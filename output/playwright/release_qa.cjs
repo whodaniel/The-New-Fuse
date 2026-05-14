@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ARCADE_URL = 'https://ai-arcade.xyz';
-const MUSIC_URL = 'https://open-audio-deck-production.up.railway.app';
+const MUSIC_URL = 'https://open-audio-deck-production.thenewfuse.com';
 const outDir = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/output/playwright';
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -79,7 +79,7 @@ async function safe(name, fn) {
     await newPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
     results.launchNewTabUrl = newPage.url();
     await newPage.screenshot({ path: path.join(outDir, 'music-new-tab-launched.png'), fullPage: true });
-    if (!results.launchNewTabUrl.includes('open-audio-deck-production.up.railway.app')) {
+    if (!results.launchNewTabUrl.includes('open-audio-deck-production.thenewfuse.com')) {
       throw new Error(`Unexpected launch URL: ${results.launchNewTabUrl}`);
     }
     await newPage.close();

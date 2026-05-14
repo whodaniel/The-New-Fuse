@@ -2,27 +2,27 @@
 
 ## Overview
 
-Reference guide for managing OpenClaw cloud instances on Railway.
+Reference guide for managing OpenClaw cloud instances on CloudRuntime.
 
 ## Instance Information
 
-| Service                  | Railway URL                                                | Purpose                    |
+| Service                  | CloudRuntime URL                                                | Purpose                    |
 | ------------------------ | ---------------------------------------------------------- | -------------------------- |
-| `openclaw-cloud`         | `https://openclaw-cloud-production-934c.up.railway.app`    | Main production instance   |
-| `openclaw-sandbox-cloud` | `https://openclaw-sandbox-cloud-production.up.railway.app` | Sandbox/Testing instance   |
-| `openclaw-primary`       | `https://openclaw-primary-production.up.railway.app`       | Secondary/Primary instance |
+| `openclaw-cloud`         | `https://openclaw-cloud-production-934c.thenewfuse.com`    | Main production instance   |
+| `openclaw-sandbox-cloud` | `https://openclaw-sandbox-cloud-production.thenewfuse.com` | Sandbox/Testing instance   |
+| `openclaw-primary`       | `https://openclaw-primary-production.thenewfuse.com`       | Secondary/Primary instance |
 
 ## Docker Configuration
 
 ### Dockerfiles
 
-- **Gateway/Cloud**: `railway-openclaw-gateway/Dockerfile`
+- **Gateway/Cloud**: `cloud_runtime-openclaw-gateway/Dockerfile`
   - Installs `openclaw@2026.2.13` (or latest).
   - Copies `openclaw.json`, `kilo-auth.json`, `entrypoint.sh`, `proxy.js`.
   - Uses `ENTRYPOINT ["/entrypoint.sh"]`.
   - Exposes port 8080.
 
-- **Sandbox**: `railway-openclaw-sandbox/Dockerfile`
+- **Sandbox**: `cloud_runtime-openclaw-sandbox/Dockerfile`
   - MUST match Gateway configuration to support Auth injection.
   - Originally was simple `npm i -g openclaw` but updated to copy entrypoint
     script.
@@ -36,7 +36,7 @@ Reference guide for managing OpenClaw cloud instances on Railway.
 
 ### Proxy.js
 
-- HTTP proxy to satisfy Railway health checks (`/health`).
+- HTTP proxy to satisfy CloudRuntime health checks (`/health`).
 - Forwards WS traffic to OpenClaw internal port (19001).
 
 ## Authentication Setup
@@ -47,7 +47,7 @@ To enable Claude (Anthropic) on cloud instances:
 
 1. Obtain OAuth tokens from local machine keychain (after local login).
    - Use `security find-generic-password -s "Claude Code-credentials" -g`.
-2. Set Railway Variables:
+2. Set CloudRuntime Variables:
    - `ANTHROPIC_OAUTH_ACCESS_TOKEN`
    - `ANTHROPIC_OAUTH_REFRESH_TOKEN`
    - `OPENCLAW_USE_ANTHROPIC_OAUTH=true`
@@ -57,37 +57,37 @@ To enable Claude (Anthropic) on cloud instances:
 
 Existing setup uses `OPENAI_CODEX_ACCESS_TOKEN` etc.
 
-## Deployment Commands (Railway CLI)
+## Deployment Commands (CloudRuntime CLI)
 
 ### Deploy Gateway (Main Cloud)
 
 ```bash
-cd railway-openclaw-gateway
-railway up --service openclaw-cloud --detach
+cd cloud_runtime-openclaw-gateway
+cloud_runtime up --service openclaw-cloud --detach
 ```
 
 ### Deploy Sandbox
 
 ```bash
-cd railway-openclaw-sandbox
+cd cloud_runtime-openclaw-sandbox
 # Ensure entrypoint.sh is copied from gateway dir first!
-cp ../railway-openclaw-gateway/entrypoint.sh .
-railway up --service openclaw-sandbox-cloud --detach
+cp ../cloud_runtime-openclaw-gateway/entrypoint.sh .
+cloud_runtime up --service openclaw-sandbox-cloud --detach
 ```
 
 ### Deploy Primary (Secondary)
 
 ```bash
-cd railway-openclaw-gateway
-railway up --service openclaw-primary --detach
+cd cloud_runtime-openclaw-gateway
+cloud_runtime up --service openclaw-primary --detach
 ```
 
 ## Troubleshooting
 
 ### Failed Deployments
 
-- If `railway up` fails, check if you are in the correct directory.
-- For Sandbox, ensure `railway-openclaw-sandbox/Dockerfile` matches the Gateway
+- If `cloud_runtime up` fails, check if you are in the correct directory.
+- For Sandbox, ensure `cloud_runtime-openclaw-sandbox/Dockerfile` matches the Gateway
   version.
 - Make sure `entrypoint.sh` is present and executable (`chmod +x`).
 
@@ -102,8 +102,8 @@ railway up --service openclaw-primary --detach
 ### Wrong App Served
 
 - If Sandbox serves frontend HTML instead of Gateway:
-  - Check Railway Dashboard > Settings > Build.
+  - Check CloudRuntime Dashboard > Settings > Build.
   - Ensure Dockerfile Path is correct (relative to root context sent by
-    `railway up`).
-  - Or deploy from subdirectory using `railway up` inside
-    `railway-openclaw-sandbox`.
+    `cloud_runtime up`).
+  - Or deploy from subdirectory using `cloud_runtime up` inside
+    `cloud_runtime-openclaw-sandbox`.

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Test Docker Builds Locally
-# This script tests all Dockerfiles before deploying to Railway
+# This script tests all Dockerfiles before deploying to CloudRuntime
 
 set -e
 
@@ -103,7 +103,7 @@ if [ $FAIL_COUNT -eq 0 ]; then
     echo ""
     echo "You can now:"
     echo "1. Test with docker-compose: docker-compose -f docker-compose.prod.yml up"
-    echo "2. Deploy to Railway: ./deploy-to-railway.sh"
+    echo "2. Deploy to CloudRuntime: ./deploy-to-cloud_runtime.sh"
     echo ""
     exit 0
 else

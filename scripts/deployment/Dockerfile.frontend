@@ -1,5 +1,5 @@
-# Dockerfile.frontend - Generic Frontend build for Railway deployments
-# This file should be used from the monorepo root with NO root directory set in Railway
+# Dockerfile.frontend - Generic Frontend build for CloudRuntime deployments
+# This file should be used from the monorepo root with NO root directory set in CloudRuntime
 
 ARG NODE_VERSION=22
 
@@ -99,7 +99,7 @@ ARG SERVICE_PATH=apps/frontend
 # Copy built files from builder stage
 COPY --from=builder /app/${SERVICE_PATH}/dist ./dist
 
-# Expose port (Railway will inject PORT env var)
+# Expose port (CloudRuntime will inject PORT env var)
 EXPOSE ${PORT:-3000}
 
 # Health check

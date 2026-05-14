@@ -61,7 +61,10 @@ docs/architecture/
 docs/ci-cd/
 
 # Agent Knowledge & Configs
-.claude/agents/
+# Keep agent definitions versioned for cross-provider parity.
+.claude/agents/*
+!.claude/agents/
+!.claude/agents/**
 packages/extension-system/src/agents/claude/
 
 # Business Logic & Personal
@@ -93,7 +96,12 @@ docs/project-management/*analysis*.md
 .agent/test-reports/
 
 # Additional Private Data
-.agent/
+# Ignore private/runtime state but keep definition banks and pathway matrix.
+.agent/*
+!.agent/agents/
+!.agent/agents/**
+!.agent/fleet/
+!.agent/fleet/agent-pathway-matrix.json
 .playwright-cli/
 data/autobiography/
 data/utp_events/
@@ -120,7 +128,7 @@ data/original_master_data.csv
 worktrees/
 cloudflare-sharedstate/accelerator/target/
 apps/external/cursor-watch-learn/output/
-scripts/railway/openclaw-codex-tenants.json
+scripts/cloud_runtime/openclaw-codex-tenants.json
 archive/junk/
 
 

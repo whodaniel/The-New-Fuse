@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { globSync } = require('glob');
 
-// Use the production Railway URL as the new default
+// Use the production CloudRuntime URL as the new default
 const PROD_REDIS_URL =
   'redis://localhost:6379';
 

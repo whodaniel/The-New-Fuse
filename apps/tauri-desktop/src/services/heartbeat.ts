@@ -95,7 +95,7 @@ export class HeartbeatClientService extends EventEmitter {
       return storedUrl;
     }
 
-    // Default to Railway production URL
+    // Default to CloudRuntime production URL
     return 'wss://api-gateway-241337102384.us-central1.run.app/ws/heartbeat';
   }
 

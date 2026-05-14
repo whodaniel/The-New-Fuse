@@ -8,18 +8,18 @@ All secrets should be configured in GitHub Settings → Secrets and variables �
 
 ### Core Secrets
 
-#### `RAILWAY_TOKEN`
-- **Purpose**: Deploy to Railway
-- **Type**: Railway API token
+#### `CLOUDFLARE_TOKEN`
+- **Purpose**: Deploy to Cloudflare
+- **Type**: Cloudflare API token
 - **Required for**: deploy.yml
 - **How to obtain**:
   ```bash
-  # Install Railway CLI
-  npm install -g @railway/cli
+  # Install Cloudflare CLI
+  npm install -g @cloudflare/cli
 
   # Login and get token
-  railway login
-  railway token
+  cloudflare login
+  cloudflare token
   ```
 - **Scopes**: Deploy, read project status
 
@@ -108,7 +108,7 @@ All secrets should be configured in GitHub Settings → Secrets and variables �
 Create an environment named `production` in GitHub Settings → Environments.
 
 **Required secrets**:
-- All Railway-related secrets
+- All Cloudflare-related secrets
 - Production database credentials (if needed)
 - Production API keys
 
@@ -121,7 +121,7 @@ Create an environment named `production` in GitHub Settings → Environments.
 Create an environment named `staging` in GitHub Settings → Environments.
 
 **Required secrets**:
-- Staging Railway token (if separate project)
+- Staging Cloudflare token (if separate project)
 - Staging database credentials
 - Staging API keys
 
@@ -142,7 +142,7 @@ Create an environment named `staging` in GitHub Settings → Environments.
 # https://cli.github.com
 
 # Set a secret
-gh secret set RAILWAY_TOKEN --body "your-token-here"
+gh secret set CLOUDFLARE_TOKEN --body "your-token-here"
 
 # Set multiple secrets from a file
 gh secret set -f secrets.env
@@ -160,7 +160,7 @@ gh secret list
 # Read from .env file (DO NOT commit this file!)
 source .env.secrets
 
-gh secret set RAILWAY_TOKEN --body "$RAILWAY_TOKEN"
+gh secret set CLOUDFLARE_TOKEN --body "$CLOUDFLARE_TOKEN"
 gh secret set CODECOV_TOKEN --body "$CODECOV_TOKEN"
 gh secret set DOCKER_USERNAME --body "$DOCKER_USERNAME"
 gh secret set DOCKER_PASSWORD --body "$DOCKER_PASSWORD"
@@ -176,7 +176,7 @@ echo "All secrets configured!"
 
 Before deploying, ensure all required secrets are set:
 
-- [ ] `RAILWAY_TOKEN` - Railway deployment
+- [ ] `CLOUDFLARE_TOKEN` - Cloudflare deployment
 - [ ] `CODECOV_TOKEN` - Test coverage (recommended)
 - [ ] `DOCKER_USERNAME` - Docker registry (if using)
 - [ ] `DOCKER_PASSWORD` - Docker registry (if using)
@@ -187,14 +187,14 @@ Before deploying, ensure all required secrets are set:
 
 ## Verifying Secrets
 
-### Test Railway Token
+### Test Cloudflare Token
 
 ```bash
 # Export your token
-export RAILWAY_TOKEN="your-token"
+export CLOUDFLARE_TOKEN="your-token"
 
 # Test connection
-railway status
+cloudflare status
 ```
 
 ### Test Codecov Token
@@ -253,7 +253,7 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 ### Secret Not Found
 
-**Error**: `Error: Secret RAILWAY_TOKEN not found`
+**Error**: `Error: Secret CLOUDFLARE_TOKEN not found`
 
 **Solution**:
 1. Verify secret name matches exactly (case-sensitive)
@@ -282,6 +282,6 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 ## Additional Resources
 
 - [GitHub Secrets Documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
-- [Railway Documentation](https://docs.railway.app)
+- [Cloudflare Documentation](https://docs.thenewfuse.com)
 - [Codecov Documentation](https://docs.codecov.com)
 - [Docker Hub Tokens](https://docs.docker.com/docker-hub/access-tokens/)

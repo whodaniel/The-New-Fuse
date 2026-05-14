@@ -14835,17 +14835,17 @@ flowchart LR
   N8356 --> N8359
   N8360[validateGcpEnvironment()]:::mth
   N8356 --> N8360
-  N8362[File: railway.config.ts]:::file
+  N8362[File: cloud_runtime.config.ts]:::file
   N8180 --> N8362
-  N8363[Class: RailwayConfigService]:::cls
+  N8363[Class: CloudRuntimeConfigService]:::cls
   N8362 --> N8363
   N8364[getDatabaseUrl()]:::mth
   N8363 --> N8364
   N8365[getRedisUrl()]:::mth
   N8363 --> N8365
-  N8366[getRailwayConfig()]:::mth
+  N8366[getCloudRuntimeConfig()]:::mth
   N8363 --> N8366
-  N8367[validateRailwayEnvironment()]:::mth
+  N8367[validateCloudRuntimeEnvironment()]:::mth
   N8363 --> N8367
   N8371[File: admin-config.controller.ts]:::file
   N8180 --> N8371

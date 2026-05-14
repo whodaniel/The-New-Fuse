@@ -27,7 +27,7 @@ let RedisConfig = class RedisConfig {
         if (redisUrl) {
             // Trim whitespace
             redisUrl = redisUrl.trim();
-            // Check if URL was accidentally duplicated (e.g., in Railway environment vars)
+            // Check if URL was accidentally duplicated (e.g., in CloudRuntime environment vars)
             const redisPrefix = 'redis://';
             const firstIndex = redisUrl.indexOf(redisPrefix);
             const secondIndex = redisUrl.indexOf(redisPrefix, firstIndex + redisPrefix.length);

@@ -18,7 +18,7 @@ The New Fuse uses a comprehensive CI/CD pipeline built on GitHub Actions to auto
 - **Testing**: Unit, integration, and E2E tests with coverage tracking
 - **Building**: Automated builds for all packages and applications
 - **Quality Gates**: Code quality, security scanning, and bundle size monitoring
-- **Deployment**: Automated deployment to Railway for production and staging
+- **Deployment**: Automated deployment to Cloudflare for production and staging
 - **PR Automation**: Automatic labeling, reviewer assignment, and checks
 
 ## Workflows
@@ -27,7 +27,7 @@ The New Fuse uses a comprehensive CI/CD pipeline built on GitHub Actions to auto
 
 1. **test.yml** - Runs comprehensive test suite on PRs and commits
 2. **build.yml** - Builds and verifies all packages and applications
-3. **deploy.yml** - Deploys to Railway with health checks and rollback
+3. **deploy.yml** - Deploys to Cloudflare with health checks and rollback
 4. **quality.yml** - Enforces quality gates (coverage, bundle size, security)
 5. **pr-automation.yml** - Automates PR management and reviews
 
@@ -70,7 +70,7 @@ The New Fuse uses a comprehensive CI/CD pipeline built on GitHub Actions to auto
 
 ### Deployment
 
-- **Railway integration**: Automated deployment with health checks
+- **Cloudflare integration**: Automated deployment with health checks
 - **Multi-service**: Deploys API, Gateway, Backend, and Frontend
 - **Health checks**: Automated post-deployment verification
 - **Rollback**: Automatic rollback on health check failures

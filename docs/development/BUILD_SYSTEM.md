@@ -3,7 +3,7 @@
 ## Overview
 
 The New Fuse monorepo now has a comprehensive, production-ready build system
-that works both locally and on Railway. The build system intelligently handles
+that works both locally and on CloudRuntime. The build system intelligently handles
 dependency ordering, validates outputs, and provides detailed build reports.
 
 ## Build Scripts
@@ -48,14 +48,14 @@ Production build with verbose logging for debugging.
 pnpm run build:production:verbose
 ```
 
-### Railway-Specific Build
+### CloudRuntime-Specific Build
 
-#### `pnpm run build:railway`
+#### `pnpm run build:cloud_runtime`
 
-Optimized build for Railway deployment - only builds what's needed.
+Optimized build for CloudRuntime deployment - only builds what's needed.
 
 ```bash
-pnpm run build:railway
+pnpm run build:cloud_runtime
 ```
 
 **What it builds:**
@@ -69,7 +69,7 @@ pnpm run build:railway
 - Skips test packages and dev-only packages
 - Memory efficient
 - Faster than full build
-- Designed for Railway's resource constraints
+- Designed for CloudRuntime's resource constraints
 
 **Environment Variables:**
 
@@ -163,9 +163,9 @@ Options:
   --skip-validation Skip build output validation
 ```
 
-#### `/scripts/build-railway.cjs`
+#### `/scripts/build-cloud_runtime.cjs`
 
-Railway-optimized build script:
+CloudRuntime-optimized build script:
 
 - Builds only essential packages
 - Memory efficient
@@ -183,13 +183,13 @@ Build verification script:
 
 ### Dockerfile Integration
 
-The Railway Dockerfile (`/Dockerfile.railway`) uses the build system:
+The CloudRuntime Dockerfile (`/Dockerfile.cloud_runtime`) uses the build system:
 
 ```dockerfile
-# Build packages and API Gateway using Railway-optimized build
+# Build packages and API Gateway using CloudRuntime-optimized build
 ENV NODE_ENV=production
 ENV BUILD_VERBOSE=true
-RUN pnpm run build:railway || (echo "Build failed" && exit 1)
+RUN pnpm run build:cloud_runtime || (echo "Build failed" && exit 1)
 ```
 
 ## Dependency Order
@@ -245,10 +245,10 @@ pnpm run build:production:verbose
 
 ### CI/CD Pipeline
 
-#### Railway deployment
+#### CloudRuntime deployment
 
 ```bash
-pnpm run build:railway
+pnpm run build:cloud_runtime
 ```
 
 #### Build verification in CI
@@ -341,10 +341,10 @@ pnpm run build:all
 pnpm run build:low-memory
 ```
 
-Or use Railway build:
+Or use CloudRuntime build:
 
 ```bash
-pnpm run build:railway
+pnpm run build:cloud_runtime
 ```
 
 ### Build succeeds but verification fails
@@ -397,7 +397,7 @@ pnpm run build:all:clean
 
 ### For CI/CD
 
-1. Always use `build:railway` for Railway deployments
+1. Always use `build:cloud_runtime` for CloudRuntime deployments
 2. Set `BUILD_VERBOSE=true` for debugging
 3. Use `build:verify` to validate build outputs
 4. Set appropriate memory limits for your environment
@@ -415,14 +415,14 @@ pnpm run build:all:clean
 
 - **Full clean build:** 2-3 minutes
 - **Incremental build:** 30-60 seconds
-- **Railway build:** 60-90 seconds
+- **CloudRuntime build:** 60-90 seconds
 - **Package-only build:** 30-45 seconds
 - **App-only build:** 20-30 seconds
 
 ### Memory Usage
 
 - **Full build:** ~2-4 GB
-- **Railway build:** ~1-2 GB
+- **CloudRuntime build:** ~1-2 GB
 - **Low-memory build:** ~512 MB - 1 GB
 
 ## Future Improvements
@@ -447,6 +447,6 @@ For issues or questions about the build system:
 ## Related Documentation
 
 - [Deployment Guide](../deployment/DEPLOYMENT.md)
-- [Railway Setup](RAILWAY_SETUP_COMMANDS.sh)
+- [CloudRuntime Setup](CLOUD_RUNTIME_SETUP_COMMANDS.sh)
 - [Package Manager Guide](README.md#package-manager)
 - [Turbo Configuration](turbo.json)

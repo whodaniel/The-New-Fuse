@@ -1,5 +1,5 @@
 #!/bin/bash
-# Push Dockerfile and railway.toml changes to GitHub using API
+# Push Dockerfile and cloud_runtime.toml changes to GitHub using API
 
 set -e
 
@@ -19,16 +19,16 @@ BRANCH="main"
 # Read Dockerfile content
 DOCKERFILE_CONTENT=$(cat Dockerfile | base64)
 
-# Read railway.toml content
-RAILWAY_TOML_CONTENT=$(cat railway.toml | base64)
+# Read cloud_runtime.toml content
+CLOUD_RUNTIME_TOML_CONTENT=$(cat cloud_runtime.toml | base64)
 
 # Get current SHA of Dockerfile if it exists
 echo "Checking if Dockerfile exists on GitHub..."
 DOCKERFILE_SHA=$(gh api repos/$REPO/contents/Dockerfile --jq '.sha' 2>/dev/null || echo "")
 
-# Get current SHA of railway.toml
-echo "Getting railway.toml SHA..."
-RAILWAY_SHA=$(gh api repos/$REPO/contents/railway.toml --jq '.sha' 2>/dev/null || echo "")
+# Get current SHA of cloud_runtime.toml
+echo "Getting cloud_runtime.toml SHA..."
+CLOUD_RUNTIME_SHA=$(gh api repos/$REPO/contents/cloud_runtime.toml --jq '.sha' 2>/dev/null || echo "")
 
 # Create or update Dockerfile
 echo "Pushing Dockerfile..."
@@ -36,14 +36,14 @@ if [ -z "$DOCKERFILE_SHA" ]; then
     # Create new file
     gh api repos/$REPO/contents/Dockerfile \
         -X PUT \
-        -f message="Add root-level Dockerfile for Railway deployment" \
+        -f message="Add root-level Dockerfile for CloudRuntime deployment" \
         -f content="$DOCKERFILE_CONTENT" \
         -f branch="$BRANCH"
 else
     # Update existing file
     gh api repos/$REPO/contents/Dockerfile \
         -X PUT \
-        -f message="Update Dockerfile for Railway deployment" \
+        -f message="Update Dockerfile for CloudRuntime deployment" \
         -f content="$DOCKERFILE_CONTENT" \
         -f sha="$DOCKERFILE_SHA" \
         -f branch="$BRANCH"
@@ -51,17 +51,17 @@ fi
 
 echo "✅ Dockerfile pushed!"
 
-# Update railway.toml
-echo "Pushing railway.toml..."
-gh api repos/$REPO/contents/railway.toml \
+# Update cloud_runtime.toml
+echo "Pushing cloud_runtime.toml..."
+gh api repos/$REPO/contents/cloud_runtime.toml \
     -X PUT \
-    -f message="Update railway.toml to use root Dockerfile" \
-    -f content="$RAILWAY_TOML_CONTENT" \
-    -f sha="$RAILWAY_SHA" \
+    -f message="Update cloud_runtime.toml to use root Dockerfile" \
+    -f content="$CLOUD_RUNTIME_TOML_CONTENT" \
+    -f sha="$CLOUD_RUNTIME_SHA" \
     -f branch="$BRANCH"
 
-echo "✅ railway.toml pushed!"
+echo "✅ cloud_runtime.toml pushed!"
 
 echo ""
 echo "🎉 All changes pushed to GitHub!"
-echo "Railway will now rebuild automatically."
+echo "CloudRuntime will now rebuild automatically."

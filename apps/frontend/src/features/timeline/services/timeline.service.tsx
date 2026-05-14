@@ -8,6 +8,10 @@ export class TimelineService implements ITimelineService {
     const response = await api.get('/timeline/events', {
       params: { recordId: branchId, includeDetails },
     });
+    if (Array.isArray(response?.data)) return response.data as TimelineEvent[];
+    if (Array.isArray(response?.data?.events)) return response.data.events as TimelineEvent[];
+    if (Array.isArray(response?.data?.items)) return response.data.items as TimelineEvent[];
+    return [];
   }
 
   async getBranchHierarchy(branchId: string): Promise<TimelineBranch[]> {

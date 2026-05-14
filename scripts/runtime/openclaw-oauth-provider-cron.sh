@@ -12,8 +12,8 @@ HEALTH_JOB="tnf-openclaw-cloud-health"
 SYNC_SCHEDULE="${TNF_OPENCLAW_OAUTH_SYNC_SCHEDULE:-20 3 * * *}"
 HEALTH_SCHEDULE="${TNF_OPENCLAW_OAUTH_HEALTH_SCHEDULE:-*/15 * * * *}"
 
-SYNC_CMD="cd '$RUNTIME_DIR' && bash scripts/railway/sync-openclaw-oauth-instances.sh --no-wait"
-HEALTH_CMD="cd '$RUNTIME_DIR' && bash scripts/railway/check-zeroclaw-instances.sh openclaw-cloud openclaw-primary openclaw-sandbox-cloud openclaw-oc004"
+SYNC_CMD="cd '$RUNTIME_DIR' && bash scripts/cloud_runtime/sync-openclaw-oauth-instances.sh --no-wait"
+HEALTH_CMD="cd '$RUNTIME_DIR' && bash scripts/cloud_runtime/check-zeroclaw-instances.sh openclaw-cloud openclaw-primary openclaw-sandbox-cloud openclaw-oc004"
 
 usage() {
   cat <<'EOF'
@@ -42,13 +42,13 @@ need_poll_script() {
 prepare_runtime_bundle() {
   local files=(
     "scripts/runtime/agent-poll-pulse.cjs"
-    "scripts/railway/sync-openclaw-oauth-instances.sh"
-    "scripts/railway/sync-openclaw-oauth-instance.sh"
-    "scripts/railway/sync-openclaw-codex-account.sh"
-    "scripts/railway/sync-openclaw-codex-tenants.sh"
-    "scripts/railway/check-zeroclaw-instances.sh"
-    "scripts/railway/openclaw-oauth-instances.json"
-    "scripts/railway/openclaw-codex-tenants.json"
+    "scripts/cloud_runtime/sync-openclaw-oauth-instances.sh"
+    "scripts/cloud_runtime/sync-openclaw-oauth-instance.sh"
+    "scripts/cloud_runtime/sync-openclaw-codex-account.sh"
+    "scripts/cloud_runtime/sync-openclaw-codex-tenants.sh"
+    "scripts/cloud_runtime/check-zeroclaw-instances.sh"
+    "scripts/cloud_runtime/openclaw-oauth-instances.json"
+    "scripts/cloud_runtime/openclaw-codex-tenants.json"
   )
   local rel
   local src
@@ -103,10 +103,10 @@ run_once() {
 
   (
     cd "$RUNTIME_DIR"
-    bash scripts/railway/sync-openclaw-oauth-instances.sh --no-wait
+    bash scripts/cloud_runtime/sync-openclaw-oauth-instances.sh --no-wait
     local attempt=1
     while [ "$attempt" -le "$retries" ]; do
-      if bash scripts/railway/check-zeroclaw-instances.sh openclaw-cloud openclaw-primary openclaw-sandbox-cloud openclaw-oc004; then
+      if bash scripts/cloud_runtime/check-zeroclaw-instances.sh openclaw-cloud openclaw-primary openclaw-sandbox-cloud openclaw-oc004; then
         return 0
       fi
       if [ "$attempt" -lt "$retries" ]; then

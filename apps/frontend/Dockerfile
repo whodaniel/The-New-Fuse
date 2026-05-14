@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile for The New Fuse Frontend
 # This Dockerfile works when build context is apps/frontend OR monorepo root
-# Railway configuration should NOT set a root directory for this service
+# CloudRuntime configuration should NOT set a root directory for this service
 
 # Stage 1: Build stage
 FROM node:22-alpine AS builder
@@ -92,10 +92,10 @@ RUN mkdir -p /tmp/client_body /tmp/proxy /tmp/fastcgi /tmp/uwsgi /tmp/scgi && \
     chmod -R 777 /tmp/client_body /tmp/proxy /tmp/fastcgi /tmp/uwsgi /tmp/scgi && \
     chmod -R 755 /app/dist
 
-# Expose port (Railway will inject PORT env var)
+# Expose port (CloudRuntime will inject PORT env var)
 EXPOSE ${PORT:-3000}
 
-# Health check - Railway injects PORT, but healthcheck runs before CMD exports it
+# Health check - CloudRuntime injects PORT, but healthcheck runs before CMD exports it
 # Use a script that reads PORT from env or defaults to 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/ || exit 1

@@ -61,7 +61,7 @@ Codex.
 
 ## 4. DevOps & Deployment
 
-- **Railway Optimization**:
+- **CloudRuntime Optimization**:
   - Completed a "safe swap" migration of the `api.thenewfuse.com` domain to a
     stable, build-verified service.
   - Fixed production build failures by strictly excluding test directories from

@@ -67,7 +67,7 @@ The existing `apps/browser-hub/` frontend (HTML/CSS/JS) can be directly reused:
       "externalBin": ["binaries/tnf-bridge"]
     },
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' wss://*.railway.app"
+      "csp": "default-src 'self'; connect-src 'self' wss://*.thenewfuse.com"
     },
     "allowlist": {
       "all": false,
@@ -75,7 +75,7 @@ The existing `apps/browser-hub/` frontend (HTML/CSS/JS) can be directly reused:
       "fs": { "all": true, "scope": ["$HOME/**", "$APPDATA/**"] },
       "http": {
         "all": true,
-        "scope": ["https://*.railway.app", "http://localhost:*"]
+        "scope": ["https://*.thenewfuse.com", "http://localhost:*"]
       },
       "process": { "relaunch": true, "exit": true },
       "window": { "all": true }
@@ -92,7 +92,7 @@ The existing `apps/browser-hub/` frontend (HTML/CSS/JS) can be directly reused:
 
 The Bridge is a small Rust binary (~2MB) that:
 
-1. Authenticates with Railway using OAuth/API key
+1. Authenticates with CloudRuntime using OAuth/API key
 2. Establishes a persistent WebSocket tunnel
 3. Implements the MCP Transport layer
 4. Proxies local file system access to the cloud
@@ -107,7 +107,7 @@ apps/tnf-bridge/
 │   ├── tunnel.rs      # WebSocket tunnel management
 │   ├── mcp_transport.rs # MCP message handling
 │   ├── fs_proxy.rs    # Local file system access
-│   └── auth.rs        # Railway authentication
+│   └── auth.rs        # CloudRuntime authentication
 ```
 
 ### 2.3 Key Dependencies
@@ -123,12 +123,12 @@ mcp-rs = "0.1"  # MCP Rust SDK (if available, else implement)
 
 ---
 
-## Phase 3: Railway Cloud Sandbox (Week 3)
+## Phase 3: CloudRuntime Cloud Sandbox (Week 3)
 
 ### 3.1 Docker Service Configuration
 
 ```yaml
-# railway.toml
+# cloud_runtime.toml
 [build]
 builder = "dockerfile"
 dockerfilePath = "Dockerfile.sandbox"
@@ -244,27 +244,27 @@ const tools = [
 
 | Feature            | Current (Electron)    | New (Cloud Sandbox)            |
 | ------------------ | --------------------- | ------------------------------ |
-| Browser Automation | Local Chromium        | Headless Playwright on Railway |
-| Build Execution    | Local Node/Rust       | Docker container on Railway    |
-| AI Inference       | Local (if any)        | Ollama/vLLM on Railway         |
+| Browser Automation | Local Chromium        | Headless Playwright on CloudRuntime |
+| Build Execution    | Local Node/Rust       | Docker container on CloudRuntime    |
+| AI Inference       | Local (if any)        | Ollama/vLLM on CloudRuntime         |
 | Extension Loading  | session.loadExtension | N/A (use MCP tools)            |
 
 ---
 
-## Railway Deployment Configuration
+## CloudRuntime Deployment Configuration
 
 ### Environment Variables
 
 ```bash
 # .env.production
-RAILWAY_TOKEN=your_token
-SANDBOX_WSS_URL=wss://tnf-sandbox.up.railway.app/ws
+CLOUD_RUNTIME_TOKEN=your_token
+SANDBOX_WSS_URL=wss://tnf-sandbox.thenewfuse.com/ws
 MCP_SERVER_PORT=8080
 ```
 
 ### Scaling
 
-Railway supports autoscaling. Configure:
+CloudRuntime supports autoscaling. Configure:
 
 - **Min instances**: 1 (for low latency)
 - **Max instances**: 5 (for concurrent users)
@@ -279,7 +279,7 @@ Railway supports autoscaling. Configure:
 | ---- | ----------------------------------------- |
 | 1    | Tauri app scaffolding, frontend port      |
 | 2    | Bridge Sidecar (Rust), WSS tunnel         |
-| 3    | Railway Sandbox Docker, MCP Server        |
+| 3    | CloudRuntime Sandbox Docker, MCP Server        |
 | 4    | Integration testing, MCP tool definitions |
 | 5    | Polish, documentation, v4.0.0 release     |
 
@@ -298,15 +298,15 @@ Railway supports autoscaling. Configure:
 | Frontend (Deep Space) | ✅     | `index.html`, `src/main.ts`                   |
 | Cloud Sandbox         | ✅     | `apps/cloud-sandbox/`                         |
 | MCP Server            | ✅     | `cloud-sandbox/src/server.ts`                 |
-| Railway Deployment    | ✅     | `tnf-cloud-sandbox-production.up.railway.app` |
+| CloudRuntime Deployment    | ✅     | `tnf-cloud-sandbox-production.thenewfuse.com` |
 | Docker Config         | ✅     | `cloud-sandbox/Dockerfile`                    |
 | Health Check          | ✅     | `/health` endpoint returning healthy status   |
 
-### Railway Cloud Sandbox URL
+### CloudRuntime Cloud Sandbox URL
 
 ```
-https://tnf-cloud-sandbox-production.up.railway.app
-wss://tnf-cloud-sandbox-production.up.railway.app/ws
+https://tnf-cloud-sandbox-production.thenewfuse.com
+wss://tnf-cloud-sandbox-production.thenewfuse.com/ws
 ```
 
 ### Available MCP Tools (Cloud Sandbox)
@@ -319,11 +319,11 @@ wss://tnf-cloud-sandbox-production.up.railway.app/ws
 
 ### Completed on Dec 18, 2024
 
-- ✅ Cloud Sandbox deployed and running on Railway
+- ✅ Cloud Sandbox deployed and running on CloudRuntime
 - ✅ Health check endpoint verified (`/health`)
 - ✅ Tauri app successfully compiled (464 crates)
 - ✅ Tauri app running in dev mode
-- ✅ Default sandbox URL configured to production Railway endpoint
+- ✅ Default sandbox URL configured to production CloudRuntime endpoint
 - ✅ Code warnings cleaned up
 
 ### Remaining Tasks
@@ -343,4 +343,4 @@ wss://tnf-cloud-sandbox-production.up.railway.app/ws
 - [ ] Idle RAM < 50MB
 - [ ] Build commands execute in cloud, results in < 5s
 - [ ] Browser automation works via MCP
-- [ ] Seamless Railway deployment
+- [ ] Seamless CloudRuntime deployment

@@ -477,7 +477,7 @@ class WorkflowExecutor extends events_1.EventEmitter {
         const agents = this.agentRegistry.getAllAgents();
         const sandboxAgent = agents.find((a) => a.status === 'ACTIVE' && this.checkAgentCapabilities(a, requirements));
         if (!sandboxAgent) {
-            // If no active sandbox, we could attempt to boot one via Railway API
+            // If no active sandbox, we could attempt to boot one via CloudRuntime API
             throw new Error(`No active sandbox agent found for requirements: ${requirements.join(', ')}`);
         }
         const taskData = {

@@ -110,7 +110,7 @@ function extractWorkflowPatterns() {
     {
       name: 'Continuous deployment and operations',
       query:
-        "rg -n 'railway|deploy|supervisor|loop|cron' docs scripts railway.toml .github --glob '!**/node_modules/**'"
+        "rg -n 'cloud_runtime|deploy|supervisor|loop|cron' docs scripts cloud_runtime.toml .github --glob '!**/node_modules/**'"
     },
     {
       name: 'Agent registration and discovery',

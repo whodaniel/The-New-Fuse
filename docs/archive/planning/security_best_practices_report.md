@@ -96,7 +96,7 @@ with safe defaults or placeholders:
 **Required Follow-up:**
 
 1. Rotate the Redis credentials that were previously embedded.
-2. Ensure `REDIS_URL` is set in Railway/production secrets.
+2. Ensure `REDIS_URL` is set in CloudRuntime/production secrets.
 
 **Mitigation:**  
 Add a pre-commit/CI secret scan to block accidental credential commits.

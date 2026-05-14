@@ -217,7 +217,7 @@ Error: Failed to fetch the engine file at https://binaries.drizzle.sh/all_commit
 1. Docker-based Drizzle generation (recommended)
 2. Set `DRIZZLE_ENGINES_CHECKSUM_IGNORE_MISSING=1` environment variable
 3. Upgrade to latest Drizzle version
-4. Use Drizzle in Railway deployment (binaries installed at runtime)
+4. Use Drizzle in CloudRuntime deployment (binaries installed at runtime)
 
 ---
 
@@ -305,7 +305,7 @@ pnpm test  # Verify 14,752 tests pass
 
 ---
 
-#### 4. Railway Deployment [Days 6-7]
+#### 4. CloudRuntime Deployment [Days 6-7]
 
 ```bash
 # Merge to main branch
@@ -313,10 +313,10 @@ git checkout main
 git merge claude/fix-monorepo-builds-019rTq29GyFPBTHdttUkdE9w
 git push origin main
 
-# Configure Railway (via dashboard):
+# Configure CloudRuntime (via dashboard):
 # - Add PostgreSQL database
 # - Set environment variables (see DEPLOYMENT_STATUS.md)
-# - Monitor: https://railway.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+# - Monitor: https://cloud_runtime.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 
 # Verify deployment
 # - All 4 services running
@@ -367,7 +367,7 @@ node scripts/pre-build-check.cjs
 | ----------------- | ------------- | ------------------ | -------- |
 | Packages Building | 32/37 (86.5%) | 37/37 (100%)       | Week 1   |
 | Drizzle Status    | Placeholder   | Real Client        | Week 1   |
-| Deployment        | Not Live      | Railway Live       | Week 2   |
+| Deployment        | Not Live      | CloudRuntime Live       | Week 2   |
 | Public Access     | No            | www.thenewfuse.com | Week 2   |
 | Beta Users        | 0             | 10+                | Week 3   |
 
@@ -375,7 +375,7 @@ node scripts/pre-build-check.cjs
 
 - **✅ Achieved**: 86.5% build success (from ~50%)
 - **🎯 Week 1 Goal**: 94.6% build success (with sync-core fixed)
-- **🎯 Week 2 Goal**: 100% build success + deployed to Railway
+- **🎯 Week 2 Goal**: 100% build success + deployed to CloudRuntime
 - **🎯 Week 3 Goal**: Public beta with real users
 
 ---
@@ -396,7 +396,7 @@ node scripts/pre-build-check.cjs
 3. ✅ **Comprehensive Drizzle Placeholder** - Enables builds while resolving
    binary issue
 4. ✅ **Standardized TypeScript Config** - ESNext/bundler across monorepo
-5. ✅ **Railway Deployment Ready** - 4 Dockerfiles configured
+5. ✅ **CloudRuntime Deployment Ready** - 4 Dockerfiles configured
 6. ✅ **Excellent Test Coverage** - 14,752 test cases ready for verification
 
 ---

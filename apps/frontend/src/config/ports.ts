@@ -59,7 +59,7 @@ export const getWebSocketUrl = () => {
       return `wss://thenewfuse.com/ws`;
     }
 
-    // Railway deployments
+    // CloudRuntime deployments
     if (host.includes('workers.dev') || host.includes('thenewfuse.com')) {
       return `${protocol}//${host}/ws`;
     }

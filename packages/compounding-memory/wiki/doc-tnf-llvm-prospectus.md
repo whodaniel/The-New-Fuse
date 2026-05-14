@@ -65,7 +65,7 @@ hardware-level kernels.
 
 1.  iPhone Vision Bridge (native QuickTime USB mirroring)
 2.  Native latency probe daemon for LLM provider routing
-3.  Establishment of stable ground control (Railway/Cloudflare/Supabase)
+3.  Establishment of stable ground control (CloudRuntime/Cloudflare/Supabase)
 
 ### PHASE 1: NATIVE ITERATION ACCELERATOR (CORSA)
 

@@ -50,7 +50,7 @@
 
 # test locally with: pnpm run docker:start && pnpm run dev
 
-# verify Railway compatibility
+# verify CloudRuntime compatibility
 
 # check health endpoints before deploy
 

@@ -2,7 +2,7 @@ import OpsPageHeader from '@/components/ops/OpsPageHeader';
 import { ActionCard, GlassCard, PremiumButton } from '@/components/ui';
 import useWorkflow from '@/hooks/useWorkflow';
 import { formatDistanceToNow } from 'date-fns';
-import { Activity, Clock, Edit, Loader2, Play, Rocket, TrendingUp, Zap } from 'lucide-react';
+import { Activity, Clock, Edit, Link2, Loader2, Play, Rocket, TrendingUp, Zap } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ export default function Workflows() {
     loadWorkflows,
     loadExecutions,
     executeWorkflow,
+    executeWorkflowViaWebhook,
     publishWorkflow,
     loading,
   } = useWorkflow();
@@ -50,6 +51,63 @@ export default function Workflows() {
         error: `Failed to publish workflow "${name}".`,
       });
       loadWorkflows();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const resolveWebhookTriggerId = (workflow: any): string | undefined => {
+    if (!Array.isArray(workflow?.triggers)) return undefined;
+    const webhookTrigger = workflow.triggers.find(
+      (trigger: any) => String(trigger?.type || '').toLowerCase() === 'webhook'
+    );
+    if (!webhookTrigger) return undefined;
+    return webhookTrigger.id || webhookTrigger.name || webhookTrigger.slug || webhookTrigger.key;
+  };
+
+  const getWebhookUrl = (workflow: any): string => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const triggerId = resolveWebhookTriggerId(workflow);
+    return triggerId
+      ? `${origin}/api/workflows/${workflow.id}/webhook/${triggerId}`
+      : `${origin}/api/workflows/${workflow.id}/webhook`;
+  };
+
+  const handleCopyWebhookUrl = async (workflow: any) => {
+    const webhookUrl = getWebhookUrl(workflow);
+    try {
+      await navigator.clipboard.writeText(webhookUrl);
+      toast.success(`Copied webhook URL for "${workflow.name}"`);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to copy webhook URL');
+    }
+  };
+
+  const handleWebhookTest = async (workflow: any) => {
+    const triggerId = resolveWebhookTriggerId(workflow);
+    try {
+      await toast.promise(
+        executeWorkflowViaWebhook(
+          workflow.id,
+          {
+            event: 'workflow-webhook-test',
+            source: 'tnf-workflows-ui',
+            workflowId: workflow.id,
+            timestamp: new Date().toISOString(),
+          },
+          {
+            triggerId,
+            source: 'tnf-workflows-ui',
+          }
+        ),
+        {
+          loading: `Triggering webhook for "${workflow.name}"...`,
+          success: `Webhook accepted for "${workflow.name}"`,
+          error: `Webhook trigger failed for "${workflow.name}"`,
+        }
+      );
+      loadExecutions(workflow.id);
     } catch (error) {
       console.error(error);
     }
@@ -146,6 +204,41 @@ export default function Workflows() {
         </GlassCard>
       </div>
 
+      <GlassCard className="p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <Link to="/workflows/builder">
+            <PremiumButton size="sm" variant="secondary">
+              Builder
+            </PremiumButton>
+          </Link>
+          <Link to="/workflows/builder-n8n">
+            <PremiumButton size="sm" variant="secondary">
+              N8N Builder
+            </PremiumButton>
+          </Link>
+          <Link to="/workflows/nexus?layer=forge">
+            <PremiumButton size="sm" variant="outline">
+              Nexus Forge
+            </PremiumButton>
+          </Link>
+          <Link to="/workflows/nexus?layer=semantic">
+            <PremiumButton size="sm" variant="outline">
+              Nexus Semantic
+            </PremiumButton>
+          </Link>
+          <Link to="/workflows/nexus?layer=memory">
+            <PremiumButton size="sm" variant="outline">
+              Nexus Memory
+            </PremiumButton>
+          </Link>
+          <Link to="/settings/api">
+            <PremiumButton size="sm" variant="outline">
+              API & Webhooks
+            </PremiumButton>
+          </Link>
+        </div>
+      </GlassCard>
+
       {/* Active Workflows Grid */}
       {workflows.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-4 animate-slide-in-up">
@@ -210,6 +303,26 @@ export default function Workflows() {
                       Publish
                     </PremiumButton>
                   )}
+                </div>
+                <div className="flex gap-2">
+                  <PremiumButton
+                    size="sm"
+                    variant="ghost"
+                    className="flex-1"
+                    onClick={() => handleCopyWebhookUrl(workflow)}
+                  >
+                    <Link2 className="w-3 h-3 mr-1" />
+                    Copy Webhook
+                  </PremiumButton>
+                  <PremiumButton
+                    size="sm"
+                    variant="ghost"
+                    className="flex-1"
+                    onClick={() => handleWebhookTest(workflow)}
+                  >
+                    <Play className="w-3 h-3 mr-1" />
+                    Test Webhook
+                  </PremiumButton>
                 </div>
               </div>
             </ActionCard>

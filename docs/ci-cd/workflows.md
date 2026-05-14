@@ -8,7 +8,7 @@ Complete guide to all GitHub Actions workflows in The New Fuse CI/CD pipeline.
 |----------|------|----------|---------|
 | Test Suite | `test.yml` | PR, Push | Run all tests and checks |
 | Build Verification | `build.yml` | PR, Push | Build and verify artifacts |
-| Deploy | `deploy.yml` | Push to main, Tags, Manual | Deploy to Railway |
+| Deploy | `deploy.yml` | Push to main, Tags, Manual | Deploy to Cloudflare |
 | Quality Gates | `quality.yml` | PR, Push, Weekly | Enforce quality standards |
 | PR Automation | `pr-automation.yml` | PR events | Automate PR management |
 
@@ -262,7 +262,7 @@ Approximately 15-20 minutes
 ## Deploy Workflow (`deploy.yml`)
 
 ### Purpose
-Deploys all services to Railway with health checks and automated rollback.
+Deploys all services to Cloudflare with health checks and automated rollback.
 
 ### When It Runs
 - Push to `main` branch
@@ -311,19 +311,19 @@ Inputs:
 
 **Caching**: Uses GitHub Actions cache
 
-#### 4. Deploy to Railway
-- Deploys each service to Railway
-- Uses Railway CLI
+#### 4. Deploy to Cloudflare
+- Deploys each service to Cloudflare
+- Uses Cloudflare CLI
 - Runs in parallel
 
 **Duration**: ~5-10 minutes
 
 **Services**:
 ```yaml
-api-gateway → Railway service: api-gateway
-api → Railway service: api
-backend → Railway service: backend
-frontend → Railway service: frontend
+api-gateway → Cloudflare service: api-gateway
+api → Cloudflare service: api
+backend → Cloudflare service: backend
+frontend → Cloudflare service: frontend
 ```
 
 #### 5. Health Checks
@@ -342,7 +342,7 @@ backend: /health
 frontend: / (200 OK)
 ```
 
-**Rollback**: Automatic via `railway rollback`
+**Rollback**: Automatic via `cloudflare rollback`
 
 #### 6. Post-Deployment Tests
 - Runs smoke tests
@@ -364,7 +364,7 @@ Approximately 35-50 minutes
 ### Deployment Strategy
 
 **Zero-Downtime**:
-- Railway handles rolling updates
+- Cloudflare handles rolling updates
 - Health checks before traffic routing
 - Old version runs until new version healthy
 

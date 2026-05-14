@@ -1,5 +1,5 @@
-import { Label, Tooltip } from '@/components/ui';
 // @ts-nocheck
+import { Label, Tooltip } from '@/components/ui';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';

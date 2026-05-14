@@ -4,7 +4,7 @@ import { QueueName } from './constants/queue-names';
 
 /**
  * Parse Redis connection URL if provided, otherwise use individual env vars
- * Railway and other cloud platforms typically provide REDIS_URL as a connection string
+ * CloudRuntime and other cloud platforms typically provide REDIS_URL as a connection string
  */
 const parseRedisConfig = () => {
   let redisUrl = process.env.REDIS_URL;
@@ -13,7 +13,7 @@ const parseRedisConfig = () => {
     // Trim whitespace
     redisUrl = redisUrl.trim();
 
-    // Check if URL was accidentally duplicated (e.g., in Railway environment vars)
+    // Check if URL was accidentally duplicated (e.g., in CloudRuntime environment vars)
     // This is a common copy-paste error where the URL is duplicated in the same environment variable string.
     const redisPrefix = 'redis://';
     const firstIndex = redisUrl.indexOf(redisPrefix);

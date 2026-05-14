@@ -130,10 +130,10 @@ FIREBASE_CLIENT_EMAIL=REDACTED-SERVICE-ACCOUNT-1@example.com
 
 - [ ] **2. Configure Production Environment**
 
-  **For Railway:**
+  **For CloudRuntime:**
 
   ```bash
-  # Navigate to Railway dashboard
+  # Navigate to CloudRuntime dashboard
   # Go to your project → Variables
   # Add all environment variables from the list above
   ```
@@ -319,7 +319,7 @@ cleaning history:
 
 - **GitHub Secrets Documentation:**
   https://docs.github.com/en/actions/security-guides/encrypted-secrets
-- **Railway Environment Variables:** https://docs.railway.app/develop/variables
+- **CloudRuntime Environment Variables:** https://docs.thenewfuse.com/develop/variables
 - **Vite Environment Variables:** https://vitejs.dev/guide/env-and-mode.html
 - **Firebase Security Best Practices:**
   https://firebase.google.com/docs/projects/api-keys

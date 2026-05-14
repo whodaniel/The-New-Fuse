@@ -649,7 +649,7 @@ export class WorkflowExecutor extends EventEmitter {
     );
 
     if (!sandboxAgent) {
-      // If no active sandbox, we could attempt to boot one via Railway API
+      // If no active sandbox, we could attempt to boot one via CloudRuntime API
       throw new Error(`No active sandbox agent found for requirements: ${requirements.join(', ')}`);
     }
 

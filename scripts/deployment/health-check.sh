@@ -547,42 +547,42 @@ check_build_health() {
 }
 
 ###############################################################################
-# Railway-Specific Health Checks
+# CloudRuntime-Specific Health Checks
 ###############################################################################
 
-check_railway_health() {
-  print_section "Railway Platform Health Check"
+check_cloud_runtime_health() {
+  print_section "CloudRuntime Platform Health Check"
 
-  if ! command -v railway &>/dev/null; then
-    check_result warning "Railway CLI not installed"
+  if ! command -v cloud_runtime &>/dev/null; then
+    check_result warning "CloudRuntime CLI not installed"
     return 0
   fi
 
-  if ! railway whoami &>/dev/null; then
-    check_result warning "Not authenticated with Railway"
+  if ! cloud_runtime whoami &>/dev/null; then
+    check_result warning "Not authenticated with CloudRuntime"
     return 0
   fi
 
-  if ! railway status &>/dev/null; then
-    check_result warning "Not linked to a Railway project"
+  if ! cloud_runtime status &>/dev/null; then
+    check_result warning "Not linked to a CloudRuntime project"
     return 0
   fi
 
-  log STEP "Checking Railway services..."
+  log STEP "Checking CloudRuntime services..."
 
   local services=("api-gateway" "backend" "frontend" "api")
   local failed_services=()
 
   for service in "${services[@]}"; do
-    if railway status --service "$service" &>/dev/null; then
-      check_result success "Railway service '$service' is running"
+    if cloud_runtime status --service "$service" &>/dev/null; then
+      check_result success "CloudRuntime service '$service' is running"
     else
       failed_services+=("$service")
     fi
   done
 
   if [[ ${#failed_services[@]} -gt 0 ]]; then
-    check_result warning "Railway services not running: ${failed_services[*]}"
+    check_result warning "CloudRuntime services not running: ${failed_services[*]}"
   fi
 }
 
@@ -728,7 +728,7 @@ main() {
   check_api_health || true
 
   # Platform checks
-  check_railway_health || true
+  check_cloud_runtime_health || true
 
   # Additional checks for deep mode
   if [[ "$HEALTH_CHECK_MODE" == "deep" ]]; then

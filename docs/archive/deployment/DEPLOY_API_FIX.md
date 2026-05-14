@@ -1,13 +1,13 @@
 # 🚀 API Fix Deployment Instructions
 
-**Date:** January 11, 2026 **Branch:** `fix-pr-421` **Target:** Railway
+**Date:** January 11, 2026 **Branch:** `fix-pr-421` **Target:** CloudRuntime
 Production
 
 ---
 
 ## ⚠️ CRITICAL FIX REQUIRED
 
-The Railway API server is currently crashing due to an incorrect import path for
+The CloudRuntime API server is currently crashing due to an incorrect import path for
 `CascadeService`. This is blocking the following pages:
 
 - `/agents`
@@ -21,7 +21,7 @@ The Railway API server is currently crashing due to an incorrect import path for
 
 ### Commit: `0691b49c7`
 
-**Message:** "fix(api): fix CascadeService import path causing Railway crash"
+**Message:** "fix(api): fix CascadeService import path causing CloudRuntime crash"
 
 **Files Changed:**
 
@@ -61,7 +61,7 @@ git log --oneline -3
 # Should show something like:
 # 7bb1249be fix(ui): fix forgot-password page layout to match premium styling
 # 5d701110a Add cloud QA infrastructure and documentation
-# 0691b49c7 fix(api): fix CascadeService import path causing Railway crash
+# 0691b49c7 fix(api): fix CascadeService import path causing CloudRuntime crash
 ```
 
 ### Step 3: Push the Fix Branch (if needed)
@@ -74,12 +74,12 @@ git push origin fix-pr-421
 
 1. Go to GitHub: https://github.com/whodaniel/fuse (or your repo)
 2. Click "Compare & pull request" for `fix-pr-421`
-3. Title: "fix(api): Fix CascadeService import causing Railway crash"
+3. Title: "fix(api): Fix CascadeService import causing CloudRuntime crash"
 4. Body:
 
    ```
    ## What
-   Fixes the API server crash on Railway caused by incorrect import path.
+   Fixes the API server crash on CloudRuntime caused by incorrect import path.
 
    ## Why
    The import `@the-new-fuse/core/src/services/CascadeService` doesn't resolve
@@ -95,7 +95,7 @@ git push origin fix-pr-421
    ```
 
 5. Merge the PR
-6. Railway will auto-deploy
+6. CloudRuntime will auto-deploy
 
 ### Step 4: Option B - Direct Merge (Faster)
 
@@ -109,7 +109,7 @@ git pull origin main
 # Merge the fix
 git merge fix-pr-421 -m "Merge fix-pr-421: CascadeService import fix"
 
-# Push to trigger Railway deploy
+# Push to trigger CloudRuntime deploy
 git push origin main
 ```
 
@@ -117,9 +117,9 @@ git push origin main
 
 ## ✅ Verification After Deployment
 
-### 1. Check Railway Logs
+### 1. Check CloudRuntime Logs
 
-Watch Railway deployment logs for successful startup (no MODULE_NOT_FOUND error)
+Watch CloudRuntime deployment logs for successful startup (no MODULE_NOT_FOUND error)
 
 ### 2. Test API Endpoint
 

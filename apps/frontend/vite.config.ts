@@ -429,7 +429,7 @@ export default defineConfig(({ mode }) => {
       port: parseInt(env.VITE_PORT || env.PORT || '3000'),
       strictPort: false,
       hmr: getHMRConfig(),
-      // Allow production domain for Railway deployment
+      // Allow production domain for CloudRuntime deployment
       allowedHosts: ['thenewfuse.com', 'www.thenewfuse.com', '.workers.dev', 'localhost'],
       proxy: isDev
         ? {

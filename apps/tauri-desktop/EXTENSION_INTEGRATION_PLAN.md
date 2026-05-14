@@ -25,7 +25,7 @@ Extension capabilities into The New Fuse Tauri desktop application.
 └─────────────────────────────────────────────────────────────────┘
           │
           ▼
-   Railway Cloud Sandbox
+   CloudRuntime Cloud Sandbox
    - Playwright Browser Control
    - SkIDEancer IDE
 ```

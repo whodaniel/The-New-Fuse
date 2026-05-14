@@ -16,6 +16,27 @@ export interface MetricsFilter {
   sources?: IntegrationSource[];
 }
 
+function resolveApiBaseUrl(): string {
+  const configured = String(import.meta.env.VITE_API_URL || '').trim();
+  if (!configured) return '/api';
+  return configured.replace(/\/$/, '');
+}
+
+function resolveAuthToken(): string | null {
+  return (
+    localStorage.getItem('auth_token') ||
+    localStorage.getItem('authToken') ||
+    localStorage.getItem('accessToken') ||
+    localStorage.getItem('token') ||
+    localStorage.getItem('AUTH_TOKEN') ||
+    sessionStorage.getItem('auth_token') ||
+    sessionStorage.getItem('authToken') ||
+    sessionStorage.getItem('accessToken') ||
+    sessionStorage.getItem('token') ||
+    sessionStorage.getItem('AUTH_TOKEN')
+  );
+}
+
 export function useBusinessMetrics(initialFilter: MetricsFilter = { timeRange: '24h' }) {
   const [state, setState] = useState<BusinessMetricsState>({
     metrics: null,
@@ -25,13 +46,13 @@ export function useBusinessMetrics(initialFilter: MetricsFilter = { timeRange: '
   });
 
   const [filter, setFilter] = useState<MetricsFilter>(initialFilter);
-  const apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+  const apiBaseUrl = resolveApiBaseUrl();
 
   const getAuthHeaders = useCallback(() => {
-    const token = localStorage.getItem('authToken');
+    const token = resolveAuthToken();
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }, []);
 

@@ -504,7 +504,7 @@
       "signalCount": 20,
       "detected": true,
       "sampleRefs": [
-        ".gemini/railway-deployment-fixes-complete.md:153:- See `.gemini/deployment-fix-proto-definitions.md` for details",
+        ".gemini/cloud_runtime-deployment-fixes-complete.md:153:- See `.gemini/deployment-fix-proto-definitions.md` for details",
         ".gemini/BUILD_PROCESS_HARDENING_SUMMARY.md:166:[BUILD_PROCESS_HARDENING.md](./.gemini/BUILD_PROCESS_HARDENING.md)",
         ".gemini/BUILD_PROCESS_HARDENING.md:295:- `.gemini/DRIZZLE_NAMESPACE_EXPORT_FIX.md` - Original issue documentation",
         ".gemini/BUILD_PROCESS_HARDENING.md:296:- `.gemini/BUILD_PROCESS_HARDENING.md` - This file",
@@ -585,20 +585,20 @@
       ]
     },
     {
-      "name": "Railway",
+      "name": "CloudRuntime",
       "signalCount": 20,
       "detected": true,
       "sampleRefs": [
-        "railway.toml:1:# railway.toml for The New Fuse Monorepo",
-        "railway.toml:9:dockerfilePath = \"Dockerfile.railway\"",
-        "railway.toml:19:dockerfilePath = \"Dockerfile.railway\"",
-        "railway.toml:32:dockerfilePath = \"Dockerfile.railway\"",
-        "railway.toml:90:# Uses shared Dockerfile.railway from repository root",
-        "railway.toml:94:dockerfilePath = \"Dockerfile.railway\"",
-        "railway.toml:105:dockerfilePath = \"apps/cloud-sandbox/Dockerfile.railway\"",
-        "railway.toml:117:dockerfilePath = \"railway-openclaw-sandbox/Dockerfile\"",
-        "railway.toml:118:watchPatterns = [\"railway-openclaw-sandbox/**\"]",
-        "railway.toml:131:dockerfilePath = \"railway-openclaw-gateway/Dockerfile\""
+        "cloud_runtime.toml:1:# cloud_runtime.toml for The New Fuse Monorepo",
+        "cloud_runtime.toml:9:dockerfilePath = \"Dockerfile.cloud_runtime\"",
+        "cloud_runtime.toml:19:dockerfilePath = \"Dockerfile.cloud_runtime\"",
+        "cloud_runtime.toml:32:dockerfilePath = \"Dockerfile.cloud_runtime\"",
+        "cloud_runtime.toml:90:# Uses shared Dockerfile.cloud_runtime from repository root",
+        "cloud_runtime.toml:94:dockerfilePath = \"Dockerfile.cloud_runtime\"",
+        "cloud_runtime.toml:105:dockerfilePath = \"apps/cloud-sandbox/Dockerfile.cloud_runtime\"",
+        "cloud_runtime.toml:117:dockerfilePath = \"cloud_runtime-openclaw-sandbox/Dockerfile\"",
+        "cloud_runtime.toml:118:watchPatterns = [\"cloud_runtime-openclaw-sandbox/**\"]",
+        "cloud_runtime.toml:131:dockerfilePath = \"cloud_runtime-openclaw-gateway/Dockerfile\""
       ]
     },
     {

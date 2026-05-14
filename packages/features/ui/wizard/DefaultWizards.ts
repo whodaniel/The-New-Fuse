@@ -287,27 +287,27 @@ export function createAgentCreationWizard(): WizardDefinition {
 }
 
 /**
- * Deploy to Railway Wizard
+ * Deploy to CloudRuntime Wizard
  */
-export function createDeployToRailwayWizard(): WizardDefinition {
-  return new WizardBuilder('deploy-railway', 'Deploy to Railway')
-    .description('Deploy your cloud sandbox to Railway with proper configuration')
+export function createDeployToCloudRuntimeWizard(): WizardDefinition {
+  return new WizardBuilder('deploy-cloud_runtime', 'Deploy to CloudRuntime')
+    .description('Deploy your cloud sandbox to CloudRuntime with proper configuration')
     .category('deployment')
-    .goal('Successfully deploy to Railway')
+    .goal('Successfully deploy to CloudRuntime')
     .targetAudience(['intermediate', 'advanced'])
     .estimatedTime(20)
-    .prerequisites(['Railway account', 'GitHub repository connected'])
+    .prerequisites(['CloudRuntime account', 'GitHub repository connected'])
     .outcomes([
-      'Service deployed to Railway',
+      'Service deployed to CloudRuntime',
       'Environment variables configured',
       'Health checks passing',
       'Custom domain configured (optional)',
     ])
-    .tags(['deployment', 'railway', 'production', 'devops'])
+    .tags(['deployment', 'cloud_runtime', 'production', 'devops'])
     .addStep({
       id: 'connect-github',
       title: 'Connect GitHub Repository',
-      description: 'Link your GitHub repository to Railway',
+      description: 'Link your GitHub repository to CloudRuntime',
       component: 'GitHubConnection',
       canSkip: false,
       estimatedTime: 120,
@@ -327,12 +327,12 @@ export function createDeployToRailwayWizard(): WizardDefinition {
     })
     .addStep({
       id: 'configure-service',
-      title: 'Configure Railway Service',
+      title: 'Configure CloudRuntime Service',
       description: 'Set up your service configuration',
-      component: 'RailwayServiceConfig',
+      component: 'CloudRuntimeServiceConfig',
       canSkip: false,
       estimatedTime: 180,
-      helpText: 'Service configuration defines how Railway builds and runs your app',
+      helpText: 'Service configuration defines how CloudRuntime builds and runs your app',
       tips: [
         'Use the recommended Dockerfile for best results',
         'Set appropriate resource limits',
@@ -365,18 +365,18 @@ export function createDeployToRailwayWizard(): WizardDefinition {
     .addStep({
       id: 'database-setup',
       title: 'Provision Database',
-      description: 'Set up PostgreSQL database on Railway',
+      description: 'Set up PostgreSQL database on CloudRuntime',
       component: 'DatabaseProvision',
       canSkip: false,
       estimatedTime: 180,
-      helpText: 'Railway provides managed PostgreSQL with automatic backups',
+      helpText: 'CloudRuntime provides managed PostgreSQL with automatic backups',
       previousStep: 'environment-variables',
       nextStep: 'deploy',
     })
     .addStep({
       id: 'deploy',
       title: 'Deploy Service',
-      description: 'Deploy your application to Railway',
+      description: 'Deploy your application to CloudRuntime',
       component: 'DeploymentTrigger',
       canSkip: false,
       estimatedTime: 600,
@@ -428,7 +428,7 @@ export function createDeployToRailwayWizard(): WizardDefinition {
     .addStep({
       id: 'completion',
       title: 'Deployment Complete!',
-      description: 'Your service is now live on Railway',
+      description: 'Your service is now live on CloudRuntime',
       component: 'DeploymentSuccess',
       canSkip: false,
       estimatedTime: 30,
@@ -666,7 +666,7 @@ export function createTroubleshootingWizard(): WizardDefinition {
 export const DEFAULT_WIZARDS = [
   createGetStartedWizard(),
   createAgentCreationWizard(),
-  createDeployToRailwayWizard(),
+  createDeployToCloudRuntimeWizard(),
   createConfigureRBACWizard(),
   createTroubleshootingWizard(),
 ];

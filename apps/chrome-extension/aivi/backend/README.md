@@ -35,32 +35,32 @@ npm run dev
 
 Server runs at: http://localhost:3000
 
-### Production Deployment (Railway)
+### Production Deployment (CloudRuntime)
 
-1. **Create Railway Project**
+1. **Create CloudRuntime Project**
 
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
+# Install CloudRuntime CLI
+npm install -g @cloud_runtime/cli
 
 # Login
-railway login
+cloud_runtime login
 
 # Initialize project
-railway init
+cloud_runtime init
 ```
 
 2. **Add PostgreSQL Database**
 
 ```bash
-# In Railway dashboard, add PostgreSQL plugin
-# Copy DATABASE_URL from Railway to your environment
+# In CloudRuntime dashboard, add PostgreSQL plugin
+# Copy DATABASE_URL from CloudRuntime to your environment
 ```
 
 3. **Set Environment Variables**
 
 ```bash
-# In Railway dashboard, go to Variables tab and add:
+# In CloudRuntime dashboard, go to Variables tab and add:
 NODE_ENV=production
 JWT_SECRET=<generate-random-secret>
 GOOGLE_CLIENT_ID=<your-google-client-id>
@@ -76,7 +76,7 @@ STRIPE_PRICE_TNF_YEARLY=price_xxx
 4. **Deploy**
 
 ```bash
-railway up
+cloud_runtime up
 ```
 
 ## API Endpoints
@@ -143,24 +143,24 @@ See `scripts/schema.sql` for complete schema.
 ### Health Check
 
 ```bash
-curl https://your-api.railway.app/health
+curl https://your-api.thenewfuse.com/health
 ```
 
 ### Logs
 
 ```bash
-railway logs
+cloud_runtime logs
 ```
 
 ## Stripe Webhook Setup
 
 1. **Create Webhook in Stripe Dashboard**
-   - URL: `https://your-api.railway.app/api/webhooks/stripe`
+   - URL: `https://your-api.thenewfuse.com/api/webhooks/stripe`
    - Events: `checkout.session.completed`, `customer.subscription.*`,
      `invoice.*`
 
 2. **Copy Webhook Secret**
-   - Add to Railway env as `STRIPE_WEBHOOK_SECRET`
+   - Add to CloudRuntime env as `STRIPE_WEBHOOK_SECRET`
 
 ## Troubleshooting
 
@@ -175,7 +175,7 @@ psql $DATABASE_URL -c "SELECT NOW();"
 
 ```bash
 # Verify JWT_SECRET is set
-railway variables
+cloud_runtime variables
 
 # Check token in Chrome DevTools > Application > Cookies
 ```

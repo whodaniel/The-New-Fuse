@@ -103,7 +103,7 @@ const COMMON_ISSUES = [
   { id: 'agent-timeout', label: 'Agent requests timing out', category: 'agent' },
   { id: 'api-401', label: 'Getting 401 Unauthorized errors', category: 'connection' },
   { id: 'db-connection', label: 'Cannot connect to database', category: 'database' },
-  { id: 'deploy-fail', label: 'Railway deployment failing', category: 'deployment' },
+  { id: 'deploy-fail', label: 'CloudRuntime deployment failing', category: 'deployment' },
   { id: 'permission-denied', label: 'Permission denied errors', category: 'access' },
 ];
 

@@ -91,7 +91,7 @@ If DOM automation is too fragile, implement a **semi-automated mode**:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           RAILWAY BACKEND                                │
+│                           CLOUD_RUNTIME BACKEND                                │
 │  ┌─────────────┐  ┌─────────────────┐  ┌──────────────────────────────┐ │
 │  │ PostgreSQL  │  │ Node.js API     │  │ Redis Queue                  │ │
 │  │ (Supabase)  │  │ (Express/Hono)  │  │ (Background Jobs)            │ │
@@ -179,10 +179,10 @@ CREATE TABLE subscriptions (
 );
 ```
 
-### Railway Services
+### CloudRuntime Services
 
 ```yaml
-# railway.toml
+# cloud_runtime.toml
 [build]
   builder = "NIXPACKS"
 
@@ -246,9 +246,9 @@ CREATE TABLE subscriptions (
 - [ ] **Test with 5 videos end-to-end**
 - [ ] **Process your 633-video playlist**
 
-### Phase 2: Railway Backend (Week 2-3)
+### Phase 2: CloudRuntime Backend (Week 2-3)
 
-- [ ] Set up Railway project
+- [ ] Set up CloudRuntime project
 - [ ] Create PostgreSQL database
 - [ ] Implement user authentication (Google OAuth)
 - [ ] Create queue management API
@@ -268,7 +268,7 @@ CREATE TABLE subscriptions (
 - [ ] Implement video queue management
 - [ ] Implement report viewing
 - [ ] Add usage analytics
-- [ ] Deploy to Vercel/Railway
+- [ ] Deploy to Vercel/CloudRuntime
 
 ### Phase 5: Launch (Week 5-6)
 

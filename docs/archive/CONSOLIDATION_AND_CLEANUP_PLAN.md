@@ -41,7 +41,7 @@ Based on systematic analysis of the codebase, I've identified **significant cons
 
 **Essential Scripts to Keep**:
 - `dev-launch.sh` (main dev server)
-- `railway-deploy.sh` (deployment)
+- `cloud_runtime-deploy.sh` (deployment)
 - `docker-complete.sh` (container orchestration)
 - `comprehensive-build.sh` (build all)
 
@@ -69,7 +69,7 @@ backups/
 │   ├── vscode-extension-backups/
 │   └── package-migration-backups/
 ├── 2024-deployment/
-│   ├── railway-deployments/
+│   ├── cloud_runtime-deployments/
 │   └── docker-configs/
 └── development/
     ├── temp-fixes/
@@ -133,7 +133,7 @@ scripts/
 │   ├── package.sh
 │   └── clean.sh
 ├── deploy/        # Deployment
-│   ├── railway.sh
+│   ├── cloud_runtime.sh
 │   ├── docker.sh
 │   └── rollback.sh
 ├── legacy/        # Old scripts for reference

@@ -18,6 +18,42 @@ import { ProxyService } from '../proxy/proxy.service';
 export class TimelineGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
+  private readonly timelinePathBases = ['/api/unified-ledger/timeline', '/api/timeline'] as const;
+  private readonly timelineServices = ['api', 'agents'] as const;
+
+  private shouldTryFallback(status: number): boolean {
+    return status === 404 || status === 405 || status === 502 || status === 503 || status === 504;
+  }
+
+  private async proxyTimelineWithFallback(
+    suffix: string,
+    method: string,
+    headers: Record<string, string>,
+    body?: any,
+    query?: Record<string, string>
+  ) {
+    let lastResponse: { status: number; data: unknown } | null = null;
+    const normalizedSuffix = suffix.startsWith('/') ? suffix : `/${suffix}`;
+    for (const serviceName of this.timelineServices) {
+      for (const base of this.timelinePathBases) {
+        const response = await this.proxyService.proxyRequest(
+          serviceName,
+          `${base}${normalizedSuffix}`,
+          method,
+          headers,
+          body,
+          query
+        );
+        lastResponse = response;
+        if (response.status < 400 || !this.shouldTryFallback(response.status)) {
+          return response;
+        }
+      }
+    }
+
+    return lastResponse;
+  }
+
   @Get('macro')
   @ApiOperation({ summary: 'Compatibility endpoint for timeline macro view' })
   async getTimelineMacroView(
@@ -26,14 +62,10 @@ export class TimelineGatewayController {
     @Res() res: Response
   ) {
     try {
-      const response = await this.proxyService.proxyRequest(
-        'agents',
-        '/api/timeline/events',
-        'GET',
-        headers,
-        undefined,
-        query
-      );
+      const response = await this.proxyTimelineWithFallback('/events', 'GET', headers, undefined, query);
+      if (!response) {
+        throw new Error('No response from timeline upstream');
+      }
       return res.status(response.status).json(response.data);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -64,17 +96,11 @@ export class TimelineGatewayController {
       suffix = `/${suffix}`;
     }
 
-    const targetPath = `/api/timeline${suffix}`;
-
     try {
-      const response = await this.proxyService.proxyRequest(
-        'agents',
-        targetPath,
-        req.method,
-        headers,
-        body,
-        query
-      );
+      const response = await this.proxyTimelineWithFallback(suffix, req.method, headers, body, query);
+      if (!response) {
+        throw new Error('No response from timeline upstream');
+      }
       return res.status(response.status).json(response.data);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

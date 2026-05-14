@@ -2,7 +2,7 @@
 
 **Date**: December 18, 2024 **Integration Status**: ✅ Complete
 
-## 1. Cloud Service (Railway)
+## 1. Cloud Service (CloudRuntime)
 
 - **Repository**:
   [whodaniel/skideancer-ide](https://github.com/whodaniel/skideancer-ide)
@@ -10,7 +10,7 @@
 - **Node Version**: 22-slim (v22.12.0+)
 - **Build Requirements**: python3, make, g++ (for native modules like
   `drivelist`)
-- **URL**: `https://skideancer-ide-production.up.railway.app`
+- **URL**: `https://skideancer-ide-production.thenewfuse.com`
 
 ## 2. Desktop Integration (Tauri)
 
@@ -41,7 +41,7 @@ SkIDEancer is now fully integrated into the "The New Fuse" desktop hub.
      └── Cloud IDE View (iframe)
              │
              ▼
-[Railway Cloud - SkIDEancer Service]
+[CloudRuntime Cloud - SkIDEancer Service]
      │
      ├── Node.js 22 Backend
      ├── SkIDEancer Frontend
@@ -52,6 +52,6 @@ SkIDEancer is now fully integrated into the "The New Fuse" desktop hub.
 
 If SkIDEancer doesn't load:
 
-1. Check `skideancer-ide` deployment on Railway
-2. Ensure `OPENAI_API_KEY` is set in Railway variables
+1. Check `skideancer-ide` deployment on CloudRuntime
+2. Ensure `OPENAI_API_KEY` is set in CloudRuntime variables
 3. Check Tauri console for iframe errors (CSP usually allows it)

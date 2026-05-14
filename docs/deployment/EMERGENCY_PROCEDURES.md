@@ -14,13 +14,13 @@ Critical procedures for handling deployment emergencies.
 
 2. **Check Service Status**
    ```bash
-   railway status
-   railway logs --service <failed-service>
+   cloud_runtime status
+   cloud_runtime logs --service <failed-service>
    ```
 
 3. **Restart Service**
    ```bash
-   railway restart --service <failed-service>
+   cloud_runtime restart --service <failed-service>
    ```
 
 4. **If Restart Fails - Rollback**
@@ -34,7 +34,7 @@ Critical procedures for handling deployment emergencies.
 
 1. **Check DATABASE_URL**
    ```bash
-   railway variables --service api-gateway
+   cloud_runtime variables --service api-gateway
    ```
 
 2. **Test Connection**
@@ -42,13 +42,13 @@ Critical procedures for handling deployment emergencies.
    pnpm drizzle db execute --stdin <<< "SELECT 1;"
    ```
 
-3. **Restart Database** (Railway dashboard)
+3. **Restart Database** (CloudRuntime dashboard)
 
 ### Data Corruption
 
 1. **Stop All Services Immediately**
    ```bash
-   railway down
+   cloud_runtime down
    ```
 
 2. **Restore from Latest Backup**
@@ -67,7 +67,7 @@ Critical procedures for handling deployment emergencies.
 
 4. **Restart Services**
    ```bash
-   railway up
+   cloud_runtime up
    ```
 
 ## 🚨 Complete System Outage
@@ -79,9 +79,9 @@ Critical procedures for handling deployment emergencies.
    - Database accessible?
    - Network issues?
 
-2. **Check Railway Status**
+2. **Check CloudRuntime Status**
    ```bash
-   railway status
+   cloud_runtime status
    ```
 
 3. **Emergency Rollback**
@@ -95,9 +95,9 @@ Critical procedures for handling deployment emergencies.
 
 4. **Manual Service Start**
    ```bash
-   railway up --service api-gateway
-   railway up --service backend
-   railway up --service frontend
+   cloud_runtime up --service api-gateway
+   cloud_runtime up --service backend
+   cloud_runtime up --service frontend
    ```
 
 ## 🚨 Security Breach
@@ -109,9 +109,9 @@ Critical procedures for handling deployment emergencies.
    # Generate new secrets
    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
-   # Update in Railway
-   railway variables --set JWT_SECRET=<new-secret>
-   railway variables --set API_SECRET_KEY=<new-secret>
+   # Update in CloudRuntime
+   cloud_runtime variables --set JWT_SECRET=<new-secret>
+   cloud_runtime variables --set API_SECRET_KEY=<new-secret>
    ```
 
 2. **Revoke Access Tokens**
@@ -120,7 +120,7 @@ Critical procedures for handling deployment emergencies.
 
 3. **Review Access Logs**
    ```bash
-   railway logs --service api-gateway | grep -i "error\|unauthorized"
+   cloud_runtime logs --service api-gateway | grep -i "error\|unauthorized"
    ```
 
 4. **Notify Security Team**
@@ -159,19 +159,19 @@ Critical procedures for handling deployment emergencies.
 
 1. **Check Deployment Status**
    ```bash
-   railway status
+   cloud_runtime status
    ```
 
 2. **View Deployment Logs**
    ```bash
-   railway logs
+   cloud_runtime logs
    ```
 
 3. **Cancel Stuck Deployment**
    ```bash
-   # Use Railway dashboard to cancel
+   # Use CloudRuntime dashboard to cancel
    # Or force restart
-   railway restart
+   cloud_runtime restart
    ```
 
 4. **Clean Up**
@@ -180,7 +180,7 @@ Critical procedures for handling deployment emergencies.
    rm -rf apps/*/dist
 
    # Rebuild
-   pnpm run build:railway
+   pnpm run build:cloud_runtime
    ```
 
 ## 🚨 High Load / Performance Issue
@@ -189,7 +189,7 @@ Critical procedures for handling deployment emergencies.
 
 1. **Scale Services**
    ```bash
-   # Use Railway dashboard to scale
+   # Use CloudRuntime dashboard to scale
    # Or adjust resources
    ```
 

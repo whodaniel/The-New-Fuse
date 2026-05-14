@@ -22,8 +22,8 @@ if [[ -z "${REDIS_URL:-}" ]]; then
   fi
 fi
 RELAY_URL="${RELAY_URL:-ws://localhost:3000/ws}"
-LEDGER_API_BASE="${LEDGER_API_BASE:-${RAILWAY_API_URL:-${LIVE_API_BASE_URL:-${API_BASE_URL:-${TNF_API_BASE:-http://localhost:3001}}}}}"
-AUTO_DETECT_RAILWAY_API="${AUTO_DETECT_RAILWAY_API:-true}"
+LEDGER_API_BASE="${LEDGER_API_BASE:-${CLOUD_RUNTIME_API_URL:-${LIVE_API_BASE_URL:-${API_BASE_URL:-${TNF_API_BASE:-http://localhost:3001}}}}}"
+AUTO_DETECT_CLOUD_RUNTIME_API="${AUTO_DETECT_CLOUD_RUNTIME_API:-true}"
 
 STALL_THRESHOLD="${STALL_THRESHOLD:-45000}"
 RECOVERY_INTERVAL="${RECOVERY_INTERVAL:-30000}"
@@ -49,12 +49,12 @@ else
   echo "[factory-boot] redis target=remote"
 fi
 
-if [[ "${AUTO_DETECT_RAILWAY_API}" == "true" ]] && [[ "${LEDGER_API_BASE}" == "http://localhost:3001" ]]; then
-  if command -v railway >/dev/null 2>&1; then
-    RAILWAY_DOMAIN_URL="$(railway domain 2>/dev/null | rg -o 'https://[^[:space:]]+' -m 1 || true)"
-    if [[ -n "${RAILWAY_DOMAIN_URL}" ]]; then
-      LEDGER_API_BASE="${RAILWAY_DOMAIN_URL}"
-      echo "[factory-boot] auto-detected railway api: ${LEDGER_API_BASE}"
+if [[ "${AUTO_DETECT_CLOUD_RUNTIME_API}" == "true" ]] && [[ "${LEDGER_API_BASE}" == "http://localhost:3001" ]]; then
+  if command -v cloud_runtime >/dev/null 2>&1; then
+    CLOUD_RUNTIME_DOMAIN_URL="$(cloud_runtime domain 2>/dev/null | rg -o 'https://[^[:space:]]+' -m 1 || true)"
+    if [[ -n "${CLOUD_RUNTIME_DOMAIN_URL}" ]]; then
+      LEDGER_API_BASE="${CLOUD_RUNTIME_DOMAIN_URL}"
+      echo "[factory-boot] auto-detected cloud_runtime api: ${LEDGER_API_BASE}"
     fi
   fi
 fi

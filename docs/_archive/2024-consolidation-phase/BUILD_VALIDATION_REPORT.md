@@ -235,7 +235,7 @@ The following critical packages for production deployment are working:
 4. **Deployment (30 minutes)**
    ```bash
    ./docker-build-all.sh
-   railway up
+   cloud_runtime up
    ```
 
 ---

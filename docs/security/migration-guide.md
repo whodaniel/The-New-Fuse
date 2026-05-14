@@ -238,19 +238,19 @@ pnpm --filter @the-new-fuse/backend-app run test dto-validation.spec
 
 ## Step 5: Deployment to Production
 
-### Railway Deployment
+### CloudRuntime Deployment
 
-1. **Set environment variables in Railway dashboard:**
+1. **Set environment variables in CloudRuntime dashboard:**
 
    ```bash
-   # Navigate to your Railway project
+   # Navigate to your CloudRuntime project
    # Go to Variables tab
    # Add/update these variables:
 
    NODE_ENV=production
    JWT_SECRET=<your-secure-secret>
-   DATABASE_URL=<railway-postgres-url>
-   REDIS_URL=<railway-redis-url>
+   DATABASE_URL=<cloud_runtime-postgres-url>
+   REDIS_URL=<cloud_runtime-redis-url>
    FRONTEND_URL=<your-frontend-url>
    ANTHROPIC_API_KEY=<your-api-key>
    CORS_ORIGINS=<your-frontend-url>

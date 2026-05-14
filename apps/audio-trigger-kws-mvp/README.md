@@ -12,6 +12,8 @@ This app is now **pilot-ready** for real use with live mini-omni integration.
 - Trigger pipeline runs continuously in-memory.
 - mini-omni native `/chat` integration is active.
 - Recent rule/package/LLM results are queryable via API.
+- Auto-prompt orchestration now supports keyword/rule and visual-object triggers.
+- Self-assessment + self-adjustment loops write context cards to wiki-friendly logs.
 
 It is not yet fully production hardened (HA, durable queues, persistent DB,
 auth).
@@ -132,6 +134,20 @@ Config keys:
 - `MAX_RECENT_RULE_FIRES`
 - `MAX_RECENT_PACKAGES`
 - `MAX_RECENT_LLM_RESULTS`
+- `AUTO_PROMPT_ENABLED`
+- `AUTO_PROMPT_SEQUENCES_FILE`
+- `CONTEXT_CARD_DIR`
+- `CLAUDE_HOOKS_ENABLED`
+- `CLAUDE_HOOKS_REQUIRE_SECRET`
+- `CLAUDE_HOOKS_SHARED_SECRET`
+- `CLAUDE_HOOKS_STREAM_PREFIX`
+- `CLAUDE_HOOKS_DEFAULT_CONFIDENCE`
+- `MAX_RECENT_AUTOPROMPT_RUNS`
+- `MAX_RECENT_ASSESSMENTS`
+- `MAX_RECENT_CONTEXT_CARDS`
+
+If `CONTEXT_CARD_DIR` is not set, the runtime auto-detects and writes cards to
+the existing wiki at `packages/compounding-memory/wiki` when available.
 
 If `MINI_OMNI_SAMPLE_WAV` is not set (common in cloud), the service now
 generates a short synthetic WAV input automatically for native `/chat` calls.
@@ -140,16 +156,83 @@ generates a short synthetic WAV input automatically for native `/chat` calls.
 
 - `GET /healthz`
 - `POST /v1/ingest/text`
+- `POST /v1/ingest/visual`
+- `POST /v1/ingest/claude-hook`
 - `POST /v1/flush`
 - `GET /v1/events/rules`
 - `GET /v1/events/packages`
 - `GET /v1/events/llm-results`
+- `GET /v1/events/autoprompt-runs`
+- `GET /v1/events/assessments`
+- `GET /v1/events/context-cards`
+- `GET /v1/events/claude-hook-triggers`
+
+## Claude Hook Webhooks
+
+This service can ingest Anthropic Claude Code HTTP hook events and convert them
+into `claude_hook` auto-prompt triggers.
+
+Minimal hook target:
+
+- URL: `POST /v1/ingest/claude-hook`
+- Auth: `x-api-key` (same ingest key) and optional `x-claude-hook-secret`
+- Output: when runs fire, endpoint returns `hookSpecificOutput.additionalContext`
+  so Claude can continue with orchestration context in the same session.
+
+Example `~/.claude/settings.local.json` hook block:
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:43110/v1/ingest/claude-hook",
+            "headers": {
+              "x-api-key": "replace-with-strong-key"
+            }
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:43110/v1/ingest/claude-hook",
+            "headers": {
+              "x-api-key": "replace-with-strong-key"
+            }
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:43110/v1/ingest/claude-hook",
+            "headers": {
+              "x-api-key": "replace-with-strong-key"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
 Example:
 
 ```bash
 curl -sS -X POST http://127.0.0.1:43110/v1/ingest/text \
-  -H 'x-edge-api-key: replace-with-strong-key' \
+  -H 'x-api-key: replace-with-strong-key' \
   -H 'content-type: application/json' \
   -d '{"streamId":"prod_stream_01","utterance":"aspirin 200 mg please"}'
 ```
@@ -171,17 +254,17 @@ Notes:
 
 Detailed runbook:
 
-- `docs/railway-cloudflare-production.md` ⚠️ **DEPRECATED — Railway no longer
+- `docs/cloud_runtime-cloudflare-production.md` ⚠️ **DEPRECATED — CloudRuntime no longer
   used**
 - `cloudflare/worker.example.ts`
 - `cloudflare/wrangler.toml`
 - `cloudflare/src/index.ts`
-- `railway.toml` ⚠️ **DEPRECATED — Railway no longer used**
+- `cloud_runtime.toml` ⚠️ **DEPRECATED — CloudRuntime no longer used**
 - `Dockerfile`
 
 Quickest live test commands:
 
-- `docs/railway-cloudflare-production.md` -> `Run Now`
+- `docs/cloud_runtime-cloudflare-production.md` -> `Run Now`
 
 ## Suggested Repository Structure
 

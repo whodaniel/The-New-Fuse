@@ -7,7 +7,7 @@
 #
 # Usage:
 #   ./activate-tnf-orchestration.sh            # Local mode
-#   ./activate-tnf-orchestration.sh --cloud    # Cloud mode (uses Railway Redis)
+#   ./activate-tnf-orchestration.sh --cloud    # Cloud mode (uses CloudRuntime Redis)
 #   ./activate-tnf-orchestration.sh --status   # Check system status
 #
 
@@ -445,7 +445,7 @@ case "${1:-}" in
     --cloud)
         header
         check_dependencies
-        log "CLOUD MODE - Using Railway Redis"
+        log "CLOUD MODE - Using CloudRuntime Redis"
         check_redis_connection "$REDIS_CLOUD_URL"
         start_relay_server "cloud"
         start_persistent_orchestrator "Green"
@@ -457,7 +457,7 @@ case "${1:-}" in
         echo "Options:"
         echo "  --status    Show system status"
         echo "  --stop      Stop all services"
-        echo "  --cloud     Use cloud Redis (Railway)"
+        echo "  --cloud     Use cloud Redis (CloudRuntime)"
         echo "  --help      Show this help"
         echo ""
         echo "Default: Start in local mode with local Redis"

@@ -25,7 +25,7 @@
 
 | File                                                           | Change                                                         |
 | -------------------------------------------------------------- | -------------------------------------------------------------- |
-| `apps/frontend/src/config/ports.ts`                            | Enhanced `getWebSocketUrl()` with production/Railway detection |
+| `apps/frontend/src/config/ports.ts`                            | Enhanced `getWebSocketUrl()` with production/CloudRuntime detection |
 | `apps/frontend/src/services/websocket.service.tsx`             | Now uses `getWebSocketUrl()` from centralized config           |
 | `apps/frontend/src/hooks/useAgentRealtime.tsx`                 | Now uses `getWebSocketUrl()` from centralized config           |
 | `apps/frontend/src/components/PerformanceDashboard.tsx`        | Now uses `getWebSocketUrl()` with metrics path                 |
@@ -102,11 +102,11 @@ The Vector Memory System was already integrated:
 
 ---
 
-## 📋 MANUAL: Priority 4 - Attach Railway Volume to SkIDEancer IDE
+## 📋 MANUAL: Priority 4 - Attach CloudRuntime Volume to SkIDEancer IDE
 
 ### Instructions
 
-1. Open Railway Dashboard: https://railway.app/dashboard
+1. Open CloudRuntime Dashboard: https://cloud_runtime.app/dashboard
 2. Navigate to your project containing `skideancer-ide`
 3. Click on the `skideancer-ide` service
 4. Go to **Settings** → **Volumes**
@@ -177,7 +177,7 @@ New Files:
 │                                                                 │
 │  ┌─────────────────┐              ┌─────────────────────────┐  │
 │  │  Tauri Desktop  │◄────wss─────►│    Cloud Sandbox        │  │
-│  │                 │              │    (Railway)            │  │
+│  │                 │              │    (CloudRuntime)            │  │
 │  │  ├─ Dashboard   │              │                         │  │
 │  │  ├─ MCP Tools   │              │  ├─ /ws (MCP Tools)     │  │
 │  │  ├─ Browser     │              │  ├─ /ws/heartbeat ★NEW  │  │
@@ -187,7 +187,7 @@ New Files:
 │                                                                 │
 │  ┌─────────────────┐              ┌─────────────────────────┐  │
 │  │   Frontend      │              │    SkIDEancer IDE            │  │
-│  │  (thenewfuse)   │              │    (Railway)            │  │
+│  │  (thenewfuse)   │              │    (CloudRuntime)            │  │
 │  │                 │              │                         │  │
 │  │  ├─ nginx proxy │              │  Volume: /home/ide    │  │
 │  │  │  /api → BE   │              │  (NEEDS MANUAL CONFIG)  │  │
@@ -203,7 +203,7 @@ New Files:
 
 ## Next Steps
 
-1. **Deploy Changes to Railway**
+1. **Deploy Changes to CloudRuntime**
 
    ```bash
    git add -A
@@ -223,11 +223,11 @@ New Files:
    Then click "Heartbeat" on the dashboard.
 
 4. **Verify Cloud Sandbox Endpoint** After deployment, test:
-   `wss://YOUR_RAILWAY_URL/ws/heartbeat`
+   `wss://YOUR_CLOUD_RUNTIME_URL/ws/heartbeat`
 
 ---
 
 ## Session Complete! 🎉
 
 All programmatic tasks have been completed. The only remaining item is the
-manual Railway volume configuration for SkIDEancer IDE.
+manual CloudRuntime volume configuration for SkIDEancer IDE.

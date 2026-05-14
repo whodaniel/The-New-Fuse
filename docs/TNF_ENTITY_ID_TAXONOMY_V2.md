@@ -37,7 +37,7 @@ sessions
   name: "OpenClaw Primary",
   platform: "openclaw",
   environment: "production",
-  endpointUrl: "https://openclaw-primary-production.up.railway.app"
+  endpointUrl: "https://openclaw-primary-production.thenewfuse.com"
 }
 ```
 
@@ -145,9 +145,9 @@ TNF:<SCOPE>:<CATEGORY>:<PROVIDER>:<NAME>:<INSTANCE>
 | tnfId                                        | Name                | Type         | Session                               |
 | -------------------------------------------- | ------------------- | ------------ | ------------------------------------- |
 | `TNF:AGENT:ORCHESTRATOR:ANTIGRAVITY:001`     | Antigravity         | ORCHESTRATOR | `TNF:SESSION:TELEGRAM:7030202773:001` |
-| `TNF:AGENT:VALIDATOR:PICOCLAW-TESTER:001`    | PicoClaw-Tester     | VALIDATOR    | `TNF:SESSION:RAILWAY:TESTER:001`      |
-| `TNF:AGENT:CLI_TESTER:PICOCLAW-SUBJECT:001`  | PicoClaw-Subject    | CLI_TESTER   | `TNF:SESSION:RAILWAY:SUBJECT:001`     |
-| `TNF:AGENT:RESEARCH:PICOCLAW-PERPLEXITY:001` | PicoClaw-Perplexity | RESEARCH     | `TNF:SESSION:RAILWAY:PERPLEXITY:001`  |
+| `TNF:AGENT:VALIDATOR:PICOCLAW-TESTER:001`    | PicoClaw-Tester     | VALIDATOR    | `TNF:SESSION:CLOUD_RUNTIME:TESTER:001`      |
+| `TNF:AGENT:CLI_TESTER:PICOCLAW-SUBJECT:001`  | PicoClaw-Subject    | CLI_TESTER   | `TNF:SESSION:CLOUD_RUNTIME:SUBJECT:001`     |
+| `TNF:AGENT:RESEARCH:PICOCLAW-PERPLEXITY:001` | PicoClaw-Perplexity | RESEARCH     | `TNF:SESSION:CLOUD_RUNTIME:PERPLEXITY:001`  |
 
 ## Migration from Legacy Schema
 

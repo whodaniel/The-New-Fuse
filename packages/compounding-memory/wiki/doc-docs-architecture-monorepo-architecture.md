@@ -166,7 +166,7 @@ tools/vscode-lm-bridge/         - VS Code language model bridge
 ┌─────────────────────────────────────────────────────────┐
 │                    PRODUCTION                            │
 ├─────────────────────────────────────────────────────────┤
-│  Railway (4 services)                                    │
+│  CloudRuntime (4 services)                                    │
 │  ├─ Frontend   (apps/frontend)     → thenewfuse.com     │
 │  ├─ Backend    (apps/backend)      → api.thenewfuse.com │
 │  ├─ API        (apps/api)          → api2.thenewfuse.com│
@@ -315,7 +315,7 @@ individual packages.
 ### Deployment
 
 - [Deployment Guide](../guides/deployment-guide.md)
-- [Railway Deployment](../deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
+- [CloudRuntime Deployment](../deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md)
 - [Docker Optimization](../deployment/DOCKER_OPTIMIZATION_SUMMARY.md)
 
 ## Backlinks

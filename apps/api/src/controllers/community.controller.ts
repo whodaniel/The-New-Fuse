@@ -87,7 +87,7 @@ const SEED_POSTS: CommunityPost[] = [
     id: 'post-help-1',
     title: 'How are you handling staged deploy rollbacks?',
     content:
-      'Looking for practical rollback patterns across Railway services with zero-downtime frontend fallbacks.',
+      'Looking for practical rollback patterns across CloudRuntime services with zero-downtime frontend fallbacks.',
     author: {
       id: 'user-delta',
       name: 'Delta',
@@ -96,7 +96,7 @@ const SEED_POSTS: CommunityPost[] = [
       badges: ['member'],
     },
     category: 'help',
-    tags: ['deploy', 'railway', 'rollback'],
+    tags: ['deploy', 'cloud_runtime', 'rollback'],
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
     votes: { upvotes: 11, downvotes: 0, userVote: null },

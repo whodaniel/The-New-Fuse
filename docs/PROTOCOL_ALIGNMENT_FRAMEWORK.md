@@ -616,7 +616,7 @@ Features: 1. Auto-generated skill sequences - AI analyzes task - Recommends
 | Agent Development       | Agent Communication, Registry                   | Swarm Orchestration, MCP           | 30 min |
 | Workflow Creation       | Workflow Architecture, Data Flow                | Agent Coordination, Error Handling | 40 min |
 | Documentation           | Information Sequencing, Documentation Standards | API Reference, Examples            | 15 min |
-| Deployment              | Deployment Guide, Railway, Docker               | Monitoring, Security               | 30 min |
+| Deployment              | Deployment Guide, CloudRuntime, Docker               | Monitoring, Security               | 30 min |
 | Testing                 | Testing Setup, Best Practices                   | Performance Testing, E2E           | 25 min |
 | Self-Improvement        | Self-Improve Command, Swarm                     | Metrics Analysis, Learning         | 35 min |
 
@@ -712,7 +712,7 @@ Testing:
 
 Deployment:
   - docs/guides/deployment-guide.md
-  - docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md
+  - docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md
   - docs/DOCKER.md
 ```
 

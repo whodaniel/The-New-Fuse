@@ -40,7 +40,7 @@ class SimpleChatBridge {
     'perplexity.ai',
     'poe.com',
     'aistudio.google.com',
-    'openclaw-cloud-production-934c.up.railway.app', // OpenClaw cloud control UI
+    'openclaw-cloud-production-934c.thenewfuse.com', // OpenClaw cloud control UI
     'localhost:3000', // Local dev with chat
     'localhost:3001', // Local backend
   ];

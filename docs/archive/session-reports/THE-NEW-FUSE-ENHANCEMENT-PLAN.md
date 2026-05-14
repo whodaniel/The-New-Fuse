@@ -435,11 +435,11 @@ pnpm run dev
 # Test all new features
 ```
 
-**Step 2: Railway Deployment**
+**Step 2: CloudRuntime Deployment**
 
 ```bash
-# Already has Railway setup!
-./railway-deploy.sh
+# Already has CloudRuntime setup!
+./cloud_runtime-deploy.sh
 ```
 
 **Step 3: Verify**
@@ -480,7 +480,7 @@ pnpm run dev
 - [ ] Day 1-2: AG-UI protocol integration
 - [ ] Day 3: Build visualization hub
 - [ ] Day 4: Testing
-- [ ] Day 5: Deploy to Railway
+- [ ] Day 5: Deploy to CloudRuntime
 
 ---
 
@@ -520,7 +520,7 @@ cat > claude.md << 'EOF'
 
 ## Deployment Standards
 # test locally with docker:start + dev
-# verify Railway compatibility
+# verify CloudRuntime compatibility
 # check health endpoints
 # monitor service status
 EOF

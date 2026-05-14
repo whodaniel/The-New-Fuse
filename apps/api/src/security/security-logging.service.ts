@@ -31,8 +31,8 @@ export class SecurityLoggingService {
   private readonly securityLogger: winston.Logger;
 
   constructor(private configService: ConfigService) {
-    // Check for production or Railway environment - use console-only logging
-    const isProduction = process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT;
+    // Check for production or CloudRuntime environment - use console-only logging
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.CLOUD_RUNTIME_ENVIRONMENT;
 
     // Main application logger - console only
     const appTransports: any[] = [
@@ -41,7 +41,7 @@ export class SecurityLoggingService {
       }),
     ];
 
-    // Only add file logging in local development (not in production or Railway)
+    // Only add file logging in local development (not in production or CloudRuntime)
     if (!isProduction) {
       try {
         // Ensure logs directory exists and is writable

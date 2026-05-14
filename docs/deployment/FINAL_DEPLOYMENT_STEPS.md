@@ -1,22 +1,22 @@
-# The New Fuse - Final Deployment Steps to Railway
+# The New Fuse - Final Deployment Steps to CloudRuntime
 
 ## ✅ What's Ready
 
 All services are prepared and ready to deploy:
 - ✅ Dockerfiles configured for all services
-- ✅ railway.toml files configured
+- ✅ cloud_runtime.toml files configured
 - ✅ Project linked to TNF (041cee9d-8648-4074-b5a6-0eae436de1d1)
 - ✅ Environment configured (production: f706eaae-de9e-4a9b-a970-944dd4a6be41)
 - ✅ Services unlinked and ready for fresh deployment
 
 ## 📋 Required Manual Steps
 
-### Step 1: Create Services in Railway Dashboard (5 minutes)
+### Step 1: Create Services in CloudRuntime Dashboard (5 minutes)
 
-Since Railway CLI requires interactive input for service creation, you need to create empty services through the web dashboard first.
+Since CloudRuntime CLI requires interactive input for service creation, you need to create empty services through the web dashboard first.
 
-1. **Open Your Railway Project**
-   - Visit: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
+1. **Open Your CloudRuntime Project**
+   - Visit: https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
    - You should see your TNF project dashboard
 
 2. **Create API Service**
@@ -45,7 +45,7 @@ Since Railway CLI requires interactive input for service creation, you need to c
    - Click "+ New" → "Database" → "PostgreSQL" → Wait for provisioning
    - Click "+ New" → "Database" → "Redis" → Wait for provisioning
 
-After this step, you should have 4 services + 2 databases in your Railway dashboard.
+After this step, you should have 4 services + 2 databases in your CloudRuntime dashboard.
 
 ### Step 2: Deploy All Services (15 minutes)
 
@@ -56,26 +56,26 @@ cd .
 
 # Deploy API Service
 cd apps/api
-railway link --service api
-railway up --detach
+cloud_runtime link --service api
+cloud_runtime up --detach
 cd ../..
 
 # Deploy Backend Service
 cd apps/backend
-railway link --service backend
-railway up --detach
+cloud_runtime link --service backend
+cloud_runtime up --detach
 cd ../..
 
 # Deploy API Gateway
 cd apps/api-gateway
-railway link --service api-gateway
-railway up --detach
+cloud_runtime link --service api-gateway
+cloud_runtime up --detach
 cd ../..
 
 # Deploy Frontend
 cd apps/frontend
-railway link --service frontend
-railway up --detach
+cloud_runtime link --service frontend
+cloud_runtime up --detach
 cd ../..
 ```
 
@@ -91,7 +91,7 @@ While builds are running, configure environment variables for each service.
 
 #### For API Service
 
-1. Go to Railway Dashboard → Click "api" service → "Variables" tab
+1. Go to CloudRuntime Dashboard → Click "api" service → "Variables" tab
 2. Add these variables:
 
 ```env
@@ -109,7 +109,7 @@ openssl rand -base64 32
 
 #### For Backend Service
 
-1. Go to Railway Dashboard → Click "backend" service → "Variables" tab
+1. Go to CloudRuntime Dashboard → Click "backend" service → "Variables" tab
 2. Add these variables:
 
 ```env
@@ -121,25 +121,25 @@ REDIS_URL=${{Redis.REDIS_URL}}
 
 #### For API Gateway Service
 
-1. Go to Railway Dashboard → Click "api-gateway" service → "Variables" tab
+1. Go to CloudRuntime Dashboard → Click "api-gateway" service → "Variables" tab
 2. Add these variables:
 
 ```env
 NODE_ENV=production
 PORT=3002
-API_URL=${{api.RAILWAY_PRIVATE_DOMAIN}}
-BACKEND_URL=${{backend.RAILWAY_PRIVATE_DOMAIN}}
+API_URL=${{api.CLOUD_RUNTIME_PRIVATE_DOMAIN}}
+BACKEND_URL=${{backend.CLOUD_RUNTIME_PRIVATE_DOMAIN}}
 ```
 
 #### For Frontend Service
 
-1. Go to Railway Dashboard → Click "frontend" service → "Variables" tab
+1. Go to CloudRuntime Dashboard → Click "frontend" service → "Variables" tab
 2. Add these variables:
 
 ```env
 NODE_ENV=production
 PORT=3000
-VITE_API_URL=https://${{api-gateway.RAILWAY_PUBLIC_DOMAIN}}
+VITE_API_URL=https://${{api-gateway.CLOUD_RUNTIME_PUBLIC_DOMAIN}}
 ```
 
 **Note**: After adding variables, click "Deploy" to restart each service with the new configuration.
@@ -150,16 +150,16 @@ Watch build progress for all services:
 
 ```bash
 # Watch API build
-railway logs --service api
+cloud_runtime logs --service api
 
 # Watch Backend build
-railway logs --service backend
+cloud_runtime logs --service backend
 
 # Watch API Gateway build
-railway logs --service api-gateway
+cloud_runtime logs --service api-gateway
 
 # Watch Frontend build
-railway logs --service frontend
+cloud_runtime logs --service frontend
 ```
 
 ### Step 5: Verify Deployment (5 minutes)
@@ -169,23 +169,23 @@ Once all builds complete:
 1. **Check Service Health**
    ```bash
    # Get API URL
-   railway service --service api
+   cloud_runtime service --service api
    curl https://<api-url>/health
 
    # Get Backend URL
-   railway service --service backend
+   cloud_runtime service --service backend
    curl https://<backend-url>/health
 
    # Get API Gateway URL
-   railway service --service api-gateway
+   cloud_runtime service --service api-gateway
    curl https://<api-gateway-url>/health
 
    # Get Frontend URL
-   railway service --service frontend
+   cloud_runtime service --service frontend
    # Open in browser
    ```
 
-2. **Check Railway Dashboard**
+2. **Check CloudRuntime Dashboard**
    - All services should show "Active" status
    - No error logs
    - Metrics showing requests
@@ -199,7 +199,7 @@ I've created `deploy-to-services.sh` for you. After creating services in the das
 ```
 
 This will:
-- Link each service directory to its Railway service
+- Link each service directory to its CloudRuntime service
 - Deploy all services in sequence
 - Show deployment URLs and status
 
@@ -219,31 +219,31 @@ This will:
 
 **Check logs:**
 ```bash
-railway logs --service <service-name>
+cloud_runtime logs --service <service-name>
 ```
 
 **Common issues:**
 - Missing dependencies: Check package.json
-- Build timeout: Railway has 15-minute limit (should be fine)
+- Build timeout: CloudRuntime has 15-minute limit (should be fine)
 - Out of memory: Services use ~512MB each
 
 ### Service Won't Start
 
 **Check:**
 - Environment variables are set correctly
-- DATABASE_URL uses Railway template syntax
+- DATABASE_URL uses CloudRuntime template syntax
 - Port matches the service configuration
 
 ### Cannot Link Service
 
-**If `railway link --service <name>` fails:**
+**If `cloud_runtime link --service <name>` fails:**
 - Verify service exists in dashboard
 - Use exact service name (case-sensitive)
 - Make sure you're in the correct project
 
 ## ✅ Success Checklist
 
-- [ ] All 4 services created in Railway dashboard
+- [ ] All 4 services created in CloudRuntime dashboard
 - [ ] PostgreSQL database added and running
 - [ ] Redis database added and running
 - [ ] API service deployed and building
@@ -262,23 +262,23 @@ After deployment, get your service URLs:
 
 ```bash
 # API Service
-railway service --service api
+cloud_runtime service --service api
 
 # Backend Service
-railway service --service backend
+cloud_runtime service --service backend
 
 # API Gateway
-railway service --service api-gateway
+cloud_runtime service --service api-gateway
 
 # Frontend
-railway service --service frontend
+cloud_runtime service --service frontend
 ```
 
 Save these URLs - you'll need them for testing and integration.
 
 ## 💰 Cost Estimate
 
-**Railway Hobby Plan ($5/month):**
+**CloudRuntime Hobby Plan ($5/month):**
 - 4 services × ~512MB RAM = ~2GB
 - PostgreSQL: ~256MB
 - Redis: ~128MB
@@ -288,11 +288,11 @@ Save these URLs - you'll need them for testing and integration.
 ## 🎯 Next Steps After Deployment
 
 1. **Custom Domains** (Optional)
-   - Add custom domain in Railway service settings
+   - Add custom domain in CloudRuntime service settings
    - Configure DNS records
 
 2. **Monitoring**
-   - Set up Railway alerts
+   - Set up CloudRuntime alerts
    - Monitor resource usage
    - Check error logs daily
 
@@ -303,21 +303,21 @@ Save these URLs - you'll need them for testing and integration.
 
 4. **Security**
    - Rotate JWT_SECRET regularly
-   - Enable Railway private networking
+   - Enable CloudRuntime private networking
    - Review access controls
 
 ## 📚 Additional Resources
 
-- **Project Dashboard**: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
-- **Railway Docs**: https://docs.railway.app
-- **Support**: https://discord.gg/railway
-- **Local Guide**: See `RAILWAY_DEPLOYMENT_INSTRUCTIONS.md`
+- **Project Dashboard**: https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+- **CloudRuntime Docs**: https://docs.thenewfuse.com
+- **Support**: https://discord.gg/cloud_runtime
+- **Local Guide**: See `CLOUD_RUNTIME_DEPLOYMENT_INSTRUCTIONS.md`
 
 ---
 
 **Ready to Deploy?**
 
-1. Create services in Railway dashboard (Step 1)
+1. Create services in CloudRuntime dashboard (Step 1)
 2. Run `./deploy-to-services.sh`
 3. Configure environment variables (Step 3)
 4. Monitor and verify (Steps 4-5)
@@ -326,8 +326,8 @@ Save these URLs - you'll need them for testing and integration.
 
 Check the logs:
 ```bash
-railway logs --service <service-name>
+cloud_runtime logs --service <service-name>
 ```
 
 Or visit the dashboard:
-https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1

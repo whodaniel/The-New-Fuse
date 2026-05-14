@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const SANDBOX_URL =
-  process.env.SANDBOX_URL || 'https://tnf-cloud-sandbox-v2-production.up.railway.app';
+  process.env.SANDBOX_URL || 'https://tnf-cloud-sandbox-v2-production.thenewfuse.com';
 const TARGET_SITE = 'https://thenewfuse.com';
 
 // QA Test Configuration
@@ -54,7 +54,7 @@ const qaResults = {
 let messageId = 0;
 
 /**
- * Call MCP tool on Railway sandbox using JSON-RPC
+ * Call MCP tool on CloudRuntime sandbox using JSON-RPC
  */
 async function callTool(toolName, args = {}) {
   const id = (messageId++).toString();

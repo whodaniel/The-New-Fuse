@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-05-11T18:04:11.878Z",
+  "generatedAt": "2026-05-14T11:01:37.248Z",
   "counts": {
-    "sidebarPaths": 56,
-    "missingRoutes": 0,
+    "sidebarPaths": 54,
+    "missingRoutes": 3,
     "adminUnguarded": 0,
-    "unguardedReview": 22
+    "unguardedReview": 20
   },
   "sidebarGuardReport": [
     {
@@ -246,20 +246,6 @@
       "redirect": false
     },
     {
-      "path": "/hub",
-      "access": "authenticated",
-      "status": "review-unguarded",
-      "guard": "none",
-      "redirect": false
-    },
-    {
-      "path": "/knowledge-hub",
-      "access": "authenticated",
-      "status": "ok",
-      "guard": "RequirePermission",
-      "redirect": false
-    },
-    {
       "path": "/live-view",
       "access": "authenticated",
       "status": "ok",
@@ -278,20 +264,6 @@
       "access": "authenticated",
       "status": "review-unguarded",
       "guard": "none",
-      "redirect": false
-    },
-    {
-      "path": "/nexus",
-      "access": "authenticated",
-      "status": "ok",
-      "guard": "RequirePermission",
-      "redirect": false
-    },
-    {
-      "path": "/observatory",
-      "access": "authenticated",
-      "status": "ok",
-      "guard": "RequirePermission",
       "redirect": false
     },
     {
@@ -365,25 +337,33 @@
       "redirect": false
     },
     {
-      "path": "/visualizations",
-      "access": "authenticated",
-      "status": "review-unguarded",
-      "guard": "none",
-      "redirect": false
-    },
-    {
-      "path": "/visualizations/concordance",
-      "access": "authenticated",
-      "status": "review-unguarded",
-      "guard": "none",
-      "redirect": false
-    },
-    {
       "path": "/workflows",
       "access": "authenticated",
       "status": "review-unguarded",
       "guard": "none",
       "redirect": false
+    },
+    {
+      "path": "/workflows/nexus",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/workflows/nexus?layer=lexicon",
+      "status": "missing-route",
+      "guard": "none"
+    },
+    {
+      "path": "/workflows/nexus?layer=memory",
+      "status": "missing-route",
+      "guard": "none"
+    },
+    {
+      "path": "/workflows/nexus?layer=topology&from=observatory",
+      "status": "missing-route",
+      "guard": "none"
     },
     {
       "path": "/workspace-settings/llm-selection",

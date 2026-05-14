@@ -75,7 +75,7 @@ The command palette organizes commands into 12 categories:
 | **Testing**         | 🧪   | Test execution, coverage        | `pnpm test`, `pnpm test:e2e`            |
 | **Database**        | 🗄️   | Migrations, schema, Drizzle     | `pnpm db:migrate`, `pnpm db:studio`     |
 | **Docker**          | 🐳   | Container management            | `pnpm docker:start`, `pnpm docker:logs` |
-| **Deployment**      | ☁️   | Railway, production deploy      | `pnpm build:railway`                    |
+| **Deployment**      | ☁️   | CloudRuntime, production deploy      | `pnpm build:cloud_runtime`                    |
 | **Agents**          | 🤖   | Agent management, registry      | `/agent-register`, `/agent-status`      |
 | **Workflows**       | 🔀   | Multi-agent workflows           | `/workflow-create`                      |
 | **Code Quality**    | ✨   | Linting, formatting, type-check | `pnpm lint`, `pnpm format`              |

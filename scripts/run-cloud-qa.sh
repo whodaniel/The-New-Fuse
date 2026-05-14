@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################################
-# Cloud QA Runner - Runs comprehensive QA testing on Railway cloud infrastructure
+# Cloud QA Runner - Runs comprehensive QA testing on CloudRuntime cloud infrastructure
 #################################################################################
 
 set -e
@@ -14,7 +14,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-RAILWAY_SANDBOX_URL="${RAILWAY_SANDBOX_URL:-https://tnf-cloud-sandbox-v2-production.up.railway.app}"
+CLOUD_RUNTIME_SANDBOX_URL="${CLOUD_RUNTIME_SANDBOX_URL:-https://tnf-cloud-sandbox-v2-production.thenewfuse.com}"
 TARGET_SITE="https://thenewfuse.com"
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
@@ -23,22 +23,22 @@ echo -e "${BLUE}═════════════════════�
 echo ""
 
 #################################################################################
-# 1. Verify Railway Cloud Browser is Running
+# 1. Verify CloudRuntime Cloud Browser is Running
 #################################################################################
-echo -e "${YELLOW}📡 Step 1: Verifying Railway cloud browser status...${NC}"
+echo -e "${YELLOW}📡 Step 1: Verifying CloudRuntime cloud browser status...${NC}"
 
-DEVTOOLS_CHECK=$(curl -s -w "%{http_code}" -o /tmp/devtools_response.json "$RAILWAY_SANDBOX_URL/api/browser/devtools" || echo "000")
+DEVTOOLS_CHECK=$(curl -s -w "%{http_code}" -o /tmp/devtools_response.json "$CLOUD_RUNTIME_SANDBOX_URL/api/browser/devtools" || echo "000")
 
 if [ "$DEVTOOLS_CHECK" != "200" ]; then
     echo -e "${RED}❌ Cloud browser not accessible${NC}"
     echo -e "${YELLOW}Response code: $DEVTOOLS_CHECK${NC}"
     echo ""
-    echo "Please ensure the Railway sandbox is deployed and running:"
-    echo "1. Visit: https://railway.app"
+    echo "Please ensure the CloudRuntime sandbox is deployed and running:"
+    echo "1. Visit: https://cloud_runtime.app"
     echo "2. Check service: tnf-cloud-sandbox-v2"
     echo "3. Verify deployment status"
     echo ""
-    echo "Or try: curl $RAILWAY_SANDBOX_URL/api/browser/devtools"
+    echo "Or try: curl $CLOUD_RUNTIME_SANDBOX_URL/api/browser/devtools"
     exit 1
 fi
 
@@ -77,16 +77,16 @@ echo ""
 echo -e "${BLUE}Target: $TARGET_SITE${NC}"
 echo ""
 
-# Option 1: Execute via Railway CLI (if available)
-if command -v railway &> /dev/null; then
-    echo -e "${GREEN}Using Railway CLI to run QA...${NC}"
-    railway run node apps/cloud-sandbox/scripts/comprehensive_qa.js
+# Option 1: Execute via CloudRuntime CLI (if available)
+if command -v cloud_runtime &> /dev/null; then
+    echo -e "${GREEN}Using CloudRuntime CLI to run QA...${NC}"
+    cloud_runtime run node apps/cloud-sandbox/scripts/comprehensive_qa.js
 
 # Option 2: Execute via SSH/API
-elif [ -n "$RAILWAY_API_TOKEN" ]; then
-    echo -e "${GREEN}Using Railway API to trigger QA...${NC}"
+elif [ -n "$CLOUD_RUNTIME_API_TOKEN" ]; then
+    echo -e "${GREEN}Using CloudRuntime API to trigger QA...${NC}"
     # Trigger via API endpoint
-    curl -X POST "$RAILWAY_SANDBOX_URL/api/qa/run" \
+    curl -X POST "$CLOUD_RUNTIME_SANDBOX_URL/api/qa/run" \
         -H "Content-Type: application/json" \
         -d '{
             "target": "'$TARGET_SITE'",
@@ -99,18 +99,18 @@ elif [ -n "$RAILWAY_API_TOKEN" ]; then
 
 # Option 3: Manual execution instructions
 else
-    echo -e "${YELLOW}⚠️  Railway CLI not found${NC}"
+    echo -e "${YELLOW}⚠️  CloudRuntime CLI not found${NC}"
     echo ""
-    echo "To run the QA test on Railway, you have two options:"
+    echo "To run the QA test on CloudRuntime, you have two options:"
     echo ""
-    echo "Option A: Install Railway CLI"
-    echo "  npm install -g @railway/cli"
-    echo "  railway login"
-    echo "  railway link"
+    echo "Option A: Install CloudRuntime CLI"
+    echo "  npm install -g @cloud_runtime/cli"
+    echo "  cloud_runtime login"
+    echo "  cloud_runtime link"
     echo "  Then re-run this script"
     echo ""
-    echo "Option B: SSH into Railway service"
-    echo "  1. Go to: https://railway.app/project/<your-project>"
+    echo "Option B: SSH into CloudRuntime service"
+    echo "  1. Go to: https://cloud_runtime.app/project/<your-project>"
     echo "  2. Open service: tnf-cloud-sandbox-v2"
     echo "  3. Click 'Shell' tab"
     echo "  4. Run: node apps/cloud-sandbox/scripts/comprehensive_qa.js"
@@ -126,12 +126,12 @@ echo ""
 #################################################################################
 # 4. Monitor QA Execution
 #################################################################################
-echo -e "${YELLOW}👁️  Step 4: QA test is now running on Railway cloud${NC}"
+echo -e "${YELLOW}👁️  Step 4: QA test is now running on CloudRuntime cloud${NC}"
 echo ""
 echo "To monitor the test in real-time using Antigravity:"
 echo ""
 echo -e "${BLUE}1. Open Antigravity AI${NC}"
-echo -e "${BLUE}2. Say: 'Connect to the Railway browser and show me the QA test status'${NC}"
+echo -e "${BLUE}2. Say: 'Connect to the CloudRuntime browser and show me the QA test status'${NC}"
 echo -e "${BLUE}3. Say: 'Show me screenshots of what's being tested'${NC}"
 echo -e "${BLUE}4. Say: 'What console errors are appearing?'${NC}"
 echo -e "${BLUE}5. Say: 'List all network requests'${NC}"
@@ -143,7 +143,7 @@ echo -e "${GREEN}✅ Cloud QA test initiated successfully!${NC}"
 echo ""
 echo "Results will be:"
 echo "  • Displayed in real-time via DevTools"
-echo "  • Saved to /tmp/qa_report_<timestamp>.json on Railway"
+echo "  • Saved to /tmp/qa_report_<timestamp>.json on CloudRuntime"
 echo "  • Accessible via Antigravity monitoring"
 echo ""
 
@@ -158,7 +158,7 @@ echo "1. ✅ Monitor via Antigravity (recommended)"
 echo "   Use the monitoring prompts from ANTIGRAVITY_QA_INSTRUCTIONS.md"
 echo ""
 echo "2. 📊 View detailed results"
-echo "   SSH into Railway and check: /tmp/qa_report_*.json"
+echo "   SSH into CloudRuntime and check: /tmp/qa_report_*.json"
 echo ""
 echo "3. 🔍 Debug specific issues"
 echo "   Ask Antigravity to: 'Debug why [specific issue] is failing'"

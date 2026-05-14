@@ -18,6 +18,6 @@ HTTP endpoint checks:
 200 https://thenewfuse.com/api/auth/session :: {"authenticated":"fa*se","user":null}
 401 https://thenewfuse.com/api/agents/registry :: {"message":"Authentication required","error":"Unauthorized","statusCode":401}
 
-Railway api deployment summary:
+CloudRuntime api deployment summary:
 d6b4062a-c188-4b84-b937-bc9828047da8	BUILDING	2026-03-03T03:00:30.562Z
 84e37e61-ceaa-4182-a653-3f0e2204f235	SUCCESS	2026-03-03T02:52:51.886Z

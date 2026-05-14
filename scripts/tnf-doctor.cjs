@@ -421,7 +421,7 @@ async function main() {
       .replace(/\/$/, "");
 
     let liveApiBase = configuredLiveApi;
-    if (!liveApiBase || (isLocalDatabaseUrl(liveApiBase) && cloudRequired) || liveApiBase.includes("railway.app")) {
+    if (!liveApiBase || (isLocalDatabaseUrl(liveApiBase) && cloudRequired) || liveApiBase.includes("cloud_runtime.app")) {
       const detected = detectCloudflareApiBaseUrl();
       if (detected) liveApiBase = detected;
     }

@@ -1,6 +1,6 @@
 # Complete Implementation Summary
 
-## Secure Cloud Sandbox with RBAC, Multi-Tenant Isolation, and Railway Deployment
+## Secure Cloud Sandbox with RBAC, Multi-Tenant Isolation, and CloudRuntime Deployment
 
 ---
 
@@ -13,7 +13,7 @@ deployment infrastructure for The New Fuse cloud sandbox. This includes:
 - **Multi-tenant isolation** with resource quotas and rate limiting
 - **AI tool framework** with 19 production-ready tools
 - **Skill chains** for complex multi-step workflows
-- **Containerized deployment** optimized for Railway
+- **Containerized deployment** optimized for CloudRuntime
 - **Complete documentation** and deployment guides
 
 **Total Implementation**: ~6,500 lines of production code + ~2,000 lines of
@@ -169,8 +169,8 @@ logging ✅ Rate limiting (hourly/daily) ✅ Resource quotas by tier
    - Security-hardened
    - Optimized layer caching
 
-2. **[Dockerfile.railway](./Dockerfile.railway)** (180 lines)
-   - Railway-optimized
+2. **[Dockerfile.cloud_runtime](./Dockerfile.cloud_runtime)** (180 lines)
+   - CloudRuntime-optimized
    - Monorepo-aware
    - Alpine runtime
    - Tini process manager
@@ -195,7 +195,7 @@ logging ✅ Rate limiting (hourly/daily) ✅ Resource quotas by tier
 
 2. **[scripts/healthcheck.sh](./scripts/healthcheck.sh)** (15 lines)
    - HTTP health endpoint verification
-   - Railway-compatible
+   - CloudRuntime-compatible
 
 ### Configuration
 
@@ -209,14 +209,14 @@ logging ✅ Rate limiting (hourly/daily) ✅ Resource quotas by tier
 - Resource limits
 - 150+ documented variables
 
-### Railway Configuration
+### CloudRuntime Configuration
 
 **Files Updated**: 1 file
 
-**[railway.toml](../../railway.toml)**:
+**[cloud_runtime.toml](../../cloud_runtime.toml)**:
 
 - Updated tnf-cloud-sandbox-v2 service
-- Uses Dockerfile.railway
+- Uses Dockerfile.cloud_runtime
 - Health check configuration
 - Watch paths for auto-deploy
 
@@ -244,7 +244,7 @@ logging ✅ Rate limiting (hourly/daily) ✅ Resource quotas by tier
    - Testing procedures
    - Migration checklist
 
-3. **[RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)** (550 lines)
+3. **[CLOUD_RUNTIME_DEPLOYMENT.md](./CLOUD_RUNTIME_DEPLOYMENT.md)** (550 lines)
    - Quick start guide
    - Detailed setup
    - Environment variables
@@ -287,7 +287,7 @@ logging ✅ Rate limiting (hourly/daily) ✅ Resource quotas by tier
 | Skill Chains    | 1      | 450       | Multi-step workflows      |
 | Docker          | 3      | 380       | Containerization          |
 | Scripts         | 2      | 215       | Startup & health check    |
-| Configuration   | 2      | 200       | Environment & Railway     |
+| Configuration   | 2      | 200       | Environment & CloudRuntime     |
 | **Total**       | **19** | **4,445** | **Production code**       |
 
 ### Documentation
@@ -296,7 +296,7 @@ logging ✅ Rate limiting (hourly/daily) ✅ Resource quotas by tier
 | ---------------------- | --------- | ------------------------ |
 | Security & Tools       | 650       | Complete reference       |
 | Integration Guide      | 450       | Step-by-step integration |
-| Railway Deployment     | 550       | Deployment guide         |
+| CloudRuntime Deployment     | 550       | Deployment guide         |
 | Implementation Summary | 250       | Architecture & decisions |
 | Deployment Summary     | 450       | Deployment details       |
 | Complete Summary       | 150       | This document            |
@@ -384,10 +384,10 @@ Quota enforcement ✅ Security alerts ✅ Admin operations for monitoring
 
 ## Deployment Options
 
-### 1. Railway (Recommended)
+### 1. CloudRuntime (Recommended)
 
 ```bash
-railway up --service tnf-cloud-sandbox-v2
+cloud_runtime up --service tnf-cloud-sandbox-v2
 ```
 
 **Pros**: Auto-scaling, SSL, monitoring, managed DB **Cost**: ~$15-35/month
@@ -432,7 +432,7 @@ costs only
 ### Pre-Deployment
 
 - [ ] Generate strong JWT_SECRET (32+ characters)
-- [ ] Set DATABASE_URL from Railway PostgreSQL
+- [ ] Set DATABASE_URL from CloudRuntime PostgreSQL
 - [ ] Configure CORS_ORIGINS
 - [ ] Enable tenant isolation
 - [ ] Enable resource quotas
@@ -461,7 +461,7 @@ costs only
 
 ### Immediate (Week 1)
 
-1. ✅ **Deploy to Railway staging**
+1. ✅ **Deploy to CloudRuntime staging**
 2. ⏳ **Run integration tests**
 3. ⏳ **Security audit**
 4. ⏳ **Load testing**
@@ -575,12 +575,12 @@ Clear error messages ✅ **Scalable**: Grows with usage
 - [SECURITY_AND_TOOLS_README.md](./SECURITY_AND_TOOLS_README.md) - Complete
   reference
 - [INTEGRATION_GUIDE.md](./src/auth/INTEGRATION_GUIDE.md) - Integration steps
-- [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md) - Deployment guide
+- [CLOUD_RUNTIME_DEPLOYMENT.md](./CLOUD_RUNTIME_DEPLOYMENT.md) - Deployment guide
 - [DEPLOYMENT_SUMMARY.md](./DEPLOYMENT_SUMMARY.md) - Deployment details
 
 ### External Resources
 
-- [Railway Documentation](https://docs.railway.app)
+- [CloudRuntime Documentation](https://docs.thenewfuse.com)
 - [NestJS Documentation](https://docs.nestjs.com)
 - [Playwright Documentation](https://playwright.dev)
 
@@ -602,9 +602,9 @@ cloud sandbox** with:
 ✅ **Complete RBAC system** for AI agents and humans (7 roles) ✅ **Multi-tenant
 isolation** with resource quotas (5 tiers) ✅ **19 production-ready tools**
 across 3 categories ✅ **Skill chain system** for complex workflows ✅
-**Railway-optimized containerization** ✅ **Comprehensive security** (auth,
+**CloudRuntime-optimized containerization** ✅ **Comprehensive security** (auth,
 permissions, quotas, audit) ✅ **Complete documentation** (~2,500 lines) ✅
-**Deployment guides** for Railway and local ✅ **Monitoring and health checks**
+**Deployment guides** for CloudRuntime and local ✅ **Monitoring and health checks**
 ✅ **Cost optimization strategies**
 
 **Total**: ~7,000 lines of production code + documentation
@@ -622,11 +622,11 @@ The system is **ready for deployment** and provides:
 All requirements from the original request have been fulfilled:
 
 ✅ Role-based access control for AI agents and humans ✅ Multi-tenant
-infrastructure hardening ✅ Containerized execution environments on Railway ✅
+infrastructure hardening ✅ Containerized execution environments on CloudRuntime ✅
 AI tool wrappers with proper context ✅ Skill chains with prompting ⏳ Wizard
 system evolution (next up!)
 
 ---
 
 **Status**: Ready for production deployment **Next Task**: Wizard system
-evolution **Deployment Target**: Railway (configured and ready)
+evolution **Deployment Target**: CloudRuntime (configured and ready)

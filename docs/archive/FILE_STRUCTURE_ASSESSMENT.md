@@ -135,10 +135,10 @@ NEXT_STEPS.md                                 (5.2KB)
 NFT_MARKETPLACE_INTEGRATION.md                (6.4KB)
 PNPM_STANDARDIZATION_REPORT.md                (6.6KB)
 PRE_DEPLOYMENT_CHECKLIST.md                   (8.9KB)
-RAILWAY_CLEAN_DEPLOYMENT_PLAN.md              (7.2KB)
-RAILWAY_DEPLOYMENT.md                         (6.9KB)
-RAILWAY_DEPLOYMENT_STATUS.md                  (3.6KB)
-RAILWAY_SERVICES.md                           (1.1KB)
+CLOUD_RUNTIME_CLEAN_DEPLOYMENT_PLAN.md              (7.2KB)
+CLOUD_RUNTIME_DEPLOYMENT.md                         (6.9KB)
+CLOUD_RUNTIME_DEPLOYMENT_STATUS.md                  (3.6KB)
+CLOUD_RUNTIME_SERVICES.md                           (1.1KB)
 README-Platform-Validation.md                 (11KB)
 README-WALLET-PLATFORM.md                     (7.2KB)
 README.md                                     (10KB)  ✅ Keep
@@ -183,7 +183,7 @@ mv the-new-fuse-migration-conversation.md docs/_archive/2024-consolidation-phase
 # 3. Move deployment reports to dedicated location
 mv DEPLOYMENT_STATUS.md docs/deployment/
 mv DOCKER_HUB_DEPLOYMENT.md docs/deployment/
-mv RAILWAY_*.md docs/deployment/
+mv CLOUD_RUNTIME_*.md docs/deployment/
 mv PRE_DEPLOYMENT_CHECKLIST.md docs/deployment/
 mv SAAS_LAUNCH_STATUS.md docs/deployment/
 

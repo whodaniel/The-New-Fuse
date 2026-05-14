@@ -33,7 +33,7 @@ For a standard production deployment:
 
 - **Node.js** >= 18.x
 - **pnpm** >= 8.x
-- **Railway CLI** (for Railway deployments)
+- **CloudRuntime CLI** (for CloudRuntime deployments)
 - **Git**
 - **jq** (for JSON processing)
 
@@ -43,14 +43,14 @@ For a standard production deployment:
 # Install pnpm
 npm install -g pnpm
 
-# Install Railway CLI
-npm install -g @railway/cli
+# Install CloudRuntime CLI
+npm install -g @cloud_runtime/cli
 
-# Login to Railway
-railway login
+# Login to CloudRuntime
+cloud_runtime login
 
-# Link to your Railway project
-railway link
+# Link to your CloudRuntime project
+cloud_runtime link
 ```
 
 ### Environment Variables
@@ -87,19 +87,19 @@ Features:
 -  Automatic rollback on failure
 -  Post-deployment smoke tests
 
-### Method 2: Railway-Specific Deployment
+### Method 2: CloudRuntime-Specific Deployment
 
-Deploy directly to Railway:
+Deploy directly to CloudRuntime:
 
 ```bash
 # Deploy all services
-./scripts/deployment/railway-deploy.sh all
+./scripts/deployment/cloud_runtime-deploy.sh all
 
 # Deploy specific service
-./scripts/deployment/railway-deploy.sh deploy api-gateway
+./scripts/deployment/cloud_runtime-deploy.sh deploy api-gateway
 
 # Watch deployment logs
-./scripts/deployment/railway-deploy.sh watch api-gateway
+./scripts/deployment/cloud_runtime-deploy.sh watch api-gateway
 ```
 
 ### Method 3: Manual Deployment
@@ -117,12 +117,12 @@ For more control over the deployment process:
 ./scripts/deployment/db-migrate.sh
 
 # 4. Build services
-pnpm run build:railway
+pnpm run build:cloud_runtime
 
-# 5. Deploy to Railway
-railway up --service api-gateway
-railway up --service backend
-railway up --service frontend
+# 5. Deploy to CloudRuntime
+cloud_runtime up --service api-gateway
+cloud_runtime up --service backend
+cloud_runtime up --service frontend
 
 # 6. Verify
 ./scripts/deployment/smoke-tests.sh
@@ -194,7 +194,7 @@ DEPLOYMENT_STRATEGY=canary ./scripts/deployment/deploy-automated.sh
 ## Related Documentation
 
 ### Deployment Guides
-- [Railway Deployment Guide](./RAILWAY_DEPLOYMENT_GUIDE.md) - Railway-specific deployment
+- [CloudRuntime Deployment Guide](./CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md) - CloudRuntime-specific deployment
 - [Docker Optimization](./DOCKER_OPTIMIZATION_SUMMARY.md) - Docker optimization strategies
 - [Deployment Automation](./DEPLOYMENT_AUTOMATION_COMPLETE.md) - Automation setup
 - [Deployment Status](./DEPLOYMENT_STATUS.md) - Current deployment status

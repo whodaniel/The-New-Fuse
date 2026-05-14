@@ -25,7 +25,7 @@ This checklist ensures all packages are functional and ready for production depl
 **Expected Output:**
 ```
 ✅ All packages validated successfully!
-Ready for deployment to Docker Hub and Railway.
+Ready for deployment to Docker Hub and CloudRuntime.
 ```
 
 ### Manual Package Audit
@@ -296,12 +296,12 @@ pnpm exec drizzle studio
 
 ---
 
-## 🌐 Phase 8: Railway Deployment Prep
+## 🌐 Phase 8: CloudRuntime Deployment Prep
 
 ### Configuration Files
 
-- [ ] `railway.json` exists
-- [ ] `railway.toml` configured
+- [ ] `cloud_runtime.json` exists
+- [ ] `cloud_runtime.toml` configured
 - [ ] Health check endpoints defined
 - [ ] Environment variables documented
 
@@ -400,10 +400,10 @@ Once all checks pass:
 # 2. Build and push images
 ./docker-build-all.sh
 
-# 3. Deploy to Railway
-railway login
-railway init
-railway up
+# 3. Deploy to CloudRuntime
+cloud_runtime login
+cloud_runtime init
+cloud_runtime up
 ```
 
 ---

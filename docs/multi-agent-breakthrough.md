@@ -117,7 +117,7 @@ separate Chrome browser tabs to complete collaborative tasks.
 
 ### 2. Content Script on Non-Chat Sites
 
-**Error:** `[SimpleChatBridge] Elements NOT ready` on railway.com **Cause:**
+**Error:** `[SimpleChatBridge] Elements NOT ready` on cloud_runtime.com **Cause:**
 Content script still running on non-chat sites after manifest update **Fix:**
 Reload extension in Chrome
 

@@ -89,11 +89,11 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m [0m [91m  ~~~~~~~~~~~~[0m
 [96msrc/cache/services/advanced-cache.manager.ts[0m:[93m41[0m:[93m9[0m - [91merror[0m[90m TS18048: [0m'cacheConfig' is possibly 'undefined'.
 
-[7m41[0m     if (cacheConfig.redis.url && cacheConfig.redis.url.includes('railway')) {
+[7m41[0m     if (cacheConfig.redis.url && cacheConfig.redis.url.includes('cloudflare')) {
 [7m  [0m [91m        ~~~~~~~~~~~[0m
 [96msrc/cache/services/advanced-cache.manager.ts[0m:[93m41[0m:[93m34[0m - [91merror[0m[90m TS18048: [0m'cacheConfig' is possibly 'undefined'.
 
-[7m41[0m     if (cacheConfig.redis.url && cacheConfig.redis.url.includes('railway')) {
+[7m41[0m     if (cacheConfig.redis.url && cacheConfig.redis.url.includes('cloudflare')) {
 [7m  [0m [91m                                 ~~~~~~~~~~~[0m
 [96msrc/cache/services/advanced-cache.manager.ts[0m:[93m42[0m:[93m22[0m - [91merror[0m[90m TS18048: [0m'cacheConfig' is possibly 'undefined'.
 

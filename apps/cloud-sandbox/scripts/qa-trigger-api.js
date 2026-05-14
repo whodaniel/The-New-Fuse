@@ -23,7 +23,7 @@ async function handleQATrigger(req, res) {
     target: target,
     estimatedDuration: '5-10 minutes',
     monitoring: {
-      devtools: `${process.env.RAILWAY_PUBLIC_DOMAIN}/api/browser/devtools`,
+      devtools: `${process.env.CLOUD_RUNTIME_PUBLIC_DOMAIN}/api/browser/devtools`,
       instructions: 'Use Antigravity with Chrome DevTools MCP to monitor in real-time',
     },
   });

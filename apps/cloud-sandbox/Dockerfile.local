@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y curl && \
 WORKDIR /app
 
 # Copy cloud-sandbox files (Repository Root Context)
-# Railway sets root directory to / so we need full paths
+# CloudRuntime sets root directory to / so we need full paths
 COPY apps/cloud-sandbox/package.json ./
 COPY apps/cloud-sandbox/tsconfig.json ./
 COPY apps/cloud-sandbox/src ./src

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Railway GraphQL API endpoint
-API_URL="https://backboard.railway.app/graphql/v2"
+# CloudRuntime GraphQL API endpoint
+API_URL="https://backboard.thenewfuse.com/graphql/v2"
 
-# Get token from Railway config
-TOKEN=$(grep '"token"' ~/.railway/config.json | sed 's/.*"token": "\(.*\)".*/\1/')
+# Get token from CloudRuntime config
+TOKEN=$(grep '"token"' ~/.cloud_runtime/config.json | sed 's/.*"token": "\(.*\)".*/\1/')
 
 # Project and environment IDs
 PROJECT_ID="041cee9d-8648-4074-b5a6-0eae436de1d1"

@@ -2,7 +2,7 @@
  * Cloudflare Worker edge proxy for audio-trigger-kws-mvp API.
  *
  * Required env vars (set via wrangler.toml or dashboard):
- * - KWS_API_ORIGIN: Railway URL for this app (e.g. https://kws-api.up.railway.app)
+ * - KWS_API_ORIGIN: CloudRuntime URL for this app (e.g. https://kws-api.thenewfuse.com)
  * - EDGE_API_KEY: shared key expected from clients
  */
 

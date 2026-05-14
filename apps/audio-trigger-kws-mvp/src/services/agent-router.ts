@@ -89,14 +89,18 @@ export class AgentRouter extends EventEmitter {
     return null;
   }
 
-  private routeToAgent(agent: string, message: string): void {
+  dispatchAutomatedPrompt(agent: string, message: string): boolean {
+    return this.routeToAgent(agent, message, 'auto_prompt');
+  }
+
+  private routeToAgent(agent: string, message: string, source: 'voice' | 'auto_prompt' = 'voice'): boolean {
     const config = this.agents.get(agent);
     if (!config) {
       this.log(`Unknown agent: ${agent}`);
-      return;
+      return false;
     }
 
-    this.log(`Routing to ${agent}: ${message.slice(0, 60)}...`);
+    this.log(`Routing (${source}) to ${agent}: ${message.slice(0, 60)}...`);
 
     if (config.tty) {
       this.injectToTty(config.tty, message);
@@ -108,6 +112,7 @@ export class AgentRouter extends EventEmitter {
     }
 
     this.emit('routed', { agent, message, tty: config.tty });
+    return true;
   }
 
   private broadcast(message: string): void {

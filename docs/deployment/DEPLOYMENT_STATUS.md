@@ -1,11 +1,11 @@
-# 🚂 Railway Deployment - Current Status & Action Plan
+# 🚂 CloudRuntime Deployment - Current Status & Action Plan
 
 ## ✅ Live Production Validation (2026-03-18)
 
-This section reflects the current live state for `thenewfuse.com` and Railway
+This section reflects the current live state for `thenewfuse.com` and CloudRuntime
 production services after the master-clock coherence and visualization updates.
 
-### Production Services (Railway)
+### Production Services (CloudRuntime)
 
 - `TheNewFuse` deployment: `17102f55-945f-4047-9396-f9797e57d215` (`SUCCESS`)
 - `api` deployment: `52298d52-c9f4-4147-b384-9ca3804bc492` (`SUCCESS`)
@@ -58,15 +58,15 @@ curl -s -o /dev/null -w "%{http_code}\n" https://thenewfuse.com/visualizations
 - ✅ All changes committed to
   `claude/prepare-public-release-011CV5qmykNfFy3h3LGLUHo8`
 
-### Railway Configuration
+### CloudRuntime Configuration
 
-- ✅ **railway.toml** configured with 4 services
-- ✅ **Dockerfile.railway** created for each service:
-  - `apps/api-gateway/Dockerfile.railway` (2.2 KB)
-  - `apps/api/Dockerfile.railway` (2.4 KB)
-  - `apps/backend/Dockerfile.railway` (2.4 KB)
-  - `apps/frontend/Dockerfile.railway` (2.2 KB)
-- ✅ Railway project linked (ID: `041cee9d-8648-4074-b5a6-0eae436de1d1`)
+- ✅ **cloud_runtime.toml** configured with 4 services
+- ✅ **Dockerfile.cloud_runtime** created for each service:
+  - `apps/api-gateway/Dockerfile.cloud_runtime` (2.2 KB)
+  - `apps/api/Dockerfile.cloud_runtime` (2.4 KB)
+  - `apps/backend/Dockerfile.cloud_runtime` (2.4 KB)
+  - `apps/frontend/Dockerfile.cloud_runtime` (2.2 KB)
+- ✅ CloudRuntime project linked (ID: `041cee9d-8648-4074-b5a6-0eae436de1d1`)
 - ✅ Frontend auth fixed (removed Supabase, added local auth)
 - ✅ Frontend builds successfully (287KB main bundle, 73KB compressed)
 
@@ -78,7 +78,7 @@ curl -s -o /dev/null -w "%{http_code}\n" https://thenewfuse.com/visualizations
 
 - **Current Branch**: `claude/prepare-public-release-011CV5qmykNfFy3h3LGLUHo8`
 - **Status**: Clean working tree, all committed
-- **Railway Config**: ✅ Modified and ready
+- **CloudRuntime Config**: ✅ Modified and ready
 
 ### Services Configuration
 
@@ -86,7 +86,7 @@ curl -s -o /dev/null -w "%{http_code}\n" https://thenewfuse.com/visualizations
 
 ```toml
 [services.frontend.build]
-dockerfilePath = "apps/frontend/Dockerfile.railway"
+dockerfilePath = "apps/frontend/Dockerfile.cloud_runtime"
 watchPaths = ["apps/frontend/**", "packages/**"]
 
 [services.frontend.deploy]
@@ -101,7 +101,7 @@ restartPolicyType = "ON_FAILURE"
 
 ```toml
 [services.api.build]
-dockerfilePath = "apps/api/Dockerfile.railway"
+dockerfilePath = "apps/api/Dockerfile.cloud_runtime"
 watchPaths = ["apps/api/**", "packages/**", "drizzle/**"]
 
 [services.api.deploy]
@@ -117,7 +117,7 @@ restartPolicyType = "ON_FAILURE"
 
 ```toml
 [services.api-gateway.build]
-dockerfilePath = "apps/api-gateway/Dockerfile.railway"
+dockerfilePath = "apps/api-gateway/Dockerfile.cloud_runtime"
 watchPaths = ["apps/api-gateway/**", "packages/**"]
 
 [services.api-gateway.deploy]
@@ -133,7 +133,7 @@ restartPolicyType = "ON_FAILURE"
 
 ```toml
 [services.backend.build]
-dockerfilePath = "apps/backend/Dockerfile.railway"
+dockerfilePath = "apps/backend/Dockerfile.cloud_runtime"
 watchPaths = ["apps/backend/**", "packages/**", "drizzle/**"]
 
 [services.backend.deploy]
@@ -151,7 +151,7 @@ restartPolicyType = "ON_FAILURE"
 
 ### Step 1: Push Branch to Main (REQUIRED)
 
-The current branch needs to be merged to main for Railway to deploy:
+The current branch needs to be merged to main for CloudRuntime to deploy:
 
 **Option A: Create Pull Request**
 
@@ -160,7 +160,7 @@ The current branch needs to be merged to main for Railway to deploy:
 https://github.com/whodaniel/fuse/pull/new/claude/prepare-public-release-011CV5qmykNfFy3h3LGLUHo8
 
 # Merge PR to main
-# Railway will auto-detect and deploy
+# CloudRuntime will auto-detect and deploy
 ```
 
 **Option B: Direct Push (if you have permissions)**
@@ -171,20 +171,20 @@ git merge claude/prepare-public-release-011CV5qmykNfFy3h3LGLUHo8
 git push origin main
 ```
 
-### Step 2: Configure Railway Project
+### Step 2: Configure CloudRuntime Project
 
 #### 2a. Add PostgreSQL Database
 
-1. Go to Railway dashboard:
-   https://railway.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+1. Go to CloudRuntime dashboard:
+   https://cloud_runtime.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 2. Click "+ New" → "Database" → "PostgreSQL"
-3. Railway will auto-create `DATABASE_URL`
+3. CloudRuntime will auto-create `DATABASE_URL`
 4. Connect to services that need it (api, backend)
 
 #### 2b. Add Redis (Optional but Recommended)
 
 1. Click "+ New" → "Database" → "Redis"
-2. Railway will auto-create `REDIS_URL`
+2. CloudRuntime will auto-create `REDIS_URL`
 3. Connect to backend service
 
 #### 2c. Set Environment Variables
@@ -194,8 +194,8 @@ git push origin main
 ```bash
 NODE_ENV=production
 PORT=8080
-VITE_API_URL=https://your-api-service.up.railway.app
-VITE_WS_URL=wss://your-api-service.up.railway.app
+VITE_API_URL=https://your-api-service.thenewfuse.com
+VITE_WS_URL=wss://your-api-service.thenewfuse.com
 ```
 
 **For API Service:**
@@ -205,7 +205,7 @@ NODE_ENV=production
 PORT=3001
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 JWT_SECRET=your-super-secret-jwt-key-change-this
-CORS_ORIGIN=https://your-frontend.up.railway.app
+CORS_ORIGIN=https://your-frontend.thenewfuse.com
 ```
 
 **For API Gateway:**
@@ -213,8 +213,8 @@ CORS_ORIGIN=https://your-frontend.up.railway.app
 ```bash
 NODE_ENV=production
 PORT=3002
-API_SERVICE_URL=https://your-api-service.up.railway.app
-BACKEND_SERVICE_URL=https://your-backend-service.up.railway.app
+API_SERVICE_URL=https://your-api-service.thenewfuse.com
+BACKEND_SERVICE_URL=https://your-backend-service.thenewfuse.com
 ```
 
 **For Backend Service:**
@@ -228,16 +228,16 @@ REDIS_URL=${{Redis.REDIS_URL}}
 
 ### Step 3: Deploy Services
 
-Railway should auto-deploy when you push to main. Monitor in the dashboard:
+CloudRuntime should auto-deploy when you push to main. Monitor in the dashboard:
 
 1. **Watch Build Logs**: Each service will show build progress
 2. **Check Health**: Services should pass health checks at `/health`
-3. **Get URLs**: Railway will assign URLs to each service
+3. **Get URLs**: CloudRuntime will assign URLs to each service
 4. **Update Environment**: Use the URLs to update cross-service communication
 
 ### Step 4: Configure Custom Domain (www.thenewfuse.com)
 
-1. Go to **Frontend Service** in Railway
+1. Go to **Frontend Service** in CloudRuntime
 2. Click **Settings** → **Domains**
 3. Click **+ Custom Domain**
 4. Enter: `www.thenewfuse.com`
@@ -245,7 +245,7 @@ Railway should auto-deploy when you push to main. Monitor in the dashboard:
    ```
    Type: CNAME
    Name: www
-   Value: [provided by Railway]
+   Value: [provided by CloudRuntime]
    TTL: 300
    ```
 
@@ -253,9 +253,9 @@ Railway should auto-deploy when you push to main. Monitor in the dashboard:
 
 ## 🔍 TROUBLESHOOTING GUIDE
 
-### Issue: Railway Doesn't Auto-Deploy
+### Issue: CloudRuntime Doesn't Auto-Deploy
 
-**Solution:** Railway may not detect `railway.toml` if it's not on main branch.
+**Solution:** CloudRuntime may not detect `cloud_runtime.toml` if it's not on main branch.
 
 ```bash
 # Make sure changes are on main
@@ -268,14 +268,14 @@ git push origin main
 
 **Check These:**
 
-1. **Dockerfile path**: Verify `apps/[service]/Dockerfile.railway` exists
+1. **Dockerfile path**: Verify `apps/[service]/Dockerfile.cloud_runtime` exists
 2. **Build logs**: Look for missing dependencies or path issues
 3. **pnpm version**: Should be 10.20.0 in Dockerfiles
 
 **Common Fix:**
 
 ```bash
-# In Railway dashboard, go to service settings
+# In CloudRuntime dashboard, go to service settings
 # Check "Builder" is set to "Dockerfile"
 # Check "Dockerfile Path" is correct
 ```
@@ -291,7 +291,7 @@ git push origin main
 **Debug:**
 
 ```bash
-# View logs in Railway dashboard
+# View logs in CloudRuntime dashboard
 # Look for:
 # - Missing environment variables
 # - Database connection errors
@@ -300,14 +300,14 @@ git push origin main
 
 ### Issue: Services Can't Communicate
 
-Railway services should use internal URLs for communication:
+CloudRuntime services should use internal URLs for communication:
 
 ```bash
 # Instead of:
-VITE_API_URL=https://api-production-abc123.up.railway.app
+VITE_API_URL=https://api-production-abc123.thenewfuse.com
 
-# Use Railway's internal networking:
-VITE_API_URL=${{API.RAILWAY_PRIVATE_DOMAIN}}
+# Use CloudRuntime's internal networking:
+VITE_API_URL=${{API.CLOUD_RUNTIME_PRIVATE_DOMAIN}}
 ```
 
 ---
@@ -317,11 +317,11 @@ VITE_API_URL=${{API.RAILWAY_PRIVATE_DOMAIN}}
 ### Pre-Deployment
 
 - [ ] Branch merged to main
-- [ ] All services have Dockerfile.railway
-- [ ] railway.toml configured correctly
+- [ ] All services have Dockerfile.cloud_runtime
+- [ ] cloud_runtime.toml configured correctly
 - [ ] Frontend builds successfully locally
 
-### Railway Setup
+### CloudRuntime Setup
 
 - [ ] Project linked (ID: 041cee9d-8648-4074-b5a6-0eae436de1d1)
 - [ ] PostgreSQL database added
@@ -350,10 +350,10 @@ VITE_API_URL=${{API.RAILWAY_PRIVATE_DOMAIN}}
 
    ```bash
    # Create PR or merge directly
-   # Railway needs main branch for auto-deploy
+   # CloudRuntime needs main branch for auto-deploy
    ```
 
-2. **Configure Railway Dashboard**
+2. **Configure CloudRuntime Dashboard**
    - Add PostgreSQL
    - Set environment variables
    - Deploy services
@@ -374,24 +374,24 @@ VITE_API_URL=${{API.RAILWAY_PRIVATE_DOMAIN}}
 
 Once deployed, get your URLs:
 
-**Method 1: Railway Dashboard**
+**Method 1: CloudRuntime Dashboard**
 
 ```
-https://railway.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+https://cloud_runtime.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 Click each service → Settings → Domains
 ```
 
-**Method 2: Railway CLI**
+**Method 2: CloudRuntime CLI**
 
 ```bash
-railway service list
-railway domain
+cloud_runtime service list
+cloud_runtime domain
 ```
 
 **Method 3: Use Helper Script**
 
 ```bash
-./scripts/railway/get-railway-urls.sh
+./scripts/cloud_runtime/get-cloud_runtime-urls.sh
 ```
 
 ---
@@ -400,7 +400,7 @@ railway domain
 
 Your deployment is successful when:
 
-✅ All 4 services show "Active" in Railway ✅ Health checks pass for backend
+✅ All 4 services show "Active" in CloudRuntime ✅ Health checks pass for backend
 services ✅ Frontend loads at www.thenewfuse.com ✅ You can sign up and log in
 ✅ No errors in browser console ✅ API calls work from frontend
 
@@ -408,10 +408,10 @@ services ✅ Frontend loads at www.thenewfuse.com ✅ You can sign up and log in
 
 ## 📚 Additional Resources
 
-- **Railway Dashboard**:
-  https://railway.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
-- **Deployment Guide**: `docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md`
-- **Railway Docs**: https://docs.railway.app
-- **Get Service URLs**: `scripts/railway/get-railway-urls.sh`
+- **CloudRuntime Dashboard**:
+  https://cloud_runtime.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+- **Deployment Guide**: `docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md`
+- **CloudRuntime Docs**: https://docs.thenewfuse.com
+- **Get Service URLs**: `scripts/cloud_runtime/get-cloud_runtime-urls.sh`
 
 **Your deployment is 95% ready - just needs to be pushed to main!** 🚀

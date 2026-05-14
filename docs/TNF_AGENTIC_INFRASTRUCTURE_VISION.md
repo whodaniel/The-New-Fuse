@@ -433,7 +433,7 @@ interface AgentHandoff {
 │  PHASE 1: INFRASTRUCTURE (0-5s)                                          │
 │  ├─ Start Redis (for A2A pub/sub)                                        │
 │  ├─ Start PostgreSQL (for persistence)                                   │
-│  ├─ Start Railway Cloud Sandbox                                          │
+│  ├─ Start CloudRuntime Cloud Sandbox                                          │
 │  └─ Initialize HeartbeatMonitoringService                                │
 │                                                                          │
 │  PHASE 2: CORE SERVICES (5-10s)                                          │
@@ -485,7 +485,7 @@ interface AgentHandoff {
 │           ▼                                        ▼                     │
 │  ┌─────────────────┐                      ┌─────────────────┐           │
 │  │ MCP Core        │   ← Transport →      │ MCP Server      │           │
-│  │ (mcp-core)      │                      │ (on Railway)    │           │
+│  │ (mcp-core)      │                      │ (on CloudRuntime)    │           │
 │  └────────┬────────┘                      └─────────────────┘           │
 │           │                                                              │
 │           │ Events                                                       │

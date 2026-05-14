@@ -181,7 +181,7 @@ Only after Phase 4 is 100% complete:
    - `packages/database/src/repositories/` (Drizzle versions)
    - All other packages: Remove `@drizzle/client` dependency
 
-3. **Update Dockerfile.railway**
+3. **Update Dockerfile.cloud_runtime**
    - Remove lines 56-62 (service-specific Drizzle generation)
 
 4. **Remove Generated Drizzle Types**
@@ -336,7 +336,7 @@ Migration is complete when:
 3. ✅ Performance metrics maintained or improved
 4. ✅ No Drizzle dependencies in package.json files
 5. ✅ Documentation updated
-6. ✅ Railway builds successfully
+6. ✅ CloudRuntime builds successfully
 
 ## Support & Resources
 

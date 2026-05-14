@@ -174,7 +174,7 @@ fully tested, and includes comprehensive documentation.
 4. Environment variable setup
 5. Validation behavior explanation
 6. Local testing procedures
-7. Production deployment guides (Railway, Docker, Kubernetes)
+7. Production deployment guides (CloudRuntime, Docker, Kubernetes)
 8. Post-deployment verification
 9. Rollback plan
 10. Troubleshooting guide

@@ -66,96 +66,96 @@ gh run cancel <run-id>
 gh secret list
 
 # Set secret
-gh secret set RAILWAY_TOKEN
+gh secret set CLOUD_RUNTIME_TOKEN
 
 # Set from file
 gh secret set -f .env.secrets
 
 # Remove secret
-gh secret remove RAILWAY_TOKEN
+gh secret remove CLOUD_RUNTIME_TOKEN
 ```
 
-## Railway CLI Commands
+## CloudRuntime CLI Commands
 
 ### Service Management
 
 ```bash
 # Login
-railway login
+cloud_runtime login
 
 # Link to project
-railway link
+cloud_runtime link
 
 # List services
-railway service
+cloud_runtime service
 
 # Select service
-railway service api-gateway
+cloud_runtime service api-gateway
 
 # Service status
-railway status
+cloud_runtime status
 
 # Service metrics
-railway metrics
+cloud_runtime metrics
 
 # Restart service
-railway restart
+cloud_runtime restart
 
 # Environment variables
-railway variables
-railway variables set KEY=value
-railway variables unset KEY
+cloud_runtime variables
+cloud_runtime variables set KEY=value
+cloud_runtime variables unset KEY
 ```
 
 ### Deployment
 
 ```bash
 # Deploy current service
-railway up
+cloud_runtime up
 
 # Deploy specific service
-railway up --service=api-gateway
+cloud_runtime up --service=api-gateway
 
 # Deploy with detach
-railway up --detach
+cloud_runtime up --detach
 
 # View deployments
-railway deployments
+cloud_runtime deployments
 
 # Rollback
-railway rollback
+cloud_runtime rollback
 
 # Rollback to specific deployment
-railway rollback <deployment-id>
+cloud_runtime rollback <deployment-id>
 ```
 
 ### Logs
 
 ```bash
 # View logs
-railway logs
+cloud_runtime logs
 
 # Follow logs
-railway logs --tail 100 --follow
+cloud_runtime logs --tail 100 --follow
 
 # Logs for specific service
-railway logs --service=api-gateway
+cloud_runtime logs --service=api-gateway
 
 # Filter logs
-railway logs --filter error
+cloud_runtime logs --filter error
 ```
 
 ### Shell Access
 
 ```bash
 # SSH into service
-railway shell
+cloud_runtime shell
 
 # Run command
-railway run -- pnpm run migrate
+cloud_runtime run -- pnpm run migrate
 
 # Run with environment
-railway run --service=backend -- pnpm run db:migrate
+cloud_runtime run --service=backend -- pnpm run db:migrate
 ```
 
 ## pnpm Commands
@@ -249,14 +249,14 @@ pnpm run clear-ports
 
 ```bash
 # Build image
-docker build -f apps/api/Dockerfile.railway -t fuse-api .
+docker build -f apps/api/Dockerfile.cloud_runtime -t fuse-api .
 
 # Build with no cache
-docker build --no-cache -f Dockerfile.railway -t fuse-api .
+docker build --no-cache -f Dockerfile.cloud_runtime -t fuse-api .
 
 # Build all services
 for service in api-gateway api backend frontend; do
-  docker build -f apps/$service/Dockerfile.railway -t fuse-$service .
+  docker build -f apps/$service/Dockerfile.cloud_runtime -t fuse-$service .
 done
 ```
 
@@ -430,20 +430,20 @@ git push
 gh run watch
 
 # 3. Check health
-curl https://api.railway.app/health
+curl https://api.thenewfuse.com/health
 
-# 4. Verify in Railway
-railway status
+# 4. Verify in CloudRuntime
+cloud_runtime status
 
 # 5. Check logs
-railway logs --tail 100
+cloud_runtime logs --tail 100
 ```
 
 ### Rolling Back Deployment
 
 ```bash
-# 1. Via Railway
-railway rollback --service=api-gateway
+# 1. Via CloudRuntime
+cloud_runtime rollback --service=api-gateway
 
 # 2. Via Git revert
 git revert HEAD
@@ -451,7 +451,7 @@ git push origin main
 
 # 3. Monitor rollback
 gh run watch
-railway status
+cloud_runtime status
 ```
 
 ### Updating Dependencies
@@ -574,20 +574,20 @@ DATABASE_URL=postgres://... pnpm run dev
 unset DATABASE_URL
 ```
 
-### Railway
+### CloudRuntime
 
 ```bash
 # List variables
-railway variables
+cloud_runtime variables
 
 # Set variable
-railway variables set DATABASE_URL=postgres://...
+cloud_runtime variables set DATABASE_URL=postgres://...
 
 # Unset variable
-railway variables unset OLD_VAR
+cloud_runtime variables unset OLD_VAR
 
 # Set from file
-railway variables set --from-file .env.production
+cloud_runtime variables set --from-file .env.production
 ```
 
 ## Monitoring Commands
@@ -610,16 +610,16 @@ gh run list --workflow=test.yml --limit 10
 
 ```bash
 # All services status
-railway status
+cloud_runtime status
 
 # Service logs
-railway logs --service=api-gateway --tail 100
+cloud_runtime logs --service=api-gateway --tail 100
 
 # Metrics
-railway metrics --service=api-gateway
+cloud_runtime metrics --service=api-gateway
 
 # Database status
-railway run -- pnpm run db:migrate:status
+cloud_runtime run -- pnpm run db:migrate:status
 ```
 
 ## Useful Aliases
@@ -634,12 +634,12 @@ alias ghrw='gh run watch'
 alias ghpc='gh pr create'
 alias ghpv='gh pr view'
 
-# Railway
-alias rws='railway status'
-alias rwl='railway logs'
-alias rwsh='railway shell'
-alias rwd='railway deployments'
-alias rwu='railway up'
+# CloudRuntime
+alias rws='cloud_runtime status'
+alias rwl='cloud_runtime logs'
+alias rwsh='cloud_runtime shell'
+alias rwd='cloud_runtime deployments'
+alias rwu='cloud_runtime up'
 
 # pnpm
 alias pt='pnpm run test'
@@ -674,7 +674,7 @@ alias gs='git status'
 ```bash
 ✓ All tests pass
 ✓ PR approved
-✓ Railway variables set
+✓ CloudRuntime variables set
 ✓ Database migrations ready
 ✓ Monitoring alerts configured
 ```

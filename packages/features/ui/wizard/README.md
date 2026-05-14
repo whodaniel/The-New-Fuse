@@ -6,7 +6,7 @@ guidance, validation, and contextual help.
 
 ## Features
 
-- **5 Default Wizards**: Get Started, Create Agent, Deploy to Railway, Configure
+- **5 Default Wizards**: Get Started, Create Agent, Deploy to CloudRuntime, Configure
   RBAC, Troubleshooting
 - **14 Step Components**: Pre-built React components for common wizard steps
 - **Dynamic Step Rendering**: Map component names to actual components at
@@ -120,13 +120,13 @@ function MyComponent() {
 - Agent Testing (interactive chat test)
 - Complete
 
-### 3. Deploy to Railway Wizard
+### 3. Deploy to CloudRuntime Wizard
 
-**ID**: `deploy-railway` **Purpose**: Deploy cloud sandbox to Railway
+**ID**: `deploy-cloud_runtime` **Purpose**: Deploy cloud sandbox to CloudRuntime
 
 **Steps**:
 
-- Railway Connection (login, project selection)
+- CloudRuntime Connection (login, project selection)
 - Deployment Configuration (environment, instance, database)
 - Deployment Progress (real-time status)
 - Complete
@@ -174,7 +174,7 @@ function MyComponent() {
 
 | Component                 | Description                               |
 | ------------------------- | ----------------------------------------- |
-| `RailwayConnection`       | Connect to Railway, select project        |
+| `CloudRuntimeConnection`       | Connect to CloudRuntime, select project        |
 | `DeploymentConfiguration` | Configure environment, instance, database |
 | `DeploymentProgress`      | Real-time deployment status               |
 

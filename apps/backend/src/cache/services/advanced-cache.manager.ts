@@ -37,10 +37,10 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     const cacheConfig = this.configService.get<CacheConfig>('cache');
 
-    // Railway-specific Redis configuration
-    if (cacheConfig.redis.url && cacheConfig.redis.url.includes('railway')) {
+    // CloudRuntime-specific Redis configuration
+    if (cacheConfig.redis.url && cacheConfig.redis.url.includes('cloud_runtime')) {
       let redisUrl = cacheConfig.redis.url;
-      this.logger.log(`[AdvancedCacheManager] Raw Railway Redis URL detected`);
+      this.logger.log(`[AdvancedCacheManager] Raw CloudRuntime Redis URL detected`);
 
       // Double-check for duplication - this provides a safety net if cache.config.ts logic didn't catch it
       const redisPrefix = 'redis://';
@@ -59,17 +59,17 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
       }
 
       this.logger.log(
-        `[AdvancedCacheManager] Connecting to Railway Redis at url length: ${redisUrl.length}`
+        `[AdvancedCacheManager] Connecting to CloudRuntime Redis at url length: ${redisUrl.length}`
       );
 
       try {
         const url = new URL(redisUrl);
-        // Railway Redis doesn't support database selection
+        // CloudRuntime Redis doesn't support database selection
         this.redisClient = new Redis({
           host: url.hostname,
           port: parseInt(url.port || '6379', 10),
           password: url.password, // Pass password from URL
-          // Remove db parameter as Railway Redis doesn't support database selection
+          // Remove db parameter as CloudRuntime Redis doesn't support database selection
           maxRetriesPerRequest: cacheConfig.redis.maxRetriesPerRequest,
           enableReadyCheck: cacheConfig.redis.enableReadyCheck,
           retryStrategy: cacheConfig.redis.retryStrategy,
@@ -81,7 +81,7 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
         );
       } catch (error) {
         this.logger.error(
-          `[AdvancedCacheManager] Failed to parse Railway REDIS_URL: ${(error as Error).message}`
+          `[AdvancedCacheManager] Failed to parse CloudRuntime REDIS_URL: ${(error as Error).message}`
         );
         // Attempt fallback to cleaned string if new URL failed
         if (redisUrl !== cacheConfig.redis.url) {

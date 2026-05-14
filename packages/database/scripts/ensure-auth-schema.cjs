@@ -6,7 +6,7 @@ const REQUIRED_COLUMNS = ['verification_token', 'verification_expires'];
 
 function resolveSsl(connectionString) {
   if (!connectionString) return false;
-  if (connectionString.includes('railway.internal')) return false;
+  if (connectionString.includes('cloud_runtime.internal')) return false;
   if (connectionString.includes('sslmode=disable')) return false;
   return { rejectUnauthorized: false };
 }

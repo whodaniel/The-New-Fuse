@@ -83,8 +83,8 @@ async function orchestrate() {
   );
 
   // 2. WAKE UP CLOUD BRAIN
-  separator('PHASE 2: CLOUD BRAIN ACTIVATION (Railway)');
-  log(ICONS.cloud, 'Railway', 'TRIGGER_CRON', 'Executing: /api/cron/maintenance', COLORS.magenta);
+  separator('PHASE 2: CLOUD BRAIN ACTIVATION (CloudRuntime)');
+  log(ICONS.cloud, 'CloudRuntime', 'TRIGGER_CRON', 'Executing: /api/cron/maintenance', COLORS.magenta);
 
   // Real fetch to verify cloud is alive (using the QA endpoint as a proxy for "aliveness")
   try {

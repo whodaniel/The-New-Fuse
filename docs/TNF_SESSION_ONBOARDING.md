@@ -156,9 +156,9 @@ Reference docs:
 Environment precedence:
 
 - Redis:
-  `REDIS_URL -> RAILWAY_REDIS_URL -> LIVE_REDIS_URL -> REDIS_PRIVATE_URL -> REDIS_TLS_URL -> localhost`
+  `REDIS_URL -> CLOUD_RUNTIME_REDIS_URL -> LIVE_REDIS_URL -> REDIS_PRIVATE_URL -> REDIS_TLS_URL -> localhost`
 - Ledger/API:
-  `LEDGER_API_BASE -> RAILWAY_API_URL -> LIVE_API_BASE_URL -> API_BASE_URL -> TNF_API_BASE -> localhost`
+  `LEDGER_API_BASE -> CLOUD_RUNTIME_API_URL -> LIVE_API_BASE_URL -> API_BASE_URL -> TNF_API_BASE -> localhost`
 
 ## Recommended Default Workflow
 

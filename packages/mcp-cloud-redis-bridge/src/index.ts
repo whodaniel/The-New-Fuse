@@ -240,7 +240,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'get_terminal_access': {
         const publicUrl =
-          process.env.RAILWAY_PUBLIC_DOMAIN || 'tnf-cloud-sandbox-production.up.railway.app';
+          process.env.CLOUD_RUNTIME_PUBLIC_DOMAIN || 'tnf-cloud-sandbox-production.thenewfuse.com';
         const protocol = publicUrl.includes('localhost') ? 'ws' : 'wss';
         return {
           content: [

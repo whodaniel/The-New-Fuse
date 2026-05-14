@@ -413,7 +413,11 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   { name: 'Docs', path: '/docs', description: 'Documentation root' },
   { name: 'Docs Wildcard', path: '/docs/*', description: 'Documentation nested routes' },
   { name: 'Main Workspace', path: '/main', description: 'Main workspace page' },
-  { name: 'Observatory', path: '/observatory', description: 'System observatory' },
+  {
+    name: 'Observatory',
+    path: '/observatory',
+    description: 'Legacy alias route to Synaptic Nexus topology layer',
+  },
   {
     name: 'AI Agent Onboarding',
     path: '/onboarding/ai-agent',

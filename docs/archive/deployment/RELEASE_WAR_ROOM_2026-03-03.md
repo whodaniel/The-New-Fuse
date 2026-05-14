@@ -3,7 +3,7 @@
 ## Completed in this execution window
 
 - Strict release gate passed locally (`node scripts/release-gate.cjs --strict`).
-- Frontend production deployment succeeded on Railway:
+- Frontend production deployment succeeded on CloudRuntime:
   - Service: `TheNewFuse`
   - Deployment ID: `46c77068-4083-4f5c-a6ce-38efe62dac3e`
   - Status: `SUCCESS`
@@ -17,8 +17,8 @@
 
 ## Code/config changes applied
 
-- `.railwayignore`
-  - Added root-anchored exclusions to reduce upload payload and prevent Railway
+- `.cloud_runtimeignore`
+  - Added root-anchored exclusions to reduce upload payload and prevent CloudRuntime
     upload timeouts.
 - `apps/frontend/nginx.conf`
   - Added `absolute_redirect off;` and `port_in_redirect off;`
@@ -29,12 +29,12 @@
 
 1. API custom domain DNS is not resolving publicly:
    - `api.thenewfuse.com` currently does not resolve via public DNS checks.
-   - Railway service has custom domain attached, but DNS appears not propagated
+   - CloudRuntime service has custom domain attached, but DNS appears not propagated
      or misconfigured.
 
 ## Immediate next actions (owner: platform ops)
 
-1. In DNS provider, ensure `api.thenewfuse.com` is correctly pointed to Railway
+1. In DNS provider, ensure `api.thenewfuse.com` is correctly pointed to CloudRuntime
    target for api-gateway.
 2. Re-verify externally:
    - `https://api.thenewfuse.com/health` -> expect `200`

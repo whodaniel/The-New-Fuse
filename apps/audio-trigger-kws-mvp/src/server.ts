@@ -3,8 +3,16 @@ import cors from 'cors';
 import { env } from './config/env';
 import { AudioTriggerRuntime } from './runtime/audio-trigger-runtime';
 import { WebSocketService } from './services/websocket.service';
-import type { RuleFireEvent, ContextPackage, LlmBatchResult, ProfileUpdate } from './types/events';
-import type { UserProfile } from './services/profile/schema';
+import type {
+  AutoPromptRun,
+  AutomationTriggerEvent,
+  ContextLogCard,
+  LlmBatchResult,
+  RuleFireEvent,
+  SelfAssessmentResult,
+  VisualObjectDetection,
+} from './types/events';
+import type { ProfileUpdate } from './services/profile/schema';
 
 const app = express();
 app.use(cors());
@@ -32,6 +40,27 @@ runtime.on('llm_result', (result: LlmBatchResult) => {
   });
 });
 
+runtime.on('auto_prompt_run', (run: AutoPromptRun) => {
+  wsService.broadcast({
+    type: 'KWS_AUTOPROMPT_RUN',
+    ...run,
+  });
+});
+
+runtime.on('self_assessment', (assessment: SelfAssessmentResult) => {
+  wsService.broadcast({
+    type: 'KWS_SELF_ASSESSMENT',
+    ...assessment,
+  });
+});
+
+runtime.on('context_card', (card: ContextLogCard) => {
+  wsService.broadcast({
+    type: 'KWS_CONTEXT_CARD',
+    ...card,
+  });
+});
+
 const apiKeyMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (!env.api.requireIngestAuth) return next();
   const key = req.headers['x-api-key'] as string | undefined || req.query?.apiKey as string | undefined;
@@ -41,6 +70,55 @@ const apiKeyMiddleware = (req: express.Request, res: express.Response, next: exp
   next();
 };
 
+const claudeHookSecretMiddleware = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  if (!env.automation.claudeHooksRequireSecret) {
+    return next();
+  }
+  const configuredSecret = env.automation.claudeHooksSharedSecret;
+  if (!configuredSecret) {
+    return res.status(500).json({ error: 'claude hook secret is required but not configured' });
+  }
+  const secret =
+    (req.headers['x-claude-hook-secret'] as string | undefined) ??
+    (req.headers['x-hook-secret'] as string | undefined);
+  if (secret !== configuredSecret) {
+    return res.status(401).json({ error: 'invalid claude hook secret' });
+  }
+  next();
+};
+
+const additionalContextEvents = new Set([
+  'SessionStart',
+  'Setup',
+  'SubagentStart',
+  'UserPromptSubmit',
+  'UserPromptExpansion',
+  'PreToolUse',
+  'PostToolUse',
+  'PostToolUseFailure',
+  'PostToolBatch',
+]);
+
+const buildHookAdditionalContext = (trigger: AutomationTriggerEvent | undefined, runs: AutoPromptRun[]): string => {
+  if (!trigger || runs.length === 0) {
+    return '';
+  }
+  const rendered = runs
+    .slice(0, 3)
+    .map((run) => `${run.sequenceId}:${run.status}`)
+    .join(', ');
+  const more = runs.length > 3 ? ` (+${runs.length - 3} more)` : '';
+  return [
+    `Auto-prompt orchestrator processed hook event '${trigger.hookEventName ?? 'unknown'}'.`,
+    `Triggered run(s): ${rendered}${more}.`,
+    'Use these runs as additional context for continuity and self-adjustment.',
+  ].join(' ');
+};
+
 app.post('/v1/ingest/text', apiKeyMiddleware, (req, res) => {
   const { streamId, utterance } = req.body;
   if (!streamId || !utterance) {
@@ -48,6 +126,49 @@ app.post('/v1/ingest/text', apiKeyMiddleware, (req, res) => {
   }
   runtime.ingestText(streamId, utterance);
   res.json({ ok: true, streamId });
+});
+
+app.post('/v1/ingest/visual', apiKeyMiddleware, async (req, res) => {
+  const { streamId, objects } = req.body as {
+    streamId?: string;
+    objects?: VisualObjectDetection[];
+  };
+
+  if (!streamId || !Array.isArray(objects) || objects.length === 0) {
+    return res.status(400).json({ error: 'streamId and non-empty objects array required' });
+  }
+
+  const runs = await runtime.handleVisualObjects(streamId, objects);
+  res.json({ ok: true, streamId, processedObjects: objects.length, generatedRuns: runs.length });
+});
+
+app.post('/v1/ingest/claude-hook', apiKeyMiddleware, claudeHookSecretMiddleware, async (req, res) => {
+  const payload = (req.body ?? {}) as Record<string, unknown>;
+  const result = await runtime.ingestClaudeHook(payload);
+
+  const response: Record<string, unknown> = {
+    ok: true,
+    accepted: result.accepted,
+    reason: result.reason ?? null,
+    hookEventName: result.hookEventName ?? null,
+    generatedRuns: result.runs.length,
+    streamId: result.trigger?.streamId ?? null,
+    triggerId: result.trigger?.triggerId ?? null,
+  };
+
+  if (
+    result.hookEventName &&
+    additionalContextEvents.has(result.hookEventName) &&
+    result.accepted &&
+    result.runs.length > 0
+  ) {
+    response.hookSpecificOutput = {
+      hookEventName: result.hookEventName,
+      additionalContext: buildHookAdditionalContext(result.trigger, result.runs),
+    };
+  }
+
+  res.json(response);
 });
 
 app.post('/v1/flush', apiKeyMiddleware, async (req, res) => {
@@ -68,6 +189,26 @@ app.get('/v1/events/packages', (req, res) => {
 app.get('/v1/events/llm-results', (req, res) => {
   const limit = Math.min(parseInt(req.query.limit as string) || 50, 1000);
   res.json(runtime.getRecentLlmResults(limit));
+});
+
+app.get('/v1/events/autoprompt-runs', (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit as string) || 50, 1000);
+  res.json(runtime.getRecentAutoPromptRuns(limit));
+});
+
+app.get('/v1/events/assessments', (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit as string) || 50, 1000);
+  res.json(runtime.getRecentAssessments(limit));
+});
+
+app.get('/v1/events/context-cards', (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit as string) || 50, 1000);
+  res.json(runtime.getRecentContextCards(limit));
+});
+
+app.get('/v1/events/claude-hook-triggers', (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit as string) || 50, 1000);
+  res.json(runtime.getRecentClaudeHookTriggers(limit));
 });
 
 app.get('/v1/events/rules/stream', (req, res) => {

@@ -61,7 +61,7 @@ distinguishes active runtime paths from legacy/archive artifacts.
 
 - `tnf-master-orchestrator.ts`
   - Continuous self-improvement loop orchestration.
-- `docs/RAILWAY_CRON_SETUP.md`
+- `docs/CLOUD_RUNTIME_CRON_SETUP.md`
   - Cron-driven self-improvement cycle and endpoints.
 - `docs/TNF_AGENTIC_INFRASTRUCTURE_VISION.md`
   - Target operating model for self-improving autonomous network.

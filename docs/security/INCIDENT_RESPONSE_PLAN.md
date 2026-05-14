@@ -100,10 +100,10 @@ This document outlines the procedures for identifying, responding to, and recove
 **Within 15 Minutes:**
 ```bash
 # 1. Isolate affected systems
-railway service stop <affected-service>
+cloud_runtime service stop <affected-service>
 
 # 2. Revoke compromised credentials
-# Update all affected secrets in Railway dashboard
+# Update all affected secrets in CloudRuntime dashboard
 
 # 3. Block suspicious IP addresses
 # Update firewall rules or WAF configuration
@@ -170,7 +170,7 @@ pnpm build
 # 4. Deploy immediately
 git commit -m "SECURITY: Fix critical vulnerability"
 git push origin hotfix/security-incident-$(date +%Y%m%d)
-# Deploy via Railway or CI/CD
+# Deploy via CloudRuntime or CI/CD
 ```
 
 **Infrastructure Fixes:**
@@ -179,13 +179,13 @@ git push origin hotfix/security-incident-$(date +%Y%m%d)
 # Generate new secrets
 openssl rand -base64 32 > new_jwt_secret.txt
 
-# 2. Update environment variables in Railway
+# 2. Update environment variables in CloudRuntime
 
 # 3. Force logout all users
 redis-cli FLUSHDB
 
 # 4. Restart services
-railway service restart --all
+cloud_runtime service restart --all
 ```
 
 ### 4. Recovery
@@ -314,7 +314,7 @@ The New Fuse Security Team
 export NEW_JWT_SECRET=$(openssl rand -base64 32)
 export NEW_DB_PASSWORD=$(openssl rand -base64 32)
 
-# Update in Railway dashboard
+# Update in CloudRuntime dashboard
 
 # 2. Revoke all active sessions
 redis-cli FLUSHALL
@@ -456,7 +456,7 @@ The New Fuse Security Team
 **How to Preserve:**
 ```bash
 # 1. Export logs
-railway logs --service <service> > incident_logs_$(date +%Y%m%d).txt
+cloud_runtime logs --service <service> > incident_logs_$(date +%Y%m%d).txt
 
 # 2. Database snapshot
 pg_dump $DATABASE_URL > incident_db_$(date +%Y%m%d).sql
@@ -522,7 +522,7 @@ pg_dump $DATABASE_URL > incident_db_$(date +%Y%m%d).sql
 ## Tools and Resources
 
 ### Incident Response Tools
-- Log aggregation: Railway logs, CloudWatch
+- Log aggregation: CloudRuntime logs, CloudWatch
 - SIEM: [To be implemented]
 - Forensics: tcpdump, Wireshark
 - Communication: Slack, Email
@@ -546,7 +546,7 @@ pg_dump $DATABASE_URL > incident_db_$(date +%Y%m%d).sql
 | Executive Sponsor | [Name] | [Phone] | [Email] |
 
 ### External Contacts
-- Railway Support: support@railway.app
+- CloudRuntime Support: support@cloud_runtime.app
 - Security Researchers: security@thenewfuse.com
 - Law Enforcement: [Local contacts]
 - Incident Response Firm: [If contracted]

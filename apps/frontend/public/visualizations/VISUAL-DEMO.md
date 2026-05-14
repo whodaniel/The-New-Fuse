@@ -495,7 +495,7 @@ scp -r ui-package/ team-server:/var/www/capabilities/
 
 ### Option 3: Cloud Platform
 ```bash
-# Deploy to Heroku, Railway, Vercel, etc.
+# Deploy to Heroku, CloudRuntime, Vercel, etc.
 git push heroku main
 # Access at: https://your-app.herokuapp.com/
 ```

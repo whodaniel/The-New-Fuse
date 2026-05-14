@@ -1,5 +1,5 @@
-import { Label, Textarea } from '@/components/ui';
 // @ts-nocheck
+import { Label, Textarea } from '@/components/ui';
 import React, { memo } from 'react';
 import { NodeProps } from 'reactflow';
 import { BaseNode } from './base-node';

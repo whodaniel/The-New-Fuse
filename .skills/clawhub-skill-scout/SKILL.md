@@ -51,15 +51,15 @@ Optional follow-up: compare alternatives
    - `python3 scripts/list_skills.py --sort downloads --non-suspicious true --limit 10`
 3. Build install/open shortlist:
    - `python3 scripts/install_shortlist.py --sort downloads --non-suspicious true --limit 5`
-   - Railway CLI execution (project env):  
-     `railway run -p <project-id> -e <environment> -s <service> python3 scripts/install_shortlist.py --sort downloads --non-suspicious true --limit 5`
+   - CloudRuntime CLI execution (project env):  
+     `cloud_runtime run -p <project-id> -e <environment> -s <service> python3 scripts/install_shortlist.py --sort downloads --non-suspicious true --limit 5`
    - Open pages directly: `python3 scripts/install_shortlist.py --open --limit 3`
    - Print install commands from your CLI template:
      `python3 scripts/install_shortlist.py --install-template 'openclaw skills add {owner_slug}' --limit 3`
    - Built-in ClawHub installer preset (recommended):
      `python3 scripts/install_shortlist.py --installer clawhub-pnpm --limit 3`
-   - Railway + ClawHub preset:
-     `railway run -p <project-id> -e <environment> -s <service> python3 scripts/install_shortlist.py --installer clawhub-pnpm --workdir /app --limit 3`
+   - CloudRuntime + ClawHub preset:
+     `cloud_runtime run -p <project-id> -e <environment> -s <service> python3 scripts/install_shortlist.py --installer clawhub-pnpm --workdir /app --limit 3`
    - Execute install commands:
      `python3 scripts/install_shortlist.py --install-template 'openclaw skills add {owner_slug}' --apply --limit 3`
    - Add resilience for registry rate limits:
@@ -86,7 +86,7 @@ Run:
 python3 scripts/check_clawhub_api.py
 python3 scripts/list_skills.py --sort downloads --non-suspicious true --limit 5
 python3 scripts/install_shortlist.py --limit 3
-railway run -p <project-id> -e <environment> -s <service> python3 scripts/install_shortlist.py --limit 3
+cloud_runtime run -p <project-id> -e <environment> -s <service> python3 scripts/install_shortlist.py --limit 3
 python3 scripts/install_shortlist.py --installer clawhub-pnpm --limit 2
 ```
 

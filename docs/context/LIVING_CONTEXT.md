@@ -11,7 +11,7 @@ and operational practices as of March 2026.
 
 - `PRODUCTION_READINESS.md`
 - `docs/deployment/DEPLOYMENT_GUIDE.md`
-- `docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md`
+- `docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md`
 - `SECURITY.md`
 - `SECURITY_MIGRATION_GUIDE.md`
 
@@ -73,13 +73,13 @@ Primary references:
 
 ## Deployment Overview
 
-Railway: ⚠️ **DEPRECATED — Railway is no longer used.** TNF has migrated to
+CloudRuntime: ⚠️ **DEPRECATED — CloudRuntime is no longer used.** TNF has migrated to
 **GCP (Cloud Run) + Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash
 (Redis)**. See `CLOUD_MIGRATION_BLUEPRINT.md` for current infrastructure.
 
-- Primary production deployment target. ⚠️ Historical — was Railway.
+- Primary production deployment target. ⚠️ Historical — was CloudRuntime.
 - Services: Frontend, API Gateway, Backend.
-- Use `Dockerfile.railway` and environment variables from `.env.railway.example`
+- Use `Dockerfile.cloud_runtime` and environment variables from `.env.cloud_runtime.example`
   for setup. ⚠️ These are historical; use GCP/Cloudflare equivalents instead.
 
 Docker (local dev infra):
@@ -90,7 +90,7 @@ Docker (local dev infra):
 Primary references:
 
 - `docs/deployment/DEPLOYMENT_GUIDE.md`
-- `docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md`
+- `docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md`
 
 ## Build and Development
 

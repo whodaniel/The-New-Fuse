@@ -2,30 +2,30 @@
 
 ## ✅ What's Been Deployed
 
-### 1. Railway Project
+### 1. Cloudflare Project
 - **Project Name**: the-new-fuse
-- **Dashboard URL**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+- **Dashboard URL**: https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 - **Environment**: production
 
 ### 2. PostgreSQL Database ✅
 - **Status**: Provisioned and running
 - **Connection**: Automatically configured via `${{Postgres.DATABASE_URL}}`
-- **Internal Address**: `postgresql://postgres:***@postgres.railway.internal:5432/railway`
+- **Internal Address**: `postgresql://postgres:***@postgres.cloudflare.internal:5432/cloudflare`
 
 ### 3. API Service ✅
-- **Status**: Building in Railway cloud
-- **Build Logs**: [View API Build](https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba?id=dbc8dd5f-3ecb-48f6-9d29-7acc1e9b0de6)
+- **Status**: Building in Cloudflare cloud
+- **Build Logs**: [View API Build](https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba?id=dbc8dd5f-3ecb-48f6-9d29-7acc1e9b0de6)
 - **Service ID**: `d40de71f-791b-4b84-97e7-23b18be289ba`
 - **Dockerfile**: `apps/api/Dockerfile`
 - **Environment Variables**:
-  - ✅ `DATABASE_URL=postgresql://postgres:***@postgres.railway.internal:5432/railway`
+  - ✅ `DATABASE_URL=postgresql://postgres:***@postgres.cloudflare.internal:5432/cloudflare`
   - ✅ `JWT_SECRET=QP3TdsL7K+rBJe2YllN6+p8onci754qaaPnPcvppMW8=`
   - ✅ `NODE_ENV=production`
   - ✅ `PORT=3001`
 
 ### 4. Frontend Service ✅
-- **Status**: Building in Railway cloud
-- **Build Logs**: [View Frontend Build](https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1?id=0f6c40a0-3bd3-4026-a905-f052630c151c)
+- **Status**: Building in Cloudflare cloud
+- **Build Logs**: [View Frontend Build](https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1?id=0f6c40a0-3bd3-4026-a905-f052630c151c)
 - **Service ID**: `c2e7324a-27a4-4128-86b4-45ff9c1deaf1`
 - **Dockerfile**: `apps/frontend/Dockerfile`
 - **Environment Variables**:
@@ -38,12 +38,12 @@
 ## 🚀 Current Status
 
 ### Build Progress
-The Docker images are currently building in Railway's cloud infrastructure. This process typically takes:
+The Docker images are currently building in Cloudflare's cloud infrastructure. This process typically takes:
 - **First build**: 10-15 minutes
 - **Subsequent builds**: 3-5 minutes (with caching)
 
 ### What's Happening Now
-1. Railway is running your Dockerfiles in the cloud
+1. Cloudflare is running your Dockerfiles in the cloud
 2. Building all dependencies from `pnpm-lock.yaml`
 3. Compiling TypeScript code
 4. Creating optimized production images
@@ -58,13 +58,13 @@ The Docker images are currently building in Railway's cloud infrastructure. This
 Monitor build progress:
 ```bash
 # Check overall status
-railway status
+cloudflare status
 
 # Watch API build in real-time
-railway logs --service api
+cloudflare logs --service api
 
 # Watch Frontend build in real-time
-railway logs --service frontend
+cloudflare logs --service frontend
 ```
 
 Or click on the build log links above to watch in your browser.
@@ -75,7 +75,7 @@ Once the API build completes successfully:
 
 ```bash
 # Get the API URL
-railway open --service api
+cloudflare open --service api
 ```
 
 This will open your browser to the API service URL. Copy that URL.
@@ -91,7 +91,7 @@ cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
 Example:
 ```bash
-./configure-env-vars.sh https://api-production-xxxx.up.railway.app
+./configure-env-vars.sh https://api-production-xxxx.thenewfuse.com
 ```
 
 This will:
@@ -102,14 +102,14 @@ This will:
 
 ```bash
 # Open frontend in browser
-railway open --service frontend
+cloudflare open --service frontend
 
 # Check API health
-curl https://your-api-url.railway.app/health
+curl https://your-api-url.thenewfuse.com/health
 
 # View logs
-railway logs --service api --live
-railway logs --service frontend --live
+cloudflare logs --service api --live
+cloudflare logs --service frontend --live
 ```
 
 ---
@@ -149,8 +149,8 @@ Environment:
 ```yaml
 Service: Postgres
 Type: PostgreSQL 15
-Internal URL: postgres.railway.internal:5432
-Database: railway
+Internal URL: postgres.cloudflare.internal:5432
+Database: cloudflare
 ```
 
 ---
@@ -159,11 +159,11 @@ Database: railway
 
 | Time | Action | Status |
 |------|--------|--------|
-| 00:00 | Railway project created | ✅ Complete |
+| 00:00 | Cloudflare project created | ✅ Complete |
 | 00:01 | PostgreSQL provisioned | ✅ Complete |
 | 00:02 | API service created | ✅ Complete |
 | 00:03 | Frontend service created | ✅ Complete |
-| 00:04 | Code uploaded to Railway | ✅ Complete |
+| 00:04 | Code uploaded to Cloudflare | ✅ Complete |
 | 00:05 | Environment variables configured | ✅ Complete |
 | 00:06 | Docker builds started | 🔄 In Progress |
 | +15 min | Builds complete, services live | ⏳ Pending |
@@ -180,19 +180,19 @@ Database: railway
 2. **Common issues**:
    - Missing dependencies: Already handled in Dockerfile
    - TypeScript errors: Check source code compilation
-   - Docker build timeout: Railway has generous limits
+   - Docker build timeout: Cloudflare has generous limits
 
 3. **Re-trigger build**:
    ```bash
-   railway up --service api
-   railway up --service frontend
+   cloudflare up --service api
+   cloudflare up --service frontend
    ```
 
 ### If Service Won't Start
 
 1. **Check runtime logs**:
    ```bash
-   railway logs --service api
+   cloudflare logs --service api
    ```
 
 2. **Common issues**:
@@ -202,15 +202,15 @@ Database: railway
 
 3. **Restart service**:
    ```bash
-   railway up --service api
+   cloudflare up --service api
    ```
 
 ### Get Help
 
-- **Railway Dashboard**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
-- **Railway Docs**: https://docs.railway.app
-- **Railway Discord**: https://discord.gg/railway
-- **Check deployment status**: `railway status`
+- **Cloudflare Dashboard**: https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+- **Cloudflare Docs**: https://docs.thenewfuse.com
+- **Cloudflare Discord**: https://discord.gg/cloudflare
+- **Check deployment status**: `cloudflare status`
 
 ---
 
@@ -220,11 +220,11 @@ All deployment documentation in this project:
 
 1. **DEPLOYMENT_COMPLETE.md** (this file) - Complete deployment summary
 2. **DEPLOYMENT_STATUS.md** - Real-time status and links
-3. **DEPLOYMENT_GUIDE_RAILWAY.md** - Comprehensive deployment guide
+3. **DEPLOYMENT_GUIDE_CLOUDFLARE.md** - Comprehensive deployment guide
 4. **QUICK_START_DEPLOYMENT.md** - Quick reference
 5. **configure-env-vars.sh** - Environment variable configuration script
 6. **test-docker-builds.sh** - Local Docker testing script
-7. **deploy-to-railway.sh** - Full deployment automation script
+7. **deploy-to-cloudflare.sh** - Full deployment automation script
 
 ---
 
@@ -232,12 +232,12 @@ All deployment documentation in this project:
 
 Your deployment is successful when:
 
-1. ✅ Railway dashboard shows all services as "Active"
+1. ✅ Cloudflare dashboard shows all services as "Active"
 2. ✅ API responds at `/health` endpoint
 3. ✅ Frontend loads in browser
 4. ✅ Frontend can communicate with API
 5. ✅ Database connections work
-6. ✅ No errors in Railway logs
+6. ✅ No errors in Cloudflare logs
 
 ---
 
@@ -248,7 +248,7 @@ You've successfully:
 1. ✅ Created a production-ready monorepo deployment
 2. ✅ Configured Docker multi-stage builds for optimal performance
 3. ✅ Set up PostgreSQL database with automatic connection
-4. ✅ Deployed two services (API + Frontend) to Railway
+4. ✅ Deployed two services (API + Frontend) to Cloudflare
 5. ✅ Configured environment variables securely
 6. ✅ Set up health checks and restart policies
 7. ✅ Created a fully automated deployment pipeline
@@ -261,29 +261,29 @@ You've successfully:
 
 ```bash
 # Check status
-railway status
+cloudflare status
 
 # View logs
-railway logs --service api
-railway logs --service frontend
+cloudflare logs --service api
+cloudflare logs --service frontend
 
 # Open services
-railway open --service api
-railway open --service frontend
+cloudflare open --service api
+cloudflare open --service frontend
 
 # Re-deploy
-railway up --service api
-railway up --service frontend
+cloudflare up --service api
+cloudflare up --service frontend
 
 # Check environment variables
-railway variables --service api --kv
-railway variables --service frontend --kv
+cloudflare variables --service api --kv
+cloudflare variables --service frontend --kv
 
 # Configure frontend with API URL (after API deploys)
 ./configure-env-vars.sh <api-url>
 
-# Open Railway dashboard
-open https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+# Open Cloudflare dashboard
+open https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 ```
 
 ---
@@ -299,5 +299,5 @@ open https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 **Next Action**: Wait for builds to complete, then follow Step 2 above to get the API URL and configure the frontend!
 
 Watch your builds here:
-- **API**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba
-- **Frontend**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1
+- **API**: https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba
+- **Frontend**: https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1

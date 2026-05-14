@@ -1,9 +1,9 @@
 # Cloud QA Guide
 
 > **Replaces:** CLOUD_QA_GUIDE.md, CLOUD_QA_QUICKREF.md, CLOUD_QA_SETUP.md,
-> README_CLOUD_QA.md (now archived). **Note:** Railway is no longer used.
+> README_CLOUD_QA.md (now archived). **Note:** CloudRuntime is no longer used.
 > Backend runs on GCP Cloud Run (see `CLOUD_MIGRATION_BLUEPRINT.md`). All
-> `*.up.railway.app` URLs replaced with `https://<your-cloud-run-backend-url>`.
+> `*.thenewfuse.com` URLs replaced with `https://<your-cloud-run-backend-url>`.
 
 ## Quick Reference
 

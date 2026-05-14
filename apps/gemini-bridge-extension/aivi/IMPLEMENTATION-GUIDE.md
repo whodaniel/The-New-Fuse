@@ -537,7 +537,7 @@ If you want full monetization, you'll need a simple backend:
 - **Node.js + Express** for API
 - **Stripe** for payments
 - **PostgreSQL** or **Firebase** for database
-- **Deploy on:** Vercel, Railway, or Render (free tier available)
+- **Deploy on:** Vercel, CloudRuntime, or Render (free tier available)
 
 **Estimated Backend Development:** 1-2 weeks
 

@@ -2,7 +2,7 @@ name: Debug and Remediate Deployment Failure
 
 on:
   workflow_run:
-    workflows: ["Deploy to Railway"]
+    workflows: ["Deploy to CloudRuntime"]
     types:
       - completed
 
@@ -20,7 +20,7 @@ jobs:
       - name: Download logs from failed run
         uses: actions/download-artifact@v4
         with:
-          name: railway-deploy-logs-${{ github.event.workflow_run.id }}
+          name: cloud_runtime-deploy-logs-${{ github.event.workflow_run.id }}
           path: ./deployment-logs
 
       - name: Analyze Failure for Known Issues

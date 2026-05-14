@@ -24,7 +24,7 @@ execution, and hard release gates that prevent mock/demo regressions.
 3. Phase C (Security + Compliance): auth, secrets, abuse paths, and
    auditability.
 4. Phase D (Reliability + Scale): error budgets, observability, rollback, and
-   Railway recovery drills.
+   CloudRuntime recovery drills.
 5. Phase E (Launch + Documentation): public docs, onboarding, SEO, and operator
    runbooks.
 
@@ -35,7 +35,7 @@ execution, and hard release gates that prevent mock/demo regressions.
 | Frontend UX        | `frontend-specialist`, `mobile-developer`, `seo-specialist`     | Production-grade nav/routes, empty/error states, mobile quality, SEO metadata  |
 | Backend/API        | `backend-specialist`, `database-architect`                      | Contract correctness, schema integrity, endpoint stability, migration safety   |
 | Security           | `security-auditor`, `penetration-tester`                        | Auth gate validation, threat checks, dependency/security hygiene               |
-| Reliability        | `devops-engineer`, `performance-optimizer`                      | Railway deploy resilience, latency/error monitoring, load bottleneck reduction |
+| Reliability        | `devops-engineer`, `performance-optimizer`                      | CloudRuntime deploy resilience, latency/error monitoring, load bottleneck reduction |
 | QA                 | `test-engineer`, `picoclaw-tester`, `picoclaw-tester-viability` | End-to-end release test matrix and regression evidence                         |
 | GTM + Intelligence | `documentation-writer`, `news-scout`, `scout-llm-opportunities` | Public docs, launch notes, competitive signal updates                          |
 | Runtime Execution  | `openclaw-fleet`, `zeroclaw-sandbox`                            | High-concurrency task execution and safe sandbox verification                  |
@@ -59,7 +59,7 @@ execution, and hard release gates that prevent mock/demo regressions.
 - [ ] `pnpm run release:gate`
 - [ ] `pnpm run release:gate:strict`
 - [ ] `pnpm run release:gate:strict:smoke`
-- [ ] Railway deploy status green for API + frontend + claw services
+- [ ] CloudRuntime deploy status green for API + frontend + claw services
 - [ ] Security scan and dependency review complete
 - [ ] Rollback procedure tested and documented
 

@@ -11,7 +11,7 @@ A comprehensive one-command deployment system with:
 - ✅ Zero-downtime deployment support
 - ✅ Automatic rollback on failure
 - ✅ Database migration automation with backup
-- ✅ Railway integration
+- ✅ CloudRuntime integration
 - ✅ Health monitoring and smoke tests
 - ✅ Deployment dashboard
 
@@ -36,7 +36,7 @@ Located in `/scripts/deployment/`:
    - Environment variable validation
    - Database connectivity
    - Resource availability checks
-   - Railway CLI validation
+   - CloudRuntime CLI validation
 
 3. **rollback.sh** - Automated rollback system
    - Identifies previous successful deployment
@@ -55,7 +55,7 @@ Located in `/scripts/deployment/`:
 5. **deployment-dashboard.sh** - Real-time deployment status
    - System information
    - Deployment history
-   - Railway service status
+   - CloudRuntime service status
    - Environment configuration
    - Database backup status
    - Health summary
@@ -75,9 +75,9 @@ Located in `/scripts/deployment/`:
    - Retention management
    - Multiple database type support
 
-### Railway Integration
+### CloudRuntime Integration
 
-1. **railway-deploy.sh** - Railway deployment utility
+1. **cloud_runtime-deploy.sh** - CloudRuntime deployment utility
    - Service deployment
    - Environment variable sync
    - Log streaming
@@ -91,7 +91,7 @@ Located in `/scripts/deployment/`:
    - Rollback settings
    - Backup configuration
    - Health check settings
-   - Railway integration
+   - CloudRuntime integration
 
 ## Documentation
 
@@ -126,17 +126,17 @@ SKIP_TESTS=true ./scripts/deployment/deploy-automated.sh
 DEPLOYMENT_STRATEGY=blue-green ./scripts/deployment/deploy-automated.sh
 ```
 
-### Railway-Specific
+### CloudRuntime-Specific
 
 ```bash
 # Deploy all services
-./scripts/deployment/railway-deploy.sh all
+./scripts/deployment/cloud_runtime-deploy.sh all
 
 # Deploy specific service
-./scripts/deployment/railway-deploy.sh deploy api-gateway
+./scripts/deployment/cloud_runtime-deploy.sh deploy api-gateway
 
 # Watch logs
-./scripts/deployment/railway-deploy.sh watch api-gateway
+./scripts/deployment/cloud_runtime-deploy.sh watch api-gateway
 ```
 
 ### Validation and Testing
@@ -201,7 +201,7 @@ DRY_RUN=true ./scripts/deployment/db-migrate.sh
 - Environment configuration
 - Database connectivity
 - Resource availability
-- Railway authentication
+- CloudRuntime authentication
 
 ### Database Management
 
@@ -230,7 +230,7 @@ DRY_RUN=true ./scripts/deployment/db-migrate.sh
 - Error rate tracking
 - Performance metrics
 
-### Railway Integration
+### CloudRuntime Integration
 
 - CLI automation
 - Service deployment
@@ -250,7 +250,7 @@ DRY_RUN=true ./scripts/deployment/db-migrate.sh
 ├── deployment-dashboard.sh      # Status dashboard
 ├── db-migrate.sh               # Database migrations
 ├── db-backup.sh                # Database backups
-└── railway-deploy.sh           # Railway integration
+└── cloud_runtime-deploy.sh           # CloudRuntime integration
 
 /.deployment-config              # Configuration file
 
@@ -286,7 +286,7 @@ DRY_RUN=true ./scripts/deployment/db-migrate.sh
 - `REDIS_URL` - Redis connection string
 - `API_PORT`, `FRONTEND_PORT`, etc. - Service ports
 - `SLACK_WEBHOOK_URL` - Slack notifications
-- `RAILWAY_PROJECT_ID` - Railway project
+- `CLOUD_RUNTIME_PROJECT_ID` - CloudRuntime project
 
 ### Deployment Configuration
 
@@ -352,17 +352,17 @@ tail -f logs/deployment/rollback-*.log
 tail -f logs/deployment/migration-*.log
 ```
 
-### Railway Monitoring
+### CloudRuntime Monitoring
 
 ```bash
 # Service status
-railway status
+cloud_runtime status
 
 # Service logs
-railway logs --service <service-name>
+cloud_runtime logs --service <service-name>
 
 # Deployment history
-railway deployments
+cloud_runtime deployments
 ```
 
 ## Troubleshooting
@@ -371,7 +371,7 @@ See [docs/deployment/TROUBLESHOOTING.md](./docs/deployment/TROUBLESHOOTING.md)
 for:
 
 - Build failures
-- Railway deployment issues
+- CloudRuntime deployment issues
 - Database problems
 - Environment variable issues
 - Rollback problems
@@ -399,12 +399,12 @@ for:
 
 ## Next Steps
 
-1. **Setup Railway**
+1. **Setup CloudRuntime**
 
    ```bash
-   npm install -g @railway/cli
-   railway login
-   railway link
+   npm install -g @cloud_runtime/cli
+   cloud_runtime login
+   cloud_runtime link
    ```
 
 2. **Configure Environment**

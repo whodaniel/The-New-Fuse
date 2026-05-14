@@ -2,23 +2,23 @@
 
 ## Problem Statement
 
-The current Live View system using Socket.IO screenshot broadcasting is unreliable on Railway due to:
-1. WebSocket connection instability through Railway's edge proxy
+The current Live View system using Socket.IO screenshot broadcasting is unreliable on CloudRuntime due to:
+1. WebSocket connection instability through CloudRuntime's edge proxy
 2. Screenshots only showing once and then failing
 3. No real-time console visibility
 4. Complex polling/websocket fallback logic
 
 ## Solution: Chrome DevTools Protocol (CDP) Integration
 
-Instead of broadcasting screenshots via Socket.IO, we'll expose Railway browsers via the Chrome DevTools Protocol,
+Instead of broadcasting screenshots via Socket.IO, we'll expose CloudRuntime browsers via the Chrome DevTools Protocol,
 allowing **Antigravity to connect directly using the Chrome DevTools MCP server**.
 
 ## Architecture
 
 ```
 ┌─────────────────┐         ┌──────────────────┐         ┌────────────────┐
-│   Antigravity   │◄───────►│ DevTools Bridge  │◄───────►│ Railway Browser│
-│  (Local/Cloud)  │  MCP    │  (Railway Cloud) │   CDP   │   (Playwright) │
+│   Antigravity   │◄───────►│ DevTools Bridge  │◄───────►│ CloudRuntime Browser│
+│  (Local/Cloud)  │  MCP    │  (CloudRuntime Cloud) │   CDP   │   (Playwright) │
 └─────────────────┘         └──────────────────┘         └────────────────┘
         │                            │
         │                            │
@@ -32,7 +32,7 @@ allowing **Antigravity to connect directly using the Chrome DevTools MCP server*
 1. **Native Chrome DevTools Access**: Antigravity gets full console, network, performance access
 2. **No Screenshot Broadcasting**: Real-time visual updates via CDP
 3. **Stable HTTP/REST**: Browser discovery via simple HTTP API
-4. **Railway Compatible**: Uses standard HTTP + WebSocket (with proper CDP handling)
+4. **CloudRuntime Compatible**: Uses standard HTTP + WebSocket (with proper CDP handling)
 5. **Multiple Browsers**: Support for multiple concurrent browser instances
 
 ## Implementation Steps
@@ -136,7 +136,7 @@ app.get('/api/devtools/browsers/:id/endpoint', (req, res) => {
     success: true,
     browserId: id,
     wsEndpoint: endpoint,
-    proxyEndpoint: `wss://${process.env.RAILWAY_PUBLIC_DOMAIN || 'localhost'}/devtools/browser/${id}`
+    proxyEndpoint: `wss://${process.env.CLOUD_RUNTIME_PUBLIC_DOMAIN || 'localhost'}/devtools/browser/${id}`
   });
 });
 
@@ -205,7 +205,7 @@ Modify `apps/cloud-sandbox/scripts/audit_website.js` to notify DevTools Bridge o
 
 ```javascript
 // After each navigation or action
-await fetch('https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browsers/main-browser/screenshot', {
+await fetch('https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/devtools/browsers/main-browser/screenshot', {
   method: 'POST'
 });
 ```
@@ -221,7 +221,7 @@ Update `~/.gemini/antigravity/mcp_config.json`:
       "command": "npx",
       "args": ["-y", "chrome-devtools-mcp@latest"],
       "env": {
-        "BROWSER_WS_ENDPOINT": "https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browsers/main-browser/endpoint"
+        "BROWSER_WS_ENDPOINT": "https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/devtools/browsers/main-browser/endpoint"
       }
     }
   }
@@ -235,8 +235,8 @@ File: `~/.gemini/scripts/tnf-devtools-connect.sh`
 ```bash
 #!/bin/bash
 
-# Fetch current Railway browser endpoint
-ENDPOINT_JSON=$(curl -s https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browsers/main-browser/endpoint)
+# Fetch current CloudRuntime browser endpoint
+ENDPOINT_JSON=$(curl -s https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/devtools/browsers/main-browser/endpoint)
 WS_ENDPOINT=$(echo "$ENDPOINT_JSON" | jq -r '.wsEndpoint')
 
 if [ "$WS_ENDPOINT" = "null" ] || [ -z "$WS_ENDPOINT" ]; then
@@ -244,7 +244,7 @@ if [ "$WS_ENDPOINT" = "null" ] || [ -z "$WS_ENDPOINT" ]; then
   exit 1
 fi
 
-echo "Connecting to Railway browser: $WS_ENDPOINT"
+echo "Connecting to CloudRuntime browser: $WS_ENDPOINT"
 
 # Export for MCP server
 export BROWSER_WS_ENDPOINT="$WS_ENDPOINT"
@@ -263,7 +263,7 @@ chmod +x ~/.gemini/scripts/tnf-devtools-connect.sh
 ### Test 1: Verify DevTools Bridge
 
 ```bash
-curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browsers
+curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/devtools/browsers
 ```
 
 Expected response:
@@ -285,7 +285,7 @@ Expected response:
 ### Test 2: Get Browser Endpoint
 
 ```bash
-curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browsers/main-browser/endpoint
+curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/devtools/browsers/main-browser/endpoint
 ```
 
 Expected response:
@@ -294,14 +294,14 @@ Expected response:
   "success": true,
   "browserId": "main-browser",
   "wsEndpoint": "ws://localhost:9222/devtools/browser/...",
-  "proxyEndpoint": "wss://tnf-cloud-sandbox-v2-production.up.railway.app/devtools/browser/main-browser"
+  "proxyEndpoint": "wss://tnf-cloud-sandbox-v2-production.thenewfuse.com/devtools/browser/main-browser"
 }
 ```
 
 ### Test 3: Screenshot API
 
 ```bash
-curl -X POST https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browsers/main-browser/screenshot --output screenshot.png
+curl -X POST https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/devtools/browsers/main-browser/screenshot --output screenshot.png
 ```
 
 Should download a PNG screenshot.
@@ -320,7 +320,7 @@ Expected: Should see `main-browser` listed
 "Connect to main-browser and show me the console messages"
 ```
 
-Expected: Should see real-time console output from the Railway browser
+Expected: Should see real-time console output from the CloudRuntime browser
 
 ## Usage in Antigravity
 
@@ -346,7 +346,7 @@ Once configured, you can use natural language:
 2. **Visibility**: Full DevTools access, not just screenshots
 3. **Debugging**: Can inspect console, network, performance in real-time
 4. **Scalability**: Easy to add more browsers
-5. **Railway Compatible**: HTTP REST + WebSocket (CDP is designed for this)
+5. **CloudRuntime Compatible**: HTTP REST + WebSocket (CDP is designed for this)
 
 ## Migration Path
 

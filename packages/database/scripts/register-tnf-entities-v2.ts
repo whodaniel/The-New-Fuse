@@ -378,7 +378,7 @@ async function main() {
       name: 'OpenClaw Cloud Primary',
       platform: 'OpenClaw',
       instance: 'cloud-primary',
-      environment: 'railway',
+      environment: 'cloud_runtime',
       status: 'offline',
     },
     {
@@ -395,7 +395,7 @@ async function main() {
       name: 'PicoClaw Tester',
       platform: 'PicoClaw',
       instance: 'tester',
-      environment: 'railway',
+      environment: 'cloud_runtime',
       status: 'active',
     },
     {
@@ -403,7 +403,7 @@ async function main() {
       name: 'PicoClaw Subject',
       platform: 'PicoClaw',
       instance: 'subject',
-      environment: 'railway',
+      environment: 'cloud_runtime',
       status: 'active',
     },
     {
@@ -411,7 +411,7 @@ async function main() {
       name: 'PicoClaw Perplexity',
       platform: 'PicoClaw',
       instance: 'perplexity',
-      environment: 'railway',
+      environment: 'cloud_runtime',
       status: 'active',
     },
 
@@ -421,7 +421,7 @@ async function main() {
       name: 'ZeroClaw Sandbox',
       platform: 'ZeroClaw',
       instance: 'sandbox',
-      environment: 'railway',
+      environment: 'cloud_runtime',
       status: 'offline',
     },
 

@@ -140,7 +140,7 @@ The IDE fix script patches the built Theia bundle to:
 
 1. **Deploy**: Follow Quick Fix commands above
 2. **Test**: Visit https://skideancer.thenewfuse.com/ and verify errors are gone
-3. **Monitor**: Check Railway logs for any new errors
+3. **Monitor**: Check CloudRuntime logs for any new errors
 
 ## Support
 

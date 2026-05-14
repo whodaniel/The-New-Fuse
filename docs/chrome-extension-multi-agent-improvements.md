@@ -22,7 +22,7 @@ coordinated image generation.
 
 **Problem:** The extension was injecting its content script on every website
 (`<all_urls>`), causing noisy console warnings on non-AI chat sites like
-Railway, GitHub, etc.
+CloudRuntime, GitHub, etc.
 
 **Solution:** Changed to targeted injection on known AI chat platforms only,
 with on-demand activation for unknown sites.

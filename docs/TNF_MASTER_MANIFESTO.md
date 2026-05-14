@@ -582,8 +582,8 @@ Federation "My AI Team"
 #### High Priority
 
 1. **SkIDEancer Reintegration**
-   - Check Railway dashboard for deployment status
-   - Fix 404 error on `https://tnf-ide-ide-production.up.railway.app`
+   - Check CloudRuntime dashboard for deployment status
+   - Fix 404 error on `https://tnf-ide-ide-production.thenewfuse.com`
    - Verify `whodaniel/skideancer-ide` repository
    - Add UI access points in Website and Tauri
 
@@ -710,7 +710,7 @@ pnpm run compile
 apps/tauri-desktop/src-tauri/
 ├── src/
 │   ├── lib.rs                 # Main entry, command registration
-│   ├── bridge.rs              # WebSocket bridge to Railway sandbox
+│   ├── bridge.rs              # WebSocket bridge to CloudRuntime sandbox
 │   ├── antigravity.rs         # Antigravity server HTTP client
 │   └── oagi.rs                # OAGI/Lux automation commands (280 lines)
 └── Cargo.toml                 # Dependencies (enigo, screenshots, etc.)
@@ -962,7 +962,7 @@ interface AGUIEvent {
 
 - [ ] Complete Node.js installation
 - [ ] Test all OAGI commands on Retina display
-- [ ] Fix SkIDEancer Railway 404 error
+- [ ] Fix SkIDEancer CloudRuntime 404 error
 - [ ] Build production Tauri app (DMG)
 - [ ] Record demo video of multi-agent conversation
 
@@ -1080,7 +1080,7 @@ pnpm run start
 - **3000**: TNF Relay Server (WebSocket)
 - **3001**: API Server
 - **6379**: Redis
-- **8080**: SkIDEancer IDE (Railway)
+- **8080**: SkIDEancer IDE (CloudRuntime)
 
 ### Environment Variables
 

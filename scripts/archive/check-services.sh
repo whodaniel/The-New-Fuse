@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Check Railway Service Status
+# Check CloudRuntime Service Status
 #
-echo "🔍 Checking Railway Service Status..."
+echo "🔍 Checking CloudRuntime Service Status..."
 echo "======================================"
 echo ""
 
@@ -30,11 +30,11 @@ for service_entry in "${SERVICE_PATHS[@]}"; do
 
     # Get service info
     echo "Status:"
-    railway status 2>&1 || echo "Could not get status"
+    cloud_runtime status 2>&1 || echo "Could not get status"
 
     echo ""
     echo "Recent logs (last 10 lines):"
-    railway logs --limit 10 2>&1 | tail -10 || echo "No logs available"
+    cloud_runtime logs --limit 10 2>&1 | tail -10 || echo "No logs available"
 
     echo ""
     sleep 1
@@ -47,4 +47,4 @@ echo "✅ Service check complete"
 echo ""
 echo "To view detailed logs for a service:"
 echo "  cd [service-path]"
-echo "  railway logs"
+echo "  cloud_runtime logs"

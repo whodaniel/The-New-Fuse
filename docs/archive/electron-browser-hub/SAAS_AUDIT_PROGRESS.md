@@ -107,7 +107,7 @@ The following files imported components that don't exist (`LandingHeader`,
 
 ## Deployment Status:
 
-Railway should automatically redeploy after each push. All commits have been
+CloudRuntime should automatically redeploy after each push. All commits have been
 pushed successfully.
 
 ---

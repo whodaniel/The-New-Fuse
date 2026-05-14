@@ -435,7 +435,7 @@ python3 agents/capability-packaging-agent.py
    - Troubleshooting guide
 
 3. **Deployment (Phase 9)**
-   - Railway staging
+   - CloudRuntime staging
    - Production deployment
    - Team training
    - Monitoring

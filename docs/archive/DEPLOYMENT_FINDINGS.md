@@ -1,23 +1,23 @@
-# Railway Deployment Findings - Nov 11, 2025
+# CloudRuntime Deployment Findings - Nov 11, 2025
 
 ## Current Status
 
 ### Frontend
 - **Status**: Was working 30 minutes ago (manual redeploy by user)
 - **Latest Attempt**: Failed 2 minutes ago after configuration changes
-- **Configuration**: Root directory `/apps/frontend`, railway.toml with dockerfilePath
+- **Configuration**: Root directory `/apps/frontend`, cloud_runtime.toml with dockerfilePath
 
 ### Backend Services (backend, api, api-gateway)
 - **Status**: All failing
 - **Error**: Build canceled during Docker image build (exit code 137)
-- **Configuration**: Root directories set, railway.toml with dockerfilePath
+- **Configuration**: Root directories set, cloud_runtime.toml with dockerfilePath
 
 ## Key Findings
 
 ### 1. Dockerfile Path Configuration Matters
-- **Removing dockerfilePath from railway.toml caused ALL services to fail**, including the previously working frontend
-- Railway's auto-detection with root directories set creates build context mismatches
-- Dockerfiles expect to build from repository root but Railway sets build context to subdirectory
+- **Removing dockerfilePath from cloud_runtime.toml caused ALL services to fail**, including the previously working frontend
+- CloudRuntime's auto-detection with root directories set creates build context mismatches
+- Dockerfiles expect to build from repository root but CloudRuntime sets build context to subdirectory
 
 ### 2. Build Cancellation Error (Exit Code 137)
 The backend services are failing with:
@@ -31,13 +31,13 @@ process "/bin/sh -c apk add --no-cache dumb-init curl" did not complete successf
 - Memory limit exceeded
 - Build timeout
 - Resource constraints
-- Railway infrastructure issue
+- CloudRuntime infrastructure issue
 
 ### 3. Frontend Success Pattern
 The user manually redeployed the frontend and it worked with:
 - Root directory: `/apps/frontend`
-- railway.toml with `dockerfilePath = "apps/frontend/Dockerfile"`
-- No railway.json file
+- cloud_runtime.toml with `dockerfilePath = "apps/frontend/Dockerfile"`
+- No cloud_runtime.json file
 
 ### 4. Build Stage Where Failure Occurs
 - Builds are reaching the "runner" stage (stage 3 of multi-stage Dockerfile)
@@ -46,35 +46,35 @@ The user manually redeployed the frontend and it worked with:
 
 ## Configuration History
 
-### Attempt 1: Remove Root railway.json ✅ Partially Successful
-- Deleted root railway.json forcing Nixpacks
-- Result: Railway stopped using Nixpacks for services with railway.toml
+### Attempt 1: Remove Root cloud_runtime.json ✅ Partially Successful
+- Deleted root cloud_runtime.json forcing Nixpacks
+- Result: CloudRuntime stopped using Nixpacks for services with cloud_runtime.toml
 
-### Attempt 2: Update railway.json Absolute Paths ❌ Failed
-- Changed dockerfilePath in service-specific railway.json to absolute paths
-- Result: Railway still defaulted to Nixpacks (not reading service configs without root directories)
+### Attempt 2: Update cloud_runtime.json Absolute Paths ❌ Failed
+- Changed dockerfilePath in service-specific cloud_runtime.json to absolute paths
+- Result: CloudRuntime still defaulted to Nixpacks (not reading service configs without root directories)
 
-### Attempt 3: Delete Service railway.json Files ❌ All Failed
-- Removed railway.json from backend services to match frontend pattern
+### Attempt 3: Delete Service cloud_runtime.json Files ❌ All Failed
+- Removed cloud_runtime.json from backend services to match frontend pattern
 - Result: All services failed (including frontend)
 
-### Attempt 4: Remove dockerfilePath from railway.toml ❌ All Failed
+### Attempt 4: Remove dockerfilePath from cloud_runtime.toml ❌ All Failed
 - Tried to match frontend's "auto-detected" builder
 - Result: All services failed with build context issues
 
 ### Attempt 5: Revert dockerfilePath (Current) ⏳ Pending
-- Restored dockerfilePath in all railway.toml files
+- Restored dockerfilePath in all cloud_runtime.toml files
 - Awaiting new deployment results
 
 ## Root Cause Analysis
 
 ### The Real Issue: Build Context vs Dockerfile Location
 
-When Railway has:
+When CloudRuntime has:
 - Root directory set to `apps/backend`
 - dockerfilePath set to `apps/backend/Dockerfile`
 
-Railway's behavior:
+CloudRuntime's behavior:
 1. **Build context**: Set to `apps/backend` directory
 2. **Dockerfile location**: Correctly found at `apps/backend/Dockerfile`
 3. **Problem**: Dockerfile tries to `COPY` from repository root (packages/, scripts/, etc.)
@@ -88,7 +88,7 @@ Railway's behavior:
 ## Recommended Next Steps
 
 ### Option A: Manual Redeploy (Immediate)
-1. In Railway UI, manually trigger redeploy for each backend service
+1. In CloudRuntime UI, manually trigger redeploy for each backend service
 2. This worked for frontend - may work for backend services
 3. Doesn't require code changes
 
@@ -98,14 +98,14 @@ Railway's behavior:
 3. Adjust all COPY commands to account for parent directory access
 
 ### Option C: Remove Root Directories (Risky)
-1. Remove root directory settings from all Railway services
-2. Keep absolute dockerfilePath in railway.toml
-3. Risk: Railway may not read service-specific railway.toml files
+1. Remove root directory settings from all CloudRuntime services
+2. Keep absolute dockerfilePath in cloud_runtime.toml
+3. Risk: CloudRuntime may not read service-specific cloud_runtime.toml files
 
 ### Option D: Use Build Args (Advanced)
 1. Add Docker BUILD_ARG to handle different build contexts
 2. Modify Dockerfiles to accept context path as variable
-3. Update railway.toml to pass appropriate build args
+3. Update cloud_runtime.toml to pass appropriate build args
 
 ## Why Exit Code 137?
 
@@ -113,7 +113,7 @@ The "context canceled" with exit code 137 suggests:
 1. **Not a file/path error** - Build reaches runner stage successfully
 2. **Resource issue** - Process killed due to memory/CPU limits
 3. **Timeout** - Build taking too long and being terminated
-4. **Railway limits** - Hitting platform resource constraints
+4. **CloudRuntime limits** - Hitting platform resource constraints
 
 ## Immediate Action Required
 
@@ -122,9 +122,9 @@ The "context canceled" with exit code 137 suggests:
 - api service
 - api-gateway service
 
-This mimics what worked for the frontend. If manual redeploys succeed, it suggests a Railway caching or timing issue rather than a configuration problem.
+This mimics what worked for the frontend. If manual redeploys succeed, it suggests a CloudRuntime caching or timing issue rather than a configuration problem.
 
 ---
 
 **Next Deployment**: Commit c18004150 - Reverted dockerfilePath removal
-**Status**: Waiting for Railway to build
+**Status**: Waiting for CloudRuntime to build

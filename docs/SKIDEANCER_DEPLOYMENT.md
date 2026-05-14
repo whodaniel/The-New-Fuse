@@ -20,7 +20,7 @@ The SkIDEancer IDE is deployed separately from the main TNF monorepo because:
 
 ## Deployment
 
-### Railway Configuration
+### CloudRuntime Configuration
 
 - **Service:** `skideancer-ide`
 - **Builder:** Dockerfile
@@ -31,7 +31,7 @@ The SkIDEancer IDE is deployed separately from the main TNF monorepo because:
 | File                          | Purpose                         |
 | ----------------------------- | ------------------------------- |
 | `Dockerfile`                  | Build and runtime configuration |
-| `railway.toml`                | Railway-specific settings       |
+| `cloud_runtime.toml`                | CloudRuntime-specific settings       |
 | `package.json`                | SkIDEancer dependencies (Yarn-based) |
 | `src-gen/backend/main.js`     | Production entry point          |
 | `src-gen/frontend/index.html` | Frontend entry point            |
@@ -46,12 +46,12 @@ The SkIDEancer IDE is deployed separately from the main TNF monorepo because:
 
 1. Wrong start command (`yarn ide start` instead of
    `node src-gen/backend/main.js`)
-2. Railway custom start command overriding Dockerfile CMD
+2. CloudRuntime custom start command overriding Dockerfile CMD
 
 **Solution:**
 
 - Updated Dockerfile CMD to use `node src-gen/backend/main.js`
-- Removed custom start command from Railway settings
+- Removed custom start command from CloudRuntime settings
 
 ### Issue: FrontendApplicationConfigProvider Error (Fixed v12)
 
@@ -79,7 +79,7 @@ preserving the singleton pattern.
 
 ```bash
 # Server
-PORT=3007  # Railway overrides dynamically
+PORT=3007  # CloudRuntime overrides dynamically
 
 # AI Providers
 OPENAI_API_KEY=sk-...
@@ -90,8 +90,8 @@ HUGGINGFACE_API_KEY=hf_...
 OLLAMA_HOST=http://localhost:11434
 
 # TNF Integration
-CLOUD_SANDBOX_URL=https://tnf-cloud-sandbox-production.up.railway.app
-CLOUD_SANDBOX_WS=wss://tnf-cloud-sandbox-production.up.railway.app/ws
+CLOUD_SANDBOX_URL=https://tnf-cloud-sandbox-production.thenewfuse.com
+CLOUD_SANDBOX_WS=wss://tnf-cloud-sandbox-production.thenewfuse.com/ws
 ```
 
 ## Version History

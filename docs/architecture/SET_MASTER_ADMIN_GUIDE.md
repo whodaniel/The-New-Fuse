@@ -40,7 +40,7 @@ Ensure your `.env` file (at project root) has:
 DATABASE_URL=postgresql://user:password@localhost:5433/thenewfuse
 ```
 
-Or for Railway/production:
+Or for Cloudflare/production:
 
 ```env
 DATABASE_URL=postgresql://user:password@host:port/database

@@ -8,6 +8,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Logger,
   Param,
   Patch,
@@ -158,6 +159,11 @@ export class WorkflowController {
           version: workflowData.version || 1,
           tags: workflowData.tags || [],
         },
+        triggers: Array.isArray(workflowData.triggers) ? workflowData.triggers : [],
+        variables:
+          workflowData.variables && typeof workflowData.variables === 'object'
+            ? workflowData.variables
+            : {},
         status: workflowData.status || 'DRAFT',
         creatorId: userId,
         usageCount: 0,
@@ -192,6 +198,12 @@ export class WorkflowController {
       if (updates.name) updateData.name = updates.name;
       if (updates.description !== undefined) updateData.description = updates.description;
       if (updates.status) updateData.status = updates.status;
+      if (updates.triggers !== undefined) {
+        updateData.triggers = Array.isArray(updates.triggers) ? updates.triggers : [];
+      }
+      if (updates.variables !== undefined && typeof updates.variables === 'object') {
+        updateData.variables = updates.variables;
+      }
       if (updates.nodes || updates.edges) {
         updateData.definition = {
           nodes: updates.nodes || [],
@@ -272,7 +284,14 @@ export class WorkflowController {
   @Post('execute')
   async executeWorkflow(@Body() body: any, @Res() res: Response): Promise<void> {
     try {
-      const { workflowId, definition, input = {} } = body;
+      const {
+        workflowId,
+        definition,
+        input = {},
+        triggerType = 'manual',
+        triggerId = null,
+        triggerSource = null,
+      } = body;
 
       if (!workflowId && !definition) {
         res.status(400).json({ error: 'Either workflowId or definition is required' });
@@ -307,6 +326,11 @@ export class WorkflowController {
         input: input,
         definition: targetDefinition, // Store definition used for this execution
         startedAt: new Date(),
+        metadata: {
+          triggerType,
+          triggerId,
+          triggerSource,
+        },
       } as any);
 
       this.logger.log(
@@ -323,6 +347,29 @@ export class WorkflowController {
       this.logger.error(`Failed to execute workflow: ${error}`);
       res.status(500).json({ error: 'Failed to execute workflow' });
     }
+  }
+
+  // POST /api/workflows/:id/webhook
+  @Post(':id/webhook')
+  async executeWorkflowViaWebhook(
+    @Param('id') workflowId: string,
+    @Body() payload: any,
+    @Headers() headers: Record<string, string | string[]>,
+    @Res() res: Response
+  ): Promise<void> {
+    await this.handleWorkflowWebhookExecution(workflowId, undefined, payload, headers, res);
+  }
+
+  // POST /api/workflows/:id/webhook/:triggerId
+  @Post(':id/webhook/:triggerId')
+  async executeWorkflowViaWebhookTrigger(
+    @Param('id') workflowId: string,
+    @Param('triggerId') triggerId: string,
+    @Body() payload: any,
+    @Headers() headers: Record<string, string | string[]>,
+    @Res() res: Response
+  ): Promise<void> {
+    await this.handleWorkflowWebhookExecution(workflowId, triggerId, payload, headers, res);
   }
 
   // GET /api/workflows/executions/:executionId
@@ -579,5 +626,246 @@ export class WorkflowController {
       this.logger.error(`Failed to create workflow from template: ${error}`);
       res.status(500).json({ error: 'Failed to create workflow from template' });
     }
+  }
+
+  private async handleWorkflowWebhookExecution(
+    workflowId: string,
+    requestedTriggerId: string | undefined,
+    payload: any,
+    headers: Record<string, string | string[]>,
+    res: Response
+  ): Promise<void> {
+    try {
+      const workflow = await this.db.workflows.findWorkflowById(workflowId);
+      if (!workflow) {
+        res.status(404).json({ error: 'Workflow not found' });
+        return;
+      }
+
+      const providedSecret =
+        this.readHeader(headers, 'x-workflow-secret') ||
+        this.readHeader(headers, 'x-webhook-secret') ||
+        this.readHeader(headers, 'x-tnf-webhook-secret');
+
+      const triggerValidation = this.resolveWebhookTrigger(
+        workflow.triggers,
+        requestedTriggerId,
+        payload,
+        providedSecret
+      );
+
+      if (!triggerValidation.allowed) {
+        res.status(triggerValidation.status).json({
+          error: triggerValidation.reason,
+          workflowId,
+          triggerId: requestedTriggerId || null,
+        });
+        return;
+      }
+
+      const targetDefinition = workflow.definition;
+      const nodes = (targetDefinition as any)?.nodes || [];
+      if (!Array.isArray(nodes) || nodes.length === 0) {
+        res.status(400).json({ error: 'Cannot execute workflow without nodes' });
+        return;
+      }
+
+      const triggerEnvelope = {
+        type: 'webhook',
+        triggerId: triggerValidation.triggerId || null,
+        triggerName: triggerValidation.triggerName || null,
+        source: this.readHeader(headers, 'x-workflow-source') || 'external',
+        receivedAt: new Date().toISOString(),
+      };
+
+      const execution = await this.db.workflows.createExecution({
+        workflowId,
+        status: 'RUNNING',
+        input: {
+          payload,
+          headers: this.pickHeaderSubset(headers),
+          __trigger: triggerEnvelope,
+        },
+        definition: targetDefinition,
+        startedAt: new Date(),
+        metadata: {
+          triggerType: 'webhook',
+          triggerId: triggerEnvelope.triggerId,
+          triggerName: triggerEnvelope.triggerName,
+          triggerSource: triggerEnvelope.source,
+        },
+      } as any);
+
+      void this.executionService.run(execution.id, targetDefinition, {
+        payload,
+        headers: this.pickHeaderSubset(headers),
+        __trigger: triggerEnvelope,
+      });
+
+      res.status(202).json({
+        executionId: execution.id,
+        status: 'RUNNING',
+        workflowId,
+        trigger: triggerEnvelope,
+      });
+    } catch (error: unknown) {
+      this.logger.error(`Failed to execute workflow ${workflowId} via webhook: ${error}`);
+      res.status(500).json({ error: 'Failed to execute workflow via webhook' });
+    }
+  }
+
+  private resolveWebhookTrigger(
+    rawTriggers: any,
+    requestedTriggerId: string | undefined,
+    payload: any,
+    providedSecret?: string
+  ): {
+    allowed: boolean;
+    status: number;
+    reason?: string;
+    triggerId?: string;
+    triggerName?: string;
+  } {
+    const triggers = Array.isArray(rawTriggers) ? rawTriggers : [];
+    const webhookTriggers = triggers.filter(
+      (trigger) => String(trigger?.type || '').toLowerCase() === 'webhook'
+    );
+
+    if (webhookTriggers.length === 0) {
+      return { allowed: true, status: 200 };
+    }
+
+    let selectedTrigger: any | undefined;
+    if (requestedTriggerId) {
+      selectedTrigger = webhookTriggers.find((trigger) =>
+        [trigger?.id, trigger?.name, trigger?.slug, trigger?.key]
+          .filter(Boolean)
+          .map((value) => String(value))
+          .includes(requestedTriggerId)
+      );
+      if (!selectedTrigger) {
+        return {
+          allowed: false,
+          status: 404,
+          reason: `Webhook trigger "${requestedTriggerId}" not found`,
+        };
+      }
+    } else {
+      selectedTrigger = webhookTriggers[0];
+    }
+
+    if (selectedTrigger?.enabled === false) {
+      return {
+        allowed: false,
+        status: 423,
+        reason: 'Webhook trigger is disabled',
+      };
+    }
+
+    const expectedSecret = this.getTriggerSecret(selectedTrigger);
+    if (expectedSecret && expectedSecret !== providedSecret) {
+      return {
+        allowed: false,
+        status: 401,
+        reason: 'Invalid webhook secret',
+      };
+    }
+
+    const conditions = Array.isArray(selectedTrigger?.conditions)
+      ? selectedTrigger.conditions
+      : [];
+    const conditionsMatched = conditions.every((condition) =>
+      this.evaluateTriggerCondition(condition, payload)
+    );
+    if (!conditionsMatched) {
+      return {
+        allowed: false,
+        status: 412,
+        reason: 'Webhook payload did not satisfy trigger conditions',
+      };
+    }
+
+    return {
+      allowed: true,
+      status: 200,
+      triggerId: selectedTrigger?.id ? String(selectedTrigger.id) : requestedTriggerId || 'webhook',
+      triggerName: selectedTrigger?.name ? String(selectedTrigger.name) : 'webhook',
+    };
+  }
+
+  private evaluateTriggerCondition(condition: any, payload: any): boolean {
+    const field = String(condition?.field || condition?.path || '').trim();
+    if (!field) return true;
+
+    const operator = String(condition?.operator || 'equals').toLowerCase();
+    const expectedValue = condition?.value;
+    const actualValue = this.readPath(payload, field);
+
+    switch (operator) {
+      case 'equals':
+      case 'eq':
+        return actualValue === expectedValue;
+      case 'not_equals':
+      case 'neq':
+        return actualValue !== expectedValue;
+      case 'contains':
+        return String(actualValue ?? '').includes(String(expectedValue ?? ''));
+      case 'exists':
+        return actualValue !== undefined && actualValue !== null;
+      case 'gt':
+        return Number(actualValue) > Number(expectedValue);
+      case 'gte':
+        return Number(actualValue) >= Number(expectedValue);
+      case 'lt':
+        return Number(actualValue) < Number(expectedValue);
+      case 'lte':
+        return Number(actualValue) <= Number(expectedValue);
+      default:
+        return actualValue === expectedValue;
+    }
+  }
+
+  private readPath(payload: any, fieldPath: string): any {
+    if (!fieldPath) return payload;
+    if (payload === undefined || payload === null) return undefined;
+
+    return fieldPath
+      .split('.')
+      .filter(Boolean)
+      .reduce((acc: any, key: string) => (acc === undefined || acc === null ? acc : acc[key]), payload);
+  }
+
+  private getTriggerSecret(trigger: any): string | undefined {
+    const secretCandidate =
+      trigger?.secret ||
+      trigger?.config?.secret ||
+      trigger?.configuration?.secret ||
+      trigger?.metadata?.secret;
+    if (!secretCandidate) return undefined;
+    return String(secretCandidate);
+  }
+
+  private readHeader(headers: Record<string, string | string[]>, name: string): string | undefined {
+    const raw = headers[name] ?? headers[name.toLowerCase()] ?? headers[name.toUpperCase()];
+    if (Array.isArray(raw)) return raw[0];
+    if (typeof raw === 'string') return raw;
+    return undefined;
+  }
+
+  private pickHeaderSubset(headers: Record<string, string | string[]>): Record<string, string> {
+    const keys = [
+      'content-type',
+      'user-agent',
+      'x-forwarded-for',
+      'x-workflow-source',
+      'x-workflow-event',
+      'x-request-id',
+    ];
+    const out: Record<string, string> = {};
+    for (const key of keys) {
+      const value = this.readHeader(headers, key);
+      if (value) out[key] = value;
+    }
+    return out;
   }
 }

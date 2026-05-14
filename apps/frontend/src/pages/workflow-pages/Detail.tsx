@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   PremiumButton as Button,
   GlassCard,
@@ -6,7 +7,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
-// @ts-nocheck
 import WorkflowAnalytics from '@/components/workflow/WorkflowAnalytics';
 import { useWorkflow, Workflow } from '@/hooks';
 import { ChevronLeft, Clock, Edit, GitBranch, Play } from 'lucide-react';

@@ -40,7 +40,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ context }) => {
     {
       icon: Globe,
       title: 'Cloud Deployment',
-      description: 'Deploy to Railway with containerized execution environments',
+      description: 'Deploy to CloudRuntime with containerized execution environments',
       color: 'text-indigo-500',
     },
     {

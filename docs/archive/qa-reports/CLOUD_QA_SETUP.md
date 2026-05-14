@@ -1,15 +1,15 @@
 # Cloud QA Setup - Complete Guide
 
-> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated from Railway to **GCP
+> **⚠️ CLOUD_RUNTIME IS NO LONGER USED.** TNF has migrated from CloudRuntime to **GCP
 > (Cloud Run) + Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash
 > (Redis)**. See `CLOUD_MIGRATION_BLUEPRINT.md` for current infrastructure.
-> Railway commands and URLs below are historical and should be replaced with
+> CloudRuntime commands and URLs below are historical and should be replaced with
 > GCP/Cloudflare equivalents.
 
 ## ✅ What's Been Set Up
 
 I've created a complete cloud-based QA testing system for **thenewfuse.com**.
-Everything runs on Railway - no local execution needed.
+Everything runs on CloudRuntime - no local execution needed.
 
 ### Files Created:
 
@@ -26,7 +26,7 @@ Everything runs on Railway - no local execution needed.
 
 ## 🚀 How to Use
 
-### Option 1: Simple Command (When Railway is Running)
+### Option 1: Simple Command (When CloudRuntime is Running)
 
 ```bash
 ./scripts/run-cloud-qa.sh
@@ -34,24 +34,24 @@ Everything runs on Railway - no local execution needed.
 
 This automatically:
 
-1. Checks Railway cloud browser status
+1. Checks CloudRuntime cloud browser status
 2. Triggers the comprehensive QA test
 3. Provides monitoring instructions
 
-### Option 2: Manual Railway Execution
+### Option 2: Manual CloudRuntime Execution
 
-If you have Railway CLI installed:
+If you have CloudRuntime CLI installed:
 
 ```bash
-# Install Railway CLI (one-time setup)
-npm install -g @railway/cli
+# Install CloudRuntime CLI (one-time setup)
+npm install -g @cloud_runtime/cli
 
 # Login and link (one-time setup)
-railway login
-railway link
+cloud_runtime login
+cloud_runtime link
 
 # Run QA test
-railway run node apps/cloud-sandbox/scripts/comprehensive_qa.js
+cloud_runtime run node apps/cloud-sandbox/scripts/comprehensive_qa.js
 ```
 
 ### Option 3: Monitor with Antigravity (Recommended)
@@ -59,7 +59,7 @@ railway run node apps/cloud-sandbox/scripts/comprehensive_qa.js
 Once a QA test is running, use **Antigravity** to monitor it:
 
 ```markdown
-"Connect to the Railway browser and show me what the QA test is currently
+"Connect to the CloudRuntime browser and show me what the QA test is currently
 testing"
 ```
 
@@ -96,9 +96,9 @@ The cloud QA automatically validates:
 
 ## 🎯 Current Status
 
-### ⚠️ Railway Service Status
+### ⚠️ CloudRuntime Service Status
 
-The Railway cloud sandbox needs to be deployed and running for the QA tests to
+The CloudRuntime cloud sandbox needs to be deployed and running for the QA tests to
 work.
 
 **Check if it's running**:
@@ -118,10 +118,10 @@ curl https://backend-241337102384.us-central1.run.app/api/browser/devtools
 }
 ```
 
-### If Railway Service is Not Running:
+### If CloudRuntime Service is Not Running:
 
-1. **Check Railway Dashboard**:
-   - Visit: https://railway.app
+1. **Check CloudRuntime Dashboard**:
+   - Visit: https://cloud_runtime.app
    - Check project: The-New-Fuse
    - Find service: `tnf-cloud-sandbox-v2`
    - Verify deployment status
@@ -130,12 +130,12 @@ curl https://backend-241337102384.us-central1.run.app/api/browser/devtools
 
    ```bash
    cd apps/cloud-sandbox
-   railway up
+   cloud_runtime up
    ```
 
 3. **Check Logs**:
    ```bash
-   railway logs
+   cloud_runtime logs
    ```
 
 ## 🔧 Configuration
@@ -163,7 +163,7 @@ const QA_CONFIG = {
 Edit `scripts/run-cloud-qa.sh`:
 
 ```bash
-RAILWAY_SANDBOX_URL="https://backend-241337102384.us-central1.run.app"
+CLOUD_RUNTIME_SANDBOX_URL="https://backend-241337102384.us-central1.run.app"
 TARGET_SITE="https://thenewfuse.com"
 ```
 
@@ -172,7 +172,7 @@ TARGET_SITE="https://thenewfuse.com"
 ### Real-Time Commands:
 
 ```markdown
-"Show me a screenshot of what the Railway browser is viewing"
+"Show me a screenshot of what the CloudRuntime browser is viewing"
 ```
 
 ```markdown
@@ -202,7 +202,7 @@ TARGET_SITE="https://thenewfuse.com"
 ### Debugging Specific Issues:
 
 ```markdown
-"Navigate the Railway browser to the page that failed and tell me why"
+"Navigate the CloudRuntime browser to the page that failed and tell me why"
 ```
 
 ```markdown
@@ -223,10 +223,10 @@ document.querySelectorAll('.error').length"
    - Interactive debugging
    - Visual screenshots
 
-2. **JSON Report on Railway**:
+2. **JSON Report on CloudRuntime**:
    - Saved to: `/tmp/qa_report_<timestamp>.json`
-   - SSH into Railway to access
-   - Or use Railway CLI: `railway run cat /tmp/qa_report_latest.json`
+   - SSH into CloudRuntime to access
+   - Or use CloudRuntime CLI: `cloud_runtime run cat /tmp/qa_report_latest.json`
 
 3. **Via API**:
    ```bash
@@ -247,17 +247,17 @@ document.querySelectorAll('.error').length"
 
 ### "Cloud browser not accessible"
 
-1. Check Railway service is running:
+1. Check CloudRuntime service is running:
 
    ```bash
-   railway status
+   cloud_runtime status
    ```
 
 2. Redeploy if needed:
 
    ```bash
    cd apps/cloud-sandbox
-   railway up
+   cloud_runtime up
    ```
 
 3. Check environment variables are set
@@ -270,10 +270,10 @@ document.querySelectorAll('.error').length"
 
 ### "QA test not starting"
 
-1. Check Railway logs:
+1. Check CloudRuntime logs:
 
    ```bash
-   railway logs --tail
+   cloud_runtime logs --tail
    ```
 
 2. Verify `comprehensive_qa.js` is deployed
@@ -281,7 +281,7 @@ document.querySelectorAll('.error').length"
 
 ## 🎉 Next Steps
 
-### When Railway Service is Running:
+### When CloudRuntime Service is Running:
 
 1. **Run the Cloud QA**:
 
@@ -292,7 +292,7 @@ document.querySelectorAll('.error').length"
 2. **Monitor with Antigravity**:
 
    ```markdown
-   "Connect to Railway browser and monitor the QA test in real-time"
+   "Connect to CloudRuntime browser and monitor the QA test in real-time"
    ```
 
 3. **Review Results**:
@@ -300,21 +300,21 @@ document.querySelectorAll('.error').length"
    "Show me the QA test summary and all critical issues found"
    ```
 
-### To Deploy Railway Service:
+### To Deploy CloudRuntime Service:
 
 If the cloud sandbox isn't deployed yet:
 
 ```bash
 cd apps/cloud-sandbox
-railway login
-railway link
-railway up
+cloud_runtime login
+cloud_runtime link
+cloud_runtime up
 ```
 
 Then verify it's working:
 
 ```bash
-curl https://$(railway status --json | jq -r .url)/api/browser/devtools
+curl https://$(cloud_runtime status --json | jq -r .url)/api/browser/devtools
 ```
 
 ## 📚 Documentation
@@ -337,7 +337,7 @@ curl https://$(railway status --json | jq -r .url)/api/browser/devtools
 
 **To use it**:
 
-1. Ensure Railway service is running
+1. Ensure CloudRuntime service is running
 2. Run `./scripts/run-cloud-qa.sh`
 3. Monitor with Antigravity
 4. Review results

@@ -31,7 +31,7 @@
 ## 2026-03-26 10:20:54 UTC
 
 - Note: 2026-03-26 post-deploy verification: deployed TheNewFuse service
-  (Railway deployment 3d4db2f6-1e56-43af-a243-f300e25f87d2) and reran strict TNF
+  (CloudRuntime deployment 3d4db2f6-1e56-43af-a243-f300e25f87d2) and reran strict TNF
   loop with no LIVE_AUDIT_EXTERNAL_ALLOWLIST. Live links: 51 checked, 0 broken,
   0 allowlisted. Semantic: 190 routes, 0 hard/network/sameAsRoot. Auth: 4/4
   passed. Scorecard overall passed.

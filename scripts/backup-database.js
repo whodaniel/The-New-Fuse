@@ -1,6 +1,6 @@
 /**
  * Database Backup Script
- * Exports all data from the Railway PostgreSQL database to JSON files
+ * Exports all data from the CloudRuntime PostgreSQL database to JSON files
  */
 
 import fs from 'fs';

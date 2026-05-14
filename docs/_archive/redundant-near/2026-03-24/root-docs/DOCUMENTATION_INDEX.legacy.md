@@ -85,7 +85,7 @@ Documentation has been organized into logical categories.
 
 - [MONOREPO-AUDIT-INDEX.md](MONOREPO-AUDIT-INDEX.md) - Monorepo audit index
 - [monorepo-audit-report.md](monorepo-audit-report.md) - Detailed audit report
-- [RAILWAY_BUILD_FIX_SUMMARY.md](RAILWAY_BUILD_FIX_SUMMARY.md) - Railway build
+- [CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md](CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md) - CloudRuntime build
   fixes
 
 ---
@@ -101,13 +101,13 @@ Documentation has been organized into logical categories.
 - [DEPLOYMENT_AUTOMATION_SUMMARY.md](DEPLOYMENT_AUTOMATION_SUMMARY.md) -
   Automation summary
 
-### Railway Deployment
+### CloudRuntime Deployment
 
-- [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md) - Railway deployment guide
-- [RAILWAY_DEPLOYMENT_GUIDE.md](RAILWAY_DEPLOYMENT_GUIDE.md) - Detailed Railway
+- [CLOUD_RUNTIME_DEPLOYMENT.md](CLOUD_RUNTIME_DEPLOYMENT.md) - CloudRuntime deployment guide
+- [CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md](CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md) - Detailed CloudRuntime
   guide
-- [RAILWAY_FAILURE_ANALYSIS.md](RAILWAY_FAILURE_ANALYSIS.md) - Failure analysis
-- [RAILWAY_BUILD_FIX_SUMMARY.md](RAILWAY_BUILD_FIX_SUMMARY.md) - Build fixes
+- [CLOUD_RUNTIME_FAILURE_ANALYSIS.md](CLOUD_RUNTIME_FAILURE_ANALYSIS.md) - Failure analysis
+- [CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md](CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md) - Build fixes
 
 ### Docker
 
@@ -299,7 +299,7 @@ Documentation has been organized into logical categories.
 - `PACKAGE_AUDIT_REPORT.txt` - Package audit
 - `components.txt` - Component list
 - `orphans.txt` - Orphan files
-- `railway_vars.txt` - Railway variables
+- `cloud_runtime_vars.txt` - CloudRuntime variables
 - `vars_frontend.txt` - Frontend variables
 
 ### Current Tasks

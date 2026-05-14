@@ -2,7 +2,7 @@
 
 /**
  * Environment Configuration Validation Script
- * Validates that the application is properly configured for Railway environment
+ * Validates that the application is properly configured for CloudRuntime environment
  */
 
 console.log('🚂 Validating Environment Configuration...\\n');
@@ -12,12 +12,12 @@ function validateEnvironment() {
     {
       name: 'DATABASE_URL',
       description: 'PostgreSQL connection URL',
-      example: 'postgresql://user:password@db.railway.internal:5432/database',
+      example: 'postgresql://user:password@db.cloud_runtime.internal:5432/database',
     },
     {
       name: 'REDIS_URL',
       description: 'Redis connection URL',
-      example: 'redis://redis.railway.internal:6379',
+      example: 'redis://redis.cloud_runtime.internal:6379',
     },
     {
       name: 'JWT_SECRET',
@@ -102,7 +102,7 @@ const result = validateEnvironment();
 if (!result.isValid) {
   console.error('\\n❌ Environment validation failed!');
   console.error('\\n💡 Troubleshooting Tips:');
-  console.error('   - Ensure you have linked PostgreSQL and Redis services in Railway');
+  console.error('   - Ensure you have linked PostgreSQL and Redis services in CloudRuntime');
   console.error('   - Check that all required environment variables are set');
   console.error(
     '   - Verify DATABASE_URL format: postgresql://username:password@host:port/database'
@@ -113,25 +113,25 @@ if (!result.isValid) {
 } else {
   console.log('\\n✅ Environment validation passed!');
   console.log('\\n💡 Next Steps:');
-  console.log('   1. Ensure all Railway services are properly linked');
-  console.log('   2. Set DATABASE_URL to your Railway PostgreSQL connection string');
-  console.log('   3. Set REDIS_URL to your Railway Redis connection string');
+  console.log('   1. Ensure all CloudRuntime services are properly linked');
+  console.log('   2. Set DATABASE_URL to your CloudRuntime PostgreSQL connection string');
+  console.log('   3. Set REDIS_URL to your CloudRuntime Redis connection string');
   console.log('   4. Set JWT_SECRET and JWT_REFRESH_SECRET to secure values (32+ chars)');
-  console.log('   5. Deploy with: railway up');
+  console.log('   5. Deploy with: cloud_runtime up');
 
-  // Test with mock Railway environment
-  console.log('\\n🧪 Testing Railway environment simulation...');
-  process.env.DATABASE_URL = 'postgresql://user:password@db.railway.internal:5432/database';
-  process.env.REDIS_URL = 'redis://redis.railway.internal:6379';
+  // Test with mock CloudRuntime environment
+  console.log('\\n🧪 Testing CloudRuntime environment simulation...');
+  process.env.DATABASE_URL = 'postgresql://user:password@db.cloud_runtime.internal:5432/database';
+  process.env.REDIS_URL = 'redis://redis.cloud_runtime.internal:6379';
   process.env.JWT_SECRET = 'very-long-secret-key-that-is-more-than-32-characters';
   process.env.JWT_REFRESH_SECRET = 'another-very-long-secret-key-for-refresh-tokens';
-  process.env.RAILWAY_ENVIRONMENT = 'true';
+  process.env.CLOUD_RUNTIME_ENVIRONMENT = 'true';
 
-  console.log('   ✅ Railway environment simulation successful!');
-  console.log('\\n📋 Railway Configuration Summary:');
+  console.log('   ✅ CloudRuntime environment simulation successful!');
+  console.log('\\n📋 CloudRuntime Configuration Summary:');
   console.log('   DATABASE_URL:', process.env.DATABASE_URL);
   console.log('   REDIS_URL:', process.env.REDIS_URL);
-  console.log('   RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT);
+  console.log('   CLOUD_RUNTIME_ENVIRONMENT:', process.env.CLOUD_RUNTIME_ENVIRONMENT);
 
   process.exit(0);
 }

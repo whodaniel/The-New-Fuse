@@ -18,7 +18,7 @@ class DeploymentManager {
   constructor() {
     this.platforms = {
       vercel: this.deployToVercel.bind(this),
-      railway: this.deployToRailway.bind(this),
+      cloud_runtime: this.deployToCloudRuntime.bind(this),
       docker: this.deployToDocker.bind(this),
       aws: this.deployToAWS.bind(this),
       heroku: this.deployToHeroku.bind(this),
@@ -133,15 +133,15 @@ class DeploymentManager {
     execSync(deployCmd, { cwd: rootDir, stdio: 'inherit' });
   }
 
-  async deployToRailway(environment) {
-    console.log('🚂 Deploying to Railway...');
+  async deployToCloudRuntime(environment) {
+    console.log('🚂 Deploying to CloudRuntime...');
 
-    // Railway uses railway.toml which is already configured
+    // CloudRuntime uses cloud_runtime.toml which is already configured
     // Just trigger deployment via CLI
-    const deployCmd = 'railway up';
+    const deployCmd = 'cloud_runtime up';
 
     execSync(deployCmd, { cwd: rootDir, stdio: 'inherit' });
-    console.log('✅ Railway deployment initiated!');
+    console.log('✅ CloudRuntime deployment initiated!');
   }
 
   async deployToDocker(environment) {

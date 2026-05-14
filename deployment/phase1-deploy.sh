@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The New Fuse - Phase 1 Deployment Script
-# Deploys to Vercel (Frontend) and Railway (Backend)
+# Deploys to Vercel (Frontend) and CloudRuntime (Backend)
 
 set -e
 
@@ -30,10 +30,10 @@ check_prerequisites() {
         npm install -g vercel
     fi
     
-    # Check if railway CLI is available
-    if ! command -v railway &> /dev/null; then
-        echo -e "${YELLOW}⚠️  Railway CLI not found. Installing...${NC}"
-        npm install -g @railway/cli
+    # Check if cloud_runtime CLI is available
+    if ! command -v cloud_runtime &> /dev/null; then
+        echo -e "${YELLOW}⚠️  CloudRuntime CLI not found. Installing...${NC}"
+        npm install -g @cloud_runtime/cli
     fi
     
     # Check if .env.production exists
@@ -94,29 +94,29 @@ build_and_test() {
     echo -e "${GREEN}✅ Local build and test completed${NC}"
 }
 
-# Deploy to Railway
-deploy_railway() {
-    echo -e "${BLUE}🚂 Deploying backend services to Railway...${NC}"
+# Deploy to CloudRuntime
+deploy_cloud_runtime() {
+    echo -e "${BLUE}🚂 Deploying backend services to CloudRuntime...${NC}"
     
-    # Check if logged in to Railway
-    if ! railway whoami &> /dev/null; then
-        echo -e "${YELLOW}🔐 Please login to Railway:${NC}"
-        railway login
+    # Check if logged in to CloudRuntime
+    if ! cloud_runtime whoami &> /dev/null; then
+        echo -e "${YELLOW}🔐 Please login to CloudRuntime:${NC}"
+        cloud_runtime login
     fi
     
     # Deploy services
-    echo "Deploying to Railway..."
-    railway up --detach
+    echo "Deploying to CloudRuntime..."
+    cloud_runtime up --detach
     
     # Wait for deployment
-    echo "Waiting for Railway deployment to complete..."
+    echo "Waiting for CloudRuntime deployment to complete..."
     sleep 30
     
     # Get service URLs
     echo "Getting service URLs..."
-    railway status
+    cloud_runtime status
     
-    echo -e "${GREEN}✅ Railway deployment completed${NC}"
+    echo -e "${GREEN}✅ CloudRuntime deployment completed${NC}"
 }
 
 # Deploy to Vercel
@@ -140,15 +140,15 @@ deploy_vercel() {
 verify_deployment() {
     echo -e "${BLUE}🔍 Verifying deployment...${NC}"
     
-    # Get Railway URLs (this would need to be customized based on actual Railway output)
+    # Get CloudRuntime URLs (this would need to be customized based on actual CloudRuntime output)
     echo "Please verify the following endpoints are working:"
     echo "- Frontend: Check Vercel deployment URL"
-    echo "- API Health: https://your-railway-api-url.railway.app/health"
-    echo "- A2A Health: https://your-railway-a2a-url.railway.app/health"
-    echo "- Sync Health: https://your-railway-sync-url.railway.app/health/sync"
-    echo "- MCP Health: https://your-railway-mcp-url.railway.app/health/mcp"
+    echo "- API Health: https://your-cloud_runtime-api-url.thenewfuse.com/health"
+    echo "- A2A Health: https://your-cloud_runtime-a2a-url.thenewfuse.com/health"
+    echo "- Sync Health: https://your-cloud_runtime-sync-url.thenewfuse.com/health/sync"
+    echo "- MCP Health: https://your-cloud_runtime-mcp-url.thenewfuse.com/health/mcp"
     
-    echo -e "${YELLOW}⚠️  Please update your Vercel environment variables with the actual Railway URLs${NC}"
+    echo -e "${YELLOW}⚠️  Please update your Vercel environment variables with the actual CloudRuntime URLs${NC}"
     echo -e "${GREEN}✅ Deployment verification guide displayed${NC}"
 }
 
@@ -157,7 +157,7 @@ main() {
     echo -e "${GREEN}🎯 The New Fuse - Phase 1 Deployment${NC}"
     echo "This script will deploy:"
     echo "- Frontend to Vercel"
-    echo "- Backend services to Railway"
+    echo "- Backend services to CloudRuntime"
     echo ""
     
     read -p "Continue with deployment? (y/N): " -n 1 -r
@@ -170,7 +170,7 @@ main() {
     check_prerequisites
     validate_monorepo
     build_and_test
-    deploy_railway
+    deploy_cloud_runtime
     deploy_vercel
     verify_deployment
     
@@ -178,7 +178,7 @@ main() {
     echo -e "${GREEN}🎉 Phase 1 deployment completed successfully!${NC}"
     echo ""
     echo "Next steps:"
-    echo "1. Update Vercel environment variables with Railway URLs"
+    echo "1. Update Vercel environment variables with CloudRuntime URLs"
     echo "2. Test all service endpoints"
     echo "3. Monitor performance and costs"
     echo "4. Prepare for Phase 2 optimization"

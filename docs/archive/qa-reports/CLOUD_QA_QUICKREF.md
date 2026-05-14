@@ -11,7 +11,7 @@
 ### Start Monitoring
 
 ```markdown
-"Connect to Railway browser and start monitoring the QA test"
+"Connect to CloudRuntime browser and start monitoring the QA test"
 ```
 
 ### Real-Time Updates
@@ -33,16 +33,16 @@
 network requests" "What's the page performance?"
 ```
 
-## Verify Railway is Running
+## Verify CloudRuntime is Running
 
 ```bash
-curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools
+curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/browser/devtools
 ```
 
-## Alternative: Run with Railway CLI
+## Alternative: Run with CloudRuntime CLI
 
 ```bash
-railway run node apps/cloud-sandbox/scripts/comprehensive_qa.js
+cloud_runtime run node apps/cloud-sandbox/scripts/comprehensive_qa.js
 ```
 
 ## Get Results

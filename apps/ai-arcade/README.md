@@ -178,7 +178,7 @@ The app expects:
 Optional:
 
 - `VITE_MUSIC_APP_URL` - URL launched by the Open Audio Deck card (recommended:
-  Railway production URL)
+  CloudRuntime production URL)
 
 ## Related Documentation
 

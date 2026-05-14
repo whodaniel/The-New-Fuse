@@ -42,13 +42,13 @@ gh run list --status failed --limit 20
 gh run watch
 ```
 
-### Railway Runtime Quick Checks
+### CloudRuntime Runtime Quick Checks
 
 ```bash
 # Service status, metrics, logs
-railway status --service=api-gateway
-railway metrics --service=api-gateway
-railway logs --service=api-gateway --tail 100
+cloud_runtime status --service=api-gateway
+cloud_runtime metrics --service=api-gateway
+cloud_runtime logs --service=api-gateway --tail 100
 ```
 
 ## Metrics Collection

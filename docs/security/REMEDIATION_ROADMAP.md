@@ -248,7 +248,7 @@ class JWTService {
 
 **Action Items:**
 - [ ] Enable PostgreSQL encryption at rest
-- [ ] Configure Railway database encryption
+- [ ] Configure CloudRuntime database encryption
 - [ ] Encrypt sensitive fields in application layer
 - [ ] Document encryption strategy
 

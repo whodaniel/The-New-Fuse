@@ -131,6 +131,44 @@ export interface RecordConnections {
 }
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
+const TIMELINE_API_BASES = ['/api/unified-ledger/timeline', '/api/timeline'] as const;
+const RECORD_API_BASES = [
+  '/api/unified-ledger/records',
+  '/api/unified-ledger/unified-ledger/records',
+] as const;
+const GOAL_API_BASES = ['/api/unified-ledger/goals', '/api/goals'] as const;
+const PLAN_API_BASES = ['/api/unified-ledger/plans', '/api/plans'] as const;
+
+function shouldFallbackRoute(status: number): boolean {
+  return status === 404 || status === 405 || status === 502 || status === 503 || status === 504;
+}
+
+async function apiFetchWithFallback(pathCandidates: readonly string[], init?: RequestInit): Promise<Response> {
+  if (pathCandidates.length === 0) {
+    throw new Error('No API path candidates provided');
+  }
+
+  const [primaryPath, ...fallbackPaths] = pathCandidates;
+  const primaryResponse = await apiFetch(primaryPath, init);
+  if (primaryResponse.ok || !shouldFallbackRoute(primaryResponse.status)) {
+    return primaryResponse;
+  }
+
+  for (const fallbackPath of fallbackPaths) {
+    const fallbackResponse = await apiFetch(fallbackPath, init);
+    if (fallbackResponse.ok || !shouldFallbackRoute(fallbackResponse.status)) {
+      return fallbackResponse;
+    }
+  }
+
+  return primaryResponse;
+}
+
+async function timelineApiFetch(path: string, init?: RequestInit): Promise<Response> {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const candidates = TIMELINE_API_BASES.map((base) => `${base}${normalizedPath}`);
+  return apiFetchWithFallback(candidates, init);
+}
 
 function getAuthHeaders(): Record<string, string> {
   if (typeof window === 'undefined') {
@@ -139,8 +177,15 @@ function getAuthHeaders(): Record<string, string> {
 
   const token =
     localStorage.getItem('auth_token') ||
+    localStorage.getItem('authToken') ||
     localStorage.getItem('accessToken') ||
-    localStorage.getItem('token');
+    localStorage.getItem('token') ||
+    localStorage.getItem('AUTH_TOKEN') ||
+    sessionStorage.getItem('auth_token') ||
+    sessionStorage.getItem('authToken') ||
+    sessionStorage.getItem('accessToken') ||
+    sessionStorage.getItem('token') ||
+    sessionStorage.getItem('AUTH_TOKEN');
 
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
@@ -167,6 +212,40 @@ async function parse<T>(res: Response): Promise<T> {
   return res.json();
 }
 
+function unwrapEnvelope<T>(payload: unknown): T {
+  if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
+    const candidate = (payload as Record<string, unknown>).data;
+    if (candidate !== undefined) {
+      return candidate as T;
+    }
+  }
+  return payload as T;
+}
+
+function unwrapArrayPayload<T>(payload: unknown, keys: string[] = []): T[] {
+  if (Array.isArray(payload)) return payload as T[];
+
+  if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
+    const record = payload as Record<string, unknown>;
+
+    for (const key of keys) {
+      const candidate = record[key];
+      if (Array.isArray(candidate)) return candidate as T[];
+    }
+
+    const data = record.data;
+    if (Array.isArray(data)) return data as T[];
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      for (const key of keys) {
+        const candidate = (data as Record<string, unknown>)[key];
+        if (Array.isArray(candidate)) return candidate as T[];
+      }
+    }
+  }
+
+  return [];
+}
+
 export async function listTasks(): Promise<LedgerRecord[]> {
   return parse<LedgerRecord[]>(await apiFetch('/api/unified-ledger/tasks'));
 }
@@ -181,7 +260,8 @@ export async function listRecords(params?: {
   if (params?.status) search.set('status', params.status);
   if (params?.q) search.set('q', params.q);
   const suffix = search.toString() ? `?${search.toString()}` : '';
-  return parse<LedgerRecord[]>(await apiFetch(`/api/unified-ledger/records${suffix}`));
+  const candidates = RECORD_API_BASES.map((base) => `${base}${suffix}`);
+  return parse<LedgerRecord[]>(await apiFetchWithFallback(candidates));
 }
 
 export async function getRecordConnections(
@@ -189,8 +269,23 @@ export async function getRecordConnections(
   owner?: string
 ): Promise<RecordConnections> {
   const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
+  const candidates = RECORD_API_BASES.map((base) => `${base}/${recordId}/connections${suffix}`);
   return parse<RecordConnections>(
-    await apiFetch(`/api/unified-ledger/records/${recordId}/connections${suffix}`)
+    await apiFetchWithFallback(candidates)
+  );
+}
+
+export async function updateRecord(
+  id: string,
+  patch: Partial<LedgerRecord> & Record<string, unknown>
+): Promise<LedgerRecord | null> {
+  const candidates = RECORD_API_BASES.map((base) => `${base}/${id}`);
+  return parse<LedgerRecord | null>(
+    await apiFetchWithFallback(candidates, {
+      method: 'PATCH',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(patch),
+    })
   );
 }
 
@@ -273,12 +368,14 @@ export async function listTimelineEvents(params?: {
   if (params?.dateTo) search.set('dateTo', params.dateTo);
   if (params?.timelineTrack) search.set('timelineTrack', params.timelineTrack);
   const suffix = search.toString() ? `?${search.toString()}` : '';
-  return parse<TimelineEvent[]>(await apiFetch(`/api/timeline/events${suffix}`));
+  const payload = await parse<unknown>(await timelineApiFetch(`/events${suffix}`));
+  return unwrapArrayPayload<TimelineEvent>(payload, ['events', 'items']);
 }
 
 export async function getTimelineEvent(id: string, userId?: string): Promise<TimelineEvent | null> {
   void userId;
-  return parse<TimelineEvent | null>(await apiFetch(`/api/timeline/events/${id}`));
+  const payload = await parse<unknown>(await timelineApiFetch(`/events/${id}`));
+  return unwrapEnvelope<TimelineEvent | null>(payload);
 }
 
 export async function createTimelineEvent(input: {
@@ -291,32 +388,34 @@ export async function createTimelineEvent(input: {
   timestamp?: string;
   payload?: Record<string, unknown>;
 }): Promise<TimelineEvent> {
-  return parse<TimelineEvent>(
-    await apiFetch('/api/timeline/events', {
+  const payload = await parse<unknown>(
+    await timelineApiFetch('/events', {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
     })
   );
+  return unwrapEnvelope<TimelineEvent>(payload);
 }
 
 export async function updateTimelineEvent(
   id: string,
   input: { userId?: string; actor?: string; timestamp?: string; payload?: Record<string, unknown> }
 ): Promise<TimelineEvent | null> {
-  return parse<TimelineEvent | null>(
-    await apiFetch(`/api/timeline/events/${id}`, {
+  const payload = await parse<unknown>(
+    await timelineApiFetch(`/events/${id}`, {
       method: 'PATCH',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
     })
   );
+  return unwrapEnvelope<TimelineEvent | null>(payload);
 }
 
 export async function deleteTimelineEvent(id: string, userId?: string): Promise<boolean> {
   void userId;
   return parse<boolean>(
-    await apiFetch(`/api/timeline/events/${id}`, {
+    await timelineApiFetch(`/events/${id}`, {
       method: 'DELETE',
     })
   );
@@ -334,7 +433,7 @@ export async function bootstrapPersonalTimeline(): Promise<{
     totalCount: number;
     events: TimelineEvent[];
   }>(
-    await apiFetch('/api/timeline/personal/bootstrap', {
+    await timelineApiFetch('/personal/bootstrap', {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify({}),
@@ -349,7 +448,7 @@ export async function importGithubTimelineNarrative(input?: {
   actor?: string;
 }): Promise<GithubTimelineImportResult> {
   return parse<GithubTimelineImportResult>(
-    await apiFetch('/api/timeline/github/import', {
+    await timelineApiFetch('/github/import', {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input || {}),
@@ -365,7 +464,8 @@ export async function getGithubNarrativeGraph(params?: {
   if (params?.ownerId) search.set('ownerId', params.ownerId);
   if (params?.timelineTrack) search.set('timelineTrack', params.timelineTrack);
   const suffix = search.toString() ? `?${search.toString()}` : '';
-  return parse<GithubNarrativeGraphResult>(await apiFetch(`/api/timeline/github/graph${suffix}`));
+  const payload = await parse<unknown>(await timelineApiFetch(`/github/graph${suffix}`));
+  return unwrapEnvelope<GithubNarrativeGraphResult>(payload);
 }
 
 export async function createGoal(input: {
@@ -374,8 +474,9 @@ export async function createGoal(input: {
   owner?: string;
   linkedRecordIds?: string[];
 }): Promise<GoalRecord> {
+  const candidates = GOAL_API_BASES.map((base) => base);
   return parse<GoalRecord>(
-    await apiFetch('/api/goals', {
+    await apiFetchWithFallback(candidates, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -385,12 +486,14 @@ export async function createGoal(input: {
 
 export async function listGoals(owner?: string): Promise<GoalRecord[]> {
   const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
-  return parse<GoalRecord[]>(await apiFetch(`/api/goals${suffix}`));
+  const candidates = GOAL_API_BASES.map((base) => `${base}${suffix}`);
+  return parse<GoalRecord[]>(await apiFetchWithFallback(candidates));
 }
 
 export async function getGoal(id: string, owner?: string): Promise<GoalRecord | null> {
   const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
-  return parse<GoalRecord | null>(await apiFetch(`/api/goals/${id}${suffix}`));
+  const candidates = GOAL_API_BASES.map((base) => `${base}/${id}${suffix}`);
+  return parse<GoalRecord | null>(await apiFetchWithFallback(candidates));
 }
 
 export async function linkGoalToRecord(
@@ -399,8 +502,9 @@ export async function linkGoalToRecord(
   actor = 'ui-user',
   owner?: string
 ): Promise<GoalRecord | null> {
+  const candidates = GOAL_API_BASES.map((base) => `${base}/${goalId}/link-record`);
   return parse<GoalRecord | null>(
-    await apiFetch(`/api/goals/${goalId}/link-record`, {
+    await apiFetchWithFallback(candidates, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify({ recordId, actor, owner }),
@@ -417,8 +521,9 @@ export async function addGoalMilestone(
     status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
   }
 ): Promise<GoalRecord | null> {
+  const candidates = GOAL_API_BASES.map((base) => `${base}/${goalId}/milestones`);
   return parse<GoalRecord | null>(
-    await apiFetch(`/api/goals/${goalId}/milestones`, {
+    await apiFetchWithFallback(candidates, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -436,8 +541,9 @@ export async function updateGoalMilestone(
     status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
   }
 ): Promise<GoalRecord | null> {
+  const candidates = GOAL_API_BASES.map((base) => `${base}/${goalId}/milestones/${milestoneId}`);
   return parse<GoalRecord | null>(
-    await apiFetch(`/api/goals/${goalId}/milestones/${milestoneId}`, {
+    await apiFetchWithFallback(candidates, {
       method: 'PATCH',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -451,8 +557,11 @@ export async function deleteGoalMilestone(
   owner?: string
 ): Promise<GoalRecord | null> {
   const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
+  const candidates = GOAL_API_BASES.map(
+    (base) => `${base}/${goalId}/milestones/${milestoneId}${suffix}`
+  );
   return parse<GoalRecord | null>(
-    await apiFetch(`/api/goals/${goalId}/milestones/${milestoneId}${suffix}`, {
+    await apiFetchWithFallback(candidates, {
       method: 'DELETE',
     })
   );
@@ -466,8 +575,9 @@ export async function createPlan(input: {
   linkedRecordIds?: string[];
   cadence?: { cycleDays?: number; reviewBpm?: number; progressPercent?: number };
 }): Promise<ProjectPlanRecord> {
+  const candidates = PLAN_API_BASES.map((base) => base);
   return parse<ProjectPlanRecord>(
-    await apiFetch('/api/plans', {
+    await apiFetchWithFallback(candidates, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -477,20 +587,23 @@ export async function createPlan(input: {
 
 export async function listPlans(owner?: string): Promise<ProjectPlanRecord[]> {
   const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
-  return parse<ProjectPlanRecord[]>(await apiFetch(`/api/plans${suffix}`));
+  const candidates = PLAN_API_BASES.map((base) => `${base}${suffix}`);
+  return parse<ProjectPlanRecord[]>(await apiFetchWithFallback(candidates));
 }
 
 export async function getPlan(id: string, owner?: string): Promise<ProjectPlanRecord | null> {
   const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
-  return parse<ProjectPlanRecord | null>(await apiFetch(`/api/plans/${id}${suffix}`));
+  const candidates = PLAN_API_BASES.map((base) => `${base}/${id}${suffix}`);
+  return parse<ProjectPlanRecord | null>(await apiFetchWithFallback(candidates));
 }
 
 export async function linkPlan(
   planId: string,
   input: { owner?: string; goalId?: string; recordId?: string; actor?: string }
 ): Promise<ProjectPlanRecord | null> {
+  const candidates = PLAN_API_BASES.map((base) => `${base}/${planId}/link`);
   return parse<ProjectPlanRecord | null>(
-    await apiFetch(`/api/plans/${planId}/link`, {
+    await apiFetchWithFallback(candidates, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),

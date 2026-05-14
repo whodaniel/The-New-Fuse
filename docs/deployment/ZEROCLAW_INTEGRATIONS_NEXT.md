@@ -1,14 +1,14 @@
 # ZeroClaw Additional Integrations
 
-## 1) Railway Webhook Relay (Primary + Failover)
+## 1) CloudRuntime Webhook Relay (Primary + Failover)
 
 Run a relay process that accepts automation webhooks and forwards to ZeroClaw.
 
 ```bash
-ZEROCLAW_PRIMARY_URL="https://zeroclaw-sandbox-production.up.railway.app" \
-ZEROCLAW_SECONDARY_URL="https://picoclaw-tester-v2-production.up.railway.app" \
+ZEROCLAW_PRIMARY_URL="https://zeroclaw-sandbox-production.thenewfuse.com" \
+ZEROCLAW_SECONDARY_URL="https://picoclaw-tester-v2-production.thenewfuse.com" \
 TNF_WEBHOOK_SECRET="set-a-shared-secret" \
-pnpm railway:zeroclaw:webhook-relay
+pnpm cloud_runtime:zeroclaw:webhook-relay
 ```
 
 Test it:
@@ -49,7 +49,7 @@ After vars are set, redeploy target service and validate `/api/status`.
 ### Fast setup command
 
 ```bash
-pnpm railway:zeroclaw:discord:setup <service> <discord_bot_token> [allow_from_csv] [enabled=true]
+pnpm cloud_runtime:zeroclaw:discord:setup <service> <discord_bot_token> [allow_from_csv] [enabled=true]
 ```
 
 ### Discord Portal steps
@@ -71,7 +71,7 @@ pnpm railway:zeroclaw:discord:setup <service> <discord_bot_token> [allow_from_cs
 ### Validation
 
 ```bash
-curl -sS https://<service>-production.up.railway.app/api/status | jq '.channels,.provider,.model'
+curl -sS https://<service>-production.thenewfuse.com/api/status | jq '.channels,.provider,.model'
 ```
 
 ## 4) Email Integration (Multi-Tenant Scale)

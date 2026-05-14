@@ -265,17 +265,17 @@ export default function TimelinePage() {
     if (!userId) {
       setEvents([]);
       setSelectedId(null);
+      setNarrativeGraph(null);
+      setLoading(false);
+      setGraphLoading(false);
       return;
     }
     setLoading(true);
     setGraphLoading(true);
+
     try {
       const rows = await listTimelineEvents(ownerScopeId ? { ownerId: ownerScopeId } : undefined);
-      const graph = await getGithubNarrativeGraph(
-        ownerScopeId ? { ownerId: ownerScopeId } : undefined
-      );
       setEvents(rows);
-      setNarrativeGraph(graph);
       if (rows.length && !selectedId) {
         setSelectedId(rows[0].id);
       } else if (rows.length === 0) {
@@ -283,9 +283,21 @@ export default function TimelinePage() {
       }
     } catch {
       toast.error('Failed to load your timeline');
-      setNarrativeGraph(null);
+      setEvents([]);
+      setSelectedId(null);
     } finally {
       setLoading(false);
+    }
+
+    try {
+      const graph = await getGithubNarrativeGraph(
+        ownerScopeId ? { ownerId: ownerScopeId } : undefined
+      );
+      setNarrativeGraph(graph);
+    } catch {
+      setNarrativeGraph(null);
+      toast.error('Timeline graph unavailable');
+    } finally {
       setGraphLoading(false);
     }
   };

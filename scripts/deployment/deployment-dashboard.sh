@@ -39,10 +39,10 @@ show_system_info() {
   echo -e "  Node Version: ${CYAN}$(node --version)${NC}"
   echo -e "  pnpm Version: ${CYAN}$(pnpm --version)${NC}"
 
-  if command -v railway &>/dev/null; then
-    echo -e "  Railway CLI:  ${GREEN}✓ Installed${NC}"
+  if command -v cloud_runtime &>/dev/null; then
+    echo -e "  CloudRuntime CLI:  ${GREEN}✓ Installed${NC}"
   else
-    echo -e "  Railway CLI:  ${RED}✗ Not installed${NC}"
+    echo -e "  CloudRuntime CLI:  ${RED}✗ Not installed${NC}"
   fi
 
   echo ""
@@ -99,33 +99,33 @@ show_deployment_history() {
   echo ""
 }
 
-show_railway_status() {
-  echo -e "${BOLD}${BLUE}Railway Services Status${NC}"
+show_cloud_runtime_status() {
+  echo -e "${BOLD}${BLUE}CloudRuntime Services Status${NC}"
   echo -e "${BLUE}$(printf '─%.0s' {1..80})${NC}"
 
-  if ! command -v railway &>/dev/null; then
-    echo -e "  ${YELLOW}Railway CLI not installed${NC}"
+  if ! command -v cloud_runtime &>/dev/null; then
+    echo -e "  ${YELLOW}CloudRuntime CLI not installed${NC}"
     echo ""
     return
   fi
 
-  if ! railway whoami &>/dev/null; then
-    echo -e "  ${YELLOW}Not authenticated with Railway${NC}"
+  if ! cloud_runtime whoami &>/dev/null; then
+    echo -e "  ${YELLOW}Not authenticated with CloudRuntime${NC}"
     echo ""
     return
   fi
 
-  if ! railway status &>/dev/null; then
-    echo -e "  ${YELLOW}Not linked to a Railway project${NC}"
+  if ! cloud_runtime status &>/dev/null; then
+    echo -e "  ${YELLOW}Not linked to a CloudRuntime project${NC}"
     echo ""
     return
   fi
 
-  # Get Railway status
+  # Get CloudRuntime status
   local services=("api-gateway" "backend" "frontend" "api")
 
   for service in "${services[@]}"; do
-    if railway status --service "$service" &>/dev/null; then
+    if cloud_runtime status --service "$service" &>/dev/null; then
       echo -e "  ${GREEN}✓${NC} $service: ${GREEN}Running${NC}"
     else
       echo -e "  ${RED}✗${NC} $service: ${RED}Not running${NC}"
@@ -206,17 +206,17 @@ show_quick_actions() {
   echo -e "  ${BOLD}Deployment Commands:${NC}"
   echo -e "    ${CYAN}./scripts/deployment/deploy-automated.sh${NC}     - Full automated deployment"
   echo -e "    ${CYAN}./scripts/deployment/validate-deployment.sh${NC}  - Pre-deployment validation"
-  echo -e "    ${CYAN}./scripts/deployment/railway-deploy.sh all${NC}   - Deploy all services to Railway"
+  echo -e "    ${CYAN}./scripts/deployment/cloud_runtime-deploy.sh all${NC}   - Deploy all services to CloudRuntime"
   echo ""
   echo -e "  ${BOLD}Utility Commands:${NC}"
   echo -e "    ${CYAN}./scripts/deployment/smoke-tests.sh${NC}          - Run smoke tests"
   echo -e "    ${CYAN}./scripts/deployment/db-backup.sh${NC}            - Create database backup"
   echo -e "    ${CYAN}./scripts/deployment/rollback.sh <id>${NC}        - Rollback deployment"
   echo ""
-  echo -e "  ${BOLD}Railway Commands:${NC}"
-  echo -e "    ${CYAN}railway status${NC}                                - Show Railway status"
-  echo -e "    ${CYAN}railway logs --service <name>${NC}                 - View service logs"
-  echo -e "    ${CYAN}railway open${NC}                                  - Open Railway dashboard"
+  echo -e "  ${BOLD}CloudRuntime Commands:${NC}"
+  echo -e "    ${CYAN}cloud_runtime status${NC}                                - Show CloudRuntime status"
+  echo -e "    ${CYAN}cloud_runtime logs --service <name>${NC}                 - View service logs"
+  echo -e "    ${CYAN}cloud_runtime open${NC}                                  - Open CloudRuntime dashboard"
   echo ""
 }
 
@@ -272,7 +272,7 @@ show_health_summary() {
 main() {
   show_banner
   show_system_info
-  show_railway_status
+  show_cloud_runtime_status
   show_deployment_history
   show_environment_status
   show_backup_status

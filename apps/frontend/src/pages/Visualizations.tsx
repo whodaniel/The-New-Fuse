@@ -1592,7 +1592,7 @@ const Visualizations: React.FC = () => {
               {liveMode
                 ? projectedMode
                   ? `Live heartbeat with projected super-cycle contract • pulse ${describeCadence(masterCadenceSeconds)}`
-                  : `Live Railway/Redis Master Clock state • heartbeat ${describeCadence(masterCadenceSeconds)}`
+                  : `Live CloudRuntime/Redis Master Clock state • heartbeat ${describeCadence(masterCadenceSeconds)}`
                 : 'Fallback concept mode • production telemetry unavailable on this client right now'}
             </span>
           </div>

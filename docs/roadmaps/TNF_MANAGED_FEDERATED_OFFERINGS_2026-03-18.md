@@ -62,7 +62,7 @@ orchestration gates, not just raw runtime hosting.
 
 1. Cloudflare
    - edge policy/gate APIs, queues, receipt/object storage
-2. Railway
+2. CloudRuntime
    - managed runtime workers and service templates
 3. Supabase
    - tenant/auth/ownership and audit query plane

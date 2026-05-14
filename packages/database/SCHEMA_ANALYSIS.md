@@ -266,8 +266,8 @@ Current preview features in schema:
 
 ### Binary Targets
 - Current: `["native"]`
-- **Issue**: May need platform-specific targets for Docker/Railway
-- **Recommendation**: Add `["native", "debian-openssl-3.0.x"]` for Railway
+- **Issue**: May need platform-specific targets for Docker/CloudRuntime
+- **Recommendation**: Add `["native", "debian-openssl-3.0.x"]` for CloudRuntime
 
 ## 5. ADDITIONAL SCHEMA ISSUES
 

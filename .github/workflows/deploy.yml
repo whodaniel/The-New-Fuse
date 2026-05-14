@@ -1,8 +1,8 @@
-# ⚠️ DEPRECATED — Railway is no longer used.
+# ⚠️ DEPRECATED — CloudRuntime is no longer used.
 # TNF has migrated to GCP (Cloud Run) + Cloudflare (Pages/Workers) + Supabase + Upstash.
 # See CLOUD_MIGRATION_BLUEPRINT.md for current deployment instructions.
 # This workflow is preserved for historical reference only.
-name: Deploy to Railway (LEGACY — DEPRECATED, Railway no longer used)
+name: Deploy to CloudRuntime (LEGACY — DEPRECATED, CloudRuntime no longer used)
 
 on:
   workflow_dispatch:
@@ -25,7 +25,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  CLOUD_RUNTIME_TOKEN: ${{ secrets.CLOUD_RUNTIME_TOKEN }}
   PNPM_VERSION: 10.22.0
 
 jobs:
@@ -132,7 +132,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile.railway
+          file: ./Dockerfile.cloud_runtime
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -141,8 +141,8 @@ jobs:
           build-args: |
             SERVICE_PATH=${{ matrix.service.path }}
 
-  deploy-to-railway:
-    name: Deploy to Railway
+  deploy-to-cloud_runtime:
+    name: Deploy to CloudRuntime
     needs: [pre-deploy-checks, build-images]
     runs-on: ubuntu-latest
     environment:
@@ -169,28 +169,28 @@ jobs:
             echo "deploy=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Install Railway CLI
+      - name: Install CloudRuntime CLI
         if: steps.should-deploy.outputs.deploy == 'true'
-        run: npm install -g @railway/cli
+        run: npm install -g @cloud_runtime/cli
 
-      - name: Deploy ${{ matrix.service }} to Railway
+      - name: Deploy ${{ matrix.service }} to CloudRuntime
         if: steps.should-deploy.outputs.deploy == 'true'
         id: deploy
         run: |
-          railway up --service=${{ matrix.service }} --detach
-          DEPLOYMENT_URL=$(railway status --service=${{ matrix.service }} --json | jq -r '.url')
+          cloud_runtime up --service=${{ matrix.service }} --detach
+          DEPLOYMENT_URL=$(cloud_runtime status --service=${{ matrix.service }} --json | jq -r '.url')
           echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          CLOUD_RUNTIME_TOKEN: ${{ secrets.CLOUD_RUNTIME_TOKEN }}
 
       - name: Wait for deployment to complete
         if: steps.should-deploy.outputs.deploy == 'true'
         run: |
           echo "Waiting for ${{ matrix.service }} to deploy..."
-          railway up --service=${{ matrix.service }} --detach
+          cloud_runtime up --service=${{ matrix.service }} --detach
 
           for i in {1..30}; do
-            STATUS=$(railway status --service=${{ matrix.service }} --json | jq -r '.status')
+            STATUS=$(cloud_runtime status --service=${{ matrix.service }} --json | jq -r '.status')
             echo "Current status: $STATUS"
             if [ "$STATUS" == "SUCCESS" ]; then
               echo "Deployment successful!"
@@ -205,23 +205,23 @@ jobs:
           echo "Deployment timed out."
           exit 1
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          CLOUD_RUNTIME_TOKEN: ${{ secrets.CLOUD_RUNTIME_TOKEN }}
 
       - name: Capture deployment logs on failure
         if: failure() && steps.should-deploy.outputs.deploy == 'true'
         run: |
-          railway logs --service=${{ matrix.service }} > railway-logs-${{ matrix.service }}.log
+          cloud_runtime logs --service=${{ matrix.service }} > cloud_runtime-logs-${{ matrix.service }}.log
 
       - name: Upload deployment logs on failure
         if: failure() && steps.should-deploy.outputs.deploy == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: railway-deploy-logs-${{ github.run_id }}
-          path: railway-logs-${{ matrix.service }}.log
+          name: cloud_runtime-deploy-logs-${{ github.run_id }}
+          path: cloud_runtime-logs-${{ matrix.service }}.log
 
   health-checks:
     name: Post-Deployment Health Checks
-    needs: [pre-deploy-checks, deploy-to-railway]
+    needs: [pre-deploy-checks, deploy-to-cloud_runtime]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -249,18 +249,18 @@ jobs:
             echo "check=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Install Railway CLI
+      - name: Install CloudRuntime CLI
         if: steps.should-check.outputs.check == 'true'
-        run: npm install -g @railway/cli
+        run: npm install -g @cloud_runtime/cli
 
       - name: Get service URL
         if: steps.should-check.outputs.check == 'true'
         id: get-url
         run: |
-          SERVICE_URL=$(railway status --service=${{ matrix.service.name }} --json | jq -r '.url')
+          SERVICE_URL=$(cloud_runtime status --service=${{ matrix.service.name }} --json | jq -r '.url')
           echo "service_url=$SERVICE_URL" >> $GITHUB_OUTPUT
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          CLOUD_RUNTIME_TOKEN: ${{ secrets.CLOUD_RUNTIME_TOKEN }}
 
       - name: Health check for ${{ matrix.service.name }}
         if: steps.should-check.outputs.check == 'true'
@@ -292,9 +292,9 @@ jobs:
         if: failure() && steps.should-check.outputs.check == 'true'
         run: |
           echo "Health check failed, initiating rollback..."
-          railway rollback --service=${{ matrix.service.name }}
+          cloud_runtime rollback --service=${{ matrix.service.name }}
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          CLOUD_RUNTIME_TOKEN: ${{ secrets.CLOUD_RUNTIME_TOKEN }}
 
   post-deployment-tests:
     name: Post-Deployment Tests
@@ -309,14 +309,14 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
+      - name: Install CloudRuntime CLI
+        run: npm install -g @cloud_runtime/cli
 
       - name: Run smoke tests
         run: |
           # Get service URLs
-          API_URL=$(railway status --service=api --json | jq -r '.url')
-          FRONTEND_URL=$(railway status --service=frontend --json | jq -r '.url')
+          API_URL=$(cloud_runtime status --service=api --json | jq -r '.url')
+          FRONTEND_URL=$(cloud_runtime status --service=frontend --json | jq -r '.url')
 
           echo "Testing API at: $API_URL"
           echo "Testing Frontend at: $FRONTEND_URL"
@@ -329,7 +329,7 @@ jobs:
 
           echo "Smoke tests passed!"
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          CLOUD_RUNTIME_TOKEN: ${{ secrets.CLOUD_RUNTIME_TOKEN }}
 
   notify:
     name: Send Notifications

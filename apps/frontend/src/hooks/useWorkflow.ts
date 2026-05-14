@@ -231,6 +231,31 @@ export const useWorkflow = () => {
     [currentWorkflow]
   );
 
+  // Execute a workflow via webhook endpoint
+  const executeWorkflowViaWebhook = useCallback(
+    async (
+      workflowId: string,
+      payload: Record<string, any>,
+      options?: { triggerId?: string; secret?: string; source?: string }
+    ) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const result = await workflowService.executeWorkflowViaWebhook(workflowId, payload, options);
+        // Refresh executions list so the UI reflects webhook-triggered runs.
+        const fetchedExecutions = await workflowService.getExecutions(workflowId);
+        setExecutions(fetchedExecutions);
+        return result;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to execute webhook workflow'));
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
   return {
     workflows,
     currentWorkflow,
@@ -248,6 +273,7 @@ export const useWorkflow = () => {
     getTemplates,
     createFromTemplate,
     publishWorkflow,
+    executeWorkflowViaWebhook,
   };
 };
 

@@ -221,7 +221,7 @@ export const LandingPageRevolution = () => {
                   Deploy Anywhere
                 </h3>
                 <p className="text-sm sm:text-base lg:text-lg text-gray-400 leading-relaxed">
-                  Docker Compose. Kubernetes. Railway. One command to production. Zero vendor
+                  Docker Compose. Kubernetes. CloudRuntime. One command to production. Zero vendor
                   lock-in.
                 </p>
               </div>

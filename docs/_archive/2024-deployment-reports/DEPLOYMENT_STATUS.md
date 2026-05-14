@@ -1,45 +1,45 @@
-# Railway Deployment Status Report
+# CloudRuntime Deployment Status Report
 
 ## Overview
-All SAAS services have been successfully deployed to Railway platform.
+All SAAS services have been successfully deployed to CloudRuntime platform.
 
 ## Deployed Services
 
 ### Core API Services ✅
 - **apps/api** - Main API service
-  - Status: ✅ Deployed and linked to Railway
+  - Status: ✅ Deployed and linked to CloudRuntime
   - Configuration: Node.js 20, pnpm, nixpacks
   
 - **apps/backend** - Backend service
-  - Status: ✅ Deployed and linked to Railway
+  - Status: ✅ Deployed and linked to CloudRuntime
   - Configuration: Node.js 20, pnpm, nixpacks
   
 - **apps/api-gateway** - API Gateway service
-  - Status: ✅ Deployed and linked to Railway
+  - Status: ✅ Deployed and linked to CloudRuntime
   - Configuration: Node.js 20, pnpm, nixpacks
 
 ### Frontend Applications ✅
 - **apps/frontend** - Main frontend application
-  - Status: ✅ Deployed and linked to Railway
+  - Status: ✅ Deployed and linked to CloudRuntime
   - Configuration: Node.js 20, pnpm, nixpacks
 
 ### Supporting Services ✅
 - **apps/relay-server** - Relay communication service
-  - Status: ✅ Deployed and linked to Railway
+  - Status: ✅ Deployed and linked to CloudRuntime
   - Configuration: Node.js 20, pnpm, nixpacks
   
 - **apps/browser-hub** - Browser automation hub
-  - Status: ✅ Deployed and linked to Railway
+  - Status: ✅ Deployed and linked to CloudRuntime
   - Configuration: Node.js 20, pnpm, nixpacks
   
 - **apps/mcp-servers** - MCP (Model Context Protocol) servers
-  - Status: ✅ Deployed and linked to Railway
+  - Status: ✅ Deployed and linked to CloudRuntime
   - Configuration: Node.js 20, pnpm, nixpacks
 
 ## Deployment Configuration
 
 Each service includes:
-- `railway.toml` - Railway-specific deployment configuration
+- `cloud_runtime.toml` - CloudRuntime-specific deployment configuration
 - `nixpacks.toml` - Build configuration for nixpacks
 - Environment variables setup
 - Health check endpoints
@@ -80,17 +80,17 @@ To check deployment status:
 
 # Check individual service
 cd apps/[service-name]
-railway status
-railway logs
+cloud_runtime status
+cloud_runtime logs
 ```
 
-## Railway Project Information
+## CloudRuntime Project Information
 
 - **Project**: outstanding-amazement
 - **Environment**: production
 - **Services**: 7 total services deployed
-- **Build Logs**: Available via Railway dashboard
+- **Build Logs**: Available via CloudRuntime dashboard
 
 ---
 *Generated on: $(date)*
-*All services successfully deployed to Railway platform*
+*All services successfully deployed to CloudRuntime platform*

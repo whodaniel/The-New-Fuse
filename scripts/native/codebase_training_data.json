@@ -37066,32 +37066,32 @@
   },
   {
     "source": "api",
-    "target": "File: railway.config.ts",
+    "target": "File: cloud_runtime.config.ts",
     "type": "parent-child"
   },
   {
-    "source": "File: railway.config.ts",
-    "target": "Class: RailwayConfigService",
+    "source": "File: cloud_runtime.config.ts",
+    "target": "Class: CloudRuntimeConfigService",
     "type": "parent-child"
   },
   {
-    "source": "Class: RailwayConfigService",
+    "source": "Class: CloudRuntimeConfigService",
     "target": "getDatabaseUrl()",
     "type": "parent-child"
   },
   {
-    "source": "Class: RailwayConfigService",
+    "source": "Class: CloudRuntimeConfigService",
     "target": "getRedisUrl()",
     "type": "parent-child"
   },
   {
-    "source": "Class: RailwayConfigService",
-    "target": "getRailwayConfig()",
+    "source": "Class: CloudRuntimeConfigService",
+    "target": "getCloudRuntimeConfig()",
     "type": "parent-child"
   },
   {
-    "source": "Class: RailwayConfigService",
-    "target": "validateRailwayEnvironment()",
+    "source": "Class: CloudRuntimeConfigService",
+    "target": "validateCloudRuntimeEnvironment()",
     "type": "parent-child"
   },
   {

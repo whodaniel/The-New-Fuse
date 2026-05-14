@@ -64,16 +64,16 @@ postgresql://user:pass@host:5432/db?schema=public&connection_limit=30&pool_timeo
 
 ## Database Connection Setup
 
-### Railway / Heroku / AWS RDS
+### CloudRuntime / Heroku / AWS RDS
 
 Most managed database services provide a `DATABASE_URL`. Simply copy it and add the recommended parameters:
 
 ```bash
-# Original Railway URL
-DATABASE_URL="postgresql://postgres:password@containers-us-west-123.railway.app:1234/railway"
+# Original CloudRuntime URL
+DATABASE_URL="postgresql://postgres:password@containers-us-west-123.thenewfuse.com:1234/cloud_runtime"
 
 # Enhanced with parameters
-DATABASE_URL="postgresql://postgres:password@containers-us-west-123.railway.app:1234/railway?connection_limit=20&pool_timeout=10&sslmode=require"
+DATABASE_URL="postgresql://postgres:password@containers-us-west-123.thenewfuse.com:1234/cloud_runtime?connection_limit=20&pool_timeout=10&sslmode=require"
 ```
 
 ### Connection Pooling with PgBouncer
@@ -517,8 +517,8 @@ await drizzleService.cleanupOldLogs(30);
 Use environment variables or secret management:
 
 ```bash
-# Railway
-railway variables set DATABASE_URL=postgresql://...
+# CloudRuntime
+cloud_runtime variables set DATABASE_URL=postgresql://...
 
 # Heroku
 heroku config:set DATABASE_URL=postgresql://...

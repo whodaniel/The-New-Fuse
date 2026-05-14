@@ -1,6 +1,6 @@
-# Deploy The New Fuse to Railway - Step-by-Step Guide
+# Deploy The New Fuse to CloudRuntime - Step-by-Step Guide
 
-**Status**: ✅ Railway CLI installed and you're logged in!
+**Status**: ✅ CloudRuntime CLI installed and you're logged in!
 
 ## Quick Deploy (Follow These Steps)
 
@@ -9,22 +9,22 @@
 cd .
 ```
 
-### Step 2: Create Railway Project
+### Step 2: Create CloudRuntime Project
 
-**Option A: Use Railway Dashboard (Recommended)**
-1. Go to https://railway.app/new
+**Option A: Use CloudRuntime Dashboard (Recommended)**
+1. Go to https://cloud_runtime.app/new
 2. Click "Deploy from GitHub repo" or "Empty Project"
 3. Name it "the-new-fuse"
 
 **Option B: Use CLI**
 ```bash
-railway init
+cloud_runtime init
 # Follow prompts to create new project
 ```
 
-### Step 3: Add Database in Railway Dashboard
+### Step 3: Add Database in CloudRuntime Dashboard
 
-1. Open your project: https://railway.app/dashboard
+1. Open your project: https://cloud_runtime.app/dashboard
 2. Click "+ New" → "Database" → "PostgreSQL"
 3. Wait for it to provision (takes ~30 seconds)
 
@@ -34,10 +34,10 @@ railway init
 # Navigate to API directory
 cd apps/api
 
-# Deploy to Railway
-railway up
+# Deploy to CloudRuntime
+cloud_runtime up
 
-# Railway will:
+# CloudRuntime will:
 # - Detect the Dockerfile
 # - Build the image
 # - Deploy the service
@@ -52,15 +52,15 @@ cd ../..
 # Navigate to Frontend directory
 cd apps/frontend
 
-# Deploy to Railway
-railway up
+# Deploy to CloudRuntime
+cloud_runtime up
 
 cd ../..
 ```
 
 ### Step 6: Configure Environment Variables
 
-In Railway Dashboard (https://railway.app/dashboard):
+In CloudRuntime Dashboard (https://cloud_runtime.app/dashboard):
 
 **For API Service:**
 1. Click on the API service
@@ -80,15 +80,15 @@ In Railway Dashboard (https://railway.app/dashboard):
    ```
    NODE_ENV=production
    PORT=3000
-   VITE_API_URL=<your-api-service-url-from-railway>
+   VITE_API_URL=<your-api-service-url-from-cloud_runtime>
    ```
 
 ### Step 7: Get Your URLs
 
-After deployment, Railway will give you URLs for each service:
+After deployment, CloudRuntime will give you URLs for each service:
 
-- API Service: `https://<your-api-service>.up.railway.app`
-- Frontend: `https://<your-frontend>.up.railway.app`
+- API Service: `https://<your-api-service>.thenewfuse.com`
+- Frontend: `https://<your-frontend>.thenewfuse.com`
 
 Visit the Frontend URL to see your app!
 
@@ -101,7 +101,7 @@ If you want the absolute minimum to get started:
 2. Frontend (UI)
 
 **Plus:**
-- PostgreSQL database (from Railway)
+- PostgreSQL database (from CloudRuntime)
 
 This gives you a working application with less complexity.
 
@@ -109,27 +109,27 @@ This gives you a working application with less complexity.
 
 ### Check Build Logs
 ```bash
-railway logs --service api
-railway logs --service frontend
+cloud_runtime logs --service api
+cloud_runtime logs --service frontend
 ```
 
 ### Check Service Status
 ```bash
-railway status
+cloud_runtime status
 ```
 
 ### Redeploy if needed
 ```bash
 cd apps/api
-railway up --detach
+cloud_runtime up --detach
 ```
 
-## Alternative: Simplified Railway Deployment Script
+## Alternative: Simplified CloudRuntime Deployment Script
 
 I've created a script for you. Run this:
 
 ```bash
-./railway-simple-deploy.sh
+./cloud_runtime-simple-deploy.sh
 ```
 
 This script will:
@@ -141,13 +141,13 @@ This script will:
 ## What's Already Done
 
 ✅ Dockerfiles created and optimized
-✅ Railway configuration files updated
+✅ CloudRuntime configuration files updated
 ✅ All services configured for production
-✅ You're logged into Railway
+✅ You're logged into CloudRuntime
 
 ## What You Need to Do
 
-1. **Create Railway project** (Step 2)
+1. **Create CloudRuntime project** (Step 2)
 2. **Add PostgreSQL** (Step 3)
 3. **Deploy API** (Step 4)
 4. **Deploy Frontend** (Step 5)
@@ -176,16 +176,16 @@ Your current setup will likely use:
 
 ## Need Help?
 
-1. Check Railway status: `railway status`
-2. View logs: `railway logs`
-3. Open dashboard: `railway open`
-4. Railway docs: https://docs.railway.app
+1. Check CloudRuntime status: `cloud_runtime status`
+2. View logs: `cloud_runtime logs`
+3. Open dashboard: `cloud_runtime open`
+4. CloudRuntime docs: https://docs.thenewfuse.com
 
 ## Next: Run This Command
 
 ```bash
 cd .
-railway init
+cloud_runtime init
 ```
 
 Then follow Steps 3-6 above!

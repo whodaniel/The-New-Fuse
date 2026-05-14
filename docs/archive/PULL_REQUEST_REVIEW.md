@@ -15,7 +15,7 @@ Reviewed **7 open pull requests** with branches ranging from 1 to 104 commits. A
 | PR | Status | Recommendation | Priority |
 |---|--------|----------------|----------|
 | **fix-mcp-core-health-check** | ✅ Fresh (Oct 26) | **MERGE NOW** | HIGH |
-| **fix-railway-port-config** | ✅ Fresh (Oct 26) | **MERGE NOW** | HIGH |
+| **fix-cloud_runtime-port-config** | ✅ Fresh (Oct 26) | **MERGE NOW** | HIGH |
 | **feature/comprehensive-reorganization** | ✅ Recent (Oct 22) | Review & Merge | MEDIUM |
 | **feature/agent-system-integration** | ⚠️ Stale (Sep 26) | Needs Testing | MEDIUM |
 | **feature/infrastructure-hardening** | ⚠️ Stale (Sep 22) | Needs Review | MEDIUM |
@@ -35,7 +35,7 @@ Reviewed **7 open pull requests** with branches ranging from 1 to 104 commits. A
 **Merge Status:** ✅ Clean
 
 **Description:**
-- Adds HTTP health check endpoint for Railway deployment
+- Adds HTTP health check endpoint for CloudRuntime deployment
 - Single focused change to `apps/mcp-servers/gemini-mcp-server.js`
 - 17 lines added
 
@@ -49,19 +49,19 @@ apps/mcp-servers/gemini-mcp-server.js | 17 insertions(+)
 **Justification:**
 - Fresh (created today)
 - Minimal, focused change
-- Critical for Railway deployment health monitoring
+- Critical for CloudRuntime deployment health monitoring
 - No conflicts with main
 - Low risk
 
 **Action Items:**
 1. Quick code review for health endpoint implementation
 2. Merge to main
-3. Deploy to verify health check works on Railway
+3. Deploy to verify health check works on CloudRuntime
 
 ---
 
-#### 2. fix-railway-port-config
-**Branch:** `fix-railway-port-config`
+#### 2. fix-cloud_runtime-port-config
+**Branch:** `fix-cloud_runtime-port-config`
 **Last Updated:** October 26, 2025 (Today)
 **Commits Ahead:** 2
 **Merge Status:** ✅ Clean
@@ -82,7 +82,7 @@ my_changes.patch                      | 40 insertions(+)
 
 **Justification:**
 - Fresh (created today)
-- Critical for Railway deployment
+- Critical for CloudRuntime deployment
 - Minimal changes (10 lines modified)
 - No conflicts with main
 
@@ -90,7 +90,7 @@ my_changes.patch                      | 40 insertions(+)
 1. **Review the `my_changes.patch` file** - should it be committed?
 2. Consider removing patch file if not needed
 3. Merge to main
-4. Test on Railway
+4. Test on CloudRuntime
 
 ---
 
@@ -106,7 +106,7 @@ my_changes.patch                      | 40 insertions(+)
 - Major reorganization of monitoring, deployment, and testing systems
 - Removes workflow-engine dependency from integration tests
 - Adds comprehensive monitoring infrastructure (Prometheus, Grafana, Alertmanager)
-- Railway deployment optimizations
+- CloudRuntime deployment optimizations
 
 **Recent Commits:**
 ```
@@ -141,7 +141,7 @@ c83e34a1 fix: Make prompt-templating tsconfig.json self-contained
 
 **Action Items:**
 1. **Detailed code review** - too large to merge without review
-2. **Test deployment** - verify Railway deployment still works
+2. **Test deployment** - verify CloudRuntime deployment still works
 3. **Check for overlaps** with recent consolidation (FILE_STRUCTURE_ASSESSMENT.md)
 4. **Verify monitoring stack** - ensure Prometheus/Grafana configs are correct
 5. Consider breaking into smaller PRs if possible
@@ -364,8 +364,8 @@ This was verified using `git merge-tree` to simulate merges. However, this doesn
 ## Priority Matrix
 
 ### Immediate Action (Today)
-1. ✅ **Merge `fix-mcp-core-health-check`** - Critical Railway health check
-2. ✅ **Merge `fix-railway-port-config`** - Critical Railway port configuration
+1. ✅ **Merge `fix-mcp-core-health-check`** - Critical CloudRuntime health check
+2. ✅ **Merge `fix-cloud_runtime-port-config`** - Critical CloudRuntime port configuration
 
 ### Short Term (This Week)
 3. ⚠️ **Review `feature/comprehensive-reorganization`** - Large but recent, good infrastructure improvements
@@ -385,7 +385,7 @@ This was verified using `git merge-tree` to simulate merges. However, this doesn
 
 ### Merge Immediately (High Confidence)
 - `fix-mcp-core-health-check` - 1 commit, fresh, critical for deployment
-- `fix-railway-port-config` - 2 commits, fresh, critical for deployment
+- `fix-cloud_runtime-port-config` - 2 commits, fresh, critical for deployment
 
 ### Review & Merge (Medium Confidence)
 - `feature/comprehensive-reorganization` - 61 commits, recent, good changes but needs review
@@ -405,7 +405,7 @@ This was verified using `git merge-tree` to simulate merges. However, this doesn
 | PR | Risk Level | Risk Factors |
 |----|-----------|--------------|
 | fix-mcp-core-health-check | 🟢 LOW | Small, focused, fresh |
-| fix-railway-port-config | 🟢 LOW | Small, focused, fresh |
+| fix-cloud_runtime-port-config | 🟢 LOW | Small, focused, fresh |
 | feature/comprehensive-reorganization | 🟡 MEDIUM | Large scope, infrastructure changes |
 | feature/agent-system-integration | 🟡 MEDIUM | Agent system changes, 1 month old |
 | feature/infrastructure-hardening | 🟡 MEDIUM | May overlap with recent work |
@@ -420,7 +420,7 @@ This was verified using `git merge-tree` to simulate merges. However, this doesn
 
 1. **Today:**
    - Merge `fix-mcp-core-health-check`
-   - Merge `fix-railway-port-config` (after reviewing patch file)
+   - Merge `fix-cloud_runtime-port-config` (after reviewing patch file)
    - Close `fix/backend-build-errors`
    - Close `claude/ide-workspace-merge` (already merged as PR #14)
 
@@ -435,7 +435,7 @@ This was verified using `git merge-tree` to simulate merges. However, this doesn
 
 ### For Testing
 
-All merged PRs should be tested on Railway deployment to ensure:
+All merged PRs should be tested on CloudRuntime deployment to ensure:
 - Health checks work
 - Port configuration is correct
 - Services start successfully
@@ -482,7 +482,7 @@ This commit IS in the git history (found via `git log --all --oneline | grep ide
 
 **Overall Health:** Repository is in good shape with clean merge potential for all PRs. The main concern is ensuring thorough review of larger PRs and preventing regressions.
 
-**Recommendation:** Prioritize the two critical Railway fixes, then methodically review the larger feature PRs with adequate testing.
+**Recommendation:** Prioritize the two critical CloudRuntime fixes, then methodically review the larger feature PRs with adequate testing.
 
 ---
 

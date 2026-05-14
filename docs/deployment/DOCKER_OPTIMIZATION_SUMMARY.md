@@ -19,7 +19,7 @@ completed for The New Fuse platform.
 
 ### 1. Optimized Dockerfiles
 
-All Dockerfile.railway files have been completely rewritten with best practices:
+All Dockerfile.cloud_runtime files have been completely rewritten with best practices:
 
 - **Multi-stage builds** (6 stages: base-build, base-runtime, deps, prod-deps,
   builder, runner)
@@ -31,11 +31,11 @@ All Dockerfile.railway files have been completely rewritten with best practices:
 
 **Updated Files**:
 
-- `<repo-root>/Dockerfile.railway` (root - API Gateway)
-- `<repo-root>/apps/api-gateway/Dockerfile.railway`
-- `<repo-root>/apps/api/Dockerfile.railway`
-- `<repo-root>/apps/backend/Dockerfile.railway`
-- `<repo-root>/apps/frontend/Dockerfile.railway`
+- `<repo-root>/Dockerfile.cloud_runtime` (root - API Gateway)
+- `<repo-root>/apps/api-gateway/Dockerfile.cloud_runtime`
+- `<repo-root>/apps/api/Dockerfile.cloud_runtime`
+- `<repo-root>/apps/backend/Dockerfile.cloud_runtime`
+- `<repo-root>/apps/frontend/Dockerfile.cloud_runtime`
 
 ### 2. Enhanced .dockerignore
 
@@ -175,16 +175,16 @@ docker-compose -f docker-compose.local.yml up --build
 
 ```bash
 # Frontend
-docker build -f apps/frontend/Dockerfile.railway -t the-new-fuse/frontend:latest .
+docker build -f apps/frontend/Dockerfile.cloud_runtime -t the-new-fuse/frontend:latest .
 
 # API Gateway (can use root or app-specific Dockerfile)
-docker build -f Dockerfile.railway -t the-new-fuse/api-gateway:latest .
+docker build -f Dockerfile.cloud_runtime -t the-new-fuse/api-gateway:latest .
 
 # API
-docker build -f apps/api/Dockerfile.railway -t the-new-fuse/api:latest .
+docker build -f apps/api/Dockerfile.cloud_runtime -t the-new-fuse/api:latest .
 
 # Backend
-docker build -f apps/backend/Dockerfile.railway -t the-new-fuse/backend:latest .
+docker build -f apps/backend/Dockerfile.cloud_runtime -t the-new-fuse/backend:latest .
 ```
 
 ### Checking Optimization Results
@@ -248,9 +248,9 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
    docker-compose -f docker-compose.local.yml up --build
    ```
 
-2. **Deploy to Railway**
-   - Railway will automatically detect and use the optimized Dockerfiles
-   - Ensure BuildKit is enabled on Railway (it is by default)
+2. **Deploy to CloudRuntime**
+   - CloudRuntime will automatically detect and use the optimized Dockerfiles
+   - Ensure BuildKit is enabled on CloudRuntime (it is by default)
 
 3. **Set up security scanning in CI/CD**
 
@@ -260,7 +260,7 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
    ```
 
 4. **Monitor build times and image sizes**
-   - Track improvements in Railway dashboard
+   - Track improvements in CloudRuntime dashboard
    - Compare with metrics in DOCKER_OPTIMIZATION.md
 
 ### Long-term (Optional)
@@ -274,11 +274,11 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 
 ### Modified Files
 
-- ✅ `Dockerfile.railway` (root)
-- ✅ `apps/api-gateway/Dockerfile.railway`
-- ✅ `apps/api/Dockerfile.railway`
-- ✅ `apps/backend/Dockerfile.railway`
-- ✅ `apps/frontend/Dockerfile.railway`
+- ✅ `Dockerfile.cloud_runtime` (root)
+- ✅ `apps/api-gateway/Dockerfile.cloud_runtime`
+- ✅ `apps/api/Dockerfile.cloud_runtime`
+- ✅ `apps/backend/Dockerfile.cloud_runtime`
+- ✅ `apps/frontend/Dockerfile.cloud_runtime`
 - ✅ `.dockerignore`
 
 ### New Files
@@ -327,7 +327,7 @@ To validate the optimizations:
 ```bash
 # 1. Build an image
 export DOCKER_BUILDKIT=1
-docker build -f apps/frontend/Dockerfile.railway -t test:frontend .
+docker build -f apps/frontend/Dockerfile.cloud_runtime -t test:frontend .
 
 # 2. Check size (should be ~55 MB)
 docker images test:frontend

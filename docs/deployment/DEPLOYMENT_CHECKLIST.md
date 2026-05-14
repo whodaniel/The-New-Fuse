@@ -35,7 +35,7 @@ Use this checklist for every production deployment.
 
 ### Verify
 - [ ] Run: `./scripts/deployment/smoke-tests.sh`
-- [ ] All services running: `railway status`
+- [ ] All services running: `cloud_runtime status`
 
 ## Post-Deployment
 

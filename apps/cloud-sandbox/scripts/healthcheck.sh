@@ -1,6 +1,6 @@
 #!/bin/bash
 # Health Check Script for Cloud Sandbox
-# Used by Docker HEALTHCHECK and Railway health monitoring
+# Used by Docker HEALTHCHECK and CloudRuntime health monitoring
 
 set -e
 

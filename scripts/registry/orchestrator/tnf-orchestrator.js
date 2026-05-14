@@ -210,7 +210,7 @@ async function main() {
   await new Promise((resolve) => setTimeout(resolve, 3000));
 
   console.log('\n═══ PHASE 3: Self-Improvement Loop ═══\n');
-  console.log('🔄 Self-improvement loop would be triggered by Railway cron jobs');
+  console.log('🔄 Self-improvement loop would be triggered by CloudRuntime cron jobs');
   console.log('   └─ Cron schedule: Every hour for health checks');
   console.log('   └─ Cron schedule: Daily for optimization analysis');
   console.log('   └─ Cron schedule: Weekly for deep system review');

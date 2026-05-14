@@ -136,20 +136,20 @@ stop_current_services() {
 
   log STEP "Stopping services..."
 
-  # Stop Railway services if Railway CLI is available
-  if command -v railway &>/dev/null; then
+  # Stop CloudRuntime services if CloudRuntime CLI is available
+  if command -v cloud_runtime &>/dev/null; then
     local services=("api-gateway" "backend" "frontend" "api")
 
     for service in "${services[@]}"; do
       log INFO "Stopping $service..."
 
-      # Railway doesn't have a direct "stop" command, but we can scale to 0
-      railway run --service "$service" -- echo "Preparing for rollback" &>/dev/null || {
+      # CloudRuntime doesn't have a direct "stop" command, but we can scale to 0
+      cloud_runtime run --service "$service" -- echo "Preparing for rollback" &>/dev/null || {
         log WARNING "Could not interact with $service (may not exist)"
       }
     done
   else
-    log WARNING "Railway CLI not available, skipping service stop"
+    log WARNING "CloudRuntime CLI not available, skipping service stop"
   fi
 
   log SUCCESS "Services prepared for rollback"
@@ -314,8 +314,8 @@ rebuild_services() {
   # Build services
   log INFO "Building services..."
 
-  if [[ -f "$PROJECT_ROOT/scripts/build-railway.cjs" ]]; then
-    node "$PROJECT_ROOT/scripts/build-railway.cjs" || {
+  if [[ -f "$PROJECT_ROOT/scripts/build-cloud_runtime.cjs" ]]; then
+    node "$PROJECT_ROOT/scripts/build-cloud_runtime.cjs" || {
       log ERROR "Build failed"
       return 1
     }
@@ -332,10 +332,10 @@ rebuild_services() {
 redeploy_services() {
   print_section "Redeploying Services"
 
-  log STEP "Redeploying services to Railway..."
+  log STEP "Redeploying services to CloudRuntime..."
 
-  if ! command -v railway &>/dev/null; then
-    log ERROR "Railway CLI not available"
+  if ! command -v cloud_runtime &>/dev/null; then
+    log ERROR "CloudRuntime CLI not available"
     log ERROR "Manual deployment required"
     return 1
   fi
@@ -353,7 +353,7 @@ redeploy_services() {
     log INFO "Deploying $service..."
 
     cd "$service_path"
-    railway up --detach || {
+    cloud_runtime up --detach || {
       log ERROR "Deployment failed for $service"
       cd "$PROJECT_ROOT"
       return 1
@@ -379,14 +379,14 @@ verify_rollback() {
   sleep 10
 
   # Check service health
-  if command -v railway &>/dev/null; then
+  if command -v cloud_runtime &>/dev/null; then
     local services=("api-gateway" "backend" "frontend" "api")
     local all_healthy=true
 
     for service in "${services[@]}"; do
       log INFO "Checking $service health..."
 
-      if railway status --service "$service" &>/dev/null; then
+      if cloud_runtime status --service "$service" &>/dev/null; then
         log SUCCESS "$service is healthy"
       else
         log ERROR "$service health check failed"
@@ -402,7 +402,7 @@ verify_rollback() {
       return 1
     fi
   else
-    log WARNING "Railway CLI not available, skipping health checks"
+    log WARNING "CloudRuntime CLI not available, skipping health checks"
     log WARNING "Please verify services manually"
   fi
 }

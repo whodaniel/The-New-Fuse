@@ -436,9 +436,9 @@ TURBO_FORCE=true pnpm run build
 
 ## Deployment Failures
 
-### Railway Deployment Failed
+### CloudRuntime Deployment Failed
 
-**Symptom**: Deployment fails on Railway
+**Symptom**: Deployment fails on CloudRuntime
 
 **Error**:
 ```
@@ -447,17 +447,17 @@ Error: Failed to deploy service api-gateway
 
 **Solution**:
 ```bash
-# Check Railway status
-railway status
+# Check CloudRuntime status
+cloud_runtime status
 
 # View deployment logs
-railway logs
+cloud_runtime logs
 
 # Check recent deployments
-railway deployments
+cloud_runtime deployments
 
 # Redeploy
-railway up --service=api-gateway
+cloud_runtime up --service=api-gateway
 ```
 
 **Common causes**:
@@ -469,14 +469,14 @@ railway up --service=api-gateway
 **Debug**:
 ```bash
 # Test Dockerfile locally
-docker build -f apps/api-gateway/Dockerfile.railway -t test .
+docker build -f apps/api-gateway/Dockerfile.cloud_runtime -t test .
 docker run -p 3001:3001 test
 
 # Check environment variables
-railway variables
+cloud_runtime variables
 
 # Increase resources
-# Go to Railway dashboard → Settings → Resources
+# Go to CloudRuntime dashboard → Settings → Resources
 ```
 
 ---
@@ -493,16 +493,16 @@ Health check failed with code 502
 **Solution**:
 ```bash
 # Check service logs
-railway logs --service=api-gateway
+cloud_runtime logs --service=api-gateway
 
 # Test health endpoint locally
-curl https://api-gateway.railway.app/health
+curl https://api-gateway.thenewfuse.com/health
 
 # Check if service is running
-railway ps
+cloud_runtime ps
 
 # Restart service
-railway restart --service=api-gateway
+cloud_runtime restart --service=api-gateway
 ```
 
 **Common causes**:
@@ -514,7 +514,7 @@ railway restart --service=api-gateway
 **Debug**:
 ```bash
 # SSH into service
-railway shell
+cloud_runtime shell
 
 # Check process
 ps aux | grep node
@@ -523,7 +523,7 @@ ps aux | grep node
 curl localhost:3001/health
 
 # Check database connection
-railway run -- pnpm run db:test-connection
+cloud_runtime run -- pnpm run db:test-connection
 ```
 
 ---
@@ -540,16 +540,16 @@ Error: Migration failed: duplicate column name
 **Solution**:
 ```bash
 # Check migration status
-railway run -- pnpm run db:migrate:status
+cloud_runtime run -- pnpm run db:migrate:status
 
 # Rollback migration
-railway run -- pnpm run db:migrate:rollback
+cloud_runtime run -- pnpm run db:migrate:rollback
 
 # Apply migrations manually
-railway run -- pnpm run db:migrate
+cloud_runtime run -- pnpm run db:migrate
 
 # Verify schema
-railway run -- pnpm run db:studio
+cloud_runtime run -- pnpm run db:studio
 ```
 
 **Prevention**:
@@ -571,16 +571,16 @@ ERROR: failed to solve: process "/bin/sh -c pnpm install" did not complete succe
 **Solution**:
 ```bash
 # Test Dockerfile locally
-docker build -f Dockerfile.railway .
+docker build -f Dockerfile.cloud_runtime .
 
 # Clear Docker cache
 docker builder prune
 
 # Build with no cache
-docker build --no-cache -f Dockerfile.railway .
+docker build --no-cache -f Dockerfile.cloud_runtime .
 
 # Check Dockerfile syntax
-docker build --progress=plain -f Dockerfile.railway .
+docker build --progress=plain -f Dockerfile.cloud_runtime .
 ```
 
 **Common issues**:
@@ -775,7 +775,7 @@ You have exceeded your GitHub Actions quota
 
 ---
 
-### Railway Resource Limits
+### CloudRuntime Resource Limits
 
 **Symptom**: Service crashes due to resources
 
@@ -787,9 +787,9 @@ Error: Service killed due to memory limit
 **Solution**:
 ```bash
 # Check resource usage
-railway metrics --service=api-gateway
+cloud_runtime metrics --service=api-gateway
 
-# Increase limits in Railway dashboard
+# Increase limits in CloudRuntime dashboard
 # Settings → Resources → Increase memory/CPU
 
 # Optimize application
@@ -807,7 +807,7 @@ If you can't resolve an issue:
 1. **Check logs**: Always start with logs
    ```bash
    gh run view <run-id>
-   railway logs --service=<service>
+   cloud_runtime logs --service=<service>
    ```
 
 2. **Search for similar issues**: GitHub Issues
@@ -835,14 +835,14 @@ gh run rerun <run-id>
 # Cancel running workflow
 gh run cancel <run-id>
 
-# Railway status
-railway status
+# CloudRuntime status
+cloud_runtime status
 
-# Railway logs
-railway logs --tail 100
+# CloudRuntime logs
+cloud_runtime logs --tail 100
 
-# Railway shell
-railway shell
+# CloudRuntime shell
+cloud_runtime shell
 
 # Test locally
 pnpm run test

@@ -34,11 +34,11 @@ RUN apk add --no-cache ca-certificates tzdata curl busybox-extras jq
 # Copy binary
 COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
 
-# Copy railway entrypoint
-COPY --from=builder /src/entrypoint-railway.sh /usr/local/bin/entrypoint-railway.sh
-RUN chmod +x /usr/local/bin/entrypoint-railway.sh
+# Copy cloud_runtime entrypoint
+COPY --from=builder /src/entrypoint-cloud_runtime.sh /usr/local/bin/entrypoint-cloud_runtime.sh
+RUN chmod +x /usr/local/bin/entrypoint-cloud_runtime.sh
 
 # Create picoclaw home directory
 RUN mkdir -p /root/.picoclaw/workspace
 
-ENTRYPOINT ["/usr/local/bin/entrypoint-railway.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint-cloud_runtime.sh"]

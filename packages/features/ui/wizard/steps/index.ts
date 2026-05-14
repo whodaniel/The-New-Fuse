@@ -12,7 +12,7 @@ import { AgentConfiguration, type AgentConfigurationProps } from './AgentConfigu
 import { AgentTesting, type AgentTestingProps } from './AgentTesting.js';
 import { DeploymentConfiguration, type DeploymentConfigurationProps } from './DeploymentConfiguration.js';
 import { DeploymentProgress, type DeploymentProgressProps } from './DeploymentProgress.js';
-import { RailwayConnection, type RailwayConnectionProps } from './RailwayConnection.js';
+import { CloudRuntimeConnection, type CloudRuntimeConnectionProps } from './CloudRuntimeConnection.js';
 import { PermissionMatrix, type PermissionMatrixProps } from './PermissionMatrix.js';
 import { RoleConfiguration, type RoleConfigurationProps } from './RoleConfiguration.js';
 import { DiagnosticsRunner, type DiagnosticsRunnerProps } from './DiagnosticsRunner.js';
@@ -29,7 +29,7 @@ export {
   AgentTesting, type AgentTestingProps,
   DeploymentConfiguration, type DeploymentConfigurationProps,
   DeploymentProgress, type DeploymentProgressProps,
-  RailwayConnection, type RailwayConnectionProps,
+  CloudRuntimeConnection, type CloudRuntimeConnectionProps,
   PermissionMatrix, type PermissionMatrixProps,
   RoleConfiguration, type RoleConfigurationProps,
   DiagnosticsRunner, type DiagnosticsRunnerProps,
@@ -52,7 +52,7 @@ export const STEP_COMPONENTS: Record<
   AgentConfiguration: AgentConfiguration as any,
   AgentCapabilities: AgentCapabilities as any,
   AgentTesting: AgentTesting as any,
-  RailwayConnection: RailwayConnection as any,
+  CloudRuntimeConnection: CloudRuntimeConnection as any,
   DeploymentConfiguration: DeploymentConfiguration as any,
   DeploymentProgress: DeploymentProgress as any,
   RoleConfiguration: RoleConfiguration as any,

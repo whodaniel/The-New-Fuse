@@ -114,13 +114,13 @@ check_prerequisites() {
     fi
   done
 
-  # Check Railway CLI if deploying to Railway
+  # Check CloudRuntime CLI if deploying to CloudRuntime
   if [[ "$ENVIRONMENT" == "production" || "$ENVIRONMENT" == "staging" ]]; then
-    if ! command -v railway &> /dev/null; then
-      log WARNING "Railway CLI not found. Install with: npm install -g @railway/cli"
-      log WARNING "Railway deployments will be skipped"
+    if ! command -v cloud_runtime &> /dev/null; then
+      log WARNING "CloudRuntime CLI not found. Install with: npm install -g @cloud_runtime/cli"
+      log WARNING "CloudRuntime deployments will be skipped"
     else
-      log SUCCESS "Railway CLI found"
+      log SUCCESS "CloudRuntime CLI found"
     fi
   fi
 
@@ -270,10 +270,10 @@ build_services() {
 
   log STEP "Building packages and services..."
 
-  # Use Railway-optimized build if available
-  if [[ -f "$PROJECT_ROOT/scripts/build-railway.cjs" ]]; then
-    log INFO "Using Railway-optimized build"
-    BUILD_VERBOSE=true node "$PROJECT_ROOT/scripts/build-railway.cjs" || {
+  # Use CloudRuntime-optimized build if available
+  if [[ -f "$PROJECT_ROOT/scripts/build-cloud_runtime.cjs" ]]; then
+    log INFO "Using CloudRuntime-optimized build"
+    BUILD_VERBOSE=true node "$PROJECT_ROOT/scripts/build-cloud_runtime.cjs" || {
       log ERROR "Build failed"
       return 1
     }
@@ -466,21 +466,21 @@ deploy_service() {
     return 1
   fi
 
-  # Check if Railway CLI is available
-  if command -v railway &> /dev/null; then
-    log INFO "Deploying $service to Railway..."
+  # Check if CloudRuntime CLI is available
+  if command -v cloud_runtime &> /dev/null; then
+    log INFO "Deploying $service to CloudRuntime..."
 
     cd "$service_path"
-    railway up --detach || {
-      log ERROR "Railway deployment failed for $service"
+    cloud_runtime up --detach || {
+      log ERROR "CloudRuntime deployment failed for $service"
       cd "$PROJECT_ROOT"
       return 1
     }
     cd "$PROJECT_ROOT"
 
-    log SUCCESS "$service deployed to Railway"
+    log SUCCESS "$service deployed to CloudRuntime"
   else
-    log WARNING "Railway CLI not available, skipping Railway deployment"
+    log WARNING "CloudRuntime CLI not available, skipping CloudRuntime deployment"
   fi
 
   return 0
@@ -527,12 +527,12 @@ check_service_health() {
 
   log INFO "Checking health of $service..."
 
-  # This is a placeholder - actual implementation would check Railway service health
-  # via Railway API or health check endpoints
+  # This is a placeholder - actual implementation would check CloudRuntime service health
+  # via CloudRuntime API or health check endpoints
 
-  if command -v railway &> /dev/null; then
-    # Check Railway service status
-    railway status --service "$service" &>/dev/null || {
+  if command -v cloud_runtime &> /dev/null; then
+    # Check CloudRuntime service status
+    cloud_runtime status --service "$service" &>/dev/null || {
       log WARNING "$service health check failed (may not be deployed)"
       return 1
     }
@@ -739,9 +739,9 @@ main() {
   echo ""
 
   echo -e "${BOLD}Next Steps:${NC}"
-  echo "  - Monitor service health: railway status"
-  echo "  - View logs: railway logs"
-  echo "  - Check metrics: railway metrics"
+  echo "  - Monitor service health: cloud_runtime status"
+  echo "  - View logs: cloud_runtime logs"
+  echo "  - Check metrics: cloud_runtime metrics"
   echo ""
 }
 

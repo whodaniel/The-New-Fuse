@@ -1,5 +1,5 @@
 # ============================================================
-# ZeroClaw Railway Sandbox — Multi-stage Rust build
+# ZeroClaw CloudRuntime Sandbox — Multi-stage Rust build
 # ============================================================
 # syntax=docker/dockerfile:1.7
 
@@ -42,9 +42,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /app/zeroclaw-bin /usr/local/bin/zeroclaw
 COPY --from=builder /zeroclaw-data  /zeroclaw-data
 
-# Copy Railway entrypoint
-COPY entrypoint-railway.sh /usr/local/bin/entrypoint-railway.sh
-RUN chmod +x /usr/local/bin/entrypoint-railway.sh
+# Copy CloudRuntime entrypoint
+COPY entrypoint-cloud_runtime.sh /usr/local/bin/entrypoint-cloud_runtime.sh
+RUN chmod +x /usr/local/bin/entrypoint-cloud_runtime.sh
 
 # Environment
 ENV ZEROCLAW_WORKSPACE=/zeroclaw-data/workspace
@@ -55,4 +55,4 @@ ENV ZEROCLAW_GATEWAY_PORT=3000
 WORKDIR /zeroclaw-data
 EXPOSE 3000
 
-ENTRYPOINT ["/usr/local/bin/entrypoint-railway.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint-cloud_runtime.sh"]

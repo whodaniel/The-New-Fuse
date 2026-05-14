@@ -19,7 +19,7 @@ Current behavior:
 ## What the new Crawl4AI workflow provides
 Workflow files:
 - `crawl4ai_research_pipeline.py`
-- `migrate_to_railway_postgres.py`
+- `migrate_to_cloud_runtime_postgres.py`
 
 Capabilities:
 - Real browser-assisted crawling via Crawl4AI + Playwright/Patchright.
@@ -30,9 +30,9 @@ Capabilities:
   - `source_links`
   - `prompts`
 - Prompt extraction from markdown blocks and high-yield repository datasets.
-- Cloud persistence in Railway Postgres schema: `ai_assets_marketplace`.
+- Cloud persistence in CloudRuntime Postgres schema: `ai_assets_marketplace`.
 
-Current cloud dataset in Railway Postgres:
+Current cloud dataset in CloudRuntime Postgres:
 - `categories`: 10
 - `sources`: 52
 - `source_links`: 8,479
@@ -47,7 +47,7 @@ Current cloud dataset in Railway Postgres:
 
 2. Data output quality
 - `mcp-drs-crawler`: no production-grade extracted dataset currently emitted.
-- Crawl4AI workflow: normalized, queryable corpus already in Railway Postgres.
+- Crawl4AI workflow: normalized, queryable corpus already in CloudRuntime Postgres.
 
 3. Source coverage
 - `mcp-drs-crawler`: appears oriented to GitHub MCP config scanning only.
@@ -57,7 +57,7 @@ Current cloud dataset in Railway Postgres:
 - `mcp-drs-crawler`: suitable as a placeholder service endpoint.
 - Crawl4AI workflow: suitable as ingestion backend for AI Assets marketplace search/index flows.
 
-## Recommended migration strategy (keeping Railway DBs)
+## Recommended migration strategy (keeping CloudRuntime DBs)
 
 1. Keep `postgres-main` as system of record (already done).
 2. Treat `mcp-drs-crawler` as upgrade target:
@@ -66,7 +66,7 @@ Current cloud dataset in Railway Postgres:
   - `GET /crawl/status` for run metadata
   - `GET /crawl/counts` from `ai_assets_marketplace` tables
 3. Move crawl orchestration code from local scripts into `mcp-drs-crawler` service codebase.
-4. Add schedule support (Railway cron or external trigger) for recurring refreshes.
+4. Add schedule support (CloudRuntime cron or external trigger) for recurring refreshes.
 5. Add dedupe guards in depth-1 expansion (domain/path normalization) to reduce repeated GitHub/HuggingFace traversals.
 
 ## Immediate next implementation

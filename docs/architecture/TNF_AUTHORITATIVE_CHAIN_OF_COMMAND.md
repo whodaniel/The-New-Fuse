@@ -12,7 +12,7 @@ The New Fuse (TNF) implements a federated control plane where authority is deriv
 
 ### 2.1 The Super Director (Cloud)
 - **Role**: Singular global authority.
-- **Residency**: TNF Central Hub (Railway).
+- **Residency**: TNF Central Hub (Cloudflare).
 - **Control Mechanism**: Exclusive control of the Authoritative command chain via a Live LLM API.
 - **Primary Tooling**:
     - **Master Clock**: Pulses global signals and heartbeats.

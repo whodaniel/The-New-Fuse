@@ -16,7 +16,7 @@ one repeatable command.
 ## Variables Applied
 
 - `TNF_LLM_ROUTING_API_BASE` (default:
-  `https://api-production-48f1.up.railway.app`)
+  `https://api-production-48f1.thenewfuse.com`)
 - `TNF_LLM_TARGET` (service-specific target)
 
 ## Command
@@ -24,13 +24,13 @@ one repeatable command.
 From repository root:
 
 ```bash
-scripts/railway/sync-claw-routing-vars.sh
+scripts/cloud_runtime/sync-claw-routing-vars.sh
 ```
 
 Optional overrides:
 
 ```bash
-TNF_LLM_ROUTING_API_BASE=https://api-production-48f1.up.railway.app MAX_RETRIES=12 SLEEP_SECONDS=5 scripts/railway/sync-claw-routing-vars.sh
+TNF_LLM_ROUTING_API_BASE=https://api-production-48f1.thenewfuse.com MAX_RETRIES=12 SLEEP_SECONDS=5 scripts/cloud_runtime/sync-claw-routing-vars.sh
 ```
 
 ## Expected Outcome
@@ -40,7 +40,7 @@ TNF_LLM_ROUTING_API_BASE=https://api-production-48f1.up.railway.app MAX_RETRIES=
 
 ## Failure Diagnostics
 
-If you see DNS lookup failures against `backboard.railway.com`:
+If you see DNS lookup failures against `backboard.cloud_runtime.com`:
 
 1. Check local resolver health:
 
@@ -48,16 +48,16 @@ If you see DNS lookup failures against `backboard.railway.com`:
 scutil --dns | sed -n '1,120p'
 ```
 
-2. Confirm Railway domain resolution:
+2. Confirm CloudRuntime domain resolution:
 
 ```bash
-curl -sS --max-time 8 https://railway.com -I
+curl -sS --max-time 8 https://thenewfuse.com -I
 ```
 
 3. Retry sync when DNS recovers:
 
 ```bash
-scripts/railway/sync-claw-routing-vars.sh
+scripts/cloud_runtime/sync-claw-routing-vars.sh
 ```
 
 ## Verification
@@ -65,11 +65,11 @@ scripts/railway/sync-claw-routing-vars.sh
 After successful sync, verify service deployments and health:
 
 ```bash
-railway status --json | jq -r '.environments.edges[].node.serviceInstances.edges[].node | [.serviceName, .latestDeployment.id, .latestDeployment.status] | @tsv'
+cloud_runtime status --json | jq -r '.environments.edges[].node.serviceInstances.edges[].node | [.serviceName, .latestDeployment.id, .latestDeployment.status] | @tsv'
 ```
 
 Then verify adaptive routing payloads for each claw target:
 
 ```bash
-scripts/railway/verify-adaptive-routing.sh
+scripts/cloud_runtime/verify-adaptive-routing.sh
 ```

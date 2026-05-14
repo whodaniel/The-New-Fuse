@@ -1,7 +1,7 @@
 # Cloudflare Edge Gateway
 
 This Worker provides a public edge endpoint for `audio-trigger-kws-mvp` and
-proxies requests to Railway.
+proxies requests to CloudRuntime.
 
 ## Files
 
@@ -10,8 +10,8 @@ proxies requests to Railway.
 
 ## Configure
 
-1. Set the Railway API origin in `wrangler.toml`:
-   - `KWS_API_ORIGIN=https://<your-kws-api>.up.railway.app`
+1. Set the CloudRuntime API origin in `wrangler.toml`:
+   - `KWS_API_ORIGIN=https://<your-kws-api>.thenewfuse.com`
 2. Authenticate Wrangler:
    - `npx wrangler whoami`
 3. Set edge secret:

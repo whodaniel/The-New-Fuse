@@ -236,11 +236,11 @@ git push origin fix/register-orphaned-controllers-and-modules
 1. **Node.js Version**: v20.12.1 < v20.19+ required
    - **Impact**: Cannot run Drizzle migrations locally
    - **Workaround**: Code changes work, but full local testing limited
-   - **Solution**: User needs to upgrade Node.js OR test in Railway environment
+   - **Solution**: User needs to upgrade Node.js OR test in CloudRuntime environment
 
 2. **pnpm Lockfile Compatibility** (mentioned in PR CI/CD logs)
    - Some GitHub Actions failing due to lockfile/version mismatch
-   - Doesn't affect Railway deployments
+   - Doesn't affect CloudRuntime deployments
    - May need `pnpm install --no-frozen-lockfile` locally if issues arise
 
 3. **Missing Services for AdminController**
@@ -341,7 +341,7 @@ cd apps/api && pnpm test
 
 **Git Credentials**: User has provided token (already configured in environment)
 
-**Railway Deployment**: Auto-deploys from this branch, monitors build logs
+**CloudRuntime Deployment**: Auto-deploys from this branch, monitors build logs
 
 ---
 

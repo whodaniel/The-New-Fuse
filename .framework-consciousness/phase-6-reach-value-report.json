@@ -63,8 +63,8 @@
       "detected": true,
       "signalCount": 60,
       "sampleRefs": [
-        "docs/RAILWAY_CRON_SETUP.md:194:  // Send notification",
-        "docs/RAILWAY_CRON_SETUP.md:238:- **Redis Pub/Sub**: Publishes to `tnf:self-improvement` channel",
+        "docs/CLOUD_RUNTIME_CRON_SETUP.md:194:  // Send notification",
+        "docs/CLOUD_RUNTIME_CRON_SETUP.md:238:- **Redis Pub/Sub**: Publishes to `tnf:self-improvement` channel",
         "docs/TNF_AGENTIC_INFRASTRUCTURE_VISION.md:357:  type: 'request' | 'response' | 'notification' | 'handoff';",
         "docs/FEDERATION_ARCHITECTURE.md:6:ChatGPT, Claude, Gemini) into **channels**, enabling coordinated multi-AI",
         "docs/FEDERATION_ARCHITECTURE.md:18:│  │  tnf:channels   │  │  Message Queue  │  │  VS Code         │              │",

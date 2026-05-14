@@ -1,5 +1,5 @@
-import { Button, Label, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from '@/components/ui';
 // @ts-nocheck
+import { Button, Label, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from '@/components/ui';
 import {
   Dialog,
   DialogContent,

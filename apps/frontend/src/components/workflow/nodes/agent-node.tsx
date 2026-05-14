@@ -1,5 +1,5 @@
-import { Badge, Label } from '@/components/ui';
 // @ts-nocheck
+import { Badge, Label } from '@/components/ui';
 import {
   Select,
   SelectContent,

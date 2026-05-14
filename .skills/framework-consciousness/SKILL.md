@@ -266,7 +266,7 @@ node scripts/map-service-deps.js
 - n8n workflow engine
 - PostgreSQL database
 - Redis cache
-- Railway deployment
+- CloudRuntime deployment
 - GitHub integration
 
 **Output**: Integration topology map

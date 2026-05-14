@@ -1,6 +1,6 @@
 # TNF Centralized LLM Routing + Adaptive Middleware
 
-Date: February 20, 2026 (EST) Environment: `production` (Railway project `TNF`)
+Date: February 20, 2026 (EST) Environment: `production` (CloudRuntime project `TNF`)
 
 ## Objective
 
@@ -47,7 +47,7 @@ routing for admin-side agents/services from one Super Admin control point.
 5. ZeroClaw sandbox provider crash fix.
 
 - Files:
-  - `apps/zeroclaw-sandbox/entrypoint-railway.sh`
+  - `apps/zeroclaw-sandbox/entrypoint-cloud_runtime.sh`
   - `apps/zeroclaw-sandbox/.env.example`
 - Fix:
   - Normalize `kilocode`/`kilo` to `custom:https://api.kilo.ai/api/gateway`
@@ -66,7 +66,7 @@ To avoid runtime/type export issues in API changes:
   - import `agentApiGrants` from `@the-new-fuse/database/drizzle/schema`
   - null-safe error text handling in usage logging
 
-## Railway Deployment Status (Captured February 20, 2026)
+## CloudRuntime Deployment Status (Captured February 20, 2026)
 
 Latest status query result:
 
@@ -79,7 +79,7 @@ Latest status query result:
   - Deployment: `638f921f-24fd-4287-9707-8f22d961de00`
   - Status: `BUILDING`
   - Created: `2026-02-20T11:55:28.829Z`
-  - Stopped: `true` (Railway metadata while build in progress)
+  - Stopped: `true` (CloudRuntime metadata while build in progress)
 
 Previously active successful API deployment remains available:
 
@@ -90,17 +90,17 @@ Previously active successful API deployment remains available:
 `api` build process in this repo can surface unrelated TypeScript
 warnings/errors in modules outside this routing scope. The latest deployment is
 still building, so final production activation of newest API changes should be
-confirmed once Railway marks that deployment `SUCCESS`.
+confirmed once CloudRuntime marks that deployment `SUCCESS`.
 
 ## Immediate Verification Steps
 
 1. Confirm API deployment completion:
 
-- `railway status --json | jq ...`
+- `cloud_runtime status --json | jq ...`
 
 2. Check API runtime logs:
 
-- `railway logs -s api --latest -n 120`
+- `cloud_runtime logs -s api --latest -n 120`
 
 3. Verify routing endpoints:
 

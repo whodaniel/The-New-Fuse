@@ -1,15 +1,15 @@
-# Antigravity + Railway DevTools Integration - Complete Setup Guide
+# Antigravity + CloudRuntime DevTools Integration - Complete Setup Guide
 
-> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated from Railway to **GCP
+> **⚠️ CLOUD_RUNTIME IS NO LONGER USED.** TNF has migrated from CloudRuntime to **GCP
 > (Cloud Run) + Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash
-> (Redis)**. Replace all `*.up.railway.app` URLs with current GCP Cloud Run
+> (Redis)**. Replace all `*.thenewfuse.com` URLs with current GCP Cloud Run
 > endpoints (e.g., `backend-241337102384.us-central1.run.app`). See
 > `CLOUD_MIGRATION_BLUEPRINT.md`.
 
 ## ✅ What We Just Deployed
 
 I've successfully integrated **Chrome DevTools Protocol (CDP)** into your
-Railway cloud sandbox, enabling **Antigravity to directly monitor your Railway
+CloudRuntime cloud sandbox, enabling **Antigravity to directly monitor your CloudRuntime
 browsers in real-time**.
 
 ### Changes Made
@@ -21,7 +21,7 @@ browsers in real-time**.
 4. ✅ **Documentation** - Created guides and integration docs
 5. ✅ **Dependencies** - Installed `chrome-remote-interface` for CDP support
 
-### Deployed to Railway
+### Deployed to CloudRuntime
 
 - **Service**: `tnf-cloud-sandbox-v2`
 - **Commit**: `277ab0b61` - "feat(sandbox): expose Chrome DevTools Protocol for
@@ -35,7 +35,7 @@ browsers in real-time**.
 ### Before (Broken)
 
 ```
-Audit Script → Screenshot → Socket.IO → Railway Proxy ❌ → Live View
+Audit Script → Screenshot → Socket.IO → CloudRuntime Proxy ❌ → Live View
                                           ↑
                                     Drops after 1st message
 ```
@@ -45,7 +45,7 @@ Audit Script → Screenshot → Socket.IO → Railway Proxy ❌ → Live View
 ```
 Audit Script → Chrome Browser → CDP (Port 9222) → Antigravity → YOU
                     ↑                                    ↑
-              Runs on Railway                  Connects via MCP
+              Runs on CloudRuntime                  Connects via MCP
 ```
 
 **Result**: Real-time console, network, performance, and screenshots - ALL
@@ -55,11 +55,11 @@ working!
 
 ## 🚀 Quick Start (5 Minutes)
 
-### Step 1: Wait for Railway Deployment
+### Step 1: Wait for CloudRuntime Deployment
 
 ```bash
 # Wait ~2-3 minutes, then test:
-curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools
+curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/browser/devtools
 ```
 
 **Expected Response**:
@@ -97,23 +97,23 @@ Then, in Antigravity chat:
 
 You should see 26 tools listed (click, fill, navigate, screenshot, etc.)
 
-### Step 3: View Railway Browser
+### Step 3: View CloudRuntime Browser
 
 ```markdown
-"Connect to the Railway browser and show me what it's currently viewing"
+"Connect to the CloudRuntime browser and show me what it's currently viewing"
 ```
 
 Antigravity will:
 
 1. Use Chrome DevTools MCP
-2. Connect to Railway's CDP port 9222
+2. Connect to CloudRuntime's CDP port 9222
 3. Take a screenshot using `take_screenshot` tool
 4. Show you the current page
 
 ### Step 4: Monitor Console in Real-Time
 
 ```markdown
-"What console messages is the Railway browser showing?"
+"What console messages is the CloudRuntime browser showing?"
 ```
 
 Uses `list_console_messages` to show all logs, errors, warnings.
@@ -149,7 +149,7 @@ All skills are documented in `.agent/skills/chrome-devtools/`:
 ```markdown
 # Example prompts:
 
-"Check the Railway browser console for JavaScript errors" "Evaluate this in the
+"Check the CloudRuntime browser console for JavaScript errors" "Evaluate this in the
 browser: document.querySelectorAll('a').length" "Show me all console warnings
 from the last page load"
 ```
@@ -168,7 +168,7 @@ from the last page load"
 ```markdown
 # Example prompts:
 
-"Start a performance trace on the Railway browser" "What are the Core Web Vitals
+"Start a performance trace on the CloudRuntime browser" "What are the Core Web Vitals
 (LCP, CLS, TBT) for the current page?" "Analyze why the page is loading slowly"
 ```
 
@@ -187,7 +187,7 @@ from the last page load"
 ```markdown
 # Example prompts:
 
-"Show me all failed network requests on the Railway browser" "What API calls has
+"Show me all failed network requests on the CloudRuntime browser" "What API calls has
 the browser made in the last minute?" "Debug why the /api/login endpoint is
 returning 401"
 ```
@@ -205,7 +205,7 @@ returning 401"
 ```markdown
 # Example prompts:
 
-"Click the login button on the Railway browser" "Fill out the form with test
+"Click the login button on the CloudRuntime browser" "Fill out the form with test
 data" "Take a full-page screenshot"
 ```
 
@@ -225,7 +225,7 @@ Complete diagnostic combining all features.
 ```markdown
 # Example prompts:
 
-"Run a complete diagnostic on the Railway browser" "Debug why the page isn't
+"Run a complete diagnostic on the CloudRuntime browser" "Debug why the page isn't
 working"
 ```
 
@@ -236,18 +236,18 @@ working"
 ### Scenario: Monitor Website Audit in Real-Time
 
 ```markdown
-You: "I'm running the website audit on Railway. Show me what's happening in
+You: "I'm running the website audit on CloudRuntime. Show me what's happening in
 real-time."
 
 Antigravity:
 
-1. "Connecting to Railway browser via Chrome DevTools Protocol..."
+1. "Connecting to CloudRuntime browser via Chrome DevTools Protocol..."
 2. Uses `list_pages` to see active tabs
 3. Uses `take_screenshot` to capture current view
 4. Uses `list_console_messages` to check for errors
 5. Uses `list_network_requests` to see API calls
 
-Response: "✅ Connected to Railway browser
+Response: "✅ Connected to CloudRuntime browser
 
 **Current Page**: https://thenewfuse.com/about **Screenshot**: [Shows current
 view]
@@ -346,7 +346,7 @@ fetch('/api/auth/login', {
 When you have multiple agents running:
 
 ```markdown
-"List all active browsers on Railway"
+"List all active browsers on CloudRuntime"
 "Connect to the audit-bot browser"
 "Connect to the performance-tester browser"
 ````
@@ -374,7 +374,7 @@ the confirmation page appears" "Take a screenshot as proof"
 **Check**:
 
 ```bash
-curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools
+curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/browser/devtools
 ```
 
 If it returns 500 error, the browser isn't initialized yet.
@@ -407,14 +407,14 @@ Socket.IO broadcasting.
 | **Network Monitoring**    | ❌ None                   | ✅ All requests           |
 | **Performance Profiling** | ❌ None                   | ✅ Full traces            |
 | **Script Evaluation**     | ❌ None                   | ✅ Run JS in browser      |
-| **Railway Compatibility** | ❌ Proxy blocks it        | ✅ Standard HTTP/WS       |
+| **CloudRuntime Compatibility** | ❌ Proxy blocks it        | ✅ Standard HTTP/WS       |
 | **Reliability**           | ❌ Drops after 1 msg      | ✅ Rock solid             |
 
 ---
 
 ## 🎉 What You Now Have
 
-1. **Real-Time Monitoring**: See exactly what Railway browsers are doing
+1. **Real-Time Monitoring**: See exactly what CloudRuntime browsers are doing
 2. **Console Visibility**: All logs, errors, warnings in real-time
 3. **Network Analysis**: Every HTTP request with headers and timing
 4. **Performance Profiling**: Core Web Vitals and bottleneck analysis
@@ -441,15 +441,15 @@ Socket.IO broadcasting.
 
 ## ✅ Next Steps
 
-1. **Wait for Railway Deployment** (~3 minutes)
+1. **Wait for CloudRuntime Deployment** (~3 minutes)
 2. **Test the endpoint**:
    ```bash
-   curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools
+   curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/browser/devtools
    ```
 3. **Restart Antigravity** to load MCP changes
 4. **Try it out**:
    ```markdown
-   "Connect to the Railway browser and show me what it's viewing"
+   "Connect to the CloudRuntime browser and show me what it's viewing"
    ```
 5. **Run the audit**:
    ```bash
@@ -472,7 +472,7 @@ Socket.IO broadcasting.
 - ✅ Unlimited screenshots
 - ✅ Script evaluation in browser
 - ✅ Full browser automation
-- ✅ All working through Railway's infrastructure
+- ✅ All working through CloudRuntime's infrastructure
 - ✅ Integrated with Antigravity via MCP
 
 **No more**:

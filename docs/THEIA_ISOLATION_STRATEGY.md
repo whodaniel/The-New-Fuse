@@ -19,7 +19,7 @@ skideancer-ide/
 ├── .github/
 │   └── workflows/
 │       ├── build.yml          # Build on push
-│       └── deploy-railway.yml # Deploy to Railway
+│       └── deploy-cloud_runtime.yml # Deploy to CloudRuntime
 ├── src-gen/
 │   ├── backend/
 │   │   └── server.js          # SkIDEancer backend
@@ -28,7 +28,7 @@ skideancer-ide/
 ├── lib/                       # Compiled modules (531 files)
 ├── static/                    # Static assets
 ├── plugins/                   # VSCode-compatible plugins
-├── Dockerfile                 # Railway deployment
+├── Dockerfile                 # CloudRuntime deployment
 ├── package.json               # Yarn-based
 ├── yarn.lock                  # Yarn lockfile
 ├── webpack.config.js
@@ -95,7 +95,7 @@ skideancer-ide/
 │  │                     │          │                     │       │
 │  └──────────┬──────────┘          └──────────┬──────────┘       │
 │             │                                 │                  │
-│             │         Railway                 │                  │
+│             │         CloudRuntime                 │                  │
 │             │                                 │                  │
 │  ┌──────────▼──────────┐          ┌──────────▼──────────┐       │
 │  │  tnf-cloud-sandbox  │          │  tnf-ide-ide      │       │
@@ -113,7 +113,7 @@ skideancer-ide/
 ```typescript
 // SkIDEancer connects to Cloud Sandbox via WebSocket
 const ws = new WebSocket(
-  'wss://tnf-cloud-sandbox-production.up.railway.app/ws'
+  'wss://tnf-cloud-sandbox-production.thenewfuse.com/ws'
 );
 
 // SkIDEancer uses MCP tools from sandbox
@@ -134,19 +134,19 @@ ws.send(
 
 ```bash
 # SkIDEancer service environment
-CLOUD_SANDBOX_URL=https://tnf-cloud-sandbox-production.up.railway.app
-CLOUD_SANDBOX_WS=wss://tnf-cloud-sandbox-production.up.railway.app/ws
-TNF_API_URL=https://tnf-api-production.up.railway.app
+CLOUD_SANDBOX_URL=https://tnf-cloud-sandbox-production.thenewfuse.com
+CLOUD_SANDBOX_WS=wss://tnf-cloud-sandbox-production.thenewfuse.com/ws
+TNF_API_URL=https://tnf-api-production.thenewfuse.com
 ```
 
 ### 3. Shared Redis (Optional)
 
 ```bash
 # Both services connect to same Redis
-REDIS_URL=redis://...railway.app:6379
+REDIS_URL=redis://...thenewfuse.com:6379
 ```
 
-## Railway Configuration
+## CloudRuntime Configuration
 
 ### Service 1: Cloud Sandbox (Existing)
 
@@ -206,10 +206,10 @@ EXPOSE 3007
 CMD ["node", "src-gen/backend/server.js", "--hostname=0.0.0.0", "--port=3007"]
 ```
 
-### Phase 3: Deploy to Railway
+### Phase 3: Deploy to CloudRuntime
 
 ```bash
-# In Railway dashboard:
+# In CloudRuntime dashboard:
 # 1. Add new service
 # 2. Connect to whodaniel/skideancer-ide
 # 3. Set environment variables
@@ -229,7 +229,7 @@ git commit -m "chore: Move SkIDEancer IDE to separate repo (whodaniel/skideancer
 
 ```typescript
 // In Tauri app, add SkIDEancer navigation
-const THEIA_URL = 'https://tnf-ide-ide-production.up.railway.app';
+const THEIA_URL = 'https://tnf-ide-ide-production.thenewfuse.com';
 
 window.tnf.openSkIDEancer = () => {
   window.open(THEIA_URL, '_blank');
@@ -242,7 +242,7 @@ window.tnf.openSkIDEancer = () => {
 2. **Independent Deployments**: Deploy SkIDEancer without touching main repo
 3. **Faster CI/CD**: Smaller repos build faster
 4. **Technology Freedom**: SkIDEancer can use whatever tools it needs
-5. **Railway Friendly**: Each service has its own repo
+5. **CloudRuntime Friendly**: Each service has its own repo
 6. **Scalable**: Can add more isolated services later
 
 ## Drawbacks & Mitigations
@@ -260,5 +260,5 @@ window.tnf.openSkIDEancer = () => {
 1. Package manager isolation (yarn vs pnpm)
 2. Independent deployment lifecycle
 3. Clear service boundaries
-4. Railway's model supports multi-repo deployments
+4. CloudRuntime's model supports multi-repo deployments
 5. Matches existing cloud sandbox pattern

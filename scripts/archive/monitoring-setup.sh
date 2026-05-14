@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Setting up monitoring and health checks for Railway services..."
+echo "Setting up monitoring and health checks for CloudRuntime services..."
 echo "============================================================="
 
 # Array of services to monitor
@@ -259,9 +259,9 @@ echo ""
 echo "✅ Monitoring setup complete!"
 echo ""
 echo "Next steps:"
-echo "1. Update service URLs in monitoring-config.json with actual Railway URLs"
+echo "1. Update service URLs in monitoring-config.json with actual CloudRuntime URLs"
 echo "2. Run './monitor-services.js' to test service health"
-echo "3. Set up automated monitoring with Railway's built-in monitoring"
+echo "3. Set up automated monitoring with CloudRuntime's built-in monitoring"
 echo "4. Configure alerting webhooks if needed"
 echo ""
 echo "To test monitoring:"

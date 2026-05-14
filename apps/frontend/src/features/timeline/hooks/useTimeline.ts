@@ -23,9 +23,23 @@ export const useTimeline = () => {
   useEffect(() => {
     fetchMacro();
 
-    // SimulCollab: Connect to Relay
-    const relayUrl = 'ws://localhost:3000';
-    const ws = new WebSocket(relayUrl);
+    // Relay for live timeline updates (env override, local default)
+    const relayUrl =
+      String(import.meta.env.VITE_TIMELINE_RELAY_WS_URL || '').trim() || 'ws://localhost:3000/ws';
+
+    if (typeof WebSocket === 'undefined') {
+      console.warn('WebSocket is not available in this runtime');
+      return;
+    }
+
+    let ws: WebSocket;
+    try {
+      ws = new WebSocket(relayUrl);
+    } catch (e) {
+      console.warn('Failed to initialize timeline relay websocket', e);
+      return;
+    }
+
     wsRef.current = ws;
 
     ws.onopen = () => {

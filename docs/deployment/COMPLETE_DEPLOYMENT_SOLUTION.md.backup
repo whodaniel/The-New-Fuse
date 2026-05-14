@@ -1,10 +1,10 @@
-# Complete Railway Deployment Solution
+# Complete Cloudflare Deployment Solution
 
 ## Current Situation
 
 ✅ **Everything is prepared:**
 - All Dockerfiles configured
-- Railway project linked (TNF: 041cee9d-8648-4074-b5a6-0eae436de1d1)
+- Cloudflare project linked (TNF: 041cee9d-8648-4074-b5a6-0eae436de1d1)
 - JWT Secret generated: `your-jwt-secret-from-env`
 - Databases exist (PostgreSQL, Redis)
 - Frontend service exists (but failing - needs rebuild)
@@ -18,11 +18,11 @@
 
 ### STEP 1: Create Services Manually (2 minutes)
 
-Railway CLI cannot create services - only the dashboard can. You MUST do this first:
+Cloudflare CLI cannot create services - only the dashboard can. You MUST do this first:
 
-1. **Open Railway Dashboard:**
+1. **Open Cloudflare Dashboard:**
    ```
-   https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+   https://www.cloudflare.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
    ```
 
 2. **Create 3 New Services:**
@@ -81,15 +81,15 @@ REDIS_URL=${{Redis.REDIS_URL}}
 ```env
 NODE_ENV=production
 PORT=3002
-API_URL=${{api.RAILWAY_PRIVATE_DOMAIN}}
-BACKEND_URL=${{backend.RAILWAY_PRIVATE_DOMAIN}}
+API_URL=${{api.CLOUDFLARE_PRIVATE_DOMAIN}}
+BACKEND_URL=${{backend.CLOUDFLARE_PRIVATE_DOMAIN}}
 ```
 
 **Frontend:**
 ```env
 NODE_ENV=production
 PORT=3000
-VITE_API_URL=https://${{api-gateway.RAILWAY_PUBLIC_DOMAIN}}
+VITE_API_URL=https://${{api-gateway.CLOUDFLARE_PUBLIC_DOMAIN}}
 ```
 
 ### 3. Monitors Deployment
@@ -112,21 +112,21 @@ The script will show you:
 
 Check status:
 ```bash
-railway status
+cloudflare status
 ```
 
 View logs:
 ```bash
-railway logs --service api
-railway logs --service backend
-railway logs --service api-gateway
-railway logs --service frontend
+cloudflare logs --service api
+cloudflare logs --service backend
+cloudflare logs --service api-gateway
+cloudflare logs --service frontend
 ```
 
 Get service URLs:
 ```bash
 # Will show all service URLs
-railway service
+cloudflare service
 ```
 
 ## If You Get Stuck
@@ -135,10 +135,10 @@ railway service
 → You didn't create the services in dashboard yet (Step 1)
 
 ### Build fails
-→ Check logs: `railway logs --service <name>`
+→ Check logs: `cloudflare logs --service <name>`
 
 ### Can't find dashboard
-→ Direct link: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+→ Direct link: https://www.cloudflare.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 
 ## Success Criteria
 
@@ -151,7 +151,7 @@ railway service
 
 ## Quick Reference
 
-**Dashboard:** https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+**Dashboard:** https://www.cloudflare.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 
 **Deploy command:**
 ```bash

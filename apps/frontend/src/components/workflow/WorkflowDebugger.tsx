@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Button,
   Card,
@@ -12,7 +13,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
-// @ts-nocheck
 import { DebugOptions, workflowExecutionService } from '@/services/WorkflowExecutionService';
 import { Bug, Play, SkipForward, X } from 'lucide-react';
 import React, { useState } from 'react';

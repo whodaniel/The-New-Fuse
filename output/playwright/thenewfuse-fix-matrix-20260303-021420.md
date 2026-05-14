@@ -13,7 +13,7 @@ Input audits:
 - Evidence:
   - `requests.get(..., allow_redirects=False)` => status 301, location header to `:3000`.
 - Likely owner:
-  - Edge routing / Railway ingress / nginx rewrite config.
+  - Edge routing / CloudRuntime ingress / nginx rewrite config.
 - Fix:
   - Remove port-3000 canonical/redirect behavior for `/observatory`.
   - Ensure HTTPS canonical redirect remains on `https://thenewfuse.com/observatory`.

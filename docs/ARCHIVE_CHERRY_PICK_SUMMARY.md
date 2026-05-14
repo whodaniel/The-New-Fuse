@@ -143,7 +143,7 @@ rm -rf "non-saas Nov-15-25/"
 1. [ ] Test SkIDEancer IDE startup:
        `cd apps/ide-ide && node src-gen/backend/server.js`
 2. [ ] Install dependencies if needed: `pnpm install`
-3. [ ] Create Dockerfile for SkIDEancer (Railway deployment)
+3. [ ] Create Dockerfile for SkIDEancer (CloudRuntime deployment)
 
 ### Integration
 

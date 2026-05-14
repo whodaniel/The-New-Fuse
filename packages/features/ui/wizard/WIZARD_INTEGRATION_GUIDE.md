@@ -41,7 +41,7 @@ packages/features/ui/wizard/
 │   ├── AgentConfiguration.tsx
 │   ├── AgentCapabilities.tsx
 │   ├── AgentTesting.tsx
-│   ├── RailwayConnection.tsx
+│   ├── CloudRuntimeConnection.tsx
 │   ├── DeploymentConfiguration.tsx
 │   ├── DeploymentProgress.tsx
 │   ├── RoleConfiguration.tsx
@@ -333,9 +333,9 @@ export const WizardLauncher: React.FC = () => {
 
 **Estimated Time**: 15 minutes
 
-### 3. Deploy to Railway Wizard (`deploy-railway`)
+### 3. Deploy to CloudRuntime Wizard (`deploy-cloud_runtime`)
 
-**Purpose**: Deploy cloud sandbox to Railway
+**Purpose**: Deploy cloud sandbox to CloudRuntime
 
 **Steps**:
 
@@ -351,7 +351,7 @@ export const WizardLauncher: React.FC = () => {
 
 **Estimated Time**: 20 minutes
 
-**Prerequisites**: Railway account, GitHub repository
+**Prerequisites**: CloudRuntime account, GitHub repository
 
 ### 4. Configure RBAC Wizard (`configure-rbac`)
 
@@ -648,11 +648,11 @@ function ConditionalWizardSuggestion() {
   const { user } = useAuth();
 
   // Show deployment wizard if user has created agents but hasn't deployed
-  if (user.agentCount > 0 && !user.hasDeployedToRailway) {
+  if (user.agentCount > 0 && !user.hasDeployedToCloudRuntime) {
     return (
       <div className="wizard-suggestion">
         <p>Ready to deploy your agents to the cloud?</p>
-        <button onClick={() => navigate('/wizards/deploy-railway')}>
+        <button onClick={() => navigate('/wizards/deploy-cloud_runtime')}>
           Start Deployment Guide
         </button>
       </div>

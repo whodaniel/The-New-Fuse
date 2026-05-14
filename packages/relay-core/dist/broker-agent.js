@@ -41,13 +41,13 @@ const ioredis_1 = require("ioredis");
 const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
-        process.env.RAILWAY_REDIS_URL ||
+        process.env.CLOUDFLARE_REDIS_URL ||
         process.env.LIVE_REDIS_URL ||
         process.env.REDIS_PRIVATE_URL ||
         process.env.REDIS_TLS_URL ||
         'redis://localhost:6379',
     LEDGER_API_BASE: process.env.LEDGER_API_BASE ||
-        process.env.RAILWAY_API_URL ||
+        process.env.CLOUDFLARE_API_URL ||
         process.env.LIVE_API_BASE_URL ||
         process.env.API_BASE_URL ||
         process.env.TNF_API_BASE ||

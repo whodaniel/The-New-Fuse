@@ -1,7 +1,7 @@
 import { WebSocket } from 'ws';
 
 // Connection details
-const SANDBOX_URL = 'wss://tnf-cloud-sandbox-v2-production.up.railway.app/ws';
+const SANDBOX_URL = 'wss://tnf-cloud-sandbox-v2-production.thenewfuse.com/ws';
 
 console.log(`🔌 Connecting to Sandbox MCP at ${SANDBOX_URL}...`);
 const ws = new WebSocket(SANDBOX_URL, {

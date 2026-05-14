@@ -27,7 +27,7 @@
 
 ### Frontend
 
-- `VITE_API_URL` (example: `https://api-production-48f1.up.railway.app`)
+- `VITE_API_URL` (example: `https://api-production-48f1.thenewfuse.com`)
 - Firebase (if using Firebase sign-in/register):
   - `VITE_FIREBASE_API_KEY`
   - `VITE_FIREBASE_AUTH_DOMAIN`

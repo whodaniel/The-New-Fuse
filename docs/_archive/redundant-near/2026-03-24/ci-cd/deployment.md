@@ -14,9 +14,9 @@ Complete guide for deploying The New Fuse to production and staging environments
 
 ## Overview
 
-The New Fuse uses automated deployment to Railway with the following characteristics:
+The New Fuse uses automated deployment to CloudRuntime with the following characteristics:
 
-- **Platform**: Railway
+- **Platform**: CloudRuntime
 - **Strategy**: Zero-downtime rolling updates
 - **Services**: 4 (api-gateway, api, backend, frontend)
 - **Environments**: Production, Staging
@@ -42,7 +42,7 @@ Before any deployment, ensure:
 - [ ] Migration scripts ready (if needed)
 
 ### Configuration
-- [ ] Environment variables updated in Railway
+- [ ] Environment variables updated in CloudRuntime
 - [ ] Database migrations prepared
 - [ ] Feature flags configured
 - [ ] Third-party services notified (if needed)
@@ -74,7 +74,7 @@ gh run watch
 **Timeline**:
 1. Tests run (15-20 min)
 2. Docker images build (10-15 min)
-3. Railway deployment (5-10 min)
+3. CloudRuntime deployment (5-10 min)
 4. Health checks (2-5 min)
 5. Smoke tests (2-3 min)
 
@@ -100,7 +100,7 @@ git push origin v1.2.3
 Manual dispatch to staging:
 
 1. Go to GitHub Actions
-2. Select "Deploy to Railway"
+2. Select "Deploy to CloudRuntime"
 3. Click "Run workflow"
 4. Select:
    - Branch: `develop` or feature branch
@@ -110,43 +110,43 @@ Manual dispatch to staging:
 
 ## Manual Deployment
 
-### Using Railway CLI
+### Using CloudRuntime CLI
 
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
+# Install CloudRuntime CLI
+npm install -g @cloud_runtime/cli
 
 # Login
-railway login
+cloud_runtime login
 
 # Link to project
-railway link
+cloud_runtime link
 
 # Deploy specific service
-railway up --service=api-gateway
+cloud_runtime up --service=api-gateway
 
 # Deploy all services
-railway up --service=api-gateway & \
-railway up --service=api & \
-railway up --service=backend & \
-railway up --service=frontend
+cloud_runtime up --service=api-gateway & \
+cloud_runtime up --service=api & \
+cloud_runtime up --service=backend & \
+cloud_runtime up --service=frontend
 ```
 
 ### Using Docker
 
 ```bash
 # Build images
-docker build -f apps/api-gateway/Dockerfile.railway -t fuse-api-gateway .
-docker build -f apps/api/Dockerfile.railway -t fuse-api .
-docker build -f apps/backend/Dockerfile.railway -t fuse-backend .
-docker build -f apps/frontend/Dockerfile.railway -t fuse-frontend .
+docker build -f apps/api-gateway/Dockerfile.cloud_runtime -t fuse-api-gateway .
+docker build -f apps/api/Dockerfile.cloud_runtime -t fuse-api .
+docker build -f apps/backend/Dockerfile.cloud_runtime -t fuse-backend .
+docker build -f apps/frontend/Dockerfile.cloud_runtime -t fuse-frontend .
 
 # Tag for registry
-docker tag fuse-api-gateway registry.railway.app/fuse-api-gateway:latest
+docker tag fuse-api-gateway registry.thenewfuse.com/fuse-api-gateway:latest
 # ... repeat for other services
 
 # Push to registry
-docker push registry.railway.app/fuse-api-gateway:latest
+docker push registry.thenewfuse.com/fuse-api-gateway:latest
 # ... repeat for other services
 ```
 
@@ -193,14 +193,14 @@ If deployment causes issues:
 # 1. Via GitHub Actions
 # Trigger rollback manually
 
-# 2. Via Railway CLI
-railway rollback --service=api-gateway
-railway rollback --service=api
-railway rollback --service=backend
-railway rollback --service=frontend
+# 2. Via CloudRuntime CLI
+cloud_runtime rollback --service=api-gateway
+cloud_runtime rollback --service=api
+cloud_runtime rollback --service=backend
+cloud_runtime rollback --service=frontend
 
 # 3. Verify services are healthy
-railway status --service=api-gateway
+cloud_runtime status --service=api-gateway
 ```
 
 **Timeline**: 5-10 minutes
@@ -210,8 +210,8 @@ railway status --service=api-gateway
 For database migrations:
 
 ```bash
-# 1. Connect to Railway
-railway shell
+# 1. Connect to CloudRuntime
+cloud_runtime shell
 
 # 2. Run migration rollback
 pnpm run db:migrate:rollback
@@ -226,10 +226,10 @@ Use feature flags:
 
 ```bash
 # Update environment variables
-railway variables set FEATURE_NEW_UI=false --service=frontend
+cloud_runtime variables set FEATURE_NEW_UI=false --service=frontend
 
 # Restart service
-railway restart --service=frontend
+cloud_runtime restart --service=frontend
 ```
 
 ## Post-Deployment
@@ -240,10 +240,10 @@ railway restart --service=frontend
 
 ```bash
 # Check all services
-curl https://api-gateway.railway.app/health
-curl https://api.railway.app/health
-curl https://backend.railway.app/health
-curl https://frontend.railway.app/
+curl https://api-gateway.thenewfuse.com/health
+curl https://api.thenewfuse.com/health
+curl https://backend.thenewfuse.com/health
+curl https://frontend.thenewfuse.com/
 
 # Expected: All return 200 OK
 ```
@@ -264,14 +264,14 @@ pnpm run test:smoke:production
 #### 3. Monitor Metrics
 
 ```bash
-# Check Railway metrics
-railway logs --service=api-gateway --tail 100
+# Check CloudRuntime metrics
+cloud_runtime logs --service=api-gateway --tail 100
 
 # Check error rates
-railway metrics --service=api-gateway
+cloud_runtime metrics --service=api-gateway
 
 # Monitor dashboards
-# - Railway dashboard
+# - CloudRuntime dashboard
 # - Application monitoring
 # - Error tracking (Sentry)
 ```
@@ -280,10 +280,10 @@ railway metrics --service=api-gateway
 
 ```bash
 # Check migrations applied
-railway run -- pnpm run db:migrate:status
+cloud_runtime run -- pnpm run db:migrate:status
 
 # Verify data integrity
-railway run -- pnpm run db:verify
+cloud_runtime run -- pnpm run db:verify
 ```
 
 ### Communication
@@ -321,32 +321,32 @@ Monitor for 30-60 minutes after deployment:
 Handled by CI/CD if health checks fail:
 
 1. Health check fails after 10 retries
-2. Railway rollback triggered
+2. CloudRuntime rollback triggered
 3. Previous version restored
 4. Notification sent
 5. Deployment marked as failed
 
 ### Manual Rollback
 
-#### Via Railway Dashboard
+#### Via CloudRuntime Dashboard
 
-1. Go to Railway dashboard
+1. Go to CloudRuntime dashboard
 2. Select service
 3. Click "Deployments"
 4. Find previous successful deployment
 5. Click "Redeploy"
 
-#### Via Railway CLI
+#### Via CloudRuntime CLI
 
 ```bash
 # Rollback to previous deployment
-railway rollback --service=api-gateway
+cloud_runtime rollback --service=api-gateway
 
 # Rollback to specific deployment
-railway rollback <deployment-id> --service=api-gateway
+cloud_runtime rollback <deployment-id> --service=api-gateway
 
 # Verify rollback
-railway status --service=api-gateway
+cloud_runtime status --service=api-gateway
 ```
 
 #### Via Git
@@ -368,13 +368,13 @@ If migrations were applied:
 
 ```bash
 # 1. Rollback migrations
-railway run -- pnpm run db:migrate:rollback
+cloud_runtime run -- pnpm run db:migrate:rollback
 
 # 2. Verify schema
-railway run -- pnpm run db:migrate:status
+cloud_runtime run -- pnpm run db:migrate:status
 
 # 3. Test application
-curl https://api.railway.app/health
+curl https://api.thenewfuse.com/health
 ```
 
 ### Partial Rollback
@@ -383,12 +383,12 @@ Rollback single service:
 
 ```bash
 # Rollback only frontend
-railway rollback --service=frontend
+cloud_runtime rollback --service=frontend
 
 # Keep other services on new version
-railway status --service=api-gateway
-railway status --service=api
-railway status --service=backend
+cloud_runtime status --service=api-gateway
+cloud_runtime status --service=api
+cloud_runtime status --service=backend
 ```
 
 ### Rollback Verification
@@ -414,29 +414,29 @@ After rollback:
 ### Production
 
 - **URL**: https://app.fuse.com
-- **Railway Project**: fuse-production
+- **CloudRuntime Project**: fuse-production
 - **Branch**: `main`
 - **Database**: Production PostgreSQL
 - **Monitoring**: Full monitoring enabled
 
 **Access**:
 ```bash
-railway link fuse-production
-railway shell
+cloud_runtime link fuse-production
+cloud_runtime shell
 ```
 
 ### Staging
 
 - **URL**: https://staging.fuse.com
-- **Railway Project**: fuse-staging
+- **CloudRuntime Project**: fuse-staging
 - **Branch**: `develop`
 - **Database**: Staging PostgreSQL
 - **Monitoring**: Basic monitoring
 
 **Access**:
 ```bash
-railway link fuse-staging
-railway shell
+cloud_runtime link fuse-staging
+cloud_runtime shell
 ```
 
 ## Database Migrations
@@ -451,10 +451,10 @@ pnpm run db:generate
 cat drizzle/migrations/*/migration.sql
 
 # Apply to staging
-railway run --service=backend -- pnpm run db:migrate
+cloud_runtime run --service=backend -- pnpm run db:migrate
 
 # Verify
-railway run --service=backend -- pnpm run db:migrate:status
+cloud_runtime run --service=backend -- pnpm run db:migrate:status
 ```
 
 ### Migration Best Practices
@@ -469,10 +469,10 @@ railway run --service=backend -- pnpm run db:migrate:status
 
 ```bash
 # Rollback last migration
-railway run --service=backend -- pnpm run db:migrate:rollback
+cloud_runtime run --service=backend -- pnpm run db:migrate:rollback
 
 # Rollback to specific version
-railway run --service=backend -- pnpm run db:migrate:rollback --to 20250115000000
+cloud_runtime run --service=backend -- pnpm run db:migrate:rollback --to 20250115000000
 ```
 
 ## Deployment Metrics
@@ -505,7 +505,7 @@ See [Troubleshooting Guide](./troubleshooting.md) for detailed solutions to comm
 
 ## Additional Resources
 
-- [Railway Documentation](https://docs.railway.app)
+- [CloudRuntime Documentation](https://docs.thenewfuse.com)
 - [Docker Documentation](https://docs.docker.com)
 - [GitHub Actions Documentation](https://docs.github.com/actions)
 - [Troubleshooting Guide](./troubleshooting.md)

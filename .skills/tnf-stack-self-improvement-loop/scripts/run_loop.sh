@@ -21,23 +21,23 @@ fi
 
 cd "$REPO"
 
-echo "[1/5] Build frontend"
-pnpm --filter @the-new-fuse/frontend-app run build
+if [[ -x "$REPO/tnf" ]]; then
+  TNF_CMD=("$REPO/tnf")
+else
+  TNF_CMD=(node "$REPO/packages/tnf-cli/dist/cli.js")
+fi
 
-echo "[2/5] Live link crawl"
-cd apps/frontend
-LIVE_AUDIT_MAX_DEPTH=5 LIVE_AUDIT_MAX_PAGES=500 LIVE_AUDIT_MAX_EXTERNAL=400 FAIL_ON_BROKEN=1 pnpm run audit:live-links
+TOKEN_ARG=()
+if [[ -n "${TNF_SUPER_ADMIN_INPUT_TOKEN:-}" ]]; then
+  TOKEN_ARG=(--super-admin-token "$TNF_SUPER_ADMIN_INPUT_TOKEN")
+elif [[ -n "${CI_SUPER_ADMIN_TOKEN:-}" ]]; then
+  TOKEN_ARG=(--super-admin-token "$CI_SUPER_ADMIN_TOKEN")
+fi
 
-echo "[3/5] Route semantic audit"
-SEMANTIC_AUDIT_BASE_URL="$BASE_URL" FAIL_ON_SEMANTIC_ISSUES=1 pnpm run audit:all-routes-semantic
+echo "[1/1] Run canonical TNF self-improvement loop"
+"${TNF_CMD[@]}" self-improvement run \
+  --base-url "$BASE_URL" \
+  --api-url "$API_URL" \
+  "${TOKEN_ARG[@]}"
 
-echo "[4/5] Auth path audit"
-AUTH_AUDIT_PUBLIC_BASE_URL="$BASE_URL" AUTH_AUDIT_API_BASE_URL="$API_URL" FAIL_ON_AUTH_ISSUES=1 pnpm run audit:auth-paths
-
-cd "$REPO"
-echo "[5/5] Generate Mermaid map"
-python3 /Users/<owner>/.codex/skills/tnf-stack-self-improvement-loop/scripts/generate_master_mermaid.py \
-  --repo "$REPO" \
-  --out "$REPO/docs/architecture/tnf-master-framework.mmd"
-
-echo "Loop complete"
+echo "Loop complete (tnf self-improvement run)"

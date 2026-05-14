@@ -98,7 +98,7 @@ danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/AI-ARCADE
 - Frontend now forwards Authorization Bearer from localStorage
   (tnf_access_token/tnf_jwt) automatically if present.
 
-- Set CASIN8_COMMUNITY_API_KEY in Railway for membership enforcement.
+- Set CASIN8_COMMUNITY_API_KEY in CloudRuntime for membership enforcement.
 - Redeployed casin8-games-backend with JWT + membership gate.
 - Frontend redeployed with Authorization forwarding + identity header.
 - Verified /api/v2/holdem/tables now returns 401 without identity (members-only

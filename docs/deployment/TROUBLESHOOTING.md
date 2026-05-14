@@ -68,9 +68,9 @@ rm -rf .turbo
 pnpm run build --concurrency=1
 ```
 
-## Railway Deployment Issues
+## CloudRuntime Deployment Issues
 
-### Issue: Railway CLI not authenticated
+### Issue: CloudRuntime CLI not authenticated
 
 **Symptoms:**
 - "Not logged in" errors
@@ -78,14 +78,14 @@ pnpm run build --concurrency=1
 
 **Solutions:**
 ```bash
-# Login to Railway
-railway login
+# Login to CloudRuntime
+cloud_runtime login
 
 # Verify authentication
-railway whoami
+cloud_runtime whoami
 
 # Link to project
-railway link
+cloud_runtime link
 ```
 
 ### Issue: Service fails to start
@@ -97,19 +97,19 @@ railway link
 **Solutions:**
 ```bash
 # Check service logs
-railway logs --service <service-name>
+cloud_runtime logs --service <service-name>
 
 # Check environment variables
-railway variables --service <service-name>
+cloud_runtime variables --service <service-name>
 
 # Restart service
-railway restart --service <service-name>
+cloud_runtime restart --service <service-name>
 
 # Verify Dockerfile
 cat apps/<service>/Dockerfile
 ```
 
-### Issue: Build timeout on Railway
+### Issue: Build timeout on CloudRuntime
 
 **Symptoms:**
 - Deployment exceeds time limit
@@ -117,13 +117,13 @@ cat apps/<service>/Dockerfile
 
 **Solutions:**
 ```bash
-# Use Railway-optimized build
-BUILD_FRONTEND=false pnpm run build:railway
+# Use CloudRuntime-optimized build
+BUILD_FRONTEND=false pnpm run build:cloud_runtime
 
 # Reduce build scope
-# Edit railway.toml to exclude dev dependencies
+# Edit cloud_runtime.toml to exclude dev dependencies
 
-# Increase Railway plan limits (if possible)
+# Increase CloudRuntime plan limits (if possible)
 ```
 
 ## Database Issues
@@ -162,8 +162,8 @@ pnpm drizzle migrate reset
 # Verify DATABASE_URL
 echo $DATABASE_URL
 
-# Check Railway database status
-railway status
+# Check CloudRuntime database status
+cloud_runtime status
 
 # Test connection
 psql $DATABASE_URL -c "SELECT 1;"
@@ -185,14 +185,14 @@ psql $DATABASE_URL -c "SELECT 1;"
 # Validate environment
 ./scripts/deployment/validate-deployment.sh
 
-# Check Railway variables
-railway variables
+# Check CloudRuntime variables
+cloud_runtime variables
 
 # Set missing variables
-railway variables --set VAR_NAME=value
+cloud_runtime variables --set VAR_NAME=value
 
 # Load from .env file
-./scripts/deployment/railway-deploy.sh sync-env
+./scripts/deployment/cloud_runtime-deploy.sh sync-env
 ```
 
 ## Rollback Issues
@@ -215,7 +215,7 @@ tail -f logs/deployment/rollback-*.log
 AUTO_CONFIRM=true ./scripts/deployment/rollback.sh <deployment-id>
 
 # Manual service restore
-railway up --service <service-name>
+cloud_runtime up --service <service-name>
 ```
 
 ## Performance Issues
@@ -270,10 +270,10 @@ pnpm run build:staged
 **Solutions:**
 ```bash
 # Check service logs
-railway logs --service <service-name>
+cloud_runtime logs --service <service-name>
 
 # Verify service is running
-railway status --service <service-name>
+cloud_runtime status --service <service-name>
 
 # Test health endpoint manually
 curl https://<service-url>/health
@@ -291,10 +291,10 @@ HEALTH_CHECK_TIMEOUT=60 ./scripts/deployment/smoke-tests.sh
 **Solution:**
 ```bash
 # Check service status
-railway status
+cloud_runtime status
 
 # Verify port configuration
-railway variables | grep PORT
+cloud_runtime variables | grep PORT
 ```
 
 ### "ETIMEDOUT"
@@ -306,8 +306,8 @@ railway variables | grep PORT
 # Increase timeout
 TIMEOUT=60 ./scripts/deployment/smoke-tests.sh
 
-# Check Railway network status
-railway status
+# Check CloudRuntime network status
+cloud_runtime status
 ```
 
 ### "Permission denied"
@@ -319,8 +319,8 @@ railway status
 # Fix script permissions
 chmod +x scripts/deployment/*.sh
 
-# Verify Railway authentication
-railway whoami
+# Verify CloudRuntime authentication
+cloud_runtime whoami
 ```
 
 ## Monitoring-Led Troubleshooting
@@ -356,9 +356,9 @@ When reporting issues, include:
    cat logs/deployment/deploy-*.log
    ```
 
-2. **Railway logs**
+2. **CloudRuntime logs**
    ```bash
-   railway logs --service <service-name>
+   cloud_runtime logs --service <service-name>
    ```
 
 3. **Build output**
@@ -370,7 +370,7 @@ When reporting issues, include:
    ```bash
    node --version
    pnpm --version
-   railway --version
+   cloud_runtime --version
    ```
 
 ### Support Channels

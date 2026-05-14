@@ -6,7 +6,7 @@ The Wizard System is a comprehensive, interactive user guidance framework for
 The New Fuse platform. It provides step-by-step workflows to help users
 accomplish complex tasks through:
 
-- **5 Pre-built Wizards**: Onboarding, Agent Creation, Railway Deployment, RBAC
+- **5 Pre-built Wizards**: Onboarding, Agent Creation, CloudRuntime Deployment, RBAC
   Configuration, Troubleshooting
 - **14 React Step Components**: Modular, reusable UI components
 - **Full State Management**: Automatic progress tracking and persistence
@@ -63,10 +63,10 @@ const suggested = stateManager.getSuggestedWizards(userRole, goals, completed);
    - Steps: Purpose → Capabilities → LLM Config → Security → Test & Deploy
    - Outcomes: Fully functional AI agent
 
-3. **Deploy to Railway** (`deploy-railway`)
+3. **Deploy to CloudRuntime** (`deploy-cloud_runtime`)
    - Target: Intermediate/Advanced
    - Time: 20 minutes
-   - Prerequisites: Railway account, GitHub repo
+   - Prerequisites: CloudRuntime account, GitHub repo
    - Steps: GitHub → Service Config → Env Vars → Database → Deploy → Verify →
      Domain
    - Outcomes: Cloud-deployed service
@@ -281,14 +281,14 @@ const {
 - Results display
 - Performance metrics
 
-#### 7. RailwayConnection.tsx
+#### 7. CloudRuntimeConnection.tsx
 
-**Purpose**: Railway/GitHub connection
+**Purpose**: CloudRuntime/GitHub connection
 
 **Features**:
 
 - GitHub connection status
-- Railway authentication
+- CloudRuntime authentication
 - Project selection
 - Environment selection
 

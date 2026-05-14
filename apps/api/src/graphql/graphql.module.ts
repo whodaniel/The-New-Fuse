@@ -36,8 +36,8 @@ import { SecurityLoggingService } from '../security/security-logging.service';
         const isProduction =
           configService.get('NODE_ENV') === 'production' ||
           process.env.NODE_ENV === 'production' ||
-          !!process.env.RAILWAY_ENVIRONMENT ||
-          !!process.env.RAILWAY_PROJECT_ID;
+          !!process.env.CLOUD_RUNTIME_ENVIRONMENT ||
+          !!process.env.CLOUD_RUNTIME_PROJECT_ID;
 
         const baseDir = process.cwd();
         const schemaPath = baseDir.endsWith('apps/api')

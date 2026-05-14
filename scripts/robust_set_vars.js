@@ -5,7 +5,7 @@ const vars = JSON.parse(fs.readFileSync('api_vars.json', 'utf8'));
 const ignore = ['SERVICE_PATH'];
 
 const args = Object.entries(vars)
-  .filter(([key]) => !key.startsWith('RAILWAY_') && !ignore.includes(key))
+  .filter(([key]) => !key.startsWith('CLOUD_RUNTIME_') && !ignore.includes(key))
   .map(([key, value]) => `--set "${key}=${value}"`)
   .join(' ');
 
@@ -17,7 +17,7 @@ function trySet(retries) {
     process.exit(1);
   }
 
-  exec(`railway variables --service api-server-v2 ${args}`, (err, stdout, stderr) => {
+  exec(`cloud_runtime variables --service api-server-v2 ${args}`, (err, stdout, stderr) => {
     if (!err) {
       console.log('SUCCESS: Variables set for api-server-v2.');
       console.log(

@@ -19,5 +19,5 @@ else
   echo "Response:"
   echo "$response" | jq . 2>/dev/null || echo "$response"
   echo ""
-  echo "Please wait a few more minutes for Railway deployment to complete"
+  echo "Please wait a few more minutes for CloudRuntime deployment to complete"
 fi

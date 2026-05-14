@@ -45,7 +45,7 @@ unlocks.
 4. Start listener: `pnpm --dir apps/api arcade:listener`
 5. Run backfill once: `pnpm --dir apps/api arcade:sweep`
 
-## Railway production sync
+## CloudRuntime production sync
 
 1. Export required chain vars in your shell:
    - `ARCADE_RPC_WSS_URL`
@@ -57,6 +57,6 @@ unlocks.
    - `VITE_CHAIN_NETWORK`, `VITE_CHAIN_ID`, `VITE_CHAIN_RPC_URL`
    - `VITE_CONTRACT_TOKEN`, `VITE_CONTRACT_MERKABA`, `VITE_CONTRACT_GENESIS`
 3. Sync vars:
-   - `pnpm railway:arcade:chain:sync`
+   - `pnpm cloud_runtime:arcade:chain:sync`
 4. Optional immediate redeploy:
-   - `TRIGGER_DEPLOY=true pnpm railway:arcade:chain:sync`
+   - `TRIGGER_DEPLOY=true pnpm cloud_runtime:arcade:chain:sync`

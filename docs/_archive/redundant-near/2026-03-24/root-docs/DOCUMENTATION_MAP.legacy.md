@@ -74,8 +74,8 @@ orphan ideas.
 1. **Status Check**: [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md)
 2. **Deployment Guide**:
    [docs/deployment/DEPLOYMENT_GUIDE.md](./docs/deployment/DEPLOYMENT_GUIDE.md)
-3. **Railway Specific**:
-   [docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
+3. **CloudRuntime Specific**:
+   [docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md](./docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md)
 4. **Docker Setup**:
    [docs/guides/docker-setup.md](./docs/guides/docker-setup.md)
 5. **Monitoring**:
@@ -365,12 +365,12 @@ orphan ideas.
   deployment
 - [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md) - Production status
 
-**Railway Deployment:**
+**CloudRuntime Deployment:**
 
-- [docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
-- [docs/RAILWAY-DEPLOYMENT-GUIDE.md](./docs/RAILWAY-DEPLOYMENT-GUIDE.md)
-- [docs/deployment/RAILWAY_FAILURE_ANALYSIS.md](./docs/deployment/RAILWAY_FAILURE_ANALYSIS.md)
-- [docs/deployment/RAILWAY_BUILD_FIX_SUMMARY.md](./docs/deployment/RAILWAY_BUILD_FIX_SUMMARY.md)
+- [docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md](./docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md)
+- [docs/CLOUD_RUNTIME-DEPLOYMENT-GUIDE.md](./docs/CLOUD_RUNTIME-DEPLOYMENT-GUIDE.md)
+- [docs/deployment/CLOUD_RUNTIME_FAILURE_ANALYSIS.md](./docs/deployment/CLOUD_RUNTIME_FAILURE_ANALYSIS.md)
+- [docs/deployment/CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md](./docs/deployment/CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md)
 
 **Docker:**
 
@@ -671,7 +671,7 @@ README.md (Root Entry Point — full codebase architecture overview)
 │
 ├── AI Infrastructure
 │   ├── apps/picoclaw-overseer/ (Go — edge AI agents)
-│   ├── OpenClaw Mesh (3 Railway cloud instances — Claude Pro OAuth)
+│   ├── OpenClaw Mesh (3 CloudRuntime cloud instances — Claude Pro OAuth)
 │   └── apps/mcp-servers/ (MCP tool servers)
 │
 ├── Database (Drizzle ORM + PostgreSQL)
@@ -679,8 +679,8 @@ README.md (Root Entry Point — full codebase architecture overview)
 │
 ├── Deployment
 │   ├── docs/deployment/DEPLOYMENT_GUIDE.md
-│   ├── docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md
-│   └── railway.toml (15+ Railway services)
+│   ├── docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md
+│   └── cloud_runtime.toml (15+ CloudRuntime services)
 │
 └── Testing & Quality
     ├── docs/testing/TESTING_SETUP_COMPLETE.md

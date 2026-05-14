@@ -187,13 +187,13 @@ export class OpenClawOAuthRotationService {
     );
   }
 
-  private async runRailway(args: string[], timeoutMs = 120000): Promise<string> {
-    const { stdout, stderr } = await execFileAsync('railway', args, {
+  private async runCloudRuntime(args: string[], timeoutMs = 120000): Promise<string> {
+    const { stdout, stderr } = await execFileAsync('cloud_runtime', args, {
       timeout: timeoutMs,
       maxBuffer: 1024 * 1024 * 8,
     });
     if (stderr && /error|failed/i.test(stderr)) {
-      // Some railway commands use stderr for progress logs; only treat strong errors later.
+      // Some cloud_runtime commands use stderr for progress logs; only treat strong errors later.
     }
     return String(stdout || '').trim();
   }
@@ -203,7 +203,7 @@ export class OpenClawOAuthRotationService {
     id: string | null;
     createdAt: string | null;
   }> {
-    const raw = await this.runRailway(['status', '--json'], 120000);
+    const raw = await this.runCloudRuntime(['status', '--json'], 120000);
     const parsed = JSON.parse(raw);
     const nodes = parsed?.environments?.edges || [];
     for (const env of nodes) {
@@ -223,7 +223,7 @@ export class OpenClawOAuthRotationService {
   }
 
   private async getVars(service: string): Promise<Record<string, string>> {
-    const raw = await this.runRailway(['variable', 'list', '--service', service, '--json'], 120000);
+    const raw = await this.runCloudRuntime(['variable', 'list', '--service', service, '--json'], 120000);
     return JSON.parse(raw);
   }
 
@@ -246,7 +246,7 @@ export class OpenClawOAuthRotationService {
 
   private async checkOverview(service: string): Promise<number | null> {
     const vars = await this.getVars(service);
-    const domain = vars.RAILWAY_PUBLIC_DOMAIN;
+    const domain = vars.CLOUD_RUNTIME_PUBLIC_DOMAIN;
     if (!domain) return null;
     const { stdout } = await execFileAsync(
       'curl',
@@ -313,7 +313,7 @@ export class OpenClawOAuthRotationService {
       payload.service
     );
 
-    await this.runRailway(setArgs, 180000);
+    await this.runCloudRuntime(setArgs, 180000);
 
     const vars = await this.getVars(payload.service);
     const verified: OpenClawOAuthExecutionResult['verified'] = {

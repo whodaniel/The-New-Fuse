@@ -2,7 +2,7 @@
 
 ## What Was Completed
 
-Comprehensive containerization and Railway deployment configuration for the
+Comprehensive containerization and CloudRuntime deployment configuration for the
 secure cloud sandbox with RBAC and multi-tenant isolation.
 
 ## Files Created
@@ -17,7 +17,7 @@ secure cloud sandbox with RBAC and multi-tenant isolation.
    - Optimized layer caching
    - ~450 lines
 
-2. **[Dockerfile.railway](./Dockerfile.railway)** - Railway-optimized Dockerfile
+2. **[Dockerfile.cloud_runtime](./Dockerfile.cloud_runtime)** - CloudRuntime-optimized Dockerfile
    - Monorepo-aware build process
    - Minimal Alpine-based runtime
    - Playwright browser support
@@ -43,7 +43,7 @@ secure cloud sandbox with RBAC and multi-tenant isolation.
 
 5. **[scripts/healthcheck.sh](./scripts/healthcheck.sh)** - Health check script
    - HTTP health endpoint verification
-   - Railway-compatible
+   - CloudRuntime-compatible
    - Exit codes for monitoring
 
 ### Configuration
@@ -56,16 +56,16 @@ secure cloud sandbox with RBAC and multi-tenant isolation.
    - Monitoring settings
    - 150+ documented variables
 
-7. **[railway.toml (updated)](../../railway.toml)** - Railway service
+7. **[cloud_runtime.toml (updated)](../../cloud_runtime.toml)** - CloudRuntime service
    configuration
    - Updated tnf-cloud-sandbox-v2 service
-   - Uses new Dockerfile.railway
+   - Uses new Dockerfile.cloud_runtime
    - Health check configuration
    - Watch paths for auto-deploy
 
 ### Documentation
 
-8. **[RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)** - Complete deployment
+8. **[CLOUD_RUNTIME_DEPLOYMENT.md](./CLOUD_RUNTIME_DEPLOYMENT.md)** - Complete deployment
    guide
    - Quick start instructions
    - Detailed setup steps
@@ -92,22 +92,22 @@ secure cloud sandbox with RBAC and multi-tenant isolation.
 - **Security hardening**: Non-root user, minimal attack surface
 - **Comprehensive validation**: Environment checks, health monitoring
 - **Production-ready**: Graceful shutdown, signal handling
-- **Railway-optimized**: Fast builds, efficient caching
+- **CloudRuntime-optimized**: Fast builds, efficient caching
 
 ## Deployment Options
 
-### Option 1: Railway (Recommended for Production)
+### Option 1: CloudRuntime (Recommended for Production)
 
 ```bash
-# Deploy to Railway
-railway up --service tnf-cloud-sandbox-v2
+# Deploy to CloudRuntime
+cloud_runtime up --service tnf-cloud-sandbox-v2
 
 # Set environment variables
-railway variables set JWT_SECRET="your-secret"
-railway variables set DATABASE_URL="postgresql://..."
+cloud_runtime variables set JWT_SECRET="your-secret"
+cloud_runtime variables set DATABASE_URL="postgresql://..."
 
 # Monitor deployment
-railway logs --service tnf-cloud-sandbox-v2 --follow
+cloud_runtime logs --service tnf-cloud-sandbox-v2 --follow
 ```
 
 **Pros**:
@@ -245,21 +245,21 @@ Response:
 - **CPU**: 1 vCPU
 - **Memory**: 1GB
 - **Disk**: 5GB
-- **Cost**: ~$5/month on Railway
+- **Cost**: ~$5/month on CloudRuntime
 
 ### Recommended (Production)
 
 - **CPU**: 2-4 vCPU
 - **Memory**: 2-4GB
 - **Disk**: 10GB
-- **Cost**: ~$15-35/month on Railway
+- **Cost**: ~$15-35/month on CloudRuntime
 
 ### High Traffic (Production)
 
 - **CPU**: 4-8 vCPU
 - **Memory**: 4-8GB
 - **Disk**: 20GB
-- **Cost**: ~$35-75/month on Railway
+- **Cost**: ~$35-75/month on CloudRuntime
 
 ## Build Performance
 
@@ -294,14 +294,14 @@ curl -H "Authorization: Bearer test-token" \
   http://localhost:8080/api/tools/list
 ```
 
-### 2. Test on Railway
+### 2. Test on CloudRuntime
 
 ```bash
 # Deploy
-railway up --service tnf-cloud-sandbox-v2
+cloud_runtime up --service tnf-cloud-sandbox-v2
 
 # Get URL
-export SANDBOX_URL=$(railway domain --service tnf-cloud-sandbox-v2)
+export SANDBOX_URL=$(cloud_runtime domain --service tnf-cloud-sandbox-v2)
 
 # Test health
 curl https://$SANDBOX_URL/health
@@ -316,14 +316,14 @@ curl -H "Authorization: Bearer $JWT_TOKEN" \
 ### Logs
 
 ```bash
-# Railway logs
-railway logs --service tnf-cloud-sandbox-v2 --follow
+# CloudRuntime logs
+cloud_runtime logs --service tnf-cloud-sandbox-v2 --follow
 
 # Docker logs
 docker-compose logs -f cloud-sandbox
 
 # Filter by level
-railway logs --service tnf-cloud-sandbox-v2 | grep ERROR
+cloud_runtime logs --service tnf-cloud-sandbox-v2 | grep ERROR
 ```
 
 ### Metrics
@@ -333,12 +333,12 @@ railway logs --service tnf-cloud-sandbox-v2 | grep ERROR
 curl http://localhost:9090/metrics
 
 # Resource usage
-railway metrics --service tnf-cloud-sandbox-v2
+cloud_runtime metrics --service tnf-cloud-sandbox-v2
 ```
 
 ### Alerts
 
-Set up alerts in Railway dashboard:
+Set up alerts in CloudRuntime dashboard:
 
 - High memory usage (>80%)
 - High CPU usage (>80%)
@@ -374,13 +374,13 @@ Set up alerts in Railway dashboard:
 
 ```bash
 # List deployments
-railway deployments --service tnf-cloud-sandbox-v2
+cloud_runtime deployments --service tnf-cloud-sandbox-v2
 
 # Rollback if issues
-railway rollback --service tnf-cloud-sandbox-v2 [previous-deployment-id]
+cloud_runtime rollback --service tnf-cloud-sandbox-v2 [previous-deployment-id]
 
 # Monitor rollback
-railway logs --service tnf-cloud-sandbox-v2 --follow
+cloud_runtime logs --service tnf-cloud-sandbox-v2 --follow
 ```
 
 ## Maintenance
@@ -415,8 +415,8 @@ railway logs --service tnf-cloud-sandbox-v2 --follow
 
 ## Next Steps
 
-1. ✅ **Deploy to Railway**: Follow
-   [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)
+1. ✅ **Deploy to CloudRuntime**: Follow
+   [CLOUD_RUNTIME_DEPLOYMENT.md](./CLOUD_RUNTIME_DEPLOYMENT.md)
 2. ⏳ **Set up monitoring**: Configure alerts and dashboards
 3. ⏳ **Security audit**: Review all security configurations
 4. ⏳ **Load testing**: Test under realistic load
@@ -431,7 +431,7 @@ railway logs --service tnf-cloud-sandbox-v2 --follow
 - [x] Health check endpoint
 - [x] Graceful shutdown
 - [x] Environment validation
-- [x] Railway configuration
+- [x] CloudRuntime configuration
 - [x] Local development stack
 - [x] Deployment documentation
 - [x] Security hardening
@@ -442,12 +442,12 @@ railway logs --service tnf-cloud-sandbox-v2 --follow
 
 ## Support
 
-- **Documentation**: [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)
+- **Documentation**: [CLOUD_RUNTIME_DEPLOYMENT.md](./CLOUD_RUNTIME_DEPLOYMENT.md)
 - **Security Guide**:
   [SECURITY_AND_TOOLS_README.md](./SECURITY_AND_TOOLS_README.md)
 - **Integration Guide**:
   [src/auth/INTEGRATION_GUIDE.md](./src/auth/INTEGRATION_GUIDE.md)
-- **Railway Docs**: https://docs.railway.app
+- **CloudRuntime Docs**: https://docs.thenewfuse.com
 - **GitHub Issues**: Open issues for bugs/questions
 
 ## Summary
@@ -457,7 +457,7 @@ secure cloud sandbox with:
 
 - ✅ Multi-stage Docker builds for optimization
 - ✅ Security-hardened containers (non-root, minimal attack surface)
-- ✅ Railway-optimized deployment configuration
+- ✅ CloudRuntime-optimized deployment configuration
 - ✅ Local development stack with docker-compose
 - ✅ Comprehensive environment variable management
 - ✅ Health checking and monitoring
@@ -465,5 +465,5 @@ secure cloud sandbox with:
 - ✅ Complete deployment documentation
 - ✅ Cost optimization strategies
 
-The cloud sandbox is now ready for Railway deployment with enterprise-grade
+The cloud sandbox is now ready for CloudRuntime deployment with enterprise-grade
 security, multi-tenant isolation, and RBAC!

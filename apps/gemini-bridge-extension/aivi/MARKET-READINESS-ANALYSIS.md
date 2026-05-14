@@ -44,7 +44,7 @@ gaps** preventing commercial launch:
 **Required:**
 
 ```
-Railway Backend Server
+CloudRuntime Backend Server
 ├── Node.js API (Express/Hono)
 │   ├── /api/auth/google         - OAuth flow
 │   ├── /api/users/:id           - User management
@@ -61,7 +61,7 @@ Railway Backend Server
     └── Session management
 ```
 
-**Estimated Time:** 2-3 weeks **Cost:** $20-50/month (Railway + Supabase)
+**Estimated Time:** 2-3 weeks **Cost:** $20-50/month (CloudRuntime + Supabase)
 
 ### 2. Payment Processing (CRITICAL - 0% Complete)
 
@@ -340,7 +340,7 @@ agent automation"
 
 **Must-Have:**
 
-1. ✅ Backend API server (Railway)
+1. ✅ Backend API server (CloudRuntime)
    - User authentication
    - Subscription validation
    - Usage quota tracking
@@ -420,7 +420,7 @@ agent automation"
 
 ### Week 1-2: Foundation
 
-1. Railway backend setup
+1. CloudRuntime backend setup
 2. Stripe integration
 3. User database
 4. Backend authentication
@@ -486,7 +486,7 @@ agent automation"
 
 1. ✅ Decide on tier strategy (Free/Pro/TNF) - **DONE ABOVE**
 2. ✅ Prioritize feature roadmap - **DONE ABOVE**
-3. ⏳ Set up Railway project
+3. ⏳ Set up CloudRuntime project
 4. ⏳ Create PostgreSQL database
 5. ⏳ Build basic authentication API
 
@@ -613,4 +613,4 @@ integration can come in Phase 3 after proving Pro tier converts.
 **Time to Market:** 3-4 weeks for MVP launch **Time to TNF Integration:** 2-3
 months
 
-**Next Action:** Set up Railway backend this week.
+**Next Action:** Set up CloudRuntime backend this week.

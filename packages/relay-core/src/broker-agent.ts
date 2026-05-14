@@ -77,14 +77,14 @@ type TwipContextSignal = {
 const CONFIG = {
   REDIS_URL:
     process.env.REDIS_URL ||
-    process.env.RAILWAY_REDIS_URL ||
+    process.env.CLOUD_RUNTIME_REDIS_URL ||
     process.env.LIVE_REDIS_URL ||
     process.env.REDIS_PRIVATE_URL ||
     process.env.REDIS_TLS_URL ||
     'redis://localhost:6379',
   LEDGER_API_BASE:
     process.env.LEDGER_API_BASE ||
-    process.env.RAILWAY_API_URL ||
+    process.env.CLOUD_RUNTIME_API_URL ||
     process.env.LIVE_API_BASE_URL ||
     process.env.API_BASE_URL ||
     process.env.TNF_API_BASE ||

@@ -23,7 +23,7 @@ This directory contains all development, build, deployment, and testing scripts 
 - **Scripts for deployment, Docker, and infrastructure management**
 - `docker-build-all.sh` - Build all Docker containers
 - `docker-complete.sh` - Complete Docker environment setup
-- Railway and other deployment scripts
+- CloudRuntime and other deployment scripts
 
 ### `/testing/` - Test Automation
 - **Scripts for testing, validation, and quality assurance**
@@ -50,7 +50,7 @@ This directory contains all development, build, deployment, and testing scripts 
 ### For Build & Deployment
 1. **Full Build**: Run `./scripts/build/comprehensive-build.sh`
 2. **Docker Setup**: Run `./scripts/deployment/docker-complete.sh`
-3. **Railway Deploy**: Run Railway-specific deployment script
+3. **CloudRuntime Deploy**: Run CloudRuntime-specific deployment script
 
 ### For Testing
 1. **Run Tests**: Use appropriate script from `/testing/`

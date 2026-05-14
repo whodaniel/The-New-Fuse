@@ -225,7 +225,7 @@ import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 1. Accept 34/37 packages (91.9% success)
 2. Focus on Drizzle binary resolution
-3. Deploy to Railway
+3. Deploy to CloudRuntime
 4. Fix sync-core non-critical errors post-launch
 
 ### Option C: Exclude Non-Critical Files (Quick Win)

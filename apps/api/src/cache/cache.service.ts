@@ -26,7 +26,7 @@ export class CacheService {
       // Trim whitespace
       redisUrl = redisUrl.trim();
 
-      // Check if URL was accidentally duplicated (e.g., in Railway environment vars)
+      // Check if URL was accidentally duplicated (e.g., in CloudRuntime environment vars)
       // Check for both redis:// and rediss:// (TLS) prefixes
       const supportedPrefixes = ['redis://', 'rediss://'];
       const prefix = supportedPrefixes.find((p) => redisUrl.startsWith(p));
@@ -44,9 +44,9 @@ export class CacheService {
         }
       }
 
-      // Railway Redis Check: Log if it is a Railway URL
-      if (redisUrl.includes('railway')) {
-        this.logger.log(`[CacheService] Detected Railway Redis URL`);
+      // CloudRuntime Redis Check: Log if it is a CloudRuntime URL
+      if (redisUrl.includes('cloud_runtime')) {
+        this.logger.log(`[CacheService] Detected CloudRuntime Redis URL`);
       }
 
       // Initialize Redis client with the connection string

@@ -34,15 +34,15 @@ Comprehensive production build orchestrator with:
 node scripts/build-production.cjs [--clean] [--packages-only] [--apps-only] [--verbose] [--skip-validation]
 ```
 
-#### `/scripts/build-railway.cjs`
+#### `/scripts/build-cloud_runtime.cjs`
 
-Railway-optimized build script:
+CloudRuntime-optimized build script:
 
 - ✅ Builds only essential packages (types, infrastructure, database, core,
   common, utils)
 - ✅ Builds API Gateway (required)
 - ✅ Optionally builds Frontend (controlled by env var)
-- ✅ Memory efficient for Railway's constraints
+- ✅ Memory efficient for CloudRuntime's constraints
 - ✅ Detailed logging and error reporting
 - ✅ Validates critical outputs (API Gateway dist)
 
@@ -50,16 +50,16 @@ Railway-optimized build script:
 
 - Skips test packages and dev-only packages
 - Faster than full build (~60 seconds vs ~120 seconds)
-- Designed for Railway's resource constraints
+- Designed for CloudRuntime's resource constraints
 - Continues on non-critical package failures
 - Verbose logging mode
 
 **Usage:**
 
 ```bash
-node scripts/build-railway.cjs
-BUILD_VERBOSE=true node scripts/build-railway.cjs
-BUILD_FRONTEND=false node scripts/build-railway.cjs
+node scripts/build-cloud_runtime.cjs
+BUILD_VERBOSE=true node scripts/build-cloud_runtime.cjs
+BUILD_FRONTEND=false node scripts/build-cloud_runtime.cjs
 ```
 
 #### `/scripts/verify-build.cjs`
@@ -92,17 +92,17 @@ Added to `/package.json`:
     "build:backend": "turbo run build --filter=@the-new-fuse/backend-app",
     "build:production": "node scripts/build-production.cjs --clean",
     "build:production:verbose": "node scripts/build-production.cjs --clean --verbose",
-    "build:railway": "node scripts/build-railway.cjs",
-    "build:railway:verbose": "BUILD_VERBOSE=true node scripts/build-railway.cjs",
+    "build:cloud_runtime": "node scripts/build-cloud_runtime.cjs",
+    "build:cloud_runtime:verbose": "BUILD_VERBOSE=true node scripts/build-cloud_runtime.cjs",
     "build:validate": "node scripts/build-production.cjs --skip-validation=false",
     "build:verify": "node scripts/verify-build.cjs"
   }
 }
 ```
 
-### 3. Railway Dockerfile Updates
+### 3. CloudRuntime Dockerfile Updates
 
-Updated `/Dockerfile.railway`:
+Updated `/Dockerfile.cloud_runtime`:
 
 **Before:**
 
@@ -117,7 +117,7 @@ RUN pnpm --filter @the-new-fuse/api-gateway build || echo "API Gateway build fai
 ```dockerfile
 ENV NODE_ENV=production
 ENV BUILD_VERBOSE=true
-RUN pnpm run build:railway || (echo "Build failed" && exit 1)
+RUN pnpm run build:cloud_runtime || (echo "Build failed" && exit 1)
 ```
 
 **Benefits:**
@@ -158,10 +158,10 @@ Quick reference guide:
 
 ## Test Results
 
-### ✅ Railway Build Test
+### ✅ CloudRuntime Build Test
 
 ```
-[INFO] Starting Railway-optimized build...
+[INFO] Starting CloudRuntime-optimized build...
 [SUCCESS] Build @the-new-fuse/types completed
 [SUCCESS] Build @the-new-fuse/infrastructure completed
 [SUCCESS] Build @the-new-fuse/database completed
@@ -220,25 +220,25 @@ pnpm run build:api       # Only API Gateway
 pnpm run build:frontend  # Only Frontend
 ```
 
-### Railway Deployment
+### CloudRuntime Deployment
 
 #### Deploy with current Dockerfile:
 
 ```bash
-# Dockerfile.railway automatically uses:
-pnpm run build:railway
+# Dockerfile.cloud_runtime automatically uses:
+pnpm run build:cloud_runtime
 ```
 
-#### Test Railway build locally:
+#### Test CloudRuntime build locally:
 
 ```bash
-pnpm run build:railway
+pnpm run build:cloud_runtime
 ```
 
-#### Debug Railway build:
+#### Debug CloudRuntime build:
 
 ```bash
-pnpm run build:railway:verbose
+pnpm run build:cloud_runtime:verbose
 ```
 
 ### CI/CD Pipeline
@@ -281,10 +281,10 @@ pnpm run build:verify || exit 1
 
 ### 4. Performance
 
-- ✅ Railway build: ~60 seconds
+- ✅ CloudRuntime build: ~60 seconds
 - ✅ Full build: ~120 seconds
 - ✅ Incremental builds via Turbo cache
-- ✅ Memory-optimized for Railway
+- ✅ Memory-optimized for CloudRuntime
 
 ### 5. Developer Experience
 
@@ -301,9 +301,9 @@ pnpm run build:verify || exit 1
 <repo-root>/
 ├── scripts/
 │   ├── build-production.cjs      # Comprehensive build orchestrator
-│   ├── build-railway.cjs          # Railway-optimized build
+│   ├── build-cloud_runtime.cjs          # CloudRuntime-optimized build
 │   └── verify-build.cjs           # Build verification utility
-├── Dockerfile.railway             # Updated to use build scripts
+├── Dockerfile.cloud_runtime             # Updated to use build scripts
 ├── package.json                   # Updated with new build scripts
 ├── BUILD_SYSTEM.md                # Complete documentation
 ├── BUILD_QUICK_START.md           # Quick reference guide
@@ -330,7 +330,7 @@ pnpm run build:verify || exit 1
 - ✅ Clear feedback on build status
 - ✅ Easy debugging with verbose mode
 
-### For Railway Deployment
+### For CloudRuntime Deployment
 
 - ✅ Optimized for memory constraints
 - ✅ Faster builds (skip unnecessary packages)
@@ -356,7 +356,7 @@ pnpm run build:verify || exit 1
 ### Immediate
 
 - ✅ Build system is ready to use
-- ✅ Test Railway deployment
+- ✅ Test CloudRuntime deployment
 - ✅ Monitor build performance
 
 ### Future Enhancements
@@ -383,10 +383,10 @@ The production build system is now:
 
 - ✅ **Complete** - All scripts created and tested
 - ✅ **Documented** - Comprehensive docs provided
-- ✅ **Tested** - Railway build successful (63s)
+- ✅ **Tested** - CloudRuntime build successful (63s)
 - ✅ **Integrated** - Dockerfile updated
 - ✅ **Production-Ready** - Ready for deployment
 
 The build system handles dependency ordering, provides detailed feedback,
-validates outputs, and is optimized for both local development and Railway
+validates outputs, and is optimized for both local development and CloudRuntime
 deployment.

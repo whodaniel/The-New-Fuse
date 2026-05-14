@@ -118627,7 +118627,7 @@
       "id": "N8362",
       "type": "file",
       "data": {
-        "label": "File: railway.config.ts",
+        "label": "File: cloud_runtime.config.ts",
         "kind": "file",
         "parentId": "N8180",
         "childCount": 1,
@@ -118643,7 +118643,7 @@
       "id": "N8363",
       "type": "class",
       "data": {
-        "label": "Class: RailwayConfigService",
+        "label": "Class: CloudRuntimeConfigService",
         "kind": "cls",
         "parentId": "N8362",
         "childCount": 4,
@@ -118691,7 +118691,7 @@
       "id": "N8366",
       "type": "method",
       "data": {
-        "label": "getRailwayConfig()",
+        "label": "getCloudRuntimeConfig()",
         "kind": "mth",
         "parentId": "N8363",
         "childCount": 0,
@@ -118707,7 +118707,7 @@
       "id": "N8367",
       "type": "method",
       "data": {
-        "label": "validateRailwayEnvironment()",
+        "label": "validateCloudRuntimeEnvironment()",
         "kind": "mth",
         "parentId": "N8363",
         "childCount": 0,

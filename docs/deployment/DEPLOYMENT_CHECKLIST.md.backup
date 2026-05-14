@@ -1,27 +1,27 @@
-# Railway Deployment Checklist
+# Cloudflare Deployment Checklist
 
 ## ✅ Already Completed
 
-- [x] Railway CLI installed
-- [x] Logged into Railway
+- [x] Cloudflare CLI installed
+- [x] Logged into Cloudflare
 - [x] Project created: `the-new-fuse`
-- [x] Project URL: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+- [x] Project URL: https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 - [x] Dockerfiles created for all services
-- [x] Railway configuration files updated
+- [x] Cloudflare configuration files updated
 
 ## 🔄 Complete These Steps
 
 ### Step 1: Add PostgreSQL Database
 
 **Option A - Dashboard (Easiest):**
-1. Open: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+1. Open: https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 2. Click "+ New"
 3. Select "Database" → "PostgreSQL"
 4. Wait ~30 seconds for provisioning
 
 **Option B - CLI:**
 ```bash
-railway add
+cloudflare add
 # Select: Database → PostgreSQL
 ```
 
@@ -31,11 +31,11 @@ railway add
 
 ```bash
 cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api
-railway up
+cloudflare up
 ```
 
 **What happens:**
-- Code uploads to Railway
+- Code uploads to Cloudflare
 - Docker image builds (10-15 min first time)
 - Service deploys automatically
 - You get a deployment URL
@@ -47,7 +47,7 @@ railway up
 
 ```bash
 cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend
-railway up
+cloudflare up
 ```
 
 **What happens:**
@@ -63,7 +63,7 @@ railway up
 
 **For API Service:**
 
-Go to: Railway Dashboard → API Service → Variables
+Go to: Cloudflare Dashboard → API Service → Variables
 
 Add these variables:
 ```
@@ -83,7 +83,7 @@ Your JWT Secret: ___________________________________
 
 **For Frontend Service:**
 
-Go to: Railway Dashboard → Frontend Service → Variables
+Go to: Cloudflare Dashboard → Frontend Service → Variables
 
 Add these variables:
 ```
@@ -98,14 +98,14 @@ VITE_API_URL=<paste your API URL here>
 
 ```bash
 # Check status
-railway status
+cloudflare status
 
 # View logs
-railway logs --service api
-railway logs --service frontend
+cloudflare logs --service api
+cloudflare logs --service frontend
 
 # Open dashboard
-railway open
+cloudflare open
 ```
 
 - [ ] Both services showing as "Active"
@@ -117,30 +117,30 @@ railway open
 
 ```bash
 # View all services
-railway status
+cloudflare status
 
 # View API logs
-railway logs --service api
+cloudflare logs --service api
 
 # View Frontend logs
-railway logs --service frontend
+cloudflare logs --service frontend
 
-# Open Railway Dashboard
-railway open
+# Open Cloudflare Dashboard
+cloudflare open
 
 # Redeploy a service
-cd apps/api && railway up --detach
+cd apps/api && cloudflare up --detach
 
-# Check Railway whoami
-railway whoami
+# Check Cloudflare whoami
+cloudflare whoami
 ```
 
 ## 🐛 Troubleshooting
 
 ### Build fails with dependency errors
-- Check logs: `railway logs --service <name>`
+- Check logs: `cloudflare logs --service <name>`
 - Dockerfiles use `--ignore-scripts` to skip native modules
-- Should build successfully in Railway's environment
+- Should build successfully in Cloudflare's environment
 
 ### Service won't start
 - Verify environment variables are set
@@ -154,7 +154,7 @@ railway whoami
 
 ### Database connection fails
 - Ensure PostgreSQL is added and running
-- Verify DATABASE_URL uses Railway template: `${{Postgres.DATABASE_URL}}`
+- Verify DATABASE_URL uses Cloudflare template: `${{Postgres.DATABASE_URL}}`
 - Check API service logs for connection errors
 
 ## 📊 Expected Timeline
@@ -187,8 +187,8 @@ railway whoami
 
 When deployment is complete, you should have:
 
-- [ ] API service running at a Railway URL
-- [ ] Frontend service running at a Railway URL
+- [ ] API service running at a Cloudflare URL
+- [ ] Frontend service running at a Cloudflare URL
 - [ ] PostgreSQL database connected to API
 - [ ] Frontend can load and display UI
 - [ ] API responds to health checks
@@ -203,7 +203,7 @@ After successful deployment:
    - Add your custom domain
 
 2. **Monitoring**
-   - Railway provides built-in metrics
+   - Cloudflare provides built-in metrics
    - Check CPU, Memory, and Network usage
 
 3. **CI/CD** (Optional)
@@ -216,9 +216,9 @@ After successful deployment:
 
 ## 📚 Resources
 
-- Project Dashboard: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
-- Railway Docs: https://docs.railway.app
-- Deployment Guide: `DEPLOYMENT_GUIDE_RAILWAY.md`
+- Project Dashboard: https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+- Cloudflare Docs: https://docs.thenewfuse.com
+- Deployment Guide: `DEPLOYMENT_GUIDE_CLOUDFLARE.md`
 - Quick Start: `QUICK_START_DEPLOYMENT.md`
 
 ---

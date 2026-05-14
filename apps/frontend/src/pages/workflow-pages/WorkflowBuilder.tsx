@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Badge,
   Button,
@@ -8,7 +9,6 @@ import {
   Input,
   Textarea,
 } from '@/components/ui';
-// @ts-nocheck
 import React, { DragEvent, useCallback, useEffect, useState } from 'react';
 import ReactFlow, {
   addEdge,

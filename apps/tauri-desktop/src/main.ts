@@ -208,7 +208,7 @@ function renderDashboard(): string {
         <div class="service-card">
           <div class="service-icon"><i class="fas fa-server"></i></div>
           <div class="service-info">
-            <h3>Railway Sandbox</h3>
+            <h3>CloudRuntime Sandbox</h3>
             <p>Cloud compute environment</p>
           </div>
           <div class="status-dot ${bridgeConnected ? 'online' : 'offline'}"></div>
@@ -288,7 +288,7 @@ function renderBrowser(): string {
       <div class="browser-info">
         <div id="browser-status" class="info-box">
           <h3>How Cloud Browser Works</h3>
-          <p>The browser runs in your <strong>Railway Cloud Sandbox</strong> using headless Chromium (Playwright).</p>
+          <p>The browser runs in your <strong>CloudRuntime Cloud Sandbox</strong> using headless Chromium (Playwright).</p>
           <ul>
             <li><strong>browser_navigate</strong> - Go to any URL</li>
             <li><strong>browser_screenshot</strong> - Capture screenshots</li>

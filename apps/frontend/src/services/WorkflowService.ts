@@ -17,6 +17,8 @@ export interface Workflow {
   createdBy: string;
   tags?: string[];
   metadata?: Record<string, any>;
+  triggers?: any[];
+  variables?: Record<string, any>;
 }
 
 export interface WorkflowExecution {
@@ -179,6 +181,26 @@ class WorkflowService {
     }
   }
 
+  async executeWorkflowViaWebhook(
+    workflowId: string,
+    payload: Record<string, any>,
+    options?: { triggerId?: string; secret?: string; source?: string }
+  ): Promise<{ executionId: string; status: string; workflowId: string }> {
+    const triggerPath = options?.triggerId
+      ? `/workflows/${workflowId}/webhook/${options.triggerId}`
+      : `/workflows/${workflowId}/webhook`;
+
+    const headers: Record<string, string> = {};
+    if (options?.secret) headers['x-workflow-secret'] = options.secret;
+    if (options?.source) headers['x-workflow-source'] = options.source;
+
+    return this.request<{ executionId: string; status: string; workflowId: string }>(triggerPath, {
+      method: 'POST',
+      body: JSON.stringify(payload || {}),
+      headers,
+    });
+  }
+
   async getExecution(executionId: string): Promise<WorkflowExecution> {
     try {
       const execution = await this.request<any>(`/workflows/executions/${executionId}`);
@@ -191,7 +213,9 @@ class WorkflowService {
 
   async getExecutions(workflowId?: string): Promise<WorkflowExecution[]> {
     try {
-      const endpoint = workflowId ? `/workflows/${workflowId}/executions` : '/workflows/executions';
+      const endpoint = workflowId
+        ? `/workflows/executions?workflowId=${encodeURIComponent(workflowId)}`
+        : '/workflows/executions';
       const payload = await this.request<any>(endpoint);
       const executions = Array.isArray(payload)
         ? payload
@@ -376,16 +400,19 @@ class WorkflowService {
     const endTime = apiExecution.endTime || apiExecution.completedAt;
     return {
       ...apiExecution,
+      status: String(apiExecution.status || 'pending').toLowerCase(),
       startTime: new Date(startTime),
       endTime: endTime ? new Date(endTime) : undefined,
       logs:
         apiExecution.logs?.map((log: any) => ({
           ...log,
+          level: String(log.level || 'info').toLowerCase(),
           timestamp: new Date(log.timestamp),
         })) || [],
       nodeExecutions:
         apiExecution.nodeExecutions?.map((nodeExec: any) => ({
           ...nodeExec,
+          status: String(nodeExec.status || 'pending').toLowerCase(),
           startTime: nodeExec.startTime ? new Date(nodeExec.startTime) : undefined,
           endTime: nodeExec.endTime ? new Date(nodeExec.endTime) : undefined,
         })) || [],

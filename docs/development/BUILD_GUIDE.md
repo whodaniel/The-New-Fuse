@@ -16,7 +16,7 @@ Scripts referencing these packages (e.g., `clean:chrome`) have been removed from
 ## Correct Build Path
 
 The correct way to build the project for deployment is to use `turbo` to handle
-the dependency graph, or rely on the standardized `Dockerfile.railway` which
+the dependency graph, or rely on the standardized `Dockerfile.cloud_runtime` which
 handles the build in layers.
 
 ### Local Build
@@ -45,9 +45,9 @@ To build locally, use the following commands:
     This runs `turbo run build` which builds all packages in the correct
     topological order.
 
-### Deployment Build (Railway)
+### Deployment Build (CloudRuntime)
 
-The `Dockerfile.railway` is the source of truth for deployment. It accepts a
+The `Dockerfile.cloud_runtime` is the source of truth for deployment. It accepts a
 `SERVICE_PATH` argument to build a specific service.
 
 The build process in Docker is:

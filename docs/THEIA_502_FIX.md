@@ -9,7 +9,7 @@
 ## ✅ PROGRESS SO FAR
 
 - ✅ Port updated from 3000 → 3007
-- ✅ Railway is routing correctly to port 3007
+- ✅ CloudRuntime is routing correctly to port 3007
 - ❌ SkIDEancer application not responding on port 3007
 
 **This is progress!** The routing is correct now; we just need to fix the SkIDEancer
@@ -28,7 +28,7 @@ startup.
 
 **This means**:
 
-- ✅ Railway is routing traffic to port 3007 correctly
+- ✅ CloudRuntime is routing traffic to port 3007 correctly
 - ❌ No process is listening on port 3007
 - ❌ SkIDEancer server didn't start, or started on wrong port
 
@@ -36,10 +36,10 @@ startup.
 
 ## 🚨 IMMEDIATE ACTION REQUIRED
 
-### Step 1: Check Railway Deployment Logs
+### Step 1: Check CloudRuntime Deployment Logs
 
-1. **Go to Railway Dashboard**:
-   https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/c83fc5bd-af38-4fd2-847f-260a2fc69f0c
+1. **Go to CloudRuntime Dashboard**:
+   https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/c83fc5bd-af38-4fd2-847f-260a2fc69f0c
 
 2. **Click "Deployments" tab**
 
@@ -102,15 +102,15 @@ yarn build && node src-gen/backend/server.js --hostname=0.0.0.0 --port=$PORT
 
 **OR** set separate build and start commands:
 
-**In Railway → Settings → Deploy**:
+**In CloudRuntime → Settings → Deploy**:
 
 - **Build Command**: `yarn install && yarn build`
 - **Start Command**:
   `node src-gen/backend/server.js --hostname=0.0.0.0 --port=$PORT`
 
-### Fix #2: Use Railway's $PORT Variable
+### Fix #2: Use CloudRuntime's $PORT Variable
 
-Update start command to use Railway's dynamic port:
+Update start command to use CloudRuntime's dynamic port:
 
 ```bash
 node src-gen/backend/server.js --hostname=0.0.0.0 --port=${PORT:-3007}
@@ -132,7 +132,7 @@ The `package.json` in `whodaniel/skideancer-ide` should have:
 }
 ```
 
-Then Railway start command can be:
+Then CloudRuntime start command can be:
 
 ```bash
 yarn start:production
@@ -159,7 +159,7 @@ COPY . .
 # Build SkIDEancer
 RUN yarn build
 
-# Expose port (Railway will override this)
+# Expose port (CloudRuntime will override this)
 EXPOSE 3007
 
 # Start SkIDEancer
@@ -168,7 +168,7 @@ CMD ["node", "src-gen/backend/server.js", "--hostname=0.0.0.0", "--port=${PORT:-
 
 ---
 
-## 📝 THINGS TO CHECK IN RAILWAY DASHBOARD
+## 📝 THINGS TO CHECK IN CLOUD_RUNTIME DASHBOARD
 
 ### 1. Environment Variables
 
@@ -176,7 +176,7 @@ Go to **Settings → Variables** and ensure:
 
 ```bash
 NODE_ENV=production
-PORT=3007  # Or let Railway auto-assign
+PORT=3007  # Or let CloudRuntime auto-assign
 NODE_VERSION=18  # If using Nixpacks
 ```
 
@@ -201,13 +201,13 @@ Go to **Settings → General**:
 
 ### Immediate (5 minutes):
 
-1. **Check Railway logs** for the exact error
+1. **Check CloudRuntime logs** for the exact error
 2. **Copy/paste the error** here so I can provide specific fix
 3. **Take screenshot** of Settings → Deploy section
 
 ### Quick Fix (10 minutes):
 
-Based on common issues, try this in Railway:
+Based on common issues, try this in CloudRuntime:
 
 **Settings → Deploy → Start Command**:
 
@@ -253,7 +253,7 @@ Then click **Redeploy** from Deployments tab.
 
 If logs show complex errors, try a clean redeploy:
 
-1. **In Railway → Settings**:
+1. **In CloudRuntime → Settings**:
    - Click **"Delete Service"** (this won't delete your repo)
 
 2. **Create New Service**:
@@ -267,7 +267,7 @@ If logs show complex errors, try a clean redeploy:
    - Add environment variable: `NODE_VERSION=18`
 
 4. **Deploy**:
-   - Railway will auto-deploy
+   - CloudRuntime will auto-deploy
    - Watch logs for success
 
 ---
@@ -285,7 +285,7 @@ If logs show complex errors, try a clean redeploy:
 
 ## 💡 NEXT STEPS
 
-**Please check Railway deployment logs and report back with**:
+**Please check CloudRuntime deployment logs and report back with**:
 
 1. The full error message from the latest deployment
 2. Whether there's a build step visible in logs

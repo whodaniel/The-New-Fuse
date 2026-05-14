@@ -1,7 +1,7 @@
 /**
  * Deployment Configuration Step
  *
- * Configure deployment settings for Railway
+ * Configure deployment settings for CloudRuntime
  */
 
 import { Clock, Database, Globe, Server, Settings, Shield } from 'lucide-react';
@@ -56,7 +56,7 @@ export const DeploymentConfiguration: React.FC<DeploymentConfigurationProps> = (
         <h2 className="step-title">Configure Deployment</h2>
         <p className="step-description">
           Set up your deployment configuration for{' '}
-          {String(context.data.railwayProjectName || 'your project')}
+          {String(context.data.cloud_runtimeProjectName || 'your project')}
         </p>
       </div>
 
@@ -169,7 +169,7 @@ export const DeploymentConfiguration: React.FC<DeploymentConfigurationProps> = (
               handleChange('customDomain', e.target.value);
             }}
           />
-          <p className="form-hint">You can configure this later in Railway dashboard</p>
+          <p className="form-hint">You can configure this later in CloudRuntime dashboard</p>
         </div>
 
         <div className="config-section">

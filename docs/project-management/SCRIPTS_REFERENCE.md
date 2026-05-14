@@ -67,7 +67,7 @@ Run these from the monorepo root (`<repo-root>`):
 | `pnpm build:frontend`         | Build Frontend                     | Specific app build       |
 | `pnpm build:backend`          | Build Backend                      | Specific app build       |
 | `pnpm build:production`       | Clean + optimized production build | Deployment preparation   |
-| `pnpm build:railway`          | Railway-specific build             | Railway deployment       |
+| `pnpm build:cloud_runtime`          | CloudRuntime-specific build             | CloudRuntime deployment       |
 | `pnpm build:clean`            | Clean + fresh build                | After dependency changes |
 | `pnpm build:memory-optimized` | Build with memory limits           | Constrained environments |
 
@@ -539,7 +539,7 @@ pnpm clean:cache
 ### 7. Memory-Constrained Builds
 
 ```bash
-# Optimize for low memory (Railway, cloud)
+# Optimize for low memory (CloudRuntime, cloud)
 pnpm build:memory-optimized
 
 # Ultra-low memory
@@ -668,12 +668,12 @@ jobs:
       - run: pnpm build
 ```
 
-### Railway Deployment
+### CloudRuntime Deployment
 
 ```bash
-# Railway uses these scripts automatically
+# CloudRuntime uses these scripts automatically
 pnpm install
-pnpm build:railway  # Or pnpm build:production
+pnpm build:cloud_runtime  # Or pnpm build:production
 pnpm start
 ```
 

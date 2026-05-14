@@ -102,14 +102,14 @@ cp .env.local.template .env.local
 # - Service account JSON: Place in ./config/firebase-credentials.json (outside git)
 ```
 
-#### For Production (Railway)
+#### For Production (CloudRuntime)
 
-Set these environment variables in the Railway dashboard:
+Set these environment variables in the CloudRuntime dashboard:
 
 - `VITE_FIREBASE_API_KEY`
 - `STRIPE_SECRET_KEY`
 - `OPENROUTER_API_KEY`
-- Upload service account JSON as a Railway Secret File
+- Upload service account JSON as a CloudRuntime Secret File
 
 ### Step 2: (Optional) Rotate Credentials When Repository Goes Public
 
@@ -127,10 +127,10 @@ Set these environment variables in the Railway dashboard:
 
 ### Step 3: Verify Environment Variable Setup
 
-#### Check Railway Production Variables
+#### Check CloudRuntime Production Variables
 
 ```bash
-# Verify these are set in Railway dashboard → your project → Variables:
+# Verify these are set in CloudRuntime dashboard → your project → Variables:
 
 VITE_FIREBASE_API_KEY=<your-firebase-key>
 VITE_FIREBASE_AUTH_DOMAIN=the-new-fuse-2025.firebaseapp.com
@@ -144,7 +144,7 @@ STRIPE_PUBLISHABLE_KEY=<your-publishable-key>
 
 OPENROUTER_API_KEY=<your-openrouter-key>
 
-# Service account JSON (use Railway Secret Files)
+# Service account JSON (use CloudRuntime Secret Files)
 GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/service-account.json
 ```
 
@@ -208,7 +208,7 @@ After completing manual actions:
 
 - [ ] All exposed keys revoked in respective dashboards
 - [ ] New credentials generated with proper restrictions
-- [ ] Railway environment variables updated
+- [ ] CloudRuntime environment variables updated
 - [ ] Local `.env.local` created for development
 - [ ] GitHub secret scanning alerts closed/resolved
 - [ ] No new secret scanning alerts appear

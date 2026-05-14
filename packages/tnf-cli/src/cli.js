@@ -2129,9 +2129,9 @@ const masterClock = program
     .description('Master clock controls (cloud-first)');
 masterClock
     .command('start')
-    .description('Start master-clock in cloud via Railway (default) or locally')
+    .description('Start master-clock in cloud via CloudRuntime (default) or locally')
     .option('--local', 'Run local master-clock (override cloud-first policy)', false)
-    .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
+    .option('--service <name>', 'CloudRuntime service name for master clock', 'tnf-master-clock')
     .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
     .action(async (options) => {
     try {
@@ -2140,8 +2140,8 @@ masterClock
             await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'master-clock']);
             return;
         }
-        console.log(chalk_1.default.cyan(`☁️ Starting cloud master clock on Railway service ${options.service}`));
-        await runCommand('railway', ['up', '--service', options.service]);
+        console.log(chalk_1.default.cyan(`☁️ Starting cloud master clock on CloudRuntime service ${options.service}`));
+        await runCommand('cloud_runtime', ['up', '--service', options.service]);
     }
     catch (err) {
         console.error(chalk_1.default.red(`Error: ${err.message}`));
@@ -2151,12 +2151,12 @@ masterClock
 masterClock
     .command('logs')
     .description('Tail cloud master-clock logs')
-    .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
+    .option('--service <name>', 'CloudRuntime service name for master clock', 'tnf-master-clock')
     .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
     .action(async (options) => {
     try {
         requireSuperAdmin(options, 'master-clock logs');
-        await runCommand('railway', ['logs', '--service', options.service]);
+        await runCommand('cloud_runtime', ['logs', '--service', options.service]);
     }
     catch (err) {
         console.error(chalk_1.default.red(`Error: ${err.message}`));
@@ -2165,13 +2165,13 @@ masterClock
 });
 masterClock
     .command('status')
-    .description('Show Railway status for master-clock service')
-    .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
+    .description('Show CloudRuntime status for master-clock service')
+    .option('--service <name>', 'CloudRuntime service name for master clock', 'tnf-master-clock')
     .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
     .action(async (options) => {
     try {
         requireSuperAdmin(options, 'master-clock status');
-        await runCommand('railway', ['status', '--service', options.service]);
+        await runCommand('cloud_runtime', ['status', '--service', options.service]);
     }
     catch (err) {
         console.error(chalk_1.default.red(`Error: ${err.message}`));
@@ -2191,7 +2191,7 @@ superCycle
     .option('--result <result>', 'Last result')
     .option('--metadata <json>', 'JSON metadata', '{}')
     .option('--local', 'Run local super-cycle client (override cloud-first policy)', false)
-    .option('--service <name>', 'Railway service name', 'tnf-master-clock')
+    .option('--service <name>', 'CloudRuntime service name', 'tnf-master-clock')
     .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
     .action(async (options) => {
     try {
@@ -2224,7 +2224,7 @@ superCycle
             return;
         }
         console.log(chalk_1.default.cyan(`☁️ Sending super-cycle event via cloud service ${options.service}`));
-        await runCommand('railway', ['run', '--service', options.service, 'pnpm', ...baseArgs]);
+        await runCommand('cloud_runtime', ['run', '--service', options.service, 'pnpm', ...baseArgs]);
     }
     catch (err) {
         console.error(chalk_1.default.red(`Error: ${err.message}`));
@@ -2628,7 +2628,7 @@ superCycle
     .command('status')
     .description('Read super-cycle state snapshot')
     .option('--local', 'Read from local Redis via local client', false)
-    .option('--service <name>', 'Railway service name', 'tnf-master-clock')
+    .option('--service <name>', 'CloudRuntime service name', 'tnf-master-clock')
     .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
     .action(async (options) => {
     try {
@@ -2642,7 +2642,7 @@ superCycle
             ]);
             return;
         }
-        await runCommand('railway', [
+        await runCommand('cloud_runtime', [
             'run',
             '--service',
             options.service,

@@ -132,22 +132,22 @@ test_api_response() {
   fi
 }
 
-test_railway_service() {
+test_cloud_runtime_service() {
   local service=$1
 
-  log STEP "Testing Railway service: $service"
+  log STEP "Testing CloudRuntime service: $service"
 
-  if ! command -v railway &>/dev/null; then
-    log WARNING "Railway CLI not available, skipping"
+  if ! command -v cloud_runtime &>/dev/null; then
+    log WARNING "CloudRuntime CLI not available, skipping"
     return 0
   fi
 
-  if railway status --service "$service" &>/dev/null; then
-    log SUCCESS "$service is running on Railway"
+  if cloud_runtime status --service "$service" &>/dev/null; then
+    log SUCCESS "$service is running on CloudRuntime"
     ((TESTS_PASSED++))
     return 0
   else
-    log ERROR "$service is not running on Railway"
+    log ERROR "$service is not running on CloudRuntime"
     ((TESTS_FAILED++))
     return 1
   fi
@@ -262,21 +262,21 @@ test_api() {
 }
 
 ###############################################################################
-# Railway-Specific Tests
+# CloudRuntime-Specific Tests
 ###############################################################################
 
-test_railway_services() {
-  print_section "Railway Service Tests"
+test_cloud_runtime_services() {
+  print_section "CloudRuntime Service Tests"
 
-  if ! command -v railway &>/dev/null; then
-    log WARNING "Railway CLI not available, skipping Railway tests"
+  if ! command -v cloud_runtime &>/dev/null; then
+    log WARNING "CloudRuntime CLI not available, skipping CloudRuntime tests"
     return 0
   fi
 
   local services=("api-gateway" "backend" "frontend" "api")
 
   for service in "${services[@]}"; do
-    test_railway_service "$service" || true
+    test_cloud_runtime_service "$service" || true
   done
 }
 
@@ -334,8 +334,8 @@ main() {
   test_frontend || true
   test_api || true
 
-  # Railway tests
-  test_railway_services || true
+  # CloudRuntime tests
+  test_cloud_runtime_services || true
 
   # Performance tests
   test_response_time || true

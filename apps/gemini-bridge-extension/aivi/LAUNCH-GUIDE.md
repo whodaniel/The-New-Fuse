@@ -16,7 +16,7 @@
 - Webhook handlers
 - Legal pages (Privacy Policy, Terms of Service)
 - Landing page
-- Railway deployment configuration
+- CloudRuntime deployment configuration
 
 ⏳ **IN PROGRESS:**
 
@@ -26,7 +26,7 @@
 
 ❌ **TODO:**
 
-- Deploy backend to Railway
+- Deploy backend to CloudRuntime
 - Configure Stripe products
 - Submit to Chrome Web Store
 - Beta testing
@@ -35,28 +35,28 @@
 
 ## Phase 1: Backend Deployment (Week 1)
 
-### Step 1: Create Railway Project
+### Step 1: Create CloudRuntime Project
 
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
+# Install CloudRuntime CLI
+npm install -g @cloud_runtime/cli
 
-# Login to Railway
-railway login
+# Login to CloudRuntime
+cloud_runtime login
 
 # Navigate to backend directory
 cd backend
 
-# Initialize Railway project
-railway init
+# Initialize CloudRuntime project
+cloud_runtime init
 
 # Link to new project
-railway link
+cloud_runtime link
 ```
 
 ### Step 2: Add PostgreSQL Database
 
-1. Go to Railway dashboard: https://railway.app/dashboard
+1. Go to CloudRuntime dashboard: https://cloud_runtime.app/dashboard
 2. Click your project
 3. Click "+ New" → "Database" → "PostgreSQL"
 4. Wait for provisioning
@@ -77,12 +77,12 @@ psql $DATABASE_URL -c "\dt"
 
 ### Step 4: Configure Environment Variables
 
-In Railway dashboard, add these variables:
+In CloudRuntime dashboard, add these variables:
 
 ```env
 NODE_ENV=production
 PORT=3000
-DATABASE_URL=<auto-set-by-railway>
+DATABASE_URL=<auto-set-by-cloud_runtime>
 
 # JWT
 JWT_SECRET=<generate-with-openssl-rand-base64-32>
@@ -91,7 +91,7 @@ JWT_EXPIRES_IN=7d
 # Google OAuth
 GOOGLE_CLIENT_ID=<from-google-cloud-console>
 GOOGLE_CLIENT_SECRET=<from-google-cloud-console>
-GOOGLE_REDIRECT_URI=https://your-api.railway.app/api/auth/google/callback
+GOOGLE_REDIRECT_URI=https://your-api.thenewfuse.com/api/auth/google/callback
 
 # Stripe (see Step 6)
 STRIPE_SECRET_KEY=sk_live_...
@@ -113,20 +113,20 @@ RATE_LIMIT_MAX_REQUESTS=100
 ### Step 5: Deploy Backend
 
 ```bash
-# Deploy to Railway
-railway up
+# Deploy to CloudRuntime
+cloud_runtime up
 
 # Check deployment status
-railway status
+cloud_runtime status
 
 # View logs
-railway logs
+cloud_runtime logs
 
 # Get public URL
-railway domain
+cloud_runtime domain
 ```
 
-Your API will be available at: `https://your-project.up.railway.app`
+Your API will be available at: `https://your-project.thenewfuse.com`
 
 ### Step 6: Configure Stripe
 
@@ -172,13 +172,13 @@ Billing: Recurring - Yearly
 
 #### C. Copy Price IDs
 
-From Stripe Dashboard → Products, copy each `price_xxx` ID and add to Railway
+From Stripe Dashboard → Products, copy each `price_xxx` ID and add to CloudRuntime
 environment variables.
 
 #### D. Set Up Webhook
 
 1. Stripe Dashboard → Developers → Webhooks
-2. Add endpoint: `https://your-api.railway.app/api/webhooks/stripe`
+2. Add endpoint: `https://your-api.thenewfuse.com/api/webhooks/stripe`
 3. Select events:
    - `checkout.session.completed`
    - `customer.subscription.created`
@@ -187,19 +187,19 @@ environment variables.
    - `invoice.payment_succeeded`
    - `invoice.payment_failed`
 4. Copy webhook signing secret
-5. Add to Railway as `STRIPE_WEBHOOK_SECRET`
+5. Add to CloudRuntime as `STRIPE_WEBHOOK_SECRET`
 
 ### Step 7: Test Backend
 
 ```bash
 # Health check
-curl https://your-api.railway.app/health
+curl https://your-api.thenewfuse.com/health
 
 # API info
-curl https://your-api.railway.app/api
+curl https://your-api.thenewfuse.com/api
 
 # Test authentication (will fail without valid token - expected)
-curl https://your-api.railway.app/api/auth/me
+curl https://your-api.thenewfuse.com/api/auth/me
 ```
 
 ---
@@ -215,7 +215,7 @@ curl https://your-api.railway.app/api/auth/me
   "oauth2": {
     "client_id": "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
   },
-  "host_permissions": ["https://your-api.railway.app/*"]
+  "host_permissions": ["https://your-api.thenewfuse.com/*"]
 }
 ```
 
@@ -226,7 +226,7 @@ Create `services/api-client.js`:
 ```javascript
 class APIClient {
   constructor() {
-    this.baseURL = 'https://your-api.railway.app/api';
+    this.baseURL = 'https://your-api.thenewfuse.com/api';
   }
 
   async request(endpoint, options = {}) {
@@ -420,7 +420,7 @@ zip -r ai-video-intelligence-suite.zip . \
 
 **Backend:**
 
-- [ ] Railway deployment healthy
+- [ ] CloudRuntime deployment healthy
 - [ ] Database schema applied
 - [ ] All environment variables set
 - [ ] Stripe products created
@@ -611,8 +611,8 @@ zip -r ai-video-intelligence-suite.zip . \
 
 ### Monthly Costs
 
-- Railway (Hobby plan): $5-20
-- Supabase/PostgreSQL: $0-25 (included in Railway)
+- CloudRuntime (Hobby plan): $5-20
+- Supabase/PostgreSQL: $0-25 (included in CloudRuntime)
 - Email service: $0 (Gmail) or $6 (Google Workspace)
 - **Total:** ~$10-50/month
 
@@ -638,7 +638,7 @@ zip -r ai-video-intelligence-suite.zip . \
 
 ## Next Immediate Actions
 
-1. ✅ **Deploy backend to Railway** (30 minutes)
+1. ✅ **Deploy backend to CloudRuntime** (30 minutes)
 2. ✅ **Configure Stripe products** (30 minutes)
 3. ✅ **Update extension with API integration** (2-3 hours)
 4. ✅ **Create Chrome Web Store marketing materials** (2-3 hours)

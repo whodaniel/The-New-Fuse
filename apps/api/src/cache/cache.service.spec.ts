@@ -60,7 +60,7 @@ describe('CacheService', () => {
     expect(Redis).toHaveBeenCalledWith('redis://localhost:6379');
   });
 
-  it('should handle railway style duplication', () => {
+  it('should handle cloud_runtime style duplication', () => {
     const url = 'redis://host:6379redis://host:6379';
     mockConfigService.get.mockReturnValue(url);
 
@@ -87,8 +87,8 @@ describe('CacheService', () => {
     expect(Redis).toHaveBeenCalledWith('rediss://host:6379');
   });
 
-  it('should detect railway url but process correctly', () => {
-    const url = 'redis://railway.internal:6379';
+  it('should detect cloud_runtime url but process correctly', () => {
+    const url = 'redis://cloud_runtime.internal:6379';
     mockConfigService.get.mockReturnValue(url);
 
     service = new CacheService(configService);
@@ -96,13 +96,13 @@ describe('CacheService', () => {
     expect(Redis).toHaveBeenCalledWith(url);
   });
 
-  it('should detect railway url with duplication and process correctly', () => {
-    const url = 'redis://railway.internal:6379redis://railway.internal:6379';
+  it('should detect cloud_runtime url with duplication and process correctly', () => {
+    const url = 'redis://cloud_runtime.internal:6379redis://cloud_runtime.internal:6379';
     mockConfigService.get.mockReturnValue(url);
 
     service = new CacheService(configService);
 
-    expect(Redis).toHaveBeenCalledWith('redis://railway.internal:6379');
+    expect(Redis).toHaveBeenCalledWith('redis://cloud_runtime.internal:6379');
   });
 
   it('should fallback to individual env vars if REDIS_URL is missing', () => {

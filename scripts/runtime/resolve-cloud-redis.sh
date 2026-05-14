@@ -2,25 +2,25 @@
 set -euo pipefail
 
 # Resolve a Redis URL with production-first precedence:
-# 1) Explicit env vars (REDIS_URL, Railway-provided aliases)
-# 2) Railway service vars for Redis (if railway CLI is linked/authenticated)
+# 1) Explicit env vars (REDIS_URL, CloudRuntime-provided aliases)
+# 2) CloudRuntime service vars for Redis (if cloud_runtime CLI is linked/authenticated)
 # 3) Optional local fallback (only when explicitly allowed)
 
 ALLOW_LOCAL_REDIS="${ALLOW_LOCAL_REDIS:-false}"
-RAILWAY_ENVIRONMENT_NAME="${RAILWAY_ENVIRONMENT_NAME:-production}"
+CLOUD_RUNTIME_ENVIRONMENT_NAME="${CLOUD_RUNTIME_ENVIRONMENT_NAME:-production}"
 
 is_local_url() {
   local url="${1:-}"
   [[ "${url}" == *"localhost"* ]] || [[ "${url}" == *"127.0.0.1"* ]]
 }
 
-is_internal_railway_url() {
+is_internal_cloud_runtime_url() {
   local url="${1:-}"
-  [[ "${url}" == *"railway.internal"* ]]
+  [[ "${url}" == *"cloud_runtime.internal"* ]]
 }
 
-running_inside_railway() {
-  [[ -n "${RAILWAY_SERVICE_ID:-}" ]] || [[ -n "${RAILWAY_PRIVATE_DOMAIN:-}" ]] || [[ -n "${RAILWAY_ENVIRONMENT_ID:-}" ]]
+running_inside_cloud_runtime() {
+  [[ -n "${CLOUD_RUNTIME_SERVICE_ID:-}" ]] || [[ -n "${CLOUD_RUNTIME_PRIVATE_DOMAIN:-}" ]] || [[ -n "${CLOUD_RUNTIME_ENVIRONMENT_ID:-}" ]]
 }
 
 emit_if_valid() {
@@ -32,7 +32,7 @@ emit_if_valid() {
   if is_local_url "${url}" && [[ "${ALLOW_LOCAL_REDIS}" != "true" ]]; then
     return 1
   fi
-  if is_internal_railway_url "${url}" && ! running_inside_railway; then
+  if is_internal_cloud_runtime_url "${url}" && ! running_inside_cloud_runtime; then
     return 1
   fi
   printf "%s\n" "${url}"
@@ -42,10 +42,10 @@ emit_if_valid() {
 
 try_env_sources() {
   local keys=()
-  if running_inside_railway; then
+  if running_inside_cloud_runtime; then
     keys=(
       REDIS_URL
-      RAILWAY_REDIS_URL
+      CLOUD_RUNTIME_REDIS_URL
       LIVE_REDIS_URL
       REDIS_PRIVATE_URL
       REDIS_TLS_URL
@@ -55,7 +55,7 @@ try_env_sources() {
     keys=(
       REDIS_PUBLIC_URL
       REDIS_URL
-      RAILWAY_REDIS_URL
+      CLOUD_RUNTIME_REDIS_URL
       LIVE_REDIS_URL
       REDIS_PRIVATE_URL
       REDIS_TLS_URL
@@ -71,34 +71,34 @@ try_env_sources() {
   return 1
 }
 
-try_railway_sources() {
-  if ! command -v railway >/dev/null 2>&1; then
+try_cloud_runtime_sources() {
+  if ! command -v cloud_runtime >/dev/null 2>&1; then
     return 1
   fi
 
   local kv
-  kv="$(railway variable list --service Redis -e "${RAILWAY_ENVIRONMENT_NAME}" -k 2>/dev/null || true)"
+  kv="$(cloud_runtime variable list --service Redis -e "${CLOUD_RUNTIME_ENVIRONMENT_NAME}" -k 2>/dev/null || true)"
   if [[ -z "${kv}" ]]; then
     return 1
   fi
 
   local val
-  if running_inside_railway; then
+  if running_inside_cloud_runtime; then
     val="$(printf "%s\n" "${kv}" | sed -n 's/^REDIS_URL=//p' | head -n1)"
-    if emit_if_valid "${val}" "railway:Redis:REDIS_URL"; then
+    if emit_if_valid "${val}" "cloud_runtime:Redis:REDIS_URL"; then
       return 0
     fi
     val="$(printf "%s\n" "${kv}" | sed -n 's/^REDIS_PUBLIC_URL=//p' | head -n1)"
-    if emit_if_valid "${val}" "railway:Redis:REDIS_PUBLIC_URL"; then
+    if emit_if_valid "${val}" "cloud_runtime:Redis:REDIS_PUBLIC_URL"; then
       return 0
     fi
   else
     val="$(printf "%s\n" "${kv}" | sed -n 's/^REDIS_PUBLIC_URL=//p' | head -n1)"
-    if emit_if_valid "${val}" "railway:Redis:REDIS_PUBLIC_URL"; then
+    if emit_if_valid "${val}" "cloud_runtime:Redis:REDIS_PUBLIC_URL"; then
       return 0
     fi
     val="$(printf "%s\n" "${kv}" | sed -n 's/^REDIS_URL=//p' | head -n1)"
-    if emit_if_valid "${val}" "railway:Redis:REDIS_URL"; then
+    if emit_if_valid "${val}" "cloud_runtime:Redis:REDIS_URL"; then
       return 0
     fi
   fi
@@ -110,7 +110,7 @@ try_railway_sources() {
   pass="$(printf "%s\n" "${kv}" | sed -n 's/^REDISPASSWORD=//p' | head -n1)"
   if [[ -n "${host}" && -n "${port}" && -n "${user}" && -n "${pass}" ]]; then
     val="redis://${user}:${pass}@${host}:${port}"
-    if emit_if_valid "${val}" "railway:Redis:host-port"; then
+    if emit_if_valid "${val}" "cloud_runtime:Redis:host-port"; then
       return 0
     fi
   fi
@@ -123,7 +123,7 @@ main() {
     exit 0
   fi
 
-  if try_railway_sources; then
+  if try_cloud_runtime_sources; then
     exit 0
   fi
 

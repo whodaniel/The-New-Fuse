@@ -22,7 +22,7 @@ Comprehensive pre-deployment checks including:
 - Database and Redis connectivity
 - Disk space and memory checks
 - Build artifacts verification
-- Railway CLI authentication
+- CloudRuntime CLI authentication
 - Security configuration
 - TypeScript configuration
 - Drizzle schema validation
@@ -54,7 +54,7 @@ Advanced health monitoring with multiple modes:
 - Environment configuration
 - Dependencies security scan
 - Build artifacts validation
-- Railway platform status
+- CloudRuntime platform status
 - Performance benchmarking
 - Security configuration audit
 
@@ -82,7 +82,7 @@ Quick validation tests:
 - Database connectivity
 - Redis connectivity
 - Environment variables
-- Railway service status
+- CloudRuntime service status
 - Response time testing
 - Performance validation
 
@@ -128,7 +128,7 @@ Interactive dashboard showing:
 
 - System information
 - Recent deployment history
-- Railway services status
+- CloudRuntime services status
 - Environment configuration
 - Database backups
 - System health summary
@@ -304,7 +304,7 @@ Implemented through:
 │   ├── db-backup.sh                   # Database backup
 │   ├── notifications.sh               # Notification system
 │   ├── deployment-dashboard.sh        # Interactive dashboard
-│   └── railway-deploy.sh              # Railway-specific deployment
+│   └── cloud_runtime-deploy.sh              # CloudRuntime-specific deployment
 │
 ├── docs/deployment/
 │   ├── AUTOMATED_DEPLOYMENT_GUIDE.md  # Complete guide
@@ -454,7 +454,7 @@ Automatic monitoring ✅ **State tracking** - Resume interrupted deployments
 ✅ **Multiple strategies** - Rolling, blue-green, canary ✅ **Service
 selection** - Deploy specific services ✅ **Configuration options** - Extensive
 customization ✅ **Manual override** - Optional auto-confirm ✅ **Platform
-agnostic** - Works with Railway and others
+agnostic** - Works with CloudRuntime and others
 
 ## 📚 Documentation
 
@@ -583,8 +583,8 @@ export EMAIL_ENABLED=true
 # Follow deployment logs
 tail -f logs/deployment/deploy-*.log
 
-# Monitor Railway services
-railway logs --service <service-name>
+# Monitor CloudRuntime services
+cloud_runtime logs --service <service-name>
 ```
 
 ### Post-Deployment
@@ -607,7 +607,7 @@ ls -lt logs/deployment/ | head -5
 1. **Validation fails** → Check environment variables and dependencies
 2. **Health check fails** → Verify service URLs and database connectivity
 3. **Migration fails** → Review migration logs, restore from backup
-4. **Deployment hangs** → Check Railway status, verify resource limits
+4. **Deployment hangs** → Check CloudRuntime status, verify resource limits
 
 ### Getting Help
 

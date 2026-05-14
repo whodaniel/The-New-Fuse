@@ -5771,9 +5771,9 @@
             "snippet": "# The New Fuse - Browser Hub Enhancement Progress Report ## Date: December 16, 2024 ## ✅ Completed Features ### 1. **Chrome Web Store Extension Installation** - **Direct Installation**: Users can now install extensions directly from the Chrome Web Store by entering a URL or extension ID - **IPC Handler**: `extensions:i"
           },
           {
-            "path": "docs/RAILWAY_DEPLOYMENT_GUIDE.md",
+            "path": "docs/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md",
             "score": 19,
-            "snippet": "# Railway Deployment Guide Complete guide for deploying The New Fuse platform to Railway with proper environment configuration. ## Table of Contents - [Prerequisites](#prerequisites) - [Infrastructure Setup](#infrastructure-setup) - [Service Configuration](#service-configuration) - [PostgreSQL Database](#postgresql-dat"
+            "snippet": "# CloudRuntime Deployment Guide Complete guide for deploying The New Fuse platform to CloudRuntime with proper environment configuration. ## Table of Contents - [Prerequisites](#prerequisites) - [Infrastructure Setup](#infrastructure-setup) - [Service Configuration](#service-configuration) - [PostgreSQL Database](#postgresql-dat"
           },
           {
             "path": "docs/CODE_QUALITY.md",
@@ -6864,7 +6864,7 @@
             "score": 6
           },
           {
-            "path": "docs/RAILWAY-DEPLOYMENT-BEHAVIOR.md",
+            "path": "docs/CLOUD_RUNTIME-DEPLOYMENT-BEHAVIOR.md",
             "score": 5
           },
           {
@@ -12288,7 +12288,7 @@
             "score": 4
           },
           {
-            "path": "docs/RAILWAY_DEPLOYMENT_GUIDE.md",
+            "path": "docs/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md",
             "score": 4
           }
         ]
@@ -12495,9 +12495,9 @@
             "snippet": "# 🎯 Final Chakra Migration - Complete Task List **Date**: 2025-12-08 07:32 AM **Status**: FINAL PUSH - Complete All Remaining Files ## 🚀 **REMAINING FILES TO MIGRATE (21 files)** ### User is Working On (1 file) - SKIP - ⏭️ EnhancedWorkflowBuilder.tsx (User is migrating) ### TO MIGRATE NOW (20 files): #### Workflow/No"
           },
           {
-            "path": "docs/RAILWAY-DEPLOYMENT-BEHAVIOR.md",
+            "path": "docs/CLOUD_RUNTIME-DEPLOYMENT-BEHAVIOR.md",
             "score": 6,
-            "snippet": "# Railway Deployment Behavior - Understanding Auto-Deployments ## 🔍 What Just Happened ### The Deployment Timeline ### Why It Failed Then Succeeded The deployment **failed due to a transient issue**, not because of code problems. Common causes: 1. **Network timeout** during package download 2. **Build server overload*"
+            "snippet": "# CloudRuntime Deployment Behavior - Understanding Auto-Deployments ## 🔍 What Just Happened ### The Deployment Timeline ### Why It Failed Then Succeeded The deployment **failed due to a transient issue**, not because of code problems. Common causes: 1. **Network timeout** during package download 2. **Build server overload*"
           },
           {
             "path": "docs/project/monetization/agent-monetization-brainstorm.md",
@@ -13220,9 +13220,9 @@
             "snippet": "You are a seasoned talent manager and agent for top-tier digital creators. You operate at a high level, focusing on long-term career strategy rather than day-to-day operations. Your job is to identify and secure major opportunities that will elevate the creator's career. Your operational workflow is as follows: 1. **An"
           },
           {
-            "path": "docs/RAILWAY-DEPLOYMENT-BEHAVIOR.md",
+            "path": "docs/CLOUD_RUNTIME-DEPLOYMENT-BEHAVIOR.md",
             "score": 5,
-            "snippet": "# Railway Deployment Behavior - Understanding Auto-Deployments ## 🔍 What Just Happened ### The Deployment Timeline ### Why It Failed Then Succeeded The deployment **failed due to a transient issue**, not because of code problems. Common causes: 1. **Network timeout** during package download 2. **Build server overload*"
+            "snippet": "# CloudRuntime Deployment Behavior - Understanding Auto-Deployments ## 🔍 What Just Happened ### The Deployment Timeline ### Why It Failed Then Succeeded The deployment **failed due to a transient issue**, not because of code problems. Common causes: 1. **Network timeout** during package download 2. **Build server overload*"
           },
           {
             "path": "docs/analysis/codebase-improvement-roadmap.md",

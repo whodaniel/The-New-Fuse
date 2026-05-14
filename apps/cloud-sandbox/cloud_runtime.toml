@@ -1,0 +1,4 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "./Dockerfile.cloud_runtime"
+watchPatterns = ["src/**", "package.json", "tsconfig.json", "public/**", "../../packages/**"]

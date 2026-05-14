@@ -57,12 +57,12 @@ The TNF Command Center provides:
 - System Metrics (sessions, messages, latency)
 - Task Queue management
 
-### 5. Deploy via Railway
+### 5. Deploy via CloudRuntime
 
 ```bash
 # Deploy OpenClaw gateway
-cd railway-openclaw-gateway
-railway up
+cd cloud_runtime-openclaw-gateway
+cloud_runtime up
 
 # Configure environment
 OPENCLAW_GATEWAY_TOKEN=your_token

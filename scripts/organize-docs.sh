@@ -22,7 +22,7 @@ mv -n FEATURE_RECREATION_ANALYSIS.md docs/architecture/ 2>/dev/null || true
 # Deployment
 echo "Moving deployment docs..."
 mv -n DEPLOYMENT*.md docs/deployment/ 2>/dev/null || true
-mv -n RAILWAY*.md docs/deployment/ 2>/dev/null || true
+mv -n CLOUD_RUNTIME*.md docs/deployment/ 2>/dev/null || true
 mv -n DOCKER*.md docs/deployment/ 2>/dev/null || true
 mv -n CI_CD*.md docs/deployment/ 2>/dev/null || true
 
@@ -121,7 +121,7 @@ This directory contains organized project documentation.
 ## Directory Structure
 
 - **architecture/** - Architecture standards, monorepo structure, refactoring
-- **deployment/** - Deployment guides, CI/CD, Railway, Docker
+- **deployment/** - Deployment guides, CI/CD, CloudRuntime, Docker
 - **development/** - Build system, dependencies, development setup
 - **features/** - Feature-specific documentation (agents, workflows, etc.)
 - **security/** - Security fixes, audits, incident response

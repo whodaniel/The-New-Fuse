@@ -2,7 +2,7 @@
 
 ## What Was Done
 
-Your monorepo is now fully configured for Docker-based deployment to Railway. Here's what was created:
+Your monorepo is now fully configured for Docker-based deployment to CloudRuntime. Here's what was created:
 
 ### ✅ Docker Configuration
 
@@ -19,28 +19,28 @@ Your monorepo is now fully configured for Docker-based deployment to Railway. He
 - Alpine-based images (smaller footprint)
 - Proper layer caching for faster builds
 
-### ✅ Railway Configuration
+### ✅ CloudRuntime Configuration
 
-**Updated railway.toml files:**
+**Updated cloud_runtime.toml files:**
 - All services now use `DOCKERFILE` builder (nixpacks removed)
 - Proper health check paths configured
 - Watch paths set for automatic redeployment
 
 **Locations:**
-- `apps/frontend/railway.toml`
-- `apps/api/railway.toml`
-- `apps/api-gateway/railway.toml`
-- `apps/backend/railway.toml`
+- `apps/frontend/cloud_runtime.toml`
+- `apps/api/cloud_runtime.toml`
+- `apps/api-gateway/cloud_runtime.toml`
+- `apps/backend/cloud_runtime.toml`
 
 ### ✅ Documentation
 
 1. **QUICK_START_DEPLOYMENT.md** - Fast-track guide (start here!)
-2. **DEPLOYMENT_GUIDE_RAILWAY.md** - Comprehensive deployment guide
+2. **DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md** - Comprehensive deployment guide
 3. **docker-compose.prod.yml** - Local testing environment
 
 ### ✅ Helper Scripts
 
-1. **deploy-to-railway.sh** - Interactive deployment tool
+1. **deploy-to-cloud_runtime.sh** - Interactive deployment tool
 2. **test-docker-builds.sh** - Validate builds before deploying
 
 ## Your Next Steps (Choose Your Path)
@@ -52,10 +52,10 @@ Perfect if you want to get something running NOW:
 ```bash
 cd .
 
-# 1. Deploy to Railway
-./deploy-to-railway.sh
+# 1. Deploy to CloudRuntime
+./deploy-to-cloud_runtime.sh
 
-# 2. Add databases in Railway Dashboard
+# 2. Add databases in CloudRuntime Dashboard
 # 3. Configure environment variables
 # 4. Done!
 ```
@@ -76,7 +76,7 @@ cd .
 docker-compose -f docker-compose.prod.yml up
 
 # 3. If tests pass, deploy
-./deploy-to-railway.sh
+./deploy-to-cloud_runtime.sh
 ```
 
 **Time Required:** ~30 minutes (includes build time)
@@ -100,12 +100,12 @@ cd .
 
 # Deploy API
 cd apps/api
-railway up
+cloud_runtime up
 cd ../..
 
 # Deploy Frontend
 cd apps/frontend
-railway up
+cloud_runtime up
 cd ../..
 ```
 
@@ -152,7 +152,7 @@ cd ../..
 
 ## Environment Variables Checklist
 
-Make sure to set these in Railway Dashboard for each service:
+Make sure to set these in CloudRuntime Dashboard for each service:
 
 ### All Services
 - [ ] `NODE_ENV=production`
@@ -177,7 +177,7 @@ Local Docker builds (first time):
 - API Gateway: ~4-6 minutes
 - Backend: ~6-10 minutes
 
-Railway deployment (first time):
+CloudRuntime deployment (first time):
 - Each service: ~10-15 minutes
 
 Subsequent builds will be faster due to layer caching.
@@ -193,8 +193,8 @@ docker builder prune -a
 docker build --no-cache -f apps/<service>/Dockerfile .
 ```
 
-### Railway Deployment Timeout
-Edit `railway.toml`:
+### CloudRuntime Deployment Timeout
+Edit `cloud_runtime.toml`:
 ```toml
 [deploy]
 healthcheckTimeout = 600  # Increase timeout
@@ -202,7 +202,7 @@ healthcheckTimeout = 600  # Increase timeout
 
 ### Check Service Logs
 ```bash
-railway logs --service <service-name>
+cloud_runtime logs --service <service-name>
 ```
 
 ### Service Won't Start
@@ -211,7 +211,7 @@ railway logs --service <service-name>
 3. Ensure database is running
 4. Review logs for errors
 
-## Cost Breakdown (Railway)
+## Cost Breakdown (CloudRuntime)
 
 ### Development/Testing (Free Tier)
 - 500 execution hours/month
@@ -248,38 +248,38 @@ railway logs --service <service-name>
 - `apps/*/Dockerfile` (4 files)
 - `docker-compose.prod.yml`
 - `QUICK_START_DEPLOYMENT.md`
-- `DEPLOYMENT_GUIDE_RAILWAY.md`
+- `DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md`
 - `DEPLOYMENT_SUMMARY.md` (this file)
-- `deploy-to-railway.sh`
+- `deploy-to-cloud_runtime.sh`
 - `test-docker-builds.sh`
 
 ### Modified Files
-- `apps/frontend/railway.toml` (nixpacks → Docker)
-- `apps/api-gateway/railway.toml` (nixpacks → Docker)
+- `apps/frontend/cloud_runtime.toml` (nixpacks → Docker)
+- `apps/api-gateway/cloud_runtime.toml` (nixpacks → Docker)
 
 ## Support Resources
 
 ### Documentation
 - Quick Start: `QUICK_START_DEPLOYMENT.md`
-- Detailed Guide: `DEPLOYMENT_GUIDE_RAILWAY.md`
+- Detailed Guide: `DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md`
 - This Summary: `DEPLOYMENT_SUMMARY.md`
 
 ### Scripts
 - Test Builds: `./test-docker-builds.sh`
-- Deploy: `./deploy-to-railway.sh`
+- Deploy: `./deploy-to-cloud_runtime.sh`
 - Local Stack: `docker-compose -f docker-compose.prod.yml up`
 
 ### External Resources
-- Railway Docs: https://docs.railway.app
+- CloudRuntime Docs: https://docs.thenewfuse.com
 - Docker Docs: https://docs.docker.com
-- Railway Discord: https://discord.gg/railway
+- CloudRuntime Discord: https://discord.gg/cloud_runtime
 
 ## Recommendations
 
 1. **Start with MVP** - Deploy just Frontend + API + PostgreSQL
 2. **Test locally first** - Run `test-docker-builds.sh` before deploying
 3. **Use environment templates** - Set up `.env.example` files
-4. **Monitor closely** - Watch Railway logs during first deployment
+4. **Monitor closely** - Watch CloudRuntime logs during first deployment
 5. **Scale gradually** - Add services one at a time
 
 ## Common Issues & Solutions
@@ -298,17 +298,17 @@ railway logs --service <service-name>
 
 ### Issue: Database connection fails
 **Solution:**
-1. Ensure DATABASE_URL uses Railway template: `${{Postgres.DATABASE_URL}}`
+1. Ensure DATABASE_URL uses CloudRuntime template: `${{Postgres.DATABASE_URL}}`
 2. Verify PostgreSQL service is running
 3. Check database exists and is accessible
 
 ## Final Checklist Before Deploying
 
 - [ ] Docker Desktop is running
-- [ ] Railway CLI installed: `railway --version`
-- [ ] Logged into Railway: `railway login`
+- [ ] CloudRuntime CLI installed: `cloud_runtime --version`
+- [ ] Logged into CloudRuntime: `cloud_runtime login`
 - [ ] Git repository is clean (optional, but recommended)
-- [ ] You have Railway account with payment method (if exceeding free tier)
+- [ ] You have CloudRuntime account with payment method (if exceeding free tier)
 - [ ] Environment variables are ready
 - [ ] Database credentials are available
 
@@ -322,6 +322,6 @@ cd .
 ./test-docker-builds.sh
 ```
 
-This will verify all Docker configurations are working before you deploy to Railway.
+This will verify all Docker configurations are working before you deploy to CloudRuntime.
 
-Good luck with your deployment! If you encounter issues, consult the detailed guides or Railway support.
+Good luck with your deployment! If you encounter issues, consult the detailed guides or CloudRuntime support.

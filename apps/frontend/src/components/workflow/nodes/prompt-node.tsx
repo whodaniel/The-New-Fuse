@@ -1,5 +1,5 @@
-import { Badge, Label, Textarea } from '@/components/ui';
 // @ts-nocheck
+import { Badge, Label, Textarea } from '@/components/ui';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import React, { memo, useEffect, useState } from 'react';
 import { NodeProps } from 'reactflow';

@@ -67,6 +67,15 @@ Scopes:
 - `performance` - Performance optimizations
 - `code-quality` - Code quality enhancements
 
+#### `/tnf-full-auto-autopilot` - Provision + Start Full-Auto Network Loop
+Install shared full-auto command+skill artifacts across agent runtimes and run unattended TNF loop operations.
+```
+/tnf-full-auto-autopilot provision
+/tnf-full-auto-autopilot once
+/tnf-full-auto-autopilot start 30
+/tnf-full-auto-autopilot all 30
+```
+
 ### Claude Skills (Anthropic)
 
 #### `/skill-load` - Load Claude Skills

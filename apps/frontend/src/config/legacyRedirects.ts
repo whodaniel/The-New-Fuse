@@ -10,11 +10,11 @@ export interface LegacyRedirect {
 export const LEGACY_REDIRECTS: LegacyRedirect[] = [
   // OpenClaw-style operational aliases
   { from: '/overview', to: '/dashboard' },
-  { from: '/instances', to: '/observatory' },
+  { from: '/instances', to: '/workflows/nexus?layer=topology&from=observatory' },
   { from: '/sessions', to: '/multi-agent-chat' },
   { from: '/usage', to: '/analytics' },
   { from: '/cron-jobs', to: '/tasks' },
-  { from: '/nodes', to: '/observatory' },
+  { from: '/nodes', to: '/workflows/nexus?layer=topology&from=observatory' },
   { from: '/config', to: '/settings' },
   { from: '/logs', to: '/admin/audit-logs' },
   { from: '/audit-logs', to: '/admin/audit-logs' },

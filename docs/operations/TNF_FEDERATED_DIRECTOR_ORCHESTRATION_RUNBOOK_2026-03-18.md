@@ -97,14 +97,14 @@ lineage.
    - `BROKER_FEDERATION_GATE_MODE=warn|enforce`
    - `BROKER_GATE_POLICY_ENDPOINT=<sharedstate worker base URL>`
    - `BROKER_GATE_POLICY_TOKEN=<optional auth token>`
-7. Railway one-command rollout for API + relay services:
-   - `pnpm railway:federation:gate-mode -- warn`
-   - `pnpm railway:federation:gate-mode -- enforce`
-8. Railway phased canary rollout:
+7. CloudRuntime one-command rollout for API + relay services:
+   - `pnpm cloud_runtime:federation:gate-mode -- warn`
+   - `pnpm cloud_runtime:federation:gate-mode -- enforce`
+8. CloudRuntime phased canary rollout:
    - relay only:
-     `APPLY_API=0 APPLY_RELAY=1 pnpm railway:federation:gate-mode -- enforce`
+     `APPLY_API=0 APPLY_RELAY=1 pnpm cloud_runtime:federation:gate-mode -- enforce`
    - api only:
-     `APPLY_API=1 APPLY_RELAY=0 pnpm railway:federation:gate-mode -- enforce`
+     `APPLY_API=1 APPLY_RELAY=0 pnpm cloud_runtime:federation:gate-mode -- enforce`
 9. Synthetic fail-closed federation gate probe:
    - `pnpm validate:federation-gate:synthetic`
 10. Broker gate telemetry counters:

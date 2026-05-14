@@ -1,14 +1,14 @@
-# ✅ Setup Complete - Antigravity + Railway DevTools Integration
+# ✅ Setup Complete - Antigravity + CloudRuntime DevTools Integration
 
-> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated from Railway to **GCP
+> **⚠️ CLOUD_RUNTIME IS NO LONGER USED.** TNF has migrated from CloudRuntime to **GCP
 > (Cloud Run) + Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash
-> (Redis)**. Railway URLs and commands below are historical. Replace
-> `*.up.railway.app` URLs with current GCP Cloud Run endpoints. See
+> (Redis)**. CloudRuntime URLs and commands below are historical. Replace
+> `*.thenewfuse.com` URLs with current GCP Cloud Run endpoints. See
 > `CLOUD_MIGRATION_BLUEPRINT.md`.
 
 ## What Was Just Done
 
-I've successfully integrated **Chrome DevTools Protocol** into your Railway
+I've successfully integrated **Chrome DevTools Protocol** into your CloudRuntime
 cloud sandbox, solving the "one screenshot then silence" problem you were
 experiencing with the Live View.
 
@@ -22,7 +22,7 @@ experiencing with the Live View.
 
 ```
 OLD (Broken):
-Audit Bot → Screenshot → Socket.IO → Railway Proxy ❌ → Stuck
+Audit Bot → Screenshot → Socket.IO → CloudRuntime Proxy ❌ → Stuck
 
 NEW (Working):
 Audit Bot → Chrome (CDP Port 9222) → Antigravity MCP → Real-time access ✅
@@ -38,7 +38,7 @@ Audit Bot → Chrome (CDP Port 9222) → Antigravity MCP → Real-time access �
 - **Message**: "feat(sandbox): expose Chrome DevTools Protocol for Antigravity
   integration"
 - **Pushed to**: `origin/main`
-- **Railway**: Auto-deploying now
+- **CloudRuntime**: Auto-deploying now
 
 ### Changes Made
 
@@ -71,12 +71,12 @@ Audit Bot → Chrome (CDP Port 9222) → Antigravity MCP → Real-time access �
 
 ## 🚀 How to Use (3 Steps)
 
-### Step 1: Wait for Railway Deployment (~3 minutes)
+### Step 1: Wait for CloudRuntime Deployment (~3 minutes)
 
 Check if deployed:
 
 ```bash
-curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools
+curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/browser/devtools
 ```
 
 **Expected Response**:
@@ -117,13 +117,13 @@ To load the Chrome DevTools MCP server you configured in:
 **Prompt**:
 
 ```markdown
-"Connect to the Railway browser and show me what it's currently viewing"
+"Connect to the CloudRuntime browser and show me what it's currently viewing"
 ```
 
 **What happens**:
 
 1. Antigravity uses Chrome DevTools MCP
-2. Connects to Railway's CDP port 9222
+2. Connects to CloudRuntime's CDP port 9222
 3. Calls `take_screenshot` tool
 4. Shows you the browser's current page
 
@@ -134,7 +134,7 @@ To load the Chrome DevTools MCP server you configured in:
 ### See Real-Time Console
 
 ```markdown
-"What console errors is the Railway browser showing?"
+"What console errors is the CloudRuntime browser showing?"
 ```
 
 **Returns**: All logs, errors, warnings in real-time
@@ -142,7 +142,7 @@ To load the Chrome DevTools MCP server you configured in:
 ### Monitor Network Activity
 
 ```markdown
-"Show me all network requests the Railway browser has made"
+"Show me all network requests the CloudRuntime browser has made"
 ```
 
 **Returns**: List of all HTTP requests with status, timing, headers
@@ -165,7 +165,7 @@ node apps/cloud-sandbox/scripts/audit_website.js
 ### Performance Analysis
 
 ```markdown
-"Start a performance trace on the Railway browser and show me the Core Web
+"Start a performance trace on the CloudRuntime browser and show me the Core Web
 Vitals"
 ```
 
@@ -174,7 +174,7 @@ Vitals"
 ### Debug a Specific Page
 
 ```markdown
-"Navigate the Railway browser to thenewfuse.com/about and tell me if there are
+"Navigate the CloudRuntime browser to thenewfuse.com/about and tell me if there are
 any errors"
 ```
 
@@ -217,7 +217,7 @@ All documentation is in your repo:
 - ❌ Only 1 screenshot works
 - ❌ No console access
 - ❌ No network visibility
-- ❌ Railway proxy blocks connection
+- ❌ CloudRuntime proxy blocks connection
 - ❌ No performance data
 - ❌ Manual debugging only
 
@@ -229,7 +229,7 @@ All documentation is in your repo:
 - ✅ Performance profiling (Core Web Vitals)
 - ✅ Script evaluation in browser
 - ✅ Browser automation (click, type, navigate)
-- ✅ Railway compatible
+- ✅ CloudRuntime compatible
 - ✅ Real-time visibility into everything
 
 ---
@@ -276,12 +276,12 @@ All documentation is in your repo:
 
 ## ✅ Testing Checklist
 
-Once Railway finishes deploying (~3 minutes from now):
+Once CloudRuntime finishes deploying (~3 minutes from now):
 
 - [ ] Test endpoint:
-      `curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools`
+      `curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/browser/devtools`
 - [ ] Restart Antigravity
-- [ ] Test connection: "Connect to Railway browser"
+- [ ] Test connection: "Connect to CloudRuntime browser"
 - [ ] Test screenshot: "Show me what the browser is viewing"
 - [ ] Test console: "Show me console messages"
 - [ ] Run audit: `node apps/cloud-sandbox/scripts/audit_website.js`
@@ -311,7 +311,7 @@ You now have:
 
 ## 📞 Next Steps
 
-1. **Wait ~3 minutes** for Railway to finish deploying
+1. **Wait ~3 minutes** for CloudRuntime to finish deploying
 2. **Test the endpoint** (curl command above)
 3. **Restart Antigravity**
 4. **Try the example prompts** in the documentation
@@ -331,17 +331,17 @@ You now have:
 - ✅ Network monitoring
 - ✅ Performance profiling
 - ✅ Unlimited screenshots
-- ✅ Railway compatible
+- ✅ CloudRuntime compatible
 - ✅ Antigravity integrated
 - ✅ Fully documented
 
-**Result**: You can now see EVERYTHING your Railway browsers are doing, in
+**Result**: You can now see EVERYTHING your CloudRuntime browsers are doing, in
 real-time, from Antigravity! 🚀
 
 ---
 
-**Deployment Status**: ⏳ Deploying to Railway **ETA**: ~3 minutes from push
+**Deployment Status**: ⏳ Deploying to CloudRuntime **ETA**: ~3 minutes from push
 (completed at ~[current time + 3 min]) **Test Command**:
-`curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools`
+`curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/browser/devtools`
 
 Enjoy your fully working live browser monitoring! 🎊

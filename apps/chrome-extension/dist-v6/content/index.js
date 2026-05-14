@@ -284,7 +284,7 @@ class SimpleChatBridge {
             'perplexity.ai',
             'poe.com',
             'aistudio.google.com',
-            'openclaw-cloud-production-934c.up.railway.app', // OpenClaw cloud control UI
+            'openclaw-cloud-production-934c.thenewfuse.com', // OpenClaw cloud control UI
             'localhost:3000', // Local dev with chat
             'localhost:3000', // Local dev with chat
             'localhost:3001', // Local backend
@@ -317,7 +317,7 @@ class SimpleChatBridge {
         // This will power the TNF injectable modal with canonical state from Cloudflare.
         try {
             const host = window.location.hostname.toLowerCase();
-            if (host.includes('openclaw-cloud') || host.endsWith('up.railway.app')) {
+            if (host.includes('openclaw-cloud') || host.endsWith('up.thenewfuse.com')) {
                 const workerUrl = DEFAULT_NODES.tnfWorker;
                 const sessionKey = this.deriveSessionKey();
                 this.enableTranscriptPolling(workerUrl, sessionKey);

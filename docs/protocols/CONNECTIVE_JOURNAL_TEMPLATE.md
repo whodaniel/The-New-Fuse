@@ -2,7 +2,7 @@
 
 `[CLASS:INTEL] [STATUS:PENDING]`
 
-**Subject:** [e.g., Gemini 3.1 Pro, OpenClaw v2, Railway Migration]
+**Subject:** [e.g., Gemini 3.1 Pro, OpenClaw v2, CloudRuntime Migration]
 **Date Created:** [YYYY-MM-DD]
 **Last Updated:** [YYYY-MM-DD]
 **Project Link:** [Project ID]

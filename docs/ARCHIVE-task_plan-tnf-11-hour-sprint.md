@@ -16,7 +16,7 @@ Phase 4 (Implementation) - in progress
 | ------------- | --------------------------------------------------- |
 | Category      | WEB + BACKEND + INTEGRATION                         |
 | Primary Agent | orchestrator + frontend-specialist + api-specialist |
-| Tech Stack    | React/Vite + NestJS + Drizzle + Redis/Railway       |
+| Tech Stack    | React/Vite + NestJS + Drizzle + Redis/CloudRuntime       |
 
 ## 11-Hour Command Window
 
@@ -155,7 +155,7 @@ Phase 4 (Implementation) - in progress
 
 | Dependency                     | Status  | Notes                                            |
 | ------------------------------ | ------- | ------------------------------------------------ |
-| Railway API reachability       | at-risk | Previous handoff notes mention DNS flakiness     |
+| CloudRuntime API reachability       | at-risk | Previous handoff notes mention DNS flakiness     |
 | Redis/relay local availability | at-risk | Required for live orchestration queue operations |
 | Auth tokens/env alignment      | pending | Needed for end-to-end admin route verification   |
 

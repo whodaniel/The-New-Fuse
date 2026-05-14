@@ -11,7 +11,7 @@ have been resolved.
 | Component             | Type      | Status       | Artifact Location                               | Notes                                             |
 | :-------------------- | :-------- | :----------- | :---------------------------------------------- | :------------------------------------------------ |
 | **Frontend**          | Web App   | **READY**    | `apps/frontend`                                 | Configured with `VITE_RELAY_URL`. Needs Redeploy. |
-| **Backend API**       | API       | **ACTIVE**   | `https://the-new-fuse-api.railway.app`          | Verified online.                                  |
+| **Backend API**       | API       | **ACTIVE**   | `https://the-new-fuse-api.thenewfuse.com`          | Verified online.                                  |
 | **Relay Server**      | WebSocket | **ACTIVE**   | `wss://relay.thenewfuse.com`                    | DNS & Connection Verified.                        |
 | **VS Code Extension** | Client    | **BUILT**    | `apps/vscode-extension/the-new-fuse-9.0.0.vsix` | **Action:** Install manually.                     |
 | **Chrome Extension**  | Client    | **VERIFIED** | `apps/chrome-extension/dist-v5`                 | **Action:** Load "dist-v5" unpacked.              |
@@ -25,12 +25,12 @@ have been resolved.
 ### A. Redeploy Frontend
 
 The frontend configuration has been updated to point to the correct production
-Relay server. You must trigger a redeploy on Railway.
+Relay server. You must trigger a redeploy on CloudRuntime.
 
-**If using Railway CLI:**
+**If using CloudRuntime CLI:**
 
 ```bash
-railway up --service frontend
+cloud_runtime up --service frontend
 ```
 
 **Or via Git:** Push the committed changes to your repository.

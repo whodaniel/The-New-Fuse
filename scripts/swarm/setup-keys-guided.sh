@@ -4,8 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ENV_LOCAL="$ROOT_DIR/.env.local"
 ENV_TEMPLATE="$ROOT_DIR/.env.local.template"
-ENVIRONMENT="${RAILWAY_ENVIRONMENT_NAME:-production}"
-RUNNER_SERVICES_CSV="${RAILWAY_RUNNER_SERVICES:-api3,api,backend}"
+ENVIRONMENT="${CLOUD_RUNTIME_ENVIRONMENT_NAME:-production}"
+RUNNER_SERVICES_CSV="${CLOUD_RUNTIME_RUNNER_SERVICES:-api3,api,backend}"
 
 upsert_env() {
   local file="$1"
@@ -19,7 +19,7 @@ upsert_env() {
 }
 
 echo "🔐 TNF Guided Key Setup"
-echo "   This script will ask for API keys and configure local + Railway vars."
+echo "   This script will ask for API keys and configure local + CloudRuntime vars."
 
 if [ ! -f "$ENV_LOCAL" ]; then
   if [ -f "$ENV_TEMPLATE" ]; then
@@ -61,11 +61,11 @@ fi
 
 echo "✅ Local .env.local updated"
 
-if command -v railway >/dev/null 2>&1 && railway whoami >/dev/null 2>&1; then
+if command -v cloud_runtime >/dev/null 2>&1 && cloud_runtime whoami >/dev/null 2>&1; then
   IFS=',' read -r -a RUNNER_SERVICES <<< "$RUNNER_SERVICES_CSV"
-  echo "🚄 Pushing vars to Railway services: ${RUNNER_SERVICES[*]}"
+  echo "🚄 Pushing vars to CloudRuntime services: ${RUNNER_SERVICES[*]}"
   for svc in "${RUNNER_SERVICES[@]}"; do
-    set_cmd=(railway variable set -s "$svc" -e "$ENVIRONMENT" "SCOUT_PROVIDER=$DEFAULT_PROVIDER")
+    set_cmd=(cloud_runtime variable set -s "$svc" -e "$ENVIRONMENT" "SCOUT_PROVIDER=$DEFAULT_PROVIDER")
     if [ -n "$TAVILY_API_KEY" ]; then
       set_cmd+=("TAVILY_API_KEY=$TAVILY_API_KEY")
     fi
@@ -79,7 +79,7 @@ if command -v railway >/dev/null 2>&1 && railway whoami >/dev/null 2>&1; then
     fi
   done
 else
-  echo "ℹ️ Railway CLI not authenticated; skipped Railway variable sync."
+  echo "ℹ️ CloudRuntime CLI not authenticated; skipped CloudRuntime variable sync."
 fi
 
 echo ""

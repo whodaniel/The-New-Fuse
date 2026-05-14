@@ -59,19 +59,19 @@
 | ---------------------------- | --------------- | ----------- | --- | ----------------------------- |
 | Managed web pages (zo.space) | 🟢              | N/A         | 🔴  | **NO equivalent — P0 gap**    |
 | API routes (HTTPS)           | 🟢              | N/A         | 🟢  | Via backend API               |
-| Custom domains               | 🟢              | N/A         | 🟡  | Via Railway/Vercel (manual)   |
+| Custom domains               | 🟢              | N/A         | 🟡  | Via CloudRuntime/Vercel (manual)   |
 | Static asset hosting         | 🟢              | N/A         | 🟡  | Assets in /public             |
 | WebSocket hosting            | 🟢              | N/A         | 🟢  | relay-server                  |
 | Auto-scaling                 | 🟢              | N/A         | ⚪  | Not managed                   |
-| Zero-config deployment       | 🟢              | N/A         | 🔴  | Manual Railway setup required |
+| Zero-config deployment       | 🟢              | N/A         | 🔴  | Manual CloudRuntime setup required |
 | Preview deployments          | 🟢              | N/A         | ⚪  | Not implemented               |
 | Branch previews              | 🟢              | N/A         | ⚪  | Not implemented               |
 | Built-in CDN                 | 🟢              | N/A         | ⚪  | Not implemented               |
-| SSL/TLS auto-cert            | 🟢              | N/A         | 🟢  | Railway provides              |
+| SSL/TLS auto-cert            | 🟢              | N/A         | 🟢  | CloudRuntime provides              |
 | Health check endpoints       | 🟢              | N/A         | 🟡  | /health exists                |
 | Background workers           | 🟢              | N/A         | 🟡  | Master Clock + cron jobs      |
 | Cron/scheduled tasks         | 🟢              | N/A         | 🟢  | Super-cycle scheduler         |
-| Persistent services          | 🟢              | N/A         | 🟡  | Railway services but manual   |
+| Persistent services          | 🟢              | N/A         | 🟡  | CloudRuntime services but manual   |
 
 ---
 
@@ -99,7 +99,7 @@
 | ---------------------------- | --------------- | ----------- | --- | ------------------------- |
 | File storage                 | 🟢              | N/A         | 🟢  | Workspace + S3            |
 | Structured data (datasets)   | 🟢              | N/A         | 🟢  | DuckDB + datapackage.json |
-| Relational database          | 🟢              | N/A         | 🟢  | PostgreSQL (Railway)      |
+| Relational database          | 🟢              | N/A         | 🟢  | PostgreSQL (CloudRuntime)      |
 | In-memory cache              | 🟢              | N/A         | 🟢  | Redis                     |
 | Vector storage               | 🟢              | N/A         | ⚪  | Not implemented           |
 | Time-series / logging        | 🟢              | N/A         | 🟢  | Loki (Grafana stack)      |
@@ -138,14 +138,14 @@
 | Bearer token auth             | 🟢              | 🟢          | 🟢  | API routes                |
 | OAuth 2.0                     | 🟢              | N/A         | 🟢  | Google OAuth              |
 | API key management            | 🟢              | 🟢          | 🟢  | Settings > Advanced       |
-| Secret management (env vars)  | 🟢              | 🟢          | 🟢  | Railway env vars          |
+| Secret management (env vars)  | 🟢              | 🟢          | 🟢  | CloudRuntime env vars          |
 | SQL injection protection      | 🟢              | 🟢          | 🟢  | Parameterized queries     |
 | Input validation/sanitization | 🟢              | 🟢          | 🟢  | Security-hardening.js     |
 | Rate limiting                 | 🟢              | N/A         | ⚪  | Not implemented           |
 | Audit logging                 | 🟢              | 🟢          | 🟢  | AuditLogViewer + Loki     |
 | Permission/role system        | 🟢              | N/A         | 🟢  | SUPER_ADMIN, MEMBER, etc. |
 | Workspace isolation           | 🟢              | N/A         | 🟢  | Multi-tenant workspaces   |
-| Encrypted at rest             | 🟢              | N/A         | 🟢  | Railway PostgreSQL        |
+| Encrypted at rest             | 🟢              | N/A         | 🟢  | CloudRuntime PostgreSQL        |
 | Encrypted in transit          | 🟢              | N/A         | 🟢  | HTTPS/WSS                 |
 | JWT tokens                    | 🟢              | N/A         | 🟡  | Auth system exists        |
 
@@ -174,7 +174,7 @@
 
 ### 1. 🔴 NO zo.space equivalent
 
-TNF has no managed hosting for React/Hono routes. Every agent needs Railway
+TNF has no managed hosting for React/Hono routes. Every agent needs CloudRuntime
 manually configured. **Action**: Build `TNF Hosted Spaces` — see
 `docs/TNF_HOSTED_SPACES_ARCHITECTURE.md`
 

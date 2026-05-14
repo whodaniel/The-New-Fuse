@@ -186,6 +186,6 @@ if [ $FAILED_PACKAGES -gt 0 ]; then
 else
     echo -e "${GREEN}✅ All packages validated successfully!${NC}"
     echo ""
-    echo "Ready for deployment to Docker Hub and Railway."
+    echo "Ready for deployment to Docker Hub and CloudRuntime."
     exit 0
 fi

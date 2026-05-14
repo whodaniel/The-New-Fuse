@@ -84,7 +84,7 @@ launch and start generating revenue.
 
 **Location:** `/backend/`
 
-- `railway.json` - Railway deployment config
+- `cloud_runtime.json` - CloudRuntime deployment config
 - `.env.example` - Environment variable template
 - `package.json` - Dependencies and scripts
 - `.gitignore` - Security (exclude secrets)
@@ -218,7 +218,7 @@ launch and start generating revenue.
 
 ⏳ **Deployment (2-3 hours)**
 
-- Deploy backend to Railway
+- Deploy backend to CloudRuntime
 - Run database migrations
 - Configure environment variables
 - Set up Stripe products
@@ -271,7 +271,7 @@ launch and start generating revenue.
                             │ HTTPS/JWT
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Backend API (Railway)                         │
+│                    Backend API (CloudRuntime)                         │
 │  ┌────────────────────────────────────────────────────────────┐ │
 │  │  Express.js API Server                                     │ │
 │  │  • Authentication (Google OAuth + JWT)                     │ │
@@ -300,7 +300,7 @@ launch and start generating revenue.
 backend/
 ├── server.js                    # Main API server
 ├── package.json                 # Dependencies
-├── railway.json                 # Deployment config
+├── cloud_runtime.json                 # Deployment config
 ├── .env.example                 # Env vars template
 ├── config/
 │   └── database.js             # PostgreSQL connection
@@ -363,18 +363,18 @@ backend/README.md               # Backend setup guide
 
 ### Immediate (This Week)
 
-1. **Deploy Backend to Railway** (30 min)
+1. **Deploy Backend to CloudRuntime** (30 min)
 
    ```bash
    cd backend
-   railway init
-   railway up
+   cloud_runtime init
+   cloud_runtime up
    ```
 
 2. **Set Up Stripe Products** (30 min)
    - Create Pro Monthly/Yearly products
    - Create TNF Monthly/Yearly products
-   - Copy price IDs to Railway env vars
+   - Copy price IDs to CloudRuntime env vars
 
 3. **Configure Environment Variables** (15 min)
    - Set JWT_SECRET, GOOGLE_CLIENT_ID, STRIPE keys
@@ -444,9 +444,9 @@ backend/README.md               # Backend setup guide
    - Pro tier - verify unlimited
    - TNF tier - verify all features
 
-3. **Monitor Railway logs during launch**
+3. **Monitor CloudRuntime logs during launch**
    ```bash
-   railway logs --follow
+   cloud_runtime logs --follow
    ```
 
 ### After Launch
@@ -516,13 +516,13 @@ backend/README.md               # Backend setup guide
 
 ### External Resources
 
-- Railway Docs: https://docs.railway.app
+- CloudRuntime Docs: https://docs.thenewfuse.com
 - Stripe Docs: https://stripe.com/docs
 - Chrome Web Store: https://developer.chrome.com/docs/webstore
 
 ### Community
 
-- Railway Discord: https://discord.gg/railway
+- CloudRuntime Discord: https://discord.gg/cloud_runtime
 - Chrome Extension Discord: https://discord.gg/chrome-extensions
 
 ---
@@ -533,7 +533,7 @@ Before launching, verify:
 
 **Backend:**
 
-- [ ] Deployed to Railway
+- [ ] Deployed to CloudRuntime
 - [ ] Database schema applied
 - [ ] All env vars configured
 - [ ] Stripe products created

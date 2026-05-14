@@ -5,31 +5,31 @@
 
 ## Content
 
-# Cloud Infrastructure Migration Blueprint (Railway -> GCP/Cloudflare Stack)
+# Cloud Infrastructure Migration Blueprint (CloudRuntime -> GCP/Cloudflare Stack)
 
-> **⚠️ RAILWAY IS NO LONGER USED.** This document describes the migration FROM
-> Railway TO the current stack: **GCP (Cloud Run) + Cloudflare (Pages/Workers) +
-> Supabase (PostgreSQL) + Upstash (Redis)**. The Railway references below are
+> **⚠️ CLOUD_RUNTIME IS NO LONGER USED.** This document describes the migration FROM
+> CloudRuntime TO the current stack: **GCP (Cloud Run) + Cloudflare (Pages/Workers) +
+> Supabase (PostgreSQL) + Upstash (Redis)**. The CloudRuntime references below are
 > historical and preserved for migration context only.
 
-Based on the verified Railway configuration, here is exactly how the services
+Based on the verified CloudRuntime configuration, here is exactly how the services
 must be configured on the new infrastructure stack.
 
 ## 1. Supabase (PostgreSQL)
 
-Your new Supabase instance must replace the Railway Postgres service.
+Your new Supabase instance must replace the CloudRuntime Postgres service.
 
 - **Old URL**:
-  `postgresql://postgres:...@postgres.railway.internal:5432/railway`
+  `postgresql://postgres:...@postgres.cloud_runtime.internal:5432/cloud_runtime`
 - **New URL (`DATABASE_URL`)**:
   `postgresql://<user>:<password>@<supabase-host>:6543/postgres?sslmode=require`
 - **Required across**: `api-gateway`, `backend-jfal`, `relay-server`
 
 ## 2. Upstash (Redis)
 
-Your new Upstash instance must replace the Railway Redis service.
+Your new Upstash instance must replace the CloudRuntime Redis service.
 
-- **Old URL**: `redis://default:...@redis.railway.internal:6379`
+- **Old URL**: `redis://default:...@redis.cloud_runtime.internal:6379`
 - **New URL (`REDIS_URL`, `A2A_REDIS_URL`)**:
   `rediss://default:gQAAAAAAAVbSAAIncDI1MTE3NWRiODViMTA...@...` (Use the Upstash
   connection string with `rediss://` for TLS)
@@ -60,7 +60,7 @@ Your new Upstash instance must replace the Railway Redis service.
 - **Critical Variables**:
   - `DATABASE_URL` (Supabase)
   - `REDIS_URL` (Upstash)
-  - `JWT_SECRET`: (Migrate from Railway secret manager; do not hardcode value)
+  - `JWT_SECRET`: (Migrate from CloudRuntime secret manager; do not hardcode value)
   - `LOG_LEVEL`: `warn`
 
 ### C. Relay Server (`relay-server`)
@@ -76,7 +76,7 @@ Your new Upstash instance must replace the Railway Redis service.
 
 ### A. The SaaS Application (`app.thenewfuse.com`)
 
-This represents the `Frontend Application` from Railway.
+This represents the `Frontend Application` from CloudRuntime.
 
 - **Hosting**: Cloudflare Pages (Project: `ai-arcade-poker` or new dedicated
   project)
@@ -92,11 +92,11 @@ This represents the `Frontend Application` from Railway.
     to the GCP API Gateway)
   - `VITE_API_URL`: `https://api.thenewfuse.com`
   - `VITE_WS_URL`: `wss://relay.thenewfuse.com`
-  - Firebase and Supabase client keys from the original Railway config.
+  - Firebase and Supabase client keys from the original CloudRuntime config.
 
 ### B. The Landing Page (`thenewfuse.com`)
 
-This represents `TheNewFuse` from Railway.
+This represents `TheNewFuse` from CloudRuntime.
 
 - **Hosting**: Cloudflare Pages (Project: `thenewfuse-main`)
 - **Framework**: Static HTML or separate Vite build.

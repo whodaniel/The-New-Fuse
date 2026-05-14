@@ -133,8 +133,8 @@ function mapIntegrations() {
       query: `rg -n 'redis|cache|ttl|expire' apps packages scripts --glob '!**/node_modules/**' | head -n 20`
     },
     {
-      name: 'Railway',
-      query: `rg -n 'railway|RAILWAY_' apps packages scripts docs railway.toml --glob '!**/node_modules/**' | head -n 20`
+      name: 'CloudRuntime',
+      query: `rg -n 'cloud_runtime|CLOUD_RUNTIME_' apps packages scripts docs cloud_runtime.toml --glob '!**/node_modules/**' | head -n 20`
     },
     {
       name: 'GitHub',

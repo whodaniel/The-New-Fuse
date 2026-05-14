@@ -1,0 +1,1212 @@
+{
+  "items": [
+    {
+      "id": "marketplace-model-neural-inference-unit-158",
+      "slug": "neural-inference-unit-158",
+      "name": "Neural Inference Unit",
+      "description": "High-performance performance monitoring model optimized for low-latency inference on edge hardware",
+      "kind": "model",
+      "category": "intelligence",
+      "tags": [
+        "backbone",
+        "inference",
+        "neural"
+      ],
+      "capabilities": [
+        "state-management",
+        "configuration",
+        "testing-harness",
+        "ws-transport"
+      ],
+      "rating": 3.5,
+      "totalRuns": 3263,
+      "successRate": 95.7,
+      "pricePerRun": 0.14,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-agent-distributed-manager-720",
+      "slug": "distributed-manager-720",
+      "name": "Distributed Manager",
+      "description": "Complete multi-agent system for threat detection with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "education",
+      "tags": [
+        "production",
+        "orchestration",
+        "agent",
+        "autonomous"
+      ],
+      "capabilities": [
+        "task-routing",
+        "chain-of-thought",
+        "skill-composition",
+        "redis-pubsub"
+      ],
+      "rating": 5.0,
+      "totalRuns": 49588,
+      "successRate": 91.2,
+      "pricePerRun": 0.34,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-experience-interactive-journey-874",
+      "slug": "interactive-journey-874",
+      "name": "Interactive Journey",
+      "description": "Interactive workshop series for code review with real-time feedback and community support",
+      "kind": "experience",
+      "category": "intelligence",
+      "tags": [
+        "course",
+        "workshop",
+        "experience",
+        "education"
+      ],
+      "capabilities": [
+        "agent-handoff",
+        "labs"
+      ],
+      "rating": 3.8,
+      "totalRuns": 22883,
+      "successRate": 98.9,
+      "pricePerRun": 0.32,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-agent-distributed-operator-739",
+      "slug": "distributed-operator-739",
+      "name": "Distributed Operator",
+      "description": "Self-orchestrating agent swarm specializing in code review with Redis-backed state management",
+      "kind": "agent",
+      "category": "operations",
+      "tags": [
+        "production",
+        "autonomous",
+        "agent"
+      ],
+      "capabilities": [
+        "testing-harness",
+        "few-shot-learning",
+        "labs",
+        "curriculum"
+      ],
+      "rating": 4.2,
+      "totalRuns": 17744,
+      "successRate": 99.4,
+      "pricePerRun": 0.08,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-workflow-automated-loop-393",
+      "slug": "automated-loop-393",
+      "name": "Automated Loop",
+      "description": "Automated pipeline handling document processing with parallel execution and state checkpointing",
+      "kind": "workflow",
+      "category": "development",
+      "tags": [
+        "pipeline",
+        "automation",
+        "workflow",
+        "process"
+      ],
+      "capabilities": [
+        "agent-handoff",
+        "benchmark"
+      ],
+      "rating": 3.8,
+      "totalRuns": 20851,
+      "successRate": 91.7,
+      "pricePerRun": 0.34,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-model-enterprise-reasoning-core-854",
+      "slug": "enterprise-reasoning-core-854",
+      "name": "Enterprise Reasoning Core",
+      "description": "Foundation model for performance monitoring with fine-tuning API and benchmark results",
+      "kind": "model",
+      "category": "nexus",
+      "tags": [
+        "backbone",
+        "neural",
+        "inference"
+      ],
+      "capabilities": [
+        "testing-harness",
+        "rapid-deployment",
+        "benchmark",
+        "notification-hooks"
+      ],
+      "rating": 4.3,
+      "totalRuns": 25643,
+      "successRate": 94.0,
+      "pricePerRun": 0.43,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-mcp_server-mcp-hub-805",
+      "slug": "mcp-hub-805",
+      "name": "MCP Hub",
+      "description": "Production-grade MCP interface for content generation with health monitoring and auto-reconnect",
+      "kind": "mcp_server",
+      "category": "nft",
+      "tags": [
+        "protocol",
+        "server",
+        "mcp"
+      ],
+      "capabilities": [
+        "testing-harness",
+        "notification-hooks"
+      ],
+      "rating": 3.7,
+      "totalRuns": 28815,
+      "successRate": 94.6,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-agent-intelligent-swarm-453",
+      "slug": "intelligent-swarm-453",
+      "name": "Intelligent Swarm",
+      "description": "Production-ready autonomous agent for knowledge retrieval with human-in-the-loop approval",
+      "kind": "agent",
+      "category": "automation",
+      "tags": [
+        "orchestration",
+        "production"
+      ],
+      "capabilities": [
+        "pipeline-orchestration",
+        "certification",
+        "health-check"
+      ],
+      "rating": 4.2,
+      "totalRuns": 40660,
+      "successRate": 90.9,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-agent-resilient-controller-668",
+      "slug": "resilient-controller-668",
+      "name": "Resilient Controller",
+      "description": "Complete multi-agent system for lead scoring with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "development",
+      "tags": [
+        "agent",
+        "autonomous",
+        "orchestration",
+        "production"
+      ],
+      "capabilities": [
+        "rapid-deployment",
+        "certification"
+      ],
+      "rating": 4.4,
+      "totalRuns": 33217,
+      "successRate": 91.7,
+      "pricePerRun": 0.29,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-mcp_server-mcp-server-457",
+      "slug": "mcp-server-457",
+      "name": "MCP Server",
+      "description": "Production-grade MCP interface for document processing with health monitoring and auto-reconnect",
+      "kind": "mcp_server",
+      "category": "development",
+      "tags": [
+        "integration",
+        "mcp",
+        "server"
+      ],
+      "capabilities": [
+        "ws-transport",
+        "mcp-compliance"
+      ],
+      "rating": 4.3,
+      "totalRuns": 6147,
+      "successRate": 94.3,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-mcp_server-relay-interface-650",
+      "slug": "relay-interface-650",
+      "name": "Relay Interface",
+      "description": "MCP-compliant server for compliance checking with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "automation",
+      "tags": [
+        "mcp",
+        "integration"
+      ],
+      "capabilities": [
+        "testing-harness",
+        "prompt-engineering"
+      ],
+      "rating": 4.1,
+      "totalRuns": 18980,
+      "successRate": 90.7,
+      "pricePerRun": 0.39,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-mcp_server-relay-interface-663",
+      "slug": "relay-interface-663",
+      "name": "Relay Interface",
+      "description": "High-performance MCP server connecting code review via standardized Model Context Protocol",
+      "kind": "mcp_server",
+      "category": "development",
+      "tags": [
+        "protocol",
+        "mcp"
+      ],
+      "capabilities": [
+        "chain-of-thought",
+        "ws-transport",
+        "task-routing",
+        "curriculum"
+      ],
+      "rating": 4.5,
+      "totalRuns": 22979,
+      "successRate": 92.2,
+      "pricePerRun": 0.06,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-workflow-automated-pipeline-868",
+      "slug": "automated-pipeline-868",
+      "name": "Automated Pipeline",
+      "description": "Production workflow for report generation with SLA monitoring and escalation paths",
+      "kind": "workflow",
+      "category": "analytics",
+      "tags": [
+        "pipeline",
+        "automation",
+        "workflow",
+        "process"
+      ],
+      "capabilities": [
+        "retry-logic",
+        "certification"
+      ],
+      "rating": 4.5,
+      "totalRuns": 37116,
+      "successRate": 91.0,
+      "pricePerRun": 0.09,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-skill-modular-skill-672",
+      "slug": "modular-skill-672",
+      "name": "Modular Skill",
+      "description": "Reusable skill module for resource scheduling with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "sensory",
+      "tags": [
+        "reusable",
+        "module"
+      ],
+      "capabilities": [
+        "state-management",
+        "error-handling",
+        "error-recovery"
+      ],
+      "rating": 4.0,
+      "totalRuns": 2374,
+      "successRate": 94.6,
+      "pricePerRun": 0.45,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-skill-portable-plugin-585",
+      "slug": "portable-plugin-585",
+      "name": "Portable Plugin",
+      "description": "Reusable skill module for compliance checking with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "development",
+      "tags": [
+        "reusable",
+        "skill"
+      ],
+      "capabilities": [
+        "inference",
+        "notification-hooks"
+      ],
+      "rating": 4.4,
+      "totalRuns": 42049,
+      "successRate": 96.9,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T12:00:00.000Z",
+      "updatedAt": "2026-05-14T12:00:00.000Z"
+    },
+    {
+      "id": "marketplace-model-lightweight-inference-unit-112",
+      "slug": "lightweight-inference-unit-112",
+      "name": "Lightweight Inference Unit",
+      "description": "High-performance threat detection model optimized for low-latency inference",
+      "kind": "model",
+      "category": "developer-tools",
+      "tags": [
+        "inference",
+        "backbone"
+      ],
+      "capabilities": [
+        "prompt-engineering",
+        "rapid-deployment",
+        "skill-composition"
+      ],
+      "rating": 3.8,
+      "totalRuns": 28984,
+      "successRate": 94.2,
+      "pricePerRun": 0.16,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-agent-autonomous-controller-695",
+      "slug": "autonomous-controller-695",
+      "name": "Autonomous Controller",
+      "description": "Complete multi-agent system for document processing with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "nexus",
+      "tags": [
+        "production",
+        "autonomous"
+      ],
+      "capabilities": [
+        "error-handling",
+        "labs",
+        "state-management"
+      ],
+      "rating": 3.8,
+      "totalRuns": 7311,
+      "successRate": 95.0,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-experience-curated-tutorial-series-853",
+      "slug": "curated-tutorial-series-853",
+      "name": "Curated Tutorial Series",
+      "description": "Structured learning experience for data extraction with hands-on labs",
+      "kind": "experience",
+      "category": "nexus",
+      "tags": [
+        "course",
+        "workshop",
+        "experience"
+      ],
+      "capabilities": [
+        "few-shot-learning",
+        "retry-logic"
+      ],
+      "rating": 3.5,
+      "totalRuns": 12747,
+      "successRate": 94.9,
+      "pricePerRun": 0.03,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-experience-premium-experience-980",
+      "slug": "premium-experience-980",
+      "name": "Premium Experience",
+      "description": "Structured learning experience for lead scoring with hands-on labs",
+      "kind": "experience",
+      "category": "nexus",
+      "tags": [
+        "education",
+        "course"
+      ],
+      "capabilities": [
+        "state-checkpointing",
+        "run-tracking",
+        "prompt-engineering",
+        "task-routing"
+      ],
+      "rating": 4.4,
+      "totalRuns": 17149,
+      "successRate": 98.6,
+      "pricePerRun": 0.35,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-mcp_server-mcp-server-335",
+      "slug": "mcp-server-335",
+      "name": "MCP Server",
+      "description": "MCP-compliant server for data extraction with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "education",
+      "tags": [
+        "mcp",
+        "protocol"
+      ],
+      "capabilities": [
+        "few-shot-learning",
+        "output-validation"
+      ],
+      "rating": 4.7,
+      "totalRuns": 28867,
+      "successRate": 96.9,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-model-foundation-model-644",
+      "slug": "foundation-model-644",
+      "name": "Foundation Model",
+      "description": "High-performance code review model optimized for low-latency inference",
+      "kind": "model",
+      "category": "analytics",
+      "tags": [
+        "neural",
+        "model",
+        "backbone"
+      ],
+      "capabilities": [
+        "prompt-engineering",
+        "error-recovery",
+        "state-management",
+        "notification-hooks"
+      ],
+      "rating": 3.7,
+      "totalRuns": 32369,
+      "successRate": 93.9,
+      "pricePerRun": 0.37,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-agent_template-quick-start-foundation-pack-749",
+      "slug": "quick-start-foundation-pack-749",
+      "name": "Quick-Start Foundation Pack",
+      "description": "Ready-to-deploy agent template for customer support with configuration and example flows",
+      "kind": "agent_template",
+      "category": "forge",
+      "tags": [
+        "blueprint",
+        "starter"
+      ],
+      "capabilities": [
+        "mcp-integration",
+        "few-shot-learning",
+        "configuration"
+      ],
+      "rating": 4.7,
+      "totalRuns": 36237,
+      "successRate": 98.0,
+      "pricePerRun": 0.36,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-experience-curated-journey-897",
+      "slug": "curated-journey-897",
+      "name": "Curated Journey",
+      "description": "Structured learning experience for code review with hands-on labs",
+      "kind": "experience",
+      "category": "productivity",
+      "tags": [
+        "course",
+        "education",
+        "workshop"
+      ],
+      "capabilities": [
+        "few-shot-learning",
+        "fine-tuning"
+      ],
+      "rating": 4.3,
+      "totalRuns": 36034,
+      "successRate": 92.5,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-agent_template-blueprint-starter-kit-573",
+      "slug": "blueprint-starter-kit-573",
+      "name": "Blueprint Starter Kit",
+      "description": "Ready-to-deploy agent template for knowledge retrieval with configuration and example flows",
+      "kind": "agent_template",
+      "category": "education",
+      "tags": [
+        "blueprint",
+        "starter"
+      ],
+      "capabilities": [
+        "rapid-deployment",
+        "agent-handoff",
+        "certification",
+        "retry-logic"
+      ],
+      "rating": 4.8,
+      "totalRuns": 5947,
+      "successRate": 96.1,
+      "pricePerRun": 0.12,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-prompt-structured-instruction-set-952",
+      "slug": "structured-instruction-set-952",
+      "name": "Structured Instruction Set",
+      "description": "Production-tested instruction templates for consistent data extraction outputs",
+      "kind": "prompt",
+      "category": "sensory",
+      "tags": [
+        "template",
+        "instruction",
+        "prompt",
+        "llm"
+      ],
+      "capabilities": [
+        "state-management",
+        "testing-harness"
+      ],
+      "rating": 4.7,
+      "totalRuns": 28072,
+      "successRate": 95.1,
+      "pricePerRun": 0.13,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-workflow-streamlined-workflow-842",
+      "slug": "streamlined-workflow-842",
+      "name": "Streamlined Workflow",
+      "description": "Full workflow for report generation with step tracking, retry logic, and notification hooks",
+      "kind": "workflow",
+      "category": "developer-tools",
+      "tags": [
+        "automation",
+        "process",
+        "workflow"
+      ],
+      "capabilities": [
+        "state-persistence",
+        "task-routing"
+      ],
+      "rating": 3.6,
+      "totalRuns": 38832,
+      "successRate": 95.4,
+      "pricePerRun": 0.07,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-prompt-precision-template-bundle-316",
+      "slug": "precision-template-bundle-316",
+      "name": "Precision Template Bundle",
+      "description": "Production-tested instruction templates for consistent threat detection outputs",
+      "kind": "prompt",
+      "category": "developer-tools",
+      "tags": [
+        "llm",
+        "template",
+        "instruction"
+      ],
+      "capabilities": [
+        "task-routing",
+        "skill-composition",
+        "error-recovery"
+      ],
+      "rating": 3.9,
+      "totalRuns": 40968,
+      "successRate": 91.1,
+      "pricePerRun": 0.02,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-prompt-precision-template-bundle-896",
+      "slug": "precision-template-bundle-896",
+      "name": "Precision Template Bundle",
+      "description": "Production-tested instruction templates for consistent document processing outputs",
+      "kind": "prompt",
+      "category": "operations",
+      "tags": [
+        "prompt",
+        "llm"
+      ],
+      "capabilities": [
+        "skill-composition",
+        "output-validation",
+        "state-persistence"
+      ],
+      "rating": 4.9,
+      "totalRuns": 16948,
+      "successRate": 96.8,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-experience-immersive-course-348",
+      "slug": "immersive-course-348",
+      "name": "Immersive Course",
+      "description": "Structured learning experience for customer support with hands-on labs",
+      "kind": "experience",
+      "category": "nft",
+      "tags": [
+        "workshop",
+        "course",
+        "experience",
+        "education"
+      ],
+      "capabilities": [
+        "run-tracking",
+        "state-checkpointing"
+      ],
+      "rating": 4.9,
+      "totalRuns": 45484,
+      "successRate": 94.9,
+      "pricePerRun": 0.43,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-workflow-optimized-loop-562",
+      "slug": "optimized-loop-562",
+      "name": "Optimized Loop",
+      "description": "Full workflow for threat detection with step tracking, retry logic, and notification hooks",
+      "kind": "workflow",
+      "category": "nexus",
+      "tags": [
+        "automation",
+        "workflow"
+      ],
+      "capabilities": [
+        "state-persistence",
+        "rapid-deployment",
+        "retry-logic",
+        "quantization"
+      ],
+      "rating": 4.8,
+      "totalRuns": 21419,
+      "successRate": 98.7,
+      "pricePerRun": 0.09,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-05-14T18:58:26Z",
+      "updatedAt": "2026-05-14T18:58:26Z"
+    },
+    {
+      "id": "marketplace-agent_template-blueprint-scaffold-937",
+      "slug": "blueprint-scaffold-937",
+      "name": "Blueprint Scaffold",
+      "description": "Ready-to-deploy agent template for report generation with configuration and example flows",
+      "kind": "agent_template",
+      "category": "productivity",
+      "tags": [
+        "starter",
+        "blueprint",
+        "scaffold"
+      ],
+      "capabilities": [
+        "quantization",
+        "error-recovery",
+        "agent-handoff"
+      ],
+      "rating": 4.2,
+      "totalRuns": 47009,
+      "successRate": 94.6,
+      "pricePerRun": 0.19,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-agent-adaptive-operator-341",
+      "slug": "adaptive-operator-341",
+      "name": "Adaptive Operator",
+      "description": "Complete multi-agent system for lead scoring with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "automation",
+      "tags": [
+        "production",
+        "agent",
+        "autonomous"
+      ],
+      "capabilities": [
+        "pipeline-orchestration",
+        "ci-cd",
+        "state-management"
+      ],
+      "rating": 4.8,
+      "totalRuns": 20333,
+      "successRate": 90.3,
+      "pricePerRun": 0.36,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-skill-portable-capability-349",
+      "slug": "portable-capability-349",
+      "name": "Portable Capability",
+      "description": "Reusable skill module for compliance checking with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "development",
+      "tags": [
+        "module",
+        "reusable",
+        "skill"
+      ],
+      "capabilities": [
+        "chain-of-thought",
+        "quantization"
+      ],
+      "rating": 4.0,
+      "totalRuns": 15587,
+      "successRate": 96.3,
+      "pricePerRun": 0.28,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-skill-portable-plugin-460",
+      "slug": "portable-plugin-460",
+      "name": "Portable Plugin",
+      "description": "Reusable skill module for resource scheduling with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "productivity",
+      "tags": [
+        "reusable",
+        "skill",
+        "capability",
+        "module"
+      ],
+      "capabilities": [
+        "rapid-deployment",
+        "state-checkpointing",
+        "chain-of-thought"
+      ],
+      "rating": 4.6,
+      "totalRuns": 27908,
+      "successRate": 90.7,
+      "pricePerRun": 0.37,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-agent_template-blueprint-scaffold-452",
+      "slug": "blueprint-scaffold-452",
+      "name": "Blueprint Scaffold",
+      "description": "Ready-to-deploy agent template for report generation with configuration and example flows",
+      "kind": "agent_template",
+      "category": "analytics",
+      "tags": [
+        "starter",
+        "scaffold",
+        "blueprint"
+      ],
+      "capabilities": [
+        "configuration",
+        "state-persistence",
+        "error-recovery",
+        "prompt-engineering"
+      ],
+      "rating": 4.0,
+      "totalRuns": 4294,
+      "successRate": 95.0,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-agent-cognitive-orchestrator-192",
+      "slug": "cognitive-orchestrator-192",
+      "name": "Cognitive Orchestrator",
+      "description": "Complete multi-agent system for compliance checking with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "security",
+      "tags": [
+        "autonomous",
+        "production",
+        "agent",
+        "orchestration"
+      ],
+      "capabilities": [
+        "agent-handoff",
+        "error-handling",
+        "testing-harness"
+      ],
+      "rating": 4.8,
+      "totalRuns": 42789,
+      "successRate": 90.4,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-experience-curated-journey-739",
+      "slug": "curated-journey-739",
+      "name": "Curated Journey",
+      "description": "Structured learning experience for workflow automation with hands-on labs",
+      "kind": "experience",
+      "category": "intelligence",
+      "tags": [
+        "course",
+        "workshop",
+        "education"
+      ],
+      "capabilities": [
+        "few-shot-learning",
+        "ci-cd",
+        "pipeline-orchestration",
+        "mcp-integration"
+      ],
+      "rating": 4.6,
+      "totalRuns": 31443,
+      "successRate": 94.5,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-skill-reusable-plugin-872",
+      "slug": "reusable-plugin-872",
+      "name": "Reusable Plugin",
+      "description": "Reusable skill module for resource scheduling with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "productivity",
+      "tags": [
+        "reusable",
+        "module",
+        "capability"
+      ],
+      "capabilities": [
+        "rapid-deployment",
+        "ci-cd",
+        "error-handling",
+        "configuration"
+      ],
+      "rating": 4.2,
+      "totalRuns": 35312,
+      "successRate": 92.0,
+      "pricePerRun": 0.46,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-mcp_server-protocol-adapter-313",
+      "slug": "protocol-adapter-313",
+      "name": "Protocol Adapter",
+      "description": "MCP-compliant server for threat detection with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "automation",
+      "tags": [
+        "server",
+        "mcp",
+        "protocol"
+      ],
+      "capabilities": [
+        "retry-logic",
+        "configuration"
+      ],
+      "rating": 4.9,
+      "totalRuns": 23948,
+      "successRate": 98.8,
+      "pricePerRun": 0.4,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-mcp_server-bridge-interface-250",
+      "slug": "bridge-interface-250",
+      "name": "Bridge Interface",
+      "description": "MCP-compliant server for anomaly detection with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "education",
+      "tags": [
+        "protocol",
+        "integration",
+        "mcp"
+      ],
+      "capabilities": [
+        "prompt-engineering",
+        "configuration",
+        "benchmark"
+      ],
+      "rating": 5.0,
+      "totalRuns": 33660,
+      "successRate": 98.4,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-prompt-advanced-prompt-pack-503",
+      "slug": "advanced-prompt-pack-503",
+      "name": "Advanced Prompt Pack",
+      "description": "Production-tested instruction templates for consistent compliance checking outputs",
+      "kind": "prompt",
+      "category": "developer-tools",
+      "tags": [
+        "template",
+        "llm"
+      ],
+      "capabilities": [
+        "ci-cd",
+        "labs",
+        "state-persistence"
+      ],
+      "rating": 3.8,
+      "totalRuns": 26524,
+      "successRate": 93.6,
+      "pricePerRun": 0.23,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-mcp_server-mcp-server-288",
+      "slug": "mcp-server-288",
+      "name": "MCP Server",
+      "description": "MCP-compliant server for sentiment analysis with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "automation",
+      "tags": [
+        "server",
+        "protocol"
+      ],
+      "capabilities": [
+        "curriculum",
+        "rapid-deployment",
+        "state-checkpointing",
+        "state-management"
+      ],
+      "rating": 3.8,
+      "totalRuns": 41117,
+      "successRate": 92.2,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-agent-distributed-operator-877",
+      "slug": "distributed-operator-877",
+      "name": "Distributed Operator",
+      "description": "Complete multi-agent system for document processing with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "productivity",
+      "tags": [
+        "agent",
+        "autonomous",
+        "orchestration"
+      ],
+      "capabilities": [
+        "quantization",
+        "rapid-deployment",
+        "benchmark"
+      ],
+      "rating": 4.1,
+      "totalRuns": 14629,
+      "successRate": 94.0,
+      "pricePerRun": 0.21,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-workflow-integrated-workflow-993",
+      "slug": "integrated-workflow-993",
+      "name": "Integrated Workflow",
+      "description": "Full workflow for content generation with step tracking, retry logic, and notification hooks",
+      "kind": "workflow",
+      "category": "nft",
+      "tags": [
+        "automation",
+        "process"
+      ],
+      "capabilities": [
+        "skill-composition",
+        "prompt-engineering",
+        "state-management"
+      ],
+      "rating": 4.3,
+      "totalRuns": 41011,
+      "successRate": 90.1,
+      "pricePerRun": 0.31,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-model-deep-model-386",
+      "slug": "deep-model-386",
+      "name": "Deep Model",
+      "description": "High-performance content generation model optimized for low-latency inference",
+      "kind": "model",
+      "category": "intelligence",
+      "tags": [
+        "model",
+        "inference",
+        "neural"
+      ],
+      "capabilities": [
+        "output-validation",
+        "run-tracking",
+        "state-persistence",
+        "pipeline-orchestration"
+      ],
+      "rating": 4.8,
+      "totalRuns": 40253,
+      "successRate": 96.5,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-05-14T18:58:34Z",
+      "updatedAt": "2026-05-14T18:58:34Z"
+    }
+  ],
+  "total": 45,
+  "generated_at": "2026-05-14T18:58:34Z"
+}

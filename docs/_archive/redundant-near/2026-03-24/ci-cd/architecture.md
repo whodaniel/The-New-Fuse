@@ -2,7 +2,7 @@
 
 ## Overview
 
-The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railway for deployment. The architecture is designed for:
+The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with CloudRuntime for deployment. The architecture is designed for:
 
 - **Speed**: Parallel execution and intelligent caching
 - **Reliability**: Comprehensive testing and health checks
@@ -73,11 +73,11 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 │   └────────┬─────────────────────────────┘                     │
 │            ↓                                                     │
 │   ┌──────────────────────────────────────┐                     │
-│   │ Deploy to Railway (Parallel)         │                     │
-│   │ - api-gateway → Railway              │                     │
-│   │ - api → Railway                      │                     │
-│   │ - backend → Railway                  │                     │
-│   │ - frontend → Railway                 │                     │
+│   │ Deploy to CloudRuntime (Parallel)         │                     │
+│   │ - api-gateway → CloudRuntime              │                     │
+│   │ - api → CloudRuntime                      │                     │
+│   │ - backend → CloudRuntime                  │                     │
+│   │ - frontend → CloudRuntime                 │                     │
 │   └────────┬─────────────────────────────┘                     │
 │            ↓                                                     │
 │   ┌──────────────────────────────────────┐                     │
@@ -146,7 +146,7 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 - **Pre-Deploy Checks**: Determine environment and services to deploy
 - **Build and Test**: Runs full test suite
 - **Build Images**: Build Docker images for each service
-- **Deploy to Railway**: Deploy services with Railway CLI
+- **Deploy to CloudRuntime**: Deploy services with CloudRuntime CLI
 - **Health Checks**: Verify deployments with retries
 - **Post-Deployment Tests**: Run smoke tests
 - **Notify**: Send Slack notifications
@@ -227,7 +227,7 @@ packages/*/node_modules
 
 ### Secrets Management
 All secrets stored in GitHub Secrets:
-- `RAILWAY_TOKEN`: Railway API token
+- `CLOUD_RUNTIME_TOKEN`: CloudRuntime API token
 - `CODECOV_TOKEN`: Codecov upload token
 - `DOCKER_USERNAME`: Docker Hub username
 - `DOCKER_PASSWORD`: Docker Hub password
@@ -265,7 +265,7 @@ All secrets stored in GitHub Secrets:
 
 ### Rollback Procedures
 1. Automatic rollback on health check failure
-2. Manual rollback via Railway CLI
+2. Manual rollback via CloudRuntime CLI
 3. Deploy previous tag/commit
 
 ### Backup Strategies

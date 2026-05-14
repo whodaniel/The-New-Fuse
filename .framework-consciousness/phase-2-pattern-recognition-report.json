@@ -97,9 +97,9 @@
       "name": "Agent-to-agent communication",
       "signalCount": 25,
       "sampleRefs": [
-        "docs/RAILWAY_CRON_SETUP.md:132:  results.checks.relay = await checkService('http://localhost:3001/health');",
-        "docs/RAILWAY_CRON_SETUP.md:161:    analysis.recommendations.push('Consider scaling relay server');",
-        "docs/RAILWAY_CRON_SETUP.md:238:- **Redis Pub/Sub**: Publishes to `tnf:self-improvement` channel",
+        "docs/CLOUD_RUNTIME_CRON_SETUP.md:132:  results.checks.relay = await checkService('http://localhost:3001/health');",
+        "docs/CLOUD_RUNTIME_CRON_SETUP.md:161:    analysis.recommendations.push('Consider scaling relay server');",
+        "docs/CLOUD_RUNTIME_CRON_SETUP.md:238:- **Redis Pub/Sub**: Publishes to `tnf:self-improvement` channel",
         "docs/TNF_AGENTIC_INFRASTRUCTURE_VISION.md:53:│  │  │  (a2a-core)  │  │  (mcp-core)  │  │  (relay-core)│                   │   │",
         "docs/TNF_AGENTIC_INFRASTRUCTURE_VISION.md:341:Your `a2a-core` package defines the inter-agent communication standard:",
         "docs/TNF_AGENTIC_INFRASTRUCTURE_VISION.md:454:│  ├─ Test inter-agent communication                                       │",

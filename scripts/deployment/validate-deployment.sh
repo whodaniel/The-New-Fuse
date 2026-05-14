@@ -377,43 +377,43 @@ validate_docker_available() {
       log_warning "Docker daemon is not running"
     fi
   else
-    log_info "Docker is not installed (not required for Railway deployment)"
+    log_info "Docker is not installed (not required for CloudRuntime deployment)"
   fi
 }
 
-validate_railway_cli() {
-  print_section "Railway CLI Validation"
+validate_cloud_runtime_cli() {
+  print_section "CloudRuntime CLI Validation"
 
-  if command -v railway &>/dev/null; then
-    log_success "Railway CLI is installed"
+  if command -v cloud_runtime &>/dev/null; then
+    log_success "CloudRuntime CLI is installed"
 
-    local railway_version=$(railway --version 2>&1 || echo "unknown")
-    log_info "Railway CLI version: $railway_version"
+    local cloud_runtime_version=$(cloud_runtime --version 2>&1 || echo "unknown")
+    log_info "CloudRuntime CLI version: $cloud_runtime_version"
 
     # Check if authenticated
-    if railway whoami &>/dev/null; then
-      log_success "Railway CLI is authenticated"
+    if cloud_runtime whoami &>/dev/null; then
+      log_success "CloudRuntime CLI is authenticated"
 
-      local user=$(railway whoami 2>&1)
+      local user=$(cloud_runtime whoami 2>&1)
       log_info "Logged in as: $user"
     else
-      log_error "Railway CLI is not authenticated"
-      log_info "Run 'railway login' to authenticate"
+      log_error "CloudRuntime CLI is not authenticated"
+      log_info "Run 'cloud_runtime login' to authenticate"
     fi
 
     # Check if linked to a project
-    if railway status &>/dev/null; then
-      log_success "Railway project is linked"
+    if cloud_runtime status &>/dev/null; then
+      log_success "CloudRuntime project is linked"
 
       log_info "Project info:"
-      railway status 2>&1 | head -5
+      cloud_runtime status 2>&1 | head -5
     else
-      log_warning "Not linked to a Railway project"
-      log_info "Run 'railway link' to link to a project"
+      log_warning "Not linked to a CloudRuntime project"
+      log_info "Run 'cloud_runtime link' to link to a project"
     fi
   else
-    log_error "Railway CLI is not installed"
-    log_info "Install with: npm install -g @railway/cli"
+    log_error "CloudRuntime CLI is not installed"
+    log_info "Install with: npm install -g @cloud_runtime/cli"
   fi
 }
 
@@ -539,7 +539,7 @@ main() {
 
   # Deployment tool validations
   validate_docker_available
-  validate_railway_cli
+  validate_cloud_runtime_cli
 
   # Security validations
   check_security_vulnerabilities

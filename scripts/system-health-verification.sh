@@ -41,7 +41,7 @@ fi
 
 # 4. API health checks (critical)
 echo "\n🌐 Checking API endpoints..."
-if curl --silent --fail https://backend-jfal-production.up.railway.app/health &> /dev/null; then
+if curl --silent --fail https://backend-jfal-production.thenewfuse.com/health &> /dev/null; then
     echo "✅ Cloud API is healthy"
 else
     echo "❌ Cloud API health check failed"

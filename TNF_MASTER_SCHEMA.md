@@ -28,7 +28,7 @@ flowchart TD
         subgraph Infrastructure [Infrastructure & DevOps]
             DockerCompose[Docker Compose]:::infra
             TurboBuild[Turbo Monorepo Build]:::infra
-            Railway[Railway Cloud Deploy]:::infra
+            CloudRuntime[CloudRuntime Cloud Deploy]:::infra
             Cloudflare[Cloudflare Wasm]:::infra
         end
 

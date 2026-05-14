@@ -9,7 +9,7 @@
 ❌ Live View stuck on "one screenshot"
 ```
 
-**Root Cause**: Railway's edge proxy is dropping Socket.IO WebSocket connections
+**Root Cause**: CloudRuntime's edge proxy is dropping Socket.IO WebSocket connections
 after the first successful message.
 
 ## The Simple Solution
@@ -17,20 +17,20 @@ after the first successful message.
 **Stop trying to broadcast screenshots through Socket.IO.**
 
 **Instead**: Use the Chrome DevTools MCP server you already configured to let
-Antigravity **directly connect** to your Railway browsers.
+Antigravity **directly connect** to your CloudRuntime browsers.
 
 ## How It Works
 
 ```
 OLD (Broken):
-Audit Script → Screenshot → Socket.IO → Railway Proxy ❌ → Live View
+Audit Script → Screenshot → Socket.IO → CloudRuntime Proxy ❌ → Live View
                                           ↑
                                     Drops connection
 
 NEW (Working):
 Audit Script → Chrome Browser → CDP Protocol → Antigravity MCP → You see everything
                     ↑                              ↑
-              Runs on Railway              Runs locally/cloud
+              Runs on CloudRuntime              Runs locally/cloud
 ```
 
 ## Implementation (5 Steps)
@@ -84,7 +84,7 @@ app.get('/api/browser/devtools', async (_req, res) => {
 });
 ```
 
-### Step 3: Deploy to Railway
+### Step 3: Deploy to CloudRuntime
 
 ```bash
 cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
@@ -98,7 +98,7 @@ Wait 2-3 minutes for deployment.
 ### Step 4: Test the Endpoint
 
 ```bash
-curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools
+curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/browser/devtools
 ```
 
 You should see:
@@ -116,8 +116,8 @@ You should see:
 In Antigravity, use the Chrome DevTools skills we just created:
 
 ```markdown
-"Connect to the Railway browser at
-https://tnf-cloud-sandbox-v2-production.up.railway.app and show me what the
+"Connect to the CloudRuntime browser at
+https://tnf-cloud-sandbox-v2-production.thenewfuse.com and show me what the
 audit bot is viewing"
 ```
 
@@ -134,7 +134,7 @@ Antigravity will:
 1. **No Socket.IO**: Bypasses the problematic broadcasting layer
 2. **Standard Protocol**: Chrome DevTools Protocol is designed for this
 3. **Direct Access**: Antigravity connects directly to browser
-4. **Railway Compatible**: Uses standard HTTP + WebSocket (CDP)
+4. **CloudRuntime Compatible**: Uses standard HTTP + WebSocket (CDP)
 5. **Real-Time**: Get console, network, screenshots on demand
 
 ## Usage Examples
@@ -142,31 +142,31 @@ Antigravity will:
 ### See Current Page
 
 ```
-"Show me a screenshot of what the Railway browser is viewing right now"
+"Show me a screenshot of what the CloudRuntime browser is viewing right now"
 ```
 
 ### Monitor Console
 
 ```
-"What console errors is the Railway browser showing?"
+"What console errors is the CloudRuntime browser showing?"
 ```
 
 ### Watch Network
 
 ```
-"List all network requests the Railway browser has made"
+"List all network requests the CloudRuntime browser has made"
 ```
 
 ### Run Script
 
 ```
-"Run this in the Railway browser: document.querySelectorAll('a').length"
+"Run this in the CloudRuntime browser: document.querySelectorAll('a').length"
 ```
 
 ### Performance Analysis
 
 ```
-"Start a performance trace on the Railway browser"
+"Start a performance trace on the CloudRuntime browser"
 ```
 
 ## Comparison
@@ -177,7 +177,7 @@ Antigravity will:
 - ❌ Only one screenshot
 - ❌ No console access
 - ❌ No network visibility
-- ❌ Railway proxy issues
+- ❌ CloudRuntime proxy issues
 
 ### New Approach (This Fix)
 
@@ -186,7 +186,7 @@ Antigravity will:
 - ✅ Full console access
 - ✅ Network monitoring
 - ✅ Performance profiling
-- ✅ Railway compatible
+- ✅ CloudRuntime compatible
 
 ## What You'll See
 
@@ -211,7 +211,7 @@ All the skills we just created in `.agent/skills/chrome-devtools/`:
 ## Next Steps
 
 1. **Add the `/api/browser/devtools` endpoint** (Step 2 above)
-2. **Deploy to Railway** (Step 3)
+2. **Deploy to CloudRuntime** (Step 3)
 3. **Test the endpoint** (Step 4)
 4. **Use in Antigravity** (Step 5)
 
@@ -219,9 +219,9 @@ Want me to help you implement this? I can:
 
 1. Add the endpoint to your server.ts
 2. Commit and push the changes
-3. Wait for Railway deployment
+3. Wait for CloudRuntime deployment
 4. Test it with you
 5. Show you how to use it in Antigravity
 
-This will give you **actual, working live visibility** into your Railway
+This will give you **actual, working live visibility** into your CloudRuntime
 browsers!

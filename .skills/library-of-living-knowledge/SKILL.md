@@ -346,7 +346,7 @@ export class AgentLifecycleManager {
 ### Cron Job Configuration
 
 ```typescript
-// Integration with TNF Cloud ( thenewfuse.com + Railway)
+// Integration with TNF Cloud ( thenewfuse.com + CloudRuntime)
 
 export class AutomatedOrchestrationService {
   @Cron('*/5 * * * *') // Every 5 minutes
@@ -531,7 +531,7 @@ async function agentInitialize(agentId, role) {
 Once all critical pieces are in place:
 
 ```
-thenewfuse.com (Cloud) + Railway
+thenewfuse.com (Cloud) + CloudRuntime
 ├── Heartbeat Monitor (Always Running)
 │   ├── Checks all agents every 5s
 │   └── Auto-recovers failures

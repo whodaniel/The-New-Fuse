@@ -13,7 +13,8 @@ These are the primary entry points for the TNF Self-Synthesizing Kernel.
 | `boot`        | Master entry point to boot the entire TNF stack.                       |
 | `forge`       | **LLVM-powered JIT compilation** and native machine code optimization. |
 | `mirror`      | iPhone/iPad mirroring and AI vision bridge operations.                 |
-| `super-cycle` | Cloud-first orchestration and long-running agent loops.                |
+| `super-cycle` | Provider-routed orchestration and long-running agent loops.            |
+| `self-improvement` | Deterministic reliability loop with artifact verification.        |
 | `relay`       | Real-time multi-agent communication and synaptic bus operations.       |
 | `jules`       | Autonomous automation engine for batch processing and PR management.   |
 | `skills`      | Skill bank operations (sync, ingest, audit).                           |
@@ -64,8 +65,8 @@ of these directly via the CLI.
 
 ### Infrastructure & Deployment
 
-- `scripts/railway/railway-deploy-saas.sh`: ⚠️ **DEPRECATED** Production SaaS
-  deployment. Railway is no longer used; deploy via GCP Cloud Run + Cloudflare.
+- `scripts/cloud_runtime/cloud_runtime-deploy-saas.sh`: ⚠️ **DEPRECATED** Production SaaS
+  deployment. CloudRuntime is no longer used; deploy via GCP Cloud Run + Cloudflare.
   See `CLOUD_MIGRATION_BLUEPRINT.md`.
 - `scripts/deployment/blue-green-deploy.sh`: Zero-downtime rollouts.
 - `scripts/cleanup/deep-cleanup.sh`: Exhaustive workspace pruning.
@@ -103,4 +104,4 @@ To find a command programmatically:
 
 ---
 
-_Last updated: April 27, 2026_
+_Last updated: May 13, 2026_

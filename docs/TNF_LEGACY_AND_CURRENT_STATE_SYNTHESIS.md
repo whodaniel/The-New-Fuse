@@ -221,7 +221,7 @@
 |---|---|---|
 | Phase 3 (MCP Enhancement): resources/list, prompts/list | `MCPBrokerService` has Redis pub/sub | Missing resource prompt handlers |
 | Phase 4 (Cron Jobs): CodebaseIndexer cron, health monitoring | `tnf-cron-governance-protocol-v0.1.md` exists | Cron jobs need deployment |
-| Phase 5 (Activation): Railway deployment, full monitoring | Infrastructure partially deployed | Monitoring incomplete |
+| Phase 5 (Activation): CloudRuntime deployment, full monitoring | Infrastructure partially deployed | Monitoring incomplete |
 | External entity registration (AI models, VS Code extensions) | Not found in current codebase | Not implemented |
 
 ### 4.3 Library ↔ Timeline Cross-Integration
@@ -277,7 +277,7 @@
 
 1. **Deploy Phase 4 Cron Jobs**: Wire `CodebaseIndexerAgent` cron and health monitoring
 2. **Implement Phase 3 MCP Enhancement**: Add `resources/list`, `resources/read`, `prompts/list`, `prompts/get` handlers
-3. **Complete Phase 5 Activation**: Railway deployment, full monitoring, 72-hour verification
+3. **Complete Phase 5 Activation**: CloudRuntime deployment, full monitoring, 72-hour verification
 
 ### 6.2 Medium Priority
 

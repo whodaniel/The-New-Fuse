@@ -1,26 +1,26 @@
-# Manual Deployment Steps - Railway Dashboard Configuration
+# Manual Deployment Steps - Cloudflare Dashboard Configuration
 
 ## Current Status
 
 ✅ **Completed**:
-- Railway project created: `the-new-fuse`
+- Cloudflare project created: `the-new-fuse`
 - PostgreSQL database provisioned
 - API service created with environment variables
 - Frontend service created with environment variables
-- Code uploaded to Railway
+- Code uploaded to Cloudflare
 - Dockerfiles are ready
 
-⚠️ **Issue**: Railway's CLI doesn't trigger builds automatically when using `railway.toml` for multiple services in a monorepo. We need to configure each service in the Railway dashboard.
+⚠️ **Issue**: Cloudflare's CLI doesn't trigger builds automatically when using `cloudflare.toml` for multiple services in a monorepo. We need to configure each service in the Cloudflare dashboard.
 
 ---
 
-## 🎯 Complete These Steps in Railway Dashboard
+## 🎯 Complete These Steps in Cloudflare Dashboard
 
-### Step 1: Open Your Railway Dashboard
+### Step 1: Open Your Cloudflare Dashboard
 
 Open this URL in your browser:
 ```
-https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 ```
 
 You should see three services:
@@ -118,7 +118,7 @@ You'll see:
 2. **Go to "Settings" tab**
 3. **Scroll to "Domains" section**
 4. **Click "Generate Domain"** if no domain exists
-5. **Copy the generated URL** (e.g., `https://api-production-xxxx.up.railway.app`)
+5. **Copy the generated URL** (e.g., `https://api-production-xxxx.thenewfuse.com`)
 
 ---
 
@@ -142,7 +142,7 @@ This will trigger a **redeploy** of the frontend with the API URL.
 2. **Go to "Settings" tab**
 3. **Scroll to "Domains" section**
 4. **Click "Generate Domain"**
-5. **Copy the URL** (e.g., `https://frontend-production-xxxx.up.railway.app`)
+5. **Copy the URL** (e.g., `https://frontend-production-xxxx.thenewfuse.com`)
 
 ---
 
@@ -150,19 +150,19 @@ This will trigger a **redeploy** of the frontend with the API URL.
 
 1. **Open the API URL** in your browser:
    ```
-   https://your-api-url.railway.app/health
+   https://your-api-url.thenewfuse.com/health
    ```
    You should see a health check response.
 
 2. **Open the Frontend URL** in your browser:
    ```
-   https://your-frontend-url.railway.app
+   https://your-frontend-url.thenewfuse.com
    ```
    Your frontend should load and connect to the API.
 
 ---
 
-## Alternative: Use Railway CLI with Direct Deployment
+## Alternative: Use Cloudflare CLI with Direct Deployment
 
 If you prefer to use the CLI, you can try this approach:
 
@@ -171,8 +171,8 @@ If you prefer to use the CLI, you can try this approach:
 ```bash
 cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
-# Ensure railway.toml points to API
-cat > railway.toml << 'EOF'
+# Ensure cloudflare.toml points to API
+cat > cloudflare.toml << 'EOF'
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "apps/api/Dockerfile"
@@ -185,7 +185,7 @@ restartPolicyType = "ON_FAILURE"
 EOF
 
 # Deploy
-railway up --service api
+cloudflare up --service api
 ```
 
 ### For Frontend Service:
@@ -193,8 +193,8 @@ railway up --service api
 ```bash
 cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
-# Update railway.toml for frontend
-cat > railway.toml << 'EOF'
+# Update cloudflare.toml for frontend
+cat > cloudflare.toml << 'EOF'
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "apps/frontend/Dockerfile"
@@ -205,7 +205,7 @@ restartPolicyType = "ON_FAILURE"
 EOF
 
 # Deploy
-railway up --service frontend
+cloudflare up --service frontend
 ```
 
 ---
@@ -246,7 +246,7 @@ railway up --service frontend
 
 Your deployment is successful when:
 
-1. ✅ Both services show "Active" in Railway dashboard
+1. ✅ Both services show "Active" in Cloudflare dashboard
 2. ✅ API health check returns 200 OK
 3. ✅ Frontend loads in browser
 4. ✅ Frontend can communicate with API
@@ -256,18 +256,18 @@ Your deployment is successful when:
 
 ## 🎉 Summary
 
-The Railway CLI uploaded your code successfully, but multi-service monorepo deployments in Railway work best when configured through the dashboard UI. Follow the steps above to complete your deployment!
+The Cloudflare CLI uploaded your code successfully, but multi-service monorepo deployments in Cloudflare work best when configured through the dashboard UI. Follow the steps above to complete your deployment!
 
-**Dashboard URL**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+**Dashboard URL**: https://www.cloudflare.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 
 ---
 
 ## 📞 Need Help?
 
-- **Railway Discord**: https://discord.gg/railway
-- **Railway Docs**: https://docs.railway.app
+- **Cloudflare Discord**: https://discord.gg/cloudflare
+- **Cloudflare Docs**: https://docs.thenewfuse.com
 - **Check service logs**: Click on service → Deployments tab → View logs
 
 ---
 
-*The code is ready, Docker configuration is perfect, environment variables are set. You just need to configure the build settings in the Railway dashboard!*
+*The code is ready, Docker configuration is perfect, environment variables are set. You just need to configure the build settings in the Cloudflare dashboard!*

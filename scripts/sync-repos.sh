@@ -132,7 +132,7 @@ ALWAYS_EXCLUDE=(
   "relay.log"
   "relay_log.txt"
   "prs.json"
-  "railway_list.json"
+  "cloud_runtime_list.json"
   "typecheck_output.txt"
   "chrome_processes.txt"
   "frontend_log.txt"

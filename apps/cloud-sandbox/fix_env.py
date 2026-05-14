@@ -3,7 +3,7 @@ import websockets
 import json
 import ssl
 
-WS_URL = "wss://tnf-cloud-sandbox-v2-production.up.railway.app/ws"
+WS_URL = "wss://tnf-cloud-sandbox-v2-production.thenewfuse.com/ws"
 
 async def call_tool(ws, name, args):
     req_id = str(uuid.uuid4())

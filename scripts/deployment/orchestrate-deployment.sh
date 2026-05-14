@@ -196,8 +196,8 @@ deploy_rolling_update() {
     log SUCCESS "Build completed for $service"
 
     # Deploy service
-    if command -v railway &>/dev/null; then
-      if ! railway up --detach --service "$service"; then
+    if command -v cloud_runtime &>/dev/null; then
+      if ! cloud_runtime up --detach --service "$service"; then
         log ERROR "Deployment failed for $service"
         return 1
       fi
@@ -214,7 +214,7 @@ deploy_rolling_update() {
         # Add health check logic here
       fi
     else
-      log ERROR "Railway CLI not available"
+      log ERROR "CloudRuntime CLI not available"
       return 1
     fi
   done
@@ -335,11 +335,11 @@ verify_deployment() {
   log STEP "Verifying deployment..."
 
   # Check if all services are running
-  if command -v railway &>/dev/null; then
+  if command -v cloud_runtime &>/dev/null; then
     for service in $SERVICES; do
       log INFO "Checking service: $service"
 
-      if railway status --service "$service" &>/dev/null; then
+      if cloud_runtime status --service "$service" &>/dev/null; then
         log SUCCESS "$service is running"
       else
         log WARNING "$service status unknown"

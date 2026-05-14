@@ -64,7 +64,7 @@ else
     if [ "$SERVICE_PATH" = "cloud-sandbox" ]; then
       echo "📦 Installing Playwright browsers for cloud-sandbox..."
 
-      # Force a writable runtime path inside Railway containers.
+      # Force a writable runtime path inside CloudRuntime containers.
       export PLAYWRIGHT_BROWSERS_PATH="/tmp/pw-browsers"
       mkdir -p "$PLAYWRIGHT_BROWSERS_PATH" 2>/dev/null || true
       chmod 777 "$PLAYWRIGHT_BROWSERS_PATH" 2>/dev/null || true
@@ -87,7 +87,7 @@ else
     if [ "$SERVICE_PATH" = "cloud-sandbox" ]; then
       echo "📦 Installing Playwright browsers for cloud-sandbox..."
 
-      # Force a writable runtime path inside Railway containers.
+      # Force a writable runtime path inside CloudRuntime containers.
       export PLAYWRIGHT_BROWSERS_PATH="/tmp/pw-browsers"
       mkdir -p "$PLAYWRIGHT_BROWSERS_PATH" 2>/dev/null || true
       chmod 777 "$PLAYWRIGHT_BROWSERS_PATH" 2>/dev/null || true

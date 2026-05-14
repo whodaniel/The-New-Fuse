@@ -512,7 +512,7 @@ interface ICommunicationProtocol {
 ### 10.3 Infrastructure as Code
 **Tools:**
 - Terraform-compatible infrastructure
-- Railway deployment configuration
+- CloudRuntime deployment configuration
 - Cloud deployment scripts
 
 ---

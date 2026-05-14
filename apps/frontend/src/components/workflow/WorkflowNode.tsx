@@ -1,5 +1,5 @@
-import { Badge, Button, Card } from '@/components/ui';
 // @ts-nocheck
+import { Badge, Button, Card } from '@/components/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,

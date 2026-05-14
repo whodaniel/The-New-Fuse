@@ -46,7 +46,7 @@ type NestImport = Type<unknown> | DynamicModule | Promise<DynamicModule> | Forwa
 
 const optionalAGUIImports: NestImport[] = (() => {
   try {
-    // AG-UI is an optional visualization layer. If Railway's runtime image prunes
+    // AG-UI is an optional visualization layer. If CloudRuntime's runtime image prunes
     // the built workspace package, the backend should still boot without it.
     const agui = require('@the-new-fuse/ag-ui-core') as { AGUIModule?: NestImport };
     return agui.AGUIModule ? [agui.AGUIModule] : [];
@@ -120,7 +120,7 @@ const optionalAGUIImports: NestImport[] = (() => {
     UsersModule,
     ApiModule,
     MassModule,
-    // JobsModule, // Temporarily disabled - requires Redis/Bull which causes dependency injection errors on Railway
+    // JobsModule, // Temporarily disabled - requires Redis/Bull which causes dependency injection errors on CloudRuntime
     AgentExecutionsModule,
     AgentRegistryModule,
     WorkflowTemplatesModule,

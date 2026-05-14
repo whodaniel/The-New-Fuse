@@ -1,5 +1,5 @@
 // The New Fuse - WebSocket Bridge
-// Handles secure tunnel to Railway cloud sandbox
+// Handles secure tunnel to CloudRuntime cloud sandbox
 
 use std::sync::Arc;
 use tokio::sync::{mpsc, Mutex};

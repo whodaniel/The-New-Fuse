@@ -63,7 +63,7 @@ if (!apiKey) {
 - [ ] All secrets in environment variables
 - [ ] `.env.local` in .gitignore
 - [ ] No secrets in git history
-- [ ] Production secrets in hosting platform (Vercel, Railway)
+- [ ] Production secrets in hosting platform (Vercel, CloudRuntime)
 
 ### 2. Input Validation
 

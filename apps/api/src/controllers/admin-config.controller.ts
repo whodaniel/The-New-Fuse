@@ -63,7 +63,7 @@ const DEFAULT_ROUTING_TARGETS = [
   'api-gateway',
   'ai-arcade',
   'backend',
-  'clawdbot-railway-template',
+  'clawdbot-cloud_runtime-template',
   'fuse-theia-ide',
   'openclaw-cloud',
   'openclaw-primary',

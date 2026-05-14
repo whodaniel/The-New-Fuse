@@ -17,7 +17,7 @@ export class SystemQueueService {
     this.redisUrl =
       redisUrl ||
       process.env.REDIS_URL ||
-      process.env.RAILWAY_REDIS_URL ||
+      process.env.CLOUD_RUNTIME_REDIS_URL ||
       process.env.LIVE_REDIS_URL ||
       process.env.REDIS_PRIVATE_URL ||
       process.env.REDIS_TLS_URL ||

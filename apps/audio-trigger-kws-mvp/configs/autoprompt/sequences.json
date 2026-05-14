@@ -1,0 +1,449 @@
+[
+  {
+    "sequenceId": "seq_safety_escalation_loop",
+    "name": "Safety Escalation Loop",
+    "enabled": true,
+    "useCase": "safety-escalation",
+    "agentId": "router",
+    "trigger": {
+      "source": [
+        "rule_fire"
+      ],
+      "ruleIds": [
+        "rule_escalation"
+      ],
+      "minConfidence": 0.82,
+      "cooldownMs": 60000
+    },
+    "steps": [
+      {
+        "stepId": "step_triage",
+        "title": "Triage",
+        "promptTemplate": "Safety signal detected for stream {{streamId}} from rule {{ruleId}} at confidence {{confidence}}. Perform immediate triage and verify severity."
+      },
+      {
+        "stepId": "step_response_plan",
+        "title": "Response Plan",
+        "promptTemplate": "Generate a concise action plan for stream {{streamId}}. Include who to notify, immediate next action, and follow-up checkpoint."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 78
+    },
+    "adaptation": {
+      "enabled": true,
+      "thresholdKey": "rule_rule_escalation",
+      "minThreshold": 0.7,
+      "maxThreshold": 0.96,
+      "increaseStep": 0.03,
+      "decreaseStep": 0.01,
+      "defaultThreshold": 0.82
+    }
+  },
+  {
+    "sequenceId": "seq_keyword_focus_recovery",
+    "name": "Keyword Focus Recovery",
+    "enabled": true,
+    "useCase": "focus-recovery",
+    "agentId": "echo",
+    "trigger": {
+      "source": [
+        "keyword_hit",
+        "rule_fire"
+      ],
+      "groupIds": [
+        "creative_block",
+        "time_management"
+      ],
+      "ruleIds": [
+        "time_management_prompt"
+      ],
+      "minConfidence": 0.68,
+      "cooldownMs": 45000
+    },
+    "steps": [
+      {
+        "stepId": "step_detect_blocker",
+        "title": "Detect Blocker",
+        "promptTemplate": "A focus-related trigger fired on stream {{streamId}} (group {{groupId}}, confidence {{confidence}}). Ask one targeted diagnostic question."
+      },
+      {
+        "stepId": "step_micro_plan",
+        "title": "Micro Plan",
+        "promptTemplate": "Create a 10-minute micro-plan with one clear deliverable for stream {{streamId}}. Keep it short and executable."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 70
+    },
+    "adaptation": {
+      "enabled": true,
+      "minThreshold": 0.6,
+      "maxThreshold": 0.9,
+      "increaseStep": 0.02,
+      "decreaseStep": 0.01,
+      "defaultThreshold": 0.7
+    }
+  },
+  {
+    "sequenceId": "seq_visual_blocker_recovery",
+    "name": "Visual Blocker Recovery",
+    "enabled": true,
+    "useCase": "visual-blocker",
+    "agentId": "pulse",
+    "trigger": {
+      "source": [
+        "visual_object"
+      ],
+      "visualLabels": [
+        "error_dialog",
+        "captcha",
+        "payment_failed",
+        "blocked_banner"
+      ],
+      "minConfidence": 0.72,
+      "cooldownMs": 30000
+    },
+    "steps": [
+      {
+        "stepId": "step_visual_interpret",
+        "title": "Interpret Visual Blocker",
+        "promptTemplate": "Visual trigger {{visualLabel}} detected on stream {{streamId}} with confidence {{confidence}}. Identify probable blocker class and likely root cause."
+      },
+      {
+        "stepId": "step_visual_next_action",
+        "title": "Suggest Next Action",
+        "promptTemplate": "For visual blocker {{visualLabel}}, generate the next best action plus one fallback action for stream {{streamId}}."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 72
+    },
+    "adaptation": {
+      "enabled": true,
+      "minThreshold": 0.65,
+      "maxThreshold": 0.95,
+      "increaseStep": 0.02,
+      "decreaseStep": 0.01,
+      "defaultThreshold": 0.75
+    }
+  },
+  {
+    "sequenceId": "tnf-health-check",
+    "name": "TNF Health Check",
+    "enabled": true,
+    "useCase": "infrastructure-audit",
+    "agentId": "tnf-infrastructure-auditor",
+    "trigger": {
+      "source": [
+        "keyword_hit"
+      ],
+      "keywords": [
+        "health",
+        "status"
+      ],
+      "minConfidence": 0.75,
+      "cooldownMs": 120000
+    },
+    "steps": [
+      {
+        "stepId": "step_endpoint_probe",
+        "title": "Endpoint Probe",
+        "promptTemplate": "Health check triggered by keyword '{{keyword}}' on stream {{streamId}} at confidence {{confidence}}. Probe all registered cloud endpoints and report reachable vs unreachable."
+      },
+      {
+        "stepId": "step_health_summary",
+        "title": "Health Summary",
+        "promptTemplate": "Summarize endpoint health for stream {{streamId}}: list failures with {{failedEndpoints}}, latencies with {{endpointLatencies}}, and recommend remediation actions."
+      },
+      {
+        "stepId": "step_remediation_alert",
+        "title": "Remediation Alert",
+        "promptTemplate": "For any unhealthy endpoints found in stream {{streamId}}, generate an alert payload for {{alertTarget}} with severity level and suggested fix."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 50
+    },
+    "adaptation": {
+      "enabled": true,
+      "defaultThreshold": 0.75,
+      "increaseStep": 0.03,
+      "decreaseStep": 0.01,
+      "minThreshold": 0.6,
+      "maxThreshold": 0.95
+    }
+  },
+  {
+    "sequenceId": "tnf-doc-sync",
+    "name": "TNF Doc Sync",
+    "enabled": true,
+    "useCase": "documentation-sync",
+    "agentId": "tnf-doc-writer",
+    "trigger": {
+      "source": [
+        "rule_fire"
+      ],
+      "ruleIds": [
+        "rule_doc_update",
+        "rule_doc_stale",
+        "rule_doc_review"
+      ],
+      "minConfidence": 0.70,
+      "cooldownMs": 180000
+    },
+    "steps": [
+      {
+        "stepId": "step_doc_audit",
+        "title": "Doc Audit",
+        "promptTemplate": "Documentation rule {{ruleId}} fired on stream {{streamId}} at confidence {{confidence}}. Audit the current wiki card set {{wikiCardSet}} for staleness or inconsistencies."
+      },
+      {
+        "stepId": "step_doc_sync_generate",
+        "title": "Generate Sync Payload",
+        "promptTemplate": "Based on audit results for {{wikiCardSet}}, generate updated wiki card content for stream {{streamId}} preserving section structure and filling gaps from {{sourceContext}}."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 45
+    },
+    "adaptation": {
+      "enabled": true,
+      "defaultThreshold": 0.70,
+      "increaseStep": 0.02,
+      "decreaseStep": 0.01,
+      "minThreshold": 0.55,
+      "maxThreshold": 0.90
+    }
+  },
+  {
+    "sequenceId": "tnf-visual-deploy-monitor",
+    "name": "TNF Visual Deploy Monitor",
+    "enabled": true,
+    "useCase": "deployment-monitoring",
+    "agentId": "tnf-deploy-watcher",
+    "trigger": {
+      "source": [
+        "visual_object"
+      ],
+      "visualLabels": [
+        "terminal",
+        "browser"
+      ],
+      "minConfidence": 0.70,
+      "cooldownMs": 60000
+    },
+    "steps": [
+      {
+        "stepId": "step_screen_classify",
+        "title": "Classify Deployment Screen",
+        "promptTemplate": "Visual object '{{visualLabel}}' detected on stream {{streamId}} with confidence {{confidence}}. Classify the screen: is this a deployment pipeline, log tail, or status dashboard?"
+      },
+      {
+        "stepId": "step_deploy_status_extract",
+        "title": "Extract Deploy Status",
+        "promptTemplate": "From the classified screen on stream {{streamId}}, extract deployment status: stage {{deployStage}}, service {{serviceName}}, and any error indicators {{errorIndicators}}."
+      },
+      {
+        "stepId": "step_deploy_action",
+        "title": "Deploy Action Recommendation",
+        "promptTemplate": "Based on deployment status for {{serviceName}} at stage {{deployStage}}, recommend next action for stream {{streamId}}: proceed, rollback, or retry with rationale."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 55
+    },
+    "adaptation": {
+      "enabled": true,
+      "defaultThreshold": 0.70,
+      "increaseStep": 0.03,
+      "decreaseStep": 0.02,
+      "minThreshold": 0.55,
+      "maxThreshold": 0.92
+    }
+  },
+  {
+    "sequenceId": "tnf-incident-response",
+    "name": "TNF Incident Response",
+    "enabled": true,
+    "useCase": "incident-triage",
+    "agentId": "tnf-incident-handler",
+    "trigger": {
+      "source": [
+        "keyword_hit"
+      ],
+      "keywords": [
+        "error",
+        "critical"
+      ],
+      "minConfidence": 0.80,
+      "cooldownMs": 90000
+    },
+    "steps": [
+      {
+        "stepId": "step_incident_classify",
+        "title": "Classify Incident",
+        "promptTemplate": "Incident keyword combo '{{keyword}}' triggered on stream {{streamId}} at confidence {{confidence}}. Classify incident severity (P1-P4) and identify affected service {{affectedService}}."
+      },
+      {
+        "stepId": "step_incident_triage",
+        "title": "Triage Actions",
+        "promptTemplate": "For {{incidentSeverity}} incident on {{affectedService}}, generate triage checklist for stream {{streamId}}: immediate containment, stakeholder notification, and diagnostic commands."
+      },
+      {
+        "stepId": "step_incident_handoff",
+        "title": "Incident Handoff",
+        "promptTemplate": "Create incident handoff document for stream {{streamId}} summarizing {{incidentSeverity}}, {{affectedService}}, actions taken, and next steps for on-call assignee {{oncallAssignee}}."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 60
+    },
+    "adaptation": {
+      "enabled": true,
+      "defaultThreshold": 0.80,
+      "increaseStep": 0.04,
+      "decreaseStep": 0.02,
+      "minThreshold": 0.65,
+      "maxThreshold": 0.96
+    }
+  },
+  {
+    "sequenceId": "tnf-context-compound",
+    "name": "TNF Context Compound",
+    "enabled": true,
+    "useCase": "compound-context-generation",
+    "agentId": "tnf-context-agent",
+    "trigger": {
+      "source": [
+        "keyword_hit",
+        "visual_object"
+      ],
+      "keywords": [
+        "context",
+        "explain"
+      ],
+      "visualLabels": [
+        "diagram",
+        "chart",
+        "code_snippet"
+      ],
+      "minConfidence": 0.72,
+      "cooldownMs": 60000,
+      "compoundWindowMs": 60000
+    },
+    "steps": [
+      {
+        "stepId": "step_context_correlate",
+        "title": "Correlate Signals",
+        "promptTemplate": "Compound trigger fired on stream {{streamId}}: keyword '{{keyword}}' and visual '{{visualLabel}}' within {{compoundWindowMs}}ms at confidence {{confidence}}. Correlate audio and visual signals into unified context."
+      },
+      {
+        "stepId": "step_context_card_generate",
+        "title": "Generate Context Card",
+        "promptTemplate": "From correlated signals on stream {{streamId}}, generate a context card with topic {{contextTopic}}, key entities {{keyEntities}}, and summary for wiki integration {{wikiTarget}}."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 48
+    },
+    "adaptation": {
+      "enabled": true,
+      "defaultThreshold": 0.72,
+      "increaseStep": 0.02,
+      "decreaseStep": 0.01,
+      "minThreshold": 0.55,
+      "maxThreshold": 0.90
+    }
+  },
+  {
+    "sequenceId": "tnf-model-failover",
+    "name": "TNF Model Failover",
+    "enabled": true,
+    "useCase": "model-rotation",
+    "agentId": "tnf-model-guard",
+    "trigger": {
+      "source": [
+        "keyword_hit"
+      ],
+      "keywords": [
+        "failover",
+        "timeout",
+        "rate-limit"
+      ],
+      "minConfidence": 0.78,
+      "cooldownMs": 45000
+    },
+    "steps": [
+      {
+        "stepId": "step_model_diagnose",
+        "title": "Diagnose Model Issue",
+        "promptTemplate": "Model failover keyword '{{keyword}}' detected on stream {{streamId}} at confidence {{confidence}}. Diagnose: is this a timeout, rate-limit, or model error for {{modelProvider}}/{{modelId}}?"
+      },
+      {
+        "stepId": "step_model_rotate",
+        "title": "Execute Model Rotation",
+        "promptTemplate": "Execute rotation sequence for {{modelId}} on stream {{streamId}}: select fallback model {{fallbackModel}}, validate connectivity, and swap routing weight from {{currentWeight}} to {{fallbackWeight}}."
+      },
+      {
+        "stepId": "step_model_verify",
+        "title": "Verify Failover",
+        "promptTemplate": "Verify failover on stream {{streamId}}: send test prompt to {{fallbackModel}}, confirm response within {{timeoutMs}}ms, and report rotation success or escalation needed."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 55
+    },
+    "adaptation": {
+      "enabled": true,
+      "defaultThreshold": 0.78,
+      "increaseStep": 0.03,
+      "decreaseStep": 0.02,
+      "minThreshold": 0.60,
+      "maxThreshold": 0.94
+    }
+  },
+  {
+    "sequenceId": "seq_claude_hook_continuity",
+    "name": "Claude Hook Continuity",
+    "enabled": true,
+    "useCase": "claude-hook-continuity",
+    "agentId": "router",
+    "trigger": {
+      "source": [
+        "claude_hook"
+      ],
+      "ruleIds": [
+        "claude_hook_pretooluse",
+        "claude_hook_posttoolusefailure",
+        "claude_hook_userpromptsubmit"
+      ],
+      "minConfidence": 0.72,
+      "cooldownMs": 30000
+    },
+    "steps": [
+      {
+        "stepId": "step_hook_state_capture",
+        "title": "Capture Hook State",
+        "promptTemplate": "Claude hook {{hookEventName}} fired on {{streamId}} (session {{sessionId}}) via tool {{toolName}} with confidence {{confidence}}. Capture immediate state and potential risk of stall."
+      },
+      {
+        "stepId": "step_hook_next_action",
+        "title": "Recommend Next Action",
+        "promptTemplate": "Given hook event {{hookEventName}} and utterance {{utterance}}, recommend the smallest next action to keep momentum while avoiding unsafe loops."
+      }
+    ],
+    "assessment": {
+      "minOverallScore": 72
+    },
+    "adaptation": {
+      "enabled": true,
+      "thresholdKey": "claude_hook_continuity",
+      "minThreshold": 0.62,
+      "maxThreshold": 0.95,
+      "increaseStep": 0.02,
+      "decreaseStep": 0.01,
+      "defaultThreshold": 0.72
+    }
+  }
+]

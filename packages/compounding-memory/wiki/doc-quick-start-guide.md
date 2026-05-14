@@ -60,10 +60,10 @@ pnpm test   # Verify 14,752 tests pass
 
 ### 🟢 Day 6-7: Deploy to Production
 
-> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated from Railway to **GCP
+> **⚠️ CLOUD_RUNTIME IS NO LONGER USED.** TNF has migrated from CloudRuntime to **GCP
 > (Cloud Run) + Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash
 > (Redis)**. See `CLOUD_MIGRATION_BLUEPRINT.md` for current deployment
-> instructions. The Railway steps below are historical.
+> instructions. The CloudRuntime steps below are historical.
 
 ```bash
 # 1. Merge to main
@@ -88,7 +88,7 @@ git push origin main
 
 - 32/37 packages building (86.5%)
 - 291 test files, 14,752 test cases
-- Railway configured with 4 Dockerfiles ⚠️ **DEPRECATED — Railway no longer
+- CloudRuntime configured with 4 Dockerfiles ⚠️ **DEPRECATED — CloudRuntime no longer
   used. See CLOUD_MIGRATION_BLUEPRINT.md for GCP/Cloudflare deployment.**
 - Core infrastructure operational
 - Comprehensive documentation
@@ -97,7 +97,7 @@ git push origin main
 
 1. **sync-core package** (5 Drizzle models, import paths)
 2. **Drizzle binary download** (using placeholder)
-3. **Railway deployment** ⚠️ **DEPRECATED — now on GCP Cloud Run + Cloudflare**
+3. **CloudRuntime deployment** ⚠️ **DEPRECATED — now on GCP Cloud Run + Cloudflare**
 4. **integration-tests** (syntax errors)
 5. **web-scraping** (electron types)
 
@@ -110,7 +110,7 @@ git push origin main
 - [ ] sync-core building
 - [ ] Real Drizzle client working
 - [ ] User auth (register/login)
-- [ ] Services deployed to GCP Cloud Run + Cloudflare (⚠️ Railway is no longer
+- [ ] Services deployed to GCP Cloud Run + Cloudflare (⚠️ CloudRuntime is no longer
       used)
 - [ ] www.thenewfuse.com live with SSL
 
@@ -166,7 +166,7 @@ pnpm run dev:no-ide  # Fastest startup
 | [DOCUMENTATION_MAP.md](./DOCUMENTATION_MAP.md)                 | Complete map of all 1,200+ docs with navigation paths                                              |
 | [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)             | Organized index by category                                                                        |
 | [BUILD_STATUS.md](./docs/development/BUILD_STATUS.md)          | Current build status and known issues                                                              |
-| [DEPLOYMENT_STATUS.md](./docs/deployment/DEPLOYMENT_STATUS.md) | ⚠️ Historical Railway configuration; now using GCP/Cloudflare — see `CLOUD_MIGRATION_BLUEPRINT.md` |
+| [DEPLOYMENT_STATUS.md](./docs/deployment/DEPLOYMENT_STATUS.md) | ⚠️ Historical CloudRuntime configuration; now using GCP/Cloudflare — see `CLOUD_MIGRATION_BLUEPRINT.md` |
 
 ## 📖 Related Documentation
 
@@ -180,8 +180,8 @@ pnpm run dev:no-ide  # Fastest startup
 ### Deployment
 
 - [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md)
-- [Railway Deployment](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md) ⚠️
-  **DEPRECATED — Railway no longer used**
+- [CloudRuntime Deployment](./docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md) ⚠️
+  **DEPRECATED — CloudRuntime no longer used**
 - [Docker Setup](./docs/guides/docker-setup.md)
 - [CI/CD Strategy](./docs/ci-cd/workflows.md)
 
@@ -212,17 +212,17 @@ PUBLIC_LAUNCH_ROADMAP.md
 → Binary download blocked (403 error) → Try Docker approach or
 DRIZZLE_ENGINES_CHECKSUM_IGNORE_MISSING=1
 
-### "Railway deployment fails"
+### "CloudRuntime deployment fails"
 
-> ⚠️ **DEPRECATED** — Railway is no longer used. Deploy to GCP Cloud Run +
+> ⚠️ **DEPRECATED** — CloudRuntime is no longer used. Deploy to GCP Cloud Run +
 > Cloudflare instead. See `CLOUD_MIGRATION_BLUEPRINT.md`.
 
-→ Check railway.toml exists on main branch → Verify Dockerfile.railway in each
+→ Check cloud_runtime.toml exists on main branch → Verify Dockerfile.cloud_runtime in each
 app → Check environment variables set
 
 ### "Services can't communicate"
 
-→ Use Railway internal URLs: ${{SERVICE.RAILWAY_PRIVATE_DOMAIN}} → Verify
+→ Use CloudRuntime internal URLs: ${{SERVICE.CLOUD_RUNTIME_PRIVATE_DOMAIN}} → Verify
 CORS_ORIGIN includes frontend URL
 
 ---
@@ -230,10 +230,10 @@ CORS_ORIGIN includes frontend URL
 ## 💡 Pro Tips
 
 1. **Fix sync-core first** - It's blocking the most packages
-2. **Test locally before deploying** ⚠️ Railway no longer used — deploy to GCP
+2. **Test locally before deploying** ⚠️ CloudRuntime no longer used — deploy to GCP
    Cloud Run
 3. **Use pnpm filtering** - Faster than full builds
-4. **Monitor deployment logs** ⚠️ Railway no longer used — use GCP Cloud Run
+4. **Monitor deployment logs** ⚠️ CloudRuntime no longer used — use GCP Cloud Run
    logs
 5. **Keep this document updated** - Track your progress
 
@@ -246,7 +246,7 @@ Based on current branch: `claude/fix-monorepo-builds-019rTq29GyFPBTHdttUkdE9w`
 1. **Immediate**: Start fixing sync-core package
 2. **Next**: Resolve Drizzle binary issue
 3. **Then**: Run full build verification
-4. **Finally**: Deploy to GCP Cloud Run + Cloudflare (⚠️ Railway is no longer
+4. **Finally**: Deploy to GCP Cloud Run + Cloudflare (⚠️ CloudRuntime is no longer
    used)
 
 **Estimated time to launch**: 7-14 days with focused effort

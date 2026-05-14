@@ -82,7 +82,7 @@ deploy_canary_version() {
   log INFO "Service: $service"
   log INFO "Traffic percentage: $percentage%"
 
-  # For Railway, we can use environment groups or separate services
+  # For CloudRuntime, we can use environment groups or separate services
   # For now, we'll deploy a separate canary service
 
   log STEP "Building canary version..."
@@ -99,12 +99,12 @@ deploy_canary_version() {
 
   log STEP "Deploying canary instance..."
 
-  # Deploy to Railway with canary tag
-  if command -v railway &>/dev/null; then
+  # Deploy to CloudRuntime with canary tag
+  if command -v cloud_runtime &>/dev/null; then
     # Create or update canary service
-    export RAILWAY_SERVICE_NAME="${service}-canary"
+    export CLOUD_RUNTIME_SERVICE_NAME="${service}-canary"
 
-    if ! railway up --detach --service "$RAILWAY_SERVICE_NAME"; then
+    if ! cloud_runtime up --detach --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
       log ERROR "Failed to deploy canary version"
       return 1
     fi
@@ -112,12 +112,12 @@ deploy_canary_version() {
     log SUCCESS "Canary version deployed"
 
     # Update traffic routing (this would depend on your load balancer)
-    # For Railway, you might use environment variables or external load balancer
+    # For CloudRuntime, you might use environment variables or external load balancer
     log INFO "Configure load balancer to route $percentage% traffic to canary"
     log WARNING "Manual traffic routing configuration may be required"
 
   else
-    log ERROR "Railway CLI not available"
+    log ERROR "CloudRuntime CLI not available"
     return 1
   fi
 
@@ -220,7 +220,7 @@ increase_canary_traffic() {
 
   # Update load balancer configuration
   # This is highly dependent on your infrastructure
-  # For Railway, you might need to update environment variables or use external load balancer
+  # For CloudRuntime, you might need to update environment variables or use external load balancer
 
   log WARNING "Manual traffic routing update required"
   log INFO "Update load balancer to route $to_percentage% to canary"
@@ -242,14 +242,14 @@ promote_canary_to_production() {
   log INFO "Canary version has passed all checks"
   log STEP "Promoting to production..."
 
-  if command -v railway &>/dev/null; then
+  if command -v cloud_runtime &>/dev/null; then
     # Swap canary and production
     log INFO "Updating production service..."
 
     # Deploy canary version to production service
-    export RAILWAY_SERVICE_NAME="$service"
+    export CLOUD_RUNTIME_SERVICE_NAME="$service"
 
-    if railway up --detach --service "$RAILWAY_SERVICE_NAME"; then
+    if cloud_runtime up --detach --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
       log SUCCESS "Production service updated"
     else
       log ERROR "Failed to update production service"
@@ -258,14 +258,14 @@ promote_canary_to_production() {
 
     # Remove canary service
     log INFO "Cleaning up canary service..."
-    export RAILWAY_SERVICE_NAME="${service}-canary"
+    export CLOUD_RUNTIME_SERVICE_NAME="${service}-canary"
 
-    # Note: Railway doesn't have a direct delete command in CLI
-    # You might need to use the Railway API or dashboard
+    # Note: CloudRuntime doesn't have a direct delete command in CLI
+    # You might need to use the CloudRuntime API or dashboard
     log WARNING "Manual cleanup of canary service may be required"
 
   else
-    log ERROR "Railway CLI not available"
+    log ERROR "CloudRuntime CLI not available"
     return 1
   fi
 
@@ -287,9 +287,9 @@ rollback_canary() {
 
   log STEP "Removing canary version..."
 
-  if command -v railway &>/dev/null; then
+  if command -v cloud_runtime &>/dev/null; then
     # Stop canary service
-    export RAILWAY_SERVICE_NAME="${service}-canary"
+    export CLOUD_RUNTIME_SERVICE_NAME="${service}-canary"
 
     log INFO "Stopping canary service..."
 
@@ -297,11 +297,11 @@ rollback_canary() {
     log INFO "Routing 100% traffic to production"
     log WARNING "Manual traffic routing update required"
 
-    # Note: Actual service removal would require Railway API
+    # Note: Actual service removal would require CloudRuntime API
     log WARNING "Manual cleanup of canary service may be required"
 
   else
-    log ERROR "Railway CLI not available"
+    log ERROR "CloudRuntime CLI not available"
   fi
 
   log SUCCESS "Rollback completed"

@@ -37,7 +37,7 @@ compromised.
    ```bash
    OPENROUTER_API_KEY=sk-or-v1-NEW_KEY_HERE
    ```
-5. Update Railway/production environment variables
+5. Update CloudRuntime/production environment variables
 
 **Impact:** API calls will fail until updated
 
@@ -216,7 +216,7 @@ git secrets --add 'sk-or-v1-[a-f0-9]+'    # OpenRouter
 - [ ] Generate new GCP service account keys
 - [ ] Generate new Firebase API keys
 - [ ] Update `.env.local` with all new keys
-- [ ] Update Railway production environment
+- [ ] Update CloudRuntime production environment
 - [ ] Test authentication with new keys
 - [ ] Test payment processing with new keys
 - [ ] Test GCP/Firebase services

@@ -24,6 +24,27 @@ export interface SSEEvent {
   timestamp: Date;
 }
 
+function resolveApiBaseUrl(): string {
+  const configured = String(import.meta.env.VITE_API_URL || '').trim();
+  if (!configured) return '/api';
+  return configured.replace(/\/$/, '');
+}
+
+function resolveAuthToken(): string | null {
+  return (
+    localStorage.getItem('auth_token') ||
+    localStorage.getItem('authToken') ||
+    localStorage.getItem('accessToken') ||
+    localStorage.getItem('token') ||
+    localStorage.getItem('AUTH_TOKEN') ||
+    sessionStorage.getItem('auth_token') ||
+    sessionStorage.getItem('authToken') ||
+    sessionStorage.getItem('accessToken') ||
+    sessionStorage.getItem('token') ||
+    sessionStorage.getItem('AUTH_TOKEN')
+  );
+}
+
 export function useSSEConnection(options: SSEConnectionOptions = {}) {
   const {
     eventTypes = [],
@@ -48,8 +69,8 @@ export function useSSEConnection(options: SSEConnectionOptions = {}) {
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const eventListenersRef = useRef<Map<string, (event: SSEEvent) => void>>(new Map());
 
-  const buildSSEUrl = useCallback(() => {
-    const baseUrl = `${process.env.REACT_APP_API_URL || 'http://localhost:3001'}/webhooks/events/stream`;
+  const buildSSEUrl = useCallback((token?: string | null) => {
+    const baseUrl = `${resolveApiBaseUrl()}/webhooks/events/stream`;
     const params = new URLSearchParams();
 
     if (eventTypes.length > 0) {
@@ -60,6 +81,10 @@ export function useSSEConnection(options: SSEConnectionOptions = {}) {
       params.append('filters', JSON.stringify(filters));
     }
 
+    if (token) {
+      params.append('token', token);
+    }
+
     return `${baseUrl}?${params.toString()}`;
   }, [eventTypes, filters]);
 
@@ -68,7 +93,7 @@ export function useSSEConnection(options: SSEConnectionOptions = {}) {
       eventSourceRef.current.close();
     }
 
-    const token = localStorage.getItem('authToken');
+    const token = resolveAuthToken();
     if (!token) {
       setConnectionState((prev) => ({
         ...prev,
@@ -79,7 +104,7 @@ export function useSSEConnection(options: SSEConnectionOptions = {}) {
     }
 
     try {
-      const url = buildSSEUrl();
+      const url = buildSSEUrl(token);
       const eventSource = new EventSource(url, {
         withCredentials: true,
       });
@@ -125,19 +150,19 @@ export function useSSEConnection(options: SSEConnectionOptions = {}) {
 
       eventSource.onerror = (error) => {
         console.error('SSE connection error:', error);
-        setConnectionState((prev) => ({
-          ...prev,
-          isConnected: false,
-          error: 'Connection error occurred',
-        }));
-
-        if (autoReconnect && prev.reconnectAttempts < maxReconnectAttempts) {
-          setConnectionState((prev) => ({
+        let shouldReconnect = false;
+        setConnectionState((prev) => {
+          shouldReconnect = autoReconnect && prev.reconnectAttempts < maxReconnectAttempts;
+          return {
             ...prev,
-            isReconnecting: true,
-            reconnectAttempts: prev.reconnectAttempts + 1,
-          }));
+            isConnected: false,
+            error: 'Connection error occurred',
+            isReconnecting: shouldReconnect,
+            reconnectAttempts: shouldReconnect ? prev.reconnectAttempts + 1 : prev.reconnectAttempts,
+          };
+        });
 
+        if (shouldReconnect) {
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
           }, reconnectInterval);

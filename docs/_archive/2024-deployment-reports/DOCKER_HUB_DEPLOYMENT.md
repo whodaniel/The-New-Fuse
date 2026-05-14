@@ -1,8 +1,8 @@
-# The New Fuse - Docker Hub Cloud Build & Railway Deployment Guide
+# The New Fuse - Docker Hub Cloud Build & CloudRuntime Deployment Guide
 
 ## Overview
 
-This guide covers building The New Fuse using Docker Hub Cloud and deploying to Railway for public release.
+This guide covers building The New Fuse using Docker Hub Cloud and deploying to CloudRuntime for public release.
 
 ---
 
@@ -11,7 +11,7 @@ This guide covers building The New Fuse using Docker Hub Cloud and deploying to 
 - Docker Desktop with buildx installed
 - Docker Hub account (bizsynth)
 - GitHub repository access
-- Railway account
+- CloudRuntime account
 - Access to Docker Hub Cloud builder: `bizsynth/tnf`
 
 ---
@@ -116,19 +116,19 @@ gh workflow run docker-build.yml -f tag=v1.0.0
 
 ---
 
-## Part 2: Railway Deployment
+## Part 2: CloudRuntime Deployment
 
-### Step 1: Railway CLI Setup
+### Step 1: CloudRuntime CLI Setup
 
 ```bash
-# Install Railway CLI
-npm i -g @railway/cli
+# Install CloudRuntime CLI
+npm i -g @cloud_runtime/cli
 
-# Login to Railway
-railway login
+# Login to CloudRuntime
+cloud_runtime login
 
 # Link to project (or create new)
-railway init
+cloud_runtime init
 ```
 
 ### Step 2: Deploy Services
@@ -137,21 +137,21 @@ railway init
 
 ```bash
 # Deploy API from Docker Hub
-railway up --service api
+cloud_runtime up --service api
 
 # Deploy Frontend from Docker Hub
-railway up --service frontend
+cloud_runtime up --service frontend
 ```
 
-#### Option B: Deploy with Railway Configuration
+#### Option B: Deploy with CloudRuntime Configuration
 
 ```bash
-# Deploy all services using railway.toml
-railway up
+# Deploy all services using cloud_runtime.toml
+cloud_runtime up
 
 # Or deploy specific service
-railway up api
-railway up frontend
+cloud_runtime up api
+cloud_runtime up frontend
 ```
 
 ---
@@ -162,9 +162,9 @@ railway up frontend
 
 **API Service:**
 ```bash
-railway variables set \
-  DATABASE_URL="$RAILWAY_POSTGRES_URL" \
-  REDIS_URL="$RAILWAY_REDIS_URL" \
+cloud_runtime variables set \
+  DATABASE_URL="$CLOUD_RUNTIME_POSTGRES_URL" \
+  REDIS_URL="$CLOUD_RUNTIME_REDIS_URL" \
   ENCRYPTION_KEY="$(openssl rand -base64 32)" \
   JWT_SECRET="$(openssl rand -base64 32)" \
   NODE_ENV="production" \
@@ -173,7 +173,7 @@ railway variables set \
 
 **Frontend Service:**
 ```bash
-railway variables set \
+cloud_runtime variables set \
   VITE_API_URL="https://$API_DOMAIN" \
   NODE_ENV="production"
 ```
@@ -181,7 +181,7 @@ railway variables set \
 #### Optional Variables
 
 ```bash
-railway variables set \
+cloud_runtime variables set \
   LOG_LEVEL="info" \
   ENABLE_SWAGGER="false" \
   ENABLE_CORS="true" \
@@ -196,7 +196,7 @@ railway variables set \
 
 ```bash
 # Connect to API service
-railway run --service api bash
+cloud_runtime run --service api bash
 
 # Inside the container
 npx drizzle migrate deploy
@@ -209,10 +209,10 @@ npx drizzle db seed
 
 ```bash
 # Check tables
-railway run --service api npx drizzle studio
+cloud_runtime run --service api npx drizzle studio
 
 # Or connect directly
-railway connect postgres
+cloud_runtime connect postgres
 ```
 
 ---
@@ -223,7 +223,7 @@ railway connect postgres
 
 ```bash
 # Get API URL
-API_URL=$(railway domain --service api)
+API_URL=$(cloud_runtime domain --service api)
 
 # Check health
 curl https://$API_URL/api/health
@@ -236,7 +236,7 @@ curl https://$API_URL/api/health
 
 ```bash
 # Get frontend URL
-FRONTEND_URL=$(railway domain --service frontend)
+FRONTEND_URL=$(cloud_runtime domain --service frontend)
 
 # Check frontend
 curl -I https://$FRONTEND_URL
@@ -255,7 +255,7 @@ curl -I https://$FRONTEND_URL
 - [ ] Images pushed to Docker Hub
 - [ ] Environment variables configured
 - [ ] Database migrations ready
-- [ ] SSL certificates configured (automatic with Railway)
+- [ ] SSL certificates configured (automatic with CloudRuntime)
 
 ### Deployment
 
@@ -279,9 +279,9 @@ curl -I https://$FRONTEND_URL
 
 ## Part 4: Monitoring & Operations
 
-### Railway Dashboard
+### CloudRuntime Dashboard
 
-- **URL**: https://railway.app/dashboard
+- **URL**: https://cloud_runtime.app/dashboard
 - **Metrics**: CPU, Memory, Network, Requests
 - **Logs**: Real-time log streaming
 - **Deployments**: Version history and rollbacks
@@ -290,14 +290,14 @@ curl -I https://$FRONTEND_URL
 
 ```bash
 # View logs
-railway logs --service api
-railway logs --service frontend
+cloud_runtime logs --service api
+cloud_runtime logs --service frontend
 
 # Monitor metrics
-railway metrics --service api
+cloud_runtime metrics --service api
 
 # Check deployment status
-railway status
+cloud_runtime status
 ```
 
 ### Prometheus Metrics
@@ -319,10 +319,10 @@ Access Prometheus at: `https://<api-domain>/metrics`
 
 ```bash
 # Scale API replicas
-railway scale --service api --replicas 3
+cloud_runtime scale --service api --replicas 3
 
 # Scale frontend replicas
-railway scale --service frontend --replicas 2
+cloud_runtime scale --service frontend --replicas 2
 ```
 
 ### Auto-Scaling (HPA)
@@ -361,24 +361,24 @@ kubectl apply -f deploy/k8s/hpa.yaml
 
 **Database (PostgreSQL):**
 ```bash
-# Automated daily backups (Railway)
+# Automated daily backups (CloudRuntime)
 # Manual backup
-railway backup create postgres
+cloud_runtime backup create postgres
 ```
 
 **Restore:**
 ```bash
-railway backup restore postgres <backup-id>
+cloud_runtime backup restore postgres <backup-id>
 ```
 
 ### Rollback Deployment
 
 ```bash
 # List deployments
-railway deployments --service api
+cloud_runtime deployments --service api
 
 # Rollback to previous version
-railway rollback --service api <deployment-id>
+cloud_runtime rollback --service api <deployment-id>
 ```
 
 ---
@@ -387,7 +387,7 @@ railway rollback --service api <deployment-id>
 
 ### SSL/TLS
 
-- ✅ Automatic SSL certificates (Railway)
+- ✅ Automatic SSL certificates (CloudRuntime)
 - ✅ Force HTTPS redirect
 - ✅ HSTS headers enabled
 
@@ -395,27 +395,27 @@ railway rollback --service api <deployment-id>
 
 ```bash
 # Rotate encryption key
-railway variables set ENCRYPTION_KEY="$(openssl rand -base64 32)"
+cloud_runtime variables set ENCRYPTION_KEY="$(openssl rand -base64 32)"
 
 # Rotate JWT secret
-railway variables set JWT_SECRET="$(openssl rand -base64 32)"
+cloud_runtime variables set JWT_SECRET="$(openssl rand -base64 32)"
 
 # Run key rotation migration
-railway run --service api npm run migrate:rotate-keys
+cloud_runtime run --service api npm run migrate:rotate-keys
 ```
 
 ### Network Security
 
 - ✅ Network policies (Kubernetes)
 - ✅ RBAC rules (Kubernetes)
-- ✅ Private networking (Railway)
-- ✅ DDoS protection (Railway)
+- ✅ Private networking (CloudRuntime)
+- ✅ DDoS protection (CloudRuntime)
 
 ---
 
 ## Part 8: Cost Optimization
 
-### Railway Pricing Tiers
+### CloudRuntime Pricing Tiers
 
 **Starter ($5/month):**
 - Good for development/staging
@@ -468,36 +468,36 @@ Total:                 $80/month
 ./docker-build-frontend.sh
 ```
 
-### Railway Deployment
+### CloudRuntime Deployment
 
 ```bash
 # Deploy
-railway up
+cloud_runtime up
 
 # Logs
-railway logs
+cloud_runtime logs
 
 # Restart
-railway restart
+cloud_runtime restart
 
 # Scale
-railway scale --replicas 3
+cloud_runtime scale --replicas 3
 
 # Variables
-railway variables set KEY=VALUE
+cloud_runtime variables set KEY=VALUE
 
 # Connect to DB
-railway connect postgres
+cloud_runtime connect postgres
 ```
 
 ### Health Checks
 
 ```bash
 # API
-curl https://the-new-fuse-api.railway.app/api/health
+curl https://the-new-fuse-api.thenewfuse.com/api/health
 
 # Frontend
-curl https://the-new-fuse.railway.app/
+curl https://the-new-fuse.thenewfuse.com/
 ```
 
 ---
@@ -519,26 +519,26 @@ docker buildx rm cloud-bizsynth-tnf
 
 ```bash
 # Check logs
-railway logs --service api --tail 100
+cloud_runtime logs --service api --tail 100
 
 # Check environment
-railway variables --service api
+cloud_runtime variables --service api
 
 # Verify database connection
-railway run --service api pnpm run d:check
+cloud_runtime run --service api pnpm run d:check
 ```
 
 ### Database Migration Issues
 
 ```bash
 # Reset database (CAUTION: deletes all data)
-railway run --service api npx drizzle migrate reset
+cloud_runtime run --service api npx drizzle migrate reset
 
 # Apply pending migrations
-railway run --service api npx drizzle migrate deploy
+cloud_runtime run --service api npx drizzle migrate deploy
 
 # Verify schema
-railway run --service api npx drizzle db pull
+cloud_runtime run --service api npx drizzle db pull
 ```
 
 ---
@@ -546,16 +546,16 @@ railway run --service api npx drizzle db pull
 ## Support & Resources
 
 ### Documentation
-- Railway: https://docs.railway.app/
+- CloudRuntime: https://docs.thenewfuse.com/
 - Docker Buildx: https://docs.docker.com/buildx/
 - Drizzle: https://www.drizzle.io/docs/
 
 ### Community
-- Railway Discord: https://discord.gg/railway
+- CloudRuntime Discord: https://discord.gg/cloud_runtime
 - GitHub Issues: https://github.com/whodaniel/fuse/issues
 
 ### Monitoring
-- Railway Dashboard: https://railway.app/dashboard
+- CloudRuntime Dashboard: https://cloud_runtime.app/dashboard
 - Docker Hub: https://hub.docker.com/u/bizsynth
 - GitHub Actions: https://github.com/whodaniel/fuse/actions
 

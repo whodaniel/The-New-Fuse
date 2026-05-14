@@ -186,7 +186,7 @@
 
             // Create Socket.IO connection with automatic transport fallback
             const socket = io(socketUrl, {
-                transports: ['polling'], // Force polling only to match Railway's proxy limitations
+                transports: ['polling'], // Force polling only to match CloudRuntime's proxy limitations
                 upgrade: false, // Disable upgrade to WebSocket to avoid console errors
                 path: '/socket.io/',
                 reconnection: true,

@@ -108,7 +108,7 @@ export function OAuthInstanceRotationControl() {
 
   const oneShotCommand = useMemo(() => {
     return [
-      'bash scripts/railway/sync-openclaw-oauth-instance.sh',
+      'bash scripts/cloud_runtime/sync-openclaw-oauth-instance.sh',
       `--service ${service}`,
       `--provider ${provider}`,
       `--auth-file "${authFile}"`,
@@ -167,7 +167,7 @@ export function OAuthInstanceRotationControl() {
     if (provider === 'openai-codex') {
       checks.unshift('.OPENAI_CODEX_ACCOUNT_ID', '.OPENCLAW_USE_CODEX_OAUTH');
     }
-    return `railway variable list --service ${service} --json | jq -r '${checks.join(', ')}'`;
+    return `cloud_runtime variable list --service ${service} --json | jq -r '${checks.join(', ')}'`;
   }, [provider, service]);
 
   function applyProviderDefaults(nextProvider: ProviderKey) {

@@ -164,12 +164,12 @@ deploy_to_inactive_environment() {
   # Deploy to inactive environment
   log STEP "Deploying to $environment environment..."
 
-  if command -v railway &>/dev/null; then
+  if command -v cloud_runtime &>/dev/null; then
     # Deploy to environment-specific service
-    export RAILWAY_SERVICE_NAME="${service}-${environment}"
-    export RAILWAY_ENVIRONMENT="$environment"
+    export CLOUD_RUNTIME_SERVICE_NAME="${service}-${environment}"
+    export CLOUD_RUNTIME_ENVIRONMENT="$environment"
 
-    if ! railway up --detach --service "$RAILWAY_SERVICE_NAME"; then
+    if ! cloud_runtime up --detach --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
       log ERROR "Failed to deploy to $environment environment"
       return 1
     fi
@@ -177,7 +177,7 @@ deploy_to_inactive_environment() {
     log SUCCESS "Deployed to $environment environment"
 
   else
-    log ERROR "Railway CLI not available"
+    log ERROR "CloudRuntime CLI not available"
     return 1
   fi
 
@@ -314,7 +314,7 @@ switch_traffic() {
   log WARNING "This step requires manual configuration"
   log INFO "Update your load balancer / reverse proxy to route traffic to $to_env"
 
-  # For Railway, you would:
+  # For CloudRuntime, you would:
   # 1. Update environment variables in the main service
   # 2. Or update DNS/load balancer to point to the new service
   # 3. Or swap the service URLs
@@ -322,15 +322,15 @@ switch_traffic() {
   # Example using environment variable swap
   log STEP "Updating routing configuration..."
 
-  if command -v railway &>/dev/null; then
+  if command -v cloud_runtime &>/dev/null; then
     # Update the main service to point to the new environment
     log INFO "Setting active environment to: $to_env"
 
     # This would require updating environment variables
-    # railway variables set ACTIVE_ENV="$to_env" --service "$service"
+    # cloud_runtime variables set ACTIVE_ENV="$to_env" --service "$service"
 
     log WARNING "Manual environment variable update required"
-    log INFO "Set ACTIVE_ENV=$to_env in Railway dashboard"
+    log INFO "Set ACTIVE_ENV=$to_env in CloudRuntime dashboard"
 
     # Wait for user confirmation
     if [[ "${AUTO_CONFIRM:-false}" != "true" ]]; then
@@ -346,7 +346,7 @@ switch_traffic() {
 
     log SUCCESS "Traffic switch completed"
   else
-    log ERROR "Railway CLI not available"
+    log ERROR "CloudRuntime CLI not available"
     return 1
   fi
 

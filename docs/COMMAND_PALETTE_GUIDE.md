@@ -72,7 +72,7 @@ API modes
 | `pnpm build:memory-optimized` | Build with 2GB memory limit        | Build    |
 | `pnpm build:low-memory`       | Build with 1GB memory limit        | Build    |
 | `pnpm build:health-check`     | Comprehensive build validation     | Build    |
-| `pnpm build:railway`          | Railway-specific build             | Build    |
+| `pnpm build:cloud_runtime`          | CloudRuntime-specific build             | Build    |
 
 ### Test Commands
 
@@ -286,7 +286,7 @@ Container management
 
 Production deployment
 
-**Icon:** ☁️ Cloud **Color:** Pink **Commands:** `build:railway`, deployment
+**Icon:** ☁️ Cloud **Color:** Pink **Commands:** `build:cloud_runtime`, deployment
 scripts
 
 ### 7. Agents (Indigo)

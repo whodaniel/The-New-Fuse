@@ -18,7 +18,7 @@ Phase X (Verification) - in progress
 | ------------- | ---------------------------------------------- |
 | Category      | WEB + BACKEND + INTEGRATION + UX               |
 | Primary Agent | orchestrator                                   |
-| Tech Stack    | React/Vite + NestJS + Railway + Postgres/Redis |
+| Tech Stack    | React/Vite + NestJS + CloudRuntime + Postgres/Redis |
 
 ## Phases
 
@@ -147,7 +147,7 @@ Phase X (Verification) - in progress
 | Dependency        | Status   | Notes                                                                  |
 | ----------------- | -------- | ---------------------------------------------------------------------- |
 | Local repo access | resolved | `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`          |
-| Runtime env vars  | pending  | Need Railway/prod or local env configuration for end-to-end validation |
+| Runtime env vars  | pending  | Need CloudRuntime/prod or local env configuration for end-to-end validation |
 | UI access         | pending  | Need confirmation of target builder route(s) and module scope          |
 
 ## Files Created/Modified

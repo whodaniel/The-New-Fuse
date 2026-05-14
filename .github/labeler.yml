@@ -21,8 +21,8 @@ infrastructure:
   - infrastructure/**/*
   - Dockerfile*
   - docker-compose*.yml
-  - railway.toml
-  - .railway/**/*
+  - cloud_runtime.toml
+  - .cloud_runtime/**/*
 
 # CI/CD changes
 ci:

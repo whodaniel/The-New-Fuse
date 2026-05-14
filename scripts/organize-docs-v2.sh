@@ -30,7 +30,7 @@ mv -n FEATURE_RECREATION_ANALYSIS.md docs/architecture/ 2>/dev/null || true
 # Deployment (docs/deployment already exists)
 echo "Moving deployment docs to docs/deployment/..."
 mv -n DEPLOYMENT*.md docs/deployment/ 2>/dev/null || true
-mv -n RAILWAY*.md docs/deployment/ 2>/dev/null || true
+mv -n CLOUD_RUNTIME*.md docs/deployment/ 2>/dev/null || true
 mv -n DOCKER*.md docs/deployment/ 2>/dev/null || true
 
 # Development (docs/development already exists)

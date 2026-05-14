@@ -1,0 +1,42 @@
+# ⚠️ DEPRECATED — CloudRuntime is no longer used.
+# TNF has migrated to GCP (Cloud Run) + Cloudflare (Pages/Workers) + Supabase + Upstash.
+# See CLOUD_MIGRATION_BLUEPRINT.md for current deployment instructions.
+# This workflow is preserved for historical reference only.
+name: CloudRuntime Deploy casin8-games (DEPRECATED)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/casin8-games/**"
+      - "cloud_runtime.toml"
+      - ".github/workflows/cloud_runtime-deploy-casin8-games.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUD_RUNTIME_TOKEN: ${{ secrets.CLOUD_RUNTIME_TOKEN }}
+      CLOUD_RUNTIME_PROJECT_ID: 041cee9d-8648-4074-b5a6-0eae436de1d1
+      CLOUD_RUNTIME_ENVIRONMENT: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install CloudRuntime CLI
+        run: npm i -g @cloud_runtime/cli
+
+      - name: Validate CloudRuntime Auth
+        run: cloud_runtime whoami
+
+      - name: Link CloudRuntime Project + Environment
+        run: cloud_runtime link -p "$CLOUD_RUNTIME_PROJECT_ID" -e "$CLOUD_RUNTIME_ENVIRONMENT"
+
+      - name: Deploy casin8-games from monorepo source
+        run: cloud_runtime up -s casin8-games -d

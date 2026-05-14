@@ -1,7 +1,7 @@
 # QA Bug Report: The New Fuse
 
 **Date:** January 11, 2026 **Overall Status:** ✅ **STABLE** (Previously
-Critical) **Inspector:** Antigravity AI **Deployment:** Production (Railway)
+Critical) **Inspector:** Antigravity AI **Deployment:** Production (CloudRuntime)
 
 ---
 
@@ -17,7 +17,7 @@ Issues:** 1 (API Subdomain DNS - Mitigated)
 
 ### 🚀 Key Achievements
 
-1.  **Fixed Railway API Crash**: Corrected `CascadeService` import path error
+1.  **Fixed CloudRuntime API Crash**: Corrected `CascadeService` import path error
     that was crashing the backend.
 2.  **Fixed Infrastructure Connectivity**: Configured Nginx proxy and Docker
     build to bypass broken `api.thenewfuse.com` DNS. All API traffic now routes
@@ -51,7 +51,7 @@ All critical blockers have been resolved and deployed.
 
 ## 3. Detailed Findings & Fixes
 
-### ✅ RESOLVED: Railway API Server Crash & Nginx Proxy
+### ✅ RESOLVED: CloudRuntime API Server Crash & Nginx Proxy
 
 **Status:** **FIXED & DEPLOYED**
 
@@ -60,11 +60,11 @@ All critical blockers have been resolved and deployed.
   does not exist in DNS.
 - **Fix Implemented:**
   1. Fixed `CascadeService` export in `packages/core`.
-  2. Updated `nginx.conf` to enable `proxy_ssl_server_name` (SNI) for Railway
+  2. Updated `nginx.conf` to enable `proxy_ssl_server_name` (SNI) for CloudRuntime
      HTTPS backend.
   3. Updated `Dockerfile` to use relative `/api` path instead of hardcoded
      subdomains.
-  4. Configured `BACKEND_URL` environment variable on Railway.
+  4. Configured `BACKEND_URL` environment variable on CloudRuntime.
 - **Verification:** `/agents` and `/analytics` now load successfully locally and
   on production.
 
@@ -91,10 +91,10 @@ All critical blockers have been resolved and deployed.
 ## 4. Pending Action Items
 
 1.  **Resolved `api.thenewfuse.com` DNS**: Create an A Record or CNAME for
-    `api.thenewfuse.com` pointing to the Railway service if direct access is
+    `api.thenewfuse.com` pointing to the CloudRuntime service if direct access is
     desired in the future.
 2.  **Unstoppable Domains**: Configure `UNSTOPPABLE_DOMAINS_CLIENT_ID` in
-    Railway variables if this feature is needed.
+    CloudRuntime variables if this feature is needed.
 3.  **API Auth**: The `/api/agents` endpoint returns 500 when unauthenticated.
     It should return 401. This is a minor backend logic issue to address in the
     next sprint.

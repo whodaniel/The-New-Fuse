@@ -112,8 +112,8 @@ node --version
 # pnpm
 pnpm --version
 
-# Railway CLI (for Railway deployments)
-railway --version
+# CloudRuntime CLI (for CloudRuntime deployments)
+cloud_runtime --version
 
 # Git
 git --version
@@ -143,25 +143,25 @@ DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
 EMAIL_API_URL="https://api.sendgrid.com/v3/mail/send"
 EMAIL_TO="team@example.com"
 
-# Railway (for Railway deployments)
-RAILWAY_TOKEN="your-railway-token"
+# CloudRuntime (for CloudRuntime deployments)
+CLOUD_RUNTIME_TOKEN="your-cloud_runtime-token"
 
 # Deployment Configuration
 DEPLOYMENT_STRATEGY="blue-green"
 SERVICES="api-gateway backend frontend api"
 ```
 
-### Railway Configuration
+### CloudRuntime Configuration
 
 ```bash
-# Login to Railway
-railway login
+# Login to CloudRuntime
+cloud_runtime login
 
 # Link to your project
-railway link
+cloud_runtime link
 
 # Verify connection
-railway status
+cloud_runtime status
 ```
 
 ## Quick Start
@@ -258,7 +258,7 @@ Pre-deployment validation script.
 # - Disk space
 # - Memory
 # - Build artifacts
-# - Railway CLI
+# - CloudRuntime CLI
 # - Security configuration
 ```
 
@@ -602,7 +602,7 @@ pnpm drizzle migrate status
 
 2. **Monitor application logs**
    ```bash
-   railway logs --service api-gateway
+   cloud_runtime logs --service api-gateway
    ```
 
 3. **Keep backup for 24-48 hours** before cleanup
@@ -627,7 +627,7 @@ pnpm drizzle migrate status
 
 # Common fixes:
 pnpm install                    # Install dependencies
-railway login                   # Authenticate Railway
+cloud_runtime login                   # Authenticate CloudRuntime
 export DATABASE_URL="..."       # Set environment variables
 ```
 
@@ -635,13 +635,13 @@ export DATABASE_URL="..."       # Set environment variables
 
 ```bash
 # Check service logs
-railway logs --service <service-name>
+cloud_runtime logs --service <service-name>
 
 # Verify service URL
 curl -i https://your-service-url/health
 
 # Check environment variables
-railway variables
+cloud_runtime variables
 ```
 
 #### Migration Fails
@@ -660,11 +660,11 @@ cat logs/deployment/migration-*.log
 #### Deployment Hangs
 
 ```bash
-# Check Railway status
-railway status
+# Check CloudRuntime status
+cloud_runtime status
 
 # Check for resource limits
-railway variables
+cloud_runtime variables
 
 # Cancel and rollback
 Ctrl+C
@@ -688,7 +688,7 @@ export DEBUG=true
 1. **Check logs**: `logs/deployment/`
 2. **Review state files**: `.deployment-state/`
 3. **Run health checks**: `./scripts/deployment/health-check.sh --deep`
-4. **Check Railway status**: `railway status`
+4. **Check CloudRuntime status**: `cloud_runtime status`
 5. **Review documentation**: `docs/deployment/`
 
 ## Summary

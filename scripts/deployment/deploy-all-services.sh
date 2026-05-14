@@ -1,11 +1,11 @@
 #!/bin/bash
-# Deploy All Services to Railway
-# This script deploys all The New Fuse services to Railway
+# Deploy All Services to CloudRuntime
+# This script deploys all The New Fuse services to CloudRuntime
 
 set -e
 
 echo "========================================="
-echo "The New Fuse - Complete Railway Deployment"
+echo "The New Fuse - Complete CloudRuntime Deployment"
 echo "========================================="
 echo ""
 
@@ -15,23 +15,23 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Check if Railway CLI is installed
-if ! command -v railway &> /dev/null; then
-    echo -e "${RED}❌ Railway CLI not found!${NC}"
-    echo "Install it with: npm install -g @railway/cli"
+# Check if CloudRuntime CLI is installed
+if ! command -v cloud_runtime &> /dev/null; then
+    echo -e "${RED}❌ CloudRuntime CLI not found!${NC}"
+    echo "Install it with: npm install -g @cloud_runtime/cli"
     exit 1
 fi
 
-echo -e "${GREEN}✅ Railway CLI found${NC}"
+echo -e "${GREEN}✅ CloudRuntime CLI found${NC}"
 
 # Check authentication
-if ! railway whoami &> /dev/null; then
-    echo -e "${RED}❌ Not logged in to Railway${NC}"
-    echo "Run: railway login"
+if ! cloud_runtime whoami &> /dev/null; then
+    echo -e "${RED}❌ Not logged in to CloudRuntime${NC}"
+    echo "Run: cloud_runtime login"
     exit 1
 fi
 
-echo -e "${GREEN}✅ Authenticated with Railway${NC}"
+echo -e "${GREEN}✅ Authenticated with CloudRuntime${NC}"
 echo ""
 
 # Project and environment IDs
@@ -68,15 +68,15 @@ deploy_service() {
         return 1
     fi
 
-    # Check if railway.toml exists
-    if [ ! -f "$service_path/railway.toml" ]; then
-        echo -e "${YELLOW}⚠️  railway.toml not found, will use default configuration${NC}"
+    # Check if cloud_runtime.toml exists
+    if [ ! -f "$service_path/cloud_runtime.toml" ]; then
+        echo -e "${YELLOW}⚠️  cloud_runtime.toml not found, will use default configuration${NC}"
     else
-        echo -e "${GREEN}✅ Found railway.toml${NC}"
+        echo -e "${GREEN}✅ Found cloud_runtime.toml${NC}"
     fi
 
     echo ""
-    echo "📦 Deploying $service_name to Railway..."
+    echo "📦 Deploying $service_name to CloudRuntime..."
     echo "   This may take 10-15 minutes for the first deployment..."
     echo ""
 
@@ -84,7 +84,7 @@ deploy_service() {
     cd "$service_path"
 
     # Try to deploy with service name
-    if RAILWAY_PROJECT_ID="$PROJECT_ID" RAILWAY_ENVIRONMENT_ID="$ENVIRONMENT_ID" RAILWAY_SERVICE="$service_name" railway up --detach 2>&1; then
+    if CLOUD_RUNTIME_PROJECT_ID="$PROJECT_ID" CLOUD_RUNTIME_ENVIRONMENT_ID="$ENVIRONMENT_ID" CLOUD_RUNTIME_SERVICE="$service_name" cloud_runtime up --detach 2>&1; then
         echo -e "${GREEN}✅ $service_name deployment started successfully!${NC}"
         cd ../..
         return 0
@@ -93,12 +93,12 @@ deploy_service() {
 
         # Alternative: deploy from root with explicit Dockerfile
         cd ../..
-        if RAILWAY_PROJECT_ID="$PROJECT_ID" RAILWAY_ENVIRONMENT_ID="$ENVIRONMENT_ID" railway up --detach --service "$service_name" 2>&1; then
+        if CLOUD_RUNTIME_PROJECT_ID="$PROJECT_ID" CLOUD_RUNTIME_ENVIRONMENT_ID="$ENVIRONMENT_ID" cloud_runtime up --detach --service "$service_name" 2>&1; then
             echo -e "${GREEN}✅ $service_name deployment started successfully!${NC}"
             return 0
         else
             echo -e "${RED}❌ Failed to deploy $service_name${NC}"
-            echo -e "${YELLOW}This service may need to be created manually in the Railway dashboard first.${NC}"
+            echo -e "${YELLOW}This service may need to be created manually in the CloudRuntime dashboard first.${NC}"
             return 1
         fi
     fi
@@ -133,7 +133,7 @@ if [ $failed_count -gt 0 ]; then
     echo -e "${YELLOW}⚠️  Some services failed to deploy.${NC}"
     echo ""
     echo "To create services manually:"
-    echo "1. Visit: https://railway.com/project/$PROJECT_ID"
+    echo "1. Visit: https://thenewfuse.com/project/$PROJECT_ID"
     echo "2. Click '+ New' → 'Empty Service'"
     echo "3. Name the service (api, backend, api-gateway, frontend)"
     echo "4. Run this script again"
@@ -141,9 +141,9 @@ if [ $failed_count -gt 0 ]; then
 fi
 
 echo "Next steps:"
-echo "1. Check deployment status: railway logs"
-echo "2. Configure environment variables in Railway Dashboard"
-echo "3. Monitor builds at: https://railway.com/project/$PROJECT_ID"
+echo "1. Check deployment status: cloud_runtime logs"
+echo "2. Configure environment variables in CloudRuntime Dashboard"
+echo "3. Monitor builds at: https://thenewfuse.com/project/$PROJECT_ID"
 echo ""
-echo "Dashboard URL: https://railway.com/project/$PROJECT_ID?environmentId=$ENVIRONMENT_ID"
+echo "Dashboard URL: https://thenewfuse.com/project/$PROJECT_ID?environmentId=$ENVIRONMENT_ID"
 echo ""

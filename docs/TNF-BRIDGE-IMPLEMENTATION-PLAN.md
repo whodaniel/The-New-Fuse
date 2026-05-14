@@ -105,4 +105,4 @@ tnf gateway failover # Manually trigger failover
 ## Notes
 - Use `tnf-additive-cli-verifier-wrapper` skill to create non-invasive CLI commands
 - All bridges should log to `~/.tnf/logs/bridge-*.log`
-- Monitor for drift between Railway services and local configs
+- Monitor for drift between CloudRuntime services and local configs

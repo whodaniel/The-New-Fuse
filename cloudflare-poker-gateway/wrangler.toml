@@ -8,6 +8,6 @@ routes = ["poker.ai-arcade.xyz/*"]
 
 [vars]
 FRONTEND_URL = "https://ai-arcade-poker.pages.dev"
-# ⚠️ DEPRECATED: BACKEND_URL points to Railway which is no longer used.
+# ⚠️ DEPRECATED: BACKEND_URL points to CloudRuntime which is no longer used.
 # Update to the current GCP Cloud Run backend URL. See CLOUD_MIGRATION_BLUEPRINT.md.
-BACKEND_URL = "https://casin8-games-backend-production.up.railway.app"
+BACKEND_URL = "https://casin8-games-backend-production.thenewfuse.com"

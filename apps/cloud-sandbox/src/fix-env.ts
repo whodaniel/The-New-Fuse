@@ -5,7 +5,7 @@ const WS_URL = 'wss://backend-241337102384.us-central1.run.app/ws';
 
 console.log(`🔌 Connecting to Remote Sandbox: ${WS_URL}`);
 
-// Enable perMessageDeflate to match server (Railway/Cloudflare proxy likely compresses)
+// Enable perMessageDeflate to match server (CloudRuntime/Cloudflare proxy likely compresses)
 const ws = new WebSocket(WS_URL, { perMessageDeflate: true });
 
 interface JsonRpcMessage {

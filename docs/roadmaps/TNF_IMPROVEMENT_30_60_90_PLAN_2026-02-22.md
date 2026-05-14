@@ -12,7 +12,7 @@ Scope: Execute the 15 TNF improvement priorities with measurable delivery gates.
 
 ## Owner Map (Role-Level)
 
-- `devops-engineer`: Railway, runtime, deployment, observability pipeline
+- `devops-engineer`: CloudRuntime, runtime, deployment, observability pipeline
 - `backend-specialist`: config, idempotency, breakers, contracts
 - `security-auditor`: secrets governance, scanning, policy
 - `performance-optimizer`: SLO metrics, latency/cost instrumentation
@@ -27,7 +27,7 @@ Priorities:
 1. Lock provider strategy and defaults.
 2. Build `swarm:doctor` preflight gate.
 3. Separate runtime config by environment.
-5. Stabilize Railway runner execution.
+5. Stabilize CloudRuntime runner execution.
 11. Consolidate setup/run scripts into canonical command set.
 
 Deliverables:
@@ -150,7 +150,7 @@ Owner: `project-planner` + `devops-engineer` + `security-auditor`
 ## Immediate Next 7-Day Sprint (Kickoff)
 
 1. Implement `SCOUT_PROVIDER=auto` policy and remove dead provider branches.
-2. Ship initial `swarm:doctor` with Railway auth/env/Redis/provider checks.
+2. Ship initial `swarm:doctor` with CloudRuntime auth/env/Redis/provider checks.
 3. Add environment profile schema enforcement at startup.
-4. Pick and lock canonical Railway runner; document run command.
+4. Pick and lock canonical CloudRuntime runner; document run command.
 5. Enable JSON structured logs in supercycle pipeline.

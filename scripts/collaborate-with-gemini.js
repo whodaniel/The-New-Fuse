@@ -153,7 +153,7 @@ class CollaborationAgent {
 
 I'm here to collaborate with you on setting up the full TNF ecosystem. We have 3 tasks:
 
-1️⃣ **Set up Railway cron jobs** for the self-improvement loop
+1️⃣ **Set up CloudRuntime cron jobs** for the self-improvement loop
 2️⃣ **Demonstrate the Chrome extension** working with the relay (we're doing that now!)
 3️⃣ **Show the Cloud Sandbox Live View** functionality
 
@@ -169,9 +169,9 @@ Can you confirm you received this message? Let me know and we can proceed with t
     this.sendToChannel(
       'general',
       `
-📋 **TASK 1: Railway Cron Jobs for Self-Improvement**
+📋 **TASK 1: CloudRuntime Cron Jobs for Self-Improvement**
 
-I'm creating a cron job configuration for Railway that will:
+I'm creating a cron job configuration for CloudRuntime that will:
 - Run health checks every hour
 - Perform optimization analysis daily
 - Do deep system review weekly

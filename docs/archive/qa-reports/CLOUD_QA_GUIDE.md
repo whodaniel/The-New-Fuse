@@ -2,7 +2,7 @@
 
 ## Overview
 
-The comprehensive QA testing for **thenewfuse.com** runs entirely on Railway's
+The comprehensive QA testing for **thenewfuse.com** runs entirely on CloudRuntime's
 cloud infrastructure. You don't need to run anything locally - everything
 happens in the cloud and you monitor it via Antigravity.
 
@@ -21,30 +21,30 @@ cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
 This script will:
 
-- ✅ Verify Railway cloud browser is running
+- ✅ Verify CloudRuntime cloud browser is running
 - ✅ Trigger the comprehensive QA test
 - ✅ Provide monitoring instructions
 
-#### Option B: Install Railway CLI and Run Directly
+#### Option B: Install CloudRuntime CLI and Run Directly
 
 ```bash
-# Install Railway CLI (one-time)
-npm install -g @railway/cli
+# Install CloudRuntime CLI (one-time)
+npm install -g @cloud_runtime/cli
 
-# Login to Railway (one-time)
-railway login
+# Login to CloudRuntime (one-time)
+cloud_runtime login
 
 # Link to your project (one-time)
-railway link
+cloud_runtime link
 
 # Run the QA test
-railway run node apps/cloud-sandbox/scripts/comprehensive_qa.js
+cloud_runtime run node apps/cloud-sandbox/scripts/comprehensive_qa.js
 ```
 
 #### Option C: Trigger via API (Programmatic)
 
 ```bash
-curl -X POST https://tnf-cloud-sandbox-v2-production.up.railway.app/api/qa/run \
+curl -X POST https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/qa/run \
   -H "Content-Type: application/json" \
   -d '{
     "target": "https://thenewfuse.com",
@@ -61,7 +61,7 @@ curl -X POST https://tnf-cloud-sandbox-v2-production.up.railway.app/api/qa/run \
 Once the test is running, open **Antigravity** and use these prompts:
 
 ```markdown
-"Connect to the Railway browser and show me what the QA test is currently
+"Connect to the CloudRuntime browser and show me what the QA test is currently
 viewing"
 ```
 
@@ -123,7 +123,7 @@ The comprehensive QA suite automatically tests:
 ### Real-Time Monitoring
 
 ```markdown
-"Take a screenshot of what the Railway browser is viewing right now"
+"Take a screenshot of what the CloudRuntime browser is viewing right now"
 ```
 
 ```markdown
@@ -151,7 +151,7 @@ The comprehensive QA suite automatically tests:
 ### Deep Debugging
 
 ```markdown
-"Navigate the Railway browser to the page that failed and show me why"
+"Navigate the CloudRuntime browser to the page that failed and show me why"
 ```
 
 ```markdown
@@ -172,13 +172,13 @@ The comprehensive QA suite automatically tests:
    - Interactive debugging
 
 2. **In JSON Report**
-   - Saved to Railway at: `/tmp/qa_report_<timestamp>.json`
+   - Saved to CloudRuntime at: `/tmp/qa_report_<timestamp>.json`
    - Contains all test details
    - Programmatically accessible
 
 3. **Via API**
    ```bash
-   curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/qa/status
+   curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/qa/status
    ```
 
 ### Report Structure
@@ -219,7 +219,7 @@ The comprehensive QA suite automatically tests:
 ```markdown
 You: "Start monitoring the cloud QA test for thenewfuse.com"
 
-Antigravity: "✅ Connected to Railway browser via Chrome DevTools Protocol
+Antigravity: "✅ Connected to CloudRuntime browser via Chrome DevTools Protocol
 
 **Current Status**:
 
@@ -277,27 +277,27 @@ const QA_CONFIG = {
 
 ### "Cloud browser not accessible"
 
-**Check Railway deployment**:
+**Check CloudRuntime deployment**:
 
 ```bash
-curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools
+curl https://tnf-cloud-sandbox-v2-production.thenewfuse.com/api/browser/devtools
 ```
 
 If it fails:
 
-1. Visit https://railway.app
+1. Visit https://cloud_runtime.app
 2. Check service: tnf-cloud-sandbox-v2
 3. Verify it's running
 4. Check logs for errors
 
-### "Railway CLI not found"
+### "CloudRuntime CLI not found"
 
 Install it:
 
 ```bash
-npm install -g @railway/cli
-railway login
-railway link
+npm install -g @cloud_runtime/cli
+cloud_runtime login
+cloud_runtime link
 ```
 
 ### "Antigravity can't connect"
@@ -316,7 +316,7 @@ railway link
 
 ## ✅ Benefits of Cloud QA
 
-1. **No Local Resources** - Runs entirely on Railway
+1. **No Local Resources** - Runs entirely on CloudRuntime
 2. **Real-Time Monitoring** - See exactly what's happening via Antigravity
 3. **Comprehensive** - Tests everything automatically
 4. **Repeatable** - Run anytime with one command

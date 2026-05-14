@@ -1,8 +1,8 @@
 # OpenClaw OAuth Provider Autopilot
 
-> **⚠️ Railway references in this document are DEPRECATED.** TNF has migrated
-> from Railway to **GCP (Cloud Run) + Cloudflare + Supabase + Upstash**. Replace
-> `railway` CLI commands with `gcloud` equivalents. See
+> **⚠️ CloudRuntime references in this document are DEPRECATED.** TNF has migrated
+> from CloudRuntime to **GCP (Cloud Run) + Cloudflare + Supabase + Upstash**. Replace
+> `cloud_runtime` CLI commands with `gcloud` equivalents. See
 > `CLOUD_MIGRATION_BLUEPRINT.md`.
 
 Status: Active  
@@ -17,7 +17,7 @@ It covers:
 
 - local non-interactive onboarding patterns
   (`openclaw onboard --non-interactive`)
-- cloud provider sync for Railway-hosted OpenClaw instances
+- cloud provider sync for CloudRuntime-hosted OpenClaw instances
 - recurring cron/poll automation with health verification and rollback
 
 ## Provider Matrix
@@ -37,7 +37,7 @@ Use `openclaw onboard --non-interactive --auth-choice <value>` with:
 - `opencode-zen`
 - `custom-api-key`
 
-### TNF cloud OAuth sync providers (Railway)
+### TNF cloud OAuth sync providers (CloudRuntime)
 
 The TNF cloud sync script currently supports:
 
@@ -46,13 +46,13 @@ The TNF cloud sync script currently supports:
 - `google-antigravity`
 - `kilo`
 
-Script: `scripts/railway/sync-openclaw-oauth-instance.sh`
+Script: `scripts/cloud_runtime/sync-openclaw-oauth-instance.sh`
 
 ## One-Time Sync (All Cloud Instances)
 
 ```bash
 cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
-bash scripts/railway/sync-openclaw-oauth-instances.sh --no-wait
+bash scripts/cloud_runtime/sync-openclaw-oauth-instances.sh --no-wait
 ```
 
 ## Recurring Autopilot Install
@@ -101,10 +101,10 @@ bash scripts/runtime/openclaw-oauth-provider-cron.sh install
 
 ## Required Environment / Prereqs
 
-- `railway` CLI authenticated (`railway whoami`)
+- `cloud_runtime` CLI authenticated (`cloud_runtime whoami`)
 - `jq`, `curl`, `bash` installed
 - OAuth auth files present per instance config:
-  - `scripts/railway/openclaw-oauth-instances.json`
+  - `scripts/cloud_runtime/openclaw-oauth-instances.json`
 - valid token fields in auth files:
   - access token
   - refresh token
@@ -112,7 +112,7 @@ bash scripts/runtime/openclaw-oauth-provider-cron.sh install
 
 ## Expected Changes
 
-When sync runs, it updates Railway service variables (for each OpenClaw
+When sync runs, it updates CloudRuntime service variables (for each OpenClaw
 service), including:
 
 - `OPENAI_CODEX_ACCESS_TOKEN`
@@ -125,19 +125,19 @@ service), including:
 
 Local file changes from this hardening pass:
 
-- `scripts/railway/openclaw-oauth-instances.json`
-- `scripts/railway/openclaw-codex-tenants.json`
-- `scripts/railway/sync-openclaw-oauth-instance.sh`
-- `scripts/railway/sync-openclaw-codex-account.sh`
-- `scripts/railway/sync-openclaw-codex-tenants.sh`
-- `scripts/railway/check-zeroclaw-instances.sh`
+- `scripts/cloud_runtime/openclaw-oauth-instances.json`
+- `scripts/cloud_runtime/openclaw-codex-tenants.json`
+- `scripts/cloud_runtime/sync-openclaw-oauth-instance.sh`
+- `scripts/cloud_runtime/sync-openclaw-codex-account.sh`
+- `scripts/cloud_runtime/sync-openclaw-codex-tenants.sh`
+- `scripts/cloud_runtime/check-zeroclaw-instances.sh`
 - `scripts/runtime/openclaw-oauth-provider-cron.sh`
 
 ## Validation
 
 ```bash
 cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
-bash scripts/railway/check-zeroclaw-instances.sh openclaw-cloud openclaw-primary openclaw-sandbox-cloud openclaw-oc004
+bash scripts/cloud_runtime/check-zeroclaw-instances.sh openclaw-cloud openclaw-primary openclaw-sandbox-cloud openclaw-oc004
 ```
 
 Also verify:
@@ -159,7 +159,7 @@ bash scripts/runtime/openclaw-oauth-provider-cron.sh uninstall
 2. Re-apply previous fallback model policy (example):
 
 ```bash
-railway variables set OPENCLAW_MODEL_FALLBACKS="openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini" --service openclaw-cloud
+cloud_runtime variables set OPENCLAW_MODEL_FALLBACKS="openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini" --service openclaw-cloud
 ```
 
 Repeat for each service as needed.

@@ -66,6 +66,7 @@ tnf agents register [name] [role] [platform]
 tnf agents send <message>
 tnf agents orchestrate <workflow>
 tnf agents convo <start|join> [param]
+tnf agents bank reconcile --targets all
 ```
 
 ### Taxonomy paths
@@ -83,6 +84,12 @@ tnf menu --full
 ```bash
 tnf onboard
 tnf doctor
+tnf self-improvement run
+tnf self-improvement status --strict
+tnf full-auto once
+tnf full-auto start --interval-minutes 30
+tnf full-auto status
+tnf full-auto provision --targets all
 tnf mcp generate
 tnf openclaw status
 tnf claw channels login
@@ -102,6 +109,91 @@ tnf jules supervisor-status
 tnf skills bank sync
 tnf reports status
 ```
+
+## Self-Improvement Loop
+
+Run the deterministic reliability loop directly from `tnf`:
+
+```bash
+tnf self-improvement run --base-url https://thenewfuse.com --api-url https://api.thenewfuse.com
+tnf self-improvement status --strict
+tnf self-improvement scorecard
+tnf self-improvement mermaid
+tnf self-improvement log "Follow-up remediation note"
+```
+
+`tnf self-improvement run` performs:
+
+1. Frontend build
+2. Live link crawl
+3. Semantic route audit
+4. Auth path audit
+5. Scorecard generation
+6. Architecture mermaid generation
+7. Artifact verification + protocol run-log entry
+
+## Full-Auto Loop
+
+Run unattended, non-interactive cycles from one command:
+
+```bash
+tnf full-auto provision --targets all
+tnf full-auto once --base-url https://thenewfuse.com --api-url https://api.thenewfuse.com
+tnf full-auto start --interval-minutes 30 --max-cycles 0 --broadcast
+tnf full-auto status
+```
+
+Behavior:
+
+1. Provision shared full-auto slash-command + skill artifacts into detected agent runtimes.
+2. Each cycle runs `tnf self-improvement run` with your selected options.
+3. Optionally broadcasts `tnf orchestrate self-improvement` when `--broadcast` is enabled.
+4. Verifies health via `tnf self-improvement status --strict`.
+5. Persists state to `docs/operations/tnf-full-auto-state.json`.
+6. Appends cycle events to `docs/operations/tnf-full-auto-runs.jsonl`.
+
+Provisioning targets include detected local roots for:
+- `codex`, `claude`, `gemini`, `opencode`, `kilo`, `augment`, `tnf`, `hermes`, and `project` runtime mirrors.
+
+## Agent Bank Reconciliation
+
+Reconcile multitenant agent definition pathways (`.agent/agents`, `.claude/agents`,
+`.skills/imported-claude-agents`) and distribute imported definitions to all runtime homes:
+
+```bash
+tnf agents bank reconcile --targets all
+```
+
+Optional flags:
+- `--dry-run`
+- `--json`
+- `--skip-restore`
+- `--skip-imported-sync`
+- `--skip-provision`
+
+
+## Control-Plane Provider Routing
+
+`master-clock` and `super-cycle` are provider-routed with `local` default:
+
+```bash
+tnf master-clock start --provider local
+tnf master-clock logs --provider local --no-follow
+tnf super-cycle status --provider local
+```
+
+CloudRuntime remains available as an explicit legacy adapter:
+
+```bash
+tnf master-clock status --provider cloud_runtime --service tnf-master-clock
+tnf super-cycle event --provider cloud_runtime --service tnf-master-clock --action heartbeat --process-id my-loop
+```
+
+Environment variables:
+
+- `TNF_CONTROL_PLANE_PROVIDER` (global fallback)
+- `TNF_MASTER_CLOCK_PROVIDER` (master-clock override)
+- `TNF_SUPER_CYCLE_PROVIDER` (super-cycle override)
 
 ## OpenClaw passthrough
 
@@ -185,6 +277,8 @@ These require `TNF_SUPER_ADMIN_TOKEN` configured in runtime and
 - `tnf relay start`
 - `tnf master-clock *`
 - `tnf super-cycle *`
+- `tnf self-improvement run`
+- `tnf full-auto once|start`
 - `tnf jules loop|supervisor|supervisor-start|supervisor-stop|supervisor-migrate-from-cron|merge-open|cron-install`
 - `tnf skills bank supervisor|supervisor-start|supervisor-stop`
 - `tnf run <script>`
@@ -196,4 +290,4 @@ These require `TNF_SUPER_ADMIN_TOKEN` configured in runtime and
 - roles: `orchestrator`, `broker`, `worker`, `participant`
 - platforms: `antigravity`, `gemini`, `claude`, `jules`, `vscode`, `browser`
 - command behavior groups: `super_admin_protected`, `redis_required`,
-  `cloud_first`
+  `provider_routed`

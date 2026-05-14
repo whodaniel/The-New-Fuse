@@ -7,7 +7,7 @@ Guide for monitoring CI/CD pipeline health and setting up alerts.
 - [Overview](#overview)
 - [Metrics to Monitor](#metrics-to-monitor)
 - [GitHub Actions Monitoring](#github-actions-monitoring)
-- [Railway Monitoring](#railway-monitoring)
+- [CloudRuntime Monitoring](#cloud_runtime-monitoring)
 - [Application Monitoring](#application-monitoring)
 - [Alerting Setup](#alerting-setup)
 - [Dashboards](#dashboards)
@@ -147,11 +147,11 @@ Track these in GitHub Actions insights:
 3. **Average duration**: Time to complete
 4. **Failure patterns**: Common failure points
 
-## Railway Monitoring
+## CloudRuntime Monitoring
 
-### Railway Dashboard
+### CloudRuntime Dashboard
 
-Monitor in Railway dashboard:
+Monitor in CloudRuntime dashboard:
 
 #### Service Health
 - CPU usage
@@ -166,20 +166,20 @@ Monitor in Railway dashboard:
 - Build logs
 - Runtime logs
 
-### Railway CLI Monitoring
+### CloudRuntime CLI Monitoring
 
 ```bash
 # Service status
-railway status --service=api-gateway
+cloud_runtime status --service=api-gateway
 
 # Resource usage
-railway metrics --service=api-gateway
+cloud_runtime metrics --service=api-gateway
 
 # Logs (real-time)
-railway logs --service=api-gateway --tail 100 --follow
+cloud_runtime logs --service=api-gateway --tail 100 --follow
 
 # Deployments
-railway deployments --service=api-gateway
+cloud_runtime deployments --service=api-gateway
 ```
 
 ### Key Metrics
@@ -245,8 +245,8 @@ import newrelic from 'newrelic';
 #### Logs: LogTail / Papertrail
 
 ```bash
-# Configure in Railway
-railway variables set LOG_DRAIN_URL=<logtail-url>
+# Configure in CloudRuntime
+cloud_runtime variables set LOG_DRAIN_URL=<logtail-url>
 ```
 
 **Monitor**:
@@ -340,9 +340,9 @@ Configure in GitHub:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 ```
 
-### Railway Alerts
+### CloudRuntime Alerts
 
-#### Setup in Railway
+#### Setup in CloudRuntime
 
 1. Project Settings → Notifications
 2. Add Slack webhook
@@ -390,9 +390,9 @@ Create custom dashboard:
 - Queue time
 - Failure trends
 
-### Railway Dashboard
+### CloudRuntime Dashboard
 
-Use Railway's built-in dashboard:
+Use CloudRuntime's built-in dashboard:
 
 **Key views**:
 - Service overview (all services)
@@ -482,7 +482,7 @@ histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
 
 - [ ] GitHub Actions insights enabled
 - [ ] Workflow failure notifications setup
-- [ ] Railway monitoring configured
+- [ ] CloudRuntime monitoring configured
 - [ ] Slack webhook integrated
 - [ ] Health check endpoints implemented
 - [ ] Error tracking (Sentry) setup
@@ -516,7 +516,7 @@ histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
 ## Resources
 
 - [GitHub Actions Monitoring](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows)
-- [Railway Metrics](https://docs.railway.app/reference/metrics)
+- [CloudRuntime Metrics](https://docs.thenewfuse.com/reference/metrics)
 - [Sentry Documentation](https://docs.sentry.io)
 - [Grafana Documentation](https://grafana.com/docs/)
 - [PagerDuty Integration](https://support.pagerduty.com)

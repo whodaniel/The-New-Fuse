@@ -75,7 +75,7 @@ cp dist/mcp/server.js /path/to/deployment/
 - [ ] Run: `./scripts/deployment/deploy-automated.sh`
 - [ ] Monitor deployment logs
 - [ ] Run: `./scripts/deployment/smoke-tests.sh`
-- [ ] Verify platform status: `railway status`
+- [ ] Verify platform status: `cloud_runtime status`
 
 ### Post-Deployment
 - [ ] Immediate (T+0): Test critical user flows, monitor error rates, notify team

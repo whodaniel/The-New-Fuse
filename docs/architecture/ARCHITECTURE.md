@@ -244,7 +244,7 @@ The New Fuse implements a comprehensive security architecture that covers authen
 
 ## CI/CD Delivery Architecture
 
-The CI/CD architecture uses GitHub Actions as the control plane and Railway as
+The CI/CD architecture uses GitHub Actions as the control plane and Cloudflare as
 the runtime deployment target for backend services.
 
 ### Pipeline Flow
@@ -252,7 +252,7 @@ the runtime deployment target for backend services.
 1. Pull request or push triggers test/build workflows.
 2. Quality gates validate lint, type safety, tests, and security checks.
 3. Build artifacts and service images are produced in parallel where possible.
-4. Deployment jobs publish services to Railway.
+4. Deployment jobs publish services to Cloudflare.
 5. Health checks and smoke tests validate runtime readiness.
 6. Rollback paths are available when verification fails.
 

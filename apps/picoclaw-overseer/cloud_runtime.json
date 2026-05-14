@@ -1,0 +1,14 @@
+{
+  "$schema": "https://thenewfuse.com/cloud_runtime.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
+  },
+  "deploy": {
+    "port": 8080,
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 60,
+    "restartPolicyType": "ON_FAILURE",
+    "startCommand": "/usr/local/bin/entrypoint-cloud_runtime.sh"
+  }
+}

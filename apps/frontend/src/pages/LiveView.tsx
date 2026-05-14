@@ -13,11 +13,11 @@ export default function LiveViewPage() {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Cloud Sandbox URL - this should match your Railway deployment
+  // Cloud Sandbox URL - this should match your CloudRuntime deployment
   const CLOUD_SANDBOX_URL = 'https://api-gateway-241337102384.us-central1.run.app';
   /**
    * IMPORTANT: We use Socket.IO with polling as the primary transport because
-   * Railway's edge proxy often drops or fails to upgrade WebSocket connections directly.
+   * CloudRuntime's edge proxy often drops or fails to upgrade WebSocket connections directly.
    * This ensures a reliable connection is established.
    */
 
@@ -38,7 +38,7 @@ export default function LiveViewPage() {
     try {
       const socket = io(CLOUD_SANDBOX_URL, {
         path: '/socket.io/',
-        // CRITICAL: Force polling to bypass Railway WebSocket handshake failures
+        // CRITICAL: Force polling to bypass CloudRuntime WebSocket handshake failures
         transports: ['polling'],
         upgrade: false, // Disable upgrade to WebSocket to avoid console errors
         reconnection: true,

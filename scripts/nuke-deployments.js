@@ -1,7 +1,7 @@
 const fs = require('fs');
 const https = require('https');
 
-const configPath = '/path/to/.railway/config.json';
+const configPath = '/path/to/.cloud_runtime/config.json';
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 const token = config.user.token;
 
@@ -21,7 +21,7 @@ function nuke(id) {
   });
 
   const options = {
-    hostname: 'backboard.railway.com',
+    hostname: 'backboard.cloud_runtime.com',
     port: 443,
     path: '/graphql/v2',
     method: 'POST',

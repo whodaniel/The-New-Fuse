@@ -1,9 +1,14 @@
 import { EventEmitter } from 'node:events';
+import fs from 'node:fs';
+import * as path from 'node:path';
+import { loadAutoPromptSequences } from '../config/auto-prompt-loader';
 import { defaultLexicon } from '../config/default-lexicon';
 import { defaultRules } from '../config/default-rules';
 import { env } from '../config/env';
 import { AgentRouter } from '../services/agent-router';
 import { AudioGateway } from '../services/audio-gateway';
+import { AutoPromptOrchestrator } from '../services/auto-prompt-orchestrator';
+import { ContextCardLogger } from '../services/context-card-logger';
 import { EchoSuppression } from '../services/echo-suppression';
 import { Enricher } from '../services/enricher';
 import { GroupingFilter } from '../services/grouping-filter';
@@ -11,13 +16,23 @@ import { KwsEngine } from '../services/kws-engine';
 import { MiniOmniClient } from '../services/llm-backends/mini-omni-client';
 import { OpenaiCompatClient, ILlmClient } from '../services/llm-backends/openai-compat-client';
 import { LlmBatcher } from '../services/llm-batcher';
+import { normalizeClaudeHookTrigger } from '../services/claude-hook-normalizer';
 import { profileService } from '../services/profile/service';
 import { ProfileUpdate } from '../services/profile/schema';
 import { RuleEngine } from '../services/rule-engine';
 import { VadGate } from '../services/vad-gate';
-import { ContextPackage, HitEvent, LlmBatchResult, RuleFireEvent, TriggerRule } from '../types/events';
+import {
+ AutoPromptRun,
+ AutomationTriggerEvent,
+ ContextLogCard,
+ ContextPackage,
+ HitEvent,
+ LlmBatchResult,
+ RuleFireEvent,
+ SelfAssessmentResult,
+ VisualObjectDetection,
+} from '../types/events';
 import { loadRulesFromDirectory } from '../config/rule-parser';
-import * as path from 'node:path';
 
 const pushBounded = <T>(list: T[], item: T, maxItems: number): void => {
   list.push(item);
@@ -25,6 +40,14 @@ const pushBounded = <T>(list: T[], item: T, maxItems: number): void => {
     list.shift();
   }
 };
+
+export interface ClaudeHookIngestResult {
+  accepted: boolean;
+  hookEventName?: string;
+  reason?: string;
+  trigger?: AutomationTriggerEvent;
+  runs: AutoPromptRun[];
+}
 
 export class AudioTriggerRuntime extends EventEmitter {
   private readonly gateway = new AudioGateway();
@@ -38,6 +61,7 @@ export class AudioTriggerRuntime extends EventEmitter {
   private readonly openaiCompatClient: OpenaiCompatClient;
   private readonly llmBatcher: LlmBatcher;
   private readonly agentRouter = new AgentRouter();
+  private readonly autoPromptOrchestrator: AutoPromptOrchestrator | null;
   readonly echoSuppression = new EchoSuppression();
   private currentUtterance: string = '';
 
@@ -45,6 +69,10 @@ export class AudioTriggerRuntime extends EventEmitter {
   private readonly recentRuleFires: RuleFireEvent[] = [];
   private readonly recentPackages: ContextPackage[] = [];
   private readonly recentLlmResults: LlmBatchResult[] = [];
+  private readonly recentAutoPromptRuns: AutoPromptRun[] = [];
+  private readonly recentAssessments: SelfAssessmentResult[] = [];
+  private readonly recentContextCards: ContextLogCard[] = [];
+  private readonly recentClaudeHookTriggers: AutomationTriggerEvent[] = [];
   private processedFrames = 0;
   private processedHits = 0;
   private running = false;
@@ -70,7 +98,35 @@ export class AudioTriggerRuntime extends EventEmitter {
       env.batcher.flushIntervalMs,
       env.batcher.maxItems
     );
-    
+
+    if (env.automation.enabled) {
+      const sequences = loadAutoPromptSequences(env.automation.sequencesFile);
+      const contextCardLogger = new ContextCardLogger(env.automation.contextCardDir);
+      this.autoPromptOrchestrator = new AutoPromptOrchestrator({
+        sequences,
+        profileService,
+        contextCardLogger,
+        dispatchPrompt: (agentId, prompt) => this.agentRouter.dispatchAutomatedPrompt(agentId, prompt),
+      });
+
+      this.autoPromptOrchestrator.on('auto_prompt_run', (run: AutoPromptRun) => {
+        pushBounded(this.recentAutoPromptRuns, run, env.runtime.maxRecentAutoPromptRuns);
+        this.emit('auto_prompt_run', run);
+      });
+
+      this.autoPromptOrchestrator.on('self_assessment', (assessment: SelfAssessmentResult) => {
+        pushBounded(this.recentAssessments, assessment, env.runtime.maxRecentAssessments);
+        this.emit('self_assessment', assessment);
+      });
+
+      this.autoPromptOrchestrator.on('context_card', (card: ContextLogCard) => {
+        pushBounded(this.recentContextCards, card, env.runtime.maxRecentContextCards);
+        this.emit('context_card', card);
+      });
+    } else {
+      this.autoPromptOrchestrator = null;
+    }
+
     // Event handlers
     this.gateway.on('frame', (frame) => {
       this.processedFrames += 1;
@@ -86,11 +142,25 @@ export class AudioTriggerRuntime extends EventEmitter {
       this.hitStore.set(hit.eventId, hit);
       this.groupingFilter.push(hit);
       this.agentRouter.processHit(hit, this.currentUtterance, hit.streamId);
+      if (this.autoPromptOrchestrator) {
+        void this.autoPromptOrchestrator
+          .handleKeywordHit(hit, this.currentUtterance)
+          .catch((error) =>
+            console.error('[AudioTriggerRuntime] Failed to process keyword auto-prompt trigger:', error)
+          );
+      }
     });
     this.groupingFilter.on('grouped_hit', (hit: HitEvent) => this.ruleEngine.push(hit));
     this.ruleEngine.on('rule_fired', async (ruleFire: RuleFireEvent) => {
       pushBounded(this.recentRuleFires, ruleFire, env.runtime.maxRecentRuleFires);
       this.emit('rule_fired', ruleFire);
+      if (this.autoPromptOrchestrator) {
+        try {
+          await this.autoPromptOrchestrator.handleRuleFire(ruleFire, this.currentUtterance);
+        } catch (error) {
+          console.error('[AudioTriggerRuntime] Failed to process rule auto-prompt trigger:', error);
+        }
+      }
       const pkg = await this.enricher.buildContextPackage(ruleFire);
       pushBounded(this.recentPackages, pkg, env.runtime.maxRecentPackages);
       this.llmBatcher.enqueue(pkg);
@@ -100,18 +170,36 @@ export class AudioTriggerRuntime extends EventEmitter {
     });
     this.llmBatcher.setResultHandler((result) => {
       pushBounded(this.recentLlmResults, result, env.runtime.maxRecentLlmResults);
+      this.emit('llm_result', result);
     });
   }
 
   private async loadAdditionalRules(): Promise<void> {
     try {
-      const rulesPath = path.join(__dirname, '..', 'configs', 'rules');
+      const rulesPath = this.resolveRuntimePath('configs', 'rules');
       const additionalRules = await loadRulesFromDirectory(rulesPath);
       console.log(`[AudioTriggerRuntime] Loaded ${additionalRules.length} additional rules from ${rulesPath}`);
       this.ruleEngine.addRules(additionalRules);
     } catch (error) {
       console.error('[AudioTriggerRuntime] Failed to load additional rules:', error);
     }
+  }
+
+  private resolveRuntimePath(...segments: string[]): string {
+    const candidates = [
+      path.resolve(process.cwd(), 'apps', 'audio-trigger-kws-mvp', ...segments),
+      path.resolve(process.cwd(), ...segments),
+      path.resolve(__dirname, '..', '..', ...segments),
+      path.resolve(__dirname, '..', ...segments),
+    ];
+
+    for (const candidate of candidates) {
+      if (fs.existsSync(candidate)) {
+        return candidate;
+      }
+    }
+
+    return candidates[0];
   }
 
   start(): void {
@@ -136,6 +224,46 @@ export class AudioTriggerRuntime extends EventEmitter {
     this.gateway.ingestMockUtterance(streamId, utterance);
   }
 
+  async handleVisualObjects(streamId: string, objects: VisualObjectDetection[]): Promise<AutoPromptRun[]> {
+    if (!this.autoPromptOrchestrator) {
+      return [];
+    }
+    return this.autoPromptOrchestrator.handleVisualObjects(streamId, objects);
+  }
+
+  async processAutoPromptTrigger(trigger: AutomationTriggerEvent): Promise<AutoPromptRun[]> {
+    if (!this.autoPromptOrchestrator) {
+      return [];
+    }
+    return this.autoPromptOrchestrator.processTrigger(trigger);
+  }
+
+  async ingestClaudeHook(payload: Record<string, unknown>): Promise<ClaudeHookIngestResult> {
+    const hookEventName = typeof payload.hook_event_name === 'string' ? payload.hook_event_name : undefined;
+
+    if (!env.automation.claudeHooksEnabled) {
+      return { accepted: false, hookEventName, reason: 'claude_hooks_disabled', runs: [] };
+    }
+
+    if (!this.autoPromptOrchestrator) {
+      return { accepted: false, hookEventName, reason: 'automation_disabled', runs: [] };
+    }
+
+    const trigger = normalizeClaudeHookTrigger(payload, {
+      defaultStreamPrefix: env.automation.claudeHooksDefaultStreamPrefix,
+      defaultConfidence: env.automation.claudeHooksDefaultConfidence,
+    });
+    if (!trigger) {
+      return { accepted: false, hookEventName, reason: 'invalid_hook_payload', runs: [] };
+    }
+
+    pushBounded(this.recentClaudeHookTriggers, trigger, env.runtime.maxRecentAutoPromptRuns);
+    this.emit('claude_hook_trigger', trigger);
+
+    const runs = await this.autoPromptOrchestrator.processTrigger(trigger);
+    return { accepted: true, hookEventName: trigger.hookEventName, trigger, runs };
+  }
+
   async flush(): Promise<void> {
     await this.llmBatcher.flush();
   }
@@ -152,6 +280,10 @@ export class AudioTriggerRuntime extends EventEmitter {
       recentRuleFires: this.recentRuleFires.length,
       recentPackages: this.recentPackages.length,
       recentLlmResults: this.recentLlmResults.length,
+      recentAutoPromptRuns: this.recentAutoPromptRuns.length,
+      recentAssessments: this.recentAssessments.length,
+      recentContextCards: this.recentContextCards.length,
+      recentClaudeHookTriggers: this.recentClaudeHookTriggers.length,
       llmSuccessRate:
         this.recentLlmResults.length === 0
           ? 1
@@ -171,6 +303,22 @@ export class AudioTriggerRuntime extends EventEmitter {
 
   getRecentLlmResults(limit = 50): LlmBatchResult[] {
     return this.recentLlmResults.slice(-Math.max(1, Math.min(limit, 1000))).reverse();
+  }
+
+  getRecentAutoPromptRuns(limit = 50): AutoPromptRun[] {
+    return this.recentAutoPromptRuns.slice(-Math.max(1, Math.min(limit, 1000))).reverse();
+  }
+
+  getRecentAssessments(limit = 50): SelfAssessmentResult[] {
+    return this.recentAssessments.slice(-Math.max(1, Math.min(limit, 1000))).reverse();
+  }
+
+  getRecentContextCards(limit = 50): ContextLogCard[] {
+    return this.recentContextCards.slice(-Math.max(1, Math.min(limit, 1000))).reverse();
+  }
+
+  getRecentClaudeHookTriggers(limit = 50): AutomationTriggerEvent[] {
+    return this.recentClaudeHookTriggers.slice(-Math.max(1, Math.min(limit, 1000))).reverse();
   }
 
   getProfile(userId: string) {

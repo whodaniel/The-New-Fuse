@@ -106,7 +106,7 @@ async function main() {
 
   console.table(deployment);
   console.log(`Wrote deployment artifact: ${outPath}`);
-  console.log('\n--- 📋 COPY THESE FOR railway:arcade:chain:sync ---');
+  console.log('\n--- 📋 COPY THESE FOR cloud_runtime:arcade:chain:sync ---');
   console.log(`export VITE_CONTRACT_SIDEPOT_MANAGER="${deployment.sidepotManager}"`);
   console.log(`export VITE_CONTRACT_PRIZE_HOOK_ROUTER="${deployment.hookRouter}"`);
   console.log(`export ARCADE_SIDEPOT_MANAGER_ADDRESS="${deployment.sidepotManager}"`);

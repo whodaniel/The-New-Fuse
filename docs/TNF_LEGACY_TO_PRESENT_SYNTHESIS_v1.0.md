@@ -53,7 +53,7 @@
 |---|---|---|
 | Phase 3: MCP Enhancement | 0% complete (resources/list, resources/read handlers needed) | `the-new-fuse-docs-private/.agent/IMPLEMENTATION_STATUS.md` |
 | Phase 4: Cron Jobs deployment | 80% (code ready, not deployed) | `the-new-fuse-docs-private/.agent/IMPLEMENTATION_STATUS.md` |
-| Phase 5: Activation (Railway deploy) | 0% complete | `the-new-fuse-docs-private/.agent/IMPLEMENTATION_STATUS.md` |
+| Phase 5: Activation (CloudRuntime deploy) | 0% complete | `the-new-fuse-docs-private/.agent/IMPLEMENTATION_STATUS.md` |
 | Orchestrator Integration | Needs final integration | `the-new-fuse-docs-private/.agent/IMPLEMENTATION_STATUS.md` |
 | 31 open issues | Unresolved | `the-new-fuse-docs-private` GitHub |
 | Phase 2-6 of SGP reference implementation | Not started | `docs/protocols/draft-sgp-0001.md` |
@@ -201,7 +201,7 @@ E2E Tests (timeline.personal.spec.ts)
 |---|---|---|
 | Phase 3: MCP Enhancement | Not started | Resources/prompts handlers still needed |
 | Phase 4: Cron Jobs deployment | Code ready | Deployment pending |
-| Phase 5: Railway activation | 0% | Full system not live |
+| Phase 5: CloudRuntime activation | 0% | Full system not live |
 | SGP Phase 1-6 | Phase 0 (schemas) done | Implement connectors, query service, change stream |
 | TWIP Phase 1-4 | Phase 0 (schemas) done | Wire read-only MCP resources, signed publish flow |
 | Agent self-registration | Plan documented | Integration with existing auth system |

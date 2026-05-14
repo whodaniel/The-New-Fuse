@@ -1,6 +1,6 @@
 # @the-new-fuse/backend
 
-Basic HTTP server for The New Fuse backend infrastructure. Provides a simple health check endpoint for deployment platforms like Railway.
+Basic HTTP server for The New Fuse backend infrastructure. Provides a simple health check endpoint for deployment platforms like CloudRuntime.
 
 ## Overview
 
@@ -10,7 +10,7 @@ The backend package is a lightweight HTTP server that serves as the foundation f
 
 - **Simple HTTP Server**: Minimal Node.js HTTP server without external framework dependencies
 - **Health Check Endpoint**: Returns operational status and timestamp
-- **Railway Compatible**: Designed for deployment on Railway and similar platforms
+- **CloudRuntime Compatible**: Designed for deployment on CloudRuntime and similar platforms
 - **Docker Support**: Includes Dockerfile for containerized deployments
 - **Port Configuration**: Configurable via environment variables
 - **Error Handling**: Basic error handling and logging
@@ -129,11 +129,11 @@ services:
     restart: unless-stopped
 ```
 
-## Railway Deployment
+## CloudRuntime Deployment
 
-The package includes `railway.toml` configuration for seamless Railway deployment.
+The package includes `cloud_runtime.toml` configuration for seamless CloudRuntime deployment.
 
-### Railway Configuration
+### CloudRuntime Configuration
 
 ```toml
 [build]
@@ -146,20 +146,20 @@ restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
 ```
 
-### Deploy to Railway
+### Deploy to CloudRuntime
 
 ```bash
-# Install Railway CLI
-npm i -g @railway/cli
+# Install CloudRuntime CLI
+npm i -g @cloud_runtime/cli
 
-# Login to Railway
-railway login
+# Login to CloudRuntime
+cloud_runtime login
 
 # Initialize project
-railway init
+cloud_runtime init
 
 # Deploy
-railway up
+cloud_runtime up
 ```
 
 ## Architecture
@@ -171,7 +171,7 @@ packages/backend/
 │   └── __tests__/         # Test files
 ├── dist/                  # Compiled JavaScript
 ├── Dockerfile             # Docker configuration
-├── railway.toml           # Railway deployment config
+├── cloud_runtime.toml           # CloudRuntime deployment config
 ├── package.json
 └── tsconfig.json
 ```
@@ -245,7 +245,7 @@ import { server } from '@the-new-fuse/backend';
 The backend package serves as:
 
 - **Health Check Endpoint**: For monitoring and orchestration systems
-- **Deployment Target**: Base service for Railway and cloud platforms
+- **Deployment Target**: Base service for CloudRuntime and cloud platforms
 - **Foundation Service**: Starting point for backend infrastructure
 - **Status Monitoring**: Provides operational status for The New Fuse platform
 
@@ -334,7 +334,7 @@ Integrate with monitoring services:
 - Pingdom
 - DataDog
 - New Relic
-- Railway built-in monitoring
+- CloudRuntime built-in monitoring
 
 ## Performance
 

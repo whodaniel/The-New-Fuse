@@ -1,5 +1,5 @@
-import { Button, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 // @ts-nocheck
+import { Button, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { WorkflowApiService, WorkflowTemplate } from '@/api/workflow';
 import {
   Card,

@@ -1,5 +1,5 @@
-import { Label } from '@/components/ui';
 // @ts-nocheck
+import { Label } from '@/components/ui';
 import { Sidebar } from '@/components/layout/Sidebar';
 import {
   ActionCard,

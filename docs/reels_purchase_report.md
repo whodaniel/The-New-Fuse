@@ -40,4 +40,4 @@ As part of this session, we have scaffolded a dedicated application to automate 
 
 ## Next Steps
 1.  Verify the above $85 subtotal against your manual notes.
-2.  Trigger the Gemini 3.1 Railway worker to scan the "Live Now" session for any additional purchases.
+2.  Trigger the Gemini 3.1 CloudRuntime worker to scan the "Live Now" session for any additional purchases.

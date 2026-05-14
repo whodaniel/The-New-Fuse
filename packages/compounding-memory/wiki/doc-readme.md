@@ -150,7 +150,7 @@ PicoClaw Fleet (Edge) <── Lightweight edge agents
 ### AI Infrastructure
 
 - **[apps/picoclaw-overseer/](apps/picoclaw-overseer/)** — Go-based
-  ultra-lightweight AI agent (<10MB RAM), three Railway instances
+  ultra-lightweight AI agent (<10MB RAM), three CloudRuntime instances
   (tester/subject/perplexity)
 - **[apps/mcp-servers/](apps/mcp-servers/)** — MCP tool servers: network
   management, DevOps bridge, Claude/Gemini integration
@@ -268,12 +268,12 @@ Federated gateway network using the `openclaw` npm package with Claude Pro
 OAuth:
 
 - **Local**: `ws://127.0.0.1:18789`
-- **Cloud Primary**: `openclaw-cloud-production-934c.up.railway.app` ⚠️
-  **DEPRECATED — Railway is no longer used. Migrated to GCP (Cloud Run) +
+- **Cloud Primary**: `openclaw-cloud-production-934c.thenewfuse.com` ⚠️
+  **DEPRECATED — CloudRuntime is no longer used. Migrated to GCP (Cloud Run) +
   Cloudflare + Supabase + Upstash. See `CLOUD_MIGRATION_BLUEPRINT.md`.**
-- **Cloud Secondary**: `openclaw-primary-production.up.railway.app` ⚠️
+- **Cloud Secondary**: `openclaw-primary-production.thenewfuse.com` ⚠️
   **DEPRECATED**
-- **Cloud Sandbox**: `openclaw-sandbox-cloud-production.up.railway.app` ⚠️
+- **Cloud Sandbox**: `openclaw-sandbox-cloud-production.thenewfuse.com` ⚠️
   **DEPRECATED**
 - **Model**: `anthropic/claude-opus-4-6`
 
@@ -374,8 +374,8 @@ The-New-Fuse/
 ├── turbo.json                  # Turbo pipeline config
 ├── pnpm-workspace.yaml         # Workspace definition
 ├── docker-compose.dev-simple.yml  # Dev infrastructure (PG + Redis)
-├── railway.toml # ⚠️ DEPRECATED — Railway deployment (15+ services). TNF migrated to GCP Cloud Run + Cloudflare. See CLOUD_MIGRATION_BLUEPRINT.md.
-└── Dockerfile.railway # ⚠️ DEPRECATED — Multi-stage Railway build. No longer used for production.
+├── cloud_runtime.toml # ⚠️ DEPRECATED — CloudRuntime deployment (15+ services). TNF migrated to GCP Cloud Run + Cloudflare. See CLOUD_MIGRATION_BLUEPRINT.md.
+└── Dockerfile.cloud_runtime # ⚠️ DEPRECATED — Multi-stage CloudRuntime build. No longer used for production.
 ```
 
 ## Development Commands
@@ -427,7 +427,7 @@ pnpm run clean:full         # Full clean + remove node_modules
 
 ## Deployment
 
-The project has migrated from Railway to a modern, edge-ready stack:
+The project has migrated from CloudRuntime to a modern, edge-ready stack:
 
 - **Cloudflare Workers**: Edge substrate for relay, shared state, and frontend.
 - **Google Cloud Platform (GCP)**: Scalable backend hosting via Cloud Run.
@@ -475,7 +475,7 @@ pnpm run deploy:gcp
 | GraphQL             | [apps/api/src/graphql/README.md](./apps/api/src/graphql/README.md)                           |
 | MCP Integration     | [apps/backend/src/modules/mcp/README.md](./apps/backend/src/modules/mcp/README.md)           |
 | Deployment          | [docs/guides/deployment-guide.md](./docs/guides/deployment-guide.md)                         |
-| Railway             | [docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md) |
+| CloudRuntime             | [docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md](./docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md) |
 | Security            | [docs/security/SECURITY_BEST_PRACTICES.md](./docs/security/SECURITY_BEST_PRACTICES.md)       |
 | Testing             | [docs/testing/TESTING_SETUP_COMPLETE.md](./docs/testing/TESTING_SETUP_COMPLETE.md)           |
 | Design System       | [docs/PREMIUM_THEME_MANIFEST.md](./docs/PREMIUM_THEME_MANIFEST.md)                           |

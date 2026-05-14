@@ -1,7 +1,7 @@
 # TNF Swarm Audit - 2026-03-27
 
-> **⚠️ Railway worker references below are DEPRECATED.** TNF migrated from
-> Railway to GCP (Cloud Run) + Cloudflare + Supabase + Upstash. See
+> **⚠️ CloudRuntime worker references below are DEPRECATED.** TNF migrated from
+> CloudRuntime to GCP (Cloud Run) + Cloudflare + Supabase + Upstash. See
 > `CLOUD_MIGRATION_BLUEPRINT.md`.
 
 ## Scope
@@ -10,9 +10,9 @@
   - `cloudflare-sharedstate`
   - `cloudflare-zeroclaw-relay`
   - `cloudflare-openclaw-runtime`
-- Railway worker wrappers:
-  - `railway-openclaw-gateway`
-  - `railway-openclaw-sandbox`
+- CloudRuntime worker wrappers:
+  - `cloud_runtime-openclaw-gateway`
+  - `cloud_runtime-openclaw-sandbox`
 - Frontend route crawl/audit tooling:
   - `apps/frontend/scripts/audit-all-routes-semantic.mjs`
   - `apps/frontend/scripts/audit-live-links.mjs`
@@ -38,13 +38,13 @@
   - `cloudflare-openclaw-runtime/src/index.ts`: required-config hard gate and
     `/health` 503 on misconfiguration.
 
-2. Railway gateway wrappers allowed insecure bootstrap
+2. CloudRuntime gateway wrappers allowed insecure bootstrap
 
 - Status: **fixed** in this pass.
 - Evidence:
   - Removed `--allow-unconfigured` from:
-    - `railway-openclaw-gateway/proxy.js`
-    - `railway-openclaw-sandbox/proxy.js`
+    - `cloud_runtime-openclaw-gateway/proxy.js`
+    - `cloud_runtime-openclaw-sandbox/proxy.js`
   - Non-local `OPENCLAW_GATEWAY_TOKEN` required (hard fail).
   - Token logging changed to local-only ephemeral generation without secret
     value exposure.
@@ -57,8 +57,8 @@
 - Evidence:
   - Removed `cat "${AUTH_PROFILES_PATH}"` behavior and replaced with redacted
     readability check:
-    - `railway-openclaw-gateway/entrypoint.sh`
-    - `railway-openclaw-sandbox/entrypoint.sh`
+    - `cloud_runtime-openclaw-gateway/entrypoint.sh`
+    - `cloud_runtime-openclaw-sandbox/entrypoint.sh`
 
 4. Entry-point non-local secret requirement absent
 
@@ -66,8 +66,8 @@
 - Evidence:
   - Added non-local env detection and hard exit if `OPENCLAW_GATEWAY_TOKEN`
     missing in:
-    - `railway-openclaw-gateway/entrypoint.sh`
-    - `railway-openclaw-sandbox/entrypoint.sh`
+    - `cloud_runtime-openclaw-gateway/entrypoint.sh`
+    - `cloud_runtime-openclaw-sandbox/entrypoint.sh`
 
 ### Medium
 

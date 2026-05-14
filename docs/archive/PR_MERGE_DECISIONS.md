@@ -28,19 +28,19 @@ gemini-mcp-server.js:
 ```
 
 **Justification:**
-- ✅ Critical for Railway deployment monitoring
+- ✅ Critical for CloudRuntime deployment monitoring
 - ✅ Correct architecture: separates WebSocket from HTTP health check
 - ✅ Clean, minimal change (17 lines)
 - ✅ No conflicts
 - ✅ Low risk
 
-**Result:** Successfully merged. Railway can now health check via HTTP on PORT while WebSocket operates independently.
+**Result:** Successfully merged. CloudRuntime can now health check via HTTP on PORT while WebSocket operates independently.
 
 ---
 
 ## Rejected PRs
 
-### ❌ fix-railway-port-config (PR #2)
+### ❌ fix-cloud_runtime-port-config (PR #2)
 
 **Status:** ❌ **REJECTED - DO NOT MERGE**
 **Reason:** Conflicts with merged health check PR
@@ -61,7 +61,7 @@ const healthServer = http.createServer(...);                // Health Check
 healthServer.listen(process.env.PORT || 3004);             // Uses PORT
 ```
 
-**If Railway-Port-Config Were Merged:**
+**If CloudRuntime-Port-Config Were Merged:**
 ```javascript
 const wss = new WebSocket.Server({ port: process.env.PORT || 3004 }); // WebSocket
 const healthServer = http.createServer(...);                            // Health Check
@@ -73,9 +73,9 @@ healthServer.listen(process.env.PORT || 3004);                         // Uses P
 **Why This is Wrong:**
 
 1. **WebSocket and HTTP can't share the same port** (in this implementation)
-2. **Railway provides PORT for HTTP health checks**, not WebSocket
+2. **CloudRuntime provides PORT for HTTP health checks**, not WebSocket
 3. **WebSocket should stay on dedicated port** for client connections
-4. **Health check should use PORT** for Railway monitoring
+4. **Health check should use PORT** for CloudRuntime monitoring
 
 **Correct Architecture:**
 ```
@@ -83,7 +83,7 @@ Service Architecture:
 ├── WebSocket Server: Fixed port (3712/3713)
 │   └── For MCP client connections
 └── HTTP Health Check: PORT environment variable
-    └── For Railway monitoring (/health endpoint)
+    └── For CloudRuntime monitoring (/health endpoint)
 ```
 
 **Decision:** ❌ **DO NOT MERGE**
@@ -111,7 +111,7 @@ Service Architecture:
 **Action Needed:**
 - Compare with recent file structure consolidation
 - Review monitoring infrastructure additions
-- Test Railway deployment compatibility
+- Test CloudRuntime deployment compatibility
 
 ---
 
@@ -174,7 +174,7 @@ Found: `3bdd326b Merge pull request #14 from whodaniel/claude/ide-workspace-merg
 | PR | Action | Status |
 |---|--------|--------|
 | fix-mcp-core-health-check | ✅ Merged | Complete |
-| fix-railway-port-config | ❌ Reject | Conflicts with health check |
+| fix-cloud_runtime-port-config | ❌ Reject | Conflicts with health check |
 | feature/comprehensive-reorganization | ⏳ Review | Pending |
 | feature/agent-system-integration | ⏳ Test | Pending |
 | feature/infrastructure-hardening | ⏳ Compare | Pending |
@@ -182,19 +182,19 @@ Found: `3bdd326b Merge pull request #14 from whodaniel/claude/ide-workspace-merg
 | claude/ide-workspace-merge | ❌ Close | Already merged |
 
 **Key Decision:**
-The health check PR was the correct solution. The port config PR would have broken the architecture by causing port conflicts. Railway needs HTTP health checks on PORT, while WebSocket servers should stay on their dedicated ports.
+The health check PR was the correct solution. The port config PR would have broken the architecture by causing port conflicts. CloudRuntime needs HTTP health checks on PORT, while WebSocket servers should stay on their dedicated ports.
 
 ---
 
 ## Technical Notes
 
-### Railway Deployment Architecture
+### CloudRuntime Deployment Architecture
 
 **Correct:**
 ```
 Service: gemini-mcp-server
 ├── WebSocket: :3713 (internal clients)
-└── Health HTTP: :PORT (Railway monitoring)
+└── Health HTTP: :PORT (CloudRuntime monitoring)
 ```
 
 **Incorrect (what port-config PR would do):**
@@ -206,7 +206,7 @@ Service: gemini-mcp-server
 
 ### Health Check Implementation
 
-Railway requires:
+CloudRuntime requires:
 1. HTTP endpoint (not WebSocket)
 2. Responds on PORT environment variable
 3. Returns 200 OK status
@@ -227,7 +227,7 @@ const healthServer = http.createServer((req, res) => {
 healthServer.listen(healthPort);
 ```
 
-This is **correct** and follows Railway best practices. ✅
+This is **correct** and follows CloudRuntime best practices. ✅
 
 ---
 

@@ -1,7 +1,7 @@
 /**
  * DevTools Bridge Service
  *
- * Exposes Railway-hosted browsers to Chrome DevTools Protocol (CDP)
+ * Exposes CloudRuntime-hosted browsers to Chrome DevTools Protocol (CDP)
  * for real-time monitoring via Antigravity
  */
 

@@ -77,7 +77,7 @@ build_frontend() {
 
     docker build \
         $NO_CACHE \
-        -f apps/frontend/Dockerfile.railway \
+        -f apps/frontend/Dockerfile.cloud_runtime \
         -t ${REGISTRY}/frontend:${TAG} \
         .
 
@@ -93,7 +93,7 @@ build_api_gateway() {
 
     docker build \
         $NO_CACHE \
-        -f apps/api-gateway/Dockerfile.railway \
+        -f apps/api-gateway/Dockerfile.cloud_runtime \
         -t ${REGISTRY}/api-gateway:${TAG} \
         .
 
@@ -109,7 +109,7 @@ build_api() {
 
     docker build \
         $NO_CACHE \
-        -f apps/api/Dockerfile.railway \
+        -f apps/api/Dockerfile.cloud_runtime \
         -t ${REGISTRY}/api:${TAG} \
         .
 
@@ -125,7 +125,7 @@ build_backend() {
 
     docker build \
         $NO_CACHE \
-        -f apps/backend/Dockerfile.railway \
+        -f apps/backend/Dockerfile.cloud_runtime \
         -t ${REGISTRY}/backend:${TAG} \
         .
 

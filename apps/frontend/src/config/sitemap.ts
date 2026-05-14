@@ -367,9 +367,24 @@ export const sitemap: SiteMapNode[] = [
     children: [
       { path: '/workflows/builder', title: 'Builder', description: 'Visual Workflow Builder' },
       {
+        path: '/workflows/nexus',
+        title: 'Workflow Nexus',
+        description: 'Unified workflow + semantic/forge/memory layers',
+      },
+      {
         path: '/workflows/advanced-builder',
         title: 'Advanced Builder',
         description: 'n8n-Compatible Workflow Editor',
+      },
+      {
+        path: '/workflows/builder-enhanced',
+        title: 'Enhanced Builder',
+        description: 'Agent-first workflow canvas with templates and logs',
+      },
+      {
+        path: '/workflows/builder-n8n',
+        title: 'N8N Builder',
+        description: 'N8N import/export workflow builder',
       },
       {
         path: '/workflows/templates',
@@ -654,7 +669,7 @@ export const sitemap: SiteMapNode[] = [
   {
     path: '/observatory',
     title: 'Observatory',
-    description: 'System observatory, 3D network visualizer',
+    description: 'Legacy alias that redirects to Synaptic Nexus topology layer',
     requiresAuth: true,
   },
   { path: '/nexus', title: 'Nexus 3D', description: '3D system visualizer', requiresAuth: true },

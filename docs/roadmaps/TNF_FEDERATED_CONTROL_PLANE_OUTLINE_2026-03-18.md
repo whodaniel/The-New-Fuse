@@ -11,7 +11,7 @@ Provide one trackable implementation outline to make TNF fully federated across:
 1. local terminal awareness (`tnf-agent`, `tnf-cli-agent`, TWIP macro board),
 2. federation channels (Chrome extension + relay),
 3. network-wide orchestration gates (broker + policy API),
-4. cloud runtime planes (Cloudflare, Railway, Supabase),
+4. cloud runtime planes (Cloudflare, CloudRuntime, Supabase),
 5. master cumulative ID lineage (MCID) across handoff, scheduling, and logs.
 
 ## 2. Fresh Context Snapshot
@@ -68,7 +68,7 @@ Web visualizer smoke check:
    - gate evaluation APIs (`/gates/federation/evaluate`, `/gates/cron/evaluate`,
      `/gates/self-edit/evaluate`)
    - policy evaluation at low latency near ingress points
-2. Railway (stateful runtime plane):
+2. CloudRuntime (stateful runtime plane):
    - relay, broker, orchestrator, long-running agent services
    - MCP-heavy and continuous execution workloads
 3. Supabase (tenant data and governance plane):
@@ -143,7 +143,7 @@ Web visualizer smoke check:
 3. Add deployment checklist for the visualizer route
    (`/visualizations/terminals`) with post-deploy smoke test.
 4. Start template bootstrap contract for managed tenant clones (Cloudflare
-   ingress + Railway runtime + Supabase tenant seed).
+   ingress + CloudRuntime runtime + Supabase tenant seed).
 
 ## 9. Done Definition
 

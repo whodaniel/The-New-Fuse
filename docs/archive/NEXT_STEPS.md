@@ -2,7 +2,7 @@
 
 ## ✅ Deployment Initiated Successfully!
 
-Your application is currently building in Railway's cloud. Here's exactly what to do next:
+Your application is currently building in CloudRuntime's cloud. Here's exactly what to do next:
 
 ---
 
@@ -10,8 +10,8 @@ Your application is currently building in Railway's cloud. Here's exactly what t
 
 Click these links to watch your services build in real-time:
 
-1. **API Service Build**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba
-2. **Frontend Build**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1
+1. **API Service Build**: https://thenewfuse.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba
+2. **Frontend Build**: https://thenewfuse.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1
 
 **Estimated build time**: 10-15 minutes
 
@@ -33,24 +33,24 @@ You can:
 
 In your terminal, run:
 ```bash
-railway open --service api
+cloud_runtime open --service api
 ```
 
-This will open your API in the browser. Copy the URL (it will look like: `https://api-production-xxxx.up.railway.app`)
+This will open your API in the browser. Copy the URL (it will look like: `https://api-production-xxxx.thenewfuse.com`)
 
 ### Step 2: Configure Frontend with API URL
 
 Run this command with your API URL:
 ```bash
 cd .
-./configure-env-vars.sh https://your-api-url.railway.app
+./configure-env-vars.sh https://your-api-url.thenewfuse.com
 ```
 
 ### Step 3: Open Your Frontend
 
 Wait 2-3 minutes for frontend to redeploy, then:
 ```bash
-railway open --service frontend
+cloud_runtime open --service frontend
 ```
 
 **🎉 Your app will be live!**
@@ -61,13 +61,13 @@ railway open --service frontend
 
 ```bash
 # Quick status check
-railway status
+cloud_runtime status
 
 # View API logs
-railway logs --service api
+cloud_runtime logs --service api
 
 # View Frontend logs
-railway logs --service frontend
+cloud_runtime logs --service frontend
 ```
 
 ---
@@ -101,20 +101,20 @@ railway logs --service frontend
 
 ```bash
 # Check if builds are done
-railway status
+cloud_runtime status
 
 # Get API URL (after build completes)
-railway open --service api
+cloud_runtime open --service api
 
 # Configure frontend
 ./configure-env-vars.sh <api-url>
 
 # Get frontend URL (after redeploy)
-railway open --service frontend
+cloud_runtime open --service frontend
 
 # View all variables
-railway variables --service api --kv
-railway variables --service frontend --kv
+cloud_runtime variables --service api --kv
+cloud_runtime variables --service frontend --kv
 ```
 
 ---
@@ -122,11 +122,11 @@ railway variables --service frontend --kv
 ## 🆘 If Something Goes Wrong
 
 1. **Build fails**: Check build logs in the links above
-2. **Service won't start**: Run `railway logs --service api` to see errors
+2. **Service won't start**: Run `cloud_runtime logs --service api` to see errors
 3. **Can't connect to database**: Verify `DATABASE_URL` is set correctly
 4. **Frontend can't reach API**: Ensure CORS is configured in API
 
-Most issues are visible in the logs. Railway's build system is very reliable!
+Most issues are visible in the logs. CloudRuntime's build system is very reliable!
 
 ---
 
@@ -134,14 +134,14 @@ Most issues are visible in the logs. Railway's build system is very reliable!
 
 - [DEPLOYMENT_COMPLETE.md](./DEPLOYMENT_COMPLETE.md) - Complete deployment summary
 - [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) - Status and build links
-- [DEPLOYMENT_GUIDE_RAILWAY.md](./DEPLOYMENT_GUIDE_RAILWAY.md) - Comprehensive guide
+- [DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md](./DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md) - Comprehensive guide
 - [configure-env-vars.sh](./configure-env-vars.sh) - Env var configuration script
 
 ---
 
 ## ✨ What Happens Next
 
-1. **Now → +15 min**: Railway builds your Docker images
+1. **Now → +15 min**: CloudRuntime builds your Docker images
 2. **+15 min**: API and Frontend services go live
 3. **+16 min**: You configure frontend with API URL
 4. **+18 min**: Frontend redeploys with API connection
@@ -153,16 +153,16 @@ Most issues are visible in the logs. Railway's build system is very reliable!
 
 You'll know everything worked when:
 
-1. ✅ `railway status` shows services as "Active"
+1. ✅ `cloud_runtime status` shows services as "Active"
 2. ✅ API URL loads and shows a response
 3. ✅ Frontend loads in browser
-4. ✅ No errors in `railway logs`
+4. ✅ No errors in `cloud_runtime logs`
 
 ---
 
 ## 🌟 You're Almost There!
 
-Everything is configured perfectly. The builds are running in Railway's cloud infrastructure, which is much more reliable than local Docker builds.
+Everything is configured perfectly. The builds are running in CloudRuntime's cloud infrastructure, which is much more reliable than local Docker builds.
 
 **Current Progress**:
 - ✅ Project created
@@ -178,7 +178,7 @@ Everything is configured perfectly. The builds are running in Railway's cloud in
 
 Watch your builds using the links at the top of this document, then come back in 15 minutes and follow Steps 1-3 above!
 
-**Railway Dashboard**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+**CloudRuntime Dashboard**: https://thenewfuse.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 
 ---
 

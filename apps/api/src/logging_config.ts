@@ -2,7 +2,7 @@ import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
 export function setupLogging(): any {
-  const isProduction = process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT;
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.CLOUD_RUNTIME_ENVIRONMENT;
 
   const loggerTransports: any[] = [
     new transports.Console({
@@ -11,7 +11,7 @@ export function setupLogging(): any {
   ];
 
   // Only use file logging in non-production environments
-  // In production (Railway, etc.), logs should go to stdout for platform log aggregation
+  // In production (CloudRuntime, etc.), logs should go to stdout for platform log aggregation
   if (!isProduction) {
     loggerTransports.push(
       new (transports as any).DailyRotateFile({

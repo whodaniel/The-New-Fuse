@@ -93,17 +93,17 @@ gh workflow run deploy.yml -f environment=staging -f services=frontend
 gh run rerun <run-id> --failed
 ```
 
-### Railway CLI (Direct Ops)
+### CloudRuntime CLI (Direct Ops)
 
 ```bash
 # Deploy or rollback a specific service
-railway up --service=api-gateway
-railway rollback --service=api-gateway
+cloud_runtime up --service=api-gateway
+cloud_runtime rollback --service=api-gateway
 
 # Runtime checks
-railway status --service=api-gateway
-railway metrics --service=api-gateway
-railway logs --service=api-gateway --tail 100 --follow
+cloud_runtime status --service=api-gateway
+cloud_runtime metrics --service=api-gateway
+cloud_runtime logs --service=api-gateway --tail 100 --follow
 ```
 
 ### Local CI Sanity Commands
@@ -150,8 +150,8 @@ export DISCORD_WEBHOOK_URL="https://..."
 export EMAIL_API_URL="https://..."
 export EMAIL_TO="team@example.com"
 
-# Railway
-export RAILWAY_TOKEN="your-token"
+# CloudRuntime
+export CLOUD_RUNTIME_TOKEN="your-token"
 
 # Deployment Config
 export DEPLOYMENT_STRATEGY="blue-green"
@@ -251,14 +251,14 @@ scripts/deployment/       # All deployment scripts
 ### Check Service Status
 
 ```bash
-# Railway services
-railway status
+# CloudRuntime services
+cloud_runtime status
 
 # Service logs
-railway logs --service <service-name>
+cloud_runtime logs --service <service-name>
 
 # Health endpoint
-curl https://your-service.railway.app/health
+curl https://your-service.thenewfuse.com/health
 ```
 
 ### View Logs
@@ -328,7 +328,7 @@ ls -lh backups/database/
 ### Pre-Deploy
 
 - [ ] CI checks are green on target branch
-- [ ] Required Railway variables are present
+- [ ] Required CloudRuntime variables are present
 - [ ] Database migration plan is confirmed
 - [ ] Rollback command path is ready
 

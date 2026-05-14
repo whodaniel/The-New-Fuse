@@ -16,7 +16,7 @@
 
 - Repo root confirmed:
   `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`.
-- Production hosting is on Railway; Cloudflare is also available as an optional
+- Production hosting is on CloudRuntime; Cloudflare is also available as an optional
   platform.
 - Cloudflare capabilities relevant to workflow builder/execution improvements:
   - Workflows: managed, durable multi-step execution on Workers (orchestration,

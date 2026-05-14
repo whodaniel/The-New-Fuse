@@ -1,4 +1,4 @@
-> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated to GCP (Cloud Run) +
+> **⚠️ CLOUD_RUNTIME IS NO LONGER USED.** TNF has migrated to GCP (Cloud Run) +
 > Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash (Redis). See
 > `/CLOUD_MIGRATION_BLUEPRINT.md` for current infrastructure. This document is
 > preserved for historical reference only.
@@ -48,7 +48,7 @@ pnpm run swarm:supercycle:live
 ## Guided API Key Setup (Recommended)
 
 This opens Tavily + Exa key pages, prompts for keys, writes `.env.local`, and
-attempts to sync vars to Railway runner services.
+attempts to sync vars to CloudRuntime runner services.
 
 ```bash
 pnpm run swarm:keys:setup
@@ -99,7 +99,7 @@ export CRAWL4AI_MAX_CHARS=2000
 export CRAWL4AI_TIMEOUT_MS=25000
 ```
 
-3. For Railway setup propagation, export the same vars before:
+3. For CloudRuntime setup propagation, export the same vars before:
 
 ```bash
 pnpm run swarm:setup
@@ -111,29 +111,29 @@ Preflight provider test:
 pnpm run swarm:provider:test
 ```
 
-## Railway-Native Setup
+## CloudRuntime-Native Setup
 
-Use this to run everything online from Railway (recommended for Railway Redis).
+Use this to run everything online from CloudRuntime (recommended for CloudRuntime Redis).
 
 ```bash
-pnpm run swarm:setup:railway
-pnpm run swarm:supercycle:railway
+pnpm run swarm:setup:cloud_runtime
+pnpm run swarm:supercycle:cloud_runtime
 ```
 
-If Railway SSH is unavailable (sleeping/serverless), the runner automatically
+If CloudRuntime SSH is unavailable (sleeping/serverless), the runner automatically
 falls back to local execution using:
 
 - `Redis.REDIS_PUBLIC_URL`
-- `SEARXNG_BASE_URL` (or `RAILWAY_SERVICE_SEARXNG_URL`)
+- `SEARXNG_BASE_URL` (or `CLOUD_RUNTIME_SERVICE_SEARXNG_URL`)
 
 Optional overrides:
 
 ```bash
-export RAILWAY_ENVIRONMENT_NAME=production
-export RAILWAY_SEARXNG_SERVICE=searxng
-export RAILWAY_RUNNER_SERVICES=api3,api,backend
+export CLOUD_RUNTIME_ENVIRONMENT_NAME=production
+export CLOUD_RUNTIME_SEARXNG_SERVICE=searxng
+export CLOUD_RUNTIME_RUNNER_SERVICES=api3,api,backend
 # Optional hard pin:
-# export RAILWAY_RUNNER_SERVICE=api3
+# export CLOUD_RUNTIME_RUNNER_SERVICE=api3
 ```
 
 ## Useful Commands
@@ -154,11 +154,11 @@ redis-cli -p 6380 LRANGE tnf:master:logs 0 20
 ## Validation Snapshot (2026-02-22)
 
 - `pnpm run swarm:provider:test` passed with `effective_provider=exa`.
-- `pnpm run swarm:setup` completed and updated Railway runner service variables.
+- `pnpm run swarm:setup` completed and updated CloudRuntime runner service variables.
 - `pnpm run swarm:supercycle:live` completed successfully:
   - SSH to serverless runners was unavailable/sleeping, then automatic local
     fallback was used.
-  - Runtime used Railway public Redis endpoint and live SearXNG endpoint.
+  - Runtime used CloudRuntime public Redis endpoint and live SearXNG endpoint.
   - Full 3-phase flywheel completed with auctions emitted from Scout and LLM
     test phases.
 - Perplexity paid API usage is disabled in swarm provider routing;

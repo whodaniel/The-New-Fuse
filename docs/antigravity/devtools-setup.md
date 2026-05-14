@@ -6,8 +6,8 @@
 > - `ANTIGRAVITY_DEVTOOLS_SETUP.md`
 > - `SETUP_COMPLETE.md`
 >
-> **Infrastructure note**: The original deployment targeted Railway
-> (`*.up.railway.app`). TNF has since migrated to **GCP Cloud Run + Cloudflare +
+> **Infrastructure note**: The original deployment targeted CloudRuntime
+> (`*.thenewfuse.com`). TNF has since migrated to **GCP Cloud Run + Cloudflare +
 > Supabase + Upstash**. Replace all `https://<your-cloud-run-backend-url>`
 > placeholders with the current Cloud Run endpoint (see
 > `CLOUD_MIGRATION_BLUEPRINT.md`).
@@ -16,7 +16,7 @@
 
 ## Problem
 
-Socket.IO broadcasting showed one screenshot then froze — Railway's edge proxy
+Socket.IO broadcasting showed one screenshot then froze — CloudRuntime's edge proxy
 dropped WebSocket connections after the first message. No console access, no
 network visibility, no performance data.
 

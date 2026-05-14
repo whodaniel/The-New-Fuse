@@ -63,11 +63,19 @@ function detectOriginLabel(skillDir, repoRoot, home) {
   if (p.startsWith(`${hm}/.codex/`)) return { llm: 'codex', scope: 'global' };
   if (p.startsWith(`${hm}/.claude/`)) return { llm: 'claude', scope: 'global' };
   if (p.startsWith(`${hm}/.gemini/`)) return { llm: 'gemini', scope: 'global' };
+  if (p.startsWith(`${hm}/.opencode/`)) return { llm: 'opencode', scope: 'global' };
   if (p.startsWith(`${hm}/.kilo/`)) return { llm: 'kilo', scope: 'global' };
+  if (p.startsWith(`${hm}/.augment/`)) return { llm: 'augment', scope: 'global' };
+  if (p.startsWith(`${hm}/.tnf/`)) return { llm: 'tnf', scope: 'global' };
+  if (p.startsWith(`${hm}/.hermes/`)) return { llm: 'hermes', scope: 'global' };
   if (p.startsWith(`${rr}/.agent/`)) return { llm: 'project-agent', scope: 'project' };
   if (p.startsWith(`${rr}/.claude/`)) return { llm: 'claude', scope: 'project' };
   if (p.startsWith(`${rr}/.gemini/`)) return { llm: 'gemini', scope: 'project' };
+  if (p.startsWith(`${rr}/.opencode/`)) return { llm: 'opencode', scope: 'project' };
   if (p.startsWith(`${rr}/.kilo/`)) return { llm: 'kilo', scope: 'project' };
+  if (p.startsWith(`${rr}/.augment/`)) return { llm: 'augment', scope: 'project' };
+  if (p.startsWith(`${rr}/.tnf/`)) return { llm: 'tnf', scope: 'project' };
+  if (p.startsWith(`${rr}/.hermes/`)) return { llm: 'hermes', scope: 'project' };
   if (p.startsWith(`${rr}/apps/openclaw/skills/`)) return { llm: 'openclaw', scope: 'project' };
   if (p.startsWith(`${rr}/apps/picoclaw-overseer/`)) return { llm: 'picoclaw', scope: 'project' };
   return { llm: 'unknown', scope: 'other' };
@@ -102,7 +110,8 @@ function collectFlatSkillFiles(root, acc) {
   }
   for (const entry of entries) {
     if (!entry.isFile()) continue;
-    if (!entry.name.toLowerCase().endsWith('.md')) continue;
+    const lower = entry.name.toLowerCase();
+    if (!lower.endsWith('.md') && !lower.endsWith('.skill')) continue;
     acc.push({ file: path.join(root, entry.name), format: 'flat' });
   }
 }
@@ -139,6 +148,14 @@ function main() {
 
   const folderSkillRoots = [
     path.join(home, '.codex', 'skills'),
+    path.join(home, '.claude', 'skills'),
+    path.join(home, '.gemini', 'skills'),
+    path.join(home, '.opencode', 'skills'),
+    path.join(home, '.kilo', 'skills'),
+    path.join(home, '.augment', 'skills'),
+    path.join(home, '.tnf', 'skills'),
+    path.join(home, '.hermes', 'skills'),
+    path.join(home, '.hermes', 'hermes-agent', 'skills'),
     path.join(repoRoot, '.agent', 'skills'),
     path.join(repoRoot, 'apps', 'openclaw', 'skills'),
     path.join(repoRoot, 'apps', 'picoclaw-overseer', 'workspace', 'skills'),
@@ -146,10 +163,19 @@ function main() {
   const flatSkillRoots = [
     path.join(home, '.claude', 'skills'),
     path.join(home, '.gemini', 'skills'),
+    path.join(home, '.opencode', 'skills'),
     path.join(home, '.kilo', 'skills'),
+    path.join(home, '.augment', 'skills'),
+    path.join(home, '.tnf', 'skills'),
+    path.join(home, '.hermes', 'skills'),
+    path.join(home, '.hermes', 'hermes-agent', 'skills'),
     path.join(repoRoot, '.claude', 'skills'),
     path.join(repoRoot, '.gemini', 'skills'),
+    path.join(repoRoot, '.opencode', 'skills'),
     path.join(repoRoot, '.kilo', 'skills'),
+    path.join(repoRoot, '.augment', 'skills'),
+    path.join(repoRoot, '.tnf', 'skills'),
+    path.join(repoRoot, '.hermes', 'skills'),
   ];
 
   const skillFiles = [];

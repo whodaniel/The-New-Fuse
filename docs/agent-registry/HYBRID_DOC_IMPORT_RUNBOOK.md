@@ -32,7 +32,7 @@ pnpm agents:registry:refresh-hybrid
 Remote target example:
 
 ```bash
-AGENT_REGISTRY_API_BASE=https://api-production-48f1.up.railway.app \
+AGENT_REGISTRY_API_BASE=https://api-production-48f1.thenewfuse.com \
 AGENT_REGISTRY_IMPORT_TOKEN=your-token-if-required \
 pnpm agents:registry:refresh-hybrid
 ```
@@ -55,7 +55,7 @@ pnpm agents:registry:cron:install
 Recommended production install with explicit target + alerts:
 
 ```bash
-AGENT_REGISTRY_API_BASE=https://backend-production-5c20.up.railway.app \
+AGENT_REGISTRY_API_BASE=https://backend-production-5c20.thenewfuse.com \
 AGENT_REGISTRY_IMPORT_TOKEN=your-token-if-required \
 AGENT_REGISTRY_ALERT_WEBHOOK_URL=https://hooks.slack.com/services/... \
 AGENT_REGISTRY_HYBRID_CRON_SCHEDULE="17 */4 * * *" \

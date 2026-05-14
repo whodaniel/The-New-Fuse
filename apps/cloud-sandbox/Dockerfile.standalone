@@ -23,7 +23,7 @@ RUN npm run build
 # Setup for Run
 # Copy manual start script if needed, but we rely on server.ts logic
 # Ensure we have a non-root user setup if desired, but for now root is fine in this contained sandbox environment?
-# The original Dockerfile used root. The Railway one used app-user.
+# The original Dockerfile used root. The CloudRuntime one used app-user.
 # Let's use root to avoid permission issues for now, or stick to app-user if creating writable paths.
 # My server.ts handles paths assuming app-user or writable /tmp.
 # Let's stick to root to be safe against EACCES, or create app-user and ensure home dir is used.

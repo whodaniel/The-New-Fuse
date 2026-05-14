@@ -28,11 +28,11 @@ instructions.
   - Production smoke tests
   - Artifact verification
 
-- **`.github/workflows/deploy.yml`** - Railway deployment
+- **`.github/workflows/deploy.yml`** - Cloudflare deployment
   - Pre-deployment checks
   - Full test suite execution
   - Docker image building
-  - Deployment to Railway (all 4 services)
+  - Deployment to Cloudflare (all 4 services)
   - Health checks with auto-rollback
   - Post-deployment smoke tests
   - Slack notifications
@@ -155,7 +155,7 @@ Set up required secrets in GitHub (Settings → Secrets and variables → Action
 **Required**:
 
 ```bash
-RAILWAY_TOKEN      # Railway API token for deployment
+CLOUDFLARE_TOKEN      # Cloudflare API token for deployment
 ```
 
 **Recommended**:
@@ -173,9 +173,9 @@ TURBO_TEAM         # Turborepo team ID
 See [Secrets Setup Guide](./docs/ci-cd/secrets-setup.md) for detailed
 instructions.
 
-#### 2. Configure Railway
+#### 2. Configure Cloudflare
 
-Ensure Railway is configured with:
+Ensure Cloudflare is configured with:
 
 **Services**:
 
@@ -246,7 +246,7 @@ See [Monitoring Guide](../deployment/MONITORING.md) for details.
 1. Full test suite (15-20 min)
 2. Build verification (15-20 min)
 3. Build Docker images (10-15 min)
-4. Deploy to Railway (5-10 min)
+4. Deploy to Cloudflare (5-10 min)
 5. Health checks (2-5 min)
 6. Smoke tests (2-3 min)
 7. Notifications
@@ -483,7 +483,7 @@ See [Monitoring Guide](../deployment/MONITORING.md) for details.
 
 **Deployment fails**:
 
-1. Check Railway logs: `railway logs`
+1. Check Cloudflare logs: `cloudflare logs`
 2. Verify environment variables
 3. Check health endpoints
 4. See [Deployment Guide](../deployment/DEPLOYMENT.md)
@@ -500,7 +500,7 @@ See [Monitoring Guide](../deployment/MONITORING.md) for details.
 ### Immediate
 
 - [ ] Set up all required secrets
-- [ ] Configure Railway environment
+- [ ] Configure Cloudflare environment
 - [ ] Test deployment to staging
 - [ ] Set up monitoring integrations
 - [ ] Configure Slack notifications
@@ -534,13 +534,13 @@ See [Monitoring Guide](../deployment/MONITORING.md) for details.
 ### External Resources
 
 - [GitHub Actions Docs](https://docs.github.com/actions)
-- [Railway Docs](https://docs.railway.app)
+- [Cloudflare Docs](https://docs.thenewfuse.com)
 - [Turborepo Docs](https://turbo.build/repo/docs)
 - [pnpm Docs](https://pnpm.io)
 
 ### Tools
 
-- [Railway CLI](https://docs.railway.app/develop/cli)
+- [Cloudflare CLI](https://docs.thenewfuse.com/develop/cli)
 - [GitHub CLI](https://cli.github.com)
 - [Turbo CLI](https://turbo.build/repo/docs/reference/command-line-reference)
 

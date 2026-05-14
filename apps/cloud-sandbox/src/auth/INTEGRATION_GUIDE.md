@@ -570,7 +570,7 @@ for (let i = 0; i < 20; i++) {
 
 ## Environment Variables
 
-Add to Railway environment variables:
+Add to CloudRuntime environment variables:
 
 ```env
 # JWT Configuration
@@ -592,12 +592,12 @@ REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 - [ ] Secure WebSocket connection handler
 - [ ] Wrap all tool handlers with executeSecuredTool
 - [ ] Add admin endpoints for monitoring
-- [ ] Configure JWT_SECRET in Railway
+- [ ] Configure JWT_SECRET in CloudRuntime
 - [ ] Test authentication with real JWT tokens
 - [ ] Test authorization with different roles
 - [ ] Test quota enforcement
 - [ ] Test audit logging
-- [ ] Deploy to Railway and verify health check
+- [ ] Deploy to CloudRuntime and verify health check
 
 ## Next Steps
 

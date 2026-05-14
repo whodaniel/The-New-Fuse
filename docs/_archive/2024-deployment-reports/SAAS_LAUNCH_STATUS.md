@@ -48,7 +48,7 @@ Common Ancestor         Our Current Base
 
 **Key commits on main:**
 - PR #1: Safe changes extraction (Aug 31)
-- PR #3: Railway multi-service build (Oct 25)
+- PR #3: CloudRuntime multi-service build (Oct 25)
 - Dockerfile optimizations
 - Our new commit: SaaS v1.0 prep (948f998e)
 
@@ -64,7 +64,7 @@ Common Ancestor         Latest Commit
 
 **Key commits on project-reconstruction:**
 - Complete migration from Bun to pnpm (Oct 24)
-- Railway deployment scripts (Oct 25)
+- CloudRuntime deployment scripts (Oct 25)
 - Multiple Nixpacks ↔ Docker iterations
 - Dependency updates and fixes
 
@@ -86,7 +86,7 @@ Common Ancestor         Latest Commit
 ### The Reality
 Your assessment is correct! The `project-reconstruction` branch has:
 - ✅ Complete pnpm migration (as of Oct 24)
-- ✅ Extensive Railway deployment work
+- ✅ Extensive CloudRuntime deployment work
 - ✅ More recent updates (105+ commits vs 20)
 - ✅ Active development and bug fixes
 
@@ -169,7 +169,7 @@ git push origin main
 
 ### ✅ Ready (on project-reconstruction)
 - pnpm standardization complete
-- Railway deployment configs tested
+- CloudRuntime deployment configs tested
 - Nixpacks configurations in place
 - Service definitions ready:
   - apps/frontend
@@ -188,7 +188,7 @@ git push origin main
 ### 📝 Documentation Status
 - ✅ Comprehensive README.md created
 - ✅ DEVELOPMENT_SETUP.md updated (all Bun → pnpm)
-- ✅ Railway deployment guide exists
+- ✅ CloudRuntime deployment guide exists
 - ✅ pnpm standardization report exists
 - ⚠️ But all on wrong branch!
 
@@ -212,9 +212,9 @@ git push origin main
 ### Short-term (Today)
 3. **Set project-reconstruction as default branch** (GitHub Settings)
 4. **Merge the documentation PR**
-5. **Deploy to Railway**
+5. **Deploy to CloudRuntime**
    ```bash
-   ./railway-deploy.sh
+   ./cloud_runtime-deploy.sh
    ```
 
 ### Medium-term (This week)
@@ -232,7 +232,7 @@ git push origin main
 ### ✅ Confirmed
 - `project-reconstruction` uses pnpm (migrated Oct 24)
 - Root `package.json` has `"packageManager": "pnpm@10.19.0"`
-- Railway configs use pnpm in nixpacks.toml
+- CloudRuntime configs use pnpm in nixpacks.toml
 - No Bun/Yarn references in scripts
 
 ### 📍 Our Contribution
@@ -264,7 +264,7 @@ Then resolve any conflicts and push.
    - Recommended: Yes, as `main-deprecated-2025-10-25`
 
 3. **Ready to deploy after docs merge?**
-   - If yes, we'll prepare Railway deployment checklist
+   - If yes, we'll prepare CloudRuntime deployment checklist
 
 ---
 

@@ -1,7 +1,7 @@
 # TNF Cloud Terminal & Super Director Deployment Guide
 
 ## 1. Overview
-The **Super Director** (Agent TNF) now has the capability to run a live, interactive terminal in the cloud (Railway). This enables the use of **Cline CLI** for **Nvidia API** (NIM) access and **OAuth** authentication directly from the cloud environment.
+The **Super Director** (Agent TNF) now has the capability to run a live, interactive terminal in the cloud (CloudRuntime). This enables the use of **Cline CLI** for **Nvidia API** (NIM) access and **OAuth** authentication directly from the cloud environment.
 
 ## 2. Infrastructure
 The Cloud Terminal is built into the `tnf-cloud-sandbox` service:
@@ -11,15 +11,15 @@ The Cloud Terminal is built into the `tnf-cloud-sandbox` service:
 
 ## 3. Deployment Steps
 
-### Step 1: Update Railway Environment
-Ensure the following variables are set in your Railway `tnf-cloud-sandbox` service:
+### Step 1: Update CloudRuntime Environment
+Ensure the following variables are set in your CloudRuntime `tnf-cloud-sandbox` service:
 - `JWT_SECRET`: (Existing)
 - `DATABASE_URL`: (Existing)
-- `RAILWAY_PUBLIC_DOMAIN`: Your service's public URL (e.g., `tnf-cloud-sandbox-production.up.railway.app`).
+- `CLOUD_RUNTIME_PUBLIC_DOMAIN`: Your service's public URL (e.g., `tnf-cloud-sandbox-production.thenewfuse.com`).
 - `CLINE_API_KEY`: (Optional) Your Nvidia NIM API key if not using OAuth.
 
 ### Step 2: Build and Deploy
-Trigger a new deployment. The `Dockerfile.railway` will automatically:
+Trigger a new deployment. The `Dockerfile.cloud_runtime` will automatically:
 1. Install build tools (`make`, `g++`, `gcc`).
 2. Build the `node-pty` native module.
 3. Install the `cline` CLI globally.
@@ -29,7 +29,7 @@ The Super Director can now use the `get_terminal_access` tool to get the WebSock
 
 ## 4. Headless OAuth Flow (For Nvidia/Cline)
 If you need to use OAuth in the cloud terminal:
-1. Open the terminal via WebSocket (or `railway exec`).
+1. Open the terminal via WebSocket (or `cloud_runtime exec`).
 2. Run `cline auth`.
 3. The CLI will print an OAuth URL.
 4. **Copy** that URL and open it in your **local browser**.

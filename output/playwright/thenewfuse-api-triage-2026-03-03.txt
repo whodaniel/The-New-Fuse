@@ -1,18 +1,18 @@
 Date: 2026-03-03
 Scope: API triage for https://thenewfuse.com
 
-Root cause confirmed from Railway logs (TheNewFuse service):
-- nginx upstream target was stale internal host: api-1f0e909a.railway.internal:5000
+Root cause confirmed from CloudRuntime logs (TheNewFuse service):
+- nginx upstream target was stale internal host: api-1f0e909a.cloud_runtime.internal:5000
 - Errors observed before fix:
   - upstream timed out while connecting to upstream
   - no live upstreams while connecting to upstream
   - mixed 502/504/timeouts on /api/*
 
 Change applied:
-- Service: TheNewFuse (Railway project TNF, production)
+- Service: TheNewFuse (CloudRuntime project TNF, production)
 - Variables updated:
-  - BACKEND_URL=https://api-production-48f1.up.railway.app
-  - BACKEND_INTERNAL_URL=https://api-production-48f1.up.railway.app
+  - BACKEND_URL=https://api-production-48f1.thenewfuse.com
+  - BACKEND_INTERNAL_URL=https://api-production-48f1.thenewfuse.com
 - Deployment triggered:
   - deployment id: e7e8b47f-3533-41b7-9e4a-db4ae6255ce4
   - status: SUCCESS

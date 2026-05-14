@@ -1,4 +1,4 @@
-# mini-omni-inference (Railway Service)
+# mini-omni-inference (CloudRuntime Service)
 
 This folder defines a production deployment target for mini-omni speech
 inference.
@@ -9,16 +9,16 @@ inference.
 - Installs runtime dependencies and serves mini-omni via Gunicorn in CPU mode.
 - Exposes mini-omni `/chat` endpoint.
 
-## Railway Deploy
+## CloudRuntime Deploy
 
 ```bash
 cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
-railway add --service mini-omni-inference
-railway up apps/audio-trigger-kws-mvp/mini-omni-inference \
+cloud_runtime add --service mini-omni-inference
+cloud_runtime up apps/audio-trigger-kws-mvp/mini-omni-inference \
   --service mini-omni-inference \
   --detach \
   --path-as-root
-railway domain --service mini-omni-inference
+cloud_runtime domain --service mini-omni-inference
 ```
 
 ## Recommended Service Variables

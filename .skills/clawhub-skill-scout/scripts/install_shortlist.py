@@ -48,7 +48,7 @@ def parse_args() -> argparse.Namespace:
         default="",
         help=(
             "Optional workdir passed to clawhub installer preset. "
-            "Useful with Railway: '/app' or project root."
+            "Useful with CloudRuntime: '/app' or project root."
         ),
     )
     parser.add_argument(

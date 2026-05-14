@@ -5,7 +5,7 @@
     "routeAudit": "apps/frontend/docs/audits/navigation-route-audit.json",
     "linkAudit": "apps/frontend/docs/audits/all-links-audit.json",
     "liveCrawl": "apps/frontend/docs/audits/live-link-crawl.json",
-    "railway": "railway_list.json",
+    "cloud_runtime": "cloud_runtime_list.json",
     "keywordMentions": "reports/keyword-mentions/mentions-map.json"
   },
   "nodes": [
@@ -1616,9 +1616,9 @@
       "group": "workflow-system"
     },
     {
-      "id": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "id": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "label": "MCP-DRS:production",
-      "kind": "railway-environment",
+      "kind": "cloud_runtime-environment",
       "group": "infrastructure",
       "metadata": {
         "id": "55868d2f-1813-4d48-9ebd-f8e942a61505",
@@ -1626,9 +1626,9 @@
       }
     },
     {
-      "id": "railway-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
+      "id": "cloud_runtime-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
       "label": "divine-encouragement:production",
-      "kind": "railway-environment",
+      "kind": "cloud_runtime-environment",
       "group": "infrastructure",
       "metadata": {
         "id": "a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
@@ -1636,9 +1636,9 @@
       }
     },
     {
-      "id": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "id": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "label": "TNF:production",
-      "kind": "railway-environment",
+      "kind": "cloud_runtime-environment",
       "group": "infrastructure",
       "metadata": {
         "id": "f706eaae-de9e-4a9b-a970-944dd4a6be41",
@@ -1646,27 +1646,27 @@
       }
     },
     {
-      "id": "railway-project:divine-encouragement",
+      "id": "cloud_runtime-project:divine-encouragement",
       "label": "divine-encouragement",
-      "kind": "railway-project",
+      "kind": "cloud_runtime-project",
       "group": "infrastructure",
       "metadata": {
         "id": "d94bcf1e-74bf-4ff5-a3df-539ff3cba8ef"
       }
     },
     {
-      "id": "railway-project:mcp-drs",
+      "id": "cloud_runtime-project:mcp-drs",
       "label": "MCP-DRS",
-      "kind": "railway-project",
+      "kind": "cloud_runtime-project",
       "group": "infrastructure",
       "metadata": {
         "id": "d9f3179e-fbc6-43b6-bd9b-eb0f4fb1068b"
       }
     },
     {
-      "id": "railway-project:tnf",
+      "id": "cloud_runtime-project:tnf",
       "label": "TNF",
-      "kind": "railway-project",
+      "kind": "cloud_runtime-project",
       "group": "infrastructure",
       "metadata": {
         "id": "041cee9d-8648-4074-b5a6-0eae436de1d1"
@@ -11761,19 +11761,19 @@
     },
     {
       "source": "framework:tnf",
-      "target": "railway-project:divine-encouragement",
+      "target": "cloud_runtime-project:divine-encouragement",
       "type": "uses_infrastructure_project",
       "weight": 1
     },
     {
       "source": "framework:tnf",
-      "target": "railway-project:mcp-drs",
+      "target": "cloud_runtime-project:mcp-drs",
       "type": "uses_infrastructure_project",
       "weight": 1
     },
     {
       "source": "framework:tnf",
-      "target": "railway-project:tnf",
+      "target": "cloud_runtime-project:tnf",
       "type": "uses_infrastructure_project",
       "weight": 1
     },
@@ -11814,163 +11814,163 @@
       "weight": 1
     },
     {
-      "source": "railway-project:divine-encouragement",
-      "target": "railway-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
+      "source": "cloud_runtime-project:divine-encouragement",
+      "target": "cloud_runtime-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
       "type": "has_environment",
       "weight": 1
     },
     {
-      "source": "railway-project:divine-encouragement",
+      "source": "cloud_runtime-project:divine-encouragement",
       "target": "service:cloudsync-studio",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:divine-encouragement",
+      "source": "cloud_runtime-project:divine-encouragement",
       "target": "service:hearty-clarity",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:divine-encouragement",
+      "source": "cloud_runtime-project:divine-encouragement",
       "target": "service:postgres",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "source": "cloud_runtime-project:mcp-drs",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "has_environment",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
+      "source": "cloud_runtime-project:mcp-drs",
       "target": "service:caring-liberation",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
+      "source": "cloud_runtime-project:mcp-drs",
       "target": "service:function-bun",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
+      "source": "cloud_runtime-project:mcp-drs",
       "target": "service:mcp-drs-api",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
+      "source": "cloud_runtime-project:mcp-drs",
       "target": "service:mcp-drs-crawler",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
+      "source": "cloud_runtime-project:mcp-drs",
       "target": "service:mcp-drs-processor",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
+      "source": "cloud_runtime-project:mcp-drs",
       "target": "service:mcp-drs-server",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
+      "source": "cloud_runtime-project:mcp-drs",
       "target": "service:mongodb",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
+      "source": "cloud_runtime-project:mcp-drs",
       "target": "service:postgres-main",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:mcp-drs",
+      "source": "cloud_runtime-project:mcp-drs",
       "target": "service:redis-cache",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "source": "cloud_runtime-project:tnf",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "has_environment",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:api",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:api-gateway",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:api3",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:backend",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:frontend-application",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:fuse-theia-ide",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:postgres",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:redis",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:relay-server",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:thenewfuse",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:tnf-cloud-sandbox",
       "type": "has_service",
       "weight": 1
     },
     {
-      "source": "railway-project:tnf",
+      "source": "cloud_runtime-project:tnf",
       "target": "service:tnf-cloud-sandbox-v2",
       "type": "has_service",
       "weight": 1
@@ -11983,7 +11983,7 @@
     },
     {
       "source": "service:api",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
@@ -11995,13 +11995,13 @@
     },
     {
       "source": "service:api-gateway",
-      "target": "railway-environment:54f12b24-60c3-4b8a-adc4-cda2d076f68d",
+      "target": "cloud_runtime-environment:54f12b24-60c3-4b8a-adc4-cda2d076f68d",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:api-gateway",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
@@ -12013,37 +12013,37 @@
     },
     {
       "source": "service:api3",
-      "target": "railway-environment:54f12b24-60c3-4b8a-adc4-cda2d076f68d",
+      "target": "cloud_runtime-environment:54f12b24-60c3-4b8a-adc4-cda2d076f68d",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:backend",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:caring-liberation",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:cloudsync-studio",
-      "target": "railway-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
+      "target": "cloud_runtime-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:frontend-application",
-      "target": "railway-environment:54f12b24-60c3-4b8a-adc4-cda2d076f68d",
+      "target": "cloud_runtime-environment:54f12b24-60c3-4b8a-adc4-cda2d076f68d",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:frontend-application",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
@@ -12055,19 +12055,19 @@
     },
     {
       "source": "service:function-bun",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:fuse-theia-ide",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:hearty-clarity",
-      "target": "railway-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
+      "target": "cloud_runtime-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
       "type": "deployed_in",
       "weight": 1
     },
@@ -12079,79 +12079,79 @@
     },
     {
       "source": "service:mcp-drs-api",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:mcp-drs-crawler",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:mcp-drs-processor",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:mcp-drs-server",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:mongodb",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:postgres",
-      "target": "railway-environment:54f12b24-60c3-4b8a-adc4-cda2d076f68d",
+      "target": "cloud_runtime-environment:54f12b24-60c3-4b8a-adc4-cda2d076f68d",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:postgres",
-      "target": "railway-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
+      "target": "cloud_runtime-environment:a8d8c5ea-0881-4cae-b496-85fdc8f84fdc",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:postgres",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:postgres-main",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:redis",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:redis-cache",
-      "target": "railway-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
+      "target": "cloud_runtime-environment:55868d2f-1813-4d48-9ebd-f8e942a61505",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:relay-server",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:thenewfuse",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
@@ -12163,13 +12163,13 @@
     },
     {
       "source": "service:tnf-cloud-sandbox",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
     {
       "source": "service:tnf-cloud-sandbox-v2",
-      "target": "railway-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
+      "target": "cloud_runtime-environment:f706eaae-de9e-4a9b-a970-944dd4a6be41",
       "type": "deployed_in",
       "weight": 1
     },
@@ -12249,8 +12249,8 @@
       "framework": 1,
       "keyword": 4,
       "package": 4,
-      "railway-environment": 3,
-      "railway-project": 3,
+      "cloud_runtime-environment": 3,
+      "cloud_runtime-project": 3,
       "route": 218,
       "service": 23,
       "technology": 2,

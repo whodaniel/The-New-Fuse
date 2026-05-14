@@ -19,7 +19,7 @@ export {
 import {
   createAgentCreationWizard,
   createConfigureRBACWizard,
-  createDeployToRailwayWizard,
+  createDeployToCloudRuntimeWizard,
   createGetStartedWizard,
   createTroubleshootingWizard,
   DEFAULT_WIZARDS,
@@ -28,7 +28,7 @@ import {
 export {
   createAgentCreationWizard,
   createConfigureRBACWizard,
-  createDeployToRailwayWizard,
+  createDeployToCloudRuntimeWizard,
   createGetStartedWizard,
   createTroubleshootingWizard,
   DEFAULT_WIZARDS,
@@ -56,7 +56,7 @@ export {
   PermissionMatrix,
   ProblemIdentification,
   ProfileSetup,
-  RailwayConnection,
+  CloudRuntimeConnection,
   RoleConfiguration,
   SolutionSteps,
   STEP_COMPONENTS,

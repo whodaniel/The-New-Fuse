@@ -44,7 +44,7 @@ seed_task "Frontend reliability pass: deterministic loading/empty/unavailable st
 # Backend and platform tasks
 seed_task "API contract sweep for all P0 frontend dependencies with explicit 2xx/4xx/5xx behavior" "backend-contracts" "backend-specialist" "critical" "All P0 calls have truthful backend responses"
 seed_task "DB and migration safety review for release candidate schema state" "data-integrity" "database-architect" "high" "No migration blockers and rollback path documented"
-seed_task "Railway release drill: deploy, health check, rollback rehearsal" "platform-release" "devops-engineer" "critical" "Deploy and rollback both succeed in rehearsal"
+seed_task "CloudRuntime release drill: deploy, health check, rollback rehearsal" "platform-release" "devops-engineer" "critical" "Deploy and rollback both succeed in rehearsal"
 seed_task "Performance budget pass on public pages and top APIs" "performance-budget" "performance-optimizer" "high" "Baseline latency and page metrics captured and within budget"
 
 # Security and QA tasks

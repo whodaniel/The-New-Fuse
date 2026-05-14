@@ -32,7 +32,7 @@ check_env_vars() {
         echo "ERROR: Missing required environment variables:"
         printf ' - %s\n' "${missing_vars[@]}"
         echo ""
-        echo "Please set these variables in Railway environment settings."
+        echo "Please set these variables in CloudRuntime environment settings."
         exit 1
     fi
 

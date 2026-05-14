@@ -49,7 +49,8 @@ const SpacesOverview = lazy(() => import('./pages/Spaces/SpacesOverview'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows.tsx'));
-const WorkflowBuilder = lazy(() => import('./pages/SynapticNexus'));
+const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/Builder'));
+const WorkflowNexus = lazy(() => import('./pages/SynapticNexus'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Dashboard = lazy(() => import('./pages/dashboard/TNFConsoleDashboard'));
@@ -191,6 +192,9 @@ const WorkflowsEnhancedPage = lazy(() => import('./pages/WorkflowsEnhanced'));
 const WorkflowDetailPage = lazy(() => import('./pages/workflow-pages/Detail'));
 const WorkflowExecutionPage = lazy(() => import('./pages/workflow-pages/Execution'));
 const WorkflowTemplatesPage = lazy(() => import('./pages/workflow-pages/Templates'));
+const WorkflowBuilderEnhancedPage = lazy(
+  () => import('./pages/workflow-pages/WorkflowBuilderEnhanced')
+);
 
 // Preview pages
 const OnboardingPreviewPage = lazy(() => import('./pages/preview/OnboardingPreview'));
@@ -418,6 +422,8 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
   // Routes that have their own complete layout and shouldn't be wrapped in PremiumLayout
   const hasOwnLayout =
     location.pathname.startsWith('/workflows/builder') ||
+    location.pathname.startsWith('/workflows/nexus') ||
+    location.pathname.startsWith('/nexus') ||
     location.pathname.startsWith('/debug/orphans');
 
   // Use PremiumLayout for authenticated routes, except those with their own layout
@@ -735,9 +741,9 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route
                 path="/observatory"
                 element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
+                  <RequireMemberAccess>
                     <SystemObservatory />
-                  </RequirePermission>
+                  </RequireMemberAccess>
                 }
               />
               <Route
@@ -866,6 +872,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route
+                path="/workflows/nexus"
+                element={
+                  <RequireMemberAccess>
+                    <WorkflowNexus />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
                 path="/workflows/executions"
                 element={
                   <RequireMemberAccess>
@@ -902,6 +916,22 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={
                   <RequireMemberAccess>
                     <WorkflowEditorWrapper />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/workflows/builder-enhanced"
+                element={
+                  <RequireMemberAccess>
+                    <WorkflowBuilderEnhancedPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/workflows/builder-n8n"
+                element={
+                  <RequireMemberAccess>
+                    <WorkflowBuilderEnhancedPage />
                   </RequireMemberAccess>
                 }
               />

@@ -19,7 +19,7 @@ import { join } from 'path';
 import { promisify } from 'util';
 
 // Self-healing: Install Playwright browsers if missing
-// REMOVED for stability: Railway usage should rely on pre-installed browsers or configured environment.
+// REMOVED for stability: CloudRuntime usage should rely on pre-installed browsers or configured environment.
 // Auto-installing on every boot causes timeouts and crashes (Exit 137/OOM).
 // try {
 //   console.log('📦 checking/installing Playwright browsers - SKIPPED for stability');
@@ -555,7 +555,7 @@ const tools: ToolHandler[] = [
       properties: {},
     },
     handler: async () => {
-      const publicUrl = process.env.RAILWAY_PUBLIC_DOMAIN || 'localhost:8080';
+      const publicUrl = process.env.CLOUD_RUNTIME_PUBLIC_DOMAIN || 'localhost:8080';
       const protocol = publicUrl.includes('localhost') ? 'ws' : 'wss';
       return {
         success: true,
@@ -910,7 +910,7 @@ app.get('/api/browser/devtools', async (_req, res) => {
       success: true,
       status: 'Browser is running with Chrome DevTools Protocol enabled',
       cdpPort: 9222,
-      publicEndpoint: `wss://${process.env.RAILWAY_PUBLIC_DOMAIN || _req.get('host')}/devtools`,
+      publicEndpoint: `wss://${process.env.CLOUD_RUNTIME_PUBLIC_DOMAIN || _req.get('host')}/devtools`,
       localEndpoint: 'ws://localhost:9222',
       browserInfo: {
         type: 'Chromium',
@@ -1059,7 +1059,7 @@ app.post('/api/agent/call', async (req, res) => {
 });
 
 // ============================================================================
-// SOCKET.IO LIVE VIEW SERVER (Better Railway compatibility)
+// SOCKET.IO LIVE VIEW SERVER (Better CloudRuntime compatibility)
 // ============================================================================
 
 const io = new SocketIOServer(server, {
@@ -1068,7 +1068,7 @@ const io = new SocketIOServer(server, {
     methods: ['GET', 'POST'],
     credentials: true,
   },
-  transports: ['polling', 'websocket'], // Polling MUST be first for Railway
+  transports: ['polling', 'websocket'], // Polling MUST be first for CloudRuntime
   path: '/socket.io/',
   pingTimeout: 60000,
   pingInterval: 25000,

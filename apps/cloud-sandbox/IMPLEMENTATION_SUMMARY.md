@@ -227,7 +227,7 @@ implementation for The New Fuse cloud sandbox infrastructure.
    - JSON-RPC 2.0 compatible
    - Standard tool schema format
 
-4. **Railway**
+4. **CloudRuntime**
    - Environment variable configuration
    - Health check endpoints
    - Docker deployment ready
@@ -309,7 +309,7 @@ await securityModule.resetTenantUsage(superAdmin, 'tenant-123');
 3. ✅ Tool wrapper system with validation
 4. ✅ Skill chains for complex workflows
 5. ⏳ Wizard system evolution (next task)
-6. ⏳ Railway containerization updates
+6. ⏳ CloudRuntime containerization updates
 
 ### Future Enhancements
 
@@ -378,7 +378,7 @@ apps/cloud-sandbox/
 
 ## Deployment Checklist
 
-- [ ] Set `JWT_SECRET` in Railway environment
+- [ ] Set `JWT_SECRET` in CloudRuntime environment
 - [ ] Set `DATABASE_URL` for production database
 - [ ] Configure Redis URL for distributed rate limiting (optional)
 - [ ] Test authentication with real JWT tokens
@@ -397,7 +397,7 @@ requirements:
 
 ✅ **Role-based access control** for AI agents and humans ✅ **Multi-tenant
 infrastructure hardening** with resource quotas ✅ **Containerized execution
-environments** (Railway-ready) ✅ **AI tool wrappers** with validation and
+environments** (CloudRuntime-ready) ✅ **AI tool wrappers** with validation and
 safety ✅ **Skill chains** with context and prompting ⏳ **Wizard system
 evolution** (next up)
 

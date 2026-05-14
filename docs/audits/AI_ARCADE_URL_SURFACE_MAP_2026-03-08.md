@@ -17,11 +17,11 @@ URLs reviewed:
 
 | URL                                  | Runtime                                                           | What it appears to serve                                            | Notes                                                                                |
 | ------------------------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `ai-arcade.xyz`                      | Railway                                                           | AI-ARCADE frontend shell (`<title>AI-ARCADE`)                       | Uses JS bundle `/assets/index-DRxT0dov.js`.                                          |
+| `ai-arcade.xyz`                      | CloudRuntime                                                           | AI-ARCADE frontend shell (`<title>AI-ARCADE`)                       | Uses JS bundle `/assets/index-DRxT0dov.js`.                                          |
 | `ai-arcade-poker.pages.dev`          | Cloudflare Pages (production alias for project `ai-arcade-poker`) | AI-ARCADE frontend shell (`<title>AI-ARCADE`)                       | Uses JS bundle `/assets/index-DOlcVTKZ.js`.                                          |
 | `7b91c0db.ai-arcade-poker.pages.dev` | Cloudflare Pages (preview deployment)                             | Same build as current production alias                              | Same bundle as production alias in this session.                                     |
 | `fae7326d.ai-arcade-poker.pages.dev` | Cloudflare Pages (older preview deployment)                       | Different app (`<title>My Google AI Studio App`)                    | Marked `x-robots-tag: noindex`; appears to be legacy/incorrect preview payload.      |
-| `poker.ai-arcade.xyz`                | Railway                                                           | Dedicated Poker Room/operator UI (`<title>AI-ARCADE.XYZ Poker App`) | Contains heavy control surfaces and console/operator panels.                         |
+| `poker.ai-arcade.xyz`                | CloudRuntime                                                           | Dedicated Poker Room/operator UI (`<title>AI-ARCADE.XYZ Poker App`) | Contains heavy control surfaces and console/operator panels.                         |
 | `gemini.google.com/...`              | External (Google account-scoped)                                  | Private Gemini workspace/app context                                | Not part of TNF deployment topology; not publicly introspectable from platform side. |
 
 ## Relationship to Poker game

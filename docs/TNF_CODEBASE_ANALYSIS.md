@@ -191,7 +191,7 @@ seamless AI-to-AI communication across different environments.
 
 ### Deployment
 
-- `RAILWAY_DEPLOYMENT_GUIDE.md` - Railway deployment
+- `CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md` - CloudRuntime deployment
 - `DOCKER_BEST_PRACTICES.md` - Docker guidelines
 - `ENVIRONMENT_VARIABLES.md` - Configuration
 
@@ -244,7 +244,7 @@ From `TNF_AGENT_THREE_PILLARS.md`:
                     │
          ┌──────────▼───────────┐
          │   CLOUD SANDBOX      │
-         │   (Railway)          │
+         │   (CloudRuntime)          │
          │                      │
          │  • Playwright        │
          │  • MCP Tools         │
@@ -299,7 +299,7 @@ The files in `packages/agent/src/implementations/` are stubs (12 bytes each):
 
 ## Recommendations for SkIDEancer Integration
 
-1. **Deploy SkIDEancer alongside Cloud Sandbox on Railway**
+1. **Deploy SkIDEancer alongside Cloud Sandbox on CloudRuntime**
    - Share network with sandbox
    - Access same file system
 
@@ -324,7 +324,7 @@ The files in `packages/agent/src/implementations/` are stubs (12 bytes each):
 - **~100 docs** with comprehensive coverage
 - **3 protocols**: A2A, MCP, Handoff
 - **3 pillars**: Orchestrator, Heartbeat, Broker
-- **Active deployment**: Railway (cloud sandbox)
+- **Active deployment**: CloudRuntime (cloud sandbox)
 - **Desktop app**: Tauri (connected, working)
 
 **Ready for SkIDEancer IDE integration!**

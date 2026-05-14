@@ -1,5 +1,5 @@
-import { Label } from '@/components/ui';
 // @ts-nocheck
+import { Label } from '@/components/ui';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import { Plus, X } from 'lucide-react';

@@ -33,7 +33,7 @@ export const DeploymentProgress: React.FC<DeploymentProgressProps> = ({
   const [steps, setSteps] = useState<DeploymentStep[]>([
     { id: '1', label: 'Preparing deployment', status: 'pending' },
     { id: '2', label: 'Building Docker image', status: 'pending' },
-    { id: '3', label: 'Pushing to Railway', status: 'pending' },
+    { id: '3', label: 'Pushing to CloudRuntime', status: 'pending' },
     { id: '4', label: 'Starting container', status: 'pending' },
     { id: '5', label: 'Running health checks', status: 'pending' },
     { id: '6', label: 'Configuring networking', status: 'pending' },
@@ -69,7 +69,7 @@ export const DeploymentProgress: React.FC<DeploymentProgressProps> = ({
     setIsDeploying(false);
     setDeploymentComplete(true);
     setDeploymentUrl(
-      `https://${context.data.railwayProjectName || 'tnf-cloud-sandbox'}.up.railway.app`
+      `https://${context.data.cloud_runtimeProjectName || 'tnf-cloud-sandbox'}.thenewfuse.com`
     );
     onDataChange({ deploymentComplete: true, deploymentUrl });
   };
@@ -94,7 +94,7 @@ export const DeploymentProgress: React.FC<DeploymentProgressProps> = ({
     <div className="wizard-step-deployment-progress">
       <div className="step-header">
         <Rocket className="w-8 h-8 text-primary" />
-        <h2 className="step-title">Deploy to Railway</h2>
+        <h2 className="step-title">Deploy to CloudRuntime</h2>
         <p className="step-description">
           Deploying to {String(context.data.deploymentEnvironment || 'production')} environment
         </p>
@@ -118,7 +118,7 @@ export const DeploymentProgress: React.FC<DeploymentProgressProps> = ({
               <div className="summary-item">
                 <span className="label">Project:</span>
                 <span className="value">
-                  {String(context.data.railwayProjectName || 'Unknown')}
+                  {String(context.data.cloud_runtimeProjectName || 'Unknown')}
                 </span>
               </div>
               <div className="summary-item">
@@ -191,7 +191,7 @@ export const DeploymentProgress: React.FC<DeploymentProgressProps> = ({
             <div className="next-steps">
               <h4>Next Steps</h4>
               <ul>
-                <li>Configure environment variables in Railway dashboard</li>
+                <li>Configure environment variables in CloudRuntime dashboard</li>
                 <li>Set up monitoring and alerts</li>
                 <li>Test the deployment with a sample request</li>
               </ul>

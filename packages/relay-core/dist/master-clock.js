@@ -128,7 +128,7 @@ const CONFIG = {
     RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3005/redis-bridge',
     REDIS_URL: process.env.REDIS_URL,
     LEDGER_API_BASE: process.env.LEDGER_API_BASE ||
-        process.env.RAILWAY_API_URL ||
+        process.env.CLOUDFLARE_API_URL ||
         process.env.LIVE_API_BASE_URL ||
         process.env.API_BASE_URL ||
         process.env.TNF_API_BASE ||

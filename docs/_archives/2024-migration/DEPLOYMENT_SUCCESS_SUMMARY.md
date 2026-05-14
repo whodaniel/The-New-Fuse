@@ -1,4 +1,4 @@
-# Railway Deployment - SUCCESS SUMMARY
+# CloudRuntime Deployment - SUCCESS SUMMARY
 **Date:** October 25, 2025
 **Project:** The New Fuse (TNF)
 **Status:** ✅ ALL SERVICES DEPLOYED
@@ -7,20 +7,20 @@
 
 ## 🎉 Deployment Complete
 
-All 8 SAAS services have been successfully deployed to Railway!
+All 8 SAAS services have been successfully deployed to CloudRuntime!
 
 ### Deployed Services
 
 | # | Service | Path | Service ID | Build Logs |
 |---|---------|------|------------|------------|
-| 1 | **core-vector-db** | `packages/core-vector-db` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
-| 2 | **relay-core** | `packages/relay-core` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
-| 3 | **backend** (package) | `packages/backend` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
-| 4 | **api** (package) | `packages/api` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
-| 5 | **backend** (app) | `apps/backend` | 740236b0-220f-4b79-a662-5c8946a25654 | [View Build](https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/740236b0-220f-4b79-a662-5c8946a25654) |
-| 6 | **api** (app) | `apps/api` | 957d4ab3-1199-48ea-a9d2-8a891644f918 | [View Build](https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/957d4ab3-1199-48ea-a9d2-8a891644f918) |
-| 7 | **api-gateway** | `apps/api-gateway` | 82c837c7-aaf0-4e2c-9848-8bb4efaef269 | [View Build](https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/82c837c7-aaf0-4e2c-9848-8bb4efaef269) |
-| 8 | **frontend** | `apps/frontend` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
+| 1 | **core-vector-db** | `packages/core-vector-db` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
+| 2 | **relay-core** | `packages/relay-core` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
+| 3 | **backend** (package) | `packages/backend` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
+| 4 | **api** (package) | `packages/api` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
+| 5 | **backend** (app) | `apps/backend` | 740236b0-220f-4b79-a662-5c8946a25654 | [View Build](https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/740236b0-220f-4b79-a662-5c8946a25654) |
+| 6 | **api** (app) | `apps/api` | 957d4ab3-1199-48ea-a9d2-8a891644f918 | [View Build](https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/957d4ab3-1199-48ea-a9d2-8a891644f918) |
+| 7 | **api-gateway** | `apps/api-gateway` | 82c837c7-aaf0-4e2c-9848-8bb4efaef269 | [View Build](https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/82c837c7-aaf0-4e2c-9848-8bb4efaef269) |
+| 8 | **frontend** | `apps/frontend` | 20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2 | [View Build](https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/20a3ef1e-2d3c-4bf0-a9fa-10f9130c57f2) |
 
 ---
 
@@ -35,10 +35,10 @@ All 8 SAAS services have been successfully deployed to Railway!
 
 ## 🔄 Deployment Method
 
-Used automated deployment script with Railway CLI:
-- Script: `railway-auto-deploy.sh`
-- Method: Auto-create services with `railway up --detach`
-- Railway auto-detected Dockerfiles and built all services
+Used automated deployment script with CloudRuntime CLI:
+- Script: `cloud_runtime-auto-deploy.sh`
+- Method: Auto-create services with `cloud_runtime up --detach`
+- CloudRuntime auto-detected Dockerfiles and built all services
 - All builds triggered successfully
 
 ---
@@ -46,7 +46,7 @@ Used automated deployment script with Railway CLI:
 ## ⚠️ Important Notes
 
 ### Service Naming
-Some services deployed to the same service ID because they were deployed from the same monorepo context. This is expected behavior with Railway's service detection.
+Some services deployed to the same service ID because they were deployed from the same monorepo context. This is expected behavior with CloudRuntime's service detection.
 
 **Unique Services Created:**
 - core-vector-db / relay-core / backend (pkg) / api (pkg) / frontend (shared ID)
@@ -59,17 +59,17 @@ Some services deployed to the same service ID because they were deployed from th
 1. **Monitor Build Status**
    ```bash
    # Check overall status
-   railway status
+   cloud_runtime status
 
    # View logs for a specific service
-   railway logs --service core-vector-db
+   cloud_runtime logs --service core-vector-db
    ```
 
 2. **Add Databases**
    - PostgreSQL (for core-vector-db, api, backend)
    - Redis (for relay-core, caching)
 
-   Create in Railway Dashboard:
+   Create in CloudRuntime Dashboard:
    - Click "+ New" → "Database" → "PostgreSQL"
    - Click "+ New" → "Database" → "Redis"
 
@@ -109,15 +109,15 @@ Some services deployed to the same service ID because they were deployed from th
 
    **api-gateway:**
    ```bash
-   API_URL=https://api.railway.internal
-   BACKEND_URL=https://backend.railway.internal
+   API_URL=https://api.cloud_runtime.internal
+   BACKEND_URL=https://backend.cloud_runtime.internal
    PORT=8080
    NODE_ENV=production
    ```
 
    **frontend:**
    ```bash
-   VITE_API_URL=https://api-gateway.[your-domain].railway.app
+   VITE_API_URL=https://api-gateway.[your-domain].thenewfuse.com
    PORT=$PORT
    ```
 
@@ -131,13 +131,13 @@ Some services deployed to the same service ID because they were deployed from th
 
 5. **Configure Custom Domains (Optional)**
 
-   In Railway Dashboard for each service:
+   In CloudRuntime Dashboard for each service:
    - Settings → Networking → Generate Domain
    - Or add custom domain
 
 6. **Set Up Monitoring**
 
-   - Enable Railway's built-in metrics
+   - Enable CloudRuntime's built-in metrics
    - Set up log aggregation
    - Configure alerts for failures
 
@@ -149,7 +149,7 @@ Some services deployed to the same service ID because they were deployed from th
 
 1. **Check Build Logs**
    ```bash
-   railway logs --service [service-name]
+   cloud_runtime logs --service [service-name]
    ```
 
 2. **Common Issues:**
@@ -161,14 +161,14 @@ Some services deployed to the same service ID because they were deployed from th
 3. **Rebuild Service:**
    ```bash
    cd [service-path]
-   railway up
+   cloud_runtime up
    ```
 
 ### If Health Checks Fail
 
 1. Verify the service implements `/health` endpoint
 2. Check that the PORT environment variable is used correctly
-3. Increase healthcheckTimeout in railway.toml if needed
+3. Increase healthcheckTimeout in cloud_runtime.toml if needed
 
 ---
 
@@ -176,21 +176,21 @@ Some services deployed to the same service ID because they were deployed from th
 
 | File | Purpose |
 |------|---------|
-| `railway-auto-deploy.sh` | Main deployment script (executable) |
-| `railway-clean-deploy.sh` | Alternative deployment with service names |
-| `RAILWAY_CLEAN_DEPLOYMENT_PLAN.md` | Comprehensive deployment guide |
+| `cloud_runtime-auto-deploy.sh` | Main deployment script (executable) |
+| `cloud_runtime-clean-deploy.sh` | Alternative deployment with service names |
+| `CLOUD_RUNTIME_CLEAN_DEPLOYMENT_PLAN.md` | Comprehensive deployment guide |
 | `DEPLOYMENT_SUCCESS_SUMMARY.md` | This file - deployment summary |
-| `railway-auto-deployment.log` | Full deployment log |
-| `railway-services-inventory.json` | Service configuration inventory |
+| `cloud_runtime-auto-deployment.log` | Full deployment log |
+| `cloud_runtime-services-inventory.json` | Service configuration inventory |
 
 ---
 
 ## 🔗 Quick Links
 
-- **Project Dashboard:** https://railway.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+- **Project Dashboard:** https://cloud_runtime.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 - **Environment:** production (f706eaae-de9e-4a9b-a970-944dd4a6be41)
-- **Railway Docs:** https://docs.railway.com
-- **Railway CLI Reference:** https://docs.railway.com/develop/cli
+- **CloudRuntime Docs:** https://docs.cloud_runtime.com
+- **CloudRuntime CLI Reference:** https://docs.cloud_runtime.com/develop/cli
 
 ---
 
@@ -198,8 +198,8 @@ Some services deployed to the same service ID because they were deployed from th
 
 1. ✅ Cleaned global npm/pnpm packages (reclaimed ~1.5GB)
 2. ✅ Updated all development tools to latest versions
-3. ✅ Audited Railway project configuration
-4. ✅ Verified all Dockerfiles and railway.toml configs
+3. ✅ Audited CloudRuntime project configuration
+4. ✅ Verified all Dockerfiles and cloud_runtime.toml configs
 5. ✅ Created comprehensive deployment plan
 6. ✅ Deployed all 8 SAAS services successfully
 7. ✅ Generated deployment documentation
@@ -230,4 +230,4 @@ Some services deployed to the same service ID because they were deployed from th
 
 **Deployment completed successfully at:** $(date)
 
-🎉 **All SAAS services are now deployed to Railway!**
+🎉 **All SAAS services are now deployed to CloudRuntime!**

@@ -14,8 +14,8 @@ Generated: 2026-03-09T06:56:50.490Z
 - Kind framework: 1
 - Kind keyword: 4
 - Kind package: 4
-- Kind railway-environment: 3
-- Kind railway-project: 3
+- Kind cloud_runtime-environment: 3
+- Kind cloud_runtime-project: 3
 - Kind route: 218
 - Kind service: 23
 - Kind technology: 2

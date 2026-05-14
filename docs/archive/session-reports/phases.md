@@ -189,14 +189,14 @@ Created:** AGUIOrchestrator, AGUIService, AGUIModule, comprehensive README
 
 ### 9.2: Staging Deployment
 
-- [ ] Deploy to Railway staging
+- [ ] Deploy to CloudRuntime staging
 - [ ] Run smoke tests
 - [ ] Performance monitoring
 - [ ] Bug fixes
 
 ### 9.3: Production Deployment
 
-- [ ] Deploy to Railway production
+- [ ] Deploy to CloudRuntime production
 - [ ] Monitor health endpoints
 - [ ] Validate functionality
 - [ ] Document deployment

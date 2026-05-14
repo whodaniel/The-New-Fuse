@@ -95,7 +95,7 @@ function main() {
 
   ensureRegex(
     boot,
-    /REDIS_URL="\$\{REDIS_URL:-\$\{RAILWAY_REDIS_URL:-\$\{LIVE_REDIS_URL:-\$\{REDIS_PRIVATE_URL:-\$\{REDIS_TLS_URL:-redis:\/\/localhost:6379\}\}\}\}\}"/,
+    /REDIS_URL="\$\{REDIS_URL:-\$\{CLOUD_RUNTIME_REDIS_URL:-\$\{LIVE_REDIS_URL:-\$\{REDIS_PRIVATE_URL:-\$\{REDIS_TLS_URL:-redis:\/\/localhost:6379\}\}\}\}\}"/,
     "factory-boot redis fallback chain"
   );
 

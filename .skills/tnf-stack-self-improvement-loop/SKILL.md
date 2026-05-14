@@ -20,6 +20,15 @@ Run this skill for end-to-end TNF reliability operations.
 ## Execution Commands
 Run from TNF repo root.
 
+Canonical CLI path:
+
+```bash
+tnf self-improvement run \
+  --base-url https://thenewfuse.com \
+  --api-url https://api.thenewfuse.com \
+  --super-admin-token "$TNF_SUPER_ADMIN_INPUT_TOKEN"
+```
+
 ```bash
 bash /Users/<owner>/.codex/skills/tnf-stack-self-improvement-loop/scripts/run_loop.sh \
   --repo /abs/path/to/The-New-Fuse \

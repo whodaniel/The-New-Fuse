@@ -1,15 +1,15 @@
-# Quick Start: Deploy The New Fuse to Railway
+# Quick Start: Deploy The New Fuse to CloudRuntime
 
-This is a simplified guide to get The New Fuse up and running on Railway quickly.
+This is a simplified guide to get The New Fuse up and running on CloudRuntime quickly.
 
 ## Prerequisites (5 minutes)
 
 1. **Docker Desktop** - Download and start: https://www.docker.com/products/docker-desktop
-2. **Railway Account** - Sign up: https://railway.app (free tier available)
-3. **Railway CLI** - Install:
+2. **CloudRuntime Account** - Sign up: https://cloud_runtime.app (free tier available)
+3. **CloudRuntime CLI** - Install:
    ```bash
-   npm install -g @railway/cli
-   railway login
+   npm install -g @cloud_runtime/cli
+   cloud_runtime login
    ```
 
 ## Option 1: Quick Deploy (Recommended for Testing)
@@ -28,28 +28,28 @@ docker-compose -f docker-compose.prod.yml up
 
 Visit http://localhost:3000 to verify everything works.
 
-### Step 2: Deploy to Railway
+### Step 2: Deploy to CloudRuntime
 
 ```bash
 # Run the deployment script
-./deploy-to-railway.sh
+./deploy-to-cloud_runtime.sh
 ```
 
 Choose option 1 to deploy all services, or deploy them individually.
 
-### Step 3: Add Database (in Railway Dashboard)
+### Step 3: Add Database (in CloudRuntime Dashboard)
 
-1. Go to Railway Dashboard: https://railway.app/dashboard
+1. Go to CloudRuntime Dashboard: https://cloud_runtime.app/dashboard
 2. Select your project
 3. Click "New" → "Database" → "PostgreSQL"
 4. Click "New" → "Database" → "Redis"
 
 ### Step 4: Configure Environment Variables
 
-In Railway Dashboard, for each service, add:
+In CloudRuntime Dashboard, for each service, add:
 
 **Frontend:**
-- `VITE_API_URL` = URL of your API Gateway (from Railway)
+- `VITE_API_URL` = URL of your API Gateway (from CloudRuntime)
 
 **API, Backend, API Gateway:**
 - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`
@@ -58,15 +58,15 @@ In Railway Dashboard, for each service, add:
 
 ### Step 5: Redeploy
 
-After adding environment variables, Railway will automatically redeploy your services.
+After adding environment variables, CloudRuntime will automatically redeploy your services.
 
 ## Option 2: Manual Step-by-Step Deploy
 
-### 1. Create Railway Project
+### 1. Create CloudRuntime Project
 
 ```bash
 cd .
-railway init
+cloud_runtime init
 ```
 
 ### 2. Deploy Core Services
@@ -74,23 +74,23 @@ railway init
 ```bash
 # Deploy API Gateway (does routing)
 cd apps/api-gateway
-railway up
+cloud_runtime up
 cd ../..
 
 # Deploy API Service (main backend)
 cd apps/api
-railway up
+cloud_runtime up
 cd ../..
 
 # Deploy Frontend (UI)
 cd apps/frontend
-railway up
+cloud_runtime up
 cd ../..
 ```
 
 ### 3. Add Databases
 
-In Railway Dashboard:
+In CloudRuntime Dashboard:
 - Add PostgreSQL
 - Add Redis
 
@@ -125,11 +125,11 @@ If you want to start with the bare minimum:
 ```bash
 # Deploy just API Service
 cd apps/api
-railway up
+cloud_runtime up
 
 # Deploy just Frontend
 cd ../frontend
-railway up
+cloud_runtime up
 ```
 
 ## Troubleshooting
@@ -139,25 +139,25 @@ railway up
 - Run: `pnpm install` before building
 
 ### Service crashes after deploy
-- Check Railway logs: `railway logs --service <name>`
+- Check CloudRuntime logs: `cloud_runtime logs --service <name>`
 - Verify environment variables are set
 - Make sure DATABASE_URL is configured
 
 ### Cannot access frontend
 - Check if VITE_API_URL is set correctly
 - Verify API Gateway/API Service is running
-- Check Railway domains in dashboard
+- Check CloudRuntime domains in dashboard
 
 ## What's Next?
 
 After successful deployment:
 
-1. **Custom Domain**: Add your domain in Railway Dashboard
-2. **Monitoring**: Railway provides built-in metrics
+1. **Custom Domain**: Add your domain in CloudRuntime Dashboard
+2. **Monitoring**: CloudRuntime provides built-in metrics
 3. **Scaling**: Adjust replicas in service settings
 4. **CI/CD**: Connect GitHub for automatic deployments
 
-## Cost Estimate (Railway)
+## Cost Estimate (CloudRuntime)
 
 - **Hobby Plan**: $5/month for basic setup
 - **Pro Plan**: $20/month for production use
@@ -173,16 +173,16 @@ Each service uses approximately:
 
 ## Support Files
 
-- `DEPLOYMENT_GUIDE_RAILWAY.md` - Detailed deployment guide
+- `DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md` - Detailed deployment guide
 - `docker-compose.prod.yml` - Local testing configuration
-- `deploy-to-railway.sh` - Automated deployment script
+- `deploy-to-cloud_runtime.sh` - Automated deployment script
 - `test-docker-builds.sh` - Test builds before deploying
 
 ## Need Help?
 
-1. Check logs: `railway logs --service <service-name>`
-2. Check Railway status: `railway status`
-3. Open dashboard: `railway open`
-4. Read detailed guide: `DEPLOYMENT_GUIDE_RAILWAY.md`
+1. Check logs: `cloud_runtime logs --service <service-name>`
+2. Check CloudRuntime status: `cloud_runtime status`
+3. Open dashboard: `cloud_runtime open`
+4. Read detailed guide: `DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md`
 
 Good luck with your deployment! 🚀

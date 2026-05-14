@@ -81,15 +81,15 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
     // Check if we're using Cloud Redis (doesn't always support database selection)
     const redisUrl = this.configService.get<string>('REDIS_URL', '');
     const isCloudRedis =
-      redisUrl.includes('railway.internal') ||
-      redisUrl.includes('railway.app') ||
+      redisUrl.includes('cloud_runtime.internal') ||
+      redisUrl.includes('cloud_runtime.app') ||
       redisUrl.includes('upstash.io');
 
     // Safe parsing of database index
     const parseDbIndex = (): number | undefined => {
       if (isCloudRedis) {
         this.logger.log(
-          '☁️ Cloud Redis (Railway/Upstash) detected in streams service - skipping database selection'
+          '☁️ Cloud Redis (CloudRuntime/Upstash) detected in streams service - skipping database selection'
         );
         return undefined;
       }
@@ -114,7 +114,7 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       lazyConnect: true,
     };
 
-    // Only add db parameter if not Railway
+    // Only add db parameter if not CloudRuntime
     const dbIndex = parseDbIndex();
     if (dbIndex !== undefined) {
       redisConfig.db = dbIndex;

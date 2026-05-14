@@ -90,7 +90,7 @@ export class ProxyService {
       name: 'casin8',
       baseUrl: this.configService.get(
         'CASIN8_SERVICE_URL',
-        'https://casin8-games-production-b06e.up.railway.app'
+        'https://casin8-games-production-b06e.thenewfuse.com'
       ),
       healthPath: '/health',
       timeout: 30000,

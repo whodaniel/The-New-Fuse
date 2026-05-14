@@ -123,14 +123,14 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
   // NEXUS: Ecosystem & Knowledge
   {
     name: 'Synaptic Nexus',
-    href: '/nexus',
+    href: '/workflows/nexus',
     icon: Network,
     section: 'nexus',
     access: 'authenticated',
   },
   {
     name: 'System Lexicon',
-    href: '/nexus?layer=lexicon',
+    href: '/workflows/nexus?layer=lexicon',
     icon: BookOpen,
     section: 'nexus',
     access: 'authenticated',
@@ -145,7 +145,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
   },
   {
     name: 'Sovereign Memory',
-    href: '/nexus?layer=memory',
+    href: '/workflows/nexus?layer=memory',
     icon: Database,
     section: 'nexus',
     access: 'authenticated',
@@ -164,7 +164,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
   },
   {
     name: 'Observatory',
-    href: '/observatory',
+    href: '/workflows/nexus?layer=topology&from=observatory',
     icon: Eye,
     section: 'apex',
     access: 'authenticated',
@@ -193,7 +193,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
       },
       {
         name: 'Observatory',
-        href: '/observatory',
+        href: '/workflows/nexus?layer=topology&from=observatory',
         icon: Eye,
         access: 'authenticated',
         requiredRoles: ['SUPER_ADMIN'],

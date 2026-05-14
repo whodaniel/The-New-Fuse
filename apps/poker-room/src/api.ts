@@ -1,5 +1,5 @@
 /**
- * API Client — connects React frontend to Railway backend at thenewfuse.com
+ * API Client — connects React frontend to CloudRuntime backend at thenewfuse.com
  * All poker game state, tournaments, cashier, agents, etc. go through here.
  */
 

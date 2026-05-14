@@ -404,7 +404,7 @@ After successful bootstrap:
 1. **Scale to Multiple Agents**: Repeat onboarding for 3-5 Claude agents
 2. **Enable Agent-to-Agent Communication**: Test relay message passing
 3. **Activate Skill Builder**: Allow agents to create new skills from patterns
-4. **Deploy to Production**: Move from localhost to Railway deployment
+4. **Deploy to Production**: Move from localhost to CloudRuntime deployment
 5. **Monitor Autonomy Metrics**: Track 99% autonomy target
 
 ## References

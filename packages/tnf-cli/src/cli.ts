@@ -9,6 +9,7 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
+import { Orchestrator } from './orchestration.js';
 
 const program = new Command();
 // Fallback for CommonJS/ESM compatibility
@@ -774,6 +775,73 @@ type SplashOptions = {
   speedMs: number;
   compact: boolean;
 };
+type ControlPlaneProvider = 'local' | 'cloud_runtime';
+type SelfImprovementArtifactStatus = {
+  path: string;
+  exists: boolean;
+  bytes: number;
+  updatedAt: string | null;
+};
+type SelfImprovementArtifactsIndex = {
+  liveLinkCrawlJson: string;
+  semanticAuditJson: string;
+  authPathAuditJson: string;
+  scorecardJson: string;
+  scorecardMd: string;
+  architectureMermaid: string;
+  runLog: string;
+};
+type SelfImprovementRunCliOptions = {
+  baseUrl?: string;
+  apiUrl?: string;
+  maxDepth?: string;
+  maxPages?: string;
+  maxExternal?: string;
+  skipBuild?: boolean;
+  skipLiveLinks?: boolean;
+  skipSemantic?: boolean;
+  skipAuth?: boolean;
+  skipScorecard?: boolean;
+  skipMermaid?: boolean;
+  note?: string;
+  superAdminToken?: string;
+};
+type FullAutoRunEvent = {
+  cycle: number;
+  startedAt: string;
+  finishedAt: string;
+  durationMs: number;
+  ok: boolean;
+  error?: string;
+};
+type FullAutoState = {
+  mode: 'running' | 'idle';
+  updatedAt: string;
+  intervalMinutes: number;
+  maxCycles: number;
+  completedCycles: number;
+  failedCycles: number;
+  lastRun?: FullAutoRunEvent;
+};
+
+const CONTROL_PLANE_PROVIDER_ENV_KEY = 'TNF_CONTROL_PLANE_PROVIDER';
+const MASTER_CLOCK_PROVIDER_ENV_KEY = 'TNF_MASTER_CLOCK_PROVIDER';
+const SUPER_CYCLE_PROVIDER_ENV_KEY = 'TNF_SUPER_CYCLE_PROVIDER';
+const DEFAULT_SELF_IMPROVEMENT_BASE_URL = 'https://thenewfuse.com';
+const DEFAULT_SELF_IMPROVEMENT_API_URL = 'https://api.thenewfuse.com';
+const DEFAULT_FULL_AUTO_INTERVAL_MINUTES = 30;
+const FULL_AUTO_STATE_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-state.json');
+const FULL_AUTO_RUN_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-runs.jsonl');
+
+const SELF_IMPROVEMENT_ARTIFACTS: SelfImprovementArtifactsIndex = {
+  liveLinkCrawlJson: path.join(repoRoot, 'apps/frontend/docs/audits/live-link-crawl.json'),
+  semanticAuditJson: path.join(repoRoot, 'apps/frontend/docs/audits/all-routes-semantic-audit.json'),
+  authPathAuditJson: path.join(repoRoot, 'apps/frontend/docs/audits/auth-path-audit.json'),
+  scorecardJson: path.join(repoRoot, 'apps/frontend/docs/audits/self-improvement-scorecard.json'),
+  scorecardMd: path.join(repoRoot, 'apps/frontend/docs/audits/self-improvement-scorecard.md'),
+  architectureMermaid: path.join(repoRoot, 'docs/architecture/tnf-master-framework.mmd'),
+  runLog: path.join(repoRoot, 'docs/operations/tnf-self-improvement-run-log.md'),
+};
 
 function loadRootScripts(): RootScriptEntry[] {
   const packageJsonPath = path.join(repoRoot, 'package.json');
@@ -876,6 +944,216 @@ async function runFileScript(file: FileScriptEntry, args: string[]): Promise<voi
   throw new Error(`Unsupported script type for ${file.relPath}`);
 }
 
+function resolveControlPlaneProvider(
+  options: { provider?: string; local?: boolean } = {},
+  envKeys: string[] = []
+): ControlPlaneProvider {
+  if (options.local) return 'local';
+
+  const envCandidate = envKeys
+    .map((key) => normalizeToken(process.env[key]))
+    .find((value): value is string => Boolean(value));
+  const candidate =
+    normalizeToken(options.provider) ?? envCandidate ?? normalizeToken(process.env[CONTROL_PLANE_PROVIDER_ENV_KEY]);
+  const normalized = (candidate || 'local').toLowerCase();
+
+  if (normalized === 'local' || normalized === 'cloud_runtime') {
+    return normalized as ControlPlaneProvider;
+  }
+  throw new Error(
+    `Unsupported provider '${candidate}'. Supported providers: local, cloud_runtime.`
+  );
+}
+
+function assertCloudRuntimeAvailable(commandLabel: string): void {
+  if (findExecutableOnPath('cloud_runtime')) return;
+  throw new Error(
+    `CloudRuntime CLI is required for '${commandLabel}' when provider is cloud_runtime. Install CloudRuntime CLI or pass --provider local.`
+  );
+}
+
+function resolveSelfImprovementBaseUrl(input?: string): string {
+  return (
+    normalizeToken(input) ??
+    normalizeToken(process.env.TNF_BASE_URL) ??
+    normalizeToken(process.env.PUBLIC_BASE_URL) ??
+    DEFAULT_SELF_IMPROVEMENT_BASE_URL
+  );
+}
+
+function resolveSelfImprovementApiUrl(input?: string): string {
+  return (
+    normalizeToken(input) ??
+    normalizeToken(process.env.TNF_API_BASE_URL) ??
+    normalizeToken(process.env.TNF_API_BASE) ??
+    normalizeToken(process.env.TNF_API_URL) ??
+    normalizeToken(process.env.API_BASE_URL) ??
+    DEFAULT_SELF_IMPROVEMENT_API_URL
+  );
+}
+
+function parsePositiveIntegerOption(
+  input: string | undefined,
+  fallback: number,
+  label: string
+): number {
+  if (typeof input === 'undefined') return fallback;
+  const parsed = Number.parseInt(input, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    throw new Error(`Invalid ${label} value '${input}'. Use a positive integer.`);
+  }
+  return parsed;
+}
+
+function parseNonNegativeIntegerOption(
+  input: string | undefined,
+  fallback: number,
+  label: string
+): number {
+  if (typeof input === 'undefined') return fallback;
+  const parsed = Number.parseInt(input, 10);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    throw new Error(`Invalid ${label} value '${input}'. Use a non-negative integer.`);
+  }
+  return parsed;
+}
+
+function collectSelfImprovementArtifactStatus(): SelfImprovementArtifactStatus[] {
+  const tracked = [
+    SELF_IMPROVEMENT_ARTIFACTS.liveLinkCrawlJson,
+    SELF_IMPROVEMENT_ARTIFACTS.semanticAuditJson,
+    SELF_IMPROVEMENT_ARTIFACTS.authPathAuditJson,
+    SELF_IMPROVEMENT_ARTIFACTS.scorecardJson,
+    SELF_IMPROVEMENT_ARTIFACTS.scorecardMd,
+    SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid,
+    SELF_IMPROVEMENT_ARTIFACTS.runLog,
+  ];
+  return tracked.map((absPath) => {
+    if (!fs.existsSync(absPath)) {
+      return { path: absPath, exists: false, bytes: 0, updatedAt: null };
+    }
+    const stats = fs.statSync(absPath);
+    return {
+      path: absPath,
+      exists: true,
+      bytes: stats.size,
+      updatedAt: stats.mtime.toISOString(),
+    };
+  });
+}
+
+function assertExpectedArtifacts(
+  expectedPaths: string[],
+  startedAtMs: number
+): { missing: string[]; stale: string[] } {
+  const missing: string[] = [];
+  const stale: string[] = [];
+  const freshnessFloor = startedAtMs - 2000;
+
+  for (const artifactPath of expectedPaths) {
+    if (!fs.existsSync(artifactPath)) {
+      missing.push(artifactPath);
+      continue;
+    }
+    const mtime = fs.statSync(artifactPath).mtimeMs;
+    if (mtime < freshnessFloor) {
+      stale.push(artifactPath);
+    }
+  }
+
+  return { missing, stale };
+}
+
+function readGitOutput(args: string[]): string {
+  const result = spawnSync('git', args, { cwd: repoRoot, encoding: 'utf8' });
+  if (result.status !== 0) return 'unknown';
+  const value = String(result.stdout || '').trim();
+  return value || 'unknown';
+}
+
+function appendSelfImprovementRunLog(note: string): string {
+  const logPath = SELF_IMPROVEMENT_ARTIFACTS.runLog;
+  fs.mkdirSync(path.dirname(logPath), { recursive: true });
+  if (!fs.existsSync(logPath)) {
+    fs.writeFileSync(logPath, '# TNF Self-Improvement Run Log\n\n', 'utf8');
+  }
+
+  const timestamp = new Date().toISOString().replace('T', ' ').replace('Z', ' UTC');
+  const branch = readGitOutput(['rev-parse', '--abbrev-ref', 'HEAD']);
+  const commit = readGitOutput(['rev-parse', '--short', 'HEAD']);
+  const entry = [
+    `## ${timestamp}`,
+    `- Note: ${note}`,
+    `- Branch: ${branch}`,
+    `- Commit: ${commit}`,
+    '',
+  ].join('\n');
+  fs.appendFileSync(logPath, `${entry}\n`, 'utf8');
+  return logPath;
+}
+
+function buildSelfImprovementRunCliArgs(options: SelfImprovementRunCliOptions): string[] {
+  const args = ['self-improvement', 'run'];
+  if (options.baseUrl) args.push('--base-url', options.baseUrl);
+  if (options.apiUrl) args.push('--api-url', options.apiUrl);
+  if (options.maxDepth) args.push('--max-depth', options.maxDepth);
+  if (options.maxPages) args.push('--max-pages', options.maxPages);
+  if (options.maxExternal) args.push('--max-external', options.maxExternal);
+  if (options.skipBuild) args.push('--skip-build');
+  if (options.skipLiveLinks) args.push('--skip-live-links');
+  if (options.skipSemantic) args.push('--skip-semantic');
+  if (options.skipAuth) args.push('--skip-auth');
+  if (options.skipScorecard) args.push('--skip-scorecard');
+  if (options.skipMermaid) args.push('--skip-mermaid');
+  if (options.note) args.push('--note', options.note);
+  if (options.superAdminToken) args.push('--super-admin-token', options.superAdminToken);
+  return args;
+}
+
+function ensureParentDir(filePath: string): void {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+}
+
+function appendJsonLine(filePath: string, payload: unknown): void {
+  ensureParentDir(filePath);
+  fs.appendFileSync(filePath, `${JSON.stringify(payload)}\n`, 'utf8');
+}
+
+function writeFullAutoState(state: FullAutoState): void {
+  ensureParentDir(FULL_AUTO_STATE_PATH);
+  fs.writeFileSync(FULL_AUTO_STATE_PATH, JSON.stringify(state, null, 2), 'utf8');
+}
+
+function readFullAutoState(): FullAutoState | null {
+  if (!fs.existsSync(FULL_AUTO_STATE_PATH)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(FULL_AUTO_STATE_PATH, 'utf8')) as FullAutoState;
+  } catch {
+    return null;
+  }
+}
+
+function readLastJsonLine(filePath: string): any | null {
+  if (!fs.existsSync(filePath)) return null;
+  const lines = fs
+    .readFileSync(filePath, 'utf8')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length === 0) return null;
+  try {
+    return JSON.parse(lines[lines.length - 1]);
+  } catch {
+    return null;
+  }
+}
+
+async function sleepMs(ms: number): Promise<void> {
+  await new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 const cliEntryPath = fileURLToPath(import.meta.url);
 const AGENT_ROLE_TRAITS = ['orchestrator', 'broker', 'worker', 'participant'];
 const AGENT_PLATFORM_TRAITS = ['antigravity', 'gemini', 'claude', 'jules', 'vscode', 'browser'];
@@ -890,6 +1168,8 @@ const SUPER_ADMIN_COMMAND_TRAITS = [
   'tnf jules cron-install',
   'tnf master-clock start|logs|status',
   'tnf super-cycle event|status',
+  'tnf self-improvement run',
+  'tnf full-auto once|start',
   'tnf skills bank supervisor|supervisor-start|supervisor-stop',
   'tnf run <script>',
 ];
@@ -901,7 +1181,10 @@ const REDIS_COMMAND_TRAITS = [
   'tnf convo',
   'tnf agents register|list|send|orchestrate|convo',
 ];
-const CLOUD_FIRST_COMMAND_TRAITS = ['tnf master-clock start', 'tnf super-cycle event|status'];
+const PROVIDER_ROUTED_COMMAND_TRAITS = [
+  'tnf master-clock start|logs|status',
+  'tnf super-cycle event|status',
+];
 const SPLASH_THEMES: SplashTheme[] = ['fuse', 'atri', 'neon', 'ember', 'mono'];
 const DEFAULT_SPLASH_THEME: SplashTheme = 'fuse';
 const DEFAULT_SPLASH_SPEED_MS = 85;
@@ -1144,7 +1427,7 @@ function buildTraitGroups(): TraitGroup[] {
     { name: 'agent_platforms', values: AGENT_PLATFORM_TRAITS },
     { name: 'super_admin_protected', values: SUPER_ADMIN_COMMAND_TRAITS },
     { name: 'redis_required', values: REDIS_COMMAND_TRAITS },
-    { name: 'cloud_first', values: CLOUD_FIRST_COMMAND_TRAITS },
+    { name: 'provider_routed', values: PROVIDER_ROUTED_COMMAND_TRAITS },
   ];
 }
 
@@ -1161,6 +1444,10 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
           description: 'Run workflow (health-check|code-review|self-improvement)',
         },
         { path: 'tnf agents convo <start|join> [param]', description: 'Manage conversations' },
+        {
+          path: 'tnf agents bank reconcile [--targets all]',
+          description: 'Reconcile and distribute multitenant agent-definition banks',
+        },
       ],
     },
     {
@@ -1181,6 +1468,22 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
       entries: [
         { path: 'tnf onboard', description: 'Run TNF frontload onboarding' },
         { path: 'tnf doctor', description: 'Run TNF diagnostics' },
+        {
+          path: 'tnf self-improvement run',
+          description: 'Run deterministic TNF self-improvement loop with artifact verification',
+        },
+        {
+          path: 'tnf self-improvement status [--strict]',
+          description: 'Inspect self-improvement artifacts and scorecard health',
+        },
+        {
+          path: 'tnf full-auto start [--interval-minutes 30]',
+          description: 'Run unattended self-improvement cycles in a loop',
+        },
+        {
+          path: 'tnf full-auto provision [--targets all]',
+          description: 'Propagate full-auto command+skill to detected agent runtimes',
+        },
         {
           path: 'tnf library status [--refresh]',
           description: 'Show canonical Virtual Library status',
@@ -2121,6 +2424,228 @@ mcp
     }
   });
 
+// ── Marketplace commands ──────────────────────────────────────────────
+const marketplace = program.command('marketplace').description('Marketplace asset management');
+
+marketplace
+ .command('list')
+ .description('List published catalog items from the marketplace')
+ .option('--kind <kind>', 'Filter by kind (agent, agent_template, experience, mcp_server, model, prompt, skill, workflow)')
+ .option('--category <cat>', 'Filter by category')
+ .option('--json', 'Output machine-readable JSON')
+ .action(async (options: { kind?: string; category?: string; json?: boolean }) => {
+  try {
+   const databaseUrl = process.env.DATABASE_URL;
+   if (!databaseUrl) {
+    console.error(chalk.red('Error: DATABASE_URL environment variable is not set'));
+    process.exit(1);
+   }
+
+   let whereClauses: string[] = ["publication_status = 'published'"];
+   if (options.kind) whereClauses.push(`kind = '${options.kind.replace(/'/g, "''")}'`);
+   if (options.category) whereClauses.push(`category = '${options.category.replace(/'/g, "''")}'`);
+   const whereClause = whereClauses.join(' AND ');
+
+   const sql = `SELECT id, slug, name, kind, category, rating, total_runs, success_rate, price_per_run, status FROM marketplace_catalog_items WHERE ${whereClause} ORDER BY kind, name;`;
+
+   const psqlArgs = [
+    databaseUrl,
+    '-t',
+    '-A',
+    '-F', '|',
+    '-c', sql,
+   ];
+
+   const { execSync } = await import('child_process');
+   const raw = execSync(`psql "${databaseUrl}" -t -A -F '|' -c "${sql.replace(/"/g, '\\"')}"`, {
+    encoding: 'utf-8',
+    timeout: 15000,
+    env: { ...process.env },
+   });
+
+   const lines = raw.trim().split('\n').filter((l: string) => l.length > 0);
+
+   if (options.json) {
+    const items = lines.map((line: string) => {
+     const [id, slug, name, kind, category, rating, totalRuns, successRate, pricePerRun, status] = line.split('|');
+     return { id, slug, name, kind, category, rating: parseFloat(rating), totalRuns: parseInt(totalRuns, 10), successRate: parseFloat(successRate), pricePerRun: parseFloat(pricePerRun), status };
+    });
+    console.log(JSON.stringify(items, null, 2));
+    return;
+   }
+
+   if (lines.length === 0) {
+    console.log(chalk.yellow('No published catalog items found'));
+    return;
+   }
+
+   console.log(chalk.bold('\nMarketplace Catalog Items\n'));
+   for (const line of lines) {
+    const [id, slug, name, kind, category, rating, totalRuns, successRate, pricePerRun, status] = line.split('|');
+    const priceTag = parseFloat(pricePerRun) > 0 ? chalk.yellow(`$${pricePerRun}/run`) : chalk.green('free');
+    const statusTag = status === 'online' ? chalk.green('online') : chalk.dim(status);
+    console.log(`  ${chalk.cyan(slug)}  ${chalk.white(name)}  [${chalk.magenta(kind)}] [${chalk.blue(category)}]  ★${rating}  ${totalRuns} runs  ${successRate}%  ${priceTag}  ${statusTag}`);
+   }
+   console.log(chalk.dim(`\n  ${lines.length} item(s)\n`));
+  } catch (err: any) {
+   console.error(chalk.red(`Error: ${err.message}`));
+   process.exit(1);
+  }
+ });
+
+marketplace
+ .command('stats')
+ .description('Show marketplace breakdown by kind (counts, free vs paid)')
+ .action(async () => {
+  try {
+   const databaseUrl = process.env.DATABASE_URL;
+   if (!databaseUrl) {
+    console.error(chalk.red('Error: DATABASE_URL environment variable is not set'));
+    process.exit(1);
+   }
+
+   const sql = `SELECT kind, COUNT(*) AS total, COUNT(*) FILTER (WHERE price_per_run = 0) AS free, COUNT(*) FILTER (WHERE price_per_run > 0) AS paid, ROUND(AVG(rating)::numeric, 2) AS avg_rating, SUM(total_runs) AS total_runs FROM marketplace_catalog_items WHERE publication_status = 'published' GROUP BY kind ORDER BY kind;`;
+
+   const { execSync } = await import('child_process');
+   const raw = execSync(`psql "${databaseUrl}" -t -A -F '|' -c "${sql.replace(/"/g, '\\"')}"`, {
+    encoding: 'utf-8',
+    timeout: 15000,
+    env: { ...process.env },
+   });
+
+   const lines = raw.trim().split('\n').filter((l: string) => l.length > 0);
+
+   if (lines.length === 0) {
+    console.log(chalk.yellow('No published catalog items found'));
+    return;
+   }
+
+   console.log(chalk.bold('\nMarketplace Stats by Kind\n'));
+   console.log(chalk.dim('  Kind                Total   Free   Paid   Avg★   Total Runs'));
+   console.log(chalk.dim('  ─────────────────── ──────  ────   ────   ─────  ───────────'));
+   for (const line of lines) {
+    const [kind, total, free, paid, avgRating, totalRuns] = line.split('|');
+    const kindPadded = kind.padEnd(20);
+    console.log(`  ${chalk.magenta(kindPadded)} ${chalk.white(total.padStart(5))}   ${chalk.green(free.padStart(4))}   ${chalk.yellow(paid.padStart(4))}   ${avgRating.padStart(5)}   ${totalRuns.padStart(11)}`);
+   }
+   console.log('');
+  } catch (err: any) {
+   console.error(chalk.red(`Error: ${err.message}`));
+   process.exit(1);
+  }
+ });
+
+marketplace
+ .command('seed')
+ .description('Run the marketplace seed script against $DATABASE_URL')
+ .action(async () => {
+  try {
+   const databaseUrl = process.env.DATABASE_URL;
+   if (!databaseUrl) {
+    console.error(chalk.red('Error: DATABASE_URL environment variable is not set'));
+    process.exit(1);
+   }
+
+   const seedPath = path.resolve(repoRoot, 'scripts/marketplace/seed-catalog-items.sql');
+   if (!fs.existsSync(seedPath)) {
+    console.error(chalk.red(`Error: Seed script not found at ${seedPath}`));
+    process.exit(1);
+   }
+
+   console.log(chalk.blue('Seeding marketplace catalog items...'));
+   await runCommand('psql', [databaseUrl, '-f', seedPath], { cwd: repoRoot });
+   console.log(chalk.green('✅ Marketplace catalog items seeded successfully'));
+  } catch (err: any) {
+   console.error(chalk.red(`Error: ${err.message}`));
+   process.exit(1);
+  }
+ });
+
+marketplace
+ .command('curate')
+ .description('Trigger the marketplace research crawl to discover and curate new items')
+ .action(async () => {
+  try {
+   const port = process.env.TNF_API_PORT || '3001';
+   const url = `http://localhost:${port}/marketplace/research/crawl/run`;
+   console.log(chalk.blue(`Triggering marketplace curation crawl at ${url}...`));
+
+   const response = await fetch(url, { method: 'POST' });
+   if (!response.ok) {
+    const body = await response.text().catch(() => '');
+    throw new Error(`HTTP ${response.status}: ${body || response.statusText}`);
+   }
+
+   const data = await response.json();
+   console.log(chalk.green('✅ Crawl triggered successfully'));
+   if (data.runId) {
+    console.log(chalk.dim(`  Run ID: ${data.runId}`));
+    console.log(chalk.dim(`  Check status with: tnf marketplace crawl-status ${data.runId}`));
+   } else {
+    console.log(chalk.dim(`  Response: ${JSON.stringify(data)}`));
+   }
+  } catch (err: any) {
+   console.error(chalk.red(`Error: ${err.message}`));
+   process.exit(1);
+  }
+ });
+
+marketplace
+ .command('crawl-status')
+ .description('Check marketplace crawl run status')
+ .argument('[runId]', 'Specific crawl run ID to check')
+ .action(async (runId?: string) => {
+  try {
+   const port = process.env.TNF_API_PORT || '3001';
+   const url = runId
+    ? `http://localhost:${port}/marketplace/research/crawl/runs/${runId}`
+    : `http://localhost:${port}/marketplace/research/crawl/runs`;
+   console.log(chalk.blue(`Fetching crawl status from ${url}...`));
+
+   const response = await fetch(url);
+   if (!response.ok) {
+    const body = await response.text().catch(() => '');
+    throw new Error(`HTTP ${response.status}: ${body || response.statusText}`);
+   }
+
+   const data = await response.json();
+
+   if (Array.isArray(data)) {
+    console.log(chalk.bold('\nCrawl Runs\n'));
+    if (data.length === 0) {
+     console.log(chalk.dim('No crawl runs found'));
+    } else {
+     for (const run of data) {
+      const statusColor = run.status === 'completed' ? chalk.green : run.status === 'failed' ? chalk.red : chalk.yellow;
+      console.log(`  ${chalk.cyan(run.id || run.runId || '?')}  ${statusColor(run.status || '?')}  ${chalk.dim(run.startedAt || run.created_at || '')}  items: ${run.itemsFound ?? run.items_found ?? '?'}`);
+     }
+    }
+    console.log('');
+   } else {
+    const statusColor = data.status === 'completed' ? chalk.green : data.status === 'failed' ? chalk.red : chalk.yellow;
+    console.log(chalk.bold('\nCrawl Run Status\n'));
+    console.log(`  ID:      ${chalk.cyan(data.id || data.runId || '?')}`);
+    console.log(`  Status:  ${statusColor(data.status || '?')}`);
+    if (data.startedAt || data.created_at) {
+     console.log(`  Started: ${data.startedAt || data.created_at}`);
+    }
+    if (data.completedAt || data.completed_at) {
+     console.log(`  Ended:   ${data.completedAt || data.completed_at}`);
+    }
+    if (data.itemsFound !== undefined || data.items_found !== undefined) {
+     console.log(`  Items:   ${data.itemsFound ?? data.items_found}`);
+    }
+    if (data.error) {
+     console.log(`  Error:   ${chalk.red(data.error)}`);
+    }
+    console.log('');
+   }
+  } catch (err: any) {
+   console.error(chalk.red(`Error: ${err.message}`));
+   process.exit(1);
+  }
+ });
+
 const ai = program.command('ai').description('AI launcher commands');
 ai.command('start')
   .argument('[provider]', 'codex|claude|gemini', '')
@@ -2543,73 +3068,182 @@ forge
     }
   });
 
+function resolveMasterClockLogDir(): string {
+  return normalizeToken(process.env.LOG_DIR) ?? path.join(process.env.HOME || '/tmp', '.tnf-master-clock');
+}
+
+function resolveLatestMasterClockLogPath(logDir: string): string | null {
+  if (!fs.existsSync(logDir) || !fs.statSync(logDir).isDirectory()) return null;
+  const candidates = fs
+    .readdirSync(logDir)
+    .filter((entry) => /^master-\d{4}-\d{2}-\d{2}\.jsonl$/.test(entry))
+    .sort();
+  if (candidates.length === 0) return null;
+  return path.join(logDir, candidates[candidates.length - 1]);
+}
+
 const masterClock = program
   .command('master-clock')
-  .description('Master clock controls (cloud-first)');
+  .description('Master clock controls (provider-routed; local default)');
 masterClock
   .command('start')
-  .description('Start master-clock in cloud via Railway (default) or locally')
-  .option('--local', 'Run local master-clock (override cloud-first policy)', false)
-  .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
+  .description('Start master-clock locally (default) or via a provider adapter')
+  .option('--provider <provider>', 'Control-plane provider: local|cloud_runtime')
+  .option('--local', 'Legacy shortcut for --provider local', false)
+  .option(
+    '--service <name>',
+    'CloudRuntime service name for master clock (used when --provider cloud_runtime)',
+    'tnf-master-clock'
+  )
   .option(
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
   )
-  .action(async (options: { local: boolean; service: string; superAdminToken?: string }) => {
-    try {
-      requireSuperAdmin(options, 'master-clock start');
-      if (options.local) {
-        await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'master-clock']);
-        return;
-      }
+  .action(
+    async (options: {
+      provider?: string;
+      local?: boolean;
+      service: string;
+      superAdminToken?: string;
+    }) => {
+      try {
+        requireSuperAdmin(options, 'master-clock start');
+        const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
+        if (provider === 'local') {
+          await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'master-clock']);
+          return;
+        }
 
-      console.log(
-        chalk.cyan(`☁️ Starting cloud master clock on Railway service ${options.service}`)
-      );
-      await runCommand('railway', ['up', '--service', options.service]);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
+        assertCloudRuntimeAvailable('master-clock start');
+        console.log(chalk.cyan(`Starting master clock on CloudRuntime service ${options.service}`));
+        await runCommand('cloud_runtime', ['up', '--service', options.service]);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
     }
-  });
+  );
 
 masterClock
   .command('logs')
-  .description('Tail cloud master-clock logs')
-  .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
+  .description('Tail master-clock logs (local by default, CloudRuntime as provider fallback)')
+  .option('--provider <provider>', 'Control-plane provider: local|cloud_runtime')
+  .option('--local', 'Legacy shortcut for --provider local', false)
+  .option(
+    '--service <name>',
+    'CloudRuntime service name for master clock (used when --provider cloud_runtime)',
+    'tnf-master-clock'
+  )
+  .option('--lines <n>', 'Number of local log lines to show', '120')
+  .option('--no-follow', 'Show local log tail and exit')
   .option(
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
   )
-  .action(async (options: { service: string; superAdminToken?: string }) => {
-    try {
-      requireSuperAdmin(options, 'master-clock logs');
-      await runCommand('railway', ['logs', '--service', options.service]);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
+  .action(
+    async (options: {
+      provider?: string;
+      local?: boolean;
+      service: string;
+      lines?: string;
+      follow?: boolean;
+      superAdminToken?: string;
+    }) => {
+      try {
+        requireSuperAdmin(options, 'master-clock logs');
+        const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
+        if (provider === 'local') {
+          const logDir = resolveMasterClockLogDir();
+          const logPath = resolveLatestMasterClockLogPath(logDir);
+          if (!logPath) {
+            throw new Error(
+              `No local master-clock log file found in ${logDir}. Start master-clock first or set LOG_DIR.`
+            );
+          }
+          const lines = parsePositiveIntegerOption(options.lines, 120, '--lines');
+          const args = options.follow === false ? ['-n', String(lines), logPath] : ['-n', String(lines), '-f', logPath];
+          await runCommand('tail', args, { cwd: process.cwd() });
+          return;
+        }
+
+        assertCloudRuntimeAvailable('master-clock logs');
+        await runCommand('cloud_runtime', ['logs', '--service', options.service]);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
     }
-  });
+  );
 
 masterClock
   .command('status')
-  .description('Show Railway status for master-clock service')
-  .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
+  .description('Show master-clock status (provider-routed)')
+  .option('--provider <provider>', 'Control-plane provider: local|cloud_runtime')
+  .option('--local', 'Legacy shortcut for --provider local', false)
+  .option(
+    '--service <name>',
+    'CloudRuntime service name for master clock (used when --provider cloud_runtime)',
+    'tnf-master-clock'
+  )
+  .option('--json', 'Output machine-readable JSON for local status checks')
   .option(
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
   )
-  .action(async (options: { service: string; superAdminToken?: string }) => {
-    try {
-      requireSuperAdmin(options, 'master-clock status');
-      await runCommand('railway', ['status', '--service', options.service]);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
+  .action(
+    async (options: {
+      provider?: string;
+      local?: boolean;
+      service: string;
+      json?: boolean;
+      superAdminToken?: string;
+    }) => {
+      try {
+        requireSuperAdmin(options, 'master-clock status');
+        const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
+        if (provider === 'local') {
+          const logDir = resolveMasterClockLogDir();
+          const logPath = resolveLatestMasterClockLogPath(logDir);
+          const payload = {
+            provider,
+            logDir,
+            latestLogPath: logPath,
+            latestLogUpdatedAt: logPath ? fs.statSync(logPath).mtime.toISOString() : null,
+            redisUrlConfigured: Boolean(normalizeToken(process.env.REDIS_URL)),
+            relayUrl: normalizeToken(process.env.RELAY_URL) ?? null,
+          };
+          if (options.json) {
+            console.log(JSON.stringify(payload, null, 2));
+          } else {
+            console.log(chalk.bold('\nMaster Clock Local Status\n'));
+            console.log(`Provider: ${chalk.cyan(provider)}`);
+            console.log(`Redis configured: ${payload.redisUrlConfigured ? chalk.green('yes') : chalk.yellow('no')}`);
+            console.log(`Relay URL: ${chalk.dim(payload.relayUrl || 'not set')}`);
+            console.log(`Log dir: ${chalk.dim(logDir)}`);
+            console.log(
+              `Latest log: ${
+                logPath
+                  ? `${chalk.green(path.relative(repoRoot, logPath))} ${chalk.dim(`(${payload.latestLogUpdatedAt})`)}`
+                  : chalk.yellow('none')
+              }`
+            );
+            console.log(chalk.dim("\nUse 'tnf super-cycle status --provider local' for runtime process snapshot.\n"));
+          }
+          return;
+        }
 
-const superCycle = program.command('super-cycle').description('Super-cycle controls (cloud-first)');
+        assertCloudRuntimeAvailable('master-clock status');
+        await runCommand('cloud_runtime', ['status', '--service', options.service]);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+const superCycle = program
+  .command('super-cycle')
+  .description('Super-cycle controls (provider-routed; local default)');
 superCycle
   .command('event')
   .description('Send super-cycle register/heartbeat/unregister event')
@@ -2621,8 +3255,9 @@ superCycle
   .option('--owner <owner>', 'Process owner', 'tnf')
   .option('--result <result>', 'Last result')
   .option('--metadata <json>', 'JSON metadata', '{}')
-  .option('--local', 'Run local super-cycle client (override cloud-first policy)', false)
-  .option('--service <name>', 'Railway service name', 'tnf-master-clock')
+  .option('--provider <provider>', 'Control-plane provider: local|cloud_runtime')
+  .option('--local', 'Legacy shortcut for --provider local', false)
+  .option('--service <name>', 'CloudRuntime service name (used when --provider cloud_runtime)', 'tnf-master-clock')
   .option(
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
@@ -2637,12 +3272,14 @@ superCycle
       owner: string;
       result?: string;
       metadata: string;
-      local: boolean;
+      provider?: string;
+      local?: boolean;
       service: string;
       superAdminToken?: string;
     }) => {
       try {
         requireSuperAdmin(options, 'super-cycle event');
+        const provider = resolveControlPlaneProvider(options, [SUPER_CYCLE_PROVIDER_ENV_KEY]);
         const baseArgs = [
           '--filter',
           '@the-new-fuse/relay-core',
@@ -2665,15 +3302,14 @@ superCycle
         if (options.name) baseArgs.push('--name', options.name);
         if (options.result) baseArgs.push('--result', options.result);
 
-        if (options.local) {
+        if (provider === 'local') {
           await runCommand('pnpm', baseArgs);
           return;
         }
 
-        console.log(
-          chalk.cyan(`☁️ Sending super-cycle event via cloud service ${options.service}`)
-        );
-        await runCommand('railway', ['run', '--service', options.service, 'pnpm', ...baseArgs]);
+        assertCloudRuntimeAvailable('super-cycle event');
+        console.log(chalk.cyan(`Sending super-cycle event via CloudRuntime service ${options.service}`));
+        await runCommand('cloud_runtime', ['run', '--service', options.service, 'pnpm', ...baseArgs]);
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
         process.exit(1);
@@ -3159,40 +3795,46 @@ skillsBank
 
 superCycle
   .command('status')
-  .description('Read super-cycle state snapshot')
-  .option('--local', 'Read from local Redis via local client', false)
-  .option('--service <name>', 'Railway service name', 'tnf-master-clock')
+  .description('Read super-cycle state snapshot (provider-routed)')
+  .option('--provider <provider>', 'Control-plane provider: local|cloud_runtime')
+  .option('--local', 'Legacy shortcut for --provider local', false)
+  .option('--service <name>', 'CloudRuntime service name (used when --provider cloud_runtime)', 'tnf-master-clock')
   .option(
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
   )
-  .action(async (options: { local: boolean; service: string; superAdminToken?: string }) => {
-    try {
-      requireSuperAdmin(options, 'super-cycle status');
-      if (options.local) {
-        await runCommand('pnpm', [
+  .action(
+    async (options: { provider?: string; local?: boolean; service: string; superAdminToken?: string }) => {
+      try {
+        requireSuperAdmin(options, 'super-cycle status');
+        const provider = resolveControlPlaneProvider(options, [SUPER_CYCLE_PROVIDER_ENV_KEY]);
+        if (provider === 'local') {
+          await runCommand('pnpm', [
+            '--filter',
+            '@the-new-fuse/relay-core',
+            'run',
+            'super-cycle:status',
+          ]);
+          return;
+        }
+
+        assertCloudRuntimeAvailable('super-cycle status');
+        await runCommand('cloud_runtime', [
+          'run',
+          '--service',
+          options.service,
+          'pnpm',
           '--filter',
           '@the-new-fuse/relay-core',
           'run',
           'super-cycle:status',
         ]);
-        return;
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-      await runCommand('railway', [
-        'run',
-        '--service',
-        options.service,
-        'pnpm',
-        '--filter',
-        '@the-new-fuse/relay-core',
-        'run',
-        'super-cycle:status',
-      ]);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 program
   .command('run')
@@ -3371,6 +4013,608 @@ library
       for (const table of tables) {
         console.log(`     - ${table}`);
       }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const selfImprovement = program
+  .command('self-improvement')
+  .description('Deterministic TNF self-improvement loop and artifact controls');
+
+selfImprovement
+  .command('run')
+  .description('Run full self-improvement loop (build, audits, scorecard, architecture map)')
+  .option('--base-url <url>', 'Public base URL used by semantic/auth audits')
+  .option('--api-url <url>', 'API base URL used by auth audit')
+  .option('--max-depth <n>', 'Max crawl depth for live link audit', '5')
+  .option('--max-pages <n>', 'Max page count for live link audit', '500')
+  .option('--max-external <n>', 'Max external URL checks for live link audit', '400')
+  .option('--skip-build', 'Skip frontend build stage')
+  .option('--skip-live-links', 'Skip live-link crawl stage')
+  .option('--skip-semantic', 'Skip semantic route audit stage')
+  .option('--skip-auth', 'Skip auth path audit stage')
+  .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
+  .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
+  .option('--note <text>', 'Override protocol run-log note')
+  .option('--json', 'Output machine-readable JSON summary')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
+  .action(
+    async (
+      options: {
+        baseUrl?: string;
+        apiUrl?: string;
+        maxDepth?: string;
+        maxPages?: string;
+        maxExternal?: string;
+        skipBuild?: boolean;
+        skipLiveLinks?: boolean;
+        skipSemantic?: boolean;
+        skipAuth?: boolean;
+        skipScorecard?: boolean;
+        skipMermaid?: boolean;
+        note?: string;
+        json?: boolean;
+        superAdminToken?: string;
+      } = {}
+    ) => {
+      try {
+        requireSuperAdmin(options, 'self-improvement run');
+        const startedAt = new Date();
+        const startedAtMs = startedAt.getTime();
+        const baseUrl = resolveSelfImprovementBaseUrl(options.baseUrl);
+        const apiUrl = resolveSelfImprovementApiUrl(options.apiUrl);
+        const maxDepth = parsePositiveIntegerOption(options.maxDepth, 5, '--max-depth');
+        const maxPages = parsePositiveIntegerOption(options.maxPages, 500, '--max-pages');
+        const maxExternal = parsePositiveIntegerOption(options.maxExternal, 400, '--max-external');
+        const frontendCwd = path.join(repoRoot, 'apps/frontend');
+        const expectedArtifacts: string[] = [];
+
+        if (!options.skipBuild) {
+          await runCommand('pnpm', ['--filter', '@the-new-fuse/frontend-app', 'run', 'build']);
+        }
+        if (!options.skipLiveLinks) {
+          await runCommand('pnpm', ['run', 'audit:live-links'], {
+            cwd: frontendCwd,
+            env: {
+              LIVE_AUDIT_MAX_DEPTH: String(maxDepth),
+              LIVE_AUDIT_MAX_PAGES: String(maxPages),
+              LIVE_AUDIT_MAX_EXTERNAL: String(maxExternal),
+              FAIL_ON_BROKEN: '1',
+            },
+          });
+          expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.liveLinkCrawlJson);
+        }
+        if (!options.skipSemantic) {
+          await runCommand('pnpm', ['run', 'audit:all-routes-semantic'], {
+            cwd: frontendCwd,
+            env: {
+              SEMANTIC_AUDIT_BASE_URL: baseUrl,
+              FAIL_ON_SEMANTIC_ISSUES: '1',
+            },
+          });
+          expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.semanticAuditJson);
+        }
+        if (!options.skipAuth) {
+          await runCommand('pnpm', ['run', 'audit:auth-paths'], {
+            cwd: frontendCwd,
+            env: {
+              AUTH_AUDIT_PUBLIC_BASE_URL: baseUrl,
+              AUTH_AUDIT_API_BASE_URL: apiUrl,
+              FAIL_ON_AUTH_ISSUES: '1',
+            },
+          });
+          expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.authPathAuditJson);
+        }
+        if (!options.skipScorecard) {
+          await runCommand('pnpm', ['run', 'audit:self-improvement-scorecard'], {
+            cwd: frontendCwd,
+            env: {
+              FAIL_ON_SCORECARD: '1',
+            },
+          });
+          expectedArtifacts.push(
+            SELF_IMPROVEMENT_ARTIFACTS.scorecardJson,
+            SELF_IMPROVEMENT_ARTIFACTS.scorecardMd
+          );
+        }
+        if (!options.skipMermaid) {
+          await runCommand('python3', [
+            'scripts/architecture/generate_tnf_master_mermaid.py',
+            '--repo',
+            repoRoot,
+            '--out',
+            SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid,
+          ]);
+          expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid);
+        }
+
+        const runNote =
+          normalizeToken(options.note) ||
+          `Executed via tnf self-improvement run (base-url=${baseUrl}, api-url=${apiUrl})`;
+        const runLogPath = appendSelfImprovementRunLog(runNote);
+        expectedArtifacts.push(runLogPath);
+
+        const verification = assertExpectedArtifacts(expectedArtifacts, startedAtMs);
+        if (verification.missing.length > 0) {
+          throw new Error(`Missing expected artifacts:\n- ${verification.missing.join('\n- ')}`);
+        }
+        if (verification.stale.length > 0) {
+          throw new Error(`Stale artifact timestamps detected:\n- ${verification.stale.join('\n- ')}`);
+        }
+
+        const payload = {
+          ok: true,
+          startedAt: startedAt.toISOString(),
+          finishedAt: new Date().toISOString(),
+          baseUrl,
+          apiUrl,
+          expectedArtifacts: expectedArtifacts.map((p) => path.relative(repoRoot, p)),
+          artifacts: collectSelfImprovementArtifactStatus().map((entry) => ({
+            ...entry,
+            path: path.relative(repoRoot, entry.path),
+          })),
+        };
+
+        if (options.json) {
+          console.log(JSON.stringify(payload, null, 2));
+          return;
+        }
+
+        console.log(chalk.bold('\nTNF Self-Improvement Run Complete\n'));
+        console.log(`Base URL: ${chalk.cyan(baseUrl)}`);
+        console.log(`API URL: ${chalk.cyan(apiUrl)}`);
+        console.log(`Artifacts verified: ${chalk.green(String(payload.expectedArtifacts.length))}`);
+        console.log(`Run log: ${chalk.dim(path.relative(repoRoot, runLogPath))}`);
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+selfImprovement
+  .command('status')
+  .description('Show current self-improvement artifact and scorecard state')
+  .option('--strict', 'Exit non-zero when required artifacts are missing or scorecard fails')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (options: { strict?: boolean; json?: boolean } = {}) => {
+    try {
+      const required = [
+        SELF_IMPROVEMENT_ARTIFACTS.liveLinkCrawlJson,
+        SELF_IMPROVEMENT_ARTIFACTS.semanticAuditJson,
+        SELF_IMPROVEMENT_ARTIFACTS.authPathAuditJson,
+        SELF_IMPROVEMENT_ARTIFACTS.scorecardJson,
+        SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid,
+      ];
+      const artifacts = collectSelfImprovementArtifactStatus();
+      const missingRequired = required.filter((artifactPath) => !fs.existsSync(artifactPath));
+
+      let scorecard: any = null;
+      if (fs.existsSync(SELF_IMPROVEMENT_ARTIFACTS.scorecardJson)) {
+        scorecard = JSON.parse(fs.readFileSync(SELF_IMPROVEMENT_ARTIFACTS.scorecardJson, 'utf8'));
+      }
+
+      const scorecardPassed = scorecard?.overall?.passed === true;
+      const payload = {
+        ok: missingRequired.length === 0 && (scorecard ? scorecardPassed : false),
+        missingRequired: missingRequired.map((artifactPath) => path.relative(repoRoot, artifactPath)),
+        scorecard: scorecard
+          ? {
+              generatedAt: scorecard.generatedAt ?? null,
+              passed: Boolean(scorecard?.overall?.passed),
+              requiredAuditsPresent: Boolean(scorecard?.overall?.requiredAuditsPresent),
+            }
+          : null,
+        artifacts: artifacts.map((entry) => ({
+          ...entry,
+          path: path.relative(repoRoot, entry.path),
+        })),
+      };
+
+      if (options.json) {
+        console.log(JSON.stringify(payload, null, 2));
+      } else {
+        console.log(chalk.bold('\nTNF Self-Improvement Status\n'));
+        console.log(`Overall: ${payload.ok ? chalk.green('PASS') : chalk.red('FAIL')}`);
+        if (payload.scorecard) {
+          console.log(
+            `Scorecard: ${payload.scorecard.passed ? chalk.green('PASS') : chalk.red('FAIL')} (${chalk.dim(payload.scorecard.generatedAt || 'unknown')})`
+          );
+        } else {
+          console.log(`Scorecard: ${chalk.yellow('missing')}`);
+        }
+
+        if (payload.missingRequired.length > 0) {
+          console.log(chalk.yellow('\nMissing required artifacts:'));
+          for (const item of payload.missingRequired) {
+            console.log(`- ${item}`);
+          }
+        }
+        console.log('');
+      }
+
+      if (options.strict && !payload.ok) {
+        process.exit(1);
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+selfImprovement
+  .command('scorecard')
+  .description('Generate self-improvement scorecard from existing audit artifacts')
+  .option('--no-fail', 'Do not fail even if scorecard checks fail')
+  .action(async (options: { fail?: boolean } = {}) => {
+    try {
+      await runCommand('pnpm', ['run', 'audit:self-improvement-scorecard'], {
+        cwd: path.join(repoRoot, 'apps/frontend'),
+        env: {
+          FAIL_ON_SCORECARD: options.fail === false ? '0' : '1',
+        },
+      });
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+selfImprovement
+  .command('mermaid')
+  .description('Generate TNF master framework mermaid architecture map')
+  .option('--out <path>', 'Output file path', path.relative(repoRoot, SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid))
+  .action(async (options: { out?: string } = {}) => {
+    try {
+      const outPath = options.out
+        ? path.resolve(repoRoot, options.out)
+        : SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid;
+      await runCommand('python3', [
+        'scripts/architecture/generate_tnf_master_mermaid.py',
+        '--repo',
+        repoRoot,
+        '--out',
+        outPath,
+      ]);
+      console.log(chalk.green(`Wrote ${path.relative(repoRoot, outPath)}`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+selfImprovement
+  .command('log')
+  .description('Append a self-improvement note to the run log')
+  .argument('<note...>', 'Note text')
+  .action((noteParts: string[]) => {
+    try {
+      const note = noteParts.join(' ').trim();
+      if (!note) {
+        throw new Error('Note text is required');
+      }
+      const logPath = appendSelfImprovementRunLog(note);
+      console.log(chalk.green(`Updated ${path.relative(repoRoot, logPath)}`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const fullAuto = program
+  .command('full-auto')
+  .description('Run unattended TNF automation loops with persisted state/logging');
+
+fullAuto
+  .command('provision')
+  .description('Install full-auto command+skill artifacts into detected agent runtimes')
+  .option(
+    '--targets <list>',
+    'Comma-separated targets: codex,claude,gemini,opencode,kilo,augment,tnf,hermes,project,all',
+    'all'
+  )
+  .option('--dry-run', 'Preview changes without writing files')
+  .option('--json', 'Output machine-readable JSON summary')
+  .action(
+    async (options: { targets?: string; dryRun?: boolean; json?: boolean } = {}) => {
+      try {
+        const args = ['scripts/agents/provision-full-auto-network.cjs'];
+        if (options.targets) args.push('--targets', options.targets);
+        if (options.dryRun) args.push('--dry-run');
+        if (options.json) args.push('--json');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+fullAuto
+  .command('once')
+  .description('Run one unattended cycle (self-improvement + optional orchestration broadcast)')
+  .option('--base-url <url>', 'Public base URL used by semantic/auth audits')
+  .option('--api-url <url>', 'API base URL used by auth audit')
+  .option('--max-depth <n>', 'Max crawl depth for live link audit')
+  .option('--max-pages <n>', 'Max page count for live link audit')
+  .option('--max-external <n>', 'Max external URL checks for live link audit')
+  .option('--skip-build', 'Skip frontend build stage')
+  .option('--skip-live-links', 'Skip live-link crawl stage')
+  .option('--skip-semantic', 'Skip semantic route audit stage')
+  .option('--skip-auth', 'Skip auth path audit stage')
+  .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
+  .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
+  .option('--note <text>', 'Override protocol run-log note')
+  .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after loop completion')
+  .option('--json', 'Output machine-readable JSON summary')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
+  .action(async (options: SelfImprovementRunCliOptions & { broadcast?: boolean; json?: boolean }) => {
+    try {
+      requireSuperAdmin(options, 'full-auto once');
+
+      const startedAt = new Date();
+      const cycleArgs = buildSelfImprovementRunCliArgs(options);
+      await runSelfCli(cycleArgs);
+
+      if (options.broadcast) {
+        await runSelfCli(['orchestrate', 'self-improvement']);
+      }
+
+      await runSelfCli(['self-improvement', 'status', '--strict']);
+      const finishedAt = new Date();
+      const event: FullAutoRunEvent = {
+        cycle: 1,
+        startedAt: startedAt.toISOString(),
+        finishedAt: finishedAt.toISOString(),
+        durationMs: finishedAt.getTime() - startedAt.getTime(),
+        ok: true,
+      };
+
+      appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
+      writeFullAutoState({
+        mode: 'idle',
+        updatedAt: finishedAt.toISOString(),
+        intervalMinutes: 0,
+        maxCycles: 1,
+        completedCycles: 1,
+        failedCycles: 0,
+        lastRun: event,
+      });
+
+      if (options.json) {
+        console.log(JSON.stringify(event, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nTNF Full-Auto Cycle Complete\n'));
+      console.log(`Duration: ${chalk.cyan(`${event.durationMs}ms`)}`);
+      console.log(`Run log: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH))}`);
+      console.log(`State: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+fullAuto
+  .command('start')
+  .description('Run continuous unattended cycles in the current terminal process')
+  .option('--interval-minutes <n>', 'Wait time between cycles', String(DEFAULT_FULL_AUTO_INTERVAL_MINUTES))
+  .option('--max-cycles <n>', 'Number of cycles before stop (0 = run forever)', '0')
+  .option('--base-url <url>', 'Public base URL used by semantic/auth audits')
+  .option('--api-url <url>', 'API base URL used by auth audit')
+  .option('--max-depth <n>', 'Max crawl depth for live link audit')
+  .option('--max-pages <n>', 'Max page count for live link audit')
+  .option('--max-external <n>', 'Max external URL checks for live link audit')
+  .option('--skip-build', 'Skip frontend build stage')
+  .option('--skip-live-links', 'Skip live-link crawl stage')
+  .option('--skip-semantic', 'Skip semantic route audit stage')
+  .option('--skip-auth', 'Skip auth path audit stage')
+  .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
+  .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
+  .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after each cycle')
+  .option('--strict', 'Stop loop on first cycle failure')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
+  .action(
+    async (
+      options: SelfImprovementRunCliOptions & {
+        intervalMinutes?: string;
+        maxCycles?: string;
+        broadcast?: boolean;
+        strict?: boolean;
+      }
+    ) => {
+      try {
+        requireSuperAdmin(options, 'full-auto start');
+
+        const intervalMinutes = parsePositiveIntegerOption(
+          options.intervalMinutes,
+          DEFAULT_FULL_AUTO_INTERVAL_MINUTES,
+          '--interval-minutes'
+        );
+        const maxCycles = parseNonNegativeIntegerOption(options.maxCycles, 0, '--max-cycles');
+        const cycleArgs = buildSelfImprovementRunCliArgs(options);
+        const intervalMs = intervalMinutes * 60 * 1000;
+        let completedCycles = 0;
+        let failedCycles = 0;
+
+        writeFullAutoState({
+          mode: 'running',
+          updatedAt: new Date().toISOString(),
+          intervalMinutes,
+          maxCycles,
+          completedCycles,
+          failedCycles,
+        });
+
+        console.log(chalk.bold('\nTNF Full-Auto Loop Started\n'));
+        console.log(`Interval: ${chalk.cyan(`${intervalMinutes} minute(s)`)}`);
+        console.log(`Max cycles: ${chalk.cyan(maxCycles === 0 ? 'unbounded' : String(maxCycles))}`);
+        console.log(`State: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
+        console.log('');
+
+        let cycle = 0;
+        while (maxCycles === 0 || cycle < maxCycles) {
+          cycle += 1;
+          const startedAt = new Date();
+          let event: FullAutoRunEvent = {
+            cycle,
+            startedAt: startedAt.toISOString(),
+            finishedAt: startedAt.toISOString(),
+            durationMs: 0,
+            ok: false,
+          };
+
+          try {
+            await runSelfCli(cycleArgs);
+            if (options.broadcast) {
+              await runSelfCli(['orchestrate', 'self-improvement']);
+            }
+            await runSelfCli(['self-improvement', 'status', '--strict']);
+
+            const finishedAt = new Date();
+            event = {
+              cycle,
+              startedAt: startedAt.toISOString(),
+              finishedAt: finishedAt.toISOString(),
+              durationMs: finishedAt.getTime() - startedAt.getTime(),
+              ok: true,
+            };
+            completedCycles += 1;
+            console.log(
+              chalk.green(
+                `[full-auto] cycle ${cycle} completed in ${Math.round(event.durationMs / 1000)}s`
+              )
+            );
+          } catch (err: any) {
+            const finishedAt = new Date();
+            event = {
+              cycle,
+              startedAt: startedAt.toISOString(),
+              finishedAt: finishedAt.toISOString(),
+              durationMs: finishedAt.getTime() - startedAt.getTime(),
+              ok: false,
+              error: err instanceof Error ? err.message : String(err),
+            };
+            failedCycles += 1;
+            console.error(chalk.red(`[full-auto] cycle ${cycle} failed: ${event.error}`));
+
+            appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
+            writeFullAutoState({
+              mode: options.strict ? 'idle' : 'running',
+              updatedAt: new Date().toISOString(),
+              intervalMinutes,
+              maxCycles,
+              completedCycles,
+              failedCycles,
+              lastRun: event,
+            });
+
+            if (options.strict) {
+              throw err;
+            }
+          }
+
+          appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
+          writeFullAutoState({
+            mode: 'running',
+            updatedAt: new Date().toISOString(),
+            intervalMinutes,
+            maxCycles,
+            completedCycles,
+            failedCycles,
+            lastRun: event,
+          });
+
+          if (maxCycles > 0 && cycle >= maxCycles) {
+            break;
+          }
+
+          console.log(
+            chalk.dim(`[full-auto] sleeping ${intervalMinutes} minute(s) before next cycle...`)
+          );
+          await sleepMs(intervalMs);
+        }
+
+        writeFullAutoState({
+          mode: 'idle',
+          updatedAt: new Date().toISOString(),
+          intervalMinutes,
+          maxCycles,
+          completedCycles,
+          failedCycles,
+          lastRun: readLastJsonLine(FULL_AUTO_RUN_LOG_PATH) || undefined,
+        });
+
+        console.log(chalk.bold('\nTNF Full-Auto Loop Complete\n'));
+        console.log(`Completed cycles: ${chalk.green(String(completedCycles))}`);
+        console.log(`Failed cycles: ${failedCycles > 0 ? chalk.yellow(String(failedCycles)) : chalk.green('0')}`);
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+fullAuto
+  .command('status')
+  .description('Show persisted full-auto loop state and latest cycle result')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean } = {}) => {
+    try {
+      const state = readFullAutoState();
+      const lastRun = readLastJsonLine(FULL_AUTO_RUN_LOG_PATH);
+      const payload = {
+        state,
+        lastRun,
+        statePath: path.relative(repoRoot, FULL_AUTO_STATE_PATH),
+        runLogPath: path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH),
+      };
+
+      if (options.json) {
+        console.log(JSON.stringify(payload, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nTNF Full-Auto Status\n'));
+      if (!state) {
+        console.log(chalk.yellow('No full-auto state file found yet.'));
+      } else {
+        console.log(`Mode: ${state.mode === 'running' ? chalk.green('running') : chalk.cyan('idle')}`);
+        console.log(`Updated: ${chalk.dim(state.updatedAt)}`);
+        console.log(`Interval: ${chalk.cyan(`${state.intervalMinutes} minute(s)`)}`);
+        console.log(`Max cycles: ${chalk.cyan(state.maxCycles === 0 ? 'unbounded' : String(state.maxCycles))}`);
+        console.log(`Completed cycles: ${chalk.green(String(state.completedCycles))}`);
+        console.log(
+          `Failed cycles: ${state.failedCycles > 0 ? chalk.yellow(String(state.failedCycles)) : chalk.green('0')}`
+        );
+      }
+
+      if (lastRun) {
+        console.log('\nLast cycle:');
+        console.log(`- cycle=${lastRun.cycle} ok=${lastRun.ok} durationMs=${lastRun.durationMs}`);
+        if (lastRun.error) {
+          console.log(`- error=${lastRun.error}`);
+        }
+      }
+
+      console.log(`\nState file: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
+      console.log(`Run log: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH))}`);
       console.log('');
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -4687,6 +5931,16 @@ agents
     if (options.name) args.push('--name', options.name);
     await runSelfCliWithExit(args);
   });
+agents
+  .command('orchestrate')
+  .description('Alias for `tnf orchestrate`')
+  .argument('<workflow>', 'Workflow name (health-check|code-review|self-improvement)')
+  .option('--path <path>', 'Path for code-review workflow')
+  .action(async (workflow: string, options: { path?: string } = {}) => {
+    const args = ['orchestrate', workflow];
+    if (options.path) args.push('--path', options.path);
+    await runSelfCliWithExit(args);
+  });
 
 agents
   .command('convo')
@@ -4698,6 +5952,50 @@ agents
     if (param) args.push(param);
     await runSelfCliWithExit(args);
   });
+
+const agentsBank = agents
+  .command('bank')
+  .description('Agent bank governance and cross-runtime distribution');
+
+agentsBank
+  .command('reconcile')
+  .description(
+    'Restore/sync agent banks and provision imported Claude agent definitions across runtime homes'
+  )
+  .option(
+    '--targets <list>',
+    'Comma-separated targets: codex,claude,gemini,opencode,kilo,augment,tnf,hermes,project,all',
+    'all'
+  )
+  .option('--dry-run', 'Preview changes without writing files')
+  .option('--json', 'Output machine-readable JSON summary')
+  .option('--skip-restore', 'Skip restoring .agent/agents from git history when missing')
+  .option('--skip-imported-sync', 'Skip creating missing .skills/imported-claude-agents wrappers')
+  .option('--skip-provision', 'Skip runtime-home provisioning stage')
+  .action(
+    async (options: {
+      targets?: string;
+      dryRun?: boolean;
+      json?: boolean;
+      skipRestore?: boolean;
+      skipImportedSync?: boolean;
+      skipProvision?: boolean;
+    } = {}) => {
+      try {
+        const args = ['scripts/agents/reconcile-agent-banks.cjs'];
+        if (options.targets) args.push('--targets', options.targets);
+        if (options.dryRun) args.push('--dry-run');
+        if (options.json) args.push('--json');
+        if (options.skipRestore) args.push('--skip-restore');
+        if (options.skipImportedSync) args.push('--skip-imported-sync');
+        if (options.skipProvision) args.push('--skip-provision');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
 
 program
   .command('list')
@@ -4761,6 +6059,33 @@ program
     } catch (err: any) {
       if (isRedisUnavailable(err)) {
         logRedisUnavailable('./tnf send <message>');
+      }
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    } finally {
+      await client.cleanup();
+    }
+  });
+
+program
+  .command('orchestrate')
+  .description('Run agent orchestration workflow (health-check|code-review|self-improvement)')
+  .argument('<workflow>', 'Workflow name')
+  .option('--path <path>', 'Code path for code-review workflow', '.')
+  .action(async (workflow: string, options: { path?: string } = {}) => {
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const orchestrator = new Orchestrator(client);
+      const ok = await orchestrator.executeWorkflow(workflow, {
+        path: options.path || '.',
+      });
+      if (!ok) {
+        process.exit(1);
+      }
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable(`./tnf orchestrate ${workflow}`);
       }
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);

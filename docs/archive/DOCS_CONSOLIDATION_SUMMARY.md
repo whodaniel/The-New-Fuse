@@ -89,7 +89,7 @@ appropriate existing subdirectories**:
 | Root Files                                            | →   | Existing docs/ Directory              |
 | ----------------------------------------------------- | --- | ------------------------------------- |
 | `ARCHITECTURE*.md`, `MONOREPO*.md`, `REFACTORING*.md` | →   | `docs/architecture/`                  |
-| `DEPLOYMENT*.md`, `RAILWAY*.md`, `DOCKER*.md`         | →   | `docs/deployment/`                    |
+| `DEPLOYMENT*.md`, `CLOUD_RUNTIME*.md`, `DOCKER*.md`         | →   | `docs/deployment/`                    |
 | `BUILD*.md`, `DEPENDENCY*.md`, `CODE_QUALITY*.md`     | →   | `docs/development/`                   |
 | `CI_CD*.md`                                           | →   | `docs/ci-cd/`                         |
 | `AGENT*.md`                                           | →   | `docs/agents/`                        |

@@ -44,7 +44,7 @@ const blockedPathPatterns = [
   /^docs\/library\/EMAIL_.*\.md$/i,
   /^reports\/personal-archaeology\//i,
   /^apps\/api\/data\/unified-task-ledger\.json$/i,
-  /^scripts\/railway\/openclaw-codex-tenants\.json$/i,
+  /^scripts\/cloud_runtime\/openclaw-codex-tenants\.json$/i,
 ];
 
 function escapeRegex(value) {

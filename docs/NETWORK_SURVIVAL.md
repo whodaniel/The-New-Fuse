@@ -22,7 +22,7 @@ TNF must solve all three simultaneously. Here's how.
 
 ### The Self-Funding Relay
 
-The relay on Railway costs ~$5-7/month. That's nothing IF it generates value.
+The relay on CloudRuntime costs ~$5-7/month. That's nothing IF it generates value.
 
 **How it generates value NOW:**
 
@@ -69,7 +69,7 @@ The Master Clock currently has ONE orchestrator. That must change.
 **Resilient baton passing:**
 
 ```
-ORCHESTRATOR_1 (Target platform)     ORCHESTRATOR_2 (Railway)    ORCHESTRATOR_3 (Home server)
+ORCHESTRATOR_1 (Target platform)     ORCHESTRATOR_2 (CloudRuntime)    ORCHESTRATOR_3 (Home server)
      │                         │                          │
      ├───── Redis pub/sub ─────┼───── Redis pub/sub ─────┤
      │                         │                          │
@@ -88,17 +88,17 @@ Redis pub/sub across multiple cloud providers = baton never drops.
 
 ### The Self-Healing Relay
 
-Railway instances die. Always. ⚠️ **DEPRECATED — Railway is no longer used.**
+CloudRuntime instances die. Always. ⚠️ **DEPRECATED — CloudRuntime is no longer used.**
 TNF now runs on GCP Cloud Run, which auto-scales. The relay must respawn itself.
 
 ```bash
-# ⚠️ DEPRECATED: Railway command below. Use GCP Cloud Run for current deployment.
-# Railway health check → if dead → redeploy
-railway up --detach || railway run npm start
+# ⚠️ DEPRECATED: CloudRuntime command below. Use GCP Cloud Run for current deployment.
+# CloudRuntime health check → if dead → redeploy
+cloud_runtime up --detach || cloud_runtime run npm start
 ```
 
-Combined with git having the code forever, the relay is IMMORTAL even if Railway
-instances are mortal. ⚠️ **Railway is historical — GCP Cloud Run provides
+Combined with git having the code forever, the relay is IMMORTAL even if CloudRuntime
+instances are mortal. ⚠️ **CloudRuntime is historical — GCP Cloud Run provides
 equivalent resilience.**
 
 ---
@@ -160,7 +160,7 @@ threshold.
         ▼                            ▼                            ▼
 ┌───────────────┐         ┌───────────────┐         ┌───────────────┐
 │   ORCHESTATOR │         │   ORCHESTRATOR│         │  ORCHESTRATOR │
-│   (Cloud #1)  │◄───────►│   (Railway #2) │◄───────►│   (Home #3)   │
+│   (Cloud #1)  │◄───────►│   (CloudRuntime #2) │◄───────►│   (Home #3)   │
 │               │ Redis   │               │ Redis   │               │
 └───────────────┘ pub/sub └───────────────┘ pub/sub └───────────────┘
         │                            │                            │
@@ -169,7 +169,7 @@ threshold.
                     ┌────────────────┴────────────────────┐
                     │         THE IMMORTAL RELAY          │
                     │   Git has code forever              │
-                    │   Railway instances are mortal      │
+                    │   CloudRuntime instances are mortal      │
                     │   Code respawns automatically       │
                     └─────────────────────────────────────┘
 ```
