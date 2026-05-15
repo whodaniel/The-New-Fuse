@@ -27,7 +27,9 @@ const textFileExtensions = new Set([
 ]);
 
 const blockedPathPatterns = [
-  /^\.agent\//i,
+  // Public agent definitions and skill cards under `.agent/fleet` are intended to be versioned.
+  // Block only private/runtime slices of `.agent`.
+  /^\.agent\/(?:runtime-logs|runtime-state|private|secrets?|state-snapshots)\//i,
   /^data\/private\//i,
   /^data\/protocols\/.*\.(json|jsonl)$/i,
   /^data\/unified-task-ledger\.json$/i,
@@ -70,14 +72,16 @@ function buildPersonalEmailRegex() {
 const personalEmailRegex = buildPersonalEmailRegex();
 
 const sensitiveContentChecks = [
-  { name: 'owner_home_path', regex: /\/Users\/danielgoldberg\//gi },
-  { name: 'mailbox_reference', regex: /\.mbox\//gi },
-  { name: 'raw_emlx_reference', regex: /\.emlx\b/gi },
+  // Local machine paths in diagnostics are useful but should not hard-fail pushes.
+  { name: 'owner_home_path', severity: 'warn', regex: /\/Users\/danielgoldberg\//gi },
+  { name: 'mailbox_reference', severity: 'block', regex: /\.mbox\//gi },
+  { name: 'raw_emlx_reference', severity: 'block', regex: /\.emlx\b/gi },
   ...(personalEmailRegex
-    ? [{ name: 'personal_email_address', regex: personalEmailRegex }]
+    ? [{ name: 'personal_email_address', severity: 'block', regex: personalEmailRegex }]
     : []),
   {
     name: 'high_risk_secret_value',
+    severity: 'block',
     regex:
       /\b(?:SUPABASE_SERVICE_ROLE_KEY|SUPABASE_ACCESS_TOKEN|OPENAI_API_KEY|ANTHROPIC_API_KEY|GEMINI_API_KEY|CLOUDFLARE_API_TOKEN|STRIPE_SECRET_KEY)\b\s*[:=]\s*["']?(?!your[_-]|YOUR[_-]|example|EXAMPLE|changeme|CHANGEME|placeholder|PLACEHOLDER|sample|SAMPLE|dummy|DUMMY|test|TEST|<|\$\{)[A-Za-z0-9._\-]{20,}/g,
   },
@@ -186,6 +190,7 @@ function main() {
 
   const pathViolations = [];
   const contentViolations = [];
+  const contentWarnings = [];
 
   for (const file of files) {
     if (blockedPathPatterns.some((pattern) => pattern.test(file))) {
@@ -196,19 +201,36 @@ function main() {
     const content = readContentForMode(file, mode);
     if (!content) continue;
 
-    const matchedChecks = [];
+    const matchedViolations = [];
+    const matchedWarnings = [];
     for (const check of sensitiveContentChecks) {
       check.regex.lastIndex = 0;
       if (check.regex.test(content)) {
-        matchedChecks.push(check.name);
+        if (check.severity === 'warn') {
+          matchedWarnings.push(check.name);
+        } else {
+          matchedViolations.push(check.name);
+        }
       }
     }
-    if (matchedChecks.length) {
-      contentViolations.push({ file, checks: matchedChecks });
+    if (matchedWarnings.length) {
+      contentWarnings.push({ file, checks: matchedWarnings });
+    }
+    if (matchedViolations.length) {
+      contentViolations.push({ file, checks: matchedViolations });
     }
   }
 
   if (!pathViolations.length && !contentViolations.length && !authorIdentityViolation) {
+    if (contentWarnings.length) {
+      console.warn(`[privacy-guard] WARN (${mode}): non-blocking sensitive diagnostics detected`);
+      for (const issue of contentWarnings.slice(0, 50)) {
+        console.warn(`  - ${issue.file}: ${issue.checks.join(', ')}`);
+      }
+      if (contentWarnings.length > 50) {
+        console.warn(`  ... and ${contentWarnings.length - 50} more`);
+      }
+    }
     console.log(`[privacy-guard] OK (${mode}): no blocked paths or sensitive content detected`);
     return;
   }
