@@ -3,6 +3,7 @@ set -euo pipefail
 
 LABEL="com.tnf.voice-bridge-server"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
+LAUNCH_DOMAIN="gui/$(id -u)"
 PYTHON_BIN="${TNF_VOICE_BRIDGE_PYTHON_BIN:-$(command -v python3)}"
 SCRIPT_PATH="${TNF_VOICE_BRIDGE_SCRIPT_PATH:-$HOME/bin/voice_server.py}"
 WORK_DIR="${TNF_VOICE_BRIDGE_WORK_DIR:-$HOME}"
@@ -58,19 +59,23 @@ PLIST
 install() {
   require_binaries
   create_plist
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
-  launchctl load -w "$PLIST_PATH"
+  start
   echo "installed: $LABEL"
 }
 
 start() {
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
-  launchctl load -w "$PLIST_PATH"
+  require_binaries
+  if [[ ! -f "$PLIST_PATH" ]]; then
+    create_plist
+  fi
+  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
+  launchctl kickstart -k "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   echo "started: $LABEL"
 }
 
 stop() {
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
+  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || launchctl unload "$PLIST_PATH" 2>/dev/null || true
   echo "stopped: $LABEL"
 }
 
@@ -86,7 +91,11 @@ uninstall() {
 }
 
 status() {
-  launchctl list | grep "$LABEL" || echo "not-running: $LABEL"
+  if launchctl print "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1; then
+    echo "running: $LABEL"
+  else
+    echo "not-running: $LABEL"
+  fi
   curl -fsS http://127.0.0.1:50005/mic_state >/dev/null 2>&1 && echo "http-ok: 127.0.0.1:50005" || echo "http-down: 127.0.0.1:50005"
 }
 
@@ -99,4 +108,3 @@ case "${1:-}" in
   status) status ;;
   *) echo "Usage: $0 <install|start|stop|restart|status|uninstall>"; exit 1 ;;
 esac
-

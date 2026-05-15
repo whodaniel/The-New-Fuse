@@ -1,5 +1,5 @@
-import { Alert, Card, LoadingSpinner, Tooltip } from '@/components/ui';
 // @ts-nocheck
+import { Alert, Card, LoadingSpinner, Tooltip } from '@/components/ui';
 /**
  * DataCard Component - Reusable card for displaying data with loading/error states
  * Replaces corrupted Material-UI version with Tailwind + Custom Design System

@@ -1,8 +1,10 @@
 import json
 import os
 
-MAP_PATH = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map.json"
-OUTPUT_PATH = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/native/codebase_training_data.json"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+MAP_PATH = os.path.join(PROJECT_ROOT, "apps", "frontend", "src", "data", "codebase_map.json")
+OUTPUT_PATH = os.path.join(PROJECT_ROOT, "scripts", "native", "codebase_training_data.json")
 
 def extract_features():
     print(f"[🧬] Extracting features from Codebase Map...")

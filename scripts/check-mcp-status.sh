@@ -6,6 +6,9 @@ echo "MCP Status Check"
 echo "================"
 echo
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TNF_ROOT_DIR="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
+
 # Look for common MCP configuration locations
 HOME_DIR="$HOME"
 CHECK_PATHS=(
@@ -50,7 +53,7 @@ for path in "${CHECK_PATHS[@]}"; do
 done
 
 # Look for agent registrations
-WORKSPACE_DIR="$HOME/Desktop/A1-Inter-LLM-Com/The New Fuse"
+WORKSPACE_DIR="$TNF_ROOT_DIR"
 if [[ -d "$WORKSPACE_DIR" ]]; then
   AGENTS=$(find "$WORKSPACE_DIR" -name "agent_registration_*.json" -o -name "agent_*.json" 2>/dev/null)
   

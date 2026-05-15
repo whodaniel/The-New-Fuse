@@ -256,7 +256,7 @@
       "evidenceCount": 2
     },
     {
-      "file": "docs/audits/RAILWAY_TNF_SERVICE_INSPECTION_2026-03-09.md",
+      "file": "docs/audits/CLOUD_RUNTIME_TNF_SERVICE_INSPECTION_2026-03-09.md",
       "classification": "public-allowed",
       "reasons": [
         "contains public GitHub handle/repository reference"
@@ -301,7 +301,7 @@
       "evidenceCount": 1
     },
     {
-      "file": "docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md",
+      "file": "docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md",
       "classification": "public-allowed",
       "reasons": [
         "contains public GitHub handle/repository reference"
@@ -310,7 +310,7 @@
       "evidenceCount": 5
     },
     {
-      "file": "docs/deployment/RAILWAY_DEPLOYMENT_INSTRUCTIONS.md",
+      "file": "docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_INSTRUCTIONS.md",
       "classification": "public-allowed",
       "reasons": [
         "contains public GitHub handle/repository reference"
@@ -319,7 +319,7 @@
       "evidenceCount": 2
     },
     {
-      "file": "docs/deployment/RAILWAY_FAILURE_ANALYSIS.md",
+      "file": "docs/deployment/CLOUD_RUNTIME_FAILURE_ANALYSIS.md",
       "classification": "public-allowed",
       "reasons": [
         "contains public GitHub handle/repository reference"
@@ -656,7 +656,7 @@
       "evidenceCount": 8
     },
     {
-      "file": "docs/THEIA_RAILWAY_FIX.md",
+      "file": "docs/THEIA_CLOUD_RUNTIME_FIX.md",
       "classification": "public-allowed",
       "reasons": [
         "contains public GitHub handle/repository reference"

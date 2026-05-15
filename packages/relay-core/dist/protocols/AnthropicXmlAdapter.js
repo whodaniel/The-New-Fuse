@@ -11,10 +11,7 @@ class AnthropicXmlAdapter {
     constructor(logger) {
         this.name = 'anthropic-xml';
         this.version = '1.0.0';
-        this.supportedProtocols = [
-            'anthropic-xml-v1.0',
-            'a2a-v2.0'
-        ];
+        this.supportedProtocols = ['anthropic-xml-v1.0', 'a2a-v2.0'];
         this.logger = logger;
     }
     canTranslate(from, to) {
@@ -39,14 +36,14 @@ class AnthropicXmlAdapter {
                 payload: {
                     function: this.extractFunctionName(payload),
                     parameters: this.extractFunctionParameters(payload),
-                    reasoning: this.extractReasoning(payload)
+                    reasoning: this.extractReasoning(payload),
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'anthropic-xml-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Handle Anthropic XML tool responses
@@ -57,14 +54,14 @@ class AnthropicXmlAdapter {
                 payload: {
                     result: this.extractToolResult(payload),
                     success: this.extractToolSuccess(payload),
-                    metadata: this.extractToolMetadata(payload)
+                    metadata: this.extractToolMetadata(payload),
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'anthropic-xml-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Handle general Anthropic XML content
@@ -73,14 +70,14 @@ class AnthropicXmlAdapter {
             payload: {
                 content: this.extractTextContent(payload),
                 thinking: this.extractThinking(payload),
-                artifacts: this.extractArtifacts(payload)
+                artifacts: this.extractArtifacts(payload),
             },
             metadata: {
                 ...message.metadata,
                 protocol: 'a2a-v2.0',
                 originalProtocol: 'anthropic-xml-v1.0',
-                translatedAt: new Date().toISOString()
-            }
+                translatedAt: new Date().toISOString(),
+            },
         };
     }
     a2aToAnthropicXml(message) {
@@ -94,8 +91,8 @@ class AnthropicXmlAdapter {
                     ...message.metadata,
                     protocol: 'anthropic-xml-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Convert A2A tool response to Anthropic XML format
@@ -107,8 +104,8 @@ class AnthropicXmlAdapter {
                     ...message.metadata,
                     protocol: 'anthropic-xml-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Convert general A2A message to Anthropic XML format
@@ -119,8 +116,8 @@ class AnthropicXmlAdapter {
                 ...message.metadata,
                 protocol: 'anthropic-xml-v1.0',
                 originalProtocol: 'a2a-v2.0',
-                translatedAt: new Date().toISOString()
-            }
+                translatedAt: new Date().toISOString(),
+            },
         };
     }
     // Anthropic XML parsing helpers
@@ -138,7 +135,7 @@ class AnthropicXmlAdapter {
         const paramMatch = xmlContent.match(/<parameter name="([^"]+)">([^<]+)<\/parameter>/g);
         const parameters = {};
         if (paramMatch) {
-            paramMatch.forEach(param => {
+            paramMatch.forEach((param) => {
                 const nameMatch = param.match(/name="([^"]+)"/);
                 const valueMatch = param.match(/>([^<]+)</);
                 if (nameMatch && valueMatch) {
@@ -191,14 +188,14 @@ class AnthropicXmlAdapter {
         const artifacts = [];
         const artifactMatches = xmlContent.match(/<artifact[^>]*>(.*?)<\/artifact>/gs);
         if (artifactMatches) {
-            artifactMatches.forEach(artifact => {
+            artifactMatches.forEach((artifact) => {
                 const typeMatch = artifact.match(/type="([^"]+)"/);
                 const nameMatch = artifact.match(/name="([^"]+)"/);
                 const contentMatch = artifact.match(/<artifact[^>]*>(.*?)<\/artifact>/s);
                 artifacts.push({
                     type: typeMatch ? typeMatch[1] : 'unknown',
                     name: nameMatch ? nameMatch[1] : 'untitled',
-                    content: contentMatch ? contentMatch[1] : ''
+                    content: contentMatch ? contentMatch[1] : '',
                 });
             });
         }

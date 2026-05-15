@@ -1,5 +1,7 @@
 import os
 
+LEGACY_MARKER = "<legacy-path-marker>"
+
 count = 0
 for root, dirs, files in os.walk('.'):
     # Skip .git etc
@@ -13,9 +15,8 @@ for root, dirs, files in os.walk('.'):
             with open(path, 'r', encoding='utf-8') as f:
                 content = f.read()
                 
-            if '/path/to' in content:
-                content = content.replace('/path/to/', '/path/to/')
-                content = content.replace('/path/to', '/path/to')
+            if LEGACY_MARKER in content:
+                content = content.replace(LEGACY_MARKER, "<resolved-path>")
                 
                 with open(path, 'w', encoding='utf-8') as f:
                     f.write(content)

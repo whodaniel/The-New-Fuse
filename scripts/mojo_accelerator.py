@@ -3,13 +3,17 @@ import subprocess
 import ctypes
 import time
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+DEFAULT_FORGE_DIR = os.path.join(PROJECT_ROOT, "forge")
+
 class MojoAccelerator:
     """
     TNF Next-Gen: Mojo JIT Bridge
     Compiles Mojo source into LLVM-IR shared libraries for hot-swapping.
     """
     
-    def __init__(self, forge_dir="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/forge"):
+    def __init__(self, forge_dir=DEFAULT_FORGE_DIR):
         self.forge_dir = forge_dir
         self._registry = {}
 

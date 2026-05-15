@@ -8,9 +8,9 @@
  * 
  * Usage:
  *   - Interactive mode: ./mcp-config-manager.js
- *   - Add server: ./mcp-config-manager.js add --file=~/path/to/config.json --name=serverName --command=cmd --args="arg1,arg2"
- *   - List servers: ./mcp-config-manager.js list --file=~/path/to/config.json
- *   - Remove server: ./mcp-config-manager.js remove --file=~/path/to/config.json --name=serverName
+ *   - Add server: ./mcp-config-manager.js add --file=~/config.json --name=serverName --command=cmd --args="arg1,arg2"
+ *   - List servers: ./mcp-config-manager.js list --file=~/config.json
+ *   - Remove server: ./mcp-config-manager.js remove --file=~/config.json --name=serverName
  */
 
 const fs = require('fs');
@@ -18,10 +18,14 @@ const path = require('path');
 const readline = require('readline');
 const os = require('os');
 
+const TNF_ROOT = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..');
+
 // Default paths for common MCP configuration files
 const DEFAULT_CONFIG_PATHS = {
   claude: path.join(os.homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json'),
-  fuse: path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'The New Fuse', 'mcp_config.json')
+  fuse: path.join(TNF_ROOT, 'mcp_config.json')
 };
 
 // CLI Colors

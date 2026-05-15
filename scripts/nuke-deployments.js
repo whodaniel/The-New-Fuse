@@ -1,7 +1,7 @@
 const fs = require('fs');
 const https = require('https');
 
-const configPath = '/path/to/.cloud_runtime/config.json';
+const configPath = process.env.CLOUD_RUNTIME_CONFIG_PATH || `${process.env.HOME || '/tmp'}/.cloud_runtime/config.json`;
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 const token = config.user.token;
 

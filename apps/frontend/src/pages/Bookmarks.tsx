@@ -576,7 +576,7 @@ export default function BookmarksPage() {
                       <Badge variant="secondary">
                         {workspaceLabelById.get(bookmark.workspaceId) || bookmark.workspaceId}
                       </Badge>
-                      <Badge variant="outline">{formatDate(bookmark.updatedAt)}</Badge>
+                      <Badge variant="secondary">{formatDate(bookmark.updatedAt)}</Badge>
                     </div>
                   </div>
 
@@ -585,7 +585,7 @@ export default function BookmarksPage() {
                   {bookmark.tags.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
                       {bookmark.tags.map((tag) => (
-                        <Badge key={`${bookmark.id}-${tag}`} variant="outline">
+                        <Badge key={`${bookmark.id}-${tag}`} variant="secondary">
                           {tag}
                         </Badge>
                       ))}

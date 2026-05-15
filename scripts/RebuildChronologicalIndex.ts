@@ -2,7 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
-const REPORTS_DIR = '/Users/<owner>/Documents/Video-Intelligence-Archive/';
+const REPORTS_DIR = process.env.TNF_VIDEO_ARCHIVE_DIR
+  ? path.resolve(process.env.TNF_VIDEO_ARCHIVE_DIR)
+  : path.join(process.env.HOME || '/tmp', 'Documents', 'Video-Intelligence-Archive');
 const MASTER_INDEX_FILE = path.join(REPORTS_DIR, 'MASTER_CHRONOLOGICAL_INDEX.md');
 
 interface VideoEntry {

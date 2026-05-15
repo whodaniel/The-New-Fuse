@@ -51,17 +51,26 @@ export class DrizzleModule {
       provide: DRIZZLE_CLIENT,
       useFactory: () => {
         const connectionString =
-          options?.connectionString ??
-          process.env.DATABASE_URL ??
-          'postgresql://localhost:5432/fuse';
+          options?.connectionString ?? process.env.DATABASE_URL;
 
-        const queryClient = postgres(connectionString, {
-          max: options?.maxConnections ?? 10,
-          idle_timeout: options?.idleTimeout ?? 20,
-          connect_timeout: options?.connectTimeout ?? 10,
-        });
+        if (!connectionString) {
+          console.warn(
+            'DrizzleModule: No DATABASE_URL configured. Database features will be unavailable.'
+          );
+          return null as any;
+        }
 
-        return drizzle(queryClient, { schema });
+        try {
+          const queryClient = postgres(connectionString, {
+            max: options?.maxConnections ?? 10,
+            idle_timeout: options?.idleTimeout ?? 20,
+            connect_timeout: options?.connectTimeout ?? 10,
+          });
+          return drizzle(queryClient, { schema });
+        } catch (error) {
+          console.error('DrizzleModule: Failed to create database connection.', error);
+          return null as any;
+        }
       },
     };
 
@@ -80,20 +89,30 @@ export class DrizzleModule {
       provide: DRIZZLE_CLIENT,
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const connectionString =
-          configService.get<string>('DATABASE_URL') ?? 'postgresql://localhost:5432/fuse';
+        const connectionString = configService.get<string>('DATABASE_URL');
+
+        if (!connectionString) {
+          console.warn(
+            'DrizzleModule: No DATABASE_URL configured. Database features will be unavailable.'
+          );
+          return null as any;
+        }
 
         const maxConnections = configService.get<number>('DB_MAX_CONNECTIONS') ?? 10;
         const idleTimeout = configService.get<number>('DB_IDLE_TIMEOUT') ?? 20;
         const connectTimeout = configService.get<number>('DB_CONNECT_TIMEOUT') ?? 10;
 
-        const queryClient = postgres(connectionString, {
-          max: maxConnections,
-          idle_timeout: idleTimeout,
-          connect_timeout: connectTimeout,
-        });
-
-        return drizzle(queryClient, { schema });
+        try {
+          const queryClient = postgres(connectionString, {
+            max: maxConnections,
+            idle_timeout: idleTimeout,
+            connect_timeout: connectTimeout,
+          });
+          return drizzle(queryClient, { schema });
+        } catch (error) {
+          console.error('DrizzleModule: Failed to create database connection.', error);
+          return null as any;
+        }
       },
     };
 

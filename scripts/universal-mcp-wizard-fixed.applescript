@@ -18,7 +18,8 @@ property mcpServerStatus : "unknown" -- "running", "stopped", or "unknown"
 on run
     -- Initialize global variables
     set homeFolder to (path to home folder as string)
-    set workspaceFolder to homeFolder & "Desktop:A1-Inter-LLM-Com:The New Fuse:"
+    set workspaceFolderPOSIX to do shell script "if [ -n \"$TNF_ROOT_DIR\" ]; then printf '%s' \"$TNF_ROOT_DIR\"; else pwd; fi"
+    set workspaceFolder to (POSIX file workspaceFolderPOSIX as string)
     set configuredTools to {}
     set foundProviders to {}
     set selectedTool to ""

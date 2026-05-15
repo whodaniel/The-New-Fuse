@@ -13,8 +13,10 @@ const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 
+const DEFAULT_REPO_ROOT = path.resolve(__dirname, '..', '..');
+
 const config = {
-  root: '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse',
+  root: process.env.TNF_ROOT_DIR || DEFAULT_REPO_ROOT,
   stateDir: path.join(os.homedir(), '.tnf', 'director', 'state'),
   logFile: path.join(os.homedir(), '.tnf', 'director', 'logs', 'director.log'),
   heartbeatSource: path.join(os.homedir(), '.tnf', 'local-subdirector', 'state', 'local-subdirector-heartbeat.json'),

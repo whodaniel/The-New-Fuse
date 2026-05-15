@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+WORKSPACE_DIR="${TNF_WORKSPACE_DIR:-$(cd "$REPO_ROOT/.." && pwd)}"
+
 usage() {
   cat <<USAGE
 Usage:
@@ -10,15 +14,15 @@ Examples:
   pcloud_offload.sh "/Volumes/pCloud Drive/My pCloud/Offload-$(date +%F)"
   pcloud_offload.sh "/Volumes/pCloud Drive/My pCloud/Offload-$(date +%F)" --delete-source
   pcloud_offload.sh "/Volumes/pCloud Drive/My pCloud/Offload-$(date +%F)" \
-    "/Users/<owner>/Documents/Audio Docs" \
-    "/Users/<owner>/mini-omni/checkpoint/lit_model.pth"
+    "\$HOME/Documents/Audio Docs" \
+    "\$HOME/mini-omni/checkpoint/lit_model.pth"
 
 Default sources (if none supplied):
-  - /Users/<owner>/Desktop/A1-Inter-LLM-Com
-  - /Users/<owner>/Documents/CODE - 2024
-  - /Users/<owner>/Documents/Audio Docs
-  - /Users/<owner>/mini-omni/checkpoint/lit_model.pth
-  - /Users/<owner>/Downloads/ai_arcade_poker_assets
+  - workspace parent (override via TNF_WORKSPACE_DIR)
+  - \$HOME/Documents/CODE - 2024
+  - \$HOME/Documents/Audio Docs
+  - \$HOME/mini-omni/checkpoint/lit_model.pth
+  - \$HOME/Downloads/ai_arcade_poker_assets
 USAGE
 }
 
@@ -47,11 +51,11 @@ if [[ "$#" -gt 0 ]]; then
   SOURCES=("$@")
 else
   SOURCES=(
-    "/Users/<owner>/Desktop/A1-Inter-LLM-Com"
-    "/Users/<owner>/Documents/CODE - 2024"
-    "/Users/<owner>/Documents/Audio Docs"
-    "/Users/<owner>/mini-omni/checkpoint/lit_model.pth"
-    "/Users/<owner>/Downloads/ai_arcade_poker_assets"
+    "$WORKSPACE_DIR"
+    "$HOME/Documents/CODE - 2024"
+    "$HOME/Documents/Audio Docs"
+    "$HOME/mini-omni/checkpoint/lit_model.pth"
+    "$HOME/Downloads/ai_arcade_poker_assets"
   )
 fi
 

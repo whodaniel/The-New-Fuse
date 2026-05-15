@@ -3,7 +3,8 @@ set -e
 
 PROJECT_ID="the-new-fuse-2025"
 REGION="us-central1"
-ROOT_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
 
 cd $ROOT_DIR
 

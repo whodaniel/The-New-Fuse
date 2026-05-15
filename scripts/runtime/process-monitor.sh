@@ -10,6 +10,8 @@ mkdir -p "$LOG_DIR" "$STATE_DIR"
 
 LOG_FILE="${LOG_DIR}/process-monitor.log"
 STATE_FILE="${STATE_DIR}/process-state.json"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+NODE_BIN="${NODE_BIN:-$(command -v node)}"
 
 log() {
   echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [PROCESS-MONITOR] $*" | tee -a "$LOG_FILE"
@@ -31,7 +33,7 @@ declare -a PROCESS_COMMANDS=(
   "bash scripts/orchestrator/factory-supervisor.sh"
   "bash scripts/autonomous-qa-swarm-loop.sh"
   "bash scripts/swarm/run-cloud_runtime-supercycle.sh"
-  "/Users/danielgoldberg/.nvm/versions/node/v24.12.0/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/relay-channel-monitor.cjs"
+  "${NODE_BIN} ${ROOT_DIR}/scripts/relay-channel-monitor.cjs"
 )
 
 # Initialize state file if it doesn't exist

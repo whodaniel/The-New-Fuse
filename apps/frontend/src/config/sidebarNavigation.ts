@@ -32,7 +32,7 @@ export interface SidebarNavChildItem {
   name: string;
   href: string;
   icon: ComponentType<{ className?: string }>;
-  section: 'dashboard' | 'workspace' | 'forge' | 'nexus' | 'apex' | 'advanced';
+  section?: 'dashboard' | 'workspace' | 'forge' | 'nexus' | 'apex' | 'advanced';
   access?: 'public' | 'authenticated';
   requiredRoles?: string[];
 }

@@ -71,6 +71,7 @@ const Logger_js_1 = require("./utils/Logger.js");
 const TerminalFormatter_js_1 = require("./utils/TerminalFormatter.js");
 // Configuration
 const PORT = parseInt(process.env.PORT || '3000', 10);
+const RELAY_HOST = (process.env.RELAY_HOST || '0.0.0.0').trim() || '0.0.0.0';
 const HEARTBEAT_INTERVAL = 30000;
 const AGENT_TIMEOUT = 60000;
 function buildRelayAgentIdentity(input) {
@@ -97,6 +98,31 @@ function buildBridgeOperatorContext(req) {
         userAgent: typeof req.headers['user-agent'] === 'string' ? req.headers['user-agent'] : null,
     };
 }
+function parseCsvSet(raw, normalize = true) {
+    if (!raw)
+        return new Set();
+    return new Set(raw
+        .split(',')
+        .map((item) => (normalize ? item.trim().toLowerCase() : item.trim()))
+        .filter(Boolean));
+}
+function isLoopbackAddress(address) {
+    if (!address)
+        return false;
+    const normalized = address.trim();
+    if (!normalized)
+        return false;
+    return (normalized === '127.0.0.1' ||
+        normalized === '::1' ||
+        normalized === '::ffff:127.0.0.1' ||
+        normalized.startsWith('localhost'));
+}
+function shouldRetryListenOnLoopback(error, attemptedHost, fallbackHost) {
+    const code = String(error?.code || '').toUpperCase();
+    if (attemptedHost === fallbackHost)
+        return false;
+    return code === 'EPERM' || code === 'EACCES' || code === 'EADDRNOTAVAIL';
+}
 // Relay Server Class
 class TNFRelayServer extends events_1.EventEmitter {
     constructor(port = PORT) {
@@ -110,6 +136,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         this.bridgeSubscribedAgents = new Set();
         this.pendingBridgeAgents = new Map();
         this.approvedBridgeAgents = new Set();
+        this.socketRemoteAddresses = new WeakMap();
         this.conversationManagers = new Map();
         this.activityRedis = null;
         this.activityUpstash = null;
@@ -124,6 +151,9 @@ class TNFRelayServer extends events_1.EventEmitter {
             this.authService = null;
         }
         this.subscriptionRegistry = new subscription_registry_js_1.SubscriptionRegistry();
+        this.bridgeAutoApproveLoopback = process.env.BRIDGE_AUTO_APPROVE_LOOPBACK !== 'false';
+        this.bridgeAutoApprovePlatforms = parseCsvSet(process.env.BRIDGE_AUTO_APPROVE_PLATFORMS || 'orchestrator,system,relay,master-clock');
+        this.bridgeAutoApproveAgentIds = parseCsvSet(process.env.BRIDGE_AUTO_APPROVE_AGENT_IDS || '');
         this.activityPersistenceEnabled = process.env.ENABLE_ACTIVITY_PERSISTENCE !== 'false';
         this.activityPersistenceRequired = process.env.ACTIVITY_PERSISTENCE_REQUIRED !== 'false';
         this.activityStreamKey = process.env.ACTIVITY_STREAM_KEY || 'tnf:activity:stream';
@@ -151,6 +181,10 @@ class TNFRelayServer extends events_1.EventEmitter {
         this.server = http_1.default.createServer(this.handleHttpRequest.bind(this));
         // Create WebSocket server at /ws path
         this.wss = new ws_1.WebSocketServer({ server: this.server, path: '/ws' });
+        this.wss.on('error', (error) => {
+            const message = error instanceof Error ? error.message : String(error);
+            console.error(`[Relay] WebSocket server error: ${message}`);
+        });
         // Setup WebSocket handlers
         this.setupWebSocket();
         // Create default channel
@@ -191,6 +225,14 @@ class TNFRelayServer extends events_1.EventEmitter {
         this.bridge.on('egress', (envelope) => {
             // Handle message from Redis -> WebSocket (egress messages go to approved agents only)
             this.handleBridgeEgress(envelope);
+        });
+        this.bridge.on('error', (err) => {
+            const baseMessage = err instanceof Error ? err.message : typeof err === 'string' ? err : String(err);
+            const code = err && typeof err === 'object' && 'code' in err
+                ? String(err.code || '')
+                : '';
+            const message = baseMessage || code || 'unknown redis bridge error';
+            console.error('[Relay] Redis bridge error (continuing local mode):', message);
         });
         this.bridge.connect().catch((err) => {
             console.error('[Relay] Failed to connect bridge:', err);
@@ -417,7 +459,7 @@ class TNFRelayServer extends events_1.EventEmitter {
             ? `${this.activityChannelPrefix}${channelId}`
             : this.activityStreamKey;
         try {
-            const entries = await this.activityRedis.xrevrange(streamKey, '+', '-', 'COUNT', count);
+            const entries = await this.readActivityStream(streamKey, count);
             const events = entries.map((entry) => {
                 const [streamId, flatFields] = entry;
                 const fields = {};
@@ -477,7 +519,9 @@ class TNFRelayServer extends events_1.EventEmitter {
     setupWebSocket() {
         this.wss.on('connection', (ws, req) => {
             let agentId = null;
-            TerminalFormatter_js_1.relay.newConnection(req.socket.remoteAddress);
+            const remoteAddress = req.socket.remoteAddress || null;
+            this.socketRemoteAddresses.set(ws, remoteAddress);
+            TerminalFormatter_js_1.relay.newConnection(remoteAddress);
             // Send welcome message
             this.send(ws, {
                 type: 'WELCOME',
@@ -500,6 +544,7 @@ class TNFRelayServer extends events_1.EventEmitter {
             });
             // Handle disconnect
             ws.on('close', () => {
+                this.socketRemoteAddresses.delete(ws);
                 if (agentId) {
                     this.handleAgentDisconnect(agentId);
                 }
@@ -580,6 +625,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                     runtimeSessionId: agentData.runtimeSessionId,
                     aliases: agentData.aliases,
                 });
+                const remoteAddress = this.socketRemoteAddresses.get(ws) || null;
                 const agent = {
                     id,
                     canonicalEntityId: identity.canonicalEntityId,
@@ -596,6 +642,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                     metadata: (0, audit_js_1.attachAuditTrace)({
                         ...agentData.metadata,
                         authenticated: !!verifiedToken,
+                        remoteAddress,
                     }, {
                         source: 'standalone-relay',
                         actor: identity.operationalHandle,
@@ -974,17 +1021,60 @@ class TNFRelayServer extends events_1.EventEmitter {
                 }
             }
             else if (this.activityRedis) {
-                const flatFields = Object.entries(fields).flat();
-                const streamId = await this.activityRedis.xadd(this.activityStreamKey, 'MAXLEN', '~', this.activityMaxLen, '*', ...flatFields);
+                const streamId = await this.appendActivityStreamEvent(this.activityStreamKey, fields);
                 event.streamId = streamId || '';
                 if (resolvedChannel) {
-                    await this.activityRedis.xadd(`${this.activityChannelPrefix}${resolvedChannel}`, 'MAXLEN', '~', this.activityMaxLen, '*', ...flatFields);
+                    await this.appendActivityStreamEvent(`${this.activityChannelPrefix}${resolvedChannel}`, fields);
                 }
             }
         }
         catch (err) {
             console.error('[Relay] Failed to persist activity event:', err instanceof Error ? err.message : String(err));
         }
+    }
+    async readActivityStream(streamKey, count) {
+        const client = this.activityRedis;
+        if (!client) {
+            return [];
+        }
+        if (typeof client.xrevrange === 'function') {
+            return (await client.xrevrange(streamKey, '+', '-', 'COUNT', count));
+        }
+        if (typeof client.xRevRange === 'function') {
+            const entries = await client.xRevRange(streamKey, '+', '-', {
+                COUNT: count,
+            });
+            return entries.map((entry) => {
+                const streamId = String(entry?.id ?? entry?.[0] ?? '');
+                const message = entry?.message ?? entry?.[1] ?? {};
+                if (Array.isArray(message)) {
+                    return [streamId, message];
+                }
+                const flatFields = Object.entries(message).flat();
+                return [streamId, flatFields];
+            });
+        }
+        throw new Error('No compatible xrevrange/xRevRange method found on activity Redis client');
+    }
+    async appendActivityStreamEvent(streamKey, fields) {
+        const client = this.activityRedis;
+        if (!client) {
+            return '';
+        }
+        const flatFields = Object.entries(fields).flat();
+        if (typeof client.xadd === 'function') {
+            return (await client.xadd(streamKey, 'MAXLEN', '~', this.activityMaxLen, '*', ...flatFields));
+        }
+        if (typeof client.xAdd === 'function') {
+            return (await client.xAdd(streamKey, '*', fields, {
+                TRIM: {
+                    strategy: 'MAXLEN',
+                    strategyModifier: '~',
+                    threshold: this.activityMaxLen,
+                },
+            }));
+        }
+        throw new Error('No compatible xadd/xAdd method found on activity Redis client');
     }
     parseActivityFields(fields) {
         let parsedMetadata;
@@ -1326,10 +1416,31 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
         // Gate check: if gating is enabled, only approved agents can bridge
         if (this.bridgeGateEnabled && !this.approvedBridgeAgents.has(agentId)) {
-            // Agent is not approved - they are in the "waiting area"
             const agent = this.agents.get(agentId);
             const socket = this.sockets.get(agentId);
-            if (agent && socket && !this.pendingBridgeAgents.has(agentId)) {
+            if (agent) {
+                const autoApproval = this.shouldAutoApproveBridge(agent, socket);
+                if (autoApproval.approved) {
+                    this.approvedBridgeAgents.add(agentId);
+                    this.pendingBridgeAgents.delete(agentId);
+                    console.log(`[Relay] Auto-approved bridge access for ${agentId} (${autoApproval.reason})`);
+                    this.emitRelayActivityEvent('bridge_access_auto_approved', `Auto-approved bridge access for ${agentId}`, {
+                        bridgeDecision: 'auto_approve',
+                        reason: autoApproval.reason,
+                        agentId,
+                        agentName: agent.name,
+                        platform: agent.platform,
+                        gateEnabled: this.bridgeGateEnabled,
+                        pendingCount: this.pendingBridgeAgents.size,
+                        approvedCount: this.approvedBridgeAgents.size,
+                        remoteAddress: (typeof agent.metadata?.remoteAddress === 'string'
+                            ? agent.metadata?.remoteAddress
+                            : null) || null,
+                    }, { actor: 'relay-auto-approver' });
+                }
+            }
+            // Agent is not approved - they are in the "waiting area"
+            if (!this.approvedBridgeAgents.has(agentId) && agent && socket && !this.pendingBridgeAgents.has(agentId)) {
                 this.pendingBridgeAgents.set(agentId, { agent, socket, requestedAt: Date.now() });
                 console.log('[Relay] Agent ' + agentId + ' (' + agent.name + ') is waiting at the bridge gate');
                 // Notify the agent they are pending approval
@@ -1352,7 +1463,9 @@ class TNFRelayServer extends events_1.EventEmitter {
                     },
                 });
             }
-            return;
+            if (!this.approvedBridgeAgents.has(agentId)) {
+                return;
+            }
         }
         if (this.bridgeSubscribedAgents.has(agentId)) {
             return;
@@ -1547,6 +1660,28 @@ class TNFRelayServer extends events_1.EventEmitter {
             requestedAt,
         }));
     }
+    shouldAutoApproveBridge(agent, socket) {
+        const normalizedAgentId = agent.id.toLowerCase();
+        if (this.bridgeAutoApproveAgentIds.has('*') ||
+            this.bridgeAutoApproveAgentIds.has(normalizedAgentId)) {
+            return { approved: true, reason: 'agent_id_allowlist' };
+        }
+        const normalizedPlatform = (agent.platform || '').toLowerCase();
+        if (normalizedPlatform &&
+            (this.bridgeAutoApprovePlatforms.has('*') ||
+                this.bridgeAutoApprovePlatforms.has(normalizedPlatform))) {
+            return { approved: true, reason: 'platform_allowlist' };
+        }
+        if (this.bridgeAutoApproveLoopback) {
+            const socketAddress = socket ? this.socketRemoteAddresses.get(socket) : null;
+            const metadataAddress = typeof agent.metadata?.remoteAddress === 'string' ? agent.metadata.remoteAddress : null;
+            const resolvedAddress = socketAddress || metadataAddress;
+            if (isLoopbackAddress(resolvedAddress)) {
+                return { approved: true, reason: 'loopback_address' };
+            }
+        }
+        return { approved: false, reason: 'manual_approval_required' };
+    }
     /**
      * Toggle bridge gate on/off
      */
@@ -1645,20 +1780,43 @@ class TNFRelayServer extends events_1.EventEmitter {
         return new Promise((resolve, reject) => {
             void this.ensureActivityPersistenceReady()
                 .then(() => {
-                this.server.listen(this.port, () => {
-                    TerminalFormatter_js_1.relay.banner({
-                        port: this.port,
-                        redisBridge: !!this.bridge,
-                        activityPersistence: this.activityPersistenceEnabled,
-                        stallDetection: true,
-                        jwtAuth: true,
+                const fallbackHost = '127.0.0.1';
+                const hostsToTry = RELAY_HOST === '0.0.0.0' || RELAY_HOST === '::'
+                    ? [RELAY_HOST, fallbackHost]
+                    : [RELAY_HOST];
+                const tryListen = (index) => {
+                    const host = hostsToTry[index];
+                    const onError = (error) => {
+                        const canRetry = index < hostsToTry.length - 1 &&
+                            shouldRetryListenOnLoopback(error, host, fallbackHost);
+                        if (canRetry) {
+                            console.warn(`[Relay] Listen failed on ${host}:${this.port} (${error.code || 'unknown'}). Retrying on ${hostsToTry[index + 1]}:${this.port}.`);
+                            setImmediate(() => tryListen(index + 1));
+                            return;
+                        }
+                        reject(error);
+                    };
+                    this.server.once('error', onError);
+                    this.server.listen(this.port, host, () => {
+                        this.server.off('error', onError);
+                        if (host !== RELAY_HOST) {
+                            console.warn(`[Relay] Started using fallback host ${host}:${this.port} (requested ${RELAY_HOST}:${this.port}).`);
+                        }
+                        TerminalFormatter_js_1.relay.banner({
+                            port: this.port,
+                            redisBridge: !!this.bridge,
+                            activityPersistence: this.activityPersistenceEnabled,
+                            stallDetection: true,
+                            jwtAuth: true,
+                        });
+                        this.startHeartbeatMonitor();
+                        this.stallDetector.start(); // Start stall detection
+                        TerminalFormatter_js_1.relay.stallDetectorStarted();
+                        this.emit('started', { port: this.port });
+                        resolve();
                     });
-                    this.startHeartbeatMonitor();
-                    this.stallDetector.start(); // Start stall detection
-                    TerminalFormatter_js_1.relay.stallDetectorStarted();
-                    this.emit('started', { port: this.port });
-                    resolve();
-                });
+                };
+                tryListen(0);
             })
                 .catch((err) => {
                 console.error('[Relay] Startup blocked:', err.message);
@@ -1680,7 +1838,16 @@ class TNFRelayServer extends events_1.EventEmitter {
                     const finalize = async () => {
                         if (this.activityRedis) {
                             try {
-                                await this.activityRedis.quit();
+                                const client = this.activityRedis;
+                                const redisStatus = typeof client?.status === 'string' ? String(client.status).toLowerCase() : null;
+                                const redisIsOpen = typeof client?.isOpen === 'boolean' ? client.isOpen : undefined;
+                                const looksClosed = redisStatus === 'end' ||
+                                    redisStatus === 'close' ||
+                                    redisStatus === 'closed' ||
+                                    redisIsOpen === false;
+                                if (!looksClosed && typeof client?.quit === 'function') {
+                                    await client.quit();
+                                }
                             }
                             catch (err) {
                                 console.warn('[Relay] Failed to close activity Redis cleanly:', err instanceof Error ? err.message : String(err));
@@ -1723,6 +1890,12 @@ const isMainModule = () => {
 };
 if (isMainModule()) {
     const relay = new TNFRelayServer(PORT);
+    const bootStartedAt = Date.now();
+    const startupSigtermGraceMsRaw = Number(process.env.RELAY_STARTUP_SIGTERM_GRACE_MS ?? '20000');
+    const startupSigtermGraceMs = Number.isFinite(startupSigtermGraceMsRaw)
+        ? Math.max(0, startupSigtermGraceMsRaw)
+        : 20000;
+    const alwaysHonorSigterm = String(process.env.RELAY_ALWAYS_HONOR_SIGTERM ?? 'false').toLowerCase() === 'true';
     relay.start().catch((err) => {
         console.error('[Relay] Failed to start:', err);
         process.exit(1);
@@ -1738,6 +1911,12 @@ if (isMainModule()) {
     });
     process.on('SIGTERM', () => {
         void (async () => {
+            const uptimeMs = Date.now() - bootStartedAt;
+            if (!alwaysHonorSigterm && uptimeMs < startupSigtermGraceMs) {
+                console.warn(`[Relay] Ignoring startup SIGTERM (uptime=${uptimeMs}ms, grace=${startupSigtermGraceMs}ms).`);
+                return;
+            }
+            console.warn(`[Relay] Received SIGTERM (uptime=${uptimeMs}ms). Shutting down.`);
             await relay.stop();
             process.exit(0);
         })();

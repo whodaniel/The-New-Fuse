@@ -1,7 +1,13 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const root = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const tnfRoot = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..');
+const root = path.join(tnfRoot, 'packages');
 
 const dirsToFix = [
   'types',

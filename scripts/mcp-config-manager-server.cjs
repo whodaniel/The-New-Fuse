@@ -16,6 +16,10 @@ const os = require('os');
 const readline = require('readline');
 const http = require('http');
 
+const TNF_ROOT = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..');
+
 // Configure stdin/stdout for the MCP protocol
 process.stdin.setEncoding('utf8');
 const rl = readline.createInterface({ input: process.stdin, terminal: false });
@@ -71,7 +75,7 @@ try {
 // Default paths for common MCP configuration files
 const DEFAULT_CONFIG_PATHS = {
   claude: path.join(os.homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json'),
-  fuse: path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'The New Fuse', 'mcp_config.json')
+  fuse: path.join(TNF_ROOT, 'mcp_config.json')
 };
 
 // Parse and handle MCP requests

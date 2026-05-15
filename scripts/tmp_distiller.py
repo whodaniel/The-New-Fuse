@@ -5,8 +5,15 @@ import hashlib
 import time
 import secrets
 import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+WORKSPACE_ROOT = os.path.abspath(os.getenv("TNF_WORKSPACE_DIR", os.path.join(PROJECT_ROOT, "..")))
+KB_ROOT = os.path.abspath(os.getenv("TNF_KB_DIR", os.path.join(WORKSPACE_ROOT, "my-ai-knowledge-base")))
+
 # Add scripts dir to path for imports
-sys.path.append("/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts")
+if SCRIPT_DIR not in sys.path:
+    sys.path.append(SCRIPT_DIR)
 from signature_wrapper import A2ASignatureWrapper
 
 def sign_entry(index, entry_id, title, content, category, backlinks, transcript_path):
@@ -38,7 +45,7 @@ def sign_entry(index, entry_id, title, content, category, backlinks, transcript_
         num = num // 58
     handoff['header']['id_number'] = f'ID#:{id_code or alphabet[0]}'
 
-    inbox_dir = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/wiki-inbox"
+    inbox_dir = os.path.join(PROJECT_ROOT, "data", "wiki-inbox")
     os.makedirs(inbox_dir, exist_ok=True)
     with open(os.path.join(inbox_dir, f"{entry_id}.json"), 'w') as f:
         json.dump(handoff, f, indent=2)
@@ -70,5 +77,5 @@ The video confirms the shift towards an "Agent-First" internet where the clunky 
 ''',
         'ai-crypto',
         ['defai', 'agentic-metaverse', 'sovereign-state', 'eliza-framework'],
-        '/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/459_The_Hottest_AI_Crypto_Trends_of_2025.txt'
+        os.path.join(KB_ROOT, "video-transcripts", "459_The_Hottest_AI_Crypto_Trends_of_2025.txt")
     )

@@ -9,8 +9,14 @@ import os
 import time
 from playwright.sync_api import sync_playwright
 
-PROMPTS_FILE = "/Users/<owner>/.gemini/antigravity/brain/129a6f84-97a9-4c46-88c8-4b5f066454aa/pfp_prompts.json"
-OUTPUT_DIR = "/Users/<owner>/.gemini/antigravity/brain/129a6f84-97a9-4c46-88c8-4b5f066454aa"
+PFP_ROOT = os.path.expanduser(
+    os.getenv(
+        "TNF_AGENT_PFP_OUTPUT_DIR",
+        "~/.gemini/antigravity/brain/129a6f84-97a9-4c46-88c8-4b5f066454aa",
+    )
+)
+PROMPTS_FILE = os.path.join(PFP_ROOT, "pfp_prompts.json")
+OUTPUT_DIR = PFP_ROOT
 
 # Agents to generate (based on what we already have + remaining)
 SKIP_EXISTING = [

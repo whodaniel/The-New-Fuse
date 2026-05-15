@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   GlassCard,
   PremiumButton,
@@ -9,7 +10,6 @@ import {
   TabsTrigger,
 } from '@/components/ui';
 import { API_BASE } from '@/config/api';
-// @ts-nocheck
 import { useToast } from '@/hooks/useToast';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';

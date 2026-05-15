@@ -7,11 +7,13 @@ import secrets
 import sys
 
 # Configuration
-PROJECT_ROOT = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
 WIKI_INBOX = os.path.join(PROJECT_ROOT, "data/wiki-inbox")
 TRANSCRIPT_DIR = os.path.join(PROJECT_ROOT, "data/video-transcripts")
 
-sys.path.append(os.path.join(PROJECT_ROOT, "scripts"))
+if SCRIPT_DIR not in sys.path:
+    sys.path.append(SCRIPT_DIR)
 from signature_wrapper import A2ASignatureWrapper
 
 def sign_video(index, video_id, title, category, content, backlinks):

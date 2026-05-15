@@ -1,7 +1,9 @@
 import ctypes
 import os
 
-SO_PATH = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/native/weight_forge_output.dylib"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+SO_PATH = os.path.join(PROJECT_ROOT, "scripts", "native", "weight_forge_output.dylib")
 lib = ctypes.CDLL(SO_PATH)
 
 lib.infer_structural_match.restype = ctypes.c_int

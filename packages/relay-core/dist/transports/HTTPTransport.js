@@ -82,7 +82,7 @@ class HTTPTransport extends events_1.EventEmitter {
         });
         app.post('/send-message', (req, res) => {
             const message = req.body;
-            this.messageHandlers.forEach(handler => handler(message));
+            this.messageHandlers.forEach((handler) => handler(message));
             res.json({ success: true, message: 'Message received' });
         });
     }

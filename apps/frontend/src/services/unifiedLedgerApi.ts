@@ -1,3 +1,5 @@
+import { hasSupabaseConfig, supabase } from '@/lib/supabase';
+
 export type LedgerStatus =
   | 'submitted'
   | 'queued'
@@ -131,16 +133,48 @@ export interface RecordConnections {
 }
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
-const TIMELINE_API_BASES = ['/api/unified-ledger/timeline', '/api/timeline'] as const;
-const RECORD_API_BASES = [
+const CONFIGURED_API_URL = String(import.meta.env.VITE_API_URL || '')
+  .trim()
+  .replace(/\/+$/, '');
+const CONFIGURED_API_ORIGIN = CONFIGURED_API_URL.replace(/\/api(?:\/v\d+)?$/i, '');
+
+function buildApiBaseCandidates(relativeBases: readonly string[]): string[] {
+  const candidates: string[] = [];
+  for (const base of relativeBases) {
+    const normalized = base.startsWith('/') ? base : `/${base}`;
+    if (CONFIGURED_API_ORIGIN) {
+      candidates.push(`${CONFIGURED_API_ORIGIN}${normalized}`);
+    }
+    candidates.push(normalized);
+  }
+  return Array.from(new Set(candidates));
+}
+
+const TIMELINE_API_BASES = buildApiBaseCandidates([
+  '/api/unified-ledger/timeline',
+  '/api/timeline',
+] as const);
+const RECORD_API_BASES = buildApiBaseCandidates([
   '/api/unified-ledger/records',
   '/api/unified-ledger/unified-ledger/records',
-] as const;
-const GOAL_API_BASES = ['/api/unified-ledger/goals', '/api/goals'] as const;
-const PLAN_API_BASES = ['/api/unified-ledger/plans', '/api/plans'] as const;
+] as const);
+const GOAL_API_BASES = buildApiBaseCandidates(['/api/unified-ledger/goals', '/api/goals'] as const);
+const PLAN_API_BASES = buildApiBaseCandidates(['/api/unified-ledger/plans', '/api/plans'] as const);
 
 function shouldFallbackRoute(status: number): boolean {
   return status === 404 || status === 405 || status === 502 || status === 503 || status === 504;
+}
+
+function isJsonLikeResponse(response: Response): boolean {
+  const contentType = (response.headers.get('content-type') || '').toLowerCase();
+  if (!contentType) {
+    return true;
+  }
+  return (
+    contentType.includes('application/json') ||
+    contentType.includes('+json') ||
+    contentType.includes('text/json')
+  );
 }
 
 async function apiFetchWithFallback(pathCandidates: readonly string[], init?: RequestInit): Promise<Response> {
@@ -148,20 +182,30 @@ async function apiFetchWithFallback(pathCandidates: readonly string[], init?: Re
     throw new Error('No API path candidates provided');
   }
 
-  const [primaryPath, ...fallbackPaths] = pathCandidates;
-  const primaryResponse = await apiFetch(primaryPath, init);
-  if (primaryResponse.ok || !shouldFallbackRoute(primaryResponse.status)) {
-    return primaryResponse;
-  }
-
-  for (const fallbackPath of fallbackPaths) {
-    const fallbackResponse = await apiFetch(fallbackPath, init);
-    if (fallbackResponse.ok || !shouldFallbackRoute(fallbackResponse.status)) {
-      return fallbackResponse;
+  let lastResponse: Response | null = null;
+  let lastError: Error | null = null;
+  for (const candidatePath of pathCandidates) {
+    try {
+      const response = await apiFetch(candidatePath, init);
+      lastResponse = response;
+      const fallbackByStatus = shouldFallbackRoute(response.status);
+      const fallbackByContentType = response.ok && !isJsonLikeResponse(response);
+      if (!fallbackByStatus && !fallbackByContentType) {
+        return response;
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
     }
   }
 
-  return primaryResponse;
+  if (lastError && !lastResponse) {
+    throw lastError;
+  }
+
+  if (!lastResponse) {
+    throw new Error('No API response from candidates');
+  }
+  return lastResponse;
 }
 
 async function timelineApiFetch(path: string, init?: RequestInit): Promise<Response> {
@@ -170,12 +214,12 @@ async function timelineApiFetch(path: string, init?: RequestInit): Promise<Respo
   return apiFetchWithFallback(candidates, init);
 }
 
-function getAuthHeaders(): Record<string, string> {
+function getStoredAuthToken(): string | null {
   if (typeof window === 'undefined') {
-    return {};
+    return null;
   }
 
-  const token =
+  return (
     localStorage.getItem('auth_token') ||
     localStorage.getItem('authToken') ||
     localStorage.getItem('accessToken') ||
@@ -185,13 +229,34 @@ function getAuthHeaders(): Record<string, string> {
     sessionStorage.getItem('authToken') ||
     sessionStorage.getItem('accessToken') ||
     sessionStorage.getItem('token') ||
-    sessionStorage.getItem('AUTH_TOKEN');
+    sessionStorage.getItem('AUTH_TOKEN')
+  );
+}
 
-  return token ? { Authorization: `Bearer ${token}` } : {};
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const storedToken = getStoredAuthToken();
+  if (storedToken) {
+    return { Authorization: `Bearer ${storedToken}` };
+  }
+
+  if (!hasSupabaseConfig || !supabase) {
+    return {};
+  }
+
+  try {
+    const { data, error } = await supabase.auth.getSession();
+    if (!error && data?.session?.access_token) {
+      return { Authorization: `Bearer ${data.session.access_token}` };
+    }
+  } catch {
+    // Fall through to unauthenticated request so caller can handle response status.
+  }
+
+  return {};
 }
 
 async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-  const authHeaders = getAuthHeaders();
+  const authHeaders = await getAuthHeaders();
   const mergedHeaders = {
     ...authHeaders,
     ...(init?.headers as Record<string, string> | undefined),

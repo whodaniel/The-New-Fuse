@@ -50,6 +50,10 @@ async function fetchPlaylistVideos(context: any, playlist: any) {
 }
 
 async function main() {
+  const outputPath = process.env.TNF_MASTER_PLAYLIST_BACKLOG_PATH
+    ? path.resolve(process.env.TNF_MASTER_PLAYLIST_BACKLOG_PATH)
+    : path.join(process.env.HOME || '/tmp', 'data', 'master_playlist_backlog.json');
+
   const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-clean');
   const context = await chromium.launchPersistentContext(profileDir, {
     headless: false,
@@ -73,11 +77,9 @@ async function main() {
   const uniqueVideos = Array.from(new Map(allVideos.map((v) => [v.videoId, v])).values());
   console.log(`✨ Unique videos: ${uniqueVideos.length}`);
 
-  fs.writeFileSync(
-    '/Users/<owner>/data/master_playlist_backlog.json',
-    JSON.stringify(uniqueVideos, null, 2)
-  );
-  console.log('💾 Master backlog saved to /Users/<owner>/data/master_playlist_backlog.json');
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, JSON.stringify(uniqueVideos, null, 2));
+  console.log(`💾 Master backlog saved to ${outputPath}`);
 
   await context.close();
 }

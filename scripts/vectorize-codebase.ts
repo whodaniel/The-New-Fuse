@@ -9,7 +9,7 @@
  *
  * Examples:
  *   npx ts-node scripts/vectorize-codebase.ts                    # Vectorize current directory
- *   npx ts-node scripts/vectorize-codebase.ts /path/to/project   # Vectorize specific path
+ *   npx ts-node scripts/vectorize-codebase.ts <project-path>   # Vectorize specific path
  */
 
 import * as path from 'path';

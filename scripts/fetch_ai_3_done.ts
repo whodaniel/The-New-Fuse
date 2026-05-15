@@ -3,6 +3,10 @@ import * as path from 'path';
 import { chromium } from 'playwright';
 
 async function main() {
+  const outputPath = process.env.TNF_AI3_DONE_LIST_PATH
+    ? path.resolve(process.env.TNF_AI3_DONE_LIST_PATH)
+    : path.join(process.env.HOME || '/tmp', 'data', 'ai_3_done_list.json');
+
   const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-clean');
   const context = await chromium.launchPersistentContext(profileDir, {
     headless: false, // Keep it visible for monitoring
@@ -44,10 +48,8 @@ async function main() {
 
   console.log(`   ✅ Extracted ${videos.length} videos.`);
 
-  fs.writeFileSync(
-    '/Users/<owner>/data/ai_3_done_list.json',
-    JSON.stringify(videos, null, 2)
-  );
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, JSON.stringify(videos, null, 2));
   await context.close();
 }
 

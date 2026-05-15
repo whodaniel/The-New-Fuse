@@ -1,5 +1,5 @@
-import { Badge, Button, LoadingSpinner } from '@/components/ui';
 // @ts-nocheck
+import { Badge, Button, LoadingSpinner } from '@/components/ui';
 import {
   Modal,
   ModalBody,

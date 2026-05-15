@@ -1,0 +1,370 @@
+{
+  "generatedAt": "2026-05-14T18:17:46.724Z",
+  "canonicalSources": {
+    "tnfBank": ".agent/agents/*.md",
+    "claudeBank": ".claude/agents/*.md",
+    "sharedImportedSkills": ".skills/imported-claude-agents/*/SKILL.md"
+  },
+  "counts": {
+    "tnfBank": 176,
+    "claudeBank": 119,
+    "importedSkills": 119
+  },
+  "drift": {
+    "claudeMissingInImported": [],
+    "importedMissingInClaude": [],
+    "claudeMissingInTnfBank": [],
+    "tnfOnly": [
+      "auth-blocker-sentinel",
+      "backend-specialist",
+      "categorization-master",
+      "claude-code-cli",
+      "code-fossil-investigator",
+      "codequality-agent",
+      "continuous-improver",
+      "cto-agent",
+      "data-agent",
+      "database-architect",
+      "debugger",
+      "devops-agent",
+      "devops-engineer",
+      "docimprover-agent",
+      "documentation-writer",
+      "email-custodian-agent",
+      "explorer-agent",
+      "frontend-specialist",
+      "game-developer",
+      "gemini-cli",
+      "kilo",
+      "master-of-taxonomies",
+      "media-evidence-investigator",
+      "mobile-agent",
+      "mobile-developer",
+      "news-scout",
+      "notes-ledger-investigator",
+      "openclaw-fleet",
+      "orchestrator",
+      "penetration-tester",
+      "perf-agent",
+      "performance-optimizer",
+      "personal-archaeology-integrity-team-orchestrator",
+      "personal-archaeology-master-orchestrator",
+      "personal-archaeology-narrative-team-orchestrator",
+      "personal-archaeology-source-team-orchestrator",
+      "personal-historical-archaeologist",
+      "picoclaw-perplexity",
+      "picoclaw-subject",
+      "picoclaw-tester",
+      "picoclaw-tester-benchmark",
+      "picoclaw-tester-viability",
+      "primitive-master",
+      "project-planner",
+      "repo-lineage-investigator",
+      "research-agent",
+      "scout-llm-discovery",
+      "scout-llm-opportunities",
+      "security-agent",
+      "security-auditor",
+      "seo-specialist",
+      "test-engineer",
+      "tester-llm-endpoints",
+      "timeline-synthesis-investigator",
+      "tnf-cli",
+      "worker-llm-validation",
+      "zeroclaw-sandbox"
+    ]
+  },
+  "pathways": {
+    "corporate_staff": [
+      "agent-registry-manager",
+      "content-calendar-orchestrator-agent",
+      "cursor-watch-learn-operator",
+      "custom-slash-command-agent",
+      "interoperability-protocol-agent",
+      "meta-agent-architect",
+      "orchestrator-agent",
+      "orchestrator-agent-copy",
+      "staff-review-agent",
+      "staffing-director-agent",
+      "sub-director",
+      "super-director"
+    ],
+    "agency_owner_ops": [],
+    "user_customer_ops": [
+      "auth-blocker-sentinel",
+      "backend-specialist",
+      "categorization-master",
+      "claude-code-cli",
+      "code-fossil-investigator",
+      "codequality-agent",
+      "continuous-improver",
+      "cto-agent",
+      "data-agent",
+      "database-architect",
+      "debugger",
+      "devops-agent",
+      "devops-engineer",
+      "docimprover-agent",
+      "documentation-writer",
+      "email-custodian-agent",
+      "explorer-agent",
+      "frontend-specialist",
+      "game-developer",
+      "gemini-cli",
+      "kilo",
+      "master-of-taxonomies",
+      "media-evidence-investigator",
+      "mobile-agent",
+      "mobile-developer",
+      "news-scout",
+      "notes-ledger-investigator",
+      "openclaw-fleet",
+      "orchestrator",
+      "penetration-tester",
+      "perf-agent",
+      "performance-optimizer",
+      "personal-archaeology-integrity-team-orchestrator",
+      "personal-archaeology-master-orchestrator",
+      "personal-archaeology-narrative-team-orchestrator",
+      "personal-archaeology-source-team-orchestrator",
+      "personal-historical-archaeologist",
+      "picoclaw-perplexity",
+      "picoclaw-subject",
+      "picoclaw-tester",
+      "picoclaw-tester-benchmark",
+      "picoclaw-tester-viability",
+      "primitive-master",
+      "project-planner",
+      "repo-lineage-investigator",
+      "research-agent",
+      "scout-llm-discovery",
+      "scout-llm-opportunities",
+      "security-agent",
+      "security-auditor",
+      "seo-specialist",
+      "test-engineer",
+      "tester-llm-endpoints",
+      "timeline-synthesis-investigator",
+      "tnf-cli",
+      "worker-llm-validation",
+      "zeroclaw-sandbox"
+    ],
+    "shared_core": [
+      "ab-testing-optimizer-agent",
+      "ad-network-manager-agent",
+      "affiliate-link-manager-agent",
+      "agent-relationship-grapher",
+      "agent-search-engine",
+      "agent-tagger",
+      "algorithm-adaptation-agent",
+      "analytics-and-reporting-agent",
+      "asset-sourcer-agent",
+      "audience-growth-agent",
+      "audience-persona-architect-agent",
+      "audience-segmentation-agent",
+      "audio-recording-agent",
+      "brand-identity-agent",
+      "brand-outreach-agent",
+      "brand-prospecting-agent",
+      "business-model-architect-agent",
+      "campaign-execution-agent",
+      "campaign-reporting-agent",
+      "codebase-pathway-tracer",
+      "cognitive-bias-optimizer-agent",
+      "community-engagement-agent",
+      "community-manager-agent",
+      "competitive-intelligence-agent",
+      "content-calendar-agent",
+      "content-refresh-agent",
+      "content-repurposing-agent",
+      "content-writer-agent",
+      "contextual-model-implementation-architect",
+      "contract-manager-agent",
+      "cro-process-agent",
+      "customer-journey-map-agent",
+      "customer-support-agent",
+      "deal-negotiator-agent",
+      "digital-asset-manager-agent",
+      "digital-product-creator-agent",
+      "digital-product-factory-agent",
+      "ecom-platform-manager-agent",
+      "email-marketing-automation-agent",
+      "episode-planner-agent",
+      "equipment-recommendation-agent",
+      "ethical-bias-auditor-agent",
+      "facebook-strategy-agent",
+      "fan-funding-agent",
+      "financial-manager-agent",
+      "frontend-debugger-agent",
+      "funnel-economics-analyst-agent",
+      "gemini",
+      "graph-writer",
+      "guest-booking-agent",
+      "guest-relationship-manager-agent",
+      "influencer-media-kit-agent",
+      "influencer-niche-agent",
+      "information-retrieval-agent",
+      "instagram-strategy-agent",
+      "inter-agentic-workflow-definer",
+      "jules-cli-agent",
+      "keyword-research-agent",
+      "lead-capture-agent",
+      "lead-magnet-funnel-agent",
+      "legal-compliance-agent",
+      "link-building-agent",
+      "live-stream-manager-agent",
+      "logical-reasoning-agent",
+      "monetization-strategy-agent",
+      "niche-analyst-agent",
+      "oto-sequence-architect-agent",
+      "personal-brand-architect-agent",
+      "personalized-content-recommendation-agent",
+      "platform-selection-agent",
+      "podcast-ad-network-agent",
+      "podcast-affiliate-agent",
+      "podcast-analytics-agent",
+      "podcast-audio-editor-agent",
+      "podcast-distribution-agent",
+      "podcast-equipment-agent",
+      "podcast-format-designer-agent",
+      "podcast-hosting-setup-agent",
+      "podcast-monetization-strategy-agent",
+      "podcast-niche-analyst-agent",
+      "podcast-promotion-agent",
+      "podcast-seo-agent",
+      "podcast-video-editor-agent",
+      "print-on-demand-manager-agent",
+      "productivity-and-burnout-prevention-agent",
+      "reputation-management-agent",
+      "sales-funnel-architect-agent",
+      "scriptwriter-agent",
+      "seo-optimizer-agent",
+      "social-selling-agent",
+      "sponsorship-outreach-agent",
+      "storyboard-artist-agent",
+      "talent-manager-agent",
+      "tax-compliance-agent",
+      "technical-seo-auditor-agent",
+      "technical-setup-agent",
+      "temporal-agent-reclassifier",
+      "tiktok-strategy-agent",
+      "traffic-generation-agent",
+      "user-feedback-analysis-agent",
+      "value-ladder-architect-agent",
+      "video-editor-agent",
+      "visual-asset-creator-agent",
+      "x-strategy-agent",
+      "yt-content-strategy-agent",
+      "yt-niche-strategy-agent",
+      "yt-seo-optimizer-agent"
+    ],
+    "unclassified": []
+  },
+  "runtimeCoverage": [
+    {
+      "target": "codex",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/.codex/skills/imported-claude-agents",
+          "action": "protected-existing",
+          "warning": "EPERM, Operation not permitted '/Users/danielgoldberg/.codex/skills/imported-claude-agents/deal-negotiator-agent/agents'",
+          "skillCount": 119
+        }
+      ]
+    },
+    {
+      "target": "claude",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/.claude/skills/imported-claude-agents",
+          "action": "synced",
+          "skillCount": 119
+        }
+      ]
+    },
+    {
+      "target": "gemini",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/.gemini/skills/imported-claude-agents",
+          "action": "synced",
+          "skillCount": 119
+        }
+      ]
+    },
+    {
+      "target": "opencode",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/.opencode/skills/imported-claude-agents",
+          "action": "synced",
+          "skillCount": 119
+        }
+      ]
+    },
+    {
+      "target": "kilo",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/.kilo/skills/imported-claude-agents",
+          "action": "synced",
+          "skillCount": 119
+        }
+      ]
+    },
+    {
+      "target": "augment",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/.augment/skills/imported-claude-agents",
+          "action": "synced",
+          "skillCount": 119
+        }
+      ]
+    },
+    {
+      "target": "tnf",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/.tnf/skills/imported-claude-agents",
+          "action": "synced",
+          "skillCount": 119
+        }
+      ]
+    },
+    {
+      "target": "hermes",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/.hermes/skills/imported-claude-agents",
+          "action": "synced",
+          "skillCount": 119
+        },
+        {
+          "destination": "/Users/danielgoldberg/.hermes/hermes-agent/skills/imported-claude-agents",
+          "action": "synced",
+          "skillCount": 119
+        }
+      ]
+    },
+    {
+      "target": "project",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents",
+          "action": "synced",
+          "skillCount": 119
+        }
+      ]
+    }
+  ]
+}

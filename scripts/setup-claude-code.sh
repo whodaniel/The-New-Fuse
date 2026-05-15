@@ -55,7 +55,9 @@ claude_with_tnf() {
     
     tnf_send_context "$context_json"
     
-    echo "[$(date)] Claude Code: $*" >> "$HOME/Desktop/A1-Inter-LLM-Com/The New Fuse/claude-code-activity.log"
+    local activity_log="${TNF_CLAUDE_ACTIVITY_LOG:-$HOME/.tnf/logs/claude-code-activity.log}"
+    mkdir -p "$(dirname "$activity_log")"
+    echo "[$(date)] Claude Code: $*" >> "$activity_log"
     command claude "$@"
     local exit_code=$?
     

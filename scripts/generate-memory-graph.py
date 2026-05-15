@@ -2,8 +2,10 @@ import os
 import json
 import re
 
-WIKI_DIR = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/compounding-memory/wiki"
-OUTPUT_FILE = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/memory-graph.json"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+WIKI_DIR = os.path.join(PROJECT_ROOT, "packages", "compounding-memory", "wiki")
+OUTPUT_FILE = os.path.join(PROJECT_ROOT, "data", "memory-graph.json")
 
 def generate_graph():
     if not os.path.exists(WIKI_DIR):

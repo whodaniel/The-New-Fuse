@@ -59,6 +59,8 @@ const HOSTMARIA_AGENT_EMAILS = (import.meta.env.VITE_HOSTMARIA_AGENT_EMAILS || '
 const HOSTMARIA_OPERATOR_EMAILS = Array.from(
   new Set([...HOSTMARIA_OWNER_EMAILS, ...HOSTMARIA_AGENT_EMAILS])
 );
+const HOSTMARIA_PERSONAL_FEATURE_ENABLED =
+  String(import.meta.env.VITE_ENABLE_PERSONAL_HOSTMARIA || '').toLowerCase() === 'true';
 
 export default function HostingControlCenter() {
   const workspaceApi = useMemo(() => new WorkspaceApiService(), []);
@@ -119,12 +121,14 @@ export default function HostingControlCenter() {
     ? hostMariaByWorkspace[selectedWorkspace.id]
     : undefined;
   const isHostMariaOperator = useMemo(
-    () =>
-      HOSTMARIA_OPERATOR_EMAILS.includes(
+    () => {
+      if (!HOSTMARIA_PERSONAL_FEATURE_ENABLED) return false;
+      return HOSTMARIA_OPERATOR_EMAILS.includes(
         String(user?.email || '')
           .trim()
           .toLowerCase()
-      ),
+      );
+    },
     [user?.email]
   );
 
@@ -266,7 +270,7 @@ export default function HostingControlCenter() {
         <GlassCard className="p-4 space-y-3" hover={false}>
           <div className="flex items-center justify-between">
             <h2 className="text-white text-lg font-semibold">Workspace Hosting Targets</h2>
-            <Badge variant="outline">{workspaceRows.length} total</Badge>
+            <Badge variant="secondary">{workspaceRows.length} total</Badge>
           </div>
 
           {loading && workspaceRows.length === 0 ? (
@@ -305,7 +309,7 @@ export default function HostingControlCenter() {
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-300">
                     <Badge variant="secondary">{workspace.members} members</Badge>
-                    <Badge variant="outline">Updated {formatDate(workspace.updatedAt)}</Badge>
+                    <Badge variant="secondary">Updated {formatDate(workspace.updatedAt)}</Badge>
                   </div>
                 </button>
               ))}
@@ -330,7 +334,7 @@ export default function HostingControlCenter() {
                   <Badge className={HEALTH_STYLES[selectedWorkspace.health]}>
                     {selectedWorkspace.health}
                   </Badge>
-                  <Badge variant="outline">Updated {formatDate(selectedWorkspace.updatedAt)}</Badge>
+                  <Badge variant="secondary">Updated {formatDate(selectedWorkspace.updatedAt)}</Badge>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <Link to="/space">
@@ -475,9 +479,12 @@ export default function HostingControlCenter() {
                   <div className="rounded-md border border-cyan-500/20 bg-cyan-500/5 p-3 space-y-3">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-sm text-white font-medium">HostMaria Legacy Ops Sync</p>
+                        <p className="text-sm text-white font-medium">
+                          HostMaria Personal Website Ops Sync
+                        </p>
                         <p className="text-xs text-slate-300 mt-1">
-                          Syncs <code>~/.tnf/hostmaria</code> artifacts into this workspace project
+                          Optional personal integration. Syncs <code>~/.tnf/hostmaria</code>{' '}
+                          artifacts for your personal business websites into this workspace project
                           and task queue.
                         </p>
                       </div>
@@ -505,7 +512,7 @@ export default function HostingControlCenter() {
                             +{selectedHostMariaSync.tasks.created} created / ~
                             {selectedHostMariaSync.tasks.updated} updated
                           </Badge>
-                          <Badge variant="outline">
+                          <Badge variant="secondary">
                             Report: {selectedHostMariaSync.telemetry.latestReportStatus}
                           </Badge>
                         </div>
@@ -525,7 +532,7 @@ export default function HostingControlCenter() {
                                 </p>
                               </div>
                               <div className="flex items-center gap-2">
-                                <Badge variant="outline">{task.priority}</Badge>
+                                <Badge variant="secondary">{task.priority}</Badge>
                                 <Badge
                                   className={
                                     task.status === 'COMPLETED'

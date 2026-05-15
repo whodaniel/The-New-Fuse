@@ -1,8 +1,11 @@
 #!/bin/sh
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BRIDGE_SCRIPT="${BRIDGE_SCRIPT:-$SCRIPT_DIR/hermes-gateway-bridge.cjs}"
+
 start() {
 echo "🚀 Starting Hermes-TNF Gateway Bridge..."
-pgrep -f "hermes-gateway-bridge" | xargs kill -9 2>/dev/null
-node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/hermes-gateway-bridge.cjs & 
+pkill -f "hermes-gateway-bridge" 2>/dev/null || true
+node "$BRIDGE_SCRIPT" &
 sleep 3
 echo "
 🔥 Gateway Bridge Started!
@@ -13,7 +16,7 @@ echo "
 
 stop() {
 echo "⏹ Stopping Hermes-TNF Gateway Bridge..."
-pgrep -f "hermes-gateway-bridge" | xargs kill -9 2>/dev/null
+pkill -f "hermes-gateway-bridge" 2>/dev/null || true
 echo "☑ Bridge stopped"
 }
 

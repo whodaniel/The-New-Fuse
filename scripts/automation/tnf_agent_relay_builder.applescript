@@ -19,7 +19,8 @@ end run
 on createApplicationWithEnhancedErrorHandling()
     try
         -- Define the persistent project path
-        set tnfPath to "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/"
+        set homePath to POSIX path of (path to home folder)
+        set tnfPath to do shell script "if [ -n \"$TNF_ROOT_DIR\" ]; then printf '%s/' \"$TNF_ROOT_DIR\"; else pwd; fi"
         set busPath to tnfPath & "agent-communication/relay/"
         
         -- Define the source code for the RELAY application
@@ -61,7 +62,7 @@ end dispatchUTPEvent
         do shell script "echo " & quoted form of sourceCode & " > " & quoted form of tempScriptFile
         
         set appName to "TNF Agent Relay.app"
-        set savePathPOSIX to "/Users/danielgoldberg/Desktop/" & appName
+        set savePathPOSIX to homePath & "Desktop/" & appName
         
         -- Compile into application
         do shell script "osacompile -o " & quoted form of savePathPOSIX & " " & quoted form of tempScriptFile

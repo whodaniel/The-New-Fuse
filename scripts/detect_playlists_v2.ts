@@ -3,6 +3,13 @@ import * as path from 'path';
 import { chromium } from 'playwright';
 
 async function main() {
+  const outputPath = process.env.TNF_DETECTED_PLAYLISTS_V2_PATH
+    ? path.resolve(process.env.TNF_DETECTED_PLAYLISTS_V2_PATH)
+    : path.join(process.env.HOME || '/tmp', 'data', 'detected_playlists_v2.json');
+  const screenshotPath = process.env.TNF_DETECTED_PLAYLISTS_V2_SCREENSHOT
+    ? path.resolve(process.env.TNF_DETECTED_PLAYLISTS_V2_SCREENSHOT)
+    : path.join(process.env.HOME || '/tmp', 'data', 'playlist_diag.png');
+
   const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-clean');
   console.log(`🚀 Launching Chrome with authenticated profile: ${profileDir}`);
 
@@ -49,13 +56,12 @@ async function main() {
 
   if (foundPlaylists.length === 0) {
     console.log('No playlists found with simple selectors. Taking diagnostic screenshot...');
-    await page.screenshot({ path: '/Users/<owner>/data/playlist_diag.png' });
+    fs.mkdirSync(path.dirname(screenshotPath), { recursive: true });
+    await page.screenshot({ path: screenshotPath });
   }
 
-  fs.writeFileSync(
-    '/Users/<owner>/data/detected_playlists_v2.json',
-    JSON.stringify(foundPlaylists, null, 2)
-  );
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, JSON.stringify(foundPlaylists, null, 2));
 
   await context.close();
 }

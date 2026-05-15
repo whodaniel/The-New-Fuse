@@ -201,7 +201,7 @@ export default function SpacesOverview() {
         <GlassCard className="p-4 space-y-3" hover={false}>
           <div className="flex items-center justify-between">
             <h2 className="text-white text-lg font-semibold">Spaces</h2>
-            <Badge variant="outline">{workspaceRows.length} total</Badge>
+            <Badge variant="secondary">{workspaceRows.length} total</Badge>
           </div>
 
           {loading && workspaceRows.length === 0 ? (
@@ -240,7 +240,7 @@ export default function SpacesOverview() {
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2 text-xs">
                     <Badge variant="secondary">{workspace.members} members</Badge>
-                    <Badge variant="outline">Updated {formatDate(workspace.updatedAt)}</Badge>
+                    <Badge variant="secondary">Updated {formatDate(workspace.updatedAt)}</Badge>
                   </div>
                 </button>
               ))}
@@ -352,7 +352,7 @@ export default function SpacesOverview() {
                           {project.status ? (
                             <Badge variant="secondary">{project.status}</Badge>
                           ) : null}
-                          <Badge variant="outline">Updated {formatDate(project.updatedAt)}</Badge>
+                          <Badge variant="secondary">Updated {formatDate(project.updatedAt)}</Badge>
                         </div>
                       </div>
                     ))

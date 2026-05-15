@@ -66,7 +66,6 @@ func resolveStateDir() -> String {
     }
 
     let candidates = [
-        "~/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
         "~/The-New-Fuse",
         "~/Desktop/The-New-Fuse",
         "~/Projects/The-New-Fuse",

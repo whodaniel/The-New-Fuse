@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle, Label, Slider } from '@/components/ui';
 // @ts-nocheck
+import { Card, CardContent, CardHeader, CardTitle, Label, Slider } from '@/components/ui';
 import { useState } from 'react';
 import { webSocketService } from '../services/websocket';
 function AgentPersonalityCustomizer({ agentId }) {

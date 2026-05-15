@@ -114,7 +114,7 @@ capability catalog alignment
 4. Added these paths to `isPublicRoute` handling so public rendering/navigation
    behavior matches `/visualizations`.
 
-## 10) API Gateway Routing Hardening (Railway)
+## 10) API Gateway Routing Hardening (CloudRuntime)
 
 1. Confirmed frontend route renders in production, but graph data fetch on
    `/api/terminals/graph` returned 404 at the gateway edge.

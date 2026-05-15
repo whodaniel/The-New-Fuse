@@ -1,7 +1,12 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import { chromium } from 'playwright';
 
 async function main() {
+  const screenshotPath = process.env.TNF_LOGIN_DIAGNOSTIC_PATH
+    ? path.resolve(process.env.TNF_LOGIN_DIAGNOSTIC_PATH)
+    : path.join(process.env.HOME || '/tmp', 'data', 'login_diagnostic.png');
+
   const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-clean');
   console.log(`🔍 Diagnosing Login Page with profile: ${profileDir}`);
 
@@ -48,7 +53,7 @@ async function main() {
     }
 
     // Diagnostic screenshot
-    const screenshotPath = '/Users/<owner>/data/login_diagnostic.png';
+    await fs.promises.mkdir(path.dirname(screenshotPath), { recursive: true });
     await page.screenshot({ path: screenshotPath });
     console.log(`📸 Diagnostic screenshot saved to: ${screenshotPath}`);
   } catch (e) {

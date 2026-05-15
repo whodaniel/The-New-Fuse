@@ -1,5 +1,5 @@
-import { Progress } from '@/components/ui';
 // @ts-nocheck
+import { Progress } from '@/components/ui';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';

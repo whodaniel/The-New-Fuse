@@ -1,0 +1,15 @@
+---
+name: MiniMax M2.7
+provider: nvidia
+endpoint: https://integrate.api.nvidia.com/v1/chat/completions
+model: minimaxai/minimax-m2.7
+tier: free
+context_window: 204800
+first_discovered: 2026-04-14
+source: youtube CodeWithNathan mDn0aCEHHFk
+tags:
+  - coding
+  - agent
+  - tool_use
+  - long_context
+notes: 230B MoE, 10B active, 97% skill adherence. 56.2% SwePro benchmark.

@@ -335,7 +335,7 @@ async function main() {
   }
 
   console.log('TNF Session Bootstrap');
-  console.log('Workspace: /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse');
+  console.log('Workspace: current TNF project root');
 
   printHeader('Frontload Checklist');
   [

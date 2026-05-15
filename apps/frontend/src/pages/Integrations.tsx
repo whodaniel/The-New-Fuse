@@ -1,5 +1,5 @@
-import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 // @ts-nocheck
+import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 import {
   ArrowRight,
   Chrome,

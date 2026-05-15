@@ -3,9 +3,19 @@ import * as path from 'path';
 import { execSync } from 'child_process';
 
 // --- CONFIGURATION ---
-const BASE_DIR = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base';
+const TNF_ROOT = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..');
+const WORKSPACE_ROOT = process.env.TNF_WORKSPACE_DIR
+  ? path.resolve(process.env.TNF_WORKSPACE_DIR)
+  : path.resolve(TNF_ROOT, '..');
+const BASE_DIR = process.env.TNF_KB_DIR
+  ? path.resolve(process.env.TNF_KB_DIR)
+  : path.join(WORKSPACE_ROOT, 'my-ai-knowledge-base');
 const LIBRARY_FILE = path.join(BASE_DIR, 'video-library/ai_video_library.html');
-const REPORTS_DIR = '/Users/<owner>/Documents/Video-Intelligence-Archive/';
+const REPORTS_DIR = process.env.TNF_VIDEO_ARCHIVE_DIR
+  ? path.resolve(process.env.TNF_VIDEO_ARCHIVE_DIR)
+  : path.join(process.env.HOME || '/tmp', 'Documents', 'Video-Intelligence-Archive');
 const TRANSCRIPTS_DIR = path.join(BASE_DIR, 'video-transcripts');
 const MASTER_INDEX_FILE = path.join(REPORTS_DIR, 'MASTER_CHRONOLOGICAL_INDEX.md');
 

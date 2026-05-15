@@ -5,7 +5,10 @@ const os = require('node:os');
 
 const HEARTBEAT_PATH = path.join(os.homedir(), '.tnf', 'terminal-heartbeat', 'state', 'terminal-heartbeat-latest.json');
 const REGISTRY_PATH = path.join(os.homedir(), '.tnf', 'session-discovery', 'terminal-identity-registry.json');
-const LEDGER_PATH = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md';
+const TNF_ROOT = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..');
+const LEDGER_PATH = path.join(TNF_ROOT, 'docs', 'protocols', 'AGENT_STATUS_LEDGER.md');
 
 function discover() {
   console.log('=== TNF Swarm Discovery ===\n');

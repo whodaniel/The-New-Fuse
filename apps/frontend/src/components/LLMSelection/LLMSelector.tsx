@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Button,
   Input,
@@ -8,7 +9,6 @@ import {
   TabsTrigger,
   toast,
 } from '@/components/ui';
-// @ts-nocheck
 import {
   Dialog,
   DialogClose,

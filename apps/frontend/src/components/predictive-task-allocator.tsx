@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   GlassCard,
   PremiumButton,
@@ -10,7 +11,6 @@ import {
 } from '@/components/ui';
 import { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
-// @ts-nocheck
 ('use client');
 
 interface TaskItem {

@@ -31,7 +31,7 @@ const textExtensions = new Set([
 ]);
 
 const replacements = [
-  { from: /\/Users\/danielgoldberg/gi, to: '/Users/<owner>' },
+  { from: /\/Users\/[A-Za-z0-9._-]+/gi, to: '/Users/<redacted-user>' },
   { from: /whodaniel@yahoo\.com/gi, to: 'owner@example.com' },
   { from: /bizsynth@gmail\.com/gi, to: 'owner@example.com' },
   { from: /danielgoldberg@thenewfuse\.com/gi, to: 'owner@example.com' },

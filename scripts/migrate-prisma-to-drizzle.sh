@@ -13,7 +13,8 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-ROOT_DIR="/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 cd "$ROOT_DIR"
 
 # Counter

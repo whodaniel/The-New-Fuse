@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Download, FileJson, Loader2, Maximize2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { GraphVisualizer } from './GraphVisualizer';

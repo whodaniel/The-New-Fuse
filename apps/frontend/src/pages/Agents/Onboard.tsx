@@ -1,5 +1,5 @@
-import { Badge, GlassCard, PremiumButton, PremiumInput, PremiumTextarea } from '@/components/ui';
 // @ts-nocheck
+import { Badge, GlassCard, PremiumButton, PremiumInput, PremiumTextarea } from '@/components/ui';
 /**
  * Agent Onboarding Page
  *

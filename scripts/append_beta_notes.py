@@ -1,4 +1,5 @@
 import time
+import os
 notes = """
 [BETA] DEAD CODE AUDIT
 Timestamp: 2026-04-05T19:47:00-04:00
@@ -27,5 +28,9 @@ Timestamp: 2026-04-05T19:47:00-04:00
 3. 🟡 Establish an ESLint rule preventing new hardcoded hex colors in `.tsx` files.
 """
 
-with open('/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/handoff_notes.txt', 'a', encoding='utf-8') as f:
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(script_dir, "..")))
+notes_path = os.path.join(project_root, ".agent", "handoff_notes.txt")
+
+with open(notes_path, 'a', encoding='utf-8') as f:
     f.write(notes + "\n--- Agent Beta execution finalized ---\n")

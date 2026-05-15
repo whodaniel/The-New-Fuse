@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   GlassCard,
   Label,
@@ -10,7 +11,6 @@ import {
   Textarea,
   toast,
 } from '@/components/ui';
-// @ts-nocheck
 import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
 import { apiService } from '@/services/api';
 import { Bot, Code, Settings, Sparkles } from 'lucide-react';

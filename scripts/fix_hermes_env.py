@@ -1,5 +1,8 @@
 import os
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+
 def load_env(path):
     env = {}
     if not os.path.exists(path):
@@ -14,8 +17,8 @@ def load_env(path):
                 env[key.strip()] = val.strip()
     return env
 
-project_env_path = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.env'
-hermes_env_path = '/Users/<owner>/.hermes/.env.clean'
+project_env_path = os.path.join(PROJECT_ROOT, '.env')
+hermes_env_path = os.path.join(os.path.expanduser('~'), '.hermes', '.env.clean')
 
 project_env = load_env(project_env_path)
 hermes_env = load_env(hermes_env_path)

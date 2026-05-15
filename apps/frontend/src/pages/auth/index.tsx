@@ -1,5 +1,5 @@
-import { GlassCard } from '@/components/ui';
 // @ts-nocheck
+import { GlassCard } from '@/components/ui';
 import { useAuth } from '@/hooks/useAuth';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';

@@ -3,6 +3,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..');
+const canonicalRoot = process.env.TNF_VLIB_CANONICAL_ROOT
+  ? path.resolve(process.env.TNF_VLIB_CANONICAL_ROOT)
+  : path.join(process.env.HOME || '/tmp', 'Projects', 'virtual-library-blueprints');
 
 const targets = [
   {
@@ -11,7 +14,7 @@ const targets = [
   },
   {
     label: 'canonical',
-    file: '/Users/danielgoldberg/Projects/virtual-library-blueprints/cloudflare-virtual-library/wrangler.toml'
+    file: path.join(canonicalRoot, 'cloudflare-virtual-library', 'wrangler.toml')
   }
 ];
 
@@ -125,4 +128,3 @@ function main() {
 }
 
 main();
-

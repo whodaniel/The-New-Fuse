@@ -3,6 +3,10 @@ import * as path from 'path';
 import { chromium } from 'playwright';
 
 async function main() {
+  const outputPath = process.env.TNF_DETECTED_PLAYLISTS_V3_PATH
+    ? path.resolve(process.env.TNF_DETECTED_PLAYLISTS_V3_PATH)
+    : path.join(process.env.HOME || '/tmp', 'data', 'detected_playlists_v3.json');
+
   const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-clean');
   console.log(`🚀 Launching Chrome with authenticated profile: ${profileDir}`);
 
@@ -46,10 +50,8 @@ async function main() {
   });
 
   console.log('Detected Playlists:', JSON.stringify(playlists, null, 2));
-  fs.writeFileSync(
-    '/Users/<owner>/data/detected_playlists_v3.json',
-    JSON.stringify(playlists, null, 2)
-  );
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, JSON.stringify(playlists, null, 2));
 
   await context.close();
 }

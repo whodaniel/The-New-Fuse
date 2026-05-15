@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CANONICAL="/Users/<owner>/Projects/virtual-library-blueprints/"
-MIRROR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints/"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+CANONICAL="${TNF_VLIB_CANONICAL:-$HOME/Projects/virtual-library-blueprints}"
+MIRROR="${TNF_VLIB_MIRROR:-$PROJECT_ROOT/apps/virtual-library-blueprints}"
 
 APPLY=0
 ALLOW_DELETE=0
@@ -70,4 +72,3 @@ if [[ $APPLY -eq 0 ]]; then
   echo
   echo "Dry-run complete. Re-run with --apply to execute."
 fi
-

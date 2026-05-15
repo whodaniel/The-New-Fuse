@@ -14,7 +14,7 @@
  *   LAUNCHPAD_DRY_RUN=true node launchpad.js  (preview only)
  *
  * Environment:
- *   TNF_RELAY_URL    — WebSocket relay URL (default: ws://localhost:3000)
+ *   TNF_RELAY_URL    — WebSocket relay URL (default: ws://localhost:3000/ws)
  *   TNF_RELAY_TOKEN  — Auth token for relay
  *   LAUNCHPAD_DRY_RUN — If "true", only prints what it would do
  */
@@ -27,7 +27,7 @@ const __dirname = typeof __dirname !== 'undefined' ? __dirname : (0, path_1.join
 // CONFIG
 // ============================================================================
 const CONFIG = {
-    RELAY_URL: process.env.TNF_RELAY_URL || 'ws://localhost:3000',
+    RELAY_URL: process.env.TNF_RELAY_URL || 'ws://localhost:3000/ws',
     RELAY_TOKEN: process.env.TNF_RELAY_TOKEN || null,
     DRY_RUN: process.env.LAUNCHPAD_DRY_RUN === 'true',
     BACKLOG_FILE: (0, path_1.join)(__dirname, '..', '..', 'docs', 'LAUNCH_BACKLOG.md'),

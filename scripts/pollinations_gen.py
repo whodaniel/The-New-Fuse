@@ -10,9 +10,20 @@ import urllib.error
 from pathlib import Path
 import argparse
 
-AGENTS_JSON_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/agent-registry/agents.json"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+AGENTS_JSON_PATH = os.path.join(PROJECT_ROOT, "data", "agent-registry", "agents.json")
 OUTPUT_DIR = Path(
-    "/Users/<owner>/.gemini/antigravity/brain/129a6f84-97a9-4c46-88c8-4b5f066454aa"
+    os.getenv(
+        "TNF_AGENT_PFP_OUTPUT_DIR",
+        os.path.join(
+            os.path.expanduser("~"),
+            ".gemini",
+            "antigravity",
+            "brain",
+            "129a6f84-97a9-4c46-88c8-4b5f066454aa",
+        ),
+    )
 )
 
 GENERATED_PROMPTS = {

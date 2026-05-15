@@ -126,7 +126,7 @@ Generated: 2026-05-07T18:31:02.684Z
   - reasons: contains public GitHub handle/repository reference
 - docs/archive/session-reports/EXECUTION_SUMMARY.md
   - reasons: contains public GitHub handle/repository reference
-- docs/audits/RAILWAY_TNF_SERVICE_INSPECTION_2026-03-09.md
+- docs/audits/CLOUD_RUNTIME_TNF_SERVICE_INSPECTION_2026-03-09.md
   - reasons: contains public GitHub handle/repository reference
 - docs/core/SECURITY.md
   - reasons: contains only low-risk public references
@@ -136,11 +136,11 @@ Generated: 2026-05-07T18:31:02.684Z
   - reasons: contains public GitHub handle/repository reference
 - docs/deployment/MANUAL_SETUP_REQUIRED.md
   - reasons: contains public GitHub handle/repository reference
-- docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md
+- docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md
   - reasons: contains public GitHub handle/repository reference
-- docs/deployment/RAILWAY_DEPLOYMENT_INSTRUCTIONS.md
+- docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_INSTRUCTIONS.md
   - reasons: contains public GitHub handle/repository reference
-- docs/deployment/RAILWAY_FAILURE_ANALYSIS.md
+- docs/deployment/CLOUD_RUNTIME_FAILURE_ANALYSIS.md
   - reasons: contains public GitHub handle/repository reference
 - docs/development/BACKGROUND_JOBS_IMPLEMENTATION_SUMMARY.md
   - reasons: contains only low-risk public references
@@ -198,7 +198,7 @@ Generated: 2026-05-07T18:31:02.684Z
   - reasons: contains public GitHub handle/repository reference
 - docs/THEIA_ISOLATION_STRATEGY.md
   - reasons: contains public GitHub handle/repository reference
-- docs/THEIA_RAILWAY_FIX.md
+- docs/THEIA_CLOUD_RUNTIME_FIX.md
   - reasons: contains public GitHub handle/repository reference
 - docs/TNF_LEGACY_AND_CURRENT_STATE_SYNTHESIS.md
   - reasons: contains public GitHub handle/repository reference

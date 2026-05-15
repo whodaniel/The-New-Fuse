@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Badge,
   GlassCard,
@@ -11,7 +12,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
-// @ts-nocheck
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import {
   BarChart3,

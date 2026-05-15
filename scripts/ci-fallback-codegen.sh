@@ -9,7 +9,7 @@
 # WHY: GitHub Actions monthly quota may be exhausted.
 # FALLBACK: Run this script locally, or set up a cron job:
 #   crontab -e
-#   */5 * * * * cd /path/to/The-New-Fuse && ./scripts/ci-fallback-codegen.sh
+#   */5 * * * * cd <tnf-root> && ./scripts/ci-fallback-codegen.sh
 #
 
 set -euo pipefail

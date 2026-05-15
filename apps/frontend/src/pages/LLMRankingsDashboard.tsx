@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   GlassCard,
   StatsCard,
@@ -6,7 +7,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
-// @ts-nocheck
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import {

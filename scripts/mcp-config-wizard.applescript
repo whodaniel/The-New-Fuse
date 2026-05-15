@@ -8,7 +8,8 @@ on run
     -- Define paths to important configuration files
     set homeFolder to (path to home folder as text)
     set claudeConfigPath to homeFolder & "Library:Application Support:Claude:claude_desktop_config.json"
-    set workspaceFolder to homeFolder & "Desktop:A1-Inter-LLM-Com:The New Fuse:"
+    set workspaceFolderPOSIX to do shell script "if [ -n \"$TNF_ROOT_DIR\" ]; then printf '%s' \"$TNF_ROOT_DIR\"; else pwd; fi"
+    set workspaceFolder to (POSIX file workspaceFolderPOSIX as string)
     set mcp_config_manager_path to workspaceFolder & "scripts:mcp-config-manager-server.js"
     
     -- Look for potential Copilot config locations

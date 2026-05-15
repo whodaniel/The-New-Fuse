@@ -15,7 +15,7 @@ import {
 } from '@/services/unifiedLedgerApi';
 import { format } from 'date-fns';
 import { Calendar, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useSearchParams } from 'react-router-dom';
 
@@ -149,6 +149,15 @@ function readNarrativeConnections(event: TimelineEvent): Array<{
   return connections;
 }
 
+function formatTimelineEventA11yLabel(event: TimelineEvent): string {
+  const payload = readPayload(event);
+  const parsedTimestamp = new Date(event.timestamp);
+  const timestamp = Number.isNaN(parsedTimestamp.getTime())
+    ? 'date unknown'
+    : format(parsedTimestamp, 'PPP p');
+  return `${payload.title}. Category ${payload.category}. Timeline position ${payload.point}%. ${timestamp}.`;
+}
+
 export default function TimelinePage() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
@@ -182,6 +191,7 @@ export default function TimelinePage() {
     category: 'Identity',
     sourcesText: '',
   });
+  const selectedEventRef = useRef<HTMLDivElement | null>(null);
 
   const userId = useMemo(() => user?.id || null, [user?.id]);
   const ownerScopeId = useMemo(() => {
@@ -229,10 +239,21 @@ export default function TimelinePage() {
     () => filteredEvents.find((e) => e.id === selectedId) || null,
     [filteredEvents, selectedId]
   );
+  const selectedPayload = useMemo(
+    () => (selectedEvent ? readPayload(selectedEvent) : null),
+    [selectedEvent]
+  );
   const selectedConnections = useMemo(
     () => (selectedEvent ? readNarrativeConnections(selectedEvent) : []),
     [selectedEvent]
   );
+  const liveRegionMessage = useMemo(() => {
+    if (loading) return 'Loading personal timeline.';
+    if (graphLoading) return 'Loading narrative graph.';
+    if (syncingGithub) return 'Syncing GitHub timeline history.';
+    if (selectedPayload) return `Selected milestone: ${selectedPayload.title}.`;
+    return 'Timeline ready.';
+  }, [graphLoading, loading, selectedPayload, syncingGithub]);
 
   const runBootstrap = async (auto = false) => {
     if (!userId) return;
@@ -305,6 +326,11 @@ export default function TimelinePage() {
   useEffect(() => {
     load();
   }, [ownerScopeId, userId]);
+
+  useEffect(() => {
+    if (!selectedEventRef.current || !selectedEvent) return;
+    selectedEventRef.current.focus();
+  }, [selectedEvent?.id]);
 
   const createItem = async () => {
     if (!userId) {
@@ -477,6 +503,9 @@ export default function TimelinePage() {
   return (
     <div className="dark min-h-screen bg-[#020617] text-slate-100 p-4 lg:p-10">
       <div className="max-w-7xl mx-auto space-y-8">
+        <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {liveRegionMessage}
+        </div>
         <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-amber-400 text-xs uppercase tracking-[0.2em] font-semibold">
@@ -547,7 +576,10 @@ export default function TimelinePage() {
           </div>
         </header>
 
-        <Card className="bg-slate-900/40 border-slate-800 p-6 rounded-md overflow-hidden relative">
+        <Card
+          className="bg-slate-900/40 border-slate-800 p-6 rounded-md overflow-hidden relative"
+          aria-busy={macroLoading}
+        >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-500 border border-sky-500/20">
@@ -569,9 +601,13 @@ export default function TimelinePage() {
 
           <div className="h-[450px] w-full">
             {macroLoading ? (
-              <div className="h-full w-full flex flex-col items-center justify-center space-y-4 bg-slate-950/40 rounded-lg border border-slate-800/50">
+              <div
+                className="h-full w-full flex flex-col items-center justify-center space-y-4 bg-slate-950/40 rounded-lg border border-slate-800/50"
+                role="status"
+                aria-live="polite"
+              >
                 <div className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm text-slate-400 font-medium">
+                <p className="text-sm text-slate-200 font-medium">
                   Synchronizing with Macro Ledger...
                 </p>
               </div>
@@ -608,6 +644,8 @@ export default function TimelinePage() {
               <button
                 onClick={() => setSelectedMacroRecord(null)}
                 className="text-slate-500 hover:text-white transition-colors"
+                type="button"
+                aria-label="Close macro record details"
               >
                 <Trash2 className="w-5 h-5" />
               </button>
@@ -650,6 +688,7 @@ export default function TimelinePage() {
         <Card
           data-testid="timeline-rail-card"
           className="bg-slate-900/40 border-slate-800 p-6 rounded-md space-y-6"
+          aria-busy={loading || graphLoading}
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col">
@@ -659,8 +698,11 @@ export default function TimelinePage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="text-xs text-slate-400">Filter By Category</Label>
+              <Label htmlFor="timeline-category-filter" className="text-xs text-slate-300">
+                Filter By Category
+              </Label>
               <select
+                id="timeline-category-filter"
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 className="h-9 rounded-md border border-slate-700 bg-slate-950 px-2 text-sm text-slate-200 outline-none focus:border-amber-500/50"
@@ -674,7 +716,14 @@ export default function TimelinePage() {
             </div>
           </div>
 
-          <div className="relative px-2 py-10 overflow-x-auto">
+          <div
+            className="relative px-2 py-10 overflow-x-auto"
+            role="group"
+            aria-label="Personal narrative timeline"
+          >
+            <p id="timeline-node-help" className="sr-only">
+              Move through timeline nodes and press Enter or Space to select a milestone.
+            </p>
             <div className="min-w-[680px]">
               <div className="h-[2px] bg-slate-700/50 relative">
                 {filteredEvents.map((event) => {
@@ -686,9 +735,13 @@ export default function TimelinePage() {
                       type="button"
                       data-testid={`timeline-node-${event.id}`}
                       onClick={() => setSelectedId(event.id)}
-                      className="absolute -top-3 -translate-x-1/2 group z-10"
+                      className="absolute -top-3 -translate-x-1/2 group z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded-full"
                       style={{ left: `${payload.point}%` }}
                       title={payload.title}
+                      aria-label={formatTimelineEventA11yLabel(event)}
+                      aria-pressed={active}
+                      aria-controls="timeline-selected-card"
+                      aria-describedby="timeline-node-help"
                     >
                       <span
                         className={`block w-6 h-6 rounded-full border-2 transition-all ${
@@ -706,7 +759,14 @@ export default function TimelinePage() {
 
           {selectedEvent ? (
             <div
+              id="timeline-selected-card"
               data-testid="timeline-selected-card"
+              ref={selectedEventRef}
+              tabIndex={-1}
+              role="region"
+              aria-live="polite"
+              aria-atomic="true"
+              aria-label={selectedPayload ? `Selected milestone ${selectedPayload.title}` : undefined}
               className="rounded-md border border-slate-700 bg-slate-950/40 p-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between animate-in fade-in slide-in-from-left-2 duration-300"
             >
               <div className="space-y-1">
@@ -715,42 +775,41 @@ export default function TimelinePage() {
                     data-testid="timeline-selected-title"
                     className="text-xl font-bold text-white"
                   >
-                    {readPayload(selectedEvent).title}
+                    {selectedPayload?.title}
                   </h2>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold uppercase tracking-wider">
-                    {readPayload(selectedEvent).category}
+                    {selectedPayload?.category}
                   </span>
                 </div>
                 <p className="text-slate-300 text-sm max-w-2xl leading-relaxed">
-                  {readPayload(selectedEvent).description ||
+                  {selectedPayload?.description ||
                     'No additional context provided for this milestone.'}
                 </p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3">
                   <p className="text-xs text-slate-400">
-                    <span className="text-slate-500">Position:</span>{' '}
-                    {readPayload(selectedEvent).point}%
+                    <span className="text-slate-300">Position:</span> {selectedPayload?.point}%
                   </p>
                   <p className="text-xs text-slate-400">
-                    <span className="text-slate-500">Timestamp:</span>{' '}
+                    <span className="text-slate-300">Timestamp:</span>{' '}
                     {format(new Date(selectedEvent.timestamp), 'PPP p')}
                   </p>
                   {readProject(selectedEvent) ? (
                     <p className="text-xs text-emerald-400">
-                      <span className="text-slate-500">Project:</span> {readProject(selectedEvent)}
+                      <span className="text-slate-300">Project:</span> {readProject(selectedEvent)}
                     </p>
                   ) : null}
                 </div>
 
                 {readSources(selectedEvent).length > 0 ? (
                   <div className="mt-4 pt-4 border-t border-slate-800/50">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold">
+                    <p className="text-[10px] text-slate-300 uppercase tracking-[0.2em] font-bold">
                       Evidence & Sources
                     </p>
                     <ul className="mt-2 space-y-1">
                       {readSources(selectedEvent).map((source) => (
                         <li
                           key={source}
-                          className="text-xs text-sky-400/80 hover:text-sky-300 transition-colors break-all flex items-center gap-2"
+                          className="text-xs text-sky-300 hover:text-sky-200 transition-colors break-all flex items-center gap-2"
                         >
                           <div className="w-1 h-1 rounded-full bg-sky-500/40" />
                           {source}
@@ -768,7 +827,7 @@ export default function TimelinePage() {
 
                 {selectedConnections.length > 0 ? (
                   <div className="mt-4 pt-4 border-t border-slate-800/50">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold">
+                    <p className="text-[10px] text-slate-300 uppercase tracking-[0.2em] font-bold">
                       Narrative Links
                     </p>
                     <ul className="mt-2 space-y-2">
@@ -782,11 +841,11 @@ export default function TimelinePage() {
                             {connection.to}
                           </p>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] text-slate-500 uppercase">
+                            <span className="text-[10px] text-slate-300 uppercase">
                               {connection.connectionType}
                             </span>
                             {connection.rationale ? (
-                              <span className="text-slate-400 italic">
+                              <span className="text-slate-200 italic">
                                 — {connection.rationale}
                               </span>
                             ) : null}
@@ -804,6 +863,7 @@ export default function TimelinePage() {
                   className="border-slate-800 bg-slate-900/50 hover:bg-slate-800"
                   onClick={() => startEdit(selectedEvent)}
                   disabled={isDelegatedView}
+                  aria-label={`Edit event ${selectedPayload?.title || ''}`.trim()}
                 >
                   <Pencil className="w-4 h-4 mr-2" />
                   Edit Event
@@ -814,6 +874,7 @@ export default function TimelinePage() {
                   className="border-red-500/20 text-red-400 hover:bg-red-950/30 hover:border-red-500/40"
                   onClick={() => removeItem(selectedEvent.id)}
                   disabled={isDelegatedView}
+                  aria-label={`Delete event ${selectedPayload?.title || ''}`.trim()}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete
@@ -821,11 +882,11 @@ export default function TimelinePage() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-10 text-center space-y-2">
+            <div className="flex flex-col items-center justify-center py-10 text-center space-y-2" role="status">
               <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-500">
                 <Calendar className="w-6 h-6" />
               </div>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-300 text-sm">
                 No milestone selected. Click a node on the timeline to view details.
               </p>
             </div>
@@ -833,7 +894,7 @@ export default function TimelinePage() {
           <div className="flex gap-4 border-t border-slate-800/50 pt-6">
             <div className="flex-1 rounded-md border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
               {graphLoading ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" role="status" aria-live="polite">
                   <div className="w-3 h-3 border-2 border-amber-500/50 border-t-transparent rounded-full animate-spin" />
                   <span>Loading narrative graph intelligence...</span>
                 </div>
@@ -857,7 +918,9 @@ export default function TimelinePage() {
                       {narrativeGraph.eventCount}
                     </span>
                   </p>
-                  <p className="ml-auto italic opacity-70">Narrative Intelligence Engine Active</p>
+                  <p className="ml-auto italic text-slate-300">
+                    Narrative Intelligence Engine Active
+                  </p>
                 </div>
               ) : (
                 <span>Narrative graph unavailable for this scope.</span>
@@ -880,8 +943,11 @@ export default function TimelinePage() {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-slate-300">Title</Label>
+                <Label htmlFor="timeline-create-title-input" className="text-slate-300">
+                  Title
+                </Label>
                 <Input
+                  id="timeline-create-title-input"
                   data-testid="timeline-create-title"
                   value={createForm.title}
                   onChange={(e) => setCreateForm((s) => ({ ...s, title: e.target.value }))}
@@ -890,8 +956,11 @@ export default function TimelinePage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-slate-300">Narrative Description</Label>
+                <Label htmlFor="timeline-create-description-input" className="text-slate-300">
+                  Narrative Description
+                </Label>
                 <Textarea
+                  id="timeline-create-description-input"
                   data-testid="timeline-create-description"
                   value={createForm.description}
                   onChange={(e) => setCreateForm((s) => ({ ...s, description: e.target.value }))}
@@ -900,8 +969,11 @@ export default function TimelinePage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-slate-300">Sources & Evidence (one per line)</Label>
+                <Label htmlFor="timeline-create-sources-input" className="text-slate-300">
+                  Sources & Evidence (one per line)
+                </Label>
                 <Textarea
+                  id="timeline-create-sources-input"
                   value={createForm.sourcesText}
                   onChange={(e) => setCreateForm((s) => ({ ...s, sourcesText: e.target.value }))}
                   placeholder="URLs or citations..."
@@ -911,8 +983,11 @@ export default function TimelinePage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Category</Label>
+                  <Label htmlFor="timeline-create-category-select" className="text-slate-300">
+                    Category
+                  </Label>
                   <select
+                    id="timeline-create-category-select"
                     value={createForm.category}
                     onChange={(e) => setCreateForm((s) => ({ ...s, category: e.target.value }))}
                     className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-amber-500/50"
@@ -925,8 +1000,11 @@ export default function TimelinePage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Date & Time</Label>
+                  <Label htmlFor="timeline-create-when-input" className="text-slate-300">
+                    Date & Time
+                  </Label>
                   <Input
+                    id="timeline-create-when-input"
                     data-testid="timeline-create-when"
                     type="datetime-local"
                     value={createForm.when}
@@ -938,14 +1016,18 @@ export default function TimelinePage() {
 
               <div className="space-y-3 pt-2">
                 <div className="flex justify-between items-center">
-                  <Label className="text-slate-300 text-xs font-bold uppercase tracking-wider">
+                  <Label
+                    htmlFor="timeline-create-point-range"
+                    className="text-slate-300 text-xs font-bold uppercase tracking-wider"
+                  >
                     Timeline Position
                   </Label>
-                  <span className="text-amber-400 font-mono font-bold text-sm">
+                  <span id="timeline-create-point-value" className="text-amber-400 font-mono font-bold text-sm">
                     {createForm.point}%
                   </span>
                 </div>
                 <input
+                  id="timeline-create-point-range"
                   data-testid="timeline-create-point"
                   type="range"
                   min={0}
@@ -953,6 +1035,8 @@ export default function TimelinePage() {
                   value={createForm.point}
                   onChange={(e) => setCreateForm((s) => ({ ...s, point: Number(e.target.value) }))}
                   className="w-full accent-amber-500 cursor-pointer"
+                  aria-valuetext={`${createForm.point}%`}
+                  aria-describedby="timeline-create-point-value"
                 />
               </div>
             </div>
@@ -990,8 +1074,11 @@ export default function TimelinePage() {
             ) : (
               <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Title</Label>
+                  <Label htmlFor="timeline-edit-title-input" className="text-slate-300">
+                    Title
+                  </Label>
                   <Input
+                    id="timeline-edit-title-input"
                     data-testid="timeline-edit-title"
                     value={editForm.title}
                     onChange={(e) => setEditForm((s) => ({ ...s, title: e.target.value }))}
@@ -999,8 +1086,11 @@ export default function TimelinePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Description</Label>
+                  <Label htmlFor="timeline-edit-description-input" className="text-slate-300">
+                    Description
+                  </Label>
                   <Textarea
+                    id="timeline-edit-description-input"
                     data-testid="timeline-edit-description"
                     value={editForm.description}
                     onChange={(e) => setEditForm((s) => ({ ...s, description: e.target.value }))}
@@ -1008,8 +1098,11 @@ export default function TimelinePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Sources</Label>
+                  <Label htmlFor="timeline-edit-sources-input" className="text-slate-300">
+                    Sources
+                  </Label>
                   <Textarea
+                    id="timeline-edit-sources-input"
                     value={editForm.sourcesText}
                     onChange={(e) => setEditForm((s) => ({ ...s, sourcesText: e.target.value }))}
                     className="bg-slate-950 border-slate-700 min-h-[90px] text-slate-200"
@@ -1018,8 +1111,11 @@ export default function TimelinePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-slate-300">Category</Label>
+                    <Label htmlFor="timeline-edit-category-select" className="text-slate-300">
+                      Category
+                    </Label>
                     <select
+                      id="timeline-edit-category-select"
                       value={editForm.category}
                       onChange={(e) => setEditForm((s) => ({ ...s, category: e.target.value }))}
                       className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-sky-500/50"
@@ -1032,8 +1128,11 @@ export default function TimelinePage() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-slate-300">Date & Time</Label>
+                    <Label htmlFor="timeline-edit-when-input" className="text-slate-300">
+                      Date & Time
+                    </Label>
                     <Input
+                      id="timeline-edit-when-input"
                       data-testid="timeline-edit-when"
                       type="datetime-local"
                       value={editForm.when}
@@ -1045,14 +1144,18 @@ export default function TimelinePage() {
 
                 <div className="space-y-3 pt-2">
                   <div className="flex justify-between items-center">
-                    <Label className="text-slate-300 text-xs font-bold uppercase tracking-wider">
+                    <Label
+                      htmlFor="timeline-edit-point-range"
+                      className="text-slate-300 text-xs font-bold uppercase tracking-wider"
+                    >
                       Position
                     </Label>
-                    <span className="text-sky-400 font-mono font-bold text-sm">
+                    <span id="timeline-edit-point-value" className="text-sky-400 font-mono font-bold text-sm">
                       {editForm.point}%
                     </span>
                   </div>
                   <input
+                    id="timeline-edit-point-range"
                     data-testid="timeline-edit-point"
                     type="range"
                     min={0}
@@ -1060,6 +1163,8 @@ export default function TimelinePage() {
                     value={editForm.point}
                     onChange={(e) => setEditForm((s) => ({ ...s, point: Number(e.target.value) }))}
                     className="w-full accent-sky-500 cursor-pointer"
+                    aria-valuetext={`${editForm.point}%`}
+                    aria-describedby="timeline-edit-point-value"
                   />
                 </div>
 

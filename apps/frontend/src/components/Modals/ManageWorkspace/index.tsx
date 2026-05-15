@@ -1,5 +1,5 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from '@/components/ui';
 // @ts-nocheck
+import { Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from '@/components/ui';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';

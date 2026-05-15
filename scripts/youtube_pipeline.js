@@ -1,13 +1,29 @@
 const fs = require('fs-extra');
+const os = require('os');
+const path = require('path');
 const { execSync } = require('child_process');
 const { google } = require('googleapis');
 
 // --- CONFIGURATION ---
+const TNF_ROOT = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..');
 const CREDENTIALS_PATH =
-  '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/tauri-desktop/src-tauri/credentials/client_secret.json';
+  process.env.YT_CREDENTIALS_PATH ||
+  path.join(TNF_ROOT, 'apps', 'tauri-desktop', 'src-tauri', 'credentials', 'client_secret.json');
 const TOKEN_PATH =
-  '/path/to/Desktop/A1-Inter-LLM-Com/mcp-servers/youtube-mcp-server/dist/tokens.json';
-const GEMINI_CLI_PATH = '/path/to/.nvm/versions/node/v24.12.0/bin/gemini';
+  process.env.YT_TOKEN_PATH ||
+  path.join(
+    os.homedir(),
+    '.gemini',
+    'antigravity',
+    'scratch',
+    'mcp-servers',
+    'youtube-mcp-server',
+    'dist',
+    'tokens.json'
+  );
+const GEMINI_CLI_PATH = process.env.GEMINI_CLI_PATH || 'gemini';
 
 // --- USER PREFERENCES ---
 // Set your preferred free-tier model here

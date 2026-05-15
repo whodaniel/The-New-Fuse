@@ -36,7 +36,7 @@ while true; do
   log "--------------------------------------------------------"
   log "🧠 Synchronizing Brain & State..."
   # Replace placeholders in brain_sync.sh if they exist, or just run it
-  # Note: brain_sync.sh has /Users/<owner>/ paths, need to be careful
+  # Note: brain_sync.sh paths should remain env-driven and portable
   
   log "🔄 Running System Health Check & Deployment Pipe..."
   if pnpm run health-check:full > "$LOG_DIR/health-check.log" 2>&1; then

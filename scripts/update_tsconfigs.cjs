@@ -2,7 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const { globSync } = require('glob');
 
-const rootDir = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse';
+const rootDir = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..');
 
 const patterns = [
   path.join(rootDir, '**/tsconfig*.json')

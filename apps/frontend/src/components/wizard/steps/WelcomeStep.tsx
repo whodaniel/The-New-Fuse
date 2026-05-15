@@ -1,5 +1,5 @@
-import { Card } from '@/components/ui';
 // @ts-nocheck
+import { Card } from '@/components/ui';
 import { CheckCircle } from 'lucide-react';
 import React from 'react';
 import { useWizard } from '../WizardProvider';

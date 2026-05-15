@@ -4,20 +4,22 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 function makeTempDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-personal-arch-'));
 }
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const REPO_ROOT = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..', '..');
+
 test('init creates manifest and base program files', () => {
   const root = makeTempDir();
   const outDir = path.join(root, 'reports');
-  const scriptPath = path.join(
-    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse',
-    'scripts',
-    'timeline',
-    'personal-archaeology-orchestrator.mjs'
-  );
+  const scriptPath = path.join(REPO_ROOT, 'scripts', 'timeline', 'personal-archaeology-orchestrator.mjs');
 
   const result = spawnSync(process.execPath, [scriptPath, 'init', '--out-dir', outDir], {
     encoding: 'utf8',
@@ -32,12 +34,7 @@ test('init creates manifest and base program files', () => {
 test('pulse writes heartbeat and blocked escalation records', () => {
   const root = makeTempDir();
   const outDir = path.join(root, 'reports');
-  const scriptPath = path.join(
-    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse',
-    'scripts',
-    'timeline',
-    'personal-archaeology-orchestrator.mjs'
-  );
+  const scriptPath = path.join(REPO_ROOT, 'scripts', 'timeline', 'personal-archaeology-orchestrator.mjs');
 
   spawnSync(process.execPath, [scriptPath, 'init', '--out-dir', outDir], {
     encoding: 'utf8',
@@ -80,12 +77,7 @@ test('pulse writes heartbeat and blocked escalation records', () => {
 test('master-loop and digest generate orchestration summaries', () => {
   const root = makeTempDir();
   const outDir = path.join(root, 'reports');
-  const scriptPath = path.join(
-    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse',
-    'scripts',
-    'timeline',
-    'personal-archaeology-orchestrator.mjs'
-  );
+  const scriptPath = path.join(REPO_ROOT, 'scripts', 'timeline', 'personal-archaeology-orchestrator.mjs');
 
   spawnSync(process.execPath, [scriptPath, 'init', '--out-dir', outDir], {
     encoding: 'utf8',
@@ -120,12 +112,7 @@ test('master-loop and digest generate orchestration summaries', () => {
 test('blocker-watch persists dispatch state without relay config', () => {
   const root = makeTempDir();
   const outDir = path.join(root, 'reports');
-  const scriptPath = path.join(
-    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse',
-    'scripts',
-    'timeline',
-    'personal-archaeology-orchestrator.mjs'
-  );
+  const scriptPath = path.join(REPO_ROOT, 'scripts', 'timeline', 'personal-archaeology-orchestrator.mjs');
 
   spawnSync(process.execPath, [scriptPath, 'init', '--out-dir', outDir], {
     encoding: 'utf8',

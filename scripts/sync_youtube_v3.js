@@ -1,11 +1,33 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { google } = require('googleapis');
 
-// Paths (Corrected for current filesystem)
-const CREDENTIALS_FILE = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/mcp-googledocs-server/credentials.json";
-const TOKEN_FILE = "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/youtube-mcp-server/dist/tokens.json";
-const LIBRARY_FILE = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/ai_video_library.html";
+const TNF_ROOT = process.env.TNF_ROOT_DIR
+    ? path.resolve(process.env.TNF_ROOT_DIR)
+    : path.resolve(__dirname, '..');
+const WORKSPACE_ROOT = process.env.TNF_WORKSPACE_DIR
+    ? path.resolve(process.env.TNF_WORKSPACE_DIR)
+    : path.dirname(TNF_ROOT);
+
+// Paths
+const CREDENTIALS_FILE = process.env.YT_CREDENTIALS_FILE || path.join(WORKSPACE_ROOT, 'mcp-googledocs-server', 'credentials.json');
+const TOKEN_FILE = process.env.YT_TOKEN_FILE || path.join(
+    os.homedir(),
+    '.gemini',
+    'antigravity',
+    'scratch',
+    'mcp-servers',
+    'youtube-mcp-server',
+    'dist',
+    'tokens.json'
+);
+const LIBRARY_FILE = process.env.YT_LIBRARY_FILE || path.join(
+    WORKSPACE_ROOT,
+    'my-ai-knowledge-base',
+    'video-library',
+    'ai_video_library.html'
+);
 
 async function getYouTubeClient() {
     const credsData = JSON.parse(fs.readFileSync(CREDENTIALS_FILE, 'utf-8'));

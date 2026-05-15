@@ -11,10 +11,7 @@ class OpenAIAdapter {
     constructor(logger) {
         this.name = 'openai-assistant';
         this.version = '1.0.0';
-        this.supportedProtocols = [
-            'openai-assistant-v1.0',
-            'a2a-v2.0'
-        ];
+        this.supportedProtocols = ['openai-assistant-v1.0', 'a2a-v2.0'];
         this.logger = logger;
     }
     canTranslate(from, to) {
@@ -40,14 +37,14 @@ class OpenAIAdapter {
                     function: payload.function_call?.name || payload.tool_calls?.[0]?.function?.name,
                     parameters: this.parseOpenAIFunctionParameters(payload),
                     reasoning: payload.reasoning || '',
-                    toolCallId: payload.tool_calls?.[0]?.id
+                    toolCallId: payload.tool_calls?.[0]?.id,
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'openai-assistant-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Handle OpenAI assistant messages
@@ -61,14 +58,14 @@ class OpenAIAdapter {
                     assistantId: payload.assistant_id,
                     threadId: payload.thread_id,
                     runId: payload.run_id,
-                    annotations: payload.annotations || []
+                    annotations: payload.annotations || [],
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'openai-assistant-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Handle OpenAI tool outputs
@@ -82,15 +79,15 @@ class OpenAIAdapter {
                     toolCallId: payload.tool_call_id,
                     metadata: {
                         runId: payload.run_id,
-                        threadId: payload.thread_id
-                    }
+                        threadId: payload.thread_id,
+                    },
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'openai-assistant-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Generic OpenAI message
@@ -99,14 +96,14 @@ class OpenAIAdapter {
             payload: {
                 content: payload.content || payload.message || payload,
                 role: payload.role || 'user',
-                metadata: this.extractOpenAIMetadata(payload)
+                metadata: this.extractOpenAIMetadata(payload),
             },
             metadata: {
                 ...message.metadata,
                 protocol: 'a2a-v2.0',
                 originalProtocol: 'openai-assistant-v1.0',
-                translatedAt: new Date().toISOString()
-            }
+                translatedAt: new Date().toISOString(),
+            },
         };
     }
     a2aToOpenAI(message) {
@@ -120,8 +117,8 @@ class OpenAIAdapter {
                     ...message.metadata,
                     protocol: 'openai-assistant-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Convert A2A tool response to OpenAI format
@@ -133,8 +130,8 @@ class OpenAIAdapter {
                     ...message.metadata,
                     protocol: 'openai-assistant-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Convert A2A assistant message to OpenAI format
@@ -146,8 +143,8 @@ class OpenAIAdapter {
                     ...message.metadata,
                     protocol: 'openai-assistant-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Generic A2A to OpenAI conversion
@@ -158,8 +155,8 @@ class OpenAIAdapter {
                 ...message.metadata,
                 protocol: 'openai-assistant-v1.0',
                 originalProtocol: 'a2a-v2.0',
-                translatedAt: new Date().toISOString()
-            }
+                translatedAt: new Date().toISOString(),
+            },
         };
     }
     // OpenAI format detection helpers
@@ -170,7 +167,7 @@ class OpenAIAdapter {
         return !!(payload.role && (payload.assistant_id || payload.thread_id));
     }
     isOpenAIToolOutput(payload) {
-        return !!(payload.tool_call_id && (payload.output !== undefined));
+        return !!(payload.tool_call_id && payload.output !== undefined);
     }
     // OpenAI parsing helpers
     parseOpenAIFunctionParameters(payload) {
@@ -197,9 +194,7 @@ class OpenAIAdapter {
             return payload.content;
         }
         if (Array.isArray(payload.content)) {
-            return payload.content
-                .map((item) => item.text?.value || item.text || item)
-                .join('\n');
+            return payload.content.map((item) => item.text?.value || item.text || item).join('\n');
         }
         return payload.message || payload.text || '';
     }
@@ -212,7 +207,7 @@ class OpenAIAdapter {
             messageId: payload.id,
             createdAt: payload.created_at,
             role: payload.role,
-            usage: payload.usage
+            usage: payload.usage,
         };
     }
     // OpenAI format generation helpers
@@ -226,10 +221,10 @@ class OpenAIAdapter {
                     type: 'function',
                     function: {
                         name: payload.function,
-                        arguments: JSON.stringify(payload.parameters || {})
-                    }
-                }
-            ]
+                        arguments: JSON.stringify(payload.parameters || {}),
+                    },
+                },
+            ],
         };
         if (payload.reasoning) {
             functionCall.content = payload.reasoning;
@@ -239,12 +234,10 @@ class OpenAIAdapter {
     createOpenAIToolOutput(payload) {
         return {
             tool_call_id: payload.toolCallId,
-            output: typeof payload.result === 'object'
-                ? JSON.stringify(payload.result)
-                : payload.result,
+            output: typeof payload.result === 'object' ? JSON.stringify(payload.result) : payload.result,
             run_id: payload.metadata?.runId,
             thread_id: payload.metadata?.threadId,
-            error: payload.success === false ? 'Tool execution failed' : undefined
+            error: payload.success === false ? 'Tool execution failed' : undefined,
         };
     }
     createOpenAIAssistantMessage(payload) {
@@ -255,14 +248,14 @@ class OpenAIAdapter {
             thread_id: payload.threadId,
             run_id: payload.runId,
             annotations: payload.annotations || [],
-            metadata: payload.metadata || {}
+            metadata: payload.metadata || {},
         };
     }
     createOpenAIMessage(payload) {
         return {
             role: payload.role || 'user',
             content: payload.content || payload.message || payload,
-            metadata: payload.metadata || {}
+            metadata: payload.metadata || {},
         };
     }
 }

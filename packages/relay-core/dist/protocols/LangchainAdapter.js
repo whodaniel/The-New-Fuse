@@ -11,10 +11,7 @@ class LangchainAdapter {
     constructor(logger) {
         this.name = 'langchain';
         this.version = '1.0.0';
-        this.supportedProtocols = [
-            'langchain-v1.0',
-            'a2a-v2.0'
-        ];
+        this.supportedProtocols = ['langchain-v1.0', 'a2a-v2.0'];
         this.logger = logger;
     }
     canTranslate(from, to) {
@@ -42,14 +39,14 @@ class LangchainAdapter {
                     log: payload.log,
                     reasoning: this.extractLangchainReasoning(payload),
                     agentType: payload.agent_type || 'langchain',
-                    intermediateSteps: payload.intermediate_steps || []
+                    intermediateSteps: payload.intermediate_steps || [],
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'langchain-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Handle Langchain agent finish
@@ -61,14 +58,14 @@ class LangchainAdapter {
                     result: payload.return_values?.output || payload.output,
                     returnValues: payload.return_values,
                     log: payload.log,
-                    reasoning: this.extractLangchainReasoning(payload)
+                    reasoning: this.extractLangchainReasoning(payload),
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'langchain-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Handle Langchain tool execution
@@ -82,14 +79,14 @@ class LangchainAdapter {
                     output: payload.output,
                     success: !payload.error,
                     error: payload.error,
-                    executionTime: payload.execution_time
+                    executionTime: payload.execution_time,
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'langchain-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Handle Langchain memory/history
@@ -101,14 +98,14 @@ class LangchainAdapter {
                     messages: payload.messages || payload.chat_memory?.messages || [],
                     memory: payload.memory || payload.buffer,
                     memoryType: payload.memory_type || 'conversation',
-                    context: payload.context
+                    context: payload.context,
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'langchain-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Handle Langchain chain execution
@@ -121,14 +118,14 @@ class LangchainAdapter {
                     input: payload.input,
                     output: payload.output,
                     intermediateSteps: payload.intermediate_steps || [],
-                    chainConfig: payload.chain_config || payload.config
+                    chainConfig: payload.chain_config || payload.config,
                 },
                 metadata: {
                     ...message.metadata,
                     protocol: 'a2a-v2.0',
                     originalProtocol: 'langchain-v1.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Generic Langchain message
@@ -137,14 +134,14 @@ class LangchainAdapter {
             payload: {
                 content: this.extractLangchainContent(payload),
                 type: payload._type || payload.type || 'unknown',
-                metadata: this.extractLangchainMetadata(payload)
+                metadata: this.extractLangchainMetadata(payload),
             },
             metadata: {
                 ...message.metadata,
                 protocol: 'a2a-v2.0',
                 originalProtocol: 'langchain-v1.0',
-                translatedAt: new Date().toISOString()
-            }
+                translatedAt: new Date().toISOString(),
+            },
         };
     }
     a2aToLangchain(message) {
@@ -158,8 +155,8 @@ class LangchainAdapter {
                     ...message.metadata,
                     protocol: 'langchain-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Convert A2A agent finish to Langchain format
@@ -171,8 +168,8 @@ class LangchainAdapter {
                     ...message.metadata,
                     protocol: 'langchain-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Convert A2A tool execution to Langchain format
@@ -184,8 +181,8 @@ class LangchainAdapter {
                     ...message.metadata,
                     protocol: 'langchain-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Convert A2A memory update to Langchain format
@@ -197,8 +194,8 @@ class LangchainAdapter {
                     ...message.metadata,
                     protocol: 'langchain-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Convert A2A chain execution to Langchain format
@@ -210,8 +207,8 @@ class LangchainAdapter {
                     ...message.metadata,
                     protocol: 'langchain-v1.0',
                     originalProtocol: 'a2a-v2.0',
-                    translatedAt: new Date().toISOString()
-                }
+                    translatedAt: new Date().toISOString(),
+                },
             };
         }
         // Generic A2A to Langchain conversion
@@ -222,8 +219,8 @@ class LangchainAdapter {
                 ...message.metadata,
                 protocol: 'langchain-v1.0',
                 originalProtocol: 'a2a-v2.0',
-                translatedAt: new Date().toISOString()
-            }
+                translatedAt: new Date().toISOString(),
+            },
         };
     }
     // Langchain format detection helpers
@@ -247,7 +244,11 @@ class LangchainAdapter {
         return payload.log || payload.reasoning || payload.thought || '';
     }
     extractLangchainContent(payload) {
-        return payload.content || payload.text || payload.output || payload.message || JSON.stringify(payload);
+        return (payload.content ||
+            payload.text ||
+            payload.output ||
+            payload.message ||
+            JSON.stringify(payload));
     }
     extractLangchainMetadata(payload) {
         return {
@@ -258,7 +259,7 @@ class LangchainAdapter {
             temperature: payload.temperature,
             maxTokens: payload.max_tokens,
             tools: payload.tools?.map((tool) => tool.name || tool),
-            memory: payload.memory_type
+            memory: payload.memory_type,
         };
     }
     // Langchain format generation helpers
@@ -268,15 +269,15 @@ class LangchainAdapter {
             tool_input: payload.toolInput,
             log: payload.reasoning || payload.log || '',
             agent_type: payload.agentType || 'tnf_agent',
-            intermediate_steps: payload.intermediateSteps || []
+            intermediate_steps: payload.intermediateSteps || [],
         };
     }
     createLangchainAgentFinish(payload) {
         return {
             return_values: {
-                output: payload.result
+                output: payload.result,
             },
-            log: payload.reasoning || payload.log || ''
+            log: payload.reasoning || payload.log || '',
         };
     }
     createLangchainToolExecution(payload) {
@@ -285,18 +286,18 @@ class LangchainAdapter {
             input: payload.input,
             output: payload.output,
             error: payload.success === false ? payload.error : undefined,
-            execution_time: payload.executionTime
+            execution_time: payload.executionTime,
         };
     }
     createLangchainMemory(payload) {
         return {
             messages: payload.messages || [],
             chat_memory: {
-                messages: payload.messages || []
+                messages: payload.messages || [],
             },
             memory: payload.memory,
             memory_type: payload.memoryType || 'conversation',
-            context: payload.context
+            context: payload.context,
         };
     }
     createLangchainChainExecution(payload) {
@@ -306,14 +307,14 @@ class LangchainAdapter {
             input: payload.input,
             output: payload.output,
             intermediate_steps: payload.intermediateSteps || [],
-            chain_config: payload.chainConfig || {}
+            chain_config: payload.chainConfig || {},
         };
     }
     createLangchainMessage(payload) {
         return {
             content: payload.content || payload.message,
             _type: 'tnf_message',
-            metadata: payload.metadata || {}
+            metadata: payload.metadata || {},
         };
     }
 }

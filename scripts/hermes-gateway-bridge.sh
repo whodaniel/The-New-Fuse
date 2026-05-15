@@ -7,7 +7,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+PROJECT_ROOT="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 RELAY_SERVER_DIR="${PROJECT_ROOT}/apps/relay-server"
 CONFIG_DIR="${HOME}/.tnf"
 CONFIG_FILE="${CONFIG_DIR}/gateway-bridge.json"

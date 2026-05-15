@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Start Development Environment for A1-Inter-LLM-Com
+# Start Development Environment for TNF workspace
 # This script initializes all necessary services for development
 
 set -e  # Exit on any error
@@ -50,7 +50,7 @@ kill_port() {
 
 # Main execution
 main() {
-    print_status "Starting A1-Inter-LLM-Com Development Environment..."
+    print_status "Starting TNF Development Environment..."
     
     # Check prerequisites
     print_status "Checking prerequisites..."

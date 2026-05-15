@@ -3,6 +3,7 @@ set -euo pipefail
 
 LABEL="com.tnf.local-subdirector"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
+LAUNCH_DOMAIN="gui/$(id -u)"
 NODE_BIN="${TNF_LOCAL_SUBDIRECTOR_NODE_BIN:-$(command -v node)}"
 SCRIPT_PATH="$HOME/.tnf/local-subdirector/bin/local-subdirector-runtime.cjs"
 WORK_DIR="$HOME/.tnf/local-subdirector"
@@ -55,19 +56,23 @@ PLIST
 install() {
   ensure_dirs
   create_plist
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
-  launchctl load -w "$PLIST_PATH"
+  start
   echo "installed: $LABEL"
 }
 
 start() {
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
-  launchctl load -w "$PLIST_PATH"
+  ensure_dirs
+  if [[ ! -f "$PLIST_PATH" ]]; then
+    create_plist
+  fi
+  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
+  launchctl kickstart -k "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   echo "started: $LABEL"
 }
 
 stop() {
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
+  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || launchctl unload "$PLIST_PATH" 2>/dev/null || true
   echo "stopped: $LABEL"
 }
 
@@ -83,7 +88,11 @@ uninstall() {
 }
 
 status() {
-  launchctl list | grep "$LABEL" || echo "not-running: $LABEL"
+  if launchctl print "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1; then
+    echo "running: $LABEL"
+  else
+    echo "not-running: $LABEL"
+  fi
   [[ -f "$STATE_DIR/local-subdirector-heartbeat.json" ]] && stat -f '%Sm %N' "$STATE_DIR/local-subdirector-heartbeat.json"
 }
 

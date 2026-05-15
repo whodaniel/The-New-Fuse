@@ -10,7 +10,7 @@ const path = require('path');
 const WebSocket = require('ws');
 const { createClient } = require('redis');
 
-const RELAY_WS_URL = process.env.RELAY_WS_URL || 'ws://localhost:3001/ws';
+const RELAY_WS_URL = process.env.RELAY_WS_URL || 'ws://localhost:3000/ws';
 const REDIS_URL = process.env.REDIS_URL;
 const PROJECT_ROOT = process.env.PROJECT_ROOT || path.join(__dirname, '../../../..');
 const IMPROVEMENT_FILE = path.join(PROJECT_ROOT, '.agent/SELF_IMPROVEMENT_CYCLE.md');

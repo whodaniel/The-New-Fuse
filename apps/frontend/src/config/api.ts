@@ -16,6 +16,8 @@ const API_PREFIX = import.meta.env.PROD
   : '/api';
 
 export const API_BASE = API_PREFIX;
+// Backward-compatible alias used by legacy services.
+export const API_BASE_URL = API_PREFIX;
 
 export const API_ENDPOINTS = {
   AUTH: {

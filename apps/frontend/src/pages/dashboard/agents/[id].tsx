@@ -1,5 +1,5 @@
-import { GlassCard, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 // @ts-nocheck
+import { GlassCard, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import AgentLogs from '@/components/agents/AgentLogs';
 import AgentSettings from '@/components/agents/AgentSettings';
 import AgentTasks from '@/components/agents/AgentTasks';

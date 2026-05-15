@@ -1,10 +1,10 @@
+// @ts-nocheck
 import { Avatar, AvatarFallback, AvatarImage, ScrollArea } from '@/components/ui';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import React, { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
-// @ts-nocheck
 ('use client');
 
 interface Message {

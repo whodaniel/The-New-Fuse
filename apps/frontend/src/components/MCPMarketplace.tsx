@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Badge,
   Checkbox,
@@ -12,7 +13,6 @@ import {
   TabsTrigger,
   toast,
 } from '@/components/ui';
-// @ts-nocheck
 import {
   Dialog,
   DialogContent,

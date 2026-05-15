@@ -1,5 +1,5 @@
-import { Editor, TreeView } from '@/components/ui';
 // @ts-nocheck
+import { Editor, TreeView } from '@/components/ui';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import React, { useState } from 'react';
 

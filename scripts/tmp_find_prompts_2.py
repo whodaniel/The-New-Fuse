@@ -27,12 +27,16 @@ def check_file(path):
         else:
             print("No simple matches found.")
 
-files = [
-    '/Users/<owner>/.gemini/antigravity/conversations/c5b48a4f-c38d-4731-91ae-5404f9ddc217.pb',
-    '/Users/<owner>/.gemini/antigravity/conversations/274bfb08-df95-4742-8a16-ba64901e2a73.34a1f98c-ca19-458c-9f59-c4dfbe67fdb9.tmp',
-    '/Users/<owner>/.gemini/antigravity/conversations/8ebfa1e1-40e2-42bd-9861-999566c5f756.42a60dd5-c812-4a2d-baee-dc0ede69c4e5.tmp',
-    '/Users/<owner>/.gemini/antigravity/conversations/636ecdcc-9b45-485d-82f6-65982832912d.8ee5cbec-708a-4476-8854-40ee230e6f60.tmp'
-]
+conversations_dir = os.path.expanduser(
+    os.getenv("TNF_GEMINI_CONVERSATIONS_DIR", "~/.gemini/antigravity/conversations")
+)
+files = []
+if os.path.isdir(conversations_dir):
+    candidates = sorted(os.listdir(conversations_dir))
+    for name in candidates[:20]:
+        if name.endswith(".pb") or name.endswith(".tmp"):
+            files.append(os.path.join(conversations_dir, name))
+
 for f in files:
     if os.path.exists(f):
         check_file(f)

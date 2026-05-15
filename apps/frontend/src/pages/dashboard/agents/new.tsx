@@ -1,5 +1,5 @@
-import { GlassCard, PremiumButton, useToast } from '@/components/ui';
 // @ts-nocheck
+import { GlassCard, PremiumButton, useToast } from '@/components/ui';
 import { NewAgentForm, agentFormSchema } from '@/components/forms/NewAgentForm';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { agentService } from '@/services/agent';

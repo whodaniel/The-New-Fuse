@@ -3,7 +3,18 @@ import * as path from 'path';
 
 // --- MEMPALACE SPATIAL ARCHITECTURE ---
 // Zero-Cost Write Path: Regex & Heuristics (No LLM calls)
-const MEMPALACE_ROOT = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/mempalace';
+const TNF_ROOT = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..');
+const WORKSPACE_ROOT = process.env.TNF_WORKSPACE_DIR
+  ? path.resolve(process.env.TNF_WORKSPACE_DIR)
+  : path.resolve(TNF_ROOT, '..');
+const KB_ROOT = process.env.TNF_KB_DIR
+  ? path.resolve(process.env.TNF_KB_DIR)
+  : path.join(WORKSPACE_ROOT, 'my-ai-knowledge-base');
+const MEMPALACE_ROOT = process.env.TNF_MEMPALACE_ROOT
+  ? path.resolve(process.env.TNF_MEMPALACE_ROOT)
+  : path.join(KB_ROOT, 'mempalace');
 
 // Define the Wings (High-level projects)
 const WINGS = {

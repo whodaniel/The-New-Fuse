@@ -49,7 +49,9 @@ class TNFDeconstructor:
         return roadmap
 
 if __name__ == "__main__":
-    deconstructor = TNFDeconstructor("/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(script_dir, "..")))
+    deconstructor = TNFDeconstructor(project_root)
     
     print("--- TNF Next-Gen Deconstruction Analysis ---")
     targets = deconstructor.scan_for_bottlenecks()

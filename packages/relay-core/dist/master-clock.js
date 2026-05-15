@@ -53,7 +53,7 @@
  *
  * Environment Variables:
  * - REDIS_URL: Redis connection string (required for cloud coordination)
- * - RELAY_URL: WebSocket relay URL (default: ws://localhost:3001/ws)
+ * - RELAY_URL: WebSocket relay URL (default: ws://localhost:3000/ws)
  * - HEARTBEAT_INTERVAL: Heartbeat frequency in ms (default: 3000)
  * - STALL_THRESHOLD: Stall detection threshold in ms (default: 5000)
  * - LOG_LEVEL: debug|info|warn|error (default: info)
@@ -125,10 +125,10 @@ const CONFIG = {
     TASK_QUEUE_BATCH_SIZE: parseInt(process.env.TASK_QUEUE_BATCH_SIZE || '') || 5,
     CHRONOLOGICAL_POLL_INTERVAL_MS: parseInt(process.env.CHRONOLOGICAL_POLL_INTERVAL_MS || '') || 30000, // 30 seconds
     // Connections
-    RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3005/redis-bridge',
+    RELAY_URL: process.env.RELAY_URL || process.env.TNF_RELAY_URL || 'ws://localhost:3000/ws',
     REDIS_URL: process.env.REDIS_URL,
     LEDGER_API_BASE: process.env.LEDGER_API_BASE ||
-        process.env.CLOUDFLARE_API_URL ||
+        process.env.CLOUD_RUNTIME_API_URL ||
         process.env.LIVE_API_BASE_URL ||
         process.env.API_BASE_URL ||
         process.env.TNF_API_BASE ||

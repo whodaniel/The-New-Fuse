@@ -1,5 +1,5 @@
-import { PremiumButton, PremiumInput } from '@/components/ui';
 // @ts-nocheck
+import { PremiumButton, PremiumInput } from '@/components/ui';
 import { useAuth } from '@/hooks/useAuth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';

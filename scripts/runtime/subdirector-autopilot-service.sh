@@ -3,12 +3,14 @@ set -euo pipefail
 
 LABEL="com.tnf.subdirector-autopilot"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
+LAUNCH_DOMAIN="gui/$(id -u)"
 NODE_BIN="${TNF_SUBDIRECTOR_AUTOPILOT_NODE_BIN:-$(command -v node)}"
 SCRIPT_PATH="$HOME/.tnf/bin/subdirector-autopilot-loop.cjs"
 WORK_DIR="$HOME/.tnf/subdirector-autopilot"
 LOG_DIR="$WORK_DIR/logs"
 STATE_DIR="$WORK_DIR/state"
-ROOT_DIR="${TNF_SUBDIRECTOR_AUTOPILOT_ROOT_DIR:-$HOME/Desktop/A1-Inter-LLM-Com/The-New-Fuse}"
+ROOT_DIR_DEFAULT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+ROOT_DIR="${TNF_SUBDIRECTOR_AUTOPILOT_ROOT_DIR:-$ROOT_DIR_DEFAULT}"
 CHECK_SCRIPT="${TNF_SUBDIRECTOR_AUTOPILOT_CHECK_SCRIPT:-$ROOT_DIR/.skills/tnf-sub-director-autopilot/scripts/subdirector-cycle-check.sh}"
 LOOP_LOG_FILE="${TNF_SUBDIRECTOR_AUTOPILOT_LOOP_LOG_FILE:-$ROOT_DIR/logs/sub-director-autopilot-loop.jsonl}"
 INTERVAL_MS="${TNF_SUBDIRECTOR_AUTOPILOT_INTERVAL_MS:-30000}"
@@ -67,19 +69,23 @@ PLIST
 install() {
   ensure_dirs
   create_plist
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
-  launchctl load -w "$PLIST_PATH"
+  start
   echo "installed: $LABEL"
 }
 
 start() {
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
-  launchctl load -w "$PLIST_PATH"
+  ensure_dirs
+  if [[ ! -f "$PLIST_PATH" ]]; then
+    create_plist
+  fi
+  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
+  launchctl kickstart -k "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   echo "started: $LABEL"
 }
 
 stop() {
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
+  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || launchctl unload "$PLIST_PATH" 2>/dev/null || true
   echo "stopped: $LABEL"
 }
 
@@ -107,7 +113,11 @@ uninstall() {
 }
 
 status() {
-  launchctl list | grep "$LABEL" || echo "not-running: $LABEL"
+  if launchctl print "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1; then
+    echo "running: $LABEL"
+  else
+    echo "not-running: $LABEL"
+  fi
   [[ -f "$STATE_DIR/subdirector-autopilot-latest.json" ]] && \
     stat -f '%Sm %N' "$STATE_DIR/subdirector-autopilot-latest.json"
 }

@@ -92,12 +92,13 @@ if [[ -z "$VOICE" ]]; then
   VOICE="$(default_voice "$PROFILE")"
 fi
 PORT="$(infer_port "$PROFILE")"
+WHISPER_BIN="${WHISPER_BIN:-$HOME/bin/whisper.cpp}"
 
 AUDIO_FILE="/tmp/voice_stt_selftest_${PROFILE}_$$.aiff"
 trap 'rm -f "$AUDIO_FILE"' EXIT
 
 say -v "$VOICE" -o "$AUDIO_FILE" "$TEXT"
-TRANSCRIPT="$(/Users/<owner>/bin/whisper.cpp -m "$HOME/.whisper-models/ggml-base.en.bin" -f "$AUDIO_FILE" -t "$THREADS" -l "$LANG" -nt -np 2>/dev/null | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
+TRANSCRIPT="$("$WHISPER_BIN" -m "$HOME/.whisper-models/ggml-base.en.bin" -f "$AUDIO_FILE" -t "$THREADS" -l "$LANG" -nt -np 2>/dev/null | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
 
 if [[ -z "$TRANSCRIPT" ]]; then
   echo "transcript-empty" >&2

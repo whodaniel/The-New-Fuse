@@ -1,0 +1,14 @@
+---
+name: MiniMax M2.5
+provider: nvidia
+endpoint: https://integrate.api.nvidia.com/v1/chat/completions
+model: minimaxai/minimax-m2.5
+tier: free
+context_window: 204800
+first_discovered: 2026-04-14
+source: manual validation
+tags:
+  - coding
+  - agent
+  - reasoning
+notes: Verified working with <think> blocks.

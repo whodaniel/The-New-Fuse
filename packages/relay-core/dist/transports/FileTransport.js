@@ -43,8 +43,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileTransport = void 0;
-const events_1 = require("events");
 const chokidar = __importStar(require("chokidar"));
+const events_1 = require("events");
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
 class FileTransport extends events_1.EventEmitter {
@@ -116,7 +116,7 @@ class FileTransport extends events_1.EventEmitter {
         try {
             const content = await promises_1.default.readFile(filePath, 'utf8');
             const message = JSON.parse(content);
-            this.messageHandlers.forEach(handler => handler(message));
+            this.messageHandlers.forEach((handler) => handler(message));
             await promises_1.default.unlink(filePath);
         }
         catch (error) {

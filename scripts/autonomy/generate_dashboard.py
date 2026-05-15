@@ -2,10 +2,22 @@ import os
 import json
 import re
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..", "..")))
+WORKSPACE_ROOT = os.path.abspath(os.getenv("TNF_WORKSPACE_DIR", os.path.join(PROJECT_ROOT, "..")))
+KB_ROOT = os.path.abspath(os.getenv("TNF_KB_DIR", os.path.join(WORKSPACE_ROOT, "my-ai-knowledge-base")))
+
 # Paths
-KNOWLEDGE_BASE_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/AI_Knowledge_Base.md"
-LIBRARY_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/ai_video_library.html"
-OUTPUT_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/public/visualizations/TNF_INTELLIGENCE_DASHBOARD.html"
+KNOWLEDGE_BASE_PATH = os.path.join(KB_ROOT, "AI_Knowledge_Base.md")
+LIBRARY_PATH = os.path.join(KB_ROOT, "video-library", "ai_video_library.html")
+OUTPUT_PATH = os.path.join(
+    PROJECT_ROOT,
+    "apps",
+    "frontend",
+    "public",
+    "visualizations",
+    "TNF_INTELLIGENCE_DASHBOARD.html",
+)
 
 def get_artifacts():
     if not os.path.exists(KNOWLEDGE_BASE_PATH):

@@ -4,9 +4,14 @@ import os
 import re
 import base58
 
-KB_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/AI_Knowledge_Base.md"
-PROTOCOL_DIR = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/"
-OUTPUT_JSON = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/KNOWLEDGE_TREE.json"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..", "..")))
+WORKSPACE_ROOT = os.path.abspath(os.getenv("TNF_WORKSPACE_DIR", os.path.join(PROJECT_ROOT, "..")))
+KB_ROOT = os.path.abspath(os.getenv("TNF_KB_DIR", os.path.join(WORKSPACE_ROOT, "my-ai-knowledge-base")))
+
+KB_PATH = os.path.join(KB_ROOT, "AI_Knowledge_Base.md")
+PROTOCOL_DIR = os.path.join(PROJECT_ROOT, "docs", "protocols")
+OUTPUT_JSON = os.path.join(PROJECT_ROOT, "KNOWLEDGE_TREE.json")
 
 def get_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()

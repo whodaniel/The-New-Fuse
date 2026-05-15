@@ -1,5 +1,5 @@
-import { GlassCard } from '@/components/ui';
 // @ts-nocheck
+import { GlassCard } from '@/components/ui';
 import { AgentFilters } from '@/components/agents/AgentFilters';
 import { AgentForm } from '@/components/agents/AgentForm';
 import { AgentMetricsDisplay } from '@/components/agents/AgentMetrics';

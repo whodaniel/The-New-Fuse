@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const TNF_ROOT = process.env.TNF_ROOT || path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'The-New-Fuse');
+const TNF_ROOT = process.env.TNF_ROOT || process.env.TNF_ROOT_DIR || path.resolve(__dirname, '..');
 const HANDOFF_PATH = path.join(os.homedir(), '.tnf', 'handoff-current.json');
 const DIRECTOR_LOG = path.join(os.homedir(), '.tnf', 'director', 'logs', 'director.log');
 

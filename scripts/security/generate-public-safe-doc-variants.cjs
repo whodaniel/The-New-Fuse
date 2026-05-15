@@ -41,7 +41,7 @@ function isTracked(filePath) {
 
 function sanitizeContent(content) {
   return content
-    .replace(/\/Users\/[A-Za-z0-9._-]+/g, '/Users/<owner>')
+    .replace(/\/Users\/[A-Za-z0-9._-]+/g, '/Users/<redacted-user>')
     .replace(/bizsynth@gmail\.com/gi, 'owner@example.com')
     .replace(/\bbizsynth\b/gi, 'owner')
     .replace(/Daniel Who's Media Empire/g, 'Media Empire Story (Private)')

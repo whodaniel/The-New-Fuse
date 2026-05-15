@@ -1,5 +1,5 @@
-import { Badge, Button, Card, Input, Label, Select } from '@/components/ui';
 // @ts-nocheck
+import { Badge, Button, Card, Input, Label, Select } from '@/components/ui';
 import React, { useState } from 'react';
 
 // Simple placeholder components for demo

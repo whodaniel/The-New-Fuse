@@ -1,7 +1,9 @@
 #!/bin/bash
 
 echo "Building @the-new-fuse/hooks package..."
-cd /path/to/Desktop/A1-Inter-LLM-Com/The\ New\ Fuse/packages/hooks
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+cd "$ROOT_DIR/packages/hooks"
 yarn tsc --skipLibCheck
 
 if [ $? -eq 0 ]; then

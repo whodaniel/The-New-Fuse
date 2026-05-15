@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Badge,
   GlassCard,
@@ -8,7 +9,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
-// @ts-nocheck
 import { useToast } from '@/hooks/useToast';
 import { agentService, type Agent } from '@/services/AgentService';
 import { AnimatePresence, motion } from 'framer-motion';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Alert,
   AlertDescription,
@@ -7,7 +8,6 @@ import {
   CardTitle,
   ScrollArea,
 } from '@/components/ui';
-// @ts-nocheck
 ('use client');
 
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';

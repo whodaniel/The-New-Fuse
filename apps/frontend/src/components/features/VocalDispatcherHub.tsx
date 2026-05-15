@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Badge, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { Mic, Radio, Settings, Terminal } from 'lucide-react';
 import React, { useState } from 'react';

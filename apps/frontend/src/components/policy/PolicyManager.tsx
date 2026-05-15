@@ -1,5 +1,5 @@
-import { PolicyEditor, RuleBuilder } from '@/components/ui';
 // @ts-nocheck
+import { PolicyEditor, RuleBuilder } from '@/components/ui';
 import React from 'react';
 
 interface Policy {

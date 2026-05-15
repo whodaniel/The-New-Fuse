@@ -1,22 +1,51 @@
-# Ignore unrelated Go packages that confuse Cloud Run Buildpacks
+# ── Aggressive .dockerignore for Cloud Build ──
+# The monorepo is 3.5+ GiB with node_modules. We only need the API and
+# its workspace dependencies for the Docker build.
+
+# ── VCS & IDE ──
+.git
+.github
+.gitignore
+.kilo
+.vscode
+.idea
+
+# ── Node modules (rebuilt in Docker) ──
+node_modules
+**/node_modules
+
+# ── Build outputs (rebuilt in Docker) ──
+dist
+build
+*.tsbuildinfo
+.next
+.turbo
+
+# ── Other apps (not needed for API build) ──
+apps/frontend
+apps/virtual-library-blueprints
+apps/external
+apps/mcp-servers
+apps/skideancer-ide
+
+# ── Reports & temp ──
+reports
+temp
+coverage
+test-results
+playwright-report
+bundle-analysis.html
+concordance_results
+scripts/generate_*
+
+# ── Go files ──
 **/cmd
 **/pkg
 **/*.go
 **/go.mod
 **/go.sum
 
-# Standard ignores
-node_modules
-dist
-build
-.git
-.kilo
-reports
-temp
-
-# Prevent stale TypeScript build artifacts from entering Docker context
-# (these confuse tsc -b incremental compilation)
-# BUT allow generated protobuf/js files that are source, not build output
+# ── Stale TS artifacts ──
 packages/*/src/**/*.js
 !packages/*/src/generated/**/*.js
 !packages/*/src/generated/**/*.d.ts
@@ -25,3 +54,16 @@ packages/*/src/**/*.d.ts
 !packages/*/src/generated/**/*.d.ts
 packages/*/src/**/*.d.ts.map
 packages/*/tsconfig.tsbuildinfo
+
+# ── Misc large files ──
+*.mp4
+*.mov
+*.zip
+*.tar.gz
+*.wasm
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.ico
+!apps/api/public/**

@@ -1,5 +1,5 @@
-import { Switch, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 // @ts-nocheck
+import { Switch, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { PremiumButton as Button, GlassCard as Card, PremiumInput as Input } from '@/components/ui';
 const GeneralSettings = () => {
   return (

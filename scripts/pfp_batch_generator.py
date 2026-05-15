@@ -10,8 +10,19 @@ import time
 import subprocess
 from pathlib import Path
 
-AGENTS_JSON = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/agent-registry/agents.json"
-OUTPUT_DIR = "/Users/<owner>/.gemini/antigravity/brain/129a6f84-97a9-4c46-88c8-4b5f066454aa"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+AGENTS_JSON = os.path.join(PROJECT_ROOT, "data", "agent-registry", "agents.json")
+OUTPUT_DIR = os.getenv(
+    "TNF_AGENT_PFP_OUTPUT_DIR",
+    os.path.join(
+        os.path.expanduser("~"),
+        ".gemini",
+        "antigravity",
+        "brain",
+        "129a6f84-97a9-4c46-88c8-4b5f066454aa",
+    ),
+)
 
 # Custom agent profiles with specific details
 CUSTOM_PROFILES = {

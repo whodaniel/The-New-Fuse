@@ -114,10 +114,9 @@ function repoMarkerToRoot(base: string): string | null {
 
   if (/^file:\/\//i.test(stripped)) {
     const noScheme = stripped.replace(/^file:\/\/+/, '/').replace(/\\/g, '/');
-    const repoMarker = '/A1-Inter-LLM-Com/The-New-Fuse/';
-    const idx = noScheme.indexOf(repoMarker);
-    if (idx >= 0) {
-      return noScheme.slice(idx + repoMarker.length);
+    const repoMatch = noScheme.match(/\/The-New-Fuse\/(.+)$/);
+    if (repoMatch && repoMatch[1]) {
+      return repoMatch[1];
     } else {
       const rootPosix = PROJECT_ROOT.replace(/\\/g, '/');
       if (noScheme.startsWith(rootPosix + '/')) {

@@ -14,7 +14,7 @@ const infrastructure_1 = require("@the-new-fuse/infrastructure");
 const ioredis_1 = __importDefault(require("ioredis"));
 const DEFAULTS = {
     redisUrl: process.env.REDIS_URL ||
-        process.env.CLOUDFLARE_REDIS_URL ||
+        process.env.CLOUD_RUNTIME_REDIS_URL ||
         process.env.LIVE_REDIS_URL ||
         process.env.REDIS_PRIVATE_URL ||
         process.env.REDIS_TLS_URL ||

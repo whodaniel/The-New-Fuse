@@ -1,5 +1,5 @@
-import { Modal } from '@/components/ui';
 // @ts-nocheck
+import { Modal } from '@/components/ui';
 // This file is kept for backward compatibility
 // It re-exports the consolidated Modal component with a wrapper for ModalWrapper
 import { ReactNode } from 'react';

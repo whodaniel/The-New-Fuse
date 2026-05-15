@@ -9,7 +9,7 @@
 const http = require('http');
 const { createClient } = require('redis');
 
-const RELAY_URL = process.env.RELAY_URL || 'http://localhost:3001';
+const RELAY_URL = process.env.RELAY_URL || 'http://localhost:3000';
 const REDIS_URL = process.env.REDIS_URL;
 
 async function checkRelayHealth() {

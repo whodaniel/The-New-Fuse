@@ -9,7 +9,7 @@ const { promisify } = require('util');
 
 const execFileAsync = promisify(execFile);
 
-const { RedisAgentClient } = require('/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/redis-agent-client.cjs');
+const { RedisAgentClient } = require(path.join(__dirname, '..', 'lib', 'redis-agent-client.cjs'));
 
 const KNOWN_SHELLS = new Set(['bash', 'fish', 'sh', 'zsh']);
 const AGENT_COMMAND_HINTS = ['codex', 'claude', 'gemini', 'goose', 'aider'];
@@ -335,14 +335,9 @@ async function injectHeartbeat(target) {
   const prompt = renderPrompt(target.agentId, heartbeatId);
   const escapedPrompt = `${config.clearLine ? '\u0015' : ''}${prompt}`;
 
-  // Pre-injection: aggressive line clear
-  if (config.clearLine) {
-    await pressTerminalKey(target.windowId, 9); // Ctrl+C just in case
-    await new Promise(r => setTimeout(r, 100));
-    await pressTerminalKey(target.windowId, 32); // Send a space to clear any prompt residue
-    await new Promise(r => setTimeout(r, 100));
-    await pressTerminalKey(target.windowId, 36); // Enter to clear
-    await new Promise(r => setTimeout(r, 200));
+  // Pre-injection: non-destructive pending-prompt cleanup only.
+  if (config.clearLine && target.windowId) {
+    await flushAnyPendingTnfPrompt(target.windowId);
   }
 
   // Using Terminal 'do script' for reliable type-and-submit in Codex
@@ -555,7 +550,7 @@ async function main() {
       functionalGaps: [
         'PERPETUAL AWAKENESS: Prompt injection is now hard-coded to TRUE.',
         'Collective Heartbeat Rule: Every agent-like TTY is pulsed every minute, including the Director.',
-        'Aggressive Flush: Pulse now includes Ctrl+C and Enter passes BEFORE injection to clear residue.',
+        'Non-destructive Flush: Pulse only attempts safe prompt cleanup before injection (no forced interrupt).',
       ],
     };
 

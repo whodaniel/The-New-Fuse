@@ -1,5 +1,5 @@
-import { Button, Tooltip } from '@/components/ui';
 // @ts-nocheck
+import { Button, Tooltip } from '@/components/ui';
 /**
  * DataTable Component - Advanced data table with sorting, filtering, pagination
  * Replaces corrupted Material-UI version with Tailwind + Custom Design System

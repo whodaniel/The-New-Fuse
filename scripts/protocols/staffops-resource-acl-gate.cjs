@@ -11,11 +11,14 @@ function usage() {
 }
 
 function parseArgs(argv) {
+  const defaultRoot = process.env.TNF_ROOT_DIR
+    ? path.resolve(process.env.TNF_ROOT_DIR)
+    : path.resolve(__dirname, '..', '..');
   const args = {
     actorId: '',
     action: 'read',
     resource: '',
-    root: path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'The-New-Fuse'),
+    root: defaultRoot,
     policy: '',
     json: false,
   };

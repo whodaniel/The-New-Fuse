@@ -5,9 +5,12 @@
 echo "===== MCP Configuration Automator ====="
 echo "Starting automated MCP server discovery and configuration"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TNF_ROOT_DIR="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
+
 # Define configuration paths
 CLAUDE_CONFIG="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
-FUSE_CONFIG="$HOME/Desktop/A1-Inter-LLM-Com/The New Fuse/mcp_config.json"
+FUSE_CONFIG="${FUSE_CONFIG:-$TNF_ROOT_DIR/mcp_config.json}"
 
 echo "Claude config path: $CLAUDE_CONFIG"
 echo "Fuse config path: $FUSE_CONFIG"

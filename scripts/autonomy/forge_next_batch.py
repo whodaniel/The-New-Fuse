@@ -1,10 +1,15 @@
 import re
 import os
 
-LIBRARY_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/ai_video_library.html"
-VAULT_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/consolidated_ai_knowledge.md"
-TRANSCRIPTS_DIR = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/"
-KB_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/AI_Knowledge_Base.md"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..", "..")))
+WORKSPACE_ROOT = os.path.abspath(os.getenv("TNF_WORKSPACE_DIR", os.path.join(PROJECT_ROOT, "..")))
+KB_ROOT = os.path.abspath(os.getenv("TNF_KB_DIR", os.path.join(WORKSPACE_ROOT, "my-ai-knowledge-base")))
+
+LIBRARY_PATH = os.path.join(KB_ROOT, "video-library", "ai_video_library.html")
+VAULT_PATH = os.path.join(KB_ROOT, "consolidated_ai_knowledge.md")
+TRANSCRIPTS_DIR = os.path.join(KB_ROOT, "video-transcripts")
+KB_PATH = os.path.join(KB_ROOT, "AI_Knowledge_Base.md")
 
 def get_existing_indices():
     with open(KB_PATH, "r") as f:
@@ -77,4 +82,3 @@ for idx in batch:
         print(f"---BATCH_ITEM_END---")
     else:
         print(f"MISSING: Index {idx} ({title}) not found in Vault or Transcripts.")
-

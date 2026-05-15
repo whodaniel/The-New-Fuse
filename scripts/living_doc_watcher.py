@@ -4,13 +4,15 @@ import shutil
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import sys
-sys.path.append("/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+if SCRIPT_DIR not in sys.path:
+    sys.path.append(SCRIPT_DIR)
 from signature_wrapper import A2ASignatureWrapper
 import json
 import re
 
 # Configuration
-PROJECT_ROOT = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
 DOCS_DIR = os.path.join(PROJECT_ROOT, "docs")
 WIKI_INBOX = os.path.join(PROJECT_ROOT, "data/wiki-inbox")
 AGENT_ID = "AGENT-DOC-WATCHER"

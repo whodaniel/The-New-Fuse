@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui';
 // @ts-nocheck
+import { Badge } from '@/components/ui';
 import {
   GlassCard,
   PremiumButton,

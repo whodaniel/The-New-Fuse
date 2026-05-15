@@ -10,12 +10,64 @@ REDIS_RESOLVER="${ROOT_DIR}/scripts/runtime/resolve-cloud-redis.sh"
 REDIS_FAIL_OPEN="${FACTORY_BOOT_REDIS_FAIL_OPEN:-true}"
 LOCAL_REDIS_URL="${FACTORY_BOOT_LOCAL_REDIS_URL:-redis://localhost:6379}"
 START_LOCAL_REDIS_ON_FALLBACK="${FACTORY_BOOT_START_LOCAL_REDIS:-true}"
+RELAY_FORCE_RESTART="${FACTORY_BOOT_RELAY_FORCE_RESTART:-false}"
 mkdir -p "${LOG_DIR}"
 mkdir -p "${RUNTIME_STATE_DIR}"
 
+get_port_3000_pids() {
+  lsof -ti :3000 2>/dev/null | sort -u || true
+}
+
+is_relay_pid() {
+  local pid="$1"
+  local cmdline
+  cmdline="$(ps -p "${pid}" -o command= 2>/dev/null || true)"
+  [[ "${cmdline}" == *"standalone-relay.js"* ]] || [[ "${cmdline}" == *"src/standalone-relay.ts"* ]]
+}
+
+find_relay_pid_on_port_3000() {
+  local pid
+  for pid in $(get_port_3000_pids); do
+    if is_relay_pid "${pid}"; then
+      echo "${pid}"
+      return 0
+    fi
+  done
+  return 1
+}
+
+terminate_relay_pid() {
+  local pid="$1"
+  if [[ -z "${pid}" ]]; then
+    return 0
+  fi
+  kill -TERM "${pid}" 2>/dev/null || true
+  sleep 1
+  if kill -0 "${pid}" >/dev/null 2>&1; then
+    echo "[factory-boot] relay pid ${pid} did not exit on SIGTERM; sending SIGKILL"
+    kill -KILL "${pid}" 2>/dev/null || true
+  fi
+}
+
 if [[ -z "${REDIS_URL:-}" ]]; then
   if [[ -x "${REDIS_RESOLVER}" ]]; then
-    REDIS_URL="$("${REDIS_RESOLVER}")"
+    resolver_allow_local="false"
+    if [[ "${REDIS_FAIL_OPEN}" == "true" ]]; then
+      resolver_allow_local="true"
+    fi
+
+    resolved_redis_url=""
+    if resolved_redis_url="$(
+      ALLOW_LOCAL_REDIS="${resolver_allow_local}" "${REDIS_RESOLVER}" 2>/dev/null
+    )"; then
+      REDIS_URL="${resolved_redis_url}"
+    elif [[ "${REDIS_FAIL_OPEN}" == "true" ]]; then
+      REDIS_URL="${LOCAL_REDIS_URL}"
+      echo "[factory-boot] WARN: redis resolver failed; using local fallback (${REDIS_URL})"
+    else
+      echo "[factory-boot] ERROR: redis resolver failed and REDIS_FAIL_OPEN=false"
+      exit 1
+    fi
   else
     echo "[factory-boot] ERROR: redis resolver missing or not executable: ${REDIS_RESOLVER}"
     exit 1
@@ -36,12 +88,6 @@ SUPERVISOR_PID_FILE="${SUPERVISOR_STATE_DIR}/supervisor.pid"
 
 echo "[factory-boot] root=${ROOT_DIR}"
 echo "[factory-boot] log_dir=${LOG_DIR}"
-
-# Cleanup stale processes on port 3000 (Relay)
-if lsof -ti :3000 >/dev/null 2>&1; then
-  echo "[factory-boot] cleaning up stale processes on port 3000"
-  lsof -ti :3000 | xargs kill -9 2>/dev/null || true
-fi
 
 if [[ "${REDIS_URL}" == *"localhost"* ]] || [[ "${REDIS_URL}" == *"127.0.0.1"* ]]; then
   echo "[factory-boot] redis target=local (${REDIS_URL})"
@@ -108,10 +154,33 @@ fi
 if curl -fsS --max-time 2 http://localhost:3000/health >/dev/null 2>&1; then
   echo "[factory-boot] relay already healthy on :3000"
 else
-  echo "[factory-boot] starting relay-core relay (compiled)"
-  nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
-    > "${LOG_DIR}/relay-dev.log" 2>&1 &
-  sleep 3
+  can_start_relay="true"
+  relay_pid_on_port="$(find_relay_pid_on_port_3000 || true)"
+  port_3000_pids="$(get_port_3000_pids | tr '\n' ' ' | sed 's/[[:space:]]*$//')"
+
+  if [[ -n "${port_3000_pids}" ]]; then
+    if [[ -n "${relay_pid_on_port}" ]]; then
+      if [[ "${RELAY_FORCE_RESTART}" == "true" ]]; then
+        echo "[factory-boot] relay on :3000 is unhealthy; force restarting pid=${relay_pid_on_port}"
+        terminate_relay_pid "${relay_pid_on_port}"
+      else
+        echo "[factory-boot] relay on :3000 is unhealthy (pid=${relay_pid_on_port}); leaving it untouched"
+        echo "[factory-boot] hint: set FACTORY_BOOT_RELAY_FORCE_RESTART=true to allow forced relay restart"
+        can_start_relay="false"
+      fi
+    else
+      echo "[factory-boot] port :3000 occupied by non-relay pid(s): ${port_3000_pids}"
+      echo "[factory-boot] refusing to kill unknown process; skipping relay start"
+      can_start_relay="false"
+    fi
+  fi
+
+  if [[ "${can_start_relay}" == "true" ]]; then
+    echo "[factory-boot] starting relay-core relay (compiled)"
+    nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
+      > "${LOG_DIR}/relay-dev.log" 2>&1 &
+    sleep 3
+  fi
 fi
 
 if pgrep -f "dist/master-clock.js|ts-node src/master-clock.ts" >/dev/null 2>&1; then

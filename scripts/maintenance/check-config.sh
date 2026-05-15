@@ -1,6 +1,7 @@
 #!/bin/bash
 TIMESTAMP=$(date -Iseconds)
-BASE="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASE="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
 cd "$BASE"
 DELTAS=$(git diff --name-only | head -20)
 UNTRACKED=$(git ls-files --others --exclude-standard | head -20)

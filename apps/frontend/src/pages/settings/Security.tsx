@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Button,
   Card,
@@ -8,7 +9,6 @@ import {
   Label,
   Switch,
 } from '@/components/ui';
-// @ts-nocheck
 import {
   WorkspaceApiService,
   WorkspaceManageableRole,

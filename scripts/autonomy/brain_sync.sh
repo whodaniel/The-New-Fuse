@@ -2,8 +2,9 @@
 # TNF Brain Survival Utility (Librarian Tool)
 # Automates Merkle Hashing, Git Snapshots, and Deep Vaulting
 
-PROJECT_ROOT="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
-KB_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+KB_DIR="${TNF_KB_DIR:-$HOME/my-ai-knowledge-base}"
 TIMESTAMP=$(date +%Y-%m-%dT%H-%M-%SZ)
 
 echo "🧠 TNF BRAIN SYNC STARTing..."

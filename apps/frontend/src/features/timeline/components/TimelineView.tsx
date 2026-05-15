@@ -73,22 +73,25 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
     }
   };
 
+  const shiftRecordByDays = (record: any, diffDays: number) => {
+    if (!diffDays) return;
+    const currentStart = new Date(record.startTime || new Date());
+    const currentEnd = new Date(record.endTime || addDays(currentStart, 1));
+    const newStart = addDays(currentStart, diffDays);
+    const newEnd = addDays(currentEnd, diffDays);
+    onRecordUpdate?.(record.id, {
+      startTime: newStart.toISOString(),
+      endTime: newEnd.toISOString(),
+    });
+  };
+
   const handleMouseUp = () => {
     if (draggingRecord) {
       const diffPx = dragCurrentX - dragStartX;
       const diffDays = Math.round(diffPx / COLUMN_WIDTH);
 
       if (diffDays !== 0) {
-        const currentStart = new Date(draggingRecord.startTime || new Date());
-        const currentEnd = new Date(draggingRecord.endTime || addDays(currentStart, 1));
-
-        const newStart = addDays(currentStart, diffDays);
-        const newEnd = addDays(currentEnd, diffDays);
-
-        onRecordUpdate?.(draggingRecord.id, {
-          startTime: newStart.toISOString(),
-          endTime: newEnd.toISOString(),
-        });
+        shiftRecordByDays(draggingRecord, diffDays);
       }
     }
     setDraggingRecord(null);
@@ -104,6 +107,8 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      role="region"
+      aria-label="Macro project and task timeline"
     >
       {/* Timeline Header */}
       <div className="flex border-b border-slate-800 bg-[#161922] sticky top-0 z-30">
@@ -120,9 +125,9 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
               className={`flex-shrink-0 border-r border-slate-800/50 flex flex-col items-center justify-center text-[10px] uppercase tracking-wider ${isToday(date) ? 'bg-sky-500/10 text-sky-400' : ''}`}
               style={{ width: COLUMN_WIDTH }}
             >
-              <span className="opacity-50">{format(date, 'MMM')}</span>
+              <span className="opacity-80">{format(date, 'MMM')}</span>
               <span className="text-sm font-bold">{format(date, 'd')}</span>
-              <span className="opacity-50 text-[8px]">{format(date, 'EEE')}</span>
+              <span className="opacity-80 text-[8px]">{format(date, 'EEE')}</span>
             </div>
           ))}
         </div>
@@ -134,6 +139,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
         <div
           className="absolute top-0 bottom-0 w-px bg-sky-500 z-20 pointer-events-none"
           style={{ left: SIDEBAR_WIDTH + nowPosition }}
+          aria-hidden
         >
           <div className="absolute -top-1 -left-1 w-2 h-2 bg-sky-500 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]" />
         </div>
@@ -181,17 +187,21 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
                   key={record.id}
                   className="flex group hover:bg-slate-800/20 transition-colors border-b border-slate-800/10"
                 >
-                  <div
-                    className="flex-shrink-0 border-r border-slate-800 px-4 py-2 sticky left-0 z-10 bg-[#0f111a] flex items-center group-hover:bg-slate-800/40 cursor-pointer"
+                  <button
+                    type="button"
+                    className="flex-shrink-0 border-r border-slate-800 px-4 py-2 sticky left-0 z-10 bg-[#0f111a] flex items-center group-hover:bg-slate-800/40 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-inset"
                     style={{ width: SIDEBAR_WIDTH }}
                     onClick={() => onRecordClick?.(record)}
+                    aria-label={`Open details for task ${record.title || 'untitled task'}`}
                   >
                     <div
                       className={`w-2 h-2 rounded-full mr-2`}
                       style={{ backgroundColor: record.color || '#38bdf8' }}
                     />
-                    <span className="text-xs truncate">{record.title}</span>
-                  </div>
+                    <span className="text-xs truncate text-slate-100">
+                      {record.title || 'Untitled task'}
+                    </span>
+                  </button>
                   <div className="flex relative items-center h-12">
                     {dateHeaders.map((_, i) => (
                       <div
@@ -202,7 +212,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
                     ))}
 
                     <div
-                      className={`absolute h-8 rounded-lg border border-white/10 shadow-lg flex items-center px-3 cursor-grab active:cursor-grabbing group/bar overflow-hidden ${isDragging ? 'z-50 opacity-80 scale-105' : 'z-10'}`}
+                      className={`absolute h-8 rounded-lg border border-white/10 shadow-lg flex items-center px-3 cursor-grab active:cursor-grabbing group/bar overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f111a] ${isDragging ? 'z-50 opacity-80 scale-105' : 'z-10'}`}
                       style={{
                         left: offsetDays * COLUMN_WIDTH + 4,
                         width: Math.max(20, durationDays * COLUMN_WIDTH - 8),
@@ -210,6 +220,23 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
                         borderColor: record.color || '#38bdf8',
                       }}
                       onMouseDown={(e) => handleDragStart(e, record)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          onRecordClick?.(record);
+                          return;
+                        }
+
+                        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                          e.preventDefault();
+                          const daysToMove = e.shiftKey ? 7 : 1;
+                          shiftRecordByDays(record, e.key === 'ArrowLeft' ? -daysToMove : daysToMove);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      aria-keyshortcuts="Enter Space ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight"
+                      aria-label={`${record.title || 'Untitled task'}, from ${format(start, 'PPP')} to ${format(end, 'PPP')}. Use left and right arrows to move.`}
                     >
                       <div
                         className="absolute left-0 top-0 bottom-0 w-1"
@@ -229,7 +256,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
 
       {/* Footer / Controls */}
       <div className="p-2 border-t border-slate-800 bg-[#161922] flex justify-between items-center text-[10px]">
-        <div className="flex space-x-4 ml-4">
+        <div className="flex space-x-4 ml-4 text-slate-200">
           <div className="flex items-center">
             <div className="w-2 h-2 rounded-full bg-amber-500 mr-1" /> High Priority
           </div>
@@ -240,7 +267,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
             <div className="w-2 h-2 rounded-full bg-sky-500 mr-1" /> In Progress
           </div>
         </div>
-        <div className="mr-4 opacity-50 uppercase tracking-tighter font-bold text-sky-500">
+        <div className="mr-4 uppercase tracking-tighter font-bold text-sky-400">
           SIMULCOLLAB™ ACTIVE
         </div>
       </div>

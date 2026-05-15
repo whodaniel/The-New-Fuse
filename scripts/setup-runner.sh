@@ -1,10 +1,15 @@
 #!/bin/bash
 set -e
 
-RUNNER_DIR="/path/to/Desktop/A1-Inter-LLM-Com/tnf-runner"
+RUNNER_DIR="${RUNNER_DIR:-$HOME/tnf-runner}"
 RUNNER_VERSION="2.330.0"
-REPO_URL="https://github.com/whodaniel/fuse"
-TOKEN="AU5U42LSSRWIQPDEEBQQUM3JIHVSY"
+REPO_URL="${RUNNER_REPO_URL:-https://github.com/whodaniel/fuse}"
+TOKEN="${RUNNER_TOKEN:-}"
+
+if [[ -z "$TOKEN" ]]; then
+  echo "RUNNER_TOKEN is required. Export it and rerun."
+  exit 1
+fi
 
 # Create directory
 mkdir -p "$RUNNER_DIR"

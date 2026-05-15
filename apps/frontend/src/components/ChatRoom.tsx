@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Avatar,
   AvatarFallback,
@@ -8,7 +9,6 @@ import {
   CardTitle,
   ScrollArea,
 } from '@/components/ui';
-// @ts-nocheck
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button, IconButton } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';

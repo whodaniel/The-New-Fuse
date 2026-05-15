@@ -91,7 +91,7 @@ const julesAgentRegistration = {
     agent_type: 'external',
     integration_method: 'cli',
     executable_name: 'jules',
-    executable_path: '/path/to/.nvm/versions/node/v22.16.0/bin/jules',
+    executable_path: process.env.JULES_EXECUTABLE_PATH || 'jules',
     documentation_url: 'https://jules.google.com',
     source_file: '.claude/agents/jules-cli-agent.md',
     command_file: '.claude/commands/delegate-to-jules.md',

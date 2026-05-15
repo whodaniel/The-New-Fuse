@@ -6,7 +6,9 @@ echo "===== Direct MCP Configuration Editor ====="
 
 # Define configuration path
 CLAUDE_CONFIG="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+CONTEXT7_SERVER_PATH="${CONTEXT7_SERVER_PATH:-$HOME/.local/share/context7-server/build/index.js}"
 echo "Claude config path: $CLAUDE_CONFIG"
+echo "Context7 server path: $CONTEXT7_SERVER_PATH"
 
 # Check if config exists
 if [ -f "$CLAUDE_CONFIG" ]; then
@@ -43,7 +45,7 @@ cat > "$CLAUDE_CONFIG" <<EOF
     "context7-server": {
       "command": "node",
       "args": [
-        "/path/to/Documents/Cline/MCP/context7-server/build/index.js"
+        "$CONTEXT7_SERVER_PATH"
       ]
     },
     "applescript_execute": {

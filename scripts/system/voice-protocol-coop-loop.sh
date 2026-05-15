@@ -5,6 +5,7 @@ A_PROFILE="a"
 B_PROFILE="b"
 INTERVAL_SECONDS="120"
 MODE="${VOICE_PROTOCOL_COOP_MODE:-silent}"
+VOICE_AGENT_SEND_BIN="${VOICE_AGENT_SEND_BIN:-$(command -v voice-agent-send || true)}"
 
 usage() {
   cat <<USAGE
@@ -57,6 +58,11 @@ case "$MODE" in
     ;;
 esac
 
+if [[ "$MODE" == "spoken" && -z "$VOICE_AGENT_SEND_BIN" ]]; then
+  echo "voice-agent-send not found and mode=spoken. Set VOICE_AGENT_SEND_BIN or switch to silent mode." >&2
+  exit 1
+fi
+
 LOCK_FILE="/tmp/voice_protocol_coop_loop.pid"
 if [[ -f "$LOCK_FILE" ]]; then
   EXISTING_PID="$(cat "$LOCK_FILE" 2>/dev/null || true)"
@@ -86,12 +92,12 @@ while true; do
     MSG_A="Samantha, George cycle ${COUNT} at ${TS}. Continue concise voice-protocol tuning and confirm interrupt readiness."
     MSG_B="George, Samantha cycle ${COUNT} at ${TS}. Audio lane clear; continuing concise protocol tuning."
 
-    VOICE_AGENT_SEND_FROM_IDENTITY=George /Users/<owner>/bin/voice-agent-send \
+    VOICE_AGENT_SEND_FROM_IDENTITY=George "$VOICE_AGENT_SEND_BIN" \
       --from "$A_PROFILE" --to "$B_PROFILE" --text "$MSG_A" >/dev/null 2>&1 || true
 
     sleep 2
 
-    VOICE_AGENT_SEND_FROM_IDENTITY=Samantha /Users/<owner>/bin/voice-agent-send \
+    VOICE_AGENT_SEND_FROM_IDENTITY=Samantha "$VOICE_AGENT_SEND_BIN" \
       --from "$B_PROFILE" --to "$A_PROFILE" --text "$MSG_B" >/dev/null 2>&1 || true
   fi
 

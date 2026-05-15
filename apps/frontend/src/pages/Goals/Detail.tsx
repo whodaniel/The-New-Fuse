@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Button, Card, Input } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import {

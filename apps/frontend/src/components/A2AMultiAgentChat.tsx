@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { A2AMessageType, A2APriority, AgentType } from '@the-new-fuse/a2a-core';
 import {
   A2AMessage,

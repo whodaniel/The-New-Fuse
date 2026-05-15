@@ -4,6 +4,12 @@ import time
 import ctypes
 from mojo_accelerator import MojoAccelerator
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+DEFAULT_WIKI_DIR = os.path.join(PROJECT_ROOT, "packages", "compounding-memory", "wiki")
+DEFAULT_FORGE_DIR = os.path.join(PROJECT_ROOT, "forge")
+DEFAULT_INBOX_DIR = os.path.join(PROJECT_ROOT, "data", "wiki-inbox")
+
 class WikiCompiler:
     """
     TNF Next-Gen: Wiki Compiler (The Borg Architect)
@@ -12,8 +18,8 @@ class WikiCompiler:
     """
     
     def __init__(self, 
-                 wiki_dir="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/compounding-memory/wiki",
-                 forge_dir="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/forge"):
+                 wiki_dir=DEFAULT_WIKI_DIR,
+                 forge_dir=DEFAULT_FORGE_DIR):
         self.wiki_dir = wiki_dir
         self.accel = MojoAccelerator(forge_dir)
         
@@ -115,7 +121,8 @@ class WikiCompiler:
         
         # 4. Trigger Visualization Update
         try:
-            os.system("python3 /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/generate-memory-graph.py")
+            graph_script = os.path.join(PROJECT_ROOT, "scripts", "generate-memory-graph.py")
+            os.system(f'python3 "{graph_script}"')
         except:
             pass
 
@@ -144,7 +151,7 @@ class WikiCompiler:
         print(f"[Wiki-Compiler] Mojo kernel clustered {num_shards} shards into {num_clusters} clusters.")
         print(f"[Wiki-Compiler] Cluster assignments: {list(output)}")
 
-    def watch_inbox(self, inbox_dir="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/wiki-inbox"):
+    def watch_inbox(self, inbox_dir=DEFAULT_INBOX_DIR):
         """
         Polls the inbox directory for new JSON entries and compiles them.
         """

@@ -2,7 +2,12 @@
 import os
 import json
 
-dir_path = "/Users/<owner>/.gemini/antigravity/brain/129a6f84-97a9-4c46-88c8-4b5f066454aa"
+dir_path = os.path.expanduser(
+    os.getenv(
+        "TNF_AGENT_PFP_OUTPUT_DIR",
+        "~/.gemini/antigravity/brain/129a6f84-97a9-4c46-88c8-4b5f066454aa",
+    )
+)
 files = sorted(
     [f for f in os.listdir(dir_path) if f.endswith(".png") and "_spaceage" in f]
 )

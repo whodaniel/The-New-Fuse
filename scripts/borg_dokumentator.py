@@ -3,6 +3,10 @@ import glob
 import json
 import subprocess
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+DEFAULT_DOCS_ROOT = os.path.join(PROJECT_ROOT, "docs")
+
 class BorgDokumentator:
     """
     TNF Next-Gen: Massive Ingestion System (The Borg Dokumentator)
@@ -10,7 +14,7 @@ class BorgDokumentator:
     """
     
     def __init__(self, 
-                 docs_root="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs",
+                 docs_root=DEFAULT_DOCS_ROOT,
                  wiki_api="http://localhost:3006/memory"):
         self.docs_root = docs_root
         self.wiki_api = wiki_api

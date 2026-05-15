@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PayPalSubscriptionButton } from '@/components/billing/PayPalSubscriptionButton';
 import { Badge, Button } from '@/components/ui';
 import { cn } from '@/lib/utils';

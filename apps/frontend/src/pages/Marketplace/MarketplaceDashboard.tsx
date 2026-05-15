@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Badge, GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import {

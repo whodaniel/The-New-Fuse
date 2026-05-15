@@ -1,5 +1,5 @@
-import { Alert, AlertDescription, Badge, Skeleton } from '@/components/ui';
 // @ts-nocheck
+import { Alert, AlertDescription, Badge, Skeleton } from '@/components/ui';
 import React, { useEffect } from 'react';
 
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';

@@ -3,6 +3,16 @@ import * as path from 'path';
 import { chromium } from 'playwright';
 
 async function main() {
+  const tnfRoot = process.env.TNF_ROOT_DIR
+    ? path.resolve(process.env.TNF_ROOT_DIR)
+    : path.resolve(__dirname, '..');
+  const timelinePath = process.env.TNF_TIMELINE_PATH
+    ? path.resolve(process.env.TNF_TIMELINE_PATH)
+    : path.join(tnfRoot, 'data', 'sovereign_ai_timeline.json');
+  const transcriptsDir = process.env.TNF_TRANSCRIPTS_DIR
+    ? path.resolve(process.env.TNF_TRANSCRIPTS_DIR)
+    : path.join(tnfRoot, 'data', 'video-transcripts');
+
   const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-clean');
   console.log(`🚀 Launching Sovereign Retriever with profile: ${profileDir}`);
 
@@ -48,7 +58,7 @@ async function main() {
 
   console.log(`✅ Chronological timeline established: ${videos.length} videos.`);
 
-  const timelinePath = '/Users/<owner>/data/sovereign_ai_timeline.json';
+  fs.mkdirSync(path.dirname(timelinePath), { recursive: true });
   fs.writeFileSync(timelinePath, JSON.stringify(videos, null, 2));
   console.log(`💾 Timeline saved to ${timelinePath}`);
 
@@ -57,7 +67,7 @@ async function main() {
   for (const video of videos) {
     // Check if we already have it
     const safeTitle = video.title.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
-    const transcriptPath = `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/video-transcripts/${video.index}_${video.videoId}.txt`;
+    const transcriptPath = path.join(transcriptsDir, `${video.index}_${video.videoId}.txt`);
 
     if (fs.existsSync(transcriptPath)) {
       continue;

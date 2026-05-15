@@ -7,6 +7,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPT_PATH="$ROOT_DIR/scripts/relay-channel-monitor.cjs"
 LOG_DIR="$HOME/.tnf/relay-monitor/logs"
 NODE_BIN="$(command -v node)"
+LAUNCH_DOMAIN="gui/$(id -u)"
 
 ensure_dirs() {
   mkdir -p "$LOG_DIR"
@@ -43,37 +44,62 @@ EOF
 install() {
   ensure_dirs
   create_plist
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
-  launchctl load -w "$PLIST_PATH"
+  start
   echo "✅ Installed and started ${LABEL} via launchd"
 }
 
+start() {
+  ensure_dirs
+  if [[ ! -f "$PLIST_PATH" ]]; then
+    create_plist
+  fi
+  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
+  launchctl kickstart -k "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  echo "Started ${LABEL}"
+}
+
+stop() {
+  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || launchctl unload "$PLIST_PATH" 2>/dev/null || true
+  echo "Stopped ${LABEL}"
+}
+
 uninstall() {
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
+  stop
   rm -f "$PLIST_PATH"
   echo "Removed ${LABEL}"
 }
 
 status() {
-  launchctl list | grep "${LABEL}" || echo "Not running"
+  if launchctl print "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1; then
+    echo "Running: ${LABEL}"
+  else
+    echo "Not running"
+  fi
 }
 
 case "${1:-}" in
   install)
     install
     ;;
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
   uninstall)
     uninstall
     ;;
   restart)
-    launchctl unload "$PLIST_PATH" 2>/dev/null || true
-    launchctl load -w "$PLIST_PATH"
+    stop
+    start
     echo "Restarted ${LABEL}"
     ;;
   status)
     status
     ;;
   *)
-    echo "Usage: $0 <install|uninstall|restart|status>"
+    echo "Usage: $0 <install|start|stop|uninstall|restart|status>"
     ;;
 esac

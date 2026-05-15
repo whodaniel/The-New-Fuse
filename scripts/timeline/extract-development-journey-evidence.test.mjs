@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 import {
   buildTimelineBatch,
@@ -15,6 +16,12 @@ import {
 function makeTempDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-journey-'));
 }
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const REPO_ROOT = process.env.TNF_ROOT_DIR
+  ? path.resolve(process.env.TNF_ROOT_DIR)
+  : path.resolve(__dirname, '..', '..');
 
 function writeFile(root, relPath, contents = 'x') {
   const absPath = path.join(root, relPath);
@@ -65,12 +72,7 @@ test('findSensitiveContentSignals detects likely secret material', () => {
 
 test('script writes outputs for a minimal git repo', () => {
   const root = makeTempDir();
-  const scriptPath = path.join(
-    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse',
-    'scripts',
-    'timeline',
-    'extract-development-journey-evidence.mjs'
-  );
+  const scriptPath = path.join(REPO_ROOT, 'scripts', 'timeline', 'extract-development-journey-evidence.mjs');
 
   fs.mkdirSync(path.join(root, '.git'), { recursive: true });
   writeFile(root, 'docs/protocols/reports/seed-2026-03-19.md', '# TNF report');
@@ -105,12 +107,7 @@ test('script writes outputs for a minimal git repo', () => {
 test('script captures local code and media artifacts while skipping sensitive files', () => {
   const root = makeTempDir();
   const localRoot = makeTempDir();
-  const scriptPath = path.join(
-    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse',
-    'scripts',
-    'timeline',
-    'extract-development-journey-evidence.mjs'
-  );
+  const scriptPath = path.join(REPO_ROOT, 'scripts', 'timeline', 'extract-development-journey-evidence.mjs');
 
   fs.mkdirSync(path.join(root, '.git'), { recursive: true });
   writeFile(root, 'docs/protocols/reports/seed-2026-03-19.md', '# TNF report');

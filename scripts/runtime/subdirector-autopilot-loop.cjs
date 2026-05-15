@@ -28,7 +28,7 @@ function tail(value, maxChars = 1000) {
 function resolveRepoRoot() {
   const candidates = [
     process.env.TNF_SUBDIRECTOR_AUTOPILOT_ROOT_DIR,
-    path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'The-New-Fuse'),
+    path.resolve(__dirname, '..', '..'),
     process.cwd(),
   ].filter(Boolean);
 
@@ -45,26 +45,28 @@ function resolveRepoRoot() {
     }
   }
 
-  return path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'The-New-Fuse');
+  return path.resolve(__dirname, '..', '..');
 }
+
+const repoRoot = resolveRepoRoot();
 
 const config = {
   actorId: process.env.TNF_SUBDIRECTOR_AUTOPILOT_ACTOR_ID || 'tnf-subdirector-autopilot',
-  rootDir: resolveRepoRoot(),
+  rootDir: repoRoot,
   stateDir:
     process.env.TNF_SUBDIRECTOR_AUTOPILOT_STATE_DIR ||
     path.join(os.homedir(), '.tnf', 'subdirector-autopilot', 'state'),
   logFile:
     process.env.TNF_SUBDIRECTOR_AUTOPILOT_LOOP_LOG_FILE ||
     path.join(
-      resolveRepoRoot(),
+      repoRoot,
       'logs',
       'sub-director-autopilot-loop.jsonl'
     ),
   checkScript:
     process.env.TNF_SUBDIRECTOR_AUTOPILOT_CHECK_SCRIPT ||
     path.join(
-      resolveRepoRoot(),
+      repoRoot,
       '.skills',
       'tnf-sub-director-autopilot',
       'scripts',

@@ -1,18 +1,21 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASE="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+
 while true; do
   # Configuration drift check
-  ./check-config.sh
+  "$SCRIPT_DIR/check-config.sh"
   # Provider health check
-  ./check-provider.sh
+  "$SCRIPT_DIR/check-provider.sh"
   # Credential check
-  ./check-credential.sh
+  "$SCRIPT_DIR/check-credential.sh"
   # Relay connectivity
-  ./check-relay.sh
+  "$SCRIPT_DIR/check-relay.sh"
   # Skill integrity
-  ./check-skill.sh
+  "$SCRIPT_DIR/check-skill.sh"
   # Task lifecycle
-  ./check-tasks.sh
+  "$SCRIPT_DIR/check-tasks.sh"
   # Heartbeat every 30s
-  echo 'PING' >> /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/heartbeats.log
+  echo 'PING' >> "$BASE/heartbeats.log"
   sleep 30
 done

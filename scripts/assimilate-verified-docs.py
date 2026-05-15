@@ -4,7 +4,8 @@ import json
 from signature_wrapper import A2ASignatureWrapper
 
 # Configuration
-PROJECT_ROOT = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
 WIKI_DIR = os.path.join(PROJECT_ROOT, "packages/compounding-memory/wiki")
 WIKI_INBOX = os.path.join(PROJECT_ROOT, "data/wiki-inbox")
 DOCS_INDEX = os.path.join(PROJECT_ROOT, "DOCUMENTATION_INDEX.md")
@@ -19,7 +20,7 @@ def assimilate_docs():
     with open(DOCS_INDEX, "r") as f:
         content = f.read()
 
-    # Extract all links [Title](./path/to/file.md)
+    # Extract all links [Title](./docs/file.md)
     links = re.findall(r"\[(.*?)\]\(\.(.*?)\)", content)
     
     # Initialize DACC-v1 Signer

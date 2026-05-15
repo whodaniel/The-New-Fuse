@@ -42,14 +42,14 @@ Scope: Federation completion + hosted product packaging + launch-ready controls
    - channel membership gate + tenant scope gate enforced on every hop
    - terminal-bound work must include `twid` + target `agentIds`
 
-## 3) Platform Split (Cloudflare + Railway + Supabase)
+## 3) Platform Split (Cloudflare + CloudRuntime + Supabase)
 
 1. Cloudflare (edge control plane + serverless policy):
    - Worker APIs for gate evaluation, ingress normalization, receipt projection
    - Durable Objects for low-latency gate state and lock/lease coordination
    - Queues for async fan-out/retry of non-blocking tasks
    - R2 for immutable receipt artifacts and report snapshots
-2. Railway (stateful runtime plane):
+2. CloudRuntime (stateful runtime plane):
    - relay server, orchestrator workers, OpenClaw runtime/gateway services
    - long-running task executors and MCP-heavy workloads
 3. Supabase (tenant data plane):
@@ -116,12 +116,12 @@ Scope: Federation completion + hosted product packaging + launch-ready controls
 - [ ] Add template presets: model stack, enabled MCPs, persona/skills profile,
       sandbox policy
 - [ ] Add per-tenant schedule namespace defaults + safe baseline cron pack
-- [ ] Add one-click “spawn managed instance” flow backed by Railway service
+- [ ] Add one-click “spawn managed instance” flow backed by CloudRuntime service
       template/env profile
 
 ### Day 3: Market-Ready Validation + Rollout
 
-- [ ] Run production checklist across Cloudflare/Railway/Supabase integration
+- [ ] Run production checklist across Cloudflare/CloudRuntime/Supabase integration
       points
 - [ ] Validate failover drills: relay outage, worker failure, schedule gate
       deny, self-edit deny
@@ -191,7 +191,7 @@ Scope: Federation completion + hosted product packaging + launch-ready controls
 - [x] Cloudflare gate API live (`https://tnf-sharedstate.owner.workers.dev`)
 - [x] Terminal-awareness cron categories added (`system_terminal_awareness`,
       `tenant_terminal_awareness`)
-- [x] Railway production services `api` + `relay-server` switched to external
+- [x] CloudRuntime production services `api` + `relay-server` switched to external
       gate `warn` mode
 - [x] Broker runtime switched to `BROKER_FEDERATION_GATE_MODE=enforce`
 - [x] API runtime switched to `TNF_GATE_POLICY_MODE=enforce`

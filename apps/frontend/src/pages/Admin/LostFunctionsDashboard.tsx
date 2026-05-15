@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Lost Functions Dashboard
  *

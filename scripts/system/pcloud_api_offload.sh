@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+WORKSPACE_DIR="${TNF_WORKSPACE_DIR:-$(cd "$REPO_ROOT/.." && pwd)}"
+
 usage() {
   cat <<USAGE
 Usage:
@@ -10,8 +14,8 @@ Examples:
   pcloud_api_offload.sh /Offload-$(date +%F)
   pcloud_api_offload.sh /Offload-$(date +%F) --delete-source
   pcloud_api_offload.sh /Offload-$(date +%F) \
-    "/Users/<owner>/Documents/Audio Docs" \
-    "/Users/<owner>/mini-omni/checkpoint/lit_model.pth"
+    "\$HOME/Documents/Audio Docs" \
+    "\$HOME/mini-omni/checkpoint/lit_model.pth"
 
 Credentials:
   Export either:
@@ -163,11 +167,11 @@ if [[ "$#" -gt 0 ]]; then
   SOURCES=("$@")
 else
   SOURCES=(
-    "/Users/<owner>/Desktop/A1-Inter-LLM-Com"
-    "/Users/<owner>/Documents/CODE - 2024"
-    "/Users/<owner>/Documents/Audio Docs"
-    "/Users/<owner>/mini-omni/checkpoint/lit_model.pth"
-    "/Users/<owner>/Downloads/ai_arcade_poker_assets"
+    "$WORKSPACE_DIR"
+    "$HOME/Documents/CODE - 2024"
+    "$HOME/Documents/Audio Docs"
+    "$HOME/mini-omni/checkpoint/lit_model.pth"
+    "$HOME/Downloads/ai_arcade_poker_assets"
   )
 fi
 

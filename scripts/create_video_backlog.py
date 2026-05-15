@@ -2,10 +2,15 @@ import os
 import re
 import json
 
-HTML_FILE = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/ai_video_library.html"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+WORKSPACE_ROOT = os.path.abspath(os.getenv("TNF_WORKSPACE_DIR", os.path.join(PROJECT_ROOT, "..")))
+KB_ROOT = os.path.abspath(os.getenv("TNF_KB_DIR", os.path.join(WORKSPACE_ROOT, "my-ai-knowledge-base")))
+
+HTML_FILE = os.path.join(KB_ROOT, "video-library", "ai_video_library.html")
 TRANSCRIPT_DIRS = [
-    "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/transcripts",
-    "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts"
+    os.path.join(KB_ROOT, "transcripts"),
+    os.path.join(KB_ROOT, "video-transcripts"),
 ]
 
 def parse_library():
@@ -60,7 +65,7 @@ def main():
             backlog.append(v)
     
     # Save the backlog to process
-    output_file = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/video_processing_backlog.json"
+    output_file = os.path.join(PROJECT_ROOT, "data", "video_processing_backlog.json")
     with open(output_file, "w") as f:
         json.dump(backlog, f, indent=2)
     

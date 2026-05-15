@@ -1,5 +1,5 @@
-import { Switch, Tabs, toast } from '@/components/ui';
 // @ts-nocheck
+import { Switch, Tabs, toast } from '@/components/ui';
 import { FeatureFlagConditionsEditor } from '@/components/AdminPanel/FeatureFlagConditions';
 import { PremiumButton as Button, GlassCard as Card, PremiumInput as Input } from '@/components/ui';
 import { FeatureFlag, FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';

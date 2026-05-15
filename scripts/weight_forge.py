@@ -3,7 +3,9 @@ import os
 import sys
 
 # Data Sources
-TRAINING_DATA = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/native/codebase_training_data.json"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..")))
+TRAINING_DATA = os.path.join(PROJECT_ROOT, "scripts", "native", "codebase_training_data.json")
 CONCORDANCE_STATS = {
     "relay": 1706,
     "message": 16674,
@@ -84,7 +86,7 @@ def forge_weight_matrix():
     }
     """
     
-    output_path = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/native/weight_forge_output.cpp"
+    output_path = os.path.join(PROJECT_ROOT, "scripts", "native", "weight_forge_output.cpp")
     with open(output_path, 'w') as f:
         f.write(cpp_code)
         
