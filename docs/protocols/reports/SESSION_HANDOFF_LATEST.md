@@ -1,13 +1,13 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-15T15:44:49.976Z`  
-Handoff ID: `773cfca4-ae2d-455e-ad67-8e757be25980`
+Created At: `2026-05-15T15:45:29.234Z`  
+Handoff ID: `a75cb480-a3f0-4932-bba3-068fb86a51a8`
 
 ## Scope
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `8aefd585e99f15134fce3789431b334ac91b9a34`
+- Head SHA: `d6e2c52ca71ffa85aed519c5632319f0e656b933`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -15,14 +15,10 @@ Handoff ID: `773cfca4-ae2d-455e-ad67-8e757be25980`
 - CI/hook gates now block critical changes without fresh handoff artifacts.
 
 ## Changed Paths
-- apps/external/ai-studio-automator
-- apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide
-- apps/external/ai_instruction_research/tmp_skill_repos/Automata-Labs-team__MCP-Server-Playwright
-- apps/external/ai_instruction_research/tmp_skill_repos/ComposioHQ__skills
-- apps/external/hardware/idb
-- apps/external/trae-agent
-- apps/virtual-library-blueprints
-- archive/drafts/tmp-poker-room-old
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- scripts/security/privacy-guard.cjs
 
 ## Verification
 - privacy_guard: `na`

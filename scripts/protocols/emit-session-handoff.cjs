@@ -186,6 +186,7 @@ function gatherChangedPaths() {
 
   const commands = [
     'git diff --cached --name-only --diff-filter=ACMR',
+    'git diff --name-only --diff-filter=ACMR @{u}..HEAD',
     'git diff --name-only --diff-filter=ACMR',
     'git diff --name-only --diff-filter=ACMR HEAD~1..HEAD',
   ];
