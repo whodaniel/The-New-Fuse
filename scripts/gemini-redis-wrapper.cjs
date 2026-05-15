@@ -29,6 +29,7 @@ const CONFIG = {
   agentRole: process.env.AGENT_ROLE || 'worker',
   platform: 'gemini',
   geminiCommand: process.env.GEMINI_CMD || 'gemini', // The gemini CLI command
+  geminiArgs: (process.env.GEMINI_ARGS || '').trim(),
   maxResponseTime: 120000, // 2 minutes max wait
 };
 
@@ -38,74 +39,44 @@ const CONFIG = {
 
 class GeminiCLIInterface {
   constructor() {
-    this.process = null;
-    this.responseBuffer = '';
-    this.responseCallback = null;
-    this.isProcessing = false;
+    this.isReady = false;
   }
 
   /**
-   * Start a new Gemini CLI session
+   * Verify Gemini CLI is available.
    */
   async start() {
     return new Promise((resolve, reject) => {
       try {
-        console.log(`🚀 Starting Gemini CLI process...`);
-
-        // Start Gemini in interactive mode
-        this.process = spawn(CONFIG.geminiCommand, [], {
-          stdio: ['pipe', 'pipe', 'pipe'],
-          shell: true,
+        console.log(`🚀 Verifying Gemini CLI process...`);
+        const check = spawn(CONFIG.geminiCommand, ['--version'], {
+          stdio: ['ignore', 'pipe', 'pipe'],
+          shell: false,
         });
 
-        this.process.stdout.on('data', (data) => {
-          this.handleOutput(data.toString());
+        let stderr = '';
+        check.stderr.on('data', (data) => {
+          stderr += data.toString();
         });
 
-        this.process.stderr.on('data', (data) => {
-          console.error(`Gemini stderr: ${data}`);
-        });
-
-        this.process.on('error', (error) => {
+        check.on('error', (error) => {
           console.error(`Gemini process error: ${error.message}`);
           reject(error);
         });
 
-        this.process.on('close', (code) => {
-          console.log(`Gemini process exited with code ${code}`);
-        });
-
-        // Give it a moment to start
-        setTimeout(() => {
-          console.log('✅ Gemini CLI started');
+        check.on('close', (code) => {
+          if (code !== 0) {
+            reject(new Error(`Gemini CLI unavailable (code ${code}): ${stderr.trim()}`));
+            return;
+          }
+          this.isReady = true;
+          console.log('✅ Gemini CLI ready');
           resolve();
-        }, 2000);
+        });
       } catch (error) {
         reject(error);
       }
     });
-  }
-
-  /**
-   * Handle output from Gemini
-   */
-  handleOutput(text) {
-    this.responseBuffer += text;
-
-    // Check if response is complete (look for prompt indicator)
-    // This may need adjustment based on Gemini CLI's actual output format
-    if (
-      this.responseBuffer.includes('> ') ||
-      this.responseBuffer.includes('\n\n') ||
-      this.responseBuffer.includes('[Done]')
-    ) {
-      if (this.responseCallback && this.isProcessing) {
-        const response = this.cleanResponse(this.responseBuffer);
-        this.responseCallback(response);
-        this.responseBuffer = '';
-        this.isProcessing = false;
-      }
-    }
   }
 
   /**
@@ -124,31 +95,62 @@ class GeminiCLIInterface {
    */
   async prompt(text) {
     return new Promise((resolve, reject) => {
-      if (!this.process) {
+      if (!this.isReady) {
         reject(new Error('Gemini CLI not started'));
         return;
       }
+      const extraArgs = CONFIG.geminiArgs
+        ? CONFIG.geminiArgs.split(/\s+/).filter(Boolean)
+        : [];
+      const args = [...extraArgs, '--prompt', text];
+      console.log(`📝 Sent to Gemini: ${text.substring(0, 50)}...`);
 
-      this.isProcessing = true;
-      this.responseBuffer = '';
+      const child = spawn(CONFIG.geminiCommand, args, {
+        stdio: ['ignore', 'pipe', 'pipe'],
+        shell: false,
+      });
 
-      // Set up response callback
-      this.responseCallback = (response) => {
-        resolve(response);
+      let stdout = '';
+      let stderr = '';
+      let settled = false;
+      const finish = (value, isError = false) => {
+        if (settled) return;
+        settled = true;
+        if (isError) {
+          reject(value);
+        } else {
+          resolve(value);
+        }
       };
 
-      // Set timeout
       const timeout = setTimeout(() => {
-        if (this.isProcessing) {
-          this.isProcessing = false;
-          resolve(this.cleanResponse(this.responseBuffer) || '[No response within timeout]');
-        }
+        child.kill('SIGTERM');
+        const fallback = this.cleanResponse(stdout) || this.cleanResponse(stderr) || '[No response within timeout]';
+        finish(fallback, false);
       }, CONFIG.maxResponseTime);
 
-      // Send the prompt
-      this.process.stdin.write(text + '\n');
-
-      console.log(`📝 Sent to Gemini: ${text.substring(0, 50)}...`);
+      child.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+      child.stderr.on('data', (data) => {
+        const chunk = data.toString();
+        stderr += chunk;
+        // Keep stderr visible for diagnostics, but do not fail immediately.
+        process.stderr.write(`Gemini stderr: ${chunk}`);
+      });
+      child.on('error', (error) => {
+        clearTimeout(timeout);
+        finish(error, true);
+      });
+      child.on('close', (code) => {
+        clearTimeout(timeout);
+        const response = this.cleanResponse(stdout) || this.cleanResponse(stderr);
+        if (code === 0 || response) {
+          finish(response || '[No response]');
+          return;
+        }
+        finish(new Error(`Gemini exited with code ${code}`), true);
+      });
     });
   }
 
@@ -156,11 +158,7 @@ class GeminiCLIInterface {
    * Stop the Gemini CLI process
    */
   stop() {
-    if (this.process) {
-      this.process.stdin.write('/exit\n');
-      this.process.kill();
-      this.process = null;
-    }
+    this.isReady = false;
   }
 }
 
