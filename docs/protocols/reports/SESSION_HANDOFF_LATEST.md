@@ -1,41 +1,54 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-15T15:45:29.234Z`  
-Handoff ID: `a75cb480-a3f0-4932-bba3-068fb86a51a8`
+Created At: `2026-05-16T19:19:02.610Z`  
+Handoff ID: `1b28e7bd-44ca-4619-ac5e-81319f9848ec`
 
 ## Scope
+
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `d6e2c52ca71ffa85aed519c5632319f0e656b933`
+- Head SHA: `9e2734d09debcdc7ab6be51ae0f0fb3bcd383c9b`
 - Sensitive Scope: `internal`
 
 ## Work Summary
-- Protocol enforcement layer implemented for mandatory session handoff continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+
+- Restored unified-ledger timeline routes in api-gateway
+- Updated frontend services to match new backend routes
+- Fixed api-gateway build clean scripts
 
 ## Changed Paths
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- scripts/security/privacy-guard.cjs
+
+- apps/external/ai-studio-automator
+- apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide
+- apps/external/ai_instruction_research/tmp_skill_repos/Automata-Labs-team\_\_MCP-Server-Playwright
+- apps/external/ai_instruction_research/tmp_skill_repos/ComposioHQ\_\_skills
+- apps/external/hardware/idb
+- apps/external/trae-agent
+- apps/virtual-library-blueprints
+- archive/drafts/tmp-poker-room-old
 
 ## Verification
-- privacy_guard: `na`
-- secret_sweep: `na`
-- docs_pii_guard: `na`
+
+- privacy_guard: `pass`
+- secret_sweep: `pass`
+- docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
 
 ## Continuation
+
 - Owner: `tnf-orchestrator`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
+
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
 - Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-- Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical work unit.
+
+- Deploy to production to verify route restoration
+- Monitor logs for 502/404 errors on /api/unified-ledger/timeline/events
