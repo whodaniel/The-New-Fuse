@@ -835,7 +835,10 @@ const FULL_AUTO_RUN_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-aut
 
 const SELF_IMPROVEMENT_ARTIFACTS: SelfImprovementArtifactsIndex = {
   liveLinkCrawlJson: path.join(repoRoot, 'apps/frontend/docs/audits/live-link-crawl.json'),
-  semanticAuditJson: path.join(repoRoot, 'apps/frontend/docs/audits/all-routes-semantic-audit.json'),
+  semanticAuditJson: path.join(
+    repoRoot,
+    'apps/frontend/docs/audits/all-routes-semantic-audit.json'
+  ),
   authPathAuditJson: path.join(repoRoot, 'apps/frontend/docs/audits/auth-path-audit.json'),
   scorecardJson: path.join(repoRoot, 'apps/frontend/docs/audits/self-improvement-scorecard.json'),
   scorecardMd: path.join(repoRoot, 'apps/frontend/docs/audits/self-improvement-scorecard.md'),
@@ -954,7 +957,9 @@ function resolveControlPlaneProvider(
     .map((key) => normalizeToken(process.env[key]))
     .find((value): value is string => Boolean(value));
   const candidate =
-    normalizeToken(options.provider) ?? envCandidate ?? normalizeToken(process.env[CONTROL_PLANE_PROVIDER_ENV_KEY]);
+    normalizeToken(options.provider) ??
+    envCandidate ??
+    normalizeToken(process.env[CONTROL_PLANE_PROVIDER_ENV_KEY]);
   const normalized = (candidate || 'local').toLowerCase();
 
   if (normalized === 'local' || normalized === 'cloud_runtime') {
@@ -2428,223 +2433,277 @@ mcp
 const marketplace = program.command('marketplace').description('Marketplace asset management');
 
 marketplace
- .command('list')
- .description('List published catalog items from the marketplace')
- .option('--kind <kind>', 'Filter by kind (agent, agent_template, experience, mcp_server, model, prompt, skill, workflow)')
- .option('--category <cat>', 'Filter by category')
- .option('--json', 'Output machine-readable JSON')
- .action(async (options: { kind?: string; category?: string; json?: boolean }) => {
-  try {
-   const databaseUrl = process.env.DATABASE_URL;
-   if (!databaseUrl) {
-    console.error(chalk.red('Error: DATABASE_URL environment variable is not set'));
-    process.exit(1);
-   }
+  .command('list')
+  .description('List published catalog items from the marketplace')
+  .option(
+    '--kind <kind>',
+    'Filter by kind (agent, agent_template, experience, mcp_server, model, prompt, skill, workflow)'
+  )
+  .option('--category <cat>', 'Filter by category')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (options: { kind?: string; category?: string; json?: boolean }) => {
+    try {
+      const databaseUrl = process.env.DATABASE_URL;
+      if (!databaseUrl) {
+        console.error(chalk.red('Error: DATABASE_URL environment variable is not set'));
+        process.exit(1);
+      }
 
-   let whereClauses: string[] = ["publication_status = 'published'"];
-   if (options.kind) whereClauses.push(`kind = '${options.kind.replace(/'/g, "''")}'`);
-   if (options.category) whereClauses.push(`category = '${options.category.replace(/'/g, "''")}'`);
-   const whereClause = whereClauses.join(' AND ');
+      let whereClauses: string[] = ["publication_status = 'published'"];
+      if (options.kind) whereClauses.push(`kind = '${options.kind.replace(/'/g, "''")}'`);
+      if (options.category)
+        whereClauses.push(`category = '${options.category.replace(/'/g, "''")}'`);
+      const whereClause = whereClauses.join(' AND ');
 
-   const sql = `SELECT id, slug, name, kind, category, rating, total_runs, success_rate, price_per_run, status FROM marketplace_catalog_items WHERE ${whereClause} ORDER BY kind, name;`;
+      const sql = `SELECT id, slug, name, kind, category, rating, total_runs, success_rate, price_per_run, status FROM marketplace_catalog_items WHERE ${whereClause} ORDER BY kind, name;`;
 
-   const psqlArgs = [
-    databaseUrl,
-    '-t',
-    '-A',
-    '-F', '|',
-    '-c', sql,
-   ];
+      const psqlArgs = [databaseUrl, '-t', '-A', '-F', '|', '-c', sql];
 
-   const { execSync } = await import('child_process');
-   const raw = execSync(`psql "${databaseUrl}" -t -A -F '|' -c "${sql.replace(/"/g, '\\"')}"`, {
-    encoding: 'utf-8',
-    timeout: 15000,
-    env: { ...process.env },
-   });
+      const { execSync } = await import('child_process');
+      const raw = execSync(`psql "${databaseUrl}" -t -A -F '|' -c "${sql.replace(/"/g, '\\"')}"`, {
+        encoding: 'utf-8',
+        timeout: 15000,
+        env: { ...process.env },
+      });
 
-   const lines = raw.trim().split('\n').filter((l: string) => l.length > 0);
+      const lines = raw
+        .trim()
+        .split('\n')
+        .filter((l: string) => l.length > 0);
 
-   if (options.json) {
-    const items = lines.map((line: string) => {
-     const [id, slug, name, kind, category, rating, totalRuns, successRate, pricePerRun, status] = line.split('|');
-     return { id, slug, name, kind, category, rating: parseFloat(rating), totalRuns: parseInt(totalRuns, 10), successRate: parseFloat(successRate), pricePerRun: parseFloat(pricePerRun), status };
-    });
-    console.log(JSON.stringify(items, null, 2));
-    return;
-   }
+      if (options.json) {
+        const items = lines.map((line: string) => {
+          const [
+            id,
+            slug,
+            name,
+            kind,
+            category,
+            rating,
+            totalRuns,
+            successRate,
+            pricePerRun,
+            status,
+          ] = line.split('|');
+          return {
+            id,
+            slug,
+            name,
+            kind,
+            category,
+            rating: parseFloat(rating),
+            totalRuns: parseInt(totalRuns, 10),
+            successRate: parseFloat(successRate),
+            pricePerRun: parseFloat(pricePerRun),
+            status,
+          };
+        });
+        console.log(JSON.stringify(items, null, 2));
+        return;
+      }
 
-   if (lines.length === 0) {
-    console.log(chalk.yellow('No published catalog items found'));
-    return;
-   }
+      if (lines.length === 0) {
+        console.log(chalk.yellow('No published catalog items found'));
+        return;
+      }
 
-   console.log(chalk.bold('\nMarketplace Catalog Items\n'));
-   for (const line of lines) {
-    const [id, slug, name, kind, category, rating, totalRuns, successRate, pricePerRun, status] = line.split('|');
-    const priceTag = parseFloat(pricePerRun) > 0 ? chalk.yellow(`$${pricePerRun}/run`) : chalk.green('free');
-    const statusTag = status === 'online' ? chalk.green('online') : chalk.dim(status);
-    console.log(`  ${chalk.cyan(slug)}  ${chalk.white(name)}  [${chalk.magenta(kind)}] [${chalk.blue(category)}]  ★${rating}  ${totalRuns} runs  ${successRate}%  ${priceTag}  ${statusTag}`);
-   }
-   console.log(chalk.dim(`\n  ${lines.length} item(s)\n`));
-  } catch (err: any) {
-   console.error(chalk.red(`Error: ${err.message}`));
-   process.exit(1);
-  }
- });
+      console.log(chalk.bold('\nMarketplace Catalog Items\n'));
+      for (const line of lines) {
+        const [
+          id,
+          slug,
+          name,
+          kind,
+          category,
+          rating,
+          totalRuns,
+          successRate,
+          pricePerRun,
+          status,
+        ] = line.split('|');
+        const priceTag =
+          parseFloat(pricePerRun) > 0 ? chalk.yellow(`$${pricePerRun}/run`) : chalk.green('free');
+        const statusTag = status === 'online' ? chalk.green('online') : chalk.dim(status);
+        console.log(
+          `  ${chalk.cyan(slug)}  ${chalk.white(name)}  [${chalk.magenta(kind)}] [${chalk.blue(category)}]  ★${rating}  ${totalRuns} runs  ${successRate}%  ${priceTag}  ${statusTag}`
+        );
+      }
+      console.log(chalk.dim(`\n  ${lines.length} item(s)\n`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 marketplace
- .command('stats')
- .description('Show marketplace breakdown by kind (counts, free vs paid)')
- .action(async () => {
-  try {
-   const databaseUrl = process.env.DATABASE_URL;
-   if (!databaseUrl) {
-    console.error(chalk.red('Error: DATABASE_URL environment variable is not set'));
-    process.exit(1);
-   }
+  .command('stats')
+  .description('Show marketplace breakdown by kind (counts, free vs paid)')
+  .action(async () => {
+    try {
+      const databaseUrl = process.env.DATABASE_URL;
+      if (!databaseUrl) {
+        console.error(chalk.red('Error: DATABASE_URL environment variable is not set'));
+        process.exit(1);
+      }
 
-   const sql = `SELECT kind, COUNT(*) AS total, COUNT(*) FILTER (WHERE price_per_run = 0) AS free, COUNT(*) FILTER (WHERE price_per_run > 0) AS paid, ROUND(AVG(rating)::numeric, 2) AS avg_rating, SUM(total_runs) AS total_runs FROM marketplace_catalog_items WHERE publication_status = 'published' GROUP BY kind ORDER BY kind;`;
+      const sql = `SELECT kind, COUNT(*) AS total, COUNT(*) FILTER (WHERE price_per_run = 0) AS free, COUNT(*) FILTER (WHERE price_per_run > 0) AS paid, ROUND(AVG(rating)::numeric, 2) AS avg_rating, SUM(total_runs) AS total_runs FROM marketplace_catalog_items WHERE publication_status = 'published' GROUP BY kind ORDER BY kind;`;
 
-   const { execSync } = await import('child_process');
-   const raw = execSync(`psql "${databaseUrl}" -t -A -F '|' -c "${sql.replace(/"/g, '\\"')}"`, {
-    encoding: 'utf-8',
-    timeout: 15000,
-    env: { ...process.env },
-   });
+      const { execSync } = await import('child_process');
+      const raw = execSync(`psql "${databaseUrl}" -t -A -F '|' -c "${sql.replace(/"/g, '\\"')}"`, {
+        encoding: 'utf-8',
+        timeout: 15000,
+        env: { ...process.env },
+      });
 
-   const lines = raw.trim().split('\n').filter((l: string) => l.length > 0);
+      const lines = raw
+        .trim()
+        .split('\n')
+        .filter((l: string) => l.length > 0);
 
-   if (lines.length === 0) {
-    console.log(chalk.yellow('No published catalog items found'));
-    return;
-   }
+      if (lines.length === 0) {
+        console.log(chalk.yellow('No published catalog items found'));
+        return;
+      }
 
-   console.log(chalk.bold('\nMarketplace Stats by Kind\n'));
-   console.log(chalk.dim('  Kind                Total   Free   Paid   Avg★   Total Runs'));
-   console.log(chalk.dim('  ─────────────────── ──────  ────   ────   ─────  ───────────'));
-   for (const line of lines) {
-    const [kind, total, free, paid, avgRating, totalRuns] = line.split('|');
-    const kindPadded = kind.padEnd(20);
-    console.log(`  ${chalk.magenta(kindPadded)} ${chalk.white(total.padStart(5))}   ${chalk.green(free.padStart(4))}   ${chalk.yellow(paid.padStart(4))}   ${avgRating.padStart(5)}   ${totalRuns.padStart(11)}`);
-   }
-   console.log('');
-  } catch (err: any) {
-   console.error(chalk.red(`Error: ${err.message}`));
-   process.exit(1);
-  }
- });
+      console.log(chalk.bold('\nMarketplace Stats by Kind\n'));
+      console.log(chalk.dim('  Kind                Total   Free   Paid   Avg★   Total Runs'));
+      console.log(chalk.dim('  ─────────────────── ──────  ────   ────   ─────  ───────────'));
+      for (const line of lines) {
+        const [kind, total, free, paid, avgRating, totalRuns] = line.split('|');
+        const kindPadded = kind.padEnd(20);
+        console.log(
+          `  ${chalk.magenta(kindPadded)} ${chalk.white(total.padStart(5))}   ${chalk.green(free.padStart(4))}   ${chalk.yellow(paid.padStart(4))}   ${avgRating.padStart(5)}   ${totalRuns.padStart(11)}`
+        );
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 marketplace
- .command('seed')
- .description('Run the marketplace seed script against $DATABASE_URL')
- .action(async () => {
-  try {
-   const databaseUrl = process.env.DATABASE_URL;
-   if (!databaseUrl) {
-    console.error(chalk.red('Error: DATABASE_URL environment variable is not set'));
-    process.exit(1);
-   }
+  .command('seed')
+  .description('Run the marketplace seed script against $DATABASE_URL')
+  .action(async () => {
+    try {
+      const databaseUrl = process.env.DATABASE_URL;
+      if (!databaseUrl) {
+        console.error(chalk.red('Error: DATABASE_URL environment variable is not set'));
+        process.exit(1);
+      }
 
-   const seedPath = path.resolve(repoRoot, 'scripts/marketplace/seed-catalog-items.sql');
-   if (!fs.existsSync(seedPath)) {
-    console.error(chalk.red(`Error: Seed script not found at ${seedPath}`));
-    process.exit(1);
-   }
+      const seedPath = path.resolve(repoRoot, 'scripts/marketplace/seed-catalog-items.sql');
+      if (!fs.existsSync(seedPath)) {
+        console.error(chalk.red(`Error: Seed script not found at ${seedPath}`));
+        process.exit(1);
+      }
 
-   console.log(chalk.blue('Seeding marketplace catalog items...'));
-   await runCommand('psql', [databaseUrl, '-f', seedPath], { cwd: repoRoot });
-   console.log(chalk.green('✅ Marketplace catalog items seeded successfully'));
-  } catch (err: any) {
-   console.error(chalk.red(`Error: ${err.message}`));
-   process.exit(1);
-  }
- });
+      console.log(chalk.blue('Seeding marketplace catalog items...'));
+      await runCommand('psql', [databaseUrl, '-f', seedPath], { cwd: repoRoot });
+      console.log(chalk.green('✅ Marketplace catalog items seeded successfully'));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 marketplace
- .command('curate')
- .description('Trigger the marketplace research crawl to discover and curate new items')
- .action(async () => {
-  try {
-   const port = process.env.TNF_API_PORT || '3001';
-   const url = `http://localhost:${port}/marketplace/research/crawl/run`;
-   console.log(chalk.blue(`Triggering marketplace curation crawl at ${url}...`));
+  .command('curate')
+  .description('Trigger the marketplace research crawl to discover and curate new items')
+  .action(async () => {
+    try {
+      const port = process.env.TNF_API_PORT || '3001';
+      const url = `http://localhost:${port}/marketplace/research/crawl/run`;
+      console.log(chalk.blue(`Triggering marketplace curation crawl at ${url}...`));
 
-   const response = await fetch(url, { method: 'POST' });
-   if (!response.ok) {
-    const body = await response.text().catch(() => '');
-    throw new Error(`HTTP ${response.status}: ${body || response.statusText}`);
-   }
+      const response = await fetch(url, { method: 'POST' });
+      if (!response.ok) {
+        const body = await response.text().catch(() => '');
+        throw new Error(`HTTP ${response.status}: ${body || response.statusText}`);
+      }
 
-   const data = await response.json();
-   console.log(chalk.green('✅ Crawl triggered successfully'));
-   if (data.runId) {
-    console.log(chalk.dim(`  Run ID: ${data.runId}`));
-    console.log(chalk.dim(`  Check status with: tnf marketplace crawl-status ${data.runId}`));
-   } else {
-    console.log(chalk.dim(`  Response: ${JSON.stringify(data)}`));
-   }
-  } catch (err: any) {
-   console.error(chalk.red(`Error: ${err.message}`));
-   process.exit(1);
-  }
- });
+      const data = await response.json();
+      console.log(chalk.green('✅ Crawl triggered successfully'));
+      if (data.runId) {
+        console.log(chalk.dim(`  Run ID: ${data.runId}`));
+        console.log(chalk.dim(`  Check status with: tnf marketplace crawl-status ${data.runId}`));
+      } else {
+        console.log(chalk.dim(`  Response: ${JSON.stringify(data)}`));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 marketplace
- .command('crawl-status')
- .description('Check marketplace crawl run status')
- .argument('[runId]', 'Specific crawl run ID to check')
- .action(async (runId?: string) => {
-  try {
-   const port = process.env.TNF_API_PORT || '3001';
-   const url = runId
-    ? `http://localhost:${port}/marketplace/research/crawl/runs/${runId}`
-    : `http://localhost:${port}/marketplace/research/crawl/runs`;
-   console.log(chalk.blue(`Fetching crawl status from ${url}...`));
+  .command('crawl-status')
+  .description('Check marketplace crawl run status')
+  .argument('[runId]', 'Specific crawl run ID to check')
+  .action(async (runId?: string) => {
+    try {
+      const port = process.env.TNF_API_PORT || '3001';
+      const url = runId
+        ? `http://localhost:${port}/marketplace/research/crawl/runs/${runId}`
+        : `http://localhost:${port}/marketplace/research/crawl/runs`;
+      console.log(chalk.blue(`Fetching crawl status from ${url}...`));
 
-   const response = await fetch(url);
-   if (!response.ok) {
-    const body = await response.text().catch(() => '');
-    throw new Error(`HTTP ${response.status}: ${body || response.statusText}`);
-   }
+      const response = await fetch(url);
+      if (!response.ok) {
+        const body = await response.text().catch(() => '');
+        throw new Error(`HTTP ${response.status}: ${body || response.statusText}`);
+      }
 
-   const data = await response.json();
+      const data = await response.json();
 
-   if (Array.isArray(data)) {
-    console.log(chalk.bold('\nCrawl Runs\n'));
-    if (data.length === 0) {
-     console.log(chalk.dim('No crawl runs found'));
-    } else {
-     for (const run of data) {
-      const statusColor = run.status === 'completed' ? chalk.green : run.status === 'failed' ? chalk.red : chalk.yellow;
-      console.log(`  ${chalk.cyan(run.id || run.runId || '?')}  ${statusColor(run.status || '?')}  ${chalk.dim(run.startedAt || run.created_at || '')}  items: ${run.itemsFound ?? run.items_found ?? '?'}`);
-     }
+      if (Array.isArray(data)) {
+        console.log(chalk.bold('\nCrawl Runs\n'));
+        if (data.length === 0) {
+          console.log(chalk.dim('No crawl runs found'));
+        } else {
+          for (const run of data) {
+            const statusColor =
+              run.status === 'completed'
+                ? chalk.green
+                : run.status === 'failed'
+                  ? chalk.red
+                  : chalk.yellow;
+            console.log(
+              `  ${chalk.cyan(run.id || run.runId || '?')}  ${statusColor(run.status || '?')}  ${chalk.dim(run.startedAt || run.created_at || '')}  items: ${run.itemsFound ?? run.items_found ?? '?'}`
+            );
+          }
+        }
+        console.log('');
+      } else {
+        const statusColor =
+          data.status === 'completed'
+            ? chalk.green
+            : data.status === 'failed'
+              ? chalk.red
+              : chalk.yellow;
+        console.log(chalk.bold('\nCrawl Run Status\n'));
+        console.log(`  ID:      ${chalk.cyan(data.id || data.runId || '?')}`);
+        console.log(`  Status:  ${statusColor(data.status || '?')}`);
+        if (data.startedAt || data.created_at) {
+          console.log(`  Started: ${data.startedAt || data.created_at}`);
+        }
+        if (data.completedAt || data.completed_at) {
+          console.log(`  Ended:   ${data.completedAt || data.completed_at}`);
+        }
+        if (data.itemsFound !== undefined || data.items_found !== undefined) {
+          console.log(`  Items:   ${data.itemsFound ?? data.items_found}`);
+        }
+        if (data.error) {
+          console.log(`  Error:   ${chalk.red(data.error)}`);
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
     }
-    console.log('');
-   } else {
-    const statusColor = data.status === 'completed' ? chalk.green : data.status === 'failed' ? chalk.red : chalk.yellow;
-    console.log(chalk.bold('\nCrawl Run Status\n'));
-    console.log(`  ID:      ${chalk.cyan(data.id || data.runId || '?')}`);
-    console.log(`  Status:  ${statusColor(data.status || '?')}`);
-    if (data.startedAt || data.created_at) {
-     console.log(`  Started: ${data.startedAt || data.created_at}`);
-    }
-    if (data.completedAt || data.completed_at) {
-     console.log(`  Ended:   ${data.completedAt || data.completed_at}`);
-    }
-    if (data.itemsFound !== undefined || data.items_found !== undefined) {
-     console.log(`  Items:   ${data.itemsFound ?? data.items_found}`);
-    }
-    if (data.error) {
-     console.log(`  Error:   ${chalk.red(data.error)}`);
-    }
-    console.log('');
-   }
-  } catch (err: any) {
-   console.error(chalk.red(`Error: ${err.message}`));
-   process.exit(1);
-  }
- });
+  });
 
 const ai = program.command('ai').description('AI launcher commands');
 ai.command('start')
@@ -3069,7 +3128,10 @@ forge
   });
 
 function resolveMasterClockLogDir(): string {
-  return normalizeToken(process.env.LOG_DIR) ?? path.join(process.env.HOME || '/tmp', '.tnf-master-clock');
+  return (
+    normalizeToken(process.env.LOG_DIR) ??
+    path.join(process.env.HOME || '/tmp', '.tnf-master-clock')
+  );
 }
 
 function resolveLatestMasterClockLogPath(logDir: string): string | null {
@@ -3161,7 +3223,10 @@ masterClock
             );
           }
           const lines = parsePositiveIntegerOption(options.lines, 120, '--lines');
-          const args = options.follow === false ? ['-n', String(lines), logPath] : ['-n', String(lines), '-f', logPath];
+          const args =
+            options.follow === false
+              ? ['-n', String(lines), logPath]
+              : ['-n', String(lines), '-f', logPath];
           await runCommand('tail', args, { cwd: process.cwd() });
           return;
         }
@@ -3217,7 +3282,9 @@ masterClock
           } else {
             console.log(chalk.bold('\nMaster Clock Local Status\n'));
             console.log(`Provider: ${chalk.cyan(provider)}`);
-            console.log(`Redis configured: ${payload.redisUrlConfigured ? chalk.green('yes') : chalk.yellow('no')}`);
+            console.log(
+              `Redis configured: ${payload.redisUrlConfigured ? chalk.green('yes') : chalk.yellow('no')}`
+            );
             console.log(`Relay URL: ${chalk.dim(payload.relayUrl || 'not set')}`);
             console.log(`Log dir: ${chalk.dim(logDir)}`);
             console.log(
@@ -3227,7 +3294,11 @@ masterClock
                   : chalk.yellow('none')
               }`
             );
-            console.log(chalk.dim("\nUse 'tnf super-cycle status --provider local' for runtime process snapshot.\n"));
+            console.log(
+              chalk.dim(
+                "\nUse 'tnf super-cycle status --provider local' for runtime process snapshot.\n"
+              )
+            );
           }
           return;
         }
@@ -3257,7 +3328,11 @@ superCycle
   .option('--metadata <json>', 'JSON metadata', '{}')
   .option('--provider <provider>', 'Control-plane provider: local|cloud_runtime')
   .option('--local', 'Legacy shortcut for --provider local', false)
-  .option('--service <name>', 'CloudRuntime service name (used when --provider cloud_runtime)', 'tnf-master-clock')
+  .option(
+    '--service <name>',
+    'CloudRuntime service name (used when --provider cloud_runtime)',
+    'tnf-master-clock'
+  )
   .option(
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
@@ -3308,8 +3383,16 @@ superCycle
         }
 
         assertCloudRuntimeAvailable('super-cycle event');
-        console.log(chalk.cyan(`Sending super-cycle event via CloudRuntime service ${options.service}`));
-        await runCommand('cloud_runtime', ['run', '--service', options.service, 'pnpm', ...baseArgs]);
+        console.log(
+          chalk.cyan(`Sending super-cycle event via CloudRuntime service ${options.service}`)
+        );
+        await runCommand('cloud_runtime', [
+          'run',
+          '--service',
+          options.service,
+          'pnpm',
+          ...baseArgs,
+        ]);
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
         process.exit(1);
@@ -3798,13 +3881,22 @@ superCycle
   .description('Read super-cycle state snapshot (provider-routed)')
   .option('--provider <provider>', 'Control-plane provider: local|cloud_runtime')
   .option('--local', 'Legacy shortcut for --provider local', false)
-  .option('--service <name>', 'CloudRuntime service name (used when --provider cloud_runtime)', 'tnf-master-clock')
+  .option(
+    '--service <name>',
+    'CloudRuntime service name (used when --provider cloud_runtime)',
+    'tnf-master-clock'
+  )
   .option(
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
   )
   .action(
-    async (options: { provider?: string; local?: boolean; service: string; superAdminToken?: string }) => {
+    async (options: {
+      provider?: string;
+      local?: boolean;
+      service: string;
+      superAdminToken?: string;
+    }) => {
       try {
         requireSuperAdmin(options, 'super-cycle status');
         const provider = resolveControlPlaneProvider(options, [SUPER_CYCLE_PROVIDER_ENV_KEY]);
@@ -4145,7 +4237,9 @@ selfImprovement
           throw new Error(`Missing expected artifacts:\n- ${verification.missing.join('\n- ')}`);
         }
         if (verification.stale.length > 0) {
-          throw new Error(`Stale artifact timestamps detected:\n- ${verification.stale.join('\n- ')}`);
+          throw new Error(
+            `Stale artifact timestamps detected:\n- ${verification.stale.join('\n- ')}`
+          );
         }
 
         const payload = {
@@ -4204,7 +4298,9 @@ selfImprovement
       const scorecardPassed = scorecard?.overall?.passed === true;
       const payload = {
         ok: missingRequired.length === 0 && (scorecard ? scorecardPassed : false),
-        missingRequired: missingRequired.map((artifactPath) => path.relative(repoRoot, artifactPath)),
+        missingRequired: missingRequired.map((artifactPath) =>
+          path.relative(repoRoot, artifactPath)
+        ),
         scorecard: scorecard
           ? {
               generatedAt: scorecard.generatedAt ?? null,
@@ -4270,7 +4366,11 @@ selfImprovement
 selfImprovement
   .command('mermaid')
   .description('Generate TNF master framework mermaid architecture map')
-  .option('--out <path>', 'Output file path', path.relative(repoRoot, SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid))
+  .option(
+    '--out <path>',
+    'Output file path',
+    path.relative(repoRoot, SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid)
+  )
   .action(async (options: { out?: string } = {}) => {
     try {
       const outPath = options.out
@@ -4322,20 +4422,18 @@ fullAuto
   )
   .option('--dry-run', 'Preview changes without writing files')
   .option('--json', 'Output machine-readable JSON summary')
-  .action(
-    async (options: { targets?: string; dryRun?: boolean; json?: boolean } = {}) => {
-      try {
-        const args = ['scripts/agents/provision-full-auto-network.cjs'];
-        if (options.targets) args.push('--targets', options.targets);
-        if (options.dryRun) args.push('--dry-run');
-        if (options.json) args.push('--json');
-        await runCommand('node', args);
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
-      }
+  .action(async (options: { targets?: string; dryRun?: boolean; json?: boolean } = {}) => {
+    try {
+      const args = ['scripts/agents/provision-full-auto-network.cjs'];
+      if (options.targets) args.push('--targets', options.targets);
+      if (options.dryRun) args.push('--dry-run');
+      if (options.json) args.push('--json');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
     }
-  );
+  });
 
 fullAuto
   .command('once')
@@ -4358,59 +4456,65 @@ fullAuto
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
   )
-  .action(async (options: SelfImprovementRunCliOptions & { broadcast?: boolean; json?: boolean }) => {
-    try {
-      requireSuperAdmin(options, 'full-auto once');
+  .action(
+    async (options: SelfImprovementRunCliOptions & { broadcast?: boolean; json?: boolean }) => {
+      try {
+        requireSuperAdmin(options, 'full-auto once');
 
-      const startedAt = new Date();
-      const cycleArgs = buildSelfImprovementRunCliArgs(options);
-      await runSelfCli(cycleArgs);
+        const startedAt = new Date();
+        const cycleArgs = buildSelfImprovementRunCliArgs(options);
+        await runSelfCli(cycleArgs);
 
-      if (options.broadcast) {
-        await runSelfCli(['orchestrate', 'self-improvement']);
+        if (options.broadcast) {
+          await runSelfCli(['orchestrate', 'self-improvement']);
+        }
+
+        await runSelfCli(['self-improvement', 'status', '--strict']);
+        const finishedAt = new Date();
+        const event: FullAutoRunEvent = {
+          cycle: 1,
+          startedAt: startedAt.toISOString(),
+          finishedAt: finishedAt.toISOString(),
+          durationMs: finishedAt.getTime() - startedAt.getTime(),
+          ok: true,
+        };
+
+        appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
+        writeFullAutoState({
+          mode: 'idle',
+          updatedAt: finishedAt.toISOString(),
+          intervalMinutes: 0,
+          maxCycles: 1,
+          completedCycles: 1,
+          failedCycles: 0,
+          lastRun: event,
+        });
+
+        if (options.json) {
+          console.log(JSON.stringify(event, null, 2));
+          return;
+        }
+
+        console.log(chalk.bold('\nTNF Full-Auto Cycle Complete\n'));
+        console.log(`Duration: ${chalk.cyan(`${event.durationMs}ms`)}`);
+        console.log(`Run log: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH))}`);
+        console.log(`State: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-
-      await runSelfCli(['self-improvement', 'status', '--strict']);
-      const finishedAt = new Date();
-      const event: FullAutoRunEvent = {
-        cycle: 1,
-        startedAt: startedAt.toISOString(),
-        finishedAt: finishedAt.toISOString(),
-        durationMs: finishedAt.getTime() - startedAt.getTime(),
-        ok: true,
-      };
-
-      appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
-      writeFullAutoState({
-        mode: 'idle',
-        updatedAt: finishedAt.toISOString(),
-        intervalMinutes: 0,
-        maxCycles: 1,
-        completedCycles: 1,
-        failedCycles: 0,
-        lastRun: event,
-      });
-
-      if (options.json) {
-        console.log(JSON.stringify(event, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Full-Auto Cycle Complete\n'));
-      console.log(`Duration: ${chalk.cyan(`${event.durationMs}ms`)}`);
-      console.log(`Run log: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH))}`);
-      console.log(`State: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 fullAuto
   .command('start')
   .description('Run continuous unattended cycles in the current terminal process')
-  .option('--interval-minutes <n>', 'Wait time between cycles', String(DEFAULT_FULL_AUTO_INTERVAL_MINUTES))
+  .option(
+    '--interval-minutes <n>',
+    'Wait time between cycles',
+    String(DEFAULT_FULL_AUTO_INTERVAL_MINUTES)
+  )
   .option('--max-cycles <n>', 'Number of cycles before stop (0 = run forever)', '0')
   .option('--base-url <url>', 'Public base URL used by semantic/auth audits')
   .option('--api-url <url>', 'API base URL used by auth audit')
@@ -4562,7 +4666,9 @@ fullAuto
 
         console.log(chalk.bold('\nTNF Full-Auto Loop Complete\n'));
         console.log(`Completed cycles: ${chalk.green(String(completedCycles))}`);
-        console.log(`Failed cycles: ${failedCycles > 0 ? chalk.yellow(String(failedCycles)) : chalk.green('0')}`);
+        console.log(
+          `Failed cycles: ${failedCycles > 0 ? chalk.yellow(String(failedCycles)) : chalk.green('0')}`
+        );
         console.log('');
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
@@ -4595,10 +4701,14 @@ fullAuto
       if (!state) {
         console.log(chalk.yellow('No full-auto state file found yet.'));
       } else {
-        console.log(`Mode: ${state.mode === 'running' ? chalk.green('running') : chalk.cyan('idle')}`);
+        console.log(
+          `Mode: ${state.mode === 'running' ? chalk.green('running') : chalk.cyan('idle')}`
+        );
         console.log(`Updated: ${chalk.dim(state.updatedAt)}`);
         console.log(`Interval: ${chalk.cyan(`${state.intervalMinutes} minute(s)`)}`);
-        console.log(`Max cycles: ${chalk.cyan(state.maxCycles === 0 ? 'unbounded' : String(state.maxCycles))}`);
+        console.log(
+          `Max cycles: ${chalk.cyan(state.maxCycles === 0 ? 'unbounded' : String(state.maxCycles))}`
+        );
         console.log(`Completed cycles: ${chalk.green(String(state.completedCycles))}`);
         console.log(
           `Failed cycles: ${state.failedCycles > 0 ? chalk.yellow(String(state.failedCycles)) : chalk.green('0')}`
@@ -5973,14 +6083,16 @@ agentsBank
   .option('--skip-imported-sync', 'Skip creating missing .skills/imported-claude-agents wrappers')
   .option('--skip-provision', 'Skip runtime-home provisioning stage')
   .action(
-    async (options: {
-      targets?: string;
-      dryRun?: boolean;
-      json?: boolean;
-      skipRestore?: boolean;
-      skipImportedSync?: boolean;
-      skipProvision?: boolean;
-    } = {}) => {
+    async (
+      options: {
+        targets?: string;
+        dryRun?: boolean;
+        json?: boolean;
+        skipRestore?: boolean;
+        skipImportedSync?: boolean;
+        skipProvision?: boolean;
+      } = {}
+    ) => {
       try {
         const args = ['scripts/agents/reconcile-agent-banks.cjs'];
         if (options.targets) args.push('--targets', options.targets);
@@ -6402,15 +6514,159 @@ reports
   });
 
 async function runPassthrough(cliName: string, args: string[] = []): Promise<void> {
+  const forwardedArgs = normalizeForwardedArgs(args);
+  const isHermesUpdate = cliName === 'hermes' && forwardedArgs[0] === 'update';
+
+  if (isHermesUpdate) {
+    const preflightCleanup = cleanupHermesGitLockFiles();
+    if (preflightCleanup.removed.length > 0) {
+      console.log(
+        chalk.yellow(
+          `↺ Removed ${preflightCleanup.removed.length} stale Hermes git lock file(s) before update.`
+        )
+      );
+    }
+  }
+
   try {
-    await runCommand(cliName, normalizeForwardedArgs(args));
+    await runCommand(cliName, forwardedArgs);
   } catch (err: any) {
+    if (isHermesUpdate) {
+      const retryCleanup = cleanupHermesGitLockFiles();
+      if (retryCleanup.removed.length > 0) {
+        console.log(
+          chalk.yellow(
+            `↺ Removed ${retryCleanup.removed.length} stale Hermes git lock file(s); retrying update once.`
+          )
+        );
+        try {
+          await runCommand(cliName, forwardedArgs);
+          return;
+        } catch (retryErr: any) {
+          err = retryErr;
+        }
+      }
+    }
+
     // Passthrough commands should exit with the child's exit code, not wrap it as an error.
     // The child process already displayed its own output/errors to the user.
     const exitCodeMatch = err?.message?.match(/exited with code (\d+)/);
     const exitCode = exitCodeMatch ? parseInt(exitCodeMatch[1], 10) : 1;
     process.exit(exitCode);
   }
+}
+
+const HERMES_GIT_STALE_LOCK_AGE_FALLBACK_MS = 2 * 60 * 1000;
+let cachedLsofAvailable: boolean | null = null;
+
+function resolveHermesRepoPath(): string {
+  const hermesHome = normalizeToken(process.env.HERMES_HOME) ?? path.join(os.homedir(), '.hermes');
+  return path.join(hermesHome, 'hermes-agent');
+}
+
+function isLsofAvailable(): boolean {
+  if (cachedLsofAvailable !== null) {
+    return cachedLsofAvailable;
+  }
+  const probe = spawnSync('lsof', ['-v'], { stdio: 'ignore' });
+  cachedLsofAvailable = !probe.error;
+  return cachedLsofAvailable;
+}
+
+function isLockFileInUse(lockPath: string): boolean {
+  const probe = spawnSync('lsof', ['-t', lockPath], {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
+  });
+  if (probe.error) return false;
+  return probe.status === 0 && Boolean((probe.stdout || '').trim());
+}
+
+function collectGitLockFiles(rootDir: string, out: string[]): void {
+  let entries: fs.Dirent[] = [];
+  try {
+    entries = fs.readdirSync(rootDir, { withFileTypes: true });
+  } catch {
+    return;
+  }
+
+  for (const entry of entries) {
+    const entryPath = path.join(rootDir, entry.name);
+    if (entry.isDirectory()) {
+      collectGitLockFiles(entryPath, out);
+      continue;
+    }
+    if (entry.isFile() && entry.name.endsWith('.lock')) {
+      out.push(entryPath);
+    }
+  }
+}
+
+function cleanupHermesGitLockFiles(): {
+  removed: string[];
+  skippedInUse: string[];
+  skippedRecent: string[];
+} {
+  const hermesRepo = resolveHermesRepoPath();
+  const gitDir = path.join(hermesRepo, '.git');
+  if (!fs.existsSync(gitDir)) {
+    return { removed: [], skippedInUse: [], skippedRecent: [] };
+  }
+
+  const candidates = new Set<string>();
+  const directLockFiles = ['index.lock', 'packed-refs.lock', 'FETCH_HEAD.lock', 'shallow.lock'];
+  for (const lockName of directLockFiles) {
+    const fullPath = path.join(gitDir, lockName);
+    if (fs.existsSync(fullPath)) {
+      candidates.add(fullPath);
+    }
+  }
+
+  const refsDir = path.join(gitDir, 'refs');
+  if (fs.existsSync(refsDir)) {
+    const recursiveLocks: string[] = [];
+    collectGitLockFiles(refsDir, recursiveLocks);
+    for (const lockPath of recursiveLocks) {
+      candidates.add(lockPath);
+    }
+  }
+
+  const lsofAvailable = isLsofAvailable();
+  const fallbackMinAgeMs = lsofAvailable ? 0 : HERMES_GIT_STALE_LOCK_AGE_FALLBACK_MS;
+  const now = Date.now();
+  const removed: string[] = [];
+  const skippedInUse: string[] = [];
+  const skippedRecent: string[] = [];
+
+  for (const lockPath of candidates) {
+    let stats: fs.Stats;
+    try {
+      stats = fs.statSync(lockPath);
+    } catch {
+      continue;
+    }
+    if (!stats.isFile()) continue;
+
+    if (!lsofAvailable) {
+      const ageMs = now - stats.mtimeMs;
+      if (ageMs < fallbackMinAgeMs) {
+        skippedRecent.push(lockPath);
+        continue;
+      }
+    } else if (isLockFileInUse(lockPath)) {
+      skippedInUse.push(lockPath);
+      continue;
+    }
+
+    try {
+      fs.unlinkSync(lockPath);
+      removed.push(lockPath);
+    } catch {
+      // Ignore filesystem race conditions from other concurrent cleanup attempts.
+    }
+  }
+
+  return { removed, skippedInUse, skippedRecent };
 }
 
 // ────────────────────────────────────────────────────────────────────────────

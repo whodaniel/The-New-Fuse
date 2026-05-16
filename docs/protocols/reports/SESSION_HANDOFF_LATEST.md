@@ -1,32 +1,25 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-16T19:19:02.610Z`  
-Handoff ID: `1b28e7bd-44ca-4619-ac5e-81319f9848ec`
+Created At: `2026-05-16T20:07:01.023Z`  
+Handoff ID: `8962e426-2c03-408f-8a38-102f4350558a`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `9e2734d09debcdc7ab6be51ae0f0fb3bcd383c9b`
+- Head SHA: `b88a9bdd360b843d76f75d66c6f6dccf3824bdce`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Restored unified-ledger timeline routes in api-gateway
-- Updated frontend services to match new backend routes
-- Fixed api-gateway build clean scripts
+- Aligned backend unified-ledger API to ingest public.timeline_events created by
+  Story Architect, ensuring cross-app timeline sync
 
 ## Changed Paths
 
-- apps/external/ai-studio-automator
-- apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide
-- apps/external/ai_instruction_research/tmp_skill_repos/Automata-Labs-team\_\_MCP-Server-Playwright
-- apps/external/ai_instruction_research/tmp_skill_repos/ComposioHQ\_\_skills
-- apps/external/hardware/idb
-- apps/external/trae-agent
-- apps/virtual-library-blueprints
-- archive/drafts/tmp-poker-room-old
+- apps/api/src/modules/unified-ledger/unified-ledger.service.ts
+- packages/tnf-cli/src/cli.ts
 
 ## Verification
 
@@ -50,5 +43,5 @@ Handoff ID: `1b28e7bd-44ca-4619-ac5e-81319f9848ec`
 
 ## Next Actions
 
-- Deploy to production to verify route restoration
-- Monitor logs for 502/404 errors on /api/unified-ledger/timeline/events
+- Monitor sync between library.thenewfuse.com and app.thenewfuse.com
+- Implement CLI command palette for Story Architect

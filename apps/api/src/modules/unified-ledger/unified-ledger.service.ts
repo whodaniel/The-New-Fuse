@@ -531,7 +531,16 @@ export class UnifiedLedgerService implements OnModuleInit {
       eventType: params?.eventType,
     });
 
-    return [...storeEvents, ...librarianEvents].sort((a, b) =>
+    const publicEvents = await this.listPublicTimelineEvents({
+      ownerUserId: access.ownerUserId,
+      dateFrom: from,
+      dateTo: to,
+      actor: params?.actor,
+      timelineTrack: params?.timelineTrack,
+      eventType: params?.eventType,
+    });
+
+    return [...storeEvents, ...librarianEvents, ...publicEvents].sort((a, b) =>
       b.timestamp.localeCompare(a.timestamp)
     );
   }
@@ -1885,6 +1894,93 @@ export class UnifiedLedgerService implements OnModuleInit {
     return input.filter(
       (item): item is string => typeof item === 'string' && item.trim().length > 0
     );
+  }
+
+  private async listPublicTimelineEvents(params: {
+    ownerUserId: string;
+    dateFrom?: string;
+    dateTo?: string;
+    actor?: string;
+    timelineTrack?: string;
+    eventType?: string;
+  }): Promise<TimelineEvent[]> {
+    if (!this.db) return [];
+    if (params.eventType && params.eventType !== 'historical_event') return [];
+
+    try {
+      const rows = (await this.db.client.execute(
+        sql`
+          SELECT
+            id::text,
+            session_id::text,
+            era,
+            event_date::text,
+            title,
+            description,
+            source_type,
+            tags,
+            created_at::text
+          FROM public.timeline_events
+          ORDER BY event_date DESC
+          LIMIT 5000
+        `
+      )) as Array<{
+        id: string;
+        session_id: string;
+        era: number;
+        event_date: string;
+        title: string;
+        description: string;
+        source_type: string;
+        tags: string[];
+        created_at: string;
+      }>;
+
+      if (!rows.length) return [];
+      const total = Math.max(1, rows.length - 1);
+
+      return rows.map((row, index) => {
+        let track = 'new_fuse_novel_development';
+        let project = 'The New Fuse (Novel)';
+
+        if (Array.isArray(row.tags)) {
+          if (row.tags.some((t) => String(t).includes('platform'))) {
+            track = 'tnf_platform_development';
+            project = 'The New Fuse Platform';
+          }
+        }
+
+        const timestamp = row.event_date ? `${row.event_date}T00:00:00.000Z` : row.created_at;
+
+        return {
+          id: row.id,
+          userId: params.ownerUserId,
+          eventType: 'historical_event',
+          actor: row.source_type || 'story-architect',
+          timestamp,
+          payload: {
+            title: row.title,
+            description: row.description || '',
+            point: Math.round((index / total) * 100),
+            category: 'Creativity',
+            segment: track,
+            timelineTrack: track,
+            timelineCategory: 'Story Architect',
+            project,
+            confidence: 'strong',
+            evidenceRefs: [`session:${row.session_id}`],
+            sources: [],
+            source: 'public.timeline_events',
+            era: row.era,
+            tags: row.tags,
+            accessScope: 'owner_and_agents',
+            isPrivate: true,
+          },
+        } as TimelineEvent;
+      });
+    } catch (error) {
+      return [];
+    }
   }
 
   private mapLibrarianRowsToTimelineEvents(
