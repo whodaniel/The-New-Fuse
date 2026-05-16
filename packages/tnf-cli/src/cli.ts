@@ -7930,15 +7930,50 @@ program
 const story = program.command('story').description('Story Architect utilities and drafting');
 
 story
+  .command('doctor')
+  .description('Verify Story Architect auth and database access')
+  .action(async () => {
+    try {
+      const storyService = new StoryService();
+      console.log(chalk.bold.magenta('\n  Story Architect Preflight Diagnostics'));
+      console.log('  ' + '-'.repeat(60));
+
+      const result = await storyService.doctor();
+
+      console.log(`  Supabase URL:  ${chalk.cyan(result.url)}`);
+      console.log(`  Auth Mode:     ${result.authMode === 'service-role' ? chalk.green('Service Role (Elevated)') : chalk.yellow('Anon (Limited)')}`);
+      console.log(`  Default Owner: ${chalk.bold(result.owner)}`);
+
+      console.log(`\n  Table Access:`);
+      const sessionColor = result.story_sessions.ok ? chalk.green : chalk.red;
+      console.log(`  - story_sessions:  ${sessionColor(result.story_sessions.message)}`);
+      
+      const eventColor = result.timeline_events.ok ? chalk.green : chalk.red;
+      console.log(`  - timeline_events: ${eventColor(result.timeline_events.message)}`);
+
+      if (!result.story_sessions.ok || !result.timeline_events.ok) {
+        console.log(chalk.yellow('\n  [Advice] End-to-end captures require service-role permissions.'));
+        console.log(chalk.dim('  Run: export SUPABASE_SERVICE_ROLE_KEY=your-key-here\n'));
+      } else {
+        console.log(chalk.green('\n  ✅ System is ready for end-to-end story drafting.\n'));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+story
   .command('draft')
   .description('Start an interactive story drafting session')
   .option('-s, --session <id>', 'Session ID (defaults to active session)')
-  .action(async (options: { session?: string }) => {
+  .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
+  .action(async (options: { session?: string; owner?: string }) => {
     try {
       const storyService = new StoryService();
       let sessionId = options.session;
       if (!sessionId) {
-        const active = await storyService.getActiveSession();
+        const active = await storyService.getActiveSession(options.owner);
         if (!active) {
           console.error(chalk.red('No active story session found.'));
           process.exit(1);
@@ -7984,6 +8019,7 @@ story
           shelfCode: q.shelfCode,
           questionText: q.text,
           answerText: answer,
+          ownerPrincipalId: options.owner,
         });
         console.log(chalk.green('  ✅ Saved and synced.'));
       }
@@ -8000,10 +8036,11 @@ story
   .command('list')
   .alias('ls')
   .description('List all story sessions')
-  .action(async () => {
+  .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
+  .action(async (options: { owner?: string }) => {
     try {
       const storyService = new StoryService();
-      const sessions = await storyService.listSessions();
+      const sessions = await storyService.listSessions(options.owner);
       if (sessions.length === 0) {
         console.log(chalk.yellow('No story sessions found.'));
         return;
@@ -8025,10 +8062,11 @@ story
 story
   .command('active')
   .description('Show the active story session')
-  .action(async () => {
+  .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
+  .action(async (options: { owner?: string }) => {
     try {
       const storyService = new StoryService();
-      const session = await storyService.getActiveSession();
+      const session = await storyService.getActiveSession(options.owner);
       if (!session) {
         console.log(chalk.yellow('No active story session.'));
         return;
@@ -8048,10 +8086,11 @@ story
 story
   .command('timeline')
   .description('List story timeline events')
-  .action(async () => {
+  .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
+  .action(async (options: { owner?: string }) => {
     try {
       const storyService = new StoryService();
-      const events = await storyService.listTimelineEvents();
+      const events = await storyService.listTimelineEvents(options.owner);
       if (events.length === 0) {
         console.log(chalk.yellow('No story timeline events found.'));
         return;
@@ -8083,12 +8122,17 @@ story
   .option('-s, --session <id>', 'Session ID (defaults to active session)')
   .option('-r, --ring <number>', 'Ring depth (1-5)', '1')
   .option('--shelf <code >', 'Shelf code', 'GEN')
-  .action(async (answer: string, options: { question: string; session?: string; ring: string; shelf: string }) => {
+  .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
+  .action(
+    async (
+      answer: string,
+      options: { question: string; session?: string; ring: string; shelf: string; owner?: string }
+    ) => {
     try {
       const storyService = new StoryService();
       let sessionId = options.session;
       if (!sessionId) {
-        const active = await storyService.getActiveSession();
+        const active = await storyService.getActiveSession(options.owner);
         if (!active) {
           console.error(chalk.red('No active session found. Please specify --session <id>.'));
           process.exit(1);
@@ -8108,6 +8152,7 @@ story
         shelfCode: options.shelf,
         questionText: options.question,
         answerText: answer,
+        ownerPrincipalId: options.owner,
       });
 
       console.log(chalk.green('✅ Story insight captured and synced to timeline.'));

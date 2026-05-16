@@ -1,32 +1,22 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-16T22:00:42.875Z`  
-Handoff ID: `befe9583-c01c-4eff-aea3-52afa013a1ed`
+Created At: `2026-05-16T23:21:16.567Z`  
+Handoff ID: `a4d29772-5f90-4ed8-b410-26ea89b9c3df`
 
 ## Scope
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `1d29a998ffe725347b93cc04d7b716fa484a0430`
+- Head SHA: `10f16e7ac6846dd8613b4d0f4d3b65984cfc2f47`
 - Sensitive Scope: `internal`
 
 ## Work Summary
-- Implemented interactive Story Architect CLI palette with cross-app timeline sync alignment
+- Finalized Story Architect CLI with 'doctor' diagnostics and Codex-aligned linkage
 
 ## Changed Paths
-- .pnpmfile.cjs
-- apps/api/src/modules/unified-ledger/test-db-connection.ts
-- package.json
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/RedisAgentClient.ts
+- apps/api/src/modules/unified-ledger/unified-ledger.service.ts
 - packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/index.ts
-- packages/tnf-cli/src/services/PermissionService.ts
 - packages/tnf-cli/src/services/StoryService.ts
-- pnpm-lock.yaml
-- scripts/install-tnf-cli.sh
-- test-timeline-events.cjs
-- tnf
 
 ## Verification
 - privacy_guard: `pass`
@@ -45,5 +35,4 @@ Handoff ID: `befe9583-c01c-4eff-aea3-52afa013a1ed`
 - Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-- Monitor production sync after CI/CD completion
-- Add more advanced drafting templates to StoryService
+- User must export SUPABASE_SERVICE_ROLE_KEY to enable end-to-end CLI captures

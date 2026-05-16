@@ -1908,20 +1908,38 @@ export class UnifiedLedgerService implements OnModuleInit {
     if (params.eventType && params.eventType !== 'historical_event') return [];
 
     try {
+      const predicates = [
+        sql`(s.user_id::text = ${params.ownerUserId} OR s.owner_principal_id = ${params.ownerUserId})`,
+      ];
+
+      if (params.dateFrom) {
+        predicates.push(sql`e.event_date >= ${params.dateFrom}::timestamptz::date`);
+      }
+      if (params.dateTo) {
+        predicates.push(sql`e.event_date <= ${params.dateTo}::timestamptz::date`);
+      }
+      if (params.actor) {
+        predicates.push(sql`LOWER(COALESCE(e.source_type, '')) = LOWER(${params.actor})`);
+      }
+
+      const whereSql = predicates.reduce((acc, predicate) => sql`${acc} AND ${predicate}`, sql`true`);
+
       const rows = (await this.db.client.execute(
         sql`
           SELECT
-            id::text,
-            session_id::text,
-            era,
-            event_date::text,
-            title,
-            description,
-            source_type,
-            tags,
-            created_at::text
-          FROM public.timeline_events
-          ORDER BY event_date DESC
+            e.id::text AS id,
+            e.session_id::text AS session_id,
+            e.era AS era,
+            e.event_date::text AS event_date,
+            e.title AS title,
+            e.description AS description,
+            e.source_type AS source_type,
+            e.tags AS tags,
+            e.created_at::text AS created_at
+          FROM public.timeline_events e
+          INNER JOIN public.story_sessions s ON s.id = e.session_id
+          WHERE ${whereSql}
+          ORDER BY e.event_date DESC, e.created_at DESC
           LIMIT 5000
         `
       )) as Array<{
@@ -1938,8 +1956,7 @@ export class UnifiedLedgerService implements OnModuleInit {
 
       if (!rows.length) return [];
       const total = Math.max(1, rows.length - 1);
-
-      return rows.map((row, index) => {
+      const events = rows.map((row, index) => {
         let track = 'new_fuse_novel_development';
         let project = 'The New Fuse (Novel)';
 
@@ -1978,7 +1995,19 @@ export class UnifiedLedgerService implements OnModuleInit {
           },
         } as TimelineEvent;
       });
+
+      if (params.timelineTrack) {
+        const wantedTrack = params.timelineTrack.toLowerCase();
+        return events.filter((event) => {
+          const payload = this.safeJsonObject(event.payload);
+          const track = String(payload.timelineTrack || payload.segment || '').toLowerCase();
+          return track === wantedTrack;
+        });
+      }
+
+      return events;
     } catch (error) {
+      this.logger.warn(`Failed loading public timeline events: ${(error as Error).message}`);
       return [];
     }
   }
