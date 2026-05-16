@@ -1896,6 +1896,42 @@ export class UnifiedLedgerService implements OnModuleInit {
     );
   }
 
+  private extractStoryArchitectSourceRefs(
+    sessionId: string,
+    tagsInput: unknown
+  ): { evidenceRefs: string[]; sourceQuestionId?: number } {
+    const refs = new Set<string>();
+    const normalizedSessionId = typeof sessionId === 'string' ? sessionId.trim() : '';
+    if (normalizedSessionId) {
+      refs.add(`session:${normalizedSessionId}`);
+    }
+
+    let sourceQuestionId: number | undefined;
+    for (const rawTag of this.safeJsonStringArray(tagsInput)) {
+      const tag = rawTag.trim();
+      if (!tag) continue;
+      const normalizedTag = tag.toLowerCase();
+
+      if (normalizedTag.startsWith('session:')) {
+        const value = tag.slice('session:'.length).trim();
+        if (value) refs.add(`session:${value}`);
+        continue;
+      }
+
+      if (normalizedTag.startsWith('question:')) {
+        const value = tag.slice('question:'.length).trim();
+        if (!value) continue;
+        refs.add(`question:${value}`);
+        if (sourceQuestionId === undefined && /^\d+$/.test(value)) {
+          sourceQuestionId = Number.parseInt(value, 10);
+        }
+      }
+    }
+
+    const evidenceRefs = Array.from(refs);
+    return sourceQuestionId === undefined ? { evidenceRefs } : { evidenceRefs, sourceQuestionId };
+  }
+
   private async listPublicTimelineEvents(params: {
     ownerUserId: string;
     dateFrom?: string;
@@ -1950,13 +1986,17 @@ export class UnifiedLedgerService implements OnModuleInit {
         title: string;
         description: string;
         source_type: string;
-        tags: string[];
+        tags: string[] | null;
         created_at: string;
       }>;
 
       if (!rows.length) return [];
       const total = Math.max(1, rows.length - 1);
       const events = rows.map((row, index) => {
+        const { evidenceRefs, sourceQuestionId } = this.extractStoryArchitectSourceRefs(
+          row.session_id,
+          row.tags
+        );
         let track = 'new_fuse_novel_development';
         let project = 'The New Fuse (Novel)';
 
@@ -1985,11 +2025,13 @@ export class UnifiedLedgerService implements OnModuleInit {
             timelineCategory: 'Story Architect',
             project,
             confidence: 'strong',
-            evidenceRefs: [`session:${row.session_id}`],
-            sources: [],
+            evidenceRefs,
+            sources: evidenceRefs,
             source: 'public.timeline_events',
             era: row.era,
-            tags: row.tags,
+            tags: Array.isArray(row.tags) ? row.tags : [],
+            sourceQuestionId,
+            sourceSessionId: row.session_id,
             accessScope: 'owner_and_agents',
             isPrivate: true,
           },

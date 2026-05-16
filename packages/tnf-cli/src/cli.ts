@@ -7964,18 +7964,43 @@ story
   });
 
 story
+  .command('create')
+  .description('Create a new story drafting session')
+  .argument('<title>', 'Session title')
+  .option('-d, --description <text>', 'Session description')
+  .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
+  .action(async (title: string, options: { description?: string; owner?: string }) => {
+    try {
+      const storyService = new StoryService();
+      const session = await storyService.createSession({
+        title,
+        description: options.description,
+        ownerPrincipalId: options.owner,
+      });
+
+      console.log(chalk.green(`✅ Story session created: ${chalk.bold(session.id)}`));
+      console.log(chalk.dim('  Run `tnf story draft` to start answering questions.\n'));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+story
   .command('draft')
-  .description('Start an interactive story drafting session')
+  .alias('resume')
+  .description('Start or resume an interactive story drafting session')
   .option('-s, --session <id>', 'Session ID (defaults to active session)')
   .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
-  .action(async (options: { session?: string; owner?: string }) => {
+  .option('--all', 'Include already answered questions', false)
+  .action(async (options: { session?: string; owner?: string; all?: boolean }) => {
     try {
       const storyService = new StoryService();
       let sessionId = options.session;
       if (!sessionId) {
         const active = await storyService.getActiveSession(options.owner);
         if (!active) {
-          console.error(chalk.red('No active story session found.'));
+          console.error(chalk.red('No active story session found. Create one with `tnf story create`.'));
           process.exit(1);
         }
         sessionId = active.id;
@@ -7983,23 +8008,24 @@ story
 
       console.log(chalk.bold.magenta('\n  Welcome to Story Architect Interactive Drafting'));
       console.log(chalk.dim('  Session: ' + sessionId));
-      console.log(chalk.dim('  Type "exit" to quit at any time.\n'));
+      console.log(chalk.dim('  Type "exit" to quit, press Enter to skip.\n'));
 
-      const questions = [
-        { id: 1, ring: 1, text: "What was the emotional catalyst for starting TNF in May 2025?", shelfCode: '000' },
-        { id: 2, ring: 1, text: "Why 'The New Fuse'? What does the name mean to you?", shelfCode: '000' },
-        { id: 3, ring: 1, text: "What is the connecting thread between your 120+ projects?", shelfCode: '300' },
-        { id: 4, ring: 2, text: "What happened between June and August 2025? The git history goes quiet.", shelfCode: '900' },
-        { id: 5, ring: 2, text: "What is the Crystal of Consciousness?", shelfCode: '100' },
-        { id: 10, ring: 4, text: "Every project follows Build→Crisis→Fix→Evolve. Is this conscious methodology?", shelfCode: '500' },
-      ];
+      const allQuestions = storyService.getQuestions();
+      const capturedIds = options.all ? [] : await storyService.getCapturedQuestionIds(sessionId);
+      const remainingQuestions = allQuestions.filter(q => !capturedIds.includes(q.id));
+
+      if (remainingQuestions.length === 0) {
+        console.log(chalk.green('  All questions have been answered for this session!'));
+        console.log(chalk.dim('  Use --all to review or overwrite previous answers.\n'));
+        return;
+      }
 
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
       });
 
-      for (const q of questions) {
+      for (const q of remainingQuestions) {
         const answer: string = await new Promise((resolve) => {
           console.log(chalk.bold.cyan(`\n  [Era ${q.ring}] ${q.text}`));
           rl.question(chalk.green('  Answer: '), (input) => resolve(input));

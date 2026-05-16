@@ -79,6 +79,72 @@ export class StoryService {
     return sessions.find(s => s.status === 'active') || null;
   }
 
+  async createSession(params: {
+    title: string;
+    description?: string;
+    ownerPrincipalId?: string;
+  }): Promise<StorySession> {
+    const resolvedOwner = this.resolveOwnerPrincipalId(params.ownerPrincipalId);
+    
+    const { data, error } = await this.supabase
+      .from('story_sessions')
+      .insert({
+        title: params.title,
+        description: params.description,
+        owner_principal_id: resolvedOwner,
+        status: 'active',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (error) throw this.wrapSupabaseError('create story session', error);
+    return data;
+  }
+
+  getQuestions(): StoryQuestion[] {
+    return [
+      { id: 1, ring: 1, text: "What was the emotional catalyst for starting TNF in May 2025?", answer: '', captured: false, shelfCode: '000', ddcLabel: 'Computer Science & General Works' },
+      { id: 2, ring: 1, text: "Why 'The New Fuse'? What does the name mean to you?", answer: '', captured: false, shelfCode: '000', ddcLabel: 'Computer Science & General Works' },
+      { id: 3, ring: 1, text: "What is the connecting thread between your 120+ projects?", answer: '', captured: false, shelfCode: '300', ddcLabel: 'Social Sciences' },
+      { id: 4, ring: 2, text: "What happened between June and August 2025? The git history goes quiet.", answer: '', captured: false, shelfCode: '900', ddcLabel: 'History & Geography' },
+      { id: 5, ring: 2, text: "What is the Crystal of Consciousness? It's both a philosophy book and a synth preset.", answer: '', captured: false, shelfCode: '100', ddcLabel: 'Philosophy & Psychology' },
+      { id: 6, ring: 2, text: "What is the empire's SECRET — the thing it tells itself about itself that isn't true?", answer: '', captured: false, shelfCode: '100', ddcLabel: 'Philosophy & Psychology' },
+      { id: 7, ring: 3, text: "You have 8 books but only TNF is monetized. Why haven't you monetized the books?", answer: '', captured: false, shelfCode: '800', ddcLabel: 'Literature' },
+      { id: 8, ring: 3, text: "Aeon and EXTREAMIX seem related. Are they the same vision?", answer: '', captured: false, shelfCode: '600', ddcLabel: 'Technology' },
+      { id: 9, ring: 3, text: "Where do Aeon (blockchain freedom) and TNF (centralized orchestration) agree?", answer: '', captured: false, shelfCode: '200', ddcLabel: 'Religion' },
+      { id: 10, ring: 4, text: "Every project follows Build→Crisis→Fix→Evolve. Is this conscious methodology?", answer: '', captured: false, shelfCode: '500', ddcLabel: 'Science' },
+      { id: 11, ring: 4, text: "What is this story REALLY about — not the plot, the theme?", answer: '', captured: false, shelfCode: '800', ddcLabel: 'Literature' },
+      { id: 12, ring: 4, text: "What would this story look like told from the antagonist's perspective?", answer: '', captured: false, shelfCode: '100', ddcLabel: 'Philosophy & Psychology' },
+      { id: 13, ring: 5, text: "What part of this story are you AVOIDING?", answer: '', captured: false, shelfCode: '100', ddcLabel: 'Philosophy & Psychology' },
+      { id: 14, ring: 5, text: "What do you want the reader to FEEL when they finish this book?", answer: '', captured: false, shelfCode: '700', ddcLabel: 'Arts & Recreation' },
+      { id: 15, ring: 5, text: "What is the story you're telling yourself by telling this story?", answer: '', captured: false, shelfCode: '400', ddcLabel: 'Language' },
+    ];
+  }
+
+  async getCapturedQuestionIds(sessionId: string): Promise<number[]> {
+    const { data, error } = await this.supabase
+      .from('timeline_events')
+      .select('tags')
+      .eq('session_id', sessionId);
+
+    if (error) throw this.wrapSupabaseError('fetch captured questions', error);
+    
+    const ids: number[] = [];
+    for (const row of data || []) {
+      if (Array.isArray(row.tags)) {
+        for (const tag of row.tags) {
+          if (tag.startsWith('question:')) {
+            const id = parseInt(tag.split(':')[1], 10);
+            if (!isNaN(id)) ids.push(id);
+          }
+        }
+      }
+    }
+    return ids;
+  }
+
   async listTimelineEvents(ownerPrincipalId?: string): Promise<StoryTimelineEvent[]> {
     const resolvedOwner = this.resolveOwnerPrincipalId(ownerPrincipalId);
     const sessions = await this.listSessions(resolvedOwner);
@@ -117,12 +183,12 @@ export class StoryService {
     try {
       const { error: sessionError } = await this.supabase
         .from('story_sessions')
-        .select('*', { count: 'exact', head: true })
+        .select('id')
         .limit(1);
       if (sessionError) {
         result.story_sessions = { ok: false, message: this.extractErrorMessage(sessionError) };
       } else {
-        result.story_sessions = { ok: true, message: 'Access granted' };
+        result.story_sessions = { ok: true, message: 'SELECT access granted' };
       }
     } catch (e: any) {
       result.story_sessions = { ok: false, message: e.message };
@@ -131,12 +197,12 @@ export class StoryService {
     try {
       const { error: eventError } = await this.supabase
         .from('timeline_events')
-        .select('*', { count: 'exact', head: true })
+        .select('id')
         .limit(1);
       if (eventError) {
         result.timeline_events = { ok: false, message: this.extractErrorMessage(eventError) };
       } else {
-        result.timeline_events = { ok: true, message: 'Access granted' };
+        result.timeline_events = { ok: true, message: 'SELECT access granted' };
       }
     } catch (e: any) {
       result.timeline_events = { ok: false, message: e.message };
@@ -232,8 +298,32 @@ export class StoryService {
   }
 
   private extractErrorMessage(error: any): string {
+    const parts: string[] = [];
     if (typeof error?.message === 'string' && error.message.trim().length > 0) {
-      return error.message.trim();
+      parts.push(error.message.trim());
+    }
+    if (typeof error?.details === 'string' && error.details.trim().length > 0) {
+      parts.push(`details: ${error.details.trim()}`);
+    }
+    if (typeof error?.hint === 'string' && error.hint.trim().length > 0) {
+      parts.push(`hint: ${error.hint.trim()}`);
+    }
+    if (typeof error?.code === 'string' && error.code.trim().length > 0) {
+      parts.push(`code: ${error.code.trim()}`);
+    }
+    if (typeof error?.status === 'number') {
+      parts.push(`status: ${error.status}`);
+    }
+    if (parts.length > 0) {
+      return parts.join(' | ');
+    }
+    try {
+      const serialized = JSON.stringify(error);
+      if (serialized && serialized !== '{}') {
+        return serialized;
+      }
+    } catch {
+      // ignore JSON stringify failures
     }
     return 'Unknown Supabase error';
   }
