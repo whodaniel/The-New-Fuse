@@ -6,6 +6,7 @@ import {
   bootstrapPersonalTimeline,
   createTimelineEvent,
   deleteTimelineEvent,
+  getApiErrorMessage,
   getGithubNarrativeGraph,
   importGithubTimelineNarrative,
   listTimelineEvents,
@@ -302,8 +303,8 @@ export default function TimelinePage() {
       } else if (rows.length === 0) {
         await runBootstrap(true);
       }
-    } catch {
-      toast.error('Failed to load your timeline');
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to load your timeline'));
       setEvents([]);
       setSelectedId(null);
     } finally {
@@ -315,9 +316,9 @@ export default function TimelinePage() {
         ownerScopeId ? { ownerId: ownerScopeId } : undefined
       );
       setNarrativeGraph(graph);
-    } catch {
+    } catch (error) {
       setNarrativeGraph(null);
-      toast.error('Timeline graph unavailable');
+      toast.error(getApiErrorMessage(error, 'Timeline graph unavailable'));
     } finally {
       setGraphLoading(false);
     }
@@ -766,7 +767,9 @@ export default function TimelinePage() {
               role="region"
               aria-live="polite"
               aria-atomic="true"
-              aria-label={selectedPayload ? `Selected milestone ${selectedPayload.title}` : undefined}
+              aria-label={
+                selectedPayload ? `Selected milestone ${selectedPayload.title}` : undefined
+              }
               className="rounded-md border border-slate-700 bg-slate-950/40 p-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between animate-in fade-in slide-in-from-left-2 duration-300"
             >
               <div className="space-y-1">
@@ -882,7 +885,10 @@ export default function TimelinePage() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-10 text-center space-y-2" role="status">
+            <div
+              className="flex flex-col items-center justify-center py-10 text-center space-y-2"
+              role="status"
+            >
               <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-500">
                 <Calendar className="w-6 h-6" />
               </div>
@@ -1022,7 +1028,10 @@ export default function TimelinePage() {
                   >
                     Timeline Position
                   </Label>
-                  <span id="timeline-create-point-value" className="text-amber-400 font-mono font-bold text-sm">
+                  <span
+                    id="timeline-create-point-value"
+                    className="text-amber-400 font-mono font-bold text-sm"
+                  >
                     {createForm.point}%
                   </span>
                 </div>
@@ -1150,7 +1159,10 @@ export default function TimelinePage() {
                     >
                       Position
                     </Label>
-                    <span id="timeline-edit-point-value" className="text-sky-400 font-mono font-bold text-sm">
+                    <span
+                      id="timeline-edit-point-value"
+                      className="text-sky-400 font-mono font-bold text-sm"
+                    >
                       {editForm.point}%
                     </span>
                   </div>

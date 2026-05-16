@@ -152,6 +152,7 @@ function buildApiBaseCandidates(relativeBases: readonly string[]): string[] {
 
 const TIMELINE_API_BASES = buildApiBaseCandidates([
   '/api/unified-ledger/timeline',
+  '/api/unified-ledger/unified-ledger/timeline',
   '/api/timeline',
 ] as const);
 const RECORD_API_BASES = buildApiBaseCandidates([
@@ -177,7 +178,10 @@ function isJsonLikeResponse(response: Response): boolean {
   );
 }
 
-async function apiFetchWithFallback(pathCandidates: readonly string[], init?: RequestInit): Promise<Response> {
+async function apiFetchWithFallback(
+  pathCandidates: readonly string[],
+  init?: RequestInit
+): Promise<Response> {
   if (pathCandidates.length === 0) {
     throw new Error('No API path candidates provided');
   }
@@ -214,6 +218,36 @@ async function timelineApiFetch(path: string, init?: RequestInit): Promise<Respo
   return apiFetchWithFallback(candidates, init);
 }
 
+export class ApiResponseError extends Error {
+  status: number;
+  body: string;
+
+  constructor(status: number, body: string, fallbackMessage: string) {
+    const compactBody = body.replace(/\s+/g, ' ').trim();
+    super(compactBody || fallbackMessage);
+    this.name = 'ApiResponseError';
+    this.status = status;
+    this.body = body;
+  }
+}
+
+export function getApiErrorMessage(error: unknown, fallback = 'Request failed'): string {
+  if (error instanceof ApiResponseError) {
+    const raw = (error.body || error.message || '').replace(/\s+/g, ' ').trim();
+    if (!raw) return `${fallback} (${error.status})`;
+    if (raw.length > 180) return `${fallback} (${error.status})`;
+    return `${fallback}: ${raw}`;
+  }
+
+  if (error instanceof Error) {
+    const raw = error.message.replace(/\s+/g, ' ').trim();
+    if (!raw || raw.length > 180) return fallback;
+    return `${fallback}: ${raw}`;
+  }
+
+  return fallback;
+}
+
 function getStoredAuthToken(): string | null {
   if (typeof window === 'undefined') {
     return null;
@@ -233,46 +267,79 @@ function getStoredAuthToken(): string | null {
   );
 }
 
-async function getAuthHeaders(): Promise<Record<string, string>> {
-  const storedToken = getStoredAuthToken();
-  if (storedToken) {
-    return { Authorization: `Bearer ${storedToken}` };
-  }
-
+async function getAuthTokenCandidates(): Promise<string[]> {
+  const tokens: string[] = [];
   if (!hasSupabaseConfig || !supabase) {
-    return {};
+    const storedToken = getStoredAuthToken();
+    return storedToken ? [storedToken] : [];
   }
 
   try {
     const { data, error } = await supabase.auth.getSession();
     if (!error && data?.session?.access_token) {
-      return { Authorization: `Bearer ${data.session.access_token}` };
+      tokens.push(data.session.access_token);
     }
   } catch {
-    // Fall through to unauthenticated request so caller can handle response status.
+    // Fall through to stored token and unauthenticated request so caller can handle response status.
   }
 
-  return {};
+  const storedToken = getStoredAuthToken();
+  if (storedToken) {
+    tokens.push(storedToken);
+  }
+
+  return Array.from(new Set(tokens));
 }
 
 async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-  const authHeaders = await getAuthHeaders();
-  const mergedHeaders = {
-    ...authHeaders,
-    ...(init?.headers as Record<string, string> | undefined),
-  };
+  const baseHeaders = new Headers(init?.headers);
+  if (baseHeaders.has('Authorization')) {
+    return fetch(input, {
+      ...init,
+      headers: baseHeaders,
+      credentials: 'include',
+    });
+  }
 
-  return fetch(input, {
-    ...init,
-    headers: mergedHeaders,
-    credentials: 'include',
-  });
+  const tokenCandidates = await getAuthTokenCandidates();
+  const authOptions = tokenCandidates.length > 0 ? tokenCandidates : [null];
+
+  let lastResponse: Response | null = null;
+  for (let i = 0; i < authOptions.length; i += 1) {
+    const token = authOptions[i];
+    const headers = new Headers(baseHeaders);
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    const response = await fetch(input, {
+      ...init,
+      headers,
+      credentials: 'include',
+    });
+    lastResponse = response;
+
+    const canRetryAuth = i < authOptions.length - 1;
+    if ((response.status === 401 || response.status === 403) && canRetryAuth) {
+      continue;
+    }
+    return response;
+  }
+
+  return (
+    lastResponse ||
+    fetch(input, {
+      ...init,
+      headers: baseHeaders,
+      credentials: 'include',
+    })
+  );
 }
 
 async function parse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(text || `Request failed with ${res.status}`);
+    throw new ApiResponseError(res.status, text, `Request failed with ${res.status}`);
   }
   return res.json();
 }
@@ -311,6 +378,155 @@ function unwrapArrayPayload<T>(payload: unknown, keys: string[] = []): T[] {
   return [];
 }
 
+const LOCAL_TIMELINE_STORAGE_KEY = 'tnf.local.timeline.v1';
+
+type LocalTimelineSnapshot = {
+  events: TimelineEvent[];
+};
+
+function isTimelineRouteUnavailable(error: unknown): boolean {
+  if (!(error instanceof ApiResponseError)) return false;
+  if (error.status !== 404) return false;
+  const body = `${error.body || ''} ${error.message || ''}`.toLowerCase();
+  return /cannot\s+(get|post|patch|delete)/i.test(body);
+}
+
+function readLocalTimelineSnapshot(): LocalTimelineSnapshot {
+  if (typeof window === 'undefined') {
+    return { events: [] };
+  }
+
+  try {
+    const raw = localStorage.getItem(LOCAL_TIMELINE_STORAGE_KEY);
+    if (!raw) return { events: [] };
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return { events: [] };
+    }
+    const eventCandidates = (parsed as Record<string, unknown>).events;
+    if (!Array.isArray(eventCandidates)) return { events: [] };
+    const events = eventCandidates
+      .filter((value): value is TimelineEvent => {
+        if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+        const row = value as Record<string, unknown>;
+        return (
+          typeof row.id === 'string' &&
+          typeof row.eventType === 'string' &&
+          typeof row.actor === 'string' &&
+          typeof row.timestamp === 'string'
+        );
+      })
+      .map((value) => ({
+        ...value,
+        payload:
+          value.payload && typeof value.payload === 'object' && !Array.isArray(value.payload)
+            ? value.payload
+            : {},
+      }));
+    return { events };
+  } catch {
+    return { events: [] };
+  }
+}
+
+function writeLocalTimelineSnapshot(snapshot: LocalTimelineSnapshot): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(LOCAL_TIMELINE_STORAGE_KEY, JSON.stringify(snapshot));
+}
+
+function resolveTimelineOwnerId(params?: { ownerId?: string; userId?: string }): string | null {
+  const ownerId = params?.ownerId?.trim();
+  if (ownerId) return ownerId;
+  const userId = params?.userId?.trim();
+  if (userId) return userId;
+  return null;
+}
+
+function filterLocalTimelineEvents(
+  rows: TimelineEvent[],
+  params?: {
+    ownerId?: string;
+    userId?: string;
+    recordId?: string;
+    goalId?: string;
+    planId?: string;
+    eventType?: string;
+    actor?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    timelineTrack?: string;
+  }
+): TimelineEvent[] {
+  const ownerId = resolveTimelineOwnerId(params);
+  const from = params?.dateFrom || '';
+  const to = params?.dateTo || '';
+  const timelineTrack = params?.timelineTrack?.toLowerCase() || '';
+
+  return rows
+    .filter((event) => (ownerId ? event.userId === ownerId : true))
+    .filter((event) => (params?.recordId ? event.recordId === params.recordId : true))
+    .filter((event) => (params?.goalId ? event.goalId === params.goalId : true))
+    .filter((event) => (params?.planId ? event.planId === params.planId : true))
+    .filter((event) => (params?.eventType ? event.eventType === params.eventType : true))
+    .filter((event) => (params?.actor ? event.actor === params.actor : true))
+    .filter((event) => (from ? event.timestamp >= from : true))
+    .filter((event) => (to ? event.timestamp <= to : true))
+    .filter((event) => {
+      if (!timelineTrack) return true;
+      const payload = (event.payload || {}) as Record<string, unknown>;
+      const track = String(payload.timelineTrack || payload.segment || '').toLowerCase();
+      return track === timelineTrack;
+    })
+    .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+}
+
+function generateLocalTimelineEventId(): string {
+  return `evt_local_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function parseJwtPayload(token: string): Record<string, unknown> | null {
+  const parts = token.split('.');
+  if (parts.length < 2) return null;
+  try {
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
+    const raw = atob(padded);
+    const decoded = JSON.parse(raw) as unknown;
+    if (!decoded || typeof decoded !== 'object' || Array.isArray(decoded)) return null;
+    return decoded as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+async function inferCurrentUserId(): Promise<string | null> {
+  if (hasSupabaseConfig && supabase) {
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (!error && data?.user?.id) {
+        return data.user.id;
+      }
+    } catch {
+      // Fall through to token inspection.
+    }
+  }
+
+  const tokens = await getAuthTokenCandidates();
+  for (const token of tokens) {
+    const payload = parseJwtPayload(token);
+    const sub = typeof payload?.sub === 'string' ? payload.sub : null;
+    if (sub && sub.trim().length > 0) {
+      return sub.trim();
+    }
+    const userId = typeof payload?.user_id === 'string' ? payload.user_id : null;
+    if (userId && userId.trim().length > 0) {
+      return userId.trim();
+    }
+  }
+
+  return null;
+}
+
 export async function listTasks(): Promise<LedgerRecord[]> {
   return parse<LedgerRecord[]>(await apiFetch('/api/unified-ledger/tasks'));
 }
@@ -335,9 +551,7 @@ export async function getRecordConnections(
 ): Promise<RecordConnections> {
   const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
   const candidates = RECORD_API_BASES.map((base) => `${base}/${recordId}/connections${suffix}`);
-  return parse<RecordConnections>(
-    await apiFetchWithFallback(candidates)
-  );
+  return parse<RecordConnections>(await apiFetchWithFallback(candidates));
 }
 
 export async function updateRecord(
@@ -433,14 +647,28 @@ export async function listTimelineEvents(params?: {
   if (params?.dateTo) search.set('dateTo', params.dateTo);
   if (params?.timelineTrack) search.set('timelineTrack', params.timelineTrack);
   const suffix = search.toString() ? `?${search.toString()}` : '';
-  const payload = await parse<unknown>(await timelineApiFetch(`/events${suffix}`));
-  return unwrapArrayPayload<TimelineEvent>(payload, ['events', 'items']);
+  try {
+    const payload = await parse<unknown>(await timelineApiFetch(`/events${suffix}`));
+    return unwrapArrayPayload<TimelineEvent>(payload, ['events', 'items']);
+  } catch (error) {
+    if (!isTimelineRouteUnavailable(error)) {
+      throw error;
+    }
+    return filterLocalTimelineEvents(readLocalTimelineSnapshot().events, params);
+  }
 }
 
 export async function getTimelineEvent(id: string, userId?: string): Promise<TimelineEvent | null> {
-  void userId;
-  const payload = await parse<unknown>(await timelineApiFetch(`/events/${id}`));
-  return unwrapEnvelope<TimelineEvent | null>(payload);
+  try {
+    void userId;
+    const payload = await parse<unknown>(await timelineApiFetch(`/events/${id}`));
+    return unwrapEnvelope<TimelineEvent | null>(payload);
+  } catch (error) {
+    if (!isTimelineRouteUnavailable(error)) {
+      throw error;
+    }
+    return readLocalTimelineSnapshot().events.find((event) => event.id === id) || null;
+  }
 }
 
 export async function createTimelineEvent(input: {
@@ -453,37 +681,106 @@ export async function createTimelineEvent(input: {
   timestamp?: string;
   payload?: Record<string, unknown>;
 }): Promise<TimelineEvent> {
-  const payload = await parse<unknown>(
-    await timelineApiFetch('/events', {
-      method: 'POST',
-      headers: JSON_HEADERS,
-      body: JSON.stringify(input),
-    })
-  );
-  return unwrapEnvelope<TimelineEvent>(payload);
+  try {
+    const payload = await parse<unknown>(
+      await timelineApiFetch('/events', {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify(input),
+      })
+    );
+    return unwrapEnvelope<TimelineEvent>(payload);
+  } catch (error) {
+    if (!isTimelineRouteUnavailable(error)) {
+      throw error;
+    }
+
+    const snapshot = readLocalTimelineSnapshot();
+    const fallbackUserId = input.userId || (await inferCurrentUserId()) || undefined;
+    const event: TimelineEvent = {
+      id: generateLocalTimelineEventId(),
+      userId: fallbackUserId,
+      recordId: input.recordId,
+      goalId: input.goalId,
+      planId: input.planId,
+      eventType: input.eventType || 'historical_event',
+      actor: input.actor || fallbackUserId || 'ui-user',
+      timestamp: input.timestamp || new Date().toISOString(),
+      payload:
+        input.payload && typeof input.payload === 'object' && !Array.isArray(input.payload)
+          ? input.payload
+          : {},
+    };
+
+    snapshot.events.push(event);
+    writeLocalTimelineSnapshot(snapshot);
+    return event;
+  }
 }
 
 export async function updateTimelineEvent(
   id: string,
   input: { userId?: string; actor?: string; timestamp?: string; payload?: Record<string, unknown> }
 ): Promise<TimelineEvent | null> {
-  const payload = await parse<unknown>(
-    await timelineApiFetch(`/events/${id}`, {
-      method: 'PATCH',
-      headers: JSON_HEADERS,
-      body: JSON.stringify(input),
-    })
-  );
-  return unwrapEnvelope<TimelineEvent | null>(payload);
+  try {
+    const payload = await parse<unknown>(
+      await timelineApiFetch(`/events/${id}`, {
+        method: 'PATCH',
+        headers: JSON_HEADERS,
+        body: JSON.stringify(input),
+      })
+    );
+    return unwrapEnvelope<TimelineEvent | null>(payload);
+  } catch (error) {
+    if (!isTimelineRouteUnavailable(error)) {
+      throw error;
+    }
+
+    const snapshot = readLocalTimelineSnapshot();
+    const idx = snapshot.events.findIndex((event) => event.id === id);
+    if (idx < 0) return null;
+
+    const current = snapshot.events[idx];
+    if (input.userId && current.userId && current.userId !== input.userId) {
+      return null;
+    }
+
+    const updated: TimelineEvent = {
+      ...current,
+      actor: input.actor || current.actor,
+      timestamp: input.timestamp || current.timestamp,
+      payload: input.payload ? { ...current.payload, ...input.payload } : current.payload,
+    };
+
+    snapshot.events[idx] = updated;
+    writeLocalTimelineSnapshot(snapshot);
+    return updated;
+  }
 }
 
 export async function deleteTimelineEvent(id: string, userId?: string): Promise<boolean> {
-  void userId;
-  return parse<boolean>(
-    await timelineApiFetch(`/events/${id}`, {
-      method: 'DELETE',
-    })
-  );
+  try {
+    void userId;
+    return parse<boolean>(
+      await timelineApiFetch(`/events/${id}`, {
+        method: 'DELETE',
+      })
+    );
+  } catch (error) {
+    if (!isTimelineRouteUnavailable(error)) {
+      throw error;
+    }
+
+    const snapshot = readLocalTimelineSnapshot();
+    const idx = snapshot.events.findIndex((event) => event.id === id);
+    if (idx < 0) return false;
+    if (userId && snapshot.events[idx].userId && snapshot.events[idx].userId !== userId) {
+      return false;
+    }
+    snapshot.events.splice(idx, 1);
+    writeLocalTimelineSnapshot(snapshot);
+    return true;
+  }
 }
 
 export async function bootstrapPersonalTimeline(): Promise<{
@@ -492,18 +789,116 @@ export async function bootstrapPersonalTimeline(): Promise<{
   totalCount: number;
   events: TimelineEvent[];
 }> {
-  return parse<{
-    message: string;
-    createdCount: number;
-    totalCount: number;
-    events: TimelineEvent[];
-  }>(
-    await timelineApiFetch('/personal/bootstrap', {
-      method: 'POST',
-      headers: JSON_HEADERS,
-      body: JSON.stringify({}),
-    })
-  );
+  try {
+    return parse<{
+      message: string;
+      createdCount: number;
+      totalCount: number;
+      events: TimelineEvent[];
+    }>(
+      await timelineApiFetch('/personal/bootstrap', {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({}),
+      })
+    );
+  } catch (error) {
+    if (!isTimelineRouteUnavailable(error)) {
+      throw error;
+    }
+
+    const userId = await inferCurrentUserId();
+    const snapshot = readLocalTimelineSnapshot();
+    const existing = filterLocalTimelineEvents(
+      snapshot.events,
+      userId ? { ownerId: userId } : undefined
+    );
+    if (!userId) {
+      return {
+        message: 'Timeline API unavailable; unable to infer current user for bootstrap',
+        createdCount: 0,
+        totalCount: existing.length,
+        events: existing,
+      };
+    }
+    if (existing.length > 0) {
+      return {
+        message: 'Personal timeline segments already exist',
+        createdCount: 0,
+        totalCount: existing.length,
+        events: existing,
+      };
+    }
+
+    const now = Date.now();
+    const seed = [
+      {
+        title: 'Identity Foundation',
+        description: 'Core identity context and baseline personal narrative anchor.',
+        point: 5,
+        category: 'Identity',
+        yearOffset: 20,
+      },
+      {
+        title: 'Early Development Milestone',
+        description: 'Foundational growth period and early personal development signals.',
+        point: 20,
+        category: 'Education',
+        yearOffset: 14,
+      },
+      {
+        title: 'Career Direction Shift',
+        description: 'A major directional shift influencing long-term goals and projects.',
+        point: 42,
+        category: 'Career',
+        yearOffset: 8,
+      },
+      {
+        title: 'Project Acceleration Phase',
+        description: 'Increased execution velocity across business and creative tracks.',
+        point: 64,
+        category: 'Business & Projects',
+        yearOffset: 4,
+      },
+      {
+        title: 'Current Strategic Horizon',
+        description: 'Present-day initiatives and active narrative trajectory.',
+        point: 85,
+        category: 'Legacy',
+        yearOffset: 1,
+      },
+    ] as const;
+
+    const created: TimelineEvent[] = seed.map((row, index) => ({
+      id: generateLocalTimelineEventId(),
+      userId,
+      eventType: 'historical_event',
+      actor: userId,
+      timestamp: new Date(
+        now - row.yearOffset * 365 * 24 * 60 * 60 * 1000 + index * 60_000
+      ).toISOString(),
+      payload: {
+        title: row.title,
+        description: row.description,
+        point: row.point,
+        category: row.category,
+        segment: row.category,
+        source: 'local-bootstrap-fallback',
+        isPrivate: true,
+      },
+    }));
+
+    snapshot.events.push(...created);
+    writeLocalTimelineSnapshot(snapshot);
+
+    const events = filterLocalTimelineEvents(snapshot.events, { ownerId: userId });
+    return {
+      message: `Generated ${created.length} local personal timeline segments`,
+      createdCount: created.length,
+      totalCount: events.length,
+      events,
+    };
+  }
 }
 
 export async function importGithubTimelineNarrative(input?: {
@@ -512,13 +907,35 @@ export async function importGithubTimelineNarrative(input?: {
   replaceExisting?: boolean;
   actor?: string;
 }): Promise<GithubTimelineImportResult> {
-  return parse<GithubTimelineImportResult>(
-    await timelineApiFetch('/github/import', {
-      method: 'POST',
-      headers: JSON_HEADERS,
-      body: JSON.stringify(input || {}),
-    })
-  );
+  try {
+    return parse<GithubTimelineImportResult>(
+      await timelineApiFetch('/github/import', {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify(input || {}),
+      })
+    );
+  } catch (error) {
+    if (!isTimelineRouteUnavailable(error)) {
+      throw error;
+    }
+    const userId = await inferCurrentUserId();
+    const events = filterLocalTimelineEvents(
+      readLocalTimelineSnapshot().events,
+      userId ? { ownerId: userId } : undefined
+    );
+    return {
+      message: 'Timeline API unavailable; GitHub import is not available in fallback mode',
+      importedCount: 0,
+      skippedCount: 0,
+      removedCount: 0,
+      trackSummaries: [],
+      connectionCount: 0,
+      matchedConnectionCount: 0,
+      totalCount: events.length,
+      generatedAt: null,
+    };
+  }
 }
 
 export async function getGithubNarrativeGraph(params?: {
@@ -529,8 +946,103 @@ export async function getGithubNarrativeGraph(params?: {
   if (params?.ownerId) search.set('ownerId', params.ownerId);
   if (params?.timelineTrack) search.set('timelineTrack', params.timelineTrack);
   const suffix = search.toString() ? `?${search.toString()}` : '';
-  const payload = await parse<unknown>(await timelineApiFetch(`/github/graph${suffix}`));
-  return unwrapEnvelope<GithubNarrativeGraphResult>(payload);
+  try {
+    const payload = await parse<unknown>(await timelineApiFetch(`/github/graph${suffix}`));
+    return unwrapEnvelope<GithubNarrativeGraphResult>(payload);
+  } catch (error) {
+    if (!isTimelineRouteUnavailable(error)) {
+      throw error;
+    }
+
+    const events = filterLocalTimelineEvents(readLocalTimelineSnapshot().events, {
+      ownerId: params?.ownerId,
+      timelineTrack: params?.timelineTrack,
+    });
+    const nodeMap = new Map<string, GithubNarrativeGraphNode>();
+    const edgeMap = new Map<string, GithubNarrativeGraphEdge>();
+
+    for (const event of events) {
+      const payload = (event.payload || {}) as Record<string, unknown>;
+      const track = typeof payload.timelineTrack === 'string' ? payload.timelineTrack : '';
+      const project = typeof payload.project === 'string' ? payload.project : '';
+
+      const refs = Array.from(
+        new Set(
+          [
+            ...(Array.isArray(payload.narrativeNodeRefs) ? payload.narrativeNodeRefs : []),
+            ...(Array.isArray(payload.evidenceRefs) ? payload.evidenceRefs : []),
+          ].filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+        )
+      );
+
+      for (const ref of refs) {
+        const current = nodeMap.get(ref) || {
+          id: ref,
+          label: ref,
+          kind: /^[a-z0-9_.-]+\/[a-z0-9_.-]+$/i.test(ref) ? 'repo' : 'reference',
+          tracks: [],
+          projects: [],
+          eventCount: 0,
+        };
+        current.eventCount += 1;
+        if (track && !current.tracks.includes(track)) current.tracks.push(track);
+        if (project && !current.projects.includes(project)) current.projects.push(project);
+        nodeMap.set(ref, current);
+      }
+
+      const connections = Array.isArray(payload.narrativeConnections)
+        ? payload.narrativeConnections
+        : [];
+      for (const candidate of connections) {
+        if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) continue;
+        const row = candidate as Record<string, unknown>;
+        const from = typeof row.from === 'string' ? row.from.trim() : '';
+        const to = typeof row.to === 'string' ? row.to.trim() : '';
+        if (!from || !to) continue;
+        const connectionType =
+          typeof row.connectionType === 'string' && row.connectionType.trim().length > 0
+            ? row.connectionType.trim()
+            : 'related';
+        const strength =
+          typeof row.strength === 'string' && row.strength.trim().length > 0
+            ? row.strength.trim()
+            : 'moderate';
+        const rationale =
+          typeof row.rationale === 'string' && row.rationale.trim().length > 0
+            ? row.rationale.trim()
+            : undefined;
+        const key = `${from}|${to}|${connectionType}`;
+        const current = edgeMap.get(key);
+        if (current) {
+          current.weight += 1;
+          if (!current.rationale && rationale) current.rationale = rationale;
+          continue;
+        }
+        edgeMap.set(key, {
+          from,
+          to,
+          connectionType,
+          weight: 1,
+          rationale,
+          strength,
+        });
+      }
+    }
+
+    return {
+      ownerUserId: params?.ownerId || null,
+      eventCount: events.length,
+      nodeCount: nodeMap.size,
+      edgeCount: edgeMap.size,
+      generatedAt: null,
+      nodes: Array.from(nodeMap.values()).sort((a, b) => a.id.localeCompare(b.id)),
+      edges: Array.from(edgeMap.values()).sort((a, b) => {
+        if (a.from !== b.from) return a.from.localeCompare(b.from);
+        if (a.to !== b.to) return a.to.localeCompare(b.to);
+        return a.connectionType.localeCompare(b.connectionType);
+      }),
+    };
+  }
 }
 
 export async function createGoal(input: {

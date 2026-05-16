@@ -1,20 +1,10 @@
-import {
-  All,
-  Body,
-  Controller,
-  Get,
-  Headers,
-  HttpStatus,
-  Query,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { All, Body, Controller, Get, Headers, HttpStatus, Query, Req, Res } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
 @ApiTags('timeline')
-@Controller('timeline')
+@Controller(['timeline', 'unified-ledger/timeline'])
 export class TimelineGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
@@ -33,7 +23,7 @@ export class TimelineGatewayController {
     query?: Record<string, string>
   ) {
     let lastResponse: { status: number; data: unknown } | null = null;
-    const normalizedSuffix = suffix.startsWith('/') ? suffix : `/${suffix}`;
+    const normalizedSuffix = suffix ? (suffix.startsWith('/') ? suffix : `/${suffix}`) : '';
     for (const serviceName of this.timelineServices) {
       for (const base of this.timelinePathBases) {
         const response = await this.proxyService.proxyRequest(
@@ -54,6 +44,20 @@ export class TimelineGatewayController {
     return lastResponse;
   }
 
+  private extractTimelineSuffix(originalUrl: string): string {
+    const withoutQuery = originalUrl.split('?')[0] || '';
+    const match = withoutQuery.match(
+      /^\/api(?:\/v\d+)?\/(?:timeline|unified-ledger\/timeline)(.*)$/
+    );
+    let suffix = match ? match[1] : '';
+
+    if (!suffix) {
+      return '';
+    }
+
+    return suffix.startsWith('/') ? suffix : `/${suffix}`;
+  }
+
   @Get('macro')
   @ApiOperation({ summary: 'Compatibility endpoint for timeline macro view' })
   async getTimelineMacroView(
@@ -62,7 +66,13 @@ export class TimelineGatewayController {
     @Res() res: Response
   ) {
     try {
-      const response = await this.proxyTimelineWithFallback('/events', 'GET', headers, undefined, query);
+      const response = await this.proxyTimelineWithFallback(
+        '/events',
+        'GET',
+        headers,
+        undefined,
+        query
+      );
       if (!response) {
         throw new Error('No response from timeline upstream');
       }
@@ -86,18 +96,16 @@ export class TimelineGatewayController {
     @Headers() headers: Record<string, string>
   ) {
     const originalUrl = req.originalUrl || req.url || '';
-    const withoutQuery = originalUrl.split('?')[0] || '';
-    const match = withoutQuery.match(/^\/api(?:\/v\d+)?\/timeline(.*)$/);
-    let suffix = match ? match[1] : '';
-
-    if (!suffix) {
-      suffix = '';
-    } else if (!suffix.startsWith('/')) {
-      suffix = `/${suffix}`;
-    }
+    const suffix = this.extractTimelineSuffix(originalUrl);
 
     try {
-      const response = await this.proxyTimelineWithFallback(suffix, req.method, headers, body, query);
+      const response = await this.proxyTimelineWithFallback(
+        suffix,
+        req.method,
+        headers,
+        body,
+        query
+      );
       if (!response) {
         throw new Error('No response from timeline upstream');
       }

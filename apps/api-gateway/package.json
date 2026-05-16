@@ -4,7 +4,7 @@
   "description": "Unified API Gateway for The New Fuse Platform",
   "main": "dist/main.js",
   "scripts": {
-    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo tsconfig.build.tsbuildinfo",
     "build": "pnpm clean && tsc -p tsconfig.build.json --skipLibCheck",
     "build:watch": "tsc -p tsconfig.build.json --watch --skipLibCheck --noEmitOnError false",
     "dev": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start --watch",
