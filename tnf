@@ -5,6 +5,5 @@ set -euo pipefail
 THIS=$(readlink -f "$0" 2>/dev/null || greadlink -f "$0" 2>/dev/null || echo "$0")
 ROOT_DIR="$(cd "$(dirname "${THIS}")" && pwd)"
 
-# Use tsx directly instead of --import register, because Node 24's
-# --import register mode does not resolve .js -> .ts for ESM subpath imports
-exec "$ROOT_DIR/node_modules/.bin/tsx" "$ROOT_DIR/packages/tnf-cli/src/cli.ts" "$@"
+# Use pnpm exec tsx for better resolution across workspaces
+exec pnpm exec tsx "$ROOT_DIR/packages/tnf-cli/src/cli.ts" "$@"

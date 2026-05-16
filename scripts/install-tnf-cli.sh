@@ -109,7 +109,25 @@ mkdir -p "${BIN_DIR}"
 cat > "${BIN_DIR}/tnf" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
-exec bash "${REPO_DIR}/tnf" "\$@"
+
+declare -a CANDIDATES=()
+
+if [[ -n "\${TNF_REPO_DIR:-}" ]]; then
+  CANDIDATES+=("\${TNF_REPO_DIR}")
+fi
+
+CANDIDATES+=("${REPO_DIR}")
+CANDIDATES+=("\${HOME}/.tnf-cli/fuse")
+
+for repo in "\${CANDIDATES[@]}"; do
+  if [[ -x "\${repo}/tnf" ]]; then
+    exec bash "\${repo}/tnf" "\$@"
+  fi
+done
+
+echo "Error: unable to locate TNF repository for launcher." >&2
+echo "Set TNF_REPO_DIR to a repo path that contains ./tnf." >&2
+exit 1
 EOF
 chmod +x "${BIN_DIR}/tnf"
 ln -sf "${BIN_DIR}/tnf" "${BIN_DIR}/tnf-agent"

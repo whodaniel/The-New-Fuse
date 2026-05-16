@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { minimatch } from 'minimatch';
+import { Minimatch } from 'minimatch';
 import { stripJsoncComments } from '../utils/jsonc.js';
 
 export type PermissionAction = 'allow' | 'deny';
@@ -75,7 +75,8 @@ export class PermissionService {
 
   private matchPattern(pattern: string, value: string): boolean {
     if (pattern === '*') return true;
-    return minimatch(value, pattern, { nocase: process.platform === 'win32' });
+    const mm = new Minimatch(pattern, { nocase: process.platform === 'win32' });
+    return mm.match(value);
   }
 
   private checkRules(

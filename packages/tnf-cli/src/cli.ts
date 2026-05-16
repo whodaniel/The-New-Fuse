@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
 import { Orchestrator } from './orchestration.js';
+import { StoryService } from './services/StoryService.js';
 
 const program = new Command();
 // Fallback for CommonJS/ESM compatibility
@@ -7919,6 +7920,197 @@ program
       } else {
         console.log(chalk.red(result.message));
       }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Story Architect command group
+const story = program.command('story').description('Story Architect utilities and drafting');
+
+story
+  .command('draft')
+  .description('Start an interactive story drafting session')
+  .option('-s, --session <id>', 'Session ID (defaults to active session)')
+  .action(async (options: { session?: string }) => {
+    try {
+      const storyService = new StoryService();
+      let sessionId = options.session;
+      if (!sessionId) {
+        const active = await storyService.getActiveSession();
+        if (!active) {
+          console.error(chalk.red('No active story session found.'));
+          process.exit(1);
+        }
+        sessionId = active.id;
+      }
+
+      console.log(chalk.bold.magenta('\n  Welcome to Story Architect Interactive Drafting'));
+      console.log(chalk.dim('  Session: ' + sessionId));
+      console.log(chalk.dim('  Type "exit" to quit at any time.\n'));
+
+      const questions = [
+        { id: 1, ring: 1, text: "What was the emotional catalyst for starting TNF in May 2025?", shelfCode: '000' },
+        { id: 2, ring: 1, text: "Why 'The New Fuse'? What does the name mean to you?", shelfCode: '000' },
+        { id: 3, ring: 1, text: "What is the connecting thread between your 120+ projects?", shelfCode: '300' },
+        { id: 4, ring: 2, text: "What happened between June and August 2025? The git history goes quiet.", shelfCode: '900' },
+        { id: 5, ring: 2, text: "What is the Crystal of Consciousness?", shelfCode: '100' },
+        { id: 10, ring: 4, text: "Every project follows Build→Crisis→Fix→Evolve. Is this conscious methodology?", shelfCode: '500' },
+      ];
+
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+      });
+
+      for (const q of questions) {
+        const answer: string = await new Promise((resolve) => {
+          console.log(chalk.bold.cyan(`\n  [Era ${q.ring}] ${q.text}`));
+          rl.question(chalk.green('  Answer: '), (input) => resolve(input));
+        });
+
+        if (answer.toLowerCase() === 'exit') break;
+        if (answer.trim() === '') {
+           console.log(chalk.dim('  Skipping...'));
+           continue;
+        }
+
+        console.log(chalk.dim('  Capturing insight...'));
+        await storyService.saveCapture({
+          sessionId,
+          questionId: q.id,
+          ring: q.ring,
+          shelfCode: q.shelfCode,
+          questionText: q.text,
+          answerText: answer,
+        });
+        console.log(chalk.green('  ✅ Saved and synced.'));
+      }
+
+      rl.close();
+      console.log(chalk.bold.magenta('\n  Drafting session complete. Check your timeline for updates!\n'));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+story
+  .command('list')
+  .alias('ls')
+  .description('List all story sessions')
+  .action(async () => {
+    try {
+      const storyService = new StoryService();
+      const sessions = await storyService.listSessions();
+      if (sessions.length === 0) {
+        console.log(chalk.yellow('No story sessions found.'));
+        return;
+      }
+      console.log(chalk.bold('\n  Story Architect Sessions:'));
+      console.log('  ' + '-'.repeat(60));
+      for (const s of sessions) {
+        const status = s.status === 'active' ? chalk.green(s.status) : chalk.dim(s.status);
+        console.log(`  ${chalk.cyan(s.id)} | ${status} | ${chalk.bold(s.title)}`);
+        if (s.description) console.log(`    ${chalk.dim(s.description)}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+story
+  .command('active')
+  .description('Show the active story session')
+  .action(async () => {
+    try {
+      const storyService = new StoryService();
+      const session = await storyService.getActiveSession();
+      if (!session) {
+        console.log(chalk.yellow('No active story session.'));
+        return;
+      }
+      console.log(chalk.bold('\n  Active Story Session:'));
+      console.log(`  ID: ${chalk.cyan(session.id)}`);
+      console.log(`  Title: ${chalk.bold(session.title)}`);
+      if (session.description) console.log(`  Description: ${session.description}`);
+      console.log(`  Created: ${new Date(session.created_at).toLocaleString()}`);
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+story
+  .command('timeline')
+  .description('List story timeline events')
+  .action(async () => {
+    try {
+      const storyService = new StoryService();
+      const events = await storyService.listTimelineEvents();
+      if (events.length === 0) {
+        console.log(chalk.yellow('No story timeline events found.'));
+        return;
+      }
+      console.log(chalk.bold('\n  Story Timeline:'));
+      console.log('  ' + '-'.repeat(60));
+      for (const e of events) {
+        const era = e.era ? chalk.magenta(`[Era ${e.era}]`) : '';
+        console.log(`  ${chalk.dim(e.event_date)} ${era} ${chalk.bold(e.title)}`);
+        if (e.description) {
+          const lines = e.description.split('\n');
+          for (const line of lines) {
+             console.log(`    ${chalk.dim(line)}`);
+          }
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+story
+  .command('capture')
+  .description('Manually capture a story insight')
+  .argument('<answer>', 'The answer or insight text')
+  .option('-q, --question <text>', 'The question text', 'Manual Discovery')
+  .option('-s, --session <id>', 'Session ID (defaults to active session)')
+  .option('-r, --ring <number>', 'Ring depth (1-5)', '1')
+  .option('--shelf <code >', 'Shelf code', 'GEN')
+  .action(async (answer: string, options: { question: string; session?: string; ring: string; shelf: string }) => {
+    try {
+      const storyService = new StoryService();
+      let sessionId = options.session;
+      if (!sessionId) {
+        const active = await storyService.getActiveSession();
+        if (!active) {
+          console.error(chalk.red('No active session found. Please specify --session <id>.'));
+          process.exit(1);
+        }
+        sessionId = active.id;
+      }
+
+      const ring = parseInt(options.ring, 10);
+      const questionId = Math.floor(Math.random() * 1000000); // Synthetic ID for manual captures
+
+      console.log(chalk.dim(`Capturing insight for session ${sessionId}...`));
+      
+      await storyService.saveCapture({
+        sessionId,
+        questionId,
+        ring,
+        shelfCode: options.shelf,
+        questionText: options.question,
+        answerText: answer,
+      });
+
+      console.log(chalk.green('✅ Story insight captured and synced to timeline.'));
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);

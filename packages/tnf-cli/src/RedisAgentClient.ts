@@ -1,3 +1,4 @@
+// @ts-ignore
 import {
   createStandaloneRedisClient,
   createUpstashRestClient,
