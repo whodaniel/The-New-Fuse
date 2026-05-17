@@ -1,10 +1,10 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "32fc7788-0d33-455b-80e3-3c4c01e50768",
-  "created_at": "2026-05-17T01:14:17.506Z",
+  "handoff_id": "1a310224-18ad-4132-92f3-164d335adafe",
+  "created_at": "2026-05-17T01:33:52.054Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "0bf66d3b98979148d8f4e4956d2b13cb014257fd",
+  "head_sha": "a117fbc77aa67ab049e3e8e24fc1a09ddfb76a4a",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
@@ -12,13 +12,16 @@
     "Protocol enforcement layer implemented for mandatory session handoff continuity.",
     "CI/hook gates now block critical changes without fresh handoff artifacts."
   ],
-  "changed_paths": ["apps/frontend/src/pages/Timeline/index.tsx"],
+  "changed_paths": [
+    "apps/frontend/src/features/timeline/components/TimelineView.tsx",
+    "apps/frontend/src/pages/Timeline/index.tsx"
+  ],
   "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-05-17T01:14:17.907Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": ""
   },
   "continuation": {
     "owner": "tnf-orchestrator",
@@ -35,6 +38,6 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["0bf66d3b98979148d8f4e4956d2b13cb014257fd"]
+    "commits": ["a117fbc77aa67ab049e3e8e24fc1a09ddfb76a4a"]
   }
 }
