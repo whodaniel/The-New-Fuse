@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE } from '../config/api-base';
 import {
   AgentTemplate,
   ClaudeSkill,
@@ -16,8 +17,6 @@ import {
   ResourceTraitScreenMeta,
 } from '../types/resources';
 import { marketplaceService, type MarketplaceCatalogItem } from './marketplace.service';
-
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
 const SEARCH_CACHE_TTL_MS = 60_000;
 const SEARCH_CACHE_MAX_ENTRIES = 100;
 
@@ -431,7 +430,10 @@ export class ResourcesService {
   }
 
   // Update authenticated user's private skill
-  async updatePersonalSkill(id: string, input: Partial<PersonalSkillInput>): Promise<PersonalSkill> {
+  async updatePersonalSkill(
+    id: string,
+    input: Partial<PersonalSkillInput>
+  ): Promise<PersonalSkill> {
     const response = await axios.put(`${API_BASE}/resources/personal-skills/${id}`, input, {
       headers: this.getAuthHeaders(),
     });

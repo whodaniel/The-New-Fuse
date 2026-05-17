@@ -28,15 +28,28 @@ export const STANDARD_PORTS = {
   PREVIEW: 4173,
 } as const;
 
+const API_SUFFIX_PATTERN = /\/api(?:\/v\d+)?$/i;
+
+const normalizeApiUrl = (value: string): string => {
+  const trimmed = String(value || '')
+    .trim()
+    .replace(/\/+$/, '');
+  if (!trimmed) return '';
+  if (API_SUFFIX_PATTERN.test(trimmed)) {
+    return trimmed.replace(/\/api\/v\d+$/i, '/api');
+  }
+  return `${trimmed}/api`;
+};
+
 // Environment-based configuration
 export const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+    return normalizeApiUrl(import.meta.env.VITE_API_URL);
   }
 
   // Handle production proxying
   if (typeof window !== 'undefined' && !window.location.host.startsWith('localhost')) {
-    return ''; // Relative to current origin
+    return '/api'; // Relative to current origin
   }
 
   // Default to unified API Gateway for local development

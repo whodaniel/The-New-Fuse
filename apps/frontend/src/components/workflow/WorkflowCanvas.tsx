@@ -72,8 +72,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     onNodeSelect?.(null);
   }, [onNodeSelect]);
 
-  // Validate and inject errors
-  const nodesWithErrors = useMemo(() => {
+  const validationErrors = useMemo(() => {
     // Create a workflow object structure that matches schema expectations
     const workflowForValidation = {
       id: 'temp',
@@ -83,15 +82,28 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     };
 
     const { errors } = validateWorkflowWithErrors(workflowForValidation);
-
-    return nodes.map((node) => ({
-      ...node,
-      data: {
-        ...node.data,
-        error: errors[node.id],
-      },
-    }));
+    return errors;
   }, [nodes, edges]);
+
+  // Only clone nodes when the error payload actually changes.
+  const nodesWithErrors = useMemo(() => {
+    return nodes.map((node) => {
+      const nextError = validationErrors[node.id];
+      const currentError = (node.data as Record<string, unknown> | undefined)?.error;
+
+      if (currentError === nextError) {
+        return node;
+      }
+
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          error: nextError,
+        },
+      };
+    });
+  }, [nodes, validationErrors]);
 
   const erroredNodeCount = useMemo(
     () =>
@@ -181,7 +193,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
-        fitView
+        fitView={nodesWithErrors.length > 0}
         proOptions={{ hideAttribution: true }}
         defaultEdgeOptions={{
           style: { stroke: '#64748b', strokeWidth: 2 },

@@ -1,12 +1,12 @@
 # Journey Integrity Audit
 
-Generated: 2026-05-17T04:45:27.131Z App Base: https://app.thenewfuse.com API
+Generated: 2026-05-17T05:29:10.904Z App Base: https://app.thenewfuse.com API
 Base: https://api.thenewfuse.com
 
 ## Summary
 
 - Route surface mismatch: catalog-not-in-router=30, router-not-in-catalog=51,
-  sidebar-not-in-router=3
+  sidebar-not-in-router=0
 - Route HTTP sweep: total=174, 200=172, non-200=2
 - Fatal shell markers: react185=0, something-went-wrong=0
 - Auth gate shell pages detected=0
@@ -14,9 +14,6 @@ Base: https://api.thenewfuse.com
 
 ## Route Surface Drift (Top)
 
-- Sidebar not in router: `/workflows/nexus?layer=lexicon`
-- Sidebar not in router: `/workflows/nexus?layer=memory`
-- Sidebar not in router: `/workflows/nexus?layer=topology&from=observatory`
 - Catalog not in router: `/admin/dashboard`
 - Catalog not in router: `/admin/experimental-features`
 - Catalog not in router: `/admin/onboarding`
@@ -62,23 +59,24 @@ Base: https://api.thenewfuse.com
 
 - App auth compat login: status=404
   url=`https://app.thenewfuse.com/api/auth/login`
-  snippet=`{"statusCode":404,"timestamp":"2026-05-17T04:45:24.670Z","path":"/api/auth/login","method":"POST","message":"Cannot POST /api/auth/login","error":"Not Found"}`
+  snippet=`{"statusCode":404,"timestamp":"2026-05-17T05:29:09.714Z","path":"/api/auth/login","method":"POST","message":"Cannot POST /api/auth/login","error":"Not Found"}`
 - App agents list: status=404 url=`https://app.thenewfuse.com/api/agents`
-  snippet=`{"statusCode":404,"timestamp":"2026-05-17T04:45:25.133Z","path":"/api/agents","method":"GET","message":"Cannot GET /api/agents","error":"Not Found"}`
+  snippet=`{"statusCode":404,"timestamp":"2026-05-17T05:29:10.225Z","path":"/api/agents","method":"GET","message":"Cannot GET /api/agents","error":"Not Found"}`
 - App agent template bank: status=404
   url=`https://app.thenewfuse.com/api/agents/bank/templates`
-  snippet=`{"statusCode":404,"timestamp":"2026-05-17T04:45:25.216Z","path":"/api/agents/bank/templates","method":"GET","message":"Cannot GET /api/agents/bank/templates","error":"Not Found"}`
-- API workspaces list: status=404 url=`https://api.thenewfuse.com/workspaces`
-  snippet=`{"statusCode":404,"timestamp":"2026-05-17T04:45:25.299Z","path":"/workspaces","method":"GET","message":"Cannot GET /workspaces","error":"Not Found"}`
+  snippet=`{"statusCode":404,"timestamp":"2026-05-17T05:29:10.301Z","path":"/api/agents/bank/templates","method":"GET","message":"Cannot GET /api/agents/bank/templates","error":"Not Found"}`
+- API workspaces list: status=404
+  url=`https://api.thenewfuse.com/api/workspaces`
+  snippet=`{"statusCode":404,"timestamp":"2026-05-17T05:29:10.375Z","path":"/api/workspaces","method":"GET","message":"Cannot GET /api/workspaces","error":"Not Found"}`
 - API current workspace: status=404
-  url=`https://api.thenewfuse.com/workspaces/current`
-  snippet=`{"statusCode":404,"timestamp":"2026-05-17T04:45:25.479Z","path":"/workspaces/current","method":"GET","message":"Cannot GET /workspaces/current","error":"Not Found"}`
+  url=`https://api.thenewfuse.com/api/workspaces/current`
+  snippet=`{"statusCode":404,"timestamp":"2026-05-17T05:29:10.580Z","path":"/api/workspaces/current","method":"GET","message":"Cannot GET /api/workspaces/current","error":"Not Found"}`
 - API resources templates: status=404
-  url=`https://api.thenewfuse.com/resources/templates`
-  snippet=`{"statusCode":404,"timestamp":"2026-05-17T04:45:25.551Z","path":"/resources/templates","method":"GET","message":"Cannot GET /resources/templates","error":"Not Found"}`
+  url=`https://api.thenewfuse.com/api/resources/templates`
+  snippet=`{"statusCode":404,"timestamp":"2026-05-17T05:29:10.652Z","path":"/api/resources/templates","method":"GET","message":"Cannot GET /api/resources/templates","error":"Not Found"}`
 - API marketplace catalog: status=404
-  url=`https://api.thenewfuse.com/marketplace/catalog?status=published`
-  snippet=`{"statusCode":404,"timestamp":"2026-05-17T04:45:25.624Z","path":"/marketplace/catalog?status=published","method":"GET","message":"Cannot GET /marketplace/catalog?status=published","error":"Not Found"}`
+  url=`https://api.thenewfuse.com/api/marketplace/catalog?status=published`
+  snippet=`{"statusCode":404,"timestamp":"2026-05-17T05:29:10.731Z","path":"/api/marketplace/catalog?status=published","method":"GET","message":"Cannot GET /api/marketplace/catalog?status=published","error":"Not Found"}`
 
 ## Non-200 Routes
 

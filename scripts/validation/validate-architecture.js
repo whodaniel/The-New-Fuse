@@ -1,14 +1,17 @@
 import fs from 'fs';
+import yaml from 'js-yaml';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import yaml from 'js-yaml';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 class ArchitectureValidator {
   constructor() {
     this.masterArchPath = path.join(__dirname, '../../docs/MASTER_INFORMATION_ARCHITECTURE.md');
-    this.monitoringConfig = path.join(__dirname, '../../.fuse/config/monitoring/information-architecture.yml');
+    this.monitoringConfig = path.join(
+      __dirname,
+      '../../.fuse/config/monitoring/information-architecture.yml'
+    );
     this.metricsPath = path.join(__dirname, '../../.fuse/monitoring/metrics/current.json');
     this.reportPath = path.join(__dirname, '../../.fuse/monitoring/logs/validation-report.json');
     this.results = {
@@ -17,37 +20,37 @@ class ArchitectureValidator {
       mcpProtocolCompliance: 0,
       messageFormatValidity: 0,
       apiCompliance: 0,
-      integrationPatternAdherence: 0
+      integrationPatternAdherence: 0,
     };
   }
 
   async validate() {
     console.log('Validating Information Architecture compliance...');
-    
+
     // Load monitoring configuration
     const monitoringConfig = yaml.load(fs.readFileSync(this.monitoringConfig, 'utf8'));
-    
+
     // Validate document structure
     await this.validateDocumentStructure();
-    
+
     // Validate cross-references
     await this.validateCrossReferences();
-    
+
     // Validate MCP protocol compliance
     await this.validateMCPCompliance();
-    
+
     // Validate message formats
     await this.validateMessageFormats();
-    
+
     // Validate API compliance
     await this.validateAPICompliance();
-    
+
     // Validate integration patterns
     await this.validateIntegrationPatterns();
-    
+
     // Export metrics
     this.exportMetrics();
-    
+
     // Generate report
     this.generateReport();
   }
@@ -98,9 +101,9 @@ class ArchitectureValidator {
     console.log('Exporting metrics...');
     const metrics = {
       timestamp: new Date().toISOString(),
-      metrics: this.results
+      metrics: this.results,
     };
-    
+
     fs.writeFileSync(this.metricsPath, JSON.stringify(metrics, null, 2));
   }
 
@@ -110,17 +113,17 @@ class ArchitectureValidator {
       timestamp: new Date().toISOString(),
       summary: 'Information Architecture Validation Report',
       results: this.results,
-      recommendations: this.generateRecommendations()
+      recommendations: this.generateRecommendations(),
     };
-    
+
     fs.writeFileSync(this.reportPath, JSON.stringify(report, null, 2));
-    
+
     console.log('Validation complete. Report generated.');
   }
 
   generateRecommendations() {
     const recommendations = [];
-    
+
     // Add recommendations based on validation results
     if (this.results.schemaCompliance < 95) {
       recommendations.push('Review document structure compliance');
@@ -140,7 +143,7 @@ class ArchitectureValidator {
     if (this.results.integrationPatternAdherence < 95) {
       recommendations.push('Review integration pattern compliance');
     }
-    
+
     return recommendations;
   }
 }

@@ -1,3 +1,5 @@
+import { API_BASE as RESOLVED_API_BASE, API_V1_BASE as RESOLVED_API_V1_BASE } from './api-base';
+
 /**
  * API Configuration
  *
@@ -9,11 +11,7 @@
  * - Development: We use relative paths (/api) so the Vite dev server handles routing.
  */
 
-const API_PREFIX = import.meta.env.PROD
-  ? import.meta.env.VITE_API_URL
-    ? `${import.meta.env.VITE_API_URL}/api/v1`
-    : '/api/v1'
-  : '/api';
+const API_PREFIX = import.meta.env.PROD ? RESOLVED_API_V1_BASE : RESOLVED_API_BASE;
 
 export const API_BASE = API_PREFIX;
 // Backward-compatible alias used by legacy services.

@@ -19,6 +19,14 @@ const path = require('node:path');
 const APP_BASE_URL = process.env.JOURNEY_APP_BASE_URL || 'https://app.thenewfuse.com';
 const API_BASE_URL = process.env.JOURNEY_API_BASE_URL || 'https://api.thenewfuse.com';
 const MAX_HTTP_CONCURRENCY = Number(process.env.JOURNEY_HTTP_CONCURRENCY || 8);
+const STRICT_MODE =
+  process.argv.includes('--strict') ||
+  String(process.env.JOURNEY_STRICT || '')
+    .trim()
+    .toLowerCase() === '1' ||
+  String(process.env.JOURNEY_STRICT || '')
+    .trim()
+    .toLowerCase() === 'true';
 
 const ROOT = process.cwd();
 const FRONTEND_ROOT = fs.existsSync(path.join(ROOT, 'apps/frontend'))
@@ -49,6 +57,15 @@ function extractRegex(text, re) {
 
 function normalizePath(p) {
   return p.trim();
+}
+
+function normalizeRouteKey(p) {
+  const trimmed = normalizePath(p);
+  const withoutQuery = trimmed.split('?')[0].split('#')[0];
+  if (withoutQuery.length > 1 && withoutQuery.endsWith('/')) {
+    return withoutQuery.slice(0, -1);
+  }
+  return withoutQuery;
 }
 
 function nonDynamic(pathname) {
@@ -90,13 +107,18 @@ function extractRouteSurfaces() {
     extractRegex(sidebarText, /href:\s*'([^']+)'/g).map(normalizePath).filter(Boolean)
   );
 
-  const routerSet = new Set(routerPaths);
-  const catalogSet = new Set(catalogPaths);
-  const sidebarSet = new Set(sidebarPaths);
+  const routerKeySet = new Set(routerPaths.map(normalizeRouteKey));
+  const catalogKeySet = new Set(catalogPaths.map(normalizeRouteKey));
 
-  const catalogNotInRouter = [...catalogSet].filter((p) => !routerSet.has(p)).sort();
-  const routerNotInCatalog = [...routerSet].filter((p) => !catalogSet.has(p)).sort();
-  const sidebarNotInRouter = [...sidebarSet].filter((p) => !routerSet.has(p)).sort();
+  const catalogNotInRouter = catalogPaths
+    .filter((p) => !routerKeySet.has(normalizeRouteKey(p)))
+    .sort();
+  const routerNotInCatalog = routerPaths
+    .filter((p) => !catalogKeySet.has(normalizeRouteKey(p)))
+    .sort();
+  const sidebarNotInRouter = sidebarPaths
+    .filter((p) => !routerKeySet.has(normalizeRouteKey(p)))
+    .sort();
 
   return {
     routerPaths,
@@ -178,7 +200,7 @@ async function probeApiContracts() {
     },
     {
       name: 'Gateway auth canonical login',
-      url: `${API_BASE_URL}/v1/auth/login`,
+      url: `${API_BASE_URL}/api/v1/auth/login`,
       method: 'POST',
       body: { email: 'invalid@example.com', password: 'invalid-password' },
       expectNot404: true,
@@ -189,16 +211,20 @@ async function probeApiContracts() {
       url: `${APP_BASE_URL}/api/agents/bank/templates`,
       expectNot404: true,
     },
-    { name: 'API workspaces list', url: `${API_BASE_URL}/workspaces`, expectNot404: true },
-    { name: 'API current workspace', url: `${API_BASE_URL}/workspaces/current`, expectNot404: true },
+    { name: 'API workspaces list', url: `${API_BASE_URL}/api/workspaces`, expectNot404: true },
+    {
+      name: 'API current workspace',
+      url: `${API_BASE_URL}/api/workspaces/current`,
+      expectNot404: true,
+    },
     {
       name: 'API resources templates',
-      url: `${API_BASE_URL}/resources/templates`,
+      url: `${API_BASE_URL}/api/resources/templates`,
       expectNot404: true,
     },
     {
       name: 'API marketplace catalog',
-      url: `${API_BASE_URL}/marketplace/catalog?status=published`,
+      url: `${API_BASE_URL}/api/marketplace/catalog?status=published`,
       expectNot404: true,
     },
   ];
@@ -367,10 +393,35 @@ async function main() {
 
   fs.writeFileSync(mdPath, `${md}\n`);
 
+  const gateFailures = [];
+  if (summary.routeSurface.catalogNotInRouter > 0) {
+    gateFailures.push(`catalog-not-in-router=${summary.routeSurface.catalogNotInRouter}`);
+  }
+  if (summary.routeSurface.routerNotInCatalog > 0) {
+    gateFailures.push(`router-not-in-catalog=${summary.routeSurface.routerNotInCatalog}`);
+  }
+  if (summary.routeSurface.sidebarNotInRouter > 0) {
+    gateFailures.push(`sidebar-not-in-router=${summary.routeSurface.sidebarNotInRouter}`);
+  }
+  if (summary.httpSweep.non200 > 0) {
+    gateFailures.push(`non-200-routes=${summary.httpSweep.non200}`);
+  }
+  if (summary.httpSweep.react185Pages > 0) {
+    gateFailures.push(`react185-pages=${summary.httpSweep.react185Pages}`);
+  }
+  if (summary.httpSweep.somethingWentWrongPages > 0) {
+    gateFailures.push(`something-went-wrong-pages=${summary.httpSweep.somethingWentWrongPages}`);
+  }
+  if (summary.apiContracts.failed > 0) {
+    gateFailures.push(`api-contract-failures=${summary.apiContracts.failed}`);
+  }
+
   console.log(
     JSON.stringify(
       {
-        ok: apiFail.length === 0 && badRoutes.length === 0 && summary.routeSurface.catalogNotInRouter === 0,
+        ok: gateFailures.length === 0,
+        strictMode: STRICT_MODE,
+        gateFailures,
         summary,
         jsonPath,
         mdPath,
@@ -379,10 +430,13 @@ async function main() {
       2
     )
   );
+
+  if (STRICT_MODE && gateFailures.length > 0) {
+    process.exit(2);
+  }
 }
 
 main().catch((error) => {
   console.error('Journey integrity audit failed:', error);
   process.exit(1);
 });
-

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE } from '../config/api-base';
 
 export type MarketplaceKind =
   | 'experience'
@@ -123,8 +124,6 @@ export interface MarketplaceResearchSkillFilesResponse {
   total: number;
   error?: string;
 }
-
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 class MarketplaceService {
   async getCatalog(params?: MarketplaceCatalogQuery): Promise<MarketplaceCatalogResponse> {

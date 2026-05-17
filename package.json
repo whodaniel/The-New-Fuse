@@ -255,6 +255,7 @@
     "verify:features": "bash ./scripts/verify-features.sh",
     "audit:routes": "node scripts/route-audit.js",
     "audit:journeys": "node scripts/journey-integrity-audit.cjs",
+    "audit:journeys:strict": "node scripts/journey-integrity-audit.cjs --strict",
     "audit:keyword-mentions:map": "node scripts/keyword-mentions-map.mjs",
     "audit:doc-hygiene": "bash scripts/audit-doc-hygiene.sh",
     "audit:security": "pnpm audit",

@@ -15,6 +15,7 @@ import {
   Put,
   Query,
   Res,
+  Version,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -25,7 +26,50 @@ import { ProxyService } from '../proxy/proxy.service';
 export class AgentGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
+  @Get('bank/templates')
+  @Version('1')
+  @ApiOperation({ summary: 'List agent bank templates' })
+  @ApiResponse({ status: 200, description: 'Agent templates retrieved successfully' })
+  async getAgentBankTemplates(
+    @Query() query: Record<string, string>,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
+    try {
+      const response = await this.proxyService.proxyRequest(
+        'api',
+        '/api/agents/bank/templates',
+        'GET',
+        headers,
+        undefined,
+        query
+      );
+
+      return res.status(response.status).json(response.data);
+    } catch {
+      try {
+        const response = await this.proxyService.proxyRequest(
+          'agents',
+          '/api/agents/bank/templates',
+          'GET',
+          headers,
+          undefined,
+          query
+        );
+        return res.status(response.status).json(response.data);
+      } catch (fallbackError) {
+        const fallbackErrorMessage =
+          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+        return res.status(HttpStatus.BAD_GATEWAY).json({
+          message: 'Agent bank service unavailable',
+          error: fallbackErrorMessage,
+        });
+      }
+    }
+  }
+
   @Get()
+  @Version('1')
   @ApiOperation({ summary: 'Get all agents' })
   @ApiResponse({ status: 200, description: 'List of agents retrieved successfully' })
   @ApiQuery({ name: 'capability', required: false, description: 'Filter by capability' })
@@ -72,6 +116,7 @@ export class AgentGatewayController {
   }
 
   @Post()
+  @Version('1')
   @ApiOperation({ summary: 'Create a new agent' })
   @ApiResponse({ status: 201, description: 'Agent created successfully' })
   @ApiBody({ description: 'Agent creation data' })
@@ -113,6 +158,7 @@ export class AgentGatewayController {
   }
 
   @Get('active')
+  @Version('1')
   @ApiOperation({ summary: 'Get active agents' })
   @ApiResponse({ status: 200, description: 'Active agents retrieved successfully' })
   async getActiveAgents(@Headers() headers: Record<string, string>, @Res() res: Response) {
@@ -146,6 +192,7 @@ export class AgentGatewayController {
   }
 
   @Get(':id')
+  @Version('1')
   @ApiOperation({ summary: 'Get agent by ID' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   @ApiResponse({ status: 200, description: 'Agent retrieved successfully' })
@@ -185,6 +232,7 @@ export class AgentGatewayController {
   }
 
   @Put(':id')
+  @Version('1')
   @ApiOperation({ summary: 'Update an agent' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   @ApiBody({ description: 'Agent update data' })
@@ -228,6 +276,7 @@ export class AgentGatewayController {
   }
 
   @Put(':id/status')
+  @Version('1')
   @ApiOperation({ summary: 'Update agent status' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   @ApiBody({ description: 'Status update data' })
@@ -270,6 +319,7 @@ export class AgentGatewayController {
   }
 
   @Delete(':id')
+  @Version('1')
   @ApiOperation({ summary: 'Delete an agent' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   @ApiResponse({ status: 204, description: 'Agent deleted successfully' })

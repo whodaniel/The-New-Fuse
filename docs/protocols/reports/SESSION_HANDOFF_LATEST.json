@@ -1,10 +1,10 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "b8d3a237-2094-4c52-b682-a36e330cd964",
-  "created_at": "2026-05-17T04:55:31.446Z",
+  "handoff_id": "8ec5c854-ca74-4b6b-9e1c-c5d22a8f4032",
+  "created_at": "2026-05-17T05:39:46.720Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "6492215034f70c12b0d69a84d004638b4866f220",
+  "head_sha": "0c4a0503088e06e56e7e63417a0ae3865eb02bbb",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
@@ -13,51 +13,40 @@
     "CI/hook gates now block critical changes without fresh handoff artifacts."
   ],
   "changed_paths": [
-    ".github/workflows/quality.yml",
-    ".github/workflows/test.yml",
-    "apps/api/src/auth/decorators/current-user.decorator.ts",
-    "apps/api/src/decorators/current-user.decorator.ts",
-    "apps/api/src/modules/unified-ledger/unified-ledger.controller.spec.ts",
-    "apps/api/src/modules/unified-ledger/unified-ledger.controller.ts",
-    "apps/api/src/modules/unified-ledger/unified-ledger.module.ts",
-    "apps/api/tsconfig.spec.json",
-    "apps/frontend/docs/audits/auth-path-audit.json",
-    "apps/frontend/docs/audits/auth-path-audit.md",
-    "apps/frontend/docs/audits/navigation-route-audit.json",
-    "apps/frontend/docs/audits/navigation-route-audit.md",
-    "apps/frontend/src/ComprehensiveRouter.tsx",
+    ".fuse/monitoring/logs/validation-report.json",
+    ".fuse/monitoring/metrics/current.json",
+    "apps/api-gateway/src/app.module.ts",
+    "apps/api-gateway/src/gateway/agent-gateway.controller.ts",
+    "apps/api-gateway/src/gateway/marketplace-gateway.controller.ts",
+    "apps/api-gateway/src/gateway/resources-gateway.controller.ts",
+    "apps/api-gateway/src/gateway/resources-gateway.module.ts",
     "apps/frontend/src/components/workflow/WorkflowCanvas.tsx",
-    "apps/frontend/src/features/timeline/components/TimelineView.tsx",
-    "apps/frontend/src/pages/Agents/UnifiedAgentCreator.tsx",
-    "apps/frontend/src/pages/Suggestions/index.tsx",
-    "apps/frontend/src/pages/SynapticNexus.tsx",
-    "apps/frontend/src/pages/Timeline/index.tsx",
-    "apps/frontend/src/pages/dashboard/Analytics.tsx",
-    "apps/frontend/src/pages/dashboard/CreateAgent.tsx",
-    "apps/frontend/src/services/AgentService.ts",
-    "apps/frontend/src/services/unifiedLedgerApi.ts",
+    "apps/frontend/src/config/api-base.ts",
+    "apps/frontend/src/config/api.ts",
+    "apps/frontend/src/config/ports.ts",
+    "apps/frontend/src/pages/workflow-pages/Builder.tsx",
+    "apps/frontend/src/pages/workflow-pages/__tests__/Builder.smoke.test.tsx",
+    "apps/frontend/src/services/marketplace.service.ts",
+    "apps/frontend/src/services/resources.service.ts",
+    "docs/audits/FIRST_PRINCIPLES_INTENT_TRACE_2026-05-17.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "eslint.config.mjs",
     "output/playwright/journey-integrity-audit.json",
     "output/playwright/journey-integrity-audit.md",
-    "output/playwright/route-http-audit-2026-05-17.json",
     "package.json",
-    "packages/api/src/modules/controllers/dto/agent.dto.ts",
-    "packages/api/src/repositories/agent.repository.ts",
-    "packages/api/src/services/agent.service.ts",
-    "packages/database/src/drizzle/index.ts",
-    "packages/tnf-cli/src/cli.ts",
+    "scripts/cycle-completion-tracker.js",
+    "scripts/docs-consistency-watcher.js",
+    "scripts/handoff-pre-validator.js",
     "scripts/journey-integrity-audit.cjs",
-    "scripts/tnf-parity-audit.cjs"
+    "scripts/validation/validate-architecture.js"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-05-17T04:55:33.501Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-05-17T05:39:48.570Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
@@ -74,6 +63,6 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["6492215034f70c12b0d69a84d004638b4866f220"]
+    "commits": ["0c4a0503088e06e56e7e63417a0ae3865eb02bbb"]
   }
 }

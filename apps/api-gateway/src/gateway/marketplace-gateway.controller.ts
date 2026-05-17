@@ -1,4 +1,15 @@
-import { Controller, Get, Headers, HttpStatus, Query, Res, Version } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  Res,
+  Version,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
@@ -10,17 +21,19 @@ export class MarketplaceGatewayController {
 
   private async proxyWithFallback(
     path: string,
+    method: 'GET' | 'POST' = 'GET',
     headers: Record<string, string>,
     res: Response,
-    query?: Record<string, string>
+    query?: Record<string, string>,
+    body?: any
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
         'agents',
         path,
-        'GET',
+        method,
         headers,
-        undefined,
+        body,
         query
       );
       return res.status(response.status).json(response.data);
@@ -29,9 +42,9 @@ export class MarketplaceGatewayController {
         const response = await this.proxyService.proxyRequest(
           'backend',
           path,
-          'GET',
+          method,
           headers,
-          undefined,
+          body,
           query
         );
         return res.status(response.status).json(response.data);
@@ -44,6 +57,100 @@ export class MarketplaceGatewayController {
         });
       }
     }
+  }
+
+  @Get('catalog')
+  @Version('1')
+  @ApiOperation({ summary: 'List marketplace catalog' })
+  @ApiResponse({ status: 200, description: 'Marketplace catalog retrieved successfully' })
+  async getCatalog(
+    @Query() query: Record<string, string>,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
+    return this.proxyWithFallback('/api/marketplace/catalog', 'GET', headers, res, query);
+  }
+
+  @Get('experiences')
+  @Version('1')
+  @ApiOperation({ summary: 'List marketplace experiences' })
+  @ApiResponse({ status: 200, description: 'Marketplace experiences retrieved successfully' })
+  async getExperiences(
+    @Query() query: Record<string, string>,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
+    return this.proxyWithFallback('/api/marketplace/experiences', 'GET', headers, res, query);
+  }
+
+  @Get('catalog/:id')
+  @Version('1')
+  @ApiOperation({ summary: 'Get marketplace catalog item by ID' })
+  @ApiResponse({ status: 200, description: 'Marketplace catalog item retrieved successfully' })
+  async getCatalogItem(
+    @Param('id') id: string,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
+    return this.proxyWithFallback(`/api/marketplace/catalog/${id}`, 'GET', headers, res);
+  }
+
+  @Post('experiences/submit')
+  @Version('1')
+  @ApiOperation({ summary: 'Submit marketplace experience' })
+  @ApiResponse({ status: 201, description: 'Marketplace experience submitted successfully' })
+  async submitExperience(
+    @Body() body: any,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
+    return this.proxyWithFallback(
+      '/api/marketplace/experiences/submit',
+      'POST',
+      headers,
+      res,
+      undefined,
+      body
+    );
+  }
+
+  @Post('catalog/submit')
+  @Version('1')
+  @ApiOperation({ summary: 'Submit marketplace catalog item' })
+  @ApiResponse({ status: 201, description: 'Marketplace catalog item submitted successfully' })
+  async submitCatalogItem(
+    @Body() body: any,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
+    return this.proxyWithFallback(
+      '/api/marketplace/catalog/submit',
+      'POST',
+      headers,
+      res,
+      undefined,
+      body
+    );
+  }
+
+  @Post('catalog/:id/publication-status')
+  @Version('1')
+  @ApiOperation({ summary: 'Update catalog publication status' })
+  @ApiResponse({ status: 200, description: 'Catalog publication status updated successfully' })
+  async updateCatalogPublicationStatus(
+    @Param('id') id: string,
+    @Body() body: any,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
+    return this.proxyWithFallback(
+      `/api/marketplace/catalog/${id}/publication-status`,
+      'POST',
+      headers,
+      res,
+      undefined,
+      body
+    );
   }
 
   @Get('research/mcp/counts')

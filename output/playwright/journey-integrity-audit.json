@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-05-17T04:45:27.131Z",
+    "generatedAt": "2026-05-17T05:29:10.904Z",
     "appBaseUrl": "https://app.thenewfuse.com",
     "apiBaseUrl": "https://api.thenewfuse.com",
     "routeSurface": {
@@ -9,7 +9,7 @@
       "sidebarCount": 54,
       "catalogNotInRouter": 30,
       "routerNotInCatalog": 51,
-      "sidebarNotInRouter": 3
+      "sidebarNotInRouter": 0
     },
     "httpSweep": {
       "totalRoutes": 174,
@@ -560,11 +560,7 @@
       "/workflows/builder-n8n",
       "/workflows/nexus"
     ],
-    "sidebarNotInRouter": [
-      "/workflows/nexus?layer=lexicon",
-      "/workflows/nexus?layer=memory",
-      "/workflows/nexus?layer=topology&from=observatory"
-    ]
+    "sidebarNotInRouter": []
   },
   "routeRows": [
     {
@@ -2870,7 +2866,7 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T04:45:24.670Z\",\"path\":\"/api/auth/login\",\"method\":\"POST\",\"message\":\"Cannot POST /api/auth/login\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:09.714Z\",\"path\":\"/api/auth/login\",\"method\":\"POST\",\"message\":\"Cannot POST /api/auth/login\",\"error\":\"Not Found\"}"
     },
     {
       "name": "App auth canonical login",
@@ -2883,11 +2879,11 @@
       "expectNot404": true,
       "status": 401,
       "ok": true,
-      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T04:45:24.871Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
+      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T05:29:09.872Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
     },
     {
       "name": "Gateway auth canonical login",
-      "url": "https://api.thenewfuse.com/v1/auth/login",
+      "url": "https://api.thenewfuse.com/api/v1/auth/login",
       "method": "POST",
       "body": {
         "email": "invalid@example.com",
@@ -2896,7 +2892,7 @@
       "expectNot404": true,
       "status": 401,
       "ok": true,
-      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T04:45:25.061Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
+      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T05:29:10.154Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
     },
     {
       "name": "App agents list",
@@ -2904,7 +2900,7 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T04:45:25.133Z\",\"path\":\"/api/agents\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.225Z\",\"path\":\"/api/agents\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents\",\"error\":\"Not Found\"}"
     },
     {
       "name": "App agent template bank",
@@ -2912,39 +2908,39 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T04:45:25.216Z\",\"path\":\"/api/agents/bank/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents/bank/templates\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.301Z\",\"path\":\"/api/agents/bank/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents/bank/templates\",\"error\":\"Not Found\"}"
     },
     {
       "name": "API workspaces list",
-      "url": "https://api.thenewfuse.com/workspaces",
+      "url": "https://api.thenewfuse.com/api/workspaces",
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T04:45:25.299Z\",\"path\":\"/workspaces\",\"method\":\"GET\",\"message\":\"Cannot GET /workspaces\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.375Z\",\"path\":\"/api/workspaces\",\"method\":\"GET\",\"message\":\"Cannot GET /api/workspaces\",\"error\":\"Not Found\"}"
     },
     {
       "name": "API current workspace",
-      "url": "https://api.thenewfuse.com/workspaces/current",
+      "url": "https://api.thenewfuse.com/api/workspaces/current",
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T04:45:25.479Z\",\"path\":\"/workspaces/current\",\"method\":\"GET\",\"message\":\"Cannot GET /workspaces/current\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.580Z\",\"path\":\"/api/workspaces/current\",\"method\":\"GET\",\"message\":\"Cannot GET /api/workspaces/current\",\"error\":\"Not Found\"}"
     },
     {
       "name": "API resources templates",
-      "url": "https://api.thenewfuse.com/resources/templates",
+      "url": "https://api.thenewfuse.com/api/resources/templates",
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T04:45:25.551Z\",\"path\":\"/resources/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /resources/templates\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.652Z\",\"path\":\"/api/resources/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /api/resources/templates\",\"error\":\"Not Found\"}"
     },
     {
       "name": "API marketplace catalog",
-      "url": "https://api.thenewfuse.com/marketplace/catalog?status=published",
+      "url": "https://api.thenewfuse.com/api/marketplace/catalog?status=published",
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T04:45:25.624Z\",\"path\":\"/marketplace/catalog?status=published\",\"method\":\"GET\",\"message\":\"Cannot GET /marketplace/catalog?status=published\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.731Z\",\"path\":\"/api/marketplace/catalog?status=published\",\"method\":\"GET\",\"message\":\"Cannot GET /api/marketplace/catalog?status=published\",\"error\":\"Not Found\"}"
     }
   ],
   "dependencyRefs": {

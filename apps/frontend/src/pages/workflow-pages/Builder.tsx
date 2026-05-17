@@ -48,7 +48,7 @@ const WorkflowBuilder: React.FC = () => {
   const [isExecuting, setIsExecuting] = useState(false);
   const [showLeftPanel, setShowLeftPanel] = useState(true);
   const [showRightPanel, setShowRightPanel] = useState(false);
-  const [showAiPanel, setShowAiPanel] = useState(true);
+  const [showAiPanel, setShowAiPanel] = useState(false);
 
   // Update workflow name and description when currentWorkflow changes
   useEffect(() => {
