@@ -27,6 +27,8 @@
     "orchestrate": "pnpm --filter @the-new-fuse/relay-core run orchestrate",
     "tnf": "node --import tsx packages/tnf-cli/src/cli.ts",
     "tnf-agent": "pnpm run tnf --",
+    "tnf:parity:audit": "node scripts/tnf-parity-audit.cjs",
+    "tnf:parity:audit:soft": "node scripts/tnf-parity-audit.cjs --soft",
     "tnf:install": "bash scripts/install-tnf-cli.sh",
     "tnf:install:local": "bash scripts/install-tnf-cli.sh --from-local",
     "tnf:aivi:inventory": "pnpm --dir apps/chrome-extension run aivi:inventory",

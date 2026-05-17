@@ -152,6 +152,48 @@ jobs:
             apps/frontend/docs/audits/navigation-route-audit.json
           retention-days: 7
 
+  tnf-parity-audit:
+    name: TNF Parity Audit
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pnpm
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Run strict TNF parity audit
+        run: |
+          set -o pipefail
+          pnpm run tnf:parity:audit | tee tnf-parity-audit.txt
+
+      - name: Upload parity audit artifact
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: tnf-parity-audit-test
+          path: tnf-parity-audit.txt
+          retention-days: 7
+
   type-check:
     name: Type Check
     needs: setup
@@ -466,6 +508,7 @@ jobs:
       [
         lint,
         architecture-audits,
+        tnf-parity-audit,
         type-check,
         unit-tests,
         integration-tests,
@@ -479,6 +522,7 @@ jobs:
         run: |
           echo "Lint: ${{ needs.lint.result }}"
           echo "Architecture Audits: ${{ needs.architecture-audits.result }}"
+          echo "TNF Parity Audit: ${{ needs.tnf-parity-audit.result }}"
           echo "Type Check: ${{ needs.type-check.result }}"
           echo "Unit Tests: ${{ needs.unit-tests.result }}"
           echo "Integration Tests: ${{ needs.integration-tests.result }}"
@@ -487,6 +531,7 @@ jobs:
 
           if [[ "${{ needs.lint.result }}" != "success" ]] || \
              [[ "${{ needs.architecture-audits.result }}" != "success" ]] || \
+             [[ "${{ needs.tnf-parity-audit.result }}" != "success" ]] || \
              [[ "${{ needs.type-check.result }}" != "success" ]] || \
              [[ "${{ needs.unit-tests.result }}" != "success" ]] || \
              [[ "${{ needs.integration-tests.result }}" != "success" ]] || \
@@ -503,6 +548,7 @@ jobs:
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Architecture Audits | ${{ needs.architecture-audits.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| TNF Parity Audit | ${{ needs.tnf-parity-audit.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Type Check | ${{ needs.type-check.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> $GITHUB_STEP_SUMMARY
