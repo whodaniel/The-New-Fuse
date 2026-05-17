@@ -1,19 +1,19 @@
 {
   "summary": {
-    "generatedAt": "2026-05-17T05:29:10.904Z",
+    "generatedAt": "2026-05-17T06:05:01.980Z",
     "appBaseUrl": "https://app.thenewfuse.com",
     "apiBaseUrl": "https://api.thenewfuse.com",
     "routeSurface": {
-      "routerCount": 205,
-      "catalogCount": 184,
+      "routerCount": 234,
+      "catalogCount": 234,
       "sidebarCount": 54,
-      "catalogNotInRouter": 30,
-      "routerNotInCatalog": 51,
+      "catalogNotInRouter": 0,
+      "routerNotInCatalog": 0,
       "sidebarNotInRouter": 0
     },
     "httpSweep": {
-      "totalRoutes": 174,
-      "ok200": 172,
+      "totalRoutes": 220,
+      "ok200": 218,
       "non200": 2,
       "react185Pages": 0,
       "somethingWentWrongPages": 0,
@@ -157,6 +157,35 @@
       "/auth/callback",
       "/auth/oauth-callback",
       "/about",
+      "/landing-page",
+      "/simple-landing",
+      "/ambassador",
+      "/careers",
+      "/testimonials",
+      "/comparisons",
+      "/faq",
+      "/components-nav",
+      "/chat-page",
+      "/chats",
+      "/channels",
+      "/automations",
+      "/tasks-page",
+      "/workspace/chat",
+      "/workspace/layout",
+      "/files",
+      "/datasets",
+      "/bookmarks",
+      "/integrations",
+      "/tools",
+      "/skills",
+      "/models",
+      "/terminal",
+      "/system",
+      "/general-settings/community-hub",
+      "/agents/unified-creator",
+      "/admin/dashboard",
+      "/admin/experimental-features",
+      "/admin/onboarding",
       "/features",
       "/pricing",
       "/community",
@@ -417,7 +446,57 @@
       "/support",
       "/workflows/console",
       "/workflows/detail",
-      "/workflows/execution"
+      "/workflows/execution",
+      "/about",
+      "/features",
+      "/capabilities",
+      "/app",
+      "/admin/control-panel",
+      "/admin/marketplace",
+      "/agents/create",
+      "/agents/catalog/:id",
+      "/agents/pfp-catalog",
+      "/agents/pfp-prompts",
+      "/agents/pfp-studio",
+      "/auth/callback",
+      "/auth/google/callback",
+      "/codebase-map",
+      "/dashboard/architecture",
+      "/dashboard/calendar",
+      "/dashboard/command-center",
+      "/dashboard/datasets",
+      "/dashboard/fairtable",
+      "/dashboard/files",
+      "/dashboard/launchpad",
+      "/dashboard/logs",
+      "/dashboard/observability",
+      "/fairtable",
+      "/fairtable/:viewType",
+      "/goals/:id",
+      "/hub",
+      "/llm-rankings",
+      "/macro-timeline",
+      "/membership",
+      "/nexus",
+      "/perpetual-status",
+      "/plans/:id",
+      "/product-map",
+      "/platform",
+      "/resources/skills",
+      "/resources/templates",
+      "/resources/workflows",
+      "/status",
+      "/system-status",
+      "/terminals",
+      "/timeline/module",
+      "/visualizations",
+      "/visualizations/concordance",
+      "/visualizations/surface",
+      "/visualizations/terminals",
+      "/workflows/builder-enhanced",
+      "/workflows/builder-n8n",
+      "/workflows/nexus",
+      "/3d-library"
     ],
     "sidebarPaths": [
       "/dashboard",
@@ -475,91 +554,8 @@
       "/build-info",
       "/all-pages"
     ],
-    "catalogNotInRouter": [
-      "/admin/dashboard",
-      "/admin/experimental-features",
-      "/admin/onboarding",
-      "/agents/unified-creator",
-      "/ambassador",
-      "/api/admin/features/:id/evaluate",
-      "/automations",
-      "/bookmarks",
-      "/careers",
-      "/channels",
-      "/chat-page",
-      "/chats",
-      "/comparisons",
-      "/components-nav",
-      "/datasets",
-      "/faq",
-      "/files",
-      "/general-settings/community-hub",
-      "/integrations",
-      "/landing-page",
-      "/models",
-      "/simple-landing",
-      "/skills",
-      "/system",
-      "/tasks-page",
-      "/terminal",
-      "/testimonials",
-      "/tools",
-      "/workspace/chat",
-      "/workspace/layout"
-    ],
-    "routerNotInCatalog": [
-      "*",
-      "/3d-library",
-      "/about",
-      "/admin/control-panel",
-      "/admin/marketplace",
-      "/agents/catalog/:id",
-      "/agents/create",
-      "/agents/pfp-catalog",
-      "/agents/pfp-prompts",
-      "/agents/pfp-studio",
-      "/app",
-      "/auth/callback",
-      "/auth/google/callback",
-      "/capabilities",
-      "/codebase-map",
-      "/dashboard/architecture",
-      "/dashboard/calendar",
-      "/dashboard/command-center",
-      "/dashboard/datasets",
-      "/dashboard/fairtable",
-      "/dashboard/files",
-      "/dashboard/launchpad",
-      "/dashboard/logs",
-      "/dashboard/observability",
-      "/fairtable",
-      "/fairtable/:viewType",
-      "/features",
-      "/goals/:id",
-      "/hub",
-      "/llm-rankings",
-      "/macro-timeline",
-      "/membership",
-      "/nexus",
-      "/perpetual-status",
-      "/plans/:id",
-      "/platform",
-      "/product-map",
-      "/resources/skills",
-      "/resources/templates",
-      "/resources/workflows",
-      "/status",
-      "/system-status",
-      "/terminals",
-      "/timeline/module",
-      "/visualizations",
-      "/visualizations/concordance",
-      "/visualizations/surface",
-      "/visualizations/terminals",
-      "/workflows/builder-enhanced",
-      "/workflows/builder-n8n",
-      "/workflows/nexus"
-    ],
+    "catalogNotInRouter": [],
+    "routerNotInCatalog": [],
     "sidebarNotInRouter": []
   },
   "routeRows": [
@@ -568,6 +564,19 @@
       "url": "https://app.thenewfuse.com/",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/3d-library",
+      "url": "https://app.thenewfuse.com/3d-library",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/3d-library",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -594,6 +603,19 @@
       "url": "https://app.thenewfuse.com/a2a-control",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/a2a-control",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/about",
+      "url": "https://app.thenewfuse.com/about",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/about",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -707,6 +729,19 @@
       }
     },
     {
+      "route": "/admin/control-panel",
+      "url": "https://app.thenewfuse.com/admin/control-panel",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/admin/control-panel",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/admin/dashboard",
       "url": "https://app.thenewfuse.com/admin/dashboard",
       "status": 200,
@@ -763,6 +798,19 @@
       "url": "https://app.thenewfuse.com/admin/layout",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/admin/layout",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/admin/marketplace",
+      "url": "https://app.thenewfuse.com/admin/marketplace",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/admin/marketplace",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -954,6 +1002,19 @@
       }
     },
     {
+      "route": "/agents/create",
+      "url": "https://app.thenewfuse.com/agents/create",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/agents/create",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/agents/new",
       "url": "https://app.thenewfuse.com/agents/new",
       "status": 200,
@@ -984,6 +1045,45 @@
       "url": "https://app.thenewfuse.com/agents/onboard",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/agents/onboard",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/agents/pfp-catalog",
+      "url": "https://app.thenewfuse.com/agents/pfp-catalog",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/agents/pfp-catalog",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/agents/pfp-prompts",
+      "url": "https://app.thenewfuse.com/agents/pfp-prompts",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/agents/pfp-prompts",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/agents/pfp-studio",
+      "url": "https://app.thenewfuse.com/agents/pfp-studio",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/agents/pfp-studio",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -1162,10 +1262,36 @@
       }
     },
     {
+      "route": "/app",
+      "url": "https://app.thenewfuse.com/app",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/app",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/auth",
       "url": "https://app.thenewfuse.com/auth",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/auth",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/auth/callback",
+      "url": "https://app.thenewfuse.com/auth/callback",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/auth/callback",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -1192,6 +1318,19 @@
       "url": "https://app.thenewfuse.com/auth/google-callback",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/auth/google-callback",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/auth/google/callback",
+      "url": "https://app.thenewfuse.com/auth/google/callback",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/auth/google/callback",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -1344,6 +1483,19 @@
       }
     },
     {
+      "route": "/capabilities",
+      "url": "https://app.thenewfuse.com/capabilities",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/capabilities",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/careers",
       "url": "https://app.thenewfuse.com/careers",
       "status": 200,
@@ -1400,6 +1552,19 @@
       "url": "https://app.thenewfuse.com/chats",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/chats",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/codebase-map",
+      "url": "https://app.thenewfuse.com/codebase-map",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/codebase-map",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -1565,6 +1730,123 @@
       }
     },
     {
+      "route": "/dashboard/architecture",
+      "url": "https://app.thenewfuse.com/dashboard/architecture",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/architecture",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/dashboard/calendar",
+      "url": "https://app.thenewfuse.com/dashboard/calendar",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/calendar",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/dashboard/command-center",
+      "url": "https://app.thenewfuse.com/dashboard/command-center",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/command-center",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/dashboard/datasets",
+      "url": "https://app.thenewfuse.com/dashboard/datasets",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/datasets",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/dashboard/fairtable",
+      "url": "https://app.thenewfuse.com/dashboard/fairtable",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/fairtable",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/dashboard/files",
+      "url": "https://app.thenewfuse.com/dashboard/files",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/files",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/dashboard/launchpad",
+      "url": "https://app.thenewfuse.com/dashboard/launchpad",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/launchpad",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/dashboard/logs",
+      "url": "https://app.thenewfuse.com/dashboard/logs",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/logs",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/dashboard/observability",
+      "url": "https://app.thenewfuse.com/dashboard/observability",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/observability",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/dashboard/settings",
       "url": "https://app.thenewfuse.com/dashboard/settings",
       "status": 200,
@@ -1643,10 +1925,36 @@
       }
     },
     {
+      "route": "/fairtable",
+      "url": "https://app.thenewfuse.com/fairtable",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/fairtable",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/faq",
       "url": "https://app.thenewfuse.com/faq",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/faq",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/features",
+      "url": "https://app.thenewfuse.com/features",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/features",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -1851,6 +2159,19 @@
       }
     },
     {
+      "route": "/hub",
+      "url": "https://app.thenewfuse.com/hub",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/hub",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/integrations",
       "url": "https://app.thenewfuse.com/integrations",
       "status": 200,
@@ -1955,10 +2276,36 @@
       }
     },
     {
+      "route": "/llm-rankings",
+      "url": "https://app.thenewfuse.com/llm-rankings",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/llm-rankings",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/login",
       "url": "https://app.thenewfuse.com/login",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/login",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/macro-timeline",
+      "url": "https://app.thenewfuse.com/macro-timeline",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/macro-timeline",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -2007,6 +2354,19 @@
       }
     },
     {
+      "route": "/membership",
+      "url": "https://app.thenewfuse.com/membership",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/membership",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/models",
       "url": "https://app.thenewfuse.com/models",
       "status": 200,
@@ -2037,6 +2397,19 @@
       "url": "https://app.thenewfuse.com/multi-agent-chat-demo",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/multi-agent-chat-demo",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/nexus",
+      "url": "https://app.thenewfuse.com/nexus",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/nexus",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -2150,10 +2523,36 @@
       }
     },
     {
+      "route": "/perpetual-status",
+      "url": "https://app.thenewfuse.com/perpetual-status",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/perpetual-status",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/plans",
       "url": "https://app.thenewfuse.com/plans",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/plans",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/platform",
+      "url": "https://app.thenewfuse.com/platform",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/platform",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -2202,6 +2601,19 @@
       }
     },
     {
+      "route": "/product-map",
+      "url": "https://app.thenewfuse.com/product-map",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/product-map",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/profile",
       "url": "https://app.thenewfuse.com/profile",
       "status": 200,
@@ -2232,6 +2644,45 @@
       "url": "https://app.thenewfuse.com/resources",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/resources",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/resources/skills",
+      "url": "https://app.thenewfuse.com/resources/skills",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/resources/skills",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/resources/templates",
+      "url": "https://app.thenewfuse.com/resources/templates",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/resources/templates",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/resources/workflows",
+      "url": "https://app.thenewfuse.com/resources/workflows",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/resources/workflows",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -2384,6 +2835,19 @@
       }
     },
     {
+      "route": "/status",
+      "url": "https://app.thenewfuse.com/status",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/status",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/suggestions",
       "url": "https://app.thenewfuse.com/suggestions",
       "status": 200,
@@ -2427,6 +2891,19 @@
       "url": "https://app.thenewfuse.com/system",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/system",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/system-status",
+      "url": "https://app.thenewfuse.com/system-status",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/system-status",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -2488,6 +2965,19 @@
       }
     },
     {
+      "route": "/terminals",
+      "url": "https://app.thenewfuse.com/terminals",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/terminals",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/test",
       "url": "https://app.thenewfuse.com/test",
       "status": 200,
@@ -2540,6 +3030,19 @@
       }
     },
     {
+      "route": "/timeline/module",
+      "url": "https://app.thenewfuse.com/timeline/module",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/timeline/module",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/tools",
       "url": "https://app.thenewfuse.com/tools",
       "status": 200,
@@ -2570,6 +3073,58 @@
       "url": "https://app.thenewfuse.com/user/profile",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/user/profile",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/visualizations",
+      "url": "https://app.thenewfuse.com/visualizations",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/visualizations",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/visualizations/concordance",
+      "url": "https://app.thenewfuse.com/visualizations/concordance",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/visualizations/concordance",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/visualizations/surface",
+      "url": "https://app.thenewfuse.com/visualizations/surface",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/visualizations/surface",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/visualizations/terminals",
+      "url": "https://app.thenewfuse.com/visualizations/terminals",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/visualizations/terminals",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -2631,6 +3186,32 @@
       }
     },
     {
+      "route": "/workflows/builder-enhanced",
+      "url": "https://app.thenewfuse.com/workflows/builder-enhanced",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/workflows/builder-enhanced",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/workflows/builder-n8n",
+      "url": "https://app.thenewfuse.com/workflows/builder-n8n",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/workflows/builder-n8n",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/workflows/console",
       "url": "https://app.thenewfuse.com/workflows/console",
       "status": 200,
@@ -2674,6 +3255,19 @@
       "url": "https://app.thenewfuse.com/workflows/executions",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/workflows/executions",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/workflows/nexus",
+      "url": "https://app.thenewfuse.com/workflows/nexus",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/workflows/nexus",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -2866,7 +3460,7 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:09.714Z\",\"path\":\"/api/auth/login\",\"method\":\"POST\",\"message\":\"Cannot POST /api/auth/login\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:04:59.947Z\",\"path\":\"/api/auth/login\",\"method\":\"POST\",\"message\":\"Cannot POST /api/auth/login\",\"error\":\"Not Found\"}"
     },
     {
       "name": "App auth canonical login",
@@ -2879,7 +3473,7 @@
       "expectNot404": true,
       "status": 401,
       "ok": true,
-      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T05:29:09.872Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
+      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T06:05:00.092Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
     },
     {
       "name": "Gateway auth canonical login",
@@ -2892,7 +3486,7 @@
       "expectNot404": true,
       "status": 401,
       "ok": true,
-      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T05:29:10.154Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
+      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T06:05:00.344Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
     },
     {
       "name": "App agents list",
@@ -2900,7 +3494,7 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.225Z\",\"path\":\"/api/agents\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.411Z\",\"path\":\"/api/agents\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents\",\"error\":\"Not Found\"}"
     },
     {
       "name": "App agent template bank",
@@ -2908,7 +3502,7 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.301Z\",\"path\":\"/api/agents/bank/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents/bank/templates\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.475Z\",\"path\":\"/api/agents/bank/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents/bank/templates\",\"error\":\"Not Found\"}"
     },
     {
       "name": "API workspaces list",
@@ -2916,7 +3510,7 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.375Z\",\"path\":\"/api/workspaces\",\"method\":\"GET\",\"message\":\"Cannot GET /api/workspaces\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.540Z\",\"path\":\"/api/workspaces\",\"method\":\"GET\",\"message\":\"Cannot GET /api/workspaces\",\"error\":\"Not Found\"}"
     },
     {
       "name": "API current workspace",
@@ -2924,7 +3518,7 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.580Z\",\"path\":\"/api/workspaces/current\",\"method\":\"GET\",\"message\":\"Cannot GET /api/workspaces/current\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.723Z\",\"path\":\"/api/workspaces/current\",\"method\":\"GET\",\"message\":\"Cannot GET /api/workspaces/current\",\"error\":\"Not Found\"}"
     },
     {
       "name": "API resources templates",
@@ -2932,7 +3526,7 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.652Z\",\"path\":\"/api/resources/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /api/resources/templates\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.794Z\",\"path\":\"/api/resources/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /api/resources/templates\",\"error\":\"Not Found\"}"
     },
     {
       "name": "API marketplace catalog",
@@ -2940,7 +3534,7 @@
       "expectNot404": true,
       "status": 404,
       "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T05:29:10.731Z\",\"path\":\"/api/marketplace/catalog?status=published\",\"method\":\"GET\",\"message\":\"Cannot GET /api/marketplace/catalog?status=published\",\"error\":\"Not Found\"}"
+      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.869Z\",\"path\":\"/api/marketplace/catalog?status=published\",\"method\":\"GET\",\"message\":\"Cannot GET /api/marketplace/catalog?status=published\",\"error\":\"Not Found\"}"
     }
   ],
   "dependencyRefs": {
@@ -2988,9 +3582,10 @@
       ]
     },
     "/resources/templates": {
-      "count": 2,
+      "count": 3,
       "files": [
         "apps/frontend/src/ComprehensiveRouter.tsx",
+        "apps/frontend/src/config/routeCatalog.ts",
         "apps/frontend/src/services/resources.service.ts"
       ]
     },

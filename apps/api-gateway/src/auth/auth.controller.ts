@@ -7,6 +7,7 @@ import {
   Req,
   UseGuards,
   Version,
+  VERSION_NEUTRAL,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
@@ -71,6 +72,7 @@ export class AuthController {
   constructor(private readonly authService: GatewayAuthService) {}
 
   @Post('login')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'User login' })
   @ApiBody({ description: 'Login credentials' })
   @ApiResponse({ status: 200, description: 'Login successful' })

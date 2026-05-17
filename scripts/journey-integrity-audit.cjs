@@ -68,6 +68,14 @@ function normalizeRouteKey(p) {
   return withoutQuery;
 }
 
+function isComparableRoutePath(p) {
+  const key = normalizeRouteKey(p);
+  if (!key || key === '*') return false;
+  // API contract paths are audited separately; route parity compares navigation surfaces.
+  if (key.startsWith('/api/')) return false;
+  return true;
+}
+
 function nonDynamic(pathname) {
   return !pathname.includes(':') && !pathname.includes('*');
 }
@@ -107,16 +115,20 @@ function extractRouteSurfaces() {
     extractRegex(sidebarText, /href:\s*'([^']+)'/g).map(normalizePath).filter(Boolean)
   );
 
-  const routerKeySet = new Set(routerPaths.map(normalizeRouteKey));
-  const catalogKeySet = new Set(catalogPaths.map(normalizeRouteKey));
+  const comparableRouterPaths = routerPaths.filter(isComparableRoutePath);
+  const comparableCatalogPaths = catalogPaths.filter(isComparableRoutePath);
+  const comparableSidebarPaths = sidebarPaths.filter(isComparableRoutePath);
 
-  const catalogNotInRouter = catalogPaths
+  const routerKeySet = new Set(comparableRouterPaths.map(normalizeRouteKey));
+  const catalogKeySet = new Set(comparableCatalogPaths.map(normalizeRouteKey));
+
+  const catalogNotInRouter = comparableCatalogPaths
     .filter((p) => !routerKeySet.has(normalizeRouteKey(p)))
     .sort();
-  const routerNotInCatalog = routerPaths
+  const routerNotInCatalog = comparableRouterPaths
     .filter((p) => !catalogKeySet.has(normalizeRouteKey(p)))
     .sort();
-  const sidebarNotInRouter = sidebarPaths
+  const sidebarNotInRouter = comparableSidebarPaths
     .filter((p) => !routerKeySet.has(normalizeRouteKey(p)))
     .sort();
 

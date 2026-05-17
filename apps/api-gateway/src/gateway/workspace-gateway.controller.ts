@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Headers,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -11,6 +12,7 @@ import {
   Query,
   Res,
   Version,
+  VERSION_NEUTRAL,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -22,7 +24,7 @@ export class WorkspaceGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
   @Get()
-  @Version('1')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Get all workspaces for the current user' })
   @ApiResponse({ status: 200, description: 'List of workspaces retrieved successfully' })
   async getAllWorkspaces(
@@ -30,29 +32,107 @@ export class WorkspaceGatewayController {
     @Headers() headers: Record<string, string>,
     @Res() res: Response
   ) {
-    const response = await this.proxyService.proxyRequest(
-      'agents',
-      '/api/workspaces',
-      'GET',
-      headers,
-      undefined,
-      query
-    );
-    return res.status(response.status).json(response.data);
+    try {
+      const primaryResponse = await this.proxyService.proxyRequest(
+        'agents',
+        '/api/workspaces',
+        'GET',
+        headers,
+        undefined,
+        query
+      );
+      if (primaryResponse.status !== HttpStatus.NOT_FOUND) {
+        return res.status(primaryResponse.status).json(primaryResponse.data);
+      }
+    } catch {
+      // Fallback below handles transport errors.
+    }
+
+    try {
+      const apiResponse = await this.proxyService.proxyRequest(
+        'api',
+        '/api/workspaces',
+        'GET',
+        headers,
+        undefined,
+        query
+      );
+      if (apiResponse.status !== HttpStatus.NOT_FOUND) {
+        return res.status(apiResponse.status).json(apiResponse.data);
+      }
+    } catch {
+      // Fallback below handles transport errors.
+    }
+
+    try {
+      const response = await this.proxyService.proxyRequest(
+        'backend',
+        '/api/workspaces',
+        'GET',
+        headers,
+        undefined,
+        query
+      );
+      return res.status(response.status).json(response.data);
+    } catch (fallbackError) {
+      const fallbackErrorMessage =
+        fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+      return res.status(HttpStatus.BAD_GATEWAY).json({
+        message: 'Workspace service unavailable',
+        error: fallbackErrorMessage,
+      });
+    }
   }
 
   @Get('current')
-  @Version('1')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Get current workspace for current user' })
   @ApiResponse({ status: 200, description: 'Current workspace retrieved successfully' })
   async getCurrentWorkspace(@Headers() headers: Record<string, string>, @Res() res: Response) {
-    const response = await this.proxyService.proxyRequest(
-      'agents',
-      '/api/workspaces/current',
-      'GET',
-      headers
-    );
-    return res.status(response.status).json(response.data);
+    try {
+      const primaryResponse = await this.proxyService.proxyRequest(
+        'agents',
+        '/api/workspaces/current',
+        'GET',
+        headers
+      );
+      if (primaryResponse.status !== HttpStatus.NOT_FOUND) {
+        return res.status(primaryResponse.status).json(primaryResponse.data);
+      }
+    } catch {
+      // Fallback below handles transport errors.
+    }
+
+    try {
+      const apiResponse = await this.proxyService.proxyRequest(
+        'api',
+        '/api/workspaces/current',
+        'GET',
+        headers
+      );
+      if (apiResponse.status !== HttpStatus.NOT_FOUND) {
+        return res.status(apiResponse.status).json(apiResponse.data);
+      }
+    } catch {
+      // Fallback below handles transport errors.
+    }
+
+    try {
+      const response = await this.proxyService.proxyRequest(
+        'backend',
+        '/api/workspaces/current',
+        'GET',
+        headers
+      );
+      return res.status(response.status).json(response.data);
+    } catch (fallbackError) {
+      const fallbackErrorMessage =
+        fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+      return res.status(HttpStatus.BAD_GATEWAY).json({
+        message: 'Workspace service unavailable',
+        error: fallbackErrorMessage,
+      });
+    }
   }
 
   @Get(':id')

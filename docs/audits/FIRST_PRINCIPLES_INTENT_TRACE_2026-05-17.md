@@ -182,3 +182,55 @@ For every route/API mismatch:
      query/hash suffixes.
    - Re-ran strict gate: `sidebar-not-in-router` reduced from `3` to `0`
      (eliminated query-string false positives), while true blockers remain.
+
+## Execution Update (Route Catalog vs Router Parity Reduction)
+
+1. Added explicit route aliases in `ComprehensiveRouter` for catalog-intended
+   legacy paths (no-prune strategy), including:
+   - `/landing-page`, `/simple-landing`, `/chat-page`, `/chats`, `/channels`,
+     `/automations`, `/tasks-page`
+   - `/files`, `/datasets`, `/integrations`, `/tools`, `/skills`, `/models`,
+     `/terminal`, `/system`
+   - `/workspace/chat`, `/workspace/layout`
+   - `/admin/dashboard`, `/admin/experimental-features`, `/admin/onboarding`
+   - `/agents/unified-creator`, `/ambassador`, `/careers`, `/testimonials`,
+     `/comparisons`, `/faq`, `/components-nav`
+2. Added missing router paths to `routeCatalog.ts` under router-coverage
+   additions (including dynamic paths like `/goals/:id`, `/plans/:id`,
+   `/fairtable/:viewType`).
+3. Updated parity comparator rules in `journey-integrity-audit.cjs` to exclude
+   non-navigation paths from parity checks:
+   - catch-all `*`
+   - `/api/*` contract endpoints (already covered by API contract probe block)
+4. Strict gate rerun result after this pass:
+   - `catalog-not-in-router: 30 -> 0`
+   - `router-not-in-catalog: 51 -> 0`
+   - `sidebar-not-in-router: 0` (unchanged)
+   - Remaining strict blockers are now purely runtime/API:
+     - `non-200-routes=2`
+     - `api-contract-failures=7`
+
+## Execution Update (API Contract Hardening - 404-Aware Fallback + Compat)
+
+1. Fixed API gateway build-time drift in marketplace controller:
+   - Corrected `proxyWithFallback(...)` call signatures for MCP research routes
+     so `apps/api-gateway` compiles cleanly again.
+2. Hardened gateway fallback semantics to handle runtime 404 passthrough:
+   - Updated `AgentGatewayController`, `ResourcesGatewayController`,
+     `MarketplaceGatewayController`, and `WorkspaceGatewayController` so a 404
+     from the primary upstream now attempts the configured fallback service
+     instead of prematurely returning.
+3. Added explicit compatibility for unversioned journey-critical endpoints:
+   - Auth login: `POST /api/auth/login` now explicitly supported via
+     `@Version(['1', VERSION_NEUTRAL])`.
+   - Agents list + template bank, workspace list + current, resource templates,
+     marketplace catalog now also expose neutral-version compatibility.
+4. Hardened frontend ingress for legacy admin UI aliases:
+   - Updated `apps/frontend/nginx.conf` to serve SPA routes (not backend proxy)
+     for `/api/admin/database`, `/api/admin/features`, and
+     `/api/admin/features/:id/evaluate`.
+5. Verification:
+   - `pnpm --dir apps/api-gateway build` passes.
+   - Strict journey gate against production still reports `non-200-routes=2` and
+     `api-contract-failures=7` until this code is deployed to live runtime
+     surfaces.

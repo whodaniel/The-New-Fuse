@@ -1385,6 +1385,48 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
 
               {/* Enhanced Landing Routes */}
               <Route path="/about" element={<Navigate to="/brand" replace />} />
+              {/* Route catalog parity aliases (first-principles no-prune pass) */}
+              <Route path="/landing-page" element={<Navigate to="/landing" replace />} />
+              <Route path="/simple-landing" element={<Navigate to="/landing" replace />} />
+              <Route path="/ambassador" element={<Navigate to="/community" replace />} />
+              <Route path="/careers" element={<Navigate to="/community" replace />} />
+              <Route path="/testimonials" element={<Navigate to="/landing" replace />} />
+              <Route path="/comparisons" element={<Navigate to="/product-map" replace />} />
+              <Route path="/faq" element={<Navigate to="/docs" replace />} />
+              <Route path="/components-nav" element={<Navigate to="/components" replace />} />
+              <Route path="/chat-page" element={<Navigate to="/chat" replace />} />
+              <Route path="/chats" element={<Navigate to="/chat" replace />} />
+              <Route path="/channels" element={<Navigate to="/chat" replace />} />
+              <Route path="/automations" element={<Navigate to="/workflows" replace />} />
+              <Route path="/tasks-page" element={<Navigate to="/tasks" replace />} />
+              <Route path="/workspace/chat" element={<Navigate to="/workspace-chat" replace />} />
+              <Route
+                path="/workspace/layout"
+                element={<Navigate to="/workspace/overview" replace />}
+              />
+              <Route path="/files" element={<Navigate to="/dashboard/files" replace />} />
+              <Route path="/datasets" element={<Navigate to="/dashboard/datasets" replace />} />
+              <Route path="/bookmarks" element={<Navigate to="/space" replace />} />
+              <Route path="/integrations" element={<Navigate to="/resources" replace />} />
+              <Route path="/tools" element={<Navigate to="/resources" replace />} />
+              <Route path="/skills" element={<Navigate to="/resources/skills" replace />} />
+              <Route path="/models" element={<Navigate to="/settings/api" replace />} />
+              <Route path="/terminal" element={<Navigate to="/terminals" replace />} />
+              <Route path="/system" element={<Navigate to="/system-status" replace />} />
+              <Route
+                path="/general-settings/community-hub"
+                element={<Navigate to="/community" replace />}
+              />
+              <Route
+                path="/agents/unified-creator"
+                element={<Navigate to="/agent-builder" replace />}
+              />
+              <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
+              <Route
+                path="/admin/experimental-features"
+                element={<Navigate to="/admin/feature-flags" replace />}
+              />
+              <Route path="/admin/onboarding" element={<Navigate to="/onboarding" replace />} />
               <Route path="/features" element={<RedirectToStatic to="/#features" />} />
               <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
               <Route path="/community" element={<CommunityHubPage />} />

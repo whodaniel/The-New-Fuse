@@ -9,6 +9,7 @@ import {
   Query,
   Res,
   Version,
+  VERSION_NEUTRAL,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -28,7 +29,7 @@ export class MarketplaceGatewayController {
     body?: any
   ) {
     try {
-      const response = await this.proxyService.proxyRequest(
+      const primaryResponse = await this.proxyService.proxyRequest(
         'agents',
         path,
         method,
@@ -36,31 +37,35 @@ export class MarketplaceGatewayController {
         body,
         query
       );
-      return res.status(response.status).json(response.data);
-    } catch {
-      try {
-        const response = await this.proxyService.proxyRequest(
-          'backend',
-          path,
-          method,
-          headers,
-          body,
-          query
-        );
-        return res.status(response.status).json(response.data);
-      } catch (fallbackError) {
-        const fallbackErrorMessage =
-          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
-        return res.status(HttpStatus.BAD_GATEWAY).json({
-          message: 'Marketplace service unavailable',
-          error: fallbackErrorMessage,
-        });
+      if (primaryResponse.status !== HttpStatus.NOT_FOUND) {
+        return res.status(primaryResponse.status).json(primaryResponse.data);
       }
+    } catch {
+      // Fallback below handles transport errors.
+    }
+
+    try {
+      const response = await this.proxyService.proxyRequest(
+        'backend',
+        path,
+        method,
+        headers,
+        body,
+        query
+      );
+      return res.status(response.status).json(response.data);
+    } catch (fallbackError) {
+      const fallbackErrorMessage =
+        fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+      return res.status(HttpStatus.BAD_GATEWAY).json({
+        message: 'Marketplace service unavailable',
+        error: fallbackErrorMessage,
+      });
     }
   }
 
   @Get('catalog')
-  @Version('1')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'List marketplace catalog' })
   @ApiResponse({ status: 200, description: 'Marketplace catalog retrieved successfully' })
   async getCatalog(
@@ -158,7 +163,7 @@ export class MarketplaceGatewayController {
   @ApiOperation({ summary: 'Get MCP research counts' })
   @ApiResponse({ status: 200, description: 'MCP research counts retrieved successfully' })
   async getResearchMcpCounts(@Headers() headers: Record<string, string>, @Res() res: Response) {
-    return this.proxyWithFallback('/api/marketplace/research/mcp/counts', headers, res);
+    return this.proxyWithFallback('/api/marketplace/research/mcp/counts', 'GET', headers, res);
   }
 
   @Get('research/mcp/sources')
@@ -170,7 +175,13 @@ export class MarketplaceGatewayController {
     @Headers() headers: Record<string, string>,
     @Res() res: Response
   ) {
-    return this.proxyWithFallback('/api/marketplace/research/mcp/sources', headers, res, query);
+    return this.proxyWithFallback(
+      '/api/marketplace/research/mcp/sources',
+      'GET',
+      headers,
+      res,
+      query
+    );
   }
 
   @Get('research/mcp/servers')
@@ -182,7 +193,13 @@ export class MarketplaceGatewayController {
     @Headers() headers: Record<string, string>,
     @Res() res: Response
   ) {
-    return this.proxyWithFallback('/api/marketplace/research/mcp/servers', headers, res, query);
+    return this.proxyWithFallback(
+      '/api/marketplace/research/mcp/servers',
+      'GET',
+      headers,
+      res,
+      query
+    );
   }
 
   @Get('research/skills/marketplace/counts')
@@ -198,6 +215,7 @@ export class MarketplaceGatewayController {
   ) {
     return this.proxyWithFallback(
       '/api/marketplace/research/skills/marketplace/counts',
+      'GET',
       headers,
       res
     );
@@ -217,6 +235,7 @@ export class MarketplaceGatewayController {
   ) {
     return this.proxyWithFallback(
       '/api/marketplace/research/skills/marketplace/entries',
+      'GET',
       headers,
       res,
       query

@@ -11,6 +11,7 @@ import {
   Query,
   Res,
   Version,
+  VERSION_NEUTRAL,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -30,7 +31,7 @@ export class ResourcesGatewayController {
     query?: Record<string, string>
   ) {
     try {
-      const response = await this.proxyService.proxyRequest(
+      const primaryResponse = await this.proxyService.proxyRequest(
         'api',
         path,
         method,
@@ -38,26 +39,30 @@ export class ResourcesGatewayController {
         body,
         query
       );
-      return res.status(response.status).json(response.data);
-    } catch {
-      try {
-        const response = await this.proxyService.proxyRequest(
-          'agents',
-          path,
-          method,
-          headers,
-          body,
-          query
-        );
-        return res.status(response.status).json(response.data);
-      } catch (fallbackError) {
-        const fallbackErrorMessage =
-          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
-        return res.status(HttpStatus.BAD_GATEWAY).json({
-          message: 'Resources service unavailable',
-          error: fallbackErrorMessage,
-        });
+      if (primaryResponse.status !== HttpStatus.NOT_FOUND) {
+        return res.status(primaryResponse.status).json(primaryResponse.data);
       }
+    } catch {
+      // Fallback below handles transport errors.
+    }
+
+    try {
+      const response = await this.proxyService.proxyRequest(
+        'agents',
+        path,
+        method,
+        headers,
+        body,
+        query
+      );
+      return res.status(response.status).json(response.data);
+    } catch (fallbackError) {
+      const fallbackErrorMessage =
+        fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+      return res.status(HttpStatus.BAD_GATEWAY).json({
+        message: 'Resources service unavailable',
+        error: fallbackErrorMessage,
+      });
     }
   }
 
@@ -105,7 +110,7 @@ export class ResourcesGatewayController {
   }
 
   @Get('templates')
-  @Version('1')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'List resource templates' })
   @ApiResponse({ status: 200, description: 'Templates retrieved successfully' })
   async getTemplates(

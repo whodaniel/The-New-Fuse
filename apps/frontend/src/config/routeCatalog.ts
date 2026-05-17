@@ -527,6 +527,244 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     path: '/workflows/execution',
     description: 'Workflow execution alias route',
   },
+  { name: 'About Alias', path: '/about', description: 'About alias redirecting to brand' },
+  { name: 'Features Alias', path: '/features', description: 'Landing feature section alias' },
+  {
+    name: 'Capabilities Surface',
+    path: '/capabilities',
+    description: 'Public capability map alias to product map',
+  },
+  { name: 'App Root Alias', path: '/app', description: 'App root alias to dashboard' },
+  {
+    name: 'Admin Control Panel',
+    path: '/admin/control-panel',
+    description: 'Super admin command console',
+  },
+  {
+    name: 'Admin Marketplace Console',
+    path: '/admin/marketplace',
+    description: 'Super admin marketplace moderation console',
+  },
+  {
+    name: 'Agents Create Alias',
+    path: '/agents/create',
+    description: 'Agent creation alias to dashboard create flow',
+  },
+  {
+    name: 'Agent Catalog Profile',
+    path: '/agents/catalog/:id',
+    description: 'Agent catalog profile deep link',
+  },
+  {
+    name: 'Agent PFP Catalog',
+    path: '/agents/pfp-catalog',
+    description: 'Agent portrait profile catalog',
+  },
+  {
+    name: 'Agent PFP Prompts',
+    path: '/agents/pfp-prompts',
+    description: 'Agent portrait prompt catalog',
+  },
+  {
+    name: 'Agent PFP Studio',
+    path: '/agents/pfp-studio',
+    description: 'Agent portrait studio surface',
+  },
+  {
+    name: 'Auth Callback',
+    path: '/auth/callback',
+    description: 'SSO callback compatibility path',
+  },
+  {
+    name: 'Auth Google Callback Alias',
+    path: '/auth/google/callback',
+    description: 'Google callback compatibility path',
+  },
+  {
+    name: 'Codebase Map',
+    path: '/codebase-map',
+    description: 'Codebase visualization and map explorer',
+  },
+  {
+    name: 'Dashboard Architecture',
+    path: '/dashboard/architecture',
+    description: 'Architecture dashboard alias',
+  },
+  {
+    name: 'Dashboard Calendar',
+    path: '/dashboard/calendar',
+    description: 'Task calendar dashboard route',
+  },
+  {
+    name: 'Dashboard Command Center',
+    path: '/dashboard/command-center',
+    description: 'Primary command center dashboard route',
+  },
+  {
+    name: 'Dashboard Datasets',
+    path: '/dashboard/datasets',
+    description: 'Dataset workbench dashboard route',
+  },
+  {
+    name: 'Dashboard Fairtable',
+    path: '/dashboard/fairtable',
+    description: 'Fairtable dashboard route',
+  },
+  {
+    name: 'Dashboard Files',
+    path: '/dashboard/files',
+    description: 'Files workspace dashboard route',
+  },
+  {
+    name: 'Dashboard Launchpad',
+    path: '/dashboard/launchpad',
+    description: 'Launchpad dashboard route',
+  },
+  {
+    name: 'Dashboard Logs',
+    path: '/dashboard/logs',
+    description: 'Operational logs dashboard route',
+  },
+  {
+    name: 'Dashboard Observability',
+    path: '/dashboard/observability',
+    description: 'Observability dashboard alias',
+  },
+  {
+    name: 'Fairtable',
+    path: '/fairtable',
+    description: 'Fairtable workspace route',
+  },
+  {
+    name: 'Fairtable View',
+    path: '/fairtable/:viewType',
+    description: 'Fairtable named view route',
+  },
+  {
+    name: 'Goals Detail',
+    path: '/goals/:id',
+    description: 'Goal detail route',
+  },
+  {
+    name: 'Hub',
+    path: '/hub',
+    description: 'Unified operational hub surface',
+  },
+  {
+    name: 'LLM Rankings',
+    path: '/llm-rankings',
+    description: 'Model rankings and comparative analytics',
+  },
+  {
+    name: 'Macro Timeline',
+    path: '/macro-timeline',
+    description: 'Macro timeline route',
+  },
+  {
+    name: 'Membership',
+    path: '/membership',
+    description: 'Membership and billing surface',
+  },
+  {
+    name: 'Nexus Root',
+    path: '/nexus',
+    description: 'Synaptic Nexus root route',
+  },
+  {
+    name: 'Perpetual Status',
+    path: '/perpetual-status',
+    description: 'Persistent status monitor surface',
+  },
+  {
+    name: 'Plans Detail',
+    path: '/plans/:id',
+    description: 'Plan detail route',
+  },
+  {
+    name: 'Product Map',
+    path: '/product-map',
+    description: 'Public product map surface',
+  },
+  {
+    name: 'Platform Alias',
+    path: '/platform',
+    description: 'Platform alias redirect to product map',
+  },
+  {
+    name: 'Resources Skills',
+    path: '/resources/skills',
+    description: 'Resource skill browser',
+  },
+  {
+    name: 'Resources Templates',
+    path: '/resources/templates',
+    description: 'Resource template browser',
+  },
+  {
+    name: 'Resources Workflows',
+    path: '/resources/workflows',
+    description: 'Resource workflow browser',
+  },
+  {
+    name: 'Status',
+    path: '/status',
+    description: 'System status page',
+  },
+  {
+    name: 'System Status',
+    path: '/system-status',
+    description: 'System status alias page',
+  },
+  {
+    name: 'Terminals',
+    path: '/terminals',
+    description: 'Terminal graph and observability surface',
+  },
+  {
+    name: 'Timeline Module',
+    path: '/timeline/module',
+    description: 'Timeline module route',
+  },
+  {
+    name: 'Visualizations',
+    path: '/visualizations',
+    description: 'Visualization index route',
+  },
+  {
+    name: 'Visualizations Concordance',
+    path: '/visualizations/concordance',
+    description: 'Concordance visualization route',
+  },
+  {
+    name: 'Visualizations Surface',
+    path: '/visualizations/surface',
+    description: 'Visualization surface viewer route',
+  },
+  {
+    name: 'Visualizations Terminals',
+    path: '/visualizations/terminals',
+    description: 'Terminal visualization route',
+  },
+  {
+    name: 'Workflow Builder Enhanced',
+    path: '/workflows/builder-enhanced',
+    description: 'Enhanced workflow builder route',
+  },
+  {
+    name: 'Workflow Builder N8N',
+    path: '/workflows/builder-n8n',
+    description: 'N8N-compatible workflow builder route',
+  },
+  {
+    name: 'Workflow Nexus',
+    path: '/workflows/nexus',
+    description: 'Workflow nexus route',
+  },
+  {
+    name: '3D Library',
+    path: '/3d-library',
+    description: '3D virtual library surface',
+  },
 ];
 
 const experienceByPath = new Map<
