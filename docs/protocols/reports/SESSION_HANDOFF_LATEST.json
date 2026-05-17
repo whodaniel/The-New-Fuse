@@ -1,10 +1,10 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "37908447-bfb0-497c-9e08-ff1f6d43312b",
-  "created_at": "2026-05-17T01:06:42.852Z",
+  "handoff_id": "32fc7788-0d33-455b-80e3-3c4c01e50768",
+  "created_at": "2026-05-17T01:14:17.506Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "43771f8f43fe321958fd5a06fd928378ef68a58f",
+  "head_sha": "0bf66d3b98979148d8f4e4956d2b13cb014257fd",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
@@ -12,19 +12,13 @@
     "Protocol enforcement layer implemented for mandatory session handoff continuity.",
     "CI/hook gates now block critical changes without fresh handoff artifacts."
   ],
-  "changed_paths": [
-    "apps/api/src/auth/decorators/current-user.decorator.ts",
-    "apps/api/src/decorators/current-user.decorator.ts",
-    "apps/api/src/modules/unified-ledger/unified-ledger.controller.spec.ts",
-    "apps/api/src/modules/unified-ledger/unified-ledger.controller.ts",
-    "apps/frontend/src/pages/Timeline/index.tsx"
-  ],
+  "changed_paths": ["apps/frontend/src/pages/Timeline/index.tsx"],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-05-17T01:06:43.554Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-05-17T01:14:17.907Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
@@ -41,6 +35,6 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["43771f8f43fe321958fd5a06fd928378ef68a58f"]
+    "commits": ["0bf66d3b98979148d8f4e4956d2b13cb014257fd"]
   }
 }

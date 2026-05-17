@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-17T01:06:42.852Z`  
-Handoff ID: `37908447-bfb0-497c-9e08-ff1f6d43312b`
+Created At: `2026-05-17T01:14:17.506Z`  
+Handoff ID: `32fc7788-0d33-455b-80e3-3c4c01e50768`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `43771f8f43fe321958fd5a06fd928378ef68a58f`
+- Head SHA: `0bf66d3b98979148d8f4e4956d2b13cb014257fd`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,10 +19,6 @@ Handoff ID: `37908447-bfb0-497c-9e08-ff1f6d43312b`
 
 ## Changed Paths
 
-- apps/api/src/auth/decorators/current-user.decorator.ts
-- apps/api/src/decorators/current-user.decorator.ts
-- apps/api/src/modules/unified-ledger/unified-ledger.controller.spec.ts
-- apps/api/src/modules/unified-ledger/unified-ledger.controller.ts
 - apps/frontend/src/pages/Timeline/index.tsx
 
 ## Verification
