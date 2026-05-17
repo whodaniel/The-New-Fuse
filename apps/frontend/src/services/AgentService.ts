@@ -14,6 +14,9 @@ export interface Agent {
   version: string;
   model?: string;
   provider?: string;
+  systemPrompt?: string;
+  profile?: Record<string, any>;
+  config?: Record<string, any>;
   configuration: Record<string, any>;
   metadata: Record<string, any>;
   createdAt: Date;
@@ -166,7 +169,7 @@ class AgentService {
 
   async updateAgent(id: string, updates: Partial<Agent>): Promise<Agent> {
     const updated = await this.request<any>(`/agents/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(updates),
     });
     return this.transformAgent(updated);
@@ -324,10 +327,38 @@ class AgentService {
   }
 
   private transformAgent(apiAgent: any): Agent {
+    const configuration = apiAgent.configuration || apiAgent.config || {};
+    const profile = apiAgent.profile || {};
+    const rawStatus = String(apiAgent.status || 'inactive').toUpperCase();
+    const normalizedStatus: Agent['status'] =
+      rawStatus === 'ACTIVE'
+        ? 'active'
+        : rawStatus === 'ERROR'
+          ? 'error'
+          : rawStatus === 'BUSY' || rawStatus === 'IDLE' || rawStatus === 'READY'
+            ? 'standby'
+            : 'inactive';
+    const metadata = {
+      ...(apiAgent.metadata || {}),
+      ...(profile.avatar && !apiAgent?.metadata?.pfpUrl ? { pfpUrl: profile.avatar } : {}),
+      ...(configuration.skills && !apiAgent?.metadata?.skills
+        ? { skills: configuration.skills }
+        : {}),
+      ...(configuration.tools && !apiAgent?.metadata?.tools ? { tools: configuration.tools } : {}),
+    };
+
     return {
       ...apiAgent,
-      createdAt: new Date(apiAgent.createdAt),
-      updatedAt: new Date(apiAgent.updatedAt),
+      status: normalizedStatus,
+      model: apiAgent.model || configuration?.llm?.primary?.model,
+      provider: apiAgent.provider || configuration?.llm?.primary?.provider,
+      systemPrompt: apiAgent.systemPrompt || configuration?.prompts?.system,
+      config: configuration,
+      configuration,
+      profile,
+      metadata,
+      createdAt: new Date(apiAgent.createdAt || Date.now()),
+      updatedAt: new Date(apiAgent.updatedAt || Date.now()),
     };
   }
 

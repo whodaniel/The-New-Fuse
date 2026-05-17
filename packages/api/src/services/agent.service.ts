@@ -39,6 +39,37 @@ export class AgentService {
     throw err;
   }
 
+  private normalizeStatus(status?: string | null): string | null | undefined {
+    if (!status) return status;
+    const normalized = String(status).toUpperCase();
+    const allowed = new Set([
+      'ACTIVE',
+      'INACTIVE',
+      'IDLE',
+      'BUSY',
+      'ERROR',
+      'OFFLINE',
+      'INITIALIZING',
+      'READY',
+      'TERMINATED',
+    ]);
+    return allowed.has(normalized) ? normalized : undefined;
+  }
+
+  private extractConfig(data: Record<string, any>): Record<string, any> | undefined {
+    const direct = data.config;
+    const alias = data.configuration;
+    if (direct && typeof direct === 'object') return direct;
+    if (alias && typeof alias === 'object') return alias;
+    return undefined;
+  }
+
+  private extractProfile(data: Record<string, any>): Record<string, any> | undefined {
+    const profile = data.profile;
+    if (profile && typeof profile === 'object') return profile;
+    return undefined;
+  }
+
   /**
    * Get all agents for a user
    */
@@ -77,16 +108,28 @@ export class AgentService {
    */
   async createAgent(data: Partial<NewAgent>, userId: string): Promise<Agent> {
     try {
+      const raw = data as Record<string, any>;
+      const extractedConfig = this.extractConfig(raw);
+      const extractedProfile = this.extractProfile(raw);
+      const normalizedStatus = this.normalizeStatus(raw.status as string | undefined);
+
       const agentData: NewAgent = {
         name: data.name || 'Untitled Agent',
         type: data.type || 'ASSISTANT',
         userId,
-        status: data.status,
+        status: normalizedStatus,
         description: data.description,
-        systemPrompt: data.systemPrompt,
-        config: data.config,
+        systemPrompt:
+          data.systemPrompt ||
+          (extractedConfig?.prompts?.system as string | undefined) ||
+          undefined,
+        config: extractedConfig,
+        profile: extractedProfile,
         capabilities: data.capabilities || [],
-        provider: data.provider || 'default',
+        provider:
+          data.provider ||
+          (extractedConfig?.llm?.primary?.provider as string | undefined) ||
+          'default',
       };
       return await this.agentRepository.create(agentData);
     } catch (error) {
@@ -104,7 +147,41 @@ export class AgentService {
         throw new Error(`Agent with ID ${id} not found for this user`);
       }
 
-      const updatedAgent = await this.agentRepository.update(id, data);
+      const raw = data as Record<string, any>;
+      const extractedConfig = this.extractConfig(raw);
+      const extractedProfile = this.extractProfile(raw);
+      const normalizedStatus = this.normalizeStatus(raw.status as string | undefined);
+
+      const updateData: Partial<NewAgent> = {};
+      if (data.name !== undefined) updateData.name = data.name;
+      if (data.type !== undefined) updateData.type = data.type;
+      if (data.description !== undefined) updateData.description = data.description;
+      if (data.capabilities !== undefined) updateData.capabilities = data.capabilities;
+
+      const mergedSystemPrompt =
+        data.systemPrompt || (extractedConfig?.prompts?.system as string | undefined);
+      if (mergedSystemPrompt !== undefined) {
+        updateData.systemPrompt = mergedSystemPrompt;
+      }
+
+      if (extractedConfig) {
+        updateData.config = extractedConfig;
+      }
+      if (extractedProfile) {
+        updateData.profile = extractedProfile;
+      }
+
+      const mergedProvider =
+        data.provider || (extractedConfig?.llm?.primary?.provider as string | undefined);
+      if (mergedProvider !== undefined) {
+        updateData.provider = mergedProvider;
+      }
+
+      if (normalizedStatus !== undefined) {
+        updateData.status = normalizedStatus;
+      }
+
+      const updatedAgent = await this.agentRepository.update(id, updateData);
       if (!updatedAgent) {
         throw new Error(`Failed to update agent ${id}`);
       }
@@ -266,7 +343,7 @@ export class AgentService {
         throw new Error(`Agent with ID ${id} not found for this user`);
       }
 
-      const updated = await this.agentRepository.update(id, { status: 'active' });
+      const updated = await this.agentRepository.update(id, { status: 'ACTIVE' });
       return updated!;
     } catch (error) {
       return this.handleError(error, `startAgent(${id})`);
@@ -283,7 +360,7 @@ export class AgentService {
         throw new Error(`Agent with ID ${id} not found for this user`);
       }
 
-      const updated = await this.agentRepository.update(id, { status: 'inactive' });
+      const updated = await this.agentRepository.update(id, { status: 'INACTIVE' });
       return updated!;
     } catch (error) {
       return this.handleError(error, `stopAgent(${id})`);

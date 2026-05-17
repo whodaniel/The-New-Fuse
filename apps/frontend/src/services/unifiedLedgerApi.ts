@@ -154,13 +154,25 @@ const TIMELINE_API_BASES = buildApiBaseCandidates([
   '/api/unified-ledger/timeline',
   '/api/unified-ledger/unified-ledger/timeline',
   '/api/timeline',
+  '/api/v1/unified-ledger/timeline',
+  '/api/v1/timeline',
 ] as const);
 const RECORD_API_BASES = buildApiBaseCandidates([
   '/api/unified-ledger/records',
   '/api/unified-ledger/unified-ledger/records',
+  '/api/v1/unified-ledger/records',
+  '/api/v1/unified-ledger/unified-ledger/records',
 ] as const);
 const GOAL_API_BASES = buildApiBaseCandidates(['/api/unified-ledger/goals', '/api/goals'] as const);
 const PLAN_API_BASES = buildApiBaseCandidates(['/api/unified-ledger/plans', '/api/plans'] as const);
+const SUGGESTION_API_BASES = buildApiBaseCandidates([
+  '/api/unified-ledger/suggestions',
+  '/api/unified-ledger/unified-ledger/suggestions',
+  '/api/suggestions',
+  '/api/v1/unified-ledger/suggestions',
+  '/api/v1/unified-ledger/unified-ledger/suggestions',
+  '/api/v1/suggestions',
+] as const);
 
 function shouldFallbackRoute(status: number): boolean {
   return status === 404 || status === 405 || status === 502 || status === 503 || status === 504;
@@ -627,16 +639,20 @@ export async function updateTask(id: string, patch: Partial<LedgerRecord>): Prom
 }
 
 export async function listSuggestions(): Promise<LedgerRecord[]> {
-  return parse<LedgerRecord[]>(await apiFetch('/api/unified-ledger/suggestions'));
+  return parse<LedgerRecord[]>(
+    await apiFetchWithFallback([...SUGGESTION_API_BASES].map((base) => `${base}`))
+  );
 }
 
 export async function getSuggestion(id: string): Promise<LedgerRecord | null> {
-  return parse<LedgerRecord | null>(await apiFetch(`/api/unified-ledger/suggestions/${id}`));
+  const candidates = SUGGESTION_API_BASES.map((base) => `${base}/${id}`);
+  return parse<LedgerRecord | null>(await apiFetchWithFallback(candidates));
 }
 
 export async function createSuggestion(input: Partial<LedgerRecord>): Promise<LedgerRecord> {
+  const candidates = [...SUGGESTION_API_BASES].map((base) => `${base}`);
   return parse<LedgerRecord>(
-    await apiFetch('/api/unified-ledger/suggestions', {
+    await apiFetchWithFallback(candidates, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -648,8 +664,9 @@ export async function voteSuggestion(
   id: string,
   direction: 'up' | 'down'
 ): Promise<LedgerRecord | null> {
+  const candidates = SUGGESTION_API_BASES.map((base) => `${base}/${id}/vote`);
   return parse<LedgerRecord | null>(
-    await apiFetch(`/api/unified-ledger/suggestions/${id}/vote`, {
+    await apiFetchWithFallback(candidates, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify({ direction }),
@@ -843,91 +860,116 @@ export async function bootstrapPersonalTimeline(): Promise<{
 
     const userId = await inferCurrentUserId();
     const snapshot = readLocalTimelineSnapshot();
-    const existing = filterLocalTimelineEvents(
+    const existingEvents = filterLocalTimelineEvents(
       snapshot.events,
       userId ? { ownerId: userId } : undefined
     );
+
     if (!userId) {
       return {
-        message: 'Timeline API unavailable; unable to infer current user for bootstrap',
+        message: 'Timeline API unavailable and authenticated user context is missing',
         createdCount: 0,
-        totalCount: existing.length,
-        events: existing,
-      };
-    }
-    if (existing.length > 0) {
-      return {
-        message: 'Personal timeline segments already exist',
-        createdCount: 0,
-        totalCount: existing.length,
-        events: existing,
+        totalCount: existingEvents.length,
+        events: existingEvents,
       };
     }
 
+    const existingKeys = new Set(
+      existingEvents
+        .map((event) => ((event.payload || {}) as Record<string, unknown>).storyKey)
+        .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+        .map((value) => value.trim())
+    );
+    const existingTitles = new Set(
+      existingEvents
+        .map((event) => ((event.payload || {}) as Record<string, unknown>).title)
+        .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+        .map((value) => value.trim().toLowerCase())
+    );
+
     const now = Date.now();
-    const seed = [
+    const blueprint = [
       {
+        key: 'identity-foundation',
         title: 'Identity Foundation',
-        description: 'Core identity context and baseline personal narrative anchor.',
-        point: 5,
+        description: 'Early identity anchors and formative personal narrative context.',
+        point: 8,
         category: 'Identity',
-        yearOffset: 20,
+        yearsAgo: 18,
       },
       {
-        title: 'Early Development Milestone',
-        description: 'Foundational growth period and early personal development signals.',
-        point: 20,
+        key: 'education-development',
+        title: 'Education & Development',
+        description: 'Learning period that shaped capabilities, values, and long-term direction.',
+        point: 22,
         category: 'Education',
-        yearOffset: 14,
+        yearsAgo: 12,
       },
       {
-        title: 'Career Direction Shift',
-        description: 'A major directional shift influencing long-term goals and projects.',
-        point: 42,
+        key: 'career-inflection',
+        title: 'Career Inflection Point',
+        description: 'A directional shift that redefined execution priorities and goals.',
+        point: 45,
         category: 'Career',
-        yearOffset: 8,
+        yearsAgo: 7,
       },
       {
-        title: 'Project Acceleration Phase',
-        description: 'Increased execution velocity across business and creative tracks.',
-        point: 64,
+        key: 'project-acceleration',
+        title: 'Project Acceleration',
+        description: 'Execution pace increased across key projects and personal systems.',
+        point: 66,
         category: 'Business & Projects',
-        yearOffset: 4,
+        yearsAgo: 3,
       },
       {
+        key: 'current-strategic-horizon',
         title: 'Current Strategic Horizon',
-        description: 'Present-day initiatives and active narrative trajectory.',
-        point: 85,
+        description: 'Current timeline arc with active priorities and next-stage planning.',
+        point: 86,
         category: 'Legacy',
-        yearOffset: 1,
+        yearsAgo: 1,
       },
     ] as const;
 
-    const created: TimelineEvent[] = seed.map((row, index) => ({
-      id: generateLocalTimelineEventId(),
-      userId,
-      eventType: 'historical_event',
-      actor: userId,
-      timestamp: new Date(
-        now - row.yearOffset * 365 * 24 * 60 * 60 * 1000 + index * 60_000
-      ).toISOString(),
-      payload: {
-        title: row.title,
-        description: row.description,
-        point: row.point,
-        category: row.category,
-        segment: row.category,
-        source: 'local-bootstrap-fallback',
-        isPrivate: true,
-      },
-    }));
+    const created: TimelineEvent[] = [];
+    for (let index = 0; index < blueprint.length; index += 1) {
+      const row = blueprint[index];
+      if (existingKeys.has(row.key) || existingTitles.has(row.title.toLowerCase())) {
+        continue;
+      }
+      const event: TimelineEvent = {
+        id: generateLocalTimelineEventId(),
+        userId,
+        eventType: 'historical_event',
+        actor: userId,
+        timestamp: new Date(
+          now - row.yearsAgo * 365 * 24 * 60 * 60 * 1000 + index * 60_000
+        ).toISOString(),
+        payload: {
+          title: row.title,
+          description: row.description,
+          point: row.point,
+          category: row.category,
+          segment: row.category,
+          source: 'local-bootstrap-fallback',
+          storyKey: row.key,
+          isPrivate: true,
+        },
+      };
+      created.push(event);
+      snapshot.events.push(event);
+    }
 
-    snapshot.events.push(...created);
-    writeLocalTimelineSnapshot(snapshot);
+    if (created.length > 0) {
+      writeLocalTimelineSnapshot(snapshot);
+    }
 
     const events = filterLocalTimelineEvents(snapshot.events, { ownerId: userId });
     return {
-      message: `Generated ${created.length} local personal timeline segments`,
+      message:
+        created.length > 0
+          ? `Generated ${created.length} local personal timeline segments`
+          : 'Personal timeline segments already exist',
       createdCount: created.length,
       totalCount: events.length,
       events,

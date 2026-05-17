@@ -15,6 +15,13 @@ const Suggestions: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [status, setStatus] = useState('All');
 
+  const systemErrorLog = useMemo(() => {
+    if (!loadError) return 'Error 404 - Request rejected by gateway synapse.';
+    const compact = loadError.replace(/\s+/g, ' ').trim();
+    if (compact.length === 0) return 'Error 404 - Request rejected by gateway synapse.';
+    return compact;
+  }, [loadError]);
+
   const load = async () => {
     setLoading(true);
     setLoadError(null);
@@ -99,8 +106,7 @@ const Suggestions: React.FC = () => {
               </p>
             </div>
             <div className="w-full bg-black/40 rounded border border-white/5 p-3 text-xs font-mono text-red-400/80 text-left overflow-hidden">
-              <span className="text-slate-500">SYSTEM_LOG:</span> Error 404 - Request rejected by
-              gateway synapse.
+              <span className="text-slate-500">SYSTEM_LOG:</span> {systemErrorLog}
             </div>
             <Button
               className="mt-2 bg-slate-800 hover:bg-slate-700 text-white font-bold h-10 px-8"

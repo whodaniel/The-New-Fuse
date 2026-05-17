@@ -1658,6 +1658,37 @@ function normalizeForwardedArgs(args: string[] = []): string[] {
   return args;
 }
 
+/**
+ * Resolve a passthrough command name to its absolute executable path.
+ *
+ * When `tnf` is launched via `pnpm exec tsx`, the child process inherits
+ * a PATH where pnpm may intercept bare command names (e.g. `hermes`) and
+ * fail with ERR_PNPM_RECURSIVE_EXEC_NO_PACKAGE because `hermes` is not a
+ * workspace package.  Resolving to an absolute path bypasses pnpm's
+ * interception and invokes the real binary directly.
+ */
+function resolvePassthroughCommand(cliName: string): string {
+  // 1. Try standard PATH resolution (findExecutableOnPath uses the
+  //    process's own PATH, which includes ~/.local/bin etc.)
+  const onPath = findExecutableOnPath(cliName);
+  if (onPath) return onPath;
+
+  // 2. Fallback: well-known install locations
+  const homeBin = path.join(os.homedir(), '.local', 'bin', cliName);
+  if (isExecutableFile(homeBin)) return homeBin;
+
+  // 3. Hermes-specific: ~/.hermes/hermes-agent/venv/bin/hermes
+  if (cliName === 'hermes') {
+    const hermesHome =
+      normalizeToken(process.env.HERMES_HOME) ?? path.join(os.homedir(), '.hermes');
+    const venvHermes = path.join(hermesHome, 'hermes-agent', 'venv', 'bin', 'hermes');
+    if (isExecutableFile(venvHermes)) return venvHermes;
+  }
+
+  // Return the bare name as last resort (will fail with ENOENT if not found)
+  return cliName;
+}
+
 async function runOpenClawControl(args: string[] = []): Promise<void> {
   await runCommand('node', ['scripts/openclaw/tnf-openclaw-control.cjs', ...args]);
 }
@@ -6517,6 +6548,7 @@ reports
 
 async function runPassthrough(cliName: string, args: string[] = []): Promise<void> {
   const forwardedArgs = normalizeForwardedArgs(args);
+  const resolvedCmd = resolvePassthroughCommand(cliName);
   const isHermesUpdate = cliName === 'hermes' && forwardedArgs[0] === 'update';
 
   if (isHermesUpdate) {
@@ -6531,7 +6563,7 @@ async function runPassthrough(cliName: string, args: string[] = []): Promise<voi
   }
 
   try {
-    await runCommand(cliName, forwardedArgs);
+    await runCommand(resolvedCmd, forwardedArgs);
   } catch (err: any) {
     if (isHermesUpdate) {
       const retryCleanup = cleanupHermesGitLockFiles();
@@ -6542,7 +6574,7 @@ async function runPassthrough(cliName: string, args: string[] = []): Promise<voi
           )
         );
         try {
-          await runCommand(cliName, forwardedArgs);
+          await runCommand(resolvedCmd, forwardedArgs);
           return;
         } catch (retryErr: any) {
           err = retryErr;

@@ -49,6 +49,16 @@ const TIMELINE_CATEGORY_OPTIONS = [
   'Personal',
 ] as const;
 
+function resolveAuthenticatedUserId(user: unknown): string | null {
+  if (!user || typeof user !== 'object' || Array.isArray(user)) return null;
+  const candidate = user as Record<string, unknown>;
+  const idValues = [candidate.id, candidate.sub, candidate.user_id, candidate.userId]
+    .filter((value): value is string => typeof value === 'string')
+    .map((value) => value.trim())
+    .find((value) => value.length > 0);
+  return idValues || null;
+}
+
 function toFormDateTime(value: string): string {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return '';
@@ -206,12 +216,12 @@ export default function TimelinePage() {
   });
   const selectedEventRef = useRef<HTMLDivElement | null>(null);
 
-  const userId = useMemo(() => user?.id || null, [user?.id]);
+  const userId = useMemo(() => resolveAuthenticatedUserId(user), [user]);
   const ownerScopeId = useMemo(() => {
     const requested = searchParams.get('ownerId');
     if (requested && requested.trim().length > 0) return requested.trim();
-    return user?.id || null;
-  }, [searchParams, user?.id]);
+    return userId;
+  }, [searchParams, userId]);
   const isDelegatedView = useMemo(
     () => Boolean(userId && ownerScopeId && userId !== ownerScopeId),
     [ownerScopeId, userId]
@@ -287,13 +297,13 @@ export default function TimelinePage() {
         toast.success(`Generated ${result.createdCount} private timeline segments`);
       }
     } catch (error) {
-      if (!auto) {
-        const message = getApiErrorMessage(error, 'Failed to generate your personal timeline');
-        if (/(missing authenticated user|unauthorized|forbidden|401|403)/i.test(message)) {
-          toast.error('Your session appears expired. Please sign in again and retry.');
-        } else {
-          toast.error(message);
-        }
+      const message = getApiErrorMessage(error, 'Failed to generate your personal timeline');
+      if (/(missing authenticated user|unauthorized|forbidden|401|403)/i.test(message)) {
+        toast.error('Your session appears expired. Please sign in again and retry.');
+      } else if (!auto) {
+        toast.error(message);
+      } else {
+        toast.error('Auto-bootstrap failed. Use "Generate Story Segments" to retry.');
       }
     } finally {
       setBootstrapping(false);
@@ -613,7 +623,7 @@ export default function TimelinePage() {
         </header>
 
         <Card
-          className="bg-slate-950/90 border-slate-600 p-6 rounded-md overflow-hidden relative"
+          className="bg-slate-950/90 border-slate-600 text-slate-100 p-6 rounded-md overflow-hidden relative"
           aria-busy={macroLoading}
         >
           <div className="flex items-center justify-between mb-6">
@@ -658,7 +668,7 @@ export default function TimelinePage() {
         </Card>
 
         {selectedMacroRecord && (
-          <Card className="bg-slate-900/60 border-sky-500/30 p-6 rounded-md animate-in slide-in-from-top-4 duration-300">
+          <Card className="bg-slate-900/60 border-sky-500/30 text-slate-100 p-6 rounded-md animate-in slide-in-from-top-4 duration-300">
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-3">
                 <div
@@ -723,7 +733,7 @@ export default function TimelinePage() {
 
         <Card
           data-testid="timeline-rail-card"
-          className="bg-slate-950/90 border-slate-600 p-6 rounded-md space-y-6"
+          className="bg-slate-950/90 border-slate-600 text-slate-100 p-6 rounded-md space-y-6"
           aria-busy={loading || graphLoading}
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -919,6 +929,31 @@ export default function TimelinePage() {
                 </Button>
               </div>
             </div>
+          ) : filteredEvents.length === 0 ? (
+            <div
+              className="flex flex-col items-center justify-center py-10 text-center space-y-3"
+              role="status"
+            >
+              <div className="w-12 h-12 rounded-full bg-slate-700/60 flex items-center justify-center text-slate-300">
+                <Calendar className="w-6 h-6" />
+              </div>
+              <p className="text-slate-100 text-sm font-medium">
+                No personal milestones found for this timeline scope.
+              </p>
+              <p className="text-slate-300 text-xs max-w-md">
+                Generate story segments to seed your private timeline, then refine or add events
+                manually.
+              </p>
+              <Button
+                onClick={() => runBootstrap(false)}
+                disabled={bootstrapping || saving || !userId || isDelegatedView}
+                variant="outline"
+                className="border-amber-500/60 text-amber-300 hover:bg-amber-500/10"
+              >
+                <Plus className={`w-4 h-4 mr-2 ${bootstrapping ? 'animate-pulse' : ''}`} />
+                {bootstrapping ? 'Generating...' : 'Generate Story Segments'}
+              </Button>
+            </div>
           ) : (
             <div
               className="flex flex-col items-center justify-center py-10 text-center space-y-2"
@@ -973,7 +1008,7 @@ export default function TimelinePage() {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <Card
             data-testid="timeline-create-card"
-            className="bg-slate-950/90 border-slate-600 p-6 rounded-md space-y-5"
+            className="bg-slate-950/90 border-slate-600 text-slate-100 p-6 rounded-md space-y-5"
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded bg-amber-500/10 flex items-center justify-center text-amber-500">
@@ -1098,7 +1133,7 @@ export default function TimelinePage() {
 
           <Card
             data-testid="timeline-edit-card"
-            className="bg-slate-950/90 border-slate-600 p-6 rounded-md space-y-5"
+            className="bg-slate-950/90 border-slate-600 text-slate-100 p-6 rounded-md space-y-5"
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded bg-sky-500/10 flex items-center justify-center text-sky-500">

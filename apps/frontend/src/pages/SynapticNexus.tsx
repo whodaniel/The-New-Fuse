@@ -11,8 +11,8 @@ import {
   Clock,
   Cpu,
   Database,
-  Loader2,
   Link2,
+  Loader2,
   Network,
   Play,
   RefreshCcw,
@@ -137,7 +137,11 @@ interface DataSourceSnapshot {
 
 const SOURCE_UNRESOLVED = 'unresolved';
 
-const LAYERS: Array<{ id: NexusLayer; label: string; icon: React.ComponentType<{ className?: string }> }> = [
+const LAYERS: Array<{
+  id: NexusLayer;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}> = [
   { id: 'topology', label: 'Topology', icon: Network },
   { id: 'semantic', label: 'Semantic', icon: Brain },
   { id: 'forge', label: 'Forge', icon: Wand2 },
@@ -201,13 +205,21 @@ const formatTimestamp = (value: Date): string => {
 
 const pickStatusTone = (status: string): string => {
   const normalized = status.toLowerCase();
-  if (normalized.includes('fail') || normalized.includes('error') || normalized.includes('stalled')) {
+  if (
+    normalized.includes('fail') ||
+    normalized.includes('error') ||
+    normalized.includes('stalled')
+  ) {
     return 'bg-rose-500/20 text-rose-200 border-rose-400/30';
   }
   if (normalized.includes('running') || normalized.includes('pending')) {
     return 'bg-sky-500/20 text-sky-200 border-sky-400/30';
   }
-  if (normalized.includes('complete') || normalized.includes('healthy') || normalized.includes('ok')) {
+  if (
+    normalized.includes('complete') ||
+    normalized.includes('healthy') ||
+    normalized.includes('ok')
+  ) {
     return 'bg-emerald-500/20 text-emerald-200 border-emerald-400/30';
   }
   return 'bg-slate-700/40 text-slate-200 border-white/10';
@@ -273,6 +285,7 @@ export const SynapticNexus: React.FC = () => {
     setCurrentWorkflow,
     createWorkflow,
     saveWorkflow,
+    publishWorkflow,
     executeWorkflowViaWebhook,
   } = useWorkflow();
 
@@ -290,6 +303,7 @@ export const SynapticNexus: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [isCreatingWorkflow, setIsCreatingWorkflow] = useState(false);
+  const [isPublishingWorkflow, setIsPublishingWorkflow] = useState(false);
   const [forgeStatusMessage, setForgeStatusMessage] = useState<string | null>(null);
   const [showAiPanel, setShowAiPanel] = useState(false);
 
@@ -352,7 +366,9 @@ export const SynapticNexus: React.FC = () => {
   );
 
   const fetchFirstJson = useCallback(
-    async (paths: string[]): Promise<{ data: any; source: string; usedAlternate: boolean } | null> => {
+    async (
+      paths: string[]
+    ): Promise<{ data: any; source: string; usedAlternate: boolean } | null> => {
       for (const [index, path] of paths.entries()) {
         try {
           const response = await axios.get(path, { validateStatus: () => true });
@@ -506,7 +522,8 @@ export const SynapticNexus: React.FC = () => {
         throughput,
         networkLatencyMs: networkLatency,
         memoryUsagePercent: memoryUsage,
-        activeAgentRatePercent: totalAgents > 0 ? Math.round((activeAgents / totalAgents) * 100) : null,
+        activeAgentRatePercent:
+          totalAgents > 0 ? Math.round((activeAgents / totalAgents) * 100) : null,
         securityStatus:
           healthStatus === 'healthy' || healthStatus === 'ok'
             ? 'healthy'
@@ -620,9 +637,7 @@ export const SynapticNexus: React.FC = () => {
             .filter((cluster: MemoryCluster) => cluster.items.length > 0)
         : [];
 
-      const nextIndices = Array.isArray(rawIndices)
-        ? (rawIndices as KnowledgeIndex[])
-        : [];
+      const nextIndices = Array.isArray(rawIndices) ? (rawIndices as KnowledgeIndex[]) : [];
 
       setMemoryClusters(nextClusters);
       setMemoryIndices(nextIndices);
@@ -660,7 +675,9 @@ export const SynapticNexus: React.FC = () => {
       }
     } catch (error) {
       setClockActivity([]);
-      setClockError(error instanceof Error ? error.message : 'Failed to load master clock activity.');
+      setClockError(
+        error instanceof Error ? error.message : 'Failed to load master clock activity.'
+      );
     } finally {
       setClockLoading(false);
     }
@@ -769,7 +786,8 @@ export const SynapticNexus: React.FC = () => {
     const query = agentSearch.trim().toLowerCase();
     if (!query) return agents;
     return agents.filter((agent) => {
-      const haystack = `${agent.name} ${agent.description ?? ''} ${(agent.tools ?? []).join(' ')} ${(agent.traits ?? []).join(' ')} ${(agent.abilities ?? []).join(' ')}`.toLowerCase();
+      const haystack =
+        `${agent.name} ${agent.description ?? ''} ${(agent.tools ?? []).join(' ')} ${(agent.traits ?? []).join(' ')} ${(agent.abilities ?? []).join(' ')}`.toLowerCase();
       return haystack.includes(query);
     });
   }, [agentIndex, agentSearch]);
@@ -1047,6 +1065,29 @@ export const SynapticNexus: React.FC = () => {
     return workflows.find((workflow) => workflow.id === selectedWorkflowId) ?? currentWorkflow;
   }, [currentWorkflow, selectedWorkflowId, workflows]);
 
+  const selectedWorkflowBuilderPath = useMemo(() => {
+    return selectedWorkflowId
+      ? `/workflows/builder?id=${encodeURIComponent(selectedWorkflowId)}`
+      : '/workflows/builder';
+  }, [selectedWorkflowId]);
+
+  const selectedWorkflowDetailPath = useMemo(() => {
+    return selectedWorkflowId ? `/workflows/${selectedWorkflowId}` : '/workflows';
+  }, [selectedWorkflowId]);
+
+  const selectedWorkflowExecutionPath = useMemo(() => {
+    return selectedWorkflowId
+      ? `/workflows/${selectedWorkflowId}/execution`
+      : '/workflows/executions';
+  }, [selectedWorkflowId]);
+
+  const openWorkflowSurface = useCallback(
+    (path: string) => {
+      navigate(path);
+    },
+    [navigate]
+  );
+
   const handleLayerChange = useCallback(
     (layer: NexusLayer) => {
       setActiveLayer(layer);
@@ -1065,7 +1106,8 @@ export const SynapticNexus: React.FC = () => {
   );
 
   const ensureWorkflowForForge = useCallback(async (): Promise<Workflow> => {
-    const existing = workflows.find((workflow) => workflow.id === selectedWorkflowId) ?? currentWorkflow;
+    const existing =
+      workflows.find((workflow) => workflow.id === selectedWorkflowId) ?? currentWorkflow;
     if (existing) {
       return existing;
     }
@@ -1177,6 +1219,33 @@ export const SynapticNexus: React.FC = () => {
       setIsExecuting(false);
     }
   }, [activeWorkflow, forgeGraph, loadExecutions]);
+
+  const handlePublishActiveWorkflow = useCallback(async () => {
+    if (!activeWorkflow?.id) {
+      setForgeStatusMessage('Publish unavailable: save this workflow first.');
+      return;
+    }
+
+    if (activeWorkflow.status?.toLowerCase() === 'active') {
+      setForgeStatusMessage(`${activeWorkflow.name} is already published.`);
+      return;
+    }
+
+    setIsPublishingWorkflow(true);
+    setForgeStatusMessage(null);
+    try {
+      const published = await publishWorkflow(activeWorkflow.id);
+      hydrateForgeFromWorkflow(published);
+      await loadWorkflows();
+      setForgeStatusMessage(`Published ${published.name}.`);
+    } catch (error) {
+      setForgeStatusMessage(
+        error instanceof Error ? `Publish failed: ${error.message}` : 'Publish failed unexpectedly.'
+      );
+    } finally {
+      setIsPublishingWorkflow(false);
+    }
+  }, [activeWorkflow, hydrateForgeFromWorkflow, loadWorkflows, publishWorkflow]);
 
   const handleGraphChange = useCallback((graph: { nodes: Node[]; edges: Edge[] }) => {
     const nextGraph = sanitizeGraph(graph.nodes, graph.edges);
@@ -1313,6 +1382,84 @@ export const SynapticNexus: React.FC = () => {
         </div>
       </header>
 
+      <section className="relative z-20 border-b border-white/10 bg-slate-950/70 backdrop-blur-xl px-4 md:px-6 py-3">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.26em] text-slate-200">
+              Workflow Surfaces
+            </p>
+            <p className="text-[11px] text-slate-300">
+              Nexus stays linked to every builder, template, and runtime console.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <PremiumButton
+              size="sm"
+              variant="outline"
+              className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+              onClick={() => openWorkflowSurface('/workflows')}
+            >
+              <Activity className="w-3.5 h-3.5 mr-1.5" />
+              Ops
+            </PremiumButton>
+            <PremiumButton
+              size="sm"
+              variant="outline"
+              className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+              onClick={() => openWorkflowSurface(selectedWorkflowBuilderPath)}
+            >
+              <Wand2 className="w-3.5 h-3.5 mr-1.5" />
+              Builder
+            </PremiumButton>
+            <PremiumButton
+              size="sm"
+              variant="outline"
+              className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+              onClick={() => openWorkflowSurface('/workflows/builder-enhanced')}
+            >
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+              Enhanced
+            </PremiumButton>
+            <PremiumButton
+              size="sm"
+              variant="outline"
+              className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+              onClick={() => openWorkflowSurface('/workflows/builder-n8n')}
+            >
+              <Network className="w-3.5 h-3.5 mr-1.5" />
+              N8N
+            </PremiumButton>
+            <PremiumButton
+              size="sm"
+              variant="outline"
+              className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+              onClick={() => openWorkflowSurface('/workflows/templates')}
+            >
+              <BookOpen className="w-3.5 h-3.5 mr-1.5" />
+              Templates
+            </PremiumButton>
+            <PremiumButton
+              size="sm"
+              variant="outline"
+              className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+              onClick={() => openWorkflowSurface(selectedWorkflowExecutionPath)}
+            >
+              <Play className="w-3.5 h-3.5 mr-1.5" />
+              Execution
+            </PremiumButton>
+            <PremiumButton
+              size="sm"
+              variant="outline"
+              className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+              onClick={() => openWorkflowSurface('/workflows/console')}
+            >
+              <Cpu className="w-3.5 h-3.5 mr-1.5" />
+              Console
+            </PremiumButton>
+          </div>
+        </div>
+      </section>
+
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative z-10">
         <main className="flex-1 flex flex-col min-w-0">
           {activeLayer === 'forge' ? (
@@ -1391,6 +1538,27 @@ export const SynapticNexus: React.FC = () => {
                       <Save className="w-3.5 h-3.5 mr-2" />
                     )}
                     Save
+                  </PremiumButton>
+                  <PremiumButton
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      void handlePublishActiveWorkflow();
+                    }}
+                    disabled={
+                      isPublishingWorkflow ||
+                      isCreatingWorkflow ||
+                      !activeWorkflow?.id ||
+                      activeWorkflow.status?.toLowerCase() === 'active'
+                    }
+                    className="border-slate-700 text-slate-100 h-9 bg-slate-900/60 hover:bg-slate-800/80"
+                  >
+                    {isPublishingWorkflow ? (
+                      <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
+                    ) : (
+                      <Zap className="w-3.5 h-3.5 mr-2" />
+                    )}
+                    Publish
                   </PremiumButton>
                   <PremiumButton
                     variant="gradient"
@@ -1548,7 +1716,9 @@ export const SynapticNexus: React.FC = () => {
                       </div>
 
                       {graphArtifactsLoading ? (
-                        <p className="text-[11px] text-slate-300 italic">Scanning published graph bundles...</p>
+                        <p className="text-[11px] text-slate-300 italic">
+                          Scanning published graph bundles...
+                        </p>
                       ) : graphArtifactDatasets.length === 0 ? (
                         <p className="text-[11px] text-slate-300 italic">
                           {graphArtifactsError || 'No graph datasets available.'}
@@ -1651,7 +1821,10 @@ export const SynapticNexus: React.FC = () => {
                         </p>
                       ) : (
                         agentsByCategory.map(([category, categoryAgents]) => (
-                          <details key={category} className="rounded-xl border border-white/10 bg-black/25">
+                          <details
+                            key={category}
+                            className="rounded-xl border border-white/10 bg-black/25"
+                          >
                             <summary className="cursor-pointer px-3 py-2 text-[11px] font-black text-slate-200 uppercase tracking-widest flex items-center justify-between [&::-webkit-details-marker]:hidden">
                               <span>{category}</span>
                               <span className="text-slate-300">{categoryAgents.length}</span>
@@ -1707,19 +1880,29 @@ export const SynapticNexus: React.FC = () => {
 
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-black text-slate-300 uppercase">Private Index</span>
-                          <Badge className={`${memoryIndices.some((index) => index.status === 'ready') ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/20' : 'bg-slate-800 text-slate-300 border-white/5'} text-[8px]`}>
-                            {memoryIndices.some((index) => index.status === 'ready') ? 'ENABLED' : 'UNAVAILABLE'}
+                          <span className="text-[10px] font-black text-slate-300 uppercase">
+                            Private Index
+                          </span>
+                          <Badge
+                            className={`${memoryIndices.some((index) => index.status === 'ready') ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/20' : 'bg-slate-800 text-slate-300 border-white/5'} text-[8px]`}
+                          >
+                            {memoryIndices.some((index) => index.status === 'ready')
+                              ? 'ENABLED'
+                              : 'UNAVAILABLE'}
                           </Badge>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-black text-slate-300 uppercase">Shared Pool</span>
+                          <span className="text-[10px] font-black text-slate-300 uppercase">
+                            Shared Pool
+                          </span>
                           <Badge className="bg-slate-800 text-slate-300 border-white/5 text-[8px]">
                             DISABLED
                           </Badge>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-black text-slate-300 uppercase">Auto-Pruning</span>
+                          <span className="text-[10px] font-black text-slate-300 uppercase">
+                            Auto-Pruning
+                          </span>
                           <Badge
                             className={`${memoryClusters.length > 0 ? 'bg-amber-500/20 text-amber-400 border-amber-500/20' : 'bg-slate-800 text-slate-300 border-white/5'} text-[8px]`}
                           >
@@ -1735,14 +1918,19 @@ export const SynapticNexus: React.FC = () => {
                               key={index.id}
                               className="p-2 rounded border border-white/10 bg-black/20 text-[10px]"
                             >
-                              <div className="font-black text-slate-100 uppercase">{index.name}</div>
+                              <div className="font-black text-slate-100 uppercase">
+                                {index.name}
+                              </div>
                               <div className="text-slate-400 mt-1">
-                                {index.vectorsCount.toLocaleString()} vectors • {index.dimension}d • {index.metric}
+                                {index.vectorsCount.toLocaleString()} vectors • {index.dimension}d •{' '}
+                                {index.metric}
                               </div>
                             </div>
                           ))
                         ) : (
-                          <div className="text-[10px] text-slate-300 italic">No index metadata available.</div>
+                          <div className="text-[10px] text-slate-300 italic">
+                            No index metadata available.
+                          </div>
                         )}
                       </div>
                     </GlassCard>
@@ -1766,7 +1954,9 @@ export const SynapticNexus: React.FC = () => {
                 <div className="h-full space-y-4 p-4 md:p-6 overflow-y-auto max-w-5xl mx-auto">
                   {(clockLoading || executions.length === 0) && activityEvents.length === 0 ? (
                     <div className="text-center text-slate-300 text-sm py-12">
-                      {clockLoading ? 'Loading activity stream...' : 'No recent activity available.'}
+                      {clockLoading
+                        ? 'Loading activity stream...'
+                        : 'No recent activity available.'}
                     </div>
                   ) : (
                     activityEvents.map((event) => (
@@ -1779,10 +1969,12 @@ export const SynapticNexus: React.FC = () => {
                             className={`w-2 h-2 rounded-full ${event.source === 'workflow' ? 'bg-sky-500' : 'bg-emerald-500'}`}
                           />
                           <div className="min-w-0">
-                            <p className="text-sm font-black text-white uppercase truncate">{event.label}</p>
+                            <p className="text-sm font-black text-white uppercase truncate">
+                              {event.label}
+                            </p>
                             <p className="text-[10px] text-slate-300 uppercase tracking-widest mt-1">
-                              {event.source === 'workflow' ? 'workflow-execution' : 'master-clock'} •{' '}
-                              {formatTimestamp(event.timestamp)}
+                              {event.source === 'workflow' ? 'workflow-execution' : 'master-clock'}{' '}
+                              • {formatTimestamp(event.timestamp)}
                             </p>
                           </div>
                         </div>
@@ -1807,7 +1999,9 @@ export const SynapticNexus: React.FC = () => {
                 <div className="h-full grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 p-4 md:p-10 max-w-5xl mx-auto items-center">
                   <MetricsCard
                     title="Latency"
-                    value={metrics.networkLatencyMs !== null ? `${metrics.networkLatencyMs}ms` : 'N/A'}
+                    value={
+                      metrics.networkLatencyMs !== null ? `${metrics.networkLatencyMs}ms` : 'N/A'
+                    }
                     progress={
                       metrics.networkLatencyMs !== null
                         ? Math.max(0, 100 - Math.min(metrics.networkLatencyMs, 100))
@@ -1875,13 +2069,95 @@ export const SynapticNexus: React.FC = () => {
               />
             </GlassCard>
 
+            {activeWorkflow && (
+              <GlassCard className="p-5 border-amber-400/20 bg-amber-500/10 space-y-4 shadow-[0_12px_28px_rgba(245,158,11,0.2)]">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-black text-amber-200 uppercase tracking-[0.24em]">
+                      Active Workflow
+                    </p>
+                    <p className="text-sm font-black text-white uppercase truncate mt-1">
+                      {activeWorkflow.name}
+                    </p>
+                  </div>
+                  <Badge className="bg-black/35 border-amber-300/35 text-amber-100 text-[9px] font-black uppercase tracking-widest">
+                    {activeWorkflow.status}
+                  </Badge>
+                </div>
+
+                {activeWorkflow.description && (
+                  <p className="text-[11px] text-slate-200 leading-relaxed italic">
+                    {activeWorkflow.description}
+                  </p>
+                )}
+
+                <div className="grid grid-cols-2 gap-2 text-[10px]">
+                  <div className="rounded-lg border border-white/10 bg-black/25 px-2 py-1.5 text-slate-200">
+                    Nodes: {activeWorkflow.nodes?.length ?? 0}
+                  </div>
+                  <div className="rounded-lg border border-white/10 bg-black/25 px-2 py-1.5 text-slate-200">
+                    Edges: {activeWorkflow.edges?.length ?? 0}
+                  </div>
+                  <div className="rounded-lg border border-white/10 bg-black/25 px-2 py-1.5 text-slate-200">
+                    Triggers:{' '}
+                    {Array.isArray(activeWorkflow.triggers) ? activeWorkflow.triggers.length : 0}
+                  </div>
+                  <div className="rounded-lg border border-white/10 bg-black/25 px-2 py-1.5 text-slate-200">
+                    Variables:{' '}
+                    {activeWorkflow.variables ? Object.keys(activeWorkflow.variables).length : 0}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <PremiumButton
+                    size="sm"
+                    variant="outline"
+                    className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+                    onClick={() => openWorkflowSurface(selectedWorkflowBuilderPath)}
+                  >
+                    <Wand2 className="w-3.5 h-3.5 mr-1.5" />
+                    Builder
+                  </PremiumButton>
+                  <PremiumButton
+                    size="sm"
+                    variant="outline"
+                    className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+                    onClick={() => openWorkflowSurface(selectedWorkflowDetailPath)}
+                  >
+                    <BookOpen className="w-3.5 h-3.5 mr-1.5" />
+                    Detail
+                  </PremiumButton>
+                  <PremiumButton
+                    size="sm"
+                    variant="outline"
+                    className="h-8 border-slate-700 text-slate-100 bg-slate-900/60"
+                    onClick={() => {
+                      void handlePublishActiveWorkflow();
+                    }}
+                    disabled={
+                      isPublishingWorkflow || activeWorkflow.status?.toLowerCase() === 'active'
+                    }
+                  >
+                    {isPublishingWorkflow ? (
+                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                    ) : (
+                      <Zap className="w-3.5 h-3.5 mr-1.5" />
+                    )}
+                    Publish
+                  </PremiumButton>
+                </div>
+              </GlassCard>
+            )}
+
             {selectedAgent && (
               <GlassCard className="p-5 border-sky-400/20 bg-sky-500/10 space-y-4 animate-in slide-in-from-right-4 shadow-[0_12px_28px_rgba(2,132,199,0.22)]">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-sky-400/15 border border-sky-300/20">
                     <Brain className="w-5 h-5 text-sky-200" />
                   </div>
-                  <p className="text-sm font-black text-white uppercase truncate">{selectedAgent.name}</p>
+                  <p className="text-sm font-black text-white uppercase truncate">
+                    {selectedAgent.name}
+                  </p>
                 </div>
                 <p className="text-[11px] text-slate-300 leading-relaxed italic">
                   {selectedAgent.description || 'Synchronized operative link.'}
@@ -1957,8 +2233,12 @@ const SidebarStat: React.FC<{ label: string; value: string; icon: React.ReactNod
 }) => (
   <div className="flex items-center justify-between">
     <div className="flex items-center gap-3">
-      <div className="p-2 rounded-lg bg-black/55 border border-white/10 shadow-inner shadow-black/40">{icon}</div>
-      <span className="text-[10px] font-black text-slate-200 uppercase tracking-widest">{label}</span>
+      <div className="p-2 rounded-lg bg-black/55 border border-white/10 shadow-inner shadow-black/40">
+        {icon}
+      </div>
+      <span className="text-[10px] font-black text-slate-200 uppercase tracking-widest">
+        {label}
+      </span>
     </div>
     <span className="text-xs font-black text-white tracking-tighter font-mono">{value}</span>
   </div>
@@ -1991,10 +2271,14 @@ const MetricsCard: React.FC<{
 
   return (
     <GlassCard className="p-8 bg-gradient-to-br from-slate-900/55 to-slate-950/50 border-white/10 relative overflow-hidden group shadow-[0_12px_28px_rgba(2,6,23,0.4)]">
-      <div className={`absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity ${color.icon}`}>
+      <div
+        className={`absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity ${color.icon}`}
+      >
         <Activity className="w-32 h-32" />
       </div>
-      <p className="text-[11px] font-black text-slate-200 uppercase tracking-[0.3em] mb-1">{title}</p>
+      <p className="text-[11px] font-black text-slate-200 uppercase tracking-[0.3em] mb-1">
+        {title}
+      </p>
       <p className="text-4xl font-black text-white mb-6 tracking-tighter">{value}</p>
       <div className="h-2 w-full bg-slate-800/90 rounded-full overflow-hidden border border-white/5">
         <div

@@ -1,31 +1,31 @@
 {
   "summary": {
-    "generatedAt": "2026-03-09T10:51:53.625Z",
+    "generatedAt": "2026-05-17T04:36:36.350Z",
     "total": 4,
-    "passed": 4,
-    "failed": 0,
-    "publicBaseUrl": "https://thenewfuse.com",
+    "passed": 3,
+    "failed": 1,
+    "publicBaseUrl": "https://app.thenewfuse.com",
     "apiBaseUrl": "https://api.thenewfuse.com"
   },
   "results": [
     {
       "name": "Public /api/auth/login compatibility route",
       "method": "POST",
-      "url": "https://thenewfuse.com/api/auth/login",
+      "url": "https://app.thenewfuse.com/api/auth/login",
       "expectedStatus": [400, 401],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
-      "status": 401,
-      "ok": true,
-      "elapsedMs": 251,
-      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-09T10:51:53.265Z\",\"path\":\"/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
+      "status": 404,
+      "ok": false,
+      "elapsedMs": 560,
+      "responseSnippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T04:36:36.175Z\",\"path\":\"/api/auth/login\",\"method\":\"POST\",\"message\":\"Cannot POST /api/auth/login\",\"error\":\"Not Found\"}"
     },
     {
       "name": "Public /api/v1/auth/login compatibility route",
       "method": "POST",
-      "url": "https://thenewfuse.com/api/v1/auth/login",
+      "url": "https://app.thenewfuse.com/api/v1/auth/login",
       "expectedStatus": [400, 401],
       "body": {
         "email": "invalid@example.com",
@@ -33,8 +33,8 @@
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 146,
-      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-09T10:51:53.423Z\",\"path\":\"/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
+      "elapsedMs": 150,
+      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T04:36:36.346Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
     },
     {
       "name": "Gateway /v1/auth/login canonical route",
@@ -47,18 +47,18 @@
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 227,
-      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-09T10:51:53.657Z\",\"path\":\"/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
+      "elapsedMs": 178,
+      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T04:36:36.530Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
     },
     {
       "name": "Public /health route",
       "method": "GET",
-      "url": "https://thenewfuse.com/health",
+      "url": "https://app.thenewfuse.com/health",
       "expectedStatus": [200],
       "status": 200,
       "ok": true,
-      "elapsedMs": 39,
-      "responseSnippet": "healthy\n"
+      "elapsedMs": 57,
+      "responseSnippet": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  <!-- Import Map removed: Vite bundles all modules correctly. The previous scheduler polyf"
     }
   ]
 }

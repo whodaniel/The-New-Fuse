@@ -1,32 +1,34 @@
 # Navigation and Route Audit
 
-Generated: 2026-05-11T18:04:10.110Z
+Generated: 2026-05-17T04:36:35.129Z
 
 ## Counts
 
-- router paths: 196
+- router paths: 205
 - legacy redirect from-paths: 36
-- effective router paths (router + redirects): 232
-- all-pages paths: 186
-- canonical sidebar paths: 56
-- canonical sidebar paths not in router: 0
-- sidebar paths: 56
-- sidebar paths not in router: 0
-- all-pages paths not in router: 20
-- router paths not in all-pages: 42
+- effective router paths (router + redirects): 241
+- all-pages paths: 184
+- canonical sidebar paths: 54
+- canonical sidebar paths not in router: 3
+- sidebar paths: 54
+- sidebar paths not in router: 3
+- all-pages paths not in router: 17
+- router paths not in all-pages: 50
 
 ## Canonical Sidebar Paths Not In Router
 
-- none
+- `/workflows/nexus?layer=lexicon`
+- `/workflows/nexus?layer=memory`
+- `/workflows/nexus?layer=topology&from=observatory`
 
 ## Sidebar Paths Not In Router
 
-- none
+- `/workflows/nexus?layer=lexicon`
+- `/workflows/nexus?layer=memory`
+- `/workflows/nexus?layer=topology&from=observatory`
 
 ## All Pages Paths Not In Router
 
-- `/ai-portal/pfp-prompts`
-- `/ai-portal/pfp-studio`
 - `/ambassador`
 - `/api/admin/features/:id/evaluate`
 - `/automations`
@@ -40,7 +42,6 @@ Generated: 2026-05-11T18:04:10.110Z
 - `/files`
 - `/models`
 - `/skills`
-- `/sophisticated-hub`
 - `/system`
 - `/terminal`
 - `/testimonials`
@@ -55,6 +56,7 @@ Generated: 2026-05-11T18:04:10.110Z
 - `/agents/catalog/:id`
 - `/agents/create`
 - `/agents/pfp-catalog`
+- `/agents/pfp-prompts`
 - `/agents/pfp-studio`
 - `/app`
 - `/auth/callback`
@@ -74,6 +76,7 @@ Generated: 2026-05-11T18:04:10.110Z
 - `/fairtable/:viewType`
 - `/features`
 - `/goals/:id`
+- `/hub`
 - `/llm-rankings`
 - `/macro-timeline`
 - `/membership`
@@ -85,8 +88,14 @@ Generated: 2026-05-11T18:04:10.110Z
 - `/resources/skills`
 - `/resources/templates`
 - `/resources/workflows`
+- `/status`
+- `/system-status`
 - `/terminals`
 - `/timeline/module`
 - `/visualizations`
 - `/visualizations/concordance`
+- `/visualizations/surface`
 - `/visualizations/terminals`
+- `/workflows/builder-enhanced`
+- `/workflows/builder-n8n`
+- `/workflows/nexus`

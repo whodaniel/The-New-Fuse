@@ -21,6 +21,9 @@ interface WorkflowCanvasProps {
   onGraphChange?: (graph: { nodes: Node[]; edges: Edge[] }) => void;
 }
 
+const EMPTY_NODES: Node[] = [];
+const EMPTY_EDGES: Edge[] = [];
+
 /**
  * WorkflowCanvas component
  * Note: Must be wrapped in ReactFlowProvider in a parent component
@@ -28,18 +31,20 @@ interface WorkflowCanvasProps {
  */
 export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   onNodeSelect,
-  initialNodes = [],
-  initialEdges = [],
+  initialNodes,
+  initialEdges,
   onGraphChange,
 }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes ?? EMPTY_NODES);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges ?? EMPTY_EDGES);
 
   useEffect(() => {
+    if (!initialNodes) return;
     setNodes(initialNodes);
   }, [initialNodes, setNodes]);
 
   useEffect(() => {
+    if (!initialEdges) return;
     setEdges(initialEdges);
   }, [initialEdges, setEdges]);
 

@@ -1,19 +1,23 @@
 // @ts-nocheck
-import { Badge } from '@/components/ui';
 import {
+  Badge,
   GlassCard,
   PremiumButton,
   PremiumInput,
+  PremiumSelect,
   PremiumTextarea,
   ToggleSwitch,
 } from '@/components/ui';
+import { AGENT_CATALOG } from '@/data/agentCatalog';
 import { useToast } from '@/hooks/useToast';
+import { agentService } from '@/services/AgentService';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeft,
   ArrowRight,
   BarChart3,
   Bot,
+  Brain,
   Check,
   Cloud,
   Code,
@@ -24,25 +28,42 @@ import {
   Info,
   Loader2,
   MessageSquare,
+  Palette,
   Pencil,
   Rocket,
   Save,
+  Settings2,
   Sparkles,
   User,
+  Wrench,
   X,
   Zap,
 } from 'lucide-react';
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface AgentConfig {
   name: string;
   description: string;
   type: 'conversational' | 'task-automation' | 'data-analysis' | 'content-generation';
+  backendTypeOverride: string;
+  provider: string;
   model: string;
+  fallbackProvider: string;
+  fallbackModel: string;
   deployment: 'cloud' | 'local' | 'hybrid';
   capabilities: string[];
+  skills: string[];
+  tools: string[];
   systemPrompt: string;
+  soulPrompt: string;
+  avatarUrl: string;
+  avatarEmoji: string;
+  creator: string;
+  communicationStyle: 'formal' | 'balanced' | 'casual';
+  personalityTraits: string[];
+  expertiseAreas: string[];
+  about: string;
   temperature: number;
   maxTokens: number;
   topP: number;
@@ -54,6 +75,7 @@ interface AgentConfig {
   enableMetrics: boolean;
   rateLimitPerMinute: number;
   timeoutSeconds: number;
+  version: string;
 }
 
 interface Step {
@@ -96,19 +118,42 @@ const itemVariants = {
 
 const CreateAgent: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [saving, setSaving] = useState(false);
   const [tagInput, setTagInput] = useState('');
+  const [skillInput, setSkillInput] = useState('');
+  const [toolInput, setToolInput] = useState('');
+  const [traitInput, setTraitInput] = useState('');
+  const [expertiseInput, setExpertiseInput] = useState('');
+  const [templateCategory, setTemplateCategory] = useState('All');
+  const [templateSearch, setTemplateSearch] = useState('');
+  const [selectedTemplateId, setSelectedTemplateId] = useState('');
+  const soulFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [config, setConfig] = useState<AgentConfig>({
     name: '',
     description: '',
     type: 'conversational',
+    backendTypeOverride: '',
+    provider: 'openai',
     model: 'gpt-4',
+    fallbackProvider: 'anthropic',
+    fallbackModel: 'claude-3-sonnet',
     deployment: 'cloud',
     capabilities: [],
+    skills: [],
+    tools: [],
     systemPrompt: '',
+    soulPrompt: '',
+    avatarUrl: '',
+    avatarEmoji: '🤖',
+    creator: '',
+    communicationStyle: 'balanced',
+    personalityTraits: [],
+    expertiseAreas: [],
+    about: '',
     temperature: 0.7,
     maxTokens: 2048,
     topP: 1.0,
@@ -120,6 +165,7 @@ const CreateAgent: React.FC = () => {
     enableMetrics: true,
     rateLimitPerMinute: 60,
     timeoutSeconds: 30,
+    version: '1.0.0',
   });
 
   const steps: Step[] = [
@@ -202,7 +248,45 @@ const CreateAgent: React.FC = () => {
     'Scheduling',
     'Translation',
     'Summarization',
+    'Tool Execution',
+    'Workflow Orchestration',
+    'RAG Retrieval',
+    'Multi-Agent Collaboration',
   ];
+
+  const commonSkills = [
+    'reasoning',
+    'planning',
+    'code-review',
+    'prompt-engineering',
+    'security-audit',
+    'research',
+  ];
+
+  const commonTools = [
+    'filesystem',
+    'terminal',
+    'webpilot',
+    'github',
+    'supabase',
+    'notion',
+    'linear',
+    'slack',
+  ];
+
+  const templateCategories = useMemo(() => {
+    return ['All', ...Array.from(new Set(AGENT_CATALOG.map((entry) => entry.category))).sort()];
+  }, []);
+
+  const filteredTemplates = useMemo(() => {
+    const search = templateSearch.trim().toLowerCase();
+    return AGENT_CATALOG.filter((entry) => {
+      if (templateCategory !== 'All' && entry.category !== templateCategory) return false;
+      if (!search) return true;
+      const haystack = `${entry.name} ${entry.description} ${entry.tags.join(' ')}`.toLowerCase();
+      return haystack.includes(search);
+    }).slice(0, 150);
+  }, [templateCategory, templateSearch]);
 
   const handleCapabilityToggle = (capability: string) => {
     setConfig((prev) => ({
@@ -231,63 +315,267 @@ const CreateAgent: React.FC = () => {
     }));
   };
 
+  const addUniqueListItem = (
+    key: 'skills' | 'tools' | 'personalityTraits' | 'expertiseAreas',
+    value: string
+  ) => {
+    const normalized = value.trim();
+    if (!normalized) return;
+
+    setConfig((prev) => {
+      const existing = prev[key] || [];
+      if (existing.includes(normalized)) return prev;
+      return { ...prev, [key]: [...existing, normalized] };
+    });
+  };
+
+  const removeListItem = (
+    key: 'skills' | 'tools' | 'personalityTraits' | 'expertiseAreas',
+    value: string
+  ) => {
+    setConfig((prev) => ({
+      ...prev,
+      [key]: (prev[key] || []).filter((entry: string) => entry !== value),
+    }));
+  };
+
+  const inferTypeFromTemplate = (template: {
+    name: string;
+    description: string;
+    tags: string[];
+  }) => {
+    const haystack =
+      `${template.name} ${template.description} ${template.tags.join(' ')}`.toLowerCase();
+    if (
+      haystack.includes('analysis') ||
+      haystack.includes('analytics') ||
+      haystack.includes('research') ||
+      haystack.includes('data')
+    ) {
+      return 'data-analysis' as const;
+    }
+    if (
+      haystack.includes('automation') ||
+      haystack.includes('manager') ||
+      haystack.includes('pipeline') ||
+      haystack.includes('setup') ||
+      haystack.includes('workflow')
+    ) {
+      return 'task-automation' as const;
+    }
+    if (
+      haystack.includes('writer') ||
+      haystack.includes('content') ||
+      haystack.includes('video') ||
+      haystack.includes('podcast') ||
+      haystack.includes('story')
+    ) {
+      return 'content-generation' as const;
+    }
+    return 'conversational' as const;
+  };
+
+  const applyTemplateFromCatalog = (templateId: string) => {
+    if (!templateId) return;
+    const template = AGENT_CATALOG.find((entry) => entry.id === templateId);
+    if (!template) return;
+
+    const templateType = inferTypeFromTemplate(template);
+    const normalizedTags = template.tags.map((tag) => String(tag).trim()).filter(Boolean);
+    const templatePrompt = [
+      `You are ${template.name}.`,
+      template.description,
+      normalizedTags.length ? `Core specialties: ${normalizedTags.join(', ')}.` : '',
+      'Follow TNF standards, use explicit verification loops, and keep outputs actionable.',
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    setConfig((prev) => ({
+      ...prev,
+      name: prev.name || template.name,
+      description: prev.description || template.description,
+      about: prev.about || template.description,
+      type: templateType,
+      tags: Array.from(new Set([...(prev.tags || []), ...normalizedTags])),
+      skills: Array.from(new Set([...(prev.skills || []), ...normalizedTags])),
+      expertiseAreas: Array.from(new Set([...(prev.expertiseAreas || []), ...normalizedTags])),
+      systemPrompt: prev.systemPrompt || templatePrompt,
+      soulPrompt:
+        prev.soulPrompt ||
+        `# SOUL\n- Archetype: ${template.name}\n- Category: ${template.category}\n- Mission: ${template.description}`,
+    }));
+  };
+
+  const applySelectedTemplate = () => {
+    applyTemplateFromCatalog(selectedTemplateId);
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const templateId = params.get('templateId');
+    if (!templateId) return;
+
+    setSelectedTemplateId(templateId);
+    applyTemplateFromCatalog(templateId);
+  }, [location.search]);
+
+  const mapAgentType = (type: AgentConfig['type']) => {
+    switch (type) {
+      case 'conversational':
+        return 'CHAT';
+      case 'task-automation':
+        return 'TASK';
+      case 'data-analysis':
+        return 'ANALYSIS';
+      case 'content-generation':
+      default:
+        return 'ASSISTANT';
+    }
+  };
+
+  const normalizeCapability = (capability: string) =>
+    capability.toUpperCase().replace(/[^A-Z0-9]+/g, '_');
+
+  const exportSoulFile = async () => {
+    const soul = config.soulPrompt?.trim();
+    if (!soul) {
+      toast({
+        title: 'No SOUL Content',
+        description: 'Add a SOUL prompt before exporting.',
+        variant: 'warning',
+      });
+      return;
+    }
+
+    const slug = (config.name || 'agent')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    const blob = new Blob([soul], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `${slug || 'agent'}-SOUL.md`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  };
+
+  const importSoulFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      setConfig((prev) => ({ ...prev, soulPrompt: text }));
+      toast({
+        title: 'SOUL Imported',
+        description: `Loaded ${file.name}.`,
+      });
+    } catch {
+      toast({
+        title: 'Import Failed',
+        description: 'Could not read the selected SOUL file.',
+        variant: 'destructive',
+      });
+    } finally {
+      if (soulFileInputRef.current) soulFileInputRef.current.value = '';
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
-      const authHeaders = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-      };
-
-      const createResponse = await fetch('/api/agents', {
-        method: 'POST',
-        headers: authHeaders,
-        credentials: 'include',
-        body: JSON.stringify({
-          name: config.name,
-          description: config.description,
-          type: config.type,
-          capabilities: config.capabilities,
-          systemPrompt: config.systemPrompt,
-          configuration: {
+      const mergedTags = Array.from(
+        new Set([...config.tags, ...config.skills, ...config.expertiseAreas])
+      );
+      const runtimeConfig = {
+        llm: {
+          primary: {
+            provider: config.provider,
             model: config.model,
+          },
+          fallback: {
+            provider: config.fallbackProvider,
+            model: config.fallbackModel,
+          },
+          parameters: {
             temperature: config.temperature,
             maxTokens: config.maxTokens,
             topP: config.topP,
             frequencyPenalty: config.frequencyPenalty,
             presencePenalty: config.presencePenalty,
-            isPublic: config.isPublic,
-            enableLogging: config.enableLogging,
-            enableMetrics: config.enableMetrics,
-            rateLimitPerMinute: config.rateLimitPerMinute,
-            timeoutSeconds: config.timeoutSeconds,
-            tags: config.tags,
           },
-        }),
+        },
+        deployment: config.deployment,
+        tools: config.tools,
+        skills: config.skills,
+        prompts: {
+          system: config.systemPrompt,
+          soul: config.soulPrompt,
+        },
+        traits: {
+          communicationStyle: config.communicationStyle,
+          personalityTraits: config.personalityTraits,
+          expertiseAreas: config.expertiseAreas,
+        },
+        visibility: {
+          isPublic: config.isPublic,
+          enableLogging: config.enableLogging,
+          enableMetrics: config.enableMetrics,
+        },
+        limits: {
+          rateLimitPerMinute: config.rateLimitPerMinute,
+          timeoutSeconds: config.timeoutSeconds,
+        },
+      };
+
+      const resolvedType = config.backendTypeOverride.trim()
+        ? config.backendTypeOverride.trim().toUpperCase()
+        : mapAgentType(config.type);
+
+      const created = await agentService.createAgent({
+        name: config.name,
+        description: config.description,
+        type: resolvedType,
+        status: 'inactive',
+        provider: config.provider,
+        model: config.model,
+        capabilities: config.capabilities.map(normalizeCapability),
+        systemPrompt: config.systemPrompt,
+        config: runtimeConfig,
+        configuration: runtimeConfig,
+        profile: {
+          about: config.about || config.description,
+          personality: config.personalityTraits.join(', '),
+          avatar: config.avatarUrl || undefined,
+          emoji: config.avatarEmoji || undefined,
+          tags: mergedTags,
+          creator: config.creator || undefined,
+          version: config.version,
+          lastUpdated: new Date().toISOString(),
+        },
+        metadata: {
+          pfpUrl: config.avatarUrl || undefined,
+          soulMd: config.soulPrompt || undefined,
+          skills: config.skills,
+          tools: config.tools,
+          tags: mergedTags,
+          communicationStyle: config.communicationStyle,
+          personalityTraits: config.personalityTraits,
+          expertiseAreas: config.expertiseAreas,
+          createdBy: config.creator || 'user',
+          deployment: config.deployment,
+          version: config.version,
+        },
+      } as any);
+
+      toast({
+        title: 'Agent Created',
+        description: `${config.name} is ready with full configuration metadata.`,
       });
-
-      if (createResponse.ok) {
-        const agent = await createResponse.json();
-        const deployResponse = await fetch(`/api/agents/${agent.id}/deploy`, {
-          method: 'POST',
-          headers: authHeaders,
-          credentials: 'include',
-          body: JSON.stringify({ target: config.deployment }),
-        });
-
-        if (!deployResponse.ok) {
-          throw new Error('Agent was created but deployment failed');
-        }
-
-        toast({
-          title: 'Agent Deployed!',
-          description: `${config.name} is live via ${config.deployment} orchestration.`,
-        });
-        navigate(`/dashboard/agents/${agent.id}`);
-      } else {
-        const errorPayload = await createResponse.text();
-        throw new Error(errorPayload || 'Failed to create agent');
-      }
+      navigate(`/agents/${created.id}`);
     } catch (error) {
       console.error('Failed to create agent:', error);
       toast({
@@ -306,7 +594,7 @@ const CreateAgent: React.FC = () => {
       case 1:
         return Boolean(config.name.trim() && config.description.trim() && config.type);
       case 2:
-        return Boolean(config.model && config.deployment);
+        return Boolean(config.provider && config.model && config.deployment);
       case 3:
       case 4:
       case 5:
@@ -398,6 +686,76 @@ const CreateAgent: React.FC = () => {
                 })}
               </div>
             </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <PremiumInput
+                label="Backend Type Override (Optional)"
+                value={config.backendTypeOverride}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setConfig({ ...config, backendTypeOverride: e.target.value })
+                }
+                placeholder="e.g. ORCHESTRATOR, CODE_REVIEWER, BROWSER_GEMINI"
+                hint="Use this to target a specific TNF enum type directly."
+              />
+            </motion.div>
+
+            <motion.div
+              variants={itemVariants}
+              className="p-4 rounded-md border border-white/10 bg-black/20"
+            >
+              <h3 className="text-sm font-semibold text-white mb-3">TNF Agent Template Library</h3>
+              <p className="text-sm text-gray-400 mb-4">
+                Start from an existing TNF definition and auto-hydrate core fields.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <PremiumSelect
+                  label="Template Category"
+                  value={templateCategory}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setTemplateCategory(e.target.value)
+                  }
+                  options={templateCategories.map((category) => ({
+                    value: category,
+                    label: category,
+                  }))}
+                />
+                <PremiumInput
+                  label="Search Templates"
+                  value={templateSearch}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setTemplateSearch(e.target.value)
+                  }
+                  placeholder="Search by name, description, or tags"
+                />
+              </div>
+
+              <div className="mt-3">
+                <PremiumSelect
+                  label={`Template (${filteredTemplates.length} shown)`}
+                  value={selectedTemplateId}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setSelectedTemplateId(e.target.value)
+                  }
+                  options={filteredTemplates.map((template) => ({
+                    value: template.id,
+                    label: `${template.name} — ${template.category}`,
+                  }))}
+                />
+              </div>
+
+              <div className="mt-3 flex justify-end">
+                <PremiumButton
+                  type="button"
+                  variant="glass"
+                  size="sm"
+                  disabled={!selectedTemplateId}
+                  onClick={applySelectedTemplate}
+                >
+                  Apply Template
+                </PremiumButton>
+              </div>
+            </motion.div>
           </motion.div>
         );
 
@@ -445,6 +803,57 @@ const CreateAgent: React.FC = () => {
                     </motion.div>
                   );
                 })}
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <PremiumSelect
+                  label="Primary Provider"
+                  value={config.provider}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setConfig({ ...config, provider: e.target.value })
+                  }
+                  options={[
+                    { value: 'openai', label: 'OpenAI' },
+                    { value: 'anthropic', label: 'Anthropic' },
+                    { value: 'google', label: 'Google' },
+                    { value: 'kilocode', label: 'KiloCode' },
+                    { value: 'local', label: 'Local Runtime' },
+                  ]}
+                />
+                <PremiumInput
+                  label="Model ID"
+                  value={config.model}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setConfig({ ...config, model: e.target.value })
+                  }
+                  placeholder="e.g. gpt-4o-mini, claude-3-5-sonnet"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                <PremiumSelect
+                  label="Fallback Provider"
+                  value={config.fallbackProvider}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setConfig({ ...config, fallbackProvider: e.target.value })
+                  }
+                  options={[
+                    { value: 'anthropic', label: 'Anthropic' },
+                    { value: 'openai', label: 'OpenAI' },
+                    { value: 'google', label: 'Google' },
+                    { value: 'local', label: 'Local Runtime' },
+                  ]}
+                />
+                <PremiumInput
+                  label="Fallback Model"
+                  value={config.fallbackModel}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setConfig({ ...config, fallbackModel: e.target.value })
+                  }
+                  placeholder="e.g. claude-3-haiku"
+                />
               </div>
             </motion.div>
 
@@ -497,6 +906,53 @@ const CreateAgent: React.FC = () => {
                 rows={4}
               />
             </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Sparkles className="w-4 h-4 inline mr-2" />
+                `SOUL.md` Prompt
+              </label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <PremiumButton
+                  type="button"
+                  variant="glass"
+                  size="sm"
+                  onClick={() => soulFileInputRef.current?.click()}
+                >
+                  Import `.md`
+                </PremiumButton>
+                <PremiumButton type="button" variant="glass" size="sm" onClick={exportSoulFile}>
+                  Export `.md`
+                </PremiumButton>
+                <PremiumButton
+                  type="button"
+                  variant="glass"
+                  size="sm"
+                  onClick={async () => {
+                    if (!config.soulPrompt?.trim()) return;
+                    await navigator.clipboard.writeText(config.soulPrompt);
+                    toast({ title: 'Copied', description: 'SOUL prompt copied to clipboard.' });
+                  }}
+                >
+                  Copy
+                </PremiumButton>
+              </div>
+              <PremiumTextarea
+                value={config.soulPrompt}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setConfig({ ...config, soulPrompt: e.target.value })
+                }
+                placeholder="Optional: long-form soul/persona definition in markdown."
+                rows={6}
+              />
+              <input
+                ref={soulFileInputRef}
+                type="file"
+                accept=".md,text/markdown,text/plain"
+                className="hidden"
+                onChange={importSoulFile}
+              />
+            </motion.div>
           </motion.div>
         );
 
@@ -545,6 +1001,140 @@ const CreateAgent: React.FC = () => {
                     </motion.label>
                   );
                 })}
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Brain className="w-4 h-4 inline mr-2" />
+                Skills
+              </label>
+              <p className="text-sm text-gray-400 mb-3">
+                Add reusable agent skills (e.g., `security-audit`, `prompt-engineering`).
+              </p>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {config.skills.map((skill) => (
+                  <Badge
+                    key={skill}
+                    className="bg-blue-500/20 text-blue-300 border-blue-500/30 px-3 py-1"
+                  >
+                    {skill}
+                    <button
+                      onClick={() => removeListItem('skills', skill)}
+                      className="ml-2 hover:text-white"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {commonSkills.map((skill) => (
+                  <button
+                    key={skill}
+                    type="button"
+                    onClick={() => addUniqueListItem('skills', skill)}
+                    className="text-xs px-2 py-1 rounded border border-blue-500/30 text-blue-300 hover:bg-blue-500/10"
+                  >
+                    + {skill}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <PremiumInput
+                  type="text"
+                  value={skillInput}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSkillInput(e.target.value)
+                  }
+                  placeholder="Add custom skill"
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addUniqueListItem('skills', skillInput);
+                      setSkillInput('');
+                    }
+                  }}
+                  className="flex-1"
+                />
+                <PremiumButton
+                  type="button"
+                  variant="glass"
+                  size="sm"
+                  onClick={() => {
+                    addUniqueListItem('skills', skillInput);
+                    setSkillInput('');
+                  }}
+                >
+                  Add
+                </PremiumButton>
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Wrench className="w-4 h-4 inline mr-2" />
+                Tool Access
+              </label>
+              <p className="text-sm text-gray-400 mb-3">
+                Define allowed tools/MCP integrations for this agent.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {config.tools.map((tool) => (
+                  <Badge
+                    key={tool}
+                    className="bg-amber-500/20 text-amber-300 border-amber-500/30 px-3 py-1"
+                  >
+                    {tool}
+                    <button
+                      onClick={() => removeListItem('tools', tool)}
+                      className="ml-2 hover:text-white"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {commonTools.map((tool) => (
+                  <button
+                    key={tool}
+                    type="button"
+                    onClick={() => addUniqueListItem('tools', tool)}
+                    className="text-xs px-2 py-1 rounded border border-amber-500/30 text-amber-300 hover:bg-amber-500/10"
+                  >
+                    + {tool}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <PremiumInput
+                  type="text"
+                  value={toolInput}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setToolInput(e.target.value)
+                  }
+                  placeholder="Add custom tool ID"
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addUniqueListItem('tools', toolInput);
+                      setToolInput('');
+                    }
+                  }}
+                  className="flex-1"
+                />
+                <PremiumButton
+                  type="button"
+                  variant="glass"
+                  size="sm"
+                  onClick={() => {
+                    addUniqueListItem('tools', toolInput);
+                    setToolInput('');
+                  }}
+                >
+                  Add
+                </PremiumButton>
               </div>
             </motion.div>
 
@@ -661,6 +1251,160 @@ const CreateAgent: React.FC = () => {
               </motion.div>
             </div>
 
+            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <PremiumInput
+                label="Avatar URL (PFP)"
+                value={config.avatarUrl}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setConfig({ ...config, avatarUrl: e.target.value })
+                }
+                placeholder="https://..."
+              />
+              <PremiumInput
+                label="Avatar Emoji"
+                value={config.avatarEmoji}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setConfig({ ...config, avatarEmoji: e.target.value })
+                }
+                placeholder="🤖"
+              />
+              <PremiumInput
+                label="Creator / Owner"
+                value={config.creator}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setConfig({ ...config, creator: e.target.value })
+                }
+                placeholder="Name or team"
+              />
+              <PremiumSelect
+                label="Communication Style"
+                value={config.communicationStyle}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setConfig({
+                    ...config,
+                    communicationStyle: e.target.value as AgentConfig['communicationStyle'],
+                  })
+                }
+                options={[
+                  { value: 'formal', label: 'Formal' },
+                  { value: 'balanced', label: 'Balanced' },
+                  { value: 'casual', label: 'Casual' },
+                ]}
+              />
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <PremiumTextarea
+                label="About / Profile Summary"
+                value={config.about}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setConfig({ ...config, about: e.target.value })
+                }
+                placeholder="Public-facing summary for this agent profile."
+                rows={3}
+              />
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Palette className="w-4 h-4 inline mr-2" />
+                Personality Traits
+              </label>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {config.personalityTraits.map((trait) => (
+                  <Badge
+                    key={trait}
+                    className="bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30 px-3 py-1"
+                  >
+                    {trait}
+                    <button
+                      onClick={() => removeListItem('personalityTraits', trait)}
+                      className="ml-2 hover:text-white"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <PremiumInput
+                  value={traitInput}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setTraitInput(e.target.value)
+                  }
+                  placeholder="e.g. rigorous, curious, concise"
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addUniqueListItem('personalityTraits', traitInput);
+                      setTraitInput('');
+                    }
+                  }}
+                />
+                <PremiumButton
+                  type="button"
+                  variant="glass"
+                  size="sm"
+                  onClick={() => {
+                    addUniqueListItem('personalityTraits', traitInput);
+                    setTraitInput('');
+                  }}
+                >
+                  Add
+                </PremiumButton>
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Settings2 className="w-4 h-4 inline mr-2" />
+                Expertise Areas
+              </label>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {config.expertiseAreas.map((area) => (
+                  <Badge
+                    key={area}
+                    className="bg-cyan-500/20 text-cyan-300 border-cyan-500/30 px-3 py-1"
+                  >
+                    {area}
+                    <button
+                      onClick={() => removeListItem('expertiseAreas', area)}
+                      className="ml-2 hover:text-white"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <PremiumInput
+                  value={expertiseInput}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setExpertiseInput(e.target.value)
+                  }
+                  placeholder="e.g. orchestration, RAG, frontend"
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addUniqueListItem('expertiseAreas', expertiseInput);
+                      setExpertiseInput('');
+                    }
+                  }}
+                />
+                <PremiumButton
+                  type="button"
+                  variant="glass"
+                  size="sm"
+                  onClick={() => {
+                    addUniqueListItem('expertiseAreas', expertiseInput);
+                    setExpertiseInput('');
+                  }}
+                >
+                  Add
+                </PremiumButton>
+              </div>
+            </motion.div>
+
             <motion.div variants={itemVariants} className="space-y-4 pt-4">
               <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                 <div>
@@ -726,8 +1470,20 @@ const CreateAgent: React.FC = () => {
                         <dd className="text-white capitalize">{config.type.replace('-', ' ')}</dd>
                       </div>
                       <div className="flex justify-between">
+                        <dt className="text-muted-foreground">Persisted Type:</dt>
+                        <dd className="text-white">
+                          {config.backendTypeOverride.trim()
+                            ? config.backendTypeOverride.trim().toUpperCase()
+                            : mapAgentType(config.type)}
+                        </dd>
+                      </div>
+                      <div className="flex justify-between">
                         <dt className="text-muted-foreground">Model:</dt>
                         <dd className="text-white">{config.model}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-muted-foreground">Provider:</dt>
+                        <dd className="text-white">{config.provider}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="text-muted-foreground">Deployment:</dt>
@@ -775,6 +1531,38 @@ const CreateAgent: React.FC = () => {
                   </div>
                 )}
 
+                {config.skills.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-medium text-gray-300 mb-3">Skills</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {config.skills.map((skill: string) => (
+                        <Badge
+                          key={skill}
+                          className="bg-blue-500/20 text-blue-300 border-blue-500/30"
+                        >
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {config.tools.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-medium text-gray-300 mb-3">Tool Access</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {config.tools.map((tool: string) => (
+                        <Badge
+                          key={tool}
+                          className="bg-amber-500/20 text-amber-300 border-amber-500/30"
+                        >
+                          {tool}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {config.tags.length > 0 && (
                   <div className="mt-4">
                     <h4 className="font-medium text-gray-300 mb-3">Tags</h4>
@@ -788,6 +1576,27 @@ const CreateAgent: React.FC = () => {
                         </Badge>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {(config.avatarUrl || config.avatarEmoji || config.about) && (
+                  <div className="mt-4 space-y-2 text-sm">
+                    <h4 className="font-medium text-gray-300">Profile</h4>
+                    {config.avatarUrl && (
+                      <div className="text-gray-300">
+                        Avatar URL: <span className="text-white break-all">{config.avatarUrl}</span>
+                      </div>
+                    )}
+                    {config.avatarEmoji && (
+                      <div className="text-gray-300">
+                        Avatar Emoji: <span className="text-white">{config.avatarEmoji}</span>
+                      </div>
+                    )}
+                    {config.about && (
+                      <div className="text-gray-300">
+                        About: <span className="text-white">{config.about}</span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -818,7 +1627,7 @@ const CreateAgent: React.FC = () => {
         >
           <div className="flex items-center gap-4 mb-6">
             <Link
-              to="/dashboard/agents"
+              to="/agents"
               className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
             >
               <ArrowLeft className="w-5 h-5" />

@@ -65,7 +65,6 @@ const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
 const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat'));
 const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
 const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
-const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
 const PfpStudioPage = lazy(() => import('./pages/Agents/PfpStudio'));
 const PfpPromptCatalogPage = lazy(() => import('./pages/Agents/PfpPromptCatalog'));
 const CatalogProfilePage = lazy(() => import('./pages/Agents/CatalogProfile'));
@@ -688,7 +687,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 path="/agent-builder"
                 element={
                   <RequireMemberAccess>
-                    <UnifiedAgentCreator />
+                    <CreateAgent />
                   </RequireMemberAccess>
                 }
               />
@@ -717,7 +716,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={
                   <RequireMemberAccess>
                     <Suspense fallback={<LoadingFallback name="Agent Creator" />}>
-                      <UnifiedAgentCreator />
+                      <CreateAgent />
                     </Suspense>
                   </RequireMemberAccess>
                 }
@@ -1486,7 +1485,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 path="/dashboard/agents/new"
                 element={
                   <RequireMemberAccess>
-                    <UnifiedAgentCreator />
+                    <CreateAgent />
                   </RequireMemberAccess>
                 }
               />

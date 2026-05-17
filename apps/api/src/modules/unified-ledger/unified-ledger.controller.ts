@@ -4,7 +4,9 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  Logger,
   NotFoundException,
+  Optional,
   Param,
   Patch,
   Post,
@@ -13,6 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
+import { AnalyzerAgentService } from '../../agents/analyzer.service';
 import { isPrivilegedUser } from '../../auth/auth-policy';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../decorators/current-user.decorator';
@@ -45,9 +48,12 @@ type AuthUser = {
 @Controller('unified-ledger')
 @UseGuards(JwtAuthGuard)
 export class UnifiedLedgerController {
+  private readonly logger = new Logger(UnifiedLedgerController.name);
+
   constructor(
     private readonly ledger: UnifiedLedgerService,
-    private readonly db: DatabaseService
+    private readonly db: DatabaseService,
+    @Optional() private readonly analyzer?: AnalyzerAgentService
   ) {}
 
   private requireUserId(user: AuthUser | undefined): string {
@@ -63,38 +69,54 @@ export class UnifiedLedgerController {
 
   private resolveTenantId(user: AuthUser | undefined): string | undefined {
     const tenantId = user?.tenantId;
-    if (typeof tenantId !== 'string') return undefined;
+    if (typeof tenantId !== 'string') {
+      return undefined;
+    }
     const normalized = tenantId.trim();
     return normalized.length > 0 ? normalized : undefined;
   }
 
   private resolveTenantIdHint(value: unknown): string | undefined {
-    if (typeof value !== 'string') return undefined;
+    if (typeof value !== 'string') {
+      return undefined;
+    }
     const normalized = value.trim();
     return normalized.length > 0 ? normalized : undefined;
   }
 
   private resolveWorkspaceId(value: unknown): string | undefined {
-    if (typeof value !== 'string') return undefined;
+    if (typeof value !== 'string') {
+      return undefined;
+    }
     const normalized = value.trim();
     return normalized.length > 0 ? normalized : undefined;
   }
 
   private resolveAuthenticatedWorkspaceId(user: AuthUser | undefined): string | undefined {
     const directWorkspaceId = this.resolveWorkspaceId(user?.workspaceId);
-    if (directWorkspaceId) return directWorkspaceId;
+    if (directWorkspaceId) {
+      return directWorkspaceId;
+    }
 
     const activeWorkspaceId = this.resolveWorkspaceId(user?.activeWorkspaceId);
-    if (activeWorkspaceId) return activeWorkspaceId;
+    if (activeWorkspaceId) {
+      return activeWorkspaceId;
+    }
 
     const currentWorkspaceId = this.resolveWorkspaceId(user?.currentWorkspaceId);
-    if (currentWorkspaceId) return currentWorkspaceId;
+    if (currentWorkspaceId) {
+      return currentWorkspaceId;
+    }
 
     const contextWorkspaceId = this.resolveWorkspaceId(user?.context?.workspaceId);
-    if (contextWorkspaceId) return contextWorkspaceId;
+    if (contextWorkspaceId) {
+      return contextWorkspaceId;
+    }
 
     const scopeWorkspaceId = this.resolveWorkspaceId(user?.scope?.workspaceId);
-    if (scopeWorkspaceId) return scopeWorkspaceId;
+    if (scopeWorkspaceId) {
+      return scopeWorkspaceId;
+    }
 
     return undefined;
   }
@@ -146,7 +168,9 @@ export class UnifiedLedgerController {
     tenantId?: string;
     workspaceId?: string;
   }): [] | [{ tenantId?: string; workspaceId?: string }] {
-    if (!scope.tenantId && !scope.workspaceId) return [];
+    if (!scope.tenantId && !scope.workspaceId) {
+      return [];
+    }
     return [scope];
   }
 
@@ -166,7 +190,9 @@ export class UnifiedLedgerController {
     userId: string,
     workspaceId: string | undefined
   ): Promise<void> {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
 
     const workspace = await this.db.workspaces.findByIdWithOwner(workspaceId);
     if (!workspace) {
@@ -191,7 +217,9 @@ export class UnifiedLedgerController {
     tenantId?: string;
     workspaceId?: string;
   } {
-    if (!scope.tenantId) return {};
+    if (!scope.tenantId) {
+      return {};
+    }
     return { tenantId: scope.tenantId };
   }
 
@@ -211,6 +239,121 @@ export class UnifiedLedgerController {
     }
     await this.assertWorkspaceWriteAccess(user, userId, resolvedScope.workspaceId);
     return resolvedScope;
+  }
+
+  private mapIssueSeverityToPriority(
+    severity: 'critical' | 'high' | 'medium' | 'low' | string
+  ): 'critical' | 'high' | 'medium' | 'low' {
+    if (severity === 'critical') {
+      return 'critical';
+    }
+    if (severity === 'high') {
+      return 'high';
+    }
+    if (severity === 'low') {
+      return 'low';
+    }
+    return 'medium';
+  }
+
+  private normalizeSuggestionKey(value: string): string {
+    return value.trim().toLowerCase().replace(/\s+/g, ' ');
+  }
+
+  private async ingestAnalyzerSuggestions(
+    owner: string,
+    scope: { tenantId?: string; workspaceId?: string },
+    existing: Array<{ title?: string }>
+  ): Promise<number> {
+    if (!this.analyzer) {
+      return 0;
+    }
+
+    try {
+      const issues = await this.analyzer.getSuggestions();
+      if (!Array.isArray(issues) || issues.length === 0) {
+        return 0;
+      }
+
+      const existingKeys = new Set(
+        existing
+          .map((record) =>
+            typeof record?.title === 'string' ? this.normalizeSuggestionKey(record.title) : ''
+          )
+          .filter((value) => value.length > 0)
+      );
+
+      let created = 0;
+      for (const issue of issues) {
+        const title = String(issue?.suggestion || issue?.description || '').trim();
+        if (!title) {
+          continue;
+        }
+
+        const normalizedTitle = this.normalizeSuggestionKey(title);
+        if (existingKeys.has(normalizedTitle)) {
+          continue;
+        }
+
+        const filePath = String(issue?.file || '').trim();
+        const lineNumber = typeof issue?.line === 'number' ? issue.line : undefined;
+        const issueType = String(issue?.type || 'quality').trim();
+        const issueDescription = String(issue?.description || '').trim();
+        const issueEffort = String(issue?.estimatedEffort || 'medium').trim();
+        const severity = String(issue?.severity || 'medium')
+          .trim()
+          .toLowerCase();
+        const priority = this.mapIssueSeverityToPriority(severity);
+
+        const descriptionParts = [
+          issueDescription || title,
+          filePath ? `Location: ${filePath}${lineNumber ? `:${lineNumber}` : ''}.` : undefined,
+          issueType ? `Type: ${issueType}.` : undefined,
+          issueEffort ? `Estimated effort: ${issueEffort}.` : undefined,
+          'Origin: Analyzer agent feature recommendation.',
+        ].filter((part): part is string => typeof part === 'string' && part.trim().length > 0);
+
+        await this.ledger.createRecord(
+          this.withScope(
+            {
+              kind: 'suggestion',
+              owner,
+              title,
+              description: descriptionParts.join(' '),
+              status: 'submitted',
+              priority,
+              tags: ['ai-generated', 'analyzer-agent', issueType, severity].filter(
+                (tag) => tag && tag !== 'undefined'
+              ),
+              source: 'system',
+              metadata: {
+                origin: 'analyzer-agent',
+                issueId: issue?.id,
+                issueType,
+                severity,
+                file: filePath || undefined,
+                line: lineNumber,
+                impact: issue?.impact,
+                estimatedEffort: issueEffort,
+              },
+            },
+            scope
+          )
+        );
+
+        existingKeys.add(normalizedTitle);
+        created += 1;
+      }
+
+      return created;
+    } catch (error) {
+      this.logger.warn(
+        `Analyzer suggestion ingestion failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+      return 0;
+    }
   }
 
   @Get('unified-ledger/records')
@@ -688,19 +831,28 @@ export class UnifiedLedgerController {
     @Query('workspaceId') workspaceId?: string
   ) {
     const userId = this.requireUserId(user);
-    return this.ledger.listRecords(
-      this.withScope(
-        {
-          owner: userId,
-          kind: 'suggestion' as UnifiedRecordKind,
-          status,
-          lane,
-          horizon,
-          q,
-        },
-        this.buildScope(user, workspaceId)
-      )
+    const scope = this.buildScope(user, workspaceId);
+    const baseFilters = this.withScope(
+      {
+        owner: userId,
+        kind: 'suggestion' as UnifiedRecordKind,
+        status,
+        lane,
+        horizon,
+        q,
+      },
+      scope
     );
+
+    let rows = await this.ledger.listRecords(baseFilters);
+    const allowAiAutofill = !status && !lane && !horizon && !q;
+    if (rows.length === 0 && allowAiAutofill) {
+      const created = await this.ingestAnalyzerSuggestions(userId, scope, rows);
+      if (created > 0) {
+        rows = await this.ledger.listRecords(baseFilters);
+      }
+    }
+    return rows;
   }
 
   @Get('suggestions/:id')
