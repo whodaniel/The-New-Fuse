@@ -219,6 +219,7 @@ const Analytics = () => {
   const [loading, setLoading] = useState(true);
   const [errorState, setErrorState] = useState<AnalyticsErrorState | null>(null);
   const [timeRange, setTimeRange] = useState('7d');
+  const [activeTab, setActiveTab] = useState('overview');
   const [refreshing, setRefreshing] = useState(false);
   const { toast } = useToast();
   const analyticsBaseCandidates = buildAnalyticsBaseCandidates(API_BASE);
@@ -666,7 +667,7 @@ const Analytics = () => {
           </div>
         </motion.div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
