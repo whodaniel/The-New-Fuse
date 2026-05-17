@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
 import { Orchestrator } from './orchestration.js';
+import { GoalsService } from './services/GoalsService.js';
 import { StoryService } from './services/StoryService.js';
 
 const program = new Command();
@@ -7941,18 +7942,22 @@ story
       const result = await storyService.doctor();
 
       console.log(`  Supabase URL:  ${chalk.cyan(result.url)}`);
-      console.log(`  Auth Mode:     ${result.authMode === 'service-role' ? chalk.green('Service Role (Elevated)') : chalk.yellow('Anon (Limited)')}`);
+      console.log(
+        `  Auth Mode:     ${result.authMode === 'service-role' ? chalk.green('Service Role (Elevated)') : chalk.yellow('Anon (Limited)')}`
+      );
       console.log(`  Default Owner: ${chalk.bold(result.owner)}`);
 
       console.log(`\n  Table Access:`);
       const sessionColor = result.story_sessions.ok ? chalk.green : chalk.red;
       console.log(`  - story_sessions:  ${sessionColor(result.story_sessions.message)}`);
-      
+
       const eventColor = result.timeline_events.ok ? chalk.green : chalk.red;
       console.log(`  - timeline_events: ${eventColor(result.timeline_events.message)}`);
 
       if (!result.story_sessions.ok || !result.timeline_events.ok) {
-        console.log(chalk.yellow('\n  [Advice] End-to-end captures require service-role permissions.'));
+        console.log(
+          chalk.yellow('\n  [Advice] End-to-end captures require service-role permissions.')
+        );
         console.log(chalk.dim('  Run: export SUPABASE_SERVICE_ROLE_KEY=your-key-here\n'));
       } else {
         console.log(chalk.green('\n  ✅ System is ready for end-to-end story drafting.\n'));
@@ -8000,7 +8005,9 @@ story
       if (!sessionId) {
         const active = await storyService.getActiveSession(options.owner);
         if (!active) {
-          console.error(chalk.red('No active story session found. Create one with `tnf story create`.'));
+          console.error(
+            chalk.red('No active story session found. Create one with `tnf story create`.')
+          );
           process.exit(1);
         }
         sessionId = active.id;
@@ -8012,7 +8019,7 @@ story
 
       const allQuestions = storyService.getQuestions();
       const capturedIds = options.all ? [] : await storyService.getCapturedQuestionIds(sessionId);
-      const remainingQuestions = allQuestions.filter(q => !capturedIds.includes(q.id));
+      const remainingQuestions = allQuestions.filter((q) => !capturedIds.includes(q.id));
 
       if (remainingQuestions.length === 0) {
         console.log(chalk.green('  All questions have been answered for this session!'));
@@ -8022,7 +8029,7 @@ story
 
       const rl = readline.createInterface({
         input: process.stdin,
-        output: process.stdout
+        output: process.stdout,
       });
 
       for (const q of remainingQuestions) {
@@ -8033,8 +8040,8 @@ story
 
         if (answer.toLowerCase() === 'exit') break;
         if (answer.trim() === '') {
-           console.log(chalk.dim('  Skipping...'));
-           continue;
+          console.log(chalk.dim('  Skipping...'));
+          continue;
         }
 
         console.log(chalk.dim('  Capturing insight...'));
@@ -8051,7 +8058,9 @@ story
       }
 
       rl.close();
-      console.log(chalk.bold.magenta('\n  Drafting session complete. Check your timeline for updates!\n'));
+      console.log(
+        chalk.bold.magenta('\n  Drafting session complete. Check your timeline for updates!\n')
+      );
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -8129,7 +8138,7 @@ story
         if (e.description) {
           const lines = e.description.split('\n');
           for (const line of lines) {
-             console.log(`    ${chalk.dim(line)}`);
+            console.log(`    ${chalk.dim(line)}`);
           }
         }
       }
@@ -8154,34 +8163,140 @@ story
       answer: string,
       options: { question: string; session?: string; ring: string; shelf: string; owner?: string }
     ) => {
-    try {
-      const storyService = new StoryService();
-      let sessionId = options.session;
-      if (!sessionId) {
-        const active = await storyService.getActiveSession(options.owner);
-        if (!active) {
-          console.error(chalk.red('No active session found. Please specify --session <id>.'));
-          process.exit(1);
+      try {
+        const storyService = new StoryService();
+        let sessionId = options.session;
+        if (!sessionId) {
+          const active = await storyService.getActiveSession(options.owner);
+          if (!active) {
+            console.error(chalk.red('No active session found. Please specify --session <id>.'));
+            process.exit(1);
+          }
+          sessionId = active.id;
         }
-        sessionId = active.id;
+
+        const ring = parseInt(options.ring, 10);
+        const questionId = Math.floor(Math.random() * 1000000); // Synthetic ID for manual captures
+
+        console.log(chalk.dim(`Capturing insight for session ${sessionId}...`));
+
+        await storyService.saveCapture({
+          sessionId,
+          questionId,
+          ring,
+          shelfCode: options.shelf,
+          questionText: options.question,
+          answerText: answer,
+          ownerPrincipalId: options.owner,
+        });
+
+        console.log(chalk.green('✅ Story insight captured and synced to timeline.'));
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+// Strategic Goals command group
+const goals = program.command('goals').description('Strategic goals and roadmap management');
+
+goals
+  .command('list')
+  .alias('ls')
+  .description('List all strategic goals')
+  .option('-s, --status <status>', 'Filter by status (active, completed, paused)')
+  .option('-p, --priority <level>', 'Filter by priority')
+  .action(async (options: { status?: string; priority?: string }) => {
+    try {
+      const goalsService = new GoalsService();
+      let list = await goalsService.list();
+
+      if (options.status) {
+        list = list.filter((g) => g.status === options.status);
+      }
+      if (options.priority) {
+        list = list.filter((g) => g.priority === options.priority);
       }
 
-      const ring = parseInt(options.ring, 10);
-      const questionId = Math.floor(Math.random() * 1000000); // Synthetic ID for manual captures
+      if (list.length === 0) {
+        console.log(chalk.yellow('No goals found.'));
+        return;
+      }
 
-      console.log(chalk.dim(`Capturing insight for session ${sessionId}...`));
-      
-      await storyService.saveCapture({
-        sessionId,
-        questionId,
-        ring,
-        shelfCode: options.shelf,
-        questionText: options.question,
-        answerText: answer,
-        ownerPrincipalId: options.owner,
-      });
+      console.log(chalk.bold.blue('\n  TNF Strategic Goals:'));
+      console.log('  ' + '-'.repeat(70));
 
-      console.log(chalk.green('✅ Story insight captured and synced to timeline.'));
+      const priorityColors: Record<string, any> = {
+        critical: chalk.red,
+        high: chalk.yellow,
+        medium: chalk.white,
+        low: chalk.dim,
+        trivial: chalk.dim,
+      };
+
+      for (const g of list) {
+        const pColor = priorityColors[g.priority] || chalk.white;
+        const status = g.status === 'active' ? chalk.green(g.status) : chalk.dim(g.status);
+        const progress = chalk.cyan(`[${g.progress}%]`);
+
+        console.log(
+          `  ${status} | ${pColor(g.priority.padEnd(8))} | ${chalk.bold(g.title)} ${progress}`
+        );
+        if (g.description) console.log(`    ${chalk.dim(g.description)}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+goals
+  .command('create')
+  .description('Create a new strategic goal')
+  .argument('<title>', 'Goal title')
+  .option('-d, --description <text>', 'Goal description')
+  .option('-p, --priority <level>', 'Priority (critical, high, medium, low)', 'medium')
+  .option('-c, --category <name>', 'Category', 'general')
+  .action(
+    async (title: string, options: { description?: string; priority: any; category: string }) => {
+      try {
+        const goalsService = new GoalsService();
+        const goal = await goalsService.create({
+          title,
+          description: options.description,
+          priority: options.priority,
+          category: options.category,
+        });
+
+        console.log(chalk.green(`✅ Goal created: ${chalk.bold(goal.title)} (${goal.id})`));
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+goals
+  .command('stats')
+  .description('Show goals summary statistics')
+  .action(async () => {
+    try {
+      const goalsService = new GoalsService();
+      const stats = await goalsService.getStats();
+
+      console.log(chalk.bold.blue('\n  Goals Summary:'));
+      console.log('  ' + '-'.repeat(30));
+      console.log(`  Total:     ${stats.total}`);
+      console.log(`  Active:    ${chalk.green(stats.active)}`);
+      console.log(`  Completed: ${chalk.cyan(stats.completed)}`);
+
+      console.log(chalk.bold('\n  By Priority:'));
+      for (const [p, count] of Object.entries(stats.byPriority)) {
+        console.log(`  ${p.padEnd(10)}: ${count}`);
+      }
+      console.log('');
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
