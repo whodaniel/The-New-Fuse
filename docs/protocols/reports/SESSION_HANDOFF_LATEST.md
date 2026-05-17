@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-17T00:54:01.057Z`  
-Handoff ID: `c0388925-c460-4e9a-b81c-f237119e8252`
+Created At: `2026-05-17T01:06:42.852Z`  
+Handoff ID: `37908447-bfb0-497c-9e08-ff1f6d43312b`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `f262ffbc3df96ac7c02feb2f0136403c5c929932`
+- Head SHA: `43771f8f43fe321958fd5a06fd928378ef68a58f`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,10 +19,11 @@ Handoff ID: `c0388925-c460-4e9a-b81c-f237119e8252`
 
 ## Changed Paths
 
-- .github/workflows/quality.yml
-- .github/workflows/test.yml
-- package.json
-- scripts/tnf-parity-audit.cjs
+- apps/api/src/auth/decorators/current-user.decorator.ts
+- apps/api/src/decorators/current-user.decorator.ts
+- apps/api/src/modules/unified-ledger/unified-ledger.controller.spec.ts
+- apps/api/src/modules/unified-ledger/unified-ledger.controller.ts
+- apps/frontend/src/pages/Timeline/index.tsx
 
 ## Verification
 
