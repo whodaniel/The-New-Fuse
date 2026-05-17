@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-17T01:33:52.054Z`  
-Handoff ID: `1a310224-18ad-4132-92f3-164d335adafe`
+Created At: `2026-05-17T02:04:33.910Z`  
+Handoff ID: `3866d5c5-d799-452e-973a-254a28e6476f`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `a117fbc77aa67ab049e3e8e24fc1a09ddfb76a4a`
+- Head SHA: `3848f329ae9b257e26c3967bb93f2b126a671b09`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,8 +19,8 @@ Handoff ID: `1a310224-18ad-4132-92f3-164d335adafe`
 
 ## Changed Paths
 
-- apps/frontend/src/features/timeline/components/TimelineView.tsx
 - apps/frontend/src/pages/Timeline/index.tsx
+- apps/frontend/src/services/unifiedLedgerApi.ts
 
 ## Verification
 
