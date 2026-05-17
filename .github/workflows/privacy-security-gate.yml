@@ -19,6 +19,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
       - name: Build changed file list
         run: |
           set -euo pipefail
@@ -36,6 +47,21 @@ jobs:
           sort -u .tnf_changed_files -o .tnf_changed_files
           echo "Changed files:"
           cat .tnf_changed_files || true
+
+      - name: Emit change ownership ledger (artifact-local)
+        run: node scripts/protocols/change-ownership-ledger.cjs --mode=ci --file-list=.tnf_changed_files --output=.tnf_artifacts/CHANGE_OWNERSHIP.jsonl
+
+      - name: Upload change ownership ledger artifact
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: change-ownership-ledger
+          path: .tnf_artifacts/CHANGE_OWNERSHIP.jsonl
+          retention-days: 14
+
+      - name: Classify conflict tier
+        if: github.event_name == 'pull_request'
+        run: node scripts/protocols/classify-change-tier.cjs --mode=ci --file-list=.tnf_changed_files --fail-on=escalate
 
       - name: Enforce session handoff protocol (changed-file scope)
         run: |

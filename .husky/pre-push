@@ -20,8 +20,19 @@ while read -r local_ref local_sha remote_ref remote_sha; do
 done
 
 sort -u "$tmp_file" -o "$tmp_file"
+
+run_warn() {
+  if ! "$@"; then
+    echo "WARN: pre-push advisory check failed (non-blocking): $*"
+  fi
+}
+
 PRIVACY_GUARD_FILE_LIST="$tmp_file" pnpm run privacy:guard:pre-push
 PRIVACY_GUARD_FILE_LIST="$tmp_file" pnpm run secret:sweep:pre-push
 PRIVACY_GUARD_FILE_LIST="$tmp_file" pnpm run docs:pii:guard:pre-push
-pnpm run supabase:rls:audit:strict
-TNF_HANDOFF_FILE_LIST="$tmp_file" pnpm run handoff:pre-push
+
+# Local hook stays lightweight; strict governance executes in CI.
+run_warn pnpm run ownership:ledger:emit -- --file-list="$tmp_file" --output=data/protocols/CHANGE_OWNERSHIP.jsonl
+run_warn pnpm run conflict:tier -- --file-list="$tmp_file"
+run_warn env TNF_HANDOFF_FILE_LIST="$tmp_file" pnpm run handoff:pre-push
+run_warn pnpm run supabase:rls:audit:strict

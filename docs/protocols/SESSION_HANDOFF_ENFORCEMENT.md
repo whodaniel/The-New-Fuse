@@ -45,9 +45,11 @@ If the change set touches Supabase-sensitive paths (`supabase/**`,
 
 ## CI + Hook Integration
 
-- `.husky/pre-push` calls `handoff:pre-push`.
-- `.github/workflows/privacy-security-gate.yml` runs the handoff gate on the
-  changed-file set for PR/push.
+- `.husky/pre-push` runs lightweight blocking checks (privacy/secrets/docs PII)
+  and keeps handoff + strict RLS checks advisory (non-blocking).
+- `.github/workflows/privacy-security-gate.yml` is the strict enforcement
+  surface for handoff freshness/coverage, governance tiering, and RLS audits on
+  PR/push.
 
 ## Operator Intent
 
