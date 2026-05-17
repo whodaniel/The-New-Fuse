@@ -522,14 +522,14 @@ export default function TimelinePage() {
               Unified Timeline
             </h1>
             <div className="flex flex-wrap gap-4 mt-4">
-              <div className="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-lg">
-                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
+              <div className="bg-slate-900/80 border border-slate-600 px-4 py-2 rounded-lg">
+                <p className="text-[10px] text-slate-300 uppercase font-bold tracking-widest">
                   Personal Milestones
                 </p>
                 <p className="text-xl font-black text-amber-500">{events.length}</p>
               </div>
-              <div className="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-lg">
-                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
+              <div className="bg-slate-900/80 border border-slate-600 px-4 py-2 rounded-lg">
+                <p className="text-[10px] text-slate-300 uppercase font-bold tracking-widest">
                   Active Macro Tasks
                 </p>
                 <p className="text-xl font-black text-sky-500">
@@ -538,8 +538,8 @@ export default function TimelinePage() {
                     .filter((r: any) => r.kind === 'task').length || 0}
                 </p>
               </div>
-              <div className="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-lg">
-                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
+              <div className="bg-slate-900/80 border border-slate-600 px-4 py-2 rounded-lg">
+                <p className="text-[10px] text-slate-300 uppercase font-bold tracking-widest">
                   Narrative Nodes
                 </p>
                 <p className="text-xl font-black text-emerald-500">
@@ -574,7 +574,7 @@ export default function TimelinePage() {
             <Button
               onClick={() => setShowAdvancedActions((value) => !value)}
               variant="ghost"
-              className="text-slate-400 hover:text-slate-200 hover:bg-slate-800/70"
+              className="text-slate-200 hover:text-slate-200 hover:bg-slate-800/70"
             >
               {showAdvancedActions ? 'Hide Advanced' : 'Show Advanced'}
             </Button>
@@ -593,7 +593,7 @@ export default function TimelinePage() {
         </header>
 
         <Card
-          className="bg-slate-900/40 border-slate-800 p-6 rounded-md overflow-hidden relative"
+          className="bg-slate-950/90 border-slate-600 p-6 rounded-md overflow-hidden relative"
           aria-busy={macroLoading}
         >
           <div className="flex items-center justify-between mb-6">
@@ -603,7 +603,7 @@ export default function TimelinePage() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white tracking-tight">Macro Horizon</h3>
-                <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mt-0.5">
+                <p className="text-xs text-slate-300 uppercase font-bold tracking-widest mt-0.5">
                   Project Workspace & Global Roadmap
                 </p>
               </div>
@@ -618,7 +618,7 @@ export default function TimelinePage() {
           <div className="h-[450px] w-full">
             {macroLoading ? (
               <div
-                className="h-full w-full flex flex-col items-center justify-center space-y-4 bg-slate-950/40 rounded-lg border border-slate-800/50"
+                className="h-full w-full flex flex-col items-center justify-center space-y-4 bg-slate-950 rounded-lg border border-slate-600/70"
                 role="status"
                 aria-live="polite"
               >
@@ -649,7 +649,7 @@ export default function TimelinePage() {
                   <h4 className="text-lg font-bold text-white uppercase tracking-wider">
                     {selectedMacroRecord.title}
                   </h4>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-200">
                     ID: {selectedMacroRecord.id} • Kind:{' '}
                     <span className="text-sky-400 font-bold uppercase">
                       {selectedMacroRecord.kind}
@@ -659,7 +659,7 @@ export default function TimelinePage() {
               </div>
               <button
                 onClick={() => setSelectedMacroRecord(null)}
-                className="text-slate-500 hover:text-white transition-colors"
+                className="text-slate-300 hover:text-white transition-colors"
                 type="button"
                 aria-label="Close macro record details"
               >
@@ -668,18 +668,18 @@ export default function TimelinePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
                   Status
                 </label>
-                <div className="text-sm text-slate-200 bg-slate-950 px-3 py-2 rounded border border-slate-800">
+                <div className="text-sm text-slate-200 bg-slate-950 px-3 py-2 rounded border border-slate-600">
                   {selectedMacroRecord.status || 'No Status'}
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
                   Time Window
                 </label>
-                <div className="text-sm text-slate-200 bg-slate-950 px-3 py-2 rounded border border-slate-800">
+                <div className="text-sm text-slate-200 bg-slate-950 px-3 py-2 rounded border border-slate-600">
                   {selectedMacroRecord.startTime
                     ? format(new Date(selectedMacroRecord.startTime), 'MMM d, yyyy')
                     : 'No Start'}
@@ -690,10 +690,10 @@ export default function TimelinePage() {
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
                   Assignee
                 </label>
-                <div className="text-sm text-slate-200 bg-slate-950 px-3 py-2 rounded border border-slate-800">
+                <div className="text-sm text-slate-200 bg-slate-950 px-3 py-2 rounded border border-slate-600">
                   {selectedMacroRecord.assignee || 'Unassigned'}
                 </div>
               </div>
@@ -703,13 +703,13 @@ export default function TimelinePage() {
 
         <Card
           data-testid="timeline-rail-card"
-          className="bg-slate-900/40 border-slate-800 p-6 rounded-md space-y-6"
+          className="bg-slate-950/90 border-slate-600 p-6 rounded-md space-y-6"
           aria-busy={loading || graphLoading}
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col">
               <h3 className="text-xl font-bold text-white tracking-tight">Personal Narrative</h3>
-              <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mt-0.5">
+              <p className="text-xs text-slate-300 uppercase font-bold tracking-widest mt-0.5">
                 Milestones, Identity & Life Events
               </p>
             </div>
@@ -785,7 +785,7 @@ export default function TimelinePage() {
               aria-label={
                 selectedPayload ? `Selected milestone ${selectedPayload.title}` : undefined
               }
-              className="rounded-md border border-slate-700 bg-slate-950/40 p-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between animate-in fade-in slide-in-from-left-2 duration-300"
+              className="rounded-md border border-slate-700 bg-slate-950 p-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between animate-in fade-in slide-in-from-left-2 duration-300"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-3">
@@ -804,10 +804,10 @@ export default function TimelinePage() {
                     'No additional context provided for this milestone.'}
                 </p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3">
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-200">
                     <span className="text-slate-300">Position:</span> {selectedPayload?.point}%
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-200">
                     <span className="text-slate-300">Timestamp:</span>{' '}
                     {format(new Date(selectedEvent.timestamp), 'PPP p')}
                   </p>
@@ -819,7 +819,7 @@ export default function TimelinePage() {
                 </div>
 
                 {readSources(selectedEvent).length > 0 ? (
-                  <div className="mt-4 pt-4 border-t border-slate-800/50">
+                  <div className="mt-4 pt-4 border-t border-slate-600/70">
                     <p className="text-[10px] text-slate-300 uppercase tracking-[0.2em] font-bold">
                       Evidence & Sources
                     </p>
@@ -844,7 +844,7 @@ export default function TimelinePage() {
                 ) : null}
 
                 {selectedConnections.length > 0 ? (
-                  <div className="mt-4 pt-4 border-t border-slate-800/50">
+                  <div className="mt-4 pt-4 border-t border-slate-600/70">
                     <p className="text-[10px] text-slate-300 uppercase tracking-[0.2em] font-bold">
                       Narrative Links
                     </p>
@@ -852,10 +852,10 @@ export default function TimelinePage() {
                       {selectedConnections.slice(0, 8).map((connection, index) => (
                         <li
                           key={`${connection.from}-${connection.to}-${index}`}
-                          className="text-xs bg-slate-900/40 p-2 rounded border border-slate-800/40"
+                          className="text-xs bg-slate-950/90 p-2 rounded border border-slate-600/60"
                         >
                           <p className="text-emerald-400 font-medium">
-                            {connection.from} <span className="text-slate-500">→</span>{' '}
+                            {connection.from} <span className="text-slate-300">→</span>{' '}
                             {connection.to}
                           </p>
                           <div className="flex items-center gap-2 mt-1">
@@ -878,7 +878,7 @@ export default function TimelinePage() {
                 <Button
                   data-testid="timeline-edit-selected"
                   variant="outline"
-                  className="border-slate-800 bg-slate-900/50 hover:bg-slate-800"
+                  className="border-slate-600 bg-slate-950/90 hover:bg-slate-800"
                   onClick={() => startEdit(selectedEvent)}
                   disabled={isDelegatedView}
                   aria-label={`Edit event ${selectedPayload?.title || ''}`.trim()}
@@ -904,7 +904,7 @@ export default function TimelinePage() {
               className="flex flex-col items-center justify-center py-10 text-center space-y-2"
               role="status"
             >
-              <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-500">
+              <div className="w-12 h-12 rounded-full bg-slate-700/60 flex items-center justify-center text-slate-300">
                 <Calendar className="w-6 h-6" />
               </div>
               <p className="text-slate-300 text-sm">
@@ -912,8 +912,8 @@ export default function TimelinePage() {
               </p>
             </div>
           )}
-          <div className="flex gap-4 border-t border-slate-800/50 pt-6">
-            <div className="flex-1 rounded-md border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
+          <div className="flex gap-4 border-t border-slate-600/70 pt-6">
+            <div className="flex-1 rounded-md border border-slate-600 bg-slate-950 px-4 py-3 text-xs text-slate-200">
               {graphLoading ? (
                 <div className="flex items-center gap-2" role="status" aria-live="polite">
                   <div className="w-3 h-3 border-2 border-amber-500/50 border-t-transparent rounded-full animate-spin" />
@@ -953,7 +953,7 @@ export default function TimelinePage() {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <Card
             data-testid="timeline-create-card"
-            className="bg-slate-900/50 border-slate-800 p-6 rounded-md space-y-5"
+            className="bg-slate-950/90 border-slate-600 p-6 rounded-md space-y-5"
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded bg-amber-500/10 flex items-center justify-center text-amber-500">
@@ -1078,7 +1078,7 @@ export default function TimelinePage() {
 
           <Card
             data-testid="timeline-edit-card"
-            className="bg-slate-900/50 border-slate-800 p-6 rounded-md space-y-5"
+            className="bg-slate-950/90 border-slate-600 p-6 rounded-md space-y-5"
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded bg-sky-500/10 flex items-center justify-center text-sky-500">
@@ -1090,7 +1090,7 @@ export default function TimelinePage() {
             {!editingId ? (
               <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
                 <Pencil className="w-10 h-10 text-slate-600 mb-4" />
-                <p className="text-slate-400 text-sm max-w-[240px]">
+                <p className="text-slate-200 text-sm max-w-[240px]">
                   Select an event on the timeline and click{' '}
                   <span className="text-slate-200 font-bold">Edit</span> to populate this form.
                 </p>
@@ -1207,7 +1207,7 @@ export default function TimelinePage() {
                   <Button
                     data-testid="timeline-edit-cancel"
                     variant="outline"
-                    className="border-slate-700 bg-slate-900/50 hover:bg-slate-800 h-11 px-6"
+                    className="border-slate-700 bg-slate-950/90 hover:bg-slate-800 h-11 px-6"
                     onClick={() => setEditingId(null)}
                   >
                     Cancel

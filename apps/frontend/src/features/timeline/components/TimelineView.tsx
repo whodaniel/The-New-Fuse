@@ -103,7 +103,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
 
   return (
     <div
-      className="flex flex-col h-full bg-[#0f111a] text-slate-300 font-sans select-none overflow-hidden border border-slate-800 rounded-lg relative"
+      className="flex flex-col h-full bg-[#0f111a] text-slate-100 font-sans select-none overflow-hidden border border-slate-600 rounded-lg relative"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
@@ -111,9 +111,9 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
       aria-label="Macro project and task timeline"
     >
       {/* Timeline Header */}
-      <div className="flex border-b border-slate-800 bg-[#161922] sticky top-0 z-30">
+      <div className="flex border-b border-slate-600 bg-[#161922] sticky top-0 z-30">
         <div
-          className="flex-shrink-0 border-r border-slate-800 flex items-center px-4 font-semibold text-sm"
+          className="flex-shrink-0 border-r border-slate-600 flex items-center px-4 font-semibold text-sm"
           style={{ width: SIDEBAR_WIDTH }}
         >
           Projects & Tasks
@@ -122,7 +122,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
           {dateHeaders.map((date, i) => (
             <div
               key={i}
-              className={`flex-shrink-0 border-r border-slate-800/50 flex flex-col items-center justify-center text-[10px] uppercase tracking-wider ${isToday(date) ? 'bg-sky-500/10 text-sky-400' : ''}`}
+              className={`flex-shrink-0 border-r border-slate-600/70 flex flex-col items-center justify-center text-[10px] uppercase tracking-wider ${isToday(date) ? 'bg-sky-500/10 text-sky-400' : ''}`}
               style={{ width: COLUMN_WIDTH }}
             >
               <span className="opacity-80">{format(date, 'MMM')}</span>
@@ -145,23 +145,23 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
         </div>
 
         {plans.map((plan) => (
-          <div key={plan.id} className="flex flex-col border-b border-slate-800/30">
+          <div key={plan.id} className="flex flex-col border-b border-slate-600/50">
             {/* Project Header Row */}
-            <div className="flex bg-slate-900/40 group">
+            <div className="flex bg-slate-900/80 group">
               <div
-                className="flex-shrink-0 border-r border-slate-800 p-3 sticky left-0 z-10 bg-[#0f111a]"
+                className="flex-shrink-0 border-r border-slate-600 p-3 sticky left-0 z-10 bg-[#0f111a]"
                 style={{ width: SIDEBAR_WIDTH }}
               >
                 <div className="text-xs font-bold text-sky-400 truncate uppercase tracking-widest">
                   {plan.name}
                 </div>
-                <div className="text-[10px] opacity-40 truncate">{plan.objective}</div>
+                <div className="text-[10px] text-slate-300 truncate">{plan.objective}</div>
               </div>
               <div className="flex relative">
                 {dateHeaders.map((_, i) => (
                   <div
                     key={i}
-                    className="flex-shrink-0 border-r border-slate-800/20 h-10"
+                    className="flex-shrink-0 border-r border-slate-600/40 h-10"
                     style={{ width: COLUMN_WIDTH }}
                   />
                 ))}
@@ -185,11 +185,11 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
               return (
                 <div
                   key={record.id}
-                  className="flex group hover:bg-slate-800/20 transition-colors border-b border-slate-800/10"
+                  className="flex group hover:bg-slate-700/30 transition-colors border-b border-slate-600/30"
                 >
                   <button
                     type="button"
-                    className="flex-shrink-0 border-r border-slate-800 px-4 py-2 sticky left-0 z-10 bg-[#0f111a] flex items-center group-hover:bg-slate-800/40 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-inset"
+                    className="flex-shrink-0 border-r border-slate-600 px-4 py-2 sticky left-0 z-10 bg-[#0f111a] flex items-center group-hover:bg-slate-800/40 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-inset"
                     style={{ width: SIDEBAR_WIDTH }}
                     onClick={() => onRecordClick?.(record)}
                     aria-label={`Open details for task ${record.title || 'untitled task'}`}
@@ -206,7 +206,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
                     {dateHeaders.map((_, i) => (
                       <div
                         key={i}
-                        className="flex-shrink-0 border-r border-slate-800/10 h-full"
+                        className="flex-shrink-0 border-r border-slate-600/30 h-full"
                         style={{ width: COLUMN_WIDTH }}
                       />
                     ))}
@@ -230,7 +230,10 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
                         if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                           e.preventDefault();
                           const daysToMove = e.shiftKey ? 7 : 1;
-                          shiftRecordByDays(record, e.key === 'ArrowLeft' ? -daysToMove : daysToMove);
+                          shiftRecordByDays(
+                            record,
+                            e.key === 'ArrowLeft' ? -daysToMove : daysToMove
+                          );
                         }
                       }}
                       role="button"
@@ -255,7 +258,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
       </div>
 
       {/* Footer / Controls */}
-      <div className="p-2 border-t border-slate-800 bg-[#161922] flex justify-between items-center text-[10px]">
+      <div className="p-2 border-t border-slate-600 bg-[#161922] flex justify-between items-center text-[10px]">
         <div className="flex space-x-4 ml-4 text-slate-200">
           <div className="flex items-center">
             <div className="w-2 h-2 rounded-full bg-amber-500 mr-1" /> High Priority
