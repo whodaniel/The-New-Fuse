@@ -4418,12 +4418,6 @@ importers:
         specifier: 6.0.2
         version: 6.0.2
 
-  packages/integrations:
-    devDependencies:
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.1.3
-
   packages/jules-integration:
     dependencies:
       '@the-new-fuse/agent':
@@ -4494,19 +4488,6 @@ importers:
       typescript:
         specifier: 6.0.2
         version: 6.0.2
-
-  packages/layout:
-    dependencies:
-      react:
-        specifier: 19.0.0
-        version: 19.0.0
-    devDependencies:
-      '@types/react':
-        specifier: ^19.2.3
-        version: 19.2.14
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.1.3
 
   packages/mcp-cloud-redis-bridge:
     dependencies:
@@ -4659,12 +4640,6 @@ importers:
       typescript:
         specifier: 6.0.2
         version: 6.0.2
-
-  packages/monitoring:
-    devDependencies:
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.1.3
 
   packages/n8n-workflows:
     dependencies:
@@ -5334,6 +5309,9 @@ importers:
       '@the-new-fuse/tnf-core':
         specifier: workspace:*
         version: link:../tnf-core
+      '@the-new-fuse/tnf-note-taking':
+        specifier: workspace:*
+        version: link:../tnf-note-taking
       '@upstash/redis':
         specifier: ^1.37.0
         version: 1.38.0
