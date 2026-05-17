@@ -384,11 +384,45 @@ type LocalTimelineSnapshot = {
   events: TimelineEvent[];
 };
 
-function isTimelineRouteUnavailable(error: unknown): boolean {
-  if (!(error instanceof ApiResponseError)) return false;
-  if (error.status !== 404) return false;
-  const body = `${error.body || ''} ${error.message || ''}`.toLowerCase();
-  return /cannot\s+(get|post|patch|delete)/i.test(body);
+function hasRouteUnavailableSignal(input: string): boolean {
+  const normalized = input.toLowerCase();
+  return (
+    /cannot\s+(get|post|patch|delete)/i.test(normalized) ||
+    /method\s+not\s+allowed/i.test(normalized) ||
+    /route\s+not\s+found/i.test(normalized) ||
+    /service\s+unavailable/i.test(normalized) ||
+    /bad\s+gateway/i.test(normalized) ||
+    /gateway\s+timeout/i.test(normalized) ||
+    /unexpected\s+token\s*</i.test(normalized)
+  );
+}
+
+function isTimelineFallbackEligible(error: unknown): boolean {
+  if (error instanceof ApiResponseError) {
+    if ([404, 405, 502, 503, 504].includes(error.status)) {
+      return true;
+    }
+    return hasRouteUnavailableSignal(`${error.body || ''} ${error.message || ''}`);
+  }
+
+  if (error instanceof SyntaxError) {
+    return hasRouteUnavailableSignal(error.message || '');
+  }
+
+  if (error instanceof Error) {
+    const message = error.message || '';
+    if (hasRouteUnavailableSignal(message)) {
+      return true;
+    }
+    const normalized = message.toLowerCase();
+    return (
+      normalized.includes('failed to fetch') ||
+      normalized.includes('networkerror') ||
+      normalized.includes('load failed')
+    );
+  }
+
+  return false;
 }
 
 function readLocalTimelineSnapshot(): LocalTimelineSnapshot {
@@ -651,7 +685,7 @@ export async function listTimelineEvents(params?: {
     const payload = await parse<unknown>(await timelineApiFetch(`/events${suffix}`));
     return unwrapArrayPayload<TimelineEvent>(payload, ['events', 'items']);
   } catch (error) {
-    if (!isTimelineRouteUnavailable(error)) {
+    if (!isTimelineFallbackEligible(error)) {
       throw error;
     }
     return filterLocalTimelineEvents(readLocalTimelineSnapshot().events, params);
@@ -664,7 +698,7 @@ export async function getTimelineEvent(id: string, userId?: string): Promise<Tim
     const payload = await parse<unknown>(await timelineApiFetch(`/events/${id}`));
     return unwrapEnvelope<TimelineEvent | null>(payload);
   } catch (error) {
-    if (!isTimelineRouteUnavailable(error)) {
+    if (!isTimelineFallbackEligible(error)) {
       throw error;
     }
     return readLocalTimelineSnapshot().events.find((event) => event.id === id) || null;
@@ -691,7 +725,7 @@ export async function createTimelineEvent(input: {
     );
     return unwrapEnvelope<TimelineEvent>(payload);
   } catch (error) {
-    if (!isTimelineRouteUnavailable(error)) {
+    if (!isTimelineFallbackEligible(error)) {
       throw error;
     }
 
@@ -732,7 +766,7 @@ export async function updateTimelineEvent(
     );
     return unwrapEnvelope<TimelineEvent | null>(payload);
   } catch (error) {
-    if (!isTimelineRouteUnavailable(error)) {
+    if (!isTimelineFallbackEligible(error)) {
       throw error;
     }
 
@@ -767,7 +801,7 @@ export async function deleteTimelineEvent(id: string, userId?: string): Promise<
       })
     );
   } catch (error) {
-    if (!isTimelineRouteUnavailable(error)) {
+    if (!isTimelineFallbackEligible(error)) {
       throw error;
     }
 
@@ -803,7 +837,7 @@ export async function bootstrapPersonalTimeline(): Promise<{
       })
     );
   } catch (error) {
-    if (!isTimelineRouteUnavailable(error)) {
+    if (!isTimelineFallbackEligible(error)) {
       throw error;
     }
 
@@ -916,7 +950,7 @@ export async function importGithubTimelineNarrative(input?: {
       })
     );
   } catch (error) {
-    if (!isTimelineRouteUnavailable(error)) {
+    if (!isTimelineFallbackEligible(error)) {
       throw error;
     }
     const userId = await inferCurrentUserId();
@@ -925,7 +959,8 @@ export async function importGithubTimelineNarrative(input?: {
       userId ? { ownerId: userId } : undefined
     );
     return {
-      message: 'Timeline API unavailable; GitHub import is not available in fallback mode',
+      message:
+        'GitHub import is unavailable in this deployment. This advanced action can be configured later.',
       importedCount: 0,
       skippedCount: 0,
       removedCount: 0,
@@ -950,7 +985,7 @@ export async function getGithubNarrativeGraph(params?: {
     const payload = await parse<unknown>(await timelineApiFetch(`/github/graph${suffix}`));
     return unwrapEnvelope<GithubNarrativeGraphResult>(payload);
   } catch (error) {
-    if (!isTimelineRouteUnavailable(error)) {
+    if (!isTimelineFallbackEligible(error)) {
       throw error;
     }
 

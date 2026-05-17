@@ -159,6 +159,17 @@ function formatTimelineEventA11yLabel(event: TimelineEvent): string {
   return `${payload.title}. Category ${payload.category}. Timeline position ${payload.point}%. ${timestamp}.`;
 }
 
+function isOptionalGithubImportFailure(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes('github narrative report not found') ||
+    normalized.includes('method not allowed') ||
+    normalized.includes('cannot post') ||
+    normalized.includes('not available in fallback mode') ||
+    normalized.includes('unavailable in this deployment')
+  );
+}
+
 export default function TimelinePage() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
@@ -277,7 +288,12 @@ export default function TimelinePage() {
       }
     } catch (error) {
       if (!auto) {
-        toast.error(getApiErrorMessage(error, 'Failed to generate your personal timeline'));
+        const message = getApiErrorMessage(error, 'Failed to generate your personal timeline');
+        if (/(missing authenticated user|unauthorized|forbidden|401|403)/i.test(message)) {
+          toast.error('Your session appears expired. Please sign in again and retry.');
+        } else {
+          toast.error(message);
+        }
       }
     } finally {
       setBootstrapping(false);
@@ -490,15 +506,19 @@ export default function TimelinePage() {
     try {
       const result = await importGithubTimelineNarrative({});
       await load();
-      toast.success(
-        result.importedCount > 0
-          ? `Imported ${result.importedCount} GitHub timeline events (${result.matchedConnectionCount} edge matches)`
-          : 'GitHub timeline is already up to date'
-      );
+      if (result.importedCount > 0) {
+        toast.success(
+          `Imported ${result.importedCount} GitHub timeline events (${result.matchedConnectionCount} edge matches)`
+        );
+      } else if (isOptionalGithubImportFailure(result.message || '')) {
+        toast('GitHub narrative import is optional and currently not enabled in this environment.');
+      } else {
+        toast.success(result.message || 'GitHub timeline is already up to date');
+      }
     } catch (error) {
       const message = getApiErrorMessage(error, 'Failed to sync GitHub timeline history');
-      if (message.toLowerCase().includes('github narrative report not found')) {
-        toast.error('GitHub import report is not configured. This is an optional advanced action.');
+      if (isOptionalGithubImportFailure(message)) {
+        toast('GitHub narrative import is optional and currently not enabled in this environment.');
       } else {
         toast.error(message);
       }
