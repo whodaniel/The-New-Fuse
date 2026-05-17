@@ -168,6 +168,7 @@ export default function TimelinePage() {
   const [saving, setSaving] = useState(false);
   const [bootstrapping, setBootstrapping] = useState(false);
   const [syncingGithub, setSyncingGithub] = useState(false);
+  const [showAdvancedActions, setShowAdvancedActions] = useState(false);
   const [graphLoading, setGraphLoading] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedMacroRecord, setSelectedMacroRecord] = useState<any>(null);
@@ -494,8 +495,13 @@ export default function TimelinePage() {
           ? `Imported ${result.importedCount} GitHub timeline events (${result.matchedConnectionCount} edge matches)`
           : 'GitHub timeline is already up to date'
       );
-    } catch {
-      toast.error('Failed to sync GitHub timeline history');
+    } catch (error) {
+      const message = getApiErrorMessage(error, 'Failed to sync GitHub timeline history');
+      if (message.toLowerCase().includes('github narrative report not found')) {
+        toast.error('GitHub import report is not configured. This is an optional advanced action.');
+      } else {
+        toast.error(message);
+      }
     } finally {
       setSyncingGithub(false);
     }
@@ -549,15 +555,6 @@ export default function TimelinePage() {
           </div>
           <div className="flex flex-wrap gap-2">
             <Button
-              onClick={syncGithubHistory}
-              disabled={syncingGithub || saving || bootstrapping || !userId || isDelegatedView}
-              variant="outline"
-              className="border-sky-500/60 text-sky-300 hover:bg-sky-500/10"
-            >
-              <RefreshCw className={`w-4 h-4 mr-2 ${syncingGithub ? 'animate-spin' : ''}`} />
-              {syncingGithub ? 'Syncing GitHub...' : 'Sync GitHub History'}
-            </Button>
-            <Button
               onClick={() => runBootstrap(false)}
               disabled={bootstrapping || saving || !userId || isDelegatedView}
               variant="outline"
@@ -574,6 +571,24 @@ export default function TimelinePage() {
               <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
+            <Button
+              onClick={() => setShowAdvancedActions((value) => !value)}
+              variant="ghost"
+              className="text-slate-400 hover:text-slate-200 hover:bg-slate-800/70"
+            >
+              {showAdvancedActions ? 'Hide Advanced' : 'Show Advanced'}
+            </Button>
+            {showAdvancedActions ? (
+              <Button
+                onClick={syncGithubHistory}
+                disabled={syncingGithub || saving || bootstrapping || !userId || isDelegatedView}
+                variant="outline"
+                className="border-sky-500/60 text-sky-300 hover:bg-sky-500/10"
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${syncingGithub ? 'animate-spin' : ''}`} />
+                {syncingGithub ? 'Importing GitHub...' : 'Import GitHub Narrative'}
+              </Button>
+            ) : null}
           </div>
         </header>
 
