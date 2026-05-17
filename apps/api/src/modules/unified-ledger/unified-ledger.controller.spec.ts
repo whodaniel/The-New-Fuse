@@ -204,6 +204,31 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     });
   });
 
+  it('bootstraps timeline when authenticated claim uses user_id', async () => {
+    ledger.bootstrapPersonalTimeline.mockResolvedValue({
+      message: 'Generated',
+      createdCount: 2,
+      totalCount: 2,
+      events: [],
+    });
+
+    const result = await controller.bootstrapPersonalTimeline({
+      user_id: 'user-claim-1',
+      email: 'claim@example.com',
+      name: 'Claim User',
+      role: 'member',
+      roles: ['member'],
+    });
+
+    expect(result.createdCount).toBe(2);
+    expect(ledger.bootstrapPersonalTimeline).toHaveBeenCalledWith('user-claim-1', {
+      email: 'claim@example.com',
+      name: 'Claim User',
+      role: 'member',
+      roles: ['member'],
+    });
+  });
+
   it('rejects timeline bootstrap when no authenticated user id is present', async () => {
     await expect(controller.bootstrapPersonalTimeline({})).rejects.toBeInstanceOf(
       UnauthorizedException

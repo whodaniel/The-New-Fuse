@@ -274,9 +274,9 @@ export default function TimelinePage() {
       } else if (result.createdCount > 0) {
         toast.success(`Generated ${result.createdCount} private timeline segments`);
       }
-    } catch {
+    } catch (error) {
       if (!auto) {
-        toast.error('Failed to generate your personal timeline');
+        toast.error(getApiErrorMessage(error, 'Failed to generate your personal timeline'));
       }
     } finally {
       setBootstrapping(false);

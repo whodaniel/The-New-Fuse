@@ -27,6 +27,8 @@ import {
 type AuthUser = {
   id?: string;
   sub?: string;
+  user_id?: string;
+  userId?: string;
   tenantId?: string;
   workspaceId?: string;
   activeWorkspaceId?: string;
@@ -34,6 +36,7 @@ type AuthUser = {
   context?: Record<string, unknown>;
   scope?: Record<string, unknown>;
   email?: string | null;
+  name?: string | null;
   role?: string | null;
   roles?: unknown;
   permissions?: unknown;
@@ -48,7 +51,10 @@ export class UnifiedLedgerController {
   ) {}
 
   private requireUserId(user: AuthUser | undefined): string {
-    const userId = user?.id || user?.sub;
+    const userId = [user?.id, user?.sub, user?.user_id, user?.userId]
+      .filter((value): value is string => typeof value === 'string')
+      .map((value) => value.trim())
+      .find((value) => value.length > 0);
     if (!userId) {
       throw new UnauthorizedException('Missing authenticated user');
     }
@@ -412,23 +418,16 @@ export class UnifiedLedgerController {
   }
 
   @Post('timeline/personal/bootstrap')
-  async bootstrapPersonalTimeline(
-    @CurrentUser()
-    user: {
-      id?: string;
-      sub?: string;
-      email?: string;
-      name?: string;
-      role?: string;
-      roles?: string[];
-    }
-  ) {
+  async bootstrapPersonalTimeline(@CurrentUser() user: AuthUser) {
     const userId = this.requireUserId(user);
+    const roles = Array.isArray(user.roles)
+      ? user.roles.filter((role): role is string => typeof role === 'string')
+      : undefined;
     return this.ledger.bootstrapPersonalTimeline(userId, {
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      roles: user.roles,
+      email: typeof user.email === 'string' ? user.email : undefined,
+      name: typeof user.name === 'string' ? user.name : undefined,
+      role: typeof user.role === 'string' ? user.role : undefined,
+      roles,
     });
   }
 
