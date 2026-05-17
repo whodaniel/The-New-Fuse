@@ -1,5 +1,6 @@
 import { Suspense, lazy, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { isFairtableFeatureEnabled } from './config/featureFlags';
 import { LEGACY_REDIRECTS } from './config/legacyRedirects';
 // Lazy load layouts for code splitting
 const PerpetualStatus = lazy(() => import('./pages/PerpetualStatus'));
@@ -384,6 +385,7 @@ const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter({ isApp: _isApp = false }: ComprehensiveRouterProps) {
   const location = useLocation();
+  const fairtableFeatureEnabled = isFairtableFeatureEnabled();
   const isAppHost = getIsAppHost();
   const isPublicRoute =
     [
@@ -537,7 +539,11 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 path="/dashboard/fairtable"
                 element={
                   <RequireMemberAccess>
-                    <FairtableDashboard />
+                    {fairtableFeatureEnabled ? (
+                      <FairtableDashboard />
+                    ) : (
+                      <Navigate to="/dashboard" replace />
+                    )}
                   </RequireMemberAccess>
                 }
               />
@@ -545,7 +551,11 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 path="/fairtable"
                 element={
                   <RequireAuth>
-                    <FairtableDashboard />
+                    {fairtableFeatureEnabled ? (
+                      <FairtableDashboard />
+                    ) : (
+                      <Navigate to="/dashboard" replace />
+                    )}
                   </RequireAuth>
                 }
               />
@@ -553,7 +563,11 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 path="/fairtable/:viewType"
                 element={
                   <RequireAuth>
-                    <FairtableDashboard />
+                    {fairtableFeatureEnabled ? (
+                      <FairtableDashboard />
+                    ) : (
+                      <Navigate to="/dashboard" replace />
+                    )}
                   </RequireAuth>
                 }
               />

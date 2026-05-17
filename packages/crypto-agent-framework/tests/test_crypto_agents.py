@@ -17,28 +17,31 @@ from pathlib import Path
 
 # Add paths for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "extension-system" / "src" / "agents" / "pydantic" / "7.0_crypto_operations_division"))
+sys.path.insert(
+    0,
+    str(
+        Path(__file__).resolve().parents[3]
+        / "packages"
+        / "protocol-contracts"
+        / "generated"
+        / "python"
+    ),
+)
 
 from executor.crypto_agent_executor import CryptoAgentExecutor
 from integration.agent_registry import CryptoAgentRegistry, register_crypto_agents_with_orchestrator
 from config import Config
 
 # Import Pydantic models
-from enso_defi_agent import (
+from tnf_contracts.crypto_operations import (
     EnsoDeFiInput, TokenSwapInput, YieldStakingInput,
-    EnsoExecutionResult, EnsoDeFiAgentMetadata
-)
-from render_network_agent import (
+    EnsoExecutionResult, EnsoDeFiAgentMetadata,
     RenderJobInput, Image3DGenerationInput,
-    RenderJobResult, RenderNetworkAgentMetadata
-)
-from akash_compute_agent import (
+    RenderJobResult, RenderNetworkAgentMetadata,
     AkashDeploymentInput, AITrainingJobInput,
-    DeploymentResult, AkashComputeAgentMetadata
-)
-from arweave_memory_agent import (
+    DeploymentResult, AkashComputeAgentMetadata,
     ArweaveStorageInput, AuditLogEntry,
-    StorageResult, ArweaveMemoryAgentMetadata
+    StorageResult, ArweaveMemoryAgentMetadata,
 )
 
 

@@ -64,15 +64,7 @@ const problematicFiles = [
   'packages/api/src/services/health.service.ts',
   'packages/api/src/services/base.service.ts',
   'packages/api/src/services/index.ts',
-  'packages/communication/src/websocket/WebSocketService.tsx',
-  'packages/monitoring/src/error-tracking.service.tsx',
-  'packages/monitoring/src/monitoring.service.tsx',
-  'packages/monitoring/src/alerts/alert.service.tsx',
-  'packages/monitoring/src/security-logging.service.tsx',
-  'packages/monitoring/src/MonitoringService.tsx',
-  'packages/monitoring/src/performance-monitoring.service.tsx',
-  'packages/monitoring/src/dashboards/monitoring-dashboard.service.tsx',
-  'packages/monitoring/src/MetricsCollector.tsx'
+  'packages/communication/src/websocket/WebSocketService.tsx'
 ];
 
 // Fix patterns

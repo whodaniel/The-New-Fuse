@@ -11,7 +11,8 @@
     "build": "rm -rf dist && tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "echo \"No tests for this package\" && exit 0"
   },
   "dependencies": {
     "@the-new-fuse/database": "workspace:*",
@@ -21,5 +22,15 @@
   "devDependencies": {
     "rimraf": "^6.0.1",
     "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
   }
 }

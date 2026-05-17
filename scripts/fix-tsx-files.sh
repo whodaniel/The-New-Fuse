@@ -26,11 +26,6 @@ convert_jsx_files() {
 # Convert files with JSX syntax in various directories
 convert_jsx_files "apps/frontend/src" "<div\|<span\|<Link\|<Button\|React.FC\|className="
 
-# Check for layout components
-if [ -d "packages/layout" ]; then
-  convert_jsx_files "packages/layout" "<div\|<span\|<Link\|<Button\|React.FC\|className="
-fi
-
 # Check for ui-components
 if [ -d "packages/ui-components" ]; then
   convert_jsx_files "packages/ui-components/src" "<div\|<span\|<Link\|<Button\|React.FC\|className="

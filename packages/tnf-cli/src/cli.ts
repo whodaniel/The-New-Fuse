@@ -7,6 +7,8 @@ import os from 'os';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
+import { NoteService } from '@the-new-fuse/tnf-note-taking';
+import { PackageReconnectHub, type PackageProbeResult } from '@the-new-fuse/tnf-core';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
 import { Orchestrator } from './orchestration.js';
@@ -1161,9 +1163,1435 @@ async function sleepMs(ms: number): Promise<void> {
   });
 }
 
+const HOOKS_EXIT_CODES = {
+  SUCCESS: 0,
+  INVALID_ARGUMENTS: 2,
+  RESOURCE_NOT_FOUND: 3,
+  VALIDATION_FAILURE: 4,
+  EXECUTION_FAILURE: 5,
+  AUTHORIZATION_DENIED: 6,
+  PARTIAL_SUCCESS: 7,
+} as const;
+const HOOK_CHAIN_NAME_PATTERN = /^[a-z0-9]([a-z0-9_-]{1,62}[a-z0-9])?$/;
+const HOOK_EVENT_PATTERN = /^[a-z0-9]+(\.[a-z0-9_]+)+$/;
+const HOOK_CHAIN_EXTENSIONS = new Set(['.json', '.yaml', '.yml']);
+
+type HookDiagnosticLevel = 'error' | 'warning';
+type HookDiagnostic = {
+  level: HookDiagnosticLevel;
+  code: string;
+  message: string;
+  path?: string;
+};
+type HookStepPlanEntry = {
+  step: string;
+  runner: string;
+  condition: string;
+  will_run: boolean;
+  reason?: string;
+};
+type HookConditionResult = {
+  supported: boolean;
+  value: boolean;
+  reason: string;
+};
+
+class HookCliError extends Error {
+  exitCode: number;
+
+  constructor(message: string, exitCode: number) {
+    super(message);
+    this.name = 'HookCliError';
+    this.exitCode = exitCode;
+  }
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function toHookRecord(value: unknown): Record<string, unknown> | null {
+  return isPlainObject(value) ? value : null;
+}
+
+function addHookDiagnostic(
+  diagnostics: HookDiagnostic[],
+  level: HookDiagnosticLevel,
+  code: string,
+  message: string,
+  path?: string
+): void {
+  diagnostics.push({ level, code, message, path });
+}
+
+function resolveByPath(root: unknown, pathExpression: string): unknown {
+  const expression = pathExpression.trim();
+  if (!expression) return undefined;
+  const tokens = expression.split('.').map((token) => token.trim()).filter(Boolean);
+  let cursor: unknown = root;
+  for (const token of tokens) {
+    if (!isPlainObject(cursor) && !Array.isArray(cursor)) return undefined;
+    if (!(token in (cursor as Record<string, unknown>))) return undefined;
+    cursor = (cursor as Record<string, unknown>)[token];
+  }
+  return cursor;
+}
+
+function pickFirstString(root: unknown, candidates: string[]): string | null {
+  for (const candidate of candidates) {
+    const value = resolveByPath(root, candidate);
+    if (typeof value === 'string' && value.trim().length > 0) {
+      return value.trim();
+    }
+  }
+  return null;
+}
+
+function collectHookFilesInDir(rootDir: string): string[] {
+  if (!fs.existsSync(rootDir)) return [];
+  const output: string[] = [];
+  const stack: string[] = [rootDir];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current) continue;
+
+    let entries: fs.Dirent[] = [];
+    try {
+      entries = fs.readdirSync(current, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+
+    for (const entry of entries) {
+      const absPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(absPath);
+        continue;
+      }
+      if (!entry.isFile()) continue;
+      const ext = path.extname(entry.name).toLowerCase();
+      if (HOOK_CHAIN_EXTENSIONS.has(ext)) {
+        output.push(absPath);
+      }
+    }
+  }
+
+  return output.sort((a, b) => a.localeCompare(b));
+}
+
+function resolveHookRegistryDirs(): string[] {
+  const cwd = process.cwd();
+  const envRaw =
+    normalizeToken(process.env.TNF_HOOKS_REGISTRY_DIRS) ??
+    normalizeToken(process.env.TNF_HOOKS_REGISTRY_DIR) ??
+    normalizeToken(process.env.TNF_HOOK_REGISTRY_DIR);
+  const envDirs = (envRaw || '')
+    .split(path.delimiter)
+    .map((dir) => dir.trim())
+    .filter(Boolean)
+    .map((dir) => (path.isAbsolute(dir) ? dir : path.resolve(cwd, dir)));
+
+  const defaults = [
+    path.join(cwd, '.tnf', 'hooks'),
+    path.join(repoRoot, '.tnf', 'hooks'),
+    path.join(repoRoot, 'config', 'hooks'),
+    process.env.HOME ? path.join(process.env.HOME, '.tnf', 'hooks') : '',
+  ].filter(Boolean);
+
+  return Array.from(new Set([...envDirs, ...defaults]));
+}
+
+async function parseYamlContent(raw: string, filePath: string): Promise<unknown> {
+  const dynamicImport = new Function('specifier', 'return import(specifier);') as (
+    specifier: string
+  ) => Promise<any>;
+
+  let yamlModule: any;
+  try {
+    yamlModule = await dynamicImport('js-yaml');
+  } catch (error: any) {
+    throw new HookCliError(
+      `YAML parsing unavailable for ${filePath}. Install js-yaml. (${error?.message || error})`,
+      HOOKS_EXIT_CODES.VALIDATION_FAILURE
+    );
+  }
+
+  const loadFn =
+    typeof yamlModule?.load === 'function'
+      ? yamlModule.load
+      : typeof yamlModule?.default?.load === 'function'
+        ? yamlModule.default.load
+        : null;
+
+  if (!loadFn) {
+    throw new HookCliError(
+      `YAML parser is not available for ${filePath}.`,
+      HOOKS_EXIT_CODES.VALIDATION_FAILURE
+    );
+  }
+
+  try {
+    return loadFn(raw);
+  } catch (error: any) {
+    throw new HookCliError(
+      `Invalid YAML in ${filePath}: ${error?.message || error}`,
+      HOOKS_EXIT_CODES.VALIDATION_FAILURE
+    );
+  }
+}
+
+async function parseJsonOrYamlFile(filePath: string): Promise<unknown> {
+  const ext = path.extname(filePath).toLowerCase();
+  const raw = fs.readFileSync(filePath, 'utf8');
+
+  if (ext === '.json') {
+    try {
+      return JSON.parse(raw);
+    } catch (error: any) {
+      throw new HookCliError(
+        `Invalid JSON in ${filePath}: ${error?.message || error}`,
+        HOOKS_EXIT_CODES.VALIDATION_FAILURE
+      );
+    }
+  }
+
+  if (ext === '.yaml' || ext === '.yml') {
+    return parseYamlContent(raw, filePath);
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return parseYamlContent(raw, filePath);
+  }
+}
+
+async function findHookChainFileByName(chainName: string): Promise<string | null> {
+  const normalizedName = chainName.trim();
+  if (!normalizedName) return null;
+
+  const candidateDirs = resolveHookRegistryDirs();
+  for (const dir of candidateDirs) {
+    for (const ext of HOOK_CHAIN_EXTENSIONS) {
+      const candidate = path.join(dir, `${normalizedName}${ext}`);
+      if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+        return candidate;
+      }
+    }
+  }
+
+  for (const dir of candidateDirs) {
+    const files = collectHookFilesInDir(dir);
+    for (const filePath of files) {
+      const base = path.basename(filePath, path.extname(filePath));
+      if (base === normalizedName) {
+        return filePath;
+      }
+    }
+  }
+
+  for (const dir of candidateDirs) {
+    const files = collectHookFilesInDir(dir);
+    for (const filePath of files) {
+      try {
+        const parsed = await parseJsonOrYamlFile(filePath);
+        const chain = toHookRecord(parsed);
+        const metadata = toHookRecord(chain?.metadata);
+        const metadataName = metadata?.name;
+        if (typeof metadataName === 'string' && metadataName.trim() === normalizedName) {
+          return filePath;
+        }
+      } catch {
+        // Ignore parse failures while searching registry files.
+      }
+    }
+  }
+
+  return null;
+}
+
+function validateHookChainDefinition(chainInput: unknown): HookDiagnostic[] {
+  const diagnostics: HookDiagnostic[] = [];
+  const chain = toHookRecord(chainInput);
+  if (!chain) {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'CHAIN_NOT_OBJECT',
+      'HookChain definition must be an object.'
+    );
+    return diagnostics;
+  }
+
+  if (chain.apiVersion !== 'tnf.hooks/v2') {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'INVALID_API_VERSION',
+      "apiVersion must equal 'tnf.hooks/v2'.",
+      'apiVersion'
+    );
+  }
+  if (chain.kind !== 'HookChain') {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'INVALID_KIND',
+      "kind must equal 'HookChain'.",
+      'kind'
+    );
+  }
+
+  const metadata = toHookRecord(chain.metadata);
+  if (!metadata) {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'MISSING_METADATA',
+      'metadata is required and must be an object.',
+      'metadata'
+    );
+  } else {
+    if (typeof metadata.name !== 'string' || !HOOK_CHAIN_NAME_PATTERN.test(metadata.name)) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_METADATA_NAME',
+        'metadata.name must match ^[a-z0-9]([a-z0-9_-]{1,62}[a-z0-9])?$',
+        'metadata.name'
+      );
+    }
+    if (!Number.isInteger(metadata.version) || (metadata.version as number) < 1) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_METADATA_VERSION',
+        'metadata.version must be an integer >= 1.',
+        'metadata.version'
+      );
+    }
+    if (typeof metadata.owner !== 'string' || metadata.owner.trim().length === 0) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_METADATA_OWNER',
+        'metadata.owner must be a non-empty string.',
+        'metadata.owner'
+      );
+    }
+  }
+
+  const spec = toHookRecord(chain.spec);
+  if (!spec) {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'MISSING_SPEC',
+      'spec is required and must be an object.',
+      'spec'
+    );
+    return diagnostics;
+  }
+
+  const trigger = toHookRecord(spec.trigger);
+  if (!trigger) {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'MISSING_TRIGGER',
+      'spec.trigger is required and must be an object.',
+      'spec.trigger'
+    );
+  } else {
+    if (typeof trigger.event !== 'string' || !HOOK_EVENT_PATTERN.test(trigger.event)) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_TRIGGER_EVENT',
+        'spec.trigger.event must match ^[a-z0-9]+(\\.[a-z0-9_]+)+$',
+        'spec.trigger.event'
+      );
+    }
+    if (trigger.mode !== 'async' && trigger.mode !== 'sync_gate') {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_TRIGGER_MODE',
+        "spec.trigger.mode must be 'async' or 'sync_gate'.",
+        'spec.trigger.mode'
+      );
+    }
+    if (typeof trigger.match !== 'undefined') {
+      const match = toHookRecord(trigger.match);
+      if (!match) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_TRIGGER_MATCH',
+          'spec.trigger.match must be an object when provided.',
+          'spec.trigger.match'
+        );
+      } else {
+        if (
+          typeof match.path_regex !== 'undefined' &&
+          (typeof match.path_regex !== 'string' || match.path_regex.trim().length === 0)
+        ) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'INVALID_PATH_REGEX',
+            'spec.trigger.match.path_regex must be a non-empty string.',
+            'spec.trigger.match.path_regex'
+          );
+        }
+        if (
+          typeof match.command_regex !== 'undefined' &&
+          (typeof match.command_regex !== 'string' || match.command_regex.trim().length === 0)
+        ) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'INVALID_COMMAND_REGEX',
+            'spec.trigger.match.command_regex must be a non-empty string.',
+            'spec.trigger.match.command_regex'
+          );
+        }
+        if (typeof match.source_in !== 'undefined') {
+          if (!Array.isArray(match.source_in) || match.source_in.length === 0) {
+            addHookDiagnostic(
+              diagnostics,
+              'error',
+              'INVALID_SOURCE_IN',
+              'spec.trigger.match.source_in must be a non-empty array when provided.',
+              'spec.trigger.match.source_in'
+            );
+          } else {
+            for (let i = 0; i < match.source_in.length; i += 1) {
+              if (typeof match.source_in[i] !== 'string' || match.source_in[i].trim().length === 0) {
+                addHookDiagnostic(
+                  diagnostics,
+                  'error',
+                  'INVALID_SOURCE_IN_ITEM',
+                  'spec.trigger.match.source_in items must be non-empty strings.',
+                  `spec.trigger.match.source_in.${i}`
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if (typeof trigger.dedupe !== 'undefined') {
+      const dedupe = toHookRecord(trigger.dedupe);
+      if (!dedupe) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_TRIGGER_DEDUPE',
+          'spec.trigger.dedupe must be an object when provided.',
+          'spec.trigger.dedupe'
+        );
+      } else {
+        if (typeof dedupe.key !== 'string' || dedupe.key.trim().length === 0) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'INVALID_DEDUPE_KEY',
+            'spec.trigger.dedupe.key must be a non-empty string.',
+            'spec.trigger.dedupe.key'
+          );
+        }
+        if (!Number.isInteger(dedupe.window_ms) || (dedupe.window_ms as number) < 0) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'INVALID_DEDUPE_WINDOW',
+            'spec.trigger.dedupe.window_ms must be an integer >= 0.',
+            'spec.trigger.dedupe.window_ms'
+          );
+        }
+      }
+    }
+  }
+
+  const execution = toHookRecord(spec.execution);
+  if (!execution) {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'MISSING_EXECUTION',
+      'spec.execution is required and must be an object.',
+      'spec.execution'
+    );
+  } else {
+    if (
+      !Number.isInteger(execution.max_run_time_ms) ||
+      (execution.max_run_time_ms as number) < 1
+    ) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_MAX_RUN_TIME',
+        'spec.execution.max_run_time_ms must be an integer >= 1.',
+        'spec.execution.max_run_time_ms'
+      );
+    }
+    const concurrency = execution.concurrency;
+    if (!['unbounded', 'single_per_key', 'fixed'].includes(String(concurrency || ''))) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_CONCURRENCY',
+        "spec.execution.concurrency must be 'unbounded', 'single_per_key', or 'fixed'.",
+        'spec.execution.concurrency'
+      );
+    }
+    if (execution.concurrency === 'fixed') {
+      if (
+        !Number.isInteger(execution.fixed_concurrency) ||
+        (execution.fixed_concurrency as number) < 1
+      ) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_FIXED_CONCURRENCY',
+          'spec.execution.fixed_concurrency must be an integer >= 1 when concurrency=fixed.',
+          'spec.execution.fixed_concurrency'
+        );
+      }
+    }
+    if (!['fail', 'continue'].includes(String(execution.on_chain_error || ''))) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_CHAIN_ERROR_POLICY',
+        "spec.execution.on_chain_error must be 'fail' or 'continue'.",
+        'spec.execution.on_chain_error'
+      );
+    }
+  }
+
+  const context = toHookRecord(spec.context);
+  if (!context) {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'MISSING_CONTEXT',
+      'spec.context is required and must be an object.',
+      'spec.context'
+    );
+  } else {
+    if (!['immutable', 'mutable'].includes(String(context.model || ''))) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_CONTEXT_MODEL',
+        "spec.context.model must be 'immutable' or 'mutable'.",
+        'spec.context.model'
+      );
+    }
+    if (
+      typeof context.write_root !== 'string' ||
+      !/^[a-zA-Z0-9_.-]+$/.test(context.write_root || '')
+    ) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_CONTEXT_WRITE_ROOT',
+        'spec.context.write_root must match ^[a-zA-Z0-9_.-]+$',
+        'spec.context.write_root'
+      );
+    }
+  }
+
+  const steps = Array.isArray(spec.steps) ? spec.steps : null;
+  if (!steps || steps.length === 0) {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'MISSING_STEPS',
+      'spec.steps must be a non-empty array.',
+      'spec.steps'
+    );
+  } else {
+    const seenStepIds = new Set<string>();
+    for (let i = 0; i < steps.length; i += 1) {
+      const stepPath = `spec.steps.${i}`;
+      const step = toHookRecord(steps[i]);
+      if (!step) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_STEP',
+          'Each step must be an object.',
+          stepPath
+        );
+        continue;
+      }
+
+      const stepId = step.id;
+      if (typeof stepId !== 'string' || !HOOK_CHAIN_NAME_PATTERN.test(stepId)) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_STEP_ID',
+          'step.id must match ^[a-z0-9]([a-z0-9_-]{1,62}[a-z0-9])?$',
+          `${stepPath}.id`
+        );
+      } else if (seenStepIds.has(stepId)) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'DUPLICATE_STEP_ID',
+          `Duplicate step id '${stepId}'.`,
+          `${stepPath}.id`
+        );
+      } else {
+        seenStepIds.add(stepId);
+      }
+
+      if (
+        typeof step.runner !== 'string' ||
+        !['shell', 'node', 'agent', 'mcp', 'webhook'].includes(step.runner)
+      ) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_STEP_RUNNER',
+          "step.runner must be one of: shell, node, agent, mcp, webhook.",
+          `${stepPath}.runner`
+        );
+      }
+      if (!Number.isInteger(step.timeout_ms) || (step.timeout_ms as number) < 1) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_STEP_TIMEOUT',
+          'step.timeout_ms must be an integer >= 1.',
+          `${stepPath}.timeout_ms`
+        );
+      }
+      if (typeof step.if !== 'string' || step.if.trim().length === 0) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_STEP_CONDITION',
+          'step.if must be a non-empty string.',
+          `${stepPath}.if`
+        );
+      }
+      if (
+        typeof step.on_failure !== 'string' ||
+        !['stop', 'continue', 'branch'].includes(step.on_failure)
+      ) {
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_ON_FAILURE',
+          "step.on_failure must be one of: stop, continue, branch.",
+          `${stepPath}.on_failure`
+        );
+      }
+
+      if (step.runner === 'shell') {
+        if (typeof step.command !== 'string' || step.command.trim().length === 0) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'MISSING_SHELL_COMMAND',
+            'shell runner requires non-empty command.',
+            `${stepPath}.command`
+          );
+        }
+      } else if (step.runner === 'node') {
+        if (typeof step.module !== 'string' || step.module.trim().length === 0) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'MISSING_NODE_MODULE',
+            'node runner requires module.',
+            `${stepPath}.module`
+          );
+        }
+        if (typeof step.function !== 'string' || step.function.trim().length === 0) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'MISSING_NODE_FUNCTION',
+            'node runner requires function.',
+            `${stepPath}.function`
+          );
+        }
+      } else if (step.runner === 'agent') {
+        const selector = toHookRecord(step.agent_selector);
+        if (!selector) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'MISSING_AGENT_SELECTOR',
+            'agent runner requires agent_selector.',
+            `${stepPath}.agent_selector`
+          );
+        } else {
+          if (
+            typeof selector.type !== 'string' ||
+            !['id', 'role', 'capability'].includes(selector.type)
+          ) {
+            addHookDiagnostic(
+              diagnostics,
+              'error',
+              'INVALID_AGENT_SELECTOR_TYPE',
+              "agent_selector.type must be one of: id, role, capability.",
+              `${stepPath}.agent_selector.type`
+            );
+          }
+          if (typeof selector.value !== 'string' || selector.value.trim().length === 0) {
+            addHookDiagnostic(
+              diagnostics,
+              'error',
+              'INVALID_AGENT_SELECTOR_VALUE',
+              'agent_selector.value must be a non-empty string.',
+              `${stepPath}.agent_selector.value`
+            );
+          }
+        }
+        if (typeof step.prompt !== 'string' || step.prompt.trim().length === 0) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'MISSING_AGENT_PROMPT',
+            'agent runner requires prompt.',
+            `${stepPath}.prompt`
+          );
+        }
+      } else if (step.runner === 'mcp') {
+        if (typeof step.tool !== 'string' || step.tool.trim().length === 0) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'MISSING_MCP_TOOL',
+            'mcp runner requires tool.',
+            `${stepPath}.tool`
+          );
+        }
+      } else if (step.runner === 'webhook') {
+        if (typeof step.url !== 'string' || step.url.trim().length === 0) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'MISSING_WEBHOOK_URL',
+            'webhook runner requires url.',
+            `${stepPath}.url`
+          );
+        }
+        if (
+          typeof step.method !== 'string' ||
+          !['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(step.method)
+        ) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'INVALID_WEBHOOK_METHOD',
+            "webhook runner method must be one of: GET, POST, PUT, PATCH, DELETE.",
+            `${stepPath}.method`
+          );
+        }
+      }
+
+      if (typeof step.retry !== 'undefined') {
+        const retry = toHookRecord(step.retry);
+        if (!retry) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'INVALID_RETRY',
+            'step.retry must be an object when provided.',
+            `${stepPath}.retry`
+          );
+        } else {
+          if (!Number.isInteger(retry.max_attempts) || (retry.max_attempts as number) < 0) {
+            addHookDiagnostic(
+              diagnostics,
+              'error',
+              'INVALID_RETRY_MAX_ATTEMPTS',
+              'retry.max_attempts must be an integer >= 0.',
+              `${stepPath}.retry.max_attempts`
+            );
+          }
+          if (
+            typeof retry.backoff_ms !== 'undefined' &&
+            (!Number.isInteger(retry.backoff_ms) || (retry.backoff_ms as number) < 0)
+          ) {
+            addHookDiagnostic(
+              diagnostics,
+              'error',
+              'INVALID_RETRY_BACKOFF',
+              'retry.backoff_ms must be an integer >= 0 when provided.',
+              `${stepPath}.retry.backoff_ms`
+            );
+          }
+        }
+      }
+    }
+  }
+
+  const security = toHookRecord(spec.security);
+  if (!security) {
+    addHookDiagnostic(
+      diagnostics,
+      'error',
+      'MISSING_SECURITY',
+      'spec.security is required and must be an object.',
+      'spec.security'
+    );
+  } else {
+    if (typeof security.policy_pack !== 'string' || security.policy_pack.trim().length === 0) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_POLICY_PACK',
+        'spec.security.policy_pack must be a non-empty string.',
+        'spec.security.policy_pack'
+      );
+    }
+    if (
+      typeof security.approval_policy !== 'string' ||
+      !['none', 'on_high_risk', 'always'].includes(security.approval_policy)
+    ) {
+      addHookDiagnostic(
+        diagnostics,
+        'error',
+        'INVALID_APPROVAL_POLICY',
+        "spec.security.approval_policy must be one of: none, on_high_risk, always.",
+        'spec.security.approval_policy'
+      );
+    }
+  }
+
+  return diagnostics;
+}
+
+function extractEventType(event: Record<string, unknown>): string | null {
+  return pickFirstString(event, [
+    'event_type',
+    'eventType',
+    'event',
+    'type',
+    'payload.event_type',
+    'payload.type',
+  ]);
+}
+
+function evaluateHookTriggerMatch(
+  chain: Record<string, unknown>,
+  event: Record<string, unknown>,
+  diagnostics: HookDiagnostic[]
+): { matched: boolean; expectedEvent: string | null; receivedEvent: string | null } {
+  const spec = toHookRecord(chain.spec);
+  const trigger = toHookRecord(spec?.trigger);
+  const expectedEvent = typeof trigger?.event === 'string' ? trigger.event : null;
+  const receivedEvent = extractEventType(event);
+  let matched = true;
+
+  if (expectedEvent && receivedEvent && expectedEvent !== receivedEvent) {
+    matched = false;
+    addHookDiagnostic(
+      diagnostics,
+      'warning',
+      'TRIGGER_EVENT_MISMATCH',
+      `Trigger event '${expectedEvent}' does not match fixture event '${receivedEvent}'.`,
+      'spec.trigger.event'
+    );
+  } else if (expectedEvent && !receivedEvent) {
+    matched = false;
+    addHookDiagnostic(
+      diagnostics,
+      'warning',
+      'EVENT_TYPE_MISSING',
+      'Event fixture has no detectable event type.',
+      'event'
+    );
+  }
+
+  const match = toHookRecord(trigger?.match);
+  if (!match) {
+    return { matched, expectedEvent, receivedEvent };
+  }
+
+  if (typeof match.path_regex === 'string') {
+    const pathCandidate = pickFirstString(event, [
+      'filepath',
+      'path',
+      'file.path',
+      'payload.filepath',
+      'payload.path',
+      'payload.file.path',
+    ]);
+    if (!pathCandidate) {
+      matched = false;
+      addHookDiagnostic(
+        diagnostics,
+        'warning',
+        'MATCH_PATH_MISSING',
+        'Trigger defines path_regex but event fixture has no filepath/path value.',
+        'spec.trigger.match.path_regex'
+      );
+    } else {
+      try {
+        if (!new RegExp(match.path_regex).test(pathCandidate)) {
+          matched = false;
+          addHookDiagnostic(
+            diagnostics,
+            'warning',
+            'MATCH_PATH_REGEX_MISS',
+            `Event path '${pathCandidate}' does not match path_regex.`,
+            'spec.trigger.match.path_regex'
+          );
+        }
+      } catch (error: any) {
+        matched = false;
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_MATCH_PATH_REGEX',
+          `Invalid path_regex: ${error?.message || error}`,
+          'spec.trigger.match.path_regex'
+        );
+      }
+    }
+  }
+
+  if (typeof match.command_regex === 'string') {
+    const commandCandidate = pickFirstString(event, ['command', 'payload.command', 'payload.cmd']);
+    if (!commandCandidate) {
+      matched = false;
+      addHookDiagnostic(
+        diagnostics,
+        'warning',
+        'MATCH_COMMAND_MISSING',
+        'Trigger defines command_regex but event fixture has no command value.',
+        'spec.trigger.match.command_regex'
+      );
+    } else {
+      try {
+        if (!new RegExp(match.command_regex).test(commandCandidate)) {
+          matched = false;
+          addHookDiagnostic(
+            diagnostics,
+            'warning',
+            'MATCH_COMMAND_REGEX_MISS',
+            `Event command does not match command_regex.`,
+            'spec.trigger.match.command_regex'
+          );
+        }
+      } catch (error: any) {
+        matched = false;
+        addHookDiagnostic(
+          diagnostics,
+          'error',
+          'INVALID_MATCH_COMMAND_REGEX',
+          `Invalid command_regex: ${error?.message || error}`,
+          'spec.trigger.match.command_regex'
+        );
+      }
+    }
+  }
+
+  if (Array.isArray(match.source_in) && match.source_in.length > 0) {
+    const sourceCandidate = pickFirstString(event, ['source', 'payload.source']);
+    if (!sourceCandidate) {
+      matched = false;
+      addHookDiagnostic(
+        diagnostics,
+        'warning',
+        'MATCH_SOURCE_MISSING',
+        'Trigger defines source_in but event fixture has no source value.',
+        'spec.trigger.match.source_in'
+      );
+    } else if (!match.source_in.includes(sourceCandidate)) {
+      matched = false;
+      addHookDiagnostic(
+        diagnostics,
+        'warning',
+        'MATCH_SOURCE_MISS',
+        `Event source '${sourceCandidate}' is not allowed by source_in.`,
+        'spec.trigger.match.source_in'
+      );
+    }
+  }
+
+  return { matched, expectedEvent, receivedEvent };
+}
+
+function evaluateHookCondition(
+  rawCondition: string,
+  stepState: Record<string, { success: boolean }>
+): HookConditionResult {
+  const condition = rawCondition.trim();
+  if (!condition) {
+    return { supported: false, value: false, reason: 'empty condition expression' };
+  }
+  if (condition === 'true') {
+    return { supported: true, value: true, reason: 'literal true' };
+  }
+  if (condition === 'false') {
+    return { supported: true, value: false, reason: 'literal false' };
+  }
+
+  const explicitComparison = condition.match(
+    /^steps\.([a-z0-9]([a-z0-9_-]{1,62}[a-z0-9])?)\.success\s*(==|!=)\s*(true|false)$/i
+  );
+  if (explicitComparison) {
+    const stepId = explicitComparison[1];
+    const operator = explicitComparison[3];
+    const expected = explicitComparison[4].toLowerCase() === 'true';
+    const resolved = stepState[stepId];
+    if (!resolved) {
+      return { supported: false, value: false, reason: `unknown step reference '${stepId}'` };
+    }
+    const value = operator === '==' ? resolved.success === expected : resolved.success !== expected;
+    return {
+      supported: true,
+      value,
+      reason: value ? 'expression true' : `expression false (${stepId}.success=${resolved.success})`,
+    };
+  }
+
+  const implicitBoolean = condition.match(
+    /^(!)?steps\.([a-z0-9]([a-z0-9_-]{1,62}[a-z0-9])?)\.success$/i
+  );
+  if (implicitBoolean) {
+    const negate = Boolean(implicitBoolean[1]);
+    const stepId = implicitBoolean[2];
+    const resolved = stepState[stepId];
+    if (!resolved) {
+      return { supported: false, value: false, reason: `unknown step reference '${stepId}'` };
+    }
+    const value = negate ? !resolved.success : resolved.success;
+    return {
+      supported: true,
+      value,
+      reason: value ? 'expression true' : `expression false (${stepId}.success=${resolved.success})`,
+    };
+  }
+
+  return {
+    supported: false,
+    value: false,
+    reason: 'unsupported condition expression (supports literals and steps.<id>.success checks)',
+  };
+}
+
+function collectStringLeaves(
+  value: unknown,
+  pathPrefix: string,
+  output: Array<{ path: string; value: string }>
+): void {
+  if (typeof value === 'string') {
+    output.push({ path: pathPrefix, value });
+    return;
+  }
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i += 1) {
+      collectStringLeaves(value[i], `${pathPrefix}.${i}`, output);
+    }
+    return;
+  }
+  if (isPlainObject(value)) {
+    for (const [key, child] of Object.entries(value)) {
+      const childPath = pathPrefix ? `${pathPrefix}.${key}` : key;
+      collectStringLeaves(child, childPath, output);
+    }
+  }
+}
+
+function resolveTemplateValue(scope: Record<string, unknown>, expression: string): unknown {
+  const expr = expression.trim();
+  if (!expr) return undefined;
+  const direct = resolveByPath(scope, expr);
+  if (typeof direct !== 'undefined') return direct;
+  if (expr.startsWith('event.')) {
+    return resolveByPath(scope, `event.payload.${expr.slice('event.'.length)}`);
+  }
+  return undefined;
+}
+
+function collectUnresolvedTemplates(
+  step: Record<string, unknown>,
+  scope: Record<string, unknown>
+): Array<{ field: string; expression: string }> {
+  const leaves: Array<{ path: string; value: string }> = [];
+  collectStringLeaves(step, '', leaves);
+
+  const unresolved: Array<{ field: string; expression: string }> = [];
+  for (const leaf of leaves) {
+    const matches = leaf.value.matchAll(/\{\{\s*([^{}]+?)\s*\}\}/g);
+    for (const match of matches) {
+      const expression = (match[1] || '').trim();
+      if (!expression) continue;
+      const resolved = resolveTemplateValue(scope, expression);
+      if (typeof resolved === 'undefined') {
+        unresolved.push({ field: leaf.path, expression });
+      }
+    }
+  }
+
+  return unresolved;
+}
+
+function buildHookStepPlan(
+  chain: Record<string, unknown>,
+  event: Record<string, unknown>,
+  triggerMatched: boolean,
+  diagnostics: HookDiagnostic[]
+): HookStepPlanEntry[] {
+  const spec = toHookRecord(chain.spec);
+  const steps = (spec?.steps || []) as unknown[];
+  const plan: HookStepPlanEntry[] = [];
+  const stepState: Record<string, { success: boolean }> = {};
+
+  for (let i = 0; i < steps.length; i += 1) {
+    const stepRaw = toHookRecord(steps[i]) || {};
+    const stepId = typeof stepRaw.id === 'string' ? stepRaw.id : `step_${i + 1}`;
+    const runner = typeof stepRaw.runner === 'string' ? stepRaw.runner : 'unknown';
+    const condition = typeof stepRaw.if === 'string' ? stepRaw.if : 'false';
+
+    if (!triggerMatched) {
+      plan.push({
+        step: stepId,
+        runner,
+        condition,
+        will_run: false,
+        reason: 'trigger mismatch',
+      });
+      stepState[stepId] = { success: false };
+      continue;
+    }
+
+    const conditionResult = evaluateHookCondition(condition, stepState);
+    if (!conditionResult.supported) {
+      addHookDiagnostic(
+        diagnostics,
+        'warning',
+        'UNSUPPORTED_CONDITION',
+        `Step '${stepId}' condition could not be evaluated: ${conditionResult.reason}`,
+        `spec.steps.${i}.if`
+      );
+    }
+
+    let willRun = conditionResult.supported && conditionResult.value;
+    let reason = willRun ? 'condition true' : conditionResult.reason;
+
+    const templateScope: Record<string, unknown> = {
+      event,
+      steps: Object.fromEntries(
+        Object.entries(stepState).map(([id, state]) => [id, { success: state.success }])
+      ),
+    };
+    const unresolved = collectUnresolvedTemplates(stepRaw, templateScope);
+    if (unresolved.length > 0) {
+      willRun = false;
+      reason = 'unresolved templates';
+      for (const miss of unresolved) {
+        addHookDiagnostic(
+          diagnostics,
+          'warning',
+          'UNRESOLVED_TEMPLATE',
+          `Step '${stepId}' has unresolved template '{{${miss.expression}}}' in ${miss.field}.`,
+          `spec.steps.${i}.${miss.field}`
+        );
+      }
+    }
+
+    plan.push({
+      step: stepId,
+      runner,
+      condition,
+      will_run: willRun,
+      reason,
+    });
+    stepState[stepId] = { success: willRun };
+  }
+
+  return plan;
+}
+
+function mapHookRunnerToWorkflowNodeType(runner: string): string {
+  switch (runner) {
+    case 'shell':
+      return 'sandbox_execution';
+    case 'node':
+      return 'transform';
+    case 'agent':
+      return 'agent_task';
+    case 'mcp':
+      return 'mcp-tool';
+    case 'webhook':
+      return 'webhook';
+    default:
+      return 'custom';
+  }
+}
+
+function buildWorkflowProjection(
+  chain: Record<string, unknown>,
+  plan: HookStepPlanEntry[]
+): Record<string, unknown> {
+  const spec = toHookRecord(chain.spec) || {};
+  const trigger = toHookRecord(spec.trigger) || {};
+  const execution = toHookRecord(spec.execution) || {};
+  const stepList = Array.isArray(spec.steps) ? spec.steps : [];
+
+  const nodes: Array<Record<string, unknown>> = [];
+  const connections: Array<Record<string, unknown>> = [];
+
+  nodes.push({
+    id: 'start',
+    type: 'start',
+    name: 'HookChain Start',
+    description: 'Synthetic start node for HookChain projection',
+    position: { x: 0, y: 0 },
+    config: {},
+    inputs: [],
+    outputs: [{ id: 'out', name: 'event', type: 'object' }],
+    metadata: { generated_by: 'tnf hooks test' },
+  });
+
+  let previousNodeId = 'start';
+  let previousOutputId = 'out';
+  for (let i = 0; i < stepList.length; i += 1) {
+    const step = toHookRecord(stepList[i]) || {};
+    const stepId = typeof step.id === 'string' ? step.id : `step_${i + 1}`;
+    const nodeId = `hook_${stepId}`;
+    const nodeType = mapHookRunnerToWorkflowNodeType(
+      typeof step.runner === 'string' ? step.runner : 'custom'
+    );
+    const planEntry = plan.find((entry) => entry.step === stepId);
+
+    nodes.push({
+      id: nodeId,
+      type: nodeType,
+      name: stepId,
+      description: `Hook step '${stepId}' (${String(step.runner || 'unknown')})`,
+      position: { x: (i + 1) * 280, y: 140 },
+      config: {
+        runner: step.runner || 'unknown',
+        timeout_ms: step.timeout_ms ?? null,
+        command: step.command ?? null,
+        module: step.module ?? null,
+        function: step.function ?? null,
+        tool: step.tool ?? null,
+        url: step.url ?? null,
+        method: step.method ?? null,
+        on_failure: step.on_failure ?? null,
+      },
+      inputs: [{ id: 'in', name: 'input', type: 'object', required: false }],
+      outputs: [{ id: 'success', name: 'success', type: 'boolean' }],
+      conditions:
+        typeof step.if === 'string' && step.if.trim().length > 0
+          ? [{ id: `cond_${stepId}`, expression: step.if, outputId: 'success' }]
+          : [],
+      retry:
+        toHookRecord(step.retry) && typeof toHookRecord(step.retry)?.max_attempts === 'number'
+          ? {
+              enabled: (toHookRecord(step.retry)?.max_attempts as number) > 0,
+              maxAttempts: toHookRecord(step.retry)?.max_attempts ?? 0,
+              delayMs: toHookRecord(step.retry)?.backoff_ms ?? 0,
+              backoffMultiplier: 1,
+              maxDelayMs: toHookRecord(step.retry)?.backoff_ms ?? 0,
+            }
+          : undefined,
+      timeout: typeof step.timeout_ms === 'number' ? step.timeout_ms : undefined,
+      metadata: {
+        generated_by: 'tnf hooks test',
+        hook_step_id: stepId,
+        condition: step.if ?? null,
+        projected_will_run: planEntry?.will_run ?? false,
+        projected_reason: planEntry?.reason ?? null,
+      },
+    });
+
+    connections.push({
+      id: `conn_${previousNodeId}_to_${nodeId}`,
+      sourceNodeId: previousNodeId,
+      sourceOutputId: previousOutputId,
+      targetNodeId: nodeId,
+      targetInputId: 'in',
+      metadata: { generated_by: 'tnf hooks test' },
+    });
+
+    previousNodeId = nodeId;
+    previousOutputId = 'success';
+  }
+
+  nodes.push({
+    id: 'end',
+    type: 'end',
+    name: 'HookChain End',
+    description: 'Synthetic end node for HookChain projection',
+    position: { x: (stepList.length + 1) * 280, y: 140 },
+    config: {},
+    inputs: [{ id: 'in', name: 'input', type: 'object', required: false }],
+    outputs: [],
+    metadata: { generated_by: 'tnf hooks test' },
+  });
+
+  connections.push({
+    id: `conn_${previousNodeId}_to_end`,
+    sourceNodeId: previousNodeId,
+    sourceOutputId: previousOutputId,
+    targetNodeId: 'end',
+    targetInputId: 'in',
+    metadata: { generated_by: 'tnf hooks test' },
+  });
+
+  return {
+    version: 'hookchain.v2-projection.1',
+    nodes,
+    connections,
+    variables: [],
+    triggers: [
+      {
+        id: 'hook_trigger',
+        type: 'agent_event',
+        name: typeof trigger.event === 'string' ? trigger.event : 'hook.trigger',
+        enabled: true,
+        config: {
+          event: trigger.event ?? null,
+          mode: trigger.mode ?? null,
+          match: trigger.match ?? null,
+        },
+        conditions: [],
+      },
+    ],
+    settings: {
+      parallel: false,
+      maxConcurrentExecutions:
+        execution.concurrency === 'fixed' && typeof execution.fixed_concurrency === 'number'
+          ? execution.fixed_concurrency
+          : 1,
+      timeoutMs: typeof execution.max_run_time_ms === 'number' ? execution.max_run_time_ms : 600000,
+      retryPolicy: {
+        enabled: true,
+        maxAttempts: 1,
+        delayMs: 0,
+        backoffMultiplier: 1,
+        maxDelayMs: 0,
+      },
+      errorHandling: {
+        onError: execution.on_chain_error === 'continue' ? 'continue' : 'stop',
+        captureErrors: true,
+        notifyOnError: false,
+      },
+      logging: {
+        level: 'info',
+        includeInputs: false,
+        includeOutputs: true,
+        includeTiming: true,
+        retentionDays: 14,
+      },
+      notifications: {
+        onStart: false,
+        onComplete: false,
+        onError: false,
+        channels: [],
+      },
+    },
+  };
+}
+
+function formatHookDiagnostics(
+  diagnostics: HookDiagnostic[],
+  level: HookDiagnosticLevel
+): Array<{ code: string; message: string; path?: string }> {
+  return diagnostics
+    .filter((entry) => entry.level === level)
+    .map((entry) => ({
+      code: entry.code,
+      message: entry.message,
+      ...(entry.path ? { path: entry.path } : {}),
+    }));
+}
+
+function printHookTestSummary(payload: Record<string, unknown>): void {
+  const chain = toHookRecord(payload.chain) || {};
+  const event = toHookRecord(payload.event) || {};
+  const compiled = toHookRecord(payload.compiled) || {};
+  const warnings = Array.isArray(payload.warnings) ? payload.warnings : [];
+  const errors = Array.isArray(payload.errors) ? payload.errors : [];
+  const plan = Array.isArray(payload.plan) ? payload.plan : [];
+  const valid = payload.valid === true;
+  const exitCode = payload.exit_code;
+
+  console.log(chalk.bold('\nHookChain Test\n'));
+  console.log(`Chain: ${chalk.cyan(String(chain.name || 'unknown'))}`);
+  if (typeof chain.source === 'string') {
+    console.log(`Source: ${chalk.dim(chain.source)}`);
+  }
+  console.log(
+    `Event: ${chalk.cyan(String(event.received_event || 'unknown'))} (expected ${chalk.cyan(
+      String(event.expected_event || 'unknown')
+    )})`
+  );
+  console.log(
+    `Trigger matched: ${event.matched === true ? chalk.green('yes') : chalk.yellow('no')}`
+  );
+  console.log(
+    `Compiled: ${chalk.cyan(String(compiled.node_count || 0))} nodes, ${chalk.cyan(
+      String(compiled.edge_count || 0)
+    )} edges`
+  );
+  console.log(
+    `Result: ${
+      valid
+        ? warnings.length > 0
+          ? chalk.yellow('VALID_WITH_WARNINGS')
+          : chalk.green('VALID')
+        : chalk.red('INVALID')
+    } (exit ${chalk.cyan(String(exitCode))})`
+  );
+
+  if (errors.length > 0) {
+    console.log(chalk.red('\nErrors:'));
+    for (const entry of errors as Array<Record<string, unknown>>) {
+      const code = String(entry.code || 'ERROR');
+      const message = String(entry.message || '');
+      const pathText = typeof entry.path === 'string' ? chalk.dim(` (${entry.path})`) : '';
+      console.log(`- [${code}] ${message}${pathText}`);
+    }
+  }
+
+  if (warnings.length > 0) {
+    console.log(chalk.yellow('\nWarnings:'));
+    for (const entry of warnings as Array<Record<string, unknown>>) {
+      const code = String(entry.code || 'WARN');
+      const message = String(entry.message || '');
+      const pathText = typeof entry.path === 'string' ? chalk.dim(` (${entry.path})`) : '';
+      console.log(`- [${code}] ${message}${pathText}`);
+    }
+  }
+
+  if (plan.length > 0) {
+    console.log(chalk.bold('\nPlan:'));
+    for (const step of plan as Array<Record<string, unknown>>) {
+      const stepName = String(step.step || 'unknown-step');
+      const willRun = step.will_run === true;
+      const reason = typeof step.reason === 'string' ? ` (${step.reason})` : '';
+      console.log(
+        `- ${stepName}: ${
+          willRun ? chalk.green('will_run=true') : chalk.yellow('will_run=false')
+        }${chalk.dim(reason)}`
+      );
+    }
+  }
+  console.log('');
+}
+
 const cliEntryPath = fileURLToPath(import.meta.url);
 const AGENT_ROLE_TRAITS = ['orchestrator', 'broker', 'worker', 'participant'];
-const AGENT_PLATFORM_TRAITS = ['antigravity', 'gemini', 'claude', 'jules', 'vscode', 'browser'];
+const AGENT_PLATFORM_TRAITS = ['antigravity', 'gemini', 'claude', 'jules', 'pi', 'vscode', 'browser'];
 const SUPER_ADMIN_COMMAND_TRAITS = [
   'tnf relay start',
   'tnf jules loop',
@@ -1475,6 +2903,10 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
       entries: [
         { path: 'tnf onboard', description: 'Run TNF frontload onboarding' },
         { path: 'tnf doctor', description: 'Run TNF diagnostics' },
+        {
+          path: 'tnf hooks test --chain <name>|--file <path> --event <event.json>',
+          description: 'Validate and dry-run HookChain definitions without side effects',
+        },
         {
           path: 'tnf self-improvement run',
           description: 'Run deterministic TNF self-improvement loop with artifact verification',
@@ -2116,7 +3548,7 @@ program
   )
   .argument(
     '[platform]',
-    'Agent platform (antigravity, gemini, claude, jules, vscode, browser)',
+    'Agent platform (antigravity, gemini, claude, jules, pi, vscode, browser)',
     process.env.AGENT_PLATFORM || 'vscode'
   )
   .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
@@ -5887,6 +7319,299 @@ voiceResponseAudioCommand
     }
   });
 
+const hooks = program
+  .command('hooks')
+  .description('HookChain operations (logs, test, replay, explain)');
+
+hooks
+  .command('test')
+  .description('Validate and dry-run a HookChain against an event fixture')
+  .option('--chain <name>', 'HookChain name from registry')
+  .option('--file <path>', 'Local HookChain definition file (JSON/YAML)')
+  .option('--event <path>', 'Event fixture file (JSON/YAML)')
+  .option('--strict', 'Fail when warnings are present')
+  .option('--render-plan', 'Include compiled node/edge render plan')
+  .option('--json', 'Output machine-readable JSON')
+  .option('--tenant <id>', 'Override tenant/workspace scope')
+  .option('--trace-id <uuid>', 'Attach correlation ID')
+  .option('--verbose', 'Include debug fields and execution timings')
+  .action(
+    async (options: {
+      chain?: string;
+      file?: string;
+      event?: string;
+      strict?: boolean;
+      renderPlan?: boolean;
+      json?: boolean;
+      tenant?: string;
+      traceId?: string;
+      verbose?: boolean;
+    }) => {
+      const startedAt = Date.now();
+      const diagnostics: HookDiagnostic[] = [];
+
+      try {
+        const hasChainName = typeof options.chain === 'string' && options.chain.trim().length > 0;
+        const hasChainFile = typeof options.file === 'string' && options.file.trim().length > 0;
+        if (hasChainName === hasChainFile) {
+          throw new HookCliError(
+            "Provide exactly one of '--chain <name>' or '--file <path>'.",
+            HOOKS_EXIT_CODES.INVALID_ARGUMENTS
+          );
+        }
+        if (!options.event || options.event.trim().length === 0) {
+          throw new HookCliError(
+            "Missing required '--event <path>' fixture.",
+            HOOKS_EXIT_CODES.INVALID_ARGUMENTS
+          );
+        }
+
+        const eventPath = path.isAbsolute(options.event)
+          ? options.event
+          : path.resolve(process.cwd(), options.event);
+        if (!fs.existsSync(eventPath) || !fs.statSync(eventPath).isFile()) {
+          throw new HookCliError(
+            `Event fixture not found: ${eventPath}`,
+            HOOKS_EXIT_CODES.RESOURCE_NOT_FOUND
+          );
+        }
+
+        const parsedEvent = await parseJsonOrYamlFile(eventPath);
+        const event = toHookRecord(parsedEvent);
+        if (!event) {
+          throw new HookCliError(
+            `Event fixture must parse to an object: ${eventPath}`,
+            HOOKS_EXIT_CODES.VALIDATION_FAILURE
+          );
+        }
+
+        let chainPath = '';
+        if (hasChainFile && options.file) {
+          chainPath = path.isAbsolute(options.file)
+            ? options.file
+            : path.resolve(process.cwd(), options.file);
+          if (!fs.existsSync(chainPath) || !fs.statSync(chainPath).isFile()) {
+            throw new HookCliError(
+              `HookChain file not found: ${chainPath}`,
+              HOOKS_EXIT_CODES.RESOURCE_NOT_FOUND
+            );
+          }
+        } else if (hasChainName && options.chain) {
+          const discovered = await findHookChainFileByName(options.chain.trim());
+          if (!discovered) {
+            throw new HookCliError(
+              `HookChain '${options.chain.trim()}' was not found in registry dirs: ${resolveHookRegistryDirs().join(', ')}`,
+              HOOKS_EXIT_CODES.RESOURCE_NOT_FOUND
+            );
+          }
+          chainPath = discovered;
+        }
+
+        const parsedChain = await parseJsonOrYamlFile(chainPath);
+        diagnostics.push(...validateHookChainDefinition(parsedChain));
+
+        const chain = toHookRecord(parsedChain);
+        if (!chain) {
+          addHookDiagnostic(
+            diagnostics,
+            'error',
+            'CHAIN_NOT_OBJECT',
+            'Parsed HookChain definition must be an object.'
+          );
+        }
+
+        const triggerEvaluation = chain
+          ? evaluateHookTriggerMatch(chain, event, diagnostics)
+          : { matched: false, expectedEvent: null, receivedEvent: extractEventType(event) };
+        const plan = chain ? buildHookStepPlan(chain, event, triggerEvaluation.matched, diagnostics) : [];
+        const workflowProjection = chain ? buildWorkflowProjection(chain, plan) : null;
+        const compiled = {
+          node_count: plan.length,
+          edge_count: plan.length > 0 ? plan.length - 1 : 0,
+          workflow_node_count: Array.isArray(workflowProjection?.nodes)
+            ? workflowProjection.nodes.length
+            : 0,
+          workflow_connection_count: Array.isArray(workflowProjection?.connections)
+            ? workflowProjection.connections.length
+            : 0,
+        };
+
+        const errors = formatHookDiagnostics(diagnostics, 'error');
+        const warnings = formatHookDiagnostics(diagnostics, 'warning');
+        const strict = options.strict === true;
+        const valid = errors.length === 0 && (!strict || warnings.length === 0);
+
+        let exitCode: number = HOOKS_EXIT_CODES.SUCCESS;
+        if (!valid) {
+          exitCode = HOOKS_EXIT_CODES.VALIDATION_FAILURE;
+        } else if (warnings.length > 0) {
+          exitCode = HOOKS_EXIT_CODES.PARTIAL_SUCCESS;
+        }
+
+        const metadata = toHookRecord(chain?.metadata);
+        const chainName =
+          typeof metadata?.name === 'string'
+            ? metadata.name
+            : hasChainName && options.chain
+              ? options.chain
+              : path.basename(chainPath, path.extname(chainPath));
+
+        const payload: Record<string, unknown> = {
+          valid,
+          strict,
+          exit_code: exitCode,
+          chain: {
+            name: chainName,
+            version: metadata?.version ?? null,
+            source: chainPath,
+          },
+          event: {
+            fixture: eventPath,
+            expected_event: triggerEvaluation.expectedEvent,
+            received_event: triggerEvaluation.receivedEvent,
+            matched: triggerEvaluation.matched,
+            tenant: options.tenant || null,
+            trace_id: options.traceId || null,
+          },
+          compiled,
+          plan,
+          warnings,
+          errors,
+        };
+
+        if (options.renderPlan) {
+          payload.render_plan = {
+            nodes: plan.map((entry, index) => ({
+              id: entry.step,
+              index,
+              runner: entry.runner,
+            })),
+            edges:
+              plan.length > 1
+                ? plan.slice(0, -1).map((entry, index) => ({
+                    from: entry.step,
+                    to: plan[index + 1].step,
+                  }))
+                : [],
+            workflow_definition: workflowProjection,
+          };
+        }
+
+        if (options.verbose) {
+          payload.debug = {
+            registry_dirs: resolveHookRegistryDirs(),
+            evaluated_at: new Date().toISOString(),
+            duration_ms: Date.now() - startedAt,
+          };
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(payload, null, 2));
+        } else {
+          printHookTestSummary(payload);
+        }
+
+        if (exitCode !== HOOKS_EXIT_CODES.SUCCESS) {
+          process.exit(exitCode);
+        }
+      } catch (error: any) {
+        const exitCode =
+          error instanceof HookCliError ? error.exitCode : HOOKS_EXIT_CODES.EXECUTION_FAILURE;
+        const message = error?.message || String(error);
+        if (options.json) {
+          console.log(
+            JSON.stringify(
+              {
+                valid: false,
+                exit_code: exitCode,
+                errors: [{ code: 'HOOK_TEST_FAILED', message }],
+              },
+              null,
+              2
+            )
+          );
+        } else {
+          console.error(chalk.red(`Error: ${message}`));
+        }
+        process.exit(exitCode);
+      }
+    }
+  );
+
+hooks
+  .command('logs')
+  .description('Read HookChain run logs (placeholder)')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    const message = 'tnf hooks logs is not implemented yet. Next phase: runtime log integration.';
+    if (options.json) {
+      console.log(
+        JSON.stringify(
+          {
+            ok: false,
+            exit_code: HOOKS_EXIT_CODES.EXECUTION_FAILURE,
+            message,
+          },
+          null,
+          2
+        )
+      );
+    } else {
+      console.error(chalk.yellow(message));
+    }
+    process.exit(HOOKS_EXIT_CODES.EXECUTION_FAILURE);
+  });
+
+hooks
+  .command('replay')
+  .description('Replay a HookChain run (placeholder)')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    const message =
+      'tnf hooks replay is not implemented yet. Next phase: idempotent replay adapter.';
+    if (options.json) {
+      console.log(
+        JSON.stringify(
+          {
+            ok: false,
+            exit_code: HOOKS_EXIT_CODES.EXECUTION_FAILURE,
+            message,
+          },
+          null,
+          2
+        )
+      );
+    } else {
+      console.error(chalk.yellow(message));
+    }
+    process.exit(HOOKS_EXIT_CODES.EXECUTION_FAILURE);
+  });
+
+hooks
+  .command('explain')
+  .description('Explain HookChain decisions (placeholder)')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    const message =
+      'tnf hooks explain is not implemented yet. Next phase: gate + policy rationale traces.';
+    if (options.json) {
+      console.log(
+        JSON.stringify(
+          {
+            ok: false,
+            exit_code: HOOKS_EXIT_CODES.EXECUTION_FAILURE,
+            message,
+          },
+          null,
+          2
+        )
+      );
+    } else {
+      console.error(chalk.yellow(message));
+    }
+    process.exit(HOOKS_EXIT_CODES.EXECUTION_FAILURE);
+  });
+
 program
   .command('menu')
   .description('Show an organized TNF command menu')
@@ -8682,6 +10407,428 @@ extensionCmd
       process.exit(1);
     }
   });
+
+const packagesCommand = program
+  .command('packages')
+  .description('Monorepo package reconnect and availability utilities');
+
+function printPackageProbeTable(results: PackageProbeResult[]): void {
+  const headers = ['Package', 'Manifest', 'Entry', 'Resolved', 'Runtime', 'Dir'];
+  const rows = results.map((result) => [
+    result.packageName,
+    result.hasMainField &&
+    result.hasTypesField &&
+    result.hasExportsField &&
+    result.hasBuildScript &&
+    result.hasTestScript
+      ? 'OK'
+      : 'WARN',
+    result.mainEntryExists ? 'OK' : 'MISS',
+    result.resolvedFromWorkspace ? 'OK' : 'MISS',
+    result.loadAttempted ? (result.loadSucceeded ? 'OK' : 'FAIL') : 'SKIP',
+    result.packageDir,
+  ]);
+
+  const widths = headers.map((header, idx) =>
+    Math.max(header.length, ...rows.map((row) => row[idx].length))
+  );
+
+  const render = (cols: string[]) =>
+    cols
+      .map((col, idx) => col.padEnd(widths[idx], ' '))
+      .join('  ')
+      .trimEnd();
+
+  console.log(render(headers));
+  console.log(
+    widths
+      .map((width) => ''.padEnd(width, '-'))
+      .join('  ')
+      .trimEnd()
+  );
+  for (const row of rows) {
+    const normalized = [...row];
+    normalized[1] = row[1] === 'OK' ? chalk.green(row[1]) : chalk.yellow(row[1]);
+    normalized[2] = row[2] === 'OK' ? chalk.green(row[2]) : chalk.yellow(row[2]);
+    normalized[3] = row[3] === 'OK' ? chalk.green(row[3]) : chalk.yellow(row[3]);
+    normalized[4] =
+      row[4] === 'OK'
+        ? chalk.green(row[4])
+        : row[4] === 'FAIL'
+          ? chalk.red(row[4])
+          : chalk.dim(row[4]);
+    console.log(render(normalized));
+  }
+}
+
+packagesCommand
+  .command('status')
+  .description('Show reconnect status for all internal workspace packages')
+  .option('--runtime', 'Attempt runtime loading for each package entrypoint')
+  .option('--json', 'Output JSON instead of table')
+  .action(async (options: { runtime?: boolean; json?: boolean }) => {
+    try {
+      const hub = new PackageReconnectHub(repoRoot);
+      const results = await hub.probeAll({ loadRuntime: options.runtime });
+
+      const summary = {
+        generatedAt: new Date().toISOString(),
+        repoRoot: hub.getRepoRoot(),
+        packageCount: results.length,
+        manifestReady: results.filter(
+          (result) =>
+            result.hasMainField &&
+            result.hasTypesField &&
+            result.hasExportsField &&
+            result.hasBuildScript &&
+            result.hasTestScript
+        ).length,
+        entryReady: results.filter((result) => result.mainEntryExists).length,
+        resolved: results.filter((result) => result.resolvedFromWorkspace).length,
+        runtimeLoadSucceeded: results.filter((result) => result.loadSucceeded).length,
+        runtimeLoadAttempted: results.filter((result) => result.loadAttempted).length,
+      };
+
+      if (options.json) {
+        console.log(JSON.stringify({ summary, results }, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nTNF Package Reconnect Status\n'));
+      console.log(`Repo: ${chalk.dim(summary.repoRoot)}`);
+      console.log(
+        `Packages=${summary.packageCount} manifest-ready=${summary.manifestReady} entry-ready=${summary.entryReady} resolved=${summary.resolved}`
+      );
+      if (options.runtime) {
+        console.log(
+          `Runtime load: success=${summary.runtimeLoadSucceeded}/${summary.runtimeLoadAttempted}`
+        );
+      }
+      console.log('');
+      printPackageProbeTable(results);
+
+      const unresolved = results.filter((result) => !result.resolvedFromWorkspace);
+      if (unresolved.length > 0) {
+        console.log(chalk.yellow(`\nUnresolved packages: ${unresolved.length}`));
+        for (const item of unresolved.slice(0, 20)) {
+          console.log(`- ${item.packageName}`);
+        }
+        if (unresolved.length > 20) {
+          console.log(chalk.dim(`... and ${unresolved.length - 20} more`));
+        }
+      }
+      if (options.runtime) {
+        const runtimeFailures = results.filter((result) => result.loadAttempted && !result.loadSucceeded);
+        if (runtimeFailures.length > 0) {
+          console.log(chalk.yellow(`\nRuntime load failures: ${runtimeFailures.length}`));
+          for (const item of runtimeFailures.slice(0, 20)) {
+            console.log(`- ${item.packageName}: ${item.loadError || 'unknown error'}`);
+          }
+          if (runtimeFailures.length > 20) {
+            console.log(chalk.dim(`... and ${runtimeFailures.length - 20} more`));
+          }
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+packagesCommand
+  .command('probe')
+  .description('Probe a single package reconnect status by package name')
+  .argument('<packageName>', 'Workspace package name (e.g. @the-new-fuse/fairtable-core)')
+  .option('--runtime', 'Attempt runtime loading for the package entrypoint')
+  .option('--json', 'Output JSON')
+  .action(async (packageName: string, options: { runtime?: boolean; json?: boolean }) => {
+    try {
+      const hub = new PackageReconnectHub(repoRoot);
+      const result = await hub.probePackage(packageName, { loadRuntime: options.runtime });
+
+      if (options.json) {
+        console.log(JSON.stringify(result, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold(`\nPackage Probe: ${result.packageName}\n`));
+      console.log(`Dir:         ${chalk.cyan(result.packageDir)}`);
+      console.log(`Main field:  ${result.hasMainField ? chalk.green('yes') : chalk.red('no')}`);
+      console.log(`Types field: ${result.hasTypesField ? chalk.green('yes') : chalk.red('no')}`);
+      console.log(`Exports:     ${result.hasExportsField ? chalk.green('yes') : chalk.red('no')}`);
+      console.log(`Build script:${result.hasBuildScript ? chalk.green(' yes') : chalk.red(' no')}`);
+      console.log(`Test script: ${result.hasTestScript ? chalk.green('yes') : chalk.red('no')}`);
+      console.log(`Entry path:  ${result.mainEntryPath || chalk.dim('none')}`);
+      console.log(`Entry exists:${result.mainEntryExists ? chalk.green(' yes') : chalk.red(' no')}`);
+      console.log(
+        `Resolved:    ${result.resolvedFromWorkspace ? chalk.green(result.resolvedPath || 'yes') : chalk.yellow('no')}`
+      );
+      if (options.runtime) {
+        console.log(
+          `Runtime:     ${
+            result.loadAttempted
+              ? result.loadSucceeded
+                ? chalk.green(`loaded (${result.loadMode})`)
+                : chalk.red(`failed (${result.loadMode})`)
+              : chalk.dim('not attempted')
+          }`
+        );
+        if (result.loadError) {
+          console.log(`Load error:  ${chalk.yellow(result.loadError)}`);
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const notesCommand = program.command('notes').description('TNF note-taking workspace commands');
+
+function createNotesService(options: { vaultPath?: string; userId?: string }): NoteService {
+  return new NoteService({
+    vaultPath: options.vaultPath,
+    userId: options.userId,
+  });
+}
+
+function parseCsvTags(raw?: string): string[] {
+  if (!raw) return [];
+  return raw
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter((tag) => tag.length > 0);
+}
+
+function parsePositiveIntOption(raw: string | undefined, fallback: number, label: string): number {
+  if (!raw) return fallback;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    throw new Error(`Invalid ${label}: ${raw}`);
+  }
+  return parsed;
+}
+
+notesCommand
+  .command('status')
+  .description('Show TNF note vault status')
+  .option('--vault-path <path>', 'Base vault path (default: ~/.tnf/vault)')
+  .option('--user-id <id>', 'Vault user id (default: OS user)')
+  .option('--json', 'Output JSON')
+  .action(async (options: { vaultPath?: string; userId?: string; json?: boolean }) => {
+    try {
+      const service = createNotesService(options);
+      const status = await service.getStatus();
+      if (options.json) {
+        console.log(JSON.stringify(status, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nTNF Notes Status\n'));
+      console.log(`Vault path: ${chalk.cyan(status.vaultPath)}`);
+      console.log(`Notes:      ${status.noteCount}`);
+      console.log(`Tags:       ${status.tagCount}`);
+      console.log(`Total size: ${status.totalSize} bytes`);
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+notesCommand
+  .command('list')
+  .description('List notes')
+  .option('--tag <tag>', 'Filter by tag')
+  .option('--limit <n>', 'Limit results (default: 50)')
+  .option('--vault-path <path>', 'Base vault path (default: ~/.tnf/vault)')
+  .option('--user-id <id>', 'Vault user id (default: OS user)')
+  .option('--json', 'Output JSON')
+  .action(
+    (options: {
+      tag?: string;
+      limit?: string;
+      vaultPath?: string;
+      userId?: string;
+      json?: boolean;
+    }) => {
+      try {
+        const service = createNotesService(options);
+        const limit = parsePositiveIntOption(options.limit, 50, '--limit');
+        const notes = options.tag ? service.getNotesByTag(options.tag) : service.getAllNotes();
+        const sorted = [...notes]
+          .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+          .slice(0, limit);
+
+        if (options.json) {
+          console.log(JSON.stringify(sorted, null, 2));
+          return;
+        }
+
+        console.log(chalk.bold(`\nTNF Notes (${sorted.length}/${notes.length})\n`));
+        for (const note of sorted) {
+          const tags = note.tags?.length ? ` [${note.tags.join(', ')}]` : '';
+          console.log(`- ${chalk.cyan(note.id)}  ${note.title}${chalk.dim(tags)}`);
+        }
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+notesCommand
+  .command('get')
+  .description('Get a note by id or exact title')
+  .argument('<idOrTitle>', 'Note id or exact note title')
+  .option('--vault-path <path>', 'Base vault path (default: ~/.tnf/vault)')
+  .option('--user-id <id>', 'Vault user id (default: OS user)')
+  .option('--json', 'Output JSON')
+  .action(
+    (idOrTitle: string, options: { vaultPath?: string; userId?: string; json?: boolean }) => {
+      try {
+        const service = createNotesService(options);
+        const note = service.getNoteById(idOrTitle) || service.getNoteByTitle(idOrTitle);
+        if (!note) {
+          throw new Error(`Note not found: ${idOrTitle}`);
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(note, null, 2));
+          return;
+        }
+
+        console.log(chalk.bold(`\n${note.title}\n`));
+        console.log(chalk.dim(`id=${note.id} updated=${note.updatedAt}`));
+        if (note.tags?.length) {
+          console.log(chalk.dim(`tags=${note.tags.join(', ')}`));
+        }
+        console.log('');
+        console.log(note.content);
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+notesCommand
+  .command('search')
+  .description('Search notes by title and content')
+  .argument('<query>', 'Search query')
+  .option('--limit <n>', 'Limit results (default: 20)')
+  .option('--vault-path <path>', 'Base vault path (default: ~/.tnf/vault)')
+  .option('--user-id <id>', 'Vault user id (default: OS user)')
+  .option('--json', 'Output JSON')
+  .action(
+    (
+      query: string,
+      options: { limit?: string; vaultPath?: string; userId?: string; json?: boolean }
+    ) => {
+      try {
+        const service = createNotesService(options);
+        const limit = parsePositiveIntOption(options.limit, 20, '--limit');
+        const results = service.searchNotes(query, limit);
+
+        if (options.json) {
+          console.log(JSON.stringify(results, null, 2));
+          return;
+        }
+
+        console.log(chalk.bold(`\nSearch Results (${results.length})\n`));
+        for (const note of results) {
+          console.log(`- ${chalk.cyan(note.id)}  ${note.title}`);
+          if (note.snippet) {
+            console.log(`  ${chalk.dim(note.snippet)}`);
+          }
+        }
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+notesCommand
+  .command('create')
+  .description('Create a new note')
+  .argument('<title>', 'Note title')
+  .argument('[content]', 'Optional note content')
+  .option('--id <id>', 'Optional explicit note id')
+  .option('--tags <csv>', 'Comma-separated tags')
+  .option('--vault-path <path>', 'Base vault path (default: ~/.tnf/vault)')
+  .option('--user-id <id>', 'Vault user id (default: OS user)')
+  .option('--json', 'Output JSON')
+  .action(
+    async (
+      title: string,
+      content: string | undefined,
+      options: {
+        id?: string;
+        tags?: string;
+        vaultPath?: string;
+        userId?: string;
+        json?: boolean;
+      }
+    ) => {
+      try {
+        const service = createNotesService(options);
+        const result = await service.createNote({
+          id: options.id,
+          title,
+          content: content || '',
+          tags: parseCsvTags(options.tags),
+        });
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to create note');
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(result, null, 2));
+          return;
+        }
+
+        console.log(chalk.green(`Created note ${result.id}`));
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+notesCommand
+  .command('daily')
+  .description('Create a daily note')
+  .argument('[templateName]', 'Optional template name (looks for note titled "Template: <name>")')
+  .option('--vault-path <path>', 'Base vault path (default: ~/.tnf/vault)')
+  .option('--user-id <id>', 'Vault user id (default: OS user)')
+  .option('--json', 'Output JSON')
+  .action(
+    async (
+      templateName: string | undefined,
+      options: { vaultPath?: string; userId?: string; json?: boolean }
+    ) => {
+      try {
+        const service = createNotesService(options);
+        const result = await service.createDailyNote(templateName);
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to create daily note');
+        }
+        if (options.json) {
+          console.log(JSON.stringify(result, null, 2));
+          return;
+        }
+        console.log(chalk.green(`Created daily note ${result.id}`));
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
 
 async function main(): Promise<void> {
   if (process.argv.length <= 2) {

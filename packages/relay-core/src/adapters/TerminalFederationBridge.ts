@@ -1,6 +1,20 @@
 import { EventEmitter } from 'events';
-import { AgentInfo, RedisAgentClient } from '@the-new-fuse/tnf-cli';
 import { Logger } from '../utils/Logger.js';
+
+// NOTE: @the-new-fuse/tnf-cli currently does not always ship complete named type exports
+// in its built dist artifacts. Use a runtime require plus local structural typing here.
+const { RedisAgentClient } = require('@the-new-fuse/tnf-cli');
+
+interface AgentInfo {
+  id: string;
+  name: string;
+  role: 'orchestrator' | 'broker' | 'worker' | 'participant';
+  platform: string;
+  status: 'active' | 'idle' | 'offline';
+  capabilities: string[];
+  registeredAt: string;
+  lastSeen: string;
+}
 
 export interface TerminalFederationConfig {
   tty: string;
@@ -16,7 +30,7 @@ export interface TerminalFederationConfig {
  * Ensures that even terminal-based agents are registered and visible in the WS Relay.
  */
 export class TerminalFederationBridge extends EventEmitter {
-  private client: RedisAgentClient;
+  private client: any;
   private logger: Logger;
   private config: TerminalFederationConfig;
   private agentInfo: AgentInfo | null = null;

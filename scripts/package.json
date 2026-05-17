@@ -5,7 +5,7 @@
   "main": "mcp-config-manager-server.js",
   "type": "module",
   "bin": {
-    "mcp-config-manager-server": "./mcp-config-manager-server.js"
+    "mcp-config-manager-server": "mcp-config-manager-server.js"
   },
   "scripts": {
     "start": "node mcp-config-manager-server.js"
@@ -20,5 +20,9 @@
   "license": "MIT",
   "dependencies": {
     "@the-new-fuse/infrastructure": "workspace:*"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
   }
 }

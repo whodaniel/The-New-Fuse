@@ -30,5 +30,15 @@
     "typescript": "^6.0.2",
     "jest": "^30.3.0",
     "ts-jest": "^29.4.6"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
   }
 }

@@ -1,0 +1,47 @@
+{
+  "name": "@the-new-fuse/protocol-contracts",
+  "files": [
+    "dist",
+    "generated"
+  ],
+  "version": "0.1.0",
+  "type": "module",
+  "description": "TS-first protocol contracts with generated JSON Schema and Python models",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit",
+    "type-check:tsgo": "tsgo --noEmit",
+    "generate:jsonschema": "node --import tsx scripts/generate-jsonschema.mjs",
+    "generate:python": "node scripts/generate-python.mjs",
+    "generate:all": "pnpm run generate:jsonschema && pnpm run generate:python",
+    "check": "pnpm run generate:jsonschema && (cd ../.. && node scripts/protocols/validate-sgp-schemas.cjs && node scripts/validate-protocol-schemas.cjs)",
+    "check:drift": "node scripts/check-drift.mjs",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx,.mjs",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx,.mjs --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md,py}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,json,md,py}\"",
+    "clean": "rm -rf dist generated/jsonschema generated/python/tnf_contracts/__pycache__",
+    "test": "echo \"No tests for this package\" && exit 0"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

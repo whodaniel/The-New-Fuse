@@ -1,0 +1,52 @@
+name: Pi Bridge Gate
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "scripts/pi-redis-wrapper.cjs"
+      - "scripts/pi-session-handoff.cjs"
+      - "scripts/tests/pi-bridge.integration.test.cjs"
+      - "packages/relay-core/src/protocol/handoff-protocol.ts"
+      - "packages/relay-core/src/protocol/handoff-protocol.js"
+      - "packages/relay-core/src/transports/MCPTransport.ts"
+      - "packages/relay-core/src/adapters/TerminalFederationBridge.ts"
+      - "packages/relay-core/tsconfig.json"
+      - "package.json"
+      - ".github/workflows/pi-bridge-gate.yml"
+  push:
+    branches: [main, develop]
+    paths:
+      - "scripts/pi-redis-wrapper.cjs"
+      - "scripts/pi-session-handoff.cjs"
+      - "scripts/tests/pi-bridge.integration.test.cjs"
+      - "packages/relay-core/src/protocol/handoff-protocol.ts"
+      - "packages/relay-core/src/protocol/handoff-protocol.js"
+      - "packages/relay-core/src/transports/MCPTransport.ts"
+      - "packages/relay-core/src/adapters/TerminalFederationBridge.ts"
+      - "packages/relay-core/tsconfig.json"
+      - "package.json"
+      - ".github/workflows/pi-bridge-gate.yml"
+  workflow_dispatch:
+
+jobs:
+  gate:
+    name: Run Pi Bridge Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Run gate
+        run: pnpm run gate:pi-bridge

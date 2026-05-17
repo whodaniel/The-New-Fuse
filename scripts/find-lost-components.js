@@ -27,7 +27,6 @@ const config = {
     'apps/frontend/src',
     'packages/core/components',
     'packages/features',
-    'packages/layout',
     'packages/shared/components',
     'packages/ui-components',
     'packages/ui'

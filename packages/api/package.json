@@ -92,5 +92,15 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.2",
     "webpack": "^5.102.1"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
   }
 }

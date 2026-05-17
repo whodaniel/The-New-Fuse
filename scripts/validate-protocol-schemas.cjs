@@ -15,6 +15,7 @@ const requiredFiles = [
   'tnf-agent-self-edit.schema.json',
   'tnf-cron-governance.schema.json',
   'tnf-session-handoff.schema.json',
+  'tnf-hook-chain.schema.json',
 ];
 
 function fail(message) {
@@ -201,6 +202,33 @@ function validateSessionHandoff(schema) {
   });
 }
 
+function validateHookChain(schema) {
+  if (!schema) return;
+  const required = new Set(schema.required || []);
+  ['apiVersion', 'kind', 'metadata', 'spec'].forEach((key) => {
+    assert(required.has(key), `tnf-hook-chain.schema.json: required must include ${key}`);
+  });
+
+  assert(
+    schema?.properties?.apiVersion?.const === 'tnf.hooks/v2',
+    'tnf-hook-chain.schema.json: apiVersion const must be tnf.hooks/v2'
+  );
+  assert(
+    schema?.properties?.kind?.const === 'HookChain',
+    'tnf-hook-chain.schema.json: kind const must be HookChain'
+  );
+
+  const specRequired = new Set(schema?.properties?.spec?.required || []);
+  ['trigger', 'execution', 'context', 'steps', 'security'].forEach((key) => {
+    assert(specRequired.has(key), `tnf-hook-chain.schema.json: spec.required must include ${key}`);
+  });
+
+  const modeEnum = schema?.properties?.spec?.properties?.trigger?.properties?.mode?.enum || [];
+  ['async', 'sync_gate'].forEach((mode) => {
+    assert(modeEnum.includes(mode), `tnf-hook-chain.schema.json: trigger.mode enum missing ${mode}`);
+  });
+}
+
 function main() {
   if (!fs.existsSync(schemaDir)) {
     fail(`Missing schema directory: ${schemaDir}`);
@@ -229,6 +257,7 @@ function main() {
   validateAgentSelfEdit(parsed['tnf-agent-self-edit.schema.json']);
   validateCronGovernance(parsed['tnf-cron-governance.schema.json']);
   validateSessionHandoff(parsed['tnf-session-handoff.schema.json']);
+  validateHookChain(parsed['tnf-hook-chain.schema.json']);
 
   if (process.exitCode) {
     process.exit(process.exitCode);

@@ -1,4 +1,5 @@
 import { WorkspaceApiService } from '@/api/workspace';
+import { isFairtableComponentsFeatureEnabled } from '@/config/featureFlags';
 import {
   Activity,
   Calendar,
@@ -10,13 +11,22 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-// TODO: Import when packages are properly configured
-// import { GridView, KanbanView, TableView } from '@the-new-fuse/fairtable-components';
-// import { formulaEvaluator } from '@the-new-fuse/fairtable-core';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  DataType,
+  ViewType,
+  evaluateFormula,
+  type AppState as FairtableAppState,
+  type CellValue,
+  type Column as FairtableColumn,
+  type Row as FairtableRow,
+  type Table as FairtableTable,
+  type View as FairtableView,
+} from '@the-new-fuse/fairtable-core';
+import { GridView, KanbanView, TableView } from '@the-new-fuse/fairtable-components';
 
-interface Table {
+interface WorkspaceTableSummary {
   id: string;
   name: string;
   description: string;
@@ -27,34 +37,184 @@ interface Table {
   status: 'active' | 'archived' | 'draft';
 }
 
+type FairtableViewMode = 'grid' | 'kanban' | 'timeline';
+
+const normalizeViewMode = (value?: string): FairtableViewMode => {
+  if (value === 'kanban' || value === 'timeline' || value === 'grid') {
+    return value;
+  }
+  return 'grid';
+};
+
+const PREVIEW_TABLE: FairtableTable = {
+  id: 'ft_preview_table',
+  name: 'Fairtable Preview',
+  columns: [
+    { id: 'col_title', name: 'Title', type: DataType.TEXT },
+    {
+      id: 'col_status',
+      name: 'Status',
+      type: DataType.SINGLE_SELECT,
+      options: [
+        { id: 'status_todo', name: 'Todo', colorClass: 'bg-slate-200 text-slate-700' },
+        {
+          id: 'status_progress',
+          name: 'In Progress',
+          colorClass: 'bg-blue-200 text-blue-700',
+        },
+        { id: 'status_done', name: 'Done', colorClass: 'bg-green-200 text-green-700' },
+      ],
+    },
+    { id: 'col_estimate', name: 'Estimate', type: DataType.NUMBER },
+    { id: 'col_owner', name: 'Owner', type: DataType.TEXT },
+    { id: 'col_due', name: 'Due Date', type: DataType.DATE },
+  ],
+  rows: [
+    {
+      id: 'row_preview_1',
+      data: {
+        col_title: 'Reconnect fairtable dashboard',
+        col_status: 'status_progress',
+        col_estimate: 3,
+        col_owner: 'TNF Core',
+        col_due: '2026-05-20',
+      },
+      createdAt: '2026-05-17T00:00:00.000Z',
+      updatedAt: '2026-05-17T00:00:00.000Z',
+      parentId: null,
+      depth: 0,
+      isCollapsed: false,
+    },
+    {
+      id: 'row_preview_2',
+      data: {
+        col_title: 'Restore adapter bridge',
+        col_status: 'status_todo',
+        col_estimate: 5,
+        col_owner: 'Relay',
+        col_due: '2026-05-24',
+      },
+      createdAt: '2026-05-17T00:00:00.000Z',
+      updatedAt: '2026-05-17T00:00:00.000Z',
+      parentId: null,
+      depth: 0,
+      isCollapsed: false,
+    },
+    {
+      id: 'row_preview_3',
+      data: {
+        col_title: 'Write cross-package tests',
+        col_status: 'status_done',
+        col_estimate: 2,
+        col_owner: 'QA',
+        col_due: '2026-05-18',
+      },
+      createdAt: '2026-05-17T00:00:00.000Z',
+      updatedAt: '2026-05-17T00:00:00.000Z',
+      parentId: null,
+      depth: 0,
+      isCollapsed: false,
+    },
+  ],
+  columnOrder: ['col_title', 'col_status', 'col_estimate', 'col_owner', 'col_due'],
+  views: [
+    {
+      id: 'view_preview_grid',
+      name: 'Grid',
+      type: ViewType.GRID,
+      filters: [],
+      sorts: [],
+      groupBy: [],
+      columnOrder: ['col_title', 'col_status', 'col_estimate', 'col_owner', 'col_due'],
+      columnVisibility: {},
+      columnWidths: {},
+      viewSpecificOptions: {},
+    },
+    {
+      id: 'view_preview_kanban',
+      name: 'Kanban',
+      type: ViewType.KANBAN,
+      filters: [],
+      sorts: [],
+      groupBy: [],
+      columnOrder: ['col_title', 'col_status', 'col_estimate', 'col_owner', 'col_due'],
+      columnVisibility: {},
+      columnWidths: {},
+      viewSpecificOptions: { groupByColumnId: 'col_status' },
+    },
+  ],
+  activeViewId: 'view_preview_grid',
+};
+
+const PREVIEW_APP_STATE: FairtableAppState = {
+  tables: [PREVIEW_TABLE],
+  activeTableId: PREVIEW_TABLE.id,
+};
+
+const PREVIEW_COLUMNS_TO_DISPLAY = PREVIEW_TABLE.columnOrder
+  .map((columnId) => PREVIEW_TABLE.columns.find((column) => column.id === columnId))
+  .filter(Boolean) as FairtableColumn[];
+
+const PREVIEW_GRID_VIEW = PREVIEW_TABLE.views.find((view) => view.id === 'view_preview_grid') as FairtableView;
+const PREVIEW_KANBAN_VIEW = PREVIEW_TABLE.views.find(
+  (view) => view.id === 'view_preview_kanban'
+) as FairtableView;
+
 const FairtableDashboard: React.FC = () => {
-  const [tables, setTables] = useState<Table[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedView, setSelectedView] = useState<'grid' | 'kanban' | 'timeline'>('grid');
   const navigate = useNavigate();
+  const { viewType } = useParams<{ viewType?: string }>();
+
+  const [tables, setTables] = useState<WorkspaceTableSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedView, setSelectedView] = useState<FairtableViewMode>(normalizeViewMode(viewType));
+
+  useEffect(() => {
+    setSelectedView(normalizeViewMode(viewType));
+  }, [viewType]);
 
   useEffect(() => {
     loadTables();
   }, []);
 
+  const fairtableComponentsEnabled = isFairtableComponentsFeatureEnabled();
+
+  const fairtableComponentRegistry = useMemo(
+    () => ({ grid: GridView, kanban: KanbanView, table: TableView }),
+    []
+  );
+
+  const formulaProbe = useMemo(() => {
+    const result = evaluateFormula(
+      '{Estimate} * 2',
+      PREVIEW_TABLE.rows[0],
+      PREVIEW_TABLE.columns,
+      PREVIEW_TABLE.rows,
+      PREVIEW_APP_STATE.tables
+    );
+
+    if (result.error) {
+      return `Formula error: ${result.error}`;
+    }
+
+    return `Formula check (Estimate*2): ${String(result.value)}`;
+  }, []);
+
   const loadTables = async () => {
     try {
       setLoading(true);
-      // Use actual API service to load workspace data
       const workspaceService = new WorkspaceApiService();
       const response = await workspaceService.getCurrentWorkspace();
       const responseError =
         typeof response.error === 'string' ? response.error : response.error?.message;
 
       if (response.success && response.data) {
-        const actualTables: Table[] = (response.data as any)?.tables || [];
+        const actualTables: WorkspaceTableSummary[] = (response.data as any)?.tables || [];
         setTables(actualTables);
       } else {
         throw new Error(responseError || 'Failed to load workspace data');
       }
     } catch (error) {
       console.error('Error loading tables', error);
-      // You might want to add a notification system here
     } finally {
       setLoading(false);
     }
@@ -62,16 +222,15 @@ const FairtableDashboard: React.FC = () => {
 
   const createNewTable = () => {
     console.log('Create table clicked');
-    // Implement creation logic
   };
 
-  const openTable = (table: Table) => {
+  const openTable = (table: WorkspaceTableSummary) => {
     const route = `/fairtable/${table.viewType}?id=${table.id}`;
     navigate(route);
   };
 
-  const getViewIcon = (viewType: string) => {
-    switch (viewType) {
+  const getViewIcon = (viewMode: string) => {
+    switch (viewMode) {
       case 'grid':
         return <Grid className="w-4 h-4" />;
       case 'kanban':
@@ -96,6 +255,111 @@ const FairtableDashboard: React.FC = () => {
     }
   };
 
+  const onNoopAddColumn = () => undefined;
+
+  const onNoopUpdateColumn = (columnId: string, updates: Partial<FairtableColumn>) => {
+    void columnId;
+    void updates;
+  };
+
+  const onNoopDeleteColumn = (columnId: string) => {
+    void columnId;
+  };
+
+  const onNoopReorderColumn = (draggedColumnId: string, targetColumnId: string) => {
+    void draggedColumnId;
+    void targetColumnId;
+  };
+
+  const onNoopAddRow = (parentId?: string | null, defaultValues?: Partial<FairtableRow['data']>) => {
+    void parentId;
+    void defaultValues;
+  };
+
+  const onNoopUpdateCell = (rowId: string, columnId: string, value: CellValue) => {
+    void rowId;
+    void columnId;
+    void value;
+  };
+
+  const onNoopDeleteRow = (rowId: string) => {
+    void rowId;
+  };
+
+  const onNoopToggleCollapse = (rowId: string) => {
+    void rowId;
+  };
+
+  const onNoopOpenLinkRecord = (
+    rowId: string,
+    columnId: string,
+    linkedTableId: string,
+    currentLinkedIds: string[]
+  ) => {
+    void rowId;
+    void columnId;
+    void linkedTableId;
+    void currentLinkedIds;
+  };
+
+  const previewTableView = (
+    <TableView
+      table={PREVIEW_TABLE}
+      view={PREVIEW_GRID_VIEW}
+      appState={PREVIEW_APP_STATE}
+      columnsToDisplay={PREVIEW_COLUMNS_TO_DISPLAY}
+      rowsToDisplay={PREVIEW_TABLE.rows}
+      onAddColumn={onNoopAddColumn}
+      onUpdateColumn={onNoopUpdateColumn}
+      onDeleteColumn={onNoopDeleteColumn}
+      onReorderColumn={onNoopReorderColumn}
+      onAddRow={onNoopAddColumn}
+      onUpdateCell={onNoopUpdateCell}
+      onDeleteRow={onNoopDeleteRow}
+      onOpenLinkRecordModal={onNoopOpenLinkRecord}
+    />
+  );
+
+  const previewGridView = (
+    <GridView
+      table={PREVIEW_TABLE}
+      view={PREVIEW_GRID_VIEW}
+      appState={PREVIEW_APP_STATE}
+      columnsToDisplay={PREVIEW_COLUMNS_TO_DISPLAY}
+      rowsToDisplay={PREVIEW_TABLE.rows}
+      onAddColumn={onNoopAddColumn}
+      onUpdateColumn={onNoopUpdateColumn}
+      onDeleteColumn={onNoopDeleteColumn}
+      onReorderColumn={onNoopReorderColumn}
+      onAddRow={onNoopAddRow}
+      onUpdateCell={onNoopUpdateCell}
+      onDeleteRow={onNoopDeleteRow}
+      onToggleRowCollapse={onNoopToggleCollapse}
+      onOpenLinkRecordModal={onNoopOpenLinkRecord}
+    />
+  );
+
+  const previewKanbanView = (
+    <KanbanView
+      table={PREVIEW_TABLE}
+      view={PREVIEW_KANBAN_VIEW}
+      appState={PREVIEW_APP_STATE}
+      columnsToDisplay={PREVIEW_COLUMNS_TO_DISPLAY}
+      rowsToDisplay={PREVIEW_TABLE.rows}
+      kanbanOptions={{ groupByColumnId: 'col_status' }}
+      onUpdateCell={onNoopUpdateCell}
+      onOpenLinkRecordModal={onNoopOpenLinkRecord}
+      onAddRow={onNoopAddRow}
+    />
+  );
+
+  const previewView =
+    selectedView === 'kanban'
+      ? previewKanbanView
+      : selectedView === 'timeline'
+        ? previewTableView
+        : previewGridView;
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[50vh]">
@@ -113,9 +377,7 @@ const FairtableDashboard: React.FC = () => {
     <div className="p-4 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-            Fairtable Dashboard
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Fairtable Dashboard</h1>
           <p className="text-muted-foreground dark:text-muted-foreground">
             Manage your databases, tables, and collaborative workspaces
           </p>
@@ -129,6 +391,32 @@ const FairtableDashboard: React.FC = () => {
           Create Table
         </button>
       </div>
+
+      {fairtableComponentsEnabled && (
+        <div className="mb-8 bg-transparent dark:bg-transparent rounded-md border border-blue-200 dark:border-blue-800 p-4">
+          <div className="flex items-start justify-between gap-4 mb-3">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Fairtable Engine Preview</h2>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                Runtime wiring is active for {Object.keys(fairtableComponentRegistry).join(', ')} components.
+              </p>
+            </div>
+            <span className="text-xs px-2 py-1 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+              {formulaProbe}
+            </span>
+          </div>
+
+          <div className="h-[360px] border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden bg-white dark:bg-slate-900">
+            {previewView}
+          </div>
+
+          {selectedView === 'timeline' && (
+            <p className="mt-2 text-xs text-muted-foreground dark:text-muted-foreground">
+              Timeline route is enabled; preview currently uses TableView until timeline-specific UI parity is reconnected.
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -171,9 +459,7 @@ const FairtableDashboard: React.FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
-              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-                {stat.label}
-              </p>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">{stat.label}</p>
             </div>
           </div>
         ))}
@@ -184,9 +470,7 @@ const FairtableDashboard: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Your Tables</h2>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground dark:text-muted-foreground">
-              View as:
-            </span>
+            <span className="text-sm text-muted-foreground dark:text-muted-foreground">View as:</span>
             <div className="flex bg-gray-100 dark:bg-transparent rounded-md p-1">
               {[
                 { id: 'grid', icon: Grid },
@@ -195,7 +479,7 @@ const FairtableDashboard: React.FC = () => {
               ].map((view) => (
                 <button
                   key={view.id}
-                  onClick={() => setSelectedView(view.id as any)}
+                  onClick={() => setSelectedView(view.id as FairtableViewMode)}
                   className={`p-1.5 rounded-md transition-all ${
                     selectedView === view.id
                       ? 'bg-transparent dark:bg-gray-600 text-blue-600 shadow-none'
@@ -220,9 +504,7 @@ const FairtableDashboard: React.FC = () => {
               <div className="flex justify-between items-start">
                 <div className="flex flex-col gap-1 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
-                      {table.name}
-                    </h3>
+                    <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{table.name}</h3>
                     <span
                       className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(table.status)}`}
                     >

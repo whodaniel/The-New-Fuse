@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc -b",
     "start": "node dist/index.js",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "echo \"No tests for this package\" && exit 0"
   },
   "dependencies": {
     "@the-new-fuse/mcp-core": "workspace:*",
@@ -22,5 +23,16 @@
     "@types/node": "^22.10.7",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"
+  },
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
   }
 }

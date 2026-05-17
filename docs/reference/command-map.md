@@ -17,6 +17,7 @@ These are the primary entry points for the TNF Self-Synthesizing Kernel.
 | `self-improvement` | Deterministic reliability loop with artifact verification.        |
 | `relay`       | Real-time multi-agent communication and synaptic bus operations.       |
 | `jules`       | Autonomous automation engine for batch processing and PR management.   |
+| `hooks`       | HookChain operations (`logs`, `test`, `replay`, `explain`).            |
 | `skills`      | Skill bank operations (sync, ingest, audit).                           |
 | `metaskills`  | Meta-skills audit and cognitive layer diagnostics.                     |
 | `mcp`         | Model Context Protocol utilities and server management.                |
@@ -104,4 +105,4 @@ To find a command programmatically:
 
 ---
 
-_Last updated: May 13, 2026_
+_Last updated: May 17, 2026_

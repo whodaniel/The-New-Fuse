@@ -1,0 +1,985 @@
+{
+  "summary": {
+    "generatedAt": "2026-05-17T13:11:54.140Z",
+    "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+    "packageCount": 69,
+    "byLifecycleState": {
+      "active": 36,
+      "latent": 33,
+      "incubating": 0,
+      "archived_candidate": 0
+    }
+  },
+  "records": [
+    {
+      "name": "@the-new-fuse/database",
+      "path": "packages/database",
+      "externalRuntimeImports": 197,
+      "externalLiteralRefs": 279,
+      "incomingInternalDependents": 10,
+      "incomingDependentPackages": [
+        "@the-new-fuse/api",
+        "@the-new-fuse/backend",
+        "@the-new-fuse/core",
+        "@the-new-fuse/data",
+        "@the-new-fuse/jules-integration",
+        "@the-new-fuse/n8n-workflows",
+        "@the-new-fuse/prompt-templating",
+        "@the-new-fuse/relay-core",
+        "@the-new-fuse/security",
+        "@the-new-fuse/sync-core"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/types",
+      "path": "packages/types",
+      "externalRuntimeImports": 102,
+      "externalLiteralRefs": 158,
+      "incomingInternalDependents": 21,
+      "incomingDependentPackages": [
+        "@the-new-fuse/agent",
+        "@the-new-fuse/api",
+        "@the-new-fuse/api-client",
+        "@the-new-fuse/api-optimization",
+        "@the-new-fuse/api-types",
+        "@the-new-fuse/backend",
+        "@the-new-fuse/core",
+        "@the-new-fuse/core-vector-db",
+        "@the-new-fuse/database",
+        "@the-new-fuse/deployment-core",
+        "@the-new-fuse/feature-suggestions",
+        "@the-new-fuse/feature-tracker",
+        "@the-new-fuse/features",
+        "@the-new-fuse/hooks",
+        "@the-new-fuse/jules-integration",
+        "@the-new-fuse/mcp-core",
+        "@the-new-fuse/n8n-workflows",
+        "@the-new-fuse/port-management",
+        "@the-new-fuse/proto-definitions",
+        "@the-new-fuse/shared",
+        "@the-new-fuse/testing"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/infrastructure",
+      "path": "packages/infrastructure",
+      "externalRuntimeImports": 94,
+      "externalLiteralRefs": 129,
+      "incomingInternalDependents": 19,
+      "incomingDependentPackages": [
+        "@the-new-fuse/a2a-core",
+        "@the-new-fuse/agent",
+        "@the-new-fuse/agent-coordination",
+        "@the-new-fuse/api",
+        "@the-new-fuse/api-optimization",
+        "@the-new-fuse/core",
+        "@the-new-fuse/data",
+        "@the-new-fuse/database",
+        "@the-new-fuse/jules-integration",
+        "@the-new-fuse/relay-core",
+        "@the-new-fuse/shared",
+        "@the-new-fuse/sync-core",
+        "@the-new-fuse/testing",
+        "@the-new-fuse/tnf-cli",
+        "@the-new-fuse/tnf-note-taking",
+        "@the-new-fuse/types",
+        "@the-new-fuse/utils",
+        "@the-new-fuse/websocket-infrastructure",
+        "@the-new-fuse/workflow-engine"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/relay-core",
+      "path": "packages/relay-core",
+      "externalRuntimeImports": 45,
+      "externalLiteralRefs": 80,
+      "incomingInternalDependents": 5,
+      "incomingDependentPackages": [
+        "@the-new-fuse/extension-system",
+        "@the-new-fuse/integration-tests",
+        "@the-new-fuse/jules-integration",
+        "@the-new-fuse/mcp-core",
+        "@the-new-fuse/workflow-engine"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/a2a-core",
+      "path": "packages/a2a-core",
+      "externalRuntimeImports": 18,
+      "externalLiteralRefs": 36,
+      "incomingInternalDependents": 3,
+      "incomingDependentPackages": [
+        "@the-new-fuse/a2a-react",
+        "@the-new-fuse/agent-coordination",
+        "@the-new-fuse/ui-consolidated"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/core-monitoring",
+      "path": "packages/core-monitoring",
+      "externalRuntimeImports": 16,
+      "externalLiteralRefs": 24,
+      "incomingInternalDependents": 4,
+      "incomingDependentPackages": [
+        "@the-new-fuse/claude-skills",
+        "@the-new-fuse/mcp-core",
+        "@the-new-fuse/sync-core",
+        "@tnf/build-optimization"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/core",
+      "path": "packages/core",
+      "externalRuntimeImports": 14,
+      "externalLiteralRefs": 86,
+      "incomingInternalDependents": 7,
+      "incomingDependentPackages": [
+        "@the-new-fuse/api",
+        "@the-new-fuse/backend",
+        "@the-new-fuse/deployment-core",
+        "@the-new-fuse/feature-tracker",
+        "@the-new-fuse/security",
+        "@the-new-fuse/testing",
+        "@the-new-fuse/workflow-engine"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/fairtable-core",
+      "path": "packages/fairtable-core",
+      "externalRuntimeImports": 14,
+      "externalLiteralRefs": 22,
+      "incomingInternalDependents": 3,
+      "incomingDependentPackages": [
+        "@the-new-fuse/fairtable-adapters",
+        "@the-new-fuse/fairtable-components",
+        "@the-new-fuse/hooks"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/utils",
+      "path": "packages/utils",
+      "externalRuntimeImports": 11,
+      "externalLiteralRefs": 37,
+      "incomingInternalDependents": 8,
+      "incomingDependentPackages": [
+        "@the-new-fuse/agent",
+        "@the-new-fuse/api",
+        "@the-new-fuse/backend",
+        "@the-new-fuse/feature-tracker",
+        "@the-new-fuse/n8n-workflows",
+        "@the-new-fuse/port-management",
+        "@the-new-fuse/ui-consolidated",
+        "@the-new-fuse/web-scraping"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/ui-consolidated",
+      "path": "packages/ui-consolidated",
+      "externalRuntimeImports": 10,
+      "externalLiteralRefs": 19,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/core-error-handling",
+      "path": "packages/core-error-handling",
+      "externalRuntimeImports": 7,
+      "externalLiteralRefs": 15,
+      "incomingInternalDependents": 4,
+      "incomingDependentPackages": [
+        "@the-new-fuse/claude-skills",
+        "@the-new-fuse/mcp-core",
+        "@the-new-fuse/sync-core",
+        "@tnf/build-optimization"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/mcp-core",
+      "path": "packages/mcp-core",
+      "externalRuntimeImports": 6,
+      "externalLiteralRefs": 32,
+      "incomingInternalDependents": 5,
+      "incomingDependentPackages": [
+        "@the-new-fuse/agent",
+        "@the-new-fuse/claude-skills",
+        "@the-new-fuse/google-sheets-mcp-server",
+        "@the-new-fuse/web-scraping",
+        "@the-new-fuse/workflow-engine"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/core-vector-db",
+      "path": "packages/core-vector-db",
+      "externalRuntimeImports": 5,
+      "externalLiteralRefs": 11,
+      "incomingInternalDependents": 3,
+      "incomingDependentPackages": [
+        "@the-new-fuse/a2a-core",
+        "@the-new-fuse/core",
+        "@the-new-fuse/data"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/ap2-protocol",
+      "path": "packages/ap2-protocol",
+      "externalRuntimeImports": 5,
+      "externalLiteralRefs": 11,
+      "incomingInternalDependents": 2,
+      "incomingDependentPackages": [
+        "@the-new-fuse/a2a-core",
+        "@the-new-fuse/web-scraping"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/workflow-engine",
+      "path": "packages/workflow-engine",
+      "externalRuntimeImports": 5,
+      "externalLiteralRefs": 23,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/feature-tracker",
+      "path": "packages/feature-tracker",
+      "externalRuntimeImports": 4,
+      "externalLiteralRefs": 8,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/feature-suggestions"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/api-client",
+      "path": "packages/api-client",
+      "externalRuntimeImports": 3,
+      "externalLiteralRefs": 11,
+      "incomingInternalDependents": 2,
+      "incomingDependentPackages": [
+        "@the-new-fuse/hooks",
+        "@the-new-fuse/ui-consolidated"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/prompt-templating",
+      "path": "packages/prompt-templating",
+      "externalRuntimeImports": 3,
+      "externalLiteralRefs": 10,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/sync-core"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/tnf-cli",
+      "path": "packages/tnf-cli",
+      "externalRuntimeImports": 3,
+      "externalLiteralRefs": 8,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/relay-core"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/agent",
+      "path": "packages/agent",
+      "externalRuntimeImports": 2,
+      "externalLiteralRefs": 8,
+      "incomingInternalDependents": 2,
+      "incomingDependentPackages": [
+        "@the-new-fuse/jules-integration",
+        "@the-new-fuse/workflow-engine"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/fairtable-utils",
+      "path": "packages/fairtable-utils",
+      "externalRuntimeImports": 2,
+      "externalLiteralRefs": 7,
+      "incomingInternalDependents": 2,
+      "incomingDependentPackages": [
+        "@the-new-fuse/fairtable-adapters",
+        "@the-new-fuse/fairtable-components"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/extension-system",
+      "path": "packages/extension-system",
+      "externalRuntimeImports": 2,
+      "externalLiteralRefs": 4,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/integration-tests"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/fairtable-components",
+      "path": "packages/fairtable-components",
+      "externalRuntimeImports": 2,
+      "externalLiteralRefs": 7,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/fairtable-adapters"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/n8n-workflows",
+      "path": "packages/n8n-workflows",
+      "externalRuntimeImports": 2,
+      "externalLiteralRefs": 6,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/api-types",
+      "path": "packages/api-types",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 17,
+      "incomingInternalDependents": 3,
+      "incomingDependentPackages": [
+        "@the-new-fuse/agent",
+        "@the-new-fuse/api-client",
+        "@the-new-fuse/ui-consolidated"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/fairtable-adapters",
+      "path": "packages/fairtable-adapters",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 3,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/relay-core"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/hooks",
+      "path": "packages/hooks",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 7,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/ui-consolidated"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/security",
+      "path": "packages/security",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 6,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/a2a-core"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/tnf-core",
+      "path": "packages/tnf-core",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 3,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/tnf-cli"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/tnf-note-taking",
+      "path": "packages/tnf-note-taking",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 3,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/tnf-cli"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/a2a-react",
+      "path": "packages/a2a-react",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 9,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/ag-ui-core",
+      "path": "packages/ag-ui-core",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 4,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/jules-skill",
+      "path": "packages/jules-skill",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 4,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/port-management",
+      "path": "packages/port-management",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 7,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/sync-core",
+      "path": "packages/sync-core",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 5,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/web-scraping",
+      "path": "packages/web-scraping",
+      "externalRuntimeImports": 1,
+      "externalLiteralRefs": 4,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "active",
+      "reason": "External runtime imports detected."
+    },
+    {
+      "name": "@the-new-fuse/proto-definitions",
+      "path": "packages/proto-definitions",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 3,
+      "incomingInternalDependents": 1,
+      "incomingDependentPackages": [
+        "@the-new-fuse/core-vector-db"
+      ],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "No runtime imports, but internal dependents indicate intended use."
+    },
+    {
+      "name": "@the-new-fuse/agent-coordination",
+      "path": "packages/agent-coordination",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/api",
+      "path": "packages/api",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 42,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/api-optimization",
+      "path": "packages/api-optimization",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/auth",
+      "path": "packages/auth",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 4,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/backend",
+      "path": "packages/backend",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 2,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/claude-skills",
+      "path": "packages/claude-skills",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 2,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/client",
+      "path": "packages/client",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/common",
+      "path": "packages/common",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/contracts",
+      "path": "packages/contracts",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/data",
+      "path": "packages/data",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 283,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/deployment-core",
+      "path": "packages/deployment-core",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/extension-core",
+      "path": "packages/extension-core",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/feature-suggestions",
+      "path": "packages/feature-suggestions",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 6,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/features",
+      "path": "packages/features",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 3,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/gemini-browser-skill",
+      "path": "packages/gemini-browser-skill",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/google-sheets-mcp-server",
+      "path": "packages/google-sheets-mcp-server",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/integration-tests",
+      "path": "packages/integration-tests",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/integrations",
+      "path": "packages/integrations",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/jules-integration",
+      "path": "packages/jules-integration",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 2,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/layout",
+      "path": "packages/layout",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/mcp-cloud-redis-bridge",
+      "path": "packages/mcp-cloud-redis-bridge",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/mcp-concordance-server",
+      "path": "packages/mcp-concordance-server",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/mcp-skills-server",
+      "path": "packages/mcp-skills-server",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/monitoring",
+      "path": "packages/monitoring",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/protocol-contracts",
+      "path": "packages/protocol-contracts",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/resource-registry",
+      "path": "packages/resource-registry",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/shared",
+      "path": "packages/shared",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 5,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/test-utils",
+      "path": "packages/test-utils",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 2,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/testing",
+      "path": "packages/testing",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@the-new-fuse/websocket-infrastructure",
+      "path": "packages/websocket-infrastructure",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@tnf/a2a-protocol",
+      "path": "packages/a2a-protocol",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    },
+    {
+      "name": "@tnf/build-optimization",
+      "path": "packages/build-optimization",
+      "externalRuntimeImports": 0,
+      "externalLiteralRefs": 1,
+      "incomingInternalDependents": 0,
+      "incomingDependentPackages": [],
+      "hasBuildScript": true,
+      "hasTestScript": true,
+      "lifecycleState": "latent",
+      "reason": "Referenced externally, but not wired through runtime imports."
+    }
+  ]
+}

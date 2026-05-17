@@ -3,70 +3,34 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import sys
 import time
 import uuid
-from typing import Any, AsyncGenerator, Dict, List, Literal, Optional
+from pathlib import Path
+from typing import Any, AsyncGenerator, Dict, List, Optional
 
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, Field
+
+CONTRACTS_PY_ROOT = (
+    Path(__file__).resolve().parents[2]
+    / "packages"
+    / "protocol-contracts"
+    / "generated"
+    / "python"
+)
+
+if str(CONTRACTS_PY_ROOT) not in sys.path:
+    sys.path.insert(0, str(CONTRACTS_PY_ROOT))
+
+from tnf_contracts.adk_execute_request import ExecuteRequest
+from tnf_contracts.adk_execute_response import ExecuteResponse
 
 APP_VERSION = "0.1.0"
 DEFAULT_MODEL = os.getenv("ADK_DEFAULT_MODEL", "gemini-2.5-pro")
 STUB_MODE = os.getenv("ADK_GATEWAY_STUB_MODE", "true").lower() != "false"
 REQUIRED_GATEWAY_KEY = os.getenv("ADK_GATEWAY_API_KEY", "").strip()
 ADK_REQUEST_TIMEOUT_MS = int(os.getenv("ADK_REQUEST_TIMEOUT_MS", "120000"))
-
-
-class Message(BaseModel):
-    role: Literal["system", "user", "assistant"]
-    content: str
-
-
-class ExecuteInput(BaseModel):
-    messages: List[Message] = Field(default_factory=list)
-
-
-class ExecuteMetadata(BaseModel):
-    source: Optional[str] = None
-    policyProfile: Optional[str] = None
-    provider: Dict[str, Any] = Field(default_factory=dict)
-
-
-class ExecuteRequest(BaseModel):
-    requestId: str
-    traceId: str
-    workspaceId: str
-    agentId: str
-    model: str = DEFAULT_MODEL
-    input: ExecuteInput
-    tools: List[Dict[str, Any]] = Field(default_factory=list)
-    metadata: ExecuteMetadata = Field(default_factory=ExecuteMetadata)
-    timeoutMs: int = 120000
-
-
-class Usage(BaseModel):
-    inputTokens: int
-    outputTokens: int
-    totalTokens: int
-
-
-class ExecuteOutput(BaseModel):
-    content: str
-    parts: List[Dict[str, Any]] = Field(default_factory=list)
-
-
-class ExecuteResponse(BaseModel):
-    requestId: str
-    traceId: str
-    status: Literal["ok", "error"]
-    output: ExecuteOutput
-    usage: Usage
-    toolCalls: List[Dict[str, Any]] = Field(default_factory=list)
-    latencyMs: int
-    provider: str
-    model: str
-    metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
 app = FastAPI(
@@ -115,7 +79,7 @@ def _estimate_tokens(text: str) -> int:
     return max(1, len(text) // 4) if text else 1
 
 
-def _last_user_message(messages: List[Message]) -> str:
+def _last_user_message(messages: List[Any]) -> str:
     for message in reversed(messages):
         if message.role == "user":
             return message.content
@@ -140,12 +104,12 @@ def _stub_execute(req: ExecuteRequest) -> ExecuteResponse:
         requestId=req.requestId or str(uuid.uuid4()),
         traceId=req.traceId or str(uuid.uuid4()),
         status="ok",
-        output=ExecuteOutput(content=content, parts=[]),
-        usage=Usage(
-            inputTokens=input_tokens,
-            outputTokens=output_tokens,
-            totalTokens=input_tokens + output_tokens,
-        ),
+        output={"content": content, "parts": []},
+        usage={
+            "inputTokens": input_tokens,
+            "outputTokens": output_tokens,
+            "totalTokens": input_tokens + output_tokens,
+        },
         toolCalls=[],
         latencyMs=elapsed_ms,
         provider="google-adk",
@@ -158,12 +122,12 @@ def _stub_execute(req: ExecuteRequest) -> ExecuteResponse:
     )
 
 
-def _extract_system_instruction(messages: List[Message]) -> str:
+def _extract_system_instruction(messages: List[Any]) -> str:
     system_lines = [message.content for message in messages if message.role == "system" and message.content]
     return "\n".join(system_lines).strip()
 
 
-def _build_user_prompt(messages: List[Message]) -> str:
+def _build_user_prompt(messages: List[Any]) -> str:
     conversational_messages = [message for message in messages if message.role != "system"]
     if not conversational_messages:
         return ""
@@ -221,25 +185,25 @@ def _derive_delta(previous: str, current: str) -> str:
     return current
 
 
-def _usage_from_event(event: Any, input_text: str, output_text: str) -> Usage:
+def _usage_from_event(event: Any, input_text: str, output_text: str) -> Dict[str, int]:
     usage_metadata = getattr(event, "usage_metadata", None)
     if usage_metadata is None:
         input_tokens = _estimate_tokens(input_text)
         output_tokens = _estimate_tokens(output_text)
-        return Usage(
-            inputTokens=input_tokens,
-            outputTokens=output_tokens,
-            totalTokens=input_tokens + output_tokens,
-        )
+        return {
+            "inputTokens": input_tokens,
+            "outputTokens": output_tokens,
+            "totalTokens": input_tokens + output_tokens,
+        }
 
     input_tokens = int(getattr(usage_metadata, "prompt_token_count", 0) or 0)
     output_tokens = int(getattr(usage_metadata, "candidates_token_count", 0) or 0)
     total_tokens = int(getattr(usage_metadata, "total_token_count", input_tokens + output_tokens) or 0)
-    return Usage(
-        inputTokens=max(input_tokens, 0),
-        outputTokens=max(output_tokens, 0),
-        totalTokens=max(total_tokens, 0),
-    )
+    return {
+        "inputTokens": max(input_tokens, 0),
+        "outputTokens": max(output_tokens, 0),
+        "totalTokens": max(total_tokens, 0),
+    }
 
 
 def _load_adk_runtime() -> Dict[str, Any]:
@@ -297,11 +261,11 @@ async def _run_adk(req: ExecuteRequest) -> ExecuteResponse:
     start = time.perf_counter()
     merged_text = ""
     final_text = ""
-    final_usage = Usage(
-        inputTokens=_estimate_tokens(input_text),
-        outputTokens=0,
-        totalTokens=_estimate_tokens(input_text),
-    )
+    final_usage = {
+        "inputTokens": _estimate_tokens(input_text),
+        "outputTokens": 0,
+        "totalTokens": _estimate_tokens(input_text),
+    }
     model_version = req.model or DEFAULT_MODEL
 
     async def consume_events() -> None:
@@ -319,7 +283,7 @@ async def _run_adk(req: ExecuteRequest) -> ExecuteResponse:
                     final_text = current_text
 
             event_usage = _usage_from_event(event, input_text, merged_text or final_text)
-            if event_usage.totalTokens > 0:
+            if event_usage["totalTokens"] > 0:
                 final_usage = event_usage
 
             event_model = getattr(event, "model_version", None)
@@ -347,7 +311,7 @@ async def _run_adk(req: ExecuteRequest) -> ExecuteResponse:
         requestId=req.requestId or str(uuid.uuid4()),
         traceId=req.traceId or str(uuid.uuid4()),
         status="ok",
-        output=ExecuteOutput(content=output_text, parts=[]),
+        output={"content": output_text, "parts": []},
         usage=final_usage,
         toolCalls=[],
         latencyMs=elapsed_ms,
@@ -393,11 +357,11 @@ async def _run_adk_stream(req: ExecuteRequest) -> AsyncGenerator[str, None]:
     )
 
     aggregated_text = ""
-    final_usage = Usage(
-        inputTokens=_estimate_tokens(input_text),
-        outputTokens=0,
-        totalTokens=_estimate_tokens(input_text),
-    )
+    final_usage = {
+        "inputTokens": _estimate_tokens(input_text),
+        "outputTokens": 0,
+        "totalTokens": _estimate_tokens(input_text),
+    }
     model_version = req.model or DEFAULT_MODEL
     stream_error: Optional[str] = None
 
@@ -422,7 +386,7 @@ async def _run_adk_stream(req: ExecuteRequest) -> AsyncGenerator[str, None]:
                     ) + "\n"
 
             event_usage = _usage_from_event(event, input_text, aggregated_text)
-            if event_usage.totalTokens > 0:
+            if event_usage["totalTokens"] > 0:
                 final_usage = event_usage
 
             event_model = getattr(event, "model_version", None)
@@ -450,7 +414,7 @@ async def _run_adk_stream(req: ExecuteRequest) -> AsyncGenerator[str, None]:
             "event": "done",
             "requestId": req.requestId,
             "traceId": req.traceId,
-            "usage": final_usage.model_dump(),
+            "usage": final_usage,
             "model": model_version,
             "provider": "google-adk",
             "status": "error" if stream_error else "ok",
@@ -509,7 +473,8 @@ async def execute_stream(
         return StreamingResponse(_run_adk_stream(req), media_type="application/x-ndjson")
 
     execute_response = _stub_execute(req)
-    text = execute_response.output.content
+    output_obj = execute_response.output
+    text = output_obj.content if hasattr(output_obj, "content") else output_obj.get("content", "")
     chunks = [text[i : i + 120] for i in range(0, len(text), 120)] or [""]
 
     async def generator():
@@ -527,7 +492,9 @@ async def execute_stream(
             "event": "done",
             "requestId": execute_response.requestId,
             "traceId": execute_response.traceId,
-            "usage": execute_response.usage.model_dump(),
+            "usage": execute_response.usage.model_dump()
+            if hasattr(execute_response.usage, "model_dump")
+            else execute_response.usage,
             "model": execute_response.model,
             "provider": execute_response.provider,
         }

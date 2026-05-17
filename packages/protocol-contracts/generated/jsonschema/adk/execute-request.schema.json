@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/adk/0.1/execute-request.schema.json",
+  "title": "ExecuteRequest",
+  "additionalProperties": false,
+  "properties": {
+    "agentId": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "input": {
+      "additionalProperties": false,
+      "properties": {
+        "messages": {
+          "default": [],
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "content": {
+                "type": "string"
+              },
+              "role": {
+                "enum": [
+                  "system",
+                  "user",
+                  "assistant"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "role",
+              "content"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "metadata": {
+      "additionalProperties": false,
+      "default": {
+        "provider": {}
+      },
+      "properties": {
+        "policyProfile": {
+          "type": "string"
+        },
+        "provider": {
+          "additionalProperties": {},
+          "default": {},
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "source": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "model": {
+      "default": "gemini-2.5-pro",
+      "minLength": 1,
+      "type": "string"
+    },
+    "requestId": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "timeoutMs": {
+      "default": 120000,
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "tools": {
+      "default": [],
+      "items": {
+        "additionalProperties": {},
+        "propertyNames": {
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "traceId": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "workspaceId": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "requestId",
+    "traceId",
+    "workspaceId",
+    "agentId",
+    "input"
+  ],
+  "type": "object"
+}

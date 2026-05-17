@@ -1,7 +1,8 @@
 {
   "name": "@the-new-fuse/contracts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "version": "1.0.0",
   "description": "Smart contracts for The New Fuse decentralized agent ecosystem",
@@ -17,7 +18,8 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "build": "pnpm run compile"
   },
   "keywords": [
     "blockchain",
@@ -44,5 +46,16 @@
     "hardhat-gas-reporter": "^2.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"
+  },
+  "types": "src/index.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./src/index.js",
+      "default": "./src/index.js",
+      "types": "./src/index.js"
+    },
+    "./package.json": "./package.json",
+    "./*": "./src/*"
   }
 }

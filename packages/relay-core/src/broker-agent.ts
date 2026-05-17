@@ -886,6 +886,23 @@ class BrokerAgent {
     return String(agent.id || agent.agentId || '');
   }
 
+  private getAgentHandles(agent: RegistryAgent): string[] {
+    const direct = [
+      this.getAgentId(agent),
+      agent?.name ? String(agent.name) : '',
+      (agent as any)?.operationalHandle ? String((agent as any).operationalHandle) : '',
+      (agent as any)?.runtimeSessionId ? String((agent as any).runtimeSessionId) : '',
+    ]
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    const aliases = Array.isArray((agent as any)?.aliases)
+      ? (agent as any).aliases.map((alias: unknown) => String(alias || '').trim()).filter(Boolean)
+      : [];
+
+    return Array.from(new Set([...direct, ...aliases]));
+  }
+
   private getCapabilityList(agent: RegistryAgent): string[] {
     if (!Array.isArray(agent.capabilities)) return [];
     return agent.capabilities.map((cap) => String(cap).toLowerCase());
@@ -916,7 +933,10 @@ class BrokerAgent {
 
     const requestedAssignee = String(task.assignee || '').trim();
     if (requestedAssignee) {
-      const exact = agents.find((agent) => this.getAgentId(agent) === requestedAssignee);
+      const normalized = requestedAssignee.toLowerCase();
+      const exact = agents.find((agent) =>
+        this.getAgentHandles(agent).some((handle) => handle.toLowerCase() === normalized)
+      );
       if (exact) return this.getAgentId(exact);
     }
 

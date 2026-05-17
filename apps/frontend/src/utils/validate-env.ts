@@ -88,6 +88,20 @@ const ENV_VARS: EnvVarConfig[] = [
     validator: (val) => ['true', 'false'].includes(val.toLowerCase()),
     description: 'Enable hot module reload',
   },
+  {
+    name: 'VITE_ENABLE_FAIRTABLE',
+    required: false,
+    defaultValue: 'true',
+    validator: (val) => ['true', 'false'].includes(val.toLowerCase()),
+    description: 'Enable fairtable routes',
+  },
+  {
+    name: 'VITE_ENABLE_FAIRTABLE_COMPONENTS',
+    required: false,
+    defaultValue: 'true',
+    validator: (val) => ['true', 'false'].includes(val.toLowerCase()),
+    description: 'Enable fairtable component preview integration',
+  },
 
   // Security
   {

@@ -8,7 +8,8 @@
 #   1. Redis server
 #   2. Redis WebSocket Bridge (for browser/extension connections)
 #   3. Antigravity Orchestrator
-#   4. Optional: Claude, Gemini, Jules wrappers
+#   4. Optional: Claude, Gemini, Jules, Pi wrappers
+#   5. Optional: Model watchdog failover consumer
 #
 # Usage:
 #   ./start-agent-network.sh           # Start core components
@@ -56,10 +57,12 @@ print_help() {
     echo "Usage: $0 [options]"
     echo ""
     echo "Options:"
-    echo "  --all        Start all agent wrappers (Claude, Gemini, Jules)"
+    echo "  --all        Start all agent wrappers (Claude, Gemini, Jules, Pi, Watchdog)"
     echo "  --claude     Also start Claude wrapper"
     echo "  --gemini     Also start Gemini wrapper"
     echo "  --jules      Also start Jules wrapper"
+    echo "  --pi         Also start Pi wrapper"
+    echo "  --watchdog   Also start model-watchdog failover consumer"
     echo "  --stop       Stop all running components"
     echo "  --status     Show status of all components"
     echo "  --help       Show this help message"
@@ -177,6 +180,8 @@ stop_all() {
     pkill -f "claude-redis-wrapper.cjs" 2>/dev/null || true
     pkill -f "gemini-redis-wrapper.cjs" 2>/dev/null || true
     pkill -f "jules-redis-wrapper.cjs" 2>/dev/null || true
+    pkill -f "pi-redis-wrapper.cjs" 2>/dev/null || true
+    pkill -f "model-watchdog-failover-consumer.cjs" 2>/dev/null || true
 
     echo -e "${GREEN}All components stopped${NC}"
 }
@@ -227,6 +232,20 @@ show_status() {
         echo -e "  ${YELLOW}○${NC} Jules          - Not running"
     fi
 
+    # Pi
+    if pgrep -f "pi-redis-wrapper" > /dev/null; then
+        echo -e "  ${GREEN}●${NC} Pi             - Running"
+    else
+        echo -e "  ${YELLOW}○${NC} Pi             - Not running"
+    fi
+
+    # Model Watchdog
+    if pgrep -f "model-watchdog-failover-consumer" > /dev/null; then
+        echo -e "  ${GREEN}●${NC} Model Watchdog - Running"
+    else
+        echo -e "  ${YELLOW}○${NC} Model Watchdog - Not running"
+    fi
+
     echo ""
     echo -e "${CYAN}Endpoints:${NC}"
     echo "  WS Bridge:    ws://localhost:$WS_BRIDGE_PORT/redis-bridge"
@@ -242,12 +261,17 @@ show_status() {
 START_CLAUDE=false
 START_GEMINI=false
 START_JULES=false
+START_PI=false
+START_WATCHDOG=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --all)
+            START_CLAUDE=true
             START_GEMINI=true
             START_JULES=true
+            START_PI=true
+            START_WATCHDOG=true
             shift
             ;;
         --claude)
@@ -260,6 +284,14 @@ while [[ $# -gt 0 ]]; do
             ;;
         --jules)
             START_JULES=true
+            shift
+            ;;
+        --pi)
+            START_PI=true
+            shift
+            ;;
+        --watchdog)
+            START_WATCHDOG=true
             shift
             ;;
         --stop)
@@ -305,6 +337,14 @@ fi
 
 if [ "$START_JULES" = true ]; then
     start_agent_wrapper "Jules" "jules-redis-wrapper.cjs"
+fi
+
+if [ "$START_PI" = true ]; then
+    start_agent_wrapper "Pi" "pi-redis-wrapper.cjs"
+fi
+
+if [ "$START_WATCHDOG" = true ]; then
+    start_agent_wrapper "ModelWatchdog" "model-watchdog-failover-consumer.cjs"
 fi
 
 echo ""

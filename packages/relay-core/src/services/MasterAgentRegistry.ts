@@ -239,6 +239,58 @@ export interface SpreadsheetIntegration {
   errorMessage?: string;
 }
 
+interface FairtableMigrationWarning {
+  component: string;
+  message: string;
+  migrationPath: string;
+  severity: 'info' | 'warning' | 'error';
+}
+
+interface LegacyKanbanItem {
+  id: string;
+  title: string;
+  description: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  [key: string]: any;
+}
+
+interface LegacyKanbanColumn {
+  id: string;
+  title: string;
+  items: LegacyKanbanItem[];
+}
+
+interface LegacyKanbanData {
+  columns: LegacyKanbanColumn[];
+}
+
+interface FairtableConversionResult {
+  table: {
+    id: string;
+    rows: Array<{ id: string }>;
+  };
+  view: {
+    id: string;
+  };
+  warnings: FairtableMigrationWarning[];
+}
+
+interface FairtableAdaptersRuntime {
+  ADAPTER_VERSION?: string;
+  addMigrationWarning?: (warning: FairtableMigrationWarning) => void;
+  clearMigrationWarnings?: () => void;
+  convertLegacyKanbanToAirtable?: (
+    legacyData: LegacyKanbanData,
+    tableId?: string,
+    tableName?: string
+  ) => FairtableConversionResult;
+  generateMigrationReport?: () => {
+    totalWarnings: number;
+    warningsBySeverity: Record<string, number>;
+  };
+  validateDataCompatibility?: (data: unknown) => FairtableMigrationWarning[];
+}
+
 export class MasterAgentRegistry extends EventEmitter {
   private logger: Logger;
   private drizzle: any;
@@ -260,6 +312,8 @@ export class MasterAgentRegistry extends EventEmitter {
     lastSync: new Date(),
     syncStatus: 'pending',
   };
+  private fairtableAdapters: FairtableAdaptersRuntime | null = null;
+  private spreadsheetRowMap: Map<string, string> = new Map();
 
   // Blockchain integration (using shared service)
   private blockchainService: BlockchainService | null = null;
@@ -889,7 +943,16 @@ export class MasterAgentRegistry extends EventEmitter {
    */
   private async initializeSpreadsheetIntegration(): Promise<void> {
     try {
-      // Check if fairtable adapters are available
+      const adapters = this.loadFairtableAdapters();
+      if (!adapters) {
+        this.spreadsheetIntegration.enabled = false;
+        this.spreadsheetIntegration.syncStatus = 'failed';
+        this.spreadsheetIntegration.errorMessage =
+          'fairtable adapters package is not available in this runtime';
+        this.logger.warn('📊 Fairtable integration unavailable: adapter package could not be loaded');
+        return;
+      }
+
       this.spreadsheetIntegration.enabled = true;
       this.logger.info('📊 Fairtable/Spreadsheet integration initialized');
 
@@ -907,27 +970,12 @@ export class MasterAgentRegistry extends EventEmitter {
     if (!this.spreadsheetIntegration.enabled) return undefined;
 
     try {
-      // This would integrate with the existing fairtable-adapters package
-      // const spreadsheetRow = {
-      //   'Agent ID': agent.id,
-      //   'Name': agent.name,
-      //   'Type': agent.type,
-      //   'Status': agent.status,
-      //   'Platform': agent.platform,
-      //   'Capabilities': Object.entries(agent.capabilities)
-      //     .filter(([_, enabled]) => enabled)
-      //     .map(([cap, _]) => cap)
-      //     .join(', '),
-      //   'Success Rate': `${agent.metrics.successRate}%`,
-      //   'Total Tasks': agent.metrics.totalTasks,
-      //   'Last Seen': agent.lastSeen.toISOString(),
-      //   'Onboarding Complete': agent.onboardingCompleted ? 'Yes' : 'No',
-      //   'Protocol Compliant': agent.protocolChecklistCompleted ? 'Yes' : 'No',
-      //   'Verification Hash': agent.verificationHash.substring(0, 12) + '...'
-      // };
-
-      // Mock integration - in real implementation would use fairtable-adapters
-      const rowId = `row_${agent.id}`;
+      await this.rebuildSpreadsheetSnapshot();
+      const rowId = this.spreadsheetRowMap.get(agent.id);
+      if (!rowId) {
+        this.logger.warn(`📊 Agent ${agent.id} is missing from fairtable snapshot after rebuild`);
+        return undefined;
+      }
       this.logger.debug(`📊 Synced agent ${agent.id} to spreadsheet row ${rowId}`);
 
       return rowId;
@@ -943,12 +991,13 @@ export class MasterAgentRegistry extends EventEmitter {
     if (!this.spreadsheetIntegration.enabled) return;
 
     try {
-      for (const agent of this.agentProfiles.values()) {
-        await this.syncAgentToSpreadsheet(agent);
-      }
+      await this.rebuildSpreadsheetSnapshot();
       this.spreadsheetIntegration.lastSync = new Date();
       this.spreadsheetIntegration.syncStatus = 'success';
-      this.logger.info('📊 All agents synced to spreadsheet');
+      this.spreadsheetIntegration.errorMessage = undefined;
+      this.logger.info(
+        `📊 All agents synced to spreadsheet (table=${this.spreadsheetIntegration.tableId || 'n/a'}, rows=${this.spreadsheetRowMap.size})`
+      );
     } catch (error) {
       this.spreadsheetIntegration.syncStatus = 'failed';
       this.spreadsheetIntegration.errorMessage =
@@ -956,6 +1005,132 @@ export class MasterAgentRegistry extends EventEmitter {
       this.logger.error(
         `📊 Failed to sync agents to spreadsheet: ${error instanceof Error ? error.message : String(error)}`
       );
+    }
+  }
+
+  private loadFairtableAdapters(): FairtableAdaptersRuntime | null {
+    if (this.fairtableAdapters) return this.fairtableAdapters;
+
+    try {
+      // Use runtime loading so relay-core still boots even when adapter artifacts
+      // are not present in minimal environments.
+      const module = require('@the-new-fuse/fairtable-adapters') as FairtableAdaptersRuntime;
+      if (!module?.convertLegacyKanbanToAirtable || !module?.validateDataCompatibility) {
+        this.logger.warn(
+          '📊 Fairtable adapters loaded but required conversion utilities are missing'
+        );
+        return null;
+      }
+
+      this.fairtableAdapters = module;
+      this.logger.info(
+        `📊 Fairtable adapters loaded${module.ADAPTER_VERSION ? ` (v${module.ADAPTER_VERSION})` : ''}`
+      );
+      return this.fairtableAdapters;
+    } catch (error) {
+      this.logger.warn(
+        `📊 Unable to load fairtable adapters: ${error instanceof Error ? error.message : String(error)}`
+      );
+      return null;
+    }
+  }
+
+  private buildLegacySpreadsheetData(): LegacyKanbanData {
+    const columnsByStatus = new Map<string, LegacyKanbanColumn>();
+
+    for (const profile of this.agentProfiles.values()) {
+      const statusKey = profile.status?.toUpperCase() || 'UNKNOWN';
+      if (!columnsByStatus.has(statusKey)) {
+        columnsByStatus.set(statusKey, {
+          id: `status_${statusKey.toLowerCase()}`,
+          title: statusKey,
+          items: [],
+        });
+      }
+
+      const enabledCapabilities = Object.entries(profile.capabilities)
+        .filter(([, enabled]) => enabled)
+        .map(([capability]) => capability)
+        .join(', ');
+
+      columnsByStatus.get(statusKey)?.items.push({
+        id: profile.id,
+        title: profile.name,
+        description: profile.description || `${profile.type} agent`,
+        priority: this.toLegacyPriority(profile),
+        type: profile.type,
+        status: profile.status,
+        platform: profile.platform,
+        successRate: profile.metrics.successRate,
+        totalTasks: profile.metrics.totalTasks,
+        completedTasks: profile.metrics.completedTasks,
+        failedTasks: profile.metrics.failedTasks,
+        reliability: profile.metrics.reliability,
+        capabilities: enabledCapabilities,
+        onboardingCompleted: profile.onboardingCompleted ? 'Yes' : 'No',
+        protocolChecklistCompleted: profile.protocolChecklistCompleted ? 'Yes' : 'No',
+        lastSeen: profile.lastSeen.toISOString(),
+        verificationHash: profile.verificationHash,
+      });
+    }
+
+    const columns = Array.from(columnsByStatus.values());
+    if (columns.length === 0) {
+      columns.push({
+        id: 'status_empty',
+        title: 'EMPTY',
+        items: [],
+      });
+    }
+
+    return { columns };
+  }
+
+  private toLegacyPriority(profile: MasterAgentProfile): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+    if (profile.status === 'ERROR' || profile.metrics.failedTasks > profile.metrics.completedTasks) {
+      return 'CRITICAL';
+    }
+    if (profile.status === 'BUSY' || profile.metrics.successRate < 70) {
+      return 'HIGH';
+    }
+    if (profile.status === 'INACTIVE' || profile.metrics.successRate < 90) {
+      return 'MEDIUM';
+    }
+    return 'LOW';
+  }
+
+  private async rebuildSpreadsheetSnapshot(): Promise<void> {
+    const adapters = this.loadFairtableAdapters();
+    if (!adapters?.convertLegacyKanbanToAirtable || !adapters?.validateDataCompatibility) {
+      throw new Error('Fairtable adapters are unavailable');
+    }
+
+    const legacyData = this.buildLegacySpreadsheetData();
+    const compatibilityWarnings = adapters.validateDataCompatibility(legacyData);
+    adapters.clearMigrationWarnings?.();
+
+    for (const warning of compatibilityWarnings) {
+      adapters.addMigrationWarning?.(warning);
+    }
+
+    const conversion = adapters.convertLegacyKanbanToAirtable(
+      legacyData,
+      'tnf_master_agent_registry',
+      'TNF Master Agent Registry'
+    );
+
+    this.spreadsheetIntegration.tableId = conversion.table.id;
+    this.spreadsheetIntegration.viewId = conversion.view.id;
+
+    this.spreadsheetRowMap.clear();
+    for (const row of conversion.table.rows) {
+      this.spreadsheetRowMap.set(row.id, row.id);
+    }
+
+    const migrationReport = adapters.generateMigrationReport?.();
+    const warningCount = (conversion.warnings?.length || 0) + (migrationReport?.totalWarnings || 0);
+    if (warningCount > 0) {
+      this.logger.warn(`📊 Fairtable snapshot generated with ${warningCount} migration warning(s)`);
     }
   }
 

@@ -15,7 +15,13 @@
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "test": "jest --passWithNoTests"
   },
-  "keywords": ["mcp", "concordance", "vocabulary", "agent", "ai"],
+  "keywords": [
+    "mcp",
+    "concordance",
+    "vocabulary",
+    "agent",
+    "ai"
+  ],
   "author": "The New Fuse",
   "license": "MIT",
   "dependencies": {
@@ -25,5 +31,15 @@
     "@types/node": "^24.8.1",
     "tsx": "^4.19.2",
     "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
   }
 }

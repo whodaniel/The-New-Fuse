@@ -1,26 +1,25 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
-import asyncio
-import os
+from fastapi import FastAPI
+from typing import Any
+import sys
 import re
+from pathlib import Path
 from crawl4ai import AsyncWebCrawler
 
+CONTRACTS_PY_ROOT = (
+    Path(__file__).resolve().parents[3]
+    / "packages"
+    / "protocol-contracts"
+    / "generated"
+    / "python"
+)
+
+if str(CONTRACTS_PY_ROOT) not in sys.path:
+    sys.path.insert(0, str(CONTRACTS_PY_ROOT))
+
+from tnf_contracts.scrape_request import ScrapeRequest
+from tnf_contracts.scrape_response import ScrapeResponse
+
 app = FastAPI(title="TNF Crawl4AI Engine")
-
-class ScrapeRequest(BaseModel):
-    url: str
-    max_chars: Optional[int] = 2000
-    timeout_ms: Optional[int] = 25000
-    main_content_only: Optional[bool] = True
-
-class ScrapeResponse(BaseModel):
-    success: bool
-    url: str
-    title: Optional[str] = None
-    text: Optional[str] = None
-    markdown: Optional[str] = None
-    error: Optional[str] = None
 
 def _clean_text(value: Any, max_chars: int) -> str:
     text = str(value or "")
@@ -32,10 +31,12 @@ def _clean_text(value: Any, max_chars: int) -> str:
 @app.post("/scrape", response_model=ScrapeResponse)
 async def scrape(request: ScrapeRequest):
     try:
+        timeout_ms = request.timeout_ms or 25000
+        max_chars = request.max_chars or 2000
         async with AsyncWebCrawler() as crawler:
             result = await crawler.arun(
                 url=request.url, 
-                timeout=request.timeout_ms
+                timeout=timeout_ms
             )
             
             # Prefer fit_markdown or cleaned_markdown for AI readability
@@ -53,7 +54,7 @@ async def scrape(request: ScrapeRequest):
                 success=True,
                 url=request.url,
                 title=getattr(result, "metadata", {}).get("title", ""),
-                text=_clean_text(markdown, request.max_chars),
+                text=_clean_text(markdown, max_chars),
                 markdown=markdown
             )
     except Exception as e:

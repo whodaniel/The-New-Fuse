@@ -6,6 +6,7 @@
     "strictFunctionTypes": false,
     "module": "CommonJS",
     "moduleResolution": "Node",
+    "ignoreDeprecations": "5.0",
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,

@@ -12,6 +12,11 @@ describe('Fairtable route registration', () => {
     );
   });
 
+  it('gates fairtable routes behind the feature flag helper', () => {
+    expect(routerSource).toContain('isFairtableFeatureEnabled');
+    expect(routerSource).toContain('fairtableFeatureEnabled ?');
+  });
+
   it('registers /fairtable route behind RequireAuth', () => {
     expect(routerSource).toMatch(
       /path="\/fairtable"[\s\S]*?<RequireAuth>[\s\S]*?<FairtableDashboard \/>[\s\S]*?<\/RequireAuth>/m

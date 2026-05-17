@@ -168,8 +168,7 @@ function main() {
       'packages/api-client/src/services',
       'packages/hooks/src',
       'packages/db/src/services',
-      'packages/api/src',
-      'packages/monitoring/src'
+      'packages/api/src'
     ];
     
     let totalFiles = 0;

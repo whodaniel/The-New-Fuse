@@ -8,9 +8,6 @@ required_dirs=(
     "packages/agent"
     "packages/db"
     "packages/features"
-    "packages/integrations"
-    "packages/layout"
-    "packages/monitoring"
     "packages/security"
     "packages/shared"
 )

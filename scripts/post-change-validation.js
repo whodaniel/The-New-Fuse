@@ -127,7 +127,7 @@ class PostChangeValidator {
   async runTestsAndCompare() {
     try {
       this.log('Running test suite...');
-      const testResult = execSync('pnpm test --passWithNoTests', { encoding: 'utf8' });
+      const testResult = execSync('pnpm test -- --passWithNoTests', { encoding: 'utf8' });
       this.results.passed++;
       this.log('All tests passed');
       

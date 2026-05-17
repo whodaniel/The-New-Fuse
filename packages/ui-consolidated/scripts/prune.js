@@ -45,11 +45,9 @@ const componentsToPrune = [
   'packages/core/components/layout/Split.tsx',
   'packages/ui-components/src/layout/Split.tsx',
   'apps/frontend/src/components/layout/Split.tsx',
-  'packages/layout/Layout.tsx',
   'packages/ui-components/src/layout/BaseLayout/index.tsx',
   'packages/ui-components/src/consolidated/Layout.tsx',
   'apps/frontend/src/components/layout/Layout.tsx',
-  'packages/layout/Sidebar.tsx',
   'packages/ui-components/src/layout/Sidebar.tsx',
   'apps/frontend/src/components/layout/Sidebar.tsx',
 

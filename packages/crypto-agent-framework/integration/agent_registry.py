@@ -10,15 +10,25 @@ from pathlib import Path
 from typing import Dict, Any, List
 
 # Add paths for imports
-pydantic_path = Path(__file__).parent.parent.parent / "extension-system" / "src" / "agents" / "pydantic" / "7.0_crypto_operations_division"
-sys.path.insert(0, str(pydantic_path))
+sys.path.insert(
+    0,
+    str(
+        Path(__file__).resolve().parents[3]
+        / "packages"
+        / "protocol-contracts"
+        / "generated"
+        / "python"
+    ),
+)
 
 # Import metadata from Pydantic agents
 try:
-    from enso_defi_agent import EnsoDeFiAgentMetadata
-    from render_network_agent import RenderNetworkAgentMetadata
-    from akash_compute_agent import AkashComputeAgentMetadata
-    from arweave_memory_agent import ArweaveMemoryAgentMetadata
+    from tnf_contracts.crypto_operations import (
+        EnsoDeFiAgentMetadata,
+        RenderNetworkAgentMetadata,
+        AkashComputeAgentMetadata,
+        ArweaveMemoryAgentMetadata,
+    )
 except ImportError as e:
     print(f"Warning: Could not import agent metadata: {e}")
     print("Some functionality may be limited")

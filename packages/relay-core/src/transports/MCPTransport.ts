@@ -5,12 +5,16 @@
  * Handles communication with Model Context Protocol (MCP) clients.
  */
 
-import { Server } from '@modelcontextprotocol/sdk/server';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { EventEmitter } from 'events';
 import { RelayMessage, Transport } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
+
+// Keep MCP SDK wiring runtime-compatible under legacy moduleResolution modes.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { Server } = require('@modelcontextprotocol/sdk/server');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
 
 export interface MCPTransportConfig {
   relayId: string;
@@ -22,7 +26,7 @@ export class MCPTransport extends EventEmitter implements Transport {
   public readonly name = 'mcp';
   private config: MCPTransportConfig;
   private logger: Logger;
-  private mcpServer: Server | null = null;
+  private mcpServer: any = null;
   private messageHandlers: ((message: RelayMessage) => void)[] = [];
 
   constructor(config: MCPTransportConfig) {

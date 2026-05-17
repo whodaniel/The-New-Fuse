@@ -7,6 +7,7 @@ export * from './services/GooseCliBridgeService.js';
 export * from './services/HandoffStoreService.js';
 export * from './services/HeartbeatMonitoringService.js';
 export * from './services/MasterAgentRegistry.js';
+export * from './services/PiCliBridgeService.js';
 export * from './transports/FileTransport.js';
 export * from './transports/HTTPTransport.js';
 export * from './transports/MCPTransport.js';

@@ -354,6 +354,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile --prefer-offline
 
+      - name: Run Pi bridge smoke canary
+        run: pnpm run smoke:pi-bridge
+        env:
+          CI: true
+
+      - name: Run Pi bridge failure-injection matrix
+        run: pnpm run smoke:pi-bridge:failures
+        env:
+          CI: true
+
       - name: Setup test database
         run: |
           pnpm run db:generate

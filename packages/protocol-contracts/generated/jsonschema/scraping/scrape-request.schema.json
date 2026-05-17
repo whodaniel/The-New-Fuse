@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/scraping/0.1/scrape-request.schema.json",
+  "title": "ScrapeRequest",
+  "additionalProperties": false,
+  "properties": {
+    "main_content_only": {
+      "default": true,
+      "type": "boolean"
+    },
+    "max_chars": {
+      "default": 2000,
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "timeout_ms": {
+      "default": 25000,
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "url": {
+      "format": "uri",
+      "type": "string"
+    }
+  },
+  "required": [
+    "url"
+  ],
+  "type": "object"
+}

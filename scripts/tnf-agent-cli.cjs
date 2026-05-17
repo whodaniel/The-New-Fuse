@@ -37,6 +37,9 @@ const CONFIG = {
     orchestrator: 'tnf:orchestrator',
     broker: 'tnf:broker',
     heartbeat: 'tnf:heartbeat',
+    ingress: 'tnf:bus:ingress',
+    egressPrefix: 'tnf:bus:egress',
+    directPrefix: 'tnf:direct',
   },
   heartbeatInterval: 30000, // 30 seconds
 };
@@ -50,7 +53,7 @@ const CONFIG = {
  * @property {string} id
  * @property {string} name
  * @property {'orchestrator'|'broker'|'worker'|'participant'} role
- * @property {'antigravity'|'gemini'|'claude'|'jules'|'vscode'|'browser'} platform
+ * @property {'antigravity'|'gemini'|'claude'|'jules'|'pi'|'vscode'|'browser'} platform
  * @property {'active'|'idle'|'offline'} status
  * @property {string[]} capabilities
  * @property {string} registeredAt
@@ -103,6 +106,9 @@ class RedisAgentClient {
     this.subscriber.on('message', (channel, message) => {
       this.handleIncomingMessage(channel, message);
     });
+    this.subscriber.on('pmessage', (_pattern, channel, message) => {
+      this.handleIncomingMessage(channel, message);
+    });
 
     this.subscriber.on('error', (error) => {
       console.error('Redis subscriber error:', error.message);
@@ -119,8 +125,11 @@ class RedisAgentClient {
    * Register this agent on the network
    */
   async register(name, role, platform, capabilities = []) {
+    const preferredId = String(process.env.AGENT_ID || '').trim();
+    const resolvedId = preferredId || `agent_${name}_${Date.now()}`;
+
     this.agentInfo = {
-      id: `agent_${name}_${Date.now()}`,
+      id: resolvedId,
       name,
       role,
       platform,
@@ -128,6 +137,10 @@ class RedisAgentClient {
       capabilities: capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(platform),
       registeredAt: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
+      routing: {
+        callableWorker: String(role || '').toLowerCase() === 'worker',
+        directorPoolEligible: String(role || '').toLowerCase() === 'worker',
+      },
     };
 
     // Store in Redis
@@ -143,8 +156,10 @@ class RedisAgentClient {
       CONFIG.channels.conversations,
       CONFIG.channels.orchestrator,
       CONFIG.channels.broker,
-      `tnf:direct:*:${this.agentInfo.id}`
+      CONFIG.channels.ingress,
+      `${CONFIG.channels.egressPrefix}:${this.agentInfo.id}`
     );
+    await this.subscriber.psubscribe(`${CONFIG.channels.directPrefix}:*:${this.agentInfo.id}`);
 
     // Announce registration
     await this.broadcast({
@@ -172,6 +187,16 @@ class RedisAgentClient {
       gemini: ['code_analysis', 'research', 'implementation', 'review'],
       claude: ['reasoning', 'review', 'synthesis', 'documentation'],
       jules: ['parallel_execution', 'github_commits', 'refactoring', 'batch_processing'],
+      pi: [
+        'autonomous_code_editing',
+        'multi_provider_inference',
+        'validation_pipeline',
+        'handoff_export',
+        'model_watchdog_reporting',
+        'director_callable_worker',
+        'broker_routed_task_execution',
+        'task_execution',
+      ],
       vscode: ['code_editing', 'terminal', 'debugging', 'extensions'],
       browser: ['web_scraping', 'research', 'automation'],
     };
@@ -204,7 +229,12 @@ class RedisAgentClient {
       metadata: options.metadata,
     };
 
-    const channel = options.channel || CONFIG.channels.conversations;
+    const directAgentId = options?.to?.agentId
+      ? String(options.to.agentId).trim()
+      : '';
+    const channel = directAgentId
+      ? `${CONFIG.channels.directPrefix}:${this.agentInfo.id}:${directAgentId}`
+      : options.channel || CONFIG.channels.conversations;
     await this.publisher.publish(channel, JSON.stringify(message));
 
     console.log(
@@ -273,7 +303,9 @@ class RedisAgentClient {
    */
   handleIncomingMessage(channel, messageStr) {
     try {
-      const message = JSON.parse(messageStr);
+      const rawMessage = JSON.parse(messageStr);
+      const message = this.normalizeIncomingMessage(rawMessage);
+      if (!message) return;
 
       // Don't process our own messages
       if (message.from?.agentId === this.agentInfo?.id) {
@@ -293,6 +325,78 @@ class RedisAgentClient {
     } catch (error) {
       console.error('Error parsing message:', error.message);
     }
+  }
+
+  normalizeIncomingMessage(rawMessage) {
+    if (!rawMessage || typeof rawMessage !== 'object') {
+      return null;
+    }
+
+    const hasEnvelopeShape =
+      typeof rawMessage.id === 'string' &&
+      typeof rawMessage.type === 'string' &&
+      rawMessage.from &&
+      typeof rawMessage.from === 'object' &&
+      rawMessage.payload &&
+      typeof rawMessage.payload === 'object' &&
+      (typeof rawMessage.traceId === 'string' ||
+        rawMessage.version === '1.0' ||
+        rawMessage.type === 'task' ||
+        rawMessage.type === 'event' ||
+        rawMessage.type === 'query');
+
+    if (!hasEnvelopeShape) {
+      return rawMessage;
+    }
+
+    const payload = rawMessage.payload || {};
+    const task = payload.task && typeof payload.task === 'object' ? payload.task : null;
+    const taskContent =
+      payload.message ||
+      payload.prompt ||
+      payload.action ||
+      task?.description ||
+      task?.title ||
+      task?.content ||
+      null;
+
+    let content = '';
+    if (typeof taskContent === 'string' && taskContent.trim()) {
+      content = taskContent.trim();
+    } else {
+      content = JSON.stringify(payload);
+    }
+
+    return {
+      id: rawMessage.id || uuidv4(),
+      timestamp: rawMessage.timestamp || new Date().toISOString(),
+      from: {
+        agentId: rawMessage.from.agentId || rawMessage.from.id || 'unknown',
+        agentName:
+          rawMessage.from.agentName ||
+          rawMessage.from.operationalHandle ||
+          rawMessage.from.agentId ||
+          'unknown',
+        role: rawMessage.from.role || 'worker',
+        platform: rawMessage.from.platform || 'relay-core',
+      },
+      to: rawMessage.to,
+      type: rawMessage.type,
+      content,
+      payload,
+      conversationId:
+        rawMessage.context?.sessionId || rawMessage.context?.workflowId || rawMessage.conversationId,
+      replyTo: rawMessage.context?.parentMessageId || rawMessage.replyTo,
+      expectsResponse:
+        rawMessage.type === 'task' ||
+        rawMessage.type === 'query' ||
+        Boolean(rawMessage.expectsResponse),
+      metadata: {
+        ...(typeof rawMessage.metadata === 'object' ? rawMessage.metadata : {}),
+        payload,
+        tnfEnvelope: true,
+      },
+    };
   }
 
   /**
@@ -598,7 +702,7 @@ Commands:
   convo join <id>                     Join an existing conversation
 
 Roles: orchestrator, broker, worker, participant
-Platforms: antigravity, gemini, claude, jules, vscode, browser
+Platforms: antigravity, gemini, claude, jules, pi, vscode, browser
 
 Environment Variables:
   REDIS_HOST      Redis host (default: localhost)
@@ -614,6 +718,9 @@ Examples:
 
   # Register as Gemini worker
   node tnf-agent-cli.js register gemini worker gemini
+
+  # Register as Pi worker
+  node tnf-agent-cli.js register pi worker pi
 
   # Start a code review conversation
   node tnf-agent-cli.js convo start code-review

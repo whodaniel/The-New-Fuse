@@ -737,7 +737,7 @@ async function runFileScript(file, args) {
 }
 const cliEntryPath = (0, url_1.fileURLToPath)(import.meta.url);
 const AGENT_ROLE_TRAITS = ['orchestrator', 'broker', 'worker', 'participant'];
-const AGENT_PLATFORM_TRAITS = ['antigravity', 'gemini', 'claude', 'jules', 'vscode', 'browser'];
+const AGENT_PLATFORM_TRAITS = ['antigravity', 'gemini', 'claude', 'jules', 'pi', 'vscode', 'browser'];
 const SUPER_ADMIN_COMMAND_TRAITS = [
     'tnf relay start',
     'tnf jules loop',
@@ -1464,7 +1464,7 @@ program
     .description('Register and listen as an agent')
     .argument('[name]', 'Agent name', process.env.AGENT_NAME || 'unnamed-agent')
     .argument('[role]', 'Agent role (orchestrator, broker, worker, participant)', process.env.AGENT_ROLE || 'participant')
-    .argument('[platform]', 'Agent platform (antigravity, gemini, claude, jules, vscode, browser)', process.env.AGENT_PLATFORM || 'vscode')
+    .argument('[platform]', 'Agent platform (antigravity, gemini, claude, jules, pi, vscode, browser)', process.env.AGENT_PLATFORM || 'vscode')
     .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
     .action(async (name, role, platform, options) => {
     const client = new RedisAgentClient_js_1.RedisAgentClient();

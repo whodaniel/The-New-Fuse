@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-05-17T08:07:41.637Z",
+  "passed": 0,
+  "failed": 5,
+  "warnings": 2,
+  "errors": [
+    "TypeScript compilation failed: Command failed: pnpm run type-check\n• turbo 2.9.10\n WARNING  Unable to calculate transitive closures: Workspace 'packages/protocol-contracts' not found in lockfile.\n  x Missing tasks in project\n  `->   x Could not find task `type-check` in project\n\n",
+    "Tests failed: Command failed: pnpm test -- --passWithNoTests\n• turbo 2.9.10\n WARNING  Unable to calculate transitive closures: Workspace 'packages/protocol-contracts' not found in lockfile.\n ERROR  @the-new-fuse/contracts#test: command (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts) /Users/danielgoldberg/Library/pnpm/.tools/pnpm/10.22.0/bin/pnpm run test --passWithNoTests exited (1)\n ERROR  run failed: command  exited (1)\n",
+    "Package integrity check failed: ENOENT: no such file or directory, stat 'apps/external/gemini-cli-source/bundle/docs/CONTRIBUTING.md'",
+    "Required tool not found: bun",
+    "Environment validation failed: Command failed: bun --version\n/bin/sh: bun: command not found\n"
+  ],
+  "status": "NOT_READY"
+}

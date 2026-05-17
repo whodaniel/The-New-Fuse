@@ -23,6 +23,7 @@ __exportStar(require("./services/GooseCliBridgeService.js"), exports);
 __exportStar(require("./services/HandoffStoreService.js"), exports);
 __exportStar(require("./services/HeartbeatMonitoringService.js"), exports);
 __exportStar(require("./services/MasterAgentRegistry.js"), exports);
+__exportStar(require("./services/PiCliBridgeService.js"), exports);
 __exportStar(require("./transports/FileTransport.js"), exports);
 __exportStar(require("./transports/HTTPTransport.js"), exports);
 __exportStar(require("./transports/MCPTransport.js"), exports);

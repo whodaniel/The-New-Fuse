@@ -67,3 +67,6 @@ export * from './nestjs/health.controller.js';
 export * from './nestjs/metrics.controller.js';
 export * from './nestjs/monitoring.interceptor.js';
 export * from './nestjs/monitoring.module.js';
+
+// Legacy compatibility facades (migrated from @the-new-fuse/monitoring)
+export * from './compat/legacy-monitoring.js';

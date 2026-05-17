@@ -14,32 +14,32 @@ from pathlib import Path
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(
+    0,
+    str(
+        Path(__file__).resolve().parents[3]
+        / "packages"
+        / "protocol-contracts"
+        / "generated"
+        / "python"
+    ),
+)
 
 from services.enso_service import EnsoService
 from services.compute_service import ComputeService
 from services.memory_service import ArweaveMemoryService
 from config import Config
 
-# Import Pydantic models from extension-system
-pydantic_path = Path(__file__).parent.parent.parent / "extension-system" / "src" / "agents" / "pydantic" / "7.0_crypto_operations_division"
-sys.path.insert(0, str(pydantic_path))
-
 try:
-    from enso_defi_agent import (
+    from tnf_contracts.crypto_operations import (
         EnsoDeFiInput, TokenSwapInput, YieldStakingInput, CrossChainBridgeInput,
-        EnsoExecutionResult, YieldOptimizationReport, CrossChainBridgeResult
-    )
-    from render_network_agent import (
+        EnsoExecutionResult, YieldOptimizationReport, CrossChainBridgeResult,
         RenderJobInput, Image3DGenerationInput, ImageGenerationInput,
-        RenderJobResult, GeneratedModel3D
-    )
-    from akash_compute_agent import (
+        RenderJobResult, GeneratedModel3D,
         AkashDeploymentInput, AITrainingJobInput, InferenceServiceInput,
-        DeploymentResult, TrainingJobResult, InferenceAPIResult
-    )
-    from arweave_memory_agent import (
+        DeploymentResult, TrainingJobResult, InferenceAPIResult,
         ArweaveStorageInput, AuditLogEntry, AOStateManagementInput, MemoryQueryInput,
-        StorageResult, AuditLogResult, AOProcessState, QueryResult, DataRetrievalResult
+        StorageResult, AuditLogResult, AOProcessState, QueryResult, DataRetrievalResult,
     )
 except ImportError as e:
     print(f"Warning: Could not import Pydantic models: {e}")
