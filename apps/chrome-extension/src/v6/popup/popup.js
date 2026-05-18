@@ -116,6 +116,31 @@ class FuseConnectPopup {
     }
   }
 
+  setRelayUrlState(relayUrl, persist = false) {
+    const nextRelayUrl = String(relayUrl || '').trim();
+    if (!nextRelayUrl) return;
+
+    this.state.settings.relayUrl = nextRelayUrl;
+
+    const relayUrlInput = document.getElementById('relay-url');
+    if (relayUrlInput && relayUrlInput !== document.activeElement) {
+      relayUrlInput.value = nextRelayUrl;
+    }
+
+    if (!persist) return;
+
+    chrome.storage.local.get(['fuse_settings'], (result) => {
+      const currentSettings = result.fuse_settings || {};
+      if (String(currentSettings.relayUrl || '').trim() === nextRelayUrl) return;
+      chrome.storage.local.set({
+        fuse_settings: {
+          ...currentSettings,
+          relayUrl: nextRelayUrl,
+        },
+      });
+    });
+  }
+
   setupTabs() {
     const tabs = document.querySelectorAll('.tab');
 
@@ -1835,7 +1860,7 @@ class FuseConnectPopup {
             this.state.settings.autoMasterClock = response.autoMasterClock;
           if (typeof response.autoWakePing === 'boolean')
             this.state.settings.autoWakePing = response.autoWakePing;
-          if (response.relayUrl) this.state.settings.relayUrl = String(response.relayUrl);
+          if (response.relayUrl) this.setRelayUrlState(response.relayUrl);
         }
         resolve();
       });
@@ -1845,8 +1870,12 @@ class FuseConnectPopup {
   async loadSettings() {
     return new Promise((resolve) => {
       chrome.storage.local.get(['fuse_settings'], (result) => {
+        const runtimeRelayUrl = String(this.state.settings.relayUrl || '').trim();
         if (result.fuse_settings) {
           this.state.settings = { ...this.state.settings, ...result.fuse_settings };
+          if (runtimeRelayUrl && this.state.connectionStatus === 'connected') {
+            this.state.settings.relayUrl = runtimeRelayUrl;
+          }
 
           // Update UI
           const relayUrl = document.getElementById('relay-url');
@@ -1962,6 +1991,9 @@ class FuseConnectPopup {
     chrome.runtime.onMessage.addListener((message) => {
       switch (message.type) {
         case 'CONNECTION_STATUS':
+          if (message.node?.type === 'relay' && message.node?.url) {
+            this.setRelayUrlState(message.node.url, true);
+          }
           this.state.connectionStatus = message.status;
           this.updateUI();
           break;
