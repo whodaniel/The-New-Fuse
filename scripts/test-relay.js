@@ -1,10 +1,10 @@
 const WebSocket = require('ws');
 
 const urls = [
-  'ws://localhost:3000/ws',
+  'ws://127.0.0.1:3000/ws',
   'ws://localhost:3001/ws',
   'ws://localhost:3005/ws',
-  'ws://127.0.0.1:3000/ws'
+  'ws://127.0.0.1:3000/ws',
 ];
 
 async function test(url) {

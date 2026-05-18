@@ -25,7 +25,7 @@ export const useTimeline = () => {
 
     // Relay for live timeline updates (env override, local default)
     const relayUrl =
-      String(import.meta.env.VITE_TIMELINE_RELAY_WS_URL || '').trim() || 'ws://localhost:3000/ws';
+      String(import.meta.env.VITE_TIMELINE_RELAY_WS_URL || '').trim() || 'ws://127.0.0.1:3000/ws';
 
     if (typeof WebSocket === 'undefined') {
       console.warn('WebSocket is not available in this runtime');

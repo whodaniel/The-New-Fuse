@@ -5,7 +5,11 @@
 import { randomUUID } from 'crypto';
 import { WebSocket } from 'ws';
 
-const WS_URL = 'ws://localhost:3000/ws';
+const WS_URL =
+  process.env.RELAY_URL ||
+  process.env.TNF_RELAY_URL ||
+  process.env.RELAY_WS_URL ||
+  'ws://127.0.0.1:3000/ws';
 const CHANNEL_ID = 'channel-1770907185552';
 const AGENT_ID = 'antigravity-agent-v1';
 

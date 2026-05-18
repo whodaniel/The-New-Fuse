@@ -71,10 +71,10 @@ class BackgroundService {
   private autoWakePing: boolean = false;
   private relayUrl: string = DEFAULT_NODES.relay;
   private readonly relayFallbackUrls: string[] = [
-    'ws://localhost:3000/ws',
-    'ws://localhost:3001/ws',
-    'ws://localhost:3010/ws',
-    'ws://localhost:3100/ws',
+    'ws://127.0.0.1:3000/ws',
+    'ws://127.0.0.1:3001/ws',
+    'ws://127.0.0.1:3010/ws',
+    'ws://127.0.0.1:3100/ws',
   ];
   private lastAutonomyStartAt: number = 0;
   private lastWakePingAt: Map<string, number> = new Map();

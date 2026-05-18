@@ -23,7 +23,7 @@ export const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
 // ============================================
 
 export const DEFAULT_NODES = {
-  relay: 'ws://localhost:3000/ws',
+  relay: 'ws://127.0.0.1:3000/ws',
   apiGateway: 'http://localhost:8080',
   backend: 'http://localhost:3001',
   saas: 'http://localhost:3002',

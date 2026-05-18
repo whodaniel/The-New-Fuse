@@ -293,7 +293,7 @@ async function main() {
     // Settings persistence check (save, reopen popup, re-check)
     await popupPage.click('.tab[data-tab="settings"]', { timeout: 1200 }).catch(() => {});
     const settingsProbe = {
-      relayUrl: `ws://localhost:3000/ws?smoke=${Date.now()}`,
+      relayUrl: `ws://127.0.0.1:3000/ws?smoke=${Date.now()}`,
       autoReconnect: false,
       autoMonitor: false,
       autoMasterClock: false,

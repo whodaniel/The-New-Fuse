@@ -1805,7 +1805,7 @@ export class EnhancedFloatingPanel {
       <div class="fcp6-section-title" style="margin-top:16px;">Connection</div>
        <div style="padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
           <label style="display:block; font-size:11px; margin-bottom:4px; opacity:0.7;">Relay Server URL</label>
-          <input type="text" data-setting="relayUrl" value="ws://localhost:3000/ws" class="fcp6-input" style="width:100%; margin-bottom:8px;">
+          <input type="text" data-setting="relayUrl" value="ws://127.0.0.1:3000/ws" class="fcp6-input" style="width:100%; margin-bottom:8px;">
        </div>
 
       <div class="fcp6-section-title" style="margin-top:16px;">Event Logs</div>
@@ -2363,7 +2363,7 @@ export class EnhancedFloatingPanel {
     ) as HTMLInputElement;
 
     const settings = {
-      relayUrl: relayUrl?.value || 'ws://localhost:3000/ws',
+      relayUrl: relayUrl?.value || 'ws://127.0.0.1:3000/ws',
       autoReconnect: autoReconnect?.checked ?? true,
       opacity: parseFloat(opacity?.value || '1'),
       alwaysOnTop: alwaysOnTop?.checked ?? false,
@@ -2409,7 +2409,7 @@ export class EnhancedFloatingPanel {
     if (!confirm('Are you sure you want to reset all settings to defaults?')) return;
 
     const defaults = {
-      relayUrl: 'ws://localhost:3000/ws',
+      relayUrl: 'ws://127.0.0.1:3000/ws',
       autoReconnect: true,
       opacity: 1,
       alwaysOnTop: false,

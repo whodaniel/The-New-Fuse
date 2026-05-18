@@ -10,7 +10,7 @@
  *   PORT=3002 pnpm run relay  # Start on custom port
  *
  * Endpoints:
- *   WebSocket: ws://localhost:3000/ws
+ *   WebSocket: ws://127.0.0.1:3000/ws
  *   Health:    http://localhost:3000/health
  *   Agents:    http://localhost:3000/agents
  *   Channels:  http://localhost:3000/channels
@@ -1787,7 +1787,12 @@ export class TNFRelayServer extends EventEmitter {
       }
 
       // Agent is not approved - they are in the "waiting area"
-      if (!this.approvedBridgeAgents.has(agentId) && agent && socket && !this.pendingBridgeAgents.has(agentId)) {
+      if (
+        !this.approvedBridgeAgents.has(agentId) &&
+        agent &&
+        socket &&
+        !this.pendingBridgeAgents.has(agentId)
+      ) {
         this.pendingBridgeAgents.set(agentId, { agent, socket, requestedAt: Date.now() });
         console.log(
           '[Relay] Agent ' + agentId + ' (' + agent.name + ') is waiting at the bridge gate'
@@ -2308,8 +2313,7 @@ export class TNFRelayServer extends EventEmitter {
                 const client = this.activityRedis as any;
                 const redisStatus =
                   typeof client?.status === 'string' ? String(client.status).toLowerCase() : null;
-                const redisIsOpen =
-                  typeof client?.isOpen === 'boolean' ? client.isOpen : undefined;
+                const redisIsOpen = typeof client?.isOpen === 'boolean' ? client.isOpen : undefined;
                 const looksClosed =
                   redisStatus === 'end' ||
                   redisStatus === 'close' ||
@@ -2368,9 +2372,7 @@ const isMainModule = () => {
 if (isMainModule()) {
   const relay = new TNFRelayServer(PORT);
   const bootStartedAt = Date.now();
-  const startupSigtermGraceMsRaw = Number(
-    process.env.RELAY_STARTUP_SIGTERM_GRACE_MS ?? '20000'
-  );
+  const startupSigtermGraceMsRaw = Number(process.env.RELAY_STARTUP_SIGTERM_GRACE_MS ?? '20000');
   const startupSigtermGraceMs = Number.isFinite(startupSigtermGraceMsRaw)
     ? Math.max(0, startupSigtermGraceMsRaw)
     : 20000;

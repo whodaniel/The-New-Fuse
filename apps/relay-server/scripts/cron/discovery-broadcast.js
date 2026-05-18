@@ -8,7 +8,11 @@
 
 const WebSocket = require('ws');
 
-const RELAY_WS_URL = process.env.RELAY_WS_URL || 'ws://localhost:3000/ws';
+const RELAY_WS_URL =
+  process.env.RELAY_URL ||
+  process.env.TNF_RELAY_URL ||
+  process.env.RELAY_WS_URL ||
+  'ws://127.0.0.1:3000/ws';
 const CHANNELS = ['Green', 'Blue', 'Red', 'Yellow', 'Purple'];
 
 async function broadcastDiscovery() {

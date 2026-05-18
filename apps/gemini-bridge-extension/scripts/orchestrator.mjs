@@ -6,7 +6,7 @@ import { WebSocket } from 'ws';
 import crypto from 'crypto';
 import fs from 'fs';
 
-const RELAY_URL = 'ws://localhost:3000/ws';
+const RELAY_URL = process.env.RELAY_URL || process.env.TNF_RELAY_URL || process.env.RELAY_WS_URL || 'ws://127.0.0.1:3000/ws';
 const CHANNEL = 'green';
 const MY_ID = `orchestrator-${Date.now()}`;
 

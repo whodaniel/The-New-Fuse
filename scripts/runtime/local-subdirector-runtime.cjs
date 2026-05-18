@@ -29,7 +29,12 @@ const config = {
     120000
   ),
   contentTailChars: parsePositiveInt(process.env.LOCAL_SUBDIRECTOR_CONTENT_TAIL_CHARS, 4000),
-  relayUrl: process.env.LOCAL_SUBDIRECTOR_RELAY_URL || 'ws://localhost:3000/ws',
+  relayUrl:
+    process.env.LOCAL_SUBDIRECTOR_RELAY_URL ||
+    process.env.RELAY_URL ||
+    process.env.TNF_RELAY_URL ||
+    process.env.RELAY_WS_URL ||
+    'ws://127.0.0.1:3000/ws',
   relayChannel: process.env.LOCAL_SUBDIRECTOR_RELAY_CHANNEL || 'fuse-activity-log',
   relayOutboxDir: process.env.LOCAL_SUBDIRECTOR_RELAY_OUTBOX_DIR || '/tmp/thefuse/terminal',
   stateDir:

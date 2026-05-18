@@ -7,8 +7,14 @@
 
 import WebSocket from 'ws';
 
+const DEFAULT_RELAY_URL =
+  process.env.RELAY_URL ||
+  process.env.TNF_RELAY_URL ||
+  process.env.RELAY_WS_URL ||
+  'ws://127.0.0.1:3000/ws';
+
 class PokerTechnician {
-  constructor(relayUrl = 'ws://localhost:3000/ws') {
+  constructor(relayUrl = DEFAULT_RELAY_URL) {
     this.relayUrl = relayUrl;
     this.socket = null;
     this.agentId = `poker-tech-${Math.random().toString(36).substr(2, 9)}`;

@@ -3,10 +3,14 @@
  * Registers agents with Master Clock and keeps them alive via heartbeat
  * Acts as a living agent on the relay — always present, always listening
  */
-import { WebSocket } from 'ws';
 import { randomUUID } from 'crypto';
+import { WebSocket } from 'ws';
 
-const RELAY_URL = process.env.RELAY_URL || 'ws://localhost:3000/ws';
+const RELAY_URL =
+  process.env.RELAY_URL ||
+  process.env.TNF_RELAY_URL ||
+  process.env.RELAY_WS_URL ||
+  'ws://127.0.0.1:3000/ws';
 const AGENT_ID = process.env.AGENT_ID || 'LAUNCHPAD-AGENT';
 const HEARTBEAT_INTERVAL = parseInt(process.env.HEARTBEAT_INTERVAL || '3000');
 
@@ -49,21 +53,23 @@ class AgentRegistryBridge {
 
   private register() {
     if (!this.ws || this.registered) return;
-    this.ws.send(JSON.stringify({
-      type: 'AGENT_REGISTER',
-      payload: {
-        agent: {
-          id: this.sessionId,
-          canonicalEntityId: `AGENT://TNFCORE/${AGENT_ID}`,
-          operationalHandle: AGENT_ID,
-          name: AGENT_ID,
-          platform: 'tnf-core',
-          capabilities: ['launchpad', 'orchestrator', 'heartbeat'],
-        }
-      },
-      source: this.sessionId,
-      timestamp: Date.now(),
-    }));
+    this.ws.send(
+      JSON.stringify({
+        type: 'AGENT_REGISTER',
+        payload: {
+          agent: {
+            id: this.sessionId,
+            canonicalEntityId: `AGENT://TNFCORE/${AGENT_ID}`,
+            operationalHandle: AGENT_ID,
+            name: AGENT_ID,
+            platform: 'tnf-core',
+            capabilities: ['launchpad', 'orchestrator', 'heartbeat'],
+          },
+        },
+        source: this.sessionId,
+        timestamp: Date.now(),
+      })
+    );
     this.registered = true;
     console.log(`[${AGENT_ID}] Registered with session ${this.sessionId}`);
   }
@@ -79,23 +85,27 @@ class AgentRegistryBridge {
 
   send(type: string, payload: any) {
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
-    this.ws.send(JSON.stringify({
-      type,
-      payload,
-      source: this.sessionId,
-      timestamp: Date.now(),
-    }));
+    this.ws.send(
+      JSON.stringify({
+        type,
+        payload,
+        source: this.sessionId,
+        timestamp: Date.now(),
+      })
+    );
   }
 
   startHeartbeat() {
     setInterval(() => {
       if (this.ws?.readyState === WebSocket.OPEN) {
-        this.ws.send(JSON.stringify({
-          type: 'AGENT_HEARTBEAT',
-          payload: { agentId: this.sessionId, status: 'active' },
-          source: this.sessionId,
-          timestamp: Date.now(),
-        }));
+        this.ws.send(
+          JSON.stringify({
+            type: 'AGENT_HEARTBEAT',
+            payload: { agentId: this.sessionId, status: 'active' },
+            source: this.sessionId,
+            timestamp: Date.now(),
+          })
+        );
       }
     }, HEARTBEAT_INTERVAL);
   }

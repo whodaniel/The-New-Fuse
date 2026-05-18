@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 
-const RELAY_URL = 'ws://localhost:3000/ws';
+const RELAY_URL = process.env.RELAY_URL || process.env.TNF_RELAY_URL || process.env.RELAY_WS_URL || 'ws://127.0.0.1:3000/ws';
 const AGENT_ID = 'terminal-agent-007';
 
 class MockAgent {

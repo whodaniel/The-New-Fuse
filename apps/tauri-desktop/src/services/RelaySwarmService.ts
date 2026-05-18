@@ -23,7 +23,7 @@ class RelaySwarmService {
   private retryCount: number = 0;
   private maxRetries: number = 5;
 
-  constructor(private url: string = 'ws://localhost:3000/ws') {}
+  constructor(private url: string = 'ws://127.0.0.1:3000/ws') {}
 
   connect() {
     if (this.ws?.readyState === WebSocket.OPEN) return;

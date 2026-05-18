@@ -43,7 +43,7 @@ class GeminiBridgePopup {
         source: 'unknown',
       },
       settings: {
-        relayUrl: 'ws://localhost:3000/ws',
+        relayUrl: 'ws://127.0.0.1:3000/ws',
         autoReconnect: true,
         autoMonitor: true,
         autoMasterClock: true,

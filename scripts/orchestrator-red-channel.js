@@ -1,7 +1,11 @@
 import { randomUUID } from 'crypto';
 import { WebSocket } from 'ws';
 
-const WS_URL = 'ws://localhost:3000/ws';
+const WS_URL =
+  process.env.RELAY_URL ||
+  process.env.TNF_RELAY_URL ||
+  process.env.RELAY_WS_URL ||
+  'ws://127.0.0.1:3000/ws';
 // Assuming 'red' or 'Red' is the channel ID. The user asked to join the "Red channel".
 const CHANNEL_ID = 'Red';
 const AGENT_ID = 'orchestrator-agent-v1';

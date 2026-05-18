@@ -12,7 +12,7 @@ const DEFAULT_MANIFEST = path.join(
 
 function parseArgs(argv) {
   const out = {
-    relayUrl: process.env.RELAY_URL || 'ws://localhost:3000/ws',
+    relayUrl: process.env.RELAY_URL || process.env.TNF_RELAY_URL || process.env.RELAY_WS_URL || 'ws://127.0.0.1:3000/ws',
     channelRegex: process.env.CHANNEL_REGEX || 'red',
     manifestPath: process.env.MANIFEST_PATH || DEFAULT_MANIFEST,
     batchSize: Number(process.env.BATCH_SIZE || 6),
