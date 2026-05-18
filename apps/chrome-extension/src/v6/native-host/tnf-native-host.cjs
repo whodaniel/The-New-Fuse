@@ -73,7 +73,7 @@ const SERVICES = {
     command: 'pnpm',
     args: ['run', 'relay:start'],
     cwd: '.',
-    port: 3001,
+    port: 3000,
   },
   backend: {
     name: 'TNF Backend',
