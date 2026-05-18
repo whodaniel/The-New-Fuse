@@ -13,40 +13,54 @@ const fs = require('fs');
 const os = require('os');
 
 // Auto-discover project root by looking for package.json with "the-new-fuse" name
+function isTNFProjectRoot(candidateDir) {
+  if (!candidateDir) return false;
+  try {
+    const pkgPath = path.join(candidateDir, 'package.json');
+    if (!fs.existsSync(pkgPath)) return false;
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    return pkg.name === 'the-new-fuse' || pkg.name === '@the-new-fuse/monorepo';
+  } catch (_error) {
+    return false;
+  }
+}
+
+function enumerateAncestors(startDir) {
+  const results = [];
+  let current = path.resolve(startDir);
+  while (true) {
+    results.push(current);
+    const parent = path.dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+  return results;
+}
+
 function findProjectRoot() {
-  // Start from this script's directory and go up
-  let currentDir = __dirname;
+  if (process.env.TNF_PROJECT_ROOT && isTNFProjectRoot(process.env.TNF_PROJECT_ROOT)) {
+    return path.resolve(process.env.TNF_PROJECT_ROOT);
+  }
 
-  // Also check common locations
-  const possibleRoots = [
-    path.resolve(currentDir, '../../../..'), // From dist-v5/native-host
-    path.resolve(currentDir, '../../..'), // From src/v5/native-host
-    path.resolve(os.homedir(), 'Desktop/A1-Inter-LLM-Com/The-New-Fuse'),
-    path.resolve(os.homedir(), 'projects/The-New-Fuse'),
-    path.resolve(os.homedir(), 'The-New-Fuse'),
-  ];
+  const seedDirs = [process.cwd(), process.env.INIT_CWD, process.env.PWD, __dirname].filter(
+    (value) => typeof value === 'string' && value.length > 0
+  );
 
-  for (const dir of possibleRoots) {
-    try {
-      const pkgPath = path.join(dir, 'package.json');
-      if (fs.existsSync(pkgPath)) {
-        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-        if (pkg.name === 'the-new-fuse' || pkg.name === '@the-new-fuse/monorepo') {
-          return dir;
-        }
-      }
-    } catch (e) {
-      // Continue searching
+  const candidates = new Set();
+  for (const seed of seedDirs) {
+    for (const candidate of enumerateAncestors(seed)) {
+      candidates.add(candidate);
     }
   }
 
-  // Fallback to environment variable
-  if (process.env.TNF_PROJECT_ROOT) {
-    return process.env.TNF_PROJECT_ROOT;
+  for (const candidate of candidates) {
+    if (isTNFProjectRoot(candidate)) {
+      return candidate;
+    }
   }
 
-  // Last resort: go up from script location
-  return path.resolve(currentDir, '../../../..');
+  // Last resort: deterministic repo-relative guess from this script location.
+  return path.resolve(__dirname, '../../../..');
 }
 
 const PROJECT_ROOT = findProjectRoot();
@@ -57,8 +71,8 @@ const SERVICES = {
   relay: {
     name: 'TNF Relay',
     command: 'pnpm',
-    args: ['run', 'relay'],
-    cwd: 'packages/relay-core',
+    args: ['run', 'relay:start'],
+    cwd: '.',
     port: 3001,
   },
   backend: {

@@ -557,7 +557,7 @@ class FuseConnectPopup {
               <span>Run this command:</span>
             </div>
             <code class="install-command" id="install-command">
-              cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension && ./install.sh
+              cd /path/to/The-New-Fuse/apps/chrome-extension && ./install.sh
             </code>
             <button class="btn-secondary" style="width:100%; margin-top:8px;" id="copy-install-cmd">
               📋 Copy Command
@@ -568,7 +568,7 @@ class FuseConnectPopup {
               Or start relay manually in terminal:
             </p>
             <code class="install-command" id="manual-command">
-              cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm relay:start
+              cd /path/to/The-New-Fuse && pnpm relay:start
             </code>
             <button class="btn-primary" style="width:100%; margin-top:8px;" id="copy-manual-cmd">
               📋 Copy & Close
@@ -664,15 +664,13 @@ class FuseConnectPopup {
     // Event handlers
     document.getElementById('copy-install-cmd')?.addEventListener('click', () => {
       navigator.clipboard.writeText(
-        'cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension && ./install.sh'
+        'cd /path/to/The-New-Fuse/apps/chrome-extension && ./install.sh'
       );
       this.showToast('Command copied!');
     });
 
     document.getElementById('copy-manual-cmd')?.addEventListener('click', () => {
-      navigator.clipboard.writeText(
-        'cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm relay:start'
-      );
+      navigator.clipboard.writeText('cd /path/to/The-New-Fuse && pnpm relay:start');
       this.showToast('Command copied!');
       modal.remove();
       styleEl.remove();
