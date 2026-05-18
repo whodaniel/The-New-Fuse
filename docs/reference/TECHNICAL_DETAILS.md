@@ -865,7 +865,8 @@ Refer to `/docs/RECOVERY_PROCEDURES.md` for:
 3. Shared Code:
    - Review `/packages/shared/` for common utilities
    - Check `/packages/ui-components/` for reusable UI components
-   - Examine `/packages/monitoring/` for monitoring implementation
+   - Examine `/packages/core-monitoring/` for monitoring implementation
+   - Note: `/packages/monitoring/` was sunset and removed on 2026-05-17
 
 ### Step 3: Configuration
 

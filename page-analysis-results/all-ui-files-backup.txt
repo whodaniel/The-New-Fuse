@@ -1,5 +1,6 @@
 # Updated UI Files Listing - Generated: $(date)
 # Total files: $(wc -l < page-analysis-results/all-ui-files-updated.txt)
+# Sunset Note (2026-05-17): Entries referencing `packages/layout/*` are historical and not part of the active workspace.
 
 $(cat page-analysis-results/all-ui-files-updated.txt | head -3)
 ./packages/core/components/auth/Login.tsx

@@ -118,15 +118,19 @@ Here's the current status:
 - **Effort**: 2-3 days
 - **Risk**: Medium (need to verify not dynamically imported)
 
-#### 8. Package Ecosystem Cleanup ❌
+#### 8. Package Ecosystem Cleanup ⚠️
 
-**Status**: Audited, not cleaned
+**Status**: Audited, partially cleaned (2026-05-17 sunset pass)
 
 - **Orphaned Packages** (~12 identified):
   - `@the-new-fuse/build-optimization`
   - `@the-new-fuse/eslint-config-custom`
-  - `@the-new-fuse/integrations`
   - Others with 0 references
+- **Completed**:
+  - Sunset + removal of `@the-new-fuse/integrations`, `@the-new-fuse/layout`,
+    and `@the-new-fuse/monitoring`
+  - Replacement surfaces documented as `@the-new-fuse/resource-registry`,
+    `@the-new-fuse/ui-consolidated`, and `@the-new-fuse/core-monitoring`
 - **Missing package.json** (~10 directories)
 - **Action**: Delete orphaned packages, fix missing package.json
 - **Effort**: 1-2 days

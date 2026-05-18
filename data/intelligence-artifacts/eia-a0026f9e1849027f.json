@@ -1,0 +1,98 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-a0026f9e1849027f",
+  "generated_at": "2026-05-17T14:17:13+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6221",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6221",
+    "source_title": "# Write concordance skill SKILL.md",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:13+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6221",
+    "source_digest_sha256": "0698bb4b4d33873d3b5fc659005be3c19d6e387a3c80762254d751195e21357f"
+  },
+  "taxonomy": {
+    "procedural": [
+      "- JSON viz data (top 500 words + categories): `https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525/concordance_viz_data.json`",
+      "- Stats JSON: `https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525/stats.json`",
+      "- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance_viz_data.json`",
+      "Fetch the viz JSON.",
+      "curl -s \"https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525/concordance_viz_data.json\" | python3 -c \"",
+      "import json, sys",
+      "data = json.load(sys.stdin)",
+      "print(f\\\"{m['word']}: {m['count']} occurrences\\\")",
+      "curl -s \"https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525/concordance.tsv.gz\" | gunzip | grep -i \"orchestrat\"",
+      "- UI & Components, Data & State, Error & Status, Config & Env",
+      "- Network & API, Domain-Specific",
+      "python3 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/generate_concordance.py",
+      "To regenerate the visualizer HTML + React JSON:",
+      "python3 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/generate_concordance_viz.py"
+    ],
+    "strategic": [
+      "- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance.tsv.gz`",
+      "- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance_viz_data.json`",
+      "- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/public/visualizations/TNF_CONCORDANCE_VISUALIZER.html`",
+      "zgrep -i \"orchestrat\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance.tsv.gz",
+      "zcat /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/per_file_index.tsv.gz | grep \"specific/path.ts\"",
+      "python3 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/generate_concordance.py",
+      "python3 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/generate_concordance_viz.py",
+      "Read Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/mcp-core/src/index.ts"
+    ],
+    "governance": [
+      "**Communication Patterns**: broadcast, relay, dispatch, subscribe, emit, notify, handoff, bridge, channel, message, protocol, negotiate",
+      "**Governance and Control**: authorize, permission, policy, compliance, audit, govern, enforce, constraint, mandate, escalat"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.206,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6221"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 14 procedural, 8 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 5367,
+    "unit_count": 68
+  }
+}

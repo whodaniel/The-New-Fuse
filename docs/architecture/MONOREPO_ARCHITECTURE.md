@@ -82,7 +82,7 @@ import { DrizzleService } from '@the-new-fuse/database';
 @the-new-fuse/relay-core        - Message relay system
 @the-new-fuse/api-client        - API client library
 @the-new-fuse/contracts         - Smart contracts (if applicable)
-@the-new-fuse/integrations      - External integrations
+@the-new-fuse/resource-registry - External resource and integration registry
 @the-new-fuse/extension-system  - Plugin architecture
 ```
 
@@ -90,7 +90,7 @@ import { DrizzleService } from '@the-new-fuse/database';
 
 ```
 @the-new-fuse/ui-consolidated   - Shared React components
-@the-new-fuse/layout            - Layout components
+@the-new-fuse/ag-ui-core        - Agent-focused UI primitives
 @the-new-fuse/a2a-react         - React hooks for A2A
 @the-new-fuse/fairtable-core    - Table library core
 @the-new-fuse/fairtable-components - Table components
@@ -115,7 +115,7 @@ import { DrizzleService } from '@the-new-fuse/database';
 ```
 @the-new-fuse/infrastructure    - Infrastructure as code
 @the-new-fuse/deployment-core   - Deployment utilities
-@the-new-fuse/monitoring        - Monitoring and metrics
+@the-new-fuse/core-monitoring   - Monitoring and metrics
 @the-new-fuse/build-optimization - Build tools
 @the-new-fuse/testing           - Testing utilities
 @the-new-fuse/test-utils        - Test helpers

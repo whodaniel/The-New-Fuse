@@ -1,3 +1,4 @@
+# Sunset Note (2026-05-17): This historical list may include legacy `packages/layout/*` paths removed from the active workspace.
 ./packages/frontend/src/pages/LandingPage.tsx
 ./packages/ui-components/src/features/workflow/components/WorkflowStepViewer.tsx
 ./packages/layout/components/PageHeader.tsx

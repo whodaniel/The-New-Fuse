@@ -2,6 +2,7 @@
 # Previous count: 6,924 files
 # Current count: 1,780 files
 # Note: Previous file appears to have included many duplicate/non-UI entries
+# Sunset Note (2026-05-17): Legacy `packages/layout/*` entries in this snapshot refer to removed paths; use `packages/ui-consolidated/src/components/*`.
 
 apps/api-gateway/src/main.tsx
 apps/electron-desktop/src/renderer/components/CommandCenter.tsx

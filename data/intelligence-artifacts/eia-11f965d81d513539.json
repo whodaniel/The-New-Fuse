@@ -1,0 +1,126 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-11f965d81d513539",
+  "generated_at": "2026-05-17T14:17:10+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6242",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6242",
+    "source_title": "Implemented end-to-end TS-first contract scaffolding and consumer\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:09+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6242",
+    "source_digest_sha256": "14309bf5f89c18cf8de10d02cb11f32ee2a013fbb827e47ef9da074b8ba79b89"
+  },
+  "taxonomy": {
+    "procedural": [
+      "- JSON Schema generator in Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/",
+      "scripts/generate-python.mjs",
+      "LLM-Com/The-New-Fuse/packages/protocol-contracts/generated/python/",
+      "package.json:319:",
+      "New-Fuse/packages/web-scraping/python/server.py:8",
+      "protocol-contracts/generated/python/tnf_contracts/crypto_operations.py:1",
+      "envelope.schema.json",
+      "identity.schema.json",
+      "payloads.schema.json",
+      "- pnpm contracts:generate passed.",
+      "- pnpm contracts:check passed (includes SGP fixture validation + protocol",
+      "- pnpm --filter @the-new-fuse/protocol-contracts run type-check passed.",
+      "- pnpm --filter @the-new-fuse/protocol-contracts run type-check:tsgo passed.",
+      "- python3 -m py_compile ...",
+      "- pnpm contracts:check:drift fails as designed right now because generated/",
+      "- Installed datamodel-code-generator via python3 -m pip install --user"
+    ],
+    "strategic": [
+      "- Added new workspace package Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/",
+      "- Zod canonical schemas for TWIP/SGP/ADK/scraping in Desktop/A1-Inter-LLM-",
+      "Inter-LLM-Com/The-New-Fuse/packages/protocol-contracts/src/twip.ts,",
+      "Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/protocol-contracts/src/",
+      "sgp.ts, Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/protocol-",
+      "contracts/src/adk-gateway.ts, Desktop/A1-Inter-LLM-Com/The-New-Fuse/",
+      "- JSON Schema generator in Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/",
+      "- Python model generator (Pydantic v2 via datamodel-code-generator) in",
+      "Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/protocol-contracts/",
+      "- Drift gate in Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/protocol-",
+      "- Generated artifacts under Desktop/A1-Inter-LLM-Com/The-New-Fuse/",
+      "LLM-Com/The-New-Fuse/packages/protocol-contracts/generated/python/",
+      "- Added root scripts in Desktop/A1-Inter-LLM-Com/The-New-Fuse/",
+      "- Rewired ADK gateway to generated models in Desktop/A1-Inter-LLM-Com/The-New-",
+      "- Rewired Crawl4AI server to generated models in Desktop/A1-Inter-LLM-Com/The-",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/crypto-agent-framework/",
+      "integration/agent_registry.py:13",
+      "- Compatibility shim is Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/schemas/twip-",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/schemas/sgp-"
+    ],
+    "governance": [
+      "protocol-contracts with:",
+      "Com/The-New-Fuse/packages/protocol-contracts/src/index.ts, Desktop/A1-",
+      "Inter-LLM-Com/The-New-Fuse/packages/protocol-contracts/src/twip.ts,",
+      "Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/protocol-contracts/src/",
+      "sgp.ts, Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/protocol-",
+      "packages/protocol-contracts/src/web-scraping.ts",
+      "protocol-contracts/scripts/generate-jsonschema.mjs",
+      "Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/protocol-contracts/",
+      "- Drift gate in Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/protocol-",
+      "packages/protocol-contracts/generated/jsonschema and Desktop/A1-Inter-",
+      "LLM-Com/The-New-Fuse/packages/protocol-contracts/generated/python/",
+      "protocol-contracts/generated/python/tnf_contracts/crypto_operations.py:1",
+      "- Updated protocol schema docs from generated source:",
+      "- pnpm contracts:check passed (includes SGP fixture validation + protocol",
+      "- pnpm --filter @the-new-fuse/protocol-contracts run type-check passed.",
+      "- pnpm --filter @the-new-fuse/protocol-contracts run type-check:tsgo passed."
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.25,
+    "verification_difficulty": "Easy"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6242"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 16 procedural, 20 strategic, and 16 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 3441,
+    "unit_count": 64
+  }
+}

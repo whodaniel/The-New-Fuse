@@ -1,0 +1,89 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-7bd3ce290d493b91",
+  "generated_at": "2026-05-17T14:17:17+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6202",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6202",
+    "source_title": "Here's the summary:",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:17+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6202",
+    "source_digest_sha256": "19377fe45bd60e42372840b2d1821eaae91d5dc9bc3add26018911e620993844"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Model Website Badge API Status",
+      "stepfun-ai/step-3.5-flash Free Endpoint Works (reasoning model)",
+      "Key finding on DeepSeek V4: Both deepseek-v4-flash and deepseek-v4-pro are listed as \"Downloadable\" on the website, but they do work via the API",
+      "The website badge distinction (\"Free Endpoint\" vs \"Downloadable\") doesn't reflect actual API accessibility",
+      "it reflects whether NVIDIA hosts a dedicated free-tier endpoint.",
+      "- ~/.tnf/model-providers.json",
+      "- ~/.tnf/llm-config.json",
+      "- ~/.tnf/llm-config-enhanced.json",
+      "- ~/.tnf/provider-config.json"
+    ],
+    "strategic": [
+      "Model Website Badge API Status",
+      "stepfun-ai/step-3.5-flash Free Endpoint Works (reasoning model)",
+      "they just have ~2-3 min cold-start latency.",
+      "- ~/.tnf/model-providers.json",
+      "- ~/.tnf/llm-config.json",
+      "- ~/.tnf/llm-config-enhanced.json",
+      "- ~/.tnf/provider-config.json"
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.31,
+    "verification_difficulty": "Easy"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6202"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 9 procedural, 7 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 1333,
+    "unit_count": 29
+  }
+}

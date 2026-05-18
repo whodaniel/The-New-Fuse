@@ -1,3 +1,4 @@
+# Sunset Note (2026-05-17): This is a historical snapshot and may contain legacy `packages/layout` paths that no longer exist in the active workspace.
 ./packages/frontend/src/pages/LandingPage.tsx:export function LandingPage() {
 ./packages/ui-components/src/features/workflow/components/WorkflowStepViewer.tsx:export const WorkflowStepViewer: FC<WorkflowStepViewerProps> = ({
 ./packages/layout/components/PageHeader.tsx:export const PageHeader: (React as unknown).FC<PageHeaderProps> = ({

@@ -1,0 +1,116 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-0fd24fd09fc624c7",
+  "generated_at": "2026-05-17T14:17:10+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6239",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6239",
+    "source_title": "It has come to my attention that the agent/agents/.agent folder\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:10+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6239",
+    "source_digest_sha256": "471960149fcc5d6ca1d34097cf929fe481984d00902ba5d7aeef24b954958347"
+  },
+  "taxonomy": {
+    "procedural": [
+      "custom-slash-command-agent.md",
+      "The same goes for all terminal based cli agents in",
+      "Restored TNF agent bank locally (.agent/agents) from pre-deletion git",
+      "Added deterministic reconciler script:",
+      "Added new TNF CLI command:",
+      "- Wiring in Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/src/",
+      "- Docs in Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/README.md",
+      "pathway-matrix.latest.json",
+      "- Runtime mirror: .agent/fleet/agent-pathway-matrix.json",
+      "- Remaining importedMissingInClaude = [frontend-debugger-agent, jules-cli-",
+      "debugger-agent and jules-cli-agent into .claude/agents."
+    ],
+    "strategic": [
+      "protocol standards from some other Agentic plat form or LLM provider, that",
+      "@/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/",
+      "audience-persona-architect-agent.md",
+      "business-model-architect-agent.md",
+      "contextual-model-implementation-architect.md",
+      "ecom-platform-manager-agent.md",
+      "facebook-strategy-agent.md",
+      "instagram-strategy-agent.md",
+      "inter-agentic-workflow-definer.md",
+      "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/l",
+      "meta-agent-architect.md",
+      "monetization-strategy-agent.md",
+      "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/o",
+      "oto-sequence-architect-agent.md",
+      "personal-brand-architect-agent.md",
+      "platform-selection-agent.md",
+      "podcast-monetization-strategy-agent.md",
+      "sales-funnel-architect-agent.md",
+      "tiktok-strategy-agent.md",
+      "value-ladder-architect-agent.md"
+    ],
+    "governance": [
+      "protocol standards from some other Agentic plat form or LLM provider, that",
+      "interoperability-protocol-agent.md",
+      "legal-compliance-agent.md",
+      "tax-compliance-agent.md",
+      "These pathways must maintain logical integrity and coherence at",
+      "canonical intent in TNF's protocol docs and design a",
+      "Investigate the canonical governance documents to understand the intended",
+      "Assumed Local Sub-Director lead and completed a protocol-safe agent-bank",
+      "Added governance report:",
+      "operational state is local-runtime authoritative unless/until ignore policy is",
+      "policy for agent-definition banks (without exposing unrelated private"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.032,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6239"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 11 procedural, 20 strategic, and 11 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 18629,
+    "unit_count": 347
+  }
+}

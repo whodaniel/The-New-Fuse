@@ -439,7 +439,15 @@ export function rebuyPlayer(t, { playerId }) {
  t.prizePoolUnits += t.rebuy.rebuyPriceUnits || t.buyInUnits;
 
   t.eventLog.push({ type: 'player.rebuy', ts: nowIso(), payload: { playerId, rebuys: p.rebuys } });
-  rebalanceTables(t);
+  if (t.status === 'running' && t.type === 'mtt') {
+    // MTT rebuy: defer rebalance. Tables will be rebalanced
+    // when eliminatePlayer is called (between hands) or when the clock
+    // advances. Do NOT call rebalanceTables here — it would disrupt
+    // active hands.
+    t.eventLog.push({ type: 'player.rebuy_deferred_rebalance', ts: nowIso(), payload: { playerId, rebalanceDeferred: true } });
+  } else {
+    // For SNGs or non-running tournaments, rebalance immediately
+    rebalanceTables(t);
   return snapshotTournament(t);
 }
 

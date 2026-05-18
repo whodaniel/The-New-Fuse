@@ -1,0 +1,81 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-31dfc21f62b3893c",
+  "generated_at": "2026-05-17T14:17:11+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6233",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6233",
+    "source_title": "Nodes\" of the Gauntlet to a large degree already exist in the\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:11+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6233",
+    "source_digest_sha256": "e80a8103bb5f671c69dcbe5bb98382d8c0af589af45653121e7c0dd98ba5c70d"
+  },
+  "taxonomy": {
+    "procedural": [
+      "factoid extracted from an email or video is a leaf node, cryptographically"
+    ],
+    "strategic": [
+      "In this 4-D model:",
+      "Codex, Kilo) are aligned on this 4-D roadmap before we conclude?"
+    ],
+    "governance": [
+      "of a High-Dimensional Governance Lattice.",
+      "The Assessment: \"The Compiled Protocol\"",
+      "The Merkle Tree (The Anchor): Provides the absolute attribution.",
+      "Sovereignty,\" another for \"Technical Integrity.\" This is the X-Z plane of"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Low",
+    "implementation_density": 0.017,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6233"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 1 procedural, 2 strategic, and 4 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 3677,
+    "unit_count": 60
+  }
+}

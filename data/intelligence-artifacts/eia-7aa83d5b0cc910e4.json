@@ -1,0 +1,86 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-7aa83d5b0cc910e4",
+  "generated_at": "2026-05-17T14:17:13+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6223",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6223",
+    "source_title": "Now let me update AGENTS.md to document the concordance system:",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:13+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6223",
+    "source_digest_sha256": "73db3f0a8a44f7d37e99b0d80f2c74437aae4059797e6eaed86c05e2cdbf58d7"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Run generate_concordance_viz.py to produce HTML + JSON",
+      "Upload HTML + JSON to Supabase Storage",
+      "JSON source + theme = PDF.",
+      "TSV (gzipped), viz JSON, stats",
+      "- **Scripts**: `scripts/generate_concordance.py` (TSV generation), `scripts/generate_concordance_viz.py` (HTML + React JSON)",
+      "- **React Component**: `packages/ui-consolidated/src/components/features/concordance-viewer/ConcordanceViewer.tsx`",
+      "Generated HTML visualizer (0.2 MB) + React JSON (0.2 MB)",
+      "TNF_CONCORDANCE_VISUALIZER.html and concordance_viz_data.json",
+      "- https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525/concordance_viz_data.json",
+      "Created React ConcordanceViewer component at packages/ui-consolidated/src/components/features/concordance-viewer/ConcordanceViewer.tsx (464 lines)"
+    ],
+    "strategic": [
+      "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/AGENTS.md [limit=20, offset=1]",
+      "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/AGENTS.md [limit=20, offset=70]",
+      "Edit Desktop/A1-Inter-LLM-Com/The-New-Fuse/AGENTS.md"
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.147,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6223"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 10 procedural, 3 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 4165,
+    "unit_count": 68
+  }
+}

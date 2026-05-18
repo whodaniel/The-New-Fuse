@@ -1,11 +1,11 @@
 {
   "summary": {
-    "generatedAt": "2026-05-17T13:11:54.140Z",
+    "generatedAt": "2026-05-17T13:26:54.110Z",
     "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
-    "packageCount": 69,
+    "packageCount": 66,
     "byLifecycleState": {
       "active": 36,
-      "latent": 33,
+      "latent": 30,
       "incubating": 0,
       "archived_candidate": 0
     }
@@ -38,7 +38,7 @@
       "name": "@the-new-fuse/types",
       "path": "packages/types",
       "externalRuntimeImports": 102,
-      "externalLiteralRefs": 158,
+      "externalLiteralRefs": 157,
       "incomingInternalDependents": 21,
       "incomingDependentPackages": [
         "@the-new-fuse/agent",
@@ -304,9 +304,7 @@
       "externalRuntimeImports": 4,
       "externalLiteralRefs": 8,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/feature-suggestions"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/feature-suggestions"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -333,9 +331,7 @@
       "externalRuntimeImports": 3,
       "externalLiteralRefs": 10,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/sync-core"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/sync-core"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -347,9 +343,7 @@
       "externalRuntimeImports": 3,
       "externalLiteralRefs": 8,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/relay-core"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/relay-core"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -391,9 +385,7 @@
       "externalRuntimeImports": 2,
       "externalLiteralRefs": 4,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/integration-tests"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/integration-tests"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -405,9 +397,7 @@
       "externalRuntimeImports": 2,
       "externalLiteralRefs": 7,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/fairtable-adapters"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/fairtable-adapters"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -447,9 +437,7 @@
       "externalRuntimeImports": 1,
       "externalLiteralRefs": 3,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/relay-core"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/relay-core"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -461,9 +449,7 @@
       "externalRuntimeImports": 1,
       "externalLiteralRefs": 7,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/ui-consolidated"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/ui-consolidated"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -475,9 +461,7 @@
       "externalRuntimeImports": 1,
       "externalLiteralRefs": 6,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/a2a-core"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/a2a-core"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -489,9 +473,7 @@
       "externalRuntimeImports": 1,
       "externalLiteralRefs": 3,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/tnf-cli"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/tnf-cli"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -503,9 +485,7 @@
       "externalRuntimeImports": 1,
       "externalLiteralRefs": 3,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/tnf-cli"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/tnf-cli"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "active",
@@ -589,9 +569,7 @@
       "externalRuntimeImports": 0,
       "externalLiteralRefs": 3,
       "incomingInternalDependents": 1,
-      "incomingDependentPackages": [
-        "@the-new-fuse/core-vector-db"
-      ],
+      "incomingDependentPackages": ["@the-new-fuse/core-vector-db"],
       "hasBuildScript": true,
       "hasTestScript": true,
       "lifecycleState": "latent",
@@ -802,34 +780,10 @@
       "reason": "Referenced externally, but not wired through runtime imports."
     },
     {
-      "name": "@the-new-fuse/integrations",
-      "path": "packages/integrations",
-      "externalRuntimeImports": 0,
-      "externalLiteralRefs": 1,
-      "incomingInternalDependents": 0,
-      "incomingDependentPackages": [],
-      "hasBuildScript": true,
-      "hasTestScript": true,
-      "lifecycleState": "latent",
-      "reason": "Referenced externally, but not wired through runtime imports."
-    },
-    {
       "name": "@the-new-fuse/jules-integration",
       "path": "packages/jules-integration",
       "externalRuntimeImports": 0,
       "externalLiteralRefs": 2,
-      "incomingInternalDependents": 0,
-      "incomingDependentPackages": [],
-      "hasBuildScript": true,
-      "hasTestScript": true,
-      "lifecycleState": "latent",
-      "reason": "Referenced externally, but not wired through runtime imports."
-    },
-    {
-      "name": "@the-new-fuse/layout",
-      "path": "packages/layout",
-      "externalRuntimeImports": 0,
-      "externalLiteralRefs": 1,
       "incomingInternalDependents": 0,
       "incomingDependentPackages": [],
       "hasBuildScript": true,
@@ -864,18 +818,6 @@
     {
       "name": "@the-new-fuse/mcp-skills-server",
       "path": "packages/mcp-skills-server",
-      "externalRuntimeImports": 0,
-      "externalLiteralRefs": 1,
-      "incomingInternalDependents": 0,
-      "incomingDependentPackages": [],
-      "hasBuildScript": true,
-      "hasTestScript": true,
-      "lifecycleState": "latent",
-      "reason": "Referenced externally, but not wired through runtime imports."
-    },
-    {
-      "name": "@the-new-fuse/monitoring",
-      "path": "packages/monitoring",
       "externalRuntimeImports": 0,
       "externalLiteralRefs": 1,
       "incomingInternalDependents": 0,

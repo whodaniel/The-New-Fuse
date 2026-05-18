@@ -1,0 +1,86 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-9e95fcd5673f349c",
+  "generated_at": "2026-05-17T14:17:12+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6227",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6227",
+    "source_title": "Phase 3.4: IR Safety Inspector Complete:",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:12+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6227",
+    "source_digest_sha256": "e241f2fbd25736b2082e368550dc86bb2862874fc9d76a866ab685ed505f8737"
+  },
+  "taxonomy": {
+    "procedural": [],
+    "strategic": [
+      "The \"Hardware Architect\" is now protected by a formal safety layer."
+    ],
+    "governance": [
+      "Title: Phase 3.4: IR Safety Inspector Complete:",
+      "Phase 3.4: IR Safety Inspector Complete:",
+      "Finalizing Phase 3.4: IR Safety Inspector with zero-trust heuristic and",
+      "Phase 3.4: IR Safety Inspector is now complete and active.",
+      "Safety Milestone: Zero-Trust Verification",
+      "attack during testing (Risk Score: 25).",
+      "Governance & Audit:",
+      "* Binaries with high risk scores (>20) are automatically quarantined.",
+      "* All validation results are recorded for kernel audit.",
+      "knowing that every piece of generated IR must pass the Safety Inspector's",
+      "The \"Hardware Architect\" is now protected by a formal safety layer.",
+      "IR Safety Inspector (Zero-Trust)"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.0,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6227"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 0 procedural, 1 strategic, and 12 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 1922,
+    "unit_count": 40
+  }
+}

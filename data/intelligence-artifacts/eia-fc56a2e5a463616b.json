@@ -1,0 +1,111 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-fc56a2e5a463616b",
+  "generated_at": "2026-05-17T14:17:11+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6236",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6236",
+    "source_title": "To keep Agents continuously and intelligently working is going to\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:11+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6236",
+    "source_digest_sha256": "54f1de06d9406fdf584682f5e04e239096e7a349f934a9e98cd363ed2cac1b84"
+  },
+  "taxonomy": {
+    "procedural": [
+      "- Config loader for growing trigger collections from JSON with fallback",
+      "src/config/auto-prompt-loader.ts:142",
+      "sequences.json:1",
+      "- API + relay updates:",
+      "config/env.ts:58",
+      "- pnpm --filter @the-new-fuse/audio-trigger-kws-mvp type-check passed.",
+      "- pnpm --filter @the-new-fuse/audio-trigger-kws-mvp build passed.",
+      "- pnpm --filter @the-new-fuse/audio-trigger-kws-mvp demo ran successfully with",
+      "failure when model endpoint is unavailable.",
+      "Tune configs/autoprompt/sequences.json per agent/use-case taxonomy.",
+      "config + logger path behavior.",
+      "config/env.ts (+19 -1)",
+      "1 +import fs from 'node:fs';",
+      "2 import path from 'node:path';",
+      "Ran pnpm --filter @the-new-fuse/audio-trigger-kws-mvp build",
+      "> tsc -p tsconfig.build.json --skipLibCheck",
+      "You approved codex to run pnpm --filter @the-new-fuse/audio-trigger-kws-mvp",
+      "Ran pnpm --filter @the-new-fuse/audio-trigger-kws-mvp type-check",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/src/config/",
+      "- pnpm --filter @the-new-fuse/audio-trigger-kws-mvp type-check passed"
+    ],
+    "strategic": [
+      "Keyword triggers that we can build off of and model after(audio-trigger-kws-",
+      "- New orchestration service for keyword/rule/visual triggers, prompt sequence",
+      "execution, scoring, and threshold adaptation: Desktop/A1-Inter-LLM-Com/The-",
+      "use-case: Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/",
+      "in Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/src/",
+      "defaults: Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/",
+      "LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/configs/autoprompt/",
+      "- Agent router method for automated prompt dispatch: Desktop/A1-Inter-LLM-Com/",
+      "Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/src/types/",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/src/",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/",
+      "failure when model endpoint is unavailable.",
+      "Edited Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/src/",
+      "Edited Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-",
+      "Edited Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/",
+      "Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp/src/config/"
+    ],
+    "governance": ["failure when model endpoint is unavailable."]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.13,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6236"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 18 strategic, and 1 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 8604,
+    "unit_count": 154
+  }
+}

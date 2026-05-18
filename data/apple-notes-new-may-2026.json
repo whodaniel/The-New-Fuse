@@ -1,0 +1,371 @@
+{
+  "generatedAt": "2026-05-17T14:04:35.226275Z",
+  "source": {
+    "account": "On My Mac",
+    "folder": "NEW- May-2026",
+    "folderPk": 6199
+  },
+  "count": 45,
+  "notes": [
+    {
+      "notePk": 6246,
+      "title": "Completed. Fresh internet research is now integrated into TNF with…",
+      "snippet": "scouting,",
+      "createdAt": null,
+      "modifiedAt": "2026-05-17T13:17:10.849062Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6245,
+      "title": "Implemented, including a workflow-engine cross-check path.",
+      "snippet": "What I changed",
+      "createdAt": null,
+      "modifiedAt": "2026-05-17T13:12:27.381441Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6244,
+      "title": "Agreed. I’ll only reconnect packages where there’s a clear architectural…",
+      "snippet": "fit",
+      "createdAt": null,
+      "modifiedAt": "2026-05-17T13:08:38.601489Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6243,
+      "title": "It is fine that you have been working on openclaw. But, remember that",
+      "snippet": "ultimately we are all working on tnf. tnf is our agent, tnf is our collective",
+      "createdAt": null,
+      "modifiedAt": "2026-05-17T11:39:36.568002Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6242,
+      "title": "Implemented end-to-end TS-first contract scaffolding and consumer…",
+      "snippet": "rewires.",
+      "createdAt": null,
+      "modifiedAt": "2026-05-17T06:50:57.263632Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6241,
+      "title": "To assure that every package, SaaS page, and CLI command in The New…",
+      "snippet": "Fuse",
+      "createdAt": null,
+      "modifiedAt": "2026-05-17T00:21:29.798070Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6239,
+      "title": "It has come to my attention that the agent/agents/.agent folder…",
+      "snippet": "infrastructure has changed a lot over time from even the last version of The",
+      "createdAt": null,
+      "modifiedAt": "2026-05-14T18:13:11.213705Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6238,
+      "title": "• TNF CLI audit/reconciliation is implemented, with a canonical self…",
+      "snippet": "-improvement",
+      "createdAt": null,
+      "modifiedAt": "2026-05-13T20:55:02.987028Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6237,
+      "title": "Protocolized execution is now in place, not a one-off.",
+      "snippet": "1. TNF coordination/state protocols were applied and verified:",
+      "createdAt": null,
+      "modifiedAt": "2026-05-13T17:09:23.990104Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6236,
+      "title": "To keep Agents continuously and intelligently working is going to…",
+      "snippet": "take more",
+      "createdAt": null,
+      "modifiedAt": "2026-05-13T12:51:34.524631Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6235,
+      "title": "The Factory Blueprint: Native Core & Super Cycle Alignment:",
+      "snippet": "Finalizing the session by aligning with the 'TNF Framework Super Cycle'",
+      "createdAt": null,
+      "modifiedAt": "2026-05-09T05:53:50.194205Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6234,
+      "title": "Your insight cuts through the \"AI hype\" and identifies the core structural",
+      "snippet": "truth of our system: The model is the engine, but the Agent is the Harness.",
+      "createdAt": null,
+      "modifiedAt": "2026-05-09T05:35:33.420737Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6233,
+      "title": "Nodes\" of the Gauntlet to a large degree already exist in the…",
+      "snippet": "collective writing compiled as part of TNF codebase. It is a matter of",
+      "createdAt": null,
+      "modifiedAt": "2026-05-09T05:21:31.646873Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6232,
+      "title": "TNF_INTELLIGENCE_PIPELINE_GAUNTLET.md → Accepted (+38, -0)",
+      "snippet": "1 # The TNF Intelligence Pipeline: \"The Gauntlet\"",
+      "createdAt": null,
+      "modifiedAt": "2026-05-09T05:05:54.265008Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6231,
+      "title": "personally relevant emails, and pull out factiods from saved whole…",
+      "snippet": "original blocks that we are able to decompose usingour own proprietary",
+      "createdAt": null,
+      "modifiedAt": "2026-05-09T04:58:05.093432Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6230,
+      "title": "Native Kernel: Intelligence Synthesis & Final Sync:",
+      "snippet": "Concluding Phase 4.1: Intelligence Synthesis and finalizing the",
+      "createdAt": null,
+      "modifiedAt": "2026-05-09T04:38:43.967441Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6228,
+      "title": "All endpoints working correctly. Let me now update the AGENTS.md with…",
+      "snippet": "the Edge Function docs and update the MCP server to also support the HTTP API:",
+      "createdAt": null,
+      "modifiedAt": "2026-05-09T04:31:12.719144Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6229,
+      "title": "─────────────────────────────────────────────────────────────────────────╯",
+      "snippet": "Phase 3: Forge Autophagy — Success & Transition:",
+      "createdAt": null,
+      "modifiedAt": "2026-05-09T04:28:52.600159Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6227,
+      "title": "Phase 3.4: IR Safety Inspector Complete:",
+      "snippet": "Finalizing Phase 3.4: IR Safety Inspector with zero-trust heuristic and",
+      "createdAt": null,
+      "modifiedAt": "2026-05-09T00:57:39.135299Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6226,
+      "title": "Implemented the next hardening pass and validated it end-to-end.",
+      "snippet": "What I changed",
+      "createdAt": null,
+      "modifiedAt": "2026-05-08T21:38:33.835716Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6225,
+      "title": "We have successfully reached a major milestone for The New Fuse (next…",
+      "snippet": "-gen),",
+      "createdAt": null,
+      "modifiedAt": "2026-05-08T21:15:41.650451Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6224,
+      "title": "The tnf agent IS the full agentic harness, procedure, protocol, mixture…",
+      "snippet": "of",
+      "createdAt": null,
+      "modifiedAt": "2026-05-08T20:12:27.929209Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6223,
+      "title": "Now let me update AGENTS.md to document the concordance system:",
+      "snippet": "# Todos",
+      "createdAt": null,
+      "modifiedAt": "2026-05-08T19:56:04.013122Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6222,
+      "title": "Here’s a consolidated list of what was worked on across this",
+      "snippet": "conversation:",
+      "createdAt": null,
+      "modifiedAt": "2026-05-08T19:51:31.670874Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6221,
+      "title": "# Write concordance skill SKILL.md",
+      "snippet": "$ cat > /Users/danielgoldberg/.agents/skills/concordance/SKILL.md << 'ENDOFFILE'",
+      "createdAt": null,
+      "modifiedAt": "2026-05-08T19:25:28.805904Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6220,
+      "title": "Core package now passes too. Let me do a final comprehensive check…",
+      "snippet": "on the critical packages and summarize all changes.",
+      "createdAt": null,
+      "modifiedAt": "2026-05-08T19:16:31.895710Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6219,
+      "title": "Native Sensory Suite: Finalized & Synced:",
+      "snippet": "Completing the Native Sensory Suite and summarizing the multi-agent",
+      "createdAt": null,
+      "modifiedAt": "2026-05-08T18:45:07.088519Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6218,
+      "title": "Can you now add an HTML visualizer similar to our other HTML visualizers…",
+      "snippet": "that allow click through to dig down into the concordance data? Make sure to document your work in the codebase. And yo may also look into including a React visual UI, similar and potentially integrated with our other React visualizer components. I am int",
+      "createdAt": null,
+      "modifiedAt": "2026-05-08T17:01:10.317027Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6217,
+      "title": "Structural = persistence",
+      "snippet": "Temporal = interactive",
+      "createdAt": null,
+      "modifiedAt": "2026-05-06T18:34:48.690545Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6216,
+      "title": "This is a very good run, that has discovered a lot of cross domain…",
+      "snippet": "contextual understanding! I want to be clear that the results surfaced and synthesized are Not a complete picture of all of the dynamic structures and definitions hidden in the depth of this masive monorepo with thousands of files and docs! It is with thi",
+      "createdAt": null,
+      "modifiedAt": "2026-05-06T17:25:04.399995Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6215,
+      "title": "synthesize everything into a unified organizational analysis document…",
+      "snippet": "that identifies the complete structure, data flows, and integration opportunities",
+      "createdAt": null,
+      "modifiedAt": "2026-05-06T17:08:00.901084Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6213,
+      "title": "Based on my exploration of the TNF codebase, documentation, CLI, and…",
+      "snippet": "system state, here is a comprehensive overview of thenewfuse.com and",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T16:16:54.022631Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6212,
+      "title": "OK! It is working! Very Good! Now keep itterating through and over…",
+      "snippet": "it!",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T15:38:09.556397Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6211,
+      "title": "Based on my investigation of thenewfuse.com and the TNF (The New…",
+      "snippet": "Fuse)",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T14:29:45.700373Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6210,
+      "title": "Do you understand that I am trying to build a complete map to the…",
+      "snippet": "entire",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T13:31:25.291864Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6209,
+      "title": "Architectural Course Correction:",
+      "snippet": "Acknowledge the critical architectural error of conflating the DSP-Arch",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T13:27:35.964805Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6208,
+      "title": "TNF SYSTEM STATUS UPDATE…",
+      "snippet": "✅ Immediate Blockers Resolved",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T12:53:42.442820Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6207,
+      "title": "You are entirely correct. The screenshot shows exactly what happens…",
+      "snippet": "when",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T02:37:38.800334Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6206,
+      "title": "Just as I had feared, the results show a massive loss of contextual…",
+      "snippet": "integrity of depth and width into the exausive layers of logical",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T02:21:37.292247Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6205,
+      "title": "synthesize them into a narrative timeline with explicit connection",
+      "snippet": "arcs",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T02:14:40.225389Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6204,
+      "title": "Extracting the SID cookie using rookiepy with the correct pyth…",
+      "snippet": "… │",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T01:15:12.999287Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6203,
+      "title": "We may need to build a more resilient proper extension/plug-in for…",
+      "snippet": "hermes that is modular and will not be overwritten by hermes updates. Specifically for sustaining customization of the provided LLM provider - model structure.",
+      "createdAt": null,
+      "modifiedAt": "2026-05-05T00:47:03.067639Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6202,
+      "title": "Here's the summary:",
+      "snippet": "5 models were missing from all configs — now added:",
+      "createdAt": null,
+      "modifiedAt": "2026-05-04T19:44:06.359586Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6201,
+      "title": "App Idea- Storeganize",
+      "snippet": "An expert at organizational systems for storage, usage, and display of objects big and small, in spaces of any size.",
+      "createdAt": null,
+      "modifiedAt": "2026-05-04T13:55:18.597468Z",
+      "noteRef": null
+    },
+    {
+      "notePk": 6200,
+      "title": "Agent Idea: They’re mission is to scour the Web and provide helpful…",
+      "snippet": "service and value to people in forums, chats, etc, and does not charge, but does provide a link to donate and or show appreciation with tips.",
+      "createdAt": null,
+      "modifiedAt": "2026-05-04T13:39:15.536684Z",
+      "noteRef": null
+    }
+  ]
+}

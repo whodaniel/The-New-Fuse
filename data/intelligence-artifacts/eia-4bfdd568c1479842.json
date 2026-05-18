@@ -1,0 +1,100 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-4bfdd568c1479842",
+  "generated_at": "2026-05-17T14:17:13+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6225",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6225",
+    "source_title": "We have successfully reached a major milestone for The New Fuse (next\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:13+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6225",
+    "source_digest_sha256": "ee91912603c7eb0a997105296c8a9e7fcac73f0677e96d32fef96d9fa54fc936"
+  },
+  "taxonomy": {
+    "procedural": [
+      "* RCE Mitigation: Replaced unsafe curl | sh in UpgradeService.ts with a",
+      "across api-client, shared, and core.",
+      "Native Sensory Suite (Gemini CLI):",
+      "* API Boot Fixed: Stabilized the apps/api path and verified the 98-event",
+      "- User-scoped task system is in place via userId ownership checks in API/repo:",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/modules/task/",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/controllers/",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/controllers/agent-",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/services/agent-",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/modules/unified-",
+      "Move unified ledger writes to tenant-partitioned DB storage (no shared JSON",
+      "* API/Timeline: Stabilized and verified (98 narrative events imported)."
+    ],
+    "strategic": [
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/modules/task/",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/src/drizzle/",
+      "- Delegation/access model is strong for workspace membership/roles and",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/controllers/",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/controllers/agent-",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/services/agent-",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints/",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/modules/unified-",
+      "implement the minimal safe migration path and verify with tests.",
+      "align this with the existing Supabase/RLS direction so private data stays",
+      "on port 3006 for zero-latency communication."
+    ],
+    "governance": [
+      "Security & Stability (Kilo Agent):",
+      "- User-scoped task system is in place via userId ownership checks in API/repo:",
+      "Add cross-tenant isolation tests and policy regression tests."
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.093,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6225"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 12 procedural, 11 strategic, and 3 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 6748,
+    "unit_count": 129
+  }
+}

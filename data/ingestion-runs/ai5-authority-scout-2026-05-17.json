@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-17T14:19:18.069578Z",
+  "scope": "Authority scouting seeded from AI 5 playlist intake",
+  "method": "fresh web reconnaissance against primary sources (official docs / GitHub repos)",
+  "topics": [
+    {
+      "seed": "Multica managed agents platform",
+      "source": "https://github.com/multica-ai/multica",
+      "signal": "Open-source managed agents platform with daemon/runtime architecture and broad CLI interoperability."
+    },
+    {
+      "seed": "Archon harness builder",
+      "source": "https://github.com/coleam00/archon",
+      "signal": "Workflow engine for AI coding agents using YAML process definitions."
+    },
+    {
+      "seed": "OpenSwarm orchestration",
+      "source": "https://github.com/openswarm-ai/openswarm",
+      "signal": "Mission-control style multi-agent orchestration surface and approval-driven operations."
+    },
+    {
+      "seed": "Pixelle-Video engine",
+      "source": "https://github.com/AIDC-AI/Pixelle-Video",
+      "signal": "Automated short-video generation pipeline with modular multimodal steps."
+    },
+    {
+      "seed": "TokenSpeed inference engine",
+      "source": "https://github.com/lightseekorg/tokenspeed",
+      "signal": "Emerging LLM inference engine project to benchmark for merit-based runtime substitution."
+    },
+    {
+      "seed": "Gemini API platform updates",
+      "source": "https://ai.google.dev/gemini-api/docs/changelog",
+      "signal": "Official release stream for model/version transitions and deprecation timing."
+    },
+    {
+      "seed": "Gemini API file-ingestion update (Jan 12, 2026)",
+      "source": "https://blog.google/innovation-and-ai/technology/developers-tools/gemini-api-new-file-limits/",
+      "signal": "Inline limit increased from 20MB to 100MB and direct GCS/URL ingestion pathways added."
+    }
+  ],
+  "integrationTargets": [
+    "data/ingestion-runs/ai5-new-may-2026-scout-queue.json",
+    "docs/protocols/reports/TNF_INGEST_RUN_AI5_NEW_MAY_2026_2026-05-17.md"
+  ]
+}

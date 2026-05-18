@@ -1,5 +1,5 @@
 import { Suspense, lazy, type ReactNode } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { isFairtableFeatureEnabled } from './config/featureFlags';
 import { LEGACY_REDIRECTS } from './config/legacyRedirects';
 // Lazy load layouts for code splitting
@@ -381,6 +381,16 @@ const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
     <RequireMembership>{children}</RequireMembership>
   </RequireAuth>
 );
+
+const WorkspaceScopedOverviewRedirect = () => {
+  const { workspaceId } = useParams<{ workspaceId: string }>();
+
+  if (!workspaceId || workspaceId.trim().length === 0) {
+    return <Navigate to="/workspace/overview" replace />;
+  }
+
+  return <Navigate to={`/workspace/${workspaceId}/overview`} replace />;
+};
 
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter({ isApp: _isApp = false }: ComprehensiveRouterProps) {
@@ -853,6 +863,46 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               />
               <Route
                 path="/workspace/settings"
+                element={
+                  <RequireMemberAccess>
+                    <WorkspaceSettings />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/workspace/:workspaceId"
+                element={
+                  <RequireMemberAccess>
+                    <WorkspaceScopedOverviewRedirect />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/workspace/:workspaceId/overview"
+                element={
+                  <RequireMemberAccess>
+                    <WorkspaceOverview />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/workspace/:workspaceId/analytics"
+                element={
+                  <RequireMemberAccess>
+                    <WorkspaceAnalytics />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/workspace/:workspaceId/members"
+                element={
+                  <RequireMemberAccess>
+                    <WorkspaceMembers />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/workspace/:workspaceId/settings"
                 element={
                   <RequireMemberAccess>
                     <WorkspaceSettings />

@@ -1,0 +1,1091 @@
+{
+  "generatedAt": "2026-05-17T14:21:00.970649Z",
+  "dryRun": false,
+  "playlist": {
+    "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ai-5-playlist.json",
+    "playlistId": "unknown",
+    "count": 31
+  },
+  "notes": {
+    "dbPath": "/Users/danielgoldberg/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite",
+    "folderTitle": "NEW- May-2026",
+    "folderPk": 6199,
+    "count": 45
+  },
+  "owner": "danielgoldberg",
+  "visibility": "private",
+  "releaseState": "sealed",
+  "previousTrackedCount": 76,
+  "summary": {
+    "attemptedThisRun": 0,
+    "succeededThisRun": 0,
+    "failedThisRun": 0,
+    "trackedTotal": 76
+  },
+  "items": [
+    {
+      "sourceId": "apple-notes-new-may-2026-6200",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6200",
+      "title": "Agent Idea: They’re mission is to scour the Web and provide helpful…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-20ac9eb8f4aedd0a",
+      "result": {
+        "artifact_id": "eia-20ac9eb8f4aedd0a",
+        "generated_at": "2026-05-17T14:17:17+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6201",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6201",
+      "title": "App Idea- Storeganize",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-721c167b6b18c4b5",
+      "result": {
+        "artifact_id": "eia-721c167b6b18c4b5",
+        "generated_at": "2026-05-17T14:17:17+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6202",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6202",
+      "title": "Here's the summary:",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-7bd3ce290d493b91",
+      "result": {
+        "artifact_id": "eia-7bd3ce290d493b91",
+        "generated_at": "2026-05-17T14:17:17+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6203",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6203",
+      "title": "We may need to build a more resilient proper extension/plug-in for…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-ec8d401a0d68ae5e",
+      "result": {
+        "artifact_id": "eia-ec8d401a0d68ae5e",
+        "generated_at": "2026-05-17T14:17:17+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6204",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6204",
+      "title": "Extracting the SID cookie using rookiepy with the correct pyth…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-d177a8033d51c6c3",
+      "result": {
+        "artifact_id": "eia-d177a8033d51c6c3",
+        "generated_at": "2026-05-17T14:17:16+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6205",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6205",
+      "title": "synthesize them into a narrative timeline with explicit connection",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-5c46a21a7d5b67de",
+      "result": {
+        "artifact_id": "eia-5c46a21a7d5b67de",
+        "generated_at": "2026-05-17T14:17:16+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6206",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6206",
+      "title": "Just as I had feared, the results show a massive loss of contextual…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-c1f133bc2b8dda40",
+      "result": {
+        "artifact_id": "eia-c1f133bc2b8dda40",
+        "generated_at": "2026-05-17T14:17:16+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6207",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6207",
+      "title": "You are entirely correct. The screenshot shows exactly what happens…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-a9edd2502aba5db9",
+      "result": {
+        "artifact_id": "eia-a9edd2502aba5db9",
+        "generated_at": "2026-05-17T14:17:16+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6208",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6208",
+      "title": "TNF SYSTEM STATUS UPDATE…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-6a835f545b3a0e38",
+      "result": {
+        "artifact_id": "eia-6a835f545b3a0e38",
+        "generated_at": "2026-05-17T14:17:16+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6209",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6209",
+      "title": "Architectural Course Correction:",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-cfb8475b8479357e",
+      "result": {
+        "artifact_id": "eia-cfb8475b8479357e",
+        "generated_at": "2026-05-17T14:17:15+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6210",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6210",
+      "title": "Do you understand that I am trying to build a complete map to the…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-e7279316ab831d97",
+      "result": {
+        "artifact_id": "eia-e7279316ab831d97",
+        "generated_at": "2026-05-17T14:17:15+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6211",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6211",
+      "title": "Based on my investigation of thenewfuse.com and the TNF (The New…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-a4e053e4cc2e5425",
+      "result": {
+        "artifact_id": "eia-a4e053e4cc2e5425",
+        "generated_at": "2026-05-17T14:17:15+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6212",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6212",
+      "title": "OK! It is working! Very Good! Now keep itterating through and over…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-6f06354674f680be",
+      "result": {
+        "artifact_id": "eia-6f06354674f680be",
+        "generated_at": "2026-05-17T14:17:15+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6213",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6213",
+      "title": "Based on my exploration of the TNF codebase, documentation, CLI, and…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-82f584499d1b110f",
+      "result": {
+        "artifact_id": "eia-82f584499d1b110f",
+        "generated_at": "2026-05-17T14:17:15+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6215",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6215",
+      "title": "synthesize everything into a unified organizational analysis document…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-41d3ecd9f998b9da",
+      "result": {
+        "artifact_id": "eia-41d3ecd9f998b9da",
+        "generated_at": "2026-05-17T14:17:15+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6216",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6216",
+      "title": "This is a very good run, that has discovered a lot of cross domain…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-5f40029a98726cb9",
+      "result": {
+        "artifact_id": "eia-5f40029a98726cb9",
+        "generated_at": "2026-05-17T14:17:14+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6217",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6217",
+      "title": "Structural = persistence",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-d12c614d8fa6a93a",
+      "result": {
+        "artifact_id": "eia-d12c614d8fa6a93a",
+        "generated_at": "2026-05-17T14:17:14+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6218",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6218",
+      "title": "Can you now add an HTML visualizer similar to our other HTML visualizers…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-ae52521ec8bad7a6",
+      "result": {
+        "artifact_id": "eia-ae52521ec8bad7a6",
+        "generated_at": "2026-05-17T14:17:14+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6219",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6219",
+      "title": "Native Sensory Suite: Finalized & Synced:",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-4ca4fe5a4e0e7ac8",
+      "result": {
+        "artifact_id": "eia-4ca4fe5a4e0e7ac8",
+        "generated_at": "2026-05-17T14:17:14+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6220",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6220",
+      "title": "Core package now passes too. Let me do a final comprehensive check…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-d5ed1d034de2da7d",
+      "result": {
+        "artifact_id": "eia-d5ed1d034de2da7d",
+        "generated_at": "2026-05-17T14:17:14+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6221",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6221",
+      "title": "# Write concordance skill SKILL.md",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-a0026f9e1849027f",
+      "result": {
+        "artifact_id": "eia-a0026f9e1849027f",
+        "generated_at": "2026-05-17T14:17:13+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6222",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6222",
+      "title": "Here’s a consolidated list of what was worked on across this",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-ddea9bc3008bba22",
+      "result": {
+        "artifact_id": "eia-ddea9bc3008bba22",
+        "generated_at": "2026-05-17T14:17:13+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6223",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6223",
+      "title": "Now let me update AGENTS.md to document the concordance system:",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-7aa83d5b0cc910e4",
+      "result": {
+        "artifact_id": "eia-7aa83d5b0cc910e4",
+        "generated_at": "2026-05-17T14:17:13+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6224",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6224",
+      "title": "The tnf agent IS the full agentic harness, procedure, protocol, mixture…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-50bf8ca046ba709c",
+      "result": {
+        "artifact_id": "eia-50bf8ca046ba709c",
+        "generated_at": "2026-05-17T14:17:13+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6225",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6225",
+      "title": "We have successfully reached a major milestone for The New Fuse (next…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-4bfdd568c1479842",
+      "result": {
+        "artifact_id": "eia-4bfdd568c1479842",
+        "generated_at": "2026-05-17T14:17:13+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6226",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6226",
+      "title": "Implemented the next hardening pass and validated it end-to-end.",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-185a71192b535c27",
+      "result": {
+        "artifact_id": "eia-185a71192b535c27",
+        "generated_at": "2026-05-17T14:17:13+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6227",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6227",
+      "title": "Phase 3.4: IR Safety Inspector Complete:",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-9e95fcd5673f349c",
+      "result": {
+        "artifact_id": "eia-9e95fcd5673f349c",
+        "generated_at": "2026-05-17T14:17:12+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6228",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6228",
+      "title": "All endpoints working correctly. Let me now update the AGENTS.md with…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-7df33ebe48cd33c8",
+      "result": {
+        "artifact_id": "eia-7df33ebe48cd33c8",
+        "generated_at": "2026-05-17T14:17:12+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6229",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6229",
+      "title": "─────────────────────────────────────────────────────────────────────────╯",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-236af14ecb3c1795",
+      "result": {
+        "artifact_id": "eia-236af14ecb3c1795",
+        "generated_at": "2026-05-17T14:17:12+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6230",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6230",
+      "title": "Native Kernel: Intelligence Synthesis & Final Sync:",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-189b806eb3e000f1",
+      "result": {
+        "artifact_id": "eia-189b806eb3e000f1",
+        "generated_at": "2026-05-17T14:17:12+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6231",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6231",
+      "title": "personally relevant emails, and pull out factiods from saved whole…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-3753fc8b272b2e9e",
+      "result": {
+        "artifact_id": "eia-3753fc8b272b2e9e",
+        "generated_at": "2026-05-17T14:17:12+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6232",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6232",
+      "title": "TNF_INTELLIGENCE_PIPELINE_GAUNTLET.md → Accepted (+38, -0)",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-34beb33158cf4ed7",
+      "result": {
+        "artifact_id": "eia-34beb33158cf4ed7",
+        "generated_at": "2026-05-17T14:17:11+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6233",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6233",
+      "title": "Nodes\" of the Gauntlet to a large degree already exist in the…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-31dfc21f62b3893c",
+      "result": {
+        "artifact_id": "eia-31dfc21f62b3893c",
+        "generated_at": "2026-05-17T14:17:11+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6234",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6234",
+      "title": "Your insight cuts through the \"AI hype\" and identifies the core structural",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-6ea94e6fa41e4af1",
+      "result": {
+        "artifact_id": "eia-6ea94e6fa41e4af1",
+        "generated_at": "2026-05-17T14:17:11+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6235",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6235",
+      "title": "The Factory Blueprint: Native Core & Super Cycle Alignment:",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-4c942f6d76a26a55",
+      "result": {
+        "artifact_id": "eia-4c942f6d76a26a55",
+        "generated_at": "2026-05-17T14:17:11+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6236",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6236",
+      "title": "To keep Agents continuously and intelligently working is going to…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-fc56a2e5a463616b",
+      "result": {
+        "artifact_id": "eia-fc56a2e5a463616b",
+        "generated_at": "2026-05-17T14:17:11+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6237",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6237",
+      "title": "Protocolized execution is now in place, not a one-off.",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-a2ced6076927e37a",
+      "result": {
+        "artifact_id": "eia-a2ced6076927e37a",
+        "generated_at": "2026-05-17T14:17:10+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6238",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6238",
+      "title": "• TNF CLI audit/reconciliation is implemented, with a canonical self…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-848a2e0c6a8cdc83",
+      "result": {
+        "artifact_id": "eia-848a2e0c6a8cdc83",
+        "generated_at": "2026-05-17T14:17:10+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6239",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6239",
+      "title": "It has come to my attention that the agent/agents/.agent folder…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-0fd24fd09fc624c7",
+      "result": {
+        "artifact_id": "eia-0fd24fd09fc624c7",
+        "generated_at": "2026-05-17T14:17:10+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6241",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6241",
+      "title": "To assure that every package, SaaS page, and CLI command in The New…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-83433b398941ef51",
+      "result": {
+        "artifact_id": "eia-83433b398941ef51",
+        "generated_at": "2026-05-17T14:17:10+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6242",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6242",
+      "title": "Implemented end-to-end TS-first contract scaffolding and consumer…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-11f965d81d513539",
+      "result": {
+        "artifact_id": "eia-11f965d81d513539",
+        "generated_at": "2026-05-17T14:17:10+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6243",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6243",
+      "title": "It is fine that you have been working on openclaw. But, remember that",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-b987ea99d147dc71",
+      "result": {
+        "artifact_id": "eia-b987ea99d147dc71",
+        "generated_at": "2026-05-17T14:17:09+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6244",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6244",
+      "title": "Agreed. I’ll only reconnect packages where there’s a clear architectural…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-dc55fb5f416fa031",
+      "result": {
+        "artifact_id": "eia-dc55fb5f416fa031",
+        "generated_at": "2026-05-17T14:17:09+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6245",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6245",
+      "title": "Implemented, including a workflow-engine cross-check path.",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-9187d38444931c1d",
+      "result": {
+        "artifact_id": "eia-9187d38444931c1d",
+        "generated_at": "2026-05-17T14:17:09+00:00"
+      }
+    },
+    {
+      "sourceId": "apple-notes-new-may-2026-6246",
+      "sourceType": "note",
+      "sourceUri": "apple-notes://on-my-mac/NEW-%20May-2026/6246",
+      "title": "Completed. Fresh internet research is now integrated into TNF with…",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-733d55dcd521a611",
+      "result": {
+        "artifact_id": "eia-733d55dcd521a611",
+        "generated_at": "2026-05-17T14:17:09+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5--Bp2Sz5xir4",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=-Bp2Sz5xir4",
+      "title": "Build an Enterprise RAG Pipeline in Minutes with Gemini New API",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-26ae0cf9f01cf812",
+      "result": {
+        "artifact_id": "eia-26ae0cf9f01cf812",
+        "generated_at": "2026-05-17T14:17:03+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-4XvM-0o3A-4",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=4XvM-0o3A-4",
+      "title": "Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-986677665bb2bb82",
+      "result": {
+        "artifact_id": "eia-986677665bb2bb82",
+        "generated_at": "2026-05-17T14:17:04+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-4azVjKhqDzw",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=4azVjKhqDzw",
+      "title": "Building the App Store for Agentic Engineering",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-bc2da01e67670b11",
+      "result": {
+        "artifact_id": "eia-bc2da01e67670b11",
+        "generated_at": "2026-05-17T14:17:04+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-65IAqRUxg3c",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=65IAqRUxg3c",
+      "title": "AI Agents run my business and life",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-fbc636bd34ff3de6",
+      "result": {
+        "artifact_id": "eia-fbc636bd34ff3de6",
+        "generated_at": "2026-05-17T14:17:04+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-7xuWZ-3lyQE",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=7xuWZ-3lyQE",
+      "title": "Hermes Agent just got 10X Better (Agentic OS)",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-f4c691fb3f2fa600",
+      "result": {
+        "artifact_id": "eia-f4c691fb3f2fa600",
+        "generated_at": "2026-05-17T14:17:07+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-M-8lv5TXUYk",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=M-8lv5TXUYk",
+      "title": "5 \"Engineer-Only\" Claude Skills Every Vibe Coder NEEDS",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-3f30082d94bf407f",
+      "result": {
+        "artifact_id": "eia-3f30082d94bf407f",
+        "generated_at": "2026-05-17T14:17:05+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-NnsQj2nDkKA",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=NnsQj2nDkKA",
+      "title": "Real gundams, top 3D generator, open-source world models, ChatGPT updates, new TTS: AI NEWS",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-6fb000c6ab47c6fb",
+      "result": {
+        "artifact_id": "eia-6fb000c6ab47c6fb",
+        "generated_at": "2026-05-17T14:17:08+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-Q7AYc2kECDI",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=Q7AYc2kECDI",
+      "title": "How to Actually Build Mobile Apps with AI in 2026 | A Complete Beginner's Tutorial",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-f8f9a17884c3e91b",
+      "result": {
+        "artifact_id": "eia-f8f9a17884c3e91b",
+        "generated_at": "2026-05-17T14:17:07+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-QK0B1mbJ-VU",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=QK0B1mbJ-VU",
+      "title": "5 Claude Code Tools That Make Vibe Coders Cry Tears of Joy",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-9dd0b5b6e5ef69e8",
+      "result": {
+        "artifact_id": "eia-9dd0b5b6e5ef69e8",
+        "generated_at": "2026-05-17T14:17:06+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-RxwjoegpI98",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=RxwjoegpI98",
+      "title": "Building Agentic RAG From Scratch in Pure Python",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-376deb2dbf202bc2",
+      "result": {
+        "artifact_id": "eia-376deb2dbf202bc2",
+        "generated_at": "2026-05-17T14:17:03+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-WQv3xjb4WgQ",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=WQv3xjb4WgQ",
+      "title": "ByteDance Just Killed Manus With This Free AI Agent",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-2ba54063e0454d00",
+      "result": {
+        "artifact_id": "eia-2ba54063e0454d00",
+        "generated_at": "2026-05-17T14:17:08+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-XLH_WLrmwfk",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=XLH_WLrmwfk",
+      "title": "Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE GROK BUILD CLI for 100% FREE!",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-b5dcf0b9d02480d6",
+      "result": {
+        "artifact_id": "eia-b5dcf0b9d02480d6",
+        "generated_at": "2026-05-17T14:17:07+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-Xfl50508LZM",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=Xfl50508LZM",
+      "title": "Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss, Arize",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-6347e50f5b4e7332",
+      "result": {
+        "artifact_id": "eia-6347e50f5b4e7332",
+        "generated_at": "2026-05-17T14:17:06+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-gb5TlGw6Uks",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=gb5TlGw6Uks",
+      "title": "Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-5d011c276874732a",
+      "result": {
+        "artifact_id": "eia-5d011c276874732a",
+        "generated_at": "2026-05-17T14:17:03+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-hTpHmLFXBrc",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=hTpHmLFXBrc",
+      "title": "Vercel Just Fixed Vibe Coding's Biggest Problem",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-87149c50482089be",
+      "result": {
+        "artifact_id": "eia-87149c50482089be",
+        "generated_at": "2026-05-17T14:17:04+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-j5_wcDifNko",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=j5_wcDifNko",
+      "title": "ChatGPT Has 900M Weekly Users. Almost None Can Buy In It.",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-cf699d5bcd86e58b",
+      "result": {
+        "artifact_id": "eia-cf699d5bcd86e58b",
+        "generated_at": "2026-05-17T14:17:05+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-jWDCnJKouhw",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=jWDCnJKouhw",
+      "title": "Are Your AI Agents Flying Blind? The Truth About AgentOps",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-877612e1a48483d4",
+      "result": {
+        "artifact_id": "eia-877612e1a48483d4",
+        "generated_at": "2026-05-17T14:17:05+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-jwtpMSRAPAQ",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=jwtpMSRAPAQ",
+      "title": "The Trillion Dollar Agentic Workflow Opportunity Is Here",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-ec919ea43ba8da74",
+      "result": {
+        "artifact_id": "eia-ec919ea43ba8da74",
+        "generated_at": "2026-05-17T14:17:05+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-k8o_UgtrGyA",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=k8o_UgtrGyA",
+      "title": "The only Browser Use breakdown you'll ever need — with founder Magnus Müller",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-0802895128ac7e3f",
+      "result": {
+        "artifact_id": "eia-0802895128ac7e3f",
+        "generated_at": "2026-05-17T14:17:07+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-kJNFWGXRrA4",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=kJNFWGXRrA4",
+      "title": "Top Dev Tool Projects : 9Router, TRUST, Dokku, React-Doctor & AgentMemory",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-d84f622009d414fd",
+      "result": {
+        "artifact_id": "eia-d84f622009d414fd",
+        "generated_at": "2026-05-17T14:17:07+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-lAAcjj5fISE",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=lAAcjj5fISE",
+      "title": "Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenSwarm & TokenSpeed #256",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-c91e62b58fc2624c",
+      "result": {
+        "artifact_id": "eia-c91e62b58fc2624c",
+        "generated_at": "2026-05-17T14:17:02+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-lK9o5Wu2upU",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=lK9o5Wu2upU",
+      "title": "Pi is INCREDIBLE - Building a Custom Coding Agent Live",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-bbed1748f6719b07",
+      "result": {
+        "artifact_id": "eia-bbed1748f6719b07",
+        "generated_at": "2026-05-17T14:17:08+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-maabARKJ94o",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=maabARKJ94o",
+      "title": "7 Claude Skills That'll Change How You Vibe Code Forever",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-71c2f8e2d159aaba",
+      "result": {
+        "artifact_id": "eia-71c2f8e2d159aaba",
+        "generated_at": "2026-05-17T14:17:06+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-nFq4POtqom4",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=nFq4POtqom4",
+      "title": "OpenSpec Will Change How You Vibe Code Forever",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-574daf1edba1af94",
+      "result": {
+        "artifact_id": "eia-574daf1edba1af94",
+        "generated_at": "2026-05-17T14:17:05+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-nyO60uzTnP4",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=nyO60uzTnP4",
+      "title": "Making $$ with AI Agents",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-77e037b78d7b204c",
+      "result": {
+        "artifact_id": "eia-77e037b78d7b204c",
+        "generated_at": "2026-05-17T14:17:04+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-oLu32YpiIJw",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=oLu32YpiIJw",
+      "title": "My AI Design Workflow That Doesn't Ship Slop",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-bab470d6be70e41f",
+      "result": {
+        "artifact_id": "eia-bab470d6be70e41f",
+        "generated_at": "2026-05-17T14:17:03+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-ohKt066uFhg",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=ohKt066uFhg",
+      "title": "Viktor: AI Coworker That Lives in Slack — Fryderyk Wiatrowski",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-8e1345e9c1b30270",
+      "result": {
+        "artifact_id": "eia-8e1345e9c1b30270",
+        "generated_at": "2026-05-17T14:17:03+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-prLO7NGU4f0",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=prLO7NGU4f0",
+      "title": "Build Your First AI Image Generator from Scratch with Codex CLI (Full Tutorial)",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-b37ca979a4962ac1",
+      "result": {
+        "artifact_id": "eia-b37ca979a4962ac1",
+        "generated_at": "2026-05-17T14:17:04+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-s3rNDndvav0",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=s3rNDndvav0",
+      "title": "The biggest AI breakthrough in medicine & drug discovery",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-44d6aeabeaaf6d10",
+      "result": {
+        "artifact_id": "eia-44d6aeabeaaf6d10",
+        "generated_at": "2026-05-17T14:17:06+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-sRKBGVFVYAw",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=sRKBGVFVYAw",
+      "title": "David Reich – Bronze Age shock, the Neanderthal puzzle, & the sudden spread of farming",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-55f1b603f2b135c7",
+      "result": {
+        "artifact_id": "eia-55f1b603f2b135c7",
+        "generated_at": "2026-05-17T14:17:08+00:00"
+      }
+    },
+    {
+      "sourceId": "yt-ai5-vi-2nasppAg",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=vi-2nasppAg",
+      "title": "Make your own event-sourced agent harness using stream processors — Jonas Templestein, Iterate",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "artifactId": "eia-98cceb62110956f5",
+      "result": {
+        "artifact_id": "eia-98cceb62110956f5",
+        "generated_at": "2026-05-17T14:17:06+00:00"
+      }
+    }
+  ]
+}

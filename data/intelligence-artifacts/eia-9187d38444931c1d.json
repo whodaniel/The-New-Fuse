@@ -1,0 +1,87 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-9187d38444931c1d",
+  "generated_at": "2026-05-17T14:17:09+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6245",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6245",
+    "source_title": "Implemented, including a workflow-engine cross-check path.",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:09+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6245",
+    "source_digest_sha256": "53595be62f8dda3ba9719b334efc7dbe0b1438b0c57a17d85ff95def8892a9e6"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Added full hooks CLI namespace with:",
+      "- --event <path> fixture loading (JSON/YAML)",
+      "Fuse/packages/tnf-cli/src/cli.ts:1165",
+      "tnf-cli/src/cli.ts:2337",
+      "- Hooks command block (test/logs/replay/explain): Desktop/A1-Inter-LLM-Com/",
+      "The-New-Fuse/packages/tnf-cli/src/cli.ts:7321",
+      "tnf-cli/src/cli.ts:2906",
+      "docs/reference/tnf-hooks-cli-command-spec.md:116",
+      "- node -> transform"
+    ],
+    "strategic": [
+      "- Hooks validation + orchestration helpers: Desktop/A1-Inter-LLM-Com/The-New-",
+      "- Workflow projection builder: Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/",
+      "- Hooks command block (test/logs/replay/explain): Desktop/A1-Inter-LLM-Com/",
+      "- Menu entry for hooks test: Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/",
+      "- Spec note for workflow projection: Desktop/A1-Inter-LLM-Com/The-New-Fuse/"
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.196,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6245"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 9 procedural, 5 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 2217,
+    "unit_count": 46
+  }
+}

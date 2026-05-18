@@ -38,16 +38,20 @@ The Browser Hub should be the **single pane of glass** for:
 | ------------------- | ------------------------------- | -------------------------------------- |
 | **A2A Protocol**    | `@the-new-fuse/a2a-core`        | Agent-to-agent communication dashboard |
 | **Feature Tracker** | `@the-new-fuse/feature-tracker` | Development progress visibility        |
-| **Monitoring**      | `@the-new-fuse/monitoring`      | System health dashboard                |
+| **Monitoring**      | `@the-new-fuse/core-monitoring` | System health dashboard                |
 | **Security**        | `@the-new-fuse/security`        | Authentication + permissions UI        |
 
 ### Tier 3: Nice to Have
 
-| Component         | Package                         | Integration Approach            |
-| ----------------- | ------------------------------- | ------------------------------- |
-| **UI Components** | `@the-new-fuse/ui-consolidated` | Consistent styling              |
-| **API Client**    | `@the-new-fuse/api-client`      | Backend communication           |
-| **Integrations**  | `@the-new-fuse/integrations`    | Third-party service connections |
+| Component         | Package                                                        | Integration Approach            |
+| ----------------- | -------------------------------------------------------------- | ------------------------------- |
+| **UI Components** | `@the-new-fuse/ui-consolidated`                                | Consistent styling              |
+| **API Client**    | `@the-new-fuse/api-client`                                     | Backend communication           |
+| **Integrations**  | `@the-new-fuse/resource-registry` + `@the-new-fuse/api-client` | Third-party service connections |
+
+Sunset note (2026-05-17): `@the-new-fuse/monitoring` and
+`@the-new-fuse/integrations` were removed from the active workspace and replaced
+by the packages above.
 
 ---
 

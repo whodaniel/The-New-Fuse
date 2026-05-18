@@ -1,0 +1,136 @@
+# Executable Intelligence Artifact
+
+**Artifact ID:** eia-41d3ecd9f998b9da **Spec:** tnf/executable-intelligence/0.2
+**Generated:** 2026-05-17T14:17:15+00:00 **Class/Status:** [INTEL] [PENDING]
+
+## Ownership & Release
+
+- Owner Principal: danielgoldberg
+- Visibility: private
+- Release State: sealed
+- Agent Allowlist: (none)
+- Release Approved By: (not released)
+- Released At: (not released)
+- Release Note: (none)
+
+## Source Attribution
+
+- Source ID: apple-notes-new-may-2026-6215
+- Type: note
+- URI: apple-notes://on-my-mac/NEW-%20May-2026/6215
+- Title: synthesize everything into a unified organizational analysis document…
+- Author:
+- Publisher:
+- Published At:
+- Retrieved At: 2026-05-17T14:17:15+00:00
+
+## Taxonomy of Actionability
+
+### Procedural
+
+- | **Organization** | TNF Development Operations Command (`TNF-DOC`) |
+- | **Total Agents** | 202 (86 cloud `api`, 73 local, 17 external, 10 analyzer,
+  6 coder, 5 coordinator, 4 mcp, 1 communicator) |
+- Complete Chain of Command
+- | Decision Type | Super Director | Director | Local Sub-Director | LLM API
+  Runner |
+- LLM API Runner / Specialist (L4)
+- - **Script**: `~/.tnf/master-heartbeat/bin/tnf-master-heartbeat-loop.cjs`
+- - `~/.tnf/master-heartbeat/state/master-heartbeat-latest.json`
+- | `api` (cloud) | 86 | Cloud/API agents (HTTP/REST)
+- | `external` | 17 | Third-party tool integrations (Claude Code CLI, Gemini
+  CLI, etc.) |
+- - Domain & Feature Agents executing scoped work under command
+- survey external environments | Scout Agents, Web Scrapers, API Listeners |
+  Target lists, URL watchlists, API keys | Raw data
+- | 4 | **Governance & StaffOps** (The Overseers) | Rule enforcers, resource
+  managers, audit | Protocol Growth Blocker Auditor, Staffing Director, LLM API
+  Runner | Executable Intelligence awaiting verification; system error logs |
+  Approved protocols; purge commands |
+- JWT + role check via `InteractiveCodebaseMap.tsx`
+- - Domain node: `DOMAIN_AGENTS`, `DOMAIN_DIRECTIVES`, `DOMAIN_PROTOCOLS`
+- - **Artifact**: `reports/protocols/dont-die-supervisor/dont-die-latest.json`
+- Raw verbatims, scraped data, API responses
+- Raw data: target lists, URLs, API keys, scraped content
+- | `InteractiveCodebaseMap.tsx` | Role-based map navigation, auth gates |
+- 202 (86 cloud api, 73 local, 17 external, 10 analyzer, 6 coder, 5 coordinator,
+  4 mcp, 1 communicator)
+- - Complete chain of command with decision matrix
+
+### Strategic
+
+- synthesize everything into a unified organizational analysis document that
+  identifies the complete structure, data flows, and integration opportunities
+- # Wrote Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/TNF_ORGANIZATIONAL_SYNTHESIS_v1.0.md
+- Provider failover and execution continuity
+- Provider Scouts (discover new providers)
+- Provider Test Harness (validate providers)
+- | Decision Type | Super Director | Director | Local Sub-Director | LLM API
+  Runner |
+- | Policy adoption/change | Accountable | Consulted | Informed | Informed |
+- | LLM provider swap | **Accountable** | Consulted | Responsible (trigger) |
+  **Responsible (execute)** |
+- | New paid provider approval | **Accountable** | Consulted | Informed |
+  Consulted |
+- LLM API Runner / Specialist (L4)
+- (within 10 minutes for strategic or cost-risk)
+- Federation & Orchestration Architecture
+- | `COORDINATOR` | 5 | Orchestration and project management |
+- | `mcp` | 4 | Model Context Protocol server agents |
+- Global orchestration, prompt injection, master clock control
+- Capability assessment verified
+- Network integration (joins mesh)
+- | 2 | **Library & Archives** (The Librarians) | Curators of deep memory,
+  spatial architecture, chronological integrity | Librarian Agents, Chronology
+  Specialists, Vector DB Managers | Raw data from Scouting; distilled artifacts
+  from Engineering | Clean RAG vaults; indexed wiki entries |
+- | 4 | **Governance & StaffOps** (The Overseers) | Rule enforcers, resource
+  managers, audit | Protocol Growth Blocker Auditor, Staffing Director, LLM API
+  Runner | Executable Intelligence awaiting verification; system error logs |
+  Approved protocols; purge commands |
+- **Capability Verification**
+
+### Governance
+
+- > **Purpose**: Integrate findings from all protocols, operations, governance,
+  > and agent systems to produce a single coherent view of how TNF's
+  > organizational structure functions end-to-end, where the seams are, and how
+  > to maintain cohesive synergy.
+- Final authority: policy, budget, emergency, structural changes
+- Protocol Growth Blocker Auditor (detect stale controls)
+- | Policy adoption/change | Accountable | Consulted | Informed | Informed |
+- | New paid provider approval | **Accountable** | Consulted | Informed |
+  Consulted |
+- (within 10 minutes for strategic or cost-risk)
+- Attaches MCID lineage + gate decisions
+- Quarantines packets on gate/lineage break
+- ### 4.2 Federation Gate Chain (8 Gates)
+- | Gate | Deny Code | What It Stops |
+- | `APPROVAL_GATE` | `POLICY.DECISION: deny` | Missing Super Admin / delegated
+  approval |
+- | **Cron governance** | Before any cron mutation | Multi-gate approval chain;
+  `APPROVAL_GATE=allow` required | SUPER_ADMIN or delegated agent |
+- | **Self-improvement review** | After each self-improvement run | Operator
+  reviews scorecard, link crawl, semantic audit | Super Admin / DevOps |
+- | **Dont-die remediation** | Critical/warning in 15-min audit | Human reviews
+  `dont-die-latest.md` | Super Admin operators |
+- | **Incident response** | Security incidents (P0
+- P3) | Incident Response Lead escalates to stakeholders | Incident Response
+  Lead |
+- | **Agent self-edit** | Any agent-owned doc edit | Schema-validated request
+  with MCID + ownership gate | Agent owner, Super Admin |
+- | `ANALYZER` | 10 | System analyzers (code review, security, performance) |
+- | `mcp` | 4 | Model Context Protocol server agents |
+- | `PENDING` | Unverified, treat as hypothesis | Requires Gate testing |
+
+## Utility Metrics
+
+- Freshness Decay: Medium
+- Implementation Density: 0.044
+- Verification Difficulty: Hard
+
+## Synthesis
+
+Artifact captures 20 procedural, 20 strategic, and 20 governance units. Use
+procedural units for immediate execution, then vet strategic and governance
+units through TNF gates before protocol adoption.

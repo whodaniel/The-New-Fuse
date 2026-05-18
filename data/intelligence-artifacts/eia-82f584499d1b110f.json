@@ -1,0 +1,105 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-82f584499d1b110f",
+  "generated_at": "2026-05-17T14:17:15+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6213",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6213",
+    "source_title": "Based on my exploration of the TNF codebase, documentation, CLI, and\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:15+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6213",
+    "source_digest_sha256": "6695e8c5294e994a9271983ec39365e4319edccc99817b95839e4dc8bb12a26d"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Title: Based on my exploration of the TNF codebase, documentation, CLI, and\u2026",
+      "| Based on my exploration of the TNF codebase, documentation, CLI, and",
+      "- api: REST/gRPC gateway services",
+      "- api-gateway: Traffic routing and rate limiting",
+      "- Embedded terminal (Terminal.tsx)",
+      "CLI Interface (tnf)",
+      "tsx packages/tnf-cli/src/cli.ts",
+      "- Key Command Groups:",
+      "- tnf run: Execute any root package script through unified TNF CLI",
+      "- tnf scripts: list/run runnable scripts from package.json,",
+      "- tnf menu: Show organized command menu",
+      "System State (from handoff-current.json)",
+      "documentation, CLI, and system state."
+    ],
+    "strategic": [
+      "Universal MCP & A2A Integration (connect to Claude, GPT-4, Gemini",
+      "TNF Network Framework Architecture",
+      "- agent-coordination: Orchestration patterns",
+      "- claude-skills: Skill-based capability system for Claude agents",
+      "The Unified Bus (System Architecture)",
+      "Node Integration & Capabilities",
+      "- Real-time element selection and chat platform detection",
+      "- Architecture Before Syntax: Define module boundaries before",
+      "Gateway Failover Bridge: Automatic provider failover like Hermes'",
+      "- Migration: From Railway to GCP (Cloud Run) +",
+      "- Deployment Model: Multi-instance mesh (Local Primary, Cloud Primary,",
+      "- Examine TNF_EXHAUSTIVE_AST_MAP.md for detailed architecture",
+      "sophisticated multi-agent orchestration platform with strong emphasis",
+      "through its hybrid architecture."
+    ],
+    "governance": [
+      "- a2a-core: Agent-to-Agent protocol implementation",
+      "- Native control via OAGI/Lux Desktop Protocol",
+      "- tnf library: audit/sync/status for Virtual Library consolidation",
+      "- Direct access to myphone-remote.pages.dev blocked by user policy"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.084,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6213"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 13 procedural, 14 strategic, and 4 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 7930,
+    "unit_count": 155
+  }
+}

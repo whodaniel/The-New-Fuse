@@ -1,0 +1,96 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-185a71192b535c27",
+  "generated_at": "2026-05-17T14:17:13+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6226",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6226",
+    "source_title": "Implemented the next hardening pass and validated it end-to-end.",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:13+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6226",
+    "source_digest_sha256": "669a99ba46e383b4953fadc8acc13e7c5fb8a40771b0544e9625e387c705edb1"
+  },
+  "taxonomy": {
+    "procedural": [
+      "entities when payload/query omits it, then enforces workspace access before",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/modules/unified-ledger/",
+      "- pnpm --filter @the-new-fuse/api-server exec jest src/modules/unified-ledger/",
+      "- pnpm --filter @the-new-fuse/api-server exec jest src/modules/task/",
+      "- pnpm --filter @the-new-fuse/api-server type-check passed.",
+      "Cross-tenant denial integration tests (API-level, not only unit-level).",
+      "Implemented the next hardening pass across API scope checks and Supabase DB",
+      "pipelines, tasks, and task_executions, including explicit Data API grants:",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/modules/unified-",
+      "- pnpm --filter @the-new-fuse/api-server type-check",
+      "- node scripts/security/supabaserludit.cRls= (new=0), **- I attempted"
+    ],
+    "strategic": [
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/modules/unified-ledger/",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/operations/",
+      "Cross-tenant denial integration tests (API-level, not only unit-level).",
+      "- Added Supabase RLS migration with restrictive tenant/workspace guards for",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/modules/unified-",
+      "- Desktop/A1-Inter-LLM-Com/The-New-Fuse/supabase/",
+      "integration coverage local socketEP0.0 I-tenant and constraintoff, I",
+      "SQL checklist for verifying this new RLS migration per environment (dev"
+    ],
+    "governance": [
+      "- Updated the hardening audit/handoff doc.",
+      "Supabase RLS policy equivalents for ledger/task tenant/workspace isolation.",
+      "- node scripts/security/supabaserludit.cRls= (new=0), **- I attempted"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.175,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6226"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 11 procedural, 8 strategic, and 3 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 3825,
+    "unit_count": 63
+  }
+}

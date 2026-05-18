@@ -45,12 +45,12 @@
 ✅ USED (49 refs): @the-new-fuse/infrastructure
 ❌ NO package.json: integration-core
 ✅ USED (1 refs): @the-new-fuse/integration-tests
-⚠️  ORPHAN? (0 refs): @the-new-fuse/integrations
+✅ SUNSET (2026-05-17): @the-new-fuse/integrations -> use @the-new-fuse/resource-registry + @the-new-fuse/api-client
 ❌ NO package.json: job-queue
-⚠️  ORPHAN? (0 refs): @the-new-fuse/layout
+✅ SUNSET (2026-05-17): @the-new-fuse/layout -> use @the-new-fuse/ui-consolidated
 ✅ USED (25 refs): @the-new-fuse/mcp-core
 ❌ NO package.json: messaging
-⚠️  ORPHAN? (0 refs): @the-new-fuse/monitoring
+✅ SUNSET (2026-05-17): @the-new-fuse/monitoring -> use @the-new-fuse/core-monitoring
 ✅ USED (5 refs): @the-new-fuse/n8n-workflows
 ✅ USED (8 refs): @the-new-fuse/port-management
 ✅ USED (11 refs): @the-new-fuse/prompt-templating

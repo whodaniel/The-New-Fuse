@@ -583,8 +583,8 @@ export function legalActionsForSeat(engine, hand, seatNo) {
         const minTotal = hand.currentBet + hand.lastAggressiveDelta;
         const maxTotal = streetCommit + stack;
         legal.push({ action: 'raise', min: Math.min(maxTotal, minTotal), max: maxTotal });
+        legal.push({ action: 'allin', min: stack, max: stack });
       }
-      legal.push({ action: 'allin', min: stack, max: stack });
     }
   } else {
     legal.push({ action: 'check' });
@@ -1264,6 +1264,13 @@ export function restoreFromRecovery(snapshot) {
   engine.riskCapsBySeat = cloneJson(snapshot.riskCapsBySeat || {});
   engine.hand = snapshot.hand ? cloneJson(snapshot.hand) : null;
   engine.pendingSeatMoves = cloneJson(snapshot.pendingSeatMoves || []);
+  // NEW-C fix: restore idempotency caches. If not restored, any in-flight action
+  // with an idempotency key could be replayed after crash recovery.
+  if (snapshot.idempotency) {
+    engine.idempotency.actions = new Map(snapshot.idempotency.actions || []);
+    engine.idempotency.settlements = new Map(snapshot.idempotency.settlements || []);
+    engine.idempotency.handStarts = new Map(snapshot.idempotency.handStarts || []);
+  }
   engine.audit = cloneJson(snapshot.audit || { lastEventHash: 'genesis' });
   engine.seq = Number(snapshot.seq || 0);
   engine.events = cloneJson(snapshot.events || []);

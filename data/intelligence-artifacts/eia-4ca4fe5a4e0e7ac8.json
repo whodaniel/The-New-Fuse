@@ -1,0 +1,79 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-4ca4fe5a4e0e7ac8",
+  "generated_at": "2026-05-17T14:17:14+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6219",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6219",
+    "source_title": "Native Sensory Suite: Finalized & Synced:",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-17T14:17:14+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6219",
+    "source_digest_sha256": "13a1fb6f1c7c04e92fde1110c428b16862d7e6d9df318e65b9037bf4fb64f916"
+  },
+  "taxonomy": {
+    "procedural": [
+      "* Codex Work: It has stabilized the apps/api boot sequence, verified the",
+      "* Result: The \"Brain\" (API/Timeline) and the \"Senses\" (Native Vision/Audio)"
+    ],
+    "strategic": [
+      "orchestration achievements.",
+      "* Latency: Achieved sub-millisecond frequency peak detection, bypassing all",
+      "* New Capability: Now supports extra_args in all compilation methods.",
+      "Audio: <1ms FFT latency (vDSP / Accelerate)."
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.05,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6219"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 2 procedural, 4 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 2026,
+    "unit_count": 40
+  }
+}
