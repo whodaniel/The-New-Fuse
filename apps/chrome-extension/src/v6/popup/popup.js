@@ -2104,6 +2104,11 @@ class FuseConnectPopup {
       statusText.textContent = texts[connectionStatus] || 'Unknown';
     }
 
+    const connectionUrl = document.getElementById('connection-url');
+    if (connectionUrl) {
+      connectionUrl.textContent = String(this.state.settings?.relayUrl || DEFAULT_NODES.relay);
+    }
+
     // Update button
     const btn = document.getElementById('connect-btn');
     if (btn) {
