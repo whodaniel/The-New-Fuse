@@ -17,6 +17,7 @@
     "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@utils/*": ["src/utils/*"],
       "@styles/*": ["src/styles/*"],
