@@ -8,32 +8,30 @@
 
 import youtubeService from '../services/ai-studio/youtube-service';
 import {
-  DEFAULT_NODES as DEFAULT_NODES_CONST,
-  STORAGE_KEYS as STORAGE_KEYS_CONST,
-  NATIVE_HOST_NAME as NATIVE_HOST_NAME_CONST,
-  API_URLS,
-  AI_MODELS,
   ACTIVITY_CHANNEL,
-  MESSAGE_TYPES,
+  AI_MODELS,
+  API_URLS,
+  DEFAULT_NODES as DEFAULT_NODES_CONST,
+  NATIVE_HOST_NAME as NATIVE_HOST_NAME_CONST,
+  STORAGE_KEYS as STORAGE_KEYS_CONST,
   TIMINGS,
 } from '../shared/constants';
 import type {
   Agent,
   AgentMessage,
+  AIVideoProcessingState,
+  AIVideoQueueItem,
   ConnectionStatus,
+  ExtensionLogEntry,
+  ExtensionLogLevel,
   FederationChannel,
-  MessageType,
   NodeType,
   Notification,
   NotificationType,
   ProtocolMessage,
   TNFNode,
-  TranscriptRole,
   TranscriptEntry,
-  AIVideoQueueItem,
-  AIVideoProcessingState,
-  ExtensionLogLevel,
-  ExtensionLogEntry,
+  TranscriptRole,
 } from '../shared/types';
 import { simpleHash } from '../shared/utils';
 
@@ -71,6 +69,13 @@ class BackgroundService {
   private autoMonitor: boolean = true;
   private autoMasterClock: boolean = true;
   private autoWakePing: boolean = false;
+  private relayUrl: string = DEFAULT_NODES.relay;
+  private readonly relayFallbackUrls: string[] = [
+    'ws://localhost:3000/ws',
+    'ws://localhost:3001/ws',
+    'ws://localhost:3010/ws',
+    'ws://localhost:3100/ws',
+  ];
   private lastAutonomyStartAt: number = 0;
   private lastWakePingAt: Map<string, number> = new Map();
   private channelLastActivityAt: Map<string, number> = new Map();
@@ -135,7 +140,7 @@ class BackgroundService {
       this.tryInitialConnection();
     } else {
       // Set initial status to disconnected without error
-      this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
+      this.updateNodeStatus('relay', this.relayUrl, 'disconnected');
     }
 
     console.log('[FuseConnect v7] Background service ready');
@@ -174,44 +179,99 @@ class BackgroundService {
    * Try initial connection with limited retries
    */
   private async tryInitialConnection(): Promise<void> {
-    // First check if relay is available via health endpoint
-    const isAvailable = await this.checkRelayHealth();
+    const discoveredRelayUrl = await this.discoverRelayUrl(this.relayUrl);
 
-    if (isAvailable) {
-      this.connectToNode('relay', DEFAULT_NODES.relay);
-    } else {
-      console.log('[FuseConnect v7] Relay not available - attempting autonomous startup');
-      this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
-      this.sendNativeMessage({ action: 'start', service: 'relay' }).then((nativeResp) => {
-        if (nativeResp?.error) {
-          return;
-        }
-        setTimeout(() => {
-          this.connectionAttempts = 0;
-          this.connectToNode('relay', DEFAULT_NODES.relay);
-          this.ensureAutonomousServices('relay_auto_bootstrap');
-        }, 3000);
-      });
+    if (discoveredRelayUrl) {
+      this.relayUrl = discoveredRelayUrl;
+      this.connectToNode('relay', this.relayUrl);
+      return;
     }
+
+    console.log('[FuseConnect v7] Relay not available - attempting autonomous startup');
+    this.updateNodeStatus('relay', this.relayUrl, 'disconnected');
+    this.sendNativeMessage({ action: 'start', service: 'relay' }).then((nativeResp) => {
+      if (nativeResp?.error) {
+        return;
+      }
+      setTimeout(async () => {
+        this.connectionAttempts = 0;
+        const preferredUrl =
+          typeof nativeResp?.result?.port === 'number' && nativeResp.result.port > 0
+            ? `ws://localhost:${nativeResp.result.port}/ws`
+            : this.relayUrl;
+        const discoveredAfterStart = await this.discoverRelayUrl(preferredUrl);
+        if (discoveredAfterStart) {
+          this.relayUrl = discoveredAfterStart;
+        }
+        this.connectToNode('relay', this.relayUrl);
+        this.ensureAutonomousServices('relay_auto_bootstrap');
+      }, 3000);
+    });
   }
 
   /**
    * Check if relay is available via HTTP health endpoint
    */
-  private async checkRelayHealth(): Promise<boolean> {
+  private async checkRelayHealth(relayUrl: string = this.relayUrl): Promise<boolean> {
     try {
-      const response = await fetch(
-        DEFAULT_NODES.relay.replace('/ws', '/health').replace('ws', 'http'),
-        {
-          method: 'GET',
-          signal: AbortSignal.timeout(2000),
-        }
-      );
+      const response = await fetch(this.relayHealthUrl(relayUrl), {
+        method: 'GET',
+        signal: AbortSignal.timeout(2000),
+      });
+      if (!response.ok) {
+        return false;
+      }
       const data = await response.json();
-      return data.status === 'ok';
+      return data?.status === 'ok' && data?.relay === 'running';
     } catch (e) {
       return false;
     }
+  }
+
+  private normalizeRelayUrl(candidate: unknown): string | null {
+    if (typeof candidate !== 'string') {
+      return null;
+    }
+    const trimmed = candidate.trim();
+    if (!trimmed) {
+      return null;
+    }
+    try {
+      const parsed = new URL(trimmed);
+      if (parsed.protocol !== 'ws:' && parsed.protocol !== 'wss:') {
+        return null;
+      }
+      const pathname = parsed.pathname && parsed.pathname !== '/' ? parsed.pathname : '/ws';
+      parsed.pathname = pathname;
+      return parsed.toString().replace(/\/$/, '');
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  private relayHealthUrl(relayUrl: string): string {
+    return relayUrl.replace(/^ws:/, 'http:').replace(/^wss:/, 'https:').replace(/\/ws$/, '/health');
+  }
+
+  private buildRelayCandidates(preferred?: string): string[] {
+    const candidates = [preferred, this.relayUrl, DEFAULT_NODES.relay, ...this.relayFallbackUrls];
+    const normalized: string[] = [];
+    for (const candidate of candidates) {
+      const resolved = this.normalizeRelayUrl(candidate);
+      if (!resolved || normalized.includes(resolved)) continue;
+      normalized.push(resolved);
+    }
+    return normalized;
+  }
+
+  private async discoverRelayUrl(preferred?: string): Promise<string | null> {
+    const candidates = this.buildRelayCandidates(preferred);
+    for (const candidate of candidates) {
+      if (await this.checkRelayHealth(candidate)) {
+        return candidate;
+      }
+    }
+    return null;
   }
 
   /**
@@ -305,12 +365,30 @@ class BackgroundService {
     if (result[STORAGE_KEYS.settings]?.autoWakePing !== undefined) {
       this.autoWakePing = !!result[STORAGE_KEYS.settings].autoWakePing;
     }
+
+    const settingsRelayUrl = this.normalizeRelayUrl(result[STORAGE_KEYS.settings]?.relayUrl);
+    const structuredRelayUrl = this.normalizeRelayUrl(
+      result[STORAGE_KEYS.settings]?.nodes?.endpoints?.relay
+    );
+    if (settingsRelayUrl) {
+      this.relayUrl = settingsRelayUrl;
+    } else if (structuredRelayUrl) {
+      this.relayUrl = structuredRelayUrl;
+    }
   }
 
   /**
    * Connect to a specific node
    */
   private connectToNode(nodeType: NodeType, url: string): void {
+    if (nodeType === 'relay') {
+      const normalizedRelayUrl = this.normalizeRelayUrl(url);
+      if (normalizedRelayUrl) {
+        url = normalizedRelayUrl;
+        this.relayUrl = normalizedRelayUrl;
+      }
+    }
+
     if (this.connections.has(nodeType)) {
       const existing = this.connections.get(nodeType);
       if (existing?.readyState === WebSocket.OPEN) {
@@ -2352,7 +2430,7 @@ class BackgroundService {
           status: a.status,
         })),
         capabilities: agent.capabilities || [],
-        relayUrl: DEFAULT_NODES.relay,
+        relayUrl: this.relayUrl,
         policy: {
           heartbeat: true,
           wakePing: this.autoWakePing,
@@ -2393,7 +2471,8 @@ class BackgroundService {
 
         case 'CONNECT':
           this.connectionAttempts = 0;
-          this.connectToNode('relay', message.url || DEFAULT_NODES.relay);
+          this.relayUrl = this.normalizeRelayUrl(message.url) || this.relayUrl;
+          this.connectToNode('relay', this.relayUrl);
           sendResponse({ success: true });
           break;
 
@@ -2439,6 +2518,7 @@ class BackgroundService {
             nodes: Object.fromEntries(this.nodeStatus),
             agentId: tabPageAgentId || this.agentId, // Use page-specific ID if available
             browserAgentId: this.agentId,
+            relayUrl: this.relayUrl,
             autoConnect: this.autoConnect,
             autoMonitor: this.autoMonitor,
             autoMasterClock: this.autoMasterClock,
@@ -2542,9 +2622,17 @@ class BackgroundService {
             sendResponse(response);
             // Try to connect after a short delay
             if (response.result?.success || !response.error) {
-              setTimeout(() => {
+              setTimeout(async () => {
                 this.connectionAttempts = 0;
-                this.connectToNode('relay', DEFAULT_NODES.relay);
+                const preferredUrl =
+                  typeof response?.result?.port === 'number' && response.result.port > 0
+                    ? `ws://localhost:${response.result.port}/ws`
+                    : this.relayUrl;
+                const discoveredAfterStart = await this.discoverRelayUrl(preferredUrl);
+                if (discoveredAfterStart) {
+                  this.relayUrl = discoveredAfterStart;
+                }
+                this.connectToNode('relay', this.relayUrl);
                 this.ensureAutonomousServices('relay_started');
               }, 3000);
             }
@@ -2559,10 +2647,24 @@ class BackgroundService {
           return true;
 
         case 'CHECK_RELAY_HEALTH':
-          this.checkRelayHealth().then((isHealthy) => {
-            sendResponse({ healthy: isHealthy });
-          });
+          this.checkRelayHealth(this.normalizeRelayUrl(message.url) || this.relayUrl).then(
+            (isHealthy) => {
+              sendResponse({ healthy: isHealthy, url: this.relayUrl });
+            }
+          );
           return true;
+
+        case 'SETTINGS_CHANGE':
+          if (message.settings) {
+            const nextRelayUrl =
+              this.normalizeRelayUrl(message.settings.relayUrl) ||
+              this.normalizeRelayUrl(message.settings?.nodes?.endpoints?.relay);
+            if (nextRelayUrl) {
+              this.relayUrl = nextRelayUrl;
+            }
+          }
+          sendResponse({ success: true, relayUrl: this.relayUrl });
+          break;
 
         case 'AI_STUDIO_AUTH':
         case 'YOUTUBE_AUTHENTICATE':
@@ -2605,11 +2707,11 @@ class BackgroundService {
                 success: false,
                 error: err.message || 'Authentication failed',
                 oauth: this.getOAuthDiagnostics(),
-});
-});
-return true; // Async response
+              });
+            });
+          return true; // Async response
 
-case 'YOUTUBE_SIGN_OUT':
+        case 'YOUTUBE_SIGN_OUT':
           this.signOutYouTube()
             .then(() => sendResponse({ success: true }))
             .catch((error) =>
@@ -3881,7 +3983,7 @@ Format as JSON array:
     this.stopStallWatchdog();
 
     // Update status
-    this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
+    this.updateNodeStatus('relay', this.relayUrl, 'disconnected');
   }
 
   /**

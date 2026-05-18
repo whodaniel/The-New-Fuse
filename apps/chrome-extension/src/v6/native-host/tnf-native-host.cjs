@@ -65,40 +65,42 @@ function findProjectRoot() {
 
 const PROJECT_ROOT = findProjectRoot();
 const LOG_FILE = path.join(os.homedir(), '.tnf-native-host.log');
+const RELAY_PORT_CANDIDATES = [3000, 3001, 3010, 3100];
+const RELAY_HEALTH_TIMEOUT_MS = 1500;
 
 // Service definitions (relative to project root)
 const SERVICES = {
   relay: {
     name: 'TNF Relay',
-    command: 'pnpm',
+    command: process.env.PNPM_BIN || 'pnpm',
     args: ['run', 'relay:start'],
     cwd: '.',
     port: 3000,
   },
   backend: {
     name: 'TNF Backend',
-    command: 'pnpm',
+    command: process.env.PNPM_BIN || 'pnpm',
     args: ['run', 'dev'],
     cwd: 'apps/backend',
     port: 3000,
   },
   frontend: {
     name: 'TNF Frontend',
-    command: 'pnpm',
+    command: process.env.PNPM_BIN || 'pnpm',
     args: ['run', 'dev'],
     cwd: 'apps/frontend',
     port: 3002,
   },
   monitor: {
     name: 'Relay Monitor',
-    command: 'pnpm',
+    command: process.env.PNPM_BIN || 'pnpm',
     args: ['run', 'relay:monitor'],
     cwd: '.',
     stopCommand: 'pkill -f "relay-channel-monitor.cjs" 2>/dev/null || true',
   },
   masterClock: {
     name: 'Master Clock',
-    command: 'pnpm',
+    command: process.env.PNPM_BIN || 'pnpm',
     args: ['run', 'master-clock'],
     cwd: '.',
     stopCommand: 'pkill -f "master-clock" 2>/dev/null || true',
@@ -181,11 +183,69 @@ function isPortInUse(port) {
   });
 }
 
+function killPort(port) {
+  return new Promise((resolve) => {
+    exec(`lsof -ti :${port} | xargs kill -9 2>/dev/null`, () => resolve());
+  });
+}
+
+async function isRelayHealthyOnPort(port) {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), RELAY_HEALTH_TIMEOUT_MS);
+    const response = await fetch(`http://127.0.0.1:${port}/health`, {
+      method: 'GET',
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (!response.ok) return false;
+    const data = await response.json();
+    return data && data.status === 'ok' && data.relay === 'running';
+  } catch (_error) {
+    return false;
+  }
+}
+
+async function getRunningRelayPorts() {
+  const running = [];
+  for (const port of RELAY_PORT_CANDIDATES) {
+    if (await isRelayHealthyOnPort(port)) {
+      running.push(port);
+    }
+  }
+  return running;
+}
+
+async function chooseRelayStartPort() {
+  const runningPorts = await getRunningRelayPorts();
+  if (runningPorts.length > 0) {
+    return { kind: 'already-running', port: runningPorts[0] };
+  }
+
+  for (const port of RELAY_PORT_CANDIDATES) {
+    // Skip occupied ports; they may belong to unrelated services.
+    if (await isPortInUse(port)) continue;
+    return { kind: 'start', port };
+  }
+
+  return { kind: 'no-port', port: null };
+}
+
 // Get service status
 async function getServiceStatus(serviceName) {
   const service = SERVICES[serviceName];
   if (!service) {
     return { running: false, error: 'Unknown service' };
+  }
+
+  if (serviceName === 'relay') {
+    const runningPorts = await getRunningRelayPorts();
+    return {
+      name: service.name,
+      running: runningPorts.length > 0,
+      port: runningPorts[0] || null,
+      pid: null,
+    };
   }
 
   const portInUse = service.port ? await isPortInUse(service.port) : false;
@@ -215,8 +275,27 @@ async function startService(serviceName) {
     return { success: false, error: 'Unknown service' };
   }
 
+  let relayStartPort = null;
+  if (serviceName === 'relay') {
+    const relayPortDecision = await chooseRelayStartPort();
+    if (relayPortDecision.kind === 'already-running') {
+      return {
+        success: true,
+        message: `${service.name} is already running`,
+        port: relayPortDecision.port,
+      };
+    }
+    if (relayPortDecision.kind === 'no-port') {
+      return {
+        success: false,
+        error: `${service.name} failed to start: no available relay ports (${RELAY_PORT_CANDIDATES.join(', ')})`,
+      };
+    }
+    relayStartPort = relayPortDecision.port;
+  }
+
   // Check if already running
-  const status = await getServiceStatus(serviceName);
+  const status = serviceName === 'relay' ? { running: false } : await getServiceStatus(serviceName);
   if (status.running) {
     return { success: true, message: `${service.name} is already running`, port: service.port };
   }
@@ -234,17 +313,13 @@ async function startService(serviceName) {
     const proc = spawn(service.command, service.args, {
       cwd,
       detached: true,
-      stdio: ['ignore', 'pipe', 'pipe'],
+      stdio: 'ignore',
       shell: true,
-      env: { ...process.env, FORCE_COLOR: '0' },
-    });
-
-    proc.stdout.on('data', (data) => {
-      log(`[${serviceName}] ${data.toString().trim()}`);
-    });
-
-    proc.stderr.on('data', (data) => {
-      log(`[${serviceName}] ERROR: ${data.toString().trim()}`);
+      env: {
+        ...process.env,
+        FORCE_COLOR: '0',
+        ...(serviceName === 'relay' && relayStartPort ? { PORT: String(relayStartPort) } : {}),
+      },
     });
 
     proc.on('error', (error) => {
@@ -260,18 +335,33 @@ async function startService(serviceName) {
     proc.unref();
     runningProcesses.set(serviceName, proc);
 
-    // Wait a bit for the service to start
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // Wait for startup and verify service health.
+    if (serviceName === 'relay') {
+      let relayReady = false;
+      for (let i = 0; i < 12; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        if ((await getRunningRelayPorts()).length > 0) {
+          relayReady = true;
+          break;
+        }
+      }
+      if (!relayReady) {
+        log('[relay] Relay did not become healthy within startup window');
+      }
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
 
     // Verify it started
     const newStatus = await getServiceStatus(serviceName);
+    const resolvedPort = serviceName === 'relay' ? newStatus.port || relayStartPort : service.port;
 
     return {
       success: newStatus.running,
       message: newStatus.running
         ? `${service.name} started successfully`
         : `${service.name} failed to start`,
-      port: service.port,
+      port: resolvedPort,
       pid: proc.pid,
     };
   } catch (error) {
@@ -288,6 +378,21 @@ async function stopService(serviceName) {
   }
 
   log(`Stopping ${service.name}...`);
+
+  if (serviceName === 'relay') {
+    const runningPorts = await getRunningRelayPorts();
+    for (const port of runningPorts) {
+      await killPort(port);
+    }
+    runningProcesses.delete(serviceName);
+    return {
+      success: true,
+      message:
+        runningPorts.length > 0
+          ? `${service.name} stopped`
+          : `${service.name} already stopped`,
+    };
+  }
 
   if (service.port) {
     return new Promise((resolve) => {

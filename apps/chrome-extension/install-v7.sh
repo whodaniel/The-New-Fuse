@@ -52,7 +52,16 @@ if [ -z "$NODE_PATH" ]; then
   NODE_PATH="$HOME/.nvm/versions/node/v24.12.0/bin/node"
 fi
 
+PNPM_PATH=$(which pnpm || true)
+NODE_DIR=$(dirname "$NODE_PATH")
+if [ -n "$PNPM_PATH" ]; then
+  PNPM_DIR=$(dirname "$PNPM_PATH")
+else
+  PNPM_DIR="$HOME/Library/pnpm"
+fi
+
 echo "   📍 Using Node: $NODE_PATH"
+echo "   📍 Using pnpm: ${PNPM_PATH:-not found in PATH (falling back to $PNPM_DIR/pnpm)}"
 
 # Get the path to the native host script
 NATIVE_HOST_JS_PATH="$DIST_DIR/native-host/tnf-native-host.cjs"
@@ -65,7 +74,8 @@ cat > "$NATIVE_HOST_SH_PATH" << EOF
 # Ensures the correct Node environment is used
 
 # Set path to include common Node locations just in case
-export PATH="\$PATH:/usr/local/bin:/usr/bin:/bin"
+export PATH="$NODE_DIR:$PNPM_DIR:\$PATH:/usr/local/bin:/usr/bin:/bin"
+export PNPM_BIN="${PNPM_PATH:-$PNPM_DIR/pnpm}"
 
 # Run the host script using the absolute Node path detected during installation
 "$NODE_PATH" "$NATIVE_HOST_JS_PATH" "\$@"

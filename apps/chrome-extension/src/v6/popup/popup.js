@@ -95,12 +95,17 @@ class FuseConnectPopup {
     if (!helper) return;
 
     try {
-      const response = await fetch('http://localhost:3000/health', {
+      const relayUrl = String(this.state.settings?.relayUrl || DEFAULT_NODES.relay).trim();
+      const healthUrl = relayUrl
+        .replace(/^ws:/, 'http:')
+        .replace(/^wss:/, 'https:')
+        .replace(/\/ws$/, '/health');
+      const response = await fetch(healthUrl, {
         method: 'GET',
         signal: AbortSignal.timeout(2000),
       });
       const data = await response.json();
-      if (data.status === 'ok') {
+      if (data?.status === 'ok' && data?.relay === 'running') {
         helper.style.display = 'none';
       } else {
         helper.style.display = 'block';
@@ -1830,6 +1835,7 @@ class FuseConnectPopup {
             this.state.settings.autoMasterClock = response.autoMasterClock;
           if (typeof response.autoWakePing === 'boolean')
             this.state.settings.autoWakePing = response.autoWakePing;
+          if (response.relayUrl) this.state.settings.relayUrl = String(response.relayUrl);
         }
         resolve();
       });
@@ -1920,6 +1926,17 @@ class FuseConnectPopup {
         // Best-effort; older background bundles may not support this message yet.
       }
     );
+    chrome.runtime.sendMessage(
+      {
+        type: 'SETTINGS_CHANGE',
+        settings: {
+          relayUrl: this.state.settings.relayUrl,
+        },
+      },
+      () => {
+        // Best-effort relay URL synchronization.
+      }
+    );
     this.showToast('Settings saved!');
   }
 
@@ -1992,7 +2009,10 @@ class FuseConnectPopup {
   }
 
   connect() {
-    chrome.runtime.sendMessage({ type: 'CONNECT' });
+    chrome.runtime.sendMessage({
+      type: 'CONNECT',
+      url: this.state.settings.relayUrl || DEFAULT_NODES.relay,
+    });
     this.state.connectionStatus = 'connecting';
     this.updateUI();
   }
