@@ -2,7 +2,7 @@
  * Fuse Connect v7 - Popup Logic
  */
 
-import { DEFAULT_NODES, NATIVE_HOST_NAME } from '../shared/constants.js';
+import { API_URLS, DEFAULT_NODES, NATIVE_HOST_NAME } from '../shared/constants.js';
 
 class FuseConnectPopup {
   constructor() {
@@ -2416,6 +2416,123 @@ class FuseConnectPopup {
     return found?.name || channelId || 'No channel';
   }
 
+  buildChannelWorkspaceLink(channel) {
+    const dashboardBase = String(API_URLS.tnfDashboard || 'https://connect.thenewfuse.com')
+      .trim()
+      .replace(/\/+$/, '');
+
+    try {
+      const url = new URL(`${dashboardBase}/workspace/overview`);
+      url.searchParams.set('channelId', String(channel?.id || '').trim());
+      url.searchParams.set('channelName', String(channel?.name || '').trim());
+      return url.toString();
+    } catch (_error) {
+      return `${dashboardBase}/workspace/overview?channelId=${encodeURIComponent(
+        String(channel?.id || '').trim()
+      )}&channelName=${encodeURIComponent(String(channel?.name || '').trim())}`;
+    }
+  }
+
+  buildChannelJoinPrompt(channel) {
+    const channelId = String(channel?.id || '').trim();
+    const channelName = String(channel?.name || channelId || 'unknown').trim();
+    const relayUrl = String(this.state.settings?.relayUrl || DEFAULT_NODES.relay).trim();
+    const workspaceLink = this.buildChannelWorkspaceLink(channel);
+
+    return `Join TNF channel "${channelName}" on relay "${relayUrl}". Use CHANNEL_JOIN with payload {"channelId":"${channelId}"}. Discovery link: ${workspaceLink}`;
+  }
+
+  async copyText(text, successMessage = 'Copied') {
+    try {
+      await navigator.clipboard.writeText(String(text || ''));
+      this.showToast(successMessage);
+      return true;
+    } catch (_error) {
+      const fallback = document.createElement('textarea');
+      fallback.value = String(text || '');
+      fallback.style.position = 'fixed';
+      fallback.style.opacity = '0';
+      document.body.appendChild(fallback);
+      fallback.focus();
+      fallback.select();
+      const copied = document.execCommand('copy');
+      fallback.remove();
+
+      if (copied) {
+        this.showToast(successMessage);
+        return true;
+      }
+
+      this.showToast('Clipboard copy failed');
+      return false;
+    }
+  }
+
+  renderChannelLinkDirectory() {
+    const container = document.getElementById('channel-link-list');
+    if (!container) return;
+
+    const channels = Array.isArray(this.state.channels)
+      ? [...this.state.channels]
+          .filter((channel) => String(channel?.id || '').trim().length > 0)
+          .sort((a, b) =>
+            String(a?.name || a?.id || '')
+              .toLowerCase()
+              .localeCompare(String(b?.name || b?.id || '').toLowerCase())
+          )
+      : [];
+
+    if (channels.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state small">
+          <p>No channels available yet</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = channels
+      .map((channel) => {
+        const channelId = String(channel.id || '').trim();
+        const channelName = String(channel.name || channelId || 'Unnamed Channel').trim();
+        const workspaceLink = this.buildChannelWorkspaceLink(channel);
+        return `
+          <div class="channel-link-item">
+            <div class="channel-link-item-header">
+              <span class="channel-link-name">${this.escapeHtml(channelName)}</span>
+              <span class="channel-link-id">${this.escapeHtml(channelId)}</span>
+            </div>
+            <a class="channel-link-url" href="${workspaceLink}" target="_blank" rel="noreferrer">${this.escapeHtml(workspaceLink)}</a>
+            <div class="channel-link-actions">
+              <button class="btn-secondary channel-link-btn" data-channel-action="copy-link" data-channel-id="${encodeURIComponent(channelId)}">Copy Link</button>
+              <button class="btn-secondary channel-link-btn" data-channel-action="copy-prompt" data-channel-id="${encodeURIComponent(channelId)}">Copy Prompt</button>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+
+    container.querySelectorAll('[data-channel-action]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const channelId = decodeURIComponent(String(button.dataset.channelId || '').trim());
+        const action = String(button.dataset.channelAction || '').trim();
+        const channel = channels.find(
+          (candidate) => String(candidate?.id || '').trim() === channelId
+        );
+        if (!channel) return;
+
+        if (action === 'copy-link') {
+          await this.copyText(this.buildChannelWorkspaceLink(channel), 'Channel link copied');
+          return;
+        }
+
+        if (action === 'copy-prompt') {
+          await this.copyText(this.buildChannelJoinPrompt(channel), 'Join prompt copied');
+        }
+      });
+    });
+  }
+
   updateCentralControlPanel() {
     const channelSelect = document.getElementById('central-channel-select');
     const subtitle = document.getElementById('central-chat-subtitle');
@@ -2443,6 +2560,7 @@ class FuseConnectPopup {
         : 'No channel selected';
     }
     this.updateAIVideoChannelTarget();
+    this.renderChannelLinkDirectory();
 
     if (!stream) return;
 

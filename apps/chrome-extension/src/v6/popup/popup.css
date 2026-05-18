@@ -611,6 +611,84 @@ body {
   word-break: break-word;
 }
 
+.channel-link-card {
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.channel-link-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--space-sm);
+}
+
+.channel-link-subtitle {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.channel-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.channel-link-item {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.03);
+  padding: var(--space-sm);
+}
+
+.channel-link-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: 4px;
+}
+
+.channel-link-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--neon-cyan);
+}
+
+.channel-link-id {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.channel-link-url {
+  display: block;
+  margin-bottom: var(--space-sm);
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.channel-link-url:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.channel-link-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.channel-link-btn {
+  flex: 1;
+  min-width: 0;
+  font-size: 10px;
+  padding: 6px 8px;
+}
+
 /* ============================================
    Agents Tab
    ============================================ */
