@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/crypto/0.1/arweave-memory-metadata.schema.json",
+  "title": "ArweaveMemoryAgentMetadata",
+  "additionalProperties": false,
+  "properties": {
+    "agent_name": {
+      "default": "arweave-memory-agent",
+      "type": "string"
+    },
+    "capabilities": {
+      "default": [
+        "Permanent data storage (200+ year guarantee)",
+        "Immutable audit logging",
+        "State management via AO",
+        "Cryptographic verification",
+        "Decentralized data retrieval",
+        "Content addressing",
+        "Tamper-proof records",
+        "Query and search"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "description": {
+      "default": "Manages permanent storage and state using Arweave (the permaweb) and AO (the hyper-parallel computer). Provides immutable audit logging, state management, and permanent data storage with cryptographic verification. Perfect for compliance, auditability, and building transparent autonomous systems.",
+      "type": "string"
+    },
+    "input_models": {
+      "default": [
+        "ArweaveStorageInput",
+        "AuditLogEntry",
+        "AOStateManagementInput",
+        "MemoryQueryInput"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "integration_notes": {
+      "default": [
+        "All agent actions should be logged to Arweave for auditability",
+        "State should be checkpointed to AO for recoverability",
+        "NFT metadata must be stored on Arweave before minting",
+        "Compliance requires immutable audit trail"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "llm_consumable_description": {
+      "default": "I provide permanent storage and immutable audit logging using Arweave and AO. Tell me what you need to store or log (e.g., 'Log this transaction', 'Store agent state', 'Save NFT metadata permanently') and I'll handle encryption, verification, and permanent storage. All data is immutable, cryptographically signed, and guaranteed permanent for 200+ years. Perfect for compliance, auditability, and transparent autonomous systems.",
+      "type": "string"
+    },
+    "output_models": {
+      "default": [
+        "StorageResult",
+        "AOProcessState",
+        "AuditLogResult",
+        "QueryResult",
+        "DataRetrievalResult"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "storage_guarantees": {
+      "default": [
+        "Permanent (200+ years)",
+        "Immutable (cannot be altered)",
+        "Decentralized (no single point of failure)",
+        "Cryptographically signed",
+        "Globally accessible",
+        "Censorship-resistant"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "typical_use_cases": {
+      "default": [
+        "Agent action audit logs",
+        "NFT metadata storage",
+        "Compliance documentation",
+        "Autonomous system state",
+        "Transaction records",
+        "Data provenance",
+        "Legal records",
+        "Research data archival"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "version": {
+      "default": "1.0.0",
+      "type": "string"
+    }
+  },
+  "required": [
+    "agent_name",
+    "version",
+    "description",
+    "capabilities",
+    "storage_guarantees",
+    "typical_use_cases",
+    "input_models",
+    "output_models",
+    "integration_notes",
+    "llm_consumable_description"
+  ],
+  "type": "object"
+}

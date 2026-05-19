@@ -1,0 +1,3653 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/crypto/0.1/crypto.schema.json",
+  "title": "Crypto Operations Bundle",
+  "additionalProperties": false,
+  "properties": {
+    "AITrainingJobInput": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_size": {
+          "default": 32,
+          "description": "Training batch size",
+          "maximum": 512,
+          "minimum": 1,
+          "type": "number"
+        },
+        "checkpoint_url": {
+          "description": "URL to resume from checkpoint",
+          "format": "uri",
+          "type": "string"
+        },
+        "epochs": {
+          "description": "Number of training epochs",
+          "maximum": 1000,
+          "minimum": 1,
+          "type": "number"
+        },
+        "framework": {
+          "default": "pytorch",
+          "description": "ML framework",
+          "enum": [
+            "pytorch",
+            "tensorflow",
+            "jax",
+            "custom"
+          ],
+          "type": "string"
+        },
+        "gpu_required": {
+          "default": true,
+          "description": "Whether GPU is required",
+          "type": "boolean"
+        },
+        "model_config_url": {
+          "description": "URL to model configuration file",
+          "format": "uri",
+          "type": "string"
+        },
+        "model_type": {
+          "description": "Type of AI model to train",
+          "enum": [
+            "transformer",
+            "cnn",
+            "gan",
+            "diffusion",
+            "reinforcement_learning"
+          ],
+          "type": "string"
+        },
+        "training_data_url": {
+          "description": "URL to training dataset",
+          "format": "uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_type",
+        "training_data_url",
+        "framework",
+        "epochs",
+        "batch_size",
+        "gpu_required"
+      ],
+      "type": "object"
+    },
+    "AkashComputeAgentMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "agent_name": {
+          "default": "akash-compute-agent",
+          "type": "string"
+        },
+        "capabilities": {
+          "default": [
+            "AI model training (LLMs, vision models, etc.)",
+            "Model inference API deployment",
+            "Containerized application hosting",
+            "Sovereign AI agent runtime",
+            "GPU compute for any workload",
+            "Custom Docker deployments",
+            "Auto-scaling services",
+            "Global deployment regions"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "cost_advantages": {
+          "default": [
+            "60-80% cheaper than AWS/GCP/Azure",
+            "No vendor lock-in",
+            "Pay-per-use pricing",
+            "Decentralized marketplace",
+            "Competitive bidding"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "description": {
+          "default": "Deploys and manages general-purpose compute workloads on Akash Network, the decentralized cloud. Specializes in AI/ML training, model inference APIs, sovereign agent hosting, and any Docker-based workload. Provides access to high-end NVIDIA GPUs at a fraction of cloud provider costs.",
+          "type": "string"
+        },
+        "input_models": {
+          "default": [
+            "AkashDeploymentInput",
+            "AITrainingJobInput",
+            "InferenceServiceInput"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "llm_consumable_description": {
+          "default": "I deploy and manage compute workloads on Akash Network's decentralized cloud. Tell me what you need to run (e.g., 'Train a Llama-2 model', 'Deploy a FastAPI service', 'Host a Stable Diffusion API') and I'll provision the resources, handle deployment, and provide access endpoints. Perfect for AI training, inference APIs, and hosting autonomous agents at 60-80% lower cost than traditional clouds.",
+          "type": "string"
+        },
+        "output_models": {
+          "default": [
+            "DeploymentResult",
+            "TrainingJobResult",
+            "InferenceAPIResult"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "supported_gpu_models": {
+          "default": [
+            "NVIDIA H100",
+            "NVIDIA A100",
+            "NVIDIA V100",
+            "NVIDIA B200 (Blackwell)",
+            "AMD MI250"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "typical_deployments": {
+          "default": [
+            "Large language model training",
+            "Stable Diffusion fine-tuning",
+            "Autonomous agent hosting",
+            "API microservices",
+            "Data processing pipelines",
+            "Web application backends"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "version": {
+          "default": "1.0.0",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_name",
+        "version",
+        "description",
+        "capabilities",
+        "supported_gpu_models",
+        "typical_deployments",
+        "input_models",
+        "output_models",
+        "cost_advantages",
+        "llm_consumable_description"
+      ],
+      "type": "object"
+    },
+    "AkashDeploymentInput": {
+      "additionalProperties": false,
+      "properties": {
+        "auto_renewal": {
+          "default": true,
+          "description": "Automatically renew deployment",
+          "type": "boolean"
+        },
+        "command": {
+          "description": "Command to run in container",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "cpu_cores": {
+          "description": "Number of CPU cores",
+          "maximum": 128,
+          "minimum": 1,
+          "type": "number"
+        },
+        "deployment_type": {
+          "description": "Type of compute workload",
+          "enum": [
+            "ai_training",
+            "model_inference",
+            "api_service",
+            "agent_runtime",
+            "custom"
+          ],
+          "type": "string"
+        },
+        "docker_image": {
+          "description": "Docker image to deploy (e.g., 'pytorch/pytorch:latest')",
+          "type": "string"
+        },
+        "duration_hours": {
+          "description": "Deployment duration (None for indefinite)",
+          "maximum": 8760,
+          "minimum": 1,
+          "type": "number"
+        },
+        "environment_variables": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Environment variables",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "expose_ports": {
+          "default": [],
+          "description": "Ports to expose",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "gpu_count": {
+          "default": 0,
+          "description": "Number of GPUs",
+          "maximum": 8,
+          "minimum": 0,
+          "type": "number"
+        },
+        "gpu_model": {
+          "description": "GPU model (optional)",
+          "enum": [
+            "NVIDIA_A100",
+            "NVIDIA_V100",
+            "NVIDIA_B200",
+            "AMD_MI250"
+          ],
+          "type": "string"
+        },
+        "max_bid_price_uakt": {
+          "description": "Maximum bid price in uAKT",
+          "type": "number"
+        },
+        "memory_gb": {
+          "description": "Memory in GB",
+          "maximum": 512,
+          "minimum": 1,
+          "type": "number"
+        },
+        "region_preference": {
+          "description": "Preferred data center regions",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "requires_public_ip": {
+          "default": false,
+          "description": "Whether deployment needs public IP",
+          "type": "boolean"
+        },
+        "storage_gb": {
+          "description": "Persistent storage in GB",
+          "maximum": 10000,
+          "minimum": 10,
+          "type": "number"
+        }
+      },
+      "required": [
+        "deployment_type",
+        "docker_image",
+        "environment_variables",
+        "cpu_cores",
+        "memory_gb",
+        "storage_gb",
+        "gpu_count",
+        "expose_ports",
+        "requires_public_ip",
+        "auto_renewal"
+      ],
+      "type": "object"
+    },
+    "AkashProviderInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "available_resources": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "Available compute resources",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "datacenter": {
+          "description": "Data center name",
+          "type": "string"
+        },
+        "provider_address": {
+          "description": "Akash provider wallet address",
+          "type": "string"
+        },
+        "region": {
+          "description": "Geographic region",
+          "type": "string"
+        },
+        "reputation_score": {
+          "description": "Provider reputation",
+          "maximum": 10,
+          "minimum": 0,
+          "type": "number"
+        },
+        "uptime_percentage": {
+          "description": "Historical uptime",
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "provider_address",
+        "region",
+        "datacenter",
+        "available_resources",
+        "reputation_score",
+        "uptime_percentage"
+      ],
+      "type": "object"
+    },
+    "AOProcessState": {
+      "additionalProperties": false,
+      "properties": {
+        "arweave_tx_id": {
+          "description": "Underlying Arweave transaction ID",
+          "type": "string"
+        },
+        "last_updated": {
+          "description": "Last state update timestamp",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+          "type": "string"
+        },
+        "merkle_root": {
+          "description": "Merkle root for state verification",
+          "type": "string"
+        },
+        "message_id": {
+          "description": "AO message ID that created/updated this state",
+          "type": "string"
+        },
+        "process_id": {
+          "description": "AO process identifier",
+          "type": "string"
+        },
+        "state_data": {
+          "additionalProperties": {},
+          "description": "Current state data",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "state_hash": {
+          "description": "Hash of state data",
+          "type": "string"
+        },
+        "state_size_kb": {
+          "description": "State size in kilobytes",
+          "type": "number"
+        },
+        "state_version": {
+          "description": "State version number",
+          "type": "number"
+        },
+        "updated_by": {
+          "description": "Last updated by",
+          "type": "string"
+        }
+      },
+      "required": [
+        "process_id",
+        "state_version",
+        "state_data",
+        "last_updated",
+        "updated_by",
+        "state_size_kb",
+        "message_id",
+        "arweave_tx_id",
+        "state_hash",
+        "merkle_root"
+      ],
+      "type": "object"
+    },
+    "AOStateManagementInput": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "State management action",
+          "enum": [
+            "save_state",
+            "load_state",
+            "update_state",
+            "delete_state"
+          ],
+          "type": "string"
+        },
+        "process_id": {
+          "description": "AO process identifier",
+          "type": "string"
+        },
+        "state_data": {
+          "additionalProperties": {},
+          "description": "State data to save/update",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "state_key": {
+          "description": "Specific state key to operate on",
+          "type": "string"
+        }
+      },
+      "required": [
+        "process_id",
+        "action"
+      ],
+      "type": "object"
+    },
+    "ArweaveMemoryAgentMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "agent_name": {
+          "default": "arweave-memory-agent",
+          "type": "string"
+        },
+        "capabilities": {
+          "default": [
+            "Permanent data storage (200+ year guarantee)",
+            "Immutable audit logging",
+            "State management via AO",
+            "Cryptographic verification",
+            "Decentralized data retrieval",
+            "Content addressing",
+            "Tamper-proof records",
+            "Query and search"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "description": {
+          "default": "Manages permanent storage and state using Arweave (the permaweb) and AO (the hyper-parallel computer). Provides immutable audit logging, state management, and permanent data storage with cryptographic verification. Perfect for compliance, auditability, and building transparent autonomous systems.",
+          "type": "string"
+        },
+        "input_models": {
+          "default": [
+            "ArweaveStorageInput",
+            "AuditLogEntry",
+            "AOStateManagementInput",
+            "MemoryQueryInput"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "integration_notes": {
+          "default": [
+            "All agent actions should be logged to Arweave for auditability",
+            "State should be checkpointed to AO for recoverability",
+            "NFT metadata must be stored on Arweave before minting",
+            "Compliance requires immutable audit trail"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "llm_consumable_description": {
+          "default": "I provide permanent storage and immutable audit logging using Arweave and AO. Tell me what you need to store or log (e.g., 'Log this transaction', 'Store agent state', 'Save NFT metadata permanently') and I'll handle encryption, verification, and permanent storage. All data is immutable, cryptographically signed, and guaranteed permanent for 200+ years. Perfect for compliance, auditability, and transparent autonomous systems.",
+          "type": "string"
+        },
+        "output_models": {
+          "default": [
+            "StorageResult",
+            "AOProcessState",
+            "AuditLogResult",
+            "QueryResult",
+            "DataRetrievalResult"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "storage_guarantees": {
+          "default": [
+            "Permanent (200+ years)",
+            "Immutable (cannot be altered)",
+            "Decentralized (no single point of failure)",
+            "Cryptographically signed",
+            "Globally accessible",
+            "Censorship-resistant"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "typical_use_cases": {
+          "default": [
+            "Agent action audit logs",
+            "NFT metadata storage",
+            "Compliance documentation",
+            "Autonomous system state",
+            "Transaction records",
+            "Data provenance",
+            "Legal records",
+            "Research data archival"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "version": {
+          "default": "1.0.0",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_name",
+        "version",
+        "description",
+        "capabilities",
+        "storage_guarantees",
+        "typical_use_cases",
+        "input_models",
+        "output_models",
+        "integration_notes",
+        "llm_consumable_description"
+      ],
+      "type": "object"
+    },
+    "ArweaveStorageInput": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "description": "Data content (JSON string for structured data)",
+          "type": "string"
+        },
+        "content_type": {
+          "default": "application/json",
+          "description": "MIME type of content",
+          "type": "string"
+        },
+        "data_type": {
+          "description": "Type of data being stored",
+          "enum": [
+            "audit_log",
+            "agent_state",
+            "nft_metadata",
+            "document",
+            "binary"
+          ],
+          "type": "string"
+        },
+        "encrypt": {
+          "default": false,
+          "description": "Whether to encrypt data before storage",
+          "type": "boolean"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Metadata tags for searchability",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "data_type",
+        "content",
+        "tags",
+        "content_type",
+        "encrypt"
+      ],
+      "type": "object"
+    },
+    "ArweaveTransaction": {
+      "additionalProperties": false,
+      "properties": {
+        "block_height": {
+          "description": "Block where transaction was mined",
+          "type": "number"
+        },
+        "confirmations": {
+          "default": 0,
+          "description": "Number of confirmations",
+          "type": "number"
+        },
+        "content_type": {
+          "description": "Content MIME type",
+          "type": "string"
+        },
+        "cost_ar": {
+          "description": "Storage cost in AR tokens",
+          "type": "string"
+        },
+        "cost_per_mb": {
+          "description": "Cost per megabyte",
+          "type": "string"
+        },
+        "cost_usd": {
+          "description": "Storage cost in USD",
+          "type": "string"
+        },
+        "data_hash": {
+          "description": "SHA-256 hash of stored data",
+          "type": "string"
+        },
+        "data_size_bytes": {
+          "description": "Size of stored data",
+          "type": "number"
+        },
+        "explorer_url": {
+          "description": "Block explorer URL",
+          "format": "uri",
+          "type": "string"
+        },
+        "gateway_url": {
+          "description": "Gateway URL to access data",
+          "format": "uri",
+          "type": "string"
+        },
+        "permanent": {
+          "default": true,
+          "description": "Whether storage is permanent (always true for Arweave)",
+          "type": "boolean"
+        },
+        "retrievable": {
+          "default": true,
+          "description": "Whether data is currently retrievable",
+          "type": "boolean"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Transaction tags",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "timestamp": {
+          "description": "Transaction timestamp",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+          "type": "string"
+        },
+        "tx_id": {
+          "description": "Arweave transaction ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tx_id",
+        "data_hash",
+        "data_size_bytes",
+        "confirmations",
+        "gateway_url",
+        "explorer_url",
+        "cost_ar",
+        "cost_usd",
+        "cost_per_mb",
+        "tags",
+        "content_type",
+        "timestamp",
+        "permanent",
+        "retrievable"
+      ],
+      "type": "object"
+    },
+    "AuditLogEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "description": "Agent or user who triggered the event",
+          "type": "string"
+        },
+        "event_data": {
+          "additionalProperties": {},
+          "description": "Event-specific data",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "event_type": {
+          "description": "Type of event (e.g., 'TRANSACTION', 'STATE_CHANGE')",
+          "type": "string"
+        },
+        "severity": {
+          "default": "info",
+          "description": "Log severity",
+          "enum": [
+            "info",
+            "warning",
+            "error",
+            "critical"
+          ],
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Additional metadata",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "timestamp": {
+          "description": "Timestamp of the event",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_type",
+        "event_data",
+        "actor",
+        "timestamp",
+        "severity",
+        "tags"
+      ],
+      "type": "object"
+    },
+    "AuditLogResult": {
+      "additionalProperties": false,
+      "properties": {
+        "arweave_tx": {
+          "additionalProperties": false,
+          "description": "Arweave transaction details",
+          "properties": {
+            "block_height": {
+              "description": "Block where transaction was mined",
+              "type": "number"
+            },
+            "confirmations": {
+              "default": 0,
+              "description": "Number of confirmations",
+              "type": "number"
+            },
+            "content_type": {
+              "description": "Content MIME type",
+              "type": "string"
+            },
+            "cost_ar": {
+              "description": "Storage cost in AR tokens",
+              "type": "string"
+            },
+            "cost_per_mb": {
+              "description": "Cost per megabyte",
+              "type": "string"
+            },
+            "cost_usd": {
+              "description": "Storage cost in USD",
+              "type": "string"
+            },
+            "data_hash": {
+              "description": "SHA-256 hash of stored data",
+              "type": "string"
+            },
+            "data_size_bytes": {
+              "description": "Size of stored data",
+              "type": "number"
+            },
+            "explorer_url": {
+              "description": "Block explorer URL",
+              "format": "uri",
+              "type": "string"
+            },
+            "gateway_url": {
+              "description": "Gateway URL to access data",
+              "format": "uri",
+              "type": "string"
+            },
+            "permanent": {
+              "default": true,
+              "description": "Whether storage is permanent (always true for Arweave)",
+              "type": "boolean"
+            },
+            "retrievable": {
+              "default": true,
+              "description": "Whether data is currently retrievable",
+              "type": "boolean"
+            },
+            "tags": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "default": {},
+              "description": "Transaction tags",
+              "propertyNames": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "timestamp": {
+              "description": "Transaction timestamp",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+              "type": "string"
+            },
+            "tx_id": {
+              "description": "Arweave transaction ID",
+              "type": "string"
+            }
+          },
+          "required": [
+            "tx_id",
+            "data_hash",
+            "data_size_bytes",
+            "confirmations",
+            "gateway_url",
+            "explorer_url",
+            "cost_ar",
+            "cost_usd",
+            "cost_per_mb",
+            "tags",
+            "content_type",
+            "timestamp",
+            "permanent",
+            "retrievable"
+          ],
+          "type": "object"
+        },
+        "cryptographically_signed": {
+          "default": true,
+          "description": "Whether log is cryptographically signed",
+          "type": "boolean"
+        },
+        "event_type": {
+          "description": "Type of event logged",
+          "type": "string"
+        },
+        "immutable": {
+          "default": true,
+          "description": "Whether log is immutable",
+          "type": "boolean"
+        },
+        "log_id": {
+          "description": "Unique log entry identifier",
+          "type": "string"
+        },
+        "severity": {
+          "description": "Log severity",
+          "type": "string"
+        },
+        "stored_on_arweave": {
+          "description": "Whether log was stored on Arweave",
+          "type": "boolean"
+        },
+        "tamper_proof": {
+          "default": true,
+          "description": "Whether log is tamper-proof",
+          "type": "boolean"
+        },
+        "timestamp": {
+          "description": "Event timestamp",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "log_id",
+        "stored_on_arweave",
+        "event_type",
+        "timestamp",
+        "severity",
+        "immutable",
+        "tamper_proof",
+        "cryptographically_signed"
+      ],
+      "type": "object"
+    },
+    "CrossChainBridgeInput": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Amount to bridge",
+          "type": "string"
+        },
+        "from_chain": {
+          "description": "Source blockchain",
+          "type": "string"
+        },
+        "recipient_address": {
+          "description": "Recipient address on destination chain",
+          "type": "string"
+        },
+        "to_chain": {
+          "description": "Destination blockchain",
+          "type": "string"
+        },
+        "token": {
+          "description": "Token to bridge",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "amount",
+        "from_chain",
+        "to_chain"
+      ],
+      "type": "object"
+    },
+    "CrossChainBridgeResult": {
+      "additionalProperties": false,
+      "properties": {
+        "amount_received": {
+          "additionalProperties": false,
+          "description": "Amount received on destination chain",
+          "properties": {
+            "amount": {
+              "description": "Amount with full precision",
+              "type": "string"
+            },
+            "amount_usd": {
+              "description": "USD value at execution time",
+              "type": "string"
+            },
+            "decimals": {
+              "default": 18,
+              "description": "Token decimals",
+              "type": "number"
+            },
+            "token_address": {
+              "type": "string"
+            },
+            "token_symbol": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "token_symbol",
+            "token_address",
+            "amount",
+            "decimals"
+          ],
+          "type": "object"
+        },
+        "amount_sent": {
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "description": "Amount with full precision",
+              "type": "string"
+            },
+            "amount_usd": {
+              "description": "USD value at execution time",
+              "type": "string"
+            },
+            "decimals": {
+              "default": 18,
+              "description": "Token decimals",
+              "type": "number"
+            },
+            "token_address": {
+              "type": "string"
+            },
+            "token_symbol": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "token_symbol",
+            "token_address",
+            "amount",
+            "decimals"
+          ],
+          "type": "object"
+        },
+        "bridge_fee": {
+          "description": "Bridge fee in USD",
+          "type": "string"
+        },
+        "bridge_protocol": {
+          "description": "Bridge protocol used",
+          "type": "string"
+        },
+        "estimated_arrival_time": {
+          "description": "Estimated time for completion",
+          "type": "string"
+        },
+        "from_chain": {
+          "type": "string"
+        },
+        "from_tx_hash": {
+          "description": "Transaction hash on source chain",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "initiated",
+            "pending",
+            "completed",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "to_chain": {
+          "type": "string"
+        },
+        "to_tx_hash": {
+          "description": "Transaction hash on destination chain",
+          "type": "string"
+        },
+        "tracking_url": {
+          "description": "URL to track bridge transaction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "from_chain",
+        "to_chain",
+        "from_tx_hash",
+        "bridge_protocol",
+        "amount_sent",
+        "bridge_fee",
+        "tracking_url"
+      ],
+      "type": "object"
+    },
+    "DataRetrievalResult": {
+      "additionalProperties": false,
+      "properties": {
+        "age_days": {
+          "description": "Age of data in days",
+          "type": "number"
+        },
+        "block_height": {
+          "description": "Block where data was stored",
+          "type": "number"
+        },
+        "content": {
+          "description": "Retrieved data content",
+          "type": "string"
+        },
+        "content_type": {
+          "description": "Content MIME type",
+          "type": "string"
+        },
+        "data_hash": {
+          "description": "SHA-256 hash of data",
+          "type": "string"
+        },
+        "hash_verified": {
+          "description": "Whether hash matches stored hash",
+          "type": "boolean"
+        },
+        "retrieval_time_ms": {
+          "description": "Time taken to retrieve data",
+          "type": "number"
+        },
+        "signature_verified": {
+          "description": "Whether signature is valid",
+          "type": "boolean"
+        },
+        "source": {
+          "description": "Data source",
+          "enum": [
+            "gateway",
+            "cache",
+            "peer"
+          ],
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Transaction tags",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "tx_id": {
+          "description": "Transaction ID of retrieved data",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tx_id",
+        "content",
+        "content_type",
+        "data_hash",
+        "hash_verified",
+        "signature_verified",
+        "tags",
+        "block_height",
+        "age_days",
+        "retrieval_time_ms",
+        "source"
+      ],
+      "type": "object"
+    },
+    "DeploymentResult": {
+      "additionalProperties": false,
+      "properties": {
+        "auto_renewal": {
+          "type": "boolean"
+        },
+        "cost_per_hour_uakt": {
+          "description": "Hourly cost in micro-AKT",
+          "type": "number"
+        },
+        "cost_per_hour_usd": {
+          "description": "Hourly cost in USD",
+          "type": "string"
+        },
+        "cpu_cores": {
+          "type": "number"
+        },
+        "created_at": {
+          "description": "Deployment creation time",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+          "type": "string"
+        },
+        "deployment_id": {
+          "description": "Unique deployment identifier",
+          "type": "string"
+        },
+        "deposit_paid_uakt": {
+          "description": "Deposit paid",
+          "type": "number"
+        },
+        "docker_image": {
+          "description": "Docker image deployed",
+          "type": "string"
+        },
+        "estimated_monthly_cost_usd": {
+          "description": "Estimated monthly cost",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "Deployment expiration time",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+          "type": "string"
+        },
+        "gpu_count": {
+          "type": "number"
+        },
+        "gpu_model": {
+          "type": "string"
+        },
+        "health_check_url": {
+          "description": "Health check endpoint",
+          "type": "string"
+        },
+        "internal_hostname": {
+          "description": "Internal hostname for service",
+          "type": "string"
+        },
+        "lease_id": {
+          "description": "Lease identifier",
+          "type": "string"
+        },
+        "logs_url": {
+          "description": "URL to view logs",
+          "type": "string"
+        },
+        "memory_gb": {
+          "type": "number"
+        },
+        "provider": {
+          "additionalProperties": false,
+          "description": "Assigned compute provider",
+          "properties": {
+            "available_resources": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "description": "Available compute resources",
+              "propertyNames": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "datacenter": {
+              "description": "Data center name",
+              "type": "string"
+            },
+            "provider_address": {
+              "description": "Akash provider wallet address",
+              "type": "string"
+            },
+            "region": {
+              "description": "Geographic region",
+              "type": "string"
+            },
+            "reputation_score": {
+              "description": "Provider reputation",
+              "maximum": 10,
+              "minimum": 0,
+              "type": "number"
+            },
+            "uptime_percentage": {
+              "description": "Historical uptime",
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          "required": [
+            "provider_address",
+            "region",
+            "datacenter",
+            "available_resources",
+            "reputation_score",
+            "uptime_percentage"
+          ],
+          "type": "object"
+        },
+        "public_endpoints": {
+          "default": [],
+          "description": "Public endpoint URLs",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "resources_allocated": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Actual resources allocated",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "ssh_access": {
+          "description": "SSH access command (if enabled)",
+          "type": "string"
+        },
+        "status": {
+          "description": "Deployment status",
+          "enum": [
+            "active",
+            "pending",
+            "failed",
+            "closed"
+          ],
+          "type": "string"
+        },
+        "storage_gb": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "deployment_id",
+        "status",
+        "provider",
+        "lease_id",
+        "public_endpoints",
+        "internal_hostname",
+        "resources_allocated",
+        "cpu_cores",
+        "memory_gb",
+        "storage_gb",
+        "gpu_count",
+        "cost_per_hour_uakt",
+        "cost_per_hour_usd",
+        "deposit_paid_uakt",
+        "estimated_monthly_cost_usd",
+        "docker_image",
+        "created_at",
+        "auto_renewal"
+      ],
+      "type": "object"
+    },
+    "EnsoDeFiAgentMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "agent_name": {
+          "default": "enso-defi-agent",
+          "type": "string"
+        },
+        "capabilities": {
+          "default": [
+            "Token swaps with optimal routing",
+            "Yield farming and staking",
+            "Cross-chain token bridging",
+            "DeFi position management",
+            "Gas optimization",
+            "Multi-protocol aggregation",
+            "Intent-based execution",
+            "Slippage protection"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "description": {
+          "default": "Executes decentralized finance operations using the ENSO intent-based execution engine. Handles token swaps, yield optimization, staking, cross-chain bridging, and complex DeFi strategies with automatic route optimization and minimal gas costs.",
+          "type": "string"
+        },
+        "input_models": {
+          "default": [
+            "EnsoDeFiInput",
+            "TokenSwapInput",
+            "YieldStakingInput",
+            "CrossChainBridgeInput"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "llm_consumable_description": {
+          "default": "I can execute any DeFi operation using natural language intents. Simply tell me what you want to do (e.g., 'Swap 10 ETH for USDC', 'Stake 100 USDC for highest yield', 'Bridge 50 USDC from Ethereum to Arbitrum') and I'll find the optimal route, minimize gas costs, and execute atomically. I support multi-step operations and can route across any supported chain.",
+          "type": "string"
+        },
+        "output_models": {
+          "default": [
+            "EnsoExecutionResult",
+            "YieldOptimizationReport",
+            "CrossChainBridgeResult"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "protocols_integrated": {
+          "default": [
+            "Uniswap V2/V3",
+            "Aave",
+            "Compound",
+            "Curve",
+            "Balancer",
+            "ENSO Router"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "supported_chains": {
+          "default": [
+            "ethereum",
+            "base",
+            "arbitrum",
+            "optimism",
+            "polygon",
+            "avalanche"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "supported_operations": {
+          "default": [
+            "swap",
+            "stake",
+            "bridge",
+            "withdraw",
+            "compound"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "version": {
+          "default": "1.0.0",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_name",
+        "version",
+        "description",
+        "capabilities",
+        "supported_chains",
+        "supported_operations",
+        "input_models",
+        "output_models",
+        "protocols_integrated",
+        "llm_consumable_description"
+      ],
+      "type": "object"
+    },
+    "EnsoDeFiInput": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Amount to operate on (as string to preserve precision)",
+          "type": "string"
+        },
+        "chain_from": {
+          "description": "For bridges: source blockchain",
+          "type": "string"
+        },
+        "chain_to": {
+          "description": "For bridges: destination blockchain",
+          "type": "string"
+        },
+        "gas_priority": {
+          "default": "medium",
+          "description": "Gas price priority",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "type": "string"
+        },
+        "operation_type": {
+          "description": "The type of DeFi operation to perform",
+          "enum": [
+            "swap",
+            "stake",
+            "bridge",
+            "withdraw",
+            "compound"
+          ],
+          "type": "string"
+        },
+        "slippage_tolerance": {
+          "default": 0.5,
+          "description": "Maximum acceptable slippage in percent",
+          "maximum": 5,
+          "minimum": 0,
+          "type": "number"
+        },
+        "strategy": {
+          "default": "highest_yield",
+          "description": "For staking: yield optimization strategy",
+          "enum": [
+            "highest_yield",
+            "lowest_risk",
+            "balanced"
+          ],
+          "type": "string"
+        },
+        "token_in": {
+          "description": "Token symbol or address to use as input (e.g., 'ETH', 'USDC')",
+          "type": "string"
+        },
+        "token_out": {
+          "description": "For swaps: output token symbol or address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_type",
+        "token_in",
+        "amount",
+        "strategy",
+        "slippage_tolerance",
+        "gas_priority"
+      ],
+      "type": "object"
+    },
+    "EnsoExecutionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "apy": {
+          "description": "Annual percentage yield (for staking)",
+          "type": "number"
+        },
+        "effective_rate": {
+          "description": "Effective exchange rate (for swaps)",
+          "type": "string"
+        },
+        "enso_route_id": {
+          "description": "ENSO route identifier for tracking",
+          "type": "string"
+        },
+        "error_message": {
+          "description": "Error message if status is 'failed'",
+          "type": "string"
+        },
+        "execution_time_seconds": {
+          "description": "Total execution time",
+          "type": "number"
+        },
+        "final_balance": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Final token balances after operation",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "input_amount": {
+          "additionalProperties": false,
+          "description": "Input token and amount",
+          "properties": {
+            "amount": {
+              "description": "Amount with full precision",
+              "type": "string"
+            },
+            "amount_usd": {
+              "description": "USD value at execution time",
+              "type": "string"
+            },
+            "decimals": {
+              "default": 18,
+              "description": "Token decimals",
+              "type": "number"
+            },
+            "token_address": {
+              "type": "string"
+            },
+            "token_symbol": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "token_symbol",
+            "token_address",
+            "amount",
+            "decimals"
+          ],
+          "type": "object"
+        },
+        "operation_type": {
+          "description": "Type of operation executed",
+          "type": "string"
+        },
+        "output_amount": {
+          "additionalProperties": false,
+          "description": "Output token and amount (for swaps)",
+          "properties": {
+            "amount": {
+              "description": "Amount with full precision",
+              "type": "string"
+            },
+            "amount_usd": {
+              "description": "USD value at execution time",
+              "type": "string"
+            },
+            "decimals": {
+              "default": 18,
+              "description": "Token decimals",
+              "type": "number"
+            },
+            "token_address": {
+              "type": "string"
+            },
+            "token_symbol": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "token_symbol",
+            "token_address",
+            "amount",
+            "decimals"
+          ],
+          "type": "object"
+        },
+        "price_impact": {
+          "description": "Price impact percentage",
+          "type": "number"
+        },
+        "retry_suggested": {
+          "default": false,
+          "description": "Whether retry is recommended",
+          "type": "boolean"
+        },
+        "route_taken": {
+          "description": "The optimal route that was executed",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "description": "Action performed (e.g., 'swap', 'deposit')",
+                "type": "string"
+              },
+              "from_token": {
+                "additionalProperties": false,
+                "properties": {
+                  "amount": {
+                    "description": "Amount with full precision",
+                    "type": "string"
+                  },
+                  "amount_usd": {
+                    "description": "USD value at execution time",
+                    "type": "string"
+                  },
+                  "decimals": {
+                    "default": 18,
+                    "description": "Token decimals",
+                    "type": "number"
+                  },
+                  "token_address": {
+                    "type": "string"
+                  },
+                  "token_symbol": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "token_symbol",
+                  "token_address",
+                  "amount",
+                  "decimals"
+                ],
+                "type": "object"
+              },
+              "gas_estimate": {
+                "type": "number"
+              },
+              "protocol": {
+                "description": "Protocol used (e.g., 'Uniswap V3', 'Aave')",
+                "type": "string"
+              },
+              "to_token": {
+                "additionalProperties": false,
+                "properties": {
+                  "amount": {
+                    "description": "Amount with full precision",
+                    "type": "string"
+                  },
+                  "amount_usd": {
+                    "description": "USD value at execution time",
+                    "type": "string"
+                  },
+                  "decimals": {
+                    "default": 18,
+                    "description": "Token decimals",
+                    "type": "number"
+                  },
+                  "token_address": {
+                    "type": "string"
+                  },
+                  "token_symbol": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "token_symbol",
+                  "token_address",
+                  "amount",
+                  "decimals"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "protocol",
+              "action",
+              "from_token",
+              "to_token",
+              "gas_estimate"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "status": {
+          "description": "Execution status",
+          "enum": [
+            "success",
+            "failed",
+            "pending"
+          ],
+          "type": "string"
+        },
+        "steps_executed": {
+          "description": "Number of protocol interactions",
+          "type": "number"
+        },
+        "timestamp": {
+          "description": "ISO timestamp of execution",
+          "type": "string"
+        },
+        "total_gas_cost_usd": {
+          "description": "Total gas cost in USD",
+          "type": "string"
+        },
+        "transaction": {
+          "additionalProperties": false,
+          "description": "On-chain transaction details",
+          "properties": {
+            "block_number": {
+              "description": "Block number where transaction was mined",
+              "type": "number"
+            },
+            "explorer_url": {
+              "description": "Block explorer URL for transaction",
+              "type": "string"
+            },
+            "gas_price_gwei": {
+              "description": "Gas price in Gwei",
+              "type": "string"
+            },
+            "gas_used": {
+              "description": "Gas consumed by transaction",
+              "type": "number"
+            },
+            "status": {
+              "description": "Transaction status",
+              "enum": [
+                "success",
+                "failed"
+              ],
+              "type": "string"
+            },
+            "total_cost_eth": {
+              "description": "Total transaction cost in ETH",
+              "type": "string"
+            },
+            "tx_hash": {
+              "description": "Transaction hash",
+              "type": "string"
+            }
+          },
+          "required": [
+            "tx_hash",
+            "block_number",
+            "gas_used",
+            "gas_price_gwei",
+            "total_cost_eth",
+            "explorer_url",
+            "status"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "operation_type",
+        "status",
+        "input_amount",
+        "route_taken",
+        "steps_executed",
+        "execution_time_seconds",
+        "transaction",
+        "total_gas_cost_usd",
+        "price_impact",
+        "final_balance",
+        "timestamp",
+        "enso_route_id",
+        "retry_suggested"
+      ],
+      "type": "object"
+    },
+    "GeneratedModel3D": {
+      "additionalProperties": false,
+      "properties": {
+        "bounding_box": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "Model bounding box dimensions",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "cost_usd": {
+          "description": "Generation cost in USD",
+          "type": "string"
+        },
+        "description": {
+          "description": "Original generation prompt",
+          "type": "string"
+        },
+        "file_size_mb": {
+          "description": "Total file size including textures",
+          "type": "number"
+        },
+        "generation_time_seconds": {
+          "description": "Time taken to generate",
+          "type": "number"
+        },
+        "has_animations": {
+          "default": false,
+          "description": "Whether model includes animations",
+          "type": "boolean"
+        },
+        "has_rigging": {
+          "default": false,
+          "description": "Whether model is rigged",
+          "type": "boolean"
+        },
+        "model_format": {
+          "description": "3D file format",
+          "type": "string"
+        },
+        "model_id": {
+          "description": "Unique model identifier",
+          "type": "string"
+        },
+        "model_url": {
+          "description": "URL to download 3D model",
+          "format": "uri",
+          "type": "string"
+        },
+        "polygon_count": {
+          "description": "Total polygon count",
+          "type": "number"
+        },
+        "preview_images": {
+          "description": "Preview render URLs",
+          "items": {
+            "format": "uri",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "texture_urls": {
+          "default": [],
+          "description": "PBR texture map URLs",
+          "items": {
+            "format": "uri",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "turntable_video": {
+          "description": "360° turntable video URL",
+          "format": "uri",
+          "type": "string"
+        },
+        "vertex_count": {
+          "description": "Total vertex count",
+          "type": "number"
+        }
+      },
+      "required": [
+        "model_id",
+        "description",
+        "model_url",
+        "model_format",
+        "texture_urls",
+        "polygon_count",
+        "vertex_count",
+        "has_animations",
+        "has_rigging",
+        "preview_images",
+        "bounding_box",
+        "file_size_mb",
+        "generation_time_seconds",
+        "cost_usd"
+      ],
+      "type": "object"
+    },
+    "GPUResourceUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "carbon_offset_kg": {
+          "description": "Carbon offset purchased (if applicable)",
+          "type": "number"
+        },
+        "compute_time_seconds": {
+          "description": "Active GPU compute time",
+          "type": "number"
+        },
+        "gpu_memory_used_gb": {
+          "description": "VRAM used in GB",
+          "type": "number"
+        },
+        "gpu_model": {
+          "description": "GPU hardware model used",
+          "type": "string"
+        },
+        "power_usage_kwh": {
+          "description": "Estimated power consumption",
+          "type": "number"
+        }
+      },
+      "required": [
+        "gpu_model",
+        "gpu_memory_used_gb",
+        "compute_time_seconds",
+        "power_usage_kwh"
+      ],
+      "type": "object"
+    },
+    "Image3DGenerationInput": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Text description of the 3D model to generate",
+          "type": "string"
+        },
+        "include_textures": {
+          "default": true,
+          "description": "Whether to include PBR textures",
+          "type": "boolean"
+        },
+        "output_format": {
+          "default": "glb",
+          "description": "3D file format",
+          "enum": [
+            "glb",
+            "gltf",
+            "fbx",
+            "obj"
+          ],
+          "type": "string"
+        },
+        "polycount_target": {
+          "default": "medium",
+          "description": "Target polygon count",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "type": "string"
+        },
+        "style": {
+          "default": "realistic",
+          "description": "Visual style",
+          "enum": [
+            "realistic",
+            "stylized",
+            "low_poly",
+            "photorealistic"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "style",
+        "output_format",
+        "include_textures",
+        "polycount_target"
+      ],
+      "type": "object"
+    },
+    "ImageGenerationInput": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "default": "1:1",
+          "description": "Image aspect ratio",
+          "enum": [
+            "1:1",
+            "16:9",
+            "4:3",
+            "3:2",
+            "9:16"
+          ],
+          "type": "string"
+        },
+        "negative_prompt": {
+          "description": "Elements to avoid in generation",
+          "type": "string"
+        },
+        "num_images": {
+          "default": 1,
+          "description": "Number of variations to generate",
+          "maximum": 10,
+          "minimum": 1,
+          "type": "number"
+        },
+        "prompt": {
+          "description": "Image generation prompt",
+          "minLength": 3,
+          "type": "string"
+        },
+        "quality": {
+          "default": "high",
+          "description": "Generation quality",
+          "enum": [
+            "draft",
+            "standard",
+            "high",
+            "ultra"
+          ],
+          "type": "string"
+        },
+        "style": {
+          "description": "Artistic style",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt",
+        "aspect_ratio",
+        "quality",
+        "num_images"
+      ],
+      "type": "object"
+    },
+    "InferenceAPIResult": {
+      "additionalProperties": false,
+      "properties": {
+        "api_docs_url": {
+          "description": "API documentation URL",
+          "format": "uri",
+          "type": "string"
+        },
+        "api_endpoint": {
+          "description": "Public API endpoint URL",
+          "format": "uri",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "API key for authentication",
+          "type": "string"
+        },
+        "api_type": {
+          "description": "API protocol",
+          "type": "string"
+        },
+        "average_latency_ms": {
+          "description": "Average inference latency",
+          "type": "number"
+        },
+        "cold_start_time_ms": {
+          "description": "Cold start latency",
+          "type": "number"
+        },
+        "cost_per_1k_requests": {
+          "description": "Cost per 1,000 inference requests",
+          "type": "string"
+        },
+        "example_request": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Example API request",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "example_response": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Example API response",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "framework": {
+          "description": "ML framework",
+          "type": "string"
+        },
+        "max_throughput_rps": {
+          "description": "Maximum requests per second",
+          "type": "number"
+        },
+        "model_info": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Deployed model information",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "monthly_base_cost_usd": {
+          "description": "Base hosting cost per month",
+          "type": "string"
+        },
+        "service_id": {
+          "description": "Service identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_id",
+        "api_endpoint",
+        "api_key",
+        "model_info",
+        "framework",
+        "api_type",
+        "max_throughput_rps",
+        "average_latency_ms",
+        "cold_start_time_ms",
+        "api_docs_url",
+        "example_request",
+        "example_response",
+        "cost_per_1k_requests",
+        "monthly_base_cost_usd"
+      ],
+      "type": "object"
+    },
+    "InferenceServiceInput": {
+      "additionalProperties": false,
+      "properties": {
+        "api_type": {
+          "default": "rest",
+          "description": "API protocol",
+          "enum": [
+            "rest",
+            "grpc",
+            "websocket"
+          ],
+          "type": "string"
+        },
+        "framework": {
+          "description": "Model framework",
+          "enum": [
+            "pytorch",
+            "tensorflow",
+            "onnx",
+            "custom"
+          ],
+          "type": "string"
+        },
+        "input_schema": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "API input schema",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "max_concurrent_requests": {
+          "default": 10,
+          "description": "Max concurrent inference requests",
+          "maximum": 100,
+          "minimum": 1,
+          "type": "number"
+        },
+        "model_url": {
+          "description": "URL to trained model weights",
+          "format": "uri",
+          "type": "string"
+        },
+        "output_schema": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "API output schema",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "model_url",
+        "framework",
+        "api_type",
+        "max_concurrent_requests",
+        "input_schema",
+        "output_schema"
+      ],
+      "type": "object"
+    },
+    "MemoryQueryInput": {
+      "additionalProperties": false,
+      "properties": {
+        "filters": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Query filters (e.g., tags, address)",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of results",
+          "maximum": 100,
+          "minimum": 1,
+          "type": "number"
+        },
+        "query_type": {
+          "description": "Type of query to perform",
+          "enum": [
+            "by_tag",
+            "by_address",
+            "by_transaction",
+            "by_content"
+          ],
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "desc",
+          "description": "Sort order by timestamp",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "query_type",
+        "filters",
+        "limit",
+        "sort_order"
+      ],
+      "type": "object"
+    },
+    "QueryResult": {
+      "additionalProperties": false,
+      "properties": {
+        "cache_hit": {
+          "default": false,
+          "description": "Whether result was cached",
+          "type": "boolean"
+        },
+        "has_more": {
+          "default": false,
+          "description": "Whether more results are available",
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "description": "Cursor for next page of results",
+          "type": "string"
+        },
+        "query_time_ms": {
+          "description": "Query execution time in milliseconds",
+          "type": "number"
+        },
+        "query_type": {
+          "description": "Type of query performed",
+          "type": "string"
+        },
+        "results_found": {
+          "description": "Number of results found",
+          "type": "number"
+        },
+        "transactions": {
+          "default": [],
+          "description": "Matching transactions",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "block_height": {
+                "description": "Block where transaction was mined",
+                "type": "number"
+              },
+              "confirmations": {
+                "default": 0,
+                "description": "Number of confirmations",
+                "type": "number"
+              },
+              "content_type": {
+                "description": "Content MIME type",
+                "type": "string"
+              },
+              "cost_ar": {
+                "description": "Storage cost in AR tokens",
+                "type": "string"
+              },
+              "cost_per_mb": {
+                "description": "Cost per megabyte",
+                "type": "string"
+              },
+              "cost_usd": {
+                "description": "Storage cost in USD",
+                "type": "string"
+              },
+              "data_hash": {
+                "description": "SHA-256 hash of stored data",
+                "type": "string"
+              },
+              "data_size_bytes": {
+                "description": "Size of stored data",
+                "type": "number"
+              },
+              "explorer_url": {
+                "description": "Block explorer URL",
+                "format": "uri",
+                "type": "string"
+              },
+              "gateway_url": {
+                "description": "Gateway URL to access data",
+                "format": "uri",
+                "type": "string"
+              },
+              "permanent": {
+                "default": true,
+                "description": "Whether storage is permanent (always true for Arweave)",
+                "type": "boolean"
+              },
+              "retrievable": {
+                "default": true,
+                "description": "Whether data is currently retrievable",
+                "type": "boolean"
+              },
+              "tags": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "default": {},
+                "description": "Transaction tags",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "timestamp": {
+                "description": "Transaction timestamp",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                "type": "string"
+              },
+              "tx_id": {
+                "description": "Arweave transaction ID",
+                "type": "string"
+              }
+            },
+            "required": [
+              "tx_id",
+              "data_hash",
+              "data_size_bytes",
+              "confirmations",
+              "gateway_url",
+              "explorer_url",
+              "cost_ar",
+              "cost_usd",
+              "cost_per_mb",
+              "tags",
+              "content_type",
+              "timestamp",
+              "permanent",
+              "retrievable"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "query_type",
+        "results_found",
+        "transactions",
+        "query_time_ms",
+        "cache_hit",
+        "has_more"
+      ],
+      "type": "object"
+    },
+    "RenderAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "description": "Unique asset identifier",
+          "type": "string"
+        },
+        "asset_type": {
+          "description": "Asset type/format",
+          "type": "string"
+        },
+        "asset_url": {
+          "description": "URL to download the asset",
+          "format": "uri",
+          "type": "string"
+        },
+        "file_size_mb": {
+          "description": "File size in megabytes",
+          "type": "number"
+        },
+        "ipfs_hash": {
+          "description": "IPFS hash if stored on IPFS",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Additional asset metadata",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "resolution": {
+          "description": "Asset resolution",
+          "type": "string"
+        },
+        "thumbnail_url": {
+          "description": "Preview thumbnail URL",
+          "format": "uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id",
+        "asset_url",
+        "asset_type",
+        "file_size_mb",
+        "resolution",
+        "metadata"
+      ],
+      "type": "object"
+    },
+    "RenderJobInput": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "default": "StabilityAI",
+          "description": "Rendering/generation engine to use",
+          "enum": [
+            "StabilityAI",
+            "Blender",
+            "Houdini",
+            "Unreal",
+            "Custom"
+          ],
+          "type": "string"
+        },
+        "job_type": {
+          "description": "Type of rendering/generation job",
+          "enum": [
+            "3d_generation",
+            "image_generation",
+            "video_render",
+            "vfx_composite"
+          ],
+          "type": "string"
+        },
+        "output_format": {
+          "description": "Desired output format",
+          "enum": [
+            "png",
+            "jpg",
+            "glb",
+            "gltf",
+            "fbx",
+            "mp4",
+            "exr"
+          ],
+          "type": "string"
+        },
+        "priority": {
+          "default": "normal",
+          "description": "Job priority level",
+          "enum": [
+            "low",
+            "normal",
+            "high",
+            "urgent"
+          ],
+          "type": "string"
+        },
+        "prompt": {
+          "description": "AI generation prompt (for generative tasks)",
+          "type": "string"
+        },
+        "quality": {
+          "default": "high",
+          "description": "Quality preset",
+          "enum": [
+            "draft",
+            "medium",
+            "high",
+            "production"
+          ],
+          "type": "string"
+        },
+        "resolution": {
+          "default": "1024x1024",
+          "description": "Output resolution (e.g., '1920x1080', '2048x2048')",
+          "type": "string"
+        },
+        "samples": {
+          "default": 50,
+          "description": "Sampling/quality iterations",
+          "maximum": 1000,
+          "minimum": 1,
+          "type": "number"
+        },
+        "scene_file_url": {
+          "description": "URL to 3D scene file (for rendering tasks)",
+          "format": "uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_type",
+        "engine",
+        "output_format",
+        "resolution",
+        "quality",
+        "samples",
+        "priority"
+      ],
+      "type": "object"
+    },
+    "RenderJobResult": {
+      "additionalProperties": false,
+      "properties": {
+        "additional_assets": {
+          "default": [],
+          "description": "Additional outputs (variations, etc.)",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "asset_id": {
+                "description": "Unique asset identifier",
+                "type": "string"
+              },
+              "asset_type": {
+                "description": "Asset type/format",
+                "type": "string"
+              },
+              "asset_url": {
+                "description": "URL to download the asset",
+                "format": "uri",
+                "type": "string"
+              },
+              "file_size_mb": {
+                "description": "File size in megabytes",
+                "type": "number"
+              },
+              "ipfs_hash": {
+                "description": "IPFS hash if stored on IPFS",
+                "type": "string"
+              },
+              "metadata": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "default": {},
+                "description": "Additional asset metadata",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "resolution": {
+                "description": "Asset resolution",
+                "type": "string"
+              },
+              "thumbnail_url": {
+                "description": "Preview thumbnail URL",
+                "format": "uri",
+                "type": "string"
+              }
+            },
+            "required": [
+              "asset_id",
+              "asset_url",
+              "asset_type",
+              "file_size_mb",
+              "resolution",
+              "metadata"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "artifacts_detected": {
+          "default": [],
+          "description": "Visual artifacts detected",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "completed_at": {
+          "description": "Render completion time",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+          "type": "string"
+        },
+        "compute_cost_rndr": {
+          "description": "Cost in RNDR tokens",
+          "type": "string"
+        },
+        "compute_cost_usd": {
+          "description": "Cost in USD equivalent",
+          "type": "string"
+        },
+        "cost_per_second": {
+          "description": "Cost per second of render time",
+          "type": "string"
+        },
+        "engine_used": {
+          "description": "Rendering engine that processed the job",
+          "type": "string"
+        },
+        "error_message": {
+          "description": "Error details if job failed",
+          "type": "string"
+        },
+        "gpu_used": {
+          "description": "GPU hardware used for rendering",
+          "type": "string"
+        },
+        "job_id": {
+          "description": "Render job identifier",
+          "type": "string"
+        },
+        "partial_results": {
+          "default": [],
+          "description": "Partial results if job was cancelled",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "asset_id": {
+                "description": "Unique asset identifier",
+                "type": "string"
+              },
+              "asset_type": {
+                "description": "Asset type/format",
+                "type": "string"
+              },
+              "asset_url": {
+                "description": "URL to download the asset",
+                "format": "uri",
+                "type": "string"
+              },
+              "file_size_mb": {
+                "description": "File size in megabytes",
+                "type": "number"
+              },
+              "ipfs_hash": {
+                "description": "IPFS hash if stored on IPFS",
+                "type": "string"
+              },
+              "metadata": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "default": {},
+                "description": "Additional asset metadata",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "resolution": {
+                "description": "Asset resolution",
+                "type": "string"
+              },
+              "thumbnail_url": {
+                "description": "Preview thumbnail URL",
+                "format": "uri",
+                "type": "string"
+              }
+            },
+            "required": [
+              "asset_id",
+              "asset_url",
+              "asset_type",
+              "file_size_mb",
+              "resolution",
+              "metadata"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "primary_asset": {
+          "additionalProperties": false,
+          "description": "Main output asset",
+          "properties": {
+            "asset_id": {
+              "description": "Unique asset identifier",
+              "type": "string"
+            },
+            "asset_type": {
+              "description": "Asset type/format",
+              "type": "string"
+            },
+            "asset_url": {
+              "description": "URL to download the asset",
+              "format": "uri",
+              "type": "string"
+            },
+            "file_size_mb": {
+              "description": "File size in megabytes",
+              "type": "number"
+            },
+            "ipfs_hash": {
+              "description": "IPFS hash if stored on IPFS",
+              "type": "string"
+            },
+            "metadata": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "default": {},
+              "description": "Additional asset metadata",
+              "propertyNames": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "resolution": {
+              "description": "Asset resolution",
+              "type": "string"
+            },
+            "thumbnail_url": {
+              "description": "Preview thumbnail URL",
+              "format": "uri",
+              "type": "string"
+            }
+          },
+          "required": [
+            "asset_id",
+            "asset_url",
+            "asset_type",
+            "file_size_mb",
+            "resolution",
+            "metadata"
+          ],
+          "type": "object"
+        },
+        "quality_score": {
+          "description": "Automated quality assessment",
+          "maximum": 10,
+          "minimum": 0,
+          "type": "number"
+        },
+        "render_nodes": {
+          "description": "Number of distributed nodes used",
+          "type": "number"
+        },
+        "render_time_seconds": {
+          "description": "Total render time",
+          "type": "number"
+        },
+        "started_at": {
+          "description": "Render start time",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+          "type": "string"
+        },
+        "status": {
+          "description": "Job status",
+          "enum": [
+            "completed",
+            "failed",
+            "cancelled"
+          ],
+          "type": "string"
+        },
+        "submitted_at": {
+          "description": "Job submission time",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "status",
+        "primary_asset",
+        "additional_assets",
+        "engine_used",
+        "render_time_seconds",
+        "gpu_used",
+        "render_nodes",
+        "compute_cost_rndr",
+        "compute_cost_usd",
+        "cost_per_second",
+        "artifacts_detected",
+        "submitted_at",
+        "started_at",
+        "completed_at",
+        "partial_results"
+      ],
+      "type": "object"
+    },
+    "RenderNetworkAgentMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "agent_name": {
+          "default": "render-network-agent",
+          "type": "string"
+        },
+        "capabilities": {
+          "default": [
+            "AI-powered 3D model generation",
+            "Text-to-image generation",
+            "3D scene rendering (Blender, Houdini, Unreal)",
+            "VFX compositing",
+            "Video rendering",
+            "PBR texture generation",
+            "Turntable/product visualization",
+            "Distributed GPU compute"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "description": {
+          "default": "Executes 3D rendering, VFX, and generative AI tasks using Render Network's decentralized GPU infrastructure. Specializes in high-quality 3D model generation, image synthesis, video rendering, and complex visual effects processing.",
+          "type": "string"
+        },
+        "input_models": {
+          "default": [
+            "RenderJobInput",
+            "Image3DGenerationInput",
+            "ImageGenerationInput"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "llm_consumable_description": {
+          "default": "I can generate 3D models, images, and videos using AI and traditional rendering engines on Render Network's decentralized GPU infrastructure. Tell me what you want to create (e.g., 'Generate a 3D model of a futuristic car', 'Create a photorealistic image of a sunset over mountains', 'Render a Blender scene') and I'll handle the GPU compute, file management, and delivery. Perfect for NFT creation, game assets, product visualization, and creative content.",
+          "type": "string"
+        },
+        "output_models": {
+          "default": [
+            "RenderJobResult",
+            "GeneratedModel3D",
+            "GPUResourceUsage"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "supported_engines": {
+          "default": [
+            "StabilityAI",
+            "Blender",
+            "Houdini",
+            "Unreal Engine",
+            "Custom engines"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "supported_formats": {
+          "default": [
+            "3D: GLB, GLTF, FBX, OBJ, USD",
+            "Image: PNG, JPG, EXR, TIFF",
+            "Video: MP4, MOV, WebM"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "typical_use_cases": {
+          "default": [
+            "Generate 3D models for NFTs",
+            "Create product visualizations",
+            "Render architectural visualizations",
+            "Generate game assets",
+            "Create marketing materials",
+            "Process VFX for video content"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "version": {
+          "default": "1.0.0",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_name",
+        "version",
+        "description",
+        "capabilities",
+        "supported_engines",
+        "supported_formats",
+        "input_models",
+        "output_models",
+        "typical_use_cases",
+        "llm_consumable_description"
+      ],
+      "type": "object"
+    },
+    "RouteStep": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "Action performed (e.g., 'swap', 'deposit')",
+          "type": "string"
+        },
+        "from_token": {
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "description": "Amount with full precision",
+              "type": "string"
+            },
+            "amount_usd": {
+              "description": "USD value at execution time",
+              "type": "string"
+            },
+            "decimals": {
+              "default": 18,
+              "description": "Token decimals",
+              "type": "number"
+            },
+            "token_address": {
+              "type": "string"
+            },
+            "token_symbol": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "token_symbol",
+            "token_address",
+            "amount",
+            "decimals"
+          ],
+          "type": "object"
+        },
+        "gas_estimate": {
+          "type": "number"
+        },
+        "protocol": {
+          "description": "Protocol used (e.g., 'Uniswap V3', 'Aave')",
+          "type": "string"
+        },
+        "to_token": {
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "description": "Amount with full precision",
+              "type": "string"
+            },
+            "amount_usd": {
+              "description": "USD value at execution time",
+              "type": "string"
+            },
+            "decimals": {
+              "default": 18,
+              "description": "Token decimals",
+              "type": "number"
+            },
+            "token_address": {
+              "type": "string"
+            },
+            "token_symbol": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "token_symbol",
+            "token_address",
+            "amount",
+            "decimals"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "protocol",
+        "action",
+        "from_token",
+        "to_token",
+        "gas_estimate"
+      ],
+      "type": "object"
+    },
+    "StorageResult": {
+      "additionalProperties": false,
+      "properties": {
+        "data_hash": {
+          "description": "SHA-256 hash for verification",
+          "type": "string"
+        },
+        "data_url": {
+          "description": "Direct URL to access stored data",
+          "format": "uri",
+          "type": "string"
+        },
+        "estimated_lifespan_years": {
+          "default": 200,
+          "description": "Estimated data permanence (Arweave guarantees 200+ years)",
+          "type": "number"
+        },
+        "ipfs_mirror": {
+          "description": "IPFS mirror URL (if available)",
+          "format": "uri",
+          "type": "string"
+        },
+        "signature": {
+          "description": "Cryptographic signature",
+          "type": "string"
+        },
+        "status": {
+          "description": "Storage operation status",
+          "enum": [
+            "pending",
+            "confirmed",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "transaction": {
+          "additionalProperties": false,
+          "description": "Arweave transaction details",
+          "properties": {
+            "block_height": {
+              "description": "Block where transaction was mined",
+              "type": "number"
+            },
+            "confirmations": {
+              "default": 0,
+              "description": "Number of confirmations",
+              "type": "number"
+            },
+            "content_type": {
+              "description": "Content MIME type",
+              "type": "string"
+            },
+            "cost_ar": {
+              "description": "Storage cost in AR tokens",
+              "type": "string"
+            },
+            "cost_per_mb": {
+              "description": "Cost per megabyte",
+              "type": "string"
+            },
+            "cost_usd": {
+              "description": "Storage cost in USD",
+              "type": "string"
+            },
+            "data_hash": {
+              "description": "SHA-256 hash of stored data",
+              "type": "string"
+            },
+            "data_size_bytes": {
+              "description": "Size of stored data",
+              "type": "number"
+            },
+            "explorer_url": {
+              "description": "Block explorer URL",
+              "format": "uri",
+              "type": "string"
+            },
+            "gateway_url": {
+              "description": "Gateway URL to access data",
+              "format": "uri",
+              "type": "string"
+            },
+            "permanent": {
+              "default": true,
+              "description": "Whether storage is permanent (always true for Arweave)",
+              "type": "boolean"
+            },
+            "retrievable": {
+              "default": true,
+              "description": "Whether data is currently retrievable",
+              "type": "boolean"
+            },
+            "tags": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "default": {},
+              "description": "Transaction tags",
+              "propertyNames": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "timestamp": {
+              "description": "Transaction timestamp",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+              "type": "string"
+            },
+            "tx_id": {
+              "description": "Arweave transaction ID",
+              "type": "string"
+            }
+          },
+          "required": [
+            "tx_id",
+            "data_hash",
+            "data_size_bytes",
+            "confirmations",
+            "gateway_url",
+            "explorer_url",
+            "cost_ar",
+            "cost_usd",
+            "cost_per_mb",
+            "tags",
+            "content_type",
+            "timestamp",
+            "permanent",
+            "retrievable"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "status",
+        "transaction",
+        "data_url",
+        "data_hash",
+        "signature",
+        "estimated_lifespan_years"
+      ],
+      "type": "object"
+    },
+    "TokenAmount": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Amount with full precision",
+          "type": "string"
+        },
+        "amount_usd": {
+          "description": "USD value at execution time",
+          "type": "string"
+        },
+        "decimals": {
+          "default": 18,
+          "description": "Token decimals",
+          "type": "number"
+        },
+        "token_address": {
+          "type": "string"
+        },
+        "token_symbol": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_symbol",
+        "token_address",
+        "amount",
+        "decimals"
+      ],
+      "type": "object"
+    },
+    "TokenSwapInput": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Amount to swap",
+          "type": "string"
+        },
+        "from_token": {
+          "description": "Token to swap from",
+          "type": "string"
+        },
+        "min_output": {
+          "description": "Minimum acceptable output amount",
+          "type": "string"
+        },
+        "slippage_tolerance": {
+          "default": 0.5,
+          "maximum": 5,
+          "minimum": 0,
+          "type": "number"
+        },
+        "to_token": {
+          "description": "Token to swap to",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from_token",
+        "to_token",
+        "amount",
+        "slippage_tolerance"
+      ],
+      "type": "object"
+    },
+    "TrainingJobResult": {
+      "additionalProperties": false,
+      "properties": {
+        "compute_cost_akt": {
+          "description": "Total cost in AKT",
+          "type": "string"
+        },
+        "compute_cost_usd": {
+          "description": "Total cost in USD",
+          "type": "string"
+        },
+        "cost_per_epoch": {
+          "description": "Average cost per epoch",
+          "type": "string"
+        },
+        "epochs_completed": {
+          "description": "Number of epochs completed",
+          "type": "number"
+        },
+        "final_accuracy": {
+          "description": "Final accuracy metric",
+          "type": "number"
+        },
+        "final_loss": {
+          "description": "Final training loss",
+          "type": "number"
+        },
+        "gpu_hours_used": {
+          "description": "GPU hours consumed",
+          "type": "number"
+        },
+        "gpu_utilization_avg": {
+          "description": "Average GPU utilization percentage",
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        },
+        "iterations": {
+          "description": "Total training iterations",
+          "type": "number"
+        },
+        "job_id": {
+          "description": "Training job identifier",
+          "type": "string"
+        },
+        "metrics_json_url": {
+          "description": "URL to training metrics JSON",
+          "format": "uri",
+          "type": "string"
+        },
+        "model_checkpoint_url": {
+          "description": "URL to trained model checkpoint",
+          "format": "uri",
+          "type": "string"
+        },
+        "samples_processed": {
+          "description": "Total training samples processed",
+          "type": "number"
+        },
+        "status": {
+          "description": "Job status",
+          "enum": [
+            "completed",
+            "failed",
+            "stopped"
+          ],
+          "type": "string"
+        },
+        "tensorboard_logs_url": {
+          "description": "URL to TensorBoard logs",
+          "format": "uri",
+          "type": "string"
+        },
+        "throughput_samples_per_second": {
+          "description": "Training throughput",
+          "type": "number"
+        },
+        "training_time_hours": {
+          "description": "Total training time",
+          "type": "number"
+        }
+      },
+      "required": [
+        "job_id",
+        "status",
+        "final_loss",
+        "epochs_completed",
+        "training_time_hours",
+        "model_checkpoint_url",
+        "metrics_json_url",
+        "samples_processed",
+        "iterations",
+        "gpu_hours_used",
+        "compute_cost_akt",
+        "compute_cost_usd",
+        "cost_per_epoch",
+        "throughput_samples_per_second",
+        "gpu_utilization_avg"
+      ],
+      "type": "object"
+    },
+    "TransactionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "block_number": {
+          "description": "Block number where transaction was mined",
+          "type": "number"
+        },
+        "explorer_url": {
+          "description": "Block explorer URL for transaction",
+          "type": "string"
+        },
+        "gas_price_gwei": {
+          "description": "Gas price in Gwei",
+          "type": "string"
+        },
+        "gas_used": {
+          "description": "Gas consumed by transaction",
+          "type": "number"
+        },
+        "status": {
+          "description": "Transaction status",
+          "enum": [
+            "success",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "total_cost_eth": {
+          "description": "Total transaction cost in ETH",
+          "type": "string"
+        },
+        "tx_hash": {
+          "description": "Transaction hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tx_hash",
+        "block_number",
+        "gas_used",
+        "gas_price_gwei",
+        "total_cost_eth",
+        "explorer_url",
+        "status"
+      ],
+      "type": "object"
+    },
+    "YieldOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "apy": {
+          "description": "Current APY",
+          "maximum": 1000,
+          "minimum": 0,
+          "type": "number"
+        },
+        "chain": {
+          "description": "Blockchain where the opportunity exists",
+          "type": "string"
+        },
+        "lock_period": {
+          "description": "Lock period in days (0 for flexible)",
+          "type": "number"
+        },
+        "pool_name": {
+          "description": "Pool or strategy name",
+          "type": "string"
+        },
+        "protocol": {
+          "description": "Protocol name (e.g., 'Aave', 'Compound')",
+          "type": "string"
+        },
+        "risk_score": {
+          "description": "Risk score (0=lowest, 10=highest)",
+          "maximum": 10,
+          "minimum": 0,
+          "type": "number"
+        },
+        "token": {
+          "description": "Token being staked",
+          "type": "string"
+        },
+        "tvl": {
+          "description": "Total Value Locked in USD",
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocol",
+        "pool_name",
+        "token",
+        "apy",
+        "tvl",
+        "risk_score",
+        "lock_period",
+        "chain"
+      ],
+      "type": "object"
+    },
+    "YieldOptimizationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_strategies": {
+          "description": "Alternative options ranked by score",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "apy": {
+                "description": "Current APY",
+                "maximum": 1000,
+                "minimum": 0,
+                "type": "number"
+              },
+              "chain": {
+                "description": "Blockchain where the opportunity exists",
+                "type": "string"
+              },
+              "lock_period": {
+                "description": "Lock period in days (0 for flexible)",
+                "type": "number"
+              },
+              "pool_name": {
+                "description": "Pool or strategy name",
+                "type": "string"
+              },
+              "protocol": {
+                "description": "Protocol name (e.g., 'Aave', 'Compound')",
+                "type": "string"
+              },
+              "risk_score": {
+                "description": "Risk score (0=lowest, 10=highest)",
+                "maximum": 10,
+                "minimum": 0,
+                "type": "number"
+              },
+              "token": {
+                "description": "Token being staked",
+                "type": "string"
+              },
+              "tvl": {
+                "description": "Total Value Locked in USD",
+                "type": "string"
+              }
+            },
+            "required": [
+              "protocol",
+              "pool_name",
+              "token",
+              "apy",
+              "tvl",
+              "risk_score",
+              "lock_period",
+              "chain"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "breakeven_time_days": {
+          "description": "Days until gas costs are covered by yield",
+          "type": "number"
+        },
+        "gas_cost_estimate": {
+          "description": "Estimated gas cost for entering position",
+          "type": "string"
+        },
+        "projected_returns": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Projected returns over different time periods",
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "recommended_strategy": {
+          "additionalProperties": false,
+          "description": "Top recommended yield opportunity",
+          "properties": {
+            "apy": {
+              "description": "Current APY",
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "number"
+            },
+            "chain": {
+              "description": "Blockchain where the opportunity exists",
+              "type": "string"
+            },
+            "lock_period": {
+              "description": "Lock period in days (0 for flexible)",
+              "type": "number"
+            },
+            "pool_name": {
+              "description": "Pool or strategy name",
+              "type": "string"
+            },
+            "protocol": {
+              "description": "Protocol name (e.g., 'Aave', 'Compound')",
+              "type": "string"
+            },
+            "risk_score": {
+              "description": "Risk score (0=lowest, 10=highest)",
+              "maximum": 10,
+              "minimum": 0,
+              "type": "number"
+            },
+            "token": {
+              "description": "Token being staked",
+              "type": "string"
+            },
+            "tvl": {
+              "description": "Total Value Locked in USD",
+              "type": "string"
+            }
+          },
+          "required": [
+            "protocol",
+            "pool_name",
+            "token",
+            "apy",
+            "tvl",
+            "risk_score",
+            "lock_period",
+            "chain"
+          ],
+          "type": "object"
+        },
+        "risk_analysis": {
+          "description": "Comprehensive risk analysis of recommendation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recommended_strategy",
+        "alternative_strategies",
+        "projected_returns",
+        "risk_analysis",
+        "gas_cost_estimate",
+        "breakeven_time_days"
+      ],
+      "type": "object"
+    },
+    "YieldStakingInput": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Amount to stake",
+          "type": "string"
+        },
+        "lock_period": {
+          "description": "Lock period in days (0 for flexible)",
+          "minimum": 0,
+          "type": "number"
+        },
+        "min_apy": {
+          "description": "Minimum acceptable APY",
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        },
+        "strategy": {
+          "default": "highest_yield",
+          "enum": [
+            "highest_yield",
+            "lowest_risk",
+            "balanced"
+          ],
+          "type": "string"
+        },
+        "token": {
+          "description": "Token to stake",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "amount",
+        "strategy"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "TokenAmount",
+    "RouteStep",
+    "TransactionResult",
+    "EnsoDeFiInput",
+    "TokenSwapInput",
+    "YieldStakingInput",
+    "CrossChainBridgeInput",
+    "EnsoExecutionResult",
+    "YieldOpportunity",
+    "YieldOptimizationReport",
+    "CrossChainBridgeResult",
+    "EnsoDeFiAgentMetadata",
+    "AkashDeploymentInput",
+    "AITrainingJobInput",
+    "InferenceServiceInput",
+    "AkashProviderInfo",
+    "DeploymentResult",
+    "TrainingJobResult",
+    "InferenceAPIResult",
+    "AkashComputeAgentMetadata",
+    "ArweaveStorageInput",
+    "AuditLogEntry",
+    "AOStateManagementInput",
+    "MemoryQueryInput",
+    "ArweaveTransaction",
+    "StorageResult",
+    "AOProcessState",
+    "AuditLogResult",
+    "QueryResult",
+    "DataRetrievalResult",
+    "ArweaveMemoryAgentMetadata",
+    "RenderJobInput",
+    "Image3DGenerationInput",
+    "ImageGenerationInput",
+    "RenderAsset",
+    "RenderJobResult",
+    "GeneratedModel3D",
+    "GPUResourceUsage",
+    "RenderNetworkAgentMetadata"
+  ],
+  "type": "object"
+}

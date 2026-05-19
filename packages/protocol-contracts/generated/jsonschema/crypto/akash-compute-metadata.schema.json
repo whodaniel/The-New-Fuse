@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/crypto/0.1/akash-compute-metadata.schema.json",
+  "title": "AkashComputeAgentMetadata",
+  "additionalProperties": false,
+  "properties": {
+    "agent_name": {
+      "default": "akash-compute-agent",
+      "type": "string"
+    },
+    "capabilities": {
+      "default": [
+        "AI model training (LLMs, vision models, etc.)",
+        "Model inference API deployment",
+        "Containerized application hosting",
+        "Sovereign AI agent runtime",
+        "GPU compute for any workload",
+        "Custom Docker deployments",
+        "Auto-scaling services",
+        "Global deployment regions"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "cost_advantages": {
+      "default": [
+        "60-80% cheaper than AWS/GCP/Azure",
+        "No vendor lock-in",
+        "Pay-per-use pricing",
+        "Decentralized marketplace",
+        "Competitive bidding"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "description": {
+      "default": "Deploys and manages general-purpose compute workloads on Akash Network, the decentralized cloud. Specializes in AI/ML training, model inference APIs, sovereign agent hosting, and any Docker-based workload. Provides access to high-end NVIDIA GPUs at a fraction of cloud provider costs.",
+      "type": "string"
+    },
+    "input_models": {
+      "default": [
+        "AkashDeploymentInput",
+        "AITrainingJobInput",
+        "InferenceServiceInput"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "llm_consumable_description": {
+      "default": "I deploy and manage compute workloads on Akash Network's decentralized cloud. Tell me what you need to run (e.g., 'Train a Llama-2 model', 'Deploy a FastAPI service', 'Host a Stable Diffusion API') and I'll provision the resources, handle deployment, and provide access endpoints. Perfect for AI training, inference APIs, and hosting autonomous agents at 60-80% lower cost than traditional clouds.",
+      "type": "string"
+    },
+    "output_models": {
+      "default": [
+        "DeploymentResult",
+        "TrainingJobResult",
+        "InferenceAPIResult"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "supported_gpu_models": {
+      "default": [
+        "NVIDIA H100",
+        "NVIDIA A100",
+        "NVIDIA V100",
+        "NVIDIA B200 (Blackwell)",
+        "AMD MI250"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "typical_deployments": {
+      "default": [
+        "Large language model training",
+        "Stable Diffusion fine-tuning",
+        "Autonomous agent hosting",
+        "API microservices",
+        "Data processing pipelines",
+        "Web application backends"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "version": {
+      "default": "1.0.0",
+      "type": "string"
+    }
+  },
+  "required": [
+    "agent_name",
+    "version",
+    "description",
+    "capabilities",
+    "supported_gpu_models",
+    "typical_deployments",
+    "input_models",
+    "output_models",
+    "cost_advantages",
+    "llm_consumable_description"
+  ],
+  "type": "object"
+}

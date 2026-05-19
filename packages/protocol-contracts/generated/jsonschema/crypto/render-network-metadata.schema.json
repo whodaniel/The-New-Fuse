@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/crypto/0.1/render-network-metadata.schema.json",
+  "title": "RenderNetworkAgentMetadata",
+  "additionalProperties": false,
+  "properties": {
+    "agent_name": {
+      "default": "render-network-agent",
+      "type": "string"
+    },
+    "capabilities": {
+      "default": [
+        "AI-powered 3D model generation",
+        "Text-to-image generation",
+        "3D scene rendering (Blender, Houdini, Unreal)",
+        "VFX compositing",
+        "Video rendering",
+        "PBR texture generation",
+        "Turntable/product visualization",
+        "Distributed GPU compute"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "description": {
+      "default": "Executes 3D rendering, VFX, and generative AI tasks using Render Network's decentralized GPU infrastructure. Specializes in high-quality 3D model generation, image synthesis, video rendering, and complex visual effects processing.",
+      "type": "string"
+    },
+    "input_models": {
+      "default": [
+        "RenderJobInput",
+        "Image3DGenerationInput",
+        "ImageGenerationInput"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "llm_consumable_description": {
+      "default": "I can generate 3D models, images, and videos using AI and traditional rendering engines on Render Network's decentralized GPU infrastructure. Tell me what you want to create (e.g., 'Generate a 3D model of a futuristic car', 'Create a photorealistic image of a sunset over mountains', 'Render a Blender scene') and I'll handle the GPU compute, file management, and delivery. Perfect for NFT creation, game assets, product visualization, and creative content.",
+      "type": "string"
+    },
+    "output_models": {
+      "default": [
+        "RenderJobResult",
+        "GeneratedModel3D",
+        "GPUResourceUsage"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "supported_engines": {
+      "default": [
+        "StabilityAI",
+        "Blender",
+        "Houdini",
+        "Unreal Engine",
+        "Custom engines"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "supported_formats": {
+      "default": [
+        "3D: GLB, GLTF, FBX, OBJ, USD",
+        "Image: PNG, JPG, EXR, TIFF",
+        "Video: MP4, MOV, WebM"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "typical_use_cases": {
+      "default": [
+        "Generate 3D models for NFTs",
+        "Create product visualizations",
+        "Render architectural visualizations",
+        "Generate game assets",
+        "Create marketing materials",
+        "Process VFX for video content"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "version": {
+      "default": "1.0.0",
+      "type": "string"
+    }
+  },
+  "required": [
+    "agent_name",
+    "version",
+    "description",
+    "capabilities",
+    "supported_engines",
+    "supported_formats",
+    "input_models",
+    "output_models",
+    "typical_use_cases",
+    "llm_consumable_description"
+  ],
+  "type": "object"
+}

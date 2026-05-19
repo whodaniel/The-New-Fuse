@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/crypto/0.1/enso-defi-metadata.schema.json",
+  "title": "EnsoDeFiAgentMetadata",
+  "additionalProperties": false,
+  "properties": {
+    "agent_name": {
+      "default": "enso-defi-agent",
+      "type": "string"
+    },
+    "capabilities": {
+      "default": [
+        "Token swaps with optimal routing",
+        "Yield farming and staking",
+        "Cross-chain token bridging",
+        "DeFi position management",
+        "Gas optimization",
+        "Multi-protocol aggregation",
+        "Intent-based execution",
+        "Slippage protection"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "description": {
+      "default": "Executes decentralized finance operations using the ENSO intent-based execution engine. Handles token swaps, yield optimization, staking, cross-chain bridging, and complex DeFi strategies with automatic route optimization and minimal gas costs.",
+      "type": "string"
+    },
+    "input_models": {
+      "default": [
+        "EnsoDeFiInput",
+        "TokenSwapInput",
+        "YieldStakingInput",
+        "CrossChainBridgeInput"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "llm_consumable_description": {
+      "default": "I can execute any DeFi operation using natural language intents. Simply tell me what you want to do (e.g., 'Swap 10 ETH for USDC', 'Stake 100 USDC for highest yield', 'Bridge 50 USDC from Ethereum to Arbitrum') and I'll find the optimal route, minimize gas costs, and execute atomically. I support multi-step operations and can route across any supported chain.",
+      "type": "string"
+    },
+    "output_models": {
+      "default": [
+        "EnsoExecutionResult",
+        "YieldOptimizationReport",
+        "CrossChainBridgeResult"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "protocols_integrated": {
+      "default": [
+        "Uniswap V2/V3",
+        "Aave",
+        "Compound",
+        "Curve",
+        "Balancer",
+        "ENSO Router"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "supported_chains": {
+      "default": [
+        "ethereum",
+        "base",
+        "arbitrum",
+        "optimism",
+        "polygon",
+        "avalanche"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "supported_operations": {
+      "default": [
+        "swap",
+        "stake",
+        "bridge",
+        "withdraw",
+        "compound"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "version": {
+      "default": "1.0.0",
+      "type": "string"
+    }
+  },
+  "required": [
+    "agent_name",
+    "version",
+    "description",
+    "capabilities",
+    "supported_chains",
+    "supported_operations",
+    "input_models",
+    "output_models",
+    "protocols_integrated",
+    "llm_consumable_description"
+  ],
+  "type": "object"
+}

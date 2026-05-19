@@ -4,9 +4,101 @@ import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 
 import { ExecuteRequestSchema, ExecuteResponseSchema } from '../src/adk-gateway.ts';
+import {
+  AkashComputeAgentMetadataSchema,
+  AkashDeploymentInputSchema,
+  AkashProviderInfoSchema,
+  AITrainingJobInputSchema,
+  AOProcessStateSchema,
+  AOStateManagementInputSchema,
+  ArweaveMemoryAgentMetadataSchema,
+  ArweaveStorageInputSchema,
+  ArweaveTransactionSchema,
+  AuditLogEntrySchema,
+  AuditLogResultSchema,
+  CrossChainBridgeInputSchema,
+  CrossChainBridgeResultSchema,
+  DataRetrievalResultSchema,
+  DeploymentResultSchema,
+  EnsoDeFiAgentMetadataSchema,
+  EnsoDeFiInputSchema,
+  EnsoExecutionResultSchema,
+  GeneratedModel3DSchema,
+  GPUResourceUsageSchema,
+  Image3DGenerationInputSchema,
+  ImageGenerationInputSchema,
+  InferenceAPIResultSchema,
+  InferenceServiceInputSchema,
+  MemoryQueryInputSchema,
+  QueryResultSchema,
+  RenderAssetSchema,
+  RenderJobInputSchema,
+  RenderJobResultSchema,
+  RenderNetworkAgentMetadataSchema,
+  RouteStepSchema,
+  StorageResultSchema,
+  TokenAmountSchema,
+  TokenSwapInputSchema,
+  TrainingJobResultSchema,
+  TransactionResultSchema,
+  YieldOpportunitySchema,
+  YieldOptimizationReportSchema,
+  YieldStakingInputSchema,
+} from '../src/crypto.ts';
 import { SgpEnvelopeSchema, SgpPayloadSchema } from '../src/sgp.ts';
 import { TwipEnvelopeSchema, TwipIdentitySchema } from '../src/twip.ts';
 import { ScrapeRequestSchema, ScrapeResponseSchema } from '../src/web-scraping.ts';
+
+const CryptoOperationsRegistrySchema = z.object({
+  // Shared/Common
+  TokenAmount: TokenAmountSchema,
+  RouteStep: RouteStepSchema,
+  TransactionResult: TransactionResultSchema,
+
+  // ENSO DeFi
+  EnsoDeFiInput: EnsoDeFiInputSchema,
+  TokenSwapInput: TokenSwapInputSchema,
+  YieldStakingInput: YieldStakingInputSchema,
+  CrossChainBridgeInput: CrossChainBridgeInputSchema,
+  EnsoExecutionResult: EnsoExecutionResultSchema,
+  YieldOpportunity: YieldOpportunitySchema,
+  YieldOptimizationReport: YieldOptimizationReportSchema,
+  CrossChainBridgeResult: CrossChainBridgeResultSchema,
+  EnsoDeFiAgentMetadata: EnsoDeFiAgentMetadataSchema,
+
+  // Akash Compute
+  AkashDeploymentInput: AkashDeploymentInputSchema,
+  AITrainingJobInput: AITrainingJobInputSchema,
+  InferenceServiceInput: InferenceServiceInputSchema,
+  AkashProviderInfo: AkashProviderInfoSchema,
+  DeploymentResult: DeploymentResultSchema,
+  TrainingJobResult: TrainingJobResultSchema,
+  InferenceAPIResult: InferenceAPIResultSchema,
+  AkashComputeAgentMetadata: AkashComputeAgentMetadataSchema,
+
+  // Arweave & AO Memory
+  ArweaveStorageInput: ArweaveStorageInputSchema,
+  AuditLogEntry: AuditLogEntrySchema,
+  AOStateManagementInput: AOStateManagementInputSchema,
+  MemoryQueryInput: MemoryQueryInputSchema,
+  ArweaveTransaction: ArweaveTransactionSchema,
+  StorageResult: StorageResultSchema,
+  AOProcessState: AOProcessStateSchema,
+  AuditLogResult: AuditLogResultSchema,
+  QueryResult: QueryResultSchema,
+  DataRetrievalResult: DataRetrievalResultSchema,
+  ArweaveMemoryAgentMetadata: ArweaveMemoryAgentMetadataSchema,
+
+  // Render Network
+  RenderJobInput: RenderJobInputSchema,
+  Image3DGenerationInput: Image3DGenerationInputSchema,
+  ImageGenerationInput: ImageGenerationInputSchema,
+  RenderAsset: RenderAssetSchema,
+  RenderJobResult: RenderJobResultSchema,
+  GeneratedModel3D: GeneratedModel3DSchema,
+  GPUResourceUsage: GPUResourceUsageSchema,
+  RenderNetworkAgentMetadata: RenderNetworkAgentMetadataSchema,
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,7 +166,15 @@ const entries = [
     id: 'https://tnf.local/spec/scraping/0.1/scrape-response.schema.json',
     outputPath: path.join('scraping', 'scrape-response.schema.json'),
   },
+  {
+    schema: CryptoOperationsRegistrySchema,
+    title: 'Crypto Operations Bundle',
+    id: 'https://tnf.local/spec/crypto/0.1/crypto.schema.json',
+    outputPath: path.join('crypto', 'crypto.schema.json'),
+    forceObjectRoot: true,
+  },
 ];
+
 
 function sortDeep(value) {
   if (Array.isArray(value)) {
