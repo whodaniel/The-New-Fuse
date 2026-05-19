@@ -52,7 +52,7 @@ async def scrape(request: ScrapeRequest):
 
             return ScrapeResponse(
                 success=True,
-                url=request.url,
+                url=str(request.url),
                 title=getattr(result, "metadata", {}).get("title", ""),
                 text=_clean_text(markdown, max_chars),
                 markdown=markdown
@@ -60,7 +60,7 @@ async def scrape(request: ScrapeRequest):
     except Exception as e:
         return ScrapeResponse(
             success=False,
-            url=request.url,
+            url=str(request.url),
             error=str(e)
         )
 
