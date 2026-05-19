@@ -1,0 +1,328 @@
+New Google Gemini update is insane.
+Okay, so Google just rolled out a brand
+new look for the Gemini app and I have
+to be honest with you. It looks really
+really cool. I've been using it for the
+last day or so and the whole thing feels
+different, smoother, cleaner, like a
+real upgrade. But here's the part most
+people are missing. It's not just a new
+coat of paint. There's a hidden model
+running under the hood, Gemini 3.2
+flash, and it's quietly being routed to
+people without Google even saying a word
+about it. So in this video, I'm going to
+walk you through what changed in the
+app, what Gemini 3.2 flash is, why it
+matters for your business, and how you
+can use it right now to save hours every
+single week. Let me show you what I saw
+when I opened the app this morning. The
+first thing you notice is the home
+screen. It's just gone. The old
+cluttered look with all those tiny
+buttons everywhere, gone. Now you get
+this big soft glowing background. It
+pulses. It moves. It feels alive. Right
+in the middle, it says, "Hi, what's on
+your mind?" with your name. That's it.
+Nothing else fighting for your
+attention. And the prompt box at the
+bottom is now pill-shaped, one round
+box, easy to tap, easy to read. Sounds
+small, right? But here's what happened
+the moment I started typing. The
+background reacted. It changed color. It
+moved with the chat. It felt like the
+app was paying attention to me, not the
+other way around. I know that sounds
+weird to say about an app, but you'll
+feel it the second you open it. Now
+look, Google has been working on this
+for a few months. Abner Li at 9to5Google
+reported on May 3rd, 2026 that this is
+the first full look at the Gemini app
+overhaul. The homepage switched to a
+pill-shaped prompt box, voice input, and
+Gemini live seat on the right. There's a
+plus button on the left. And that plus
+button is where things get really
+useful. You tap it. A clean sheet slides
+up from the bottom. Photos, camera,
+files, notebooks, and then a list of
+tools right underneath. Images, videos,
+music, canvas, deep research, guided
+learning, all in one spot. Before this,
+you had to dig through menus, hunt for
+buttons, tap three times to find deep
+research. Now, one tap, done. For a busy
+business owner, that is a real
+time-saver. Every second you don't spend
+hunting through a menu is a second you
+can spend actually getting work done.
+Okay, so let me show you the other thing
+nobody's really talking about yet. The
+model picker moved. It used to sit
+inside the prompt box. Now, it's up in
+the top left corner. Just a little drop
+down. And when you tap it, you see your
+model options. Gemini Pro, Gemini Flash.
+And for some people, a brand new one is
+showing up. Gemini 3.2 Flash. A Reddit
+user on the Gemini AI subreddit noticed
+their iOS app cycling through model
+versions over 24 hours, shifting from
+Gemini 3 Flash to 3.1, then landing on
+3.2 Flash. Google hasn't officially
+announced it, but it's quietly being
+routed to people right now. And this
+matters a lot. Let me tell you why.
+Gemini 3.2 Flash is shaping up to be
+Google's most aggressively priced Flash
+tier model yet. Based on what surfaced
+in AI Studio and the iOS app, it's not a
+ground-up rebuild. It's a targeted
+quality and cost update. The clearest
+signals point to better coding output,
+faster speed than its predecessor, and a
+price cut that halves the input cost
+compared to Gemini 3 Flash. Translate
+that for me. What does that actually
+mean for you? It means the cheap, fast
+model just got way smarter. You know how
+Flash models used to be the budget
+option? Quick, but a bit dumb on hard
+stuff. That's flipping. Early benchmarks
+suggest 3.2 Flash approaches 3.1 Pro
+quality on coding tasks, specifically at
+a fraction of the price. So, the cheap
+Flash model is now nearly as smart as
+the expensive Pro model. That's a huge
+deal. And here's why it matters for
+anyone running a business. You can now
+run more tasks, faster tasks, smarter
+tasks without having to pay the top-tier
+price or wait around for slow responses.
+Whether you're writing emails, building
+a content template, drafting a sales
+pitch, or running research for a new
+offer, Gemini Flash 3.2 will handle it
+in seconds. And the way you switch
+between models, just tap the top left
+corner. Pick the one you want. Done.
+Now, let me give you one quick example
+of how I'm already using this. I asked
+Gemini 3.2 Flash to research who the top
+creators are talking about AI automation
+right now. Just to see what content gaps
+I could fill for our AI Profit Boardroom
+community. It pulled the list, ranked
+them, even showed me what topics they
+cover most. That used to take me an hour
+with Google searches, it now takes about
+90 seconds. Quick pause here. If you
+want help using Gemini 3.2 flash to grow
+your business and save hours every
+single week, come join us inside the AI
+Profit Boardroom. Every week we run four
+live coaching calls where we walk you
+through exactly how to set up Gemini for
+your business. We've got step-by-step
+tutorials showing you how to use the new
+Gemini app, the new model picker, and
+how to plug Gemini flash 3.2 into your
+daily work. We've got a 30-day roadmap
+built around using AI tools like Gemini
+to get more leads and more customers. A
+prompt library full of Gemini prompts
+ready to copy and paste. And 2800
+business owners inside, many already
+using Gemini every single day for client
+work, content, and sales. Link in the
+description or go to
+aiprofitboardroom.com.
+Okay, back to the update. Let me walk
+you through one more thing that changed.
+And this one is sneaky useful. The
+thinking option, gone. Well, not gone
+gone, but moved. Before, you had to pick
+a separate thinking model if you wanted
+Gemini to reason deeply about something.
+Now, thinking is a global toggle
+available across all options. Users can
+choose between standard and extended
+reasoning levels directly. What that
+means is simple. You pick one model. You
+decide if you want quick answers or deep
+thinking. And the model just adjusts. No
+need to switch back and forth. For
+business owners, this is huge. Why?
+Because most of your daily questions
+need quick answers. But once or twice a
+day you have a big strategy question, a
+pricing question, a positioning
+question. One toggle, you can flip the
+same model into deep thinking mode. It
+feels like having two assistants in one.
+A quick one for fast tasks, slow careful
+one for big decisions. Tested it on a
+real question I had this week. Asked
+Gemini to help me figure out how to
+position a new offer inside the AI
+Profit Boardroom. First, I asked with
+quick mode on. It gave me a decent
+answer in 4 seconds. Then I flipped to
+extended thinking. It thought for about
+30 seconds. The answer came back twice
+as deep, way more nuanced, way more
+useful. model. It's in prompt. Just one
+toggle changed. Now, let me show you
+something else nobody's paying attention
+to, the new agents tab. The user who
+spotted the leak also noticed a new
+agents beta tab in the sidebar. This
+mostly broken right now and just leads
+to a black screen, a blank screen. That
+sounds boring, right? It's not because
+Google doesn't put empty tabs in their
+apps for no reason. This is a
+placeholder. They're getting ready to
+ship agents inside the Gemini app,
+agents that don't just answer your
+questions, but actually go and do stuff
+for you. And we know this is coming
+because Gemini agent is a new
+experimental tool that can complete
+multi-step tasks from start to finish
+while keeping you in control. Agent uses
+Gemini 3's advanced reasoning and tool
+calling to break up complex tasks into
+smaller steps. If your task requires it,
+it will use apps like Gmail or calendar
+alongside many of the tools in Gemini,
+like deep research capabilities and
+canvas to achieve your end goal. It can
+use live web browsing capabilities to
+research and take action on the web as
+part of completing your task. Let that
+be clear. Gemini is about to do work for
+you, not just talk to you, do actual
+tasks, book stuff on your calendar,
+search the web, build documents. The
+empty agents tab is the first sign that
+this is coming to the main Gemini app
+very soon. Here's a quick example for
+you. Imagine telling Gemini, "Find me 10
+business owners who post about AI on
+LinkedIn this week. Pull their names,
+write a custom message for each, and
+save it to a doc." A few months ago,
+that was a dream. Now, with agents built
+into the Gemini app, it's about to be
+three taps on your phone. For our AI
+Profit Board members, this is gold.
+Because we're already mapping out how to
+use this for lead generation, for client
+research, for content. The moment the
+agents tab goes live, our members will
+have a playbook ready. Okay, let me hit
+you with one more thing. The whole
+reason this update matters is because
+Google is moving fast, really fast.
+Gemini 3 Flash arrived in December 2025.
+Gemini 3.1 Flashlight followed in early
+2026. And now 3.2 is appearing less than
+3 months after 3.1. 3 months between
+major upgrades. that's the new pace.
+Google appears to be moving to
+incremental versioning, 3.0, 3.1, 3.2,
+and presumably beyond. This is a
+deliberate signal. It suggests Google is
+shifting to a more software-like release
+cadence, smaller, more frequent model
+updates rather than infrequent major
+releases. So, if you're sitting around
+waiting for the dust to settle, it never
+will. The dust is the new normal. New
+updates every few weeks, new models
+every few months, new features every
+single day. You either learn how to keep
+up or you don't. And here's the simple
+truth, keeping up alone is brutal. It's
+a full-time job just to follow the news,
+test the tools, and figure out what
+works for your business. That's why
+having a community matters. Okay, let me
+wrap this up. What you need to do right
+now is open the Gemini app on your
+phone. Look in the top left corner. Tap
+your model picker. If you see Gemini 3.2
+flash in there, you're one of the lucky
+ones. Test it. Try a real task. Ask it
+to write you a sales email. Ask it to
+research your top three competitors. Ask
+it to plan your content for next week.
+You will feel the difference. If you
+don't see 3.2 flash yet, don't worry.
+It's rolling out in stages. Just keep
+checking. And in the meantime, play with
+the new pill prompt box. Tap the plus
+button. Try the deep research tool. Try
+Canvas. Try Notebooks. Spend 20 minutes
+today learning where things are. That 20
+minutes will save you hours every single
+week. Here's my last tip. Build one
+Gemini notebook for your business. Just
+one. Put in your offer details, your
+customer profile, your tone of voice,
+your goals for this quarter. Every time
+you open Gemini after that, point it to
+that notebook. It will remember
+everything. It will write in your voice.
+It will think like your business
+partner. That is the future of doing
+work, not typing the same details into a
+chat over and over, saving them once,
+then letting the AI use them every
+single time. Now, if you want help
+setting all of this up for your
+business, here's what I'd do. Come and
+join us inside the AI Profit Boardroom.
+We've already built a full step-by-step
+Gemini setup guide, how to set up your
+Gemini notebook for your business, how
+to use the new pill prompt box for
+faster work. How to switch between
+Gemini flash and pro to save time and
+get better answers. And the moment the
+agents tab goes live in the Gemini app,
+we'll have a playbook ready showing you
+how to use it to find leads, write
+outreach, and grow your customer base.
+Four live coaching calls every week
+where you can ask questions about your
+Gemini setup. A prompt library full of
+Gemini prompts built for business
+owners. And 20 1800 members inside, many
+of them already running Gemini every day
+for content, client work, and lead
+generation. A member map so you can
+connect with Gemini users near you.
+There's always someone online. Link in
+the description or go to AI
+profitboardroom.com.
+And if you want the full process and
+over 100 AI use cases just like this
+one, join the AI success lab. It's free.
+Links are in the comments and
+description. You'll get all the video
+notes from this episode, plus access to
+our community of 67,000 members who are
+crushing it with AI right now. The
+Gemini app just changed. The model just
+got smarter. The price just got cheaper.
+The tools just got easier to use. And
+the agents are coming. This is the
+moment to learn how to use it. Don't
+wait until everyone else figures it out.
+See you in the next one.

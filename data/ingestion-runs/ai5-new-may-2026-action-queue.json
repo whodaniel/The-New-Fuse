@@ -1,0 +1,2402 @@
+{
+  "generatedAt": "2026-05-19T07:49:14.221302Z",
+  "seedSource": "tnf-executable-intelligence-activation",
+  "manifestPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-manifest.json",
+  "artifactDir": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts",
+  "sourcePrefixes": ["yt-ai5-"],
+  "summary": {
+    "sources_seen": 37,
+    "artifacts_resolved": 37,
+    "tasks_generated": 64,
+    "procedural_artifacts": 3,
+    "dormant_artifacts": 0,
+    "activation_coverage_tasks_per_artifact": 1.73,
+    "immediate_execution_coverage": 0.081,
+    "no_procedural_video_count": 34,
+    "no_procedural_video_sources": [
+      "yt-ai5--Bp2Sz5xir4",
+      "yt-ai5-4XvM-0o3A-4",
+      "yt-ai5-4azVjKhqDzw",
+      "yt-ai5-725QE_LNXT4",
+      "yt-ai5-7xuWZ-3lyQE",
+      "yt-ai5-9rXH2ssCe9E",
+      "yt-ai5-NnsQj2nDkKA",
+      "yt-ai5-PIdETjcXNIk",
+      "yt-ai5-Q7AYc2kECDI",
+      "yt-ai5-QK0B1mbJ-VU",
+      "yt-ai5-RxwjoegpI98",
+      "yt-ai5-VTVRTN8nkxM",
+      "yt-ai5-WQv3xjb4WgQ",
+      "yt-ai5-XLH_WLrmwfk",
+      "yt-ai5-Xfl50508LZM",
+      "yt-ai5-gb5TlGw6Uks",
+      "yt-ai5-j5_wcDifNko",
+      "yt-ai5-jWDCnJKouhw",
+      "yt-ai5-jwtpMSRAPAQ",
+      "yt-ai5-k8o_UgtrGyA",
+      "yt-ai5-kJNFWGXRrA4",
+      "yt-ai5-kXBXIipl1lQ",
+      "yt-ai5-lAAcjj5fISE",
+      "yt-ai5-lK9o5Wu2upU",
+      "yt-ai5-maabARKJ94o",
+      "yt-ai5-nFq4POtqom4",
+      "yt-ai5-nyO60uzTnP4",
+      "yt-ai5-oLu32YpiIJw",
+      "yt-ai5-ohKt066uFhg",
+      "yt-ai5-prLO7NGU4f0",
+      "yt-ai5-s3rNDndvav0",
+      "yt-ai5-sRKBGVFVYAw",
+      "yt-ai5-vi-2nasppAg",
+      "yt-ai5-ynJyIKwjonM"
+    ],
+    "missing_transcript_count": 0,
+    "missing_transcript_sources": [],
+    "transcript_present_but_nonprocedural_count": 34,
+    "dispatch_eligible_count": 0,
+    "confidence_counts": {
+      "high": 3,
+      "medium": 36,
+      "low": 25
+    },
+    "implementation_area_counts": {
+      "cross-stack-intel-activation": 43,
+      "orchestration-runtime": 19,
+      "backend-and-data": 1,
+      "frontend-delivery": 1
+    },
+    "status_counts": {
+      "pending": 64
+    },
+    "open_tasks": 64,
+    "execution_candidates": 0,
+    "execution_candidate_threshold": "medium"
+  },
+  "tasks": [
+    {
+      "id": "act-835de9bc3d8c04b3",
+      "status": "pending",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Security evaluation",
+      "description": "Apply governance gate before adoption: Security evaluation",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Security evaluation",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.209513Z",
+      "source": {
+        "source_id": "yt-ai5-lAAcjj5fISE",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=lAAcjj5fISE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=1&pp=iAQBsAgC",
+        "source_title": "Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenSwarm & TokenSpeed #256",
+        "artifact_id": "eia-412f3d6ee6d014b7",
+        "artifact_generated_at": "2026-05-19T07:42:35+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.056,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-12bbf5192aaa77f7",
+      "status": "pending",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: So, if there's security",
+      "description": "Apply governance gate before adoption: So, if there's security",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: So, if there's security",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.197323Z",
+      "source": {
+        "source_id": "yt-ai5-M-8lv5TXUYk",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=M-8lv5TXUYk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=16&pp=iAQBsAgC",
+        "source_title": "5 \"Engineer-Only\" Claude Skills Every Vibe Coder NEEDS",
+        "artifact_id": "eia-0e2659469e281165",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.044,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-be553bc6c292ac9f",
+      "status": "pending",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: We're adding security to our batch tool",
+      "description": "Apply governance gate before adoption: We're adding security to our batch tool",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: We're adding security to our batch tool",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.198550Z",
+      "source": {
+        "source_id": "yt-ai5-PIdETjcXNIk",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+        "source_title": "Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+        "artifact_id": "eia-765120d1a314bae3",
+        "artifact_generated_at": "2026-05-19T07:44:10+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-ba65817fba8250a3",
+      "status": "pending",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: have a security hole that you don't even",
+      "description": "Apply governance gate before adoption: have a security hole that you don't even",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: have a security hole that you don't even",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.205236Z",
+      "source": {
+        "source_id": "yt-ai5-hTpHmLFXBrc",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC",
+        "source_title": "Vercel Just Fixed Vibe Coding's Biggest Problem",
+        "artifact_id": "eia-dc1b7a2feb228930",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.063,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-60ae611151291b25",
+      "status": "pending",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: scary security breach, it'll just",
+      "description": "Apply governance gate before adoption: scary security breach, it'll just",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: scary security breach, it'll just",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.195054Z",
+      "source": {
+        "source_id": "yt-ai5-65IAqRUxg3c",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=65IAqRUxg3c&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=8&pp=iAQBsAgC",
+        "source_title": "AI Agents run my business and life",
+        "artifact_id": "eia-1097d1b5e0e44b43",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-97ef83dd9eab4027",
+      "status": "pending",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: security model and the already working",
+      "description": "Apply governance gate before adoption: security model and the already working",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: security model and the already working",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.199213Z",
+      "source": {
+        "source_id": "yt-ai5-Q7AYc2kECDI",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=Q7AYc2kECDI&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=25&pp=iAQBsAgC",
+        "source_title": "How to Actually Build Mobile Apps with AI in 2026 | A Complete Beginner's Tutorial",
+        "artifact_id": "eia-c3a8d92859934089",
+        "artifact_generated_at": "2026-05-19T07:42:39+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-fa38d4465b2d5e57",
+      "status": "pending",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: security teams start raging because",
+      "description": "Apply governance gate before adoption: security teams start raging because",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: security teams start raging because",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.213142Z",
+      "source": {
+        "source_id": "yt-ai5-ohKt066uFhg",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=ohKt066uFhg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=6&t=259s&pp=iAQBsAgC",
+        "source_title": "Viktor: AI Coworker That Lives in Slack — Fryderyk Wiatrowski",
+        "artifact_id": "eia-d947ac4004455b56",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.043,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-9929b24ce13c25eb",
+      "status": "pending",
+      "priority": "high",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "procedural_activation",
+      "title": "[AI5] ship them, there's a 90% chance that you",
+      "description": "ship them, there's a 90% chance that you",
+      "acceptance": "Execution evidence captured for: ship them, there's a 90% chance that you",
+      "confidence": {
+        "score": 0.85,
+        "label": "high"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.205165Z",
+      "source": {
+        "source_id": "yt-ai5-hTpHmLFXBrc",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC",
+        "source_title": "Vercel Just Fixed Vibe Coding's Biggest Problem",
+        "artifact_id": "eia-dc1b7a2feb228930",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.063,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-139e5f5f71b9a8a3",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Is it in the ownership",
+      "description": "Apply governance gate before adoption: Is it in the ownership",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Is it in the ownership",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.207224Z",
+      "source": {
+        "source_id": "yt-ai5-jwtpMSRAPAQ",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC",
+        "source_title": "The Trillion Dollar Agentic Workflow Opportunity Is Here",
+        "artifact_id": "eia-76688f36dc87a0c1",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.026,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-0d6b025a7f285671",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: That's the failure rate of",
+      "description": "Apply governance gate before adoption: That's the failure rate of",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: That's the failure rate of",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.214385Z",
+      "source": {
+        "source_id": "yt-ai5-s3rNDndvav0",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=s3rNDndvav0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=22&pp=iAQBsAgC",
+        "source_title": "The biggest AI breakthrough in medicine & drug discovery",
+        "artifact_id": "eia-3aa7edbb50a4ab89",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-6528bcfe53e3c6e4",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: There is also a hallucination gate and",
+      "description": "Apply governance gate before adoption: There is also a hallucination gate and",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: There is also a hallucination gate and",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.193695Z",
+      "source": {
+        "source_id": "yt-ai5-4XvM-0o3A-4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=4XvM-0o3A-4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=12&pp=iAQBsAgC",
+        "source_title": "Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!",
+        "artifact_id": "eia-66e38b413dd7e570",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.09,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-26f0b04a6c3fbe5c",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: There's many more failure cases, but",
+      "description": "Apply governance gate before adoption: There's many more failure cases, but",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: There's many more failure cases, but",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.218375Z",
+      "source": {
+        "source_id": "yt-ai5-ynJyIKwjonM",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC",
+        "source_title": "Agentic Search for Context Engineering — Leonie Monigatti, Elastic",
+        "artifact_id": "eia-f4c7b2309ce448d8",
+        "artifact_generated_at": "2026-05-19T07:14:44+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-a9a2548b46fdd2e5",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: a major risk factor for severe",
+      "description": "Apply governance gate before adoption: a major risk factor for severe",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: a major risk factor for severe",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.215333Z",
+      "source": {
+        "source_id": "yt-ai5-sRKBGVFVYAw",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=sRKBGVFVYAw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=31&pp=iAQBsAgC",
+        "source_title": "David Reich – Bronze Age shock, the Neanderthal puzzle, & the sudden spread of farming",
+        "artifact_id": "eia-73167bcafded5935",
+        "artifact_generated_at": "2026-05-19T07:46:32+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-1b68cba6e344401c",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: as an agent client protocol agent over",
+      "description": "Apply governance gate before adoption: as an agent client protocol agent over",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: as an agent client protocol agent over",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.202969Z",
+      "source": {
+        "source_id": "yt-ai5-XLH_WLrmwfk",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=XLH_WLrmwfk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=26&t=315s&pp=iAQBsAgC",
+        "source_title": "Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE GROK BUILD CLI for 100% FREE!",
+        "artifact_id": "eia-b854a821a8406dc7",
+        "artifact_generated_at": "2026-05-19T07:42:39+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.045,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-826d8d9d3e4372f4",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: audit and tell us what it thinks we",
+      "description": "Apply governance gate before adoption: audit and tell us what it thinks we",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: audit and tell us what it thinks we",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.210785Z",
+      "source": {
+        "source_id": "yt-ai5-maabARKJ94o",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=maabARKJ94o&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=19&pp=iAQBsAgC",
+        "source_title": "7 Claude Skills That'll Change How You Vibe Code Forever",
+        "artifact_id": "eia-c7495b41ec14eeec",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.038,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-2857aa220def8816",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: design systems compliance, and turning",
+      "description": "Apply governance gate before adoption: design systems compliance, and turning",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: design systems compliance, and turning",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.196661Z",
+      "source": {
+        "source_id": "yt-ai5-9rXH2ssCe9E",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=9rXH2ssCe9E&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=34&pp=iAQBsAgC",
+        "source_title": "Hermes Agent has a NEW SuperPower (NotebookLM)",
+        "artifact_id": "eia-8456374b90a67db3",
+        "artifact_generated_at": "2026-05-19T07:46:46+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.034,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-c9bd8f8f9ea0ddea",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: failure modes you haven't seen before.",
+      "description": "Apply governance gate before adoption: failure modes you haven't seen before.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: failure modes you haven't seen before.",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.203801Z",
+      "source": {
+        "source_id": "yt-ai5-Xfl50508LZM",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=Xfl50508LZM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=20&t=211s&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+        "source_title": "Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss, Arize",
+        "artifact_id": "eia-ae0ed17d07619c7e",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-e67c54d02d6dc614",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: like risk mitigation that like every",
+      "description": "Apply governance gate before adoption: like risk mitigation that like every",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: like risk mitigation that like every",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.212003Z",
+      "source": {
+        "source_id": "yt-ai5-nyO60uzTnP4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=nyO60uzTnP4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=9&t=342s&pp=iAQBsAgC",
+        "source_title": "Making $$ with AI Agents",
+        "artifact_id": "eia-2262f2d003883087",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.025,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-dd116c510204323d",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: much risk to this pull request, which is",
+      "description": "Apply governance gate before adoption: much risk to this pull request, which is",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: much risk to this pull request, which is",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.194359Z",
+      "source": {
+        "source_id": "yt-ai5-4azVjKhqDzw",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=4azVjKhqDzw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=11&t=1733s&pp=iAQBsAgC",
+        "source_title": "Building the App Store for Agentic Engineering",
+        "artifact_id": "eia-8ea9d0c4c7676546",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-1bb835ae2183173d",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: permission gate configurable danger",
+      "description": "Apply governance gate before adoption: permission gate configurable danger",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: permission gate configurable danger",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.210187Z",
+      "source": {
+        "source_id": "yt-ai5-lK9o5Wu2upU",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=lK9o5Wu2upU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=30&t=5491s&pp=iAQBsAgC",
+        "source_title": "Pi is INCREDIBLE - Building a Custom Coding Agent Live",
+        "artifact_id": "eia-34a4307ca07f4365",
+        "artifact_generated_at": "2026-05-19T07:46:25+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-f1999c0b204d27cb",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: policy number, is it actually correct?",
+      "description": "Apply governance gate before adoption: policy number, is it actually correct?",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: policy number, is it actually correct?",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.206496Z",
+      "source": {
+        "source_id": "yt-ai5-jWDCnJKouhw",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=jWDCnJKouhw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=14&pp=iAQBsAgC",
+        "source_title": "Are Your AI Agents Flying Blind? The Truth About AgentOps",
+        "artifact_id": "eia-6998f4018077c039",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.061,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-59a6c191582b114f",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: protocol camps right now that are",
+      "description": "Apply governance gate before adoption: protocol camps right now that are",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: protocol camps right now that are",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.205866Z",
+      "source": {
+        "source_id": "yt-ai5-j5_wcDifNko",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=j5_wcDifNko&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=13&pp=iAQBsAgC",
+        "source_title": "ChatGPT Has 900M Weekly Users. Almost None Can Buy In It.",
+        "artifact_id": "eia-c0462d7dc8d3576d",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.033,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-3d7e9c21a9462983",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: right out of the gate.",
+      "description": "Apply governance gate before adoption: right out of the gate.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: right out of the gate.",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.201818Z",
+      "source": {
+        "source_id": "yt-ai5-WQv3xjb4WgQ",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=WQv3xjb4WgQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=28&t=1655s&pp=iAQBsAgC",
+        "source_title": "ByteDance Just Killed Manus With This Free AI Agent",
+        "artifact_id": "eia-6be67d5e80118da6",
+        "artifact_generated_at": "2026-05-19T07:46:14+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-a1961db7dcc866ca",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: safety nuance, Cron sessions cannot",
+      "description": "Apply governance gate before adoption: safety nuance, Cron sessions cannot",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: safety nuance, Cron sessions cannot",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.204473Z",
+      "source": {
+        "source_id": "yt-ai5-gb5TlGw6Uks",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC",
+        "source_title": "Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+        "artifact_id": "eia-62ff8bcf5711e391",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-f3251e7bbbc7e312",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: safety precaution to make sure we",
+      "description": "Apply governance gate before adoption: safety precaution to make sure we",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: safety precaution to make sure we",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.200489Z",
+      "source": {
+        "source_id": "yt-ai5-RxwjoegpI98",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC",
+        "source_title": "Building Agentic RAG From Scratch in Pure Python",
+        "artifact_id": "eia-d9edb2689984c74c",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.025,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-149c54eb91764a3b",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: the relational integrity.",
+      "description": "Apply governance gate before adoption: the relational integrity.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: the relational integrity.",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.208950Z",
+      "source": {
+        "source_id": "yt-ai5-kXBXIipl1lQ",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=kXBXIipl1lQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=36&pp=iAQBsAgC",
+        "source_title": "Design Google Docs in a System Design Interview",
+        "artifact_id": "eia-27047611af6e522b",
+        "artifact_generated_at": "2026-05-19T07:14:44+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.037,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-cc2f6212e0d66283",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: your current position, how you audit and",
+      "description": "Apply governance gate before adoption: your current position, how you audit and",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: your current position, how you audit and",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.195486Z",
+      "source": {
+        "source_id": "yt-ai5-725QE_LNXT4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=725QE_LNXT4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=33&pp=iAQBsAgC",
+        "source_title": "The Prove-It Economy is Here | And Most Marketers Aren't Ready",
+        "artifact_id": "eia-d685083f4981e50f",
+        "artifact_generated_at": "2026-05-19T07:46:41+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.03,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-007305943d9279c7",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: your ownership is definitely gone.",
+      "description": "Apply governance gate before adoption: your ownership is definitely gone.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: your ownership is definitely gone.",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.207815Z",
+      "source": {
+        "source_id": "yt-ai5-k8o_UgtrGyA",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=k8o_UgtrGyA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=24&pp=iAQBsAgC",
+        "source_title": "Harness Engineering is the future… trust me.",
+        "artifact_id": "eia-ad461d2640a798b5",
+        "artifact_generated_at": "2026-05-19T07:42:39+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.025,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-2d75a58dc64f1cec",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for '5 Claude Code Tools That Make Vibe Coders Cry Tears of Joy'. Extract co...",
+      "description": "Transcript is already ingested for '5 Claude Code Tools That Make Vibe Coders Cry Tears of Joy'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for '5 Claude Code Tools That Make Vibe Coders Cry Tears of Joy'. Extract co...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.199911Z",
+      "source": {
+        "source_id": "yt-ai5-QK0B1mbJ-VU",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=QK0B1mbJ-VU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=18&pp=iAQBsAgC",
+        "source_title": "5 Claude Code Tools That Make Vibe Coders Cry Tears of Joy",
+        "artifact_id": "eia-97e6ad153f197c12",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.027,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-3d22a1a3733114ff",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for '7 Claude Skills That'll Change How You Vibe Code Forever'. Extract conc...",
+      "description": "Transcript is already ingested for '7 Claude Skills That'll Change How You Vibe Code Forever'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for '7 Claude Skills That'll Change How You Vibe Code Forever'. Extract conc...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.210970Z",
+      "source": {
+        "source_id": "yt-ai5-maabARKJ94o",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=maabARKJ94o&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=19&pp=iAQBsAgC",
+        "source_title": "7 Claude Skills That'll Change How You Vibe Code Forever",
+        "artifact_id": "eia-c7495b41ec14eeec",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.038,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-9ab58be51e6500d6",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Agentic Search for Context Engineering — Leonie Monigatti, Elastic'. Ex...",
+      "description": "Transcript is already ingested for 'Agentic Search for Context Engineering — Leonie Monigatti, Elastic'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Agentic Search for Context Engineering — Leonie Monigatti, Elastic'. Ex...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.218766Z",
+      "source": {
+        "source_id": "yt-ai5-ynJyIKwjonM",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC",
+        "source_title": "Agentic Search for Context Engineering — Leonie Monigatti, Elastic",
+        "artifact_id": "eia-f4c7b2309ce448d8",
+        "artifact_generated_at": "2026-05-19T07:14:44+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-ade55c10c3efa4ad",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Are Your AI Agents Flying Blind? The Truth About AgentOps'. Extract con...",
+      "description": "Transcript is already ingested for 'Are Your AI Agents Flying Blind? The Truth About AgentOps'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Are Your AI Agents Flying Blind? The Truth About AgentOps'. Extract con...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.206673Z",
+      "source": {
+        "source_id": "yt-ai5-jWDCnJKouhw",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=jWDCnJKouhw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=14&pp=iAQBsAgC",
+        "source_title": "Are Your AI Agents Flying Blind? The Truth About AgentOps",
+        "artifact_id": "eia-6998f4018077c039",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.061,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-39c0a96be6b046e2",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Build Your First AI Image Generator from Scratch with Codex CLI (Full T...",
+      "description": "Transcript is already ingested for 'Build Your First AI Image Generator from Scratch with Codex CLI (Full Tutorial)'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Build Your First AI Image Generator from Scratch with Codex CLI (Full T...",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.213880Z",
+      "source": {
+        "source_id": "yt-ai5-prLO7NGU4f0",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=prLO7NGU4f0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=7&t=67s&pp=iAQBsAgC",
+        "source_title": "Build Your First AI Image Generator from Scratch with Codex CLI (Full Tutorial)",
+        "artifact_id": "eia-f0459ea413ef3ced",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.039,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-702f0f43bf453325",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "backend-contracts",
+      "ownerHint": "backend-specialist",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Build an Enterprise RAG Pipeline in Minutes with Gemini New API'. Extra...",
+      "description": "Transcript is already ingested for 'Build an Enterprise RAG Pipeline in Minutes with Gemini New API'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Build an Enterprise RAG Pipeline in Minutes with Gemini New API'. Extra...",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "backend-and-data",
+        "file_hints": [
+          "apps/api/src/modules/task/task.service.ts",
+          "apps/api/src/modules/task/task.controller.ts",
+          "packages/database/src/drizzle/schema/tasks.ts"
+        ],
+        "rationale": "Matched target rule for area 'backend-and-data'"
+      },
+      "createdAt": "2026-05-19T07:49:14.192275Z",
+      "source": {
+        "source_id": "yt-ai5--Bp2Sz5xir4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=-Bp2Sz5xir4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=5&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+        "source_title": "Build an Enterprise RAG Pipeline in Minutes with Gemini New API",
+        "artifact_id": "eia-a2daa15013e1ca64",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.047,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-d6fcc31906772206",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Building Agentic RAG From Scratch in Pure Python'. Extract concrete pro...",
+      "description": "Transcript is already ingested for 'Building Agentic RAG From Scratch in Pure Python'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Building Agentic RAG From Scratch in Pure Python'. Extract concrete pro...",
+      "confidence": {
+        "score": 0.7,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.200665Z",
+      "source": {
+        "source_id": "yt-ai5-RxwjoegpI98",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC",
+        "source_title": "Building Agentic RAG From Scratch in Pure Python",
+        "artifact_id": "eia-d9edb2689984c74c",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.025,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-a98440a80b335a5d",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Building the App Store for Agentic Engineering'. Extract concrete proce...",
+      "description": "Transcript is already ingested for 'Building the App Store for Agentic Engineering'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Building the App Store for Agentic Engineering'. Extract concrete proce...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.194523Z",
+      "source": {
+        "source_id": "yt-ai5-4azVjKhqDzw",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=4azVjKhqDzw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=11&t=1733s&pp=iAQBsAgC",
+        "source_title": "Building the App Store for Agentic Engineering",
+        "artifact_id": "eia-8ea9d0c4c7676546",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-40531bab2753ab28",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'ByteDance Just Killed Manus With This Free AI Agent'. Extract concrete...",
+      "description": "Transcript is already ingested for 'ByteDance Just Killed Manus With This Free AI Agent'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'ByteDance Just Killed Manus With This Free AI Agent'. Extract concrete...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.202063Z",
+      "source": {
+        "source_id": "yt-ai5-WQv3xjb4WgQ",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=WQv3xjb4WgQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=28&t=1655s&pp=iAQBsAgC",
+        "source_title": "ByteDance Just Killed Manus With This Free AI Agent",
+        "artifact_id": "eia-6be67d5e80118da6",
+        "artifact_generated_at": "2026-05-19T07:46:14+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-e92b641497d7f56d",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'ChatGPT Has 900M Weekly Users. Almost None Can Buy In It.'. Extract con...",
+      "description": "Transcript is already ingested for 'ChatGPT Has 900M Weekly Users. Almost None Can Buy In It.'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'ChatGPT Has 900M Weekly Users. Almost None Can Buy In It.'. Extract con...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.206055Z",
+      "source": {
+        "source_id": "yt-ai5-j5_wcDifNko",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=j5_wcDifNko&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=13&pp=iAQBsAgC",
+        "source_title": "ChatGPT Has 900M Weekly Users. Almost None Can Buy In It.",
+        "artifact_id": "eia-c0462d7dc8d3576d",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.033,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-e06625316f84d880",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'David Reich – Bronze Age shock, the Neanderthal puzzle, & the sudden sp...",
+      "description": "Transcript is already ingested for 'David Reich – Bronze Age shock, the Neanderthal puzzle, & the sudden spread of farming'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'David Reich – Bronze Age shock, the Neanderthal puzzle, & the sudden sp...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.216048Z",
+      "source": {
+        "source_id": "yt-ai5-sRKBGVFVYAw",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=sRKBGVFVYAw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=31&pp=iAQBsAgC",
+        "source_title": "David Reich – Bronze Age shock, the Neanderthal puzzle, & the sudden spread of farming",
+        "artifact_id": "eia-73167bcafded5935",
+        "artifact_generated_at": "2026-05-19T07:46:32+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-11760c5847093981",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "frontend-p0-truth",
+      "ownerHint": "frontend-specialist",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Design Google Docs in a System Design Interview'. Extract concrete proc...",
+      "description": "Transcript is already ingested for 'Design Google Docs in a System Design Interview'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Design Google Docs in a System Design Interview'. Extract concrete proc...",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.209087Z",
+      "source": {
+        "source_id": "yt-ai5-kXBXIipl1lQ",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=kXBXIipl1lQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=36&pp=iAQBsAgC",
+        "source_title": "Design Google Docs in a System Design Interview",
+        "artifact_id": "eia-27047611af6e522b",
+        "artifact_generated_at": "2026-05-19T07:14:44+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.037,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-47c93a6a9da9b78c",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE...",
+      "description": "Transcript is already ingested for 'Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE GROK BUILD CLI for 100% FREE!'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE...",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.203194Z",
+      "source": {
+        "source_id": "yt-ai5-XLH_WLrmwfk",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=XLH_WLrmwfk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=26&t=315s&pp=iAQBsAgC",
+        "source_title": "Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE GROK BUILD CLI for 100% FREE!",
+        "artifact_id": "eia-b854a821a8406dc7",
+        "artifact_generated_at": "2026-05-19T07:42:39+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.045,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-fbb0f68dab103294",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Harness Engineering is the future… trust me.'. Extract concrete procedu...",
+      "description": "Transcript is already ingested for 'Harness Engineering is the future… trust me.'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Harness Engineering is the future… trust me.'. Extract concrete procedu...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.208014Z",
+      "source": {
+        "source_id": "yt-ai5-k8o_UgtrGyA",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=k8o_UgtrGyA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=24&pp=iAQBsAgC",
+        "source_title": "Harness Engineering is the future… trust me.",
+        "artifact_id": "eia-ad461d2640a798b5",
+        "artifact_generated_at": "2026-05-19T07:42:39+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.025,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-91597d0c14c082e5",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!'. Extr...",
+      "description": "Transcript is already ingested for 'Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!'. Extr...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.193873Z",
+      "source": {
+        "source_id": "yt-ai5-4XvM-0o3A-4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=4XvM-0o3A-4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=12&pp=iAQBsAgC",
+        "source_title": "Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!",
+        "artifact_id": "eia-66e38b413dd7e570",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.09,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-0c7601a2fe371f02",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Hermes Agent has a NEW SuperPower (NotebookLM)'. Extract concrete proce...",
+      "description": "Transcript is already ingested for 'Hermes Agent has a NEW SuperPower (NotebookLM)'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Hermes Agent has a NEW SuperPower (NotebookLM)'. Extract concrete proce...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.196811Z",
+      "source": {
+        "source_id": "yt-ai5-9rXH2ssCe9E",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=9rXH2ssCe9E&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=34&pp=iAQBsAgC",
+        "source_title": "Hermes Agent has a NEW SuperPower (NotebookLM)",
+        "artifact_id": "eia-8456374b90a67db3",
+        "artifact_generated_at": "2026-05-19T07:46:46+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.034,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-51d9a9b61567bad9",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Hermes Agent just got 10X Better (Agentic OS)'. Extract concrete proced...",
+      "description": "Transcript is already ingested for 'Hermes Agent just got 10X Better (Agentic OS)'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Hermes Agent just got 10X Better (Agentic OS)'. Extract concrete proced...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.196213Z",
+      "source": {
+        "source_id": "yt-ai5-7xuWZ-3lyQE",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=7xuWZ-3lyQE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=27&t=1669s&pp=iAQBsAgC",
+        "source_title": "Hermes Agent just got 10X Better (Agentic OS)",
+        "artifact_id": "eia-153d8f2404f80758",
+        "artifact_generated_at": "2026-05-19T07:46:09+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-e54268fbc34a9c09",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)'. Extract c...",
+      "description": "Transcript is already ingested for 'Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)'. Extract c...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.204645Z",
+      "source": {
+        "source_id": "yt-ai5-gb5TlGw6Uks",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC",
+        "source_title": "Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+        "artifact_id": "eia-62ff8bcf5711e391",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-af8536d082fc747c",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "frontend-p0-truth",
+      "ownerHint": "frontend-specialist",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'How to Actually Build Mobile Apps with AI in 2026 | A Complete Beginner...",
+      "description": "Transcript is already ingested for 'How to Actually Build Mobile Apps with AI in 2026 | A Complete Beginner's Tutorial'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'How to Actually Build Mobile Apps with AI in 2026 | A Complete Beginner...",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.199384Z",
+      "source": {
+        "source_id": "yt-ai5-Q7AYc2kECDI",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=Q7AYc2kECDI&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=25&pp=iAQBsAgC",
+        "source_title": "How to Actually Build Mobile Apps with AI in 2026 | A Complete Beginner's Tutorial",
+        "artifact_id": "eia-c3a8d92859934089",
+        "artifact_generated_at": "2026-05-19T07:42:39+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-7bc2faebcd5114aa",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Make your own event-sourced agent harness using stream processors — Jon...",
+      "description": "Transcript is already ingested for 'Make your own event-sourced agent harness using stream processors — Jonas Templestein, Iterate'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Make your own event-sourced agent harness using stream processors — Jon...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.217364Z",
+      "source": {
+        "source_id": "yt-ai5-vi-2nasppAg",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=vi-2nasppAg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=21&t=38s&pp=iAQBsAgC",
+        "source_title": "Make your own event-sourced agent harness using stream processors — Jonas Templestein, Iterate",
+        "artifact_id": "eia-625f3f761b57600b",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.025,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-a519f9625c0db337",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Making $$ with AI Agents'. Extract concrete procedural steps and map ea...",
+      "description": "Transcript is already ingested for 'Making $$ with AI Agents'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Making $$ with AI Agents'. Extract concrete procedural steps and map ea...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.212154Z",
+      "source": {
+        "source_id": "yt-ai5-nyO60uzTnP4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=nyO60uzTnP4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=9&t=342s&pp=iAQBsAgC",
+        "source_title": "Making $$ with AI Agents",
+        "artifact_id": "eia-2262f2d003883087",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.025,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-ef6e77e5502db71e",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "frontend-p0-truth",
+      "ownerHint": "frontend-specialist",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'My AI Design Workflow That Doesn't Ship Slop'. Extract concrete procedu...",
+      "description": "Transcript is already ingested for 'My AI Design Workflow That Doesn't Ship Slop'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'My AI Design Workflow That Doesn't Ship Slop'. Extract concrete procedu...",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.212619Z",
+      "source": {
+        "source_id": "yt-ai5-oLu32YpiIJw",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=oLu32YpiIJw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=4&pp=iAQBsAgC",
+        "source_title": "My AI Design Workflow That Doesn't Ship Slop",
+        "artifact_id": "eia-1592f62f77307dbe",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-b9e3351d8f4385ea",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'New Google Gemini Update Is INSANE'. Extract concrete procedural steps...",
+      "description": "Transcript is already ingested for 'New Google Gemini Update Is INSANE'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'New Google Gemini Update Is INSANE'. Extract concrete procedural steps...",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.201236Z",
+      "source": {
+        "source_id": "yt-ai5-VTVRTN8nkxM",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=VTVRTN8nkxM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=32&pp=iAQBsAgC",
+        "source_title": "New Google Gemini Update Is INSANE",
+        "artifact_id": "eia-b2a579ddcf59274e",
+        "artifact_generated_at": "2026-05-19T07:46:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.056,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-3f06ad144a41909f",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'OpenSpec Will Change How You Vibe Code Forever'. Extract concrete proce...",
+      "description": "Transcript is already ingested for 'OpenSpec Will Change How You Vibe Code Forever'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'OpenSpec Will Change How You Vibe Code Forever'. Extract concrete proce...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.211516Z",
+      "source": {
+        "source_id": "yt-ai5-nFq4POtqom4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=nFq4POtqom4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=17&pp=iAQBsAgC",
+        "source_title": "OpenSpec Will Change How You Vibe Code Forever",
+        "artifact_id": "eia-d8fca7a8f4cf2d4f",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.031,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-bc5b9656ff399fd6",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Pi is INCREDIBLE - Building a Custom Coding Agent Live'. Extract concre...",
+      "description": "Transcript is already ingested for 'Pi is INCREDIBLE - Building a Custom Coding Agent Live'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Pi is INCREDIBLE - Building a Custom Coding Agent Live'. Extract concre...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.210352Z",
+      "source": {
+        "source_id": "yt-ai5-lK9o5Wu2upU",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=lK9o5Wu2upU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=30&t=5491s&pp=iAQBsAgC",
+        "source_title": "Pi is INCREDIBLE - Building a Custom Coding Agent Live",
+        "artifact_id": "eia-34a4307ca07f4365",
+        "artifact_generated_at": "2026-05-19T07:46:25+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-0c782d911b46172f",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent'. Extrac...",
+      "description": "Transcript is already ingested for 'Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent'. Extrac...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.198728Z",
+      "source": {
+        "source_id": "yt-ai5-PIdETjcXNIk",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+        "source_title": "Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+        "artifact_id": "eia-765120d1a314bae3",
+        "artifact_generated_at": "2026-05-19T07:44:10+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-1f3903ba47486ac0",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Real gundams, top 3D generator, open-source world models, ChatGPT updat...",
+      "description": "Transcript is already ingested for 'Real gundams, top 3D generator, open-source world models, ChatGPT updates, new TTS: AI NEWS'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Real gundams, top 3D generator, open-source world models, ChatGPT updat...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.197966Z",
+      "source": {
+        "source_id": "yt-ai5-NnsQj2nDkKA",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=NnsQj2nDkKA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=29&pp=iAQBsAgC",
+        "source_title": "Real gundams, top 3D generator, open-source world models, ChatGPT updates, new TTS: AI NEWS",
+        "artifact_id": "eia-4c3610c9affec4c0",
+        "artifact_generated_at": "2026-05-19T07:46:19+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-8be946b64166602f",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss...",
+      "description": "Transcript is already ingested for 'Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss, Arize'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss...",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.204028Z",
+      "source": {
+        "source_id": "yt-ai5-Xfl50508LZM",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=Xfl50508LZM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=20&t=211s&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+        "source_title": "Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss, Arize",
+        "artifact_id": "eia-ae0ed17d07619c7e",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-837a1ca20c63be18",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'The Prove-It Economy is Here | And Most Marketers Aren't Ready'. Extrac...",
+      "description": "Transcript is already ingested for 'The Prove-It Economy is Here | And Most Marketers Aren't Ready'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'The Prove-It Economy is Here | And Most Marketers Aren't Ready'. Extrac...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.195674Z",
+      "source": {
+        "source_id": "yt-ai5-725QE_LNXT4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=725QE_LNXT4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=33&pp=iAQBsAgC",
+        "source_title": "The Prove-It Economy is Here | And Most Marketers Aren't Ready",
+        "artifact_id": "eia-d685083f4981e50f",
+        "artifact_generated_at": "2026-05-19T07:46:41+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.03,
+        "transcript_status": "fetched"
+      }
+    },
+    {
+      "id": "act-41299f213156f267",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'The Trillion Dollar Agentic Workflow Opportunity Is Here'. Extract conc...",
+      "description": "Transcript is already ingested for 'The Trillion Dollar Agentic Workflow Opportunity Is Here'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'The Trillion Dollar Agentic Workflow Opportunity Is Here'. Extract conc...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-05-19T07:49:14.207382Z",
+      "source": {
+        "source_id": "yt-ai5-jwtpMSRAPAQ",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC",
+        "source_title": "The Trillion Dollar Agentic Workflow Opportunity Is Here",
+        "artifact_id": "eia-76688f36dc87a0c1",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.026,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-9527d5fe2ced5056",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'The biggest AI breakthrough in medicine & drug discovery'. Extract conc...",
+      "description": "Transcript is already ingested for 'The biggest AI breakthrough in medicine & drug discovery'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'The biggest AI breakthrough in medicine & drug discovery'. Extract conc...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.214561Z",
+      "source": {
+        "source_id": "yt-ai5-s3rNDndvav0",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=s3rNDndvav0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=22&pp=iAQBsAgC",
+        "source_title": "The biggest AI breakthrough in medicine & drug discovery",
+        "artifact_id": "eia-3aa7edbb50a4ab89",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-5faefc864572e607",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Top Dev Tool Projects : 9Router, TRUST, Dokku, React-Doctor & AgentMemo...",
+      "description": "Transcript is already ingested for 'Top Dev Tool Projects : 9Router, TRUST, Dokku, React-Doctor & AgentMemory'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Top Dev Tool Projects : 9Router, TRUST, Dokku, React-Doctor & AgentMemo...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "frontend-delivery",
+        "file_hints": [
+          "apps/frontend/src/pages/TNFCommandCenter.tsx",
+          "apps/frontend/src/pages/Tasks/Detail.tsx",
+          "apps/frontend/src/services/unifiedLedgerApi.ts"
+        ],
+        "rationale": "Matched target rule for area 'frontend-delivery'"
+      },
+      "createdAt": "2026-05-19T07:49:14.208567Z",
+      "source": {
+        "source_id": "yt-ai5-kJNFWGXRrA4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=kJNFWGXRrA4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=23&pp=iAQBsAgC",
+        "source_title": "Top Dev Tool Projects : 9Router, TRUST, Dokku, React-Doctor & AgentMemory",
+        "artifact_id": "eia-f860e0f18fee3b9c",
+        "artifact_generated_at": "2026-05-19T07:42:39+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.056,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-af8ce301ecb8e2bb",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenS...",
+      "description": "Transcript is already ingested for 'Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenSwarm & TokenSpeed #256'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenS...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.209711Z",
+      "source": {
+        "source_id": "yt-ai5-lAAcjj5fISE",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=lAAcjj5fISE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=1&pp=iAQBsAgC",
+        "source_title": "Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenSwarm & TokenSpeed #256",
+        "artifact_id": "eia-412f3d6ee6d014b7",
+        "artifact_generated_at": "2026-05-19T07:42:35+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.056,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-6af8ff3d69af0c10",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "strategic_activation",
+      "title": "[AI5] Transcript is already ingested for 'Viktor: AI Coworker That Lives in Slack — Fryderyk Wiatrowski'. Extract...",
+      "description": "Transcript is already ingested for 'Viktor: AI Coworker That Lives in Slack — Fryderyk Wiatrowski'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+      "acceptance": "Execution evidence captured for: Transcript is already ingested for 'Viktor: AI Coworker That Lives in Slack — Fryderyk Wiatrowski'. Extract...",
+      "confidence": {
+        "score": 0.5,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.213367Z",
+      "source": {
+        "source_id": "yt-ai5-ohKt066uFhg",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=ohKt066uFhg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=6&t=259s&pp=iAQBsAgC",
+        "source_title": "Viktor: AI Coworker That Lives in Slack — Fryderyk Wiatrowski",
+        "artifact_id": "eia-d947ac4004455b56",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.043,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-7b8743b660e55be7",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "procedural_activation",
+      "title": "[AI5] build me horse tinder, but I also don't",
+      "description": "build me horse tinder, but I also don't",
+      "acceptance": "Execution evidence captured for: build me horse tinder, but I also don't",
+      "confidence": {
+        "score": 0.85,
+        "label": "high"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.197260Z",
+      "source": {
+        "source_id": "yt-ai5-M-8lv5TXUYk",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=M-8lv5TXUYk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=16&pp=iAQBsAgC",
+        "source_title": "5 \"Engineer-Only\" Claude Skills Every Vibe Coder NEEDS",
+        "artifact_id": "eia-0e2659469e281165",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.044,
+        "transcript_status": "cache_hit"
+      }
+    },
+    {
+      "id": "act-3bfeb2138e9e4cf4",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "procedural_activation",
+      "title": "[AI5] run his personal and business life.",
+      "description": "run his personal and business life.",
+      "acceptance": "Execution evidence captured for: run his personal and business life.",
+      "confidence": {
+        "score": 0.85,
+        "label": "high"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-05-19T07:49:14.194991Z",
+      "source": {
+        "source_id": "yt-ai5-65IAqRUxg3c",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=65IAqRUxg3c&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=8&pp=iAQBsAgC",
+        "source_title": "AI Agents run my business and life",
+        "artifact_id": "eia-1097d1b5e0e44b43",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      }
+    }
+  ],
+  "executionCandidates": []
+}

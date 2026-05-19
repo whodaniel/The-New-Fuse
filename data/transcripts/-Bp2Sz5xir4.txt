@@ -1,0 +1,459 @@
+So, Google just expanded the Gemini API
+file search tool.
+And this update is actually bigger than
+the release post makes it sound. File
+search is now multimodal. You can drop
+images into the same store as your PDFs
+and documents, query everything in one
+call, and get back grounded answers with
+page-level citations.
+If you have been building
+retrieval-augmented generation systems
+by hand, this changes what the pipeline
+has to look like. Let me walk you
+through what they shipped, how the new
+multimodal retrieval actually works, and
+the three things you should know before
+you wire this into anything real.
+Now, quick context for anyone who missed
+the original release. File search is
+basically a built-in RAG, or
+retrieval-augmented generation system,
+inside the Gemini API. You upload your
+documents, the API chunks them, embeds
+with Gemini embedding, and stores the
+vectors in something called
+file search store. At query time, you
+pass file_search
+as a tool.
+The model retrieves the relevant chunk,
+and the response comes back grounded
+with citations pointing to the original
+source.
+Before this update, the pipeline was
+text-only. You could send PDF, code,
+markdown, logs, JSON, etc.
+Which was useful, but
+the moment your
+documents had screenshots, diagrams, or
+scanned pages, you had to fall back to
+your own pipeline. Now, the announcement
+covers three things. One, it's
+multimodal. The store now embeds images
+and text in the same vector space using
+Gemini embedding too.
+So, you can search both with a single
+query.
+Uh
+results on the multimodal data and the
+text data.
+Two, now they introduce custom metadata.
+You can attach arbitrary key-value
+labels to any document, like department
+um equals legal or
+region equals EU
+and filter retrieval
+against them at query time.
+The third is uh page-level citation.
+The grounded response is now points to
+the specific page inside the source
+document, not just the document itself.
+Each of these matters on its own.
+Together, they close most of the gap
+between this and a hand-rolled
+retrieval stack. Most enterprise
+documents are not pure text. Uh for
+example, insurance claims have
+photographs, engineering specs have uh
+schematics, medical reports have scans,
+scans,
+and product catalogs usually contain
+images.
+&gt;&gt; [snorts]
+&gt;&gt; Even a perfectly clean PDF uh of a
+research paper has figures that carry
+half the meaning.
+Now, before today, your options were
+extract text and lose figures, or run a
+separate vision pipeline and stitch
+results together, or pay for a
+multimodal embedding service and host
+your own vector store.
+None of these are great.
+With this update, you upload the
+document, the API embeds the visual
+content alongside the text, and query
+like
+"Show me the chart where uh revenue
+dipped." actually retrieves the chart,
+not just a paragraph that mentions a
+chart. The pipeline has five stages.
+Stage one is ingest. You upload via the
+uh files API or pass the path directly.
+Stage two is chunking. The service
+splits the document into manageable
+units,
+uh in this case text into token bound
+chunks.
+Images into discrete tiles or uh page
+regions.
+And the third is embed. Uh this is where
+the Gemini embedding tool does the work.
+Both modalities go into the shared
+embedding space, which is the part that
+makes cross modal search possible. Now,
+the fourth stage is the storing. Vector
+lands in your file uh file search store,
+index for fast retrieval along with
+whatever metadata you attach.
+Fifth stage is query. You pass uh file
+{underscore} search as a tool on a
+uh
+generated content call. The model
+retrieves the top K chunks, optionally
+filter by your metadata, and produce a
+grounded response with citations.
+Now, the thing I found generally
+interesting here is that the embed step
+now treats a screenshot the same way it
+treats a paragraph. This is pretty
+amazing. Now, the code ship is uh mostly
+the same as before, which is honestly
+the best part. If you already had a file
+search wired up, the new behavior just
+works. Uh you're going to create the
+file search store, upload your files,
+and now those files can include images
+and PDFs that contain images. The image
+uh content gets embedded automatically.
+Now, to attach metadata, you can pass
+the custom metadata dictionary on
+upload. So, for example, department uh
+email equals uh legal or region equal
+EU.
+Uh
+to query with a metadata filter, you set
+metadata filter on the file search tool
+config. Something like uh metadata
+filter equals department equal uh quote
+legal quote.
+Uh the response
+comes back with the grounded metadata.
+And inside that, each grounding chunks
+now exposes a page number field where
+applicable. So, the migration from
+version 1 to multimodal is essentially
+nothing plus two uh optional fields when
+you want them. Okay, now on pricing, uh
+you pay the standard Gemini embedding
+rate at ingest time. Vector storage is
+free. Um query time embeddings are free.
+Files cap at 100 MB each, and the free
+tier gives you 1 GB of total total
+storage.
+The original files stick around for 48
+hours,
+uh which matters if you need to
+re-embed.
+Okay, in this section, we're going to
+look at the code, and I'll walk you
+through
+uh through a few examples which shows
+different capabilities. We're going to
+be making use of the multimodal file
+search API. If you're interested in the
+text only, uh I have covered that in one
+of my previous video. So, I'm going to
+show you how to do um
+text query across PDFs with page-level
+citations. Then, we're going to do
+cross-modal queries.
+Uh I'll also show you the metadata
+filtering, and then we're going to look
+at multi-source search questions
+answered across several papers.
+Now, uh
+you'll need to set your own Gemini API
+key. Uh for this, I'm using older Gemini
+2.5 flash model, uh but you can use the
+latest model if you want. Now, the
+corpus that we have uh has two different
+things.
+One, um
+uh the technical papers. So, I uploaded
+attention is all you need and vision
+transformer paper.
+And then, I created a few different
+plots which are not relevant to uh those
+papers,
+uh but they show the multimodal
+capabilities of this new file search
+API. So, here we are downloading um
+the papers.
+Also, if you look here, we are creating
+some metadata. So, um
+what is the modality, who are the
+authors, what year it was published, and
+what was the um
+uh topic. Uh for this one, again, we're
+doing uh something very similar.
+So, right now you can see we downloaded
+both the files. And then, in this
+section, I am creating multiple
+different plots. And the idea is that if
+you're using this multimodal file search
+uh from Gemini, you probably want to
+upload uh documents which are multimodal
+in nature. So, I created this dummy data
+which shows the quarterly
+uh revenue
+uh for Q3.
+Uh then, there is another one uh which
+shows the model accuracy over uh
+training time. And uh here's another one
+which is a multimodal rag system
+architecture, right? So, these are just
+dummy documents to give you an idea of
+what type of documents you can include.
+Now, I'm converting these into PDFs, but
+you can render them as images and store
+them as images.
+Okay, so the first thing is to create a
+store uh
+for storing the embeddings.
+Now, we do uh cleanup step uh which
+basically, if you rerun this uh notebook
+multiple times, I just want to make sure
+that we start fresh. Uh
+so, it's going to delete or uh remove
+the prior runs from the demo to keep
+things tidy.
+Okay. So, after creating or um
+selecting your store name,
+now we need to update or upload the
+documents to the store with the metadata
+that we created. Okay, one thing to
+point out for those images, I'm also
+including um
+similar metadata, which is title,
+year,
+topic, and then modality. Now, instead
+of paper, uh right now we're using chart
+as modality.
+All right, so here's how the upload
+works. Uh we create the file search
+store.
+Then, one by one, we're going to upload
+the documents
+and also include the metadata for each
+of the documents. So, if you uh look
+here, we are putting uh these technical
+papers and the charts in PDF form, and
+we just show what type of modality they
+represent. Now, this is uh a simple
+helper function that is going to show
+what uh the grounding chunks are when we
+do retrieval. Now, look let's look at
+the demos. So, the first one is text
+query with page-level citation. This is
+something new. Uh this capability was
+not available
+in the uh prior release of Gemini File
+Search, but now you can get page-level
+citations.
+So, here we're asking, "How does
+multi-head attention work? And why does
+it keep uh does it help over single-head
+attention, right?" Uh so, we just
+provide the file search name as a tool
+to the Gemini model.
+And uh
+here's the response.
+So, uh this is the answer,
+but I am interested in what are the
+grounding chunks. So, if you look here,
+uh it's mainly citing attention is all
+you need paper. It didn't go to the
+Vision Transformer paper. And you can
+also see page numbers. So, page number
+four, page number three, then there's
+some discussion on page seven and page
+five.
+Now, here we can actually go and look at
+uh page
+Okay, so in the paper we can actually go
+and look at page um
+three. So, it starts the discussion
+around attention. Now, if you go down,
+uh
+this basically talks about multi-headed
+attention. Uh this is probably the chunk
+that it uh captured. Now, on page five,
+uh it continues, talks about embeddings
+and softmax.
+And page seven is more of a technical
+details. Now, uh not all of these chunks
+are going to be relevant, uh but the
+model is smart enough to figure out
+uh
+what are the relevant chunks. And the
+main thing is that now it can tell you
+which page the information is coming
+from.
+Okay. So, uh
+this second demo is cross-model query.
+So, we're asking, "Show me the chart
+where Q3 revenue dipped. Uh what were
+the actual numbers?"
+So, if you remember, uh we had this
+revenue plot
+that I basically fabricated. So, it has
+to uh
+retrieve this
+and then uh give us an interpretation of
+what exactly happened.
+So, we see a drop from uh 168 million to
+89 million for Q3.
+So, here, uh
+we actually see that it retrieved the uh
+proper chunk
+uh as the first chunk. Then,
+interestingly enough, uh it also
+is looking at the page 22 and widget
+transformer
+uh paper and
+uh
+couple of other uh I think not relevant
+documents. Now, this is just the
+retrieved step. You want your model to
+be smart enough to reason over chunks.
+So, in this case, it's only uh creating
+answer based on the uh actual document
+that was retrieved. So, it says the uh
+chart title, "Quarterly Revenue 2025,"
+uh illustrates dip in Q3, and then it's
+able to actually read those numbers,
+which is pretty good.
+Now, here's another one. Describe the
+system architecture diagram in our
+internal documents. Now, think if you
+have some internal schematics for your
+business, you could potentially embed
+those and what are the components there
+and how they connect, right? So, this
+basically looks at the multimodal rag
+architecture that we have as a diagram.
+And interestingly enough, that since
+it's
+know about rag, just by looking at the
+diagram, it can actually explain what
+exactly is going on. Again, the first
+one is the most relevant document. Then,
+you have some irrelevant documents
+listed there that were returned by the
+retrieval mechanism, which is file
+search in this case. You probably want
+to have some sort of threshold below
+which you want to discard the documents
+if they're not if they if they don't
+have enough similarity.
+But, let's look at how do we do metadata
+fair-based filtering. So, my question in
+this case is what architectural
+innovation does the vision transformer
+introduces versus CNN?
+And I only want to look at papers as
+modality
+in topics that are
+vision. Now, this is an example of
+enterprise use cases where you know the
+set of documents based on the metadata
+or you might be one you are might want
+to look at documents from certain time
+range. You can use that
+as a metadata-based filter and filter
+your documents based on the metadata,
+right? So, in this case,
+it is only looking at the vision
+transformer paper and providing answer
+based on that.
+Now, here is another example. What
+internal charts and diagrams do we have?
+Briefly describe each. We are limiting
+the modality to charts. This is going to
+filter the documents. and in this case
+we can see that these are the
+images that we generated and based on
+that it's generating an answer. This is
+extremely powerful and you definitely
+want to make use of this metadata based
+filtering.
+Now
+we can do multi-source research
+questions.
+So in this case
+we have two questions which are going to
+need two different papers that we have
+provided, right? So again we are
+limiting it to uh
+modality equal to paper,
+but we're widening the retrieval for
+multi-paper synthesis, right? And for
+this to work
+we actually need
+chunks from both of the papers. Now
+turns out I think it only
+retrieved information from the Vision
+Transformer paper, which is
+interesting because I would expect that
+um
+it would also look at the Attention is
+All You Need paper. However, since this
+paper actually
+uses information from
+uh the original Attention is All You
+Need paper, seems like it thinks that it
+has enough information based on that to
+actually propose an answer.
+You can also do something uh you can
+actually look at grounding your answers
+so you can inspect where did each chunk
+come from.
+Um so here I'm saying anywhere in the
+corpus where you see the word attention,
+list each source. We are limiting it to
+10, right? But this is most probably you
+can do something like this with keyword
+based search, but still the system is
+pretty smart enough that it uh
+is telling us the places where it sees
+the word attention.
+All right, so just uh recap on the
+pricing. Um each file is 100 megabyte.
+Free tier is 1 GB's of total free
+storage. Vector storage is free. Query
+time embeddings are free.
+You're only charged for
+ingestion of the documents.
+And during the generation, you're going
+to be charged for all the tokens that
+you're using.
+Also, once you're done
+with your vector store, if you're not
+going to use it, it's better to just
+delete the vector store.
+So, you keep everything tidy. Link to
+this is going to be in the video
+description. Do let me know if you see
+use cases for this. I have been using
+the original Gemini file search API for
+some of my own projects.
+And I have found it to be really, really
+useful. And now with this multimodal
+capabilities, I think it's going to make
+it even more useful and powerful. Let me
+know how your experience with this new
+update is. Anyways, I hope you found
+this video useful. Thanks for watching.
+And as always,
+see you in the next one.

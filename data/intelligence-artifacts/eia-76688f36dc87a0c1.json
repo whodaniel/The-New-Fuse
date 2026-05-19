@@ -1,0 +1,123 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-76688f36dc87a0c1",
+  "generated_at": "2026-05-19T07:42:37+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-jwtpMSRAPAQ",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC",
+    "source_title": "The Trillion Dollar Agentic Workflow Opportunity Is Here",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:42:37+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC",
+    "source_digest_sha256": "a95656086aa1d22feb23af1ae5b1a18ed28ca5540488c444d8889533efc22651"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Video Title: The Trillion Dollar Agentic Workflow Opportunity Is Here",
+      "People think it's an agent",
+      "helpful and easy to implement and not be",
+      "they're all aimed at the third player in",
+      "chat and an agent just a few months ago.",
+      "agents can do an entire workflow.",
+      "100% on an entire workflow is a new",
+      "that they cannot just implement",
+      "enterprise AI agent solutions without",
+      "think about the battle to implement full",
+      "model shows up in the workflow versus",
+      "workflow from the implementation layer,",
+      "with when they put agent workflows into",
+      "So, first axis, frontier labs",
+      "and OpenAI used to ship the model and",
+      "let everyone else build around that.",
+      "design or Claude releasing finance agent",
+      "traditional coding agent patterns, which",
+      "first example of this.",
+      "piece, second axis of pressure."
+    ],
+    "strategic": [
+      "Video Title: The Trillion Dollar Agentic Workflow Opportunity Is Here",
+      "model of software in the future.",
+      "services deployment model that we're",
+      "pivoting into agentic workflows.",
+      "business model for this.",
+      "getting GPUs, of model training, etc.,",
+      "this market, the company.",
+      "market because the AI products on the",
+      "market right now are by and large not",
+      "the market right now is in the completed",
+      "their previous business model, which in",
+      "delegated work agentic workflows.",
+      "model shows up in the workflow versus",
+      "want to differentiate data and model and",
+      "model tells you the bottleneck isn't",
+      "their model, it's the whole",
+      "more of the lab strategy, and I'm going",
+      "pressure that are pressuring agentic",
+      "workflows and how agentic workflows work",
+      "and OpenAI used to ship the model and"
+    ],
+    "governance": [
+      "Is it in the ownership",
+      "compliance, and they are desperate to",
+      "owning an action layer or a governance",
+      "ownership in the space.",
+      "Reading is one risk profile, writing is",
+      "a whole separate risk profile, and",
+      "reconstruct after a failure?",
+      "recovery and ongoing ownership?",
+      "with a buyer-side audit framework, I"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.026,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 20 strategic, and 9 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 27525,
+    "unit_count": 756
+  }
+}

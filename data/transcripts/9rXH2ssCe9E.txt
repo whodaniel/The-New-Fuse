@@ -1,0 +1,539 @@
+Imagine combining Hermes's agent with
+the world's number one research and
+intelligence platform, Notebook LM. I
+did this and it blew my mind and it
+unlocks capabilities that most people on
+the planet don't even know exist. And in
+this video, I'll show you exactly how to
+supercharge Hermes agent by powering it
+with Notebook LM, giving you a 247 AI
+research agent with new capabilities,
+saving you time, and getting you light
+years ahead of your competitors. And if
+you're new, I'm Jack. I built some sil
+tech startup with a gazillion customers.
+Now I'm building my own AI startups and
+I share here the stuff that actually
+works. So if you haven't already, grab
+that beautiful coffee and let's dive
+straight in. Hermes and notebook is so
+fun. And if you've not heard of notebook
+Alam, I'm about to bring you out from
+the beautiful rock that you've been
+under. We're going to cover things like
+the operating system for memory and
+Hermes operating system. So many cool
+freaking things. But let me come down
+and explain to you why this is so
+freaking cool. Now, the way that I want
+you to think about this, because this is
+going to unlock new capabilities, and
+it's so epic that you can do this from
+anywhere in the world. Hermes is your
+personal AI agent, okay? We know this
+for a fact. We know it's fantastic. It
+grows with you. The more that you use
+Hermes, the better it gets. It's
+reachable anywhere and it levels up.
+It's really freaking cool. It's the best
+on the market right now. Then we have
+the wonderful Notebook LM. As we know
+very simply, it is the world's number
+one research and intelligence platform.
+We can do audio overviews, slide decks,
+video overviews, mind maps. It can
+actually collect over 250 different
+resources on any topic in a planet. And
+you pay precisely $0 for the privilege.
+So the idea is, can we bring this
+beautiful knowledge system into Hermes?
+The answer is, you might have guessed
+it, yes, we can. Now look, over 300
+sources per notebook, $0 to use, and you
+can host two host podcast audio
+overviews. It cites everything. It
+creates mind maps. It ships artifacts.
+And you can also get all of that stuff
+directly in your Hermes chat, it will
+send it to you in your actual Telegram
+chat. How cool is that? Any podcast you
+ask for, it is such an overpowered
+integration. Now, why is this so
+important? I'm going to show you and
+it's so important to understand why this
+is key. And then we're going to actually
+get this whole thing running up together
+with some pretty freaking amazing use
+cases. So, first of all, is we can now
+use Notebook LM from our phone. I can
+tell you I have built so much so many
+research systems. There is just
+something about notebook align that just
+gets levels of research and data and
+insights that is just so difficult to
+get when you're standardly searching the
+internet. So we can literally now drop a
+telegram message. Hermes can query that
+any notebook for us and basically bring
+back anything that we want to. That's
+how incredible it is. And say for
+example I'm on the go. I can come over
+here. This is my Hermes operating
+system. Of course you can do this
+directly in Telegram. But I might say
+something like hey there dude. Could you
+do me a favor? just go ahead and check
+for me my notebook LM on um YouTube
+strategy and just give me two principles
+about creating fantastic hooks that are
+going to be valuable for me. Now I have
+one that has got an insane amount of
+information on this. Now this agent's
+going to work in the background but
+effectively we're on our phone, we're in
+the gym. We can drop these messages
+anywhere that we go. So this is really
+important. Second of all, we can chat
+with our second brain in Notebook LM. If
+we wanted to, we could effectively build
+anything. So you could build brains on
+whatever things that you want to. For
+example, I've got one here I did an as
+an example, right? Notebook LM
+capability research 50 different
+notebooks. E-commerce 70 notebooks.
+There's an insane number of things and
+we can query these insane actual like
+literally like Alexandre's library
+materials really easily. So we have a
+second brand. Third thing is we can send
+a voice note and get an answer. So we
+can now actually grab our phone and yap
+to notebook alert. I think that's really
+understated just to say hey I want to go
+ahead and quote from me a notebook alm
+on the best place to buy Ralph Lauren
+jumpers or literally you think of it we
+can now build notebook just by talking
+to it which is really awesome what we
+can do here is not just read it but
+actually going from reading to action so
+notebookm answers Hermes acts you can
+draft scripts save the notes schedule
+reminders ship the email all from the
+same chat so not only can we get the
+information from the bookm but then
+within Hermes itself that can then
+trigger things like sending emails,
+which I'm going to show you in this
+video, or whatever the things you want
+to do. We're getting the knowledge and
+then we're using that knowledge to
+actually act. We can set it once run
+forever. So, literally, I could say
+every morning 8 a.m. go ahead and um
+create me a notebook alm on something
+that you think is going to be valuable
+based on our conversations in the last
+24 hours. Then, I want you to drop for
+me the podcast overview and the
+infographic from that so I can read it
+first thing at 8 a.m. That's literally
+what we can do now with this. That
+That's where we're at. It's freaking
+ridiculous. We've got every tool in one
+shot and it can capture your thoughts on
+the go. So idea hits you in the wild,
+you can just literally rock up Telegram,
+give it a thought and literally that
+turns into a notebook and we can grab
+all those resources straight away. It
+effectively becomes your chief of staff.
+Your executive assistant has had a
+incredible knowledge upgrade by it
+basically creating this integration. And
+then when we come back over here to our
+Hermes operating system, you can see
+it's checked our YouTube strategy brain
+notebook to hook principles and be most
+useful for you. Make the hook about one
+painful high stakes problem. opening up
+with blah blah blah blah. So you can see
+sentry it's done it. It's used my
+notebook and it's come back and give me
+a wonderful answer. So now we know why
+this is so important. The next thing
+we're going to do is actually set this
+thing up. And the coolest thing, it's so
+easy to set up. It takes only a couple
+of steps and then you're going to be
+rocking and rolling. So the very first
+thing that we need to do is get the
+notebook LM skill working for you. So
+how do we do that? Well, first thing to
+do, I'm going to put a link down below
+in description for you for this
+completely free resource. And by the
+way, if you really want to level up and
+learn CL code, I've got a full master
+class I'm releasing in the community. It
+takes you from foundations, building
+websites, power features, memory systems
+with Obsidian, building more Hermes,
+epic stuff, apps, all the way down to
+design systems compliance, and turning
+into dollars. I'll put a link down below
+so you can grab this full course. Now,
+you go over here to grab the free
+resource, and effectively what you do is
+come down and download this notebook LM
+skill. You come over here, you click on
+download. Now once you've done that, I
+want you to head over to cool code or
+your model of choice and effectively
+come down and just upload that file to
+it. And then you're simply going to say,
+"Hey there, I'd like you to install the
+notebook LM skill, please." And then
+we're just going to send that one off.
+Now, I've already stored it up there.
+So, what it will actually ask you to do
+is to sign into Notebook LM. Hey there,
+could you do me a favor? Can we
+reauthenticate Notebook LM, please? Now,
+the way that this skill, it's an
+unofficial skill from Google. So, what
+we need to do is basically open up
+Notebook LM in a browser. We sign in and
+this gets the cookie. And effectively
+what happens here then is that your
+laptop, your computer is connected to
+notebook LM which means that it can
+anything you can do in notebook LM you
+can now do programmatically with claude
+code and or Hermes agent. If you want to
+go deep on the claude code use case I'll
+put a link on screen for you so you can
+go through and see this. I've had a few
+versions of this integration. This is
+the best, sickest, most powerful one and
+super duper easy and effectively now we
+can summon that book alarm whenever we
+like to. Okay, great. So once you've
+done that and you've signed in, it
+should be working fantastically. So you
+can just test this works by saying, "Hey
+there, do me a favor. Um, find what are
+the last three notebooks that I have in
+Notebook LM. Okay, come over and do
+this." Now bear in mind there are two
+ways we use AI. There's the on our
+desktop using Cloud Code or Codeex or
+whatever and then we have Hermes agent.
+In the last video, I showed you how you
+connect them together so you have one
+universal intelligent system that
+effectively means you get this beautiful
+network of memory. Everything that we do
+in Hermes and cla code is connected and
+you get this full overview. I'll put a
+link on screen so you can just see how
+you connect this together. It is an
+absolute cheat code. And as you can see,
+it's come back and it's literally gotten
+everything. So the next thing we need to
+do now, now we've validated that we've
+got the connection between notebook
+alarm and basically clawed code and our
+computer. We need to connect it to
+Hermes. Now, to use this, we want to
+give it a skill. So, we're going to come
+down to this link down below in the
+description. And effectively, this will
+just give a description and assistant
+prompt. Two ways we can do this. Number
+one is to copy all of the stuff and then
+head over to our beautiful Hermes agent
+and basically say, "Hey, turn this into
+skill. Do something else." Personally, I
+like to use the pantheon, which lets me
+basically build out these beautiful
+characters and I can see physically the
+different skills that I've got. So, if
+you are using my dashboard, you
+literally create on new persona. Going
+to click on prescribe for this one and
+effectively just copy and paste those
+different bits. The reason why I like to
+do this for skills that I'm building is
+I have a nice visual overview of the
+things that I'm doing. So I can add a
+description here. I can come down, grab
+the system prompt, and then I'm ready to
+rock and roll. I find it helpful because
+if I ever want to change it, I've got a
+nice visual way of doing it. I am going
+to elect to have 4.7 for the model
+simply because it's quite good. And then
+I'm happy with activating notebook LM
+skill. Click on create scribe, which is
+fantastic. And then we have prescribe
+which is going to be on notebook LM
+skill, which is fantastic. And so to
+activate this, I'm just going to copy
+this prompt here, head back over to
+Hemy's, and just throw this bad boy in
+here, which is cool. And so now Hem has
+access to the world's best research and
+intelligence agent. The skill now is how
+you actually use it to unlock really
+cool capabilities. So first thing I'm
+going to do is come down and do this,
+which is, hey there dude, I just want to
+confirm that you have access to the
+notebook skill with the scribe. Once
+it's done that, I'm going to ask it
+something else, which is what I'd love
+you to do for me, actually, dude, is go
+ahead and grab for me the latest
+infographic that I created on Notebook
+LM. And then what I'd like you to do is
+to create for me a brand new Notebook LM
+on how to lose weight effectively and
+bring in all the resources you need to
+and use any information about me that
+you may have to make that a reality.
+Thank you. And send that one off. So now
+I'm doing two things. I'm asking three
+things actually. Number one is confirm
+you know it. Number two is go ahead and
+grab me a resource from Notebook Alam.
+And then thirdly, go ahead and actually
+create for me a brand new notebook. Now,
+I could be on the go. We could be having
+coffee with our buddies, right? Playing
+fetch with our dog and it will go ahead
+and do all this stuff for us from the
+laptop wherever we are. And the reason
+why this is so cool is cuz this is
+superior. There is nothing better. You
+can search all you want to. The Notebook
+LM is 100% free. We can have a vector
+database of 300 separate YouTube videos
+on anything you want and we can query it
+at $0 because we send the question and
+notebook Alam does all the heavy lifting
+and the retrieval and the rag and it
+just spits back the answer meaning that
+your cost on this is unbelievably low
+and the answers and quality are insanely
+powerful. And just like that, it's come
+back. It took it a few minutes because
+it was creating and searching and look
+at this. It's grabbed our latest
+notebook infographic and it's created a
+brand new notebook alone which is
+awesome. And it's found the actual
+infographic which I'm going to scroll
+down and show because it's got some
+different information here. And there
+you go guys. You can actually see this
+here and this was something they
+actually created. So you can see we can
+create infographics in notebook LM for
+$0 and bring them through. So maybe I
+want to learn about I see you know one
+of my buddies was in Rome at the moment.
+Maybe he sees a coliseum and is like I
+want to learn about that. Go create
+quote me not do loads of research and
+just make me an interesting infographic.
+You drop that in as a voice note and
+then it comes back with this. You see
+how crazy this is? Then if I actually
+head over to Notebook LM, you can see I
+now have effective weight loss for Jack
+evidence base blah blah blah and it's
+got nine sources and I could say go
+ahead and find 20 sources, 30 sources.
+It will do that. Now I can actually
+query it and ask this notebook whenever
+I want to. Now we can even take this one
+step further by integrating NA to end
+with this. So cl code we can build a
+gazillion things. Hermes agent, we can
+build a gazillion things, but there's
+still a number of use cases where we
+want granular level control of what's
+happening. And a perfect example for
+that is actually sending out emails. So,
+let me show you what I mean. And this is
+how cool Hermes agent is is I can
+literally give it a prompt like this.
+Hey there, NA10 very recently released
+an MCP. I'm going to give you the
+credentials to connect to that NA10 MCP.
+And I want you to give me a command that
+I can run in the terminal that will
+allow me to give you the full
+credentialed access to create any
+scenario I want to check and I can ask
+it any questions I want to at any time.
+I'm going to send that one off and it
+will do that for us. So within any 10,
+we can actually build these whole
+scenarios, right? Where we have an
+email, we can see the chain, we can see
+the logic and actually go back. The
+coolest feature I think is the
+executions because we want a visual
+layer sometimes of what we're doing and
+we can see that in here if we need to.
+Now if you come over to nitn basically
+app.net.cloud/s/mcp
+this is the new thing which is cool. So
+effectively if we do want to configure
+and we do want to grind all the details
+we can use homes agent to do that which
+is freaking sick. So on the left hand
+side instance level MCP come over click
+on enable workflows. So here we're going
+to do is come down to connected clients
+and you're going to see there's lovable
+where we did that one previously but
+come down to connection details and then
+you got the server URL and you got an
+access token. So what I want you to do
+is come down and copy this configuration
+JSON and then come back over to Hermes.
+We're going to paste that in there. I'm
+going to come back over and you can see
+you've got your server URL here. Come
+back over come all the way down and say
+and here is my server URL. Okay. And
+then literally paste it in here. Now,
+I'm going to show you how you can
+connect your credentials in a very safe
+way because when we're using these AI
+assistants, it's just best practice not
+to put your API keys in it. Okay? So,
+I'm going down here. I'm going to say,
+give me a bash command that I can enter
+into the terminal with my token. That
+means that you can access it and you
+have full functionality to do that.
+Okay. And then send that one off. And
+so, you can see it's come back and given
+us all this information. And all you're
+going to do is come down and click on
+copy. And just come down to the message
+and type CRLV. And then this is what we
+need to enter into the terminal. So what
+we need to do is basically replace this
+with your access token. And you can find
+that over here by rotating the access
+token and then just simply copying it.
+And then coming back over. Now we've got
+that. All we're going to do is come down
+and copy and paste this information
+here. And then just paste that into the
+chat window so we can edit it properly.
+And then we're just going to replace and
+add in our token from NHN. And just so
+you know where that is, it's literally
+bearer space. And then you're going to
+delete this section here. Okay. And then
+you can literally paste in that long
+number. Great. And once you've done
+that, you can do command T. You can type
+in terminal. The terminal does appear.
+And then just copy all this text right
+here. Crl + C. Come over and just drop
+that straight into the terminal. And
+when that's done, just come down and hit
+enter. And now Hermes has given us a
+slightly refined version, which is going
+to be better. And you can see after
+entering that in, it says paste NAN MCP
+access token. So we'll just do that
+right here inside the terminal. Just
+like that, it says added NA10 MCP to
+Hermes config, which is great. And now
+we can say awesome. could you go ahead
+and validate that this is fully added in
+please and that you have access to NA10.
+It's going to come down and ask if we
+want to give it permission. We're going
+to say that sounds great. Go ahead. And
+just like that, it's got all the access
+so it can search, execute, get search.
+So if you have clients with NA10, you
+can now manage it in Hermes. But check
+this out. If I come down here now, I
+need to do reload MCP. Let's just do
+this. If you didn't know, by the way, in
+Telegram, you have these fantastic
+little actions you can do, which is
+fantastic. Yep. Come down here. We're
+going to improve that one. That's
+awesome. So here's an interesting thing
+I could do now. I could for example give
+it a workflow. So let's say this. Hey,
+Doug. What I would like you to do for me
+is create a workflow in NHM that
+triggers every morning at 8:00 a.m. and
+it sends me an email to my email address
+and that is hardcoded into the send
+file. And then what I want to do is grab
+I want you to grab and run like one
+insight from YouTube strategy and send
+that as like a daily blast in my email.
+Create the entire workflow and then I
+want to link to that workflow for me to
+have a look and then I want to actually
+go ahead and see what this looks like.
+So you get the idea. Now we can build
+any of these workflows and just like
+that it has literally gone ahead and
+done that in a couple of minutes. I'm
+going to click on this link to have a
+quick look at what is going on here and
+we'll see what's up. Why is this
+significant? Well, let's say that we're
+managing something here now for a client
+of some description. Granted, this is a
+first. It's even got a daily YouTube
+strategy thing here. This is freaking
+cool. I like this. Every morning at 8:00
+a.m. pick YouTube strategy insight. Come
+down here and it can mend it. So, we can
+understand workflows that break for
+clients if we've got these in situ. Very
+freaking cool. And then if we come down,
+it's even got the body preview. It shows
+everything like that's really cool and I
+can even publish there if I want to.
+Again, for me guys, just when it comes
+to sending emails, just by nature of
+these models because they are as you can
+understand like non-deterministic like
+they you ask 100 questions, you get 100
+responses. So I like to build out
+workflows that are you know I can
+actually see and understand if I am
+sending emails out. And bear in mind the
+capabilities now that we have with this
+notebook 11 creating incredible
+knowledge using that in any number one
+of our workflows is ridiculous. I'm
+going to be using this literally all the
+time. It's so insane when you know how
+to apply it in the right way. Now, using
+the world's best intelligence and
+research platform is one thing, but if
+we don't connect it and have a Hermes
+operating system, we're leaving too much
+value on the table. So, the next thing
+we need to do is get one of those. And
+we're going to learn that by watching
+this video right

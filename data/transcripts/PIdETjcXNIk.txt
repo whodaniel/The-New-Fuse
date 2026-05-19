@@ -1,0 +1,790 @@
+What's up engineers? Indydev Dan here. I
+have a simple question for you. What's
+better than one GPT 5.5 PI coding agent?
+You guessed it, two GPT 5.5 PI coding
+agents. Let's push it further. What's
+better than two isolated sidebyside GPT
+5.5 agents? Sure, you could add another
+agent. Sure, you could change the model,
+but we can do much better than this.
+What about two GPT 5.5 agents that
+actually work together? What about three
+agents that work together with unique
+models? What about four models? So, here
+we have four PI coding agents and none
+of them is the orchestrator. Instead,
+they're equals. They're co-workers. Ping
+every agent. In this video, we'll
+understand what type of agentic
+engineering we can achieve if we gave
+our agents a true two-way communication
+channel. By the end of this video,
+you'll have a simple yet powerful way to
+coordinate your multi- aent systems.
+This gives us a powerful flat agent
+hierarchy where the best information
+wins, where the best ideas win, and
+where your agents can truly coordinate
+together to outperform each other alone.
+Let's talk about pietoie, two-way agent
+communication.
+So, let's go ahead and reset here. Let's
+dehype this a little bit. Let's close
+our agents. As you can see, one by one
+as we close them, they leave the chat
+room. They leave the communication pool.
+We've got a production database on my
+Mac Mini. And this production database
+has an issue. Some Protier users are
+getting locked out of Pro features. So,
+in order to fix this issue, I need to
+reproduce it on my local developer
+environment. This is a common
+engineering workflow. You don't fix
+things in production. You fix things on
+your developer environment and then you
+deploy through staging and then
+eventually it hits production. The trick
+here is there is sensitive information
+on my Mac Mini production environment
+here and I can't leak any PII while I'm
+fixing this issue. We're not vibe coding
+here. We're doing real engineering work
+in production systems. Our PITPI agentto
+agent communication system is perfect
+for this. So I'll boot up two agents
+here. One on my Mac Mini, the production
+server, and one on my M5 MacBook Pro, my
+dev machine. We'll do JCOMs 2. And we'll
+give this a name. This is going to be
+production. Jcoms one name dev. We'll
+run some basic pings to make sure both
+agents are up and online. And then we're
+going to paste in a production prompt
+here. This is a prod gatekeeper agent.
+It has a production database that's
+working with that's been seated. We're
+not going to recreate it or anything.
+And you have a teammate. And then key
+piece here, we have PII inside of this
+production codebase that we're not going
+to break. This is personal identifiable
+information. So a production agent
+understands the system. It understands
+what's available and it knows that it's
+not going to expose any information to
+any other agent on the network. Okay.
+And now our developer agent is going to
+get to work. We need to reproduce this
+issue locally. Here's our developer
+prompt. The key here is this. Bring the
+affected slice from production over with
+PII stripped into your local Dev DB so
+an engineer can reproduce the issue
+locally. First, in order to reproduce a
+production database issue, you need the
+production data. Here's where the magic
+happens. Our agent sees the pier on the
+network, right? It knows that it has
+connection to a prod agent. And now it's
+going to start working through things.
+So, it's going to send a message. It's
+going to send a prompt. And it's going
+to get returned an ID, a message ID. Our
+agent can now await this message. And
+our production agent, as you can see
+here, is getting to work on the
+production side, but it's getting to
+work with all redactions applied, right?
+It's not going to expose any personal
+identifiable information. Our agents are
+going to work back and forth here, not
+as individual agents, not as a sub
+agent, not as workers, right? They're
+going to work together as a team. It's a
+simple, beautiful pattern and it really
+reflects how great work is done. And so
+our agent is learning about the local
+DB. It's making sure that it's clean and
+is starting to sync things while keeping
+everything PII safe. Right? So this is
+yet another place where if you engineer
+things properly, if you prompt things
+properly, you can do extraordinary
+things in your agentic systems. There
+are endless use cases for agents that
+actually communicate and work together.
+You can see there we got another message
+back and this process is going to
+continue. So we're going to let our
+agents cook here. I want to take the
+time to like highlight why agentto agent
+communication is so important and
+highlight of course once again why the
+pie coding agent is really the only way
+that you get this level of control out
+of your agents here
+I think the most important thing to
+start with here is understanding the
+current problem right agents can't talk
+to each other we know that there is sub
+aent delegation and sub aent prompting
+right and this is a great pattern it's a
+great start like if you agree with this
+statement we are just scratching the
+surface of what the true developer
+experience looks like for a gentic
+engineering right we don't really even
+know what that form factor is I think
+very clearly internal agents is going to
+be the kind of focal point the center
+point but everything around that from
+the agent harness to how we manage
+contacts models agent scale tools this
+is all a work in progress so if we're
+not exploring the state space of what's
+possible with our agent communication
+and other agentic workflows and
+patterns. Uh we're going to be stuck in
+the normal distribution the very
+beginning of what's possible. So sub
+agents very important very cool but this
+is just the beginning right when you
+push further you can find a message
+queue and this is what the cloud code
+agent teams uses. So you have one agent
+that kind of sets up all the message
+queue and then it serves as a message
+broker between agents. Another great
+powerful pattern, you then have things
+like agent chains where you have a
+deterministic setup workflow that have
+individual nodes of agents. When you
+combine this with code, you get powerful
+AI developer workflows or blueprints or
+representations of agents plus code.
+This is a very very powerful framework
+because it adds determinism into the
+process. Right? At any one of these
+steps, you can insert code and it'll
+enhance what your agents can do. So very
+powerful stuff here, right? But um
+there's a problem with this. As you can
+see in every one of these workflows, it
+is traveling information in basically
+one direction and it's always a top-
+down way. Even if the information comes
+back, it's a one-way stream, right? It's
+never birectional. So, what's the
+solution? It's quite simple. Let your
+agents talk to each other, right? Prompt
+response and then prompt response. Okay?
+Peer-to-peer, not orchestrator to
+worker, changes things here. Agents are
+equals. They're not parent and child.
+And this unlocks, of course, birectional
+flows of information, okay? Just two
+agents communicating to each other. As
+you can see here, our agents are still
+working together to figure out these
+issues to really work through how to
+perfectly reproduce the production
+slice. But you can push this across
+devices and across multiple agents,
+right? And this looks like exactly what
+you would imagine. Right? Now we have
+three agents in the network. You might
+have a researcher, coder, planner. These
+can be anything under the sun. In our
+case, we have a prod agent and we have a
+developer agent talking to each other
+across the network. Okay? But you can
+just keep scaling this up, right? And at
+some point, it's going to be uh harmful,
+right? Like there is a limit to how
+useful this is. Um I'm not just trying
+to sell you the upside here. There's
+downsides to every approach. Great
+engineering is all about managing
+trade-offs. At some level, you're not
+going to want to use this pattern
+anymore. And at some level, adding
+agents doesn't help anything. But there
+is certainly a useful level to this
+where you want that bidirectional
+agent-to- a communication where it's
+very very useful to have every agent
+have access to every other agent. Okay?
+And so why is this useful, right? Let's
+let's really hit on this. Like I think
+at the core of this, it comes down to
+information hierarchies. If you have a
+traditional software engineering job,
+you work at a company that has a
+hierarchy, right? For one reason or
+another, there is someone at the top.
+Okay? And information usually travels
+downstream, commands travel downstream,
+objectives travel downstream, and then
+it hits the person, usually the
+engineers who are actually building the
+thing, right? And often times the best
+information, the best decisions, the
+best awareness about the system is all
+the way down here, right? It's on the
+worker level, right? It's it's you and
+I, the engineers with their boots on the
+ground every single day putting in the
+work to understand the system,
+understand the objectives, and then
+actually building it, right? The best
+information is often times down here
+when you have these hierarchical
+information systems. And I'm speaking in
+a generic way. It doesn't just need to
+be about the job. It doesn't just need
+to be in a career setting, but just
+information structures like this. Oftent
+times the best ideas are down here. They
+get stuck down here because they don't
+have the right title. They don't have
+the right authority. They don't have the
+right say. Right? And you've, you know,
+you've probably heard this, right? The
+best companies, the best structures are
+flat, where there's communication
+happening on every single level where
+everyone can just talk to the other to
+get the job done, right? Nvidia is
+really famous for this very flat
+reporting structures. Of course, Jensen
+at the top commanding that insane
+company, but then he has very few direct
+reports and then it spans from there,
+right? But startups are famous for this,
+right? You have very very flat
+structures. All the best information
+systems are flat. Why is that? It's
+because you get valuable information
+wins always over titles and politics.
+Okay? Ideas die in hierarchies. So
+that's why this is so important. And and
+you know maybe you think I'm
+anthropomorphizing this too much. Maybe
+you think I am trying to apply something
+where it doesn't belong. I completely
+disagree. I think when you really boil
+things down everything is a system. And
+a key part about every system is that
+there is flows of information inside of
+systems and how things flow. How the
+structures, the nodes, and the actors in
+the system communicate information
+matters, right? This matters because
+often times the best ideas are down
+here. They're at the bottom level. And
+so this means that as much as you can,
+you want to have flat hierarchy
+structures. Okay. But on a functional
+level, we can see that this is uh useful
+for other reasons as well. We have
+crossdevice agent to agent
+communication, right? We have a
+production service. Say this is in the
+EU, right? where everything has to be
+redacted. Everything has to be perfect
+and nothing can escape the device, but
+you still need to fix things, right? We
+still need to do real engineering work.
+So, this is a great system. We have
+redacted information properly,
+transferred it to our developer machine,
+and as you can see here, the repro is
+ready. The bug has been imported. Okay,
+PII is clean. Okay, so legitimate
+engineering work happening here.
+Obviously, this is not a real production
+server. I'm using this as an example.
+And now I can go ahead debug, look at my
+code, look at this slice of the
+production database that has been
+reproduced from production. And now we
+can actually resolve the bug. And our
+agents are really great at communicating
+information like this. And that's
+exactly what they've done. Okay. So we
+have very simple two-way birectional
+agent agent communication. If I needed
+to, I could come in here and validate
+that everything looks good on the
+production agent side. Right? Do one
+final check with the dev agent. PII
+safe. the issue has been reprodu
+and they can then communicate together
+to get the job done. So I hope you can
+see the value proposition of this. I
+hope you can see why age communication
+is useful even if you don't think that
+the flat information hierarchies are
+more performant for making sure that the
+best ideas are the ones that always win.
+This is great because now we have simple
+uh multi- aent communication on
+different devices. Okay. And whenever we
+need to, you know, let be super clear
+about this, whenever we need to, I can
+add an agent to the pool. So if I type
+Jcoms, let's use four. I think that's
+the GLM agent. You can see GLM added
+here and now it is part of the pool,
+right? So fantastic. How else can we use
+this age to agent communication? This
+seems very powerful. We're not just
+delegating work, which is in its own
+right a very powerful communication
+pattern, right? This isn't a
+replacement. This is another option for
+your agentic engineering. We can solve
+other problems with it. Right? Let's
+walk through another example.
+So let's fire up a E2B agent. And in
+fact, let's open up a new project here.
+Sandbox. Same deal. Jcoms 2 and name exe
+dev agent project sandbox. So we're just
+getting our agents off this network.
+This is a different pool to communicate
+in. Right? So we still still have our
+previous set there. And you can actually
+see that this work here was done. PII is
+safe. All the findings are there. So, we
+verified by having our production agent
+prompt our developer agent. Fantastic.
+We got the pass. Everything looks great.
+Both context windows are sharp and
+focused. There's no spillover between
+issues. This system has completed
+successfully. So, I've been using the
+E2B agent sandbox tool for quite some
+time now. It's been a great tool. It's
+also expensive and it has some downsides
+like there's a limit to the total
+duration that you can have your agents
+up in a sandbox. You have to pause them
+to manage that. So, I've been looking at
+uh exe.dev. dev is a new agent sandbox
+tool to uh replace or use additionally
+right next to E2B. And so this is just
+another agent sandbox tool. It's got a
+couple different benefits. I'll link
+both of these in the description for
+you. But the idea here is I already have
+my E2B agent in this sandbox skill.
+Right? So I have agent sandboxes and
+this is my E2B skill where I can just
+quickly spin up an agent sandbox that my
+agent can fully own and operate on my
+behalf. We've talked about agent
+sandboxes on the channel in the past.
+I'll link those in the description for
+you as well. But what I want to do here
+is spin up a brand new skill for exe.dev
+that mirrors and matches and has feature
+parody to my E2B agent skill. And
+anything that doesn't match, I want to
+know about it, right? I want to
+understand the feature differences, but
+I want my agent to fail forward. I want
+the skill to be built so that I can
+prototype and experiment with it right
+away. Okay? So, I don't just want a
+simple research comparison. I want a new
+skill I can use that has feature parody
+with my existing skill. That's exactly
+what I'm going to prompt here in my E2B
+agent. I'm going to fire this off.
+You're the E2B agent. Your teammate is
+exe.dev. They will be building this
+skill against exe.dev's persistent VM
+platform. Your job is to answer their
+questions. Okay. So, we have a teammate
+set up specifically to understand this
+feature set. It's booting up a sandbox.
+It's reminding itself of all the
+features. And when this completes, I'm
+going to kick off the exe.dev agent to
+communicate, work with, and sync up a
+brand new skill. You know, a lot of the
+agent agent communication and
+multi-agent orchestration comes down to
+expanding your context window in a
+useful way such that your agents can
+specialize what they're focused on.
+Okay. A lot of engineers do think that
+you just throw everything at one agent,
+wait for the models to get better, wait
+for that 5 million context window, and
+then all your problems will be solved. I
+don't agree with this approach at all. I
+think you should lean on the models. You
+should expect them to get better. You
+should plan for that in your products
+and services. But at the same time, you
+should be learning how to focus your
+agents on one problem so that the chance
+that they cause an issue so that the
+chance something goes wrong drops down
+to near zero. And how can you do that?
+You can do that by having focused
+context windows. Okay? And by
+effectively specializing your agent to
+focus on one problem and one problem
+only. spinning up and comparing two
+different tools with likely very similar
+APIs is going to get the context window
+pretty big. You can see here this agent
+is loading uh refreshing itself on all
+of the E2B agent skill functionality,
+right? You can see sandbox remove
+download dur so on and so forth. We're
+almost at 10% context already. That's
+100K tokens. Okay, if you're using
+agents on a daily basis, you understand
+this fact, right? A focus agent is a
+performant agent. And the more you add
+to that context window, the higher the
+chance something goes wrong is.
+Specifically, when you start muddying
+unrelated context together. Okay, this
+is the art of context engineering. It's
+not just getting all the right things.
+It's getting just the right things. This
+agent's booting up. It should be
+complete pretty soon here. And then we
+can prompt our exe.dev to create this
+new skill so that we can boot up brand
+new sandboxes for exe.dev. and we can
+really see what this is all about moving
+forward. It's not just about these two
+sandbox tools, right? It's about every
+sandbox tool moving forward and our
+ability to deploy agents to understand
+the tools, to understand the technology
+and then deploy them into valuable use
+cases on our behalf. So, we can use this
+system over and over and over. We can
+compare the features between every
+specialized agent. I hope you get the
+point, right? If that's all making
+sense, you know, make sure you drop a
+like. This is like really our bread and
+butter on the channel. We're scaling our
+compute to scale our impact. It's all
+about scaling up what our agents can do
+and focusing our agents to solve real
+business problems on our behalf via
+agentic engineering, not vibe coding.
+We're not shooting prompts and not
+looking. We know what our agents are
+doing. Okay? And this just stacks up on
+previous videos we've had on the channel
+where we're making our agents secure.
+We're not letting them crush production
+assets when they should not be able to.
+We're adding security to our batch tool
+when they need it. Just like in last
+week's video, we're preventing
+catastrophic commands from running. And
+then, you know, we're letting our agents
+rip on all the tools, all the skills,
+all the commands that we actually want
+our agents to execute. Right? As you can
+see here, a lot of that sandbox tool
+running. Our agent is understanding what
+it can do here. And soon it's going to
+write this uh presentation file for us.
+And this is one of the great things and
+one of the annoying things about GPD
+5.5. model really chews up tokens and it
+just goes and goes and goes to really
+get you the most comprehensive result
+possible. Whereas I found that Opus 4.7
+will do that as well, but it also will
+really just focus on the goal, right? I
+think Opus is more goal oriented and
+really focuses on accomplishing the
+goal. If you prompt it wide enough to
+capture more of that state, more of that
+scope, it'll certainly capture that as
+well. Okay, but here we go. We're
+getting that inventory file that really
+compresses all the observations. Now we
+should be able to kick off our exe.dev
+agent pretty soon here. There you go.
+Nice write up. Look at that detailed
+write up of all the features, inputs and
+outputs, the commands, E2B quirks,
+right? This is great. And this was part
+of the prompt, right? We wanted at the
+end a feature inventory. And this is
+going to allow our exe.dev agent to
+really map everything out one to one.
+And again, like focus context is so
+important here, right? In tactical agent
+coding, it's so important. This is an
+entire tactic. We talk about this for an
+entire lesson. A focused agent is a
+performant agent. We have 20% context of
+the 1 million context window GPT 5.5
+focused on just understanding this tool
+and understanding the skill and this
+whole sandbox system. Okay, so there we
+go. Validating its work, making sure
+that that file exists. And now we're
+going to boot up our exe.dev agent.
+There we go. Perfect. So it's all
+primed. It's all good to go. Now we're
+going to fire off this prompt inside of
+our exe.dev agent. And I actually
+haven't run this before. So I'm really
+curious to see how how this executes and
+how well this mirrors. So you're the
+exe.dev agent. There is no agent sandbox
+exe dev skill yet. Your job is to build
+one. Okay. So there's the purpose and
+then your reference target is this
+existing skill here which your teammate
+understands and is already standing by
+to answer questions about. You're the
+driver of this collaboration. E2 will
+not initiate. You reach out. So I'm
+setting this up so that in this specific
+scenario I want my exe dev agent to be
+the one driving this. I'm giving it a
+couple skills, firecrawl, meta skill to
+really build on this. And then we have
+our clear deliverable. So I want that
+new skill, right? And I'm making it
+super clear here. A new working skill
+that mirrors the / agent sandboxes
+against exe.dev primitives. And I also
+want a feature parody document just like
+the E2B agent has as well for us. Okay.
+And so it's starting to get to work
+here. Grabbing all the docs. It's going
+to start building the skill. And this is
+the Opus 4.7 running in the PI Asian
+harness. This is going to be some pretty
+uh fantastic results as this gets to
+work here. So, right now it's gobbling
+up all the documentation starting to
+stack up that proper context. And at
+some point here, it's going to begin its
+communicating with our exe dev agent
+here. So, there it is. We have live
+access confirmed. SSH exe.dev. It's now
+checking out all my VMs. no current VMs
+set up yet, but my agent is going to go
+through this process, figure everything
+out, and it has all the documentation,
+and it has the feature parity it's
+trying to get equal to. Okay, so this is
+a really great way to in general, you
+know, it doesn't really matter what
+agent to agent communication system
+you're using. This is a great way to
+mirror systems together, right? In the
+age of agents, we're going to have a 100
+different services available to us for
+agent sandboxing and frankly, you know,
+for agent harnessing, cloud databases,
+terso, things like neonb. And a lot of
+them are going to be swappable, right?
+Composable. And so this is a great
+pattern. Once you have one skill against
+one specific service, you can quickly
+create a feature parody document and
+then build directly against another
+service. Agent agent communication is a
+great way to do that because you get
+that focus agent context window and then
+your agent can just quickly communicate
+when they need to. But let's go ahead
+and dig a little bit deeper into this
+system, right? Like how does this system
+really work? There's four tools here.
+There's basically no magic. It's really
+simple.
+You list all the agents on the network
+send command where you send the prompt
+and then optionally you can await a
+response. Right? Sometimes you send off
+a Slack message and you're just sending
+useful information to someone or a
+confirmation or something and that's it.
+But if you need to, you can await the
+response. You can check in on the
+message. You can do a block wait or you
+can do a non-blocking pull. I have two
+versions of this that's going to be
+available to you. You can see our agents
+are starting to uh chat together here.
+I'll have two versions of this available
+to you. Both are going to be available
+in the Pi versus Cloud Code codebase.
+This is a codebase that uh has been live
+for quite some time and it's where I
+posted and shared a lot of extensions
+from simple to complex across multiple
+different agent harness use cases for
+the PI agent harness. All right. And so
+the whole idea here is just to hedge
+against cloud code, the agentic coding
+market leader and get control of the
+agent harness. This codebase builds on
+that very idea. And I'm going to add
+these two extensions for you into this
+codebase. And so you know what are these
+two extensions? We can just go ahead and
+crack these open here. Comms version. So
+this is the non-network version. This
+operates on a single device. But then we
+have a comm's net where we basically
+boot up a simple simple simple
+lightweight bun server here that accepts
+requests over the network and you can
+imagine we have a simple set that uh let
+the agent connect get messages list
+agents process events so on and so forth
+here right this is a very simple
+implementation uh secure it make it more
+legitimate for your specific use case
+every piece of code you see now I really
+think it's really about read and adapt
+right throw your agents at it and have
+them transform it for your specific use
+case and always understand the code. 25%
+here on our E2B agent. See, it just
+responded directly here. Okay, looks
+good. Browser. Okay, spx tool. Nice. So,
+it looks like exe.dev agent was asking
+about the browser tool. All three
+questions cleanly answered. Quick recap.
+Templates versus images. Okay, so
+confirm partial support. Let's see.
+Captured artifacts, arbitrary container
+images. Okay, browser two primary files.
+zero E2B import fix drop in portability.
+Great snapshot. No E2B equivalent. CP is
+unique to exec.dev. Okay, so there we
+go. Here it's writing that feature
+parody doc. This is looking great. Yeah,
+nice. Looks like we had a couple chats
+here to showcase everything. Sent this
+to EDB. Why now? The parody has their
+claims is to flag as many E2B claim
+that's wrong before I bake them into the
+new skill. Very cool. Okay. Very nice.
+So, our agents here are doing the work
+that I would do myself, which is
+validate the claims. Right? This is
+something we talked about in the
+verifier agent video we did a couple
+weeks ago where you have an agent
+basically double-checking all the claims
+and all the statements that the primary
+agent is making to make sure that
+they're right. This is a really powerful
+pattern. I like to run my PI agents, my
+primary PI agent with a validator on top
+of it, which basically, you know,
+increases the tokens used, but in
+exchange, it saves me time because the
+validator is validating everything my
+agent just said, right? It makes sure
+that everything it said is actually
+true. And then it also makes sure that
+the work it said it did is exactly what
+was done. I'll link that in the
+description as well. There we go.
+There's a nice write back to our exe.dev
+agent. Look like it's asking for a
+recursive flag there, too. Wow, so much
+detail here. Like an aside here, this is
+a great way to just watch these models
+work together, right? GBT 5.5, Claude
+4.7 gave them a decent sized prompt,
+maybe 80 lines each and a skill, and now
+they're just like hashing it out,
+recreating this new skill. And this is
+again just one of millions and millions
+of different ways to coordinate agents
+to work toward a goal, to work toward
+something, right? So, okay, so we got 10
+corrections from that exchange, right?
+This is a valuable exchange of
+information. 10 corrections. There's a
+couple comments on my videos recently,
+especially when I talk about multi-agent
+orchestration. Some engineers, probably
+a decent amount of vibe coders as well,
+asking why can't you just do all this in
+one agent? Uh, you certainly can. You
+certainly can, but you have to remember
+that a couple things. There is a limit
+to the context window. The more
+problems, the more different problems,
+APIs, systems you put into that context
+window, your error rate will go up.
+Okay? This is just a fact. If you don't
+believe that, you don't understand that,
+do more research on the context window.
+Okay? And then second, with every unique
+model that you add to your system,
+right, I'm running Claude right next to
+GPD 5.5. These models are trained in a
+completely different way. They have
+different RL loops running on top of
+them. Putting these agents together
+creates something greater. It creates a
+system that outperforms either of them
+alone. Just like code plus agent beats
+either alone, unique agent one plus
+unique agent two, communicating beats
+either alone, right? And and that's like
+really the gift and really the value
+proposition of multi-agent
+orchestration. It's not just the 10
+parallel agents you boot up to like
+write all those files or generate all
+those images at the same time. It's
+doing serious engineering work where
+your agents are checking in on each
+other, double-checking the work,
+coordinating on a solution, so on and so
+forth. Okay, so that's the idea. And so
+we got one more message coming back
+here. Hopefully this wraps it up. And
+yeah, look at this. Like Opus is just
+being really really great here with the
+verification. So please reread the doc
+and either send review complete or flag
+remaining issues right so this is just
+like you know it's team work right this
+is teamwork okay sign off one
+non-blocking knit okay and then after
+this we can proceed with scaffolding so
+there we go so yeah it's loading that
+meta skill this is my skill that helps
+me create skills I'm going to let this
+cook comment down below if you're
+interested in my agent sandbox skills
+the ETB skill or this new exev skill and
+I'll add to this codebase. But that's
+the idea, right? It's it's it's simple
+yet it's very very important. Okay. Now,
+you know, quickly just talking about
+pros and cons of this system. Every
+system has pros and cons. If you don't
+address them, you'll be exposed to them.
+What ar
+[TRUNCATED]

@@ -1,0 +1,434 @@
+[music]
+&gt;&gt; Hi. Welcome to another video. So, xAI
+has finally launched Grok Build. And
+this is basically their attempt at a
+proper terminal coding agent. This is
+not just Grok inside a chat window. This
+is a CLI agent that runs inside your
+terminal, can inspect your repo, can
+edit files, can work in a full-screen
+TUI, can run headlessly for scripts, and
+can also plug into other apps through
+ACP.
+And if that sounds familiar, it should.
+Because this is very clearly going after
+Claude Codex CLI, Gemini CLI, and all
+the other agentic terminal coding tools
+that have become popular recently. Now,
+there is one big catch. As of the
+launch, Grok Build is in early beta, and
+it is available first for Super Grok
+heavy subscribers. So, this is not
+something everyone can just use for free
+right now, which is a bummer. But, the
+actual tool is interesting.
+And the configuration story is even more
+interesting, because Grok Build supports
+custom models through config.toml.
+So, yes, even if xAI wants you to use
+Grok, you can configure other
+OpenAI-compatible providers as well. And
+that means you can set up things like
+GLM coding plan, Nvidia NIM, and
+OpenRouter free APIs inside the same
+workflow. That is the part I really care
+about, because I like the idea of the
+agent interface, but I do not like being
+locked into one expensive model
+provider.
+Especially when we now have GLM, Qwen,
+Kimiko, DeepSeek, and Nvidia-hosted
+models that can be really good and very
+cheap, or even free with rate limits.
+So, let's get right into it. First,
+installation is very simple. xAI gives
+you one command. You run curl -fssl, l,
+then x.ai /cli
+/install.s,
+and pipe that into bash. Once it is
+installed, you go into your project
+folder and run Grok. On first launch, it
+opens a browser for authentication. If
+you are in a headless environment, like
+a server, CI job, or remote machine
+where you do not have a browser, you can
+set an API key instead. The environment
+variable is grok_code_xai_api_key.
+After that, you can just run grok and
+start asking questions like explain this
+repo or walk me through this file or add
+rate limiting to this API.
+The main interface is a TUI and it looks
+very similar to what you would expect
+from a modern coding agent. It has a
+full-screen terminal interface. It shows
+what the agent is thinking. It shows
+edits. It shows progress and it lets you
+approve or reject changes. So, the
+feature that X AI is pushing heavily is
+plan mode. Plan mode is basically for
+planning first. When it is active, write
+tools are blocked except for the session
+plan file. So, the agent can inspect the
+repo, reason about the task, then write
+a write up a plan, but it should not
+start changing your actual project files
+until you approve the direction. This is
+great for bigger refactors. For example,
+if you ask it to restructure
+authentication, add a new payment flow,
+or fix a messy architecture issue, you
+do not want the agent to immediately
+edit 30 files based on a misunderstood
+prompt. You want it to first explain
+what it is going to do. In grok build,
+you can review the plan, comment on
+individual steps, or rewrite the plan
+before execution begins. Once you
+approve it, then the actual edits show
+up as diffs. So, this is very similar to
+the planning workflows that I like in
+other tools as well. I think planning
+mode is one of those things every
+serious coding agent should have. If the
+tool only vibes and edits files
+immediately, that can be fine for tiny
+tasks, but it gets risky very quickly in
+real projects. There's also always
+approve mode. You can launch grok with
+{dash} {dash} always approve or toggle
+it in the TUI with {slash} always
+approve.
+This skips permission prompts for tool
+calls. It is great for throwaway
+projects, local experiments, and tasks
+where you fully trust the sandbox. But
+for real repositories, especially
+anything with credentials or production
+code, I would be careful with it. You
+can also set the default permission
+behavior in home {slash} {dot} grok
+{slash} config.toml.
+The setting lives under UI and the key
+is permission_mode.
+You can set it to ask or you can set it
+to always-approve.
+One small thing here, some people might
+say configure.toml or configuration.toml
+casually, but the actual file in the XAI
+docs is config.toml inside home/dotgrok.
+So, the path is
+home/dotgrok/config.toml.
+Now, the second major thing is
+compatibility. Grok build reads
+agents.md files. It also reads Claude
+code instruction files. It can discover
+Claude code skills from dotgrok/skills
+in the project home/dotgrok/skills
+globally. Any enabled plugin skill
+directory and extra paths that you put
+under the skill section in config.toml.
+User invocable skills also show up as
+/commands. So, if you have a skill
+called browser review, you can invoke it
+like a /command. Plugins go further than
+skills. They can include skills, agents,
+hooks, MCP servers, and LSP servers.
+Grok loads plugins from
+project.grok/plugins,
+home.grok/plugins,
+marketplace installs, extra plugin paths
+in config.toml, and a plugin directory
+passed on the CLI. There is also a
+unified extensions model. You can open
+it with /plugins/hooks/skills
+or /mcps.
+These commands open the same model, but
+jump to different tabs.
+This is kind of awesome because one
+thing that has been annoying with AI
+coding tools is that every tool invents
+a new extension format. Grok is clearly
+trying to say, "Bring your Claude code
+stuff. Bring your agents.md stuff. Bring
+your existing skills." And it will try
+to work with it. Now, there are also
+sub-agents. For larger tasks, Grok build
+can delegate work to specialized child
+sessions that run in parallel. XAI
+specifically shows examples where it
+splits a performance investigation into
+multiple parallel tasks.
+One sub-agent checks recent deploys. One
+ranks slow endpoints. One pulls slow
+query plans, and so on.
+This is the kind of thing I like a lot
+in agentic coding tools. If you're
+debugging something complex, parallel
+research can save a ton of time. You do
+not want one agent doing everything
+sequentially if some of the
+investigation can happen independently,
+but again, the model matters here.
+Parallel agents can burn through usage
+very quickly. So, if you're using an
+expensive model or an expensive
+subscription tier,
+you want to be intentional. This is
+exactly why custom model configuration
+matters.
+Now, let's talk about headless mode.
+This is one of the most important parts
+if you want to use Grok build in
+scripts, bots, CI, or automations. The
+basic command is grok-p, then you're
+prompt, for example. You can run grok-p
+quote explain this code base quote. You
+can also choose a model with -m, resume
+a session with -r, create or resume a
+named headless session with -s over
+streaming JSON is especially useful if
+you're building a bot, dashboard, or
+automation system where you want to show
+progress instead of waiting silently.
+There's also ACP support. You can run
+grok agent test -o, and then Grok works
+as an agent client protocol agent over
+JSON RPC on standard input and output.
+That means people can integrate Grok
+build into IDEs, custom orchestration
+apps, and other agent systems. So, this
+is not only a terminal product. The
+terminal is the default interface, but
+the underlying agent can be embedded
+elsewhere.
+Now, let's come to the part that I think
+is the most useful. Custom models. The
+XAI docs show that Grok supports custom
+models in home {slash}
+The shape is simple. You create a model
+block, give it an internal name, set the
+real model ID, set the base {underscore}
+URL, set a display name, and set the
+environment variable name where the API
+key lives. After that, you can set the
+default model under the model section,
+or you can choose it manually. Once you
+edit the config, run grok inspect. This
+shows what Grok discovered in the
+current directory, including config
+sources, instructions, skills, plugins,
+hooks, and MCP servers. Then, you can
+run grok-p quote hello quote -m your
+model name, or switch inside the 2A with
+{slash} model followed by the model
+name. So, you can keep Grok as the agent
+interface and swap the actual model
+underneath. Now, the first provider I
+would set up is GLM coding plan.
+The GLM coding plan is very interesting
+because it gives you access to Ziai's
+coding models at a very low price.
+Zico's own docs talk about the GLM
+coding plan unlocking models like GLM
+5.1, GLM 5 Turbo, and GLM 5.
+The pricing has been one of the main
+reasons I keep talking about GLM. It is
+not perfect, but for the money it is
+really good. For Grok build, you would
+add a custom model in config. The
+internal name can be GLM-coding.
+The model can be GLM-5.1.
+The base _url should be the Ziai coding
+endpoint.
+The name can be GLM coding plan. And if
+you want it as your default, set the
+model's default value to GLM-coding. One
+important thing here is that Ziai has
+more than one endpoint for normal Ziai
+pay-as-you-go API usage. The OpenAI
+compatible base URL is
+https://api.zi.ai/api/paas/v4. For GLM
+coding plan, use the coding endpoint.
+So, if the normal endpoint works for
+your regular API credits, but not your
+subscription plan, that is probably why.
+This is the type of detail that can
+waste an hour for no reason. The model
+is not necessarily broken. The endpoint
+might simply be wrong. My recommendation
+would be to use GLM as the cheap daily
+coding model. Use it for normal
+implementations, small refactors,
+repetitive edits, and repo exploration.
+Then use a stronger paid model only for
+hard debugging, architecture planning,
+or places where GLM starts going in
+circles. This setup gives you the most
+value. You're not burning expensive
+usage on every small task, but you still
+have stronger models available when they
+actually matter.
+The second provider I would set up is
+NVIDIA NIM.
+NVIDIA NIM is really underrated for this
+kind of workflow because it exposes an
+OpenAI compatible API at
+integrate.api.nvidia.com/v1.
+You get access to a lot of hosted models
+from the NVIDIA API catalog, and many of
+them have free endpoint access for
+development and testing.
+For coding, one of the most interesting
+models is Qwen-3-72B-A35B-Instruct.
+On Nvidia's own model card, it is
+described as a model for code generation
+and agentic coding tasks. It supports
+function calling, tool choice, long
+context, and agentic browser use. The
+model ID is
+Qwen/Qwen-3-72B-A35B-Instruct.
+So, in config, create another custom
+model. The internal name can be
+Nvidia-Qwen-Coder.
+The model is
+Qwen/Qwen-Coder-72B-A35B-Instruct.
+The name can be Nvidia-Qwen-Coder.
+And the NV_KEY can be NVIDIA_API_KEY.
+Then, export NVIDIA_API_KEY
+equals your Nvidia key. Now, you can run
+grok-p "Explain this repo" -m
+Nvidia-Qwen-Coder. You can also use
+Nvidia's own NeMo Tron models. For
+example, Nvidia's model list includes
+Nvidia/NeMo Tron-3-Nano-30B-A3B
+and Nvidia/NeMo Tron-3-Super-120B-A12B.
+These are interesting for general
+reasoning and agentic workflows. The
+main thing is that with Nvidia NIM, you
+should copy the exact model ID from
+build.nvidia.com
+or from the models endpoint because
+availability can change and not every
+model behaves equally well with tool
+calling.
+This is a really good option for
+experiments. It is also good for people
+who want to test open models in a coding
+agent without immediately paying
+OpenRouter or running a giant local
+model, but there is a trade-off.
+Free hosted endpoints can be slower or
+rate limited and some models can become
+unavailable depending on load. So, I
+would not build an important production
+workflow on the free tier alone.
+For personal testing, tutorials, and
+benchmarking, it is pretty great. The
+third provider is OpenRouter free APIs.
+OpenRouter is the easiest one to
+understand. It gives you one API key and
+one OpenAI compatible endpoint for a ton
+of models.
+The base URL is
+https://openrouter.ai/api/v1.
+For free models, the simplest trick
+is that many open router model IDs end
+with colon free. For example,
+QN/QN3-coder:free,
+Z-AI/GLM-4.5-air:free,
+Nvidia/Nematron-3-super-120b-A12b:free,
+OpenAI/GPT-OSS-120b:free,
+and DeepSeek/DeepSeek-v4-flash:free.
+There is also openrouter/free, which is
+a free models router that automatically
+selects a free model based on what is
+available and what your request needs.
+For Grok build, you can create a model
+called openrouter-QNfree.
+Then export openrouter_api_key
+equals your open router key. After that,
+run grok-p quote list. The main files in
+this repo quote -m openrouter.dek Free
+model variants can make up to 20
+requests per minute. If you have
+purchased less than 10 credits, you get
+50 free model requests per day. If you
+have purchased at least 10 credits, that
+daily free model limit goes up to 1,000
+requests per day. So, this is not
+unlimited. It is free with limits, and
+if you are using it inside an agent, 50
+requests can disappear quickly because
+agents call the model many times during
+a single coding session.
+There's also the privacy side. Some free
+providers may have different data
+policies, so do not send private code,
+private customer data, secrets, or
+anything sensitive through a free
+endpoint unless you have checked the
+provider policy and you're okay with it.
+My general recommendation is simple. Use
+open router free models for learning,
+benchmarking, and disposable projects.
+Use Nvidia NIM for trying strong open
+models through a clean OpenAI compatible
+endpoint. Use GLM coding plan as the
+cheap daily driver, then keep Grok or
+another premium model for situations
+where you need the strongest reasoning,
+or you specifically want XAI's model
+behavior.
+This is where Grok build becomes much
+more interesting to me. If it was only a
+$300 tier coding agent, I would say it
+is cool, but most people should ignore
+it for now.
+But because the docs show custom model
+configuration, headless mode, skills,
+plugins, hooks, MCP servers, and model
+providers to be swappable, Grok build is
+not fully proven yet. It is early beta.
+It is gated and we still need to see how
+good the actual coding performance is
+compared to Claude code, Codex, Gemini,
+CLI, Kilo, Rue, and other tools.
+But the foundation looks pretty good.
+Plan mode is good. Headless mode is
+good. ACP support is good. Claude code
+compatibility is good. Skills and
+plugins are good. Sub agents are good.
+And custom models through config.toml
+are probably the most important part for
+people who care about cost.
+So, if you get access, I would not just
+test it with Grok. I would test it with
+GLM coding plan, Nvidia, Nim, and open
+router free models, too. Run the same
+tasks across all of them. Try a small
+bug fix, a UI change, a repo
+explanation, a refactor plan, and a
+headless script. Then compare not only
+the final code, but also the number of
+calls, how often it needs permissions,
+how good the diffs are, and how well the
+model uses tools. Because in coding
+agents, the model is only half the
+story. The agent harness matters a lot.
+A weaker model in a better harness can
+sometimes feel more useful than a
+stronger model in a bad tool.
+And if Grok build can become a good
+harness where you can plug in cheaper
+and free models, then this could be
+genuinely useful. Overall, it's pretty
+cool. Anyway, let me know your thoughts
+in the comments. If you like this video,
+consider donating through the super
+thanks option or becoming a member
+[music] by clicking the join button.
+Also, give this video a thumbs up and
+subscribe to my channel. I'll see you in
+the next one. Until then, bye.
+&gt;&gt; [music]

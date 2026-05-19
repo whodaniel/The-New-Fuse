@@ -25,6 +25,9 @@ PROCEDURAL_PATTERNS = [
     re.compile(r"\b--[a-zA-Z0-9-]+\b"),
     re.compile(r"\{[^\n]*:[^\n]*\}"),
     re.compile(r"\b(?:script|payload|endpoint|api|command|cli|json|yaml|config)\b", re.IGNORECASE),
+    re.compile(r"\b(?:first|second|third|then|next|finally|step)\b", re.IGNORECASE),
+    re.compile(r"\b(?:install|setup|set up|configure|create|build|implement|deploy|integrate|run|test|benchmark|optimi[sz]e|refactor|migrate|ship)\b", re.IGNORECASE),
+    re.compile(r"\b(?:repository|repo|workflow|pipeline|agent|prompt|tool|sdk|framework)\b", re.IGNORECASE),
 ]
 
 STRATEGIC_PATTERNS = [

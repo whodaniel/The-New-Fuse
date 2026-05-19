@@ -1,0 +1,116 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-4893b549e6f7141d",
+  "generated_at": "2026-05-19T07:35:55+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-nyO60uzTnP4",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=nyO60uzTnP4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=9&t=342s&pp=iAQBsAgC",
+    "source_title": "Making $$ with AI Agents",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:35:55+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=nyO60uzTnP4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=9&t=342s&pp=iAQBsAgC",
+    "source_digest_sha256": "13bf6eb6c591e0aa4f44b8f2c809225686ddf296c37182c6a5fa2d053641b033"
+  },
+  "taxonomy": {
+    "procedural": [
+      "First, where is the",
+      "agent builder that allows you to build",
+      "digital employees, allows you to build",
+      "Agent so that you can outperform 99.9%",
+      "to give you $1,000 of Hyper Agent",
+      "build the business of your dreams.",
+      "catch is first a,000 people do it, get",
+      "play with Hyper Agent, to automate some",
+      "stuff, to do some research, to build",
+      "Um, but first, Howie, I have been",
+      "&gt;&gt; Agent psychosis.",
+      "And then two I think",
+      "hyper agent is I have like 30 different",
+      "this thing for the first time like",
+      "not like an autonomous agent interaction",
+      "how quickly we can deploy agents into",
+      "aren't motivated to create startups",
+      "know, who's going to win the next",
+      "am ambitious enough prompt or task in",
+      "before structurally how could you build"
+    ],
+    "strategic": [
+      "applying frontier agentic development",
+      "new model of software development is not",
+      "And so it's clear that the model",
+      "a cost like you can create some serious",
+      "the cost per token of the frontier",
+      "clearly the most expensive model right",
+      "you know adapt to this mental model of",
+      "cheap dumb model but like you're not",
+      "would it have cost a human to do the",
+      "And so, like, even if it cost me, let's",
+      "opportunity it cost my time.",
+      "time cost versus wow $150 that sounds",
+      "adoption curve in enterprise history,",
+      "of adoption, right?",
+      "to where like a an AI model can like",
+      "pitch was hyper local uh market reports",
+      "research on the landscape of the market.",
+      "got full coding capability.",
+      "dollar market which is going to be super",
+      "like mini or medium market like couple"
+    ],
+    "governance": [
+      "like risk mitigation that like every",
+      "I risk wasting $100 million and maybe"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.025,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=nyO60uzTnP4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=9&t=342s&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 20 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 30468,
+    "unit_count": 816
+  }
+}

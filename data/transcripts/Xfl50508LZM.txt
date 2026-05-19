@@ -1,0 +1,824 @@
+Hi everybody. Uh my name is Lori Voss. I
+am head of developer experience at
+AriseAI. Uh in a former life, I
+co-founded npm Inc. So some of you may
+remember me from when I used to talk
+incessantly about JavaScript. Now I talk
+incessantly about AI. Uh what I think
+about mostly is how to test AI systems,
+how to make AI systems that actually
+work. Uh so we've got a good long
+stretch of time today. Uh so we're going
+to cover a lot of ground. Uh we're going
+to start with the fundamentals. Uh what
+eval are uh why you need them and why
+agents make evaluation harder than a
+simple LLM call is. Uh and then we're
+going to set up tracing uh which is how
+you capture the raw data that you need
+to run evals in the first place. Uh
+we're also going to uh run a simple AI
+agent with the claw a agent SDK uh and
+look at the traces that it produces.
+Once we've looked at the data uh we're
+going to do something that most of the
+tutorials skip. Uh we're going to
+actually look at the data. We're going
+to read our traces, categorize what went
+what what went wrong, uh and figure out
+what to uh measure before we write a
+single eval. Uh then we're going to
+write three kinds of evals. We're going
+to write uh a simple code eval,
+deterministic, uh cheap, easy to run. Uh
+we're going to use some of Arisa's
+built-in evals. Uh and then we're going
+to use uh LLM evals. uh where an LLM uh
+judges the semantic content over the
+output uh and judges whether things have
+succeeded or failed in a more flexible
+uh non-deterministic way. Uh we are
+going to use the built-in eval and we're
+also going to write a custom eval from
+scratch.
+Uh and we'll also test whether our
+judges are judging correctly, a process
+called meta evaluation.
+Uh and then we'll finish with data sets
+and experiments. This is how you iterate
+on your agent. This is how you imp use
+evals, not just to tell you whether
+things went wrong, but to improve your
+agent. Uh, and we're going to do at the
+end a brief look at what comes next
+after you've got this stuff down. So,
+practical frameworks you can use after
+you leave this room, the impact
+hierarchy, the data flywheel, uh, and a
+quick tour of techniques like, uh, pair
+wise evaluation and reliability scoring.
+Um,
+this is uh the slide that I left up
+while you were waiting. Hands up if you
+intend to actually attempt to code
+along.
+Wow, impressive. Also, just impressive
+how many people are in this room? Like
+this is the, you know, last session of
+the day and it's eval. And do you know
+that it's about eval? This is like it's
+not the most exciting topic. I'm very
+proud you're here. Uh, this workshop is
+about evaluating an agent though. So,
+it's not going to be about building an
+agent. I'm kind of assuming you've
+already built an agent and you're having
+problems with it going off the rails
+radically. So the uh learner notebook
+that you're going to get there has an
+agent already built for you. We are not
+going to spend any time on how do you
+build an agent and what makes an agent
+good or bad. We are going to be
+evaluating this agent that I've already
+written. Um we're also going to be using
+Claude both to power the agent and to
+power the evals. Uh I picked claude
+because everybody seems to have switched
+to cloud in the last couple of months.
+like I'm hoping you have a cloud AP a
+cloud account already so you don't have
+to sign up for an API key right now but
+if you do uh now is the time um you can
+if you want to use open AI or Gemini
+with our stuff it is completely open
+source it is uh open standards it will
+work with those as well uh but for
+simplicity I have not uh included any
+examples of how to use open AR or Gemini
+in this stuff um you will also need a
+free Phoenix cloud account
+Fenix is open source and will run on
+your laptop, but Fenix Cloud doesn't
+involve installing anything, so it's the
+easier way to get up and running faster.
+Um, Fenix Cloud is where our log data
+will be sent. Uh, so you'll need a Fenix
+API key to uh get permission to send it
+there. Um,
+hopefully you've got these links to
+these slides because I'm going to
+advance them in a second. Um, and really
+you only need the one to the notebook
+because the notebook has the links to
+everything else in it.
+uh who is at this point completely
+confused and needs some help because
+I've built in some time for that. Feel
+free to ask questions uh and and don't
+don't worry about it. I've built in time
+for asking like I don't know what this
+is. I'm accidentally on the wrong
+product. Uh speaking of which, uh Arise
+has two products. One is called Arise AX
+and one is called Arise Phoenix. We are
+working with Arise Phoenix today. If you
+go to our homepage, there's a big button
+on it that says sign up and it will sign
+you up for AX, which is the enterprise
+product, and you don't want to do that.
+If you're completely confused about
+where your API API key goes and what
+your host name might be, it is because
+you've signed up for the wrong product.
+So, make sure you are signing up for
+Phoenix. Uh,
+so without with that stuff out of the
+way or at least while you're frantically
+still installing things, uh, let us
+cover the basics. What is an eval? Who
+in the room hand show of hands feels
+like they already know what an eval is?
+Like really knows. Okay, great. You're
+in the right room. Uh,
+so one of the things that bugs me about
+evals as a field is that we use a whole
+bunch of words that come from MLAN. We
+use a bunch of jargon that comes from M
+MLAN that AI engineers do not need to
+know and do not understand and makes it
+needlessly opaque. So you can think of
+traces, you can think of ebals as being
+tests because that is what they are. And
+the things that power our tests are log
+data. And the log data we call traces.
+Um
+so just as logs record what your server
+did at runtime, traces record what your
+AI did. Every agent call, every tool
+call, every LLM invoc invocation, all of
+the inputs and outputs from your AI
+application uh are recorded as traces.
+uh and the building blocks of traces are
+called spans. Um each span represents
+one step uh in the execution. So an LLM
+call is a span, a tool call is a span,
+uh a full agent turn is a span that
+contains other spans inside of it. It's
+this nested data structure uh that you
+know can be easily imagined as JSON
+because it is JSON a lot of the time. Um
+each span records the its input, its
+output, but also a bunch of metadata. Uh
+so things like timing and token count
+token counts uh stuff that you need to
+understand what went on. Uh and that is
+your mental model today. You are writing
+you are writing tests for a brave new
+world of applications that are very hard
+to test. So it's not rocket science.
+Uh
+why do we need them? Well the reason we
+need AI eval is because of the vibes
+problem. Uh a lot of people build an AI
+feature and test it by running a few
+queries and sort of going does this look
+right? Um,
+then you ship it and it fails on inputs
+that you didn't test. It fails on edge
+cases. It fails on people being
+adversarial and putting bad stuff in
+there that you weren't expecting. Uh,
+and it fails most often on people asking
+questions that are dumber than you were
+expecting. That is the the primary way
+that agents fail is people using
+vocabulary that you weren't expecting uh
+to hit an agent that is expecting a
+bunch of nouns and verbs that those
+people don't know. Um,
+so the usual fix unit test doesn't work
+here. Uh, and the reason that's true is
+because the same prompt will produce
+different text on every single run, but
+those outputs, those different outputs
+might all be correct. There's a huge uh,
+space of potential correct outputs. So
+you can't just have basic string
+matching like most unit tests do uh, to
+make sure that your tests are running
+successfully. So a lot of teams fall
+back on human review. They watch it,
+they run it, they ship it. uh and that
+doesn't scale because it doesn't catch
+regressions and most importantly it
+doesn't run in CI.
+So what you can't do without V evals is
+you can't change your system prompt to
+fix a tone issue because the tone might
+get better uh but suddenly the bot might
+be hallucinating product features uh and
+without evals you won't catch that.
+Um,
+without eval catch that because until a
+user report uh reports it with but you
+can do something called a faithfulness
+eval uh which will tell you whether or
+not your bot is uh actively using its
+source material correctly. Uh and we're
+going to show you how to build one of
+those today. Um
+and every prompt change potentially
+affects every kind of input that users
+send. This is another way in which uh
+eval uh AI agents are different is if
+you change one thing about your prompt,
+it doesn't just change the thing you
+were trying to change. It changes
+everything that the agent does because
+it the agent absorbs the prompt as a
+block. Uh and will do unpredictable
+things as you ch make even minor changes
+in wording. Uh so you don't want to fix
+one thing and break another. Uh and eval
+give you a way to uh test that
+everything is working the way that it is
+supposed to including all of the things
+that it used to do. Uh you also can't
+switch models without eval. And this is
+very important because the uh big model
+labs come out with a new model every
+couple of months. Uh and the models are
+meaningfully different in how they you
+know they're not just better, they're
+different. Uh so a prompt that worked
+for sonnet 4.5 does not work for sonnet
+4.6. Uh and if you don't have evals then
+that's a very expensive and cumbersome
+process where you have to test
+everything that you tested previously
+again to see if it works. Uh whereas if
+you have a suite of evals you can just
+run a regression and know whether or not
+it is safe to upgrade.
+Um and this is not theoretical uh real
+teams that are shipping real AI agents
+that people use all the time. Dcript
+bolt anthropic itself with cloud code
+this is how they do it. Uh they ship
+they all followed the same pattern. They
+started by shipping fast and checking
+things with vibes and discovered that it
+didn't scale and moved on to uh formal
+evals. Uh so that's the arc that we're
+going to follow today.
+Like I mentioned, there are two types of
+evals. There are code evals uh which are
+deterministic functions you write
+yourself. They're just you know basic
+Python or TypeScript. Uh they run in
+milliseconds and because they are just
+code uh they cost basically nothing to
+run. Um, you can do a lot with code
+eval. If the output of your agent is
+supposed to be JSON, you can test
+whether it is JSON. You can test whether
+it is under 500 tokens. You can uh you
+can ask you can check whether it
+mentions the thing that you asked about.
+Um, the big advantage of code eval is
+that they're super fast and super cheap
+and totally reproducible. So, if you
+have something simple that you need to
+test, you don't need to throw an LLM
+eval at it every single time. you can
+get quite far with things that look
+basically like old style unit tests
+although there is a lot of subtlety to
+how to how to uh put them together that
+we're going to cover today. Uh the
+downside of code ev valves is that like
+unit tests they're going to be brittle.
+When your output becomes complex or uh
+extremely nondeterministic
+uh you're going to find that you need to
+move to the other type of evals uh which
+is LLM as a judge. Um
+with LLM as a judge use a second a
+second LLM to judge the output of the
+first LLM. Usually you use an LLM that
+is more powerful than the one that you
+put into production.
+um you grade your outputs against a
+rubric. Rubric being another one of
+those terms that the ML engineers snuck
+in there. A rubric is just a set of
+rules. It can be it's just a prompt
+basically uh that defines all of the
+things that you need to uh test.
+Um and because LLMs are p LLM evals are
+powered by an LLM, they are a lot more
+flexible. So uh you can say was this
+response factually accurate? You can say
+did it stay faithful to the source
+material. You can ask is the tone right
+for a customer inter interaction.
+There's no there's no kind of unit test
+that you could write that would check
+for tone. But an LLM is very good at
+that kind of stuff. The strength of LLM
+judges that they understand meaning uh
+not just basic strings. But LLM as a
+judge has trade-offs. Uh the biggest
+weakness is that they are expensive uh
+both in terms of time and actual money.
+um and they are nondeterministic
+themselves which means that your LLM as
+a judge can itself be wrong. You have to
+prompt your LLM to be a judge and that
+prompt is just as complicated as the
+prompt that you were putting into your
+application itself. So you have to spend
+some time making sure that your uh that
+your LLM as a judge is aligned that your
+LLM as a judge is actually judging what
+you intended it to judge and that it
+does that in a way that you believe is
+correct. Um there's also a third type of
+eval which is human evaluation. Human
+evaluation is the gold standard. It is
+great. Humans are the best at judging
+whether things are good or bad according
+to hum other humans. Uh the problem is
+that humans don't scale. You need this
+stuff to run in CI, you need it to run
+thousands of times a day. Uh there is no
+way even if you work at you know Meta or
+Google and you can hire you know the
+population of a small country to do your
+evals for you that it's going to be
+cost-effective to have humans doing your
+evals for you. Uh so uh what we use
+humans to do is to build what we call
+you're going to hear about this later a
+golden data set of known good answers
+that you can then judge your evals
+against. Uh, a fun fact about human
+annotators is that about 50% of the
+time, even if you are using humans to
+judge your the output of your of your AI
+application, uh, they're going to get it
+wrong 50% of the time because if you
+hire somebody to do nothing but test
+your code, they're going to get tired.
+Uh, and uh, just fatigue makes them miss
+things roughly 50% of the time. But Kod
+evals, human evals, and LM as a judge,
+they are not competing approaches. They
+are complimentary approaches. A real
+eval suite is going to use all three of
+these at the same time.
+So the question becomes when do you use
+which? Uh use code evals when the answer
+is deterministic. So format validation,
+length limits, forbidden phrases,
+required fields, all of that kind of
+stuff you can very deterministically
+check. Uh
+uh and then use LM judges when you need
+semantic understanding. So like I said,
+a correctness eval asks did it answer
+the question accurately? uh a
+faithfulness eval asks did it stick to
+its source material and only its source
+material when you were answering that
+question. Uh and you can keep you have
+to keep humans in the loop uh for
+failure modes you haven't seen before.
+You have to make sure that your evals
+are being run in a way that humans
+believe is real and believe is correct.
+Uh because LLM judges can be wrong.
+Um,
+and all of that stuff is true of any
+application that uses an LLM for
+anything, but agents make it even harder
+because agents have cascading failures.
+Uh, and in an agent, you have not just
+one thing that you are testing, but a
+series of things. You have an agent that
+that can take any number of paths. And
+an early misstep on one of those paths
+can uh lead the agent to radically
+incorrect directions. So if you imagine
+uh asking an e like if you have an eval
+that has sorry if you have an agent uh
+that has is making tool calls uh you
+have to test uh whether the agent picked
+the right tool whether it sent the right
+parameters to that tool whether it
+correctly understood the output of that
+tool and that's just adding one tool
+call whereas an agent can run multiple
+tool calls in a single session uh and
+each of those tool calls relies on the
+output of the previous tool call. Uh so
+it gets very very complicated very very
+quickly which is why you generally need
+to throw an LLM at the problem. Uh
+uh and then there's multi- aent systems.
+If you haven't made things complicated
+enough uh you get additional levels of
+complexity because then you have to test
+did my routing LLM uh choose the right
+sub agent before it got before anything
+started happening and then did my sub
+agent correctly understand what it was
+being asked to do? Did it pass the
+information back correctly? Did it stop
+when it was supposed to? Uh, so all of
+this stuff stuff builds up and cascades.
+Uh, an example uh would be you ask your
+agent to uh write a report on Tesla. Uh,
+the first agent that does the research
+is like, "Oh, I guess you must meet
+Nicola Tesla." It writes you, it sends
+you a whole bunch of information about,
+you know, the 18th century inventor. uh
+and then you output an investment case
+that is based entirely on uh you know
+whether Nicholas Tesla was a good guy uh
+and that gets forwarded to your boss uh
+and nobody notices because the agent was
+just doing this all autonomously that is
+the cascading failure that we are trying
+to avoid.
+Uh but agents can also do the opposite.
+Uh they can get things right in a way
+that you weren't expecting. So one of
+the hazards of writing evals is writing
+evals that are too prescriptive. You
+don't want to write an eval that says
+I'm expecting it to call tool A and then
+tool B and then make decision C uh and
+then get the answer because the agent
+might find a way to be more clever than
+that. Um this happens a lot in
+production. The agent will find a
+loophole or it will find uh a faster way
+of doing what you were of doing what
+it's doing. Especially if you've just
+upgraded uh your model, it will get
+better at doing things that it was doing
+before. It will do them in fewer steps.
+So your evals will break if they are too
+prescriptive. Um
+uh yeah and that's a hard problem. Um
+there's another way to categorize evals
+into two groups into two groups which is
+uh capability evals uh versus regression
+evals. So uh a capability eval is giving
+your agent a hill to climb. You've given
+it something that it is that you know
+that it's bad at and something that it's
+going to mostly fail at. uh and you are
+giving it a loop where it can get
+progressively better at passing this
+capability eval. Once it's hit 100% on a
+capabil capability eval, a capability
+eval becomes a regression eval. You
+build that into your into your test
+suite and you make sure that it can
+always do the things that it used to be
+able to do and you give it a new
+capability eval where it climbs a new
+hill and adds a new functionality. So in
+the life of your eval suite, you're
+going to be constantly turning
+capability evals into regression evals.
+Uh
+this is what an eval result looks like.
+Uh it's very simple. Uh you can imagine
+a JSON object with this stuff in it
+because that's what it is. Uh you get a
+score uh a label uh that is human
+readable. Uh and LLM judges add a third
+thing. They add an explanation. Um, code
+evals don't produce explanations because
+they are just code. You didn't build an
+explanation into it. But LM evals uh are
+extremely helpful in that they don't
+just say why it was that something was
+wrong. They say why they think it was
+wrong. As we're going to see, this is
+extremely helpful when you are building
+your eval suite. Um,
+because it can tell you what was wrong.
+It can tell you what was missing. It can
+tell you what the agent should have done
+differently. It will give you hints as
+to how to make your prompt better, which
+is extremely helpful. Uh here's what an
+explanation from a real eval looks like.
+So uh in this case the uh prompt was to
+the user was asking for budget travel
+recommendations uh for Tokyo. Uh and the
+LLM as a judge has said okay well they
+gave travel recommendations but they
+didn't specify how much everything cost.
+Uh so if I'm ask if I'm looking at
+budget travel uh that's a failure.
+That's a really subtle distinction,
+right? Because you if you were saying,
+you know, did it give me travel
+recommendations to Tokyo? It absolutely
+did. Uh but it didn't follow everything
+I asked it to do. It didn't follow the
+subtlety of the original request.
+Uh and that explanation is what makes
+eval actionable. Uh you know what to fix
+in the prompt because you have an
+explanation that says this is what went
+wrong. uh and more usefully when you run
+evals across thousands of traces uh or
+thousands of spans you will find uh
+patterns you will find uh that your
+agent fails on the same kind of problem
+in the same kind of way lots and lots of
+times and that gives you a hint as to
+what is a one-off failure you know just
+the agent being weird and
+nondeterministic versus what is a
+systemata systematic failure which is
+likely to be a problem with your prompt.
+Uh, of course, if you've run uh an eval
+against, you know, a thousand traces uh
+and you've got a thousand explanations,
+then you have you as a human have to
+read a thousand explanations, which
+provide which uh creates a new problem,
+which is reading a thousand explanations
+and categorizing them all is kind of a
+pain in the ass. So, you get a third LLM
+involved. Uh, and you get the LLM to
+read the explanations and turn them into
+categories uh until it's LLM's all the
+way down.
+Um
+so this is the full loop that we're
+going to build. Instrumentation is where
+you start. That is where you start
+capturing the data. Uh you get traces,
+you evaluate them, you annotate your uh
+evaluations, you analyze the results. Uh
+and then you change your prompt, you
+change your application, you improve
+your application, and you start over. So
+let's get started with the actual eval.
+Uh,
+who who wants to be set up with Phoenix
+is not yet set up with Phoenix?
+Okay. What do you need? What where are
+you stuck? Or are you not?
+&gt;&gt; Okay. Sorry. Great. Excellent. Everyone
+is set up with Phoenix as far as I can
+tell. Or they're not brave enough to put
+their hand up and say they aren't. Uh,
+so what is Phoenix now that I've been
+talking about it for, you know, 20
+minutes? Uh, Phoenix is ARIS's
+open-source AI observability platform.
+What it does is it captures your trace
+data. It captures those logs that we're
+generating. So, every LLM call, every
+tool call, every agent step uh with the
+inputs and outputs at each point. Uh,
+and it also captures and stalls your
+stores your evals and gives you a UI for
+examining all of that. Uh, and uh, it
+also gives you a way to run uh,
+experiments on that data. Uh, so that
+you can test how things are improving
+and make your application better. Uh
+like I said earlier, you can run it
+locally on your laptop if you want to,
+but we're using Fenix Cloud today
+because that involves not installing any
+software.
+So let's look at our actual notebook.
+Uh
+the first thing is the pip install.
+We're installing the cloud agent SDK.
+Like I said, we are installing open
+inference instrumentation cloud agent
+SDK. This is the magic. every uh SDK,
+every framework that is out there has a
+uh integration package written by us uh
+that automatically instruments
+uh and starts collecting logs from that
+framework. This is why uh Arise Phoenix
+is so useful is you don't have to dig
+into the bowels of your framework or dig
+into the bowels of OpenAI or Claude or
+Gemini uh and get it to send logs to
+you. the people who built that software
+have already decided on this uh open-
+source uh standard called open inference
+uh and they've plumbed in all of those
+log lines already. So all you have to do
+is tell it to start sending those logs
+to a particular place. Uh and that is
+what we're going to do in a bit. Um
+so let's move on to uh the very first
+call. Um
+we've got uh those uh API keys. My API
+keys were pulled in via Collab Secrets.
+Uh, but you can just paste them in
+because no one's going to see your
+screen, right? There's only you in this
+room. Uh, and then these two lines of
+code are the magic. You import phoenix.
+Uh, and you call register. You give it a
+project name. That's how you know what
+name it's going to show up in inside of
+uh, Fenix. Uh, and you tell it auto
+instrument equals true. And that is the
+magic command that tells it dig into the
+internals where you already know how to
+do stuff. Uh and turn on all of the
+logging. Uh it's complaining at me in
+this error message uh because it is
+using a a a span processor which is good
+for demos but not good for production.
+In production, you're going to get
+thousands of spans at once. So you want
+to use a batch processor. Uh but this is
+not that. So uh it doesn't matter in
+this particular instance.
+Um
+Oh yes, we also brought in Anthropic uh
+up in the imports uh because we're using
+Anthropic to do the actual uh to be the
+LLM that runs the LMS as a judge, which
+is why we have to bring it in separately
+to the agent SDK.
+Uh the cloud agent SDK, if you haven't
+used it, is a very very simple framework
+for building agents. That is why I
+picked it because it's nice and simple
+and it doesn't have a whole bunch of uh
+ceremony. Um you can uh the agents can
+use the can use tools, they can search
+the web, they can maintain conversation
+across turns, which is really all I need
+my agent to be able to do for the
+purposes of this example. Um OpenAI has
+their own agent SDK. Uh and of course
+there are whole agent frameworks like
+Crew AI, line chain, master, lama index,
+uh all those sorts of things uh that
+will let you build lot a lot more
+elaborate agents. uh and we have
+instrumentation packages for all of
+them. So whatever you have used to build
+your agent, you can do the same two
+lines of code and just turn it on.
+Um
+so uh you can go ahead and run that
+call. Um
+&gt;&gt; question.
+&gt;&gt; Sure.
+&gt;&gt; I was cannot find where to generate the
+API.
+Can I do that? Go to
+&gt;&gt; happened to me. Um,
+&gt;&gt; go to spaces.
+&gt;&gt; Yeah, you got to initialize one space
+beforehand.
+&gt;&gt; Just launch the space and that's what
+you want.
+&gt;&gt; Thank you.
+&gt;&gt; Great.
+&gt;&gt; Question actually.
+&gt;&gt; Sure.
+&gt;&gt; What's the Fenix collector endoint?
+&gt;&gt; The Phoenix collector endpoint is the
+thing that I called the host name. Uh,
+&gt;&gt; so it's um
+&gt;&gt; it's app.fsyou
+username.
+&gt;&gt; All right.
+Uh, anybody else need help on that kind
+of stuff?
+Cool. It is warm in here. Um,
+uh, so let's look at the actual agent.
+Today we are building a financial
+analysis agent. Uh, a very very simple
+agent indeed. It has just two sub aents.
+Uh, it has one agent that does research.
+if you give it a stock ticker or a set
+of stock tickers. It's going to uh
+search the web for information about
+those companies. Uh and then it passes
+that information to uh the second part
+of the agent uh which writes a concise
+financial report about that research. Uh
+obviously a real financial research
+agent which is a thing people build in
+production all the time uh is going to
+have a lot more elaborate databases to
+refer to. It's going to have a lot it's
+not just going to be doing web search.
+uh and it's also going to be able to
+write much more complicated reports. Uh
+but that is fundamentally what we're
+going to ask it to do. Um
+and here is how the uh two turns
+connect. You can see uh the cloud the
+cloud agent SDK maintains conversation
+context. Uh so turn one it's doing
+research. Turn two it's writing a
+report. uh and because they are both
+using in this line the claw SDK client
+uh that con the context from the first
+one is shared to the second one and
+that's all you really need to know about
+what this agent is doing. I'm not going
+to go into the details of the boiler
+plate there that is just uh handling
+output. Uh
+so next you set your API keys. Like I
+said you did all of that stuff already.
+Uh
+you've done your register step. Uh and
+uh I want to emphasize again if there's
+anybody in the room using Fenix AX, you
+are in the wrong place. You should be
+sorry. Using Arise AX, you should be
+using Arise Phoenix. But I think
+everyone's got that down now.
+&gt;&gt; It redirects you from one to the other.
+&gt;&gt; Oh, really?
+&gt;&gt; Oh,
+yes. Uh so we've showed the register
+function already. the register function
+to sets up open telemetry. Open
+telemetry also called hotel is used by
+all of the major observability
+providers. So anybody who's doing
+logging, Kubernetes logs, all that kind
+of stuff is done via hotel. There is a
+layer on top of hotel uh called um uh
+open inference which adds a lot of
+extensions to hotel uh that are LLM
+specific. So uh stuff like prompt text,
+completion text, token counts, which
+model was called, what tools were
+invoked, all of that kind of stuff is
+handled by, uh the open inference
+extension to hotel, uh that everybody
+builds for. Uh
+and now we're building our agent. Like I
+said, those those two steps. Um
+this part is just us setting up our uh
+agents. Uh we've create we're using
+claude haiku. The reason we are using
+claude haiku is because it is reliably
+dumb. It's not a very good agent. So
+it's going to make some mistakes which
+will then give me something to test
+against. Uh and I've given it one
+allowed tool which is web search. Uh and
+I've also given it a permission mode of
+accept edits. Uh because otherwise uh it
+keep it kept trying to prompt me to like
+be able to change files which turned out
+to be a mistake that we're going to
+cover later. Um, so it's cheap and fast
+and it's great for demos like this. Uh,
+and these are our two turns, research
+and write report. Um,
+and we wrap all of this in an async
+function called financial report. Uh,
+which is all we need to create an agent.
+Um,
+we also do this line here which is we
+are wrapping all of it in an open
+telemetry span. Uh the reason we are
+doing that is because by default uh the
+step one and the step two the research
+step and the write report step will show
+up in Phoenix as uh separate traces
+because they are separate agent turns.
+So we are here telling the agent that
+both of these should be considered a
+single agent doing a single thing. So
+we're just sort of preformatting our
+data to make it easy uh to handle the
+agent.
+Uh
+and with that done, we can run our
+agent. Uh if you run your agent now, it
+will take a minute or two. Um
+you can give
+[TRUNCATED]

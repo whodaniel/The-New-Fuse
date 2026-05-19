@@ -1,0 +1,708 @@
+The Chads of the Opensource community
+have been delivering some serious value
+in the AI coding space recently. It's
+almost too much to keep up with. So, in
+this video, I'm going to go through five
+tools that I have found recently that
+have pretty much become daily drivers
+for me. So, we're going to talk about
+what each one is, give a little bit of a
+demo, and talk about how or if you
+should use it. starting with a tool
+called CLI anything. So, one of the
+biggest bottlenecks when you're working
+with AI is that not every software that
+you use is like agent native. So, like
+there's a lot of stuff in the course of
+my day-to-day life that I wish I could
+give to a tool like clog code. So, in
+steps CLI anything which makes all
+software in air quotes agent native. So
+basically what this thing does is that
+you can use any opensource tool that you
+find on a place like GitHub and you can
+turn it into a CLI that your language
+model can use. So let's say for example
+a lot of people on YouTube like to use
+this tool called Excaladraw to draw out
+diagrams and this is actually an open-
+source library where they have premium
+features inside of their paid version.
+So, let's say that I wanted to actually
+use this thing with Claude code. So, I
+have an outline for a video maybe and
+there's specific things I want to
+diagram for people and I would like to
+be able to just tell Claude Code to go
+build the diagram. So, all I need to do
+is clone this repository to my computer,
+which I have done. And we can see up
+here that I have this now running on my
+local machine. So, if I wanted to come
+through and draw pictures, I have it
+running and working on my machine. Now,
+if I wanted to turn this into an actual
+CLI that I could use with something like
+cloud code, I can come through here and
+I can type in the command slash CLI
+anything. And so what this is going to
+do is it has a obviously a series of
+commands and skills that it knows how to
+use in order to look at the back end,
+look at the front end, and then from
+that build an actual CLI so that we can
+interact with all of that stuff
+automatically. So in this case, I could
+say, "Hey, yeah, I'm trying to build it
+for this repo." And it's going to move
+through and do its thing. So while that
+thing's running, we can look at some of
+the use cases. For example, someone
+built this to actually automatically
+play the game Slay the Spire. Another
+person built it to create an automatic
+video captioner CLI tool. So they can
+take videos, pass it through this thing,
+and it makes those captions for them.
+So, there's actually a ton of these that
+the community has already built like
+browser automation tools, nitin workflow
+automations, drawing tools, mermaid
+editors, image generation tools. I mean,
+pretty much anything you can think of,
+if you can access the source code in
+some way, you can build the thing. So,
+now that this thing is done, it has
+built out a complete CLI for me to use
+with in this case. So if I came through
+here and said use the CLI anything
+escaladraw to draw a diagram of how
+knowledge graphs work, we can see that
+it moves through and it has complete
+context on how to actually build this
+thing and it is moving through and
+building us a diagram. So if I was to
+now pop down into the tool, we can see
+it was able to move through and build
+this for us automatically. So I didn't
+have to come in and touch this.
+Obviously, if I was really going to try
+to build a graph, I would give it a lot
+more instruction on what I wanted
+represented. But this is how we can turn
+any tool into a CLI. But next up on the
+list is one of my favorite new libraries
+of 2026. So, in the world of AI coding
+and vibe coding and being a builder, the
+world seems to be diverging into two
+camps. Camp one is more of the simple is
+better type of approach that gives you a
+lot of flexibility and control whereas
+the other camp is more complicated and
+autonomous and it just does everything
+for you automatically. And now I'm not
+convinced that that super complex camp
+is winning. And so a really strong
+example of the simplicity with
+flexibility camp is the compound
+engineering plugin from every inc. So
+the concept behind this is actually
+pretty simple. There's six steps.
+Brainstorming, planning, doing the work,
+reviewing the work, compounding the
+learnings, which is key, and then
+repeating the process. And so the thing
+that's really cool about this is that as
+you're building things inside of your
+app, it documents the learnings as you
+go, as you complete each cycle of
+building. And it really makes the future
+work that you do faster and easier
+because you don't make the same mistakes
+and you can reuse things that you've
+already spent a lot of time and tokens
+to come to the conclusion about. Now, I
+actually did a full video on this
+earlier in the week, which I'll link at
+the end of this video if you want to see
+it in detail, but basically it works
+like this. Now, I've used probably every
+major like specd driven development type
+of tool. GitHub spec kit, Kira, Ora
+superpowers, be mad, be happy,
+agent skills, get done library. And
+if I had to choose just two of those to
+move forward with, I honestly might pick
+compound engineering alongside something
+like Ora superpowers, which I think are
+more complimentary than things that are
+one or the other. Here's the phases that
+it has. So the first stage is ideate,
+and this one they consider optional, but
+this is where we can discover project
+improvements through divergent ideiation
+and adversarial filtering. Now, what
+does that actually mean? What this tool
+is going to do is it's going to actually
+look at your codebase and it's going to
+look at what your query was, like the
+thing you want to ideulate around or
+improve, and it's going to come up with
+a list of like 30 to 40 different
+improvements that it could make. And
+then it's going to use this adversarial
+agent to decide which of these is
+actually the right one for what you are
+trying to do and what's going to work
+best for your project. Now, once you've
+decided on a few of these that you want
+to take forward, the next step is the
+brainstorming skill. And so, what this
+one does is it takes that idea that you
+just landed on and it really hashes out
+and explores the requirements and the
+approaches that you could take to doing
+it before you really get into the
+planning phase. And this thing is really
+killer because it does churn up a lot of
+contradictions or force you to reconcile
+your assumptions before you decide to
+move forward into the planning phase. So
+once you enter the planning phase, this
+is where we take those ideas, turn them
+into very detailed implementation plans.
+We then call the work command to
+actually execute those plans. And then
+one of the things that I was most
+impressed with was how the review
+function works. So there are a bunch of
+different sub aents that get
+conditionally called based on what type
+of thing you are building. So if you're
+building a back-end feature that maybe
+doesn't need a ton of front-end work or
+doesn't have any front-end work, then
+it's not going to call the front-end
+agent in order to do anything. But if
+you are working on maybe authentication
+flows, it's going to actually call the O
+reviewer to make sure that what you're
+doing is correct. And now the last
+command is the compound command. And
+this is where it takes everything that
+you just worked on throughout this
+entire iterative process for this
+feature or in this branch and it
+documents it into major learnings that
+you take forward into future sessions.
+So, if I just worked on a feature that
+was improving how I manage the context
+with my LLM calls inside of the chat,
+the next time I go to touch this
+feature, it's going to know to pull
+those learnings forward and not make the
+same mistakes that it potentially made
+in the past. And so, this is where it
+gets the name compound engineering.
+Every time we complete something, that
+knowledge should be carried forward into
+the next stage. So this tool is pretty
+sick, but how do you even decide and
+validate what to build in the first
+place? Well, our next tool that we are
+going to look at helps with exactly
+that. So I think something that's been
+really lost in like the AI mega cycle
+that we are riding right now is the role
+that product managers have historically
+played. So when I worked at my first
+tech company, I loved the product
+management team because they were really
+great at defining the what and the why
+of what their team was going to build.
+The engineers then dealt with the how
+and the whether or not to do certain
+things. So if an engineer is the pilot,
+the product manager might be the
+navigator. And so this library is a
+product management skills plugin. And so
+inside of this repo, it's technically
+eight different plugins that you can use
+depending on what you're doing. Product
+discovery, product strategy, execution,
+market research, data analytics, go to
+market strategy, marketing growth
+strategy, and a generic toolkit. So
+depending on where you are in your
+process of building things, some of
+these may be more or less needed or
+relevant for you. But let's say for
+example that you are a developer. You
+already have an app. You have a few
+users and you wanted to create an actual
+structured interview that a product
+manager might actually use when they
+interview customers to help kind of
+explore what type of features and things
+they might need next. Well, there's a
+skill that helps you do that. So, let's
+actually take a look at one or two of
+these and how they work inside of this
+goto market strategy. One of the ones
+that we have access to is called a
+growth loop. So how can we build
+features of the product that actually
+serve to grow the user base more and
+more? So an example of this might be
+something like Figma where anybody
+that's a user of Figma that builds stuff
+in Figma can share a public URL so that
+anybody else can go and view what they
+have built. And that type of thing
+creates a flywheel of growth where more
+people discover the tool and then end up
+signing up for the tool. Another really
+good example of that was notion. This is
+part of the reason that notion had
+templates everywhere that everyone and
+their mother wanted to sell people. It
+was a form of a growth loop. So let's go
+look at one of our projects and see how
+we could implement one. So, for example,
+I could come down into one of my
+projects, which I've been building a
+little bit on this channel and in my uh
+paid group, which is a AI native like
+cooking and recipe companion app. And
+so, I could come through and I could say
+/growth loops, check out our repo, and
+then make suggestions, right? Kind of
+vague, but we'll see what this thing can
+actually go out and do. Okay, so that
+thing processed for a few minutes, and
+now we have a few different
+recommendations on growth loops for this
+app. So, the target user are like more
+ambitious home cooks, 28 to 45. They
+cook at home regularly. They're past the
+basics, right? They know how to actually
+like cook things that aren't eggs in a
+skillet for the 50th night in in a row.
+And they like to cook new things and
+explore food. So, now it's gone through
+and it's made a few different
+recommendations. So, we can look at one
+of these. This is the one that thinks
+has the highest fit. And the concept
+behind this one is that the output of
+what users make is inherently sharable
+content. So you make something, you cook
+it, it's delicious. You can very easily
+share that. And so the general like user
+journey of this thing is they cook a
+recipe and they really like it. Maybe a
+guest at their house asks like, "Oh my
+god, this is amazing. Where did you
+learn how to do this? What's the
+recipe?" They share a link to the recipe
+in the app. The friend signs up, they
+cook it their own, and then that process
+repeats and it starts spreading out.
+Right? So that's an example of the type
+of thing that you can get out of just
+one of these skills. I mean, there's
+dozens and dozens of skills like this
+inside of this repo, but we could run
+through and run a separate one. So, if
+we cleared the context out, another one
+that we could run, for example, is the
+marketing ideas. So, we're going to give
+it a similar command to say, "Hey,
+explore the codebase first." Now, if I
+had like a a markdown file or something
+that explained who the avatar is and all
+that type of stuff, I wouldn't have to
+tell it to go explore the codebase, but
+we could say, "Hey, I want you to go
+generate me different marketing ideas
+now for this product." So now that this
+thing has run through, we have a few
+different recommendations. So obviously
+social media like Tik Tok and Instagram,
+things like that would be huge for
+something like this. And so you could do
+something cool where you are pulling out
+three random ingredients from your
+fridge, throwing it into the app saying,
+"Hey, I want to make a Mexican inspired
+chicken dish, but I have these
+ingredients in my fridge." And it goes
+through, it generates the recipe, they
+show it on screen, they actually make
+the thing, and it ends with them being
+surprised at how delicious it is, right?
+and that becomes like this sharable
+thing where people would potentially
+want to download it. So, it gives us a
+lot of really cool ideas like that. The
+one that I really liked was the 30-cond
+chef. One of the big memes of the
+cooking home cooking space is that you
+have to go through countless ads and
+display ads and life stories and
+cookbook call to actions before you can
+ever get to a recipe. And so having this
+thing that's like the 30 secondond chef
+where hey it's delicious and they tell
+you the flavor profile and what it
+tastes like and then there's just the
+recipe right there. Um that would be
+really easy to do. You have an app that
+can basically make the content for you.
+And so this type of like SEO optimized
+blogging I think would be really dope.
+So a lot of really cool ideas of what we
+could do here. We could tell it to keep
+generating options but you get the idea.
+So this thing is really dope. It's based
+on a lot of like best practices from
+people that have actually like run or
+helped run product teams and
+organizations. So, it's definitely worth
+poking around in if you're interested in
+any of these types of plugins that we
+were talking about. But once we have a
+clear vision for something, how do we
+like actually take it and make sure
+we're actually like planning and
+orchestrating the build in a way where
+the important things don't get lost?
+Well, this skill, planning with files,
+helps us do exactly that. And so, this
+is kind of marketed as a Manis style
+persistent markdown planning system. So,
+if you don't know what Manis is, it's an
+AI agent company that uh Meta or
+Facebook recently acquired for $2
+billion.
+And so, what helped make Manis so
+successful was a relatively
+straightforward approach to how they
+actually planned the work and tracked
+progress of the work. So the real secret
+to their success was context engineering
+and this library helps us do exactly
+that with a three file memory pattern.
+And so here's basically the high level
+of it. The core problem and this is
+really the big thing is that tools like
+claw code when you use their to-do write
+tools anytime you reset context it's
+basically lost. And so what often
+happens is that you're jamming, you're
+doing a bunch of stuff and a lot of the
+important details get lost along the
+way. And so that manifests in a few
+different ways. Uh number one is like
+the actual list of to-dos potentially
+that you had disappearing. Goal drift is
+a big one where when there's a lot of
+tool calls happening, like the original
+core intent kind of gets forgotten and
+lost and watered down. Failures in the
+system aren't really tracked really
+well. And then what happens is you're
+like constantly cramming context into
+the system instead of just storing it in
+a place that you can retrieve it when
+you need it. So like I said, there's a
+three file pattern that makes this work.
+First is tracking the phases and the
+progress. Second is storing research and
+findings as you move through the system.
+And third is actually logging each
+session and the like results of the
+tests after you've done something. So
+the way this works is creates a plan. It
+then has this thing called the two
+action rule. So every two operations
+basically every two like view or browser
+operations it will save what it has most
+recently found and it will log all
+errors it encounters and the result of
+this is that it's never really repeating
+failures because it already knows that
+it failed doing that and it has a lot of
+granular context about like exactly
+where it is in the system. So that being
+said, let's go actually look at this in
+practice. So in coding work, I mean, I
+think it's fairly obvious where this
+would fit. You have a plan about what
+you want to build and you use this in
+order to track your progress against the
+plan. So if you're ever using a spec
+driven development tool maybe that you
+really like, but you find that they're
+not tracking certain things in the way
+you would want it to, you could use a
+tool like this and insert it into the
+process. So we're going to run this for
+a research project for an app that I am
+planning. And so I want to research how
+to construct a knowledge graph for
+course creators. And so it should be
+able to ingest all of their course
+material. So it could be videos, PDFs,
+text, whatever, as well as their social
+media. So YouTube, Twitter, Instagram,
+etc. And then from it, I wanted to build
+a knowledge graph. And so there's this
+company, if you've never heard of them,
+called deli.ai.
+And they actually use this approach
+where their system is a knowledge graph
+that uses rag inside of the system. And
+so the benefit of that is that the
+chatbot in this case that we're thinking
+about building can actually kind of
+reason in a way that the person it's
+constructing this for would reason about
+a problem. So instead of it just going
+out and using rag, which we probably all
+know about, to like fetch chunks and
+then send the chunks to the language
+model and formulate a response based on
+that, it's doing it in a bit more of an
+intelligent kind of way where again it
+knows how the creator in this case has
+actually organized their body of
+knowledge and so it can kind of reason
+through a user's questions more
+effectively. I have no clue though how I
+would build something like that. But
+I'll be honest with you now. I know that
+it exists because I came across it once
+in something I was reading. I know this
+is a an approach that would be really
+relevant to what I'm trying to build.
+And so I'm saying, "Hey, I need you to
+go out and actually research this
+thing." So if we were to go in and
+actually look at what is happening, we
+can see that it is now kicked off. It's
+doing all this research. And it broke it
+down into phases. So it has like what's
+the overarching goal based on what I had
+said I wanted to look at. And now it's
+broken the research down into phases. So
+they're going to deep dive into the tool
+I mentioned. They're going to look at
+knowledge graph fundamentals like what
+is it? How would it work in the context
+of this project? What would the
+ingestion pipeline of the data need to
+actually look like for this thing to
+work? How would you actually construct a
+graph in the first place? How would you
+integrate like rag retrieval augmented
+generation into this knowledge graph
+concept? So it has a plan for all of
+that stuff. Then if we go in and look at
+the findings, it's documenting every
+single thing that it found as it was
+going. So for example, the core
+architecture that it found from this
+phase 1 deli deep dive is that they
+actually modeled their system off of Ray
+Kerszswhile's how to create a mind. So
+it's a temporal knowledge graph and it
+basically has built-in pattern
+recognition. So, it can capture facts,
+it can reason with patterns, it can draw
+conceptual associations between
+different concepts, and it can even
+understand how a person's view evolves
+over time. So, again, it went through
+for all of those different goals that we
+had, and it's tracking every single
+thing that it's finding as it goes. And
+then it's marking what it has found
+inside of this progress log. And so the
+thing that's really cool about this, if
+I was to now call the command again and
+tell it, hey, I want you to dive deeper
+into this other specific piece, it now
+goes through, it can read the findings
+and understand what's there. And then it
+can just add in new phases to our plan.
+So this task plan file has now been
+appended with these extra phases where I
+asked it, hey, I want to know like more
+deep dive into like how we would
+actually design this thing. And so for
+me as someone that's not like a trained
+software engineer, this system of like
+gathering context and really looking at
+it and thinking through it and thinking
+of how it'll apply to my project is
+super valuable. And so having a system
+like this that can actually track that
+research over time and persist what it
+found is super super super valuable. So,
+anytime you're trying to use a tool like
+Claude Code in this case or any similar
+tool to complete tasks like this,
+especially if you're not using tools
+like Orapowers
+or other tools that have their own
+tracking system in place, you should
+100% be tracking what you do with this
+paradigm of planning [snorts]
+with files and keeping track of
+everything you've done. So, last up on
+the list is a repo called Oh My Cloud
+Code. And this one has been trending
+super hard. And so basically what this
+thing does is it takes Claude Code's
+hidden agent teams feature and it makes
+it immediately useful and available for
+you. So, if you missed the whole teams
+slash agent swarms versus sub aents
+thing from I don't know a month or two
+back, agent teams can actually
+coordinate and communicate with each
+other in real time using shared
+information and tasks which is a huge
+benefit over something like sub aents
+that they go off they do the work and
+then they report back to like the main
+agent so they never see what the other
+one is working on. So anytime you have a
+task where the two of those things would
+benefit from being done at the same time
+with shared information that is where
+using something like a team first
+orchestration which this enables would
+be super valuable. So let me show you
+how it works. So the first thing that
+you have to do is inside of your global
+claude settings you need to make sure
+this cla experimental agent teams has
+the number one. If you've never done
+this before, it is most likely turned
+off and so you just need to go turn that
+on and then we'll be able to actually
+use this thing. So, we're going to copy
+the plug-in command. We're going to go
+into a project and we are going to
+install. So, now that we've copied those
+commands and pasted them in and we're
+ready to go. There's a few different
+commands that we have access to here.
+So, you can use this oh my claudom
+to like configure your teams or to plan
+something. But in this case, I'm going
+to use the autopilot capability to show
+you what a full like team-based fully
+autonomous execution of something looks
+like. And so, we're going to just
+describe the product idea in here or
+like the the feature that we want to
+build. So, I'm on a new uh work tree and
+we're going to tell it what we want it
+to build. So, in this case, it's
+something like relatively
+straightforward. I would probably want
+to go through a full planning phase for
+something like this to be safe, but
+we're just going to run it autopilot. So
+we need to add a functionality for
+generating shopping lists from a recipe
+inside of our app. So just for context,
+we're working with uh this app which is
+like a AI enabled cooking companion and
+one of the features is that we have
+these recipes. So, I want it to be the
+case that if someone says, "Hey, I want
+to make this thing." That instead of
+them having to go through and think
+about every single thing that they have
+and make a shopping list, it helps them
+do that a lot more uh quickly or a lot
+more easily. Now, in the future, I know
+that we want to have like a pantry
+option at one point where some of the
+stuff will already be in the pantry so
+it will know. But for now, we're going
+to just do like a basic like kind of
+check-in checkbox type of system. That
+is where we're at right here. And so I'm
+seeing like two inputs for this. One is
+via natural chat. So I want this thing
+always to be chat first. So someone
+says, "Hey, I want to make this bourbon
+soup via the chat. It can find that and
+it it knows what they're doing. It can
+kind of ask them with a generative UI
+like what of these do you know you have
+already?" And so that's the general flow
+of what we're going to build. And we're
+going to try to let this thing run in
+autopilot mode. So this is a situation
+where it should benefit from a agent
+team being used. And the reason for that
+is if it's out there and one agent build
+the API contracts on the back end, it
+would benefit the front-end agent to
+have access to that information. So,
+this should kick off automatically for
+us and agent team. But we will uh see
+what's going to happen as this thing
+rolls. All right, guys. So, this thing
+just went through. I didn't touch
+anything. This thing just ran through
+from that message I sent fully through.
+It took maybe 10 minutes. See 10 minutes
+and 30 seconds. It automatically fixed
+bugs that it found. And so we are going
+to come look at what we have. So it
+added in this weird thing. So I did test
+this where for whatever reason now the
+entire viewport is like having this
+weird giant scroll thing. But if I were
+to come through now and I said uh I need
+a shopping list for this bourbon French
+onion soup recipe that I have in here.
+One issue is that it clearly didn't
+really understand fully because it went
+through and actually generated the
+recipe from scratch. I already had the
+recipe, so I didn't need it to do that.
+So, that's something I would need to
+fix. But at the bottom of that, it does
+render this nice little button to
+generate a shopping list. When you click
+on that, you get this message that pops
+out. And then the only other problem is
+that this crashes when I click on it.
+So, that's not good. That's something
+that we would need to obviously come
+through and fix. So that's the
+experience with using the autopilot mode
+without really going through the
+specification steps. And this is part of
+the reason that I think planning stages
+are super super necessary for any of
+this stuff. And so we should have gone
+through that plan phase inside of uh oh
+my cloud code. But still pretty cool
+library with a ton of really awesome
+builtin features. So that's up for this
+roundup. If you want to see the video
+that I mentioned where I use the
+compound engineering plugin to like
+actually build something out in real
+time, I will link to that somewhere
+around here. But that's it for this
+video. I'll see you in the next

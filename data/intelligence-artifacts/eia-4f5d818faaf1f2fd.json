@@ -1,0 +1,99 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-4f5d818faaf1f2fd",
+  "generated_at": "2026-05-19T07:35:17+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-prLO7NGU4f0",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=prLO7NGU4f0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=7&t=67s&pp=iAQBsAgC",
+    "source_title": "Build Your First AI Image Generator from Scratch with Codex CLI (Full Tutorial)",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:35:17+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=prLO7NGU4f0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=7&t=67s&pp=iAQBsAgC",
+    "source_digest_sha256": "1a9b70e75f6c33787bcaf11fb3cd2f66f6cba0c6f74ec0be208eccec8018c5ce"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Video Title: Build Your First AI Image Generator from Scratch with Codex CLI (Full Tutorial)",
+      "style reference, write a prompt, and",
+      "because this is a build challenge, I'm",
+      "not using the coding tool, the wheel is.",
+      "have to use to build the app.",
+      "we're using the Codex CLI.",
+      "All right, first things",
+      "first, I just created this blank folder,",
+      "I am going to run certain commands",
+      "another command prompt window.",
+      "thing I'm going to do is run the command",
+      "create a gen tick app at latest space",
+      "This will scaffold the Next.js",
+      "lot of things we need to build a",
+      "that's done, we just have to run the",
+      "command docker compose up {dash} d.",
+      "Then we have to run the",
+      "command npm run db migrate.",
+      "database, we can run the command npm run",
+      "sessions, and instead, I'll just run"
+    ],
+    "strategic": [
+      "AI image generation platform for",
+      "model should be able to combine all of",
+      "platform.openai.com",
+      "Now under this AI integration",
+      "if you ever wanted to use an AI model on",
+      "image generation model."
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.039,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=prLO7NGU4f0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=7&t=67s&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 6 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 18534,
+    "unit_count": 509
+  }
+}

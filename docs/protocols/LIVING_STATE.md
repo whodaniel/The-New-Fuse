@@ -2,9 +2,9 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Protocol Intersection Verified. Executing Strategic
-Analyst Traversal. **Project ID:** `INFRA-002` **Session Key:**
-`agent:historian:session:2026-04-29T21:00Z`
+**Current Directive:** Phase 6 Initiation: High-Throughput Relay Bridge
+Integration. **Project ID:** `INFRA-002` **Session Key:**
+`agent:orchestrator:session:2026-05-19T07:56Z`
 
 ---
 
@@ -38,6 +38,10 @@ Analyst Traversal. **Project ID:** `INFRA-002` **Session Key:**
 20. [✅] Promote canonical Turn Zero source to
     `docs/protocols/TURN_ZERO_MANDATE.md`; demote home `GEMINI.md` to
     mirror-only.
+21. [✅] Contract Unification: 100% Core Protocols moved to
+    `@the-new-fuse/protocol-contracts`.
+22. [✅] Supabase Control-Plane Sync: 115 agents, 15 models, 13 MCPs, 122 skills
+    inventoried.
 
 ---
 
@@ -46,6 +50,7 @@ Analyst Traversal. **Project ID:** `INFRA-002` **Session Key:**
 - **Master Library:** 647
 - **Intelligence Density:** 100% (645 Artifacts)
 - **Vectorized Nodes:** 645 (`tnf_intelligence_artifacts`)
+- **Supabase Control-Plane:** 115 Agents | 15 Models | 13 MCPs | 122 Skills
 - **Native Hardware Control:** ACTIVE (`packages/hardware-bridge`)
 - **API Search:** `GET /api/agents/intelligence/search?q={query}`
 - **Merkle Root:**
@@ -56,12 +61,19 @@ Analyst Traversal. **Project ID:** `INFRA-002` **Session Key:**
 
 ## 🕒 Last Update
 
-2026-05-09T17:35Z - Protocol Governance: canonical Turn Zero authority moved
-in-repo; TNF/OpenClaw boundary clarified. \n## 🛡️ Contract Migration Status
-(TSGo + LLVM Alignment)\n\n- [x] Phase 1: Bootstrap (Registry Scaffolding &
-Generation Pipeline)\n- [x] Phase 2: Consumer Migration\n - [x] Domain A: ADK
-Gateway\n - [x] Domain B: Web-Scraping (Crawl4AI)\n - [x] Domain D: Crypto
-Operations (7.0 Division)\n- [x] Phase 3: Relay & Governance Hardening
+2026-05-19T07:56Z - Phase 6 Initiation: High-Throughput Relay Bridge
+Integration; Protocol Contracts Unified.
 
+## 🛡️ Contract Migration Status
+
+(TSGo + LLVM Alignment)
+
+- [x] Phase 1: Bootstrap (Registry Scaffolding & Generation Pipeline)
+- [x] Phase 2: Consumer Migration
+- [x] Domain A: ADK Gateway
+- [x] Domain B: Web-Scraping (Crawl4AI)
+- [x] Domain D: Crypto Operations (7.0 Division)
+- [x] Phase 3: Relay & Governance Hardening
 - [x] Phase 4: Forge Acceleration (Crawl4AI complete)
-- [ ] Phase 5: Forge Acceleration (Relay Validator Rust Integration)
+- [x] Phase 5: Forge Acceleration (Relay Validator Rust Compiled)
+- [x] Phase 6: Forge Acceleration (High-Throughput Relay Bridge Integration)

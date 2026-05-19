@@ -1,0 +1,425 @@
+A really talented AI educator and
+engineer named Matt PCO has a skill
+library that has soared to over 70,000
+stars pretty quickly. But the
+description says that it's not for vibe
+coders.
+So it really makes me wonder, am I
+actually a vibe coder? Are you? I don't
+use tools like Replet and ask it to
+build me horse tinder, but I also don't
+have a decade's experience as a software
+engineer. So I think vibe engineering is
+a better term for that middle ground
+exit level beginner into intermediate
+where we're trying to actually build
+awesome stuff but do it in a very
+systematic way because this skill
+library is pretty amazing and I use it
+alongside tools like OpenSpec
+and Compound Engineering every single
+day. So I'm going to show you five of
+the skills from it that I use on the
+daily, how they work and where in your
+projects you can use them. Starting with
+one of my favorites, improving codebase
+architecture. One of the big downsides
+of vibe coding is that you can go along
+your merry way making a bunch of changes
+that contradict what you've already
+done. And so your project gets very
+complicated and convoluted over time,
+which makes it really difficult to build
+things on top of it. So this skill aims
+to solve that by improving the
+underlying structure of your project. So
+let's take a look at how to use it. So
+here we're looking at a project that
+I've been working on inside of my paid
+community. shameless plug, which is a
+Twitter intelligence tool that was built
+using BMAD. Now, it's pretty simple how
+a user interacts with it, but behind the
+scenes, there's a bit going on for
+identifying trends, clustering topics
+together, ranking them. Again, as a
+Twitter research tool that's meant to
+identify trends, and surface them to me
+proactively. So, let's see what happens
+when we run this improve codebase
+architecture command in this project.
+So, one of the things that I really like
+about how this skill works is it makes
+sure that it's actually using the
+language of your app to explain things
+to you. And this is important because
+when we're talking with the language
+model and when the language model's
+responding to us, we need to make sure
+that we're using the same vocabulary to
+describe things so that we don't go off
+and make changes inadvertently. So now
+what this is doing is it's going out,
+it's dispatching an exploration agent to
+actually go through the codebase and
+find any architectural friction. Now, if
+you're interested in exactly what it's
+doing, you can go check out the repo.
+But basically, what it's looking for are
+moments of friction inside of your app.
+And so, the premise behind this is that
+it's going to propose to you deepening
+opportunities where you can take shallow
+modules and turn them into deeper
+modules. And the intent behind that is
+that it's meant to make your codebase
+more testable and easier for an AI to
+navigate. And so now what we get out the
+other side are the top five deepening
+opportunities in priority order. Now
+obviously you want to use your own
+judgment to see which of these actually
+make sense for you to implement. But
+again as we move through we can see that
+it's recommending a change. It's talking
+about the files related to this change.
+The fundamental problem that is
+surfacing based on what you've built in
+these files and how they interact. It'll
+then provide you a concrete solution and
+the benefits of that solution. And so
+this process continues now through in
+this case the top five issues that it
+found. So having something like this
+that can kind of surface the highlevel
+changes you should make is really
+valuable. But what happens when some of
+these objections that it is bringing up
+needs a deeper dive. So in this case as
+I read through these, the one that
+actually stuck out to me as the biggest
+concern is this quality scoring system
+that I have inside of the app. They're
+calling it a god orchestrator tangled
+with a bunch of other stuff. And so
+fixing this might be something that I
+want to explore. Well, the next skill
+solves that problem and it is called
+grill me. So we can run the command and
+then talk about what it's doing while it
+goes. So one of the things that's a real
+pain about a lot of these tools is they
+don't really push you to have an
+understanding of what it is exactly that
+you're about to change and how that
+might impact things. So they might ask
+like two, three, four questions trying
+to clarify a few like really big things,
+but often it lets a lot of hidden
+assumptions just slide through and they
+make their way into your project. And so
+this skill helps that by really stress
+testing exactly what you want to change
+and why and the ramifications of that
+change. So after about seven or eight
+questions and maybe 10 minutes of back
+and forth, this has gone from like that
+one fundamental thing that we wanted to
+address all the way down to an actual
+design that we can implement. Now, the
+thing that I think is really valuable
+about this skill is the way that it
+actually works. So again, a lot of other
+tools are going to ask you five
+questions maybe that get your
+directional insight on which way you
+want to take the implementation and then
+they're going to go off and address all
+of these underlying assumptions at game
+time when they go to write the stuff.
+But what the grill me command does is
+that once you pick a direction, it's
+going to go deep down the rabbit hole to
+resolve all of the other issues that
+crop up because of that decision. So for
+example in question one we addressed
+like what is the actual problem that we
+are solving specifically and then based
+on that specific problem we had to
+define well what's the right shape of
+this solution and then based on that
+shape how is that going to impact the
+other functions that interact with this
+service and then based on our response
+to that well then what needs to go
+inside of that right and it continues
+spiraling down until every branch of
+this design tree has actually been
+resolved. olved. So, just to draw this
+out real quick, with a lot of other
+tools, we're going to get just our five
+primary questions that address something
+like at a high level. But then, let's
+say that based on what we respond to
+here, there's technically new decisions
+now. So, maybe now we have a whole new
+subset of four different directions that
+we could take based on what we responded
+to there. Well, now based on what we
+choose to do here, there's again another
+branch of decisions and then from here
+another branch of decisions and it
+continues down the tree making sure that
+we as the humans in the loop are
+actually resolving these decisions in a
+way that makes sense for us. Now again,
+the thing that's really nice about this
+is that it is open source. So, if you
+want to come in here and customize this
+to make it something that maybe explains
+things in more detail to you or
+generally makes things clearer for you,
+you have the capacity to very easily do
+that. Now, one objection I can already
+hear people shouting from the void is
+how many tokens this costs, bro. Well,
+the next skill I'm going to show you can
+help reduce your token costs allegedly
+by up to 75%. And that skill is called
+caveman. So, as it implies, this skill
+forces your language model to reply to
+you like a smart caveman. And so it
+claims to cut token usage by 75% by
+dropping fillers, articles, and
+pleasantries while keeping full
+technical accuracy. And that's a really
+big thing because there's been a lot of
+implementations of this caveman mode.
+But the problem with some of those
+things is that they dropped the
+important technical language. Now, one
+of the things that I really like is that
+it will automatically kick you out of
+caveman mode when there's really
+important stuff. So, if there's security
+warnings, irreversible actions, or
+multi-step sequences where talking like
+a caveman might risk you misreading it,
+or if the user asks you to, hey, stop
+talking like a caveman for a second. All
+of those things will automatically kick
+it out of this mode and explain to you
+in regular mode. And so, in order to
+show you the difference, I'm going to
+run this now without the caveman skill
+with the same exact prompt so that we
+can see the difference in the outputs
+that we get. So let's look through like
+the first few lines just to compare. It
+says the plan asserts the threshold read
+bootstrap fallback logic is duplicated
+between the ranker when it applies
+thresholds per post and the recomputee
+stage when it logs old values for the
+tuning log per enforcement guideline
+number 10. I read the code. The
+recomputee stage doesn't read thresholds
+with the bootstrap fallback. It reads
+postcreated at count, right? And then it
+goes on to explain all of this stuff.
+So, we can come through here actually
+and let's just pop this into a token
+counter. So, now this isn't perfect
+because we're using Opus and they
+tokenize things differently, but roughly
+tokens for that response without the
+caveman approach. And now we can hop in
+and check that same exact output from
+the caveman mode. So, plan claim ranker
+recomputee threshold and divergence
+makes tuning log a lie. That is
+significantly shorter, right? Red code
+carefully. ranker does this. Recomputee
+does this. Question one is the premise
+wrong. So this is significantly shorter
+than the last one. And let's actually
+just go test that. If we pop back into
+our tokenizer, the first one was 768.
+This one is 502. So in that case, that's
+I think like roughly like a 30%
+reduction in the number of tokens that
+were used just to basically check in
+with us and ask us a question. And that
+is pretty significant, especially when
+you consider how these conversations are
+going to compound over time. So now, if
+we had used that caveman skill with this
+original design that we got from the
+previous step, we would have had
+significantly less token usage. So, in a
+second, I'm going to show you how he
+carries forward a decision like this to
+use in future sessions. But first, what
+if these first three skills are
+generating questions for you that are
+hitting a little bit higher than your
+understanding of things? So the next
+skill that I really like is simply
+called zoom out. And what this does is
+it tells the agent to zoom out and give
+you broader context or higher level
+perspective. So if you're ever
+unfamiliar with a section of code or
+need to understand how it fits into the
+bigger picture, this a really helpful
+skill to call. So we will come down and
+we will run the zoom out command. And so
+one of the things when you're working in
+a domain that you're not really
+comfortable with, you will very often
+defer to the recommendation of the
+model. But if you really care about what
+you're building, you really need to look
+at those things and make sure that they
+are something that you're at least
+understanding and on board with. So
+let's say that, you know, the first
+codebase architecture improver
+recommended that we look at this thing
+specifically and now that we've run it,
+the caveman skill or the grill me skill
+is telling us that, hey, this isn't
+actually an issue. And let's say we want
+to really understand if it is or not.
+And so we ask it to zoom out and explain
+where we are. And so the first thing
+that it's going to look at is the domain
+vocabulary. So that what it's about to
+explain to you is grounded in the actual
+language your project uses. So in this
+case, it's breaking down some of the
+domain vocabulary about how our ranking
+algorithm works. It's telling us these
+are the actual modules involved in this
+thing. It's showing us where certain
+files are read, where certain files are
+written. And so now it's going to
+actually break down like where does the
+claim that we were making in this case
+actually sit in the context of all of
+this stuff that it just broke down for
+us. And so in this case it actually
+gives us like a really clear mental
+model breakdown. It says the ranker is
+looking at what threshold should it
+apply right now which does need to have
+a fallback value but the logging is just
+showing what the prior row actually
+held. And so the initial premise that we
+found in that codebase architecture
+improvement was kind of unfounded and we
+don't really need to worry about it. Now
+in this case this is still using that
+caveman skill which is why it's being
+kind of tur with its outputs to us. So
+if you ran this without caveman mode on
+you would obviously get like a little
+bit more explanation and story behind
+what it's doing and why. And again this
+is an open source skill. So if you want
+to make modifications to this to explain
+things in different ways or do something
+else, that's something that you can very
+easily do by just downloading the repo
+and modifying the skill files. So I love
+the zoom out skill. I use it on a weekly
+basis. But like I said earlier, how do
+we now pull all of this different
+context that we've been generating
+together and take it forward into a new
+session? So like I said earlier in the
+video, I really love to use this skill
+library with other tools. I personally
+like to use specd driven development
+tools, but I find that processes like
+this to improve the codebase, grill you
+about those changes, and some of these
+other commands, they're really valuable
+in helping you get to a decision on the
+plan. And then those specriven tools are
+really great at taking that plan and
+actually implementing it systematically.
+So in this case, what we're going to do
+is we're going to loop back through and
+run that codebase architecture again.
+We're going to run through a grill me
+exercise and then I'm going to show you
+how you can take that output and make a
+lot of really great use of it. So, our
+last skill is a really simple but high
+utility skill called handoff. And so,
+this solves the problem of needing to
+continue your train of thought, but you
+really need a fresh context window. And
+so, this is kind of like an alternative
+to compacting because we're still going
+to get all of that information, but we
+can then just use that document as the
+context for our next session. So,
+there's a lot of really solid use cases
+for this, but two that come to mind.
+Number one, if you want to switch from
+planning to implementing, the handoff
+command will distill it down what you've
+talked about into a very concrete brief.
+Number two, maybe you're mid session and
+you need to go down a tangent in the
+middle of a task in a separate window,
+but everything you've accumulated so far
+is really valuable context that you
+don't want to pollute with a side
+conversation. So, let's say we go back
+down to our codebase here for the
+Twitter tool. And so we just went
+through like another very extensive
+round of the codebase review with a
+grill me and we've reached a conclusion
+about what we want to do. So what we can
+do is we can come through and run this
+handoff command and then we can give
+instructions about what the next session
+is going to actually use this for. So in
+this case we're going to say hey this is
+getting passed to a specd driven
+development tool for implementation. It
+should have adequate problem framing,
+the solution we came to, the key
+decisions we made, and any other
+specifics that got resolved. And so what
+we get out the other side of this is a
+markdown file that is basically a
+version of compacting. So everything
+that we just discussed in that chat has
+been properly ported over into this
+file. So now what we could do is come
+down and just clear the window out and
+we could run our command for a specriven
+tool to take this over. And now it's
+going to move through and it's going to
+start building all of the planning
+artifacts with this context in mind. So
+the thing that I really like about all
+of his skills is that they are very
+flexible and to the point. You can
+integrate them with pretty much any
+process you already use and just simply
+make those things better and make like
+your daily quality of life as you move
+through and do these things just a
+little bit easier. So, if you like this
+video, I will link you to a playlist
+where I have a bunch of other awesome
+skill libraries and Vibe engineering
+plugins that I use on a daily or weekly
+basis. But that is it for this video. I
+will see you in the next

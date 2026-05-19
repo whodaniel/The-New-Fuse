@@ -1,0 +1,538 @@
+Let's go through one of the most common
+system design interview questions, which
+is to design a real-time collaborative
+doc editor, something like Google Docs,
+where multiple users can edit the same
+document at the same time and see each
+other's changes live. We're going to
+tackle this in four simple phases. So,
+in the first phase, we'll gather the
+requirements and estimate the storage
+and everything that we need for this
+system. Then we'll get into high-level
+design and come up with all the
+components that we'll need to be able to
+design this at the high level. And after
+that, we'll move on to coming up with
+the database design and handling the
+most important part of this system,
+which is concurrency when multiple users
+are editing the same document. Let's
+start with the design requirements,
+which includes both functional and
+non-functional requirements. First of
+all, let's focus on the functional ones.
+So, users should be able to create
+documents, edit them, and also delete
+these documents. Now, creating and
+deleting is just a CRUD operation in
+this type of system. Editing is where
+the complexity will be mostly.
+Also, multiple users should be able to
+edit the same document simultaneously
+and see each other's changes live. So,
+these changes should be visible to all
+the editors in real time for the same
+document.
+And of course, documents should be
+persisted, meaning they should survive a
+page refresh. If a user typed something
+new in this document and then the page
+accidentally got refreshed, the changes
+should be persisted. Some clarifying
+questions that we can ask here if this
+is an interview setup. An important one
+is what kind of content are we storing?
+Because it might be just a pure text, in
+which case we don't need to store a
+complex structure. But assuming it's
+Google Doc, we should be able to store
+rich text, meaning italics, bold, and be
+able to
+apply styling to the text. This is
+important because based on that, we'll
+make the database choice later on. Also,
+who can edit these files? Whether it's
+publicly accessible, like we can make it
+edit for everyone, as we have on Google
+Docs, or it's with invited users only.
+In this case, let's say the invited
+users can edit this only.
+And whether we provide offline support
+or not, which is a less important part
+in this system. So, let's just say no,
+we don't need to provide with offline
+support.
+So, these are the core functional
+requirements. Now, let's see what are
+the non-functional requirements that we
+need to support. First of all, let's
+start from the latency. So, edits should
+appear to the other users who are
+working on the same document within 100
+milliseconds. This number should tell us
+that HTTP polling, of course, won't work
+for this level of latency. So, we need
+to go with a web socket option for
+providing the connection to the users.
+Then, we have the availability. For this
+one, let's just go with a standard 99.9%
+of uptime. When it comes to durability,
+no data should be lost if a server
+crashes in the middle of the edit. So,
+we should maintain the state locally on
+the client side as well, so that if the
+server didn't acknowledge the changes
+that we made as an edit, then we should
+be able to retry that edit with the
+server. And another important part is
+consistency, which means that all of the
+users should see the same document state
+eventually.
+For these parts, some of the clarifying
+questions that we can ask to see what is
+the scale that we're dealing with here
+is how many registered users will we
+have? Let's say it's 10 million. This
+part specifically has less impact on the
+real-time design that we will do, but it
+helps us to do the overall scaling
+estimates. The important part is how
+many concurrent editors can we have in a
+single document? Let's just assume
+maximum 500 concurrent editors.
+And another important part is what's the
+maximum document size? Let's say it's up
+to 500 kilobytes.
+This part is important for three
+reasons. First of all, it gives us an
+idea on how we will edit pieces of this
+document and not the entire document on
+every request. Second is whether we will
+hit the limits of the database when
+storing this document content. And
+third, also for us to get an idea on how
+we will cache these documents.
+These are the core requirements of the
+Google Doc or a real-time doc
+collaboration tool. So, based on these
+numbers, let's now do a
+back-of-the-envelope or estimation of
+the storage, and then we'll get to the
+high-level design.
+Since we have 10 million users, we can
+either assume the active amount of users
+at peak, or we can just ask it to the
+interviewer if this was an interview
+setup. Let's just assume it's 1% of
+overall users that will be active at
+peak times, which will come down to
+100,000 active users. We also need the
+average users that will be working on a
+document. We have the maximum number,
+which is 500, but we also need the
+average. Let's say it's five users. So,
+this will come down to around 20,000
+active documents that we'll be working
+with at peak time.
+Since 500 kilobytes is the maximum size
+we can expect, if we multiply that by
+the amount of active documents that
+we'll be dealing with at a given moment,
+it comes down to maximum 10 gigabytes of
+active data, which fits in one Redis
+cluster.
+Worst case scenario is that if we are at
+the peak traffic and also each of these
+docs is at the peak concurrent editors,
+which is 500 editors per document. If
+you multiply that by the 20,000, it will
+come down to 10 million concurrent web
+socket connections that we'll need to
+handle, but this is the very worst case
+and it's very unlikely that it will
+happen, but we always calculate for the
+worst case scenario.
+There isn't a specific amount on how
+many connections one web socket server
+handles. It also comes down to the data
+that you're transferring between the
+server and the client, but on average,
+let's just assume it's around 50,000
+connections that we can handle in one
+server. That comes down to having 200
+servers needed at the peak time and we
+can set it up with auto scaling. So, if
+it's not at peak time, then we can
+downscale the servers and just have the
+ones that are serving the traffic.
+Now that the requirements and estimates
+are clear, we can get into the
+high-level design and think about the
+general components we will need for this
+type of system. You have the client
+where the user is browsing this Google
+Doc and making edits.
+Of course, we mentioned that users
+should be able to create and delete
+documents, but that's just crowd
+operations to the servers to send a
+request to create a document or send the
+request to delete a document. So, in
+this flow specifically, let's focus what
+happens if user opens an existing
+document and starts making edits. This
+is where we need to connect to the
+gateway with a web socket.
+The reason behind this is the
+collaborative requirement where two
+users should be able to update the same
+document and see each other's changes
+live. If you have two clients connecting
+to the backend and working on the same
+document, how are you going to notify
+the first user that the second user made
+edits on that document? If you were to
+use HTTP,
+you could maybe send a server-sent
+event, but first of all, that won't
+match the latency requirements that we
+have, and it's not the ideal solution if
+both of them are working on the same
+document at the same time. That's why we
+go with WebSocket to have one persistent
+connection throughout the session.
+So, this comes to the API Gateway first
+of all to check the authentication, the
+rate limits, and then we proxy this same
+WebSocket connection to a WebSocket
+server, which handles the updates.
+This alone is not enough for us to
+provide with less than 100 milliseconds
+latency, because if we start reading
+from the database, it will easily take
+us more than this number. That's why we
+need to introduce a Redis Cluster. So,
+if two users or more are working on the
+same document, they connect to the same
+Redis Cluster, and this Redis Cluster
+can broadcast the edits across the
+WebSocket servers. And this also acts as
+a cache because it holds all the active
+documents in the memory of Redis, so we
+can read it directly from here instead
+of from the database, which is way
+faster than reading from the database
+itself.
+But we also need a persistent storage,
+of course. We can't go with the Redis
+Cluster only, as this is not persistent.
+So, for persisting these edits, we can
+have a separate service that talks to
+the database directly, something like
+Document Service. This is what validates
+the edits that are coming from the
+WebSocket server, persists them to some
+sort of database. We'll get to choose
+the database type soon. And it also
+validates the versions and edits, and
+also manages the conflicts.
+So, the flow is like this. Let's say you
+have user A and B who are connecting to
+different WebSocket servers. They don't
+have to connect to the same one to be
+able to work on the same document. So,
+the first one connects to the server
+one, the second one connects to the
+server two.
+Let's say for now there are no
+conflicts. So, user A just publishes an
+edit. They make a change in the document
+and this gets published to the Redis
+pub/sub. From here, we broadcast this
+change to the WebSocket server two and
+this is what forwards the edit to the
+user B so that user B sees the edit that
+was made by this first user on their
+client.
+Now, that's in case there are no
+conflicts and user A just edited
+something that user B didn't. So, the
+user B just sees the updates from user
+A. But, what if there are conflicts? To
+be able to think about this, it first
+makes sense to come up with a database,
+at least high-level design on what are
+the fields, how we will manage this, and
+then get to resolving the concurrency.
+First, let's define how the structure
+will look like and then we'll get to
+choose what type of database or
+databases we will use in this situation.
+So, of course the core of the system are
+the documents. We have documents with
+ID, with title, with content. This is
+the important part. Why we specified
+that it's a rich text document in the
+beginning is because we need to know how
+to store this. If it's a rich text
+document, it makes sense to store this
+in some sort of JSON format. So, either
+it's JSON in a document database or it's
+JSONB in PostgreSQL. Both of these would
+work. You just need to know the pros and
+cons of each.
+So, in case of PostgreSQL, it supports a
+JSONB column type natively, which means
+that you can store entire rich text
+content in a tree format.
+And why we store it in a tree format,
+let's say you have this text in Google
+document. So, you have paragraph one,
+then you have a new line, and you have
+paragraph two, and here maybe one of the
+texts is bold, one of the texts is
+italic, and also with an underline.
+If you store this in a JSON format, you
+can also specify the type for each of
+these blocks of the text, and you can
+know on the front end if you need to
+render this part in bold or this part in
+italic, and so on.
+Another option you can use MongoDB for
+everything, for documents,
+collaborators, users, and so on.
+In this case, you have no schema
+friction. The trade-off is that you lose
+the relational integrity.
+For example, if we get to the rest of
+this schema, we also have collaborators
+and users, and the connection between
+users and collaborators is a foreign
+key, which you won't get in MongoDB if
+you go with a document-based database.
+And the third option is that you can
+actually split it. You can use
+PostgreSQL for the relationships between
+collaborators, users, and documents, and
+you can use MongoDB for storing the
+content.
+The downside in this case is that you
+create a distributed transaction
+problem. What if you have a transaction
+in SQL where the write to the document
+title and some other fields in
+collaborators succeeds, but then the
+content update fails in MongoDB? You
+need to start supporting distributed
+transactions, be able to revert it back,
+and this adds complexity, especially if
+you don't have a good reason to go with
+two databases.
+So, each of the options has its pros and
+cons, and the core thing here is just to
+know the difference between these.
+I personally would go with PostgreSQL
+with JSONB field for the content unless
+there is a specific requirement or
+reason to introduce a second database or
+to go with a document-based database
+only. And why PostgreSQL is the safe
+option in general is because you have
+other relationships also between
+documents and the collaborators which
+links to the document ID. You have the
+collaborator IDs and also you need to
+manage the permissions. Since in the
+requirements we discussed that this
+should be wide-based, we need to be able
+to add permissions to the collaborators
+whether they are an editor, viewer, or
+just a commenter on the doc. We need to
+manage those permissions in this field.
+And this links back to the users table
+where we have the user details like
+name, email, and so on.
+So rest of these document fields are
+just extra metadata that we need to
+maintain. Of course also the owner ID to
+know who is the owner of this document.
+And an important part here is the
+version which we'll see why in a bit.
+But for now let's also see why we will
+send deltas to make these updates and
+not the full documents. So since we
+clarified that each document can be up
+to 500 kilobytes, if you assume 100
+users are working on the same doc or not
+even 100 like 10 users are working on
+the same doc. If they make one update
+each of those and let's assume there is
+no conflict each of them is working on a
+different piece of the document. That
+will come down to 5 megabytes in case of
+10 users or 50 megabytes in case of 100
+users per second that we need to send
+and update in the database.
+So this way the network will get
+saturated very easily.
+Since we chose to go with the JSON
+format, this is how we can use and
+leverage that to update the deltas only.
+Let's say one of the users updates only
+50 bytes in the document. We only send
+that piece of information to the backend
+with the type. Let's say this is
+inserting characters in between
+paragraphs. We give the position where
+this needs to be inserted, the text if
+it's just a text, and we also will
+provide the type of this if there are
+any, let's say, bold italics in between,
+and the version of the document that we
+also send along with every edit, and
+some more data about the edit, but in
+general, that's how it looks like for
+updating a piece of this document. So,
+in this case, if 100 users are typing,
+we only send 5 kilobytes per second for
+making this update in the backend.
+After having the database rough design,
+we can now think about the concurrency
+problem. In the first scenario we just
+discussed, if user A, let's say, updates
+the document, and user B just sees those
+updates in case there are no conflicts.
+But, what if we have the same document
+at version four, let's say,
+and this is the text that we have
+inside. So, user A deletes the word
+world from this text, and then user B
+adds this exclamation mark at the
+position 11 at the end of this text.
+So, both of these changes arrive to the
+web socket servers at the same time, and
+now we have a conflict on the same
+paragraph, same block of text that two
+users are trying to modify.
+What we can do is each of these edits
+can include the document version. This
+is why we added this in the database,
+and based on this, if user's B edit
+arrives with version four, but the
+document is already at version five,
+then the server rejects this, and asks
+the client to refetch and retry the edit
+again.
+This is how it will work with optimistic
+locking. It will work decently, but it's
+not great user experience, of course,
+because if you made an edit and now the
+server is asking you to re-edit because
+there are issues, that's not ideal.
+But that's at least where we can start
+from as a simple solution. So, let's say
+we have that user A, user B. Both of
+these edited the document with version
+four, sent the edits to their
+corresponding web socket server. The
+server applies the edit and updates the
+version of the document to be five.
+And then if this second user tried the
+edit later than the first one, then they
+still send the version four to be
+updated. And in the database, you will
+see that there is a version mismatch.
+They are trying to update the version
+four, but version five already exists,
+which was updated by user A.
+So, in this case, we reject them to the
+second user, asking them to refetch the
+latest document and return the document
+to the user, and then they can apply the
+edits to the version five document.
+After that, if there are no more
+conflicts, we apply that edit and change
+the document version to version six. And
+now the version matches, so we apply the
+edit to the document.
+That's the first step at least on where
+we can start from, but there are
+actually techniques for managing these
+type of issues.
+The one we discussed is optimistic
+locking, where a conflict is detected
+based on the version of the document.
+So, one of the edits is rejected, user
+must retry the same edits, and it gives
+the user a bit of bad user experience,
+right? Because they have to reapply the
+changes.
+Now, when it comes to these techniques
+specifically for system design
+interviews, you don't have to know them
+exactly as long as you can at least
+reason about this with the first option,
+that's good enough. Of course, if you
+know any more than that, that's just a
+bonus point on top of it. So, there are
+actually two more techniques that help
+us manage these conflicts better. One of
+them is operational transformation,
+which is the one that's used by Google.
+So, in this case, both edits arrive to
+the server. Then server transforms the
+positions, and both edits end up being
+applied. That's how if you change
+anything on Google Doc, you never see
+the server asking you to
+edit the same stuff again, because no
+data is lost with this type of
+transformation.
+For example, if we go back to that
+previous example, if user A inserts X at
+position five and user B deletes the
+position three from the same word
+simultaneously,
+after the second action of deleting the
+third position later,
+the position five is shifted to four.
+So, in case of operational
+transformation, if one of the users,
+let's say, is editing this text, let's
+just say this client's text, and user A
+inserts X at the last position here, and
+user B deletes the fourth letter like E
+from this text.
+The way we manage it is after user B's
+delete operation, position five is
+shifted to position four, and we adjust
+also user A's operation automatically,
+and this way both users edits survive.
+Another technique that is used by Figma
+is called CRDT.
+It stands for conflict-free replicated
+data type.
+In this case, the data structure itself
+handles the merging, so each characters
+gets a unique ID and a relationship to
+its neighbors instead of a position.
+This way no central coordinator is
+needed. Of course, this is because Figma
+handles more complex relationships than
+in text in Google Docs, but these are,
+for example, two of the popular conflict
+resolution mechanisms in this type of
+system. Again, you don't have to know it
+exactly. You are not expected to talk
+about this in an interview, but knowing
+it is a bonus point over someone else
+who doesn't know this. If you found this
+helpful and would like to also learn the
+components that go into designing such
+systems like this one or any other
+system, then I recommend you watch this
+full course next where I break down all
+the components that you need to know to
+be able to design systems like this and
+make the architectural decisions.

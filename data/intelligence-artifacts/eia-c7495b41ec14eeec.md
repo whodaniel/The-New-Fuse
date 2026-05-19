@@ -1,0 +1,76 @@
+# Executable Intelligence Artifact
+
+**Artifact ID:** eia-c7495b41ec14eeec **Spec:** tnf/executable-intelligence/0.2
+**Generated:** 2026-05-19T07:42:38+00:00 **Class/Status:** [INTEL] [PENDING]
+
+## Ownership & Release
+
+- Owner Principal: danielgoldberg
+- Visibility: private
+- Release State: sealed
+- Agent Allowlist: (none)
+- Release Approved By: (not released)
+- Released At: (not released)
+- Release Note: (none)
+
+## Source Attribution
+
+- Source ID: yt-ai5-maabARKJ94o
+- Type: video
+- URI:
+  https://www.youtube.com/watch?v=maabARKJ94o&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=19&pp=iAQBsAgC
+- Title: 7 Claude Skills That'll Change How You Vibe Code Forever
+- Author:
+- Publisher:
+- Published At:
+- Retrieved At: 2026-05-19T07:42:38+00:00
+
+## Taxonomy of Actionability
+
+### Procedural
+
+- hypothesis, and then test a fix to
+- can have it run through this type of
+- process and then actually perform an
+- So, the first skill up is one
+- mindlessly inside of some tool asking it
+- to build Instagram for cats without
+- actually build something real from it.
+- management agent that I've been working
+- I want to make this third panel over on
+- On the right third,
+- I want it to be a separate like command
+- And then inside of that
+- the agent logic, the front end.
+- in writing specific plans and then
+- summary and then pass it in for example
+- build this thing in a contained way
+- using Git work trees, which is the next
+- work trees allow you to create isolated
+- brainstorming tool and you want to work
+- to build, one is a bug fix, and one is a
+
+### Strategic
+
+- well the model is able to actually do
+
+### Governance
+
+- audit and tell us what it thinks we
+- thing, it's going to audit all of their
+- dedicated to security.
+- against known security vulnerabilities.
+- then actually perform an audit and tell
+- actually run the audit and make the
+
+## Utility Metrics
+
+- Freshness Decay: High
+- Implementation Density: 0.038
+- Verification Difficulty: Hard
+
+## Synthesis
+
+Artifact captures 20 procedural, 1 strategic, and 6 governance units. Use
+procedural units for immediate execution, then vet strategic and governance
+units through TNF gates before protocol adoption.

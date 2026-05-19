@@ -1,0 +1,97 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-27047611af6e522b",
+  "generated_at": "2026-05-19T07:14:44+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-kXBXIipl1lQ",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=kXBXIipl1lQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=36&pp=iAQBsAgC",
+    "source_title": "Design Google Docs in a System Design Interview",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:14:44+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=kXBXIipl1lQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=36&pp=iAQBsAgC",
+    "source_digest_sha256": "3db41e268b2877237be3d1f137091aa1a4c1f506793009f557d567cb4aa9c784"
+  },
+  "taxonomy": {
+    "procedural": [
+      "in the first phase, we'll gather the",
+      "Then we'll get into high-level",
+      "So, users should be able to create",
+      "new in this document and then the page",
+      "is an interview setup.",
+      "First of all, let's",
+      "Then, we have the availability.",
+      "that we made as an edit, then we should",
+      "First of all, it gives us an",
+      "Second is whether we will",
+      "third, also for us to get an idea on how",
+      "collaboration tool.",
+      "the storage, and then we'll get to the",
+      "it's not at peak time, then we can",
+      "should be able to create and delete",
+      "request to create a document or send the",
+      "the first user that the second user made",
+      "event, but first of all, that won't",
+      "So, this comes to the API Gateway first",
+      "rate limits, and then we proxy this same"
+    ],
+    "strategic": [
+      "start from the latency.",
+      "for this level of latency.",
+      "match the latency requirements that we",
+      "latency, because if we start reading"
+    ],
+    "governance": ["the relational integrity."]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.037,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=kXBXIipl1lQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=36&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 4 strategic, and 1 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 20187,
+    "unit_count": 544
+  }
+}

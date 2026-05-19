@@ -1,0 +1,791 @@
+Hermes' agent is one of the most
+powerful AI agents that I've ever played
+with. So, in today's video, I'm going to
+take you from absolutely nothing to
+being able to get one set up. And by the
+end, you're going to understand exactly
+how to actually get the most out of the
+super powerful AI agent. This is the
+landing page for Hermes' agent. It is an
+agent that grows with you. So, it has
+like sort of that self-improving loop
+with skills and stuff. So, it's very,
+very cool. And it's a lot easier to set
+up than you'd think. We're not going to
+have to use a Mac mini or anything. I'm
+going to show you how you can just set
+one up on a private server. Now, this
+thing out of the box is already super
+powerful. If I go to docs and then I
+click on skills, you can see that
+there's like a 684 total skills, but
+there's 91 that are already basically
+just built in once you install Hermes.
+So, for example, you can see that it
+generated me some Excalidraw diagrams,
+which we'll look at in a sec. But, I
+didn't have it install any sort of
+Excalidraw skill. It just had that
+already. And I never gave it a
+transcription skill or a voice skill,
+but take a look at this. "Hey there,
+sir. Can you just go ahead and tell
+YouTube who you are, what you do, and
+what some of your crons are?" By the
+way, when I say cron, that basically
+just means like an automation. It's a
+scheduled automation. And don't worry,
+we're going to dive into all of that
+later in the video. I'll also talk about
+Hermes compared to Claude code, compared
+to Open Claw, and the differences, and
+why in this specific video I'm going
+with Hermes. So, you can see that it
+shot back an actual voice note as well
+as text. So, this is a full minute and
+16 seconds. I'm not going to play the
+whole thing, but let's take a quick
+listen. Here's a YouTube-friendly
+version. Hey YouTube, I'm Hermes' agent.
+I'm Nick's AI assistant running on his
+own infrastructure. I'm not just a
+chatbot in a browser. I can use tools,
+remember preferences, write reusable
+skills, run scheduled automations,
+search past conversations, work through
+Telegram, and help manage real
+workflows. The way I can
+&gt;&gt; All right, thank you so much, Hermes.
+But anyways, take a look at some of
+these crons that my Hermes is running. A
+daily AI news briefing, which is posted
+inside of my school community. YouTube
+comment monitoring. So, if you guys have
+noticed on my YouTube videos lately,
+I've had an AI agent that has access to
+the transcript and knowledge about me,
+and it's been responding to you guys'
+comments. And that is this Hermes agent.
+School community engagement, morning
+business summaries, server checks,
+research reports, follow-up reminders.
+And that's just some of the crons that I
+have this agent working on. And if you
+guys have seen my videos on my channel
+about hyperframes with Claude code,
+basically to edit videos, I wanted to
+see if Hermes could do that. So, I said,
+"Hey, can you make me a video using
+HyperFrames about what Hermes Agent is,
+how you work, how you remember things?"
+It ran all of these different things.
+So, it has a skill called creative. It
+had a skill called Man in Video.
+&gt;&gt; [snorts]
+&gt;&gt; It was searching for Hyper. It ran all
+these terminal commands. And it also,
+you can see here, it's using vision to
+analyze the actual video to see how it
+turned out.
+Now, its first pass wasn't great. It
+didn't even use HyperFrames. I'm not
+exactly sure what this used. But, as you
+can see, some of the spacing is off.
+It's not amazing. But, you know, it's
+not terrible for the fact that I just
+said, "Hey, make me a video." So,
+basically then I said, "Okay, what tool
+did you use? I wanted you to use
+HyperFrames." So, it had to look into
+it. It did the research on its own. It
+asked me if it could install
+HyperFrames. I said, "Yes." And then it
+comes back with a video that's actually
+much, much better. So, I'm not going to
+play the whole thing, but here's the
+video that it actually came up with. It
+looks a lot better. The spacing is a lot
+better. It just has these diagrams that
+actually like don't overlap and they're
+not going out of bounds. So, think about
+this. One natural language request. It
+did the research. It wrote this. And all
+I said, as you guys can see, is, "Hey,
+make me a video about what Hermes Agent
+is and how your memory and skills work.
+It should feel fast-paced and exciting."
+So, that's one mindset shift here is if
+you are confused about anything to do
+with Hermes, Hermes probably understands
+it the best and it can also look up its
+own documentation.
+So, just ask it, "Hey, can you do this?"
+If you see something cool on X, grab
+that X post, give it the link and say,
+"Hey, read this and then help me
+implement it." It's really going to be
+your best friend here by just
+brainstorming and then you tell it to go
+figure out how to do it. Okay, so that
+was just a quick demo about what Hermes
+Agent looks like when I'm using it
+through Telegram. You can use it through
+tons of other platforms as well. So,
+let's just actually dive into this video
+here. Hermes Agent from zero to your own
+assistant. Okay, so what is Hermes
+Agent? It is an open source AI Agent
+from News Research and it is an MIT
+licensed, like I said, open source
+project. Right now, it has 140,000
+GitHub stars and that is growing really
+fast. It's one of the fastest growing
+open source projects on GitHub. It runs
+on your own infrastructure, whether that
+is a Mac mini, a laptop, a VPS. It can
+run inside a Docker container. Wherever
+you want to put it. It can even run on
+an Android via Termux. There are tons of
+different messaging platforms. I'm going
+to be showing you guys Telegram today.
+You could also do Discord, Slack,
+WhatsApp. You could even do iMessage if
+you wanted to connect it to that. And
+really the big thing that got me
+interested in trying it out was the
+self-improvement over time by writing
+its own skills and updating those. And
+it's kind of built on top of five main
+pillars, which I'm going to talk to you
+guys about in just a sec here. But
+before we get into that, I wanted to
+cover Hermes versus Cloud Code versus
+Open Claw and kind of even like Codex,
+too. So, this is just my comparison of
+the way that I compartmentalize them in
+my head. So, Cloud Code is still my
+daily driver. That's where I do 90% of
+my knowledge work throughout the day.
+But there's a clear distinction in my
+mind between the way that I'm going to
+use Cloud Code and Open Claw or Hermes.
+So, this is obviously Anthropic's coding
+assistant. It lives in your terminal
+next to your code, and you basically sit
+there and you drive it. You could enact
+like dispatch or remote control to use
+it on the go, but honestly I don't
+really do that too much. The way I think
+about Cloud Code is when I'm sitting
+down at my desk or I'm on my laptop and
+I'm doing work. Now, Open Claw is where
+I started to play around with it. I did
+the trading video if you guys saw that
+with Open Claw. And the way that I
+started to think about this was I'm not
+going to use Open Claw or Hermes to sit
+down and do like my knowledge work and
+my coding. I'm going to use Open Claw
+and Hermes when I'm on the go. When I
+want to be on my phone and be able to
+set up crons really quick and have
+everything kind of just be managed right
+there in Telegram where I can talk to
+something and it wakes up immediately
+and responds to me back. And it's truly
+been a game-changer for being able to go
+on a walk and still do work or, you
+know, be out and about. This was created
+by Peter Steinberger, he then joined
+OpenAI, and Open Claw is still an
+independent, once again, also an
+open-source project that has over
+350,000 GitHub stars now. There's a much
+larger team around Open Claw compared to
+Hermes, and they are also doing frequent
+updates. Also, Nvidia built Nemo Claw on
+top of Open Claw as a separate
+enterprise stack. Now, Hermes and Open
+Claw may seem kind of similar when you
+just kind of take a first glance, but
+there are a lot of differences. Hermes
+is also lighter, faster, focused on
+self-improvement, and they've come out
+and say like, "Hey, you know, this is
+built for people that want to tinker
+with open source models, Claude, Llama."
+I'm not necessarily using Hermes right
+now with open source models, but
+definitely something that I'm going to
+start experimenting with. But one of the
+main reasons that I started kind of
+switching over to Hermes was my Open
+Claude was just kind of breaking a lot.
+They would push a lot of updates and
+changes, and sometimes it would just
+like crash my Open Claude, and I'd have
+to get in there and fix some stuff. And
+Hermes doesn't seem to do that as much,
+fingers crossed. But a lot of people are
+using these all together, and I'm
+definitely using Claude Code with Hermes
+together, for sure. Because I mean, if
+you think about what are your coding
+agents actually working in, they're
+working in some sort of directory, which
+is just a file structure, a folder
+structure. And all of that we want to
+sync to GitHub. So, if you have a GitHub
+repo of all of your knowledge, all of
+the business context, all of your
+skills, you can pick out any of these
+agents, even Codex, and just plop it on
+top of your GitHub repo, and now you can
+play with all these different tools and
+see how they interact. There's just a
+little bit of difference sometimes with
+terminology, whether that's like a
+Claude.md or an agents.md, or, you know,
+a couple little tiny things, but each
+agent understands its own terminology.
+So, if you say, "Hey, take this repo and
+make sure you can use it," it should be
+able to make all the changes for you
+very quick. And I'm going to show you
+guys a way that I use Claude Code to
+help me manage all of my Hermes agents
+and Open Claude agents, which makes me
+stay way more organized. I never forget
+things, and trust me, it's definitely a
+game changer. So, anyways, before we
+jump in and we start doing the install
+and the onboarding to Hermes, I just
+want you guys understand some of these,
+you know, main concepts to think about,
+which are the five pillars. And what I
+did is I actually copied this exact five
+pillar structure, which by the way, my
+Hermes agent helped me think of. I
+copied this, I pasted it into Hermes, if
+I scroll up a little bit here, and I
+said, "Hey, can you just use the
+Excalidraw skill to generate diagrams
+for all of these, and make sure that all
+of this information is correct?" It gave
+me a zip file right here, and I took
+that zip file, I put it into Excalidraw,
+and let's now take a look at these five
+pillar diagrams. Okay. So, the first
+pillar is memory. Memory is the small,
+durable context that Hermes should carry
+across sessions. So, there's two main
+files to be thinking about when it comes
+to memory. The first one is the user.md,
+who you are, your style, your
+preferences, and things that you don't
+like.
+The second one is the memory.md. This is
+like the environments, the projects
+you're working on, some of your business
+context potentially, and these two files
+get loaded at the session start so that
+it always kind of knows what's going on.
+Because the way that you want to think
+about AI in general is that it wakes up
+stateless, meaning it wakes up with
+basically no memory. If you guys have
+ever seen the movie Memento, that's kind
+of like how agents work. So, it's your
+job to make sure that the context that
+gets loaded in, Claude.md, user.md,
+memory.md, agents.md, it's your job to
+make sure that those files are pretty
+holistic so that every time you wake up
+an agent, you don't feel like you're
+repeating yourself. And don't worry,
+these files Hermes agent understands and
+it's automatically going to start
+extracting things about you and
+extracting things from your projects and
+putting these files together so you
+don't actually have to like manually,
+consciously think about it. As you can
+see, the session would start, you would
+go ahead and start talking, building
+skills, doing knowledge work, and as
+you're starting to add tools, and as
+you're starting to give more info and
+make changes, it's going to
+automatically come back and update these
+files for you. Now, that doesn't mean to
+just be completely oblivious to it. You
+still want to say, "Hey, by the way,
+chuck that in the memory." Or, "Hey,
+make sure you don't ever do this again,
+throw that in the user.md." Stuff like
+that. And you see the SQL diagram wasn't
+perfect, I had to expand that a little
+bit, but here's some beginner nuance.
+Save durable preferences and facts to
+memory. Use session search for old
+conversations. So, it's basically able
+to store all of your sessions into a SQL
+database and it can go search through
+those. And do not store secrets or
+temporary task status. So, we'll talk
+about API keys and the way that you
+should be putting them into your Hermes
+agent responsibly once we get into the
+setup. So, that is the first pillar,
+memory.
+The second pillar we have here is
+skills. So, skills are procedural
+memory, reusable playbooks for how to do
+a task well. If you guys have already
+been working with Codex or Claude Code
+or all these other things, you probably
+understand skills, but I'll give you the
+real quick lowdown. Basically, think of
+a skill as a recipe. Someone asks you,
+"Hey, can you make me some chocolate
+chip pancakes?" You want to pull up a
+recipe, and then you're going to follow
+that recipe to a T. And that's how your
+pancakes turn out the same and, you
+know, yummy every time. Otherwise, if
+you were just going off of memory of how
+to make the chocolate chip pancakes,
+sometimes they might be a little more
+burnt than the other times, sometimes
+they would have less chocolate chips
+than other times.
+You just want them to be consistently
+done in the same way, and that is your
+skill or your recipe. So, all of these
+skills are in a file called skill.md.
+They have a YAML front matter, which is
+basically just like a little front
+matter that that tells the agent, "Hey,
+this skill does this, so use it for X,
+Y, and Z." And that's basically a
+concept called progressive disclosure,
+which helps make sure that you're not
+loading full skills, full context load
+into a session if you don't actually
+need to use that skill. So, Hermes will
+understand the use case for the skill.
+It will then invoke the skill and read
+it, and then it will ship that
+information into the session and then
+invoke the skill and do what you need.
+And what's cool about the Hermes agent
+is that if you're doing things
+frequently, if you forget, "Hey, let's
+build a skill out of this," it will
+analyze conversations, it will analyze
+your workflow, and it will turn things
+into skills. And then, of course, as you
+use skills more and more, if you're
+giving feedback, it's going to update
+those skills as well. As you can see,
+these uh Excalidraw diagrams keep
+messing up right here, which is
+basically just the beginner nuance. So,
+memory equals what to remember, skill
+equals how to do it again. Hermes can
+create or patch skills after real work.
+So, super cool.
+And of course, there's a skills hub. So,
+any skills you've already built can be
+used in Hermes, or you can go to the
+skills hub, and you can see that there's
+over 520 community skills. There's
+different categories, so you can
+definitely search through here to see
+what you can add to your Hermes to make
+it even more powerful. It looks like
+there's actually 16 right here that are
+Anthropic um
+official skills. We have Canvas design,
+front-end design. We have a skill
+creator skill. So, you can pull all of
+these into your Hermes agent super super
+easily. You just have to basically run
+this command, or, you know, you could
+drop in this URL to your Hermes agent
+and say, "Hey, install this skill right
+now." All right, so that's pillar two.
+Pillar three is the soul. Now, soul.md
+basically shapes the assistant. This
+shapes your Hermes agent. So that if you
+have six different Hermes agents, they
+all have basically a different vibe.
+Some can be concise, some can be rude,
+some can be
+I don't know. But anyways, the soul.md
+is another markdown file that gets put
+into the context of the agent. And now
+it's able to just have a bit of a
+personality. So, if you're also letting
+other people interact with your Hermes,
+they will feel the personality. If your
+Hermes is, you know, commenting on
+YouTube videos like mine, there will be
+some sort of personality.
+The one in my YouTube comments, I told
+it to be like very sarcastic, but not
+rude. And by the way, guys, it's not
+super super important that you need to
+like know what a skill file looks like
+or know exactly what a markdown file
+looks like. But don't get intimidated.
+Here is a skill. So, this is skill.md.
+This one's called generate image. So,
+everything in between these two lines up
+here, that is the the YAML front matter
+that I was talking about. This is what
+your agent reads in order to understand,
+okay, should I use this skill or not? If
+it then decides,
+Then it's going to read all of this
+other stuff, which is just markdown. And
+markdown just basically means that it's
+using like headers and bullets, and it's
+just a way for agents to read structure
+within a block of text. Like this means
+bold. Anyways, that's what a markdown
+file is, and that's what a skill file
+looks like. So, a soul file would look
+like that, but there wouldn't be that
+YAML front matter. But as you might have
+guessed, the soul file will also evolve
+over time based on the feedback that
+you're giving your Hermes.
+So, what is pillar number four? This is
+where it gets super cool, and this is
+one of the main value props for me over
+something like Cloud Code is the fact
+that I can just say, "Hey, spin up a
+cron job to do this at this time." And
+it just does it. Cloud Code, obviously,
+you have your routines, you have your
+loops, but that usually requires you to
+leave some sort of infrastructure on.
+Unless you're using like the that new
+cloud routine, but you're only limited
+to 15 of those, at least on the the max
+plan, 15 of those a day. So, once again,
+Hermes doesn't replace Cloud Code for
+me, but it's kind of my on-the-go spin
+up things really quick, and that's why I
+love it. So, Cron's turn Hermes from
+reactive into a proactive scheduled
+automation, and you're still getting
+that full agentic loop if you want it.
+So, you could say in natural language,
+"Hey, every morning at 6:00 a.m., I want
+you to do X, Y, and Z." It will go ahead
+and use a skill and use its tools to
+create that Cron job, and then when that
+time hits, it will basically invoke like
+a fresh isolated session. It doesn't
+inherit any of the context that you're
+currently, you know, having that
+conversation about, and then it will
+just run that skill. After that happens,
+it will send that result back to the
+original chat, and it will maybe update
+any local files or do whatever it needs
+to do based on the skill requirements.
+So, some useful pieces of advice down
+here, context underscore from is to pass
+one job output into another. Work dir
+is, you know, work directory, and it
+runs tools from a project folder, and
+then you can do this flag for no agent,
+which is just a script. So, hey, I just
+want you to run this Python script. I
+don't want the agentic harness loop
+inside of that. I just want the script
+to be ran. So, if you think back to the
+WAT framework, workflow, agent, tools,
+you basically just be deploying the
+workflow on something like Modal. You're
+not deploying the agent as well. So,
+safety nuance, Cron sessions cannot
+recursively create more Cron jobs. So,
+the prompts need to be self-contained.
+And if any of this is starting to feel a
+little bit overwhelming, I just want you
+to understand this terminology so that
+when we hop into the setup and the
+onboarding, it all clicks a little bit
+better. So, just stick with me. All
+right, and then the last pillar here is
+the self-improving loop. Hermes improves
+when useful experience gets persisted as
+memory, skills, and searchable history.
+So, if you think about the loop like
+this, you do the work, the agent learns,
+you save things to memory or to agent.md
+or to, you know, user.md, and then you
+turn those repeatable steps into skills
+or your preferences into more memory.
+And then, the agent's able to search
+past sessions when old context matters,
+and then you basically just go in that
+loop over and over. So, the more you use
+your Hermes agent, the better it's going
+to get, and the more it's going to
+understand you. So, the nuance here is
+that automatic does not mean magic. The
+loop works best when the user corrects
+Hermes, asks it to save things to
+memory, and lets it create and update
+skills after you've done some complex
+work. And there is one more kind of
+honorable mention, which is the context
+file. So, agents.md, if you're using
+Codex, you know what that is. If you're
+using Cloud Code, this is the cloud.md,
+which is kind of just like the overall
+project goal, kind of like the structure
+of the project. So, this is something
+that you're more so going to use if
+you're like coding in different projects
+with Hermes, and I would say more so if
+you're in like the terminal using
+Hermes. In today's video, I'm not going
+to focus too hard on the terminal. I am
+going to talk about the difference
+between using it in the terminal or
+using it through Telegram or whatever
+other channel you use, but this is not
+going to be a deep dive on Hermes in the
+terminal because once again, any
+terminal style work that I'd be doing, I
+would just be doing that in Cloud Code.
+That's the way that my workflow
+currently exists. But anyways, this
+honestly works pretty similar to the way
+like the memory or the soul file works,
+but those are all global. And this one's
+more of like a local project. This is
+what we're working on in this contained
+environment. So anyways, hopefully you
+guys aren't too bored yet. Let's
+actually go ahead and get your guys's
+hands-on. I am going to say before we
+jump into this, all of this video, I'm
+going to have broken down into a
+resource guide, which might even be
+helpful for you to just give your Hermes
+agent the document and say, "Hey, help
+me get all this set up." But if you want
+to access that free resource guide that
+breaks down everything that we're going
+to talk about today, that will be in my
+free school community. The link for that
+is down in the description. You'll go
+into here, you'll click on classroom,
+you'll click on all YouTube resources,
+and you'll be able to find every doc,
+skill, GitHub repo, everything I've ever
+dropped for free on YouTube right in
+there. Okay. So, now let's get into the
+setup of Hermes agent. All right, so the
+way that we're going to be doing this is
+on a VPS, which stands for a virtual
+private server. Now, I'm going to be
+using Hostinger for my Hermes agent. I
+have been using Hostinger for hosting N
+and N and for Open Claw and for Cloud
+Code. So, this is my VPS provider of
+choice. There's a link in the
+description if you guys want to go here.
+You can see there's also basically like
+a one-click install for Hermes agent
+when you spin up one of these VPS. So,
+very, very cool. Now, the first thing
+you have to do is choose the plan. So,
+on here you can see KVM 1, 2, 4, or 8.
+I'm just going to go ahead and start
+with two for now. This basically just
+changes like how much CPU and RAM you
+have and your bandwidth in your server.
+So, you could definitely start on one
+and if you need to just scale up, you
+can scale up later. But, I'm just going
+to go ahead and pick KVM 2. And then I'm
+just going to go ahead and click on
+deploy. So, you have to choose your
+period. So, 24 months, 12 months, or 1
+month. Um I think that you should just
+probably go for the annual at least cuz
+you're going to save more money, but
+also, you know, you pay about 100 bucks
+and then you have this just set up
+forever. And you can also, or for a
+year, I guess. But, you can also deploy
+multiple different Hermes agents or even
+multiple Open Claws and Cloud Codes on
+your VPS as long as you can support the
+RAM and the CPU. And if you choose an
+annual plan, so 12 months or 24, you can
+use code NATEHERK and you can save an
+additional 10% on that plan. So, you can
+see right here, it says, "Hermes agent
+auto deploys with your VPS." You can
+also get daily auto backups and then
+you're going to choose your server
+location. And then once you've made your
+payment, you just have to go ahead and
+get started with setting up your VPS.
+So, you'll choose your server location,
+click on next. This is where you can see
+the actual OS that you want to use. So,
+I'm going to do Ubuntu and I'm going to
+do 24.04 LTS. And what else you can see
+here is that there's tons of different
+apps that you could also deploy, and
+then Nemo Claw. And this is where you
+could come in here and you could search
+Hermes agent as well. And if you do want
+to do the one-click install, then go
+ahead and do Hermes agent. But, if you
+want to do it on the root of your VPS,
+then just stick with me here. I'm going
+to do a breakdown of the differences
+there in just like a minute. So, if you
+want to wait until you see that, then
+just wait for a sec. So, you're going to
+have to go ahead and create a root
+password. I'm going to go ahead and
+click next. If you forget that later,
+you can obviously just um regenerate it.
+So, it's not a huge deal, but obviously,
+you probably want to remember that. You
+can add a malware scanner for free, so
+I'll just check that box and hit finish
+setup. And now this will take just a
+couple minutes to actually spin up your
+VPS. So, while we're waiting for that,
+let me talk about the difference between
+setting it up kind of with the one-click
+or setting it up directly at the root of
+your VPS. Okay, so a VPS is basically
+just a computer in the cloud that you
+will be renting from Hostinger.
+You will get an IP address and you will
+get a password in order to basically SSH
+in, which means you were just like
+getting into that virtual private
+computer so that you can manage the
+files and install things, stuff like
+that. So if you install Hermes directly
+on the VPS, it will be at the root
+level. And if you install it using the
+one-click Docker image, it will be in a
+containerized Docker environment within
+your VPS. So I know that might make like
+no sense at all, but here's a quick
+visual. Your VPS has data, it has like
+services, it has other files, and then
+you could also put the Hermes agent
+right there. Or you could have all of
+your files and stuff, you know, locked
+into the root of your VPS and then you
+can spin up an individual container for
+all of your different Hermes agents or
+Open Cloud agents within the actual
+different Docker containers. So for the
+sake of the video, I'm going to be doing
+the Docker container approach because
+it's just a one-click install and it's
+much simpler, but even the root VPS is
+very, very simple. Now, here is
+something that I am very, very strong on
+that some people might disagree with me
+and think that it's over-engineering,
+but I think it's like why would you not
+do this?
+For all of my VPS agents, I have created
+a my own Cloud Code project to help me
+manage them. So right here you can see
+this is called UpIt agents. If I click
+on VPS agents, you can see that I have
+my bull, which is my trading bot, I have
+my main Hermes, I have my UpIt OS, and I
+have Klaus, which was like my main
+personal assistant. And so for each of
+these, I can see my passwords and my
+environment variables and I can see, you
+know, like what's the IP address of this
+VPS and how do we have this set up in
+the Docker or at the root and it has an
+information about security and
+integrations. And basically now, I have
+one clean place to manage all of my
+different agents because I've got a lot
+of different VPSs running and I don't
+want to forget my passwords and I don't
+want to forget like which agent is on
+which server. So I just have this
+project set up. So I would definitely
+recommend you guys do this. And I'm
+actually going to do this live with you
+guys here to show you what I mean. So,
+all right, we are going to go ahead and
+set up a new VPS and we're going to do a
+new Hermes agent. So, in the VPS_agents
+folder, create a new subfolder called
+YouTube Hermes. And then we're going to
+go ahead and set up like, you know, like
+the passwords and the configuration
+stuff, just so that you can help me make
+sure we maintain this project well. Now,
+the reason I like to do this is because
+do you think that I like understanding
+VPSs and terminal commands and CLIs? Not
+at all. And I'm not very good at it. So,
+who's better at that than me? Hermes
+agent and Cloud Code.
+And sometimes if you're running random
+commands and you don't know what you're
+doing, your Hermes agent might like shut
+down. And now I have Cloud Code to help
+me boot it back up if I need to. And
+this may sound scary and overwhelming,
+but trust me, it is so, so simple. This
+is just a good best practice to keep
+yourself organized. Okay, so switching
+back over to our Hostinger dashboard,
+you can now see that we have our VPS
+ready. So, if I click on manage VPS,
+this opens up our main dashboard. Couple
+things to look at. So, first of all, we
+have our root access. This is what we
+can actually give to Cloud Code. So, if
+it needs to root into our
+VPS and like look at our passwords or
+help us fix things, it can do so. It
+would just need the password as well.
+So, here's where you can change that
+root password. Down here you can see
+your current plan. You can see when it
+expires. You can see your, you know,
+your analytics and server data will pop
+up and it will show you if you need to
+like upgrade to a higher plan. And also,
+you can see on this left-hand side,
+these are all the different servers that
+I've got running, which is why I want a
+Cloud Code project to help me keep that
+organized. So, the other thing you can
+do is you can change the host name. If
+you come into here,
+you just have to have it end in a dot
+something. So, if I just do YouTube
+Hermes and then I do dot VPS, I should
+be able to
+[TRUNCATED]

@@ -1,0 +1,118 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-a1fca1e12689c95a",
+  "generated_at": "2026-05-19T07:34:19+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-RxwjoegpI98",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC",
+    "source_title": "Building Agentic RAG From Scratch in Pure Python",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:34:19+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC",
+    "source_digest_sha256": "0a6a5510a01db97ac1832aca3e61da5575f5848ca058e7aa6b65a886644106fd"
+  },
+  "taxonomy": {
+    "procedural": [
+      "So in this video, we're going to build",
+      "And not to build another",
+      "coding agent, but rather to replace or",
+      "some simple tool definitions all the way",
+      "speed or you really need to optimize for",
+      "information and we make a single LLM API",
+      "right information where it may at first",
+      "a tool that can list files, a tool that",
+      "can search files, and a tool that can",
+      "tools that all of the popular agent",
+      "along, the link to the GitHub repository",
+      "build tool files.",
+      "first file, build tools, is to show you",
+      "first set our notes directory.",
+      "this is a knowledge agentic rag and then",
+      "back to the first line over here where",
+      "path of the current file and then we're",
+      "going to take the parent and then we add",
+      "to start with step one listing the",
+      "this step by step and then we'll bring"
+    ],
+    "strategic": [
+      "Video Title: Building Agentic RAG From Scratch in Pure Python",
+      "an agentic rack system from scratch in",
+      "available to a large language model when",
+      "latency scenarios where you need raw",
+      "you have the budgets, agentic rag will",
+      "intelligence of the large language model",
+      "information and we make a single LLM API",
+      "Whereas with agentic rack, we have",
+      "back to the language model and we can",
+      "Agentic Rack folder.",
+      "replace it with another provider that",
+      "the agentic loop around this.",
+      "this is a knowledge agentic rag and then",
+      "we are now in the agentic rag folder.",
+      "particular file, the architecture",
+      "tools available for a language model and",
+      "also build your own using the model APIs",
+      "agentic rag system.",
+      "means that in this example this agentic",
+      "model but now what we're doing instead"
+    ],
+    "governance": [
+      "safety precaution to make sure we",
+      "this is a safety precaution that we can",
+      "did but now just with added safety",
+      "We'll add some safety precautions."
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.025,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 20 strategic, and 4 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 29529,
+    "unit_count": 802
+  }
+}

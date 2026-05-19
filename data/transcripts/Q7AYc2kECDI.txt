@@ -1,0 +1,794 @@
+I'm sure you've had an idea for an app
+you never built. The kind that stays in
+your notes app for 2 years or that you
+mentioned to your friend over a coffee.
+The one that you opened up a tutorial
+for and then closed it as soon as you
+saw the stack. Most ideas die there. But
+AI changed the math because the gap
+between I want to build this and it's
+already running on my phone is now just
+a weekend and not 6 months. Most AI
+demos that you see on YouTube or X show
+you how to spin up a toy project in 20
+minutes. You finish it, then try to
+build something real and the whole thing
+falls apart by the third feature. Vibe
+coding doesn't survive contact with
+anything serious. Overengineering is
+even worse. Two days of planning and
+writing architecture docs for an app
+with zero screens. Both approaches are
+how nothing gets built. This video sits
+in the middle. You're going to build a
+full Dolingo clone in React Native using
+AI the whole way through. Onboarding,
+sign up and sign in with email plus
+social, language selection, lessons,
+profile, and a realtime AI teacher that
+you can actually talk to out loud.
+&gt;&gt; Please repeat after me. Hola.
+&gt;&gt; Hola.
+&gt;&gt; Nice start. You speak, it responds back
+and forth like practicing with someone
+who's always around.
+&gt;&gt; Try hola with a clean O sound like ola.
+&gt;&gt; Ola. Ola.
+&gt;&gt; That was much better.
+&gt;&gt; You won't write a single line of manual
+code. You also won't just yolo the
+prompts and hope it works. The first
+part of the video teaches you the
+workflow. I'm calling it practical vibe
+coding. structured enough that you never
+lose track of what's in your codebase,
+but fast enough so that you actually
+ship. The second part is the full build.
+The stack, React Native with Expo and
+TypeScript, Native Wind for styling,
+Zastand for state management, Clerk for
+O and user management, stream voice
+agents powering the AI teacher that
+responds in real time. Nov Diaz. Just
+one small tweak. 10 is DS with a soft
+yes sound, not DS.
+&gt;&gt; Posthog for product analytics and Code
+Rabbit reviewing every AI generated PR
+before it merges. But the app isn't the
+point, the workflow is. And if you stick
+around for the second half, I'll show
+you why this is the only way to build
+mobile applications with AI without
+getting lost in all that spaghetti code.
+So, use that workflow that I'll talk
+about in the video, which you can also
+get as a reference guide. I'll leave the
+link in the description, and use it on
+anything you build next. Now, grab some
+coffee, Red Bull, or tea, and let's go.
+Earlier this year, Andre Carpathy, one
+of Open AI's founding members, posted
+about something he called Vibe Coding,
+fully given to AI. Don't read the code.
+Describe what you want and let it
+happen. The dev internet split. Half the
+replies said, "This is the future." And
+the other half said, "It's how you build
+something that nobody can ever
+maintain." Both replies were right. If
+you've actually tried to build something
+real with pure vibe coding, you know how
+it goes. The first three features fly
+and then around feature five, you ask AI
+to fix one thing, something else breaks.
+You ask it again and now you're staring
+at code that you didn't write in a
+project you can't fully explain. Speed
+without direction always lands here. But
+the other extreme looks completely
+different but ends up at the same place.
+Days of planning before a single screen
+exists. Folder structures, color tokens,
+architecture docs, naming conventions,
+and pattern libraries, hours of prep
+work for an AI to maybe build something
+one day. It feels productive because
+you're typing a lot, but the app never
+gets started. You're essentially
+preparing for a battle without ever
+fighting one. So what's the middle
+ground? It's a method I call practical
+vibe coding. Keep the speed of AI
+development and add just enough
+structure so that AI knows what it's
+working on and you don't lose track.
+Build feature by feature and verify each
+one before moving to the next. And this
+whole method runs through one file. It's
+called the agents MD, a markdown file at
+the root of your project. It tells the
+AI how your project works, what stack
+you're using, where files go, and what
+rules to follow before you say anything
+else in your prompt. And it's not
+written for you. Tools like cursor,
+cloud code, and windserve read project
+files for context. And that agents MD
+file is the first file they read.
+Without it, you'd end up writing the
+same context lines into every prompt.
+Same stack description, same folder
+rules, same use this and don't use that.
+And the moment you forget to repeat one,
+the AI fills the gap on its own. It
+picks a different state library, a
+different folder convention, or a
+different styling approach. Across 20
+prompts, your codebase ends up looking
+like five different people built it with
+10 different architecture patterns who
+never talked to each other in the first
+place. So then what is the agents MD
+file made of? First, a role. You are an
+expert React Native plus expo engineer.
+You write clean, simple code. You
+prioritize clarity over abstraction.
+That paragraph alone changes the quality
+of everything that follows. Then you
+give it a short overview. What the app
+is, what does it do, and who uses it.
+One paragraph is enough here. The stack,
+every library and service, one line each
+on what it handles. This stops the AI
+from suggesting alternatives midbu.
+There's also the folder structure, where
+screens live, where components go, and
+where state lives as well. The styling
+rules on what approach you want to use,
+your color tokens, or any quirks like
+native wind doesn't work with safe area
+view, for example. So, write that down.
+And finally, the patterns to follow.
+Anything you'd otherwise have to repeat
+across different sessions. And you don't
+have to write this perfectly up front.
+You write what you know and then update
+it when something keeps coming up. Like
+when a native wind gave me trouble with
+safe area view, I added that rule to the
+file. And then after that, the AI never
+made the mistake again. So solve it
+once, document it, and then move on. Now
+the full agents.mmd file for this
+project specifically comes later in the
+build. and it's on the GitHub repo, too.
+But if you want a reusable template you
+can drop into any project and make it
+work with it, plus the rest of the
+practical vibe coding workflow as a
+written reference, well, grab the free
+playbook linked in the description. But
+now, let's talk a bit more about how
+we're going to actually prompt. So, once
+you've got the agents.mmd file, what's
+next? How do you actually use it? The
+file handles the project context, but
+the prompt handles what you're trying to
+build right now. And this is where I see
+most developers get it wrong. They type
+a few sentences about what they want and
+hope the AI figures out the rest.
+Sometimes it works. And more often the
+output looks close, but it isn't quite
+right. Or it breaks something else that
+was working. or I've seen it introduce a
+pattern that doesn't match the rest of
+the codebase and then you waste another
+20 minutes explaining what went wrong.
+So the fix isn't a longer prompt, it's a
+more specific one with the right
+structure. So every single prompt that
+we'll write together for this project
+has the same four parts and in the same
+order. Starting with number one and that
+is to point it to your agents.mmd.
+Say something like read the agents MD
+first and follow it strictly every
+single time without exceptions because
+AI tools don't automatically remember
+what they read in previous sessions. So
+these two lines force the file back into
+the context before any code gets
+written. And that strictly matters too
+because it signals that the rules in
+that file aren't just suggestions. The
+second part of every prompt is one task.
+State exactly what you're building. One
+feature, one screen, one integration.
+Not something like set up native wind
+and build the onboarding screen and add
+authentication. That's three prompts
+merged into one because it felt
+efficient. But trust me, it isn't. If
+something breaks across three tasks, you
+can't tell which one caused it. So stay
+scoped to one thing per prompt. The
+third part of every prompt are
+constraints that protect what already
+works. And again, most devs skip this.
+Every feature you've built so far is
+working, but unfortunately, the AI
+doesn't know to leave it alone unless
+you say so. So add lines like do not
+change the screen design, preserve the
+existing UI exactly, keep the existing
+stream audio flow intact, and don't
+expose any secrets in the mobile app.
+These tell the AI what not to break.
+They're your working codes institutional
+memory written down so the AI treats it
+as something to work around, not to
+refactor. And finally, the fourth part
+of every prompt are design references.
+If you're doing something visual, attach
+that image or screenshot or pieces of
+the design. The AI reads layouts better
+than it reads descriptions of layouts.
+So, one image will save you three
+prompts of you explaining margins. So,
+put together a real prompt looks
+something like this. Read the agents MD
+first and then follow it strictly.
+Implement the onboarding screen as shown
+in the attached design exactly using the
+assets from the assets folder. Add a
+navigation link on the home route to
+open up the onboarding screen and use
+the mascot logo image for the top logo
+alongside the app name. Do not include
+the pagionation dots and then also drag
+and drop the image design. It's short,
+scoped, has a constraint, and has a
+reference. The AI knows what to build,
+what not to add, and what it should look
+like. And I've also prepared a prompt
+template that follows these patterns
+alongside more examples in that free
+playbook down below so that you can
+reuse it across any kind of project to
+give your AI more discipline and
+structure. Once again, the link is down
+in the description. And that was the
+fourpart prom structure. But now let's
+talk a bit more about constraints. Even
+when I taught developers the structure,
+they still got wrong the constraints
+part because you can prep the full
+agents file. You can write the task,
+attach the design, and then write a
+constraint that doesn't actually
+constrain anything. And that happens
+because most devs are thinking about
+code when they should actually be
+thinking about behavior.
+You don't need to tell the AI how to
+write the code. It'll figure it out.
+What you need to tell it is how the
+feature should behave. What's already
+working that should stay the same,
+what's allowed to change, and what's off
+limits. Some examples that you'll see
+later on in the build, so definitely
+make sure to stick until the end look
+like this. If anything is unclear, ask
+before implementing. That stops the AI
+from making decisions on its own when it
+hits ambiguity.
+Also, do not expose any secrets in the
+mobile app. Keep the existing stream
+audio flow intact. that protects the
+security model and the already working
+integration.
+And I came up with these just by looking
+at the app the way that a product
+engineer would. What could go wrong from
+a user's perspective? What might the AI
+accidentally change that's already
+working? Write those things down into
+the constraint part of the prompt. Okay,
+so now you have that fourpart structure
+figured out and you know that
+constraints have to be about behavior.
+But not every feature has a design. Some
+are about state management, o logic or
+backend integration. There's nothing
+visual for you to attach or drag and
+drop. So how do you prompt for those?
+Well, again just describe behavior.
+First we have the usual read agents MD
+file and follow it. Then you tell it
+something like integrate the language
+selection state. Store the selected
+language using zastand that's a state
+library with react native async storage.
+That's going to be our database of
+choice. So if an authenticated user has
+no selected language, route them to the
+language selection screen and then only
+after the selection should they reach
+the home route. preserve the existing
+UI. Exactly. And we can also add a
+temporary button on the home screen to
+clear the async storage so I can
+actually test the flow. The first part
+is the behavior of how we want our users
+to be able to use the app. And that last
+line is a development utility that
+you'll remove later. So remember, prompt
+for the infrastructure that lets you
+verify the feature, not just the feature
+itself.
+And what about cases where the AI itself
+is the problem? Where it just doesn't
+know the current version of the thing
+you're using? This is incredibly common
+with libraries and services that update
+fast. The AI's training data is months
+behind, sometimes a year. So, it
+generates code that looks right, but it
+uses a deprecated method, an old API, or
+a config pattern that just changed in
+the last major version. You won't notice
+these changes until something breaks at
+build time or in production. And the
+fix, thankfully, is simple. Just paste
+the current documentation directly into
+the prompt after the instructions,
+separated by a divider. An example would
+be something like replace the mocked O
+flow with real clerk authentication.
+Keep the existing UI and navigation
+intact. Implement email signup, signin,
+social o, and verification through
+clerk. And then after verification,
+navigate to the home route. And then
+after all of that, simply paste the
+markdown clerk docs which you can copy
+over from their website. That way, the
+AI will read your instructions first,
+understand what you're trying to build,
+and then uses the docs to do it
+correctly with the latest version of the
+API. And you can do this for any library
+where you're not sure whether the AI has
+the current version. And there's also a
+cleaner path for libraries that publish
+official skill packs, and almost every
+dev tool nowadays does that. You simply
+need to install the agent skill once and
+then the AI will keep using the right
+version automatically without you
+needing to pace the docs every time.
+Expo clerk and stream all have them. And
+I'll teach you later on how we can
+install those agent skills for any tool
+you're using. Another option as well is
+to use something like context 7 which
+also brings back the latest version of
+documentations for any tool you're
+using. But again, if you stick along
+throughout this video, I'll teach you
+how to use all of those in practice to
+make sure that your agents always have
+the latest info. But even that is going
+to be just the beginning of what we are
+about to teach in the ultimate AI agent
+course that's coming soon on
+jsmastery.com. I've been working on that
+one for more than a year now, analyzing
+how to work with agents and the best way
+to make the most out of them. So, if you
+haven't already, I'll leave the link
+down in the description to sign up for
+the weight list completely for free. So,
+you can access it first and at the most
+affordable price. I'll leave the link
+down in the description so you can join
+the weight list. And now, let me tell
+you a bit more about how to prompt when
+something in your application breaks. I
+mean, even with this full structure that
+I'm giving you, things will break
+sometimes. That's not a failure of the
+method. It's just how software
+development is. So when something breaks
+the response is always the same. Write
+just one targeted prompt fix something
+like the verification model is appearing
+behind the keyboard on iOS. It should
+sit above the keyboard. Don't change any
+other model behavior or layout. You
+don't need to reexlain the feature. You
+don't paste the codebase. You state the
+problem. State the correct behavior and
+then add a constraint. if needed to keep
+everything else untouched. So this means
+one problem, one fix, and one
+verification. And that's it. That's how
+you can prompt. Well, so finally, let me
+give you one sentence that ties all of
+it together. A perfect prompt is just an
+instruction with a defined scope. And
+the scope is three things. What are you
+building right now? what already works
+that you're not touching and what rules
+the AI already knows from the file. Once
+those three are decided, the prompt
+almost writes itself. Agents MD handles
+the rules. The task line handles what's
+new and the constraints handle what's
+protected and you can eventually add a
+design reference or a dock paste if
+needed. That's it. So build the
+onboarding screen, see if it works, move
+on. Same for the signin, the language
+selection, and every other feature to
+follow. And then when something breaks,
+it's contained because you only changed
+one thing. If you build this way, which
+I'm going to show you how to do later on
+in the build, you can apply it to
+anything else next. The product will
+change, but the workflow doesn't. That's
+the actual skill, and that's what you're
+walking away from watching this video
+until the end. The workflow that you'll
+learn here runs on any stack, but here's
+the one that we're using for this build.
+So, let's get it set up. For
+authentication and user management,
+we'll use Clerk. The developer
+experience for React Native and Expo is
+honestly really clean, especially for
+OTP o sessions and protected routes. You
+can do it fully custom or enable their
+pre-built components. But on top of the
+developer experience, the second biggest
+reason why I go for Clerk is their
+pricing. They have the most generous
+free plan that I've ever seen, where you
+can have up to 50,000
+monthly retained users per app. That's
+actually more than you need for most
+MVPs, startup projects, and even
+fullyran businesses. And then the thing
+that makes it a no-brainer are their
+billing features. On top of O, you can
+immediately add billing to your app so
+that you can monetize it and actually
+start making money from your app. So,
+click the clerk link down in the
+description, create your account, and
+then create a new application on their
+dashboard. You can call it something
+like JSM React Native.
+Then for the AI teacher part of the
+application and the real time lesson
+experience, I'll teach you how to use
+stream alongside their new and fully
+open-source vision AI SDK. The vision
+agents is exactly what we needed for
+this build as they allow you to
+integrate low latency voice and video AI
+agents, which is perfect in this case
+because your conversation when learning
+language should feel like you're talking
+to a real person in real time. Getting
+started with Stream will be super easy,
+especially thanks to their agent skills,
+but just so it's even easier later on
+when we do end up using it, go ahead and
+click the link down in the description,
+and create your free account. You can
+sign in with Google or GitHub, and
+you'll be in and get your API key and
+secret, which we'll use later throughout
+the build. We'll also use Posthog for
+analytics because as you continue
+building more serious products,
+understanding how your users interact
+with your app becomes really important.
+Things like lesson completion,
+retention, and feature usage will help a
+lot over time. So, Post Hog combines
+analytics with session replays, feature
+flags, and product insights all in one.
+There is a very developer friendly
+package. And that's the thing that I
+love about Post Hog the most. They're
+not trying to speak to some huge
+corporations, but rather this hedgehog
+speaks directly to us developers working
+with their tool. So, I'll leave the link
+down in the description below. So, click
+get started and create your account.
+Then later on, I'll teach you how to use
+their Post Hog wizard to automatically
+install and set up Post Hog within your
+application. And that's it for the crash
+course. Very soon, we'll dive into the
+build. And just a final reminder before
+we get started that I also wrote up
+everything you learned about in the last
+10 to 20 minutes as a free playbook. The
+idea, the design, the stack, the agent
+subd with all the prompts and templates
+included so that you can also integrate
+it within your upcoming projects, not
+just this one. for the final time. The
+link is in the description if you want
+it on hand while you build your own apps
+even after this video. So, finally,
+let's start building the app feature by
+feature using the practical vibe coding
+workflow. Let's build it.
+To get started developing our great
+application, we'll start from bare
+beginnings by literally creating a new
+empty folder on our desktop. Call it
+something like Dualingo clone and then
+simply drag and drop it into your code
+editor. Throughout this video, I'll be
+using VS Code. I like using it because
+of its simple interface to interact with
+your agents. There's a simple chat
+builtin as well as Cloud Code extensions
+that work natively with whichever agent
+you're using. But don't worry about that
+for now as I'll show you exactly what
+you need once we actually start
+building. For now, I want us to generate
+a new application from scratch manually.
+Head over to expo.dev,
+then switch over to docs, and you can
+get started with a simple command. MPX
+create expo app at latest.
+So, just copy it. Go back and open up
+your integrated terminal, paste it in,
+and add dot slash at the end, which will
+create it within the current folder.
+It'll download and extract all the
+necessary project files and then run mpm
+install so we can immediately run it. So
+give it a minute and then when it's done
+you'll see a screen that looks something
+like this telling you to run it for
+either Android iOS or the web or what
+you can do is just start the developer
+server by running mpx expo start and
+then pressing enter. This will fire up
+the metro bundler which compiles and
+serves your React Native code. And then
+you'll see a QR code and a couple of
+keyboard shortcuts below. You can press
+the letter A to open up Android Studio,
+I for iOS simulator, R to reload the
+app, or J to open up the debugger. We'll
+use a few of these as we build. And in
+this course, I'll also teach you how to
+set up and run the application on your
+Android Studio or the iOS simulator
+through Xcode. But to get started with
+the easiest way to develop with Expo is
+through Expo Go app on your phone. It's
+a mobile app that lets you preview your
+project on a real device by simply
+scanning this QR code.
+Doesn't require any full builds and you
+get realtime updates as you save your
+code. So, simply open up your Google
+Play Store on Android or the App Store
+on iOS. Search for Expo Go and install
+it. Pause the video. Go ahead and do
+that now and then come back. It should
+literally take a second. Once you
+download it, simply log into your
+account. And if you're on an Android
+device, you'll have to scan the QR code
+directly from within the app itself. If
+you're on iOS, you'll need to simply
+open up your camera app and then scan it
+from there. And if you're on iOS and
+it's not connecting, make sure that your
+VPN is turned off and that your phone is
+on the same Wi-Fi network as your
+computer. So once you scan it and open
+it up, it should look something like
+this. From this point onward, at all
+times, you'll see exactly what I'm
+seeing on my real physical device that I
+hold in my hand, but you can see it on
+right here on my screen as I'm casting
+the full device. so that as we're
+developing different features, we can
+see what's happening in real time on my
+screen. For you, I would just recommend
+to hold your device in your hand and
+then test it out manually while we
+develop. Now, Expo generated a lot of
+different files for us right here.
+Plenty of different files and folders
+that we don't necessarily need to start
+with, but we don't need this generated
+boilerplate code that says welcome, try
+it, explore it, and so on. So we can do
+what the step three says and that is to
+open up another terminal and simply run
+mpm run reset project which will ask you
+whether you want to move the existing
+files to an app example folder instead
+of deleting them. In this case simply
+say no and let's delete them
+permanently. The Expo app might ask you
+for some additional permissions. And
+since the project reset has been
+completed you have to rerun the
+development server. So head over into
+our initial terminal, press Ctrl + C to
+stop the server, and then once again run
+the MPX expo start command, which will
+restart the server, and then you can
+press the letter R to reload the app on
+your phone. And now there's just a blank
+screen, allowing you to head over into
+app index.tsx,
+where you can edit it and make it say
+something like Dualingo
+clone. you'll see that the changes will
+be reflected in real time on your phone.
+And with that, the Expo setup is done.
+We have everything we need to start
+developing our app. So, in the next
+lesson, let's immediately set up that
+agents.m MD file that I've been telling
+you so much about throughout the crash
+course.
+As you learned in the crash course, the
+next step after deciding the text stack
+and setting up the project is creating
+that agents.md file. So, right here in
+the root of your application, create a
+new file called agents in capital
+letters.md.
+Then head over to the video kit link
+down in the description. And if you
+scroll down, you'll be able to see the
+snippets to copy part where at the top
+there's going to be the agents.md file
+which you can simply copy. Once you copy
+it, paste it right here and then we can
+go over it together so you understand
+how it looks like specifically for this
+project. And the reason why we're not
+writing it by hand together is that I
+didn't write it myself either. The
+entire process of how I came up with
+this agents.mmd file and how you can
+come up with agents.mmd file for your
+own upcoming projects is within that
+playbook linked in the description. But
+it's basically a conversation with an AI
+to generate it. Still, let's go over it
+together so you can understand exactly
+what is happening and we can go through
+it together in the preview mode which
+will allow us to read it just as text.
+So the first thing in your agents.md
+file is a role. You tell the AI what
+kind of developer it should be for this
+project. Sounds small but it's not. A
+general purpose AI will give you general
+purpose answers. The role acts as a
+filter. Every suggestion, pattern and
+line of code will get shaped by it. For
+this project, I wrote expert React
+Native Engineer Practical Learning
+Project. Clean and simple. Prioritize
+clarity over unnecessary abstraction and
+think like a senior mobile developer.
+But explain and implement like someone
+building a practical learning project.
+So before anything else, just ask
+yourself who would you want to work on
+your project? what should they care
+about and what should they avoid? Then
+write that at the top of the agents.mmd
+file. Now after the role, give the AI
+everything it would otherwise have to
+guess. A short overview of what the app
+does and who uses it. Like we're
+building a Dualingo inspired AI language
+learning mobile app using Expo. The app
+teaches users languages through
+interactive lessons that may include
+video or audiobased teacher lessons,
+chatbased AI tutor lessons, vocabulary
+review, local XP and lesson completion,
+and more. The goal is to teach
+developers how to build a modern AI
+powered expo app feature by feature.
+Then we dive into the stack. Just one
+line for every library that we use. This
+stops AI from reaching for different
+state libraries halfway through the
+build. A bit about the development
+philosophy. In this case, we're building
+feature by feature. And for every
+feature, we want to first understand the
+user request. Check this file before
+coding. Keep the implementation simple.
+Avoid overengineering. Prefer readable
+code over clever code. And build the
+smallest useful version first. Only
+refactor when repetition or complexity
+appears. and keep the app easy to teach
+upon and explain. We also dive into some
+decision-making and clarifications where
+I tell it that if something is unclear
+or could be improved, I wanted to
+proactively suggest better approaches
+and if a new library would significantly
+simplify or improve the implementation,
+then recommend that library clearly
+explain why is it useful and ask the
+user for permission before adding or
+installing it. And agents thrive on
+examples. So here I give it an example
+of this could be implemented manually
+but using React Native reanimated would
+make animation smoother. Do you want to
+add it? And then only if we say yes it
+does. If not we tell it to not install
+or add any libraries without user
+approval. This is a little thing that I
+add to my agents MD file that makes a
+huge difference and I think I also
+provided it in that playbook below so
+you can copy it and use it for all the
+other projects.
+Then we dive a bit into the architecture
+guidelines. How to structure the app,
+what each folder is all about. This was
+generated with AI by following the expo
+documentation. How it generates images,
+and then most importantly, the styling
+rules. In this case, we're using native
+wind and tailwind CSS for classes. We
+don't want it to use the native
+stylesheet unless it's not possible to
+do a specific thing with Tailwind CSS
+class names. I also give it some
+information on how it can build from a
+specific design image and we'll ask it
+to reuse some stuff from globals.css if
+it's already there. We ask it to
+specifically use the native wind version
+installed in the app by checking which
+one is available in package json. And
+then a bit below you can see this style
+exception rules. This is a real example
+from this project where native wind the
+styling library we'll use here doesn't
+work with safe area view which is
+another library which we need to nicely
+contain everything on all the screens.
+You'll see that on it the class name
+prop just doesn't work and this is not
+something that I know right off the bat.
+This came up during development of a
+previous React Native project I've
+built. Specifically, that was this React
+Native full course 2026, which I would
+highly recommend that you watch before
+this
+[TRUNCATED]

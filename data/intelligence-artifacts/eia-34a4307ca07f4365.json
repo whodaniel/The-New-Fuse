@@ -1,0 +1,107 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-34a4307ca07f4365",
+  "generated_at": "2026-05-19T07:46:25+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-lK9o5Wu2upU",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=lK9o5Wu2upU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=30&t=5491s&pp=iAQBsAgC",
+    "source_title": "Pi is INCREDIBLE - Building a Custom Coding Agent Live",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:46:25+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=lK9o5Wu2upU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=30&t=5491s&pp=iAQBsAgC",
+    "source_digest_sha256": "b3149e08c5dc79f564411d3d1426e42719345191633096a4b1d723146e236662"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Video Title: Pi is INCREDIBLE - Building a Custom Coding Agent Live",
+      "agent that you build on top of instead",
+      "of taking a really massive bloated tool",
+      "then you can really take control of it",
+      "Archon is my open source tool that helps",
+      "you build your own harnesses.",
+      "about, you know, create your own",
+      "process, build your own workflows and",
+      "But here, I just want to build",
+      "works, how we can build on top of it,",
+      "the other thing that I'm going to test",
+      "more of like an enterprise tool, but",
+      "yeah, as far as like the API keys you",
+      "coding is the one that I want to test",
+      "wanted to test using within Pi.",
+      "the Dark Factory to run on Pi, by the",
+      "And then if we look at the",
+      "the archon workflow marketplace that I",
+      "don't actually ship natively with PI cuz",
+      "and then you build in or install the"
+    ],
+    "strategic": [
+      "Archon and I showed the integration that",
+      "model uh output quality and just like",
+      "agent that allows us to use any model we",
+      "a weaker model, we can still get really",
+      "the model when it comes to getting good",
+      "I'm kind of open to what that model is,",
+      "Adam custom provider.",
+      "status footer for Pi with model thinking",
+      "um LLM callable multi-question tool with",
+      "token, and cost widget, artifacts,",
+      "token management and cost."
+    ],
+    "governance": [
+      "permission gate configurable danger",
+      "Um slow mode is a review gate for"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.024,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=lK9o5Wu2upU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=30&t=5491s&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 11 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 30500,
+    "unit_count": 828
+  }
+}

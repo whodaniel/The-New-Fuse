@@ -1,0 +1,80 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-447973bfe855fae5",
+  "generated_at": "2026-05-19T07:10:10+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-ynJyIKwjonM",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC",
+    "source_title": "Agentic Search for Context Engineering \u2014 Leonie Monigatti, Elastic",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:10:10+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC",
+    "source_digest_sha256": "4e6a06bfef710c3f06df2b6bd90cf3c4c510fcc09349e9490c8d45c8b8dc465a"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Who<00:01:03.120><c> here</c><00:01:03.359><c> has</c><00:01:03.600><c> built</c><00:01:03.840><c> an</c><00:01:04.000><c> agent</c><00:01:04.400><c> or</c><00:01:04.640><c> some</c><00:01:04.879><c> form</c>",
+      "Who here has built an agent or some form",
+      "Awesome.<00:01:08.479><c> Then</c><00:01:08.799><c> you've</c><00:01:09.119><c> probably</c><00:01:10.479><c> then</c>",
+      "Then you've probably then"
+    ],
+    "strategic": [
+      "Video Title: Agentic Search for Context Engineering \u2014 Leonie Monigatti, Elastic",
+      "We<00:00:23.680><c> are</c><00:00:23.840><c> going</c><00:00:24.000><c> to</c><00:00:24.160><c> be</c><00:00:24.400><c> talking</c><00:00:24.640><c> about</c><00:00:24.880><c> agentic</c>",
+      "We are going to be talking about agentic"
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.075,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 4 procedural, 3 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 4507,
+    "unit_count": 53
+  }
+}

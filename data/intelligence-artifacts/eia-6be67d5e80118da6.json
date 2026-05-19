@@ -1,0 +1,119 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-6be67d5e80118da6",
+  "generated_at": "2026-05-19T07:46:14+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-WQv3xjb4WgQ",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=WQv3xjb4WgQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=28&t=1655s&pp=iAQBsAgC",
+    "source_title": "ByteDance Just Killed Manus With This Free AI Agent",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:46:14+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=WQv3xjb4WgQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=28&t=1655s&pp=iAQBsAgC",
+    "source_digest_sha256": "fea21238a833e259aff73a00c96a91b0498bde373a4e6a13c706112d49f4dbea"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Video Title: ByteDance Just Killed Manus With This Free AI Agent",
+      "Every major AI lab is racing to build",
+      "not suggest what you should do next,",
+      "They run in the cloud.",
+      "serious computer use agent in the market",
+      "the two products that ship under this",
+      "And then we're going to walk through",
+      "and power users can take and run with",
+      "developer tool space consistently and",
+      "for their workflow, share this video",
+      "repository name, they read the",
+      "Under the same GitHub repository,",
+      "The first product is called Agentars.",
+      "Agent TARS is a general purpose",
+      "multimodal AI agent that you run from",
+      "You can run it with claude,",
+      "you can run it with bite dance on",
+      "whatever model fits your setup.",
+      "entire tool layer is built on top of the",
+      "mounted directly into agent tars and"
+    ],
+    "strategic": [
+      "serious computer use agent in the market",
+      "open source down to the model weights.",
+      "The model family that powers all",
+      "five real world agentic use cases that",
+      "They share the same underlying model",
+      "It is model agnostic meaning",
+      "doughbound model or you can point it at",
+      "whatever model fits your setup.",
+      "model context protocol which means any",
+      "immediately becomes a capability the",
+      "both of them is the model family that",
+      "we need to talk about the model that",
+      "purpose language model gets wrapped in",
+      "is built on a model that was designed",
+      "general purpose vision language model",
+      "live inside one model.",
+      "Everything the model needs to understand",
+      "model was trained not just on successful",
+      "That is a significant capability in the",
+      "The model gained the ability"
+    ],
+    "governance": [
+      "right out of the gate.",
+      "model context protocol which means any",
+      "gate, it achieved state-of-the-art",
+      "much larger failure later.",
+      "policies and security practices in"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.024,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=WQv3xjb4WgQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=28&t=1655s&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 20 strategic, and 5 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 30498,
+    "unit_count": 828
+  }
+}

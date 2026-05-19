@@ -1,0 +1,111 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-319149f4a050e421",
+  "generated_at": "2026-05-19T07:37:25+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-jWDCnJKouhw",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=jWDCnJKouhw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=14&pp=iAQBsAgC",
+    "source_title": "Are Your AI Agents Flying Blind? The Truth About AgentOps",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:37:25+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=jWDCnJKouhw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=14&pp=iAQBsAgC",
+    "source_digest_sha256": "5cdaed3caec5699d73ccb7769ee9dc565660b5fdef57c60fe01dca2b7366cdae"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Your AI agent just approved a",
+      "Now, imagine you deploy two",
+      "Another agent submits",
+      "This is where most agent",
+      "agent doesn't work, but because no one",
+      "And that is exactly what agent",
+      "Agent operations.",
+      "gave us the tools to deploy software",
+      "And then we have MLOps, which gave us",
+      "Agent Ops is what you need when your AI",
+      "The agent op frameworks break down",
+      "Let's start with the first",
+      "agent made a decision, you need to be",
+      "every tool call, every LLM",
+      "A second one is agent to agent handoff",
+      "When one agent passes",
+      "work to another agent, how long does",
+      "third, cost per request.",
+      "cost you an API calls?",
+      "second layer is evaluation."
+    ],
+    "strategic": [
+      "stakes, blind is not a strategy.",
+      "every tool call, every LLM",
+      "lat for latency.",
+      "third, cost per request.",
+      "cost you an API calls?",
+      "This is a real agentic",
+      "handoff latency.",
+      "execution latency.",
+      "is cost per authorization.",
+      "The cost efficiency",
+      "cost reduction on every single request."
+    ],
+    "governance": [
+      "policy number, is it actually correct?",
+      "guardrail violations?",
+      "trigger a guardrail.",
+      "compliance violations because we built",
+      "the safety net before we needed it.",
+      "First pass approval improved by 50%."
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.061,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=jWDCnJKouhw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=14&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 11 strategic, and 6 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 11915,
+    "unit_count": 330
+  }
+}

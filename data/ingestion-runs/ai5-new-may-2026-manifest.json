@@ -1,24 +1,24 @@
 {
-  "generatedAt": "2026-05-19T06:13:08.359035Z",
+  "generatedAt": "2026-05-19T07:46:46.412839Z",
   "dryRun": false,
   "playlist": {
-    "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ai-5-playlist.live-2026-05-19T06-12-28Z.json",
+    "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ai-5-playlist.json",
     "playlistId": "PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
-    "count": 37
+    "count": 8
   },
   "notes": {
     "dbPath": "/Users/danielgoldberg/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite",
     "folderTitle": "NEW- May-2026",
     "folderPk": 6199,
-    "count": 47
+    "count": 0
   },
   "owner": "danielgoldberg",
   "visibility": "private",
   "releaseState": "sealed",
-  "previousTrackedCount": 82,
+  "previousTrackedCount": 84,
   "summary": {
-    "attemptedThisRun": 2,
-    "succeededThisRun": 2,
+    "attemptedThisRun": 8,
+    "succeededThisRun": 8,
     "failedThisRun": 0,
     "trackedTotal": 84
   },
@@ -827,70 +827,491 @@
     {
       "sourceId": "yt-ai5--Bp2Sz5xir4",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=-Bp2Sz5xir4",
+      "sourceUri": "https://www.youtube.com/watch?v=-Bp2Sz5xir4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=5&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
       "title": "Build an Enterprise RAG Pipeline in Minutes with Gemini New API",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-a2daa15013e1ca64",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-26ae0cf9f01cf812",
       "result": {
-        "artifact_id": "eia-26ae0cf9f01cf812",
-        "generated_at": "2026-05-17T14:17:03+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-a2daa15013e1ca64",
+        "generated_at": "2026-05-19T07:42:36+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5--Bp2Sz5xir4",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=-Bp2Sz5xir4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=5&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+          "source_title": "Build an Enterprise RAG Pipeline in Minutes with Gemini New API",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:36+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=-Bp2Sz5xir4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=5&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+          "source_digest_sha256": "a2461b16f93e754067b8f4dcf7cadd5f054671b45d93b4ba6c9ddd95e7a61639"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Build an Enterprise RAG Pipeline in Minutes with Gemini New API",
+            "So, Google just expanded the Gemini API",
+            "file search tool.",
+            "by hand, this changes what the pipeline",
+            "inside the Gemini API.",
+            "documents, the API chunks them, embeds",
+            "Before this update, the pipeline was",
+            "markdown, logs, JSON, etc.",
+            "your own pipeline.",
+            "The third is uh page-level citation.",
+            "extract text and lose figures, or run a",
+            "separate vision pipeline and stitch",
+            "document, the API embeds the visual",
+            "The pipeline has five stages.",
+            "uh files API or pass the path directly.",
+            "And the third is embed.",
+            "the Gemini embedding tool does the work.",
+            "{underscore} search as a tool on a",
+            "interesting here is that the embed step",
+            "Now, the code ship is uh mostly"
+          ],
+          "strategic": [
+            "The model retrieves the relevant chunk,",
+            "So, the migration from",
+            "2.5 flash model, uh but you can use the",
+            "latest model if you want.",
+            "shows the model accuracy over uh",
+            "architecture, right?",
+            "Uh this capability was",
+            "to the Gemini model.",
+            "model is smart enough to figure out",
+            "this second demo is cross-model query.",
+            "You want your model to",
+            "system architecture diagram in our",
+            "architecture that we have as a diagram."
+          ],
+          "governance": []
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.047,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=-Bp2Sz5xir4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=5&pp=iAQB0gcJCQQLAYcqIYzvsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 13 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 15235,
+          "unit_count": 424
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-4XvM-0o3A-4",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=4XvM-0o3A-4",
+      "sourceUri": "https://www.youtube.com/watch?v=4XvM-0o3A-4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=12&pp=iAQBsAgC",
       "title": "Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-66e38b413dd7e570",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-986677665bb2bb82",
       "result": {
-        "artifact_id": "eia-986677665bb2bb82",
-        "generated_at": "2026-05-17T14:17:04+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-66e38b413dd7e570",
+        "generated_at": "2026-05-19T07:42:37+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-4XvM-0o3A-4",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=4XvM-0o3A-4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=12&pp=iAQBsAgC",
+          "source_title": "Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:37+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=4XvM-0o3A-4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=12&pp=iAQBsAgC",
+          "source_digest_sha256": "662921787cd5e63f6e8c4f9091632b38b7078a3cca8d10c36d6c177f78f8ffcd"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!",
+            "Hermes Agent 0.13 is out, and this is a",
+            "the first big thing is the durable",
+            "multi-agent Kanban system.",
+            "agent says it created or completed a",
+            "durable work queue for multiple agent",
+            "The next important feature is /goal.",
+            "are good at one step, but worse at",
+            "a background agent.",
+            "cron prompt injection scanning, and log",
+            "feature, no agent cron mode.",
+            "can now run as script-only watchdogs",
+            "The tool system also got better.",
+            "Python, JSON, YAML, and TOML.",
+            "agent writes a broken config file or",
+            "image tool results.",
+            "tool outputs should work better.",
+            "Hermes also added a video analyze tool",
+            "Static gateway and CLI",
+            "you guide an in-flight agent."
+          ],
+          "strategic": [
+            "Now on the platform side, Hermes added",
+            "platform plugin hooks, so new adapters",
+            "are also new platform allow lists across",
+            "change is provider plugins.",
+            "has a provider profile abstraction and a",
+            "model providers plugin directory.",
+            "as new providers and model routes keep",
+            "They also added new model entries like",
+            "as a free model route, which is nice for",
+            "with cost if the route and model support",
+            "There is also a useful cost-related",
+            "without calling a model.",
+            "text-to-speech provider with voice",
+            "picker now matches the Hermes model flow",
+            "run without wasting model calls."
+          ],
+          "governance": [
+            "There is also a hallucination gate and",
+            "Security also got a",
+            "security issues and secret redaction is",
+            "right safety, MCPOAuth handling, browser",
+            "Security defaults are stricter."
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.09,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=4XvM-0o3A-4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=12&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 15 strategic, and 5 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 8396,
+          "unit_count": 223
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-4azVjKhqDzw",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=4azVjKhqDzw",
+      "sourceUri": "https://www.youtube.com/watch?v=4azVjKhqDzw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=11&t=1733s&pp=iAQBsAgC",
       "title": "Building the App Store for Agentic Engineering",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-8ea9d0c4c7676546",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-bc2da01e67670b11",
       "result": {
-        "artifact_id": "eia-bc2da01e67670b11",
-        "generated_at": "2026-05-17T14:17:04+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-8ea9d0c4c7676546",
+        "generated_at": "2026-05-19T07:42:37+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-4azVjKhqDzw",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=4azVjKhqDzw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=11&t=1733s&pp=iAQBsAgC",
+          "source_title": "Building the App Store for Agentic Engineering",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:37+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=4azVjKhqDzw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=11&t=1733s&pp=iAQBsAgC",
+          "source_digest_sha256": "3d9404ed1c59707163b400baaf875a217b7a7434c76e0a0a7178f8cc6b6ea961"
+        },
+        "taxonomy": {
+          "procedural": [
+            "All right, welcome everyone to the next",
+            "out the workflow marketplace for Archon.",
+            "So, workflow or archon is my open-source",
+            "it up into workflows that you can run",
+            "the workflows that you build.",
+            "a lot of workflows that ship with",
+            "But then also really like the",
+            "is to build your own workflows.",
+            "you build with others and vice versa",
+            "build an archon workflow that will",
+            "system essentially where you build a",
+            "workflow, you submit a pull request to",
+            "the repository to add it to this",
+            "marketplace here, and then I'll have an",
+            "Code running behind an Archon workflow",
+            "that we're going to build today.",
+            "And then I've got uh my",
+            "So, that's my setup right now.",
+            "uh, this is the second live stream that",
+            "Code sessions open in my second brain."
+          ],
+          "strategic": [
+            "Video Title: Building the App Store for Agentic Engineering",
+            "is for agentic engineering and package",
+            "This is my core agentic coding process.",
+            "agentic coding course, the PIV loop.",
+            "AI review provider PI minia versus cloud",
+            "switch the model.",
+            "keeps swapping the model back to Sonnet"
+          ],
+          "governance": [
+            "much risk to this pull request, which is",
+            "changing that would risk anything",
+            "are a couple of human approval gates",
+            "workflow in Archon hit an approval gate",
+            "just going to have claude audit."
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=4azVjKhqDzw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=11&t=1733s&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 7 strategic, and 5 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30495,
+          "unit_count": 818
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-65IAqRUxg3c",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=65IAqRUxg3c",
+      "sourceUri": "https://www.youtube.com/watch?v=65IAqRUxg3c&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=8&pp=iAQBsAgC",
       "title": "AI Agents run my business and life",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-1097d1b5e0e44b43",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-fbc636bd34ff3de6",
       "result": {
-        "artifact_id": "eia-fbc636bd34ff3de6",
-        "generated_at": "2026-05-17T14:17:04+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-1097d1b5e0e44b43",
+        "generated_at": "2026-05-19T07:42:36+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-65IAqRUxg3c",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=65IAqRUxg3c&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=8&pp=iAQBsAgC",
+          "source_title": "AI Agents run my business and life",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:36+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=65IAqRUxg3c&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=8&pp=iAQBsAgC",
+          "source_digest_sha256": "88034bf6b2d8224441ff5599fe6d66d86363597f250d0960c04510654c20b05e"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: AI Agents run my business and life",
+            "run his personal and business life.",
+            "is a guy who has a great setup.",
+            "next generation business is and where he",
+            "he's using AI agents to run his life and",
+            "&gt;&gt; Andrew Wilkinson, I think third time on",
+            "Uh they're going to learn how to build a",
+            "they're going to learn a few prompt",
+            "trying to build an open claw agent uh",
+            "test before I started doing this in our",
+            "a business um a SaaS business, and then",
+            "heroin, the first time is the best time.",
+            "Um, but I'd set up an",
+            "OpenClaw agent on my computer, and I",
+            "basically was able to run my entire",
+            "time making it better, and then 20% of",
+            "Um, but we have been able to build some",
+            "uh I wanted to build a custom GPT uh or",
+            "multiple-choice test, set up scoring,",
+            "and then put them in a JSON file?\" And"
+          ],
+          "strategic": [
+            "blazing architect.",
+            "have a model that's just like a CEO",
+            "model or or and just like delegate to",
+            "my strategy is basically been",
+            "makes it highly searchable for an LLM.",
+            "all the cost, but I could probably build",
+            "actually just, um, scaling the API cost.",
+            "market data, and it just tells you like,"
+          ],
+          "governance": [
+            "scary security breach, it'll just",
+            "that are at the most risk.",
+            "But even that I think is at risk with"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=65IAqRUxg3c&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=8&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 8 strategic, and 3 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30473,
+          "unit_count": 834
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-725QE_LNXT4",
       "sourceType": "video",
       "sourceUri": "https://www.youtube.com/watch?v=725QE_LNXT4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=33&pp=iAQBsAgC",
       "title": "The Prove-It Economy is Here | And Most Marketers Aren't Ready",
+      "transcriptStatus": "fetched",
+      "artifactId": "eia-d685083f4981e50f",
       "ok": true,
       "returncode": 0,
       "result": {
         "spec": "tnf/executable-intelligence/0.2",
-        "artifact_id": "eia-873d57f0974106b9",
-        "generated_at": "2026-05-19T05:25:11+00:00",
+        "artifact_id": "eia-d685083f4981e50f",
+        "generated_at": "2026-05-19T07:46:41+00:00",
         "classification": {
           "class": "INTEL",
           "status": "PENDING"
@@ -913,20 +1334,48 @@
           "source_author": "",
           "source_publisher": "",
           "source_published_at": "",
-          "retrieved_at": "2026-05-19T05:25:11+00:00",
+          "retrieved_at": "2026-05-19T07:46:41+00:00",
           "resource_pointer": "https://www.youtube.com/watch?v=725QE_LNXT4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=33&pp=iAQBsAgC",
-          "source_digest_sha256": "919ef7b853bf0b34719bb707d15f5c22b1ed5cbb9072d74c6f7e15648af95ee0"
+          "source_digest_sha256": "30daedf8b4a141f5ca70cf91857d8bc69540551fce90b75a54c8a5b47c22874b"
         },
         "taxonomy": {
-          "procedural": [],
-          "strategic": [
-            "Distill concrete implementation logic and architecture signals."
+          "procedural": [
+            "The first question you",
+            "future where AI is going to be the first",
+            "port of call, the first place we stop to",
+            "The first lesson",
+            "search agent when you ask a query.",
+            "then you are going to be flattened into",
+            "it out so that any AI agent can read and",
+            "the agent trusts it, then you're going",
+            "unlock more energy on every step and",
+            "energy on every step.",
+            "impact energy of a step.",
+            "agent can effectively extract the DOM",
+            "readable, maybe it's a JSON schema,",
+            "together an MLOps pipeline, or I do have",
+            "the ability to stand up an entire agent",
+            "development pipeline, or I do have the",
+            "that if a pipeline is there, I can build",
+            "wanted to make a tangible step towards",
+            "actually explain to an agent what you do",
+            "the data that makes an agent work well,"
           ],
-          "governance": []
+          "strategic": [
+            "seeking to market products we are",
+            "off balance when the market starts to",
+            "market and also for brands.",
+            "agentic information flow from that truth",
+            "positioning yourself for the agentic"
+          ],
+          "governance": [
+            "your current position, how you audit and",
+            "Now, the obvious risk in"
+          ]
         },
         "utility_metrics": {
-          "freshness_decay": "Medium",
-          "implementation_density": 0.0,
+          "freshness_decay": "High",
+          "implementation_density": 0.03,
           "verification_difficulty": "Hard"
         },
         "gate_results": {
@@ -954,10 +1403,10 @@
             "release_state": "sealed"
           }
         },
-        "synthesis": "Artifact captures 0 procedural, 1 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "synthesis": "Artifact captures 20 procedural, 5 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
         "raw_stats": {
-          "char_count": 621,
-          "unit_count": 10
+          "char_count": 24963,
+          "unit_count": 669
         }
       },
       "stderr": ""
@@ -965,28 +1414,137 @@
     {
       "sourceId": "yt-ai5-7xuWZ-3lyQE",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=7xuWZ-3lyQE",
+      "sourceUri": "https://www.youtube.com/watch?v=7xuWZ-3lyQE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=27&t=1669s&pp=iAQBsAgC",
       "title": "Hermes Agent just got 10X Better (Agentic OS)",
+      "transcriptStatus": "fetched",
+      "artifactId": "eia-153d8f2404f80758",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-f4c691fb3f2fa600",
       "result": {
-        "artifact_id": "eia-f4c691fb3f2fa600",
-        "generated_at": "2026-05-17T14:17:07+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-153d8f2404f80758",
+        "generated_at": "2026-05-19T07:46:09+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-7xuWZ-3lyQE",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=7xuWZ-3lyQE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=27&t=1669s&pp=iAQBsAgC",
+          "source_title": "Hermes Agent just got 10X Better (Agentic OS)",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:46:09+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=7xuWZ-3lyQE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=27&t=1669s&pp=iAQBsAgC",
+          "source_digest_sha256": "3b3c20c031dd682c27f41444d8b1cba2847a9f83e55c89d82dee982b59907a6b"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Hermes Agent just got 10X Better (Agentic OS)",
+            "agent assistant.",
+            "with Claude code, you can create a",
+            "So first thing about",
+            "It is an agent that dreams,",
+            "assistant, our AI agent.",
+            "your ND preferences, bug fixes you run",
+            "Then you got Hermes that knows your",
+            "going to show you exactly how to set up",
+            "is so important for her in a second",
+            "if I come over to Hermes agent on the",
+            "and create these here.",
+            "prompt, tell them which model you want",
+            "to use, and then give it a name in in",
+            "description, a system prompt, a model,",
+            "can do is share this then with Hermes",
+            "And effectively then if I say hey",
+            "So we build out this pantheon of",
+            "I'm going to show you how we run",
+            "And then we've got"
+          ],
+          "strategic": [
+            "Video Title: Hermes Agent just got 10X Better (Agentic OS)",
+            "across every single model.",
+            "model you're using, all your chat logs",
+            "model I'm currently using, memory, my",
+            "prompt, tell them which model you want",
+            "description, a system prompt, a model,",
+            "use Deepseek model or a free model.",
+            "way to get a custom AI agent model.",
+            "provider, we're happy using the current",
+            "We've got the model we've got the",
+            "active model that we're using right now",
+            "model, like an absolute like you don't",
+            "different model to do that for us.",
+            "doing a deep YouTube strategy.",
+            "delegate a cheap model to reflect or use",
+            "to use the metal llama model.",
+            "mind it using the chat GBT model"
+          ],
+          "governance": []
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=7xuWZ-3lyQE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=27&t=1669s&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 17 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30492,
+          "unit_count": 827
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-9rXH2ssCe9E",
       "sourceType": "video",
       "sourceUri": "https://www.youtube.com/watch?v=9rXH2ssCe9E&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=34&pp=iAQBsAgC",
       "title": "Hermes Agent has a NEW SuperPower (NotebookLM)",
+      "transcriptStatus": "fetched",
+      "artifactId": "eia-8456374b90a67db3",
       "ok": true,
       "returncode": 0,
       "result": {
         "spec": "tnf/executable-intelligence/0.2",
-        "artifact_id": "eia-adc99f01b8e8fe58",
-        "generated_at": "2026-05-19T05:25:11+00:00",
+        "artifact_id": "eia-8456374b90a67db3",
+        "generated_at": "2026-05-19T07:46:46+00:00",
         "classification": {
           "class": "INTEL",
           "status": "PENDING"
@@ -1009,20 +1567,55 @@
           "source_author": "",
           "source_publisher": "",
           "source_published_at": "",
-          "retrieved_at": "2026-05-19T05:25:11+00:00",
+          "retrieved_at": "2026-05-19T07:46:46+00:00",
           "resource_pointer": "https://www.youtube.com/watch?v=9rXH2ssCe9E&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=34&pp=iAQBsAgC",
-          "source_digest_sha256": "1f8f6a4289c4678c9a4bdb89e87a123f7ceec8f5309e11a8c08cc5b7e5216add"
+          "source_digest_sha256": "bb1c723355469b0cd9b1973fc19553b14a0e0c13fbedc51120bba92f01b99e1c"
         },
         "taxonomy": {
-          "procedural": [],
-          "strategic": [
-            "Distill concrete implementation logic and architecture signals."
+          "procedural": [
+            "Video Title: Hermes Agent has a NEW SuperPower (NotebookLM)",
+            "Imagine combining Hermes's agent with",
+            "supercharge Hermes agent by powering it",
+            "research agent with new capabilities,",
+            "personal AI agent, okay?",
+            "And then we're going to actually",
+            "So, first of all, is we can now",
+            "Now this agent's",
+            "Second of all, we can chat",
+            "with our second brain in Notebook LM.",
+            "we wanted to, we could effectively build",
+            "So you could build brains on",
+            "Third thing is we can send",
+            "can now build notebook just by talking",
+            "reminders ship the email all from the",
+            "information from the bookm but then",
+            "within Hermes itself that can then",
+            "then we're using that knowledge to",
+            "We can set it once run",
+            "create me a notebook alm on something"
           ],
-          "governance": []
+          "strategic": [
+            "intelligence platform, Notebook LM.",
+            "on the market right now.",
+            "one research and intelligence platform.",
+            "strategy and just give me two principles",
+            "capability research 50 different",
+            "basically creating this integration.",
+            "it's checked our YouTube strategy brain",
+            "your model of choice and effectively",
+            "versions of this integration.",
+            "to elect to have 4.7 for the model",
+            "your cost on this is unbelievably low",
+            "insight from YouTube strategy and send",
+            "strategy thing here.",
+            "pick YouTube strategy insight.",
+            "research platform is one thing, but if"
+          ],
+          "governance": ["design systems compliance, and turning"]
         },
         "utility_metrics": {
-          "freshness_decay": "Medium",
-          "implementation_density": 0.0,
+          "freshness_decay": "High",
+          "implementation_density": 0.034,
           "verification_difficulty": "Hard"
         },
         "gate_results": {
@@ -1050,10 +1643,10 @@
             "release_state": "sealed"
           }
         },
-        "synthesis": "Artifact captures 0 procedural, 1 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "synthesis": "Artifact captures 20 procedural, 15 strategic, and 1 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
         "raw_stats": {
-          "char_count": 605,
-          "unit_count": 10
+          "char_count": 21151,
+          "unit_count": 586
         }
       },
       "stderr": ""
@@ -1061,42 +1654,16 @@
     {
       "sourceId": "yt-ai5-M-8lv5TXUYk",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=M-8lv5TXUYk",
+      "sourceUri": "https://www.youtube.com/watch?v=M-8lv5TXUYk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=16&pp=iAQBsAgC",
       "title": "5 \"Engineer-Only\" Claude Skills Every Vibe Coder NEEDS",
-      "ok": true,
-      "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-3f30082d94bf407f",
-      "result": {
-        "artifact_id": "eia-3f30082d94bf407f",
-        "generated_at": "2026-05-17T14:17:05+00:00"
-      }
-    },
-    {
-      "sourceId": "yt-ai5-NnsQj2nDkKA",
-      "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=NnsQj2nDkKA",
-      "title": "Real gundams, top 3D generator, open-source world models, ChatGPT updates, new TTS: AI NEWS",
-      "ok": true,
-      "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-6fb000c6ab47c6fb",
-      "result": {
-        "artifact_id": "eia-6fb000c6ab47c6fb",
-        "generated_at": "2026-05-17T14:17:08+00:00"
-      }
-    },
-    {
-      "sourceId": "yt-ai5-PIdETjcXNIk",
-      "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&t=1610s&pp=iAQBsAgC",
-      "title": "Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-0e2659469e281165",
       "ok": true,
       "returncode": 0,
       "result": {
         "spec": "tnf/executable-intelligence/0.2",
-        "artifact_id": "eia-77f34a86e160d2e2",
-        "generated_at": "2026-05-19T05:25:11+00:00",
+        "artifact_id": "eia-0e2659469e281165",
+        "generated_at": "2026-05-19T07:42:37+00:00",
         "classification": {
           "class": "INTEL",
           "status": "PENDING"
@@ -1112,28 +1679,58 @@
           "release_note": ""
         },
         "source": {
-          "source_id": "yt-ai5-PIdETjcXNIk",
+          "source_id": "yt-ai5-M-8lv5TXUYk",
           "source_type": "video",
-          "source_uri": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&t=1610s&pp=iAQBsAgC",
-          "source_title": "Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+          "source_uri": "https://www.youtube.com/watch?v=M-8lv5TXUYk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=16&pp=iAQBsAgC",
+          "source_title": "5 \"Engineer-Only\" Claude Skills Every Vibe Coder NEEDS",
           "source_author": "",
           "source_publisher": "",
           "source_published_at": "",
-          "retrieved_at": "2026-05-19T05:25:11+00:00",
-          "resource_pointer": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&t=1610s&pp=iAQBsAgC",
-          "source_digest_sha256": "801f559a6c764adf4eedade4644c32d9d6400efb334dfdd73f4b82fdd201db20"
+          "retrieved_at": "2026-05-19T07:42:37+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=M-8lv5TXUYk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=16&pp=iAQBsAgC",
+          "source_digest_sha256": "a8c4fe2777cb753205e083bbba9bc1172b74cd5cbc8027678a299e2772151df5"
         },
         "taxonomy": {
-          "procedural": [],
-          "strategic": [
-            "Video Title: Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
-            "Distill concrete implementation logic and architecture signals."
+          "procedural": [
+            "build me horse tinder, but I also don't",
+            "where we're trying to actually build",
+            "which makes it really difficult to build",
+            "Twitter intelligence tool that was built",
+            "Twitter research tool that's meant to",
+            "when we run this improve codebase",
+            "architecture command in this project.",
+            "it's dispatching an exploration agent to",
+            "doing, you can go check out the repo.",
+            "make sense for you to implement.",
+            "then provide you a concrete solution and",
+            "Well, the next skill",
+            "So we can run the command and",
+            "then talk about what it's doing while it",
+            "design that we can implement.",
+            "want to take the implementation and then",
+            "But what the grill me command does is",
+            "are solving specifically and then based",
+            "this solution and then based on that",
+            "service and then based on our response"
           ],
-          "governance": []
+          "strategic": [
+            "architecture command in this project.",
+            "model and when the language model's",
+            "that once you pick a direction, it's",
+            "forces your language model to reply to",
+            "codebase architecture improver",
+            "model breakdown.",
+            "found in that codebase architecture",
+            "run that codebase architecture again."
+          ],
+          "governance": [
+            "So, if there's security",
+            "a caveman might risk you misreading it,"
+          ]
         },
         "utility_metrics": {
-          "freshness_decay": "Medium",
-          "implementation_density": 0.0,
+          "freshness_decay": "High",
+          "implementation_density": 0.044,
           "verification_difficulty": "Hard"
         },
         "gate_results": {
@@ -1152,7 +1749,7 @@
           },
           "linkage_attribution": {
             "passed": true,
-            "resource_pointer": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&t=1610s&pp=iAQBsAgC"
+            "resource_pointer": "https://www.youtube.com/watch?v=M-8lv5TXUYk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=16&pp=iAQBsAgC"
           },
           "ownership_scope_gate": {
             "passed": true,
@@ -1161,10 +1758,251 @@
             "release_state": "sealed"
           }
         },
-        "synthesis": "Artifact captures 0 procedural, 2 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "synthesis": "Artifact captures 20 procedural, 8 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
         "raw_stats": {
-          "char_count": 629,
-          "unit_count": 10
+          "char_count": 16699,
+          "unit_count": 451
+        }
+      },
+      "stderr": ""
+    },
+    {
+      "sourceId": "yt-ai5-NnsQj2nDkKA",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=NnsQj2nDkKA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=29&pp=iAQBsAgC",
+      "title": "Real gundams, top 3D generator, open-source world models, ChatGPT updates, new TTS: AI NEWS",
+      "transcriptStatus": "fetched",
+      "artifactId": "eia-4c3610c9affec4c0",
+      "ok": true,
+      "returncode": 0,
+      "result": {
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-4c3610c9affec4c0",
+        "generated_at": "2026-05-19T07:46:19+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-NnsQj2nDkKA",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=NnsQj2nDkKA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=29&pp=iAQBsAgC",
+          "source_title": "Real gundams, top 3D generator, open-source world models, ChatGPT updates, new TTS: AI NEWS",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:46:19+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=NnsQj2nDkKA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=29&pp=iAQBsAgC",
+          "source_digest_sha256": "d643c30da9ee0dc3b417c8368478435097d5c776ff0307b14d08f9a5fdce2d82"
+        },
+        "taxonomy": {
+          "procedural": [
+            "music generator that can create full",
+            "songs from just a prompt.",
+            "First up, this AI is super useful.",
+            "on how to download and run this locally",
+            "GPU to run this.",
+            "and make it simpler and then after it",
+            "then it uses something called a VAE to",
+            "and run this locally on your computer.",
+            "text prompt plus the WD key presses, and",
+            "also be first person like this.",
+            "very flexible tool that can generate a",
+            "you specify in the prompt.",
+            "made a distilled variant which can run",
+            "So, this can create a minute-long clip",
+            "in an image as the first frame, plus a",
+            "text prompt and keyboard presses, and it",
+            "to download and run this locally on your",
+            "script on how you can train and",
+            "then it places that body in a physics",
+            "same prompt, you can see that everything"
+          ],
+          "strategic": [
+            "model that can generate articulated 3D",
+            "movement and direction.",
+            "leading open- source video model with",
+            "released the model to this.",
+            "turn it into a 3D model with super",
+            "instead of loosely giving the model an",
+            "accurate 3D model generator you can use.",
+            "this image model is super interesting.",
+            "base model that uses latent space plus",
+            "from some clever architecture tweaks,",
+            "model against other competitor models",
+            "their own interactive world model.",
+            "world model that can turn an image into",
+            "foundation model from scratch.",
+            "model for movement that's physically",
+            "talking while a deeper background model",
+            "interaction model that stays present for",
+            "a background model which is used for",
+            "new direction while it's already",
+            "tiny and very efficient model that can"
+          ],
+          "governance": []
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=NnsQj2nDkKA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=29&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 20 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30530,
+          "unit_count": 839
+        }
+      },
+      "stderr": ""
+    },
+    {
+      "sourceId": "yt-ai5-PIdETjcXNIk",
+      "sourceType": "video",
+      "sourceUri": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+      "title": "Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+      "transcriptStatus": "fetched",
+      "artifactId": "eia-765120d1a314bae3",
+      "ok": true,
+      "returncode": 0,
+      "result": {
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-765120d1a314bae3",
+        "generated_at": "2026-05-19T07:44:10+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-PIdETjcXNIk",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+          "source_title": "Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:44:10+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+          "source_digest_sha256": "698d1820c6f91d46e400bdb6bda68f0ddd73ac9b9dcc6251d10d52eed1e193c3"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+            "better than one GPT 5.5 PI coding agent?",
+            "This gives us a powerful flat agent",
+            "Let's talk about pietoie, two-way agent",
+            "engineering workflow.",
+            "your developer environment and then you",
+            "deploy through staging and then",
+            "agent communication system is perfect",
+            "run some basic pings to make sure both",
+            "going to paste in a production prompt",
+            "This is a prod gatekeeper agent.",
+            "So a production agent",
+            "any other agent on the network.",
+            "And now our developer agent is going to",
+            "First, in order to reproduce a",
+            "Our agent sees the pier on the",
+            "connection to a prod agent.",
+            "going to send a prompt.",
+            "agent can now await this message.",
+            "our production agent, as you can see"
+          ],
+          "strategic": [
+            "Video Title: Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+            "Sure, you could change the model,",
+            "understand what type of agentic",
+            "things in your agentic systems.",
+            "and other agentic workflows and",
+            "one direction and it's always a top-",
+            "your agentic engineering.",
+            "multi-agent orchestration comes down to",
+            "agentic engineering, not vibe coding.",
+            "model really chews up tokens and it",
+            "against cloud code, the agentic coding",
+            "market leader and get control of the",
+            "model that you add to your system,"
+          ],
+          "governance": ["We're adding security to our batch tool"]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&pp=iAQB0gcJCQQLAYcqIYzvsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 13 strategic, and 1 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30517,
+          "unit_count": 836
         }
       },
       "stderr": ""
@@ -1172,56 +2010,377 @@
     {
       "sourceId": "yt-ai5-Q7AYc2kECDI",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=Q7AYc2kECDI",
+      "sourceUri": "https://www.youtube.com/watch?v=Q7AYc2kECDI&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=25&pp=iAQBsAgC",
       "title": "How to Actually Build Mobile Apps with AI in 2026 | A Complete Beginner's Tutorial",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-c3a8d92859934089",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-f8f9a17884c3e91b",
       "result": {
-        "artifact_id": "eia-f8f9a17884c3e91b",
-        "generated_at": "2026-05-17T14:17:07+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-c3a8d92859934089",
+        "generated_at": "2026-05-19T07:42:39+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-Q7AYc2kECDI",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=Q7AYc2kECDI&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=25&pp=iAQBsAgC",
+          "source_title": "How to Actually Build Mobile Apps with AI in 2026 | A Complete Beginner's Tutorial",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:39+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=Q7AYc2kECDI&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=25&pp=iAQBsAgC",
+          "source_digest_sha256": "a051777e90848b52a22550d405aa5fa5ab93090f63cccb7a379d4ccac9cdd0a4"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: How to Actually Build Mobile Apps with AI in 2026 | A Complete Beginner's Tutorial",
+            "for and then closed it as soon as you",
+            "between I want to build this and it's",
+            "You finish it, then try to",
+            "build something real and the whole thing",
+            "falls apart by the third feature.",
+            "You're going to build a",
+            "The second part is the full build.",
+            "point, the workflow is.",
+            "around for the second half, I'll show",
+            "you why this is the only way to build",
+            "So, use that workflow that I'll talk",
+            "anything you build next.",
+            "the other half said, \"It's how you build",
+            "you've actually tried to build something",
+            "The first three features fly",
+            "and then around feature five, you ask AI",
+            "work for an AI to maybe build something",
+            "Build feature by feature and verify each",
+            "one before moving to the next."
+          ],
+          "strategic": [
+            "writing architecture docs for an app",
+            "without direction always lands here.",
+            "architecture docs, naming conventions,",
+            "10 different architecture patterns who",
+            "feature, one screen, one integration.",
+            "security model and the already working",
+            "backend integration.",
+            "like the verification model is appearing",
+            "other model behavior or layout.",
+            "integrate low latency voice and video AI",
+            "Then we dive a bit into the architecture"
+          ],
+          "governance": [
+            "security model and the already working",
+            "That's not a failure of the"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=Q7AYc2kECDI&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=25&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 11 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30523,
+          "unit_count": 835
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-QK0B1mbJ-VU",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=QK0B1mbJ-VU",
+      "sourceUri": "https://www.youtube.com/watch?v=QK0B1mbJ-VU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=18&pp=iAQBsAgC",
       "title": "5 Claude Code Tools That Make Vibe Coders Cry Tears of Joy",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-97e6ad153f197c12",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-9dd0b5b6e5ef69e8",
       "result": {
-        "artifact_id": "eia-9dd0b5b6e5ef69e8",
-        "generated_at": "2026-05-17T14:17:06+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-97e6ad153f197c12",
+        "generated_at": "2026-05-19T07:42:38+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-QK0B1mbJ-VU",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=QK0B1mbJ-VU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=18&pp=iAQBsAgC",
+          "source_title": "5 Claude Code Tools That Make Vibe Coders Cry Tears of Joy",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:38+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=QK0B1mbJ-VU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=18&pp=iAQBsAgC",
+          "source_digest_sha256": "123f72e9c1a809eab46d0ee1876e9bf4e5bdf9303b338293173e2ae83b16d3c4"
+        },
+        "taxonomy": {
+          "procedural": [
+            "starting with a tool",
+            "called CLI anything.",
+            "you use is like agent native.",
+            "give to a tool like clog code.",
+            "steps CLI anything which makes all",
+            "software in air quotes agent native.",
+            "you can use any opensource tool that you",
+            "turn it into a CLI that your language",
+            "this tool called Excaladraw to draw out",
+            "build the diagram.",
+            "is clone this repository to my computer,",
+            "CLI that I could use with something like",
+            "I can type in the command slash CLI",
+            "look at the front end, and then from",
+            "that build an actual CLI so that we can",
+            "say, \"Hey, yeah, I'm trying to build it",
+            "for this repo.\" And it's going to move",
+            "person built it to create an automatic",
+            "video captioner CLI tool.",
+            "browser automation tools, nitin workflow"
+          ],
+          "strategic": [
+            "with my LLM calls inside of the chat,",
+            "discovery, product strategy, execution,",
+            "market research, data analytics, go to",
+            "market strategy, marketing growth",
+            "strategy, and a generic toolkit.",
+            "goto market strategy.",
+            "model and formulate a response based on",
+            "architecture that it found from this",
+            "orchestration which this enables would",
+            "to use the autopilot capability to show"
+          ],
+          "governance": []
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.027,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=QK0B1mbJ-VU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=18&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 10 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 27489,
+          "unit_count": 753
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-RxwjoegpI98",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=RxwjoegpI98",
+      "sourceUri": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC",
       "title": "Building Agentic RAG From Scratch in Pure Python",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-d9edb2689984c74c",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-376deb2dbf202bc2",
       "result": {
-        "artifact_id": "eia-376deb2dbf202bc2",
-        "generated_at": "2026-05-17T14:17:03+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-d9edb2689984c74c",
+        "generated_at": "2026-05-19T07:42:36+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-RxwjoegpI98",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC",
+          "source_title": "Building Agentic RAG From Scratch in Pure Python",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:36+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC",
+          "source_digest_sha256": "478e5b0a755b60abec67d778671bdb2e83137347e58bab251c6b46ca63aef8bf"
+        },
+        "taxonomy": {
+          "procedural": [
+            "So in this video, we're going to build",
+            "And not to build another",
+            "coding agent, but rather to replace or",
+            "some simple tool definitions all the way",
+            "speed or you really need to optimize for",
+            "information and we make a single LLM API",
+            "right information where it may at first",
+            "a tool that can list files, a tool that",
+            "can search files, and a tool that can",
+            "tools that all of the popular agent",
+            "along, the link to the GitHub repository",
+            "build tool files.",
+            "first file, build tools, is to show you",
+            "first set our notes directory.",
+            "this is a knowledge agentic rag and then",
+            "back to the first line over here where",
+            "path of the current file and then we're",
+            "going to take the parent and then we add",
+            "to start with step one listing the",
+            "this step by step and then we'll bring"
+          ],
+          "strategic": [
+            "Video Title: Building Agentic RAG From Scratch in Pure Python",
+            "an agentic rack system from scratch in",
+            "available to a large language model when",
+            "latency scenarios where you need raw",
+            "you have the budgets, agentic rag will",
+            "intelligence of the large language model",
+            "information and we make a single LLM API",
+            "Whereas with agentic rack, we have",
+            "back to the language model and we can",
+            "Agentic Rack folder.",
+            "replace it with another provider that",
+            "the agentic loop around this.",
+            "this is a knowledge agentic rag and then",
+            "we are now in the agentic rag folder.",
+            "particular file, the architecture",
+            "tools available for a language model and",
+            "also build your own using the model APIs",
+            "agentic rag system.",
+            "means that in this example this agentic",
+            "model but now what we're doing instead"
+          ],
+          "governance": [
+            "safety precaution to make sure we",
+            "this is a safety precaution that we can",
+            "did but now just with added safety",
+            "We'll add some safety precautions."
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "Medium",
+          "implementation_density": 0.025,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 20 strategic, and 4 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 29531,
+          "unit_count": 802
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-VTVRTN8nkxM",
       "sourceType": "video",
       "sourceUri": "https://www.youtube.com/watch?v=VTVRTN8nkxM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=32&pp=iAQBsAgC",
       "title": "New Google Gemini Update Is INSANE",
+      "transcriptStatus": "fetched",
+      "artifactId": "eia-b2a579ddcf59274e",
       "ok": true,
       "returncode": 0,
       "result": {
         "spec": "tnf/executable-intelligence/0.2",
-        "artifact_id": "eia-3741b2651ad71de0",
-        "generated_at": "2026-05-19T05:25:11+00:00",
+        "artifact_id": "eia-b2a579ddcf59274e",
+        "generated_at": "2026-05-19T07:46:37+00:00",
         "classification": {
           "class": "INTEL",
           "status": "PENDING"
@@ -1244,20 +2403,57 @@
           "source_author": "",
           "source_publisher": "",
           "source_published_at": "",
-          "retrieved_at": "2026-05-19T05:25:11+00:00",
+          "retrieved_at": "2026-05-19T07:46:37+00:00",
           "resource_pointer": "https://www.youtube.com/watch?v=VTVRTN8nkxM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=32&pp=iAQBsAgC",
-          "source_digest_sha256": "955386aff52bd3586784fe3a33d28144766f38f4c834ffb9f6833bba8827df4e"
+          "source_digest_sha256": "3d85773ae915ef462c42988050fc8a0956e9bbe1c6e23bd71b17216dddc428ee"
         },
         "taxonomy": {
-          "procedural": [],
+          "procedural": [
+            "first thing you notice is the home",
+            "And the prompt box at the",
+            "feel it the second you open it.",
+            "the first full look at the Gemini app",
+            "pill-shaped prompt box, voice input, and",
+            "files, notebooks, and then a list of",
+            "Every second you don't spend",
+            "hunting through a menu is a second you",
+            "inside the prompt box.",
+            "Gemini 3 Flash to 3.1, then landing on",
+            "run more tasks, faster tasks, smarter",
+            "Every week we run four",
+            "through exactly how to set up Gemini for",
+            "We've got step-by-step",
+            "prompt library full of Gemini prompts",
+            "First, I asked with",
+            "Then I flipped to",
+            "ship agents inside the Gemini app,",
+            "because Gemini agent is a new",
+            "experimental tool that can complete"
+          ],
           "strategic": [
-            "Distill concrete implementation logic and architecture signals."
+            "There's a hidden model",
+            "model picker moved.",
+            "their iOS app cycling through model",
+            "quality and cost update.",
+            "price cut that halves the input cost",
+            "model just got way smarter.",
+            "Flash model is now nearly as smart as",
+            "the expensive Pro model.",
+            "Gemini app, the new model picker, and",
+            "We've got a 30-day roadmap",
+            "a separate thinking model if you wanted",
+            "You pick one model.",
+            "And the model just adjusts.",
+            "day you have a big strategy question, a",
+            "same model into deep thinking mode.",
+            "cadence, smaller, more frequent model",
+            "your model picker."
           ],
           "governance": []
         },
         "utility_metrics": {
-          "freshness_decay": "Medium",
-          "implementation_density": 0.0,
+          "freshness_decay": "High",
+          "implementation_density": 0.056,
           "verification_difficulty": "Hard"
         },
         "gate_results": {
@@ -1285,10 +2481,10 @@
             "release_state": "sealed"
           }
         },
-        "synthesis": "Artifact captures 0 procedural, 1 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "synthesis": "Artifact captures 20 procedural, 17 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
         "raw_stats": {
-          "char_count": 593,
-          "unit_count": 10
+          "char_count": 12938,
+          "unit_count": 357
         }
       },
       "stderr": ""
@@ -1296,154 +2492,1270 @@
     {
       "sourceId": "yt-ai5-WQv3xjb4WgQ",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=WQv3xjb4WgQ",
+      "sourceUri": "https://www.youtube.com/watch?v=WQv3xjb4WgQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=28&t=1655s&pp=iAQBsAgC",
       "title": "ByteDance Just Killed Manus With This Free AI Agent",
+      "transcriptStatus": "fetched",
+      "artifactId": "eia-6be67d5e80118da6",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-2ba54063e0454d00",
       "result": {
-        "artifact_id": "eia-2ba54063e0454d00",
-        "generated_at": "2026-05-17T14:17:08+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-6be67d5e80118da6",
+        "generated_at": "2026-05-19T07:46:14+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-WQv3xjb4WgQ",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=WQv3xjb4WgQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=28&t=1655s&pp=iAQBsAgC",
+          "source_title": "ByteDance Just Killed Manus With This Free AI Agent",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:46:14+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=WQv3xjb4WgQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=28&t=1655s&pp=iAQBsAgC",
+          "source_digest_sha256": "fea21238a833e259aff73a00c96a91b0498bde373a4e6a13c706112d49f4dbea"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: ByteDance Just Killed Manus With This Free AI Agent",
+            "Every major AI lab is racing to build",
+            "not suggest what you should do next,",
+            "They run in the cloud.",
+            "serious computer use agent in the market",
+            "the two products that ship under this",
+            "And then we're going to walk through",
+            "and power users can take and run with",
+            "developer tool space consistently and",
+            "for their workflow, share this video",
+            "repository name, they read the",
+            "Under the same GitHub repository,",
+            "The first product is called Agentars.",
+            "Agent TARS is a general purpose",
+            "multimodal AI agent that you run from",
+            "You can run it with claude,",
+            "you can run it with bite dance on",
+            "whatever model fits your setup.",
+            "entire tool layer is built on top of the",
+            "mounted directly into agent tars and"
+          ],
+          "strategic": [
+            "serious computer use agent in the market",
+            "open source down to the model weights.",
+            "The model family that powers all",
+            "five real world agentic use cases that",
+            "They share the same underlying model",
+            "It is model agnostic meaning",
+            "doughbound model or you can point it at",
+            "whatever model fits your setup.",
+            "model context protocol which means any",
+            "immediately becomes a capability the",
+            "both of them is the model family that",
+            "we need to talk about the model that",
+            "purpose language model gets wrapped in",
+            "is built on a model that was designed",
+            "general purpose vision language model",
+            "live inside one model.",
+            "Everything the model needs to understand",
+            "model was trained not just on successful",
+            "That is a significant capability in the",
+            "The model gained the ability"
+          ],
+          "governance": [
+            "right out of the gate.",
+            "model context protocol which means any",
+            "gate, it achieved state-of-the-art",
+            "much larger failure later.",
+            "policies and security practices in"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=WQv3xjb4WgQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=28&t=1655s&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 20 strategic, and 5 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30498,
+          "unit_count": 828
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-XLH_WLrmwfk",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=XLH_WLrmwfk",
+      "sourceUri": "https://www.youtube.com/watch?v=XLH_WLrmwfk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=26&t=315s&pp=iAQBsAgC",
       "title": "Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE GROK BUILD CLI for 100% FREE!",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-b854a821a8406dc7",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-b5dcf0b9d02480d6",
       "result": {
-        "artifact_id": "eia-b5dcf0b9d02480d6",
-        "generated_at": "2026-05-17T14:17:07+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-b854a821a8406dc7",
+        "generated_at": "2026-05-19T07:42:39+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-XLH_WLrmwfk",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=XLH_WLrmwfk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=26&t=315s&pp=iAQBsAgC",
+          "source_title": "Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE GROK BUILD CLI for 100% FREE!",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:39+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=XLH_WLrmwfk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=26&t=315s&pp=iAQBsAgC",
+          "source_digest_sha256": "0ca67897d5a6331b0a1b4ff9bb374efd31df157659d1e2c0514613a1d57b13f6"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE GROK BUILD CLI for 100% FREE!",
+            "has finally launched Grok Build.",
+            "proper terminal coding agent.",
+            "is a CLI agent that runs inside your",
+            "terminal, can inspect your repo, can",
+            "TUI, can run headlessly for scripts, and",
+            "Claude Codex CLI, Gemini CLI, and all",
+            "launch, Grok Build is in early beta, and",
+            "it is available first for Super Grok",
+            "actual tool is interesting.",
+            "interesting, because Grok Build supports",
+            "custom models through config.toml.",
+            "Grok, you can configure other",
+            "that means you can set up things like",
+            "agent interface, but I do not like being",
+            "you one command.",
+            "You run curl -fssl, l,",
+            "folder and run Grok.",
+            "On first launch, it",
+            "set an API key instead."
+          ],
+          "strategic": [
+            "the other agentic terminal coding tools",
+            "locked into one expensive model",
+            "until you approve the direction.",
+            "or fix a messy architecture issue, you",
+            "unified extensions model.",
+            "These commands open the same model, but",
+            "in agentic coding tools.",
+            "but again, the model matters here.",
+            "expensive model or an expensive",
+            "exactly why custom model configuration",
+            "can also choose a model with -m, resume",
+            "build into IDEs, custom orchestration",
+            "You create a model",
+            "real model ID, set the base {underscore}",
+            "default model under the model section,",
+            "model name, or switch inside the 2A with",
+            "{slash} model followed by the model",
+            "interface and swap the actual model",
+            "Now, the first provider I",
+            "add a custom model in config."
+          ],
+          "governance": [
+            "as an agent client protocol agent over",
+            "provider policy and you're okay with it."
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "Medium",
+          "implementation_density": 0.045,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=XLH_WLrmwfk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=26&t=315s&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 20 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 16023,
+          "unit_count": 445
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-Xfl50508LZM",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=Xfl50508LZM",
+      "sourceUri": "https://www.youtube.com/watch?v=Xfl50508LZM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=20&t=211s&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
       "title": "Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss, Arize",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-ae0ed17d07619c7e",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-6347e50f5b4e7332",
       "result": {
-        "artifact_id": "eia-6347e50f5b4e7332",
-        "generated_at": "2026-05-17T14:17:06+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-ae0ed17d07619c7e",
+        "generated_at": "2026-05-19T07:42:38+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-Xfl50508LZM",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=Xfl50508LZM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=20&t=211s&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+          "source_title": "Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss, Arize",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:38+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=Xfl50508LZM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=20&t=211s&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+          "source_digest_sha256": "1fa775c4be6d00ab76ada463d47d3924d962c9db340b6dd2f1bf7b7a2cb0578e"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss, Arize",
+            "co-founded npm Inc.",
+            "about mostly is how to test AI systems,",
+            "Uh and then we're",
+            "going to set up tracing uh which is how",
+            "to run evals in the first place.",
+            "we're also going to uh run a simple AI",
+            "agent with the claw a agent SDK uh and",
+            "Uh then we're going to",
+            "deterministic, uh cheap, easy to run.",
+            "Uh and then we're going",
+            "Uh and we'll also test whether our",
+            "Uh and then we'll finish with data sets",
+            "end a brief look at what comes next",
+            "about evaluating an agent though.",
+            "already built an agent and you're having",
+            "agent already built for you.",
+            "build an agent and what makes an agent",
+            "evaluating this agent that I've already",
+            "Claude both to power the agent and to"
+          ],
+          "strategic": [
+            "Video Title: Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss, Arize",
+            "simple LLM call is.",
+            "to use uh LLM evals.",
+            "uh where an LLM uh",
+            "call, every LLM invoc invocation, all of",
+            "your mental model today.",
+            "very important because the uh big model",
+            "labs come out with a new model every",
+            "code uh they cost basically nothing to",
+            "test, you don't need to throw an LLM",
+            "is LLM as a judge.",
+            "with LLM as a judge use a second a",
+            "second LLM to judge the output of the",
+            "Usually you use an LLM that",
+            "Um and because LLMs are p LLM evals are",
+            "powered by an LLM, they are a lot more",
+            "But an LLM is very good at",
+            "The strength of LLM",
+            "themselves which means that your LLM as",
+            "prompt your LLM to be a judge and that"
+          ],
+          "governance": [
+            "failure modes you haven't seen before.",
+            "the cascading failure that we are trying",
+            "budget travel uh that's a failure.",
+            "what is a one-off failure you know just",
+            "systemata systematic failure which is"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=Xfl50508LZM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=20&t=211s&pp=iAQB0gcJCQQLAYcqIYzvsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 20 strategic, and 5 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30542,
+          "unit_count": 829
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-gb5TlGw6Uks",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=gb5TlGw6Uks",
+      "sourceUri": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC",
       "title": "Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-62ff8bcf5711e391",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-5d011c276874732a",
       "result": {
-        "artifact_id": "eia-5d011c276874732a",
-        "generated_at": "2026-05-17T14:17:03+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-62ff8bcf5711e391",
+        "generated_at": "2026-05-19T07:42:36+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-gb5TlGw6Uks",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC",
+          "source_title": "Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:35+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC",
+          "source_digest_sha256": "e349e8cf950189e02057ebbe62e30796e1efc37a41c0e93cc46423696efcb5fd"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+            "Hermes' agent is one of the most",
+            "being able to get one set up.",
+            "super powerful AI agent.",
+            "landing page for Hermes' agent.",
+            "agent that grows with you.",
+            "If I go to docs and then I",
+            "just built in once you install Hermes.",
+            "didn't have it install any sort of",
+            "Hey YouTube, I'm Hermes' agent.",
+            "skills, run scheduled automations,",
+            "I've had an AI agent that has access to",
+            "And that is this Hermes agent.",
+            "have this agent working on.",
+            "HyperFrames about what Hermes Agent is,",
+            "Now, its first pass wasn't great.",
+            "basically then I said, \"Okay, what tool",
+            "asked me if it could install",
+            "I said, \"Yes.\" And then it",
+            "make me a video about what Hermes Agent"
+          ],
+          "strategic": [
+            "that full agentic loop if you want it.",
+            "don't want the agentic harness loop",
+            "So, this is my VPS provider of"
+          ],
+          "governance": [
+            "safety nuance, Cron sessions cannot",
+            "information about security and"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 3 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30497,
+          "unit_count": 834
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-hTpHmLFXBrc",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=hTpHmLFXBrc",
+      "sourceUri": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC",
       "title": "Vercel Just Fixed Vibe Coding's Biggest Problem",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-dc1b7a2feb228930",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-87149c50482089be",
       "result": {
-        "artifact_id": "eia-87149c50482089be",
-        "generated_at": "2026-05-17T14:17:04+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-dc1b7a2feb228930",
+        "generated_at": "2026-05-19T07:42:37+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-hTpHmLFXBrc",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC",
+          "source_title": "Vercel Just Fixed Vibe Coding's Biggest Problem",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:37+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC",
+          "source_digest_sha256": "2c5e7d8b8e9581d5a8b8d639f24eaf9b126e68d14854ae8598a64ace25f466f5"
+        },
+        "taxonomy": {
+          "procedural": [
+            "ship them, there's a 90% chance that you",
+            "open-source tool that helps us find",
+            "agent-powered vulnerability scanner that",
+            "you can run in your own infrastructure,",
+            "to copy this command npx deepsec init.",
+            "And so, the first thing that you",
+            "want to do is copy this command right",
+            "agent what it needs to do in order to",
+            "we need to install the dependencies.",
+            "the agent that you want to use, if you",
+            "Now, you can also run this",
+            "with a Vercel API key, and it will run",
+            "agent, and we are going to paste in that",
+            "command that it gave us.",
+            "it's teaching it how to do the setup",
+            "that it needs in order to run.",
+            "this is done, we're going to run through",
+            "and we're going to actually run the",
+            "that command into Claude code or codex",
+            "folder and we can run the command scan"
+          ],
+          "strategic": [
+            "the overall threat model, what are the",
+            "And so the threat model",
+            "actually use your language model to go",
+            "And the total cost, cuz a lot",
+            "what the cost of this thing is with just",
+            "changes, cost about $1.12, and it is now"
+          ],
+          "governance": [
+            "have a security hole that you don't even",
+            "important to know that app security goes",
+            "the OWASP Top 10 Web App Security Risks",
+            "security risks are.",
+            "be security misconfiguration.",
+            "failure, so for example, not rate",
+            "Number eight, data integrity",
+            "OWASP top 10 and audit those things.",
+            "of our app, which again is a security",
+            "priority security issues that should be",
+            "needs to address the security issues",
+            "But a lot of security issues tend to"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.063,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 6 strategic, and 12 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 11816,
+          "unit_count": 315
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-j5_wcDifNko",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=j5_wcDifNko",
+      "sourceUri": "https://www.youtube.com/watch?v=j5_wcDifNko&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=13&pp=iAQBsAgC",
       "title": "ChatGPT Has 900M Weekly Users. Almost None Can Buy In It.",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-c0462d7dc8d3576d",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-cf699d5bcd86e58b",
       "result": {
-        "artifact_id": "eia-cf699d5bcd86e58b",
-        "generated_at": "2026-05-17T14:17:05+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-c0462d7dc8d3576d",
+        "generated_at": "2026-05-19T07:42:37+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-j5_wcDifNko",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=j5_wcDifNko&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=13&pp=iAQBsAgC",
+          "source_title": "ChatGPT Has 900M Weekly Users. Almost None Can Buy In It.",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:37+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=j5_wcDifNko&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=13&pp=iAQBsAgC",
+          "source_digest_sha256": "0be3f0bb61a39ae65dae6af0dcca9f3902293c39d76c6358dad79103ec65ba3c"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Your agent is about to spend your money,",
+            "One, who decides where the agent",
+            "for API calls, or procure tools without",
+            "anyone watching every single step.",
+            "that the agent that took that action was",
+            "the first split is the one almost",
+            "GPT and announced the Agent Commerce",
+            "Open AAI runs the agent surface.",
+            "So the agent can",
+            "checkout moves into the agent surface,",
+            "in the US going to chat GPT as a first",
+            "merchant doesn't only need an agent to",
+            "needs the agent to understand what the",
+            "strongest answer for a very clean agent",
+            "you how the agent pays.",
+            "nor ACP tells you whether the agent was",
+            "allowed to pay in the first place.",
+            "an independent agent in the scene.",
+            "authorization is proof the agent was",
+            "You tell an agent to"
+          ],
+          "strategic": [
+            "you are building anything on the Agentic",
+            "there's six layers of an agentic",
+            "Agentic commerce",
+            "when I say agentic commerce, I mean any",
+            "answer if you're rebuilding the agentic",
+            "with the agentic platforms that are",
+            "direction from their own positions in",
+            "PayPal's agentic",
+            "a model call or a browser action.",
+            "wallet, the issuance, the orchestration,",
+            "business problems and the agentic",
+            "agents on a cloud platform, they expect",
+            "the platform to help manage payment",
+            "payment provider just sees the payment,",
+            "The agent platform sees all the",
+            "resistance to unauthorized agentic",
+            "browsing make clear that platform",
+            "don't assume agentic commerce is a march",
+            "platform controlled, some will open up",
+            "strategy in an age when agents and"
+          ],
+          "governance": [
+            "protocol camps right now that are",
+            "Protocol or ACP.",
+            "long-term existential risk to merchant.",
+            "commerce protocol or UCP.",
+            "A checkout protocol that ignores",
+            "depend on taxes, cancellation policy,",
+            "Google's agent payments protocol or AP2",
+            "payments protocol points in the same",
+            "and the risk of the transaction with the",
+            "approval rules, and logs.",
+            "governance layer and it must be there.",
+            "Governance is the set of controls that",
+            "protocol to own this layer.",
+            "called, the policy active, the budget",
+            "will be protocol driven, some will be",
+            "credential and the risk?",
+            "And I get you a full audit list at the",
+            "detail and have an audit list in the",
+            "enterprise governance and is trying to"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "Medium",
+          "implementation_density": 0.033,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=j5_wcDifNko&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=13&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 20 strategic, and 19 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 21539,
+          "unit_count": 603
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-jWDCnJKouhw",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=jWDCnJKouhw",
+      "sourceUri": "https://www.youtube.com/watch?v=jWDCnJKouhw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=14&pp=iAQBsAgC",
       "title": "Are Your AI Agents Flying Blind? The Truth About AgentOps",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-6998f4018077c039",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-877612e1a48483d4",
       "result": {
-        "artifact_id": "eia-877612e1a48483d4",
-        "generated_at": "2026-05-17T14:17:05+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-6998f4018077c039",
+        "generated_at": "2026-05-19T07:42:37+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-jWDCnJKouhw",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=jWDCnJKouhw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=14&pp=iAQBsAgC",
+          "source_title": "Are Your AI Agents Flying Blind? The Truth About AgentOps",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:37+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=jWDCnJKouhw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=14&pp=iAQBsAgC",
+          "source_digest_sha256": "7ae18e25739d33b87f912b4f20877ec1016dce8abef404f22273048ee354bbc5"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Your AI agent just approved a",
+            "Now, imagine you deploy two",
+            "Another agent submits",
+            "This is where most agent",
+            "agent doesn't work, but because no one",
+            "And that is exactly what agent",
+            "Agent operations.",
+            "gave us the tools to deploy software",
+            "And then we have MLOps, which gave us",
+            "Agent Ops is what you need when your AI",
+            "The agent op frameworks break down",
+            "Let's start with the first",
+            "agent made a decision, you need to be",
+            "every tool call, every LLM",
+            "A second one is agent to agent handoff",
+            "When one agent passes",
+            "work to another agent, how long does",
+            "third, cost per request.",
+            "cost you an API calls?",
+            "second layer is evaluation."
+          ],
+          "strategic": [
+            "stakes, blind is not a strategy.",
+            "every tool call, every LLM",
+            "lat for latency.",
+            "third, cost per request.",
+            "cost you an API calls?",
+            "This is a real agentic",
+            "handoff latency.",
+            "execution latency.",
+            "is cost per authorization.",
+            "The cost efficiency",
+            "cost reduction on every single request."
+          ],
+          "governance": [
+            "policy number, is it actually correct?",
+            "guardrail violations?",
+            "trigger a guardrail.",
+            "compliance violations because we built",
+            "the safety net before we needed it.",
+            "First pass approval improved by 50%."
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "Medium",
+          "implementation_density": 0.061,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=jWDCnJKouhw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=14&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 11 strategic, and 6 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 11917,
+          "unit_count": 330
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-jwtpMSRAPAQ",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=jwtpMSRAPAQ",
+      "sourceUri": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC",
       "title": "The Trillion Dollar Agentic Workflow Opportunity Is Here",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-76688f36dc87a0c1",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-ec919ea43ba8da74",
       "result": {
-        "artifact_id": "eia-ec919ea43ba8da74",
-        "generated_at": "2026-05-17T14:17:05+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-76688f36dc87a0c1",
+        "generated_at": "2026-05-19T07:42:37+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-jwtpMSRAPAQ",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC",
+          "source_title": "The Trillion Dollar Agentic Workflow Opportunity Is Here",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:37+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC",
+          "source_digest_sha256": "a95656086aa1d22feb23af1ae5b1a18ed28ca5540488c444d8889533efc22651"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: The Trillion Dollar Agentic Workflow Opportunity Is Here",
+            "People think it's an agent",
+            "helpful and easy to implement and not be",
+            "they're all aimed at the third player in",
+            "chat and an agent just a few months ago.",
+            "agents can do an entire workflow.",
+            "100% on an entire workflow is a new",
+            "that they cannot just implement",
+            "enterprise AI agent solutions without",
+            "think about the battle to implement full",
+            "model shows up in the workflow versus",
+            "workflow from the implementation layer,",
+            "with when they put agent workflows into",
+            "So, first axis, frontier labs",
+            "and OpenAI used to ship the model and",
+            "let everyone else build around that.",
+            "design or Claude releasing finance agent",
+            "traditional coding agent patterns, which",
+            "first example of this.",
+            "piece, second axis of pressure."
+          ],
+          "strategic": [
+            "Video Title: The Trillion Dollar Agentic Workflow Opportunity Is Here",
+            "model of software in the future.",
+            "services deployment model that we're",
+            "pivoting into agentic workflows.",
+            "business model for this.",
+            "getting GPUs, of model training, etc.,",
+            "this market, the company.",
+            "market because the AI products on the",
+            "market right now are by and large not",
+            "the market right now is in the completed",
+            "their previous business model, which in",
+            "delegated work agentic workflows.",
+            "model shows up in the workflow versus",
+            "want to differentiate data and model and",
+            "model tells you the bottleneck isn't",
+            "their model, it's the whole",
+            "more of the lab strategy, and I'm going",
+            "pressure that are pressuring agentic",
+            "workflows and how agentic workflows work",
+            "and OpenAI used to ship the model and"
+          ],
+          "governance": [
+            "Is it in the ownership",
+            "compliance, and they are desperate to",
+            "owning an action layer or a governance",
+            "ownership in the space.",
+            "Reading is one risk profile, writing is",
+            "a whole separate risk profile, and",
+            "reconstruct after a failure?",
+            "recovery and ongoing ownership?",
+            "with a buyer-side audit framework, I"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "Medium",
+          "implementation_density": 0.026,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 20 strategic, and 9 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 27525,
+          "unit_count": 756
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-k8o_UgtrGyA",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=k8o_UgtrGyA",
-      "title": "The only Browser Use breakdown you'll ever need — with founder Magnus Müller",
+      "sourceUri": "https://www.youtube.com/watch?v=k8o_UgtrGyA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=24&pp=iAQBsAgC",
+      "title": "Harness Engineering is the future… trust me.",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-ad461d2640a798b5",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-0802895128ac7e3f",
       "result": {
-        "artifact_id": "eia-0802895128ac7e3f",
-        "generated_at": "2026-05-17T14:17:07+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-ad461d2640a798b5",
+        "generated_at": "2026-05-19T07:42:39+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-k8o_UgtrGyA",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=k8o_UgtrGyA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=24&pp=iAQBsAgC",
+          "source_title": "Harness Engineering is the future… trust me.",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:39+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=k8o_UgtrGyA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=24&pp=iAQBsAgC",
+          "source_digest_sha256": "90ad24b778dc7fde87487597887c94568eea17e0a06a675d4d30eb763de218d7"
+        },
+        "taxonomy": {
+          "procedural": [
+            "what do you prompt such a system?",
+            "this more and more that AI will prompt",
+            "Then the agent can just resolve upstream",
+            "So the agent can decide what",
+            "then development cycle is like 10 times",
+            "challenge is then who can describe their",
+            "The second variable is the taste.",
+            "framework which lets agents use the",
+            "we talk about why your agent should",
+            "prompt you what the interface for AGI",
+            "prompt and it controls the browser in a",
+            "picture and then says, \"Okay, handle",
+            "this yourself and have your AI agent",
+            "just copy paste your AI agent.",
+            "available in the first link below video",
+            "go below the video and click the first",
+            "reliable with AI then basically our",
+            "what's what's next?",
+            "even want to prompt those agents?",
+            "what what do you prompt such a system?"
+          ],
+          "strategic": [
+            "actually like a strategy game where you",
+            "the harness or the model.",
+            "your Deep Seek or your local model in",
+            "to the product market fit",
+            "agentic kind of company you know"
+          ],
+          "governance": [
+            "your ownership is definitely gone.",
+            "expose schema security invokers on views",
+            "like your ownership is definitely gone."
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.025,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=k8o_UgtrGyA&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=24&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 5 strategic, and 3 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30484,
+          "unit_count": 807
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-kJNFWGXRrA4",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=kJNFWGXRrA4",
+      "sourceUri": "https://www.youtube.com/watch?v=kJNFWGXRrA4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=23&pp=iAQBsAgC",
       "title": "Top Dev Tool Projects : 9Router, TRUST, Dokku, React-Doctor & AgentMemory",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-f860e0f18fee3b9c",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-d84f622009d414fd",
       "result": {
-        "artifact_id": "eia-d84f622009d414fd",
-        "generated_at": "2026-05-17T14:17:07+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-f860e0f18fee3b9c",
+        "generated_at": "2026-05-19T07:42:39+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-kJNFWGXRrA4",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=kJNFWGXRrA4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=23&pp=iAQBsAgC",
+          "source_title": "Top Dev Tool Projects : 9Router, TRUST, Dokku, React-Doctor & AgentMemory",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:39+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=kJNFWGXRrA4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=23&pp=iAQBsAgC",
+          "source_digest_sha256": "a98f29042756ae3474f9bb3cc9b0f041994bc15c875a6ec01e97b16bdba9e973"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Top Dev Tool Projects : 9Router, TRUST, Dokku, React-Doctor & AgentMemory",
+            "source tools that improve how we build,",
+            "trending open source and best dev tool",
+            "From AI workflow",
+            "Developers can integrate it into local",
+            "coordinate your AI request pipeline.",
+            "Project number two, AIDLC, workflow",
+            "workflow collection from AWS Labs that",
+            "Developers integrate the workflows into",
+            "number three, Trust framework for",
+            "trustworthy AI agent workflows.",
+            "an open-source framework focused on",
+            "The framework is useful for",
+            "This helps teams build more",
+            "structured agent workflows.",
+            "open-source repository that adapts",
+            "apply to agent systems.",
+            "engineering thinking into agent design.",
+            "to Earn to build AI-assisted operational",
+            "framework for vibe coding workflows."
+          ],
+          "strategic": [
+            "orchestration to deployment platforms",
+            "routing logic, provider selection, and",
+            "request handling strategies for model",
+            "flexible model orchestration.",
+            "simplify multi-model infrastructure",
+            "Earn, platform for AI-powered earning",
+            "platform focused on building workflows",
+            "platform designed to build long-term",
+            "model routing across different LLMs with",
+            "number 15, Turrax, AI workflow platform",
+            "an open-source AI platform designed to",
+            "pipelines while the platform manages how",
+            "from Temporal that demonstrates platform",
+            "explore workflow orchestration features",
+            "Self-hosted platform as a service for",
+            "platform as a service that helps",
+            "The platform handles"
+          ],
+          "governance": []
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.056,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=kJNFWGXRrA4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=23&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 17 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 13195,
+          "unit_count": 360
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-kXBXIipl1lQ",
       "sourceType": "video",
       "sourceUri": "https://www.youtube.com/watch?v=kXBXIipl1lQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=36&pp=iAQBsAgC",
       "title": "Design Google Docs in a System Design Interview",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-27047611af6e522b",
       "ok": true,
       "returncode": 0,
       "result": {
         "spec": "tnf/executable-intelligence/0.2",
-        "artifact_id": "eia-72bae05fa0222d2b",
-        "generated_at": "2026-05-19T06:13:08+00:00",
+        "artifact_id": "eia-27047611af6e522b",
+        "generated_at": "2026-05-19T07:14:44+00:00",
         "classification": {
           "class": "INTEL",
           "status": "PENDING"
@@ -1466,20 +3778,44 @@
           "source_author": "",
           "source_publisher": "",
           "source_published_at": "",
-          "retrieved_at": "2026-05-19T06:13:08+00:00",
+          "retrieved_at": "2026-05-19T07:14:44+00:00",
           "resource_pointer": "https://www.youtube.com/watch?v=kXBXIipl1lQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=36&pp=iAQBsAgC",
-          "source_digest_sha256": "a463bc8037a244d8b5bd7df21a766b3321ab831390330f21941ee843bf4f373e"
+          "source_digest_sha256": "3db41e268b2877237be3d1f137091aa1a4c1f506793009f557d567cb4aa9c784"
         },
         "taxonomy": {
-          "procedural": [],
-          "strategic": [
-            "Distill concrete implementation logic and architecture signals."
+          "procedural": [
+            "in the first phase, we'll gather the",
+            "Then we'll get into high-level",
+            "So, users should be able to create",
+            "new in this document and then the page",
+            "is an interview setup.",
+            "First of all, let's",
+            "Then, we have the availability.",
+            "that we made as an edit, then we should",
+            "First of all, it gives us an",
+            "Second is whether we will",
+            "third, also for us to get an idea on how",
+            "collaboration tool.",
+            "the storage, and then we'll get to the",
+            "it's not at peak time, then we can",
+            "should be able to create and delete",
+            "request to create a document or send the",
+            "the first user that the second user made",
+            "event, but first of all, that won't",
+            "So, this comes to the API Gateway first",
+            "rate limits, and then we proxy this same"
           ],
-          "governance": []
+          "strategic": [
+            "start from the latency.",
+            "for this level of latency.",
+            "match the latency requirements that we",
+            "latency, because if we start reading"
+          ],
+          "governance": ["the relational integrity."]
         },
         "utility_metrics": {
-          "freshness_decay": "Medium",
-          "implementation_density": 0.0,
+          "freshness_decay": "High",
+          "implementation_density": 0.037,
           "verification_difficulty": "Hard"
         },
         "gate_results": {
@@ -1507,10 +3843,10 @@
             "release_state": "sealed"
           }
         },
-        "synthesis": "Artifact captures 0 procedural, 1 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "synthesis": "Artifact captures 20 procedural, 4 strategic, and 1 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
         "raw_stats": {
-          "char_count": 606,
-          "unit_count": 10
+          "char_count": 20187,
+          "unit_count": 544
         }
       },
       "stderr": ""
@@ -1518,168 +3854,1310 @@
     {
       "sourceId": "yt-ai5-lAAcjj5fISE",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=lAAcjj5fISE",
+      "sourceUri": "https://www.youtube.com/watch?v=lAAcjj5fISE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=1&pp=iAQBsAgC",
       "title": "Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenSwarm & TokenSpeed #256",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-412f3d6ee6d014b7",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-c91e62b58fc2624c",
       "result": {
-        "artifact_id": "eia-c91e62b58fc2624c",
-        "generated_at": "2026-05-17T14:17:02+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-412f3d6ee6d014b7",
+        "generated_at": "2026-05-19T07:42:35+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-lAAcjj5fISE",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=lAAcjj5fISE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=1&pp=iAQBsAgC",
+          "source_title": "Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenSwarm & TokenSpeed #256",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:35+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=lAAcjj5fISE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=1&pp=iAQBsAgC",
+          "source_digest_sha256": "f71651052a851987bd4f52771e94e0f92a9fb3b045b020be1bf26f940249791b"
+        },
+        "taxonomy": {
+          "procedural": [
+            "teams build faster and work smarter.",
+            "Pixel video, AI framework for",
+            "video is an open-source framework for",
+            "Developers run it locally or in research",
+            "teams build advanced generative video",
+            "Explore the repository to",
+            "create AI-generated videos.",
+            "productivity with structured command",
+            "features such as command blocks,",
+            "Developers run it locally",
+            "improving usability and workflow",
+            "organization inside the CLI.",
+            "upgrade your terminal workflow.",
+            "number three, Multiga, multi-agent",
+            "build collaborative workflows for",
+            "scalable multi-agent execution.",
+            "helps teams create coordinated AI",
+            "build agent workflows.",
+            "four, generic agent, general-purpose",
+            "framework for autonomous agents."
+          ],
+          "strategic": [
+            "orchestration platform for AI systems.",
+            "Multiga is an open-source platform that",
+            "provides orchestration logic for",
+            "The platform focuses on",
+            "with hosted model providers, depending",
+            "open-source platform that helps",
+            "It combines orchestration,",
+            "The platform focuses on agent",
+            "acts as a shared capability layer for AI",
+            "workflows for testing prompts, model",
+            "metrics related to latency and output",
+            "evaluate model serving performance.",
+            "platform focuses on usability and",
+            "requiring heavy orchestration systems."
+          ],
+          "governance": [
+            "Security evaluation",
+            "evaluates AI systems for security risks",
+            "security and evaluation.",
+            "teams improve the safety of AI",
+            "test AI security."
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.056,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=lAAcjj5fISE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=1&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 14 strategic, and 5 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 12474,
+          "unit_count": 356
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-lK9o5Wu2upU",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=lK9o5Wu2upU",
+      "sourceUri": "https://www.youtube.com/watch?v=lK9o5Wu2upU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=30&t=5491s&pp=iAQBsAgC",
       "title": "Pi is INCREDIBLE - Building a Custom Coding Agent Live",
+      "transcriptStatus": "fetched",
+      "artifactId": "eia-34a4307ca07f4365",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-bbed1748f6719b07",
       "result": {
-        "artifact_id": "eia-bbed1748f6719b07",
-        "generated_at": "2026-05-17T14:17:08+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-34a4307ca07f4365",
+        "generated_at": "2026-05-19T07:46:25+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-lK9o5Wu2upU",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=lK9o5Wu2upU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=30&t=5491s&pp=iAQBsAgC",
+          "source_title": "Pi is INCREDIBLE - Building a Custom Coding Agent Live",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:46:25+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=lK9o5Wu2upU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=30&t=5491s&pp=iAQBsAgC",
+          "source_digest_sha256": "b3149e08c5dc79f564411d3d1426e42719345191633096a4b1d723146e236662"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Pi is INCREDIBLE - Building a Custom Coding Agent Live",
+            "agent that you build on top of instead",
+            "of taking a really massive bloated tool",
+            "then you can really take control of it",
+            "Archon is my open source tool that helps",
+            "you build your own harnesses.",
+            "about, you know, create your own",
+            "process, build your own workflows and",
+            "But here, I just want to build",
+            "works, how we can build on top of it,",
+            "the other thing that I'm going to test",
+            "more of like an enterprise tool, but",
+            "yeah, as far as like the API keys you",
+            "coding is the one that I want to test",
+            "wanted to test using within Pi.",
+            "the Dark Factory to run on Pi, by the",
+            "And then if we look at the",
+            "the archon workflow marketplace that I",
+            "don't actually ship natively with PI cuz",
+            "and then you build in or install the"
+          ],
+          "strategic": [
+            "Archon and I showed the integration that",
+            "model uh output quality and just like",
+            "agent that allows us to use any model we",
+            "a weaker model, we can still get really",
+            "the model when it comes to getting good",
+            "I'm kind of open to what that model is,",
+            "Adam custom provider.",
+            "status footer for Pi with model thinking",
+            "um LLM callable multi-question tool with",
+            "token, and cost widget, artifacts,",
+            "token management and cost."
+          ],
+          "governance": [
+            "permission gate configurable danger",
+            "Um slow mode is a review gate for"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=lK9o5Wu2upU&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=30&t=5491s&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 11 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30500,
+          "unit_count": 828
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-maabARKJ94o",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=maabARKJ94o",
+      "sourceUri": "https://www.youtube.com/watch?v=maabARKJ94o&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=19&pp=iAQBsAgC",
       "title": "7 Claude Skills That'll Change How You Vibe Code Forever",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-c7495b41ec14eeec",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-71c2f8e2d159aaba",
       "result": {
-        "artifact_id": "eia-71c2f8e2d159aaba",
-        "generated_at": "2026-05-17T14:17:06+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-c7495b41ec14eeec",
+        "generated_at": "2026-05-19T07:42:38+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-maabARKJ94o",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=maabARKJ94o&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=19&pp=iAQBsAgC",
+          "source_title": "7 Claude Skills That'll Change How You Vibe Code Forever",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:38+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=maabARKJ94o&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=19&pp=iAQBsAgC",
+          "source_digest_sha256": "65a9184ff63c09f992797384ad0680601753c478d001f36f30313c05f6b5f6d8"
+        },
+        "taxonomy": {
+          "procedural": [
+            "hypothesis, and then test a fix to",
+            "can have it run through this type of",
+            "process and then actually perform an",
+            "So, the first skill up is one",
+            "mindlessly inside of some tool asking it",
+            "to build Instagram for cats without",
+            "actually build something real from it.",
+            "management agent that I've been working",
+            "I want to make this third panel over on",
+            "On the right third,",
+            "I want it to be a separate like command",
+            "And then inside of that",
+            "the agent logic, the front end.",
+            "in writing specific plans and then",
+            "summary and then pass it in for example",
+            "build this thing in a contained way",
+            "using Git work trees, which is the next",
+            "work trees allow you to create isolated",
+            "brainstorming tool and you want to work",
+            "to build, one is a bug fix, and one is a"
+          ],
+          "strategic": ["well the model is able to actually do"],
+          "governance": [
+            "audit and tell us what it thinks we",
+            "thing, it's going to audit all of their",
+            "dedicated to security.",
+            "against known security vulnerabilities.",
+            "then actually perform an audit and tell",
+            "actually run the audit and make the"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.038,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=maabARKJ94o&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=19&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 1 strategic, and 6 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 19586,
+          "unit_count": 527
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-nFq4POtqom4",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=nFq4POtqom4",
+      "sourceUri": "https://www.youtube.com/watch?v=nFq4POtqom4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=17&pp=iAQBsAgC",
       "title": "OpenSpec Will Change How You Vibe Code Forever",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-d8fca7a8f4cf2d4f",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-574daf1edba1af94",
       "result": {
-        "artifact_id": "eia-574daf1edba1af94",
-        "generated_at": "2026-05-17T14:17:05+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-d8fca7a8f4cf2d4f",
+        "generated_at": "2026-05-19T07:42:38+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-nFq4POtqom4",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=nFq4POtqom4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=17&pp=iAQBsAgC",
+          "source_title": "OpenSpec Will Change How You Vibe Code Forever",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:38+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=nFq4POtqom4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=17&pp=iAQBsAgC",
+          "source_digest_sha256": "e14b5ea6bc58624ad41f2e57813195dc19256e98dcdfafcf009a90d4ca741fbf"
+        },
+        "taxonomy": {
+          "procedural": [
+            "It's a spectrum and tool called Open",
+            "recently added a new expanded workflow",
+            "really quickly, where does this tool sit",
+            "spec that you create is the primary",
+            "are going to build and then everything",
+            "agent is assisting.",
+            "The second category I would call",
+            "agent skills, Obra superpowers, and",
+            "test driven development their red green",
+            "refactor is a really strong thing to do",
+            "anytime you're going to build something",
+            "And so the third",
+            "autonomous pipeline and these are where",
+            "able to define something and then",
+            "get this like first version of something",
+            "build things out so that it looks a lot",
+            "driven development tool to bridge this",
+            "gap and build all of these screens out",
+            "work tree, run all of my tests and make",
+            "is install the package via this command"
+          ],
+          "strategic": [
+            "So the mental model is mostly the",
+            "the information architecture that's in",
+            "model's just going to decide what to do",
+            "architecture decisions.",
+            "architecture of the like the app itself",
+            "system migration, building out the new",
+            "bookmarks migration, the discovery page,",
+            "actual like design system migration,",
+            "this design system migration, all of"
+          ],
+          "governance": []
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.031,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=nFq4POtqom4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=17&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 9 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 23842,
+          "unit_count": 650
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-nyO60uzTnP4",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=nyO60uzTnP4",
+      "sourceUri": "https://www.youtube.com/watch?v=nyO60uzTnP4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=9&t=342s&pp=iAQBsAgC",
       "title": "Making $$ with AI Agents",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-2262f2d003883087",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-77e037b78d7b204c",
       "result": {
-        "artifact_id": "eia-77e037b78d7b204c",
-        "generated_at": "2026-05-17T14:17:04+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-2262f2d003883087",
+        "generated_at": "2026-05-19T07:42:37+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-nyO60uzTnP4",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=nyO60uzTnP4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=9&t=342s&pp=iAQBsAgC",
+          "source_title": "Making $$ with AI Agents",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:37+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=nyO60uzTnP4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=9&t=342s&pp=iAQBsAgC",
+          "source_digest_sha256": "8435f6aa64a8de5767516005b9133fde743c068f532a26ce8db534d5bc189a38"
+        },
+        "taxonomy": {
+          "procedural": [
+            "First, where is the",
+            "agent builder that allows you to build",
+            "digital employees, allows you to build",
+            "Agent so that you can outperform 99.9%",
+            "to give you $1,000 of Hyper Agent",
+            "build the business of your dreams.",
+            "catch is first a,000 people do it, get",
+            "play with Hyper Agent, to automate some",
+            "stuff, to do some research, to build",
+            "Um, but first, Howie, I have been",
+            "&gt;&gt; Agent psychosis.",
+            "And then two I think",
+            "hyper agent is I have like 30 different",
+            "this thing for the first time like",
+            "not like an autonomous agent interaction",
+            "how quickly we can deploy agents into",
+            "aren't motivated to create startups",
+            "know, who's going to win the next",
+            "am ambitious enough prompt or task in",
+            "before structurally how could you build"
+          ],
+          "strategic": [
+            "applying frontier agentic development",
+            "new model of software development is not",
+            "And so it's clear that the model",
+            "a cost like you can create some serious",
+            "the cost per token of the frontier",
+            "clearly the most expensive model right",
+            "you know adapt to this mental model of",
+            "cheap dumb model but like you're not",
+            "would it have cost a human to do the",
+            "And so, like, even if it cost me, let's",
+            "opportunity it cost my time.",
+            "time cost versus wow $150 that sounds",
+            "adoption curve in enterprise history,",
+            "of adoption, right?",
+            "to where like a an AI model can like",
+            "pitch was hyper local uh market reports",
+            "research on the landscape of the market.",
+            "got full coding capability.",
+            "dollar market which is going to be super",
+            "like mini or medium market like couple"
+          ],
+          "governance": [
+            "like risk mitigation that like every",
+            "I risk wasting $100 million and maybe"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.025,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=nyO60uzTnP4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=9&t=342s&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 20 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30470,
+          "unit_count": 816
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-oLu32YpiIJw",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=oLu32YpiIJw",
+      "sourceUri": "https://www.youtube.com/watch?v=oLu32YpiIJw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=4&pp=iAQBsAgC",
       "title": "My AI Design Workflow That Doesn't Ship Slop",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-1592f62f77307dbe",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-bab470d6be70e41f",
       "result": {
-        "artifact_id": "eia-bab470d6be70e41f",
-        "generated_at": "2026-05-17T14:17:03+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-1592f62f77307dbe",
+        "generated_at": "2026-05-19T07:42:36+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-oLu32YpiIJw",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=oLu32YpiIJw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=4&pp=iAQBsAgC",
+          "source_title": "My AI Design Workflow That Doesn't Ship Slop",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:36+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=oLu32YpiIJw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=4&pp=iAQBsAgC",
+          "source_digest_sha256": "e50b7536b658114cf8208ec0593a8cb29a97ca64ef9de68aef18995ab1c05c31"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: My AI Design Workflow That Doesn't Ship Slop",
+            "There's a way to create beautiful",
+            "his entire workflow to how to create",
+            "create better design than 99.99%",
+            "chance of getting people to install it,",
+            "Second time on the",
+            "this is one way to create a blueprint to",
+            "whether you made it or not, and then",
+            "and then you can turn that into motion",
+            "with one shot, and then suddenly they",
+            "able to create jaw-dropping, beautiful",
+            "of their systems to create something of",
+            "you know, remember the first time I came",
+            "introduced slides, and then, you know,",
+            "First things first, I realized a lot of",
+            "including this tool that I'm showing",
+            "So, but first of all, you know,",
+            "then we're going to end with a demo.",
+            "And then, we we're going to get started.",
+            "that to the agent"
+          ],
+          "strategic": [
+            "between platform.",
+            "that to another platform.",
+            "specific to one platform.",
+            "you always when there's a new model that"
+          ],
+          "governance": []
+        },
+        "utility_metrics": {
+          "freshness_decay": "Medium",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=oLu32YpiIJw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=4&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 4 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30483,
+          "unit_count": 830
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-ohKt066uFhg",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=ohKt066uFhg",
+      "sourceUri": "https://www.youtube.com/watch?v=ohKt066uFhg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=6&t=259s&pp=iAQBsAgC",
       "title": "Viktor: AI Coworker That Lives in Slack — Fryderyk Wiatrowski",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-d947ac4004455b56",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-8e1345e9c1b30270",
       "result": {
-        "artifact_id": "eia-8e1345e9c1b30270",
-        "generated_at": "2026-05-17T14:17:03+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-d947ac4004455b56",
+        "generated_at": "2026-05-19T07:42:36+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-ohKt066uFhg",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=ohKt066uFhg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=6&t=259s&pp=iAQBsAgC",
+          "source_title": "Viktor: AI Coworker That Lives in Slack — Fryderyk Wiatrowski",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:36+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=ohKt066uFhg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=6&t=259s&pp=iAQBsAgC",
+          "source_digest_sha256": "cefc8bb36300da036b93b45438c542353c6a3332bfc55c88af86f6f77540b105"
+        },
+        "taxonomy": {
+          "procedural": [
+            "integrations, it can build its own",
+            "the very early days in 2023 was to build",
+            "And back then it was, you",
+            "then we thought that the right way to",
+            "build AI employees is is is through",
+            "have tool calling.",
+            "And the way back then it was",
+            "then based on the snapshot and this",
+            "deciding on the next step.",
+            "compounding with with each step and so",
+            "JCAI was a state-of-the-art web agent on",
+            "on the most popular agenting benchmark",
+            "um they're finally working much better",
+            "we have built our face first agent loop",
+            "web app to ask the agent to do something",
+            "but rather the agent having all the",
+            "agent loop is triggered, connects to",
+            "with with uh tool calls.",
+            "someone asks for a refund, the agent can",
+            "then, you know, this February, we"
+          ],
+          "strategic": [
+            "Immediate product market fit, you know,",
+            "huge adoption worldwide and yeah, we",
+            "great product market fit.",
+            "integration Victor will inherit the",
+            "the same architecture and the same",
+            "suddenly the latency is is very low uh",
+            "used as as the kind of the main model",
+            "to our architecture, but they loved Opus",
+            "model that um, you know, um, we can",
+            "needs to connect this integration.",
+            "integration, someone can connect their",
+            "own wrong integration, right?",
+            "know might not know which integration to",
+            "integration, a team integration that",
+            "is we added a capability to Victor to",
+            "want to have your personal integration,",
+            "connector integration through pipedream"
+          ],
+          "governance": [
+            "security teams start raging because",
+            "threads and the security is going crazy.",
+            "Slack approval process, which is very"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "Medium",
+          "implementation_density": 0.043,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=ohKt066uFhg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=6&t=259s&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 17 strategic, and 3 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 17370,
+          "unit_count": 470
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-prLO7NGU4f0",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=prLO7NGU4f0",
+      "sourceUri": "https://www.youtube.com/watch?v=prLO7NGU4f0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=7&t=67s&pp=iAQBsAgC",
       "title": "Build Your First AI Image Generator from Scratch with Codex CLI (Full Tutorial)",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-f0459ea413ef3ced",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-b37ca979a4962ac1",
       "result": {
-        "artifact_id": "eia-b37ca979a4962ac1",
-        "generated_at": "2026-05-17T14:17:04+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-f0459ea413ef3ced",
+        "generated_at": "2026-05-19T07:42:36+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-prLO7NGU4f0",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=prLO7NGU4f0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=7&t=67s&pp=iAQBsAgC",
+          "source_title": "Build Your First AI Image Generator from Scratch with Codex CLI (Full Tutorial)",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:36+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=prLO7NGU4f0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=7&t=67s&pp=iAQBsAgC",
+          "source_digest_sha256": "29d5068c02b77c9100c74066a0a43aec23b0c323ffc34d0873c16237fd0d5932"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Build Your First AI Image Generator from Scratch with Codex CLI (Full Tutorial)",
+            "style reference, write a prompt, and",
+            "because this is a build challenge, I'm",
+            "not using the coding tool, the wheel is.",
+            "have to use to build the app.",
+            "we're using the Codex CLI.",
+            "All right, first things",
+            "first, I just created this blank folder,",
+            "I am going to run certain commands",
+            "another command prompt window.",
+            "thing I'm going to do is run the command",
+            "create a gen tick app at latest space",
+            "This will scaffold the Next.js",
+            "lot of things we need to build a",
+            "that's done, we just have to run the",
+            "command docker compose up {dash} d.",
+            "Then we have to run the",
+            "command npm run db migrate.",
+            "database, we can run the command npm run",
+            "sessions, and instead, I'll just run"
+          ],
+          "strategic": [
+            "AI image generation platform for",
+            "model should be able to combine all of",
+            "platform.openai.com",
+            "Now under this AI integration",
+            "if you ever wanted to use an AI model on",
+            "image generation model."
+          ],
+          "governance": []
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.039,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=prLO7NGU4f0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=7&t=67s&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 6 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 18536,
+          "unit_count": 509
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-s3rNDndvav0",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=s3rNDndvav0",
+      "sourceUri": "https://www.youtube.com/watch?v=s3rNDndvav0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=22&pp=iAQBsAgC",
       "title": "The biggest AI breakthrough in medicine & drug discovery",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-3aa7edbb50a4ab89",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-44d6aeabeaaf6d10",
       "result": {
-        "artifact_id": "eia-44d6aeabeaaf6d10",
-        "generated_at": "2026-05-17T14:17:06+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-3aa7edbb50a4ab89",
+        "generated_at": "2026-05-19T07:42:38+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-s3rNDndvav0",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=s3rNDndvav0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=22&pp=iAQBsAgC",
+          "source_title": "The biggest AI breakthrough in medicine & drug discovery",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:38+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=s3rNDndvav0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=22&pp=iAQBsAgC",
+          "source_digest_sha256": "5bde50f44fc4925088d31727bccfa5b9a904dea176e4fbb5688b96453a38f007"
+        },
+        "taxonomy": {
+          "procedural": [
+            "deal, it's helpful to first start with",
+            "To understand this, we first",
+            "They send signals, build",
+            "these proteins then tell the cell to",
+            "molecular tool strong enough to stop the",
+            "and then to entire bodies.",
+            "And then we also have zinc and",
+            "genes screaming the loudest go first.",
+            "And then for proteins and antibodies",
+            "first paragraph is in English, the",
+            "second paragraph is in sheet music and",
+            "the third paragraph is in JavaScript.",
+            "discovery pipeline.",
+            "for this benchmark, the reigning",
+            "barrier penetration test.",
+            "And then same for this clintox",
+            "safety benchmark which predicts FDA",
+            "second to highlight why this is so",
+            "released Runway Agent.",
+            "can see the entire plan first."
+          ],
+          "strategic": [
+            "this new AI model called MAML.",
+            "One AI model might",
+            "model that understands everything at",
+            "So the model was trained on everything",
+            "So the model learns chemistry, proteins,",
+            "champion for predicting this was a model",
+            "specialized model.",
+            "compared to a specialized model.",
+            "scene, the visual direction, the flow of",
+            "truly new to the model, to prove that it",
+            "mammal is just a sequence model, right?",
+            "large language model operating on",
+            "just a language model.",
+            "means the model isn't just memorizing",
+            "foundation model for biology.",
+            "model that understands everything.",
+            "And because this model also"
+          ],
+          "governance": [
+            "That's the failure rate of",
+            "through approval.",
+            "Another detective only has the security",
+            "evaluated mammal on two critical safety",
+            "clinical toxicity and FDA approval.",
+            "brain has this incredibly tight security",
+            "safety benchmark which predicts FDA"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "High",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=s3rNDndvav0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=22&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 17 strategic, and 7 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30497,
+          "unit_count": 846
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-sRKBGVFVYAw",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=sRKBGVFVYAw",
+      "sourceUri": "https://www.youtube.com/watch?v=sRKBGVFVYAw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=31&pp=iAQBsAgC",
       "title": "David Reich – Bronze Age shock, the Neanderthal puzzle, & the sudden spread of farming",
+      "transcriptStatus": "fetched",
+      "artifactId": "eia-73167bcafded5935",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-55f1b603f2b135c7",
       "result": {
-        "artifact_id": "eia-55f1b603f2b135c7",
-        "generated_at": "2026-05-17T14:17:08+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-73167bcafded5935",
+        "generated_at": "2026-05-19T07:46:32+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-sRKBGVFVYAw",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=sRKBGVFVYAw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=31&pp=iAQBsAgC",
+          "source_title": "David Reich – Bronze Age shock, the Neanderthal puzzle, & the sudden spread of farming",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:46:32+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=sRKBGVFVYAw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=31&pp=iAQBsAgC",
+          "source_digest_sha256": "317e2e2eb061c1974615e4701253e3f9c6100742d3afdea6b40fec394b3bf315"
+        },
+        "taxonomy": {
+          "procedural": [
+            "years is the fact that we now finally",
+            "the next few hours, but why are",
+            "then there's pressure on the population",
+            "the previous one, and then a new",
+            "because of the step migration from the",
+            "step north of the Black and Caspian Sea.",
+            "from step pestoralists.",
+            "In this next section, David",
+            "a sense of the results first.",
+            "invented for the first time anywhere in",
+            "and more next to their animals and",
+            "And then it rockets down in frequency in",
+            "selection in the first case to increase",
+            "in frequency and then in the next case",
+            "But then tuberculosis became uh",
+            "very next point.",
+            "started as a programming tool, but I",
+            "but then also for milk and wool and",
+            "But then there's other things which seem",
+            "age and then two or three thousand years"
+          ],
+          "strategic": [
+            "push systematically in some direction in",
+            "direction or another.",
+            "being pushed in a systematic direction",
+            "migration is there's just huge",
+            "mutation slowly blowing in one direction",
+            "between big events of migration and",
+            "direction, we win.",
+            "because of the step migration from the",
+            "positions in one direction or the other",
+            "switch over to a different model and",
+            "I could have one model critique the"
+          ],
+          "governance": [
+            "a major risk factor for severe",
+            "risk factor for tuberculosis, this",
+            "uh tuberculosis risk uh multiple",
+            "sclerosis risk variant inflected and"
+          ]
+        },
+        "utility_metrics": {
+          "freshness_decay": "Medium",
+          "implementation_density": 0.024,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=sRKBGVFVYAw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=31&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 11 strategic, and 4 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30524,
+          "unit_count": 820
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-vi-2nasppAg",
       "sourceType": "video",
-      "sourceUri": "https://www.youtube.com/watch?v=vi-2nasppAg",
+      "sourceUri": "https://www.youtube.com/watch?v=vi-2nasppAg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=21&t=38s&pp=iAQBsAgC",
       "title": "Make your own event-sourced agent harness using stream processors — Jonas Templestein, Iterate",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-625f3f761b57600b",
       "ok": true,
       "returncode": 0,
-      "stderr": "",
-      "artifactId": "eia-98cceb62110956f5",
       "result": {
-        "artifact_id": "eia-98cceb62110956f5",
-        "generated_at": "2026-05-17T14:17:06+00:00"
-      }
+        "spec": "tnf/executable-intelligence/0.2",
+        "artifact_id": "eia-625f3f761b57600b",
+        "generated_at": "2026-05-19T07:42:38+00:00",
+        "classification": {
+          "class": "INTEL",
+          "status": "PENDING"
+        },
+        "namespace": "intelligence",
+        "ownership": {
+          "owner_principal_id": "danielgoldberg",
+          "visibility": "private",
+          "release_state": "sealed",
+          "agent_allowlist": [],
+          "release_approved_by": "",
+          "released_at": "",
+          "release_note": ""
+        },
+        "source": {
+          "source_id": "yt-ai5-vi-2nasppAg",
+          "source_type": "video",
+          "source_uri": "https://www.youtube.com/watch?v=vi-2nasppAg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=21&t=38s&pp=iAQBsAgC",
+          "source_title": "Make your own event-sourced agent harness using stream processors — Jonas Templestein, Iterate",
+          "source_author": "",
+          "source_publisher": "",
+          "source_published_at": "",
+          "retrieved_at": "2026-05-19T07:42:38+00:00",
+          "resource_pointer": "https://www.youtube.com/watch?v=vi-2nasppAg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=21&t=38s&pp=iAQBsAgC",
+          "source_digest_sha256": "b744d5902e6435ace8913a5fe480bac46cd68536e95db3d555fb854613a759aa"
+        },
+        "taxonomy": {
+          "procedural": [
+            "Video Title: Make your own event-sourced agent harness using stream processors — Jonas Templestein, Iterate",
+            "I think pure chaos first of all because",
+            "to do this and then there was like um",
+            "and the kids were sick and then this",
+            "then we came here and we're told you're",
+            "SDK literally one minute ago, and Misha",
+            "build agent harnesses.",
+            "that you later can't tell and then you",
+            "see that in a second is they already",
+            "Um, and then the",
+            "second thing is I want I want this to be",
+            "an agent extensible not just by humans",
+            "for for for agents basically for agent",
+            "has to run in a single thread in in in",
+            "then I think it should be on the edge",
+            "And then I would just",
+            "an agent exists, it should have a URL.",
+            "up making all these things and then you",
+            "agent again or or something like that.",
+            "And then it should be"
+          ],
+          "strategic": [
+            "based on this architecture.",
+            "that are on the market right now.",
+            "What's the architecture?",
+            "arguments in favor of this architecture",
+            "might in the future need to trigger LLM",
+            "and um make a ton of LLM requests for"
+          ],
+          "governance": []
+        },
+        "utility_metrics": {
+          "freshness_decay": "Medium",
+          "implementation_density": 0.025,
+          "verification_difficulty": "Hard"
+        },
+        "gate_results": {
+          "definition_class_validation": {
+            "passed": true,
+            "reason": "Artifact follows executable intelligence schema and taxonomy."
+          },
+          "library_namespace_assignment": {
+            "passed": true,
+            "namespace": "intelligence"
+          },
+          "flag_integrity": {
+            "passed": true,
+            "class": "INTEL",
+            "status": "PENDING"
+          },
+          "linkage_attribution": {
+            "passed": true,
+            "resource_pointer": "https://www.youtube.com/watch?v=vi-2nasppAg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=21&t=38s&pp=iAQBsAgC"
+          },
+          "ownership_scope_gate": {
+            "passed": true,
+            "owner_principal_id": "danielgoldberg",
+            "visibility": "private",
+            "release_state": "sealed"
+          }
+        },
+        "synthesis": "Artifact captures 20 procedural, 6 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "raw_stats": {
+          "char_count": 30541,
+          "unit_count": 805
+        }
+      },
+      "stderr": ""
     },
     {
       "sourceId": "yt-ai5-ynJyIKwjonM",
       "sourceType": "video",
       "sourceUri": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC",
       "title": "Agentic Search for Context Engineering — Leonie Monigatti, Elastic",
+      "transcriptStatus": "cache_hit",
+      "artifactId": "eia-f4c7b2309ce448d8",
       "ok": true,
       "returncode": 0,
       "result": {
         "spec": "tnf/executable-intelligence/0.2",
-        "artifact_id": "eia-a11cdc0537daf90e",
-        "generated_at": "2026-05-19T06:13:08+00:00",
+        "artifact_id": "eia-f4c7b2309ce448d8",
+        "generated_at": "2026-05-19T07:14:44+00:00",
         "classification": {
           "class": "INTEL",
           "status": "PENDING"
@@ -1702,21 +5180,62 @@
           "source_author": "",
           "source_publisher": "",
           "source_published_at": "",
-          "retrieved_at": "2026-05-19T06:13:08+00:00",
+          "retrieved_at": "2026-05-19T07:14:44+00:00",
           "resource_pointer": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC",
-          "source_digest_sha256": "ad20a1125195f9eec7ece12ef5acd2deaff009aa79617da3ecb6fac4eb79180b"
+          "source_digest_sha256": "2fbaf2cf32b12464922c84e9bcb60e378f2e16d305ba82fef37950df0129c252"
         },
         "taxonomy": {
-          "procedural": [],
+          "procedural": [
+            "Who here has built an agent or some form",
+            "Then you've probably then",
+            "what's powering this is the search tool",
+            "retrieval pipeline.",
+            "the context window and then it would be",
+            "So since this is a fixed pipeline",
+            "something more complex, then if you're",
+            "you need, then you would actually might",
+            "want to have a second round of search,",
+            "So that's why we then moved on to",
+            "So we replace the fixed pipeline with",
+            "now a search tool.",
+            "now the agent can decide by himself by",
+            "search tool and retrieve some",
+            "your coding agent, you probably have",
+            "you're planning with your um agent what",
+            "Then you probably have",
+            "When you have agent skills, you also",
+            "have a skill loading tool.",
+            "um general purpose like a tool that lets"
+          ],
           "strategic": [
             "Video Title: Agentic Search for Context Engineering — Leonie Monigatti, Elastic",
-            "Distill concrete implementation logic and architecture signals."
+            "We are going to be talking about agentic",
+            "engineering is about 80% agentic search",
+            "case that can actually confuse your LLM.",
+            "retrieval, you're asking your LLM",
+            "requirements and latency requirements",
+            "agentic search at the surface level",
+            "some sort of agentic rag, agentic surge",
+            "agentic search demo.",
+            "an embedding model.",
+            "model I'm putting in with putting it",
+            "This is where most agentic search demos",
+            "a little bit more powerful model here.",
+            "then I'm plugging in the LLM, the system",
+            "So this time LLM",
+            "in the LLM, the system prompt and the"
           ],
-          "governance": []
+          "governance": [
+            "There's many more failure cases, but",
+            "parameter also is kind of a failure mode",
+            "it's looking for compliance.",
+            "It's looking for governance.",
+            "uh regulate, compliance, GDPR, PR,"
+          ]
         },
         "utility_metrics": {
           "freshness_decay": "Medium",
-          "implementation_density": 0.0,
+          "implementation_density": 0.024,
           "verification_difficulty": "Hard"
         },
         "gate_results": {
@@ -1744,10 +5263,10 @@
             "release_state": "sealed"
           }
         },
-        "synthesis": "Artifact captures 0 procedural, 2 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+        "synthesis": "Artifact captures 20 procedural, 16 strategic, and 5 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
         "raw_stats": {
-          "char_count": 625,
-          "unit_count": 10
+          "char_count": 30507,
+          "unit_count": 833
         }
       },
       "stderr": ""

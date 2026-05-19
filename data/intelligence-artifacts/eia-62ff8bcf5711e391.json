@@ -1,0 +1,99 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-62ff8bcf5711e391",
+  "generated_at": "2026-05-19T07:42:36+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-gb5TlGw6Uks",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC",
+    "source_title": "Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:42:35+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC",
+    "source_digest_sha256": "e349e8cf950189e02057ebbe62e30796e1efc37a41c0e93cc46423696efcb5fd"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Video Title: Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+      "Hermes' agent is one of the most",
+      "being able to get one set up.",
+      "super powerful AI agent.",
+      "landing page for Hermes' agent.",
+      "agent that grows with you.",
+      "If I go to docs and then I",
+      "just built in once you install Hermes.",
+      "didn't have it install any sort of",
+      "Hey YouTube, I'm Hermes' agent.",
+      "skills, run scheduled automations,",
+      "I've had an AI agent that has access to",
+      "And that is this Hermes agent.",
+      "have this agent working on.",
+      "HyperFrames about what Hermes Agent is,",
+      "Now, its first pass wasn't great.",
+      "basically then I said, \"Okay, what tool",
+      "asked me if it could install",
+      "I said, \"Yes.\" And then it",
+      "make me a video about what Hermes Agent"
+    ],
+    "strategic": [
+      "that full agentic loop if you want it.",
+      "don't want the agentic harness loop",
+      "So, this is my VPS provider of"
+    ],
+    "governance": [
+      "safety nuance, Cron sessions cannot",
+      "information about security and"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.024,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 3 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 30497,
+    "unit_count": 834
+  }
+}

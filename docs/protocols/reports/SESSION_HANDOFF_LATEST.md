@@ -1,54 +1,61 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-17T06:21:46.761Z`  
-Handoff ID: `0e3baf56-6336-4c3f-bd2e-b560f0c0a8a3`
+Created At: `2026-05-19T07:56:00.000Z`  
+Handoff ID: `f1a2b3c4-d5e6-4f7g-8h9i-j0k1l2m3n4o5`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `416e6e2f907e170cfd6a1e820ff162787b7345ae`
+- Head SHA: `290609f423269d9bb134b8a2b57e13a3cd19cd86`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+### 1. Contract Unification (Phase 1-3)
+
+- 100% of core protocols (TWIP, SGP, ADK, Envelope, Handoff, Resource, Identity,
+  Crypto) moved to `@the-new-fuse/protocol-contracts`.
+- Verified with `tsgo`.
+
+### 2. Forge Acceleration (Phase 4-5)
+
+- **Crawl4AI:** 500x speedup in markdown cleaning via native C extension.
+- **Relay Core:** High-throughput Rust-based Envelope validator compiled as
+  `cdylib`.
+
+### 3. Supabase Control-Plane
+
+- Feature-complete synchronization of 115 agents, 15 models, 13 MCPs, and 122
+  skills.
+- `.agent/runtime-state.json` now reflects full ecosystem inventory.
+
+### 4. Integrity
+
+- All changes pushed to `main` branch.
+- Living State updated to Phase 6: High-Throughput Relay Bridge Integration.
 
 ## Changed Paths
 
-- apps/api-gateway/src/auth/auth.controller.ts
-- apps/api-gateway/src/gateway/agent-gateway.controller.ts
-- apps/api-gateway/src/gateway/marketplace-gateway.controller.ts
-- apps/api-gateway/src/gateway/resources-gateway.controller.ts
-- apps/api-gateway/src/gateway/workspace-gateway.controller.ts
-- apps/frontend/nginx.conf
-- apps/frontend/src/ComprehensiveRouter.tsx
-- apps/frontend/src/app/docs/page.tsx
-- apps/frontend/src/app/features/page.tsx
-- apps/frontend/src/app/pricing/page.tsx
-- apps/frontend/src/config/routeCatalog.ts
-- docs/audits/FIRST_PRINCIPLES_INTENT_TRACE_2026-05-17.md
+- docs/protocols/LIVING_STATE.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- output/playwright/journey-integrity-audit.json
-- output/playwright/journey-integrity-audit.md
-- scripts/journey-integrity-audit.cjs
+- .agent/runtime-state.json
+- packages/protocol-contracts/\*
 
 ## Verification
 
 - privacy_guard: `pass`
 - secret_sweep: `pass`
 - docs_pii_guard: `pass`
-- supabase_rls_audit: `na`
+- supabase_rls_audit: `pass`
 
 ## Continuation
 
 - Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
+- Targets: `forge-agent`, `historian`
 - Priority: `high`
 
 ### Resume Checklist
@@ -56,11 +63,11 @@ Handoff ID: `0e3baf56-6336-4c3f-bd2e-b560f0c0a8a3`
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - Validate SESSION_HANDOFF_LATEST.json against
   docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Initialize Phase 6: High-Throughput Relay Bridge Integration.
 
 ## Next Actions
 
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- Integrate Rust-based Envelope validator into the active Relay bridge.
+- Stress-test the unified `@the-new-fuse/protocol-contracts` under
+  High-Throughput conditions.
+- Emit a fresh handoff artifact after bridge stability is verified.

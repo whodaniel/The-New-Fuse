@@ -1,0 +1,112 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-ca94d2fef23b97b9",
+  "generated_at": "2026-05-19T07:36:11+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-hTpHmLFXBrc",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC",
+    "source_title": "Vercel Just Fixed Vibe Coding's Biggest Problem",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:36:11+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC",
+    "source_digest_sha256": "af03480ee2c2b59734c49e9f3a42fce97452cd9faf6c6b5dae7e3bc12856c1d1"
+  },
+  "taxonomy": {
+    "procedural": [
+      "ship them, there's a 90% chance that you",
+      "open-source tool that helps us find",
+      "agent-powered vulnerability scanner that",
+      "you can run in your own infrastructure,",
+      "to copy this command npx deepsec init.",
+      "And so, the first thing that you",
+      "want to do is copy this command right",
+      "agent what it needs to do in order to",
+      "we need to install the dependencies.",
+      "the agent that you want to use, if you",
+      "Now, you can also run this",
+      "with a Vercel API key, and it will run",
+      "agent, and we are going to paste in that",
+      "command that it gave us.",
+      "it's teaching it how to do the setup",
+      "that it needs in order to run.",
+      "this is done, we're going to run through",
+      "and we're going to actually run the",
+      "that command into Claude code or codex",
+      "folder and we can run the command scan"
+    ],
+    "strategic": [
+      "the overall threat model, what are the",
+      "And so the threat model",
+      "actually use your language model to go",
+      "And the total cost, cuz a lot",
+      "what the cost of this thing is with just",
+      "changes, cost about $1.12, and it is now"
+    ],
+    "governance": [
+      "have a security hole that you don't even",
+      "important to know that app security goes",
+      "the OWASP Top 10 Web App Security Risks",
+      "security risks are.",
+      "be security misconfiguration.",
+      "failure, so for example, not rate",
+      "Number eight, data integrity",
+      "OWASP top 10 and audit those things.",
+      "of our app, which again is a security",
+      "priority security issues that should be",
+      "needs to address the security issues",
+      "But a lot of security issues tend to"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.063,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 6 strategic, and 12 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 11814,
+    "unit_count": 315
+  }
+}

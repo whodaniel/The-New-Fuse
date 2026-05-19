@@ -1,0 +1,115 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-7fb82dc38e038bb9",
+  "generated_at": "2026-05-19T07:12:16+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-ynJyIKwjonM",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC",
+    "source_title": "Agentic Search for Context Engineering \u2014 Leonie Monigatti, Elastic",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:12:16+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC",
+    "source_digest_sha256": "1e37233084c7f33dbb3283c04e1b80be0c20fea2887932e4a2cbd1f1dcfb8234"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Who here has built an agent or some form",
+      "Then you've probably then",
+      "what's powering this is the search tool",
+      "retrieval pipeline.",
+      "the context window and then it would be",
+      "So since this is a fixed pipeline",
+      "something more complex, then if you're",
+      "you need, then you would actually might",
+      "want to have a second round of search,",
+      "So that's why we then moved on to",
+      "So we replace the fixed pipeline with",
+      "now a search tool.",
+      "now the agent can decide by himself by",
+      "search tool and retrieve some",
+      "your coding agent, you probably have",
+      "you're planning with your um agent what",
+      "Then you probably have",
+      "When you have agent skills, you also",
+      "have a skill loading tool.",
+      "um general purpose like a tool that lets"
+    ],
+    "strategic": [
+      "Video Title: Agentic Search for Context Engineering \u2014 Leonie Monigatti, Elastic",
+      "We are going to be talking about agentic",
+      "engineering is about 80% agentic search",
+      "case that can actually confuse your LLM.",
+      "retrieval, you're asking your LLM",
+      "requirements and latency requirements",
+      "agentic search at the surface level",
+      "some sort of agentic rag, agentic surge",
+      "agentic search demo.",
+      "an embedding model.",
+      "model I'm putting in with putting it",
+      "This is where most agentic search demos",
+      "a little bit more powerful model here.",
+      "then I'm plugging in the LLM, the system",
+      "So this time LLM",
+      "in the LLM, the system prompt and the"
+    ],
+    "governance": [
+      "There's many more failure cases, but",
+      "parameter also is kind of a failure mode",
+      "it's looking for compliance.",
+      "It's looking for governance.",
+      "uh regulate, compliance, GDPR, PR,"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.024,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=ynJyIKwjonM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=37&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 16 strategic, and 5 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 30505,
+    "unit_count": 833
+  }
+}

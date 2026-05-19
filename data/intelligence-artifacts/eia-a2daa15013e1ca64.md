@@ -1,0 +1,83 @@
+# Executable Intelligence Artifact
+
+**Artifact ID:** eia-a2daa15013e1ca64 **Spec:** tnf/executable-intelligence/0.2
+**Generated:** 2026-05-19T07:42:36+00:00 **Class/Status:** [INTEL] [PENDING]
+
+## Ownership & Release
+
+- Owner Principal: danielgoldberg
+- Visibility: private
+- Release State: sealed
+- Agent Allowlist: (none)
+- Release Approved By: (not released)
+- Released At: (not released)
+- Release Note: (none)
+
+## Source Attribution
+
+- Source ID: yt-ai5--Bp2Sz5xir4
+- Type: video
+- URI:
+  https://www.youtube.com/watch?v=-Bp2Sz5xir4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=5&pp=iAQB0gcJCQQLAYcqIYzvsAgC
+- Title: Build an Enterprise RAG Pipeline in Minutes with Gemini New API
+- Author:
+- Publisher:
+- Published At:
+- Retrieved At: 2026-05-19T07:42:36+00:00
+
+## Taxonomy of Actionability
+
+### Procedural
+
+- Video Title: Build an Enterprise RAG Pipeline in Minutes with Gemini New API
+- So, Google just expanded the Gemini API
+- file search tool.
+- by hand, this changes what the pipeline
+- inside the Gemini API.
+- documents, the API chunks them, embeds
+- Before this update, the pipeline was
+- markdown, logs, JSON, etc.
+- your own pipeline.
+- The third is uh page-level citation.
+- extract text and lose figures, or run a
+- separate vision pipeline and stitch
+- document, the API embeds the visual
+- The pipeline has five stages.
+- uh files API or pass the path directly.
+- And the third is embed.
+- the Gemini embedding tool does the work.
+- {underscore} search as a tool on a
+- interesting here is that the embed step
+- Now, the code ship is uh mostly
+
+### Strategic
+
+- The model retrieves the relevant chunk,
+- So, the migration from
+- 2.5 flash model, uh but you can use the
+- latest model if you want.
+- shows the model accuracy over uh
+- architecture, right?
+- Uh this capability was
+- to the Gemini model.
+- model is smart enough to figure out
+- this second demo is cross-model query.
+- You want your model to
+- system architecture diagram in our
+- architecture that we have as a diagram.
+
+### Governance
+
+- (none)
+
+## Utility Metrics
+
+- Freshness Decay: High
+- Implementation Density: 0.047
+- Verification Difficulty: Hard
+
+## Synthesis
+
+Artifact captures 20 procedural, 13 strategic, and 0 governance units. Use
+procedural units for immediate execution, then vet strategic and governance
+units through TNF gates before protocol adoption.

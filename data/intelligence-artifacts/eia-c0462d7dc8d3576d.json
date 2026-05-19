@@ -1,0 +1,133 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-c0462d7dc8d3576d",
+  "generated_at": "2026-05-19T07:42:37+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-j5_wcDifNko",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=j5_wcDifNko&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=13&pp=iAQBsAgC",
+    "source_title": "ChatGPT Has 900M Weekly Users. Almost None Can Buy In It.",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:42:37+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=j5_wcDifNko&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=13&pp=iAQBsAgC",
+    "source_digest_sha256": "0be3f0bb61a39ae65dae6af0dcca9f3902293c39d76c6358dad79103ec65ba3c"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Your agent is about to spend your money,",
+      "One, who decides where the agent",
+      "for API calls, or procure tools without",
+      "anyone watching every single step.",
+      "that the agent that took that action was",
+      "the first split is the one almost",
+      "GPT and announced the Agent Commerce",
+      "Open AAI runs the agent surface.",
+      "So the agent can",
+      "checkout moves into the agent surface,",
+      "in the US going to chat GPT as a first",
+      "merchant doesn't only need an agent to",
+      "needs the agent to understand what the",
+      "strongest answer for a very clean agent",
+      "you how the agent pays.",
+      "nor ACP tells you whether the agent was",
+      "allowed to pay in the first place.",
+      "an independent agent in the scene.",
+      "authorization is proof the agent was",
+      "You tell an agent to"
+    ],
+    "strategic": [
+      "you are building anything on the Agentic",
+      "there's six layers of an agentic",
+      "Agentic commerce",
+      "when I say agentic commerce, I mean any",
+      "answer if you're rebuilding the agentic",
+      "with the agentic platforms that are",
+      "direction from their own positions in",
+      "PayPal's agentic",
+      "a model call or a browser action.",
+      "wallet, the issuance, the orchestration,",
+      "business problems and the agentic",
+      "agents on a cloud platform, they expect",
+      "the platform to help manage payment",
+      "payment provider just sees the payment,",
+      "The agent platform sees all the",
+      "resistance to unauthorized agentic",
+      "browsing make clear that platform",
+      "don't assume agentic commerce is a march",
+      "platform controlled, some will open up",
+      "strategy in an age when agents and"
+    ],
+    "governance": [
+      "protocol camps right now that are",
+      "Protocol or ACP.",
+      "long-term existential risk to merchant.",
+      "commerce protocol or UCP.",
+      "A checkout protocol that ignores",
+      "depend on taxes, cancellation policy,",
+      "Google's agent payments protocol or AP2",
+      "payments protocol points in the same",
+      "and the risk of the transaction with the",
+      "approval rules, and logs.",
+      "governance layer and it must be there.",
+      "Governance is the set of controls that",
+      "protocol to own this layer.",
+      "called, the policy active, the budget",
+      "will be protocol driven, some will be",
+      "credential and the risk?",
+      "And I get you a full audit list at the",
+      "detail and have an audit list in the",
+      "enterprise governance and is trying to"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.033,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=j5_wcDifNko&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=13&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 20 strategic, and 19 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 21539,
+    "unit_count": 603
+  }
+}

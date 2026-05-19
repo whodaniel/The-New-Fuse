@@ -1,0 +1,116 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-b854a821a8406dc7",
+  "generated_at": "2026-05-19T07:42:39+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-ai5-XLH_WLrmwfk",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=XLH_WLrmwfk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=26&t=315s&pp=iAQBsAgC",
+    "source_title": "Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE GROK BUILD CLI for 100% FREE!",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-05-19T07:42:39+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=XLH_WLrmwfk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=26&t=315s&pp=iAQBsAgC",
+    "source_digest_sha256": "0ca67897d5a6331b0a1b4ff9bb374efd31df157659d1e2c0514613a1d57b13f6"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Video Title: Grok Build + FULLY Free Unlimited APIs: This is THE EASIEST WAY to USE GROK BUILD CLI for 100% FREE!",
+      "has finally launched Grok Build.",
+      "proper terminal coding agent.",
+      "is a CLI agent that runs inside your",
+      "terminal, can inspect your repo, can",
+      "TUI, can run headlessly for scripts, and",
+      "Claude Codex CLI, Gemini CLI, and all",
+      "launch, Grok Build is in early beta, and",
+      "it is available first for Super Grok",
+      "actual tool is interesting.",
+      "interesting, because Grok Build supports",
+      "custom models through config.toml.",
+      "Grok, you can configure other",
+      "that means you can set up things like",
+      "agent interface, but I do not like being",
+      "you one command.",
+      "You run curl -fssl, l,",
+      "folder and run Grok.",
+      "On first launch, it",
+      "set an API key instead."
+    ],
+    "strategic": [
+      "the other agentic terminal coding tools",
+      "locked into one expensive model",
+      "until you approve the direction.",
+      "or fix a messy architecture issue, you",
+      "unified extensions model.",
+      "These commands open the same model, but",
+      "in agentic coding tools.",
+      "but again, the model matters here.",
+      "expensive model or an expensive",
+      "exactly why custom model configuration",
+      "can also choose a model with -m, resume",
+      "build into IDEs, custom orchestration",
+      "You create a model",
+      "real model ID, set the base {underscore}",
+      "default model under the model section,",
+      "model name, or switch inside the 2A with",
+      "{slash} model followed by the model",
+      "interface and swap the actual model",
+      "Now, the first provider I",
+      "add a custom model in config."
+    ],
+    "governance": [
+      "as an agent client protocol agent over",
+      "provider policy and you're okay with it."
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.045,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=XLH_WLrmwfk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=26&t=315s&pp=iAQBsAgC"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 20 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 16023,
+    "unit_count": 445
+  }
+}

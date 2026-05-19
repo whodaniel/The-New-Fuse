@@ -1,0 +1,807 @@
+All right, welcome everyone to the next
+live stream. Continuing to do some
+pretty awesome things with Archon. So,
+this is going to be all about building
+out the workflow marketplace for Archon.
+So, workflow or archon is my open-source
+harness builder for AI coding. So it
+allows you to take whatever your process
+is for agentic engineering and package
+it up into workflows that you can run
+reliably and repeatably in parallel on
+all of your code bases. And right now
+there's not a super easy way to share
+the workflows that you build. So we have
+a lot of workflows that ship with
+Archon. But then also really like the
+main way that I recommend using Archon
+is to build your own workflows. That's
+why it's a harness builder, not just a
+harness. And so I want to make it really
+easy for you to share the workflows that
+you build with others and vice versa
+being able to grab workflows that people
+have put a lot of effort into building
+so you can use them for yourself and
+customize them to your use cases as
+well. So this is the initial proof of
+concept that I worked on in my last live
+stream. And so this live stream is all
+about refining it and making it so that
+it is really really easy to submit
+workflows to this marketplace. I want to
+build an archon workflow that will
+review the poll requests for submitting
+these to automatically approve them. So,
+it's going to be a self- evvolving
+system essentially where you build a
+workflow, you submit a pull request to
+the repository to add it to this
+marketplace here, and then I'll have an
+automated review process with Claude
+Code running behind an Archon workflow
+that we're going to build today. So,
+that's the plan for the stream today.
+And uh I've got my chat open on the left
+hand side here. And then I've got uh my
+recording software on the right hand
+side. So, that's my setup right now. So,
+when you see me looking between
+monitors, that's what I'm doing. And,
+uh, this is the second live stream that
+I'm doing with my new cadence that I'm
+going to try at least for a couple of
+weeks here every Monday, Thursday, and
+Saturday at 9:00 a.m. Central time. So,
+excited to do this. Uh, continuing to
+work on Archon. Not every stream will be
+on Archon, but it definitely is my
+biggest passion project right now. So, I
+want to do a lot with that. Um, so, all
+right. Excited for this. Um, let's see.
+Cole, I'm late. Maybe I was like one
+minute late, but it was nine o'clock for
+me when I clicked start, so maybe my
+computer's slow or something.
+All right, just here to say thank you
+for giving us Archon. Also love these
+live stream formats. You're very welcome
+and I appreciate it. I have a blast
+doing live streams, let me tell you
+guys. Um I of course I like making
+regular YouTube videos. Uh and I'll keep
+doing that at least once a week, but
+doing these live streams is pretty
+exciting. like being here with you guys
+live and uh just getting to show more
+like what my actual AI coding process
+looks like because showing you like how
+I really work on a dayto-day is a lot
+easier to do in a live stream than a
+YouTube video where it has to be like,
+you know, really polished and edited and
+people expect it to be concise. Um, so
+there's room for that. I'm going to keep
+doing that. It's valuable, but man, I I
+love doing live streams, too. So, yeah,
+let's uh let's get right into things
+today. I don't want to waste any time. I
+want to get right into building. In
+fact, I already have a little bit
+prepped here. So, I've got two Claude
+Code sessions open in my second brain.
+This is the one we're going to be
+primarily working in today as we build
+out the marketplace. And then I also
+have one where I just started up the
+docs page in the workree from last live
+stream. So, that's why we're able to see
+a little preview of what the workflow
+marketplace looks like. And so now we're
+going to keep building out the second
+phase where I create that archon
+workflow to automatically review poll
+requests by the end of the live stream.
+I don't think this is too ambitious. I
+think we'll be able to do this in the
+next like hour and a half. What I want
+to do is I want to have the workflow
+created and I want to have it set up to
+run automatically on any poll request
+that is adding a workflow here. And then
+I want to do a live test with you guys
+where I create a new workflow or I might
+just take an existing one for the sake
+of speed and I want to create a pull
+request going through like the full
+contributor process of submitting a
+workflow here. So you guys get to see it
+live and we get to test it to make sure
+everything is running end to end because
+if that's all working then pretty much
+by the end of today we'll have this this
+available for everybody. It'll be fully
+shipped. Now, we'll obviously have to
+wait for a the next Archon release for
+this to like really be live. Like right
+now, this is running on localhost. If
+you go to archon.diy/
+uh workflows right now, obviously it is
+a 404. So, by the end of today, I don't
+know if it'll be like publicly
+available, but we'll have it shipped to
+the dev branch ready for the next Archon
+release. That's the goal that I have for
+today. And if you guys follow along with
+me, you get to just continue to see how
+I work on a daily basis, what my agent
+coding workflows really look like. We're
+going to go through another piv loop in
+Archon in order to build out this
+workflow and really finalize this this
+new feature, this new workflow
+marketplace. Um, and I'm actually like
+really excited for this. I I don't have
+a a big expectation. Like I don't think
+that we're going to have like dozens and
+dozens of workflows flood into the
+marketplace in the first week, but like
+I am kind of crossing my fingers that uh
+that a lot of you guys will share some
+cool workflows you've been working on
+cuz like right now I've been kind of in
+the dark for how you guys have actually
+been using Archon. Like of course um on
+YouTube and especially in Dynamis,
+people have been sharing their workflows
+and generally how they're using Archon,
+but I've never actually gotten to like
+see the YAML file for your workflows
+before aside from a couple of examples.
+Like I'm really excited to see what you
+guys actually ship more than just the
+idea. It's cool to hear about the idea,
+but seeing the workflow and you know
+running some of them myself, I'm I'm
+really excited for.
+So, okay. Uh I have this session with
+Claude just to like really get our feet
+on the ground running for the live
+stream. I I have a session where I
+loaded in the plan that I used for the
+last live stream. I updated it with the
+things that we worked on last time. And
+um now I have it ready to like just
+prime to go into the next
+implementation. And if you weren't in
+the last live stream, no worries. It
+doesn't really matter. Like you can
+still follow along with what I'm doing
+here cuz I already showed the proof of
+concept for that UI. Now we're going to
+build the workflow and we'll see it all
+in action. So even if you're coming in
+this totally green, then I still think
+there'll be a lot of value for you here.
+So the first thing that we need to do is
+we have a pull request open for the
+initial marketplace and that's uh the
+thing that I showed right here. Now in
+order for us to more easily build on top
+of this, it's telling me that I need to
+merge into the dev branch. So I'm just
+going to go ahead and do that. I haven't
+done like a super full comprehensive
+review of the poll request, but just for
+the sake of the stream, I'm going to get
+this merged in and then obviously I'll
+make any adjustments that I need as we
+actually test this live. So, going over
+to the pull request list here. This is
+the PR that we have to merge into dev.
+This is what we created uh on in the
+live stream that I did on Saturday over
+the weekend. And so there's not really
+much risk to this pull request, which is
+why I'm especially comfortable just
+merging it right now because pretty much
+we just have I mean you can see we only
+have one removal. We just have a ton of
+additions cuz we're adding a new page to
+the doc site and the whole like
+functionality of submitting workflows
+and updating a file that updates this
+page through a poll request. So there's
+there's not really anything that we're
+changing that would risk anything
+breaking. Um, so, uh, yeah, we're just
+going to go ahead and and merge this
+pull request. So, let me go back to
+Claude and see where it's at here. Uh,
+looks like there's just a quick little
+merge conflict because we also added the
+road map recently to the the docs site,
+which that's another thing that I worked
+on a couple of live streams ago, having
+a road map. This is also going to be
+available with the next release of
+Archon. a road map that just shows like
+the priority features that we have for
+the next couple of months. Uh that's
+going to be something that I continue to
+build out just as we shape the vision as
+a community for Archon as a tool.
+All right, so we'll wait for this. Um
+okay, about to push and update PR.
+That'll rerun CI pushing now. Okay,
+good. So, getting to the point where
+it's merging the poll request and we'll
+probably have some time
+in our live stream here where we're just
+waiting for Archon workflows to run.
+And so, there there are a couple of
+other things that I can do in parallel
+while we are working on this. In fact,
+one of the things I can do, I think this
+will really keep the live stream moving
+along smoothly. One thing I can do while
+we're waiting for this whole like V1 to
+be built out is I can actually create an
+archon workflow to submit right here to
+the workflow marketplace.
+So like I said, I kind of have to figure
+out um maybe you guys could could share
+in the chat. I have to figure out like
+should I just like package up an
+existing workflow or should I build like
+a brand new one to like really show end
+to end what it looks like to build an
+Archon workflow, host it in a GitHub
+repo and then submit the poll request
+here to get it added to the marketplace.
+That could be cool, but then I'd have to
+figure out like, okay, what workflow do
+I actually build live with you guys? I
+mean, I've got, of course, I got a
+million ideas, but sometimes it's hard
+to pick a solid one that wouldn't take
+too long to build, but we'll see. I'll
+I'll let Claude run in the meantime and
+uh maybe I'll just uh pop into chat for
+a little bit and uh see what you guys
+have said so far while we wait for it to
+run. So, okay, how do I want to proceed
+with the merge while CI runs? Um,
+let's see.
+Yeah, I'm just going to merge right
+away. I don't really care.
+All right. Will I create a workflow that
+reviews the submitted workflows? Yes,
+that is what we're doing today. That's
+exactly what we're doing today. So that
+way it's not a huge maintainer burden to
+get these workflows added to the
+marketplace.
+Live streams are the best. I agree. I
+agree. I'm excited for this. Uh less
+work for you means more value for us. We
+don't need polish. You're already
+polished enough live. I appreciate it. I
+try my best. Yep. Uh, I mean sometimes I
+stumble on my words and I'll cut that
+out of a video and obviously it's there
+in the live stream, but yeah, in the end
+I don't think it matters a ton. You
+know, one of the reasons I prefer live
+streaming over recording YouTube videos
+is um I'm way too hard on myself. Like
+if I stumble even like the smallest
+amount, I'll just re-record that that
+whole segment. So it ends up taking a
+while to record. Like a 20-minute video
+takes like two hours to record. Oh man.
+And so like with live streams, it's like
+it's sort of the expectation that uh
+you're not going to be polished and so I
+can just run with it and give you guys
+pretty much the same amount of value for
+really a fraction of the time if you
+consider like the pure amount of content
+that I can do in a live stream. So yeah,
+that that I think that's really the main
+reason that I enjoy live streams so
+much.
+All right.
+I love Archon. Starting to understand
+how it can be my tool, not just an out
+of the box working tool. I appreciate
+it, Sean. And I'm I'm glad. Yeah. And
+that's one of the biggest things I want
+to keep working on is making it as easy
+as possible through documentation and
+then just the application itself um for
+you to take it as your own. Like I said,
+Archon is a harness builder, not a
+harness. It's not something that you
+just use out of the box, though you can.
+the best way to use it is to build your
+own workflows, wrapping your process how
+you want to work and custom to your code
+bases and and uh tech stack. So, I'm
+glad that you're you're doing that,
+Sean.
+All right, cool. So, we merged our
+marketplace v0ero into the dev branch.
+And so, now we're running the pivoop
+archon workflow. And this is going to
+handle creating the archon workflow that
+automatically reviews and merges pull
+requests for new workflows added to the
+marketplace. That's kind of a mouthful.
+So let me let me explain that again.
+What we're doing right now is we're
+running an archon workflow. It's called
+the pit loop workflow. And you know
+actually what I'll do here is I'll I'll
+show this just so that it's really
+concrete what I'm actually doing. So let
+me open up the archon pib loop workflow.
+This is my primary development workflow
+that I use with archon. Whenever I want
+to really be involved in the
+development, I use this because there
+are a couple of human approval gates
+that we have in this workflow. So we'll
+actually see in a little bit that uh
+after the initial exploration that it
+does, it is going to come back to us to
+ask us clarifying questions.
+In fact, you can you can see right here
+that the process just exited. So the uh
+workflow in Archon hit an approval gate
+because basically what it does initially
+is it does some exploration based on the
+feature that we're looking to build. In
+this case I'm looking to build another
+archon workflow and then it comes back.
+You can see that the archon piv loop
+this is just within the archon dashboard
+here. It's paused. It's waiting for my
+input. And if we go back to Claude here,
+we can see that it has some clarifying
+questions for us, which this is one of
+the most important things you can do
+when you're planning with an AI coding
+assistant. You always always want it to
+ask you questions or you want it to
+grill you, right? Because you don't
+necessarily know the assumptions it's
+making, but it's really important to
+reduce the number of assumptions the
+coding agent is making. So having it ask
+you questions is one of the best ways to
+do that. And so, uh, we'll get to this
+in a second, but I want to fully explain
+this workflow really quick because this
+is the process that we're going through.
+This is my core agentic coding process.
+This is what I teach in the Dynamis
+agentic coding course, the PIV loop.
+It's a a loop of planning and
+implementing and validating with human
+in the loop at the end of the plan
+creation and the end of the validation.
+So, that we get to make sure that we're
+actually aligned with the coding agent
+for what we're building. And so I don't
+need to explain like every single node
+here, but we start with the exploration
+like I said. And this is just like one
+big prompt telling it how to explore.
+And then we iterate. So this is where it
+comes back, asks us questions, allows us
+to specify anything else that it needs
+before it goes and creates the plan. And
+then once it creates the plan with the
+exact format that we've specified, it
+outputs it into a markdown document that
+we can then review and give any feedback
+that we want. So we're able to work with
+the coding agent before we even write a
+single line of code to make sure it
+really understands what we're looking to
+build. And then finally, it'll set up
+the implementation installing all the
+dependencies in the work tree so that
+our isolated copy of the codebase for
+the workflow is ready for implementation
+and validation. So then we implement, we
+have the coding agent do some of its own
+uh iteration as well. So that by the
+time control passes back to us, we're
+able to give feedback and have it
+address things. But hopefully most of
+the the problems in the implementation
+have been addressed already. And then we
+just do a comprehensive code review in a
+separate coding agent session at the end
+and fix any of the feedback that comes
+up from its own verification and uh
+anything that we give it as feedback as
+well. Right? So it accepts it accepts
+human feedback for this kind of last
+loop that we have in the archon
+workflow. So it's a very very
+comprehensive workflow because it is
+packaging up my entire process for
+taking something from plan all the way
+to implementation at least for like a
+single feature. Like in this case I'm
+building a single workflow. So I know
+it's a little bit meta but I'm using an
+archon workflow to build another archon
+workflow which I mean I actually do that
+pretty often because I don't want to
+just build it from scratch. It's really
+useful to actually have Archon help me
+create the YAML so that I don't always
+have to remember the exact syntax and
+how to prompt and the parameters and all
+of that. So, uh yeah, let's go ahead and
+see the questions that it has for me
+now.
+Um let's see. [sighs]
+So, it has our questions. Scanner
+location standalone script versus inline
+YAML. Um
+standalone. Okay. Okay. Source fetching
+standalone fetch script versus extract
+CLI helpers. Okay. Uh validation node
+AI review provider PI minia versus cloud
+sonnet. It recommends claude sonnet.
+Um text fixtures. Okay. Sure.
+So yeah, I mean honestly I'm pretty
+happy with its recommendations. So the
+archon piv loop paused. It sent these
+questions back to my second brain
+because my second brain is running the
+archon workflow. And so now my second
+brain is relaying the questions to me
+with its own recommendations, which is
+actually pretty solid. I think the only
+one that I might want to do differently
+is I might want to use Claude Haiku
+instead of Sonnet just for the sake of
+token efficiency. If a lot of people are
+submitting archon workflows, then that
+could get kind of expensive.
+So, okay,
+let's go with all of your
+recommendations except for the AI review
+provider. Let's use Claude Haiku because
+we might have to be reviewing a lot of
+workflows.
+All right, cool. So, I'll send that in
+and then it's going to resume. And so my
+second brain that's running Claude code
+is going to resume the archon workflow
+sending in the feedback which is you
+know pretty much my second brain's
+recommendations plus my single tweak to
+answer number four.
+All right.
+So I guess it ran a couple of help
+commands just to see how to use archon
+which is kind of weird but okay. Um, all
+right. So, sending the bundled answers.
+Archon workflow approve. All right.
+Um, cool. So, I'm actually confused why
+it used archon chat. Usually, it just
+uses the archon workflow approve
+command. So, it's a little strange. I
+might need to correct that here. But,
+let's see if it's still running.
+Okay, it actually failed.
+Yeah, I think because my I think cloud
+code kind of hallucinated something
+here. So, I'm going to actually exit
+here. Uh, you're not supposed to use
+Archon chat. You're supposed to use
+Archon workflow approve. Also, the
+Archon workflow failed. So, I need you
+to resume it. Make sure that you send in
+the feedback.
+Okay. I've actually never I've literally
+never had that happen before. It It kind
+of hallucinated a bad command.
+So, let's see what happens if it runs
+it. Let's see. I'll refresh. No, it
+still failed. Where What did it fail on?
+I guess I can't see right now.
+All right. Sending the feedback via
+archon workflow approve.
+Okay.
+Yeah. Okay. So, good. It catches that
+it's failed. So, now it's going to
+resume.
+Um, let's see if we're in a better state
+now.
+Oh, it's still failed. I might I might
+need to redo it. I'm not sure why this
+I've never had this happen. Of course,
+when it's a live stream, this has to
+happen.
+Uh, no. Wait, hold on. No, it still
+failed. You didn't successfully resume
+it. You might have to redo it as well.
+I'll uh send that in. Okay, good. Good.
+You should add tags to the workflow so
+they can be searched and filtered a
+little better. Uh, I agree. I I
+definitely agree. I think we have a
+little bit of tagging already, right?
+Like development, review, automation,
+planning. So, yeah, I have that in mind
+100%.
+Um, when you're working on a in a
+multi-reo project involving dozens of
+repos, how do you work with the piv
+workflow? Do you have suggestions to
+make archon work in these scenarios?
+Yeah. So, the main thing is as much as
+you possibly can, you want to isolate a
+piv loop to a single repository because
+you you want to be very contextaware
+with your coding agent. It doesn't
+matter if you're using the piv loop,
+you're using archon, or you're not,
+you're using something entirely
+different. It's always ideal to as much
+as possible work on a single repo or at
+least try to work on just a couple of
+repos. When you have a dozen
+repositories, you really don't want your
+agent sifting through all of them if you
+can help it. Now, if you really really
+can't help it, then it just comes down
+to having a a lot of sub aent usage
+because you have to sort of scout ahead
+into the code bases to figure out the
+parts that you need to actually load
+into the context of your primary coding
+agent. And so there's a a part of my
+process that uh in this archon workflow
+I called the explore phase. So like when
+the the PIB loop is first running it
+does the exploration phase. Um I also
+call it like in the Agenta coding course
+I call it the prime phase. It's all
+about loading in the right context to
+your coding agent. And so when you have
+a really really large codebase, that's
+where you want to do a lot of context
+engineering around your priming. Making
+sure that you have a really elaborate
+process that uses sub aents to find the
+parts of the codebase you need to
+actually pay attention to and then
+focusing the rest of the piv loop on
+that. And so like having the exploration
+phase and the archon pivoop workflow,
+that's what you'd want to like take and
+actually mold to your own use case. Like
+I said earlier, the best use of archon
+is to package your AI coding workflow.
+So you can take the PIV loop workflow
+that I ship with Archon as a starting
+point, but then you would edit it. You
+would make the exploration do more like
+sub agents and going through different
+code bases. Maybe even making it so that
+the exploration node like knows all of
+the code bases up front. Like you'd add
+that into the prompt so that you're
+customizing it to your specific
+architecture. That would be my
+recommendation.
+All right. So, let's go back to Claude
+because it looks like it resumed. Uh,
+PIV redispatch and explore is running.
+Okay, so it had to restart, which is
+kind of unfortunate. I don't really know
+why it hallucinated that like super
+random, but that's fine because it'll
+it'll come back to me with questions and
+we'll specify everything that we did
+earlier and then whatever else we might
+need to.
+Um, all right. So, we'll let it run.
+Cool.
+Claude also hallucinated this too. Okay,
+Claude code has been a little
+frustrating recently with all of its
+like scheduled wakeups that it it keeps
+doing because then it'll like keep
+waking itself up when you don't actually
+want it to. But it's fine. Like it
+doesn't actually affect the workflow
+here. It just kind of loads tokens or or
+uses tokens that it doesn't need to. Uh
+explore completed and the workflow is
+now in create plan. Okay, good. So we
+sent in our feedback. Now we're creating
+the structured plan and we can also see
+the logs for the workflow in Archon
+here. So if I ref I guess I didn't have
+to refresh but if I click in we can see
+the the actions as they're happening. We
+can see the step that we're currently
+in. So we're currently creating the
+plan. So this is going to create a
+markdown document that outlines
+everything going into building this
+archon workflow for automatically
+um merging these poll requests for
+adding to the workflow marketplace.
+So pretty cool. And uh while we wait for
+this to run, I'm gonna actually start a
+new cloud code session because I want to
+work on the workflow that'll actually
+submit here. Um one other thing I have
+to do though is I need to check my rate
+limits. So I' I've also been pretty
+disappointed recently with the claude
+code rate limits. They've been really
+rough. Take a look at this.
+So the five the fivehour limit is quite
+generous. Now, uh, Enthropic made an
+update recently, I think it was like
+just last week, where they made it so
+that the rate limit is like you get like
+two times the usage every 5 hours, but
+the weekly limit is a lot worse now. My
+limit doesn't reset until Friday
+morning, and I'm already at 73% and it
+is it is freaking Monday. Like I'm I
+will probably have to either switch to
+Codeex in the middle of this week or buy
+another Claude code subscription. And I
+I try Codeex pretty often, like at least
+once a month just to see how it compares
+to Claude. And I'm always disappointed.
+So I'll probably end up buying another
+Claude Code subscription for this week
+because there's no way that 27% is going
+to get me through today and the rest of
+the week. Like I'm I'm probably going to
+get into the 80% just for our live
+stream today. Uh, so yeah, I'm going to
+have to keep an eye on this. Luckily
+though, the I still have like 58% for my
+5 hour limit. That should be good enough
+to get us through the live stream here.
+Um, yeah. Okay, but man, it's it's
+pretty rough.
+So, all right, let's go back here and uh
+switch the model. Okay, Claude Code has
+also been doing this to me recently. It
+keeps swapping the model back to Sonnet
+4.6 even though I keep changing it um in
+each individual session. I don't know
+like what triggers it cuz then if I open
+another one you can see it's Opus 4.7
+but like once in a while it swaps itself
+back. So I constantly have to check to
+make sure that I'm actually using Opus
+4.7 cuz I definitely don't want to do
+this kind of involved work with uh with
+Sonnet. [snorts]
+All right. So okay what I need to do now
+is I need to
+I need to build a workflow to actually
+submit to the marketplace.
+You know, I I
+kind of have an idea because there is
+one thing I have been working on. I
+showed this in a live stream as well a
+couple of weeks ago, but I've been
+working on with the help of Thomas and
+Raasmus. I've been working on because
+there are people that help me with
+they're a couple of awesome guys that
+help me with a lot of things for
+Dynamis. They've been helping me work on
+this video generation workflow. So it's
+an archon workflow where you give it
+some kind of topic or a URL or a GitHub
+repo and it creates a voice and animated
+reotion video and then we also have like
+human in the loop so that we can steer
+like the script and uh like what we're
+going to generate before it actually
+builds the full video. But it's super
+cool because it generates my voice. Um
+it uses 11 Labs. It generates the entire
+like animation with Remotion and it
+syncs everything together and adds in
+transitions and sound effects. It's
+actually really fantastic. So, it could
+be cool to take this workflow. It's It's
+not fully polished yet, so this would
+really just be for testing purposes, but
+it'd be cool to take this workflow
+and actually submit this as our our test
+here. Creating a pull request for
+submitting this workflow.
+Um, so I think I I think I want to do
+that in well I'll maybe have a
+conversation with Claude asking it how
+we would do this in parallel. So while
+we wait for the um this piv loop to be
+done and we'll have to like keep coming
+back to this then I can work on getting
+this workflow ready to submit like a
+pull request for that. Um so yeah, we'll
+do that in a second. It looks like
+though that the piv loop is paused
+again. So if we go back to the web UI,
+we can see that uh it is currently
+paused. So it it created the plan. So
+here is the plan. It's reading it. Now I
+can also click on this. So I just do a
+control-click to open it in my VS code.
+The reason that it's kind of a funky
+path here is because every single Archon
+workflow runs in a git work tree. So
+that way it's an isolated copy of the
+codebase so that we can run any number
+of Archon workflows across any code
+bases in parallel. And so that's yeah,
+but I can just open up the plan of VS
+Code like I normally would when I'm
+working with cloud code. And I can take
+a look at the summary here. So it's
+really important when you go through a
+piv loop or any kind of planning with a
+coding agent, you want to make sure that
+you are spending a lot of time reviewing
+the plan because this is a very high
+lever tool. One bad line in a plan can
+lead to a thousand bad lines of code. We
+got to really make sure that uh we are
+aligned with the coding agent on
+everything here. So the summary of our
+pivoop we're when we go into
+implementation we're going to add a
+maintainer archon workflow that
+automatically reviews marketplace
+submission PRs verifying scope fetching
+pin source validating schema blah blah
+blah running a haiku AI review and then
+automerging or rejecting
+um okay so success criteria what's in
+scope what is out of scope
+um let's see
+I got to sneeze He's coming. Excuse
+[clears throat] me. [snorts] Okay. So,
+trusted submitter promotion automation
+hard-coded colam0000 constant only. I
+think I actually will want to change
+that because it's saying it's going to
+hardcode so that only I can submit PRs.
+But I definitely want you guys to be
+able to right away
+because there's not really much of a
+risk, right? Like we within the banner
+here, it says that um that like you know
+we haven't audited every workflow the
+maintainers themselves have and we're
+just going to have claude audit. So we
+have that banner. Therefore, we're
+allowing anyone to really submit without
+it being like a human has actually
+approved it. So I'm I'm good with that.
+I'll have to change that. Although uh or
+besides that though, I'm going to just
+tak
+[TRUNCATED]
