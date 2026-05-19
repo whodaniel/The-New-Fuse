@@ -5,5 +5,6 @@ set -euo pipefail
 THIS=$(readlink -f "$0" 2>/dev/null || greadlink -f "$0" 2>/dev/null || echo "$0")
 ROOT_DIR="$(cd "$(dirname "${THIS}")" && pwd)"
 
-# Use pnpm --prefix to ensure we find the correct workspace even if called from elsewhere
-exec pnpm --prefix "$ROOT_DIR" exec tsx "$ROOT_DIR/packages/tnf-cli/src/cli.ts" "$@"
+# Resolve from repo root so pnpm does not inspect unrelated package.json files.
+cd "$ROOT_DIR"
+exec pnpm exec tsx "$ROOT_DIR/packages/tnf-cli/src/cli.ts" "$@"

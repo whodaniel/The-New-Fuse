@@ -16,6 +16,17 @@ curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse/main/scripts/install
 pnpm run tnf:install:local
 ```
 
+Install scripts automatically run `tnf:onboard` at the end so a fresh install
+joins the TNF frontload/session flow immediately.
+
+Skip this only when needed (for example CI/non-interactive provisioning):
+
+```bash
+pnpm run tnf:install:local -- --skip-onboard
+# or
+TNF_INSTALL_AUTO_ONBOARD=0 pnpm run tnf:install:local
+```
+
 ### Verify
 
 ```bash
@@ -145,32 +156,37 @@ tnf full-auto status
 
 Behavior:
 
-1. Provision shared full-auto slash-command + skill artifacts into detected agent runtimes.
+1. Provision shared full-auto slash-command + skill artifacts into detected
+   agent runtimes.
 2. Each cycle runs `tnf self-improvement run` with your selected options.
-3. Optionally broadcasts `tnf orchestrate self-improvement` when `--broadcast` is enabled.
+3. Optionally broadcasts `tnf orchestrate self-improvement` when `--broadcast`
+   is enabled.
 4. Verifies health via `tnf self-improvement status --strict`.
 5. Persists state to `docs/operations/tnf-full-auto-state.json`.
 6. Appends cycle events to `docs/operations/tnf-full-auto-runs.jsonl`.
 
 Provisioning targets include detected local roots for:
-- `codex`, `claude`, `gemini`, `opencode`, `kilo`, `augment`, `tnf`, `hermes`, and `project` runtime mirrors.
+
+- `codex`, `claude`, `gemini`, `opencode`, `kilo`, `augment`, `tnf`, `hermes`,
+  and `project` runtime mirrors.
 
 ## Agent Bank Reconciliation
 
-Reconcile multitenant agent definition pathways (`.agent/agents`, `.claude/agents`,
-`.skills/imported-claude-agents`) and distribute imported definitions to all runtime homes:
+Reconcile multitenant agent definition pathways (`.agent/agents`,
+`.claude/agents`, `.skills/imported-claude-agents`) and distribute imported
+definitions to all runtime homes:
 
 ```bash
 tnf agents bank reconcile --targets all
 ```
 
 Optional flags:
+
 - `--dry-run`
 - `--json`
 - `--skip-restore`
 - `--skip-imported-sync`
 - `--skip-provision`
-
 
 ## Control-Plane Provider Routing
 

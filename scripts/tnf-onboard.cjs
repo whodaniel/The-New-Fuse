@@ -2,13 +2,27 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const dotenv = require('dotenv');
-const postgres = require('postgres');
 
 const ROOT = process.cwd();
+const ONBOARD_GENERATED_MARKER = 'tnf-onboard --repair';
 const CANONICAL_SESSION_HANDOFF_JSON = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json';
 const CANONICAL_SESSION_HANDOFF_MD = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md';
 const CANONICAL_TURN_ZERO_MANDATE = 'docs/protocols/TURN_ZERO_MANDATE.md';
+const DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS = 8000;
+const FRONTLOAD_CHECKLIST = [
+  '.agent/SYSTEM_PROMPT.md',
+  '.agent/context/resource-map.md',
+  '.agent/context/agent-onboarding.md',
+  '.agent/workflows/frontload.md',
+  '.agent/handoff_notes.txt',
+  'data/mcp_config.json',
+  CANONICAL_TURN_ZERO_MANDATE,
+];
+const MCP_CONFIG_PATHS = [
+  'tools/config-files/mcp_config.json',
+  'tools/config-files/enhanced_mcp_config.json',
+  'packages/jules-skill/mcp-config.example.json',
+];
 const LEGACY_OPENCLAW_LATEST_MD = process.env.HOME
   ? path.join(process.env.HOME, '.openclaw', 'workspace', 'handoff', 'LATEST.md')
   : null;
@@ -65,6 +79,271 @@ function printMcpConfig(relPath) {
     const args = Array.isArray(def.args) ? def.args.join(' ') : '';
     console.log(`  - ${name}: ${cmd}${args ? ` ${args}` : ''}`);
   }
+}
+
+function ensureTextFile(relPath, content) {
+  const absPath = path.join(ROOT, relPath);
+  if (fs.existsSync(absPath)) return false;
+  fs.mkdirSync(path.dirname(absPath), { recursive: true });
+  fs.writeFileSync(absPath, content, 'utf8');
+  return true;
+}
+
+function objectContainsString(value, needle) {
+  if (!needle) return false;
+  if (typeof value === 'string') return value.includes(needle);
+  if (!value || typeof value !== 'object') return false;
+  if (Array.isArray(value)) return value.some((item) => objectContainsString(item, needle));
+  return Object.values(value).some((item) => objectContainsString(item, needle));
+}
+
+function upsertGeneratedJsonFile(relPath, payload) {
+  const absPath = path.join(ROOT, relPath);
+  const desired = `${JSON.stringify(payload, null, 2)}\n`;
+
+  if (!fs.existsSync(absPath)) {
+    fs.mkdirSync(path.dirname(absPath), { recursive: true });
+    fs.writeFileSync(absPath, desired, 'utf8');
+    return 'created';
+  }
+
+  const existing = readJson(relPath);
+  const shouldRefreshGenerated =
+    existing &&
+    typeof existing === 'object' &&
+    !Array.isArray(existing) &&
+    (existing.generatedBy === ONBOARD_GENERATED_MARKER || objectContainsString(existing, ROOT));
+
+  if (!shouldRefreshGenerated) {
+    return 'preserved';
+  }
+
+  fs.writeFileSync(absPath, desired, 'utf8');
+  return 'updated';
+}
+
+function frontloadSystemPromptTemplate() {
+  return [
+    '# TNF Session System Prompt',
+    '',
+    'Local bootstrap context for terminal agents in this repository.',
+    '',
+    '## Authority',
+    `1. ${CANONICAL_TURN_ZERO_MANDATE}`,
+    `2. ${CANONICAL_SESSION_HANDOFF_JSON}`,
+    '3. AGENTS.md',
+    '',
+    '## Operating Loop',
+    '- Inspect current state first.',
+    '- Act with minimal side effects.',
+    '- Verify outcomes before handoff.',
+    '',
+    '## Session Start Checklist',
+    '- Run: ./tnf onboard --repair',
+    '- Confirm frontload files are present.',
+    '- Confirm MCP config inventory is valid.',
+    '',
+  ].join('\n');
+}
+
+function resourceMapTemplate() {
+  return [
+    '# TNF Resource Map',
+    '',
+    '## Canonical Protocols',
+    '- docs/protocols/TURN_ZERO_MANDATE.md',
+    '- docs/protocols/reports/SESSION_HANDOFF_LATEST.json',
+    '',
+    '## Operator Guides',
+    '- AGENTS.md',
+    '- docs/TNF_SESSION_ONBOARDING.md',
+    '- docs/PROTOCOL_ALIGNMENT_FRAMEWORK.md',
+    '',
+    '## Runtime State',
+    '- .agent/runtime-state.json',
+    '- .agent/runtime-state/',
+    '- .agent/runtime-logs/',
+    '',
+    '## MCP Configuration',
+    '- data/mcp_config.json',
+    '- tools/config-files/mcp_config.json',
+    '- tools/config-files/enhanced_mcp_config.json',
+    '',
+  ].join('\n');
+}
+
+function onboardingTemplate() {
+  return [
+    '# Agent Onboarding',
+    '',
+    '## Steps',
+    '1. Run `./tnf onboard --repair`.',
+    '2. Read `docs/protocols/TURN_ZERO_MANDATE.md`.',
+    '3. Read `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`.',
+    '4. Validate frontload + MCP checklist output.',
+    '5. Continue with requested task and keep handoff continuity.',
+    '',
+    '## Guardrails',
+    '- Prefer structured state over screenshots.',
+    '- Do not trust upstream output without verification.',
+    '- Treat OpenClaw routes as optional TNF integration surfaces.',
+    '',
+  ].join('\n');
+}
+
+function frontloadWorkflowTemplate() {
+  return [
+    '# Frontload Workflow',
+    '',
+    '## Inspect',
+    '- Run `./tnf onboard --repair`.',
+    '- Validate canonical handoff source and next actions.',
+    '',
+    '## Act',
+    '- Execute scoped task work.',
+    '- Keep edits minimal and verifiable.',
+    '',
+    '## Verify',
+    '- Re-run `./tnf onboard` before handoff.',
+    '- Confirm no missing frontload files.',
+    '- Confirm MCP config inventory parses.',
+    '',
+  ].join('\n');
+}
+
+function buildHandoffNotesTemplate() {
+  const handoff = resolveCanonicalSessionHandoff();
+  const sourcePath = handoff.path || 'missing';
+  const handoffId = handoff.mode === 'json' ? handoff.payload.handoff_id || 'unknown' : 'unknown';
+  const createdAt = handoff.mode === 'json' ? handoff.payload.created_at || 'unknown' : 'unknown';
+  const nextActions =
+    handoff.mode === 'json' && Array.isArray(handoff.payload?.next_actions)
+      ? handoff.payload.next_actions
+      : [];
+
+  const lines = [
+    '# TNF Handoff Notes (Legacy Mirror)',
+    '',
+    `Updated: ${new Date().toISOString()}`,
+    `Canonical source: ${sourcePath}`,
+    `Canonical handoff id: ${handoffId}`,
+    `Canonical created_at: ${createdAt}`,
+    '',
+    'Next actions:',
+  ];
+
+  if (nextActions.length === 0) {
+    lines.push('- (none listed)');
+  } else {
+    nextActions.forEach((action) => lines.push(`- ${action}`));
+  }
+
+  lines.push('', 'Notes:', '- Keep this file as a legacy fallback mirror only.');
+  return lines.join('\n');
+}
+
+function buildMcpServers() {
+  function tsxServer(entryPoint) {
+    return {
+      command: 'pnpm',
+      args: ['exec', 'tsx', entryPoint],
+    };
+  }
+
+  return {
+    'tnf-complete-api-wrapper': tsxServer('src/mcp/complete-api-mcp-server.ts'),
+    'tnf-enhanced-mcp-server': tsxServer('src/mcp/enhanced-tnf-mcp-server.ts'),
+    'tnf-core-server': tsxServer('src/mcp/server.ts'),
+    'tnf-network': tsxServer('apps/mcp-servers/tnf-network-mcp/src/index.ts'),
+    'devops-bridge': tsxServer('apps/mcp-servers/devops-bridge/src/index.ts'),
+    jules: tsxServer('packages/jules-skill/src/mcp-server.ts'),
+  };
+}
+
+function baseMcpConfigTemplate() {
+  const mcpServers = buildMcpServers();
+  return {
+    $schema:
+      'https://raw.githubusercontent.com/modelcontextprotocol/specification/main/schema/server.schema.json',
+    generatedBy: ONBOARD_GENERATED_MARKER,
+    generatedAt: new Date().toISOString(),
+    mcpServers,
+    servers: {
+      'tnf-api-gateway': {
+        type: 'api',
+        enabled: true,
+        protocol: 'http',
+        host: '127.0.0.1',
+        port: 3005,
+      },
+      'tnf-backend': {
+        type: 'api',
+        enabled: true,
+        protocol: 'http',
+        host: '127.0.0.1',
+        port: 3004,
+      },
+    },
+  };
+}
+
+function enhancedMcpConfigTemplate() {
+  const mcpServers = buildMcpServers();
+  return {
+    $schema:
+      'https://raw.githubusercontent.com/modelcontextprotocol/specification/main/schema/server.schema.json',
+    generatedBy: ONBOARD_GENERATED_MARKER,
+    generatedAt: new Date().toISOString(),
+    profile: 'enhanced',
+    mcpServers,
+  };
+}
+
+function repairOnboardingAssets() {
+  const changes = [];
+
+  if (ensureTextFile('.agent/SYSTEM_PROMPT.md', frontloadSystemPromptTemplate())) {
+    changes.push({ path: '.agent/SYSTEM_PROMPT.md', status: 'created' });
+  }
+  if (ensureTextFile('.agent/context/resource-map.md', resourceMapTemplate())) {
+    changes.push({ path: '.agent/context/resource-map.md', status: 'created' });
+  }
+  if (ensureTextFile('.agent/context/agent-onboarding.md', onboardingTemplate())) {
+    changes.push({ path: '.agent/context/agent-onboarding.md', status: 'created' });
+  }
+  if (ensureTextFile('.agent/workflows/frontload.md', frontloadWorkflowTemplate())) {
+    changes.push({ path: '.agent/workflows/frontload.md', status: 'created' });
+  }
+  if (ensureTextFile('.agent/handoff_notes.txt', buildHandoffNotesTemplate())) {
+    changes.push({ path: '.agent/handoff_notes.txt', status: 'created' });
+  }
+
+  const baseMcp = baseMcpConfigTemplate();
+  const mcpConfigStatus = upsertGeneratedJsonFile('data/mcp_config.json', baseMcp);
+  if (mcpConfigStatus !== 'preserved') {
+    changes.push({ path: 'data/mcp_config.json', status: mcpConfigStatus });
+  }
+  const toolsConfigStatus = upsertGeneratedJsonFile('tools/config-files/mcp_config.json', baseMcp);
+  if (toolsConfigStatus !== 'preserved') {
+    changes.push({ path: 'tools/config-files/mcp_config.json', status: toolsConfigStatus });
+  }
+  const enhancedConfigStatus = upsertGeneratedJsonFile(
+    'tools/config-files/enhanced_mcp_config.json',
+    enhancedMcpConfigTemplate()
+  );
+  if (enhancedConfigStatus !== 'preserved') {
+    changes.push({ path: 'tools/config-files/enhanced_mcp_config.json', status: enhancedConfigStatus });
+  }
+
+  return changes;
+}
+
+function withTimeout(promise, timeoutMs, errorMessage) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(errorMessage)), timeoutMs);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
 }
 
 function resolveCanonicalSessionHandoff() {
@@ -148,14 +427,18 @@ function printUsage() {
   console.log('');
   console.log('Options:');
   console.log('  -h, --help                Show this help');
+  console.log('      --repair              Scaffold missing onboarding files/configs');
   console.log('      --allow-local-db      Set TNF_ALLOW_LOCAL_DB=1 for this run');
   console.log('      --require-cloud-db    Set TNF_REQUIRE_CLOUD_DB=1 for this run');
   console.log('      --no-require-cloud-db Set TNF_REQUIRE_CLOUD_DB=0 for this run');
   console.log('      --database-url <url>  Override DATABASE_URL for this run');
+  console.log(`      --runtime-timeout-ms  Runtime snapshot timeout (default: ${DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS})`);
 }
 
 function parseArgs(argv) {
   const envOverrides = {};
+  let repair = false;
+  let runtimeTimeoutMs = DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS;
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -165,7 +448,12 @@ function parseArgs(argv) {
     }
 
     if (arg === '-h' || arg === '--help') {
-      return { help: true, envOverrides };
+      return { help: true, envOverrides, repair, runtimeTimeoutMs };
+    }
+
+    if (arg === '--repair') {
+      repair = true;
+      continue;
     }
 
     if (arg === '--allow-local-db') {
@@ -198,10 +486,33 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (arg === '--runtime-timeout-ms') {
+      const next = argv[i + 1];
+      if (!next) {
+        throw new Error('Missing value for --runtime-timeout-ms');
+      }
+      const parsedValue = Number.parseInt(next, 10);
+      if (!Number.isFinite(parsedValue) || parsedValue < 500 || parsedValue > 60000) {
+        throw new Error('--runtime-timeout-ms must be an integer between 500 and 60000');
+      }
+      runtimeTimeoutMs = parsedValue;
+      i += 1;
+      continue;
+    }
+
+    if (arg.startsWith('--runtime-timeout-ms=')) {
+      const parsedValue = Number.parseInt(arg.slice('--runtime-timeout-ms='.length), 10);
+      if (!Number.isFinite(parsedValue) || parsedValue < 500 || parsedValue > 60000) {
+        throw new Error('--runtime-timeout-ms must be an integer between 500 and 60000');
+      }
+      runtimeTimeoutMs = parsedValue;
+      continue;
+    }
+
     throw new Error(`Unknown option: ${arg}`);
   }
 
-  return { help: false, envOverrides };
+  return { help: false, envOverrides, repair, runtimeTimeoutMs };
 }
 
 function resolveDatabaseConfig() {
@@ -230,9 +541,14 @@ function resolveDatabaseConfig() {
   return { ok: true, databaseUrl, cloudRequired };
 }
 
-async function writeRuntimeStateSnapshot() {
-  dotenv.config({ path: path.join(ROOT, '.env.local') });
-  dotenv.config({ path: path.join(ROOT, '.env') });
+async function writeRuntimeStateSnapshot(timeoutMs = DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS) {
+  try {
+    const dotenv = require('dotenv');
+    dotenv.config({ path: path.join(ROOT, '.env.local') });
+    dotenv.config({ path: path.join(ROOT, '.env') });
+  } catch {
+    // Optional at install time. If missing, rely on existing environment variables.
+  }
 
   const dbConfig = resolveDatabaseConfig();
   if (!dbConfig.ok) {
@@ -244,40 +560,58 @@ async function writeRuntimeStateSnapshot() {
   }
 
   const databaseUrl = dbConfig.databaseUrl;
+  let postgres;
+  try {
+    postgres = require('postgres');
+  } catch (error) {
+    console.log(
+      `- .agent/runtime-state.json: skipped (postgres module unavailable: ${error?.message || 'unknown error'})`
+    );
+    return;
+  }
+
   const sql = postgres(databaseUrl, {
     max: 1,
     connect_timeout: 3,
     idle_timeout: 5,
+    max_lifetime: 10,
   });
 
   try {
-    const [agents, llmModels, harnesses, mcpServers, sessions] = await Promise.all([
-      sql`
-        SELECT tnf_id, name, agent_type, is_system, access_level, version, updated_at
-        FROM tnf_agent_definitions
-        ORDER BY is_system DESC, name ASC
-      `,
-      sql`
-        SELECT tnf_id, name, provider, model_id, version, is_current
-        FROM tnf_llm_models
-        ORDER BY provider ASC, name ASC
-      `,
-      sql`
-        SELECT tnf_id, name, platform, instance, environment, status, ws_url, endpoint_url
-        FROM tnf_harnesses
-        ORDER BY name ASC
-      `,
-      sql`
-        SELECT tnf_id, name, protocol, scope, status, command
-        FROM tnf_mcp_servers
-        ORDER BY name ASC
-      `,
-      sql`
-        SELECT tnf_id, status, started_at, last_heartbeat
-        FROM tnf_agent_sessions
-        ORDER BY started_at DESC
-      `,
-    ]);
+    // Execute sequentially on one connection to avoid queue deadlocks seen with
+    // Promise.all + max:1 against managed poolers (for example Supabase).
+    const [agents, llmModels, harnesses, mcpServers, sessions] = await withTimeout(
+      (async () => {
+        const agents = await sql`
+          SELECT tnf_id, name, agent_type, is_system, access_level, version, updated_at
+          FROM tnf_agent_definitions
+          ORDER BY is_system DESC, name ASC
+        `;
+        const llmModels = await sql`
+          SELECT tnf_id, name, provider, model_id, version, is_current
+          FROM tnf_llm_models
+          ORDER BY provider ASC, name ASC
+        `;
+        const harnesses = await sql`
+          SELECT tnf_id, name, platform, instance, environment, status, ws_url, endpoint_url
+          FROM tnf_harnesses
+          ORDER BY name ASC
+        `;
+        const mcpServers = await sql`
+          SELECT tnf_id, name, protocol, scope, status, command
+          FROM tnf_mcp_servers
+          ORDER BY name ASC
+        `;
+        const sessions = await sql`
+          SELECT tnf_id, status, started_at, last_heartbeat
+          FROM tnf_agent_sessions
+          ORDER BY started_at DESC
+        `;
+        return [agents, llmModels, harnesses, mcpServers, sessions];
+      })(),
+      timeoutMs,
+      `timed out after ${timeoutMs}ms`
+    );
 
     const snapshot = {
       source: 'tnf_v2',
@@ -308,7 +642,11 @@ async function writeRuntimeStateSnapshot() {
       `- .agent/runtime-state.json: skipped (DB unavailable: ${error?.message || 'unknown error'})`
     );
   } finally {
-    await sql.end({ timeout: 1 });
+    try {
+      await withTimeout(sql.end({ timeout: 0 }), 1500, 'sql.end timeout');
+    } catch {
+      // If the connection cannot close cleanly, continue shutdown.
+    }
   }
 }
 
@@ -337,15 +675,18 @@ async function main() {
   console.log('TNF Session Bootstrap');
   console.log('Workspace: current TNF project root');
 
+  if (parsed.repair) {
+    printHeader('Auto Repair');
+    const repaired = repairOnboardingAssets();
+    if (repaired.length === 0) {
+      console.log('- no changes (baseline onboarding artifacts already present)');
+    } else {
+      repaired.forEach((change) => console.log(`- ${change.status}: ${change.path}`));
+    }
+  }
+
   printHeader('Frontload Checklist');
-  [
-    '.agent/SYSTEM_PROMPT.md',
-    '.agent/context/resource-map.md',
-    '.agent/context/agent-onboarding.md',
-    '.agent/workflows/frontload.md',
-    '.agent/handoff_notes.txt',
-    CANONICAL_TURN_ZERO_MANDATE,
-  ].forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
+  FRONTLOAD_CHECKLIST.forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
   printHeader('Turn Zero Authority');
   console.log(`- canonical source: ${CANONICAL_TURN_ZERO_MANDATE}`);
@@ -406,11 +747,7 @@ async function main() {
   tnfSkills.slice(0, 15).forEach((p) => console.log(`  - ${path.dirname(p)}`));
 
   printHeader('MCP Config Inventory');
-  [
-    'tools/config-files/mcp_config.json',
-    'tools/config-files/enhanced_mcp_config.json',
-    'packages/jules-skill/mcp-config.example.json',
-  ].forEach(printMcpConfig);
+  MCP_CONFIG_PATHS.forEach(printMcpConfig);
 
   printHeader('MCP Server Code Paths');
   [
@@ -424,7 +761,7 @@ async function main() {
   ].forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
   printHeader('Runtime Snapshot');
-  await writeRuntimeStateSnapshot();
+  await writeRuntimeStateSnapshot(parsed.runtimeTimeoutMs);
 
   printHeader('OpenClaw / Claw Operator Policy');
   console.log('- TNF is the primary control plane');
@@ -436,6 +773,7 @@ async function main() {
 
   printHeader('How To Start New Sessions');
   console.log('- Run: ./tnf onboard');
+  console.log('- Repair mode: ./tnf onboard --repair');
   console.log('- Alt: pnpm run tnf -- onboard');
   console.log('- Read: AGENTS.md');
   console.log('- Optional shell auto-bootstrap: docs/TNF_SESSION_ONBOARDING.md');

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/specification/main/schema/server.schema.json",
+  "generatedBy": "tnf-onboard --repair",
+  "generatedAt": "2026-05-19T04:30:15.699Z",
+  "profile": "enhanced",
+  "mcpServers": {
+    "tnf-complete-api-wrapper": {
+      "command": "pnpm",
+      "args": ["exec", "tsx", "src/mcp/complete-api-mcp-server.ts"]
+    },
+    "tnf-enhanced-mcp-server": {
+      "command": "pnpm",
+      "args": ["exec", "tsx", "src/mcp/enhanced-tnf-mcp-server.ts"]
+    },
+    "tnf-core-server": {
+      "command": "pnpm",
+      "args": ["exec", "tsx", "src/mcp/server.ts"]
+    },
+    "tnf-network": {
+      "command": "pnpm",
+      "args": ["exec", "tsx", "apps/mcp-servers/tnf-network-mcp/src/index.ts"]
+    },
+    "devops-bridge": {
+      "command": "pnpm",
+      "args": ["exec", "tsx", "apps/mcp-servers/devops-bridge/src/index.ts"]
+    },
+    "jules": {
+      "command": "pnpm",
+      "args": ["exec", "tsx", "packages/jules-skill/src/mcp-server.ts"]
+    }
+  }
+}

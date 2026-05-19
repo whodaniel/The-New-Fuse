@@ -1,3 +1,5 @@
+import { PackageReconnectHub, type PackageProbeResult } from '@the-new-fuse/tnf-core';
+import { NoteService } from '@the-new-fuse/tnf-note-taking';
 import chalk from 'chalk';
 import { spawn, spawnSync } from 'child_process';
 import { Command } from 'commander';
@@ -7,8 +9,6 @@ import os from 'os';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import { NoteService } from '@the-new-fuse/tnf-note-taking';
-import { PackageReconnectHub, type PackageProbeResult } from '@the-new-fuse/tnf-core';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
 import { Orchestrator } from './orchestration.js';
@@ -1227,7 +1227,10 @@ function addHookDiagnostic(
 function resolveByPath(root: unknown, pathExpression: string): unknown {
   const expression = pathExpression.trim();
   if (!expression) return undefined;
-  const tokens = expression.split('.').map((token) => token.trim()).filter(Boolean);
+  const tokens = expression
+    .split('.')
+    .map((token) => token.trim())
+    .filter(Boolean);
   let cursor: unknown = root;
   for (const token of tokens) {
     if (!isPlainObject(cursor) && !Array.isArray(cursor)) return undefined;
@@ -1434,13 +1437,7 @@ function validateHookChainDefinition(chainInput: unknown): HookDiagnostic[] {
     );
   }
   if (chain.kind !== 'HookChain') {
-    addHookDiagnostic(
-      diagnostics,
-      'error',
-      'INVALID_KIND',
-      "kind must equal 'HookChain'.",
-      'kind'
-    );
+    addHookDiagnostic(diagnostics, 'error', 'INVALID_KIND', "kind must equal 'HookChain'.", 'kind');
   }
 
   const metadata = toHookRecord(chain.metadata);
@@ -1568,7 +1565,10 @@ function validateHookChainDefinition(chainInput: unknown): HookDiagnostic[] {
             );
           } else {
             for (let i = 0; i < match.source_in.length; i += 1) {
-              if (typeof match.source_in[i] !== 'string' || match.source_in[i].trim().length === 0) {
+              if (
+                typeof match.source_in[i] !== 'string' ||
+                match.source_in[i].trim().length === 0
+              ) {
                 addHookDiagnostic(
                   diagnostics,
                   'error',
@@ -1626,10 +1626,7 @@ function validateHookChainDefinition(chainInput: unknown): HookDiagnostic[] {
       'spec.execution'
     );
   } else {
-    if (
-      !Number.isInteger(execution.max_run_time_ms) ||
-      (execution.max_run_time_ms as number) < 1
-    ) {
+    if (!Number.isInteger(execution.max_run_time_ms) || (execution.max_run_time_ms as number) < 1) {
       addHookDiagnostic(
         diagnostics,
         'error',
@@ -1760,7 +1757,7 @@ function validateHookChainDefinition(chainInput: unknown): HookDiagnostic[] {
           diagnostics,
           'error',
           'INVALID_STEP_RUNNER',
-          "step.runner must be one of: shell, node, agent, mcp, webhook.",
+          'step.runner must be one of: shell, node, agent, mcp, webhook.',
           `${stepPath}.runner`
         );
       }
@@ -1790,7 +1787,7 @@ function validateHookChainDefinition(chainInput: unknown): HookDiagnostic[] {
           diagnostics,
           'error',
           'INVALID_ON_FAILURE',
-          "step.on_failure must be one of: stop, continue, branch.",
+          'step.on_failure must be one of: stop, continue, branch.',
           `${stepPath}.on_failure`
         );
       }
@@ -1843,7 +1840,7 @@ function validateHookChainDefinition(chainInput: unknown): HookDiagnostic[] {
               diagnostics,
               'error',
               'INVALID_AGENT_SELECTOR_TYPE',
-              "agent_selector.type must be one of: id, role, capability.",
+              'agent_selector.type must be one of: id, role, capability.',
               `${stepPath}.agent_selector.type`
             );
           }
@@ -1894,7 +1891,7 @@ function validateHookChainDefinition(chainInput: unknown): HookDiagnostic[] {
             diagnostics,
             'error',
             'INVALID_WEBHOOK_METHOD',
-            "webhook runner method must be one of: GET, POST, PUT, PATCH, DELETE.",
+            'webhook runner method must be one of: GET, POST, PUT, PATCH, DELETE.',
             `${stepPath}.method`
           );
         }
@@ -1964,7 +1961,7 @@ function validateHookChainDefinition(chainInput: unknown): HookDiagnostic[] {
         diagnostics,
         'error',
         'INVALID_APPROVAL_POLICY',
-        "spec.security.approval_policy must be one of: none, on_high_risk, always.",
+        'spec.security.approval_policy must be one of: none, on_high_risk, always.',
         'spec.security.approval_policy'
       );
     }
@@ -2155,7 +2152,9 @@ function evaluateHookCondition(
     return {
       supported: true,
       value,
-      reason: value ? 'expression true' : `expression false (${stepId}.success=${resolved.success})`,
+      reason: value
+        ? 'expression true'
+        : `expression false (${stepId}.success=${resolved.success})`,
     };
   }
 
@@ -2173,7 +2172,9 @@ function evaluateHookCondition(
     return {
       supported: true,
       value,
-      reason: value ? 'expression true' : `expression false (${stepId}.success=${resolved.success})`,
+      reason: value
+        ? 'expression true'
+        : `expression false (${stepId}.success=${resolved.success})`,
     };
   }
 
@@ -2591,7 +2592,15 @@ function printHookTestSummary(payload: Record<string, unknown>): void {
 
 const cliEntryPath = fileURLToPath(import.meta.url);
 const AGENT_ROLE_TRAITS = ['orchestrator', 'broker', 'worker', 'participant'];
-const AGENT_PLATFORM_TRAITS = ['antigravity', 'gemini', 'claude', 'jules', 'pi', 'vscode', 'browser'];
+const AGENT_PLATFORM_TRAITS = [
+  'antigravity',
+  'gemini',
+  'claude',
+  'jules',
+  'pi',
+  'vscode',
+  'browser',
+];
 const SUPER_ADMIN_COMMAND_TRAITS = [
   'tnf relay start',
   'tnf jules loop',
@@ -3610,19 +3619,29 @@ program
 program
   .command('onboard')
   .description('Run TNF frontload onboarding')
+  .option('--repair', 'Scaffold missing onboarding files and config stubs')
   .option('--allow-local-db', 'Allow local DATABASE_URL for this run')
   .option('--require-cloud-db', 'Require cloud DATABASE_URL for this run')
   .option('--no-require-cloud-db', 'Allow non-cloud DATABASE_URL for this run')
   .option('--database-url <url>', 'Override DATABASE_URL for this run')
+  .option('--runtime-timeout-ms <ms>', 'Runtime snapshot timeout in milliseconds')
   .action(
-    async (options: { allowLocalDb?: boolean; requireCloudDb?: boolean; databaseUrl?: string }) => {
+    async (options: {
+      repair?: boolean;
+      allowLocalDb?: boolean;
+      requireCloudDb?: boolean;
+      databaseUrl?: string;
+      runtimeTimeoutMs?: string;
+    }) => {
       try {
         const args = ['scripts/tnf-onboard.cjs'];
+        if (options.repair) args.push('--repair');
         if (options.allowLocalDb) args.push('--allow-local-db');
         if (typeof options.requireCloudDb === 'boolean') {
           args.push(options.requireCloudDb ? '--require-cloud-db' : '--no-require-cloud-db');
         }
         if (options.databaseUrl) args.push('--database-url', options.databaseUrl);
+        if (options.runtimeTimeoutMs) args.push('--runtime-timeout-ms', options.runtimeTimeoutMs);
         await runCommand('node', args);
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
@@ -7423,7 +7442,9 @@ hooks
         const triggerEvaluation = chain
           ? evaluateHookTriggerMatch(chain, event, diagnostics)
           : { matched: false, expectedEvent: null, receivedEvent: extractEventType(event) };
-        const plan = chain ? buildHookStepPlan(chain, event, triggerEvaluation.matched, diagnostics) : [];
+        const plan = chain
+          ? buildHookStepPlan(chain, event, triggerEvaluation.matched, diagnostics)
+          : [];
         const workflowProjection = chain ? buildWorkflowProjection(chain, plan) : null;
         const compiled = {
           node_count: plan.length,
@@ -10518,7 +10539,9 @@ packagesCommand
         }
       }
       if (options.runtime) {
-        const runtimeFailures = results.filter((result) => result.loadAttempted && !result.loadSucceeded);
+        const runtimeFailures = results.filter(
+          (result) => result.loadAttempted && !result.loadSucceeded
+        );
         if (runtimeFailures.length > 0) {
           console.log(chalk.yellow(`\nRuntime load failures: ${runtimeFailures.length}`));
           for (const item of runtimeFailures.slice(0, 20)) {
@@ -10560,7 +10583,9 @@ packagesCommand
       console.log(`Build script:${result.hasBuildScript ? chalk.green(' yes') : chalk.red(' no')}`);
       console.log(`Test script: ${result.hasTestScript ? chalk.green('yes') : chalk.red('no')}`);
       console.log(`Entry path:  ${result.mainEntryPath || chalk.dim('none')}`);
-      console.log(`Entry exists:${result.mainEntryExists ? chalk.green(' yes') : chalk.red(' no')}`);
+      console.log(
+        `Entry exists:${result.mainEntryExists ? chalk.green(' yes') : chalk.red(' no')}`
+      );
       console.log(
         `Resolved:    ${result.resolvedFromWorkspace ? chalk.green(result.resolvedPath || 'yes') : chalk.yellow('no')}`
       );
@@ -10686,34 +10711,32 @@ notesCommand
   .option('--vault-path <path>', 'Base vault path (default: ~/.tnf/vault)')
   .option('--user-id <id>', 'Vault user id (default: OS user)')
   .option('--json', 'Output JSON')
-  .action(
-    (idOrTitle: string, options: { vaultPath?: string; userId?: string; json?: boolean }) => {
-      try {
-        const service = createNotesService(options);
-        const note = service.getNoteById(idOrTitle) || service.getNoteByTitle(idOrTitle);
-        if (!note) {
-          throw new Error(`Note not found: ${idOrTitle}`);
-        }
-
-        if (options.json) {
-          console.log(JSON.stringify(note, null, 2));
-          return;
-        }
-
-        console.log(chalk.bold(`\n${note.title}\n`));
-        console.log(chalk.dim(`id=${note.id} updated=${note.updatedAt}`));
-        if (note.tags?.length) {
-          console.log(chalk.dim(`tags=${note.tags.join(', ')}`));
-        }
-        console.log('');
-        console.log(note.content);
-        console.log('');
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
+  .action((idOrTitle: string, options: { vaultPath?: string; userId?: string; json?: boolean }) => {
+    try {
+      const service = createNotesService(options);
+      const note = service.getNoteById(idOrTitle) || service.getNoteByTitle(idOrTitle);
+      if (!note) {
+        throw new Error(`Note not found: ${idOrTitle}`);
       }
+
+      if (options.json) {
+        console.log(JSON.stringify(note, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold(`\n${note.title}\n`));
+      console.log(chalk.dim(`id=${note.id} updated=${note.updatedAt}`));
+      if (note.tags?.length) {
+        console.log(chalk.dim(`tags=${note.tags.join(', ')}`));
+      }
+      console.log('');
+      console.log(note.content);
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
     }
-  );
+  });
 
 notesCommand
   .command('search')

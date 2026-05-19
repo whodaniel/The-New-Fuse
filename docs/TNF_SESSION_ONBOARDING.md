@@ -9,6 +9,16 @@ sessions.
 pnpm run tnf:onboard
 ```
 
+If baseline frontload files/config stubs are missing, self-heal in one pass:
+
+```bash
+./tnf onboard --repair
+```
+
+When TNF is installed via `scripts/install-tnf-cli.sh` (including
+`pnpm run tnf:install` and `pnpm run tnf:install:local`), this onboarding step
+now runs automatically at install time unless explicitly skipped.
+
 ## OpenClaw / Claw Operator Policy
 
 Future TNF sessions should treat TNF as the primary control plane.
@@ -162,9 +172,10 @@ Environment precedence:
 
 ## Recommended Default Workflow
 
-1. `cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
-2. `pnpm run tnf:onboard`
-3. Start your AI session in this repository root
+1. `export TNF_REPO_DIR="/absolute/path/to/The-New-Fuse"`
+2. `cd "$TNF_REPO_DIR"`
+3. `pnpm run tnf:onboard`
+4. Start your AI session in this repository root
 
 ## Auto-Run In New Shells (zsh)
 
@@ -172,7 +183,7 @@ Add this to `~/.zshrc`:
 
 ```bash
 tnf_auto_onboard() {
-  local repo="/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+  local repo="${TNF_REPO_DIR:-$HOME/code/The-New-Fuse}"
   if [[ "$PWD" == "$repo" ]]; then
     [[ -n "$TNF_ONBOARDED" ]] && return
     export TNF_ONBOARDED=1
@@ -184,9 +195,9 @@ add-zsh-hook chpwd tnf_auto_onboard
 tnf_auto_onboard
 
 # Optional wrappers for one-command AI launches
-alias codex-tnf='cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run -s tnf:start:codex'
-alias claude-tnf='cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run -s tnf:start:claude'
-alias gemini-tnf='cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run -s tnf:start:gemini'
+alias codex-tnf='cd "${TNF_REPO_DIR:?set TNF_REPO_DIR}" && pnpm run -s tnf:start:codex'
+alias claude-tnf='cd "${TNF_REPO_DIR:?set TNF_REPO_DIR}" && pnpm run -s tnf:start:claude'
+alias gemini-tnf='cd "${TNF_REPO_DIR:?set TNF_REPO_DIR}" && pnpm run -s tnf:start:gemini'
 ```
 
 ## Client-Specific Notes

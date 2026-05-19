@@ -1,26 +1,19 @@
 import { ApiProperty, ApiPropertyOptional, getSchemaPath } from '@nestjs/swagger';
-import type {
-  ResourceSearchProtocolActor,
-  ResourceSearchProtocolRequestEnvelope,
-  ResourceSearchProtocolResponseEnvelope,
-  ResourceSearchProtocolTrace,
-  ResourceSearchResponse,
-} from '@the-new-fuse/types';
 import {
   ResourceDto,
   ResourceSearchEnvelopeDto,
   ResourceSearchRequestDto,
 } from './resource-search.dto';
 
-export class ResourceSearchProtocolActorDto implements ResourceSearchProtocolActor {
-  @ApiPropertyOptional()
-  id?: string;
+export class ResourceSearchProtocolActorDto {
+  @ApiProperty()
+  id!: string;
 
-  @ApiPropertyOptional({ type: [String] })
-  roles?: string[];
+  @ApiProperty({ type: [String] })
+  roles!: string[];
 }
 
-export class ResourceSearchProtocolTraceDto implements ResourceSearchProtocolTrace {
+export class ResourceSearchProtocolTraceDto {
   @ApiProperty()
   correlation_id!: string;
 
@@ -28,15 +21,15 @@ export class ResourceSearchProtocolTraceDto implements ResourceSearchProtocolTra
   causation_id!: string | null;
 }
 
-export class ResourceSearchProtocolRequestEnvelopeDto implements ResourceSearchProtocolRequestEnvelope {
+export class ResourceSearchProtocolRequestEnvelopeDto {
   @ApiProperty()
   id!: string;
 
   @ApiProperty({ default: 'sgp/0.1' })
-  spec!: string;
+  spec!: 'sgp/0.1';
 
-  @ApiProperty({ enum: ['RESOURCE.SEARCH.REQUEST'] })
-  type!: 'RESOURCE.SEARCH.REQUEST';
+  @ApiProperty({ enum: ['DISCOVER.REQUEST', 'QUERY.REQUEST'] })
+  type!: 'DISCOVER.REQUEST' | 'QUERY.REQUEST';
 
   @ApiProperty()
   tenant!: string;
@@ -47,25 +40,28 @@ export class ResourceSearchProtocolRequestEnvelopeDto implements ResourceSearchP
   @ApiProperty()
   sent_at!: string;
 
-  @ApiPropertyOptional({ type: ResourceSearchProtocolActorDto })
-  actor?: ResourceSearchProtocolActorDto;
+  @ApiProperty({ type: ResourceSearchProtocolActorDto })
+  actor!: ResourceSearchProtocolActorDto;
 
   @ApiProperty({ type: ResourceSearchProtocolTraceDto })
   trace!: ResourceSearchProtocolTraceDto;
 
   @ApiProperty({ type: ResourceSearchRequestDto })
   payload!: ResourceSearchRequestDto;
+
+  @ApiPropertyOptional()
+  sig?: string;
 }
 
-export class ResourceSearchProtocolResponseEnvelopeDto implements ResourceSearchProtocolResponseEnvelope<ResourceDto> {
+export class ResourceSearchProtocolResponseEnvelopeDto {
   @ApiProperty()
   id!: string;
 
   @ApiProperty({ default: 'sgp/0.1' })
-  spec!: string;
+  spec!: 'sgp/0.1';
 
-  @ApiProperty({ enum: ['RESOURCE.SEARCH.RESPONSE'] })
-  type!: 'RESOURCE.SEARCH.RESPONSE';
+  @ApiProperty({ enum: ['DISCOVER.RESPONSE', 'QUERY.RESPONSE', 'ERROR'] })
+  type!: 'DISCOVER.RESPONSE' | 'QUERY.RESPONSE' | 'ERROR';
 
   @ApiProperty()
   tenant!: string;
@@ -76,8 +72,8 @@ export class ResourceSearchProtocolResponseEnvelopeDto implements ResourceSearch
   @ApiProperty()
   sent_at!: string;
 
-  @ApiPropertyOptional({ type: ResourceSearchProtocolActorDto })
-  actor?: ResourceSearchProtocolActorDto;
+  @ApiProperty({ type: ResourceSearchProtocolActorDto })
+  actor!: ResourceSearchProtocolActorDto;
 
   @ApiProperty({ type: ResourceSearchProtocolTraceDto })
   trace!: ResourceSearchProtocolTraceDto;
@@ -93,5 +89,8 @@ export class ResourceSearchProtocolResponseEnvelopeDto implements ResourceSearch
       },
     ],
   })
-  payload!: ResourceSearchResponse<ResourceDto>;
+  payload!: any;
+
+  @ApiPropertyOptional()
+  sig?: string;
 }

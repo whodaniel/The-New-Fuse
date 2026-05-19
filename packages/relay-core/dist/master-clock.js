@@ -58,39 +58,6 @@
  * - STALL_THRESHOLD: Stall detection threshold in ms (default: 5000)
  * - LOG_LEVEL: debug|info|warn|error (default: info)
  */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -125,7 +92,10 @@ const CONFIG = {
     TASK_QUEUE_BATCH_SIZE: parseInt(process.env.TASK_QUEUE_BATCH_SIZE || '') || 5,
     CHRONOLOGICAL_POLL_INTERVAL_MS: parseInt(process.env.CHRONOLOGICAL_POLL_INTERVAL_MS || '') || 30000, // 30 seconds
     // Connections
-    RELAY_URL: process.env.RELAY_URL || process.env.TNF_RELAY_URL || process.env.RELAY_WS_URL || 'ws://127.0.0.1:3000/ws',
+    RELAY_URL: process.env.RELAY_URL ||
+        process.env.TNF_RELAY_URL ||
+        process.env.RELAY_WS_URL ||
+        'ws://127.0.0.1:3000/ws',
     REDIS_URL: process.env.REDIS_URL,
     LEDGER_API_BASE: process.env.LEDGER_API_BASE ||
         process.env.CLOUD_RUNTIME_API_URL ||
@@ -412,7 +382,7 @@ class MasterClock {
         log('info', 'REDIS', 'Connecting to Redis for cloud coordination...');
         try {
             // Use unified standalone utilities via dynamic import for ESM/CJS compatibility
-            const infra = await Promise.resolve().then(() => __importStar(require('@the-new-fuse/infrastructure')));
+            const infra = await import('@the-new-fuse/infrastructure');
             this.redis = infra.createStandaloneRedisClient({ lazyConnect: true });
             this.redisSub = infra.createStandaloneRedisClient({ lazyConnect: true });
             this.upstash = infra.createUpstashRestClient();

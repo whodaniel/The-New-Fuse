@@ -1440,7 +1440,10 @@ class TNFRelayServer extends events_1.EventEmitter {
                 }
             }
             // Agent is not approved - they are in the "waiting area"
-            if (!this.approvedBridgeAgents.has(agentId) && agent && socket && !this.pendingBridgeAgents.has(agentId)) {
+            if (!this.approvedBridgeAgents.has(agentId) &&
+                agent &&
+                socket &&
+                !this.pendingBridgeAgents.has(agentId)) {
                 this.pendingBridgeAgents.set(agentId, { agent, socket, requestedAt: Date.now() });
                 console.log('[Relay] Agent ' + agentId + ' (' + agent.name + ') is waiting at the bridge gate');
                 // Notify the agent they are pending approval

@@ -40,6 +40,7 @@
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/fairtable-adapters": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/protocol-contracts": "workspace:*",
     "@the-new-fuse/tnf-cli": "workspace:*",
     "@upstash/redis": "^1.37.0",
     "chokidar": "^4.0.3",

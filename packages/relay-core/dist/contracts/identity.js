@@ -9,21 +9,9 @@ exports.buildIdentityAliases = buildIdentityAliases;
 exports.createAgentIdentityRecord = createAgentIdentityRecord;
 exports.buildIdentityAliasMap = buildIdentityAliasMap;
 exports.resolveIdentityAlias = resolveIdentityAlias;
-const zod_1 = require("zod");
+const protocol_contracts_1 = require("@the-new-fuse/protocol-contracts");
 const CANONICAL_ID_SEGMENT = /^[A-Z0-9_]+$/;
-exports.TnfIdentityCategory = zod_1.z.enum([
-    'AGENT',
-    'SESSION',
-    'CHANNEL',
-    'WORKFLOW',
-    'TASK',
-    'SCHEDULE',
-    'HARNESS',
-    'MCP',
-    'LLM',
-    'USER',
-    'SYSTEM',
-]);
+exports.TnfIdentityCategory = protocol_contracts_1.TnfIdentityCategorySchema;
 function normalizeCanonicalSegment(value) {
     if (value == null)
         return null;

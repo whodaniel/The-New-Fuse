@@ -22,126 +22,20 @@ exports.isTaskMessage = isTaskMessage;
 exports.isEventMessage = isEventMessage;
 exports.requiresResponse = requiresResponse;
 const crypto_1 = __importDefault(require("crypto"));
-const zod_1 = require("zod");
+const protocol_contracts_1 = require("@the-new-fuse/protocol-contracts");
 const audit_js_1 = require("../contracts/audit.js");
 const identity_js_1 = require("../contracts/identity.js");
-const resource_protocol_js_1 = require("./resource-protocol.js");
-/**
- * Message Types
- */
-exports.MessageType = zod_1.z.enum([
-    'command', // Direct action request
-    'event', // Fire-and-forget notification
-    'task', // Requires ACK/result
-    'handoff', // Targeted prompt/state transfer between agents
-    'handoff-ack', // Acknowledgement for a handoff packet
-    'state-sync', // State synchronization
-    'query', // Information request
-    'response', // Response to query/task
-    'resource-negotiate', // Resource/Quota management
-    'auction', // Broadcast for task bidding
-    'bid', // Agent bid for a task
-    'award', // Selection of an agent for a task
-]);
-/**
- * Agent Identity
- */
-exports.AgentIdentity = zod_1.z.object({
-    agentId: zod_1.z.string().describe('Unique agent identifier'),
-    canonicalEntityId: zod_1.z.string().optional().describe('Canonical TNF identity for this agent'),
-    operationalHandle: zod_1.z.string().optional().describe('Operational routing handle for this agent'),
-    runtimeSessionId: zod_1.z.string().optional().describe('Runtime session identifier for this agent'),
-    aliases: zod_1.z.array(zod_1.z.string()).optional().describe('Known aliases for this agent'),
-    role: zod_1.z.enum(['orchestrator', 'worker', 'coordinator', 'observer']).optional(),
-    platform: zod_1.z.string().optional().describe('Platform (e.g., "gemini", "claude", "terminal")'),
-    capabilities: zod_1.z.array(zod_1.z.string()).optional().describe('Agent capabilities'),
-});
-/**
- * Message Context
- */
-exports.MessageContext = zod_1.z.object({
-    workflowId: zod_1.z.string().optional().describe('Parent workflow ID'),
-    stepId: zod_1.z.string().optional().describe('Workflow step ID'),
-    sessionId: zod_1.z.string().optional().describe('Conversation session ID'),
-    channelId: zod_1.z.string().optional().describe('Relay channel ID'),
-    sequenceId: zod_1.z.number().optional().describe('Message sequence number for ordering'),
-    parentMessageId: zod_1.z.string().optional().describe('ID of message this is responding to'),
-});
-/**
- * TNF Envelope - Unified Message Format
- */
-exports.TNFEnvelope = zod_1.z.object({
-    // Core metadata
-    id: zod_1.z.string().uuid().describe('Unique message ID'),
-    version: zod_1.z.string().default('1.0').describe('Protocol version'),
-    traceId: zod_1.z.string().min(1).describe('Correlation ID for debugging/tracing'),
-    timestamp: zod_1.z.string().datetime().describe('ISO-8601 timestamp'),
-    // Message classification
-    type: exports.MessageType,
-    // Routing
-    from: exports.AgentIdentity,
-    to: exports.AgentIdentity.or(zod_1.z.object({ broadcast: zod_1.z.boolean() })),
-    // Content
-    payload: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).describe('Message-specific data'),
-    // Context
-    context: exports.MessageContext.optional(),
-    // Resource Control (NEW PRIMITIVE)
-    resource: resource_protocol_js_1.ResourceStrategy.optional().describe('Strategic resource/account handling instructions'),
-    // Metadata
-    metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).optional().describe('Additional metadata'),
-});
-/**
- * Specific Message Payloads
- */
-// Task payload
-exports.TaskPayload = zod_1.z.object({
-    action: zod_1.z.string().describe('Action to perform'),
-    parameters: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).optional(),
-    timeout: zod_1.z.number().optional().describe('Timeout in milliseconds'),
-    priority: zod_1.z.enum(['low', 'normal', 'high', 'critical']).default('normal'),
-});
-// Event payload
-exports.EventPayload = zod_1.z.object({
-    eventType: zod_1.z.string().describe('Type of event'),
-    data: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).optional(),
-    source: zod_1.z.string().optional().describe('Event source'),
-});
-// State sync payload
-exports.StateSyncPayload = zod_1.z.object({
-    stateKey: zod_1.z.string().describe('Redis key for state'),
-    stateValue: zod_1.z.unknown(),
-    version: zod_1.z.number().describe('State version for optimistic locking'),
-    operation: zod_1.z.enum(['set', 'update', 'delete', 'get']),
-});
-// Response payload
-exports.ResponsePayload = zod_1.z.object({
-    success: zod_1.z.boolean(),
-    result: zod_1.z.unknown().optional(),
-    error: zod_1.z
-        .object({
-        code: zod_1.z.string(),
-        message: zod_1.z.string(),
-        details: zod_1.z.unknown().optional(),
-    })
-        .optional(),
-});
-// Auction payload
-exports.AuctionPayload = zod_1.z.object({
-    taskId: zod_1.z.string().describe('ID of the task up for auction'),
-    taskType: zod_1.z.string().describe('Type of task (e.g. "code-generation")'),
-    requirements: zod_1.z.array(zod_1.z.string()).describe('Required capabilities'),
-    priority: zod_1.z.enum(['low', 'normal', 'high', 'critical']).default('normal'),
-    expiresAt: zod_1.z.number().describe('Timestamp when the auction ends'),
-    metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).optional(),
-});
-// Bid payload
-exports.BidPayload = zod_1.z.object({
-    taskId: zod_1.z.string().describe('ID of the task being bid on'),
-    suitability: zod_1.z.number().min(0).max(1).describe('Score from 0-1 on how well the agent fits'),
-    estimatedDuration: zod_1.z.number().optional().describe('Estimated time to complete in ms'),
-    status: zod_1.z.string().optional().describe('Current agent status/load info'),
-    metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).optional(),
-});
+// Re-export values and types with unified names for back-compat
+exports.MessageType = protocol_contracts_1.MessageTypeSchema;
+exports.AgentIdentity = protocol_contracts_1.AgentIdentitySchema;
+exports.MessageContext = protocol_contracts_1.MessageContextSchema;
+exports.TNFEnvelope = protocol_contracts_1.TNFEnvelopeSchema;
+exports.TaskPayload = protocol_contracts_1.TaskPayloadSchema;
+exports.EventPayload = protocol_contracts_1.EventPayloadSchema;
+exports.StateSyncPayload = protocol_contracts_1.StateSyncPayloadSchema;
+exports.ResponsePayload = protocol_contracts_1.ResponsePayloadSchema;
+exports.AuctionPayload = protocol_contracts_1.AuctionPayloadSchema;
+exports.BidPayload = protocol_contracts_1.BidPayloadSchema;
 /**
  * Helper Functions
  */
@@ -216,7 +110,7 @@ function normalizeTNFEnvelope(envelope) {
         context: envelope.context,
         metadata: envelope.metadata,
     }));
-    return exports.TNFEnvelope.parse({
+    return protocol_contracts_1.TNFEnvelopeSchema.parse({
         ...envelope,
         from,
         to,
@@ -244,7 +138,7 @@ function createTNFEnvelope(type, from, to, payload, context, options) {
     };
 }
 function validateTNFEnvelope(data) {
-    return normalizeTNFEnvelope(exports.TNFEnvelope.parse(data));
+    return normalizeTNFEnvelope(protocol_contracts_1.TNFEnvelopeSchema.parse(data));
 }
 function isTaskMessage(envelope) {
     return envelope.type === 'task';

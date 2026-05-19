@@ -27,7 +27,10 @@ const __dirname = typeof __dirname !== 'undefined' ? __dirname : (0, path_1.join
 // CONFIG
 // ============================================================================
 const CONFIG = {
-    RELAY_URL: process.env.RELAY_URL || process.env.TNF_RELAY_URL || process.env.RELAY_WS_URL || 'ws://127.0.0.1:3000/ws',
+    RELAY_URL: process.env.RELAY_URL ||
+        process.env.TNF_RELAY_URL ||
+        process.env.RELAY_WS_URL ||
+        'ws://127.0.0.1:3000/ws',
     RELAY_TOKEN: process.env.TNF_RELAY_TOKEN || null,
     DRY_RUN: process.env.LAUNCHPAD_DRY_RUN === 'true',
     BACKLOG_FILE: (0, path_1.join)(__dirname, '..', '..', 'docs', 'LAUNCH_BACKLOG.md'),

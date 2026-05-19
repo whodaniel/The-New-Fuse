@@ -49,6 +49,10 @@ const mappings = [
     input: path.join(jsonSchemaRoot, 'crypto', 'crypto.schema.json'),
     output: path.join(contractsPyRoot, 'crypto_operations.py'),
   },
+  {
+    input: path.join(jsonSchemaRoot, 'messaging', 'envelope.schema.json'),
+    output: path.join(contractsPyRoot, 'messaging.py'),
+  },
 ];
 
 function runPython(args) {

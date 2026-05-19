@@ -1,37 +1,16 @@
-import { z } from 'zod';
+import {
+  type TnfAgentIdentityRecord,
+  type TnfCanonicalEntityParts,
+  type TnfIdentityCategory as TnfIdentityCategoryType,
+  TnfIdentityCategorySchema,
+} from '@the-new-fuse/protocol-contracts';
 
 const CANONICAL_ID_SEGMENT = /^[A-Z0-9_]+$/;
 
-export const TnfIdentityCategory = z.enum([
-  'AGENT',
-  'SESSION',
-  'CHANNEL',
-  'WORKFLOW',
-  'TASK',
-  'SCHEDULE',
-  'HARNESS',
-  'MCP',
-  'LLM',
-  'USER',
-  'SYSTEM',
-]);
+export const TnfIdentityCategory = TnfIdentityCategorySchema;
+export type TnfIdentityCategory = TnfIdentityCategoryType;
 
-export type TnfIdentityCategory = z.infer<typeof TnfIdentityCategory>;
-
-export interface TnfCanonicalEntityParts {
-  scope?: string | null;
-  category: string;
-  provider: string;
-  name: string;
-  instance?: string | number | null;
-}
-
-export interface TnfAgentIdentityRecord {
-  canonicalEntityId?: string | null;
-  operationalHandle: string;
-  runtimeSessionId?: string | null;
-  aliases: string[];
-}
+export type { TnfAgentIdentityRecord, TnfCanonicalEntityParts };
 
 function normalizeCanonicalSegment(value: string | number | null | undefined): string | null {
   if (value == null) return null;
@@ -76,7 +55,10 @@ export function normalizeCanonicalEntityId(input: string): string {
     throw new Error('canonical entity id cannot be empty');
   }
 
-  const segments = value.split(':').map((segment) => segment.trim()).filter(Boolean);
+  const segments = value
+    .split(':')
+    .map((segment) => segment.trim())
+    .filter(Boolean);
   if (segments.length < 5 || segments.length > 6) {
     throw new Error(`invalid canonical entity id: ${input}`);
   }
@@ -111,7 +93,9 @@ export function normalizeOperationalHandle(input: string): string {
 }
 
 function normalizeAlias(input: string): string | null {
-  const value = String(input || '').trim().toLowerCase();
+  const value = String(input || '')
+    .trim()
+    .toLowerCase();
   return value || null;
 }
 
@@ -189,7 +173,6 @@ export function resolveIdentityAlias(
 ): TnfAgentIdentityRecord | null {
   const normalized = normalizeAlias(alias);
   if (!normalized) return null;
-  const aliasMap =
-    recordsOrMap instanceof Map ? recordsOrMap : buildIdentityAliasMap(recordsOrMap);
+  const aliasMap = recordsOrMap instanceof Map ? recordsOrMap : buildIdentityAliasMap(recordsOrMap);
   return aliasMap.get(normalized) || null;
 }

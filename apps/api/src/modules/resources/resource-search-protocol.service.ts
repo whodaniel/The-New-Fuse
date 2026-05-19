@@ -1,12 +1,29 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { type SgpEnvelope, type SgpPayload } from '@the-new-fuse/protocol-contracts';
 import type {
   ResourceCatalogItem,
-  ResourceSearchProtocolRequestEnvelope,
-  ResourceSearchProtocolResponseEnvelope,
   ResourceSearchRequest,
   ResourceSearchResponse,
 } from '@the-new-fuse/types';
 import { randomUUID } from 'node:crypto';
+
+// Local types for the legacy API structure, but based on the new spec
+export type ResourceSearchProtocolEnvelopeBase<TType extends string, TPayload> = SgpEnvelope & {
+  type: TType;
+  payload: TPayload;
+};
+
+export type ResourceSearchProtocolRequestEnvelope = ResourceSearchProtocolEnvelopeBase<
+  'DISCOVER.REQUEST' | 'QUERY.REQUEST' | 'RESOURCE.SEARCH.REQUEST',
+  ResourceSearchRequest | any
+>;
+
+export type ResourceSearchProtocolResponseEnvelope<
+  TResource extends ResourceCatalogItem = ResourceCatalogItem,
+> = ResourceSearchProtocolEnvelopeBase<
+  'DISCOVER.RESPONSE' | 'QUERY.RESPONSE' | 'RESOURCE.SEARCH.RESPONSE' | 'ERROR',
+  ResourceSearchResponse<TResource> | SgpPayload
+>;
 
 type ProtocolRequestDecodeResult = {
   filter: ResourceSearchRequest;
@@ -24,15 +41,15 @@ export class ResourceSearchProtocolService {
       this.assertValidRequestEnvelope(body);
       return {
         filter: this.normalizeFilter(body.payload),
-        requestEnvelope: body,
+        requestEnvelope: body as ResourceSearchProtocolRequestEnvelope,
       };
     }
 
     if (this.looksLikeProtocolEnvelope(body)) {
       throw new BadRequestException({
-        message: 'Invalid RESOURCE.SEARCH.REQUEST envelope',
+        message: 'Invalid SGP envelope',
         errors: [
-          "Expected envelope type 'RESOURCE.SEARCH.REQUEST' with required fields: id, spec, tenant, resource, sent_at, trace, payload.",
+          "Expected envelope type 'DISCOVER.REQUEST' or 'QUERY.REQUEST' with required fields: id, spec, tenant, resource, sent_at, trace, payload.",
         ],
       });
     }
@@ -46,16 +63,20 @@ export class ResourceSearchProtocolService {
       requestEnvelope: {
         id: messageId,
         spec: this.defaultSpec,
-        type: 'RESOURCE.SEARCH.REQUEST',
+        type: 'DISCOVER.REQUEST',
         tenant: this.defaultTenant,
         resource: this.defaultResource,
         sent_at: now,
+        actor: {
+          id: 'anonymous',
+          roles: ['guest'],
+        },
         trace: {
           correlation_id: messageId,
           causation_id: null,
         },
-        payload: filter,
-      },
+        payload: filter as any,
+      } as ResourceSearchProtocolRequestEnvelope,
     };
   }
 
@@ -65,10 +86,19 @@ export class ResourceSearchProtocolService {
   ): ResourceSearchProtocolResponseEnvelope<TResource> {
     const responseId = randomUUID();
 
+    // Map REQUEST types to RESPONSE types
+    const requestType = (requestEnvelope as any).type as string;
+    let type: any = 'DISCOVER.RESPONSE';
+    if (requestType === 'QUERY.REQUEST') {
+      type = 'QUERY.RESPONSE';
+    } else if (requestType === 'RESOURCE.SEARCH.REQUEST') {
+      type = 'RESOURCE.SEARCH.RESPONSE';
+    }
+
     return {
       id: responseId,
       spec: requestEnvelope.spec || this.defaultSpec,
-      type: 'RESOURCE.SEARCH.RESPONSE',
+      type,
       tenant: requestEnvelope.tenant || this.defaultTenant,
       resource: requestEnvelope.resource || this.defaultResource,
       sent_at: new Date().toISOString(),
@@ -78,7 +108,7 @@ export class ResourceSearchProtocolService {
         causation_id: requestEnvelope.id || null,
       },
       payload,
-    };
+    } as ResourceSearchProtocolResponseEnvelope<TResource>;
   }
 
   private normalizeFilter(value: unknown): ResourceSearchRequest {
@@ -108,10 +138,12 @@ export class ResourceSearchProtocolService {
     value: unknown
   ): value is ResourceSearchProtocolRequestEnvelope {
     if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
-    const message = value as Partial<ResourceSearchProtocolRequestEnvelope>;
+    const message = value as any;
 
     return (
-      message.type === 'RESOURCE.SEARCH.REQUEST' &&
+      (message.type === 'DISCOVER.REQUEST' ||
+        message.type === 'QUERY.REQUEST' ||
+        message.type === 'RESOURCE.SEARCH.REQUEST') &&
       typeof message.payload === 'object' &&
       message.payload !== null &&
       !Array.isArray(message.payload)
@@ -128,7 +160,8 @@ export class ResourceSearchProtocolService {
       'resource' in candidate ||
       'sent_at' in candidate ||
       'trace' in candidate ||
-      (typeof type === 'string' && type.startsWith('RESOURCE.SEARCH.'))
+      (typeof type === 'string' &&
+        (type.startsWith('DISCOVER.') || type.startsWith('QUERY.') || type.startsWith('RESOURCE.')))
     );
   }
 
@@ -141,8 +174,16 @@ export class ResourceSearchProtocolService {
     if (!this.isNonEmptyString(envelope.spec)) {
       errors.push('spec must be a non-empty string.');
     }
-    if (envelope.type !== 'RESOURCE.SEARCH.REQUEST') {
-      errors.push("type must be 'RESOURCE.SEARCH.REQUEST'.");
+
+    const type = (envelope as any).type as string;
+    if (
+      type !== 'DISCOVER.REQUEST' &&
+      type !== 'QUERY.REQUEST' &&
+      type !== 'RESOURCE.SEARCH.REQUEST'
+    ) {
+      errors.push(
+        "type must be 'DISCOVER.REQUEST', 'QUERY.REQUEST', or 'RESOURCE.SEARCH.REQUEST'."
+      );
     }
     if (!this.isNonEmptyString(envelope.tenant)) {
       errors.push('tenant must be a non-empty string.');
@@ -178,7 +219,7 @@ export class ResourceSearchProtocolService {
 
     if (errors.length > 0) {
       throw new BadRequestException({
-        message: 'Invalid RESOURCE.SEARCH.REQUEST envelope',
+        message: 'Invalid SGP envelope',
         errors,
       });
     }

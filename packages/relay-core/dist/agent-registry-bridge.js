@@ -6,9 +6,12 @@ exports.AgentRegistryBridge = void 0;
  * Registers agents with Master Clock and keeps them alive via heartbeat
  * Acts as a living agent on the relay — always present, always listening
  */
-const ws_1 = require("ws");
 const crypto_1 = require("crypto");
-const RELAY_URL = process.env.RELAY_URL || process.env.TNF_RELAY_URL || process.env.RELAY_WS_URL || 'ws://127.0.0.1:3000/ws';
+const ws_1 = require("ws");
+const RELAY_URL = process.env.RELAY_URL ||
+    process.env.TNF_RELAY_URL ||
+    process.env.RELAY_WS_URL ||
+    'ws://127.0.0.1:3000/ws';
 const AGENT_ID = process.env.AGENT_ID || 'LAUNCHPAD-AGENT';
 const HEARTBEAT_INTERVAL = parseInt(process.env.HEARTBEAT_INTERVAL || '3000');
 class AgentRegistryBridge {
@@ -58,7 +61,7 @@ class AgentRegistryBridge {
                     name: AGENT_ID,
                     platform: 'tnf-core',
                     capabilities: ['launchpad', 'orchestrator', 'heartbeat'],
-                }
+                },
             },
             source: this.sessionId,
             timestamp: Date.now(),

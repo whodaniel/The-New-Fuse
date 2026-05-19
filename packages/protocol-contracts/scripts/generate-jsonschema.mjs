@@ -45,6 +45,33 @@ import {
   YieldOptimizationReportSchema,
   YieldStakingInputSchema,
 } from '../src/crypto.ts';
+import {
+  AgentIdentitySchema,
+  AuctionPayloadSchema,
+  BidPayloadSchema,
+  EventPayloadSchema,
+  MessageContextSchema,
+  MessageTypeSchema,
+  ResponsePayloadSchema,
+  StateSyncPayloadSchema,
+  TaskPayloadSchema,
+  TNFEnvelopeSchema,
+} from '../src/envelope.ts';
+import {
+  FederationGateDecisionSchema,
+  HandoffAckSchema,
+  HandoffPacketSchema,
+  HandoffPayloadSchema,
+  HandoffPrioritySchema,
+  HandoffStatusSchema,
+  MasterCumulativeIdSchema,
+  TNFResourcePointerSchema,
+} from '../src/handoff.ts';
+import {
+  ResourceNegotiationPayloadSchema,
+  ResourceStrategySchema,
+  ResourceTierSchema,
+} from '../src/resource.ts';
 import { SgpEnvelopeSchema, SgpPayloadSchema } from '../src/sgp.ts';
 import { TwipEnvelopeSchema, TwipIdentitySchema } from '../src/twip.ts';
 import { ScrapeRequestSchema, ScrapeResponseSchema } from '../src/web-scraping.ts';
@@ -98,6 +125,30 @@ const CryptoOperationsRegistrySchema = z.object({
   GeneratedModel3D: GeneratedModel3DSchema,
   GPUResourceUsage: GPUResourceUsageSchema,
   RenderNetworkAgentMetadata: RenderNetworkAgentMetadataSchema,
+});
+
+const MessagingRegistrySchema = z.object({
+  AgentIdentity: AgentIdentitySchema,
+  MessageType: MessageTypeSchema,
+  MessageContext: MessageContextSchema,
+  TNFEnvelope: TNFEnvelopeSchema,
+  TaskPayload: TaskPayloadSchema,
+  EventPayload: EventPayloadSchema,
+  StateSyncPayload: StateSyncPayloadSchema,
+  ResponsePayload: ResponsePayloadSchema,
+  AuctionPayload: AuctionPayloadSchema,
+  BidPayload: BidPayloadSchema,
+  ResourceTier: ResourceTierSchema,
+  ResourceStrategy: ResourceStrategySchema,
+  ResourceNegotiationPayload: ResourceNegotiationPayloadSchema,
+  HandoffPriority: HandoffPrioritySchema,
+  HandoffStatus: HandoffStatusSchema,
+  FederationGateDecision: FederationGateDecisionSchema,
+  MasterCumulativeId: MasterCumulativeIdSchema,
+  TNFResourcePointer: TNFResourcePointerSchema,
+  HandoffPayload: HandoffPayloadSchema,
+  HandoffPacket: HandoffPacketSchema,
+  HandoffAck: HandoffAckSchema,
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -171,6 +222,13 @@ const entries = [
     title: 'Crypto Operations Bundle',
     id: 'https://tnf.local/spec/crypto/0.1/crypto.schema.json',
     outputPath: path.join('crypto', 'crypto.schema.json'),
+    forceObjectRoot: true,
+  },
+  {
+    schema: MessagingRegistrySchema,
+    title: 'TNF Messaging Bundle',
+    id: 'https://tnf.local/spec/messaging/0.1/envelope.schema.json',
+    outputPath: path.join('messaging', 'envelope.schema.json'),
     forceObjectRoot: true,
   },
 ];

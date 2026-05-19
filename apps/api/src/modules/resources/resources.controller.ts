@@ -515,7 +515,7 @@ export class ResourcesController {
     );
     const payload = filter.includeTraitMeta ? { items, traitScreen: meta } : items;
 
-    return this.resourceSearchProtocolService.encodeResponse(requestEnvelope, payload);
+    return this.resourceSearchProtocolService.encodeResponse(requestEnvelope, payload) as any;
   }
 
   @Post(':id/favorite')

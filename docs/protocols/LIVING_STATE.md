@@ -57,4 +57,10 @@ Analyst Traversal. **Project ID:** `INFRA-002` **Session Key:**
 ## 🕒 Last Update
 
 2026-05-09T17:35Z - Protocol Governance: canonical Turn Zero authority moved
-in-repo; TNF/OpenClaw boundary clarified.
+in-repo; TNF/OpenClaw boundary clarified. \n## 🛡️ Contract Migration Status
+(TSGo + LLVM Alignment)\n\n- [x] Phase 1: Bootstrap (Registry Scaffolding &
+Generation Pipeline)\n- [x] Phase 2: Consumer Migration\n - [x] Domain A: ADK
+Gateway\n - [x] Domain B: Web-Scraping (Crawl4AI)\n - [x] Domain D: Crypto
+Operations (7.0 Division)\n- [x] Phase 3: Relay & Governance Hardening
+
+- [ ] Phase 4: Forge Acceleration (Identifying hot-paths for LLVM)

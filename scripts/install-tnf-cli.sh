@@ -11,6 +11,11 @@ REPO_URL="${DEFAULT_REPO_URL}"
 REF="${DEFAULT_REF}"
 INSTALL_ROOT="${DEFAULT_INSTALL_ROOT}"
 BIN_DIR="${DEFAULT_BIN_DIR}"
+AUTO_ONBOARD=true
+
+if [[ "${TNF_INSTALL_AUTO_ONBOARD:-1}" == "0" ]]; then
+  AUTO_ONBOARD=false
+fi
 
 usage() {
   cat <<'USAGE'
@@ -25,6 +30,7 @@ Options:
   --ref <git-ref>        Git branch/tag/sha to install (default: main)
   --install-root <dir>   Clone/update root for remote install (default: ~/.tnf-cli)
   --bin-dir <dir>        Target bin directory for wrappers (default: ~/.local/bin)
+  --skip-onboard         Skip automatic onboarding after install.
   -h, --help             Show this help text.
 USAGE
 }
@@ -57,6 +63,10 @@ while [[ $# -gt 0 ]]; do
     --bin-dir)
       BIN_DIR="$2"
       shift 2
+      ;;
+    --skip-onboard)
+      AUTO_ONBOARD=false
+      shift
       ;;
     -h|--help)
       usage
@@ -146,3 +156,20 @@ fi
 
 echo "Verification:"
 "${BIN_DIR}/tnf" --version || true
+
+if [[ "${AUTO_ONBOARD}" == "true" ]]; then
+  echo
+  echo "Running TNF onboarding bootstrap..."
+  if pnpm --dir "${REPO_DIR}" run -s tnf:onboard; then
+    echo "Auto-onboard complete."
+  else
+    echo "WARN: auto-onboard failed; install is still complete." >&2
+    echo "Run manually from the TNF repo root:" >&2
+    echo "  pnpm run tnf:onboard" >&2
+  fi
+else
+  echo
+  echo "Skipping auto-onboard (TNF_INSTALL_AUTO_ONBOARD=0 or --skip-onboard)."
+  echo "To run manually later from the TNF repo root:"
+  echo "  pnpm run tnf:onboard"
+fi
