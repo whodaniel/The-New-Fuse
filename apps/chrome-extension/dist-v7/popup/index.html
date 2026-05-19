@@ -49,6 +49,10 @@
           <span class="tab-icon">🖥️</span>
           <span class="tab-label">Services</span>
         </button>
+        <button class="tab" data-tab="system">
+          <span class="tab-icon">📟</span>
+          <span class="tab-label">System</span>
+        </button>
         <button class="tab" data-tab="settings">
           <span class="tab-icon">⚙️</span>
           <span class="tab-label">Settings</span>
@@ -67,7 +71,7 @@
               </div>
               <div class="connection-info">
                 <h2 id="connection-status-text">Disconnected</h2>
-                <p id="connection-url">ws://localhost:3000/ws</p>
+                <p id="connection-url">Detecting...</p>
               </div>
             </div>
             <button class="btn-primary" id="connect-btn">
@@ -151,6 +155,18 @@
                 placeholder="Send to selected channel..."
               />
               <button class="btn-primary central-send-btn" id="central-send-message">Send</button>
+            </div>
+          </div>
+
+          <div class="channel-link-card">
+            <div class="channel-link-header">
+              <h3 class="section-title">Channel Links & Prompts</h3>
+              <span class="channel-link-subtitle">Copy-ready join instructions per channel</span>
+            </div>
+            <div class="channel-link-list" id="channel-link-list">
+              <div class="empty-state small">
+                <p>No channels available yet</p>
+              </div>
             </div>
           </div>
         </section>
@@ -403,6 +419,38 @@
           </div>
         </section>
 
+        <!-- System Tab (Port Monitor) -->
+        <section class="tab-content" id="tab-system">
+          <div class="services-header">
+            <h3 class="section-title">Localhost Port Monitor</h3>
+            <button class="btn-icon-only" id="refresh-ports" title="Refresh Ports">🔄</button>
+          </div>
+          
+          <div class="system-stats-card">
+            <div id="native-host-status-badge" class="status-badge warning">
+              Native Host Required
+            </div>
+            <p class="section-subtitle">Real-time system port allocation</p>
+          </div>
+
+          <div class="port-list-container">
+            <div id="port-list" class="port-grid">
+              <!-- Ports dynamically injected -->
+              <div class="empty-state small">
+                <p>Click refresh to scan ports</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="system-tools-section" style="margin-top: 16px;">
+            <h4 class="subsection-title">System Tools</h4>
+            <div class="tool-buttons">
+              <button class="btn-secondary" id="kill-inactive-ports">Kill Inactive</button>
+              <button class="btn-secondary" id="clean-zombie-processes">Clean Zsh</button>
+            </div>
+          </div>
+        </section>
+
         <!-- Settings Tab -->
         <section class="tab-content" id="tab-settings">
           <div class="settings-section">
@@ -468,8 +516,8 @@
               <input
                 type="text"
                 id="relay-url"
-                value="ws://localhost:3000/ws"
-                placeholder="ws://..."
+                value=""
+                placeholder="ws://127.0.0.1:3000/ws"
               />
             </div>
             <div class="setting-item">

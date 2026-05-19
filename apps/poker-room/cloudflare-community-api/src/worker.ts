@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 export interface Env {
   COMMUNITY_DB: D1Database;
   COMMUNITY_R2: R2Bucket;
@@ -1128,7 +1129,7 @@ const handler = async (request: Request, env: Env) => {
     if (!exists) return json({ ok: false, error: 'app not found' }, 404, corsOrigin);
 
     const userId = normalizeUserId(request, body.userId);
-    const commentId = `cmt-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const commentId = `cmt-${Date.now()}-${randomInt(0, 2821109907455).toString(36)}`;
     const now = new Date().toISOString();
 
     const membership = await findMember(env, userId);

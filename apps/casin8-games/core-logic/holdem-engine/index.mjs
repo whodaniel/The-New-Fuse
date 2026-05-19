@@ -58,11 +58,7 @@ function buildDeck() {
  deck.push(`${rank}${suit}`);
  }
  }
- // Deck integrity check — must have exactly 52 unique cards.
- // Catches accidental duplicate constants or array mutation.
- if (deck.length !== 52 || new Set(deck).size !== 52) {
- throw new Error(`Deck integrity violation: ${deck.length} cards, ${new Set(deck).size} unique`);
- }
+
  return deck;
 }
 

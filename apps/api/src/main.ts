@@ -2,9 +2,11 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
+import * as express from 'express';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
+import 'reflect-metadata';
 import { AppModule } from './app.module';
 import { validateGcpEnvironment } from './config/gcp.config';
 dotenv.config();
@@ -50,6 +52,23 @@ async function bootstrap(): Promise<void> {
       ],
     },
   });
+
+  // Back-compat middleware for /api/auth/* -> /api/v1/auth/* (if versioning is implicitly active)
+  app.use((req: any, _res: any, next: any) => {
+    const originalUrl = req.url;
+    if (originalUrl.startsWith('/api/auth/')) {
+      req.url = originalUrl.replace('/api/auth', '/api/v1/auth');
+      logger.log(`Rewrote: ${originalUrl} -> ${req.url}`);
+    } else if (originalUrl === '/api/auth') {
+      req.url = '/api/v1/auth';
+      logger.log(`Rewrote: ${originalUrl} -> ${req.url}`);
+    }
+    next();
+  });
+
+  // Explicitly add body parsers (essential for POST data processing)
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
   // Global validation pipe with enhanced options
   app.useGlobalPipes(

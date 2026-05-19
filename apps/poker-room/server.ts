@@ -679,8 +679,8 @@ const handleSettlement = () => {
       }
     }
 
-    const settlementKey = `settle-${hand.handId}-${Date.now()}`;
-    holdemEngine.settleHand(pokerEngine, { rankingBySeat, settlementKey });
+    const settlementKey = `settle-${hand.handId}`;
+    holdemEngine.settleHand(pokerEngine, { rankingBySeat, idempotencyKey: hand.handId });
 
     currentWinners = [];
     for (const [seatRaw, payout] of Object.entries(hand.payoutBySeat)) {
@@ -825,16 +825,26 @@ io.on('connection', (socket) => {
         if (info.identity === identity) {
           // This identity already has a seat. Reclaim it instead of creating a new one.
           const oldTimer = disconnectTimers.get(info.playerId);
-          if (oldTimer) { clearTimeout(oldTimer); disconnectTimers.delete(info.playerId); }
+          if (oldTimer) {
+            clearTimeout(oldTimer);
+            disconnectTimers.delete(info.playerId);
+          }
           socketToPlayer.delete(existingSocketId);
-          socketToPlayer.set(socket.id, { playerId: info.playerId, seat: info.seat, identity: identity || '' });
+          socketToPlayer.set(socket.id, {
+            playerId: info.playerId,
+            seat: info.seat,
+            identity: identity || '',
+          });
           playerToSocket.set(info.playerId, socket.id);
           const displayName = socketDisplayNames.get(existingSocketId) || info.playerId;
           socketDisplayNames.set(socket.id, displayName);
           socketDisplayNames.delete(existingSocketId);
-          try { holdemEngine.setConnection(pokerEngine, { playerId: info.playerId, connected: true }); } catch {}
+          try {
+            holdemEngine.setConnection(pokerEngine, { playerId: info.playerId, connected: true });
+          } catch {}
           if (actionTimeoutTimer && pokerEngine.hand?.actingSeat === info.seat) {
-            clearTimeout(actionTimeoutTimer); actionTimeoutTimer = null;
+            clearTimeout(actionTimeoutTimer);
+            actionTimeoutTimer = null;
           }
           addLog(`${displayName} reclaimed seat ${info.seat}`);
           broadcastState();
