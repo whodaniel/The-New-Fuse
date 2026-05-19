@@ -2,6 +2,7 @@ import os
 import time
 import ctypes
 import functools
+from typing import Any, List, Optional, Dict
 from tnf_forge import ForgeCompiler
 
 class PythonAccelerator:
@@ -9,72 +10,83 @@ class PythonAccelerator:
     
     def __init__(self, forge: ForgeCompiler):
         self.forge = forge
-        self._registry = {}
+        self._registry: Dict[str, Dict[str, Any]] = {}
 
-    def accelerate(self, c_code: str, func_name: str):
+    def accelerate(self, 
+                   source_code: str, 
+                   func_name: str, 
+                   argtypes: List[Any] = None, 
+                   restype: Any = None,
+                   free_func_name: Optional[str] = None):
         """
-        Takes C source, forges it into a shared library, 
+        Takes source code, forges it into a shared library, 
         and registers it for hot-swapping.
         """
-        lib_path = self.forge.compile_c(c_code, func_name, shared=True)
+        # Auto-detect language
+        if "fn " in source_code or "pub " in source_code:
+            lib_path = self.forge.compile_rust(source_code, func_name, shared=True)
+        elif "class " in source_code or "template<" in source_code:
+            lib_path = self.forge.compile_cpp(source_code, func_name, shared=True)
+        else:
+            lib_path = self.forge.compile_c(source_code, func_name, shared=True)
+            
         # Load the forged library
         native_lib = ctypes.CDLL(lib_path)
-        self._registry[func_name] = getattr(native_lib, func_name)
-        print(f"Hot-swap ready for: {func_name}")
+        func = getattr(native_lib, func_name)
+        
+        if argtypes:
+            func.argtypes = argtypes
+        if restype:
+            func.restype = restype
+            
+        free_func = None
+        if free_func_name:
+            free_func = getattr(native_lib, free_func_name)
+            free_func.argtypes = [ctypes.c_void_p]
+            
+        self._registry[func_name] = {
+            "func": func,
+            "lib": native_lib,
+            "path": lib_path,
+            "restype": restype,
+            "free_func": free_func
+        }
+        
+        print(f"[🔥] Forge Hot-swap active: {func_name} ({lib_path})")
         return lib_path
 
     def wrap(self, func):
         """Decorator to automatically use forged version if available."""
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            if func.__name__ in self._registry:
-                # Call the native version
-                # Note: This basic scaffolding assumes integer arguments
-                # Future versions will use type-mapping for complex objects
-                return self._registry[func.__name__](*args)
+            entry = self._registry.get(func.__name__)
+            if entry:
+                native_func = entry["func"]
+                restype = entry["restype"]
+                free_func = entry["free_func"]
+                
+                # Auto-encode strings to bytes
+                processed_args = []
+                for arg in args:
+                    if isinstance(arg, str):
+                        processed_args.append(arg.encode('utf-8'))
+                    else:
+                        processed_args.append(arg)
+                
+                # Call native
+                res = native_func(*processed_args)
+                
+                # Auto-decode result if it's a pointer to a string (c_void_p or c_char_p)
+                if restype in (ctypes.c_void_p, ctypes.c_char_p) and res:
+                    raw_bytes = ctypes.string_at(res)
+                    py_res = raw_bytes.decode('utf-8')
+                    
+                    # Free the C-allocated memory if free_func was provided
+                    if free_func:
+                        free_func(res)
+                        
+                    return py_res
+                
+                return res
             return func(*args, **kwargs)
         return wrapper
-
-# --- DEMONSTRATION & SCAFFOLDING TEST ---
-
-if __name__ == "__main__":
-    forge_service = ForgeCompiler()
-    accel = PythonAccelerator(forge_service)
-
-    # 1. THE SLOW PYTHON VERSION
-    @accel.wrap
-    def slow_factorial(n):
-        res = 1
-        for i in range(1, n + 1):
-            res *= i
-        return res
-
-    # 2. THE AGENT-GENERATED C REPLACEMENT
-    c_logic = """
-    long slow_factorial(int n) {
-        long res = 1;
-        for (int i = 1; i <= n; i++) {
-            res *= i;
-        }
-        return res;
-    }
-    """
-
-    print("Testing original Python speed...")
-    start = time.perf_counter()
-    for _ in range(1000000): slow_factorial(20)
-    print(f"Python took: {time.perf_counter() - start:.4f}s")
-
-    try:
-        # 3. FORGE AND SWAP
-        accel.accelerate(c_logic, "slow_factorial")
-
-        print("Testing forged Native speed...")
-        start = time.perf_counter()
-        for _ in range(1000000): slow_factorial(20)
-        print(f"Forged took: {time.perf_counter() - start:.4f}s")
-        
-        print("\nSUCCESS: The Python function was hot-swapped with native LLVM code!")
-        
-    except Exception as e:
-        print(f"Acceleration test skipped (LLVM not ready yet): {e}")
