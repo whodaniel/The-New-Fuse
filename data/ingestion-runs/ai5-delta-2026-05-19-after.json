@@ -1,0 +1,40 @@
+{
+  "asOfUtc": "2026-05-19T05:25:37.325244Z",
+  "playlistId": "PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+  "liveSnapshotPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ai-5-playlist.live-2026-05-19.json",
+  "manifestPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-manifest.json",
+  "live_count": 35,
+  "ingested_count": 35,
+  "missing_in_manifest": [],
+  "extra_in_manifest": [],
+  "verification_missing_before": [
+    {
+      "videoId": "725QE_LNXT4",
+      "present": true,
+      "ok": true,
+      "artifact_id": "eia-873d57f0974106b9",
+      "stderr": ""
+    },
+    {
+      "videoId": "9rXH2ssCe9E",
+      "present": true,
+      "ok": true,
+      "artifact_id": "eia-adc99f01b8e8fe58",
+      "stderr": ""
+    },
+    {
+      "videoId": "PIdETjcXNIk",
+      "present": true,
+      "ok": true,
+      "artifact_id": "eia-77f34a86e160d2e2",
+      "stderr": ""
+    },
+    {
+      "videoId": "VTVRTN8nkxM",
+      "present": true,
+      "ok": true,
+      "artifact_id": "eia-3741b2651ad71de0",
+      "stderr": ""
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-17T14:21:54.405525Z",
+  "generatedAt": "2026-05-19T05:25:12.463331Z",
   "seedSource": "ai5-and-new-may-2026-intake",
   "queue": [
     {
@@ -318,6 +318,20 @@
       "priority": "medium"
     },
     {
+      "source_id": "apple-notes-new-may-2026-6247",
+      "source_type": "note",
+      "discovery_layer": "personal_ledger",
+      "authority_scout_query": "Strategic Refactoring & Crypto Migration Complete",
+      "priority": "medium"
+    },
+    {
+      "source_id": "apple-notes-new-may-2026-6255",
+      "source_type": "note",
+      "discovery_layer": "personal_ledger",
+      "authority_scout_query": "New App Idea-  A platform on which the finance companies that are…",
+      "priority": "medium"
+    },
+    {
       "source_id": "yt-ai5--Bp2Sz5xir4",
       "source_type": "video",
       "discovery_layer": "personal_sensor",
@@ -346,10 +360,24 @@
       "priority": "medium"
     },
     {
+      "source_id": "yt-ai5-725QE_LNXT4",
+      "source_type": "video",
+      "discovery_layer": "personal_sensor",
+      "authority_scout_query": "The Prove-It Economy is Here | And Most Marketers Aren't Ready",
+      "priority": "medium"
+    },
+    {
       "source_id": "yt-ai5-7xuWZ-3lyQE",
       "source_type": "video",
       "discovery_layer": "personal_sensor",
       "authority_scout_query": "Hermes Agent just got 10X Better (Agentic OS)",
+      "priority": "medium"
+    },
+    {
+      "source_id": "yt-ai5-9rXH2ssCe9E",
+      "source_type": "video",
+      "discovery_layer": "personal_sensor",
+      "authority_scout_query": "Hermes Agent has a NEW SuperPower (NotebookLM)",
       "priority": "medium"
     },
     {
@@ -364,6 +392,13 @@
       "source_type": "video",
       "discovery_layer": "personal_sensor",
       "authority_scout_query": "Real gundams, top 3D generator, open-source world models, ChatGPT updates, new TTS: AI NEWS",
+      "priority": "medium"
+    },
+    {
+      "source_id": "yt-ai5-PIdETjcXNIk",
+      "source_type": "video",
+      "discovery_layer": "personal_sensor",
+      "authority_scout_query": "Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
       "priority": "medium"
     },
     {
@@ -385,6 +420,13 @@
       "source_type": "video",
       "discovery_layer": "personal_sensor",
       "authority_scout_query": "Building Agentic RAG From Scratch in Pure Python",
+      "priority": "medium"
+    },
+    {
+      "source_id": "yt-ai5-VTVRTN8nkxM",
+      "source_type": "video",
+      "discovery_layer": "personal_sensor",
+      "authority_scout_query": "New Google Gemini Update Is INSANE",
       "priority": "medium"
     },
     {
