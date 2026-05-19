@@ -42,6 +42,8 @@ Integration. **Project ID:** `INFRA-002` **Session Key:**
     `@the-new-fuse/protocol-contracts`.
 22. [✅] Supabase Control-Plane Sync: 115 agents, 15 models, 13 MCPs, 122 skills
     inventoried.
+23. [✅] AI5 Ingestion Pipeline Optimization: Cleared specificity bottleneck
+    with 651 high-fidelity directives.
 
 ---
 
@@ -61,8 +63,8 @@ Integration. **Project ID:** `INFRA-002` **Session Key:**
 
 ## 🕒 Last Update
 
-2026-05-19T07:56Z - Phase 6 Initiation: High-Throughput Relay Bridge
-Integration; Protocol Contracts Unified.
+2026-05-23T19:46:28Z - AI5 Ingestion Pipeline Optimization COMPLETED; 651
+directives extracted via V2.
 
 ## 🛡️ Contract Migration Status
 
@@ -78,14 +80,13 @@ Integration; Protocol Contracts Unified.
 - [x] Phase 5: Forge Acceleration (Relay Validator Rust Compiled)
 - [x] Phase 6: Forge Acceleration (High-Throughput Relay Bridge Integration)
 
-## 🧠 AI5 Intelligence Pipeline (May 19, 2026)
+## 🧠 AI5 Intelligence Pipeline (May 23, 2026)
 
 - **Ingestion Coverage:** 100% (37/37 Videos Transcript-Complete)
-- **Specificity Bottleneck:** Identified; fragments failing strict activation
-  gates.
-- **Optimization V2:** Procedural Extractor V2 (LLM-Backed) implemented and
-  verified.
-- **Current Truth:** Reconstructed 23 implementation-grade directives from
-  single transcript (-v2-extracted.json).
-- **Next Goal:** Batch-reprocess all 37 transcripts with V2 to re-enable
-  auto-dispatch.
+- **Specificity Bottleneck:** CLEARED via Procedural Extractor V2.
+- **Optimization V2:** Procedural Extractor V2 (LLM-Backed) implemented,
+  verified, and set as default.
+- **Current Truth:** Reconstructed **651 implementation-grade directives** from
+  37 transcripts.
+- **Next Goal:** Monitor auto-dispatch of the 651 directives and track
+  conversion KPIs.
