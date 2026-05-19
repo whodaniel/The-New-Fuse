@@ -1,0 +1,213 @@
+{
+  "source_id": "QK0B1mbJ-VU",
+  "generated_at": "2026-05-19T18:55:53.982120+00:00",
+  "total_extracted": 13,
+  "dispatch_ready_count": 13,
+  "directives": [
+    {
+      "title": "Convert an Open-Source Repository into an Agent-Native CLI using CLI Anything",
+      "steps": [
+        "Clone the target open-source repository (e.g., 'Excalidraw') to the local machine.",
+        "Execute the command `/CLI anything` in the terminal.",
+        "When prompted by the `/CLI anything` tool, specify the target repository for CLI creation, for example, by stating \"I'm trying to build it for this repo.\""
+      ],
+      "target": "CLI anything tool",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This sequence provides clear, actionable steps for using the 'CLI anything' tool to convert a given open-source repository into an agent-native CLI. It includes cloning the repository and interacting with the tool to initiate the conversion process, with a specific command and example prompt response.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Growth Loop Recommendations for AI Cooking App",
+      "steps": [
+        "Navigate to the project directory of the 'AI native cooking and recipe companion app'.",
+        "Execute the `/growth loops` command within the project environment.",
+        "Review the generated recommendations for potential growth loops to implement in the application."
+      ],
+      "target": "ai-cooking-recipe-companion-app (project environment/CLI tool)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly details invoking the `/growth loops` command within the context of a specific project and describes the expected outcome (recommendations), providing clear, actionable steps for an autonomous agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Manis-style Three-File Memory Pattern",
+      "steps": [
+        "Establish a dedicated file for tracking project phases and overall progress (e.g., `phases_progress.md`).",
+        "Establish a dedicated file for storing research findings and discovered information (e.g., `research_findings.md`).",
+        "Establish a dedicated file for logging each operational session and the outcomes of executed tests (e.g., `session_logs.md`)."
+      ],
+      "target": "Persistent memory management system / Planning system core logic",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "This directive outlines the creation and purpose of the three distinct files that form the core of the persistent memory pattern, providing clear categories for information storage that an agent can act upon.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Two-Action Rule for Context Preservation and Error Logging",
+      "steps": [
+        "Monitor all significant system operations (e.g., view interactions, browser operations) within the Manis-style planning system.",
+        "After every two detected operations, automatically persist the most recently acquired context or finding to the appropriate memory file (e.g., `research_findings.md`).",
+        "Immediately log all errors encountered during any operation to the dedicated session log file (e.g., `session_logs.md`)."
+      ],
+      "target": "System operational loop / Context saving module / Error handling module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive specifies a concrete trigger ('every two operations') and two distinct actions ('save context', 'log errors') for automated context management and failure tracking, which are critical for the system's described functionality.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Document Research Findings",
+      "steps": [
+        "Record every piece of information discovered during the research process.",
+        "Include details about core architectures (e.g., temporal knowledge graph, built-in pattern recognition).",
+        "Provide specific examples and findings from deep dives (e.g., `deli.ai`'s system being modeled off of Ray Kurzweil's 'How to Create a Mind')."
+      ],
+      "target": "Findings documentation (e.g., `findings.md` or similar research output file)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The system explicitly states 'it's documenting every single thing that it found as it was going,' providing clear instructions on what to record and examples of content.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Update Research Progress Log",
+      "steps": [
+        "Mark each finding as it is discovered and documented.",
+        "Track the overall progress and status of research phases within a dedicated log file."
+      ],
+      "target": "Progress log file (e.g., `progress_log.txt` or `research_status.json`)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The chunk mentions 'it's marking what it has found inside of this progress log,' indicating a clear action to update a tracking file with completed items.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Append New Phases to Task Plan File",
+      "steps": [
+        "Read and understand existing research findings and the current task plan.",
+        "Identify new or deeper dive research areas requested by the user.",
+        "Append these newly identified research phases as additional entries to the existing task plan file."
+      ],
+      "target": "Task plan file (e.g., `task_plan.txt` or `plan.json`)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The statement 'this task plan file has now been appended with these extra phases where I asked it, hey, I want to know like more deep dive into like how we would actually design this thing' provides a direct and explicit directive for a file modification action.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable Claude Experimental Agent Teams",
+      "steps": [
+        "Access the global Claude settings configuration.",
+        "Locate the setting named 'cla experimental agent teams'.",
+        "Set the value of 'cla experimental agent teams' to `1`."
+      ],
+      "target": "Claude Global Settings",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This directive explicitly names a configuration setting, its target value, and where to find it, making it directly actionable and verifiable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install Oh My Cloud Code Plugin",
+      "steps": [
+        "Obtain the specific plugin installation command for 'Oh My Cloud Code'.",
+        "Navigate to the root directory of the target project in the development environment (e.g., terminal).",
+        "Execute the obtained 'Oh My Cloud Code' plugin installation command within the project context."
+      ],
+      "target": "Project Development Environment (Terminal/IDE)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.9
+      },
+      "rationale": "While the exact command is not provided, the sequence of actions (obtain command, navigate, execute) is clear. An autonomous agent would need to infer or look up the specific installation command.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Autopilot for Shopping List Feature Implementation",
+      "steps": [
+        "Invoke the `oh my claudom` tool's 'autopilot' capability.",
+        "Provide the following detailed feature description to the autopilot for implementation: 'Develop a functionality for generating shopping lists from recipes within our AI-enabled cooking companion app. This feature should allow users to request a shopping list for a specific recipe via natural language chat (e.g., \"Hey, I want to make this bourbon soup\"). The system must then generate the list and, as an initial version, present a basic check-in/checkbox type of interface (potentially using a generative UI) for users to indicate items they already possess. (Note: Future iterations may include a full pantry integration, but for now, focus on the basic check-in system).'"
+      ],
+      "target": "oh my claudom CLI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive specifies the exact tool (`oh my claudom`), the mode of operation (`autopilot`), and provides a comprehensive, structured description of the feature to be built, suitable as input for an autonomous agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Fix global viewport scroll issue",
+      "steps": [
+        "Identify the root cause of the 'weird giant scroll thing' affecting the entire viewport.",
+        "Implement a fix to prevent unintended scrolling, likely by adjusting CSS styles related to overflow, height, or element sizing of the relevant UI components."
+      ],
+      "target": "UI/CSS components, potentially global stylesheets or the main layout component",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Describes a clear and observable UI bug (unintended viewport scroll) with specific actions to diagnose and correct CSS/layout issues, which an autonomous agent can perform.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prevent regeneration of provided recipes",
+      "steps": [
+        "Modify the agent's understanding or context management logic to detect if a recipe has already been provided by the user.",
+        "If a recipe is present in the context, instruct the agent to avoid generating a new recipe from scratch when asked for derivative tasks (e.g., shopping list).",
+        "Ensure the agent can still perform actions based on the *provided* recipe (e.g., extracting ingredients for a shopping list)."
+      ],
+      "target": "Recipe generation agent logic, LLM prompt engineering, context management module",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "Addresses a clear functional error where the system performs a redundant action. The steps are logical for an agent to tackle through prompt refinement, context handling, or agent decision-making adjustments.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Fix 'Generate Shopping List' button crash",
+      "steps": [
+        "Debug the event handler or backend API call associated with the 'generate a shopping list' button.",
+        "Identify the specific error or exception causing the crash when the button is clicked.",
+        "Implement a fix to prevent the crash, ensuring the button functions correctly and triggers the shopping list generation process without error."
+      ],
+      "target": "Frontend button component's event handler, associated backend API endpoint/function",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Describes a critical functional bug with a clear trigger (button click) and outcome (crash). The steps are standard for debugging and resolving such software issues, making it highly implementable by an agent.",
+      "dispatch_ready": true
+    }
+  ]
+}

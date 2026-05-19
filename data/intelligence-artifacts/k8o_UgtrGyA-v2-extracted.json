@@ -1,0 +1,312 @@
+{
+  "source_id": "k8o_UgtrGyA",
+  "generated_at": "2026-05-19T18:52:25.227269+00:00",
+  "total_extracted": 17,
+  "dispatch_ready_count": 17,
+  "directives": [
+    {
+      "title": "Resolve Agent Upstream Code Changes",
+      "steps": [
+        "Access the agent's own source code repository.",
+        "Pull the latest changes from the configured upstream repository.",
+        "Resolve any merge conflicts that arise during the pull operation."
+      ],
+      "target": "Agent's source code repository/version control system",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states 'The agent has full control of its own source code. Then the agent can just resolve upstream changes,' which clearly outlines a version control operation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Fix Agent's Own Harness",
+      "steps": [
+        "Diagnose operational issues within the agent's harness component.",
+        "Identify the root cause of the harness malfunction.",
+        "Implement necessary code modifications or patches to correct the harness issues.",
+        "Perform internal tests to ensure the harness is fully functional after the fix."
+      ],
+      "target": "Agent's harness module/codebase",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The statement 'the agent which can directly fix its own harness' provides a clear, albeit high-level, directive for self-correction of a core component.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Burrito Ordering via Telegram",
+      "steps": [
+        "Receive a natural language command via Telegram to order a specific quantity of burritos (e.g., 'Order me five burritos').",
+        "Initiate a web browsing session to a known food ordering platform.",
+        "Locate and select the specified burritos and add them to the shopping cart.",
+        "Proceed to the checkout page.",
+        "Capture a screenshot of the order confirmation details before final purchase.",
+        "Send the captured screenshot to the user via Telegram for approval.",
+        "Upon receiving a 'buy' confirmation from the user via Telegram, finalize the purchase using stored payment information.",
+        "Confirm the successful order to the user."
+      ],
+      "target": "Telegram API, Web browser automation, Food ordering service",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The example 'I just go to Telegram and say, 'Okay, order me five burritos.' Send me a screenshot. Okay, I liked it. I say buy and it buys me for me.' details a precise, sequential set of actions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Parking Ticket Payment",
+      "steps": [
+        "Receive an image of a parking ticket from the user.",
+        "Process the image to extract key information such as ticket number, fine amount, due date, and relevant payment portal URL.",
+        "Initiate a web browsing session and navigate to the identified payment portal.",
+        "Input the extracted ticket details into the appropriate fields on the payment form.",
+        "Proceed with the payment using pre-configured or user-provided payment credentials.",
+        "Verify the payment success and inform the user of the resolved ticket."
+      ],
+      "target": "Image processing module, Web browser automation, Payment gateway",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The statement 'This one person just had a parking ticket and just sends a picture and then says, 'Okay, handle this for me.'' implies a full automation workflow from image input to resolution.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Driver's License Application Sign-up",
+      "steps": [
+        "Initiate a web browsing session and navigate to the relevant government or Department of Motor Vehicles (DMV) website.",
+        "Locate the online application form for a driver's license.",
+        "Fill in all required fields of the application form using user-provided or securely stored personal information.",
+        "Upload any necessary supporting documents (e.g., proof of identity, residency) as required by the form.",
+        "Submit the completed application form.",
+        "Provide confirmation of the application submission status to the user."
+      ],
+      "target": "Web browser automation (government portal)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The directive 'Or sign me up for my driver's license' suggests an automated process for interacting with an online application form.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Product Research and Comparison",
+      "steps": [
+        "Receive a product research query (e.g., 'What are the best speakers to buy?').",
+        "Initiate a web browsing session and navigate to relevant forums or communities like Reddit.",
+        "Search for and read multiple discussion threads related to the product query to gather opinions and recommendations.",
+        "Extract key product features, common issues, and user-reported pros and cons.",
+        "Navigate to e-commerce platforms such as Amazon.",
+        "Search for and locate the identified products based on the research.",
+        "Compare product specifications, pricing, customer reviews, and ratings across multiple listings.",
+        "Capture screenshots of important comparison data, product pages, or review summaries.",
+        "Compile the gathered information into a concise summary, including recommended options and comparison points.",
+        "Send the summary and captured screenshots to the user for review."
+      ],
+      "target": "Web browser automation (Reddit, Amazon), Natural Language Processing (NLP)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The description 'cloud code with browser harness goes through Reddit, reads different threads, okay, what's the best speaker, compares on Amazon, sends some screenshots' provides a highly detailed, multi-step process for product research.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Custom AI Shopping Skill",
+      "steps": [
+        "Initiate a web browsing session.",
+        "Navigate to the first link provided below the current video content.",
+        "Click on the identified link to access the custom AI shopping skill's source or configuration.",
+        "Copy the entire content (code or configuration) of the custom skill.",
+        "Paste the copied skill definition into the AI agent's designated configuration file or codebase.",
+        "Trigger a restart or refresh operation for the AI agent to load and activate the newly integrated skill."
+      ],
+      "target": "Web browser, AI agent's configuration files/codebase",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The instructions 'go below the video and click the first link. ... copy paste your AI agent' are explicit, step-by-step directives for integrating a new skill.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install Superbase Agent Skill for Database Expertise",
+      "steps": [
+        "Execute the designated single installation command for the Superbase Agent Skill."
+      ],
+      "target": "AI Agent's execution environment or development setup (e.g., Codeex, Cloud Code, Cursor, or system shell)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly states 'You install it with one command' and describes the direct, measurable outcomes: the agent gains 'perfect knowledge of Superbase documentation' and can perform 'any SQL change ... on the first try without any mistakes.' This is a clear, single-step procedural directive.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Continuously Monitor Services and Propose Actions",
+      "steps": [
+        "Establish a monitoring loop to execute every 30 minutes.",
+        "Within the monitoring loop, scan all connected user services (e.g., Gmail, Slack, Notion, Linear, GitHub, WhatsApp) for new data, events, or changes relevant to the user's high-level goals (e.g., 'make my startup successful').",
+        "Analyze the gathered data to identify potential opportunities for action or necessary responses.",
+        "Generate a concise suggestion for a specific action, including a drafted message or a proposed sequence of steps, if applicable, ensuring it can be understood within 3 seconds.",
+        "Present the generated suggestion to the user via the primary messaging interface (e.g., Telegram) for approval, modification, or rejection (e.g., 'yes/no/more context')."
+      ],
+      "target": "Agent Core Logic/Scheduler",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "This directive outlines the agent's core operational loop, frequency, and general interaction pattern, providing clear steps for how it should monitor and propose actions to the user.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Draft WhatsApp Responses for Growth Initiatives",
+      "steps": [
+        "Monitor the user's WhatsApp channels, specifically identifying those designated for 'growth loops'.",
+        "Upon detecting incoming messages or relevant contextual information within these growth-related WhatsApp channels, assess the need for a response.",
+        "Formulate a suggestion to send a message to a specific client, including a draft message body (e.g., 'pitch browser harness').",
+        "Present the suggestion and the drafted message to the user via the primary messaging interface for approval."
+      ],
+      "target": "WhatsApp Integration Module",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "This directive provides a concrete example of the agent's proactive behavior on a specific platform (WhatsApp) for a defined goal (growth), detailing the monitoring, drafting, and user interaction steps.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Proactively Address Internal Complaints from Slack",
+      "steps": [
+        "Continuously monitor the user's Slack channels for complaints or issues raised by co-founders or team members (e.g., product naming confusion).",
+        "Upon detecting a relevant complaint (e.g., 'Codeex uses browser use as a name inside Codex. It's confusing.'), identify the origin of the complaint and the relevant external team or individual to address it (e.g., 'Codex team').",
+        "Formulate a suggestion to send a direct message (DM) to the identified external team on an appropriate external communication platform (e.g., X, email).",
+        "Include a drafted message for the DM that clearly states the complaint and suggests a resolution or clarification.",
+        "Present the suggestion and the drafted DM to the user via the primary messaging interface for approval."
+      ],
+      "target": "Slack Integration Module / Communication Module",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "This directive is directly derived from a specific scenario in the transcript, detailing how the agent should monitor Slack for specific issues and propose external communication to resolve them.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Facilitate Codex Name Change Request",
+      "steps": [
+        "Monitor Slack for co-founder complaints explicitly mentioning 'Codeex uses browser use as a name inside Codex' being confusing.",
+        "Upon detecting such a complaint, identify a relevant contact person within the Codex team (e.g., the 'pyite person' who worked on pyite).",
+        "Compose a message (e.g., email or X DM) to the identified Codex team contact, clearly stating the confusion caused by 'Codeex uses browser use as a name inside Codex' and requesting a name change.",
+        "Send the composed message to the Codex team contact."
+      ],
+      "target": "Communication_Module.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This directive describes a clear, sequential set of actions that the agent performed in the past, in response to a user's explicit 'Yes, let's do it,' to resolve a specific naming issue. It involves clear inputs (Slack message), process (contact identification, message composition), and output (sending the message).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Persuasion Strategy for Agent-Generated Ideas",
+      "steps": [
+        "When proposing an idea to the user, calculate and explicitly communicate the anticipated impact of the idea on the user's overarching goal (e.g., 'make my startup successful').",
+        "Structure the idea presentation to actively persuade the user of the idea's importance, aiming to secure user acceptance ('click accept').",
+        "Present the idea and its rationale in a manner that is 'super easy' for the user to understand.",
+        "Engage in a 'negotiation' style of interaction with the user regarding the proposed idea to encourage acceptance."
+      ],
+      "target": "Agent_Ideation_Module.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides concrete instructions on how the agent should modify its communication strategy when presenting its own ideas to the user. It specifies desired content (impact, importance, ease of understanding) and the overall rhetorical approach (persuade, negotiate) for a clear implementation goal.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set GitHub Repository Visibility to Public",
+      "steps": [
+        "Navigate to the target GitHub repository's settings page.",
+        "Locate the 'Visibility' or 'Change visibility' section within the settings.",
+        "Select the 'Public' option to make the repository accessible to everyone.",
+        "Confirm the change, if prompted, to apply the new visibility setting."
+      ],
+      "target": "GitHub repository settings",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The speaker explicitly states 'we just clicked on on GitHub on open', indicating a direct and reconstructible action to change a repository's visibility setting to public on GitHub. This is a clear, step-by-step GUI interaction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Persist User Goals and Preferences",
+      "steps": [
+        "Upon user input, parse and store the declared high-level goal (e.g., 'make my startup successful') as a primary objective.",
+        "During interactive sessions (e.g., brainstorming), capture explicit negative feedback (e.g., 'no, I don't want this') as user preferences.",
+        "Persist these preferences in a `SkillDatabase` or `UserPreferenceStore` for future reference.",
+        "Associate specific preferences with relevant contexts or topics (e.g., 'user prioritizes distribution over GitHub PRs' rather than 'GitHub PRs')."
+      ],
+      "target": "AgentCore/SkillDatabase.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Directly implements the system's capability to 'store it all in a skill database so it remembers your preferences and remembers oh you don't care about your GitHub PRs but you care more about distribution'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Agent-Initiated Content Creation and Publishing Workflow with User Approval",
+      "steps": [
+        "Based on user goals and preferences, generate a content suggestion (e.g., 'create a video').",
+        "Present the content suggestion to the user for explicit approval.",
+        "If approved, initiate the content generation process (e.g., synthesize video assets).",
+        "After content generation, prompt the user for authorization to publish the content to a specified platform (e.g., 'should I post this video on X for you?').",
+        "Upon receiving explicit 'yes' confirmation, use the appropriate platform API (e.g., X API) to publish the generated content."
+      ],
+      "target": "AgentModules/ContentGenerator.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Directly implements the flow 'let me suggest let me create your video and then ask you should I post this video on X for you and I just click yes and then it does it'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Communication Platforms for Enhanced Context Aggregation",
+      "steps": [
+        "Develop or integrate API connectors for key communication platforms (e.g., Gmail, Slack, WhatsApp).",
+        "Implement a mechanism to securely fetch and parse relevant contextual information from these connected platforms.",
+        "Store aggregated context in a temporary or persistent `ContextStore` for agent processing.",
+        "Identify and log instances where current contextual input is insufficient (e.g., 'sitting in a car' scenario)."
+      ],
+      "target": "AgentCore/ContextManager.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Directly implements the need for the agent to have 'most of my context' by connecting 'Gmail Slack my WhatsApp' and highlights the need for more context in specific scenarios (e.g., 'a small microphone here so it has a bit more context').",
+      "dispatch_ready": true
+    }
+  ]
+}

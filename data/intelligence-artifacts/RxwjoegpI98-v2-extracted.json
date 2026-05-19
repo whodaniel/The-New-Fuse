@@ -1,0 +1,440 @@
+{
+  "source_id": "RxwjoegpI98",
+  "generated_at": "2026-05-19T18:35:42.925307+00:00",
+  "total_extracted": 26,
+  "dispatch_ready_count": 26,
+  "directives": [
+    {
+      "title": "Import Core Libraries for File Operations",
+      "steps": [
+        "Import the regular expressions module, typically aliased as `re`.",
+        "Import the `Path` class from the `podlift` library."
+      ],
+      "target": "build_tools.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly states which modules and classes to import. The 'podlift' library might be a custom or less common reference, potentially affecting immediate implementability if not readily available or a typo for `pathlib`.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure the Notes Directory Path",
+      "steps": [
+        "Define a variable in the Python file to represent the base directory where markdown notes are stored.",
+        "Set this variable's value to the path `knowledge/agentic-rag/notes`."
+      ],
+      "target": "build_tools.py",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a clear instruction to set a specific directory path, including the exact relative path for the notes.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Notes Directory Path",
+      "steps": [
+        "Obtain the path of the current Python file (e.g., `build_tools.py`).",
+        "Get the parent directory of the current file's path.",
+        "Append the directory segment 'notes' to the parent path.",
+        "Resolve the resulting path to obtain a clean, absolute, and canonical path, ensuring no symbolic links or unusual characters."
+      ],
+      "target": "A variable holding the `notes` directory path (e.g., `notes_dir`) within the current Python script (e.g., `build_tools.py`).",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides a clear, step-by-step process using standard `pathlib` operations to robustly determine a specific directory path.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "List Markdown Files with Relative Paths",
+      "steps": [
+        "Utilize the `glob` method on the previously defined `notes` directory path.",
+        "Apply a pattern filter of `*.md` to find all Markdown files within that directory.",
+        "For each full file path found by `glob`, transform it into a path relative to the `notes` directory.",
+        "Aggregate these relative paths into a list or similar collection."
+      ],
+      "target": "A function that, given the `notes` directory, returns a list of relative Markdown file paths.",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "The steps explicitly mention using `glob` with a specific pattern and `relative_to` method, which are precise and directly translatable into code using `pathlib`.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Compile Case-Insensitive Regular Expression for Search",
+      "steps": [
+        "Import the standard regular expression library (e.g., `re` in Python).",
+        "Define the target search string (e.g., 'connection pool').",
+        "Compile the search string into a regular expression pattern.",
+        "During compilation, specify the flag to ignore case (e.g., `re.IGNORECASE`) to ensure matches regardless of letter casing."
+      ],
+      "target": "A variable holding the compiled regular expression pattern within a search utility or function.",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "This describes the exact process of creating a reusable, case-insensitive regex pattern using common library functions, detailing both the action and the desired outcome.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Case-Insensitive Regex Pattern for 'connection pool'",
+      "steps": [
+        "Import the `re` (regular expression) library.",
+        "Compile a regular expression pattern for the string `\"connection pool\"`.",
+        "Set the compilation flag to ignore case (e.g., `re.IGNORECASE`).",
+        "Store the compiled pattern in a variable for reuse in subsequent searches."
+      ],
+      "target": "Python script/module using `re` library",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The steps explicitly detail using the Python `re` module to compile a case-insensitive pattern, which is a standard and direct procedure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Read File Content and Split into Individual Lines",
+      "steps": [
+        "Specify the path to the target file (e.g., `billing_runbook.md`).",
+        "Open the specified file in read mode to access its content.",
+        "Read the entire content of the file as a single string.",
+        "Apply the string's `splitlines()` method to convert the single string into a list, where each element represents a line from the file."
+      ],
+      "target": "File I/O operations/String processing utility",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This describes a common and well-defined Python procedure for file reading and line-by-line processing using built-in string methods.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Search Lines for Regex Pattern and Collect Matches",
+      "steps": [
+        "Initialize an empty list to store all discovered search results.",
+        "Iterate over the list of lines (obtained from `splitlines()`) using `enumerate`, ensuring the line counter starts from 1 for human-readable indexing.",
+        "For each enumerated line, use the previously compiled case-insensitive regular expression pattern to search for a match.",
+        "If the pattern finds a match within the current line:",
+        "Obtain the filename of the file being processed (assuming it's available from the calling context, possibly using a method like `relative_to` mentioned earlier in the tutorial).",
+        "Append a data structure (e.g., a tuple or dictionary) containing the filename, the current line number, and the full content of the matching line to the results list."
+      ],
+      "target": "Core search loop/Result aggregation logic",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The loop structure, conditional search, and data collection mechanism are explicitly defined, using `enumerate` for line numbers and appending results. The filename retrieval method is referenced as existing but not detailed here.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop a 'Grab' Function for Codebase-Wide Pattern Search",
+      "steps": [
+        "Define a function (e.g., `grep_tool`) that can accept parameters such as a target directory or a list of files to search, and the search pattern (or the string to convert into a pattern).",
+        "Within this function, implement logic to iterate over all files within the specified target directory or list of files.",
+        "For each file encountered:",
+        "Apply the 'Read File Content and Split into Individual Lines' logic (Directive 2) to prepare the file for line-by-line processing.",
+        "Apply the 'Search Lines for Regex Pattern and Collect Matches' logic (Directive 3) using the pre-defined regex pattern (from Directive 1) to find and record matches.",
+        "Aggregate all individual file results into a single, comprehensive list.",
+        "Return or print the aggregated list of results, detailing each match with its filename, line number, and the content of the matching line."
+      ],
+      "target": "`grep_tool` function/Modular search utility",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This directive integrates the previous steps into a reusable function, outlining its purpose to search multiple files and return structured results. It consolidates the described logic into a coherent tool.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement 'read_file' Tool with Safety Check",
+      "steps": [
+        "Define a Python function named `read_file` within `utils/tools.py` that accepts a file path as a string argument.",
+        "Inside `read_file`, convert the input file path string into a `pathlib.Path` object.",
+        "Implement a safety check using the `pathlib.Path.is_relative_to()` method to verify if the target file path is located within a predefined 'notes' directory.",
+        "If the safety check fails (i.e., the target path is not relative to the 'notes' directory), raise an appropriate error (e.g., `ValueError`) to indicate the file is inaccessible or outside the allowed scope.",
+        "If the path is valid, read the content of the file.",
+        "Return only the first 200 characters of the read file content."
+      ],
+      "target": "utils/tools.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly outlines the creation of a `read_file` tool, detailing steps for path conversion, a mandatory `is_relative_to` safety check, error handling, and returning a truncated file content. The target file `utils/tools.py` is also clearly specified.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set Up Basic Agent with Custom Tools and Query",
+      "steps": [
+        "In the `basic_agent.py` script, add import statements to bring in `grab`, `list_files`, and `read_files` from the `utils.tools` module.",
+        "Initialize an AI agent instance, utilizing a framework like Pydantic-AI (as mentioned, possibly `instructor` or similar) to manage tool integration and execution loops.",
+        "Configure the initialized AI agent to use `OpenAI GPT 5.5` as its underlying language model.",
+        "Register the imported `grab`, `list_files`, and `read_files` functions as callable tools within the AI agent's environment, making them available for the language model to invoke.",
+        "Submit the following specific question to the configured agent: 'Why does our nightly deploy job run specifically at this time?'"
+      ],
+      "target": "basic_agent.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The transcript describes moving to `basic_agent.py` to import and integrate the previously created tools into an AI agent setup. It specifies the use of 'paidic AI' (interpreted as Pydantic-AI/Instructor), `OpenAI GPT 5.5`, and a precise question to be posed to the agent, providing a clear sequence of actions for setting up and querying the agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Agent Tool Call Interception for Debugging",
+      "steps": [
+        "Locate the agent setup within `streaming_steps.py`.",
+        "Modify the agent execution flow to wrap direct Large Language Model (LLM) API calls, rather than executing the agent directly.",
+        "Integrate the `agent.Method` from the `pyantic AI` framework around the agent's execution to intercept all subsequent tool calls."
+      ],
+      "target": "streaming_steps.py",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states the need to 'intercept all of the tool calls to get a look behind the scenes' and directs the user to 'use the agent. Method from pyantic AI' within `streaming_steps.py` for this purpose. While the exact code for wrapping isn't provided, the framework and method are identified as the means to achieve interception.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable Debug Mode for Detailed Agent Tool Results",
+      "steps": [
+        "Identify the `debug` parameter within `streaming_steps.py`.",
+        "Set the value of this `debug` parameter to `true`.",
+        "Run the agent to observe the detailed output, which will now include the full results returned from each tool call (e.g., `grab` command results with line numbers and content)."
+      ],
+      "target": "streaming_steps.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The speaker clearly introduces a 'debug parameter' in 'file number four' (`streaming_steps.py`) and provides a direct instruction: 'if you put this in file number four to true and we run this one more time. Now you will also literally see all of the results that it got back.' This is a specific, actionable configuration change.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enhance Tool Definition with LLM Guidance",
+      "steps": [
+        "Locate the definition of a specific tool that the Large Language Model (LLM) will utilize.",
+        "Add detailed instructions or domain-specific knowledge within the tool's docstring or its explicit definition.",
+        "Ensure these additions guide the LLM on the tool's correct usage, including expected parameters and the scope of information to search for, to effectively steer its behavior."
+      ],
+      "target": "tool_definitions.py (or similar file defining tools/interfaces)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "This directive provides clear instructions on modifying existing tool definitions with specific content (instructions/domain knowledge) to achieve a defined behavioral outcome (LLM steering), making it directly implementable by a developer familiar with the tool framework.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Structured Output Model for Search Agent",
+      "steps": [
+        "Define a new default output data model that the search agent must adhere to.",
+        "Include a top-level field named `search_answer` within this model, designed to store the agent's primary response as plain English text.",
+        "Add another top-level field named `citations` to the output model, specifying it as a list.",
+        "Define a separate sub-data model (e.g., 'Citation') for the individual items within the `citations` list.",
+        "Ensure the `Citation` sub-model includes the following fields: `file` (string), `quote` (string), and `line_number` (integer).",
+        "Configure the search agent's execution or response pipeline to produce output strictly conforming to this newly defined structured data model."
+      ],
+      "target": "agent_output_schema.py (or within the search agent's definition file, e.g., using Pydantic)",
+      "metrics": {
+        "specificity": 0.95,
+        "implementability": 0.95,
+        "testability": 1.0
+      },
+      "rationale": "This directive precisely outlines the structure of the agent's output, specifying field names, data types, and nesting (list of sub-objects). This level of detail is sufficient for an autonomous agent to generate or modify code for defining and enforcing such a schema (e.g., Pydantic models).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Production Environment Example",
+      "steps": [
+        "Locate the file named 'production' (file number six in the speaker's context).",
+        "Execute the script, specifically running the code from the bottom of the file."
+      ],
+      "target": "production file (Python script)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The directive explicitly names the file and instructs to run it to observe its behavior, including logging, correct answers, citations, total time, and tool calls.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Production Safety Parameters and Logging",
+      "steps": [
+        "Add an 'agent_request_limit' parameter within the agent configuration to prevent infinite loops.",
+        "Add a 'readmax_lines' parameter to limit the amount of data read from large files, avoiding context window overflow.",
+        "Integrate a logger into the system to provide visibility into behind-the-scenes operations."
+      ],
+      "target": "production file / agent configuration",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "The directive explicitly names specific parameters to add and instructs to integrate a logger, with clear rationales for each addition.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Rip-Grep for Enhanced Search",
+      "steps": [
+        "If on Mac OS, install 'rip-grep' using Homebrew (e.g., by running `brew install rip-grep`).",
+        "Implement a helper function to check if 'rip-grep' is installed on the system.",
+        "Modify or implement the 'grab' function to utilize 'rip-grep' for content searching.",
+        "Ensure the 'grab' function executes 'rip-grep' via Python's `subprocess` module."
+      ],
+      "target": "System environment (for installation), production file (for helper and grab function)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive details a major system change, explicitly naming the tool ('rip-grep'), providing a specific installation method for Mac OS, and detailing the integration pattern using a helper function and Python's `subprocess` within the 'grab' function.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure rip-grep Flags in Grab Function",
+      "steps": [
+        "Locate the `grab` function within the codebase.",
+        "Identify the Python `subprocess` command responsible for invoking the `rip-grep` tool.",
+        "Ensure that the following flags are passed as parameters to the `rip-grep` command: `--line-numbers` (for line numbers), `--ignore-case` (to ignore case), and `--no-modification` (to prevent content modification)."
+      ],
+      "target": "grab function (likely within production.py)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly details the `rip-grep` tool's usage, its invocation via Python's subprocess, and the exact flags (`--line-numbers`, `--ignore-case`, `--no-modification`) that need to be plugged into the command.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Try-Except Blocks in list_files Function",
+      "steps": [
+        "Locate the `list_files` function within the codebase.",
+        "Wrap the primary logic of the `list_files` function with a `try-except` block to handle potential errors gracefully."
+      ],
+      "target": "list_files function (likely within production.py)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript states that `list_files` had 'a little bit of extra like try accept' added, indicating a clear directive to implement this error handling pattern.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Refactor Error Handling to Return Human-Readable Messages",
+      "steps": [
+        "Review functions prone to errors (e.g., `grab`, `list_files`, and other utility functions) to identify current error handling mechanisms.",
+        "Modify these functions to `return` human-readable error messages instead of `raising` exceptions.",
+        "Ensure the returned error messages are sufficiently descriptive to allow an AI agent to intercept and course correct."
+      ],
+      "target": "Error handling across utility functions (e.g., grab, list_files) and system components (e.g., production.py)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly outlines the strategy of returning human-readable errors instead of raising them, explaining the benefit for AI agents in avoiding process stoppage and enabling course correction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Core Toolkit from production.py into Project",
+      "steps": [
+        "Copy the `production.py` file into the target project's codebase.",
+        "Import and utilize the functions provided by `production.py` as required by the project's logic."
+      ],
+      "target": "Your project's main application or integration layer",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript gives a direct instruction: 'all you need to do to apply this into your own project is simply use this production.py file over here.'",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Refactor production.py into Smaller, Manageable Modules",
+      "steps": [
+        "Analyze the existing `production.py` file to identify logical groupings of functions or concerns.",
+        "Create new Python modules (e.g., separate .py files) for each identified group.",
+        "Move the relevant functions from `production.py` into their respective new modules.",
+        "Update any import statements in `production.py` and other files that reference these moved functions to reflect the new module structure."
+      ],
+      "target": "production.py and newly created Python modules",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "The speaker explicitly recommends 'to do a little bit of refactoring, split it up, put it in your project.'",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Agent Data Source with Markdown Files on File System",
+      "steps": [
+        "Ensure that a file system directory containing markdown files is available and accessible to the agent loop.",
+        "If not already present, create a dedicated directory for markdown files and populate it with relevant documentation or content."
+      ],
+      "target": "Project's data storage environment/configuration",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript specifies the requirement: 'you need a folder or file system, ideally with markdown files because that's just the easiest to to work with for this whole agent loop to run over.'",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Agent Loop and Language Model",
+      "steps": [
+        "Select an existing agent framework or develop a custom agent loop that will orchestrate the system's operations.",
+        "Integrate the functions provided by `production.py` (or its refactored modules) into the agent's workflow.",
+        "Choose and configure a preferred large language model (LLM) to be used by the agent for processing and understanding information."
+      ],
+      "target": "Agent orchestration module/system",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The transcript provides a clear directive for combining the tools: 'You simply combine it with your favorite agent framework or you build your own loop and you use your favorite model and this will simply work.'",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Adapt Functions for PostgreSQL Markdown Storage",
+      "steps": [
+        "Identify the existing functions responsible for retrieving markdown content, currently from the file system.",
+        "Modify these identified functions to establish a connection to a PostgreSQL database.",
+        "Implement new logic within these functions to query the PostgreSQL database and retrieve markdown file content based on relevant criteria, replacing the file system access."
+      ],
+      "target": "Data retrieval functions (e.g., list_files, or a new data access layer)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly suggests, 'you could just also put all of your markdown files in a postcore SQL database. The concepts will still be the same. You just slightly need to adjust the functions in order to create that loop to actually get the information.'",
+      "dispatch_ready": true
+    }
+  ]
+}

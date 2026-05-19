@@ -1,0 +1,417 @@
+{
+  "source_id": "7xuWZ-3lyQE",
+  "generated_at": "2026-05-19T18:12:21.890501+00:00",
+  "total_extracted": 25,
+  "dispatch_ready_count": 25,
+  "directives": [
+    {
+      "title": "Create a Custom AI Persona in Hermes Pantheon",
+      "steps": [
+        "Navigate to the 'Pantheon' section within the Hermes agent interface.",
+        "Initiate the creation of a new AI persona (e.g., by clicking an 'Add' button).",
+        "Assign a unique name to the new persona.",
+        "Provide a descriptive explanation of the persona's purpose or role.",
+        "Define a specific system prompt that will govern the persona's behavior.",
+        "Select the desired AI model to be associated with this persona (e.g., Labyrinth, Deepseek).",
+        "Confirm and save the persona configuration to make it available to the Hermes agent."
+      ],
+      "target": "Hermes Pantheon Feature",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This sequence provides clear, distinct steps for configuring an AI persona, specifying the required fields (name, description, system prompt, model) for an autonomous agent to populate within the Hermes system's Pantheon feature.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install Hermes Agent via Terminal",
+      "steps": [
+        "Locate and copy the Hermes installation code (mentioned as 'this code here' or available on the Hermes website).",
+        "Open a compatible terminal application (e.g., 'anti-gravity', 'Claude terminal', or a generic 'top terminal').",
+        "Paste the copied Hermes installation code into the active terminal window.",
+        "Press Enter to execute the code and allow the system to perform initial tests.",
+        "Proceed with the interactive full setup journey presented within the terminal window."
+      ],
+      "target": "Terminal (e.g., Anti-Gravity, Claude Terminal, or standard CLI)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The transcript clearly outlines the procedural steps for installing Hermes by obtaining an installation code, interacting with a terminal by pasting and executing the code, and then continuing through an interactive setup process.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initiate Hermes Installation via Claude AI Command",
+      "steps": [
+        "Access the Claude AI interface (e.g., within 'anti-gravity' or a dedicated Claude application).",
+        "Issue the verbal or text command to Claude: \"Hey, install this, please.\""
+      ],
+      "target": "Claude AI (as an intelligent agent/interface)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "This directive provides a specific command to be given to the Claude AI, indicating an alternative, high-level method to trigger the Hermes installation process through an intelligent agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Select OpenAI Codex During Hermes Setup",
+      "steps": [
+        "During the interactive Hermes setup journey in the terminal, identify and select 'OpenAI codeex' as a desired component or configuration option when prompted."
+      ],
+      "target": "Hermes Setup Wizard/Configuration Interface",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This step specifies a concrete choice to make within the Hermes setup process, indicating a particular component ('OpenAI codeex') that should be selected for integration.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Bot for Telegram Platform",
+      "steps": [
+        "In the active terminal window running the bot setup script, navigate through the configuration options until 'platforms to configure' is presented.",
+        "Select 'Telegram' from the available platform options.",
+        "Press Enter to confirm the selection, initiating the Telegram-specific configuration flow."
+      ],
+      "target": "Running bot setup script in terminal",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "This action initiates the Telegram-specific configuration process within the main bot setup, clearly defining the selection and confirmation steps.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Register New Telegram Bot with BotFather",
+      "steps": [
+        "Open the Telegram application or web client.",
+        "Search for and open a chat with the official Telegram bot creator account, `@BotFather`.",
+        "Send the command `/newbot` to BotFather.",
+        "When prompted, provide a user-friendly display name for the new bot (e.g., 'Hermes bot').",
+        "When prompted, provide a unique username for the new bot; this username must end with 'bot' (e.g., 'HermesAssistant_bot').",
+        "After the bot is created, locate and copy the generated HTTP API token provided by BotFather in the chat."
+      ],
+      "target": "Telegram BotFather chat (@BotFather)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This sequence precisely outlines the steps to create a Telegram bot and obtain its critical access token, using explicit Telegram commands and interactions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Retrieve Current User's Telegram ID",
+      "steps": [
+        "Open the Telegram application or web client.",
+        "Search for and open a chat with a user information bot (e.g., `@userinfobot` or a similar service that provides user IDs).",
+        "Send the command `/start` or any message to the user information bot.",
+        "Locate and copy the numeric user ID provided by the bot in its response."
+      ],
+      "target": "Telegram user information bot chat (e.g., @userinfobot)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The steps provide a clear, platform-specific method to obtain the user's Telegram ID, which is essential for authorizing bot access.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Input Telegram Credentials and Start Bot Service",
+      "steps": [
+        "In the active terminal window, when prompted for the 'Telegram bot token', paste the copied HTTP API token obtained from BotFather.",
+        "Press Enter to confirm the token.",
+        "When prompted for 'allowed user IDs', paste the copied numeric user ID obtained from the user information bot.",
+        "Press Enter to confirm the user ID.",
+        "When prompted to confirm the user ID, type 'Y' and press Enter.",
+        "When asked 'if you want to launch it as a service', type 'yes' and press Enter.",
+        "Locate and select the 'done' option or command within the setup process and confirm it to finalize the configuration."
+      ],
+      "target": "Running bot setup script in terminal",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This directive details the final input of credentials into the bot setup script and confirms the bot's launch as a service, covering all necessary interactive prompts.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Test Communication with Newly Configured Hermes Bot",
+      "steps": [
+        "Open the Telegram application or web client.",
+        "Return to the chat with `@BotFather`.",
+        "Click on the link provided by BotFather for the newly created Hermes bot to open a new direct chat window with the bot.",
+        "In the Hermes bot chat, click the 'Start' button or send the `/start` command if available.",
+        "Send a test message to the bot (e.g., 'Hey there.').",
+        "Observe the bot's response to confirm it is operational and responding as expected (e.g., 'Hey there. I'm Hermes. I can help you with anything.')."
+      ],
+      "target": "Newly created Telegram bot chat (e.g., Hermes bot)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This final step provides clear instructions for verifying the successful setup and functionality of the bot by initiating and observing a conversation with it in Telegram.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Start Hermes Bot Conversation",
+      "steps": [
+        "Click on the 'start' button associated with the Hermes bot in the UI."
+      ],
+      "target": "Hermes bot UI/dashboard",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The instruction 'click on start' is a direct and actionable UI interaction for initiating a conversation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Send Initial Message to Hermes Bot",
+      "steps": [
+        "Type 'hey there' into the chat input field of the Hermes bot.",
+        "Send the message."
+      ],
+      "target": "Hermes bot chat interface",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides specific text to input and an action to send it within a chat interface, expecting a response.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "View Hermes Integrations",
+      "steps": [
+        "Click on the 'Hermes' entry within the dashboard to reveal its integrations."
+      ],
+      "target": "Hermes dashboard",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Direct instruction to click a specific UI element ('Hermes') to access related information (integrations).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Request GitHub Connection via Telegram",
+      "steps": [
+        "Open the Telegram application.",
+        "Navigate to the chat with the Hermes bot.",
+        "Type the message 'Hey there I would like to connect to GitHub um let me know anything you need from me in order to connect to GitHub just so we can start doing some very cool things.' into the message input field.",
+        "Send the message."
+      ],
+      "target": "Telegram chat with Hermes bot",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Details the exact text to send, the application (Telegram) to send it through, and the action of sending to initiate a specific system integration.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create New GitHub Repository via Chat",
+      "steps": [
+        "Type the message 'Hey dude, quote me a brand new repo called Tango Blast, please. and let me know the link to that repo once that is complete.' into the chat input field of the Hermes bot (desktop or Telegram).",
+        "Send the message."
+      ],
+      "target": "Hermes bot chat interface (desktop or Telegram)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides the exact text to use in a chat interface to request a specific system action (GitHub repository creation).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Open Newly Created GitHub Repository",
+      "steps": [
+        "Locate the link or UI element representing the 'Tango Blast' GitHub repository in the chat or command center.",
+        "Click the link/element to open the repository in a web browser or integrated viewer."
+      ],
+      "target": "Hermes bot chat interface / Command Center UI",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Instructs the agent to interact with a UI element (link or button) to view a recently created resource, which is expected to appear after the previous step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install Pantheon",
+      "steps": [
+        "Navigate to the persona management section of the UI.",
+        "Click on the button or link designated to 'install the Pantheon'."
+      ],
+      "target": "Hermes dashboard/Persona management UI",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Provides a clear action ('clicking on this guy right here') in the context of installing 'the Pantheon', with an inferred navigation step ('come down here').",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initiate Hermes-GitHub Repository Mirroring",
+      "steps": [
+        "Obtain the specific 'GitHub connection prompt' intended for Hermes.",
+        "Paste the obtained prompt into your Hermes Telegram chat or any active Hermes session."
+      ],
+      "target": "Hermes chat interface (to initiate GitHub mirroring)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This step describes the direct action of providing an initial prompt to Hermes to begin the interactive process of setting up a GitHub mirror. The prompt itself is implied but the action of pasting it is explicit.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Confirm GitHub Repository Creation and File Copying",
+      "steps": [
+        "After Hermes confirms it has the necessary information (e.g., GitHub CLI, username, repo name like 'awesome backup') and asks for confirmation, send the following message to Hermes: 'sounds great. Go ahead and create all that for me please and let me know when that's done.'"
+      ],
+      "target": "Hermes chat interface (to confirm GitHub repository actions)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a precise, imperative instruction provided to Hermes, including the exact text to send, confirming a preceding step and triggering the creation of a GitHub repository and copying of files.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Schedule Daily Full System Update via Cron",
+      "steps": [
+        "Send the following instruction to the Hermes session: 'set up a chron schedule for 11 p.m. every day to do a full update for me please.'"
+      ],
+      "target": "Hermes chat interface (to configure system cron job)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This provides a clear, time-specific command to Hermes to establish a recurring cron job for system updates, indicating the exact instruction to be sent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Synchronize Pantheon Personas and Configurations to GitHub Mirror",
+      "steps": [
+        "Obtain the specific prompt/command for pushing the latest Persona Labyrinth, Mercury, Philosopher, and any other added configurations.",
+        "Paste the obtained prompt into the Hermes session."
+      ],
+      "target": "Hermes chat interface (to push configurations to GitHub)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This describes the action of providing a specific prompt to Hermes to synchronize existing Pantheon configurations and personas with the newly established GitHub mirror. The content of the prompt is implied but the action is concrete.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Hermes to Use Obsidian as a Memory System",
+      "steps": [
+        "Ensure Obsidian is installed and you have an existing vault setup on your system.",
+        "Navigate to the memory configuration section within the Hermes application.",
+        "Locate and click the 'I've got a vault' option/button in the Hermes UI to confirm vault presence.",
+        "Copy the specific integration code provided within Hermes, which is likely part of the Obsidian connection setup.",
+        "Determine the file path of your Obsidian vault. If unknown, copy a query (e.g., 'find me the vault location, please') and use an AI assistant (referred to as 'cloud code') to obtain the path.",
+        "Paste the obtained Obsidian vault file path into the designated input field within Hermes.",
+        "Execute or save the configuration (e.g., by clicking 'run' or 'confirm') to establish the connection between Hermes and Obsidian."
+      ],
+      "target": "Hermes application's memory configuration module & Obsidian local installation",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript provides a clear, sequential set of actions for connecting Hermes to an Obsidian vault for memory storage. It details UI interactions (clicking 'I've got a vault'), data input (pasting vault path), and even a helper step for path discovery using an AI assistant, making it highly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Obsidian Vault for Hermes Reference",
+      "steps": [
+        "Identify the full file path of your Obsidian vault on your system.",
+        "Open a chat interface with the Hermes agent.",
+        "Send the following message to Hermes, replacing `[YOUR_OBSIDIAN_VAULT_PATH]` with the actual path obtained in step 1: `Hey, I've added it. I'd like to reference this Obsidian vault when answering questions, please. Here is a file location: [YOUR_OBSIDIAN_VAULT_PATH]. Save this as a memory.`",
+        "Confirm that Hermes responds with an acknowledgment of the vault being saved and its intent to use it as a reference."
+      ],
+      "target": "Hermes Agent / Hermes Memory System",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides clear, sequential steps for adding an Obsidian vault path to Hermes' memory for future reference, including the exact prompt format and expected confirmation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Daily Proactive Improvement Briefing via Hermes Cron Job",
+      "steps": [
+        "Open a chat interface with the Hermes agent.",
+        "Send the following comprehensive prompt to Hermes: `Hey, I want you to go through my entire computer. Find all the stuff that's relevant that could be helpful. I want you to set up a cron job that every night you're going to think proactively about ways in which I can improve based on all these different conversations and things like that. Based on all the information that you have in our conversations and also that you glean from the computer based on these files, I want you to delegate a cheap model to reflect on ways in which I could potentially improve and be better and come back in the morning with a couple suggestions of that I could potentially action, two to three max. Do that at 8:00 a.m. Dubai time alongside a beautiful morning brief for me.`",
+        "If Hermes indicates it will use a model other than Chat GBT 5.5 (e.g., Meta Llama), send a follow-up prompt to override: `Hey dude, just do me a favor. Actually, use my Chat GBT 5.5 subscription, please. I think that should be fine for this particular use case.`",
+        "Verify that Hermes confirms the successful setup of the daily cron job for proactive reflection and briefing."
+      ],
+      "target": "Hermes Agent / System Cron Scheduler / LLM Model Selection",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Details the exact prompts and sequence for instructing Hermes to create a system-level cron job for daily proactive analysis and briefing, including specific timing, output requirements, and an optional model preference override.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Scheduled Job to Use ChatGPT 5.5",
+      "steps": [
+        "Identify the 'crown job' (scheduled task) responsible for proactive analysis and thinking.",
+        "Locate the configuration setting that specifies the AI model used by this scheduled job.",
+        "Modify the configuration to select 'chat GBT 5.5 subscription' as the primary AI model, replacing or overriding any previous selection like 'metal llama model'.",
+        "Verify that the scheduled job is set to execute daily (every morning) to ensure proactive processing of conversations."
+      ],
+      "target": "Scheduled Task / Cron Job Configuration",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive specifies a clear change in resource (AI model) for a defined system component (the 'crown job') with a verifiable outcome (daily execution using the specified model).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create and Populate Hermes Agent's Soul.md Knowledge File",
+      "steps": [
+        "Access the Hermes agent interface or configuration environment.",
+        "Initiate an interaction or command instructing the Hermes agent to 'build a soul.md' file.",
+        "Provide comprehensive personal and professional information ('brain dump') to the Hermes agent as prompted, ensuring all key details about the user are communicated.",
+        "Confirm that the provided information has been successfully processed and appears within the `soul.md` file associated with the Hermes agent, verifying its retention for future interactions."
+      ],
+      "target": "Hermes Agent / soul.md file",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The directive outlines a precise interaction with a specific agent (Hermes) to create and populate a designated knowledge file (`soul.md`) with user-supplied data, which can be directly verified.",
+      "dispatch_ready": true
+    }
+  ]
+}

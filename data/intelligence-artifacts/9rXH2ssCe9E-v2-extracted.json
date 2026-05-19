@@ -1,0 +1,430 @@
+{
+  "source_id": "9rXH2ssCe9E",
+  "generated_at": "2026-05-19T18:09:14.698634+00:00",
+  "total_extracted": 26,
+  "dispatch_ready_count": 26,
+  "directives": [
+    {
+      "title": "Download Notebook LM Skill Resource",
+      "steps": [
+        "Locate the provided link in the video description for the free resource.",
+        "Navigate to the free resource page using the identified link.",
+        "Locate and click the 'download' button for the 'Notebook LM skill'."
+      ],
+      "target": "Local file system (downloaded skill file)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides clear, sequential steps for obtaining a specific file from a web resource, assuming the video description and web page are accessible.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Upload Notebook LM Skill File to AI Model",
+      "steps": [
+        "Access the interface for 'Cool Code' or your chosen AI model.",
+        "Navigate to the file upload functionality within the AI model's interface.",
+        "Upload the previously downloaded 'Notebook LM skill' file to the AI model."
+      ],
+      "target": "Cool Code / AI Model Interface (e.g., web UI, API for file uploads)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Directs the user to upload a specific file to a designated AI model, outlining the general steps required for a file transfer.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install Notebook LM Skill via AI Model Command",
+      "steps": [
+        "In the chat or command interface of 'Cool Code' or your chosen AI model, input the following command:",
+        "\"Hey there, I'd like you to install the notebook [LM skill]\""
+      ],
+      "target": "Cool Code / AI Model Chat/Command Interface",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Provides the exact verbal command needed to initiate the installation of the uploaded skill within the AI model, specifying the target interaction point.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install Notebook LM Skill in AI Model",
+      "steps": [
+        "Navigate to the provided resource link (implied to be 'down below').",
+        "Download the 'notebook LM skill' file from the resource link.",
+        "Go to your chosen AI model environment (e.g., 'Cool Code' or 'model of choice').",
+        "Upload the downloaded 'notebook LM skill' file to the AI model's interface.",
+        "In the AI model's chat interface, input the command: 'Hey there, I'd like you to install the notebook LM skill, please.'",
+        "Send the command to the AI model."
+      ],
+      "target": "Cool Code / AI Model Interface",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Provides clear sequential steps for downloading a specific file and installing it within a defined AI model environment using a natural language command.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reauthenticate Notebook LM for AI Model Access",
+      "steps": [
+        "If prompted by the AI model (e.g., in chat) to 'sign into Notebook LM' or 'reauthenticate Notebook LM', acknowledge or respond affirmatively.",
+        "Open Notebook LM in a web browser.",
+        "Sign in to Notebook LM within the web browser to acquire the necessary authentication cookie."
+      ],
+      "target": "Notebook LM website (browser) / Cool Code AI Model Interface",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "Explains the specific external action required (browser sign-in) to establish or re-establish the connection for an AI model skill, triggered by a prompt from the AI.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Test Notebook LM Skill Functionality in AI Model",
+      "steps": [
+        "In the AI model's chat interface (e.g., Cool Code), input the query: 'Hey there, do me a favor. Um, find what are the last three notebooks that I have in Notebook LM.'",
+        "Send the query to the AI model.",
+        "Verify that the AI model responds with the requested information, confirming successful integration with Notebook LM."
+      ],
+      "target": "Cool Code / AI Model Chat Interface",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Offers a direct, verifiable command to test the newly installed and authenticated skill, with a clear expected outcome for verification.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create Notebook LM Skill in Hermes Agent Dashboard (Pantheon)",
+      "steps": [
+        "Navigate to the skill definition link (implied as 'down below in the description') to obtain the Notebook LM skill's description and assistant prompt.",
+        "Copy the entire skill description content.",
+        "Copy the entire assistant prompt content.",
+        "Go to your Hermes Agent dashboard (referred to as 'Pantheon').",
+        "Click on the 'new persona' option.",
+        "Click on 'prescribe' for this new persona.",
+        "Paste the copied skill description into the designated description field.",
+        "Paste the copied assistant prompt into the designated system prompt field.",
+        "Select '4.7' (or the recommended version) as the model for this skill.",
+        "Ensure the option to 'activate Notebook LM skill' is enabled.",
+        "Click on the 'create scribe' button to save and create the skill."
+      ],
+      "target": "Hermes Agent Dashboard / Pantheon UI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Details the preferred, step-by-step process of creating a new skill within a specific UI (Hermes Agent's Pantheon dashboard) using provided content and configuration settings.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Activate Notebook LM Skill in Hermes Agent Chat",
+      "steps": [
+        "Copy the specific activation prompt for the Notebook LM skill (implied to be provided on screen or from the skill definition).",
+        "Navigate to the Hermes Agent chat interface.",
+        "Paste the copied activation prompt into the chat input field.",
+        "Send the prompt to Hermes Agent."
+      ],
+      "target": "Hermes Agent Chat Interface",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides a clear, actionable sequence for initiating a newly created skill within the Hermes Agent's operational chat environment by sending a specific activation prompt.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Activate Notebook LM Skill and Create Scribe",
+      "steps": [
+        "Activate the 'Notebook LM skill' within the system.",
+        "Initiate the 'Create Scribe' function."
+      ],
+      "target": "System component for AI skill management and scribe creation (e.g., UI, API endpoint, configuration service)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The directive explicitly names the 'Notebook LM skill' to activate and the 'Create Scribe' function to initiate, providing clear steps even if the underlying mechanism (e.g., UI click, API call) is implied.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Submit Multi-Part Inquiry to Hemy's AI Agent",
+      "steps": [
+        "Construct the first part of the prompt: 'Hey there dude, I just want to confirm that you have access to the notebook skill with the scribe.'",
+        "Construct the second part of the prompt: 'Go ahead and grab for me the latest infographic that I created on Notebook LM.'",
+        "Construct the third part of the prompt: 'Create for me a brand new Notebook LM on how to lose weight effectively and bring in all the resources you need to and use any information about me that you may have to make that a reality.'",
+        "Combine these parts into a single, complete prompt.",
+        "Transmit the complete prompt to the 'Hemy's' AI agent."
+      ],
+      "target": "Hemy's AI agent (input interface, e.g., chat window, API endpoint)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The full, exact text of a multi-part prompt is provided, along with the specific target AI agent ('Hemy's'), making this highly actionable for an autonomous agent to formulate and send.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Infographic on Topic via Voice Note",
+      "steps": [
+        "Formulate a voice prompt with the request: 'Go create, don't do loads of research and just make me an interesting infographic on [specific topic, e.g., the Colosseum].'",
+        "Record this formulated request as a voice note.",
+        "Submit the voice note to the relevant system for processing (implicitly Notebook LM or an integrated AI agent)."
+      ],
+      "target": "Notebook LM or an AI agent capable of processing voice inputs and generating infographics",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "This directive specifies both the input method (voice note) and the desired output (an infographic on a given topic), along with a clear instruction for content generation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Query Notebook LM for Additional Sources",
+      "steps": [
+        "Access the specified Notebook LM instance (e.g., the 'effective weight loss for Jack' notebook).",
+        "Submit a query to this notebook requesting it to 'find 20 sources' (or '30 sources', as examples provided)."
+      ],
+      "target": "An existing Notebook LM instance (its query interface)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The directive clearly states the action (query for more sources) and the specific target (an existing Notebook LM), allowing an agent to interact with it programmatically.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prompt Hermes Agent to Generate NA10 MCP Connection Command",
+      "steps": [
+        "Formulate the prompt: 'Hey there, NA10 very recently released an MCP. I'm going to give you the credentials to connect to that NA10 MCP. And I want you to give me a command that I can run in the terminal that will allow me to give you the full c[onnection/control, implicit].'",
+        "Provide the necessary NA10 MCP connection credentials (implicitly alongside or prior to sending the prompt).",
+        "Transmit this prompt and credentials to the 'Hermes agent'."
+      ],
+      "target": "Hermes AI agent (input interface)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The directive provides the exact textual prompt to be sent to the 'Hermes agent', instructing it to generate a specific technical output (a terminal command), making it highly precise and executable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable Workflows for Instance-Level MCP in NA10",
+      "steps": [
+        "On the left-hand side navigation of the NA10 UI, locate and click on 'instance level MCP'.",
+        "Click on 'enable workflows'."
+      ],
+      "target": "NA10 UI (app.net.cloud/s/mcp)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides clear UI navigation steps and an explicit action to enable a feature.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Obtain and Copy NA10 Connection Configuration JSON",
+      "steps": [
+        "In the NA10 UI, navigate to 'connected clients'.",
+        "Locate and click on 'connection details'.",
+        "Copy the displayed 'configuration JSON' to the clipboard."
+      ],
+      "target": "NA10 UI (app.net.cloud/s/mcp -> connected clients -> connection details)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Clear instructions for UI navigation and data extraction (copying JSON).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Send NA10 Configuration JSON to Hermes",
+      "steps": [
+        "Switch to the Hermes chat interface.",
+        "Paste the copied NA10 'configuration JSON' directly into the chat window."
+      ],
+      "target": "Hermes chat window",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Clear instruction for inter-application data transfer (copy-paste) into a chat interface.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Request Secure Token Configuration Command from Hermes",
+      "steps": [
+        "In the Hermes chat interface, send a prompt similar to: 'Give me a bash command that I can enter into the terminal with my token. That means that you can access it and you have full functionality to do that.'"
+      ],
+      "target": "Hermes chat window",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Explicit instruction to send a specific type of prompt to an AI assistant, expecting a structured output.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prepare NA10 Access Token for Terminal Input",
+      "steps": [
+        "In the NA10 UI, navigate to 'connected clients' and 'connection details'.",
+        "Locate the existing 'access token'.",
+        "Rotate the access token to generate a new, valid token.",
+        "Copy the newly generated raw access token (without 'bearer' prefix) to the clipboard."
+      ],
+      "target": "NA10 UI (app.net.cloud/s/mcp -> connected clients -> connection details)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides clear UI actions to obtain and copy a specific credential.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Edit Hermes-Provided Bash Command with NA10 Access Token",
+      "steps": [
+        "Copy the bash command that Hermes provided in response to the request for secure token configuration.",
+        "Paste this command into a temporary text editor or chat window for modification.",
+        "Locate the placeholder within the command that signifies where the access token should be inserted.",
+        "Replace the placeholder with 'bearer ' followed by the copied NA10 access token (e.g., 'bearer [your_NA10_access_token]')."
+      ],
+      "target": "Text editor or chat window",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Detailed steps for text manipulation, including the specific format required for the token (bearer prefix).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Execute Hermes Configuration Command in Terminal",
+      "steps": [
+        "Open a terminal application (e.g., using `command T` and typing 'terminal').",
+        "Copy the fully edited bash command (including the 'bearer' token).",
+        "Paste the command into the terminal window.",
+        "Press Enter to execute the command.",
+        "When prompted by the terminal to 'paste NAN MCP access token', paste the raw NA10 access token (the one copied previously, *without* the 'bearer' prefix).",
+        "Press Enter again to confirm the token input."
+      ],
+      "target": "Terminal",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides a clear sequence of terminal interactions, including handling an interactive prompt for the token.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Validate Hermes' Access to NA10 MCP",
+      "steps": [
+        "In the Hermes chat interface, send a prompt similar to: 'Could you go ahead and validate that this is fully added in please and that you have access to NA10'.",
+        "When Hermes asks for permission to access NA10, respond affirmatively (e.g., 'That sounds great. Go ahead')."
+      ],
+      "target": "Hermes chat window",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Clear instructions for prompting an AI assistant and responding to its subsequent permission request.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Add NA10 MCP Access Token to Hermes Configuration",
+      "steps": [
+        "Paste the provided NA10 MCP access token into the terminal when prompted."
+      ],
+      "target": "Terminal / Hermes Configuration",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Direct instruction to paste a specific token into a command-line interface, with an explicit success message 'added NA10 MCP to Hermes config' implied.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Validate NA10 MCP Integration and Grant Access",
+      "steps": [
+        "Validate that NA10 MCP has been fully added to the Hermes configuration.",
+        "Confirm that the system has functional access to NA10 (e.g., ability to search, execute, get search).",
+        "Grant necessary permissions when prompted by the system (e.g., respond affirmatively to 'give it permission')."
+      ],
+      "target": "Hermes Configuration / NA10 System",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Clear steps for system validation and interaction with a specific permission prompt, with 'got all the access' as an implicit success metric.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reload MCP System Configuration",
+      "steps": ["Execute the 'reload MCP' command within the system."],
+      "target": "MCP System / Hermes",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 0.7
+      },
+      "rationale": "Direct and unambiguous instruction to perform a specific system command ('reload MCP'). Testability is slightly lower as no explicit success message is described, but subsequent functionality would confirm it.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create Daily YouTube Strategy Email Workflow in NHM",
+      "steps": [
+        "Create a new workflow within the NHM system.",
+        "Configure the workflow to trigger automatically every morning at 8:00 a.m.",
+        "Add an action to the workflow to send an email.",
+        "Hardcode the recipient's email address into the 'send file' associated with the email action.",
+        "Add an action to the workflow to grab and execute one insight from 'YouTube strategy'.",
+        "Configure the workflow to send the extracted YouTube strategy insight as a daily email blast to the specified recipient.",
+        "Generate and provide a link to the newly created workflow for review.",
+        "Display a preview or visual representation of the workflow structure."
+      ],
+      "target": "NHM (Workflow Management System)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Highly detailed, multi-step instruction for building a specific workflow, including triggers, multiple actions, content sourcing, and required outputs (link, preview). Success is verifiable by inspecting the generated workflow.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Publish an NHM Workflow",
+      "steps": ["Initiate the 'publish' action for the active NHM workflow."],
+      "target": "NHM Workflow UI / Workflow System",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Direct command to publish a workflow. Testability is high, as the workflow's status can be checked for 'published'.",
+      "dispatch_ready": true
+    }
+  ]
+}

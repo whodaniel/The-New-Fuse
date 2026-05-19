@@ -1,0 +1,204 @@
+{
+  "source_id": "ohKt066uFhg",
+  "generated_at": "2026-05-19T18:21:51.224762+00:00",
+  "total_extracted": 11,
+  "dispatch_ready_count": 11,
+  "directives": [
+    {
+      "title": "Implement JCAI-style Web Agent DOM Processing and Action Execution",
+      "steps": [
+        "Capture a snapshot of the current Document Object Model (DOM) of the active webpage.",
+        "Minify the captured DOM snapshot in a lossless manner to reduce its size while retaining all necessary information.",
+        "Analyze the minified DOM snapshot in conjunction with the defined user goal to determine the most appropriate next action.",
+        "Execute the determined action on the webpage, such as typing text into a specific search bar or clicking a designated login button."
+      ],
+      "target": "jci_web_agent_module/dom_processor.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive outlines a concrete, sequential process for a web agent to interact with a browser, detailing the data acquisition (DOM snapshot), processing (lossless minification), decision-making, and execution steps. The examples provided (type in search bar, click login button) further specify the types of actions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Refund Processing via Email Agent",
+      "steps": [
+        "Implement an email parsing component to identify refund requests within incoming emails.",
+        "Integrate a refund processing tool or API into the agent's available toolset.",
+        "Develop agent decision-making logic that, upon detecting a refund request, initiates a call to the integrated refund processing tool.",
+        "Optionally, implement a pre-execution approval flow that requires user or administrator consent before the refund tool call is fully executed."
+      ],
+      "target": "Jace/EmailAgentLogic.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive outlines a specific, automated action (refund processing) triggered by an email, detailing the necessary components from parsing to tool execution and optional approval.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Shared Company-Wide Integration Permissions for Agent",
+      "steps": [
+        "Develop an integration management module that allows a single authorized user to connect an external tool or service for the company agent (Victor).",
+        "Design a permission inheritance system where the connected integration's permissions are automatically available to the company agent.",
+        "Ensure that once an integration is connected by one user, its capabilities become accessible to all authorized team members interacting with the company agent, without requiring individual connections for each user.",
+        "Implement granular tuning options for inherited permissions, allowing administrators to restrict certain actions or channels for shared integrations."
+      ],
+      "target": "Victor/IntegrationService.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This describes a core architectural difference for a company agent (Victor) that requires specific system components for managing shared integrations and their associated permissions across a team.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Contextual Memory Isolation for Channel-Specific Agents",
+      "steps": [
+        "Design and implement a context management system that stores agent memory segregated by unique Slack channel IDs (e.g., #growth, #engineering) and individual user DM IDs.",
+        "Ensure that when the agent processes a request from a specific Slack channel or DM, it exclusively accesses the memory associated with that particular channel or DM.",
+        "Implement a rule-based access control mechanism that strictly prevents context from one channel (e.g., #growth) from being leaked to or utilized in another channel (e.g., #engineering) or a user's DM.",
+        "Develop mechanisms for conditional cross-context access, allowing context transfer or linking between channels/DMs only when explicitly authorized, potentially based on user attributes like team membership."
+      ],
+      "target": "Victor/ContextManager.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directly addresses the stated challenge of managing context and preventing information leakage across different Slack channels and DMs for a company-wide agent, requiring distinct memory and access control logic.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Terminate Agent Task on Message Deletion",
+      "steps": [
+        "Subscribe to Slack `message_deleted` events via the Slack API.",
+        "Upon receiving a `message_deleted` event, extract the `deleted_ts` (timestamp of the original message) and `channel` ID from the event payload.",
+        "Query the system's active agent tasks to identify any task that was initiated by, or is actively processing, the message corresponding to the `deleted_ts` within the specified `channel` ID.",
+        "If a corresponding task is identified, send a cancellation signal to the agent's task executor, ensuring graceful termination.",
+        "Log the task cancellation, including the `user_id` of the user who deleted the message, the `task_id`, and the reason ('message deleted by user').",
+        "Optionally, post a temporary, ephemeral message in the Slack channel, visible only to the deleting user, confirming that the associated task has been stopped."
+      ],
+      "target": "slack_event_handler.py, agent_task_manager.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states that when a message is deleted, the associated task should not be continued. This directive outlines concrete steps to achieve that.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Re-evaluate Agent Task on Message Edit",
+      "steps": [
+        "Subscribe to Slack `message_changed` events via the Slack API.",
+        "Upon receiving a `message_changed` event, extract the `channel` ID, the `message.ts` (timestamp of the original, now edited, message), and the `message.text` (the new content of the message).",
+        "Retrieve the agent's current understanding or ongoing task state that is associated with the `message.ts` in that specific channel.",
+        "Re-process the message using its new `message.text` content, considering it as an updated instruction or query for the active task.",
+        "Update the agent's internal context and state with the revised message content.",
+        "Generate and post a new response to the Slack thread or update an existing agent response, reflecting the agent's updated understanding or actions based on the edit.",
+        "Log the message edit event, the old and new message content, and the agent's subsequent re-evaluation action."
+      ],
+      "target": "slack_event_handler.py, agent_message_processor.py, agent_context_updater.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The transcript states that an agent should 'respond to an edit' when a message is changed. This directive provides the steps for how the agent can detect, process, and react to such an edit.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Synthesize Cross-DM Conversation Context for Agent",
+      "steps": [
+        "When the Victor agent receives a new Direct Message (DM) from a user.",
+        "Identify the `user_id` of the sender of the new DM.",
+        "Query the historical conversation database or Slack API for all recent messages exchanged between the Victor agent and this specific `user_id` across all DM channels and threads where Victor was directly mentioned or participated.",
+        "Define a configurable look-back window (e.g., last 24 hours, last 50 messages, or a combination) to retrieve relevant historical messages.",
+        "Filter the retrieved history to remove any irrelevant or explicitly excluded contexts (e.g., specific 'growth channel' contexts if the agent is not configured for them, as mentioned in the transcript).",
+        "Concatenate and potentially summarize the filtered historical messages into a coherent `context_string` suitable for input to a language model or task planner.",
+        "Pass this `context_string` along with the content of the new incoming DM to the agent's core processing unit, enabling it to maintain conversational continuity.",
+        "Log the context retrieval and injection process, including the range of messages considered for context."
+      ],
+      "target": "slack_dm_handler.py, conversation_context_manager.py, history_database_interface.py",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.7
+      },
+      "rationale": "The transcript highlights the problem where users start new DMs forgetting previous threads, and states that Victor needs to 'look at the previous messages and somehow roll them over'. This directive outlines the mechanism to achieve that context transfer.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Staged Rollout for Victor's Proactive Features",
+      "steps": [
+        "Configure Victor's proactive feature activation to target a limited, predefined set of early adopter users or teams.",
+        "Establish monitoring and feedback channels to collect qualitative and quantitative data from these initial users regarding feature utility and any unexpected behaviors, especially concerning security implications.",
+        "Upon successful validation and addressing identified concerns from the limited rollout, update the configuration to enable Victor's proactive features for all users within a designated workspace."
+      ],
+      "target": "Victor's feature flag system, deployment configuration, workspace management module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states 'you should earn it with the first us with a few users first and then can you can roll it out broadly' due to security concerns with broad day-one activation. This is a clear, actionable product rollout strategy.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Design and Implement Team-Level Shared Integration Context",
+      "steps": [
+        "Modify the integration connection workflow to allow a single user to connect a shared resource (e.g., Meta Ads, PostHog analytics) on behalf of an entire team or company.",
+        "Ensure that once a team-level integration is established, all authorized members of that team or company can utilize Victor's capabilities reliant on that integration without needing to connect it individually.",
+        "Implement validation logic to prevent individual users from connecting redundant or conflicting integrations for the same shared resource if a team-level connection already exists.",
+        "Update Victor's internal routing logic to prioritize and correctly utilize team-level integrations when multiple users interact with it regarding shared data."
+      ],
+      "target": "Victor's integration management module, configuration database, user interface for integration setup",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker details the pain points of individual integrations ('painful,' 'wrong integration,' 'complexity') and explicitly states 'only one person from the company needs to connect this integration' for Victor to work well, pointing to a need for shared integration context.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Restrict Personal Account Integrations from Team-Wide Access and Enhance Access Control",
+      "steps": [
+        "Categorize integration types into 'Personal' (e.g., individual Gmail, personal calendar) and 'Team/Company' (e.g., shared analytics, ad accounts).",
+        "Implement access control rules in the integration setup process to explicitly prevent 'Personal' categorized accounts from being connected as 'Team/Company' integrations.",
+        "Develop clear user interface prompts and warnings during the integration process to educate users on the scope and implications of connecting different integration types.",
+        "Ensure Victor's data access layer strictly respects the defined scope (personal vs. team) of each connected integration, preventing cross-user data exposure from personal connections."
+      ],
+      "target": "Victor's integration setup UI, backend integration service, access control module, data privacy mechanisms",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The critical customer story where a personal Gmail was connected as a 'team integration' leading to data leakage demonstrates a severe security and privacy flaw that requires immediate attention and explicit procedural steps to prevent recurrence. The problem is a lack of distinction and enforcement between personal and team-scoped integrations.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Scoped Integration Access for Victor",
+      "steps": [
+        "Modify Victor's integration management system to allow for different access scopes for connected services.",
+        "Introduce a configuration or setting for each user's integration (e.g., personal email) to designate it as 'personal' or 'shared'.",
+        "For integrations marked as 'personal', restrict Victor's usage to contexts where the integrating user explicitly calls it or within private direct messages (DMs) with Victor.",
+        "Ensure that integrations marked as 'shared' remain accessible by Victor across relevant team contexts as per existing policy.",
+        "Update Victor's interaction and data access logic to enforce these integration scopes, preventing unauthorized or unintended data exposure from 'personal' integrations."
+      ],
+      "target": "Victor/IntegrationManagementService, Victor/AccessControlModule, Victor/ConversationHandler",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states 'we added a capability to Victor to kind of scope the integrations. So, they're not always shared. And if you want to have your personal integration, your personal email and want Victor to like in your DMs or publicly uh be able to use it when you call it, uh, this is also possible now.' This describes a clear, actionable functional requirement to add privacy controls to integrations.",
+      "dispatch_ready": true
+    }
+  ]
+}

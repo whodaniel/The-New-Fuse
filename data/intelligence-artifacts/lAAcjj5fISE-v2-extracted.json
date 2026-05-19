@@ -1,0 +1,124 @@
+{
+  "source_id": "lAAcjj5fISE",
+  "generated_at": "2026-05-19T18:30:10.882761+00:00",
+  "total_extracted": 7,
+  "dispatch_ready_count": 7,
+  "directives": [
+    {
+      "title": "Integrate Versa Labs for AI Security Testing",
+      "steps": [
+        "Integrate the Versa Labs tool into the existing AI pipeline.",
+        "Configure the tool to define workflows for testing prompts, model responses, and application logic.",
+        "Execute tests against adversarial or risky scenarios.",
+        "Identify and report security weaknesses and unsafe behaviors before deployment."
+      ],
+      "target": "AI pipelines",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The directive clearly states the purpose, target, and the types of actions to be performed with the Versa Labs tool, making it actionable for a system capable of pipeline management and configuration.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Deploy and Utilize Hermes Desktop for AI Agent Workflows",
+      "steps": [
+        "Install Hermes Desktop as an open-source desktop application on a target desktop system.",
+        "Launch Hermes Desktop to provide a graphical environment for AI agent workflows.",
+        "Use the application's interfaces to manage AI agent workflows, including prompts, memory, tool execution, and task coordination, within the local workspace."
+      ],
+      "target": "Desktop systems",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This provides clear instructions for deploying and interacting with a desktop application for a specific purpose (managing AI agent workflows).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Benchmark Language Model Performance with Token Speed",
+      "steps": [
+        "Execute the Token Speed benchmarking tool.",
+        "Configure Token Speed to process specified language models using standardized workloads.",
+        "Measure and collect performance metrics including token generation speed, inference throughput, latency, and output speed.",
+        "Analyze the reported metrics to compare different hardware setups and optimization strategies for model serving."
+      ],
+      "target": "Language models, hardware setups",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The directive outlines a clear benchmarking process, specifying inputs (models, workloads), outputs (metrics), and the goal of the analysis (comparison of setups/strategies).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Deploy and Manage Audio Collections with Avnac",
+      "steps": [
+        "Install Avnac as an open-source desktop audio player on a target desktop system.",
+        "Launch Avnac to provide a local application environment for media management.",
+        "Utilize Avnac's interfaces to manage audio libraries, playlists, and playback controls for audio collections."
+      ],
+      "target": "Desktop systems",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This provides clear instructions for deploying and interacting with a desktop application for audio collection management.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Local Tasks with Doth a Thing",
+      "steps": [
+        "Define repeatable tasks using Doth a Thing's simple workflow definition capabilities.",
+        "Execute these defined tasks via Doth a Thing's command-based interface.",
+        "Apply this utility for scripting and automating repetitive development and operational actions on a local system."
+      ],
+      "target": "Local automation, development and operational actions",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The directive clearly outlines how to use the utility to define and run automation scripts through its command-based execution, making it highly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Check Website Accessibility with Arcan Block Checker",
+      "steps": [
+        "Execute the Arcan Block Checker tool.",
+        "Provide a list of target URLs to the tool.",
+        "Process the URLs and compare the accessibility responses against known restriction behaviors.",
+        "Monitor and report on site availability across networks to track access restrictions, especially those related to Russian network filtering systems."
+      ],
+      "target": "URLs, websites",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The directive provides concrete steps for using the tool to input URLs, process them, and report on website accessibility and restrictions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Load and Experiment with Linux on PlayStation 5 Hardware",
+      "steps": [
+        "Deploy the PS5 Linux Loader's boot and execution utilities onto PlayStation 5 hardware.",
+        "Utilize the boot utilities to initiate the loading of a Linux environment on the PS5 system.",
+        "Use the execution utilities to run and interact with the Linux environment on the PS5.",
+        "Conduct experiments and explore alternative software environments on the PS5 hardware using the loaded Linux system."
+      ],
+      "target": "PlayStation 5 hardware",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This directive provides specific, low-level instructions for leveraging hardware-specific utilities to achieve a functional Linux environment on a PS5, detailing deployment, booting, execution, and experimentation.",
+      "dispatch_ready": true
+    }
+  ]
+}

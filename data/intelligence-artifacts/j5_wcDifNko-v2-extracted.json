@@ -1,0 +1,60 @@
+{
+  "source_id": "j5_wcDifNko",
+  "generated_at": "2026-05-19T18:29:20.528321+00:00",
+  "total_extracted": 3,
+  "dispatch_ready_count": 3,
+  "directives": [
+    {
+      "title": "Acquire Authorized Payment Token from Stripe Payment Link",
+      "steps": [
+        "Receive a Stripe approved payment link URL, which is pre-configured for a specific purchase.",
+        "Initiate an HTTP GET request to the provided Stripe payment link URL.",
+        "Parse the response body or the URL itself to extract the embedded authorized payment token for the purchase.",
+        "Store the extracted payment token securely within the agent's payment handler module for subsequent transaction execution."
+      ],
+      "target": "PaymentHandlerModule / StripeAPIClient",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly states, 'you can point your agent at a link URL and the agent will pick up an authorized token for a purchase.' This provides a clear, actionable sequence for an autonomous agent to acquire authorization via Stripe.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Process Google AP2 Mandate for Task Authorization",
+      "steps": [
+        "Receive a Google Agent Payments Protocol (AP2) mandate (permission slip).",
+        "Parse the AP2 mandate to extract the defined scope of the task.",
+        "Parse the AP2 mandate to extract the specified constraints applicable to the task.",
+        "Parse the AP2 mandate to verify the embedded proof of user approval for the agent's action.",
+        "Store the extracted task scope, constraints, and user approval proof within the agent's authorization context for runtime enforcement and auditing."
+      ],
+      "target": "AuthorizationProcessor / GoogleAP2Client",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "The transcript states Google AP2 'provides a mandate or permission slip that generates the scope of the task, the constraints, and the proof that the user approved the agent's action.' This implies a clear procedural requirement for an agent to consume and interpret such a mandate to proceed with authorized actions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement X42 Payment Flow for Resource Access",
+      "steps": [
+        "Initiate a web request from the software to an X42-enabled service to request a specific resource.",
+        "Receive and process payment instructions provided by the service in response to the resource request.",
+        "Execute the payment as specified by the received instructions.",
+        "Upon successful payment, gain access to the requested resource."
+      ],
+      "target": "Software Agent / Client component interacting with X42 protocol",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly outlines a four-step, sequential process ('software requests a resource, gets payment instructions, pays, gets access') which describes an implementable interaction flow for a software agent or system component.",
+      "dispatch_ready": true
+    }
+  ]
+}

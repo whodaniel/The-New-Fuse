@@ -1,0 +1,221 @@
+{
+  "source_id": "nyO60uzTnP4",
+  "generated_at": "2026-05-19T18:44:29.944050+00:00",
+  "total_extracted": 13,
+  "dispatch_ready_count": 13,
+  "directives": [
+    {
+      "title": "Access Hyperagent Credit Offer",
+      "steps": [
+        "Navigate a web browser to `hyperagent.com`.",
+        "Log into an existing Hyperagent account or create a new one if necessary.",
+        "Verify that $1,000 in credits has been applied to the account."
+      ],
+      "target": "hyperagent.com (web application)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states the actions required to receive the credit: 'You just log into the account, there's going to be a,000 bucks right there'. These steps describe accessing and confirming the credit.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Promote Podcast Video Content",
+      "steps": [
+        "Locate the current podcast episode video on its hosting platform.",
+        "Perform a 'like' action on the identified video.",
+        "Post a comment on the video, expressing appreciation for Howie's contribution."
+      ],
+      "target": "Podcast video hosting platform (e.g., YouTube)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The speaker explicitly requests these actions to support the content: 'all I ask is you like and comment on this video. Show some love for Howie'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Conduct Automated Frontier AI Agent Capability Exploration",
+      "steps": [
+        "Initialize connection to a specified frontier AI agent platform (e.g., Anthropic Claude, OpenAI GPT).",
+        "Configure an experimentation loop to run for a designated duration (e.g., equivalent of a full weekend of continuous operation).",
+        "Generate and submit a sequence of ambitious, multi-turn, and interdependent prompts to the agent under test.",
+        "Avoid generating superficial, single-turn, or trivial queries (e.g., simple factual lookup).",
+        "Capture and analyze agent responses, tracking metrics related to coherence, task completion, autonomy demonstrated, and problem-solving depth.",
+        "Report on the observed 'full power and autonomy' of the agent based on analysis."
+      ],
+      "target": "AI_Agent_Testing_Module",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "The speaker explicitly suggests users 'go hands-on, spent like at least a full weekend playing with agents' with 'ambitious enough prompt or task' to 'experience the full power and autonomy.' Interpreted for an autonomous agent, this translates into a systematic, prolonged, and complex testing protocol to discover the limits and capabilities of a frontier agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Executive Memo Drafting with Hyper-Agents",
+      "steps": [
+        "Receive a request for an executive memo, including its objective, target audience (e.g., board, investors), and core messages.",
+        "Ingest supplementary contextual information, data points, and strategic 'instincts' provided by a human user or an internal knowledge base.",
+        "Instruct a designated hyper-agent (e.g., a fine-tuned GPT/Claude instance) to autonomously conduct research on relevant topics and draft the complete memo content.",
+        "Present the agent's drafted memo to a human for review, feedback, and final approval, incorporating any necessary edits.",
+        "Calculate and report the token cost incurred for memo generation, comparing it against estimated human labor cost savings."
+      ],
+      "target": "Executive_Communications_Automation_System",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker provides a concrete example of a CEO using a 'hyper agent' to 'research and craft' a 'board memo,' supplying 'instincts and context,' and then 'overseeing it at the end,' which directly outlines a specific, implementable workflow for an autonomous agent to assist in high-value document creation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop Core Fleet Agent Management in HyperAgent",
+      "steps": [
+        "Implement or verify the core logic within the `HyperAgent` framework to support the instantiation and management of a 'fleet' of multiple AI agents.",
+        "Develop or confirm the capability to define and assign distinct, purposeful roles to individual agents within the fleet (e.g., Customer Intelligence Agent, Content Production Agent, Competitive Research Agent, Lead Enrichment Agent).",
+        "Ensure the system can orchestrate parallel execution and lifecycle management (e.g., deployment, monitoring, termination) for a configurable number of role-based agents (e.g., up to 20 or more)."
+      ],
+      "target": "HyperAgent/agent_management.py, HyperAgent/agent_orchestration.py",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly references 'run a fleet of 20 agents doing customer intel content production competitive research lead enrichment' as a key future capability, directly implying the need for backend systems to manage such agents and their specialized roles.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement 'Agent Command Center' UI View in HyperAgent",
+      "steps": [
+        "Design and implement a new user interface component or enhance an existing one within the `HyperAgent` application to serve as an 'Agent Command Center' view.",
+        "Integrate this UI view with the backend agent management system to display a real-time overview of all currently deployed agents within the fleet.",
+        "Ensure the view visually represents each agent's assigned role (e.g., 'Customer Intelligence Agent') and its current operational status (e.g., running, paused, error).",
+        "Develop basic interactive controls within the command center, allowing users to monitor, and potentially initiate lifecycle actions (e.g., start, stop, restart) for individual agents or the entire fleet."
+      ],
+      "target": "HyperAgent/ui/agent_dashboard.js, HyperAgent/ui/agent_command_center.vue",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.95
+      },
+      "rationale": "The speaker directly states, 'an agent command center right yeah I mean look that literally is a view in hyper agent,' making the implementation or enhancement of this specific UI component a clear directive.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Hyper-Local Real Estate Market Reports",
+      "steps": [
+        "Receive a task request to generate hyper-local market reports for real estate agents from public data.",
+        "Conduct research on the landscape of the specified hyper-local market by accessing relevant public data sources.",
+        "Perform analysis on the gathered public data to extract key market insights and trends.",
+        "Compile and generate a comprehensive market report based on the conducted research and analysis."
+      ],
+      "target": "Hyper Agent (Task Thread)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly details a past task where Hyper Agent 'went around and did research on the landscape of the market', 'ran a bunch of like analysis', and 'created this research' for 'hyper local market reports for real estate agents generated from public data'. This forms a clear, sequential set of actions for the agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate AI Imagery/Video from Billboard Street View",
+      "steps": [
+        "Identify target billboard locations as points of interest.",
+        "Access Google Street View for each identified billboard location.",
+        "Capture the street view imagery corresponding to the billboard.",
+        "Designate the captured street view image as a reference seed image.",
+        "Initiate an AI image or video generation process using the reference seed image."
+      ],
+      "target": "Google Maps/Street View API integration, AI Image/Video Generation module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly details a multi-step process where the agent uses Google Street View to find points of interest (billboards), captures their imagery, and then uses these images as reference seeds for AI image or video generation. This provides a clear, sequential, and tool-specific workflow that an autonomous agent can follow.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop Personalized Agent Skill",
+      "steps": [
+        "Research the user's content style.",
+        "Identify preferred content posting platforms.",
+        "Analyze a selection of the user's actual posts.",
+        "Distill all gathered information into a reusable skill.",
+        "Pin the created skill to the specified agent OR make it available for on-demand use."
+      ],
+      "target": "Skill generation system / Agent management system",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This outlines a clear, multi-step process for an AI system to create and deploy a personalized skill based on user data, involving research, analysis, distillation, and deployment actions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Agent's Primary Posting Platform",
+      "steps": [
+        "Set the primary content posting platform for the agent to 'X'."
+      ],
+      "target": "Agent configuration / `agent_platform_settings.json`",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "A direct and unambiguous instruction to set a specific parameter for the agent's operation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Restrict Skill Output to Draft Generation",
+      "steps": [
+        "Configure the generated skill to only produce content drafts.",
+        "Ensure the skill is prevented from auto-posting any content."
+      ],
+      "target": "Skill configuration / `skill_behavior_settings.json`",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This specifies a clear functional constraint on the skill's output behavior, which can be configured and verified.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Agent Content Focus and Topics",
+      "steps": [
+        "Set the agent's primary content focus to 'contrarian AI takes'.",
+        "Add 'solopreneur', 'bootstrap', and 'life' as additional content topics for the agent."
+      ],
+      "target": "Agent configuration / `agent_content_profile.json`",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "These are explicit parameters for guiding the agent's content generation strategy, directly mappable to configuration settings.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set Agent to Full Autonomous Operation",
+      "steps": [
+        "Configure the agent to operate in full autonomous mode, generating ideas and content without manual intervention."
+      ],
+      "target": "Agent operational settings / `agent_runtime_config.json`",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "A clear directive to set the agent's operational mode to maximize self-sufficiency, representing a specific system state.",
+      "dispatch_ready": true
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "source_id": "kJNFWGXRrA4",
+  "generated_at": "2026-05-19T18:13:58.361279+00:00",
+  "total_extracted": 4,
+  "dispatch_ready_count": 4,
+  "directives": [
+    {
+      "title": "Inspect React Application Performance",
+      "steps": [
+        "Execute the React Doctor diagnostic tool against the target React application.",
+        "Analyze the tool's output to identify rendering and performance issues, unnecessary renders, or inefficient update patterns within the React project."
+      ],
+      "target": "React application / React project",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The phrase 'Run React Doctor to inspect your React app' provides a clear, imperative command. The description of the tool's function (analyzes, identifies issues, inspects component behavior, highlights patterns) allows for the reconstruction of the detailed analysis step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Persistent Memory into AI Agent Workflow",
+      "steps": [
+        "Integrate the Agent Memory system (an open-source memory layer) into an existing AI agent workflow.",
+        "Configure the AI agent to utilize Agent Memory for persistent storage of contextual information, including task history, facts, and interactions.",
+        "Implement retrieval mechanisms within the AI agent to access stored contextual information from Agent Memory across sessions during execution to maintain continuity."
+      ],
+      "target": "AI agent system / Agent workflow configuration / Agent codebase",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 0.7
+      },
+      "rationale": "The command 'Add Agent memory to your agent workflow' is a direct imperative. The detailed description of Agent Memory's capabilities (stores and retrieves context, maintains continuity, preserves task history/facts/interactions, supports persistent retrieval) provides sufficient information to infer the necessary integration, configuration, and usage steps.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Cloud-Based Claude Coding Environment",
+      "steps": [
+        "Access the 'Free Cloud Code' open-source repository to retrieve setup instructions, usage examples, and workflow guidance.",
+        "Follow the provided setup instructions to configure a cloud-based coding environment for AI-assisted coding, specifically tailored for Claude workflows.",
+        "Verify that the configured environment allows for experimentation with Claude workflows without complex onboarding."
+      ],
+      "target": "Cloud coding environment setup (e.g., specific cloud configurations, infrastructure as code files, or provisioning scripts as detailed in the 'Free Cloud Code' repository)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly states 'run your own Claude coding setup' and that the 'Free Cloud Code' repository 'provides setup instructions, usage examples, and workflow guidance.' This is a clear directive to execute a configuration process using provided documentation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Deploy application using Doku's Git-based workflow",
+      "steps": [
+        "Configure your local application's Git repository to include a remote pointing to your Doku server instance.",
+        "Push the current state of your application's Git repository to the configured Doku remote to initiate deployment."
+      ],
+      "target": "Your Application's Git Repository, Doku Server",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states Doku uses 'Git-based deployment workflows' and that 'applications can be pushed directly to servers,' which directly translates to configuring a Git remote and performing a Git push operation for deployment.",
+      "dispatch_ready": true
+    }
+  ]
+}

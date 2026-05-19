@@ -1,0 +1,249 @@
+{
+  "source_id": "NnsQj2nDkKA",
+  "generated_at": "2026-05-19T18:50:28.372983+00:00",
+  "total_extracted": 15,
+  "dispatch_ready_count": 14,
+  "directives": [
+    {
+      "title": "Set up and Run Pixel 3D Locally",
+      "steps": [
+        "Identify the official source or repository for the 'Pixel 3D' generator, which is indicated to be accessible via a 'code button' from its release announcement.",
+        "Access the detailed installation and execution instructions provided within the identified source's documentation (e.g., README file).",
+        "Execute the retrieved instructions to download all necessary Pixel 3D models (totaling 24 GB) and configure the generator for local operation."
+      ],
+      "target": "Local machine environment (with GPU)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states that Pixel 3D has been released, provides a clear path ('code button' leading to 'all the instructions on how to download and run this locally'), and specifies key parameters like model size (24 GB) and a critical hardware requirement (mid to high-end GPU). This provides enough detail for an autonomous agent to understand the goal and the general procedural steps, even if the initial URL is not directly given.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Download and Run 'warp as history' Locally",
+      "steps": [
+        "Access the 'warp as history' project page/repository.",
+        "Locate and click the 'code button' on the page.",
+        "Scroll down the page to find the section containing the detailed instructions.",
+        "Execute the provided instructions to download and run the 'warp as history' code locally on the computer."
+      ],
+      "target": "Project page/repository for 'warp as history'",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly states that the code and models are released, and provides clear steps (click code button, scroll, follow instructions) for downloading and running locally.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Train and Fine-tune 'warp as history' Model",
+      "steps": [
+        "Access the 'warp as history' project page/repository.",
+        "Locate and click the 'code button' on the page.",
+        "Scroll down the page to find the released script for training and fine-tuning.",
+        "Utilize the script to train and fine-tune the 'warp as history' model."
+      ],
+      "target": "Project page/repository for 'warp as history'",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript mentions that a specific script for training and fine-tuning 'warp as history' has been released and is accessible via the 'code button' on the project page.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Download and Set Up 'Fi Motion' Locally",
+      "steps": [
+        "Access the 'Fi Motion' project page/repository.",
+        "Locate and click the 'code button' on the page.",
+        "Scroll down the page to find the section containing the detailed instructions.",
+        "Execute the provided instructions to download and set up 'Fi Motion' on the computer."
+      ],
+      "target": "Project page/repository for 'Fi Motion'",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript clearly states that the code for 'Fi Motion' has been released and provides explicit steps (click code button, scroll, follow instructions) for downloading and setting it up.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set up and run Reit Live video relighting locally",
+      "steps": [
+        "Verify the local system has a CUDA GPU with at least 24 GB of VRAM.",
+        "Navigate to the Reit Live main project page.",
+        "Locate and activate the 'code' button on the project page.",
+        "Scroll down to find the section containing all instructions for local download and execution.",
+        "Execute the provided instructions to download the Reit Live codebase.",
+        "Execute the provided instructions to run the Reit Live application locally on the computer."
+      ],
+      "target": "Local Machine (Reit Live)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states that the code for Reit Live has been released and contains 'all the instructions on how to download and run this locally on your computer,' along with a specific hardware prerequisite (CUDA GPU with 24 GB VRAM). This provides enough detail for an autonomous agent to find and follow the setup process.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Dictate Creata 2 Image Style via Example Upload",
+      "steps": [
+        "Upload a set of images to the Creata 2 image generation system.",
+        "Ensure the uploaded images collectively represent the desired artistic style for subsequent generations."
+      ],
+      "target": "Creata 2 Image Generation System",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "An autonomous agent can programmatically interact with an API or system endpoint to upload image files, assuming such an interface exists for Creata 2. The purpose of dictating style is clear.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Creata 2 Images with Dictated Style",
+      "steps": [
+        "Initiate an image generation request within the Creata 2 system.",
+        "Apply the artistic style previously dictated by an uploaded set of images to the generation request, ensuring consistency across outputs."
+      ],
+      "target": "Creata 2 Image Generation System",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Following the style dictation, an autonomous agent can issue a generation command to Creata 2, referencing the previously defined style. The outcome can be visually verified.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Update Mobile App for Codeex Integration",
+      "steps": [
+        "Access the appropriate mobile app store for the device (e.g., Apple App Store for iOS, Google Play Store for Android).",
+        "Locate the ChatGPT mobile application.",
+        "Initiate and complete the update process for the ChatGPT mobile app to its latest available version."
+      ],
+      "target": "Mobile Device (iOS/Android) running the ChatGPT mobile app",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a direct and standard procedural step that an autonomous agent managing a mobile environment or simulating user interaction can execute. Success is verifiable by checking the app version.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Update Codeex and ChatGPT Mobile App",
+      "steps": [
+        "Update the ChatGPT mobile application on an iOS or Android device.",
+        "Update the Codeex application on a macOS computer."
+      ],
+      "target": "ChatGPT mobile app / Codeex desktop application",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The directives explicitly name the applications and platforms for updates, providing clear targets and actions. An autonomous agent can initiate standard app update procedures for these components.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Connect Higsfield MCP Endpoint to AI Agents",
+      "steps": [
+        "Connect the Higsfield MCP endpoint to an AI agent system (e.g., Claude, OpenClaw, Hermes)."
+      ],
+      "target": "AI agent configuration / Higsfield MCP service",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The instruction 'Just connect the MCP endpoint once' is a direct, imperative action. While the exact connection mechanism (e.g., API key, specific command) isn't detailed, the goal is clear enough for an agent to perform a configuration task and verify the connection.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install and Test New Open-Source AI Music Generator",
+      "steps": [
+        "Install the newly released open-source AI music generator.",
+        "Test the functionality of the installed music generator by providing a text prompt and input lyrics to generate a song."
+      ],
+      "target": "Local development environment / Open-source software repository",
+      "metrics": {
+        "specificity": 0.6,
+        "implementability": 0.7,
+        "testability": 0.7
+      },
+      "rationale": "The speaker explicitly states the intention to 'install this and test it some more,' providing clear procedural steps. An agent can typically locate and execute installation procedures for open-source software and perform basic functional tests.",
+      "dispatch_ready": false
+    },
+    {
+      "title": "Locate Music Generator Installation Instructions",
+      "steps": [
+        "Navigate to the GitHub repository page associated with the music generator.",
+        "Locate and click the GitHub button, typically found in the top right corner of the page.",
+        "Scroll down the GitHub repository page to find the section containing all instructions on how to download and run the music generator locally on your computer."
+      ],
+      "target": "Music Generator GitHub Repository Page",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript provides explicit UI navigation steps and the expected content to be found on a specific target (GitHub page) to obtain detailed installation instructions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Articulated 3D Object using Articcraft",
+      "steps": [
+        "Provide a simple descriptive text prompt (e.g., 'desk lamp with a rectangular base' or 'three-link chain for compact mechanical linkage') to the Articcraft 3D model generator.",
+        "Initiate the 3D object generation process within Articcraft.",
+        "Retrieve the output, which should be a working 3D asset composed of separate parts, joints, and realistic motion mechanisms."
+      ],
+      "target": "Articcraft 3D Model Generator",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The transcript clearly outlines the input type (object description/prompt) and the expected output (articulated 3D asset with specific properties) for the Articcraft generator, allowing for a functional generation directive.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Delegate 3D Asset Program Generation to AI Coding Agent",
+      "steps": [
+        "Provide a simple object description (e.g., a prompt) as input to the AI coding agent.",
+        "Instruct the AI coding agent (e.g., GPT 5.5) to write a program that constructs the described 3D object.",
+        "Ensure the generated program defines the object's geometry, separate parts, and joints.",
+        "Ensure the generated program includes tests to validate the object's structural integrity, correct part linkage, and potential for realistic motion."
+      ],
+      "target": "Articcraft System (AI Agent Integration Module)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This describes the core automated process within the Articcraft system for generating articulated 3D assets by leveraging an AI coding agent to produce executable code, specifying the expected content and validation mechanisms of that code.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Retrieve Articcraft Source Code and Setup Instructions",
+      "steps": [
+        "Navigate to the Articcraft project's public page (e.g., GitHub repository or dedicated website).",
+        "Locate and click on the designated 'code button' within the project page's user interface.",
+        "Scroll down the displayed content (e.g., the README file or a dedicated instructions section) to access the complete instructions for downloading and running Articcraft on a local machine."
+      ],
+      "target": "Articcraft Project Page (Web UI)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "These steps provide a clear, sequential set of UI interactions for a user or an automated browser agent to locate and access the necessary documentation for Articcraft's installation and execution.",
+      "dispatch_ready": true
+    }
+  ]
+}

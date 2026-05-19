@@ -1,0 +1,410 @@
+{
+  "source_id": "WQv3xjb4WgQ",
+  "generated_at": "2026-05-19T18:32:33.002834+00:00",
+  "total_extracted": 25,
+  "dispatch_ready_count": 21,
+  "directives": [
+    {
+      "title": "Execute Agentars from Terminal",
+      "steps": [
+        "Locate the Agentars executable or main script within the TARS GitHub repository.",
+        "Execute the Agentars program directly from a terminal interface."
+      ],
+      "target": "Agentars component of the TARS stack",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states Agentars can be run 'from your terminal', implying a direct command-line execution method. An autonomous agent can infer common executable patterns.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Launch Agentars Web-Based Interface",
+      "steps": [
+        "Locate the Agentars web server component or script within the TARS GitHub repository.",
+        "Start the web server component for Agentars.",
+        "Access Agentars functionality through the provided web-based interface (e.g., via a browser)."
+      ],
+      "target": "Agentars component of the TARS stack",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript states Agentars can be run 'through a web-based interface', indicating a separate operational mode that involves starting a server and accessing a UI.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Agentars with a Specific AI Model",
+      "steps": [
+        "Identify the configuration mechanism for selecting an AI model within Agentars (e.g., environment variable, configuration file, command-line argument).",
+        "Specify 'Claude' or 'ByteDance's doughbound model' as the chosen AI provider for Agentars operations."
+      ],
+      "target": "Agentars configuration",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The transcript mentions Agentars is 'model agnostic' and can be run 'with claude' or 'with bite dance on doughbound model', clearly indicating a configurable option for the underlying AI model provider.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install and Launch UITARS Desktop Application",
+      "steps": [
+        "Download the UITARS Desktop native application.",
+        "Install the UITARS Desktop native application on the local machine.",
+        "Execute the UITARS Desktop application to run it.",
+        "Open the UITARS Desktop application interface to interact with it."
+      ],
+      "target": "Local machine operating system",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly outlines these sequential actions as direct imperatives for users to get started with the UITARS Desktop application, making them highly specific and implementable steps for deploying and initiating the software.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Iterative Training with Reflection Tuning",
+      "steps": [
+        "Modify the model training loop to capture and log task outcomes (success/failure) for each execution.",
+        "For failed tasks, record the model's intermediate states, actions taken, and the specific nature of the error encountered.",
+        "Generate new training examples from these logged error instances, explicitly highlighting incorrect decisions and providing desired recovery paths or corrective actions.",
+        "Incorporate these error-based examples into subsequent training iterations, giving them appropriate weighting.",
+        "Design or adjust the loss function and/or reward mechanism to penalize persistent errors and incentivize successful error recognition and recovery without human intervention."
+      ],
+      "target": "UITARS_training_pipeline.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive outlines a clear and specific enhancement to the model's training methodology, detailing the data capture, generation, and integration steps required for 'reflection tuning'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop Pre-Action Reasoning using Reinforcement Learning",
+      "steps": [
+        "Introduce a distinct 'reasoning phase' module into the UITARS inference pipeline, preceding the final action execution module.",
+        "Within this reasoning phase, implement logic to analyze the current visual screen state, extracting semantic meaning and context beyond raw pixel data.",
+        "Define or infer the intended outcome of the current task given the overall high-level goal.",
+        "Integrate a reinforcement learning agent responsible for proposing and evaluating a sequence of potential actions that are most likely to achieve the intended outcome from the current state.",
+        "Train the RL agent using a reward system that prioritizes accurate action sequences, minimizes errors, and maximizes task completion efficiency within various screen contexts.",
+        "The reasoning module must output the optimal first action from the determined sequence to the action execution module for immediate implementation."
+      ],
+      "target": "UITARS_inference_engine.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides actionable steps for implementing a new architectural component (reasoning phase) and integrating a specific AI technique (RL) to enhance the model's decision-making process before committing to an action.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable Software Coding and External Tool Interaction in UITARS 2",
+      "steps": [
+        "Integrate a dedicated code understanding and generation module within the core UITARS 2 architecture, capable of parsing, reasoning about, and producing various programming language constructs.",
+        "Develop a robust and extensible tool invocation interface that allows the model to dynamically discover, call, and interact with external command-line tools, APIs, and IDE functionalities.",
+        "Design a mechanism for the model to effectively parse and interpret diverse outputs from external tools, incorporating this information into its ongoing reasoning process for subsequent actions.",
+        "Expand the training dataset significantly to include complex tasks that explicitly require a combination of visual understanding, code manipulation, and orchestration of multiple external tools.",
+        "Ensure the unified architecture facilitates seamless and fluid transitions between interacting with graphical user interfaces, performing code-related tasks, and utilizing external tools based on the dynamic requirements of the task."
+      ],
+      "target": "UITARS_2_capabilities_manager.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive outlines the required components and integration considerations for extending UITARS 2's capabilities into new domains (software coding, tool use), detailing the modules and interfaces needed for implementation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Launch Agent TARS CLI",
+      "steps": [
+        "Execute the Agent TARS launch command using `npx` (e.g., `npx <agent-tars-package-name>`).",
+        "During the launch process, specify a model provider (e.g., via command-line argument or interactive prompt).",
+        "During the launch process, provide an API key for the chosen model provider."
+      ],
+      "target": "System CLI",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states 'To launch agentars you run a single command using npx. ... You run the command, you point at a model provider, you hand an API key and it is running.' This provides a clear sequence of actions, even if the exact package name requires minor inference.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Ensure Node.js Version Compatibility",
+      "steps": [
+        "Verify that Node.js version 22 or above is installed in the execution environment.",
+        "If Node.js version 22 or above is not installed, proceed to install or upgrade Node.js to meet this requirement."
+      ],
+      "target": "Node.js Environment",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript clearly states 'It supports node.js version 22 and above,' establishing a precise and testable prerequisite for operation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Perform Global Installation of Agent TARS",
+      "steps": [
+        "Execute the appropriate package manager command to install Agent TARS globally (e.g., `npm install -g <agent-tars-package-name>`).",
+        "Confirm that the Agent TARS command-line interface is accessible from any directory in the system path."
+      ],
+      "target": "System CLI / npm package manager",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript mentions 'If you want to install it globally rather than running it fresh each time, that is one additional command.' This indicates a standard global package installation process, which is an implementable action for an autonomous agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Mount MCP Server into Agent Tars Instance",
+      "steps": [
+        "Mount an existing MCP server directly into your Agent Tararss instance."
+      ],
+      "target": "Agent Tararss instance runtime / configuration",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.6,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides a clear action (mount) and a clear target (MCP server into Agent Tararss instance), enabling an agent to seek specific documentation or API calls for the 'mount' operation.",
+      "dispatch_ready": false
+    },
+    {
+      "title": "Develop Custom Frontend for Agent Activity Visualization",
+      "steps": [
+        "Build a custom front end that visualizes agent activity.",
+        "Utilize the Agent Tars event stream as the data layer for the custom front end."
+      ],
+      "target": "Custom UI/Frontend application",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.6,
+        "testability": 0.9
+      },
+      "rationale": "This directive specifies building a custom application component (frontend) with a defined purpose (visualize agent activity) and a specific data source (event stream), which is an implementable development task.",
+      "dispatch_ready": false
+    },
+    {
+      "title": "Develop Custom Frontend for Surfacing Specific Events to Users",
+      "steps": [
+        "Build a custom front end that surfaces specific events to users.",
+        "Utilize the Agent Tars event stream as the data layer for the custom front end."
+      ],
+      "target": "Custom UI/Frontend application",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.6,
+        "testability": 0.9
+      },
+      "rationale": "Similar to the visualization task, this is an explicit directive to build a custom frontend with a clear function (surface specific events) and data source (event stream), making it an implementable task.",
+      "dispatch_ready": false
+    },
+    {
+      "title": "Develop Custom Frontend for Triggering Processes based on Events",
+      "steps": [
+        "Build a custom front end that triggers other processes when certain events occur.",
+        "Utilize the Agent Tars event stream as the data layer for the custom front end."
+      ],
+      "target": "Custom UI/Frontend application",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.6,
+        "testability": 0.9
+      },
+      "rationale": "This directive clearly outlines the development of a custom frontend with event-driven logic (trigger processes based on events) and specifies the data source (event stream), qualifying it as an implementable task.",
+      "dispatch_ready": false
+    },
+    {
+      "title": "Install UI Tar's Desktop Application",
+      "steps": [
+        "Download the native UI Tar's desktop application onto the local machine.",
+        "Execute the installer to install the UI Tar's desktop application on the local machine."
+      ],
+      "target": "Operating System (User's Machine)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "These are standard software installation steps, providing clear actions for an autonomous agent to perform on a host system.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Local Operator's Perceive-Reason-Act Loop",
+      "steps": [
+        "Initiate continuous capture of screenshots from the user's screen at predefined regular intervals.",
+        "Process each captured screenshot using the Vision Language Model (VLM) to interpret visual information.",
+        "Based on the VLM's output, determine the optimal next action to achieve the user's goal.",
+        "Execute the determined action through precise simulated mouse movements and keyboard inputs on the local machine."
+      ],
+      "target": "LocalOperator.module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Describes the core operational loop of the local operator with clear inputs, processing, decision-making, and outputs, providing sufficient detail for implementation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Ensure Local Operator Data Privacy and Local-First Architecture",
+      "steps": [
+        "Prevent the transmission of any data, including screenshots or activity logs, to remote servers.",
+        "Ensure no screenshot data or operational records physically leave the local device.",
+        "Implement mechanisms to store all user activity records exclusively on the local hardware."
+      ],
+      "target": "LocalOperator.module, DataStorage.subsystem, NetworkCommunication.subsystem",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "These are specific, measurable constraints on data handling and network communication, directly guiding architectural and coding decisions for privacy.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Remote Computer Operator Functionality",
+      "steps": [
+        "Establish a secure connection to a specified remote computer.",
+        "Enable control and operation of the connected remote machine through the unified natural language interface.",
+        "Translate natural language commands into actions for navigating the remote machine's interface (e.g., clicking, typing).",
+        "Execute these translated actions on the remote machine to complete the specified task."
+      ],
+      "target": "RemoteComputerOperator.module",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Outlines the necessary steps for remote machine control, requiring specific connection, language processing, and remote interaction logic.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Design Remote Computer Operator for Standard Remote Access",
+      "steps": [
+        "Identify and utilize industry-standard protocols for establishing remote computer connections.",
+        "Ensure the remote machine requires no custom or proprietary software installation beyond standard operating system services to facilitate the connection."
+      ],
+      "target": "RemoteComputerOperator.module, ConnectionManagement.subsystem",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Specifies a key architectural constraint for remote connectivity, focusing on interoperability and reducing client-side prerequisites.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Remote Browser Operator for Isolated Web Workflows",
+      "steps": [
+        "Provision and spin up a dedicated browser session within a remote, isolated environment.",
+        "Enable the UI Tar's desktop application to fully operate this remote browser session on behalf of the user."
+      ],
+      "target": "RemoteBrowserOperator.module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Clearly defines the core actions for setting up and controlling a remote, isolated browser environment, which are concrete implementation tasks.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Ensure Remote Browser Operator Session Isolation",
+      "steps": [
+        "Implement strict separation to prevent the Remote Browser Operator from interacting with the user's local browser instance.",
+        "Ensure that remote browsing activity does not affect or mix with the user's local browsing history.",
+        "Ensure that remote browsing activity does not affect or mix with the user's local browser cookies.",
+        "Ensure that remote browsing activity does not affect or mix with the user's local active browser sessions."
+      ],
+      "target": "RemoteBrowserOperator.module, Sandboxing.component, Security.component",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "These are critical isolation requirements, necessitating specific architectural and security measures to maintain strict separation between local and remote browsing environments.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate All Operators into a Unified Desktop Interface",
+      "steps": [
+        "Design and implement a single, cohesive user interface within the UI Tar's desktop application.",
+        "Ensure this interface provides seamless access and control over all three operator types: Local Computer, Remote Computer, and Remote Browser.",
+        "Avoid requiring users to switch to separate tools or applications when transitioning between different operator modes."
+      ],
+      "target": "UITARS_Desktop.Application, UserInterface.module, OperatorManagement.component",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Specifies a clear UI/UX and architectural requirement for consolidating control over all operator types within a single application interface.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate New MCP Server with Agent TAR",
+      "steps": [
+        "Mount the new MCP server into your Agent TAR setup to immediately add its capabilities."
+      ],
+      "target": "Agent TAR Configuration / Runtime Environment",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The directive 'You mount the server and it is there' provides a clear, imperative instruction for adding new functionalities to Agent TAR. Given Agent TAR's 'MCP native' architecture, 'mounting' an MCP server implies a specific technical procedure familiar to developers for integrating external components into the system's operational state. This is an implementable step for extending the agent's capabilities.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Browse Job Boards and Apply Search Filters",
+      "steps": [
+        "Activate the `hybrid browser operator`.",
+        "Open `LinkedIn` using the `hybrid browser operator`.",
+        "Sequentially open `Indeed` using the `hybrid browser operator`.",
+        "For job listing pages, when the DOM structure is inconsistent, utilize `vision` capabilities to read listings.",
+        "When filling search filters, switch to `DOM interaction` mode.",
+        "Methodically move through search results, applying the specified job criteria."
+      ],
+      "target": "Agent TARS Hybrid Browser Operator",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive details the agent's initial interaction with external job platforms, specifying the operator, sequence, and conditional use of 'vision' versus 'DOM interaction' modes for different browser elements. Each step is an explicit action with a clear condition or tool.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Evaluate and Apply to Matching Job Listings",
+      "steps": [
+        "For every job listing identified as matching the predefined criteria:",
+        "Navigate to the full job description page.",
+        "Evaluate the job description's fit against the developer's resume and criteria.",
+        "Open the job application flow for that listing.",
+        "Complete all required form fields within the application using information from the resume and criteria."
+      ],
+      "target": "Agent TARS Application Processor",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.85,
+        "testability": 0.85
+      },
+      "rationale": "This directive outlines the iterative process of handling individual job opportunities found by the agent. It includes specific actions like navigation, evaluation, opening an application, and completing forms, which are core functions of an automated job application system.",
+      "dispatch_ready": true
+    }
+  ]
+}

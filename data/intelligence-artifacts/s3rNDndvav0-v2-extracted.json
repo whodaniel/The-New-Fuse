@@ -1,0 +1,282 @@
+{
+  "source_id": "s3rNDndvav0",
+  "generated_at": "2026-05-19T18:15:54.883328+00:00",
+  "total_extracted": 16,
+  "dispatch_ready_count": 15,
+  "directives": [
+    {
+      "title": "Collect biological data for unified AI model pre-training",
+      "steps": [
+        "Access and retrieve antibody sequences from the Observed Antibody Space database.",
+        "Access and retrieve protein data from the Uniprot database.",
+        "Access and retrieve small molecule structures from the ZINC database.",
+        "Access and retrieve small molecule structures from the PubChem database.",
+        "Access and retrieve gene expression data from the Cell Xgene database.",
+        "Integrate all retrieved data into a single, unified dataset for model pre-training."
+      ],
+      "target": "Data Ingestion / Pre-processing Module for the 'Mammal' AI model",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.85,
+        "testability": 0.9
+      },
+      "rationale": "The steps clearly identify specific databases and types of data to be collected, which are common data engineering tasks. The final step defines the aggregation goal for model input.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Encode Chemical Structures as SMILES Strings",
+      "steps": [
+        "Accept a 3D chemical structure as input.",
+        "Apply a SMILES (Simplified Molecular-Input Line-Entry System) encoding algorithm to flatten the 3D structure into a linear text string.",
+        "Ensure the resulting SMILES string represents atoms as specific characters and chemical bonds (e.g., single, double, triple, aromatic) as defined symbols (e.g., '-', '=', '#', ':')."
+      ],
+      "target": "chemical_encoder_module.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides clear input, output, and a standard algorithm to use (SMILES encoding), making it directly actionable. Libraries like RDKit can implement this.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prioritize Genes by Expression Level",
+      "steps": [
+        "Obtain raw gene expression data for a given cell or biological sample.",
+        "Quantify the activity or expression level for each individual gene present in the dataset.",
+        "Sort all quantified genes in descending order based on their activity/expression level.",
+        "Output the sorted list, effectively creating a priority list where the most active genes appear first."
+      ],
+      "target": "gene_expression_processor.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Defines the input (gene expression data), the processing (quantify, sort), and the output (ranked list) in a procedural manner using standard bioinformatics operations.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Extract and Format Protein/Antibody Amino Acid Sequence",
+      "steps": [
+        "Receive protein or antibody data (e.g., from UniProt, PDB entries, FASTA files).",
+        "Identify and extract the linear sequence of constituent amino acids.",
+        "Represent this sequence as a string of characters, where each character corresponds to a specific amino acid (e.g., using standard single-letter codes like 'A' for Alanine, 'G' for Glycine)."
+      ],
+      "target": "protein_sequence_extractor.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Specifies input, the core extraction task, and the desired output format (standard amino acid character sequence), which is a common bioinformatics task.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Modular Domain-Specific Tokenization and Embedding",
+      "steps": [
+        "Develop an input data classifier to identify the domain of incoming biological data (e.g., small molecule, protein, gene expression profile).",
+        "For each identified domain, configure or develop a specialized tokenizer/dictionary (e.g., `ChemistryTokenizer`, `ProteinTokenizer`, `GeneExpressionTokenizer`).",
+        "For each identified domain, configure or develop an embedding model (e.g., `ChemistryEmbedder`, `ProteinEmbedder`, `GeneExpressionEmbedder`) that translates tokens into numerical vector representations.",
+        "Upon receiving new data, route it to the appropriate domain-specific tokenizer to convert it into a sequence of tokens.",
+        "Feed the generated tokens into their corresponding domain-specific embedding model to produce numerical embeddings.",
+        "Combine all generated embeddings from different domains into a single shared multi-dimensional embedding space, ensuring compatibility for downstream model processing."
+      ],
+      "target": "modular_tokenizer_system.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 0.7
+      },
+      "rationale": "Outlines the architectural components (classifier, domain-specific tokenizers/embedders) and the procedural flow for processing data from domain classification to merged embeddings. This describes a system-level implementation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initiate Video Generation via Runway Agent",
+      "steps": [
+        "Formulate a detailed description of the desired video concept (e.g., product launch, ad campaign, YouTube intro).",
+        "Submit the formulated video concept description to the Runway Agent to begin the video generation process."
+      ],
+      "target": "Runway Agent API / User Interface",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states, 'You start by simply describing what you want,' which provides a clear, actionable first step for an autonomous agent interacting with the Runway Agent feature.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Review Proposed Video Plan from Runway Agent",
+      "steps": [
+        "Access the entire video plan provided by Runway Agent after concept submission.",
+        "Review the plan details, including every scene, visual direction, and narrative structure, before proceeding with final video generation."
+      ],
+      "target": "Runway Agent output / User Interface",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript states, 'Before the video is generated, you can see the entire plan first. every scene, the visual direction, the flow of the story,' which defines a specific, observable action and its purpose prior to video finalization.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate and Refine AI-Powered Video Content",
+      "steps": [
+        "Submit a natural language description of the desired video content (e.g., product launch, ad campaign, YouTube intro) to the Runway Agent system.",
+        "Review the generated preliminary video plan, which includes scene breakdowns, visual direction, and story flow.",
+        "Modify, redirect, or completely reshape elements of the video plan based on user feedback or predefined criteria.",
+        "Approve the refined video plan to initiate the final video rendering process.",
+        "Receive the fully assembled and edited video, incorporating multiple scenes, voice-over, music, and post-production elements, ready for publication."
+      ],
+      "target": "Runway Agent System/API",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "This outlines a clear, multi-step interaction with an AI video generation system, from initial prompt to final output, including an interactive refinement loop that an autonomous agent could follow if APIs or UI automation are available.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Classify Immune Cell Types by Genetic Activity",
+      "steps": [
+        "Acquire genetic activity data for an unknown immune cell.",
+        "Process the acquired genetic activity data using the Mammal AI model's classification component.",
+        "Output a specific label identifying the cell type (e.g., 'ZD4 plus T-cell', 'NK cell') based on its genetic profile."
+      ],
+      "target": "Mammal AI Model (Cell Classification Component)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This is a fundamental machine learning classification task with clearly defined inputs (genetic activity) and expected outputs (cell type label), making it highly implementable and testable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Predict and Rank Efficacy of Novel Drugs Against Cancer Cells",
+      "steps": [
+        "Input the chemical strings for a set of novel drugs, specifically including 'carzomibadanib', 'infigratinib', and 'vura phenib', along with any other specified new drugs, into the Mammal AI model.",
+        "Input the genetic profiles of over 800 diverse types of human cancer tumor cells (e.g., lung cancer, breast cancer, colon cancer) into the Mammal AI model.",
+        "Query the Mammal AI model to predict the effectiveness of each novel drug against each of the provided cancer tumor cell types.",
+        "Generate an aggregated ranking of the novel drugs, ordered from the most deadly to the least deadly to the cancer cells, based on the model's predictions across all tumor types."
+      ],
+      "target": "Mammal AI Model (Drug Response Prediction Component)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This describes a concrete predictive task for an AI model, with specific input data types (chemical strings, genetic profiles) and a well-defined, quantifiable output (ranked list of drug potencies). The context of 'unseen drugs' emphasizes the predictive capability, which is a core ML task.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Evaluate Protein Binding Prediction for Mammal vs. AlphaFold 3",
+      "steps": [
+        "Identify and prepare seven distinct, well-documented antibody-disease target pairs.",
+        "For each antibody-disease target pair, provide the relevant representations (e.g., sequences for Mammal, structures/sequences for AlphaFold 3) as input to the Mammal model.",
+        "Query the Mammal model for a binary prediction (Yes/No) indicating whether the given antibody and target will bind.",
+        "For the same antibody-disease target pair, provide the relevant representations as input to the AlphaFold 3 model.",
+        "Query the AlphaFold 3 model for a binary prediction (Yes/No) indicating whether the given antibody and target will bind.",
+        "Record the binding predictions from both Mammal and AlphaFold 3 for each of the seven pairs.",
+        "Compare the recorded predictions against the established ground truth for binding for each pair.",
+        "Calculate and compare the prediction accuracy of the Mammal model versus the AlphaFold 3 model across all seven test cases."
+      ],
+      "target": "ProteinBindingPredictionSystem (encompassing MammalModel and AlphaFold3Model components)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly describes a comparison experiment where researchers 'showed both Mammal and AlphaFold an antibody and a disease target' and 'asked, will these two stick together? Yes or no?' across 'seven different well-documented targets'. This provides clear inputs, outputs, specific models, and a defined scope for the evaluation, making it highly implementable for an autonomous agent with access to these models and data.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prepare SABDAB Dataset for CDR Prediction Training/Testing",
+      "steps": [
+        "Access the SABDAB dataset.",
+        "Select thousands of known and successful antibody entries from the dataset.",
+        "For each selected antibody, programmatically identify and artificially erase its Complementarity Determining Regions (CDRs) to create masked entries.",
+        "Ensure that the erased CDR information is not accessible to the AI model during subsequent testing or inference."
+      ],
+      "target": "Antibody Data Preprocessing Module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "This directive provides explicit steps for data preparation, including identifying a source dataset, selecting specific entries, performing a data modification (erasure), and setting a constraint for AI access, making it highly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Novel Antibody Complementarity Determining Region (CDR) Sequences using Mammal AI",
+      "steps": [
+        "Provide the `Mammal AI` model with a specific `disease target` as input.",
+        "Present the input to `Mammal AI` in a 'fill-in-the-blank' format, representing an antibody structure with missing CDR sequences.",
+        "Instruct `Mammal AI` to predict the precise `amino acid sequence` for the missing `CDRs` ('fingers') that would enable binding to the given `disease target`.",
+        "Constrain `Mammal AI` to operate solely on `one-dimensional text sequences` and prevent it from accessing any `3D structural maps` of the antibody or the disease during the prediction process."
+      ],
+      "target": "Mammal AI Antibody Design Engine",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive details the interaction with an AI model for a generative task, specifying input, desired output, the core operation, and key operational constraints, making it highly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Process Patient Samples for Disease Diagnosis",
+      "steps": [
+        "Ingest digitized patient DNA sample data into the `Mammal_Foundation_Model_API`.",
+        "Ingest digitized patient blood sample data into the `Mammal_Foundation_Model_API`.",
+        "Invoke the diagnostic function of the `Mammal_Foundation_Model_API` with the ingested sample data.",
+        "Parse the returned output to identify the specific disease cause.",
+        "Parse the returned output to identify abnormalities in the patient's DNA.",
+        "Parse the returned output to identify problematic proteins in the patient's body."
+      ],
+      "target": "Mammal_Foundation_Model_API",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides a clear sequence of actions for an autonomous agent to feed patient sample data into the AI model and extract specific diagnostic information.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Personalized Drug Prescriptions",
+      "steps": [
+        "Provide patient-specific diagnostic data (e.g., disease cause, identified DNA abnormalities, problematic proteins) as input to the `Mammal_Foundation_Model_API`.",
+        "Invoke the drug recommendation function of the `Mammal_Foundation_Model_API` using the provided diagnostic data.",
+        "Parse the returned output to extract the recommended best drugs for the specific patient."
+      ],
+      "target": "Mammal_Foundation_Model_API",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "This directive outlines how an autonomous agent can use the AI model, with previously obtained diagnostic data, to generate personalized drug recommendations for a patient.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Design Custom Antibody for Patient",
+      "steps": [
+        "Provide patient-specific biological requirements and target information (e.g., specific antigen, desired binding properties) as input to the `Mammal_Foundation_Model_API`.",
+        "Invoke the custom antibody design function of the `Mammal_Foundation_Model_API`.",
+        "Parse the returned output to obtain the generated design for a new antibody tailored for the patient."
+      ],
+      "target": "Mammal_Foundation_Model_API",
+      "metrics": {
+        "specificity": 0.6,
+        "implementability": 0.6,
+        "testability": 0.8
+      },
+      "rationale": "This directive describes the process for an autonomous agent to utilize the AI model to synthesize a novel antibody design based on specific patient requirements.",
+      "dispatch_ready": false
+    }
+  ]
+}

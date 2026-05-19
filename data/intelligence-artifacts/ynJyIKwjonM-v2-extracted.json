@@ -1,0 +1,544 @@
+{
+  "source_id": "ynJyIKwjonM",
+  "generated_at": "2026-05-19T18:20:38.525306+00:00",
+  "total_extracted": 33,
+  "dispatch_ready_count": 33,
+  "directives": [
+    {
+      "title": "Implement Agentic RAG by Replacing Fixed Retrieval",
+      "steps": [
+        "Remove or disable the existing fixed RAG retrieval pipeline component that unconditionally pulls data/chunks using the user message as a query.",
+        "Develop a new 'Search Tool' module or function that encapsulates the core retrieval logic (e.g., vector search to pull data/chunks from a database).",
+        "Integrate this Search Tool into the agent's toolkit or available actions.",
+        "Implement a decision-making mechanism within the agent (e.g., via LLM prompting or specific logic) that determines:",
+        "    a. Whether to call the Search Tool at all based on the current user message or task.",
+        "    b. If the Search Tool is called, what query to use (potentially rewriting the original user message).",
+        "    c. Whether additional rounds of retrieval are needed after an initial search.",
+        "Ensure the retrieved context is conditionally added to the LLM's context window only when the Search Tool is invoked and returns relevant information."
+      ],
+      "target": "RAG Pipeline, Agent orchestration module, Search Tool module, Database integration",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive directly translates the speaker's architectural shift from a 'fixed retrieval pipeline' to 'agentic rag' where 'the agent can decide... whether or not to call the search tool.' It provides a clear set of actions to replace the old system with the new, including the necessary decision logic.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Search Local Files via Shell Tool",
+      "steps": [
+        "Invoke the shell tool.",
+        "Execute the `ls` command to list files in the target directory.",
+        "Execute the `grep` command with appropriate patterns to find data within the listed files in the local file system."
+      ],
+      "target": "Local file system",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly states 'you can just run ls and grab to find data in your local file system' as a capability of the shell tool, providing concrete command examples.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Interact with Database using Custom CLI via Shell Tool",
+      "steps": [
+        "Invoke the shell tool.",
+        "Execute commands provided by the database's custom command-line interface (CLI) to interact with the database (e.g., query, update, manage)."
+      ],
+      "target": "Database (via custom CLI)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript notes: 'If your database has a custom CLI, you can actually let the agent also use the shell tool um and interact with the database,' outlining the method of interaction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Execute Database Interaction Script via Shell Tool",
+      "steps": [
+        "Invoke the shell tool.",
+        "Write a script (e.g., Bash, Python) that includes logic to connect to the database and run a search query.",
+        "Execute the written script using the shell tool."
+      ],
+      "target": "Database (via custom script)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The directive 'You could also let your agent write an entire search entire script from scratch like connect to your database, run a search query' defines the task of script creation and execution for database interaction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Interact with HTTPS-Exposed Database via Curl and Shell Tool",
+      "steps": [
+        "Invoke the shell tool.",
+        "Execute a `curl` command targeting the HTTPS endpoint of the database to send requests and receive responses."
+      ],
+      "target": "Database (exposed via HTTPS)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript specifies: 'If your database is exposed via HTTPS, you can just run a curl command, interact with the database through the shell tool,' providing a direct method using `curl`.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Perform Web Search via Curl and Shell Tool",
+      "steps": [
+        "Invoke the shell tool.",
+        "Execute a `curl` command to interact with a web search endpoint or API to perform a web search."
+      ],
+      "target": "Web",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The statement 'Speaking of curl commands, you can also um do web searches if you like' implies the use of `curl` through the shell tool for web search functionality.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enhance Tool Description with Trigger Conditions",
+      "steps": [
+        "Identify a tool whose agent is struggling to call the right tool, especially after adding more parameters or other tools.",
+        "Access the relevant tool's description (e.g., docstring, configuration object, or dedicated description field).",
+        "Add explicit 'trigger conditions' to the tool description.",
+        "Clearly define when this specific tool *should* be used.",
+        "Clearly define when this specific tool *should not* be used, particularly in comparison to other available tools."
+      ],
+      "target": "Tool description (e.g., `tool_config.json`, `tool_class_docstring`, `tool_definition.py`)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "This directive provides clear, actionable steps for modifying a tool's description to improve agent decision-making on tool selection by specifying usage conditions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enhance Tool Description with Relational Constraints",
+      "steps": [
+        "Review tools within the agent's arsenal, especially in scenarios involving multiple tools or complex multi-step workflows.",
+        "Access the relevant tool's description.",
+        "Add 'relationship' constraints to the tool description.",
+        "Specify any required pre-conditions or dependencies, such as another agent skill that must be called *before* this tool (e.g., 'first call `get_user_info` skill').",
+        "Include any necessary confirmation steps before calling the tool (e.g., 'get confirmation from the user')."
+      ],
+      "target": "Tool description (e.g., `tool_config.json`, `tool_class_docstring`, `tool_definition.py`)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "This directive details how to embed inter-tool dependency and relational information directly into a tool's description, guiding the agent through sequential or conditional tool usage.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reinforce Tool Usage in Agent System Prompt",
+      "steps": [
+        "Identify instances where the agent consistently fails to call the correct tool, even after optimizing its tool descriptions.",
+        "Access the agent's primary system prompt (or initial instruction set).",
+        "Add explicit reinforcement instructions or guiding principles to the system prompt.",
+        "Ensure these instructions emphasize *when* and *how* to use the specific problematic tool(s) to steer the agent's behavior."
+      ],
+      "target": "Agent system prompt (e.g., `agent_config.py`, `system_prompt_template.txt`, `agent_initialization_code`)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides a direct, actionable measure to correct agent tool-calling failures by modifying the agent's core instructions to reinforce desired behaviors.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Agent System Prompt",
+      "steps": [
+        "Define a system prompt string for the agent.",
+        "Set the agent's primary role as 'a search agent tasked with answering questions.'",
+        "Include information that the agent 'has access to different context retrieval tools.'",
+        "Instruct the agent to 'decide whether or not you need to retrieve additional context before answering a question.'"
+      ],
+      "target": "agent_config.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides direct, specific content for the agent's system prompt, clearly outlining its role and initial instructions, which is a concrete configuration step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Inform Agent about ElasticSearch Data Structure",
+      "steps": [
+        "Include the following information about the ElasticSearch data structure in the agent's context (e.g., system prompt or tool description):",
+        "Specify that a 'text' field exists, comprised of the 'title' and 'description' of each session.",
+        "State that this 'text' field is used for vector embeddings and semantic search.",
+        "List metadata fields: 'day', 'time', 'room', and 'speaker's name'.",
+        "Explain that metadata fields are not embedded and can only be used for filtering, not semantic search."
+      ],
+      "target": "agent_config.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Details the crucial information the agent needs to effectively use the ElasticSearch tool, providing specific content to be incorporated into the agent's knowledge base.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initialize Semantic Search Embedding Model",
+      "steps": [
+        "Define and initialize an embedding model instance.",
+        "Specifically, use the 'new genome embeddings v5 model' for this purpose."
+      ],
+      "target": "tools.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Specifies the exact embedding model to be used, which is a direct code instruction for instantiation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create ElasticSearch Vector Store and Search Tool",
+      "steps": [
+        "Integrate the previously defined embedding model with an existing local ElasticSearch store.",
+        "Use this integration to create a vector store (e.g., using a LangChain-compatible ElasticSearch vector store class).",
+        "Instantiate a semantic search tool that utilizes this newly created vector store for its search operations."
+      ],
+      "target": "tools.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Outlines the sequential setup of core search components, connecting the embedding model to ElasticSearch to form a usable vector store and then a search tool.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Semantic Search Tool's Similarity Search",
+      "steps": [
+        "Within the semantic search tool's implementation, ensure there is a `similarity_search` method.",
+        "Configure this method to accept a `search_query` as its primary input.",
+        "Set the result limit (or `top K` parameter) for the `similarity_search` method to `3`."
+      ],
+      "target": "semantic_search_tool.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides concrete parameters and method requirements for the search function, directly impacting its functional behavior.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Decorate Python Function as LangChain Agent Tool",
+      "steps": [
+        "Apply the `@tool` decorator (from LangChain's `tools` module or similar) to the Python function that encapsulates the semantic search logic.",
+        "Ensure the Python function's name is descriptive, as it will be used as the default tool name by LangChain.",
+        "Provide a clear and concise docstring for the function; this docstring will automatically be converted into the tool's description for the agent."
+      ],
+      "target": "tools.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Directly describes how to integrate a custom Python function into a LangChain agent's toolset using a specific decorator and leveraging docstrings for descriptions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set Search Tool Top-K Result Limit",
+      "steps": [
+        "Configure the search tool to return a maximum of three search results by setting its `top_k` parameter (or equivalent) to `3`."
+      ],
+      "target": "search_tool.py (or relevant configuration for the search tool component)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a direct configuration parameter and its specific numerical value for the search tool.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Convert Python Function to Agent Tool using Langchain Decorator",
+      "steps": [
+        "Apply the `@tool` decorator from Langchain to the Python function intended to be an agent tool.",
+        "Ensure the Python function's name is descriptive, as it will be used as the tool's name by default.",
+        "Add a docstring to the Python function, which will serve as the tool's description."
+      ],
+      "target": "Python function definition (e.g., `search_tool_definition.py`)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Directly outlines the Langchain mechanism for creating agent tools from Python functions, specifying how the function's name and docstring are utilized.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Assemble Agent with LLM, System Prompt, and Search Tool",
+      "steps": [
+        "Instantiate the chosen Language Model (LLM).",
+        "Define or load the system prompt string.",
+        "Instantiate the search tool.",
+        "Assemble a new agent instance, providing it with the instantiated LLM, the system prompt, and the search tool.",
+        "Explicitly omit the memory component during this agent assembly for conciseness."
+      ],
+      "target": "agent_assembly.py (or the main agent initialization script)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Details the core components required for the agent's initial setup and explicitly mentions omitting one for a focused implementation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Replace Agent's Database Tool with Execute Query Tool",
+      "steps": [
+        "Remove the previously configured 'database tool' (semantic search tool) from the agent's toolkit.",
+        "Instantiate a new 'execute query tool'.",
+        "Integrate the 'execute query tool' into the agent's toolkit, configuring it to accept and process an entire search query as input, rather than just a topic."
+      ],
+      "target": "agent_tool_configuration.py (or agent initialization logic)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a clear instruction to swap one agent tool for another, detailing the new tool's enhanced capability.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Add Skill Loading Tool to Agent",
+      "steps": [
+        "Instantiate and integrate a 'skill loading tool' into the agent's configuration, alongside other tools like the 'execute query tool'."
+      ],
+      "target": "agent_tool_configuration.py (or agent initialization logic)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "Direct instruction to add a specific component to the agent's toolkit.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Upgrade Agent's Language Model to 'mini'",
+      "steps": [
+        "Modify the agent's configuration to use the `mini` LLM model.",
+        "Update the LLM instantiation in the agent setup code, changing the specified model from `GPT 5.4 Nano` to `mini`."
+      ],
+      "target": "llm_configuration.py (or the agent's main configuration file)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides exact names for the old and new LLM models, making the upgrade directive highly specific and actionable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure LLM with a More Powerful Model",
+      "steps": [
+        "Set up the Language Model (LLM).",
+        "Switch the LLM model from 'GPT 5.4 Nano' to a 'mini' model.",
+        "Apply the existing system prompt to the configured LLM."
+      ],
+      "target": "LLM configuration / Agent initialization script",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Explicitly states a model change and reuse of an existing prompt, providing clear steps for LLM initialization to handle more complex tasks.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create General-Purpose ESQL Database Query Tool",
+      "steps": [
+        "Create a new general-purpose database query tool.",
+        "Configure the tool to use the Elasticsearch Query Language (ESQL) for data filtering, transformation, and analysis.",
+        "Implement the necessary client connection to an Elasticsearch instance.",
+        "Integrate the use of a 'query' method from an 'SQL' class (e.g., within an Elasticsearch client library) to execute ESQL queries."
+      ],
+      "target": "database_query_tool.py or ESQL client wrapper module",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Describes the creation of a new tool and its core interaction with Elasticsearch using ESQL, detailing the client and method usage.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement ESQL Search Tool with Robust Error Handling",
+      "steps": [
+        "Wrap the ESQL query functionality into a new agent search tool.",
+        "Design the search tool to accept a complete ESQL query as a primary parameter.",
+        "Set the tool's description to 'execute an ESQL query against the conference schedule index in elastic search'.",
+        "Incorporate a 'try-except' block (or equivalent) within the tool's execution logic for comprehensive error handling.",
+        "In the 'except' block, instead of causing a failure, return the caught error response directly to the agent to enable self-correction and query rewriting."
+      ],
+      "target": "esql_search_tool.py or agent tool definition module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides detailed steps for creating a specific agent tool, including its input, explicit description, and critical error handling mechanism for agent autonomy.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop Custom Agent Skill",
+      "steps": [
+        "Create a new custom agent skill definition.",
+        "Define a unique skill name for the custom skill.",
+        "Write a descriptive skill description.",
+        "Configure the system to inject both the skill name and skill description into the agent's system prompt (e.g., using a markdown format)."
+      ],
+      "target": "custom_agent_skill_definition_file or agent skill registry",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Provides clear steps for creating and registering a custom agent skill, which is intended to provide more detailed documentation or guidance to the agent for complex tasks.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Compose Agent with Configured LLM and ESQL Search Tool",
+      "steps": [
+        "Plug the configured, more powerful LLM into the agent.",
+        "Plug the existing system prompt into the agent.",
+        "Plug the newly created ESQL search tool (including its error handling) into the agent."
+      ],
+      "target": "Agent orchestration/composition logic or main agent script",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive explicitly combines the previously configured LLM, system prompt, and the new search tool to initialize and enable the agent's functionality.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define ESQL Query Skill Content",
+      "steps": [
+        "Add instructions outlining the basic structure of an ESQL query to the agent skill's documentation body.",
+        "Include a rule stating that ESQL uses double quotes for string literals.",
+        "Provide detailed information on wildcard patterns (e.g., '*' or '%') to prevent common syntax errors."
+      ],
+      "target": "Agent Skill Definition (e.g., `esql_agent_skill.md` body or `esql_skill_object.content`)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "Explicitly details the textual content that needs to be part of the agent skill's definition, which the agent will progressively disclose.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Update General Purpose Search Tool Description",
+      "steps": [
+        "Locate the existing description for the `general_purpose_search_tool`.",
+        "Append or integrate the instruction: 'Always use the Elastic Search ESQL skill to generate the ESQL query before using this tool.' into the tool's description."
+      ],
+      "target": "`general_purpose_search_tool.description` (a string attribute)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a precise instruction for modifying a specific attribute of a known component, directly influencing agent behavior and tool-use ordering.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Inject Skill Usage Directive into Agent System Prompt",
+      "steps": [
+        "Access the main `system_prompt` used to initialize the agent.",
+        "Add or ensure the prompt includes a clear directive for the agent to 'use the Elastic Search agent skill first before calling the general purpose search tool.'"
+      ],
+      "target": "`agent.system_prompt` (a string configuration)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Directly modifies a crucial part of the agent's initial instruction set to guide its overall decision-making process for tool selection.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Assemble Agent with ESQL Skill Components",
+      "steps": [
+        "Initialize the agent with the appropriate `LLM system prompt` that includes the skill usage directives.",
+        "Integrate the `skill_loading_tool` into the agent's toolset or configuration.",
+        "Integrate the `skill_middleware` into the agent's processing pipeline.",
+        "Integrate the `general_purpose_esql_query_tool` as one of the agent's available tools."
+      ],
+      "target": "Agent Initialization/Configuration (e.g., `Agent` constructor or factory method)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Defines the high-level steps for combining the necessary components into a functional agent, ensuring the custom skill and tools are properly available and connected for operation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define System Prompt for Local File System Data Access",
+      "steps": [
+        "Initialize a new system prompt string.",
+        "Retain the initial part of the system prompt identical to the previously used version.",
+        "Replace any explanation of data structure in Elastic Search with a detailed description of the data structure in the local file system, including a 'session data' folder, subfolders for 'keynotes' and 'workshops', and individual files per session containing title, metadata, and description."
+      ],
+      "target": "LLM agent configuration (system_prompt variable/string)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides explicit instructions on how to construct or modify the system prompt, specifying content to include and what to replace for local file system context.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Shell Tool Integration",
+      "steps": [
+        "Import the necessary shell tool module (e.g., from a LangChain or similar agent framework utility library).",
+        "Instantiate the imported shell tool, assigning it to a variable for subsequent use within the agent."
+      ],
+      "target": "Python script (e.g., agent_setup.py)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "These are direct, standard programming actions for integrating a tool into a Python-based agent framework.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure LLM Agent with System Prompt and Shell Tool",
+      "steps": [
+        "Select and initialize the desired Large Language Model (e.g., GPT 5.4 nano).",
+        "Pass the previously defined system prompt to the LLM agent configuration during initialization.",
+        "Pass the instantiated shell tool to the LLM agent configuration, making it available for the agent's operational use."
+      ],
+      "target": "LLM agent initialization code (e.g., a LangChain Agent constructor)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Outlines the essential components and how they are connected to assemble a functional LLM agent for interacting with the local file system.",
+      "dispatch_ready": true
+    }
+  ]
+}

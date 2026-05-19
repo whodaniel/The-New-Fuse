@@ -1,0 +1,435 @@
+{
+  "source_id": "XLH_WLrmwfk",
+  "generated_at": "2026-05-19T18:40:21.182219+00:00",
+  "total_extracted": 27,
+  "dispatch_ready_count": 27,
+  "directives": [
+    {
+      "title": "Install Grok Build CLI",
+      "steps": [
+        "Execute the following command in your system terminal: `curl -fssl https://x.ai/cli/install.s | bash`."
+      ],
+      "target": "System Terminal",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript provides the exact, single command required for Grok Build CLI installation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initialize Grok Build in a Project Folder",
+      "steps": [
+        "Navigate to the desired project folder using your terminal.",
+        "Run the `grok` command to initiate the agent within that project context."
+      ],
+      "target": "Project directory / Terminal",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly instructs on the first launch process: navigate to a project and execute `grok`.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Grok Build API Key for Headless Environments",
+      "steps": [
+        "Set the environment variable `grok_code_xai_api_key` with your xAI API key as its value."
+      ],
+      "target": "Shell Environment Variables",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The specific environment variable name for headless authentication is provided, enabling direct configuration.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Launch Grok Build with Always Approve Mode via CLI",
+      "steps": [
+        "Execute the command `grok --always-approve` in your terminal to start Grok Build with all tool calls pre-approved."
+      ],
+      "target": "Terminal / Grok Build CLI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The exact CLI flag for activating 'always approve' mode upon launch is specified.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Toggle Always Approve Mode within Grok Build TUI",
+      "steps": [
+        "While interacting with the Grok Build Terminal User Interface (TUI), type `/always approve` and press Enter to toggle the 'always approve' setting."
+      ],
+      "target": "Grok Build TUI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The specific TUI command to toggle 'always approve' mode is explicitly provided.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Launch Grok with always-approve mode via CLI",
+      "steps": ["Execute the command: `grok --always-approve`"],
+      "target": "grok CLI command",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The exact CLI command and its purpose are explicitly provided.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Toggle always-approve mode in Grok TUI",
+      "steps": [
+        "Launch Grok in TUI mode.",
+        "Type `/always approve` within the Grok TUI."
+      ],
+      "target": "Grok TUI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "The TUI command is clearly specified. Implementability assumes TUI interaction capability.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set default permission behavior in Grok configuration file",
+      "steps": [
+        "Open the configuration file located at `~/.grok/config.toml`.",
+        "Locate or create the `[UI]` section.",
+        "Inside the `[UI]` section, set the `permission_mode` key. Valid values are `\"ask\"` or `\"always-approve\"`.",
+        "For example: `permission_mode = \"always-approve\"`"
+      ],
+      "target": "~/.grok/config.toml",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The file path, section, key, and explicit values are all provided, making it highly implementable via file manipulation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure additional skill discovery paths in Grok configuration",
+      "steps": [
+        "Open the configuration file located at `~/.grok/config.toml`.",
+        "Locate or create the `[skill]` section.",
+        "Inside the `[skill]` section, add or modify the `extra_paths` key with a list of directories where Grok should look for skills.",
+        "For example: `extra_paths = [\"/path/to/my/skills\", \"/another/skill/dir\"]`"
+      ],
+      "target": "~/.grok/config.toml",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The file path, section, and key are provided. The specific paths to add are left to the agent's context or input, hence slightly lower specificity on the *value* but clear structure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Invoke a user-defined skill via Grok TUI command",
+      "steps": [
+        "Launch Grok in TUI mode.",
+        "Type the command for the skill, prefixed with `/`. For example: `/browser review`"
+      ],
+      "target": "Grok TUI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "The command syntax and an example skill are provided. Implementability assumes TUI interaction capability.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure additional plugin discovery paths in Grok configuration",
+      "steps": [
+        "Open the configuration file located at `~/.grok/config.toml`.",
+        "Locate or create the `[plugin]` section.",
+        "Inside the `[plugin]` section, add or modify the `extra_paths` key with a list of directories where Grok should look for plugins.",
+        "For example: `extra_paths = [\"/path/to/my/plugins\", \"/another/plugin/dir\"]`"
+      ],
+      "target": "~/.grok/config.toml",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The file path, section, and key are provided. The specific paths to add are left to the agent's context or input, hence slightly lower specificity on the *value* but clear structure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Open Grok TUI extensions model to plugins/hooks/skills tab",
+      "steps": [
+        "Launch Grok in TUI mode.",
+        "Type `/plugins/hooks/skills` within the Grok TUI."
+      ],
+      "target": "Grok TUI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "The exact TUI command is explicitly provided. Implementability assumes TUI interaction capability.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Open Grok TUI extensions model to MCPs tab",
+      "steps": [
+        "Launch Grok in TUI mode.",
+        "Type `/mcps` within the Grok TUI."
+      ],
+      "target": "Grok TUI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "The exact TUI command is explicitly provided. Implementability assumes TUI interaction capability.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Grok in headless mode with a text prompt",
+      "steps": [
+        "Execute the command: `grok-p \"explain this code base\"` (replace 'explain this code base' with the desired prompt)."
+      ],
+      "target": "grok-p CLI command",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The command syntax and an example prompt are explicitly provided.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Grok in headless mode specifying a custom model",
+      "steps": [
+        "Execute the command: `grok-p -m <model_name> \"your prompt\"` (replace `<model_name>` with the desired model identifier and 'your prompt' with the actual prompt)."
+      ],
+      "target": "grok-p CLI command",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The command syntax and option for specifying a model are clear, but the actual model name needs to be provided by the agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Resume an existing named headless Grok session",
+      "steps": [
+        "Execute the command: `grok-p -r <session_id>` (replace `<session_id>` with the identifier of the session to resume)."
+      ],
+      "target": "grok-p CLI command",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The command syntax and option for resuming a session are clear, but the actual session ID needs to be provided by the agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create or resume a named headless Grok session",
+      "steps": [
+        "Execute the command: `grok-p -s <session_name> \"your prompt\"` (replace `<session_name>` with the desired session name and 'your prompt' with the actual prompt)."
+      ],
+      "target": "grok-p CLI command",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The command syntax and option for creating/resuming a named session are clear, but the actual session name needs to be provided by the agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Grok as an Agent Client Protocol (ACP) agent",
+      "steps": ["Execute the command: `grok agent test -o`"],
+      "target": "grok CLI command",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The exact CLI command to run Grok in ACP mode is explicitly provided.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure a new custom model in Grok",
+      "steps": [
+        "Locate the Grok configuration file, typically found in the user's home directory (e.g., `~/.grok/config.toml`).",
+        "Open the Grok configuration file for editing.",
+        "Add a new `[[model]]` configuration block.",
+        "Within this block, set `internal_name` to a unique identifier for the model.",
+        "Set `model_id` to the actual identifier for the model (referred to as 'real model ID').",
+        "Set `base_url` to the API endpoint URL for the model provider.",
+        "Set `display_name` to a user-friendly name for the model.",
+        "Set `api_key_env_var` to the name of the environment variable that will contain the API key for this model.",
+        "(Optional) To set this model as the default, find the appropriate `[settings]` or `[grok]` section and set `default_model = \"<internal_name>\"`.",
+        "Save the changes to the configuration file.",
+        "Run the command `grok inspect` to confirm Grok has discovered the new model configuration.",
+        "To use the model, execute `grok-p \"your prompt here\" -m <internal_name>` or use `/model <internal_name>` within the Grok interactive interface."
+      ],
+      "target": "Grok configuration file (e.g., ~/.grok/config.toml or similar in the user's home directory tree)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive reconstructs the generic procedure for adding any custom model to Grok's configuration, detailing the necessary parameters and verification steps, assuming a common configuration file format.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate GLM Coding Plan as a Grok custom model",
+      "steps": [
+        "Locate the Grok configuration file, typically found in the user's home directory (e.g., `~/.grok/config.toml`).",
+        "Open the Grok configuration file for editing.",
+        "Add a new `[[model]]` configuration block for the GLM Coding Plan model.",
+        "Within this block, set `internal_name = \"GLM-coding\"`.",
+        "Set `model_id = \"GLM-5.1\"`.",
+        "Set `base_url = \"<Ziai_coding_endpoint>\"`. (Note: The transcript states 'use the coding endpoint' but does not provide its exact URL; this detail must be sourced externally.)",
+        "Set `display_name = \"GLM coding plan\"`.",
+        "Set `api_key_env_var = \"<ZIAI_API_KEY_ENV_VAR>\"`. (Note: The transcript does not explicitly state the environment variable name for the Ziai API key; this detail must be sourced externally.)",
+        "(Optional) To make GLM-coding the default model, set `default_model = \"GLM-coding\"` in the appropriate section of the configuration.",
+        "Save the changes to the configuration file.",
+        "Run the command `grok inspect` to verify Grok discovers the `GLM-coding` model.",
+        "To use the model, execute `grok-p \"your prompt here\" -m GLM-coding` or use `/model GLM-coding` within Grok's 2A interface."
+      ],
+      "target": "Grok configuration file (e.g., ~/.grok/config.toml or similar in the user's home directory tree)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides concrete values for setting up the GLM Coding Plan model, highlighting specific considerations like its unique endpoint, while also explicitly noting missing details required for full autonomy.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate NVIDIA NIM Qwen-Coder as a Grok custom model",
+      "steps": [
+        "Locate the Grok configuration file, typically found in the user's home directory (e.g., `~/.grok/config.toml`).",
+        "Open the Grok configuration file for editing.",
+        "Add a new `[[model]]` configuration block for the NVIDIA NIM Qwen-Coder model.",
+        "Within this block, set `internal_name = \"Nvidia-Qwen-Coder\"`.",
+        "Set `model_id = \"Qwen/Qwen-Coder-72B-A35B-Instruct\"`.",
+        "Set `base_url = \"https://integrate.api.nvidia.com/v1\"`.",
+        "Set `display_name = \"Nvidia-Qwen-Coder\"`.",
+        "Set `api_key_env_var = \"NVIDIA_API_KEY\"`.",
+        "Save the changes to the configuration file.",
+        "Set the `NVIDIA_API_KEY` environment variable in your shell or execution environment (e.g., `export NVIDIA_API_KEY=\"<your_nvidia_api_key>\"`).",
+        "Run the command `grok inspect` to verify Grok discovers the `Nvidia-Qwen-Coder` model.",
+        "To use the model, execute `grok-p \"Explain this repo\" -m Nvidia-Qwen-Coder`."
+      ],
+      "target": "Grok configuration file (e.g., ~/.grok/config.toml or similar in the user's home directory tree) and the shell environment",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This directive provides all necessary specific values, including the exact base URL and API key environment variable, for integrating the NVIDIA NIM Qwen-Coder model into Grok's configuration, making it fully implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set NVIDIA API Key for Grok",
+      "steps": [
+        "Set the `NVIDIA_API_KEY` environment variable to your Nvidia key: `export NVIDIA_API_KEY=\"your_nvidia_key\"`"
+      ],
+      "target": "Shell environment variables",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a direct shell command to set an environment variable, which is a common setup step for API access.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Grok-P with Nvidia-Qwen-Coder model",
+      "steps": [
+        "Execute the `grok-p` command with the specified prompt and model: `grok-p \"Explain this repo\" -m Nvidia-Qwen-Coder`"
+      ],
+      "target": "grok-p CLI tool",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Gives a precise command-line instruction for interacting with the `grok-p` tool using a specific model.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Obtain NVIDIA NIM Model ID",
+      "steps": [
+        "Navigate to `build.nvidia.com` to browse available models.",
+        "Alternatively, query the NVIDIA models API endpoint.",
+        "Identify and copy the exact model ID of the desired Nvidia NIM model for use in configurations."
+      ],
+      "target": "NVIDIA NIM (build.nvidia.com or API)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Describes a clear procedure to retrieve necessary model identification information from an external source.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set OpenRouter API Key for Grok",
+      "steps": [
+        "Set the `openrouter_api_key` environment variable to your OpenRouter key: `export openrouter_api_key=\"your_openrouter_key\"`"
+      ],
+      "target": "Shell environment variables",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a direct shell command to set an environment variable for OpenRouter API access.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Grok-P with OpenRouter model",
+      "steps": [
+        "Execute the `grok-p` command with a prompt and the 'openrouter' model alias: `grok-p \"list. The main files in this repo\" -m openrouter`"
+      ],
+      "target": "grok-p CLI tool",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Gives a precise command-line instruction for interacting with the `grok-p` tool using a specified OpenRouter model alias.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Comparative Evaluation of Agent Performance with Alternative LLM Backends",
+      "steps": [
+        "Identify and configure integration points for external Large Language Models (LLMs) within the agent harness, specifically for GLM coding plan, Nvidia, Nim, and Open Router free models.",
+        "Define a suite of test tasks encompassing: a small bug fix scenario, a UI change implementation, a repository explanation generation, a refactor planning exercise, and a headless script creation.",
+        "For each defined test task, execute the agent harness using each configured LLM backend (Grok, GLM coding plan, Nvidia, Nim, Open Router free models) individually.",
+        "During and after each execution, systematically collect the following performance data: the final generated code output, the total number of API calls made by the agent, the frequency and nature of required permission grants, the quality and accuracy of generated code diffs, and an assessment of the model's effectiveness in utilizing available tools within the harness.",
+        "Compile and compare the collected data across all LLM backends and tasks to identify performance trends, strengths, and weaknesses of each integration."
+      ],
+      "target": "Agent harness / LLM integration layer (e.g., in `config.toml` for custom models)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides a structured, multi-step procedure for evaluating the agent's performance and compatibility with various LLM backends. It specifies the models to test, the types of tasks to run, and the key metrics to collect and compare, making it highly implementable and testable.",
+      "dispatch_ready": true
+    }
+  ]
+}

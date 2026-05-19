@@ -1,0 +1,320 @@
+{
+  "source_id": "4azVjKhqDzw",
+  "generated_at": "2026-05-19T18:28:16.595779+00:00",
+  "total_extracted": 20,
+  "dispatch_ready_count": 20,
+  "directives": [
+    {
+      "title": "Create Archon Workflow for Automated Marketplace PR Review",
+      "steps": [
+        "Develop a new Archon workflow.",
+        "Configure the workflow to monitor and process pull requests submitted to the Archon workflow marketplace repository.",
+        "Integrate Claude Code into the Archon workflow to perform automated code reviews of the submitted workflows.",
+        "Set up the workflow to automatically approve pull requests that successfully pass the Claude Code review criteria."
+      ],
+      "target": "Archon workflow marketplace repository (new workflow definition file, e.g., `workflows/marketplace_pr_reviewer.yaml`)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.85,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states the goal to 'build an Archon workflow that will review the pull requests for submitting these to automatically approve them' using 'Claude Code'. This provides a clear, actionable set of steps to develop a specific software component with defined inputs (PRs), tools (Archon, Claude Code), and outputs (automatic approval).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Merge initial marketplace pull request into `dev` branch",
+      "steps": [
+        "Identify the open pull request associated with the 'initial marketplace' feature.",
+        "Merge the identified pull request into the `dev` branch."
+      ],
+      "target": "Git repository (specifically the `dev` branch)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states, 'it's telling me that I need to merge into the dev branch. So I'm just going to go ahead and do that.' This is a clear, immediate, and actionable git operation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Perform live test of workflow submission and automated review",
+      "steps": [
+        "Create a new Archon workflow file (or select an existing one for expediency).",
+        "Initiate the full contributor process by creating a pull request that adds this workflow.",
+        "Observe and verify that the newly created Archon workflow automatically reviews the pull request end-to-end."
+      ],
+      "target": "Archon project repository and workflow submission system",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "This outlines a clear sequence of actions for a testing phase: 'create a new workflow... and I want to create a pull request going through like the full contributor process... we get to test it to make sure everything is running end to end.'",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Merge 'Initial Marketplace' Pull Request into Dev Branch",
+      "steps": [
+        "Identify the specific pull request related to the 'initial marketplace' feature, which was created on Saturday and adds a new page to the doc site for workflow submission functionality.",
+        "Initiate the merge process for this identified pull request into the `dev` branch.",
+        "Resolve any merge conflicts that may arise during the merge (e.g., conflicts with recently added content like the roadmap to the docs site).",
+        "Confirm that the pull request has been successfully merged into the `dev` branch."
+      ],
+      "target": "Git repository (e.g., GitHub/GitLab) pull request system and the `dev` branch.",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The speaker explicitly states the need to 'merge into the dev branch' for a specific, identifiable pull request, and mentions a merge conflict that needs handling. This provides clear, sequential actions for an autonomous agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Execute Archon Workflow to Generate Marketplace Review System",
+      "steps": ["Execute the `pivoop archon workflow`."],
+      "target": "Archon System / `pivoop archon workflow`",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states 'now we're running the pivoop archon workflow' and defines its purpose as 'creating the archon workflow that automatically reviews and merges pull requests for new workflows added to the marketplace.' This is a concrete action with a clear outcome.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Inspect Archon Primary Development Workflow Definition",
+      "steps": [
+        "Open the configuration or definition of the `archon pib loop workflow`."
+      ],
+      "target": "Archon System / `archon pib loop workflow` definition",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker states 'I'll open up the archon pib loop workflow' to provide concrete demonstration of their primary development workflow, indicating an intent to view its contents or structure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate and Document Workflow Plan",
+      "steps": [
+        "Create a detailed plan for the workflow, adhering to the exact specified format.",
+        "Output the generated plan into a markdown document for human review and feedback."
+      ],
+      "target": "PLAN.md",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "The directive explicitly states to create a plan in a specific format and output it to a markdown file, which is a clear, executable sequence for an agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set Up Implementation Environment",
+      "steps": [
+        "Install all necessary dependencies within the designated work tree.",
+        "Ensure the isolated copy of the codebase is fully prepared for subsequent implementation and validation phases."
+      ],
+      "target": "work tree",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "Installing dependencies is a concrete and common setup task that an agent can execute by running package manager commands.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Conduct Code Review and Address Feedback",
+      "steps": [
+        "Perform a comprehensive code review in a separate coding agent session.",
+        "Fix any issues or feedback identified during the agent's own verification process.",
+        "Incorporate and fix any feedback provided by the human reviewer."
+      ],
+      "target": "Generated code / Codebase",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "This describes a clear process of automated code review and subsequent correction based on both internal verification and external human feedback.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Archon Workflow YAML",
+      "steps": [
+        "Automatically create the Archon workflow YAML file, incorporating the correct syntax, prompts, and parameters based on the desired workflow definition."
+      ],
+      "target": "workflow.yaml",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "The agent is explicitly tasked with generating a structured configuration file (YAML) for an Archon workflow, which is a highly implementable task.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Update AI Review Provider to Claude Haiku",
+      "steps": [
+        "Identify the configuration setting for the 'AI review provider' within the Archon workflow system (e.g., in a configuration file or environment variable).",
+        "Change the value of this configuration setting from its current provider (e.g., Sonnet) to 'Claude Haiku' to improve token efficiency."
+      ],
+      "target": "Archon workflow configuration or environment settings",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Direct instruction to change a specific AI model for a specific function to optimize cost, providing enough detail to locate and modify the setting.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Correct Archon Command Usage and Successfully Resume Failed Workflow",
+      "steps": [
+        "Review the 'second brain' (Claude code) agent's logic responsible for interacting with Archon commands.",
+        "Identify and correct any instances where the `archon chat` command is used in place of `archon workflow approve`.",
+        "Execute the `archon workflow approve` command, ensuring that the previously gathered feedback (second brain's recommendations + user's tweak to answer #4) is properly sent as part of the command.",
+        "Monitor the Archon workflow status and retry the resume process if it initially fails, ensuring the workflow enters a successfully resumed and progressing state.",
+        "Verify that the Archon workflow successfully progresses beyond the previously failed state."
+      ],
+      "target": "The 'second brain' (Claude code) module responsible for issuing Archon commands and the Archon CLI.",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Explicit correction of a specific command used by the agent and a clear, repeated instruction to resume a failed process, emphasizing the need for successful execution and feedback inclusion.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Workflow Tagging Feature",
+      "steps": [
+        "Identify the appropriate metadata or configuration area within the Archon workflow definition or execution context where tags can be stored.",
+        "Develop or integrate a mechanism that allows for the assignment of arbitrary tags (e.g., 'development', 'review', 'automation', 'planning') to Archon workflows.",
+        "Ensure that these assigned tags are persistently stored and can be retrieved for purposes of searching and filtering workflows."
+      ],
+      "target": "Archon workflow definition schema, Archon CLI/UI for workflow management, or associated data persistence layer.",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Clear instruction to add a new feature (tagging) with a specified purpose (search and filtering), implying necessary data model and interface changes.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Customize Archon PIV Loop Exploration for Enhanced Context Handling",
+      "steps": [
+        "Acquire the default Archon PIV loop workflow template.",
+        "Modify the exploration phase configuration within the workflow to utilize multiple sub-agents.",
+        "Configure these sub-agents to traverse and analyze different codebases.",
+        "Update the exploration node's prompt to pre-load knowledge about all relevant codebases.",
+        "Integrate the customized exploration phase into your specific Archon workflow architecture."
+      ],
+      "target": "Archon PIV Loop Workflow Definition (e.g., YAML, JSON, Python script)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly instructs to 'take the PIV loop workflow... as a starting point, but then you would edit it,' to 'make the exploration do more like sub agents and going through different code bases,' and to 'add that into the prompt so that you're customizing it.' This provides a clear sequence of modifications for an existing workflow template.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initiate New Claude Code Session",
+      "steps": [
+        "Execute the command or UI action to start a fresh Claude Code session."
+      ],
+      "target": "Claude Code Development Environment",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The speaker states, 'I'm gonna actually start a new cloud code session,' which is a direct, unambiguous action for an agent to perform within a Claude Code environment.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Monitor Claude Code API Rate Limits",
+      "steps": [
+        "Access the Anthropic developer console or Claude Code API dashboard.",
+        "Retrieve the current usage statistics for the 5-hour and weekly rate limits.",
+        "Assess the remaining allowance and reset schedule for both limits."
+      ],
+      "target": "Anthropic Developer Console / Claude Code API",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states, 'I need to check my rate limits' and then proceeds to discuss specific limits (5-hour, weekly) and their status. This requires an agent to access an external system to obtain the information.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create Pull Request for Video Generation Workflow Marketplace Submission",
+      "steps": [
+        "Identify the codebase and files pertaining to the 'video generation workflow' (the Archon workflow described in the transcript, which generates animated videos from a topic, URL, or GitHub repo).",
+        "Create a new Git branch for this submission (e.g., `feature/submit-video-workflow-test`) from the main integration branch.",
+        "Add all necessary files and dependencies of the video generation workflow to this new branch.",
+        "Commit these changes with a clear message indicating the purpose, e.g., 'feat: Add video generation workflow for marketplace testing'.",
+        "Push the new branch to the remote repository.",
+        "Open a Pull Request from this new branch (e.g., `feature/submit-video-workflow-test`) targeting the main integration branch. Include a description noting that the workflow is for 'testing purposes' and 'not fully polished yet', and briefly describe its functionality."
+      ],
+      "target": "The Git repository containing Archon workflows (likely within the 'Dynamis' project context).",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states the need to 'build a workflow to actually submit to the marketplace' and clarifies 'Creating a pull request for submitting this workflow' and 'getting this workflow ready to submit like a pull request for that'. The steps outlined reconstruct a standard Git workflow to achieve this goal.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Open Archon Workflow Plan in VS Code",
+      "steps": [
+        "Perform a control-click action on the Archon workflow plan file located within the git work tree environment.",
+        "Open the selected plan file within VS Code."
+      ],
+      "target": "Archon workflow plan file (e.g., 'plan.md' or similar document in the git work tree)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This is a direct, actionable step to access the planning document using a specific tool and interaction method.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Review Archon Workflow Plan Summary",
+      "steps": [
+        "Locate the 'summary' section within the opened Archon workflow plan in VS Code.",
+        "Thoroughly review the summary content, focusing on the proposed objectives and changes for the maintainer Archon workflow."
+      ],
+      "target": "Opened Archon workflow plan file (summary section)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "Explicitly stated as a critical procedural step to ensure alignment before proceeding with implementation, emphasizing the need for careful review.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Modify Hardcoded Submitter Constant",
+      "steps": [
+        "Identify the code location where the 'colam0000' constant is hard-coded within the configuration or source code of the new maintainer Archon workflow.",
+        "Modify this constant to broaden access, allowing multiple or any authorized submitters for PRs, instead of restricting it solely to 'colam0000'."
+      ],
+      "target": "Maintainer Archon workflow configuration or source code (specifically where submitter constants are defined)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This is a concrete directive to change a specific piece of code, identified by a constant name, with a clear desired outcome (broader submitter access).",
+      "dispatch_ready": true
+    }
+  ]
+}

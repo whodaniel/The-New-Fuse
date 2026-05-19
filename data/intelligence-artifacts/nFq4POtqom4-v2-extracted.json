@@ -1,0 +1,329 @@
+{
+  "source_id": "nFq4POtqom4",
+  "generated_at": "2026-05-19T18:54:08.530040+00:00",
+  "total_extracted": 22,
+  "dispatch_ready_count": 22,
+  "directives": [
+    {
+      "title": "Set Up Clean Git Work Tree with Obra",
+      "steps": [
+        "Utilize Obra's 'working with get work trees' skill.",
+        "Spin up a new Git work tree using the specified Obra skill.",
+        "Run all existing tests within the newly created work tree.",
+        "Verify that all tests pass to ensure a clean baseline before proceeding with further development."
+      ],
+      "target": "Git Repository / Development Environment",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "This directive provides a clear sequence of actions involving a specific tool (Obra) and its skill ('working with get work trees') to prepare a development environment. The steps are sequential and have clear, verifiable outcomes (work tree created, tests run, clean baseline confirmed).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initialize Open Spec in Project",
+      "steps": [
+        "Navigate to the root directory of the target project (e.g., `cd <project_root>`).",
+        "Execute the command 'open-spec init'.",
+        "Select the desired environment from any interactive prompts that follow the initialization command."
+      ],
+      "target": "Project root directory",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "This sequence provides clear, distinct steps for setting up Open Spec. The 'choose your environment' step is interactive but a common pattern for CLI tools, requiring the agent to handle prompts (e.g., select a default option if available, read from configuration, or prompt the user if in interactive mode).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Execute Open Spec Onboarding Process",
+      "steps": ["Execute the command 'open-spec onboard'."],
+      "target": "Project root directory",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a direct and unambiguous command execution for a specific Open Spec feature designed to guide users through their first feature build.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initiate Open Spec Design Exploration Phase",
+      "steps": ["Execute the command 'open-spec explore'."],
+      "target": "Project root directory",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a direct and unambiguous command execution to begin the optional design exploration phase with Open Spec, allowing for idea refinement before committing to implementation details.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Apply Project Changes",
+      "steps": [
+        "Execute the `apply` command.",
+        "Pass the project's output directory or identifier as an argument to the `apply` command."
+      ],
+      "target": "Overall system/project where changes are to be applied",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly states 'run the final command which is apply and then we're just going to pass in the directory that it gave us for this project or like the identifier for this project'. This provides a clear command and its required argument, making it directly actionable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Apply Project Configuration",
+      "steps": [
+        "Execute the project's `apply` command.",
+        "Provide the generated project directory path or unique identifier as the target for the `apply` operation."
+      ],
+      "target": "Deployment CLI / Project Orchestration System",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states to 'run the final command which is apply and then we're just going to pass in the directory that it gave us for this project or like the identifier for this project'. This is a direct and actionable command.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Refine Discovery Page Sidebar Styling",
+      "steps": [
+        "Locate the stylesheet or component definition responsible for the Discovery Page sidebar.",
+        "Adjust the styling and layout properties of the sidebar to ensure it strictly conforms to the established design specification."
+      ],
+      "target": "src/features/discovery/DiscoveryPage.css or src/components/DiscoverySidebar/index.js",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "The speaker explicitly notes 'the sidebar needs to be cleaned up a little bit because it didn't do it to spec'. This identifies a specific UI element and a clear objective for its correction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Adjust Discovery Page Layout Spacing",
+      "steps": [
+        "Identify the CSS rules or layout configurations controlling the spacing between the sidebar and the main content column on the Discovery Page.",
+        "Modify these rules to correct the observed spacing issues, particularly ensuring proper rendering on large screen sizes, as per design guidelines."
+      ],
+      "target": "src/features/discovery/DiscoveryPage.css or src/layouts/AppLayout.css",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "The speaker points out 'the spacing of how close the sidebar actually is to like this this middle column, that spacing is a little messed up. So, we can address those sorts of things'. This identifies a specific visual issue with an implied resolution.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Correct User Profile Page Button and Color Styling",
+      "steps": [
+        "Identify the styling for buttons on the User Profile Page.",
+        "Apply the designated accent color to the appropriate elements on the User Profile Page.",
+        "Ensure all primary action buttons on the User Profile Page have consistent and roughly equal sizes.",
+        "Correct the alignment of all buttons on the User Profile Page to match the design specification."
+      ],
+      "target": "src/features/userProfile/UserProfilePage.css or src/components/UserProfile/Buttons.js",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The transcript enumerates multiple styling issues on the user profile page: 'This is supposed to be like an accent color, the alignment on like some of these buttons, these should be like roughly the same size, one should be accented. So, there's like a few things that we would need to dial in on this.' These are concrete styling adjustments.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Finalize Feature Branch and Sync Specifications",
+      "steps": [
+        "Execute the `archive` command to finalize the current feature branch.",
+        "Sync all generated specs and associated context with the application's root source of truth."
+      ],
+      "target": "Open Spec tool/CLI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly states 'run the archive command' and details its function: syncing specs, context, and surfacing any breaking changes, while also creating an archive folder for historical reference.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initiate a New Iterative Feature Plan",
+      "steps": [
+        "Execute the `new` command to kick off the planning for a new feature or a new phase of an existing feature (e.g., building backend functionality for a previously implemented frontend change)."
+      ],
+      "target": "Open Spec tool/CLI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly mentions 'we're going to kick off this new command' as the starting point for an iterative planning approach, providing a clear example of its use case.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate New Information into Existing Feature Plan",
+      "steps": [
+        "Execute the `continue` command to reintegrate newly acquired information or changes into an ongoing feature plan."
+      ],
+      "target": "Open Spec tool/CLI",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "The `continue` command is identified as part of a pair with the `new` command, specifically designed to address the need to 'reintegrate that information into your plan moving forward' as part of an iterative planning process. While the exact command syntax is not demonstrated, its purpose and existence are clear.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initiate Backend Development Planning",
+      "steps": [
+        "Execute the `new` command.",
+        "Input the planning objective: building out backend functionality, including API routes and data models, to support existing frontend changes."
+      ],
+      "target": "opsx CLI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive clearly defines the `new` command to execute and the high-level objective to be provided as input, suitable for setting up an initial development plan.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Advance Iterative Planning Process",
+      "steps": [
+        "Execute the `opsx continue` command.",
+        "If prompted, provide responses to guide the planning process (e.g., confirm decision to slice changes into more focused pieces)."
+      ],
+      "target": "opsx CLI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This provides a direct command to progress through the defined iterative planning stages, including handling interactive prompts for decision-making.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initiate Planning for Specific Component Slice",
+      "steps": [
+        "Execute the `new` command again after deciding to slice changes.",
+        "Input the specific objective for this planning iteration, focusing on a defined slice of functionality (e.g., 'wiring the public profile reads')."
+      ],
+      "target": "opsx CLI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive describes how to initiate a new, more granular planning cycle for a specific part of a larger change, clearly defining the command and expected input.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Draft Proposal for Current Change",
+      "steps": ["Execute the `continue` command."],
+      "target": "opsx CLI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This directly executes a command to perform a distinct, well-defined step in the planning workflow: drafting a proposal.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Specifications for Current Change",
+      "steps": ["Execute the `continue` command."],
+      "target": "opsx CLI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This directly executes a command to perform the next distinct, well-defined step in the planning workflow: generating specifications.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Explore Solutions During Planning and Integrate Feedback",
+      "steps": [
+        "Execute the `explore` command to address problems or uncertainties in the current planning stage.",
+        "Review the generated solutions or insights.",
+        "Apply necessary modifications to the current plan or code based on the exploration outcome."
+      ],
+      "target": "opsx CLI and relevant project files",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "This directive initiates a problem-solving dialogue within the planning tool and includes the essential follow-up action of integrating the findings into the current state.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Fast Forward Remaining Planning Stages",
+      "steps": ["Execute the `fast forward` command."],
+      "target": "opsx CLI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This provides a direct command to automate the completion of the planning workflow when the plan is considered sufficient, allowing for rapid progression.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Execute Plan Fast Forward Command",
+      "steps": [
+        "Confirm that the current development plan is sufficiently complete to proceed through remaining stages automatically.",
+        "Execute the `fast forward` command within the application's command-line interface."
+      ],
+      "target": "Application CLI",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly states 'we can run this fast forward command' to automate plan progression, providing a clear command and its purpose.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Execute App Feature Documentation Sync Command",
+      "steps": [
+        "Execute the `sync` command within the application's command-line interface.",
+        "Verify that the documentation for all app features has been updated to reflect their current actual state, preventing outdated information."
+      ],
+      "target": "Application CLI",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "The transcript clearly introduces 'the sync command' and describes its function as maintaining up-to-date documentation based on the actual state of app features.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Verify Automatic Feature Specification Updates",
+      "steps": [
+        "Implement a change within the application that modifies an existing feature (e.g., public profile).",
+        "Navigate to the `master specs folder` directory.",
+        "Locate the specification file corresponding to the modified feature (e.g., `public_profile` spec).",
+        "Inspect the content of the identified spec file to confirm that it has been automatically updated with new relevant information, such as requirements or database schema changes, reflecting the recently applied work."
+      ],
+      "target": "master specs folder (e.g., ./master_specs/public_profile.md)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The transcript describes a 'built-in step that's going to go back and actually update the documentation' in the 'master specs folder' whenever a change 'touches something that already exists.' This defines an action-and-verification sequence for an agent.",
+      "dispatch_ready": true
+    }
+  ]
+}

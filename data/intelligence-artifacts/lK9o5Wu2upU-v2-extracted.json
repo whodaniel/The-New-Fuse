@@ -1,0 +1,374 @@
+{
+  "source_id": "lK9o5Wu2upU",
+  "generated_at": "2026-05-19T18:01:55.309410+00:00",
+  "total_extracted": 23,
+  "dispatch_ready_count": 22,
+  "directives": [
+    {
+      "title": "Configure and Test Pi with Kimmy Coding Model",
+      "steps": [
+        "Ensure a valid Kimmy for coding subscription is active and readily available.",
+        "Identify the appropriate configuration mechanism within Pi for AI assistant clients (e.g., environment variables, configuration file, or CLI parameters).",
+        "Configure Pi to use Kimmy as an AI provider, including setting up any required API keys or authentication tokens for the Kimmy subscription.",
+        "Execute a task with Pi, explicitly directing it to utilize the configured Kimmy coding model.",
+        "Verify through observation or logging that Pi successfully processes the task using the Kimmy model."
+      ],
+      "target": "Pi's configuration system (e.g., a specific configuration file like `config.py`, `.env` variables, or direct code integration if extensions are used).",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states the intent to 'test out with this is running PI with some different models' and specifically names 'Kimmy for coding' as 'the one that I want to test here' because they 'do have a Kimmy subscription that I wanted to test using within Pi.' This clearly implies the necessity to configure Pi to integrate with Kimmy and then execute a test.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Kimmy API into Pi",
+      "steps": [
+        "Obtain the Kimmy API key from the user's active Kimmy subscription.",
+        "Navigate to the API key management section or configuration file within the Pi environment.",
+        "Add or configure the obtained Kimmy API key to enable its use within Pi.",
+        "Verify that Pi can successfully connect to and utilize the Kimmy API for coding tasks."
+      ],
+      "target": "Pi Configuration / API Key Management System",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states having a Kimmy subscription and wanting to 'test using within Pi' and 'try that out as well,' indicating a clear intent to configure and use the Kimmy API.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Test Existing Pi Extensions",
+      "steps": [
+        "Access the Pi extensions marketplace or package catalog.",
+        "Select at least one or two specific extensions for testing (e.g., 'PI sub aents extension', 'MCP adapter').",
+        "Install the chosen extensions into the active Pi environment.",
+        "Execute tests or interact with the Pi environment to verify the functionality of the installed extensions."
+      ],
+      "target": "Pi Extension Ecosystem",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker mentions several specific extensions (like 'PI sub aents extension', 'MCP adapter') and clearly states 'I want to try at least with one or two today' in the context of Pi extensions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop Custom Pi Extension",
+      "steps": [
+        "Define the specific functionality and scope for a new custom Pi extension.",
+        "Implement the extension's code, adhering to Pi's extension development standards and APIs.",
+        "Integrate the developed extension into the Pi environment.",
+        "Perform comprehensive testing to validate the custom extension's behavior and stability."
+      ],
+      "target": "Pi Extension Development Framework",
+      "metrics": {
+        "specificity": 0.6,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states 'and then build my own extension as well,' which is a clear directive for custom development, albeit without specifics of the extension's function.",
+      "dispatch_ready": false
+    },
+    {
+      "title": "Configure Pi for Kimmy Code Subscription",
+      "steps": [
+        "Identify the configuration mechanism within Pi for integrating external language model subscriptions.",
+        "Configure Pi to use the provided Kimmy Code subscription credentials or API key."
+      ],
+      "target": "Pi's configuration system (e.g., environment variables, configuration file, or CLI commands)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states their current state ('I don't have it set up to use my Kimmy subscription') and then a direct, immediate goal: 'the first thing that I want to do is I want to set up Pi to use my Kimmy code subscription.' This is a clear, actionable directive for system configuration.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initiate Pi's Guided Extension Development Workflow",
+      "steps": [
+        "Access Pi's conversational interface.",
+        "Input the prompt: 'I want to work on a Pi extension'.",
+        "Engage with Pi as it internally analyzes its own codebase and guides the user through the process of evolving itself to build an extension."
+      ],
+      "target": "The Pi conversational agent / internal codebase analysis system",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The speaker describes a specific interactive procedure: 'if I say like I want to... work on a pi extension like that would kick off a conversation where it would look at its own codebase internally... to walk you through basically evolving itself.' This outlines a concrete first step to leverage Pi's meta-reasoning capabilities for extension development.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Pi for Kimmy Custom Provider",
+      "steps": [
+        "Locate the `models.json` configuration file within the Pi environment.",
+        "Modify `models.json` to add or update a configuration entry for Kimmy as a custom provider, ensuring it includes a field for an API key.",
+        "Output the specific path or key within the updated `models.json` where the Kimmy API key should be inserted by the user."
+      ],
+      "target": "models.json",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.85,
+        "testability": 0.9
+      },
+      "rationale": "The user explicitly requests to 'update models.json' for a custom provider and then to 'give me the path' for the API key. This clearly defines actions for modifying a configuration file and relaying specific structural information.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install Pi Web Access Package",
+      "steps": [
+        "Execute the command `pi install mpm pi-web-access` in the terminal."
+      ],
+      "target": "Pi CLI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The user explicitly states and then proceeds to execute the command `pi install mpm pi web access`. This is a direct, unambiguous, and immediately executable instruction for the Pi command-line interface.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install Pi Web Access Extension",
+      "steps": [
+        "Execute the command `pi install mpm pi web access` in the terminal."
+      ],
+      "target": "Pi CLI / Pi environment",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript provides the exact command `pi install mpm pi web access` as a direct procedural step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Add API Key to models.json",
+      "steps": [
+        "Open the `models.json` file.",
+        "Locate the designated placeholder for the API key within the file.",
+        "Copy the API key from its secure source.",
+        "Paste the copied API key into the `models.json` file."
+      ],
+      "target": "models.json",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly states to 'open up this file' (`models.json`) and 'added my API key', followed by 'Copy and then paste', providing a clear sequence of actions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reconfigure Exposed API Key",
+      "steps": [
+        "Access the API key provider's management interface.",
+        "Delete the previously exposed API key.",
+        "Generate a new API key through the provider's management interface."
+      ],
+      "target": "API Key Provider's management interface (e.g., Google Cloud console)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker clearly states the necessity to 'delete the key right now' and 'create a new API key' due to its accidental exposure, outlining the required remediation steps.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Update Kimmy API Key in Configuration",
+      "steps": [
+        "Open the `O.JSON` configuration file.",
+        "Locate the entry for the Kimmy API key.",
+        "Replace the existing key with the new, accepted Kimmy API key.",
+        "Save and close the `O.JSON` file."
+      ],
+      "target": "O.JSON",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The directive clearly identifies a target file and specific action (editing a key) to resolve an API authentication issue.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Verify Kimmy API Integration in Pi",
+      "steps": [
+        "Start a new session in Pi.",
+        "Clear the current Pi session state.",
+        "Enter the Pi application/interface.",
+        "Execute the `/model` command.",
+        "Select 'Kimmy for coding' as the active model.",
+        "Perform a test interaction to confirm Kimmy is working."
+      ],
+      "target": "pi application",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This provides a clear sequence of commands and actions within the Pi application to test the newly configured Kimmy API.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Close Active Pi Session",
+      "steps": [
+        "Identify the active Pi application window or session.",
+        "Terminate or close the Pi application."
+      ],
+      "target": "pi application/process",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "A straightforward instruction to end an application instance, with a clear target.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install PI Agent Extension",
+      "steps": [
+        "Open a new terminal window.",
+        "Execute the command: `pi install PI agent extension`.",
+        "Wait for the installation process to complete."
+      ],
+      "target": "System terminal",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The exact command for installation is provided, making this highly specific and implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Verify PI Agent Extension Status Line Feature",
+      "steps": [
+        "Enter the Pi application/interface.",
+        "Observe the Pi interface for an updated status line footer.",
+        "Confirm the presence of a 'fixed twoline status footer for Pi with model thinking context get token or get token work tree skill indicators'.",
+        "Verify the status line is actively displaying indicators."
+      ],
+      "target": "pi application (UI)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This directive details specific UI elements to look for to confirm the successful installation and functionality of the extension.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Manage Extensions via TUI",
+      "steps": [
+        "Access the Text User Interface (TUI) designed for extension management.",
+        "View the list of all installed packages and their extensions within the TUI.",
+        "Filter the displayed list of extensions based on desired criteria.",
+        "Toggle (enable/disable) individual extensions as required.",
+        "Repeat the viewing, filtering, and toggling process for any secondary extension lists if available."
+      ],
+      "target": "Pi's Extension Management TUI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The description explicitly details the TUI's functionalities (view, filter, toggle) and its scope (every extension from installed packages and other lists), making these steps directly implementable for an agent interacting with a TUI.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Test Multi-Question Tool (Questionnaire Extension)",
+      "steps": [
+        "Initiate a conversation or prompt the Pi agent with a request for multiple questions, for example: 'ask me a couple questions about different models I want to try with Pi.'",
+        "If the agent misinterprets the request or doesn't activate the multi-question tool, explicitly instruct the agent to 'use the extension' or clarify by saying 'use the questionnaire'.",
+        "Respond to the questions posed by the agent, providing relevant input (e.g., 'open router, Kimmy, Miniax through the subscription', 'general coding assistance', 'compare several models side by side').",
+        "Verify that the multi-question tool (questionnaire extension) is functioning correctly by observing its interactive questioning process and the agent's responses."
+      ],
+      "target": "Pi Agent / Multi-Questionnaire Extension",
+      "metrics": {
+        "specificity": 0.95,
+        "implementability": 0.95,
+        "testability": 0.9
+      },
+      "rationale": "The speaker performs these actions directly to test the extension, including providing specific prompts, a necessary clarification step, and example responses, making it a clear and repeatable procedure for an autonomous agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reload Pi Extensions",
+      "steps": [
+        "Execute the `reload extensions` command within the Pi environment."
+      ],
+      "target": "Pi CLI/runtime",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The speaker explicitly identifies 'reload extensions command' as a functional command to avoid restarting the session after installing new things, indicating a clear, executable step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reload Pi Key Bindings",
+      "steps": [
+        "Execute the `reload key bindings` command within the Pi environment."
+      ],
+      "target": "Pi CLI/runtime",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript states 'this is the command reload key bindings extension skills prompts', implying that 'key bindings' is a component that can be reloaded using a similar command structure as 'reload extensions'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reload Pi Skills",
+      "steps": [
+        "Execute the `reload skills` command within the Pi environment."
+      ],
+      "target": "Pi CLI/runtime",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript states 'this is the command reload key bindings extension skills prompts', implying that 'skills' is a component that can be reloaded using a similar command structure as 'reload extensions'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reload Pi Prompts",
+      "steps": [
+        "Execute the `reload prompts` command within the Pi environment."
+      ],
+      "target": "Pi CLI/runtime",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript states 'this is the command reload key bindings extension skills prompts', implying that 'prompts' is a component that can be reloaded using a similar command structure as 'reload extensions'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reload Core System Components",
+      "steps": [
+        "Execute the command: `reload key bindings extension skills prompts and themes`"
+      ],
+      "target": "Current running agent/system (likely 'Pi')",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly states 'this is the command reload key bindings extension skills prompts and themes', providing a direct, executable imperative with a clear target and components.",
+      "dispatch_ready": true
+    }
+  ]
+}

@@ -1,0 +1,523 @@
+{
+  "source_id": "gb5TlGw6Uks",
+  "generated_at": "2026-05-19T18:46:51.748103+00:00",
+  "total_extracted": 32,
+  "dispatch_ready_count": 32,
+  "directives": [
+    {
+      "title": "Generate AI-Enhanced Video Content",
+      "steps": [
+        "Parse the natural language request to understand the video's subject, desired tone (e.g., 'fast-paced and exciting'), and content requirements (e.g., 'what Hermes Agent is and how your memory and skills work').",
+        "Research and identify appropriate video generation tools (e.g., HyperFrames) capable of fulfilling the request and potentially improving initial output quality.",
+        "If new or better tools require installation, prompt the user for explicit permission to proceed with the installation.",
+        "Upon receiving user approval, install the necessary video generation tools on the host system.",
+        "Utilize the installed tools to generate the video content, ensuring visual quality, proper spacing, non-overlapping diagrams, and adherence to specified stylistic elements.",
+        "Present the generated video to the user for review and potential iterative refinement."
+      ],
+      "target": "Hermes Agent/Video Generation Module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides a detailed, multi-step process for generating video content based on a natural language prompt, including tool research, installation (with user consent), and quality considerations, directly reflecting a demonstrated capability.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Provide Implementation Assistance from Web Content",
+      "steps": [
+        "Receive a web link (e.g., an X post URL) and an explicit request to 'read this and then help me implement it'.",
+        "Access and retrieve the full content from the provided URL, handling various web content types.",
+        "Analyze the extracted content to understand the core concept, technology, or procedural steps described.",
+        "Formulate and present concrete, actionable implementation steps, relevant code snippets, or configuration instructions based on the comprehensive analysis of the web content.",
+        "Offer further assistance or clarification based on the provided implementation guidance."
+      ],
+      "target": "Hermes Agent/Web Research & Implementation Assistant Skill",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This describes a clear and repeatable process for an agent to consume external web information, interpret it, and then provide practical, actionable implementation advice, which is a core utility described.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Deploy Hermes Agent on Diverse Infrastructure",
+      "steps": [
+        "Identify the specified target deployment environment (e.g., Mac mini, laptop, Virtual Private Server (VPS), Docker container, Android via Termux).",
+        "For bare-metal or VM deployments (Mac mini, laptop, VPS), execute the appropriate platform-specific installation scripts or configuration routines, ensuring necessary dependencies are met.",
+        "For Docker deployments, ensure Docker daemon is running, then either build or pull the official Hermes Agent Docker image and run it with all required environment variables, port mappings, and volume mounts.",
+        "For Android via Termux, provide or execute a guided script for Termux installation and subsequent Hermes Agent setup within the Termux environment, including necessary package installations.",
+        "Verify the successful initiation and operational status of the Hermes Agent instance, confirming accessibility and functionality on the chosen infrastructure."
+      ],
+      "target": "Hermes Agent/Deployment Automation",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive outlines how Hermes Agent itself can be deployed across various specified infrastructure types, a fundamental implementation task for setting up the system.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Hermes Agent with Messaging Platforms",
+      "steps": [
+        "Receive the name of the desired messaging platform for integration (e.g., Telegram, Discord, Slack, WhatsApp, iMessage).",
+        "Obtain or securely prompt the user for the necessary API keys, bot tokens, or authentication credentials required for the chosen platform.",
+        "Configure Hermes Agent's communication modules by updating settings with the platform-specific API endpoints and the provided authentication details.",
+        "Establish and verify a stable, authenticated connection to the specified messaging platform's API.",
+        "Confirm Hermes Agent's ability to both send and receive messages accurately and reliably through the newly integrated platform, conducting a self-test if possible."
+      ],
+      "target": "Hermes Agent/Messaging Connectors Module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive specifies connecting Hermes Agent to various user interaction interfaces, detailing the necessary steps from platform selection to authentication and connection verification.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Synchronize Knowledge and Agent Configurations to GitHub Repository",
+      "steps": [
+        "Maintain a GitHub repository that consolidates all project knowledge, business context, and agent skills.",
+        "Deploy or 'plop' agent configurations (e.g., for Codex) directly into this GitHub repository.",
+        "Ensure that all relevant file structures and agent definitions are synchronized with the GitHub repository for version control and accessibility."
+      ],
+      "target": "GitHub repository",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The speaker explicitly states the intention to 'sync to GitHub' and to 'plop' agents onto a repo, outlining a clear strategy for managing and deploying agent configurations and knowledge via version control.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Instruct AI Agent to Process and Modify a GitHub Repository",
+      "steps": [
+        "Provide an AI agent (e.g., Claude Code, Hermes) with access permissions to a specified GitHub repository.",
+        "Issue an imperative command to the agent, such as 'take this repo and make sure you can use it,' to initiate its processing of the repository.",
+        "Allow the agent to autonomously analyze the repository and implement necessary changes or configurations as per its understanding and capabilities."
+      ],
+      "target": "AI Agent / GitHub repository",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.6
+      },
+      "rationale": "The directive describes a clear interaction model where an agent is given a repository and instructed to make changes, indicating an operational command and response flow.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Excalidraw Diagrams from Text via Hermes Agent Skill",
+      "steps": [
+        "Copy the structured text containing the 'five pillar structure' or similar conceptual data.",
+        "Paste the copied text into the input interface of the Hermes agent.",
+        "Issue a command to the Hermes agent: 'Hey, can you just use the Excalidraw skill to generate diagrams for all of these, and make sure that all of this information is correct?'",
+        "Receive and download the resulting zip file generated by Hermes, which contains the diagram data.",
+        "Load the contents of the received zip file into the Excalidraw application for visualization and further editing."
+      ],
+      "target": "Hermes Agent, Excalidraw application",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This sequence is a precise, step-by-step account of an action taken by the speaker, involving specific tools (Hermes, Excalidraw) and a clear command with an expected output.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automatically Update Memory Files",
+      "steps": [
+        "Observe user interactions, knowledge work, tool additions, and changes during a session.",
+        "Extract relevant information about the user (style, preferences, dislikes) and projects/environments.",
+        "Persist extracted user information by updating the `user.md` file.",
+        "Persist extracted project/environment context by updating the `memory.md` file."
+      ],
+      "target": "Hermes Agent Memory Management Module (user.md, memory.md)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Defines an automated process for the agent to maintain its durable memory, specifying source data and target files.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Load Session Start Context Files",
+      "steps": [
+        "At the initiation of a new session, identify the predefined context files.",
+        "Load the content of `user.md` into the session's active context.",
+        "Load the content of `memory.md` into the session's active context.",
+        "Load the content of `Claude.md` into the session's active context.",
+        "Load the content of `agents.md` into the session's active context."
+      ],
+      "target": "Agent Session Initialization Module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides a clear, ordered list of files to load at session start to establish the agent's initial context.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Manage Durable Memory Content with Constraints",
+      "steps": [
+        "Process explicit user directives to save information (e.g., 'chuck that in the memory', 'throw that in the user.md').",
+        "If the information represents durable user preferences or persistent facts, update `user.md` or `memory.md` accordingly.",
+        "Before storing, validate that the information does NOT contain secrets (e.g., API keys) or temporary task status.",
+        "Prevent or reject attempts to store secrets or temporary task status in `user.md` or `memory.md` files."
+      ],
+      "target": "Hermes Agent Memory Management Module (user.md, memory.md, Input Validation)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Outlines how to handle user-initiated memory updates, including what types of information are permissible to store and what to explicitly avoid.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Search Previous Conversational Sessions",
+      "steps": [
+        "Receive a request to retrieve information from past conversations.",
+        "Access the designated SQL database storing all historical session data.",
+        "Execute a search query against the session records within the SQL database.",
+        "Return the relevant past conversational contexts or snippets that match the query."
+      ],
+      "target": "SQL Database, Session Search Module",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Describes the process for retrieving historical conversational data from a structured database.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Skill Metadata in skill.md Front Matter",
+      "steps": [
+        "For each skill, create or update a corresponding `skill.md` file.",
+        "Include a YAML front matter section at the very beginning of the `skill.md` file.",
+        "Within the YAML front matter, specify metadata that describes the skill's purpose and its specific use cases (e.g., 'use it for X, Y, and Z')."
+      ],
+      "target": "skill.md files (Skill Authoring/Parsing Module)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Establishes a clear structural requirement for skill definition files, ensuring agents can understand and apply skills correctly.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Invoke Skills Based on Use Case and Session Context",
+      "steps": [
+        "Analyze the current task or user request to determine potential relevant skill use cases.",
+        "Based on the identified use case, select the appropriate skill definition from available `skill.md` files.",
+        "Load the content of the selected `skill.md` file.",
+        "Extract both the procedural steps of the skill and its associated YAML front matter (metadata).",
+        "Integrate the extracted skill content and metadata into the current session's active context.",
+        "Execute the defined procedural steps of the loaded skill within the session."
+      ],
+      "target": "Hermes Agent Skill Invocation Module, Session Context Manager",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Details the complete workflow for how the agent dynamically identifies, loads, and executes skills based on ongoing tasks.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install a Skill into Hermes Agent",
+      "steps": [
+        "Obtain the specific command for the skill to be installed.",
+        "Execute the obtained command within the Hermes agent's interface or environment."
+      ],
+      "target": "Hermes Agent (Skill Management Component)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states 'You just have to basically run this command' as a method for skill installation, providing a direct, actionable step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install a Skill using a URL in Hermes Agent",
+      "steps": [
+        "Obtain the URL of the skill from the skills hub or a direct source.",
+        "Provide this URL to the Hermes agent.",
+        "Issue an imperative command (e.g., 'install this skill right now') to the Hermes agent, referencing the provided URL, to initiate the installation."
+      ],
+      "target": "Hermes Agent (Skill Management Component)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states 'you could drop in this URL to your Hermes agent and say, 'Hey, install this skill right now.'' This provides a clear, multi-step instruction for installing skills via URL.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Schedule a Cron Job with Hermes Agent",
+      "steps": [
+        "Formulate a natural language request specifying the desired task and its exact execution time (e.g., 'spin up a cron job to [task description] at [specific time]').",
+        "Submit this natural language request to the Hermes agent."
+      ],
+      "target": "Hermes Agent (Scheduling / Task Management Module)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker provides a direct example of interaction: 'I can just say, \"Hey, spin up a cron job to do this at this time.\"' This indicates a natural language interface for scheduling tasks.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Schedule a Proactive Cron Job",
+      "steps": [
+        "Provide Hermes with a natural language prompt specifying the desired schedule (e.g., 'every morning at 6:00 a.m.').",
+        "Include a natural language description of the task (e.g., 'I want you to do X, Y, and Z') to be executed by the cron job."
+      ],
+      "target": "Hermes natural language interface",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "The directive clearly outlines the natural language input required to initiate a cron job, with an explicit schedule and task description. The system is expected to translate this into an executable cron job.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Chain Job Outputs Using context_from Parameter",
+      "steps": [
+        "Configure a Hermes job to utilize the `context_from` parameter to pass the output of a preceding job as input to the current job."
+      ],
+      "target": "Hermes job configuration / invocation command",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly mentions a parameter (`context_from`) and its precise function (passing job output), making it a direct and testable configuration step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Working Directory for Tool Execution",
+      "steps": [
+        "When invoking a Hermes job, set the `work_dir` parameter to specify the project folder from which any tools or scripts should be executed."
+      ],
+      "target": "Hermes job configuration / invocation command",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Clearly specifies the `work_dir` parameter and its role in defining the execution context for tools, providing a precise configuration instruction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Script Without Agentic Loop Using no_agent Flag",
+      "steps": [
+        "Include the `no_agent` flag when executing a Hermes job to run a specified Python script directly, bypassing the agentic harness loop."
+      ],
+      "target": "Hermes job configuration / invocation command",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Directly instructs on the use of the `no_agent` flag and its effect (running a script without the agentic loop), making it a concrete command-line or configuration directive.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Persist Information to Agent Memory and Context Files",
+      "steps": [
+        "Instruct Hermes to save useful experiences or current context to its internal memory.",
+        "Manually save relevant information or preferences into `agent.md` or `user.md` files to enhance the agent's learning and context."
+      ],
+      "target": "Hermes system / agent.md / user.md files",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides two explicit ways (natural language instruction to Hermes and direct file manipulation) to persist information for agent learning and recall, making it an actionable set of steps.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable Agent to Create and Update Skills",
+      "steps": [
+        "After completing complex tasks, allow Hermes to analyze repeatable steps and create or update skills to automate future similar operations."
+      ],
+      "target": "Hermes system",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "This describes a user action (allowing/enabling) to facilitate the agent's self-improvement by turning repeatable steps into skills. While 'allow' implies a user confirmation or specific interaction not fully detailed, it's a direct prompt for user behavior to foster skill development.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Project Goal and Structure in cloud.md",
+      "steps": [
+        "Create or update the `cloud.md` file in the project's root directory to define the overall project goal and structural overview for Hermes."
+      ],
+      "target": "cloud.md file",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Clearly specifies the target file (`cloud.md`) and its purpose (defining project goal/structure), providing a direct file management instruction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Access Free Hermes Agent Resource Guide",
+      "steps": [
+        "Navigate to the free school community platform using the provided link in the video description.",
+        "Click on 'classroom' within the community interface.",
+        "Click on 'all YouTube resources' to view available materials.",
+        "Locate and access the relevant documents, skills, or GitHub repositories related to Hermes agent setup."
+      ],
+      "target": "free school community platform (web application)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The steps provide a clear, sequential set of actions within a web-based community platform, allowing an agent to navigate and click specific UI elements to retrieve resources.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Deploy Hermes Agent on Hostinger VPS (One-Click Install)",
+      "steps": [
+        "Navigate to the Hostinger website (using the provided link if available).",
+        "Select the 'KVM 2' VPS hosting plan.",
+        "Click on the 'Deploy' button (or equivalent) to proceed with plan selection.",
+        "Choose an annual subscription period (e.g., 12 months or 24 months) for the VPS plan.",
+        "Apply the coupon code 'NATEHERK' to save an additional 10% on the chosen plan.",
+        "Select your preferred server location for the VPS.",
+        "Complete the payment process for the VPS subscription.",
+        "During the VPS setup, choose 'Ubuntu 24.04 LTS' as the operating system.",
+        "Search for and select 'Hermes agent' from the available applications for a one-click installation during the OS/app deployment phase."
+      ],
+      "target": "Hostinger VPS provisioning system (web application/interface)",
+      "metrics": {
+        "specificity": 0.95,
+        "implementability": 0.95,
+        "testability": 0.95
+      },
+      "rationale": "This directive outlines a precise sequence of actions involving specific selections (plan, OS, app) and inputs (coupon code) within the Hostinger platform to deploy a VPS with Hermes Agent, making it highly implementable by an autonomous agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure VPS Operating System",
+      "steps": [
+        "Select 'Ubuntu' as the desired operating system for the VPS.",
+        "Choose '24.04 LTS' as the specific Ubuntu version."
+      ],
+      "target": "VPS provisioning interface",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly states the operating system type and specific version to be selected during the VPS provisioning process.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Deploy Hermes Agent via One-Click Install",
+      "steps": [
+        "Locate the 'Hermes agent' option within the available applications for deployment (e.g., in a marketplace or app section).",
+        "Initiate the one-click installation process for the Hermes agent."
+      ],
+      "target": "VPS provisioning interface (applications/marketplace section)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Describes a specific action to deploy an application using a designated 'one-click' feature, which the speaker confirms they will use later in the video.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set VPS Root Password",
+      "steps": ["Input a new root password for the VPS."],
+      "target": "VPS provisioning interface",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Clearly instructs to create and input a password during the VPS setup process, which is a standard step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Finalize VPS Setup with Malware Scanner",
+      "steps": [
+        "Check the checkbox to enable the free malware scanner.",
+        "Click the 'finish setup' button to complete the VPS provisioning."
+      ],
+      "target": "VPS provisioning interface",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides specific UI interaction steps (checkbox and button click) to finalize the VPS setup, making the actions highly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create Subfolder for Hermes Agent in Cloud Code Project",
+      "steps": [
+        "Navigate to the existing 'VPS_agents' folder within the Cloud Code project.",
+        "Create a new subfolder named 'YouTube Hermes' inside the 'VPS_agents' folder."
+      ],
+      "target": "Cloud Code project file structure ('VPS_agents' directory)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides clear, sequential instructions with a defined target location and name for directory creation, making it highly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create YouTube Hermes Agent Folder",
+      "steps": [
+        "Navigate to the 'VPS_agents' folder.",
+        "Create a new subfolder named 'YouTube Hermes' within the 'VPS_agents' folder."
+      ],
+      "target": "/VPS_agents/",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The directive clearly specifies the parent folder and the exact name of the new subfolder to be created. This is a direct file system operation an agent can execute.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Change VPS Hostname to YouTube Hermes",
+      "steps": [
+        "Access the VPS hostname configuration settings (implied to be within the Hostinger dashboard).",
+        "Set the hostname to 'YouTube Hermes.VPS'.",
+        "Ensure the hostname adheres to the format requirement of ending in a dot followed by a suffix (e.g., '.VPS')."
+      ],
+      "target": "Hostinger VPS Hostname Configuration",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The directive identifies the specific configuration item (hostname) and provides the exact value to set it to ('YouTube Hermes.VPS'), along with a general format constraint. An agent interacting with the Hostinger API or UI could perform this action.",
+      "dispatch_ready": true
+    }
+  ]
+}

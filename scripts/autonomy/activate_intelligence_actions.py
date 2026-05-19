@@ -260,6 +260,29 @@ def task_id_for(source_id: str, artifact_id: str, plane: str, action_text: str) 
     return f"act-{digest[:16]}"
 
 
+def resolve_v2_directives(artifact_dir: Path, source_id: str, source_uri: str) -> List[Dict[str, Any]]:
+    candidates: List[Path] = [artifact_dir / f"{source_id}-v2-extracted.json"]
+    if source_id.startswith("yt-ai5-"):
+        video_id = source_id[len("yt-ai5-") :]
+        candidates.append(artifact_dir / f"{video_id}-v2-extracted.json")
+    match = re.search(r"[?&]v=([A-Za-z0-9_-]{6,})", source_uri or "")
+    if match:
+        candidates.append(artifact_dir / f"{match.group(1)}-v2-extracted.json")
+
+    seen = set()
+    for path in candidates:
+        path_key = str(path)
+        if path_key in seen:
+            continue
+        seen.add(path_key)
+        if path.exists():
+            data = read_json(path)
+            directives = data.get("directives", [])
+            if isinstance(directives, list):
+                return [d for d in directives if isinstance(d, dict)]
+    return []
+
+
 def make_task(
     *,
     source_id: str,
@@ -363,6 +386,7 @@ def activate_from_manifest(
 
         artifacts_resolved += 1
         artifact = read_json(artifact_path)
+
         taxonomy = plane_actions(artifact.get("taxonomy", {}), max_per_plane=max_per_plane)
         metrics = artifact.get("utility_metrics", {})
         source = artifact.get("source", {})
@@ -375,23 +399,47 @@ def activate_from_manifest(
         source_title = str(source.get("source_title") or item.get("title") or source_id)
         transcript_status = str(item.get("transcriptStatus") or "").strip().lower()
         transcript_available = is_transcript_available(transcript_status)
+        v2_directives = resolve_v2_directives(artifact_dir, source_id, source_uri)
 
-        local_actions: List[Tuple[str, str]] = []
-        filtered_procedural = [line for line in taxonomy["procedural"] if is_actionable_procedural(line)] if transcript_available else []
-        for line in filtered_procedural:
-            local_actions.append(("procedural", line))
+        local_actions: List[Tuple[str, str, Dict[str, Any]]] = []
+
+        # Prefer V2 directives when available.
+        for d in v2_directives:
+            steps = [str(s).strip() for s in d.get("steps", []) if str(s).strip()]
+            if not steps:
+                continue
+            steps_md = "\n".join([f"- {s}" for s in steps])
+            full_description = f"{d.get('title')}\n\nSteps:\n{steps_md}\n\nRationale: {d.get('rationale')}"
+            impl_score = float(d.get("metrics", {}).get("implementability", 0.5))
+            dispatch_ready = bool(d.get("dispatch_ready"))
+            overrides = {
+                "target_override": {"area": "v2-extracted", "file_hints": [d.get("target")]},
+                "confidence_override": {"score": impl_score, "label": "high" if dispatch_ready else "medium"},
+                "dispatch_eligible_override": dispatch_ready,
+            }
+            local_actions.append(("procedural", full_description, overrides))
+
+        # Fallback to taxonomy-extracted procedural lines when V2 is absent.
+        if not v2_directives:
+            filtered_procedural = [line for line in taxonomy["procedural"] if is_actionable_procedural(line)] if transcript_available else []
+            for line in filtered_procedural:
+                local_actions.append(("procedural", line, {}))
+
+        # Always include one governance gate reminder if present.
         for line in taxonomy["governance"][:1]:
-            local_actions.append(("governance", f"Apply governance gate before adoption: {line}"))
+            local_actions.append(("governance", f"Apply governance gate before adoption: {line}", {}))
 
-        if filtered_procedural:
+        has_procedural_action = any(plane == "procedural" for plane, _, _ in local_actions)
+        if has_procedural_action:
             procedural_artifacts += 1
-        elif source_type == "video":
+        if not local_actions and source_type == "video":
             no_procedural_video_sources.append(source_id)
             if transcript_available:
                 local_actions.append(
                     (
                         "strategic",
                         f"Transcript is already ingested for '{source_title}'. Extract concrete procedural steps and map each to an implementable code change candidate.",
+                        {}
                     )
                 )
             else:
@@ -400,6 +448,7 @@ def activate_from_manifest(
                     (
                         "strategic",
                         f"Acquire transcript/captions for '{source_title}' and re-run ingestion to produce procedural implementation tasks.",
+                        {}
                     )
                 )
 
@@ -407,9 +456,9 @@ def activate_from_manifest(
             dormant_artifacts += 1
             continue
 
-        for plane, action_text in local_actions:
+        for plane, action_text, overrides in local_actions:
             tasks.append(
-                make_task(
+                make_task_v2(
                     source_id=source_id,
                     source_type=source_type,
                     source_uri=source_uri,
@@ -421,6 +470,7 @@ def activate_from_manifest(
                     transcript_status=transcript_status,
                     plane=plane,
                     action_text=action_text,
+                    overrides=overrides
                 )
             )
 
@@ -461,6 +511,74 @@ def activate_from_manifest(
             "dispatch_eligible_count": dispatch_eligible_count,
             "confidence_counts": confidence_counts,
             "implementation_area_counts": implementation_area_counts,
+        },
+    }
+
+
+def make_task_v2(
+    *,
+    source_id: str,
+    source_type: str,
+    source_uri: str,
+    source_title: str,
+    artifact_id: str,
+    generated_at: str,
+    freshness_decay: str,
+    density: float,
+    transcript_status: str,
+    plane: str,
+    action_text: str,
+    overrides: Dict[str, Any] = None,
+) -> Dict[str, Any]:
+    overrides = overrides or {}
+    lane, owner = infer_lane_owner(action_text)
+    priority = infer_priority(source_type=source_type, text=action_text, density=density, plane=plane)
+    target = overrides.get("target_override") or infer_implementation_target(action_text, source_title)
+    confidence = overrides.get("confidence_override") or infer_confidence(
+        plane=plane,
+        action_text=action_text,
+        transcript_status=transcript_status,
+        source_type=source_type,
+    )
+
+    if "dispatch_eligible_override" in overrides:
+        dispatch_eligible = bool(overrides.get("dispatch_eligible_override"))
+    else:
+        dispatch_eligible = (
+            plane == "procedural"
+            and is_transcript_available(transcript_status)
+            and confidence["label"] in {"medium", "high"}
+            and is_dispatch_ready_action(action_text)
+        )
+
+    short = normalize_line(action_text.split("\n")[0])
+    if len(short) > 110:
+        short = short[:107].rstrip() + "..."
+
+    return {
+        "id": task_id_for(source_id, artifact_id, plane, action_text),
+        "status": "pending",
+        "priority": priority,
+        "lane": lane,
+        "ownerHint": owner,
+        "taskType": f"{plane}_activation",
+        "title": f"[AI5] {short}",
+        "description": action_text,
+        "acceptance": f"Execution evidence captured for: {short}",
+        "confidence": confidence,
+        "dispatchEligible": dispatch_eligible,
+        "implementationTarget": target,
+        "createdAt": now_iso(),
+        "source": {
+            "source_id": source_id,
+            "source_type": source_type,
+            "source_uri": source_uri,
+            "source_title": source_title,
+            "artifact_id": artifact_id,
+            "artifact_generated_at": generated_at,
+            "freshness_decay": freshness_decay,
+            "implementation_density": density,
+            "transcript_status": transcript_status or "unknown",
         },
     }
 

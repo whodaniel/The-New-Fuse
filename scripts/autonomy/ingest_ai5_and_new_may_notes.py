@@ -15,6 +15,7 @@ import argparse
 import datetime as dt
 import gzip
 import json
+import os
 import re
 import sqlite3
 import subprocess
@@ -661,6 +662,29 @@ def main(argv: Sequence[str]) -> int:
             ),
             dry_run=args.dry_run,
         )
+        
+        # [NEW] Phase 4 Acceleration: Run V2 Extractor if transcript is available.
+        if not args.dry_run and transcript.get("text") and len(str(transcript.get("text", ""))) > 200:
+            print(f"🔥 [V2] Extracting implementation directives for {source_id}...")
+            api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+            transcript_file = transcript_cache_dir / f"{video.get('videoId')}.txt"
+            if not transcript_file.exists():
+                transcript_file.write_text(str(transcript.get("text", "")) + "\n", encoding="utf-8")
+            if not api_key:
+                print(f"⚠️ [V2] Skipping {source_id}: GEMINI_API_KEY is not set")
+            else:
+                v2_cmd = [
+                    sys.executable,
+                    str(ROOT / "scripts" / "autonomy" / "procedural_extractor_v2.py"),
+                    "--input", str(transcript_file),
+                    "--source-id", source_id,
+                    "--api-key", api_key,
+                ]
+                try:
+                    subprocess.run(v2_cmd, check=False)
+                except Exception as e:
+                    print(f"⚠️ V2 Extraction failed for {source_id}: {e}")
+
         item_payload = {
             "sourceId": source_id,
             "sourceType": "video",

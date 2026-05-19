@@ -1,0 +1,358 @@
+{
+  "source_id": "kXBXIipl1lQ",
+  "generated_at": "2026-05-19T18:48:38.735485+00:00",
+  "total_extracted": 20,
+  "dispatch_ready_count": 20,
+  "directives": [
+    {
+      "title": "Implement Document CRUD Operations",
+      "steps": [
+        "Implement functionality for users to create new documents.",
+        "Implement functionality for users to delete existing documents.",
+        "Implement functionality for users to perform basic edits on documents."
+      ],
+      "target": "Document Management Service; API Endpoints; Database Schema",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Directly stated functional requirements: 'users should be able to create documents, edit them, and also delete these documents'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable Real-Time Collaborative Editing Updates",
+      "steps": [
+        "Design and implement a system that allows multiple users to edit the same document simultaneously.",
+        "Ensure that changes made by one editor are instantly visible to all other active editors of the same document in real-time."
+      ],
+      "target": "Collaboration Service; Real-time Sync Logic; Frontend Editor",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Core functional requirement: 'multiple users should be able to edit the same document simultaneously and see each other's changes live'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Ensure Document Persistence Across Sessions",
+      "steps": [
+        "Implement a robust mechanism to persist all document content and changes to a storage layer.",
+        "Verify that persisted document changes survive client-side events such as page refreshes or accidental disconnections."
+      ],
+      "target": "Database Layer; Document Storage Service",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Explicit functional requirement: 'documents should be persisted, meaning they should survive a page refresh'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Rich Text Formatting Support",
+      "steps": [
+        "Design and update the document data model and database schema to store rich text attributes (e.g., bold, italics, styling).",
+        "Develop functionality within the editor to apply, display, and manage rich text formatting for document content."
+      ],
+      "target": "Database Schema; Document Model; Frontend Editor Component",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Clarifying question led to the requirement for 'rich text, meaning italics, bold, and be able to apply styling to the text'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Invited User Access Control for Editing",
+      "steps": [
+        "Develop an authorization system to restrict document editing privileges only to explicitly invited users.",
+        "Ensure that uninvited or unauthorized users cannot modify document content."
+      ],
+      "target": "Authorization Service; Document Service; User Management Module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Explicitly stated access requirement: 'In this case, let's say the invited users can edit this only'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set Up WebSocket Protocol for Real-Time Communication",
+      "steps": [
+        "Configure the backend server to support and manage WebSocket connections.",
+        "Implement client-side logic to establish and maintain WebSocket connections for sending and receiving document edits.",
+        "Utilize WebSockets as the primary communication channel for real-time document change propagation, ensuring edits appear within 100 milliseconds."
+      ],
+      "target": "Real-time Communication Layer; Backend WebSocket Server; Frontend Client Module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Directly stated as a technical solution: 'we need to go with a web socket option for providing the connection to the users' due to the 100ms latency requirement.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Client-Side Edit Durability and Retry Mechanism",
+      "steps": [
+        "Implement client-side state management to locally store unacknowledged document edits.",
+        "Develop a retry mechanism to re-send edits to the server if they are not acknowledged, ensuring 'no data should be lost if a server crashes'."
+      ],
+      "target": "Client-Side Editor; Real-time Synchronization Module (Client)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Explicit instruction: 'we should maintain the state locally on the client side as well, so that if the server didn't acknowledge the changes... then we should be able to retry that edit with the server'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Auto-scaling for WebSocket Servers",
+      "steps": [
+        "Provision an initial fleet of 200 WebSocket servers to accommodate peak traffic estimates (10 million concurrent connections / 50,000 connections per server).",
+        "Implement auto-scaling rules for the WebSocket server fleet to dynamically adjust the number of servers.",
+        "Configure auto-scaling to scale down the number of WebSocket servers during off-peak times to optimize resource usage.",
+        "Configure auto-scaling to scale up the number of WebSocket servers as traffic approaches peak levels."
+      ],
+      "target": "WebSocket server fleet / Infrastructure Orchestration (e.g., Kubernetes HPA, AWS Auto Scaling Group)",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states 'we can set it up with auto scaling' and describes the need to 'downscale the servers' when not at peak time, providing a clear objective and context for an autonomous agent to implement auto-scaling logic for the WebSocket server cluster.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Establish Persistent WebSocket Connection from Client to Gateway",
+      "steps": [
+        "Upon a user opening an existing document and initiating edits, establish a WebSocket connection from the client application to the backend gateway service.",
+        "Maintain this WebSocket connection as a persistent link throughout the entire duration of the user's editing session.",
+        "Ensure the persistent connection facilitates real-time bidirectional communication for collaborative editing."
+      ],
+      "target": "Client-side application (frontend code) / Gateway service (backend API)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.95
+      },
+      "rationale": "The text clearly states 'This is where we need to connect to the gateway with a web socket' and 'to have one persistent connection throughout the session,' directly instructing the establishment and maintenance of a WebSocket connection for real-time collaboration.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure API Gateway for WebSocket Handling",
+      "steps": [
+        "Configure the API Gateway to accept and manage incoming WebSocket connections.",
+        "Implement authentication checks for all incoming WebSocket connections.",
+        "Apply rate limiting policies to control the flow of WebSocket connections and requests.",
+        "Set up proxying rules within the API Gateway to forward established WebSocket connections to the designated WebSocket server(s)."
+      ],
+      "target": "api_gateway_config.yaml (or equivalent API Gateway configuration system)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides clear, actionable steps for configuring a standard API Gateway to handle and proxy WebSocket traffic, including essential security and performance features.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Redis Cluster for Real-time Edits and Caching",
+      "steps": [
+        "Provision and deploy a Redis Cluster instance to support high availability and scalability.",
+        "Configure all WebSocket servers to establish and maintain persistent connections to the Redis Cluster.",
+        "Implement a Redis Pub/Sub mechanism: when an edit is received by a WebSocket server from a user, publish it to a relevant Redis channel corresponding to the document.",
+        "Subscribe all relevant WebSocket servers to Redis channels to receive edits for documents that their connected users are actively working on.",
+        "Broadcast received edits from Redis (via subscribed WebSocket servers) to all other connected users working on the same document via their respective WebSocket connections.",
+        "Configure the Redis Cluster to store active document contents in memory, serving as a real-time cache.",
+        "Implement logic within WebSocket servers to read active document content directly from the Redis cache, bypassing the persistent database for faster retrieval."
+      ],
+      "target": "redis_cluster_deployment.tf (or equivalent infrastructure-as-code), websocket_server/src/redis_integration.py, websocket_server/src/document_cache.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Details the setup and operational logic for integrating Redis Cluster to manage real-time updates via Pub/Sub and improve data access latency through caching, specifying distinct functional requirements.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Document Service for Persistence and Validation",
+      "steps": [
+        "Design and develop a new microservice named 'Document Service' dedicated to document management.",
+        "Establish secure and robust communication channels between WebSocket servers (or an intermediary message queue) and the Document Service for submitting document edits.",
+        "Implement comprehensive edit validation logic within the Document Service, including checks for document versioning, structural integrity, and schema compliance.",
+        "Develop sophisticated conflict detection and resolution mechanisms within the Document Service to handle concurrent edits from multiple users.",
+        "Implement persistence logic to securely store validated and conflict-resolved document edits into a chosen backend database."
+      ],
+      "target": "document_service/ (new microservice project directory), document_service/api.py, document_service/validation_logic.py, document_service/persistence_layer.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Outlines the creation of a new, critical service with specific responsibilities for data integrity, conflict management, and persistent storage, providing clear functional requirements.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Rich Text Document Schema",
+      "steps": [
+        "Define the core fields for a document entity: `id` (a unique identifier), `title` (a string), and `content`.",
+        "Specify that the `content` field must support and store rich text formatting (e.g., bold, italic, paragraphs, new lines).",
+        "Design the `content` field to store rich text in a structured JSON format, preferably as a tree-like structure representing blocks of text and their formatting.",
+        "Evaluate and select a storage mechanism for the JSON content, considering native JSON column types like PostgreSQL's `JSONB` or utilizing a dedicated document database."
+      ],
+      "target": "database/migrations/001_create_documents_table.sql (or equivalent schema definition file), document_service/schemas/document.py, common/models/document.proto",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides concrete requirements for the document data model, focusing on the specific needs of rich text storage and guiding the choice of database schema and technology.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define PostgreSQL Schema for Documents, Users, and Collaborations",
+      "steps": [
+        "Create a `users` table with at least `id` (primary key), `name`, and `email` columns.",
+        "Create a `documents` table with at least `id` (primary key), `title`, `owner_id` (foreign key referencing `users.id`), and `version` columns. Set the `version` column to be an integer, default to 1, and ensure it increments on each document content update.",
+        "Create a `document_collaborators` (or similar) table with at least `document_id` (foreign key referencing `documents.id`), `user_id` (foreign key referencing `users.id`), and `permission_level` columns.",
+        "Define the `permission_level` column as an ENUM or similar type, allowing specific values such as 'editor', 'viewer', and 'commenter'.",
+        "Establish foreign key constraints: `documents.owner_id` should reference `users.id`; `document_collaborators.document_id` should reference `documents.id`; `document_collaborators.user_id` should reference `users.id`."
+      ],
+      "target": "database/schema.sql or ORM migration files (e.g., db/migrate/create_initial_schema.rb)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly recommends PostgreSQL for managing relationships, detailing the necessary entities (users, documents, collaborators) and their connections (foreign keys, permissions, owner ID) and the need for document versioning.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Rich Text Content Storage via PostgreSQL JSONB",
+      "steps": [
+        "Modify the `documents` table by adding a new column named `content` with the data type `JSONB`.",
+        "Design and document a specific JSON schema for the `content` field. This schema must support the representation of rich text, including but not limited to:",
+        "    - A hierarchical or tree-like structure to store blocks of text (e.g., paragraphs).",
+        "    - Mechanisms to embed inline styling attributes (e.g., bold, italic, underline) within text segments.",
+        "Ensure the application's data access layer (e.g., ORM, custom mappers) can correctly serialize and deserialize rich text content between application objects and the `JSONB` format in the database."
+      ],
+      "target": "database/schema.sql (for column definition), app/models/document.rb (or equivalent ORM model), app/services/document_content_serializer.rb",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker strongly recommends using PostgreSQL with a JSONB field for storing 'entire rich text content in a tree format' and clarifies that this JSON should specify block types and styling for frontend rendering.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop Backend API for Delta-based Document Updates",
+      "steps": [
+        "Create or modify a backend API endpoint (e.g., `PATCH /api/documents/:id`) specifically for updating document content.",
+        "Configure this endpoint to expect a request payload containing 'delta' changes (incremental updates) rather than the full document content.",
+        "Define the structure of the delta payload. It must include:",
+        "    - `document_id`: The identifier for the document being updated.",
+        "    - `client_version`: The client's current known version of the document content.",
+        "    - `changes`: A structured list of granular modifications. Each change object within this list must specify:",
+        "        - `type`: The nature of the operation (e.g., 'insert', 'delete', 'format').",
+        "        - `position`: The exact location within the document's content where the change applies (e.g., character offset, block index).",
+        "        - `content`: The new text or formatting to apply (e.g., `text: 'new characters'`, `style: { bold: true }`).",
+        "        - Any associated styling or metadata relevant to the change (e.g., `bold: true`, `italic: true`).",
+        "Implement server-side logic within this endpoint to:",
+        "    - Validate the incoming delta payload.",
+        "    - Fetch the current document's `content` (from the JSONB field) and its `version` from the database.",
+        "    - Apply the received delta changes to the current JSONB `content` in a structured manner.",
+        "    - Increment the `version` field of the `documents` table for the updated document.",
+        "    - Implement optimistic concurrency control by checking if the `client_version` matches the database's `version` before applying changes, to handle potential conflicts.",
+        "    - Persist the modified JSONB `content` and the new `version` back to the database."
+      ],
+      "target": "app/controllers/documents_controller.rb (or similar API controller), app/services/document_delta_processor.rb, app/models/document.rb (for update logic)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The speaker clearly states the necessity of delta-based updates to prevent network saturation, outlines the specific information required in a delta payload (position, text, type, version), and describes the backend process for applying these partial updates.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Construct Minimal Client-Side Document Edit Payload",
+      "steps": [
+        "Identify the precise, minimal segment of the document that has been updated by the user (e.g., specific bytes, characters, or formatting changes).",
+        "Determine the `edit_type` (e.g., 'insert_chars', 'delete_chars', 'apply_format') for the identified change.",
+        "Include the `position` within the document where the edit occurred (e.g., character index for insertions/deletions).",
+        "If the edit involves text modification, include the `text` content relevant to the change (e.g., inserted text).",
+        "If the edit involves formatting, include the `formatting_type` (e.g., 'bold', 'italics') and its affected range.",
+        "Embed the `current_document_version` that the client holds, alongside the edit data.",
+        "Serialize this compiled, minimal set of information into an edit request payload for transmission to the backend."
+      ],
+      "target": "ClientDocumentEditor.generateEditPayload (or similar client-side module)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly details the components of the minimal edit payload sent from the client: '50 bytes', 'type', 'position', 'text', 'bold italics', 'version of the document', providing sufficient detail to construct this data structure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Server-Side Optimistic Locking Conflict Detection",
+      "steps": [
+        "Upon receiving a document edit request from a client, extract the `document_version` provided within the edit payload.",
+        "Query the persistent storage (database) to retrieve the `current_document_version` associated with the target document.",
+        "Compare the `document_version` from the client's edit with the `current_document_version` from the database.",
+        "If `client_document_version < current_document_version`, indicating an outdated client state:",
+        "Reject the incoming edit operation.",
+        "Generate and send an error response to the client, instructing it to 'refetch' the latest document content and 'retry' its edit based on the updated version."
+      ],
+      "target": "DocumentEditService.handleEditRequest (or similar server-side edit processing component)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript provides a clear, conditional logic for conflict detection: 'if user's B edit arrives with version four, but the document is already at version five, then the server rejects this, and asks the client to refetch and retry the edit again.' This directly translates into an implementable sequence of server actions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Apply Document Edit and Increment Version on Success",
+      "steps": [
+        "Assuming all conflict checks (including optimistic locking) pass, apply the received document modifications (e.g., character insertions, deletions, formatting changes) to the document's content.",
+        "Increment the `document_version` of the affected document by one.",
+        "Persist the updated document content and the new `document_version` into the database."
+      ],
+      "target": "DocumentEditService.applyEdit (or similar server-side module responsible for state modification)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript describes the successful path of an edit: 'The server applies the edit and updates the version of the document to be five.' and 'After that, if there are no more conflicts, we apply that edit and change the document version to version six.' This outlines the post-processing steps for a valid edit.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Adjust Insert Operation Position During Operational Transformation for Concurrent Deletes",
+      "steps": [
+        "Receive a delete operation (e.g., from User B) targeting a specific character position (`P_delete`).",
+        "Identify any pending or concurrent insert operations (e.g., from User A) that target a character position (`P_insert`) numerically greater than `P_delete`.",
+        "For each identified concurrent insert operation, automatically adjust its target position by decrementing `P_insert` by one (assuming a single character deletion).",
+        "Apply both the transformed insert operation(s) and the original delete operation to the shared document state."
+      ],
+      "target": "OperationalTransformationEngine",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly describes this specific operational transformation rule: 'after user B's delete operation, position five is shifted to position four, and we adjust also user A's operation automatically'. This provides concrete steps for transforming an insert operation's position when a concurrent delete occurs before it.",
+      "dispatch_ready": true
+    }
+  ]
+}

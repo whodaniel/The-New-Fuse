@@ -74,6 +74,9 @@ function drawCards(rng, deck, count) {
 function dealHoldemCards(engine, hand, seated) {
  const rng = createRng(`${engine.replaySeed}:${hand.handId}`);
  const deck = buildDeck();
+    if (deck.length !== 52 || new Set(deck).size !== 52) {
+      throw new Error(`Deck integrity violation: ${deck.length} cards, ${new Set(deck).size} unique`);
+    }
  const holeCards = {};
  for (const seat of seated) {
  holeCards[String(seat.seat)] = drawCards(rng, deck, 2);

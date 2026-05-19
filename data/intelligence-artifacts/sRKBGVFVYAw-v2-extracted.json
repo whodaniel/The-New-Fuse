@@ -1,0 +1,142 @@
+{
+  "source_id": "sRKBGVFVYAw",
+  "generated_at": "2026-05-19T18:03:22.426336+00:00",
+  "total_extracted": 8,
+  "dispatch_ready_count": 8,
+  "directives": [
+    {
+      "title": "Acquire Diverse Population Genetic Frequency Data",
+      "steps": [
+        "Identify target diverse human populations from different continents (e.g., Europeans, East Asians).",
+        "Acquire population-level genetic datasets for the identified populations, ensuring frequency data for individual genetic variants is available."
+      ],
+      "target": "GeneticDataAcquisitionModule",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides clear instructions for obtaining the necessary input data, specifying the type of populations and data (genetic frequency) required for analysis.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Quantify Mutation Frequency Differences Between Paired Populations",
+      "steps": [
+        "Select a pair of genetically diverse human populations from the acquired datasets (e.g., Europeans vs. East Asians).",
+        "For each common genetic mutation present in both populations' datasets:",
+        "  a. Retrieve the reported frequency of the mutation in Population A.",
+        "  b. Retrieve the reported frequency of the mutation in Population B.",
+        "  c. Calculate the absolute difference between the frequency in Population A and Population B.",
+        "Store these calculated frequency differences, associated with each mutation and the specific population pair."
+      ],
+      "target": "GeneticAnalysisEngine/FrequencyDifferenceCalculator",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This outlines a precise, step-by-step procedure for comparing genetic variants quantitatively between two datasets, specifying inputs, operations, and the expected output (calculated differences).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Identify and Rank Most Differentially Frequented Mutations",
+      "steps": [
+        "Receive a list of genetic mutations, each with its calculated frequency difference between a specific pair of populations.",
+        "Sort this list of mutations in descending order based on the magnitude of their absolute frequency difference.",
+        "Extract the top N mutations from the sorted list, representing those exhibiting the most extreme frequency differences, to highlight biologically significant variants."
+      ],
+      "target": "GeneticAnalysisEngine/DifferentialMutationRanker",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This describes a concrete data processing task to identify and prioritize genetic mutations that show the most significant divergence, a crucial step for subsequent biological interpretation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Quantify Genetic Selection Signal Enrichment in Trait-Associated Loci",
+      "steps": [
+        "Obtain a comprehensive list of approximately 100 diverse traits for which Genome-Wide Association Studies (GWAS) have been performed (e.g., immunity, autoimmunity, behavior, metabolism).",
+        "For each identified trait, extract the specific genetic variations (loci) known to affect that trait from the corresponding GWAS datasets.",
+        "Cross-reference these trait-associated genetic variations against a pre-identified dataset of 'genetic selection signals' (i.e., hundreds of positions confidently identified as under strong natural selection).",
+        "Perform a statistical enrichment analysis for each trait to determine if the number of genetic selection signals found within its associated loci is unusually high compared to a random distribution or a suitable baseline."
+      ],
+      "target": "genetic_data_analysis_pipeline.py",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly describes a procedure: 'we looked at maybe a hundred or so traits... And for each of these we could ask are the genetic variations... do they have an unusual number of genetic selection signals?'. This clearly outlines a data retrieval, comparison, and statistical evaluation task.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Investigate Genetic Positions and Selection Signals Using Aegis Browser",
+      "steps": [
+        "Locate and access the 'Aegis browser' web application or tool.",
+        "Utilize the Aegis browser's query functionality.",
+        "Formulate queries to investigate specific genetic positions in the DNA, focusing on those exhibiting selection signals.",
+        "Direct queries to identify examples of intensified natural selection that occurred around the Bronze Age.",
+        "Specifically examine enrichment patterns where immune traits are unusually associated with these selection signals.",
+        "Similarly, investigate enrichment patterns where metabolic traits are associated with selection signals during this period."
+      ],
+      "target": "Aegis browser",
+      "metrics": {
+        "specificity": 0.75,
+        "implementability": 0.8,
+        "testability": 0.75
+      },
+      "rationale": "The transcript explicitly names the 'Aegis browser' as a tool built to 'query' data. It also details the specific type of data and examples to investigate using this tool, including genetic positions, selection intensification around the Bronze Age, and associations with immune and metabolic traits. While specific UI/API commands are not provided, the directive gives enough context for an agent with web browsing capabilities to understand and attempt execution.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Multiple LLMs for Comparative Analysis via Cursor",
+      "steps": [
+        "Launch the Cursor application.",
+        "Initiate a 'handful' (multiple) of different LLM models simultaneously within the Cursor interface, providing them with the same prompt/context.",
+        "Compare the results generated by each LLM.",
+        "(Optional) Use one LLM's response as input for another LLM to critique it."
+      ],
+      "target": "Cursor application / LLM interaction module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This sequence describes concrete actions to leverage Cursor's advertised functionality for parallel LLM execution and result comparison/critique, with enough detail for an automated agent to attempt execution given access to the Cursor API or UI.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Flashcards from Research Material via Cursor",
+      "steps": [
+        "Provide the relevant research content/notes (referred to as 'this work') to the Cursor application.",
+        "Issue a command or select an option within Cursor to 'turn this work into a flash card'.",
+        "Confirm the successful generation of flashcards based on the provided material."
+      ],
+      "target": "Cursor application / Flashcard generation feature",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This provides a clear, single-purpose instruction for using a specific feature within the Cursor application, outlining the input ('this work') and desired output (flash cards).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Visit Cursor Trial Website",
+      "steps": [
+        "Open a web browser.",
+        "Navigate to the URL: `cursor.com/thash`."
+      ],
+      "target": "Web browser / Network module",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a direct and unambiguous instruction to access a specific web resource, executable by any system with a web browsing capability.",
+      "dispatch_ready": true
+    }
+  ]
+}

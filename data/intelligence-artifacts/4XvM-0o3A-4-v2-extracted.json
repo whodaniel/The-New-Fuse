@@ -1,0 +1,230 @@
+{
+  "source_id": "4XvM-0o3A-4",
+  "generated_at": "2026-05-19T18:10:06.649391+00:00",
+  "total_extracted": 14,
+  "dispatch_ready_count": 14,
+  "directives": [
+    {
+      "title": "Configure Platform Allow Lists",
+      "steps": [
+        "Access the Hermes platform configuration settings.",
+        "For Slack, Telegram, Mattermost, Matrix, and DingTalk, define specific allow lists.",
+        "Restrict interaction with Hermes to only the channels, rooms, or chats specified in these allow lists."
+      ],
+      "target": "Hermes platform configuration (e.g., `platform_configs.yaml` or similar)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directs an agent to modify specific configuration parameters for multiple messaging platforms to enforce access control, a common and discrete task.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Add New Model Provider Plugin",
+      "steps": [
+        "Locate the `model providers plugin directory` within the Hermes installation.",
+        "Create a new plugin file or directory structure adhering to the plugin interface within this directory.",
+        "Implement the necessary code for the new model provider or route within the newly created plugin."
+      ],
+      "target": "Hermes `model providers plugin directory`",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "This task involves creating a new file/module in a specified location following an expected pattern, which an autonomous agent could perform if it understands the plugin structure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable Open Router Response Caching",
+      "steps": [
+        "Access the Hermes configuration related to Open Router integration.",
+        "Locate the setting for response caching.",
+        "Enable response caching for Open Router routes and models, ensuring it applies only where supported."
+      ],
+      "target": "Hermes Open Router configuration (e.g., `open_router_config.yaml` or API settings)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "This is a direct configuration change to activate a specific feature, a clear action for an autonomous agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Cron Job for Script-Only Execution (No Agent Cron Mode)",
+      "steps": [
+        "Access the Hermes cron job definition files or configuration interface.",
+        "For a specific cron job, set the execution mode to 'script-only' or 'no agent cron mode'.",
+        "Ensure the configuration dictates that Hermes remains silent if the script produces no output, and delivers output directly if produced."
+      ],
+      "target": "Hermes cron job configuration (e.g., `cron_jobs.yaml` or a dedicated cron config file)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This involves setting a specific operational mode for a cron job, a clear and discrete configuration task an agent can perform.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Per-Task Max Retries in Kanban",
+      "steps": [
+        "Access the Hermes Kanban system configuration.",
+        "Locate the parameter for 'max retries' at a per-task level.",
+        "Set the desired maximum number of retries for individual tasks."
+      ],
+      "target": "Hermes Kanban task configuration (e.g., `kanban_settings.yaml` or task definition schema)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This is a direct configuration of a numerical parameter within the Kanban system, a standard and implementable task for an agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Cron Job for Script-Only Watchdog Mode",
+      "steps": [
+        "Identify the specific cron job configuration to be modified.",
+        "Set the cron job's execution mode to 'script-only watchdog' (or equivalent setting) within its configuration.",
+        "Ensure the associated script is designed to produce output when Hermes should deliver it, and no output when Hermes should remain silent, to leverage this mode effectively."
+      ],
+      "target": "hermes_config.yaml or cron_jobs.json (Hermes cron job configuration)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides explicit steps to enable a new, cost-saving cron job execution mode by modifying configuration, making it highly implementable and testable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Utilize Hermes Video Analyze Tool",
+      "steps": [
+        "Access the 'video analyze' tool within the Hermes system or an agent workflow.",
+        "Provide the video content (e.g., file path, URL, or data stream) as input to the tool.",
+        "Specify 'Gemini' or a 'compatible multimodal model' for performing the video analysis task."
+      ],
+      "target": "hermes.tools.video_analyze_tool",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive specifies the use of a newly added, named tool within Hermes, including its inputs and model requirements, making it concrete for execution.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure XAI Custom Voices as TTS Provider with Cloning",
+      "steps": [
+        "Integrate 'XAI custom voices' as a new text-to-speech provider within Hermes system configuration.",
+        "Enable and configure 'voice cloning support' for the XAI TTS provider.",
+        "Select 'XAI custom voices' as the active text-to-speech provider for relevant voice workflows."
+      ],
+      "target": "hermes_config.yaml or tts_providers.json (Hermes TTS configuration)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive details the setup of a specific new TTS provider and its unique feature, clearly outlining configuration steps.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Guide In-Flight Agent via /steer Command in IDE",
+      "steps": [
+        "Ensure an agent is currently running an in-progress task within a supported IDE (Zed, VS Code, or JetBrains) with the ACP adapter activated.",
+        "Input the '/steer' command followed by specific guidance (e.g., '/steer prioritize fixing authentication flow') into the agent interaction interface."
+      ],
+      "target": "IDE ACP adapter, agent_control_interface",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This provides explicit instructions for using a new, named interactive command within a well-defined context (IDE with ACP), making it highly actionable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Queue Follow-Up Work via /q Command in IDE",
+      "steps": [
+        "Within a supported IDE (Zed, VS Code, or JetBrains) with the ACP adapter, initiate an agent interaction or observe an ongoing one.",
+        "Input the '/q' command followed by the description of the follow-up task (e.g., '/q next task: write unit tests for the new API endpoint') into the agent interaction interface."
+      ],
+      "target": "IDE ACP adapter, agent_control_interface",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive clearly outlines how to use another new, named interactive command for scheduling tasks within specified IDEs, providing a concrete action.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable and Use SearXNG Search Skill",
+      "steps": [
+        "Access the Hermes skill management interface.",
+        "Locate and enable the 'SearXNG search' optional skill.",
+        "Configure any necessary backend connection details for the SearXNG instance within Hermes.",
+        "Integrate the SearXNG search skill into an agent's workflow for web research tasks."
+      ],
+      "target": "hermes.skills.searxng_skill and hermes_config.yaml",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides steps to activate and utilize a specific new optional skill, including configuration and integration, making it implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Archive Curator Items using Subcommand",
+      "steps": [
+        "Open the Hermes CLI or access the Curator tool interface.",
+        "Execute the command 'curator archive [item_id(s) / criteria]' to move specified items to the archive.",
+        "Optionally, verify the archival operation by listing archived items using 'curator list archive'."
+      ],
+      "target": "hermes.cli.curator_command and curator_module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides explicit CLI command usage for a new Curator subcommand, detailing how to perform an archival action.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prune Curator Items using Subcommand",
+      "steps": [
+        "Open the Hermes CLI or access the Curator tool interface.",
+        "Execute the command 'curator prune [item_id(s) / criteria]' to permanently remove specified items.",
+        "Verify the pruning by attempting to list or retrieve the pruned items, ensuring their removal."
+      ],
+      "target": "hermes.cli.curator_command and curator_module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides explicit CLI command usage for a new Curator subcommand, detailing how to perform a pruning (deletion) action.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "List Archived Curator Items using Subcommand",
+      "steps": [
+        "Open the Hermes CLI or access the Curator tool interface.",
+        "Execute the command 'curator list archive' to display all items currently residing in the archive."
+      ],
+      "target": "hermes.cli.curator_command and curator_module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides explicit CLI command usage for a new Curator subcommand, detailing how to view the contents of the archive.",
+      "dispatch_ready": true
+    }
+  ]
+}

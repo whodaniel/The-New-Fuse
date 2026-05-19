@@ -1,0 +1,537 @@
+{
+  "source_id": "Xfl50508LZM",
+  "generated_at": "2026-05-19T17:59:59.452988+00:00",
+  "total_extracted": 33,
+  "dispatch_ready_count": 32,
+  "directives": [
+    {
+      "title": "Obtain Claude API Key",
+      "steps": [
+        "If you do not already possess a Claude API account, sign up for one.",
+        "Obtain your Claude API key for use in powering both the agent and evaluations."
+      ],
+      "target": "External Service: Anthropic Claude API",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly stated as a prerequisite for the workshop, necessary for powering the agent and evals.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set up Phoenix Cloud Account and API Key",
+      "steps": [
+        "Sign up for a free Phoenix Cloud account.",
+        "Obtain your Phoenix API key, which is required to send log data to Phoenix Cloud."
+      ],
+      "target": "External Service: Phoenix Cloud",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Phoenix Cloud is specified as the destination for log data, necessitating an account and API key.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Tracing for Raw Data Capture",
+      "steps": [
+        "Implement a tracing mechanism to capture the raw data required for running evaluations."
+      ],
+      "target": "AI Agent / Application Code / Evaluation Framework",
+      "metrics": {
+        "specificity": 0.6,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "Explicitly mentioned as the initial technical step to gather essential data for evaluations.",
+      "dispatch_ready": false
+    },
+    {
+      "title": "Execute AI Agent and Examine Output Traces",
+      "steps": [
+        "Run the provided simple AI agent using the Claude agent SDK.",
+        "Inspect the traces produced by the executed agent to understand its behavior and output."
+      ],
+      "target": "AI Agent / Claude Agent SDK",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "A clear, sequential set of actions involving running a specified agent with a specific SDK and then examining its output.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Analyze Raw Trace Data for Evaluation Planning",
+      "steps": [
+        "Read through the generated trace data.",
+        "Categorize identified issues or errors present within the traces.",
+        "Determine specific metrics or aspects to measure based on the categorized issues before proceeding to write any evaluations."
+      ],
+      "target": "Trace Data / Evaluation Planning Document",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This outlines a critical preliminary step of analyzing trace data to inform the evaluation design.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop and Integrate Multiple Evaluation Methods",
+      "steps": [
+        "Write a simple, deterministic, cost-effective code evaluation.",
+        "Integrate and utilize AriseAI's pre-built evaluation functions.",
+        "Develop LLM-based evaluations where an LLM judges the semantic content and success/failure of agent outputs in a flexible, non-deterministic manner.",
+        "Create a custom evaluation from scratch."
+      ],
+      "target": "Evaluation Framework / Evaluation Scripts",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "This directive provides a comprehensive list of distinct evaluation types to be implemented, each with specific characteristics mentioned.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Perform Meta-Evaluation of Judge Accuracy",
+      "steps": [
+        "Implement a process to test whether the evaluation judges (including LLM judges) are assessing correctness accurately, referred to as meta-evaluation."
+      ],
+      "target": "Evaluation System / Judge Validation Framework",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly states the need for meta-evaluation to validate the correctness of evaluation judges.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create Free Arise Phoenix Cloud Account",
+      "steps": [
+        "Navigate to the Arise homepage or the direct sign-up link for Arise Phoenix.",
+        "Crucially, ensure you are signing up for the 'Arise Phoenix' product, not 'Arise AX' (the enterprise product).",
+        "Complete the sign-up process to create a free Fenix Cloud account."
+      ],
+      "target": "Arise Phoenix Cloud platform (web interface)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly states the need for a free Fenix Cloud account and strongly warns against signing up for the wrong product (Arise AX), stating it's a common confusion point leading to issues with API keys and hostnames. This is a fundamental setup step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Obtain Fenix Cloud API Key",
+      "steps": [
+        "Log in to your newly created Arise Phoenix Cloud account.",
+        "Navigate to the API key management section within your Fenix Cloud dashboard or account settings.",
+        "Generate and securely retrieve your Fenix API key, which is required for sending log data to Fenix Cloud."
+      ],
+      "target": "Fenix Cloud platform (account settings/dashboard)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript states, 'you'll need a Fenix API key to uh get permission to send [log data] there.' This is a direct, actionable requirement for integrating with Fenix Cloud.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Validate Agent Output as JSON",
+      "steps": [
+        "Create a deterministic code eval function (e.g., in Python or TypeScript).",
+        "Inside the function, attempt to parse the agent's raw output string as JSON.",
+        "Return a pass if JSON parsing is successful, otherwise return a fail (e.g., on `JSONDecodeError`)."
+      ],
+      "target": "evals/output_validators.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Provides clear, deterministic steps to check if an agent's output adheres to JSON format, which is a common requirement for structured outputs.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Validate Agent Output Token Count Below Threshold",
+      "steps": [
+        "Create a deterministic code eval function (e.g., in Python or TypeScript).",
+        "Implement tokenization logic (using a suitable library) to accurately count tokens in the agent's output.",
+        "Check if the counted tokens are strictly less than a predefined threshold (e.g., 500 tokens).",
+        "Return a pass if the token count is below the threshold, otherwise return a fail."
+      ],
+      "target": "evals/output_validators.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "Defines an objective, quantifiable check for the length of the agent's output, preventing excessively long or costly responses.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Validate Agent Output Mentions Specific Keyword/Phrase",
+      "steps": [
+        "Create a deterministic code eval function (e.g., in Python or TypeScript).",
+        "Define the specific keyword or phrase that the agent's output must contain.",
+        "Implement string search logic to determine if the agent's output contains the expected keyword or phrase (consider case-insensitivity as needed).",
+        "Return a pass if the keyword/phrase is found, otherwise return a fail."
+      ],
+      "target": "evals/output_validators.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Enables deterministic checking that the agent's output includes essential information or directly addresses a specific query.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Code Evals for Deterministic Output Checks",
+      "steps": [
+        "Create a dedicated module or test suite for deterministic output validation checks.",
+        "Implement a function to validate if the LLM output is well-formed JSON.",
+        "Implement a function to check if the LLM output token count is below a specified threshold (e.g., 500 tokens).",
+        "Implement a function to verify if the LLM output contains specific, required keywords or phrases.",
+        "Implement functions for format validation of required fields within the LLM output.",
+        "Implement functions to detect and flag forbidden phrases or patterns in the LLM output."
+      ],
+      "target": "src/evaluations/code_evals.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly identifies format validation, length limits, forbidden phrases, and required fields as ideal use cases for fast, cheap, and reproducible code evals, akin to unit tests.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure LLM-as-a-Judge for Semantic Evaluation",
+      "steps": [
+        "Select an LLM model to serve as the judge, preferably one more powerful than the production LLM being evaluated.",
+        "Develop a comprehensive judge prompt (acting as a rubric) that defines the evaluation criteria for the production LLM's output.",
+        "Include explicit instructions in the judge prompt to assess factual accuracy of the response.",
+        "Include explicit instructions in the judge prompt to evaluate faithfulness to source material (if applicable).",
+        "Include explicit instructions in the judge prompt to determine if the tone is appropriate for the intended interaction (e.g., customer service).",
+        "Integrate the chosen judge LLM to automatically evaluate the outputs of the primary production LLM using the developed judge prompt.",
+        "Conduct a validation process to ensure the judge LLM's prompt is well-aligned and that the judge accurately assesses outputs according to the intended criteria."
+      ],
+      "target": "src/evaluations/llm_judge_evals.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript details using a separate, often more powerful, LLM to judge the output of another LLM against a 'rubric' (defined as a set of rules/prompt), specifically for semantic understanding like factual accuracy, faithfulness, and tone, which traditional unit tests cannot handle.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Establish a Golden Dataset using Human Evaluation",
+      "steps": [
+        "Design a structured human annotation task to gather high-quality, known good answers for a representative set of inputs.",
+        "Recruit and onboard human evaluators or annotators to perform the task of generating or validating these ideal responses.",
+        "Compile these human-generated 'known good answers' into a 'golden dataset'.",
+        "Utilize this golden dataset as a reliable benchmark to compare and validate the performance of automated evaluation methods (code evals, LLM-as-a-judge evals)."
+      ],
+      "target": "data/golden_datasets/human_annotations.jsonl",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 0.9
+      },
+      "rationale": "The transcript highlights human evaluation as the 'gold standard' for creating a 'golden data set of known good answers' which can then be used to judge automated evals, particularly because humans excel at subjective judgment that machines struggle with.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Code Evals for Deterministic Checks",
+      "steps": [
+        "Identify all deterministic criteria for agent output, such as format validation, length limits, forbidden phrases, and required fields.",
+        "Develop a dedicated module or component within the evaluation suite to house these deterministic checks.",
+        "For each identified criterion, write a precise function or method that takes the agent's output as input and returns a boolean pass/fail result.",
+        "Integrate this module into the overall evaluation runner to automatically execute these checks against agent responses."
+      ],
+      "target": "eval_suite/deterministic_code_evals.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The directive clearly defines the purpose (deterministic checks), provides concrete examples of checks, and implies a modular code structure for implementation, making it highly actionable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement LM Judges for Semantic Understanding",
+      "steps": [
+        "Create a module specifically for LLM-based evaluations (LM judges) within the evaluation suite.",
+        "Develop a prompt template for 'correctness evals' to instruct an LLM judge on how to assess if an agent's answer is accurate based on the given question and context.",
+        "Develop a distinct prompt template for 'faithfulness evals' to guide an LLM judge in assessing if an agent's answer strictly adhered to its provided source material.",
+        "Implement functions that take agent output, relevant context (e.g., original question, source documents), and the appropriate prompt template, then call an LLM API to get an evaluation.",
+        "Design a parsing and logging mechanism for the LM judge's output (e.g., a score, a rationale, or a pass/fail flag)."
+      ],
+      "target": "eval_suite/lm_judges.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "This directive specifies the use case (semantic understanding) and outlines two concrete types of evaluations (correctness, faithfulness), implying the need for prompt engineering and LLM API integration, which are standard development tasks.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Multi-Step Evaluation for Agent Tool Calls",
+      "steps": [
+        "Enhance the agent's execution logging to comprehensively capture the details of each tool call made during a session, including the chosen tool, parameters sent, and the raw output received from the tool.",
+        "Develop a dedicated evaluation component that can parse and analyze these detailed agent execution traces.",
+        "For each distinct tool call identified in the trace, implement specific checks to verify:",
+        "    a. If the agent selected the appropriate tool for the task at that particular step.",
+        "    b. If the agent correctly formulated and sent the required parameters to the chosen tool.",
+        "    c. If the agent accurately interpreted and utilized the output received from the tool for subsequent reasoning or actions.",
+        "Aggregate the results of these individual tool call checks to provide a comprehensive evaluation of the agent's multi-step execution path and its interactions with tools."
+      ],
+      "target": "agent_framework/tool_call_evaluator.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The directive breaks down the complex problem of evaluating agent tool use into three specific, testable sub-steps (tool selection, parameter passing, output understanding) for each call, making it highly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Multi-Agent System Evaluation",
+      "steps": [
+        "Extend the existing evaluation framework to support the tracing and assessment of interactions within a multi-agent system.",
+        "Implement specific evaluation checks for the routing LLM component:",
+        "    a. Verify that the routing LLM correctly selected the appropriate sub-agent to handle the initial incoming request.",
+        "Implement specific evaluation checks for each sub-agent's interaction and behavior:",
+        "    a. Verify that the sub-agent accurately understood the specific task or instruction it received.",
+        "    b. Verify that the sub-agent correctly formatted and passed its generated information or results back to the orchestrator or the next agent in the sequence.",
+        "    c. Verify that the sub-agent terminated its execution or handed off control at the appropriate point in the workflow.",
+        "Design and implement a mechanism to aggregate and present the evaluation results from across all agents and routing decisions within the entire multi-agent interaction flow."
+      ],
+      "target": "eval_suite/multi_agent_system_evaluator.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "This directive addresses the added complexity of multi-agent systems by identifying specific, observable points of failure or success (routing, sub-agent understanding, data passing, termination) and detailing checks for each.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Transition Capability Evals to Regression Evals",
+      "steps": [
+        "Monitor a capability eval until the agent achieves 100% success.",
+        "Promote the 100% successful capability eval to a regression eval.",
+        "Integrate the new regression eval into the existing test suite to ensure the agent maintains previous capabilities.",
+        "Create and introduce a new capability eval to challenge the agent with new functionality or a 'new hill to climb.'",
+        "Continuously repeat this process, converting successful capability evals into regression evals throughout the eval suite's lifecycle."
+      ],
+      "target": "Eval suite management system, Test suite configuration files, Eval definition files",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides a clear, sequential process for managing the lifecycle of evaluation tests within an agent development pipeline, with a specific success condition for transition.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Eval Explanation Categorization using LLM",
+      "steps": [
+        "Collect eval explanations generated from multiple traces or spans (e.g., thousands).",
+        "Deploy a dedicated LLM (a 'third LLM') instance for explanation processing.",
+        "Instruct the dedicated LLM to read each individual explanation.",
+        "Instruct the dedicated LLM to categorize the explanations based on identified patterns or themes."
+      ],
+      "target": "Explanation processing module, LLM orchestration system",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Offers a direct, multi-step instruction for leveraging an LLM to automate the categorization of evaluation explanations, addressing a known scalability issue.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Iterative Agent Development Loop",
+      "steps": [
+        "Implement instrumentation within the agent or application to capture operational data (traces).",
+        "Collect recorded traces from the instrumentation.",
+        "Evaluate the collected traces using defined evaluation criteria.",
+        "Annotate the results of the evaluations.",
+        "Analyze the annotated evaluation results to identify issues, patterns, and areas for improvement.",
+        "Based on the analysis, modify the agent's prompts.",
+        "Based on the analysis, modify or update the agent's application code or configuration.",
+        "Deploy the improved agent/application.",
+        "Restart the loop by capturing new data through instrumentation for the updated agent."
+      ],
+      "target": "CI/CD pipeline, Agent development environment, Instrumentation framework",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Outlines a comprehensive, sequential, and cyclical process for developing and continuously improving AI agents, with distinct, actionable stages.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install Phoenix Cloud Agent SDK",
+      "steps": [
+        "Execute 'pip install open-inference-instrumentation-cloud-agent-sdk' in the terminal or add it to the project's requirements file."
+      ],
+      "target": "Python development environment / requirements.txt",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly provides the exact `pip install` command for the required SDK.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initialize Phoenix Auto-Instrumentation",
+      "steps": [
+        "Add 'import phoenix' to the main Python application script.",
+        "Call 'phoenix.register(project_name=\"YourPhoenixProjectName\", auto_instrument=True)' early in the application's lifecycle, replacing 'YourPhoenixProjectName' with a descriptive name for the project to be displayed in Phoenix."
+      ],
+      "target": "Python application entry point / main script",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 0.8
+      },
+      "rationale": "The transcript specifies the exact `import` statement and the `phoenix.register` call with `project_name` and `auto_instrument=True` parameters, which are concrete code actions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Import Anthropic Client",
+      "steps": [
+        "Add 'import anthropic' to the Python script if the Anthropic LLM is being used as part of the application or as a judge LLM."
+      ],
+      "target": "Python application / script using Anthropic",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 1.0,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly mentions 'we also brought in Anthropic up in the imports because we're using Anthropic to do the actual LLM', indicating a direct import statement is required when using the Anthropic API.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate API Key for Spaces Platform",
+      "steps": [
+        "Initialize one space on the platform.",
+        "Launch the initialized space."
+      ],
+      "target": "Spaces platform user interface or CLI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Direct, step-by-step guidance provided in the transcript by multiple speakers to resolve a user's query about generating an API key. The actions are specific to interacting with a 'space' component.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Phoenix Collector Endpoint",
+      "steps": [
+        "Set the Phoenix collector endpoint (hostname) to 'app.fsyouusername'."
+      ],
+      "target": "Phoenix observability SDK configuration (e.g., environment variable, configuration file, or code parameter)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "A specific URL is provided as the 'Phoenix collector endpoint.' This is an implementation-grade directive as it specifies a concrete value for a known configuration parameter in an observability context, which an autonomous agent can set in the relevant SDK or environment.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Agent with Claude Haiku LLM",
+      "steps": ["Set the agent's Language Model (LLM) to use 'Claude Haiku'."],
+      "target": "Agent configuration (e.g., agent_config.py or directly in agent initialization code)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly names the LLM ('claude haiku') to be used for the agent. This is a direct configuration parameter.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable Web Search Tool for Agent",
+      "steps": ["Configure the agent's allowed tools to include 'web search'."],
+      "target": "Agent configuration (e.g., agent_config.py or agent initialization code)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly states 'one allowed tool which is web search'. This is a direct tool registration.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set Agent Permission Mode to 'accept edits'",
+      "steps": ["Configure the agent's permission mode to 'accept edits'."],
+      "target": "Agent configuration (e.g., agent_config.py or agent initialization code)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly states 'given it a permission mode of accept edits'. This is a direct configuration setting.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Agent Workflow Steps",
+      "steps": [
+        "Define the agent's workflow to include two distinct turns (steps): 'research' and 'write report'."
+      ],
+      "target": "Agent workflow definition (e.g., a list of steps in a Python script or a workflow YAML)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly names the two main `turns` as `research` and `write report`, implying a sequential execution of these steps within the agent's operation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Encapsulate Agent Logic in Async Function",
+      "steps": [
+        "Create an asynchronous Python function named `financial_report`.",
+        "Place all the agent setup and execution logic within this `financial_report` function."
+      ],
+      "target": "Python script defining the agent (e.g., `main_agent.py` or `financial_agent.py`)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly states 'wrap all of this in an async function called financial report'. This defines a specific code structure and function name.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Instrument Agent Execution with OpenTelemetry Span",
+      "steps": [
+        "Wrap the entire agent execution logic (specifically, the `financial_report` function) within an OpenTelemetry span.",
+        "Ensure this span encapsulates both the 'research' and 'write report' agent turns to group them into a single trace for observability platforms like Phoenix."
+      ],
+      "target": "Python script containing agent execution and instrumentation (e.g., `main_agent.py`, `telemetry_setup.py`)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly states 'wrapping all of it in an open telemetry span' and provides the clear purpose of grouping 'separate traces' (research and write report) into 'a single agent doing a single thing'.",
+      "dispatch_ready": true
+    }
+  ]
+}

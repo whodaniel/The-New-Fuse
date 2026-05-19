@@ -1,0 +1,150 @@
+{
+  "source_id": "VTVRTN8nkxM",
+  "generated_at": "2026-05-19T18:16:53.462428+00:00",
+  "total_extracted": 8,
+  "dispatch_ready_count": 7,
+  "directives": [
+    {
+      "title": "Switch Gemini Model in UI",
+      "steps": [
+        "Tap the top left corner of the Gemini application interface.",
+        "From the displayed options, select the desired Gemini model (e.g., Flash 3.2, Pro 3.1)."
+      ],
+      "target": "Gemini App UI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Provides explicit UI interaction steps for changing the active AI model within the Gemini application.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Toggle Gemini Reasoning Level in Prompt",
+      "steps": [
+        "Locate the reasoning level toggle or option within the Gemini prompt interface (referred to as 'in prompt').",
+        "Select or flip the toggle to choose between 'Standard' for quick answers or 'Extended' for deep thinking."
+      ],
+      "target": "Gemini App UI (Prompt Interface)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Describes a direct UI interaction to change the reasoning mode of the AI model, accessible within the active conversation or prompt input area.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Verify and Test Gemini 3.2 Flash Availability",
+      "steps": [
+        "Launch the Gemini application on the device.",
+        "Navigate to the top-left corner of the application interface.",
+        "Interact with the 'model picker' UI element.",
+        "Assess the displayed list of available models for the entry 'Gemini 3.2 Flash'.",
+        "If 'Gemini 3.2 Flash' is present in the list, perform the following:",
+        "    a. Select 'Gemini 3.2 Flash' as the active model.",
+        "    b. Submit a prompt to the model requesting it to 'write a sales email'.",
+        "    c. Submit a prompt to the model requesting it to 'research top three competitors'.",
+        "    d. Submit a prompt to the model requesting it to 'plan content for next week'."
+      ],
+      "target": "Gemini app UI",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This directive provides clear, sequential UI interactions (opening app, tapping picker, selecting model) and specific input prompts for an agent to execute and test a feature's presence and functionality.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Explore Supplemental Gemini Tools",
+      "steps": [
+        "Locate and interact with the 'pill prompt box' UI element within the Gemini app.",
+        "Tap the 'plus button' (typically indicating more options or tools) associated with the prompt box.",
+        "Initiate the 'Deep Research' tool and observe its functionality.",
+        "Initiate the 'Canvas' tool and observe its functionality.",
+        "Initiate the 'Notebooks' feature and observe its functionality."
+      ],
+      "target": "Gemini app UI (prompt box and integrated tools)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "This directive specifies distinct UI elements and integrated tools to interact with, providing clear, observable actions for an agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure a Business-Specific Gemini Notebook",
+      "steps": [
+        "Access the 'Notebooks' feature within the Gemini application.",
+        "Create a new notebook designated for business use.",
+        "Input comprehensive 'offer details' into the newly created notebook.",
+        "Add a detailed 'customer profile' to the notebook.",
+        "Define the desired 'tone of voice' for communications within the notebook.",
+        "Specify 'goals for this quarter' within the notebook.",
+        "Configure Gemini to default to or 'point to' this specific business notebook for subsequent interactions."
+      ],
+      "target": "Gemini Notebooks feature",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This directive details the creation, population with specific data types, and configuration of a persistent data store within Gemini, providing precise steps for an agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Gemini Notebook with Business Profile",
+      "steps": [
+        "Access the 'notebook' feature within the Gemini application.",
+        "Input your specific offer details into the Gemini notebook.",
+        "Input your customer profile into the Gemini notebook.",
+        "Input your desired tone of voice into the Gemini notebook.",
+        "Input your goals for this quarter into the Gemini notebook.",
+        "Configure the Gemini application to consistently point to and use this specific notebook for all future interactions."
+      ],
+      "target": "Gemini application",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.6,
+        "testability": 0.7
+      },
+      "rationale": "The steps directly translate the speaker's instructions for personalizing Gemini. An autonomous agent would need existing access to and interface knowledge of the Gemini application to 'access the notebook feature' and 'input' the specified details, and to 'configure' it to point to the notebook. This is the highest level of detail available within this chunk for this task; more granular UI steps are explicitly mentioned to be available in an external guide.",
+      "dispatch_ready": false
+    },
+    {
+      "title": "Join the AI Profit Boardroom Community",
+      "steps": [
+        "Navigate a web browser to the URL 'AIprofitboardroom.com'.",
+        "Initiate the membership registration process on the AI Profit Boardroom website.",
+        "Complete all necessary steps to join and become a member of the AI Profit Boardroom community."
+      ],
+      "target": "AI Profit Boardroom website",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides a clear target URL and an unambiguous action ('join'). An autonomous agent can navigate to the specified URL and initiate registration. The completion of registration might require external input (e.g., payment, form details) if not pre-configured.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Join the AI Success Lab Community",
+      "steps": [
+        "Locate the designated link for the 'AI Success Lab' within the comments or description section of the current content.",
+        "Navigate a web browser to the URL found for the AI Success Lab.",
+        "Initiate the membership registration process on the AI Success Lab website.",
+        "Complete all necessary steps to join and become a member of the AI Success Lab community."
+      ],
+      "target": "AI Success Lab website",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "This outlines a clear process to join another community. The initial step requires parsing the current context for a link, which is an implementable task for an autonomous agent. The subsequent navigation and registration are similar to joining the AI Profit Boardroom.",
+      "dispatch_ready": true
+    }
+  ]
+}

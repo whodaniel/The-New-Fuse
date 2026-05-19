@@ -1,0 +1,342 @@
+{
+  "source_id": "PIdETjcXNIk",
+  "generated_at": "2026-05-19T18:05:44.007371+00:00",
+  "total_extracted": 21,
+  "dispatch_ready_count": 19,
+  "directives": [
+    {
+      "title": "Close Existing Agent Instances",
+      "steps": [
+        "Initiate a controlled shutdown sequence for all currently active agent instances.",
+        "Monitor the communication pool to confirm that all agents have successfully disconnected and are no longer active."
+      ],
+      "target": "Agent_Orchestrator_System",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Provides clear, imperative steps to terminate agent processes and verify their state in the communication system.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Provision Two-Agent Peer-to-Peer Environment",
+      "steps": [
+        "Instantiate a new agent process on the 'Mac Mini' (designated as the production server).",
+        "Configure this agent with the identifier 'production' (e.g., using 'JCOMs 2 name production').",
+        "Instantiate a new agent process on the 'M5 MacBook Pro' (designated as the development machine).",
+        "Configure this agent with the identifier 'dev' (e.g., using 'JCOMs 1 name dev').",
+        "Execute network ping tests between the 'production' and 'dev' agents to confirm mutual connectivity and online status."
+      ],
+      "target": "Agent_Deployment_Service",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Details the precise steps for deploying and configuring two distinct agents on specific machines and verifying their network presence.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Production Agent for PII Gatekeeping",
+      "steps": [
+        "Construct an initial prompt for the 'production' agent, describing its role as a gatekeeper for a pre-seeded production database.",
+        "Explicitly include a directive in the prompt that the 'production' agent must *never* expose Personal Identifiable Information (PII) to any other agent on the network, even during data transfer.",
+        "Send this constructed prompt to the 'production' agent instance."
+      ],
+      "target": "Production_Agent_Interface",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "Defines the content and delivery of the initial configuration/instruction for the production agent, emphasizing the critical PII handling constraint.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Developer Agent for PII-Stripped Local Reproduction",
+      "steps": [
+        "Construct an initial prompt for the 'dev' agent.",
+        "The prompt must instruct the 'dev' agent to request a specific 'affected slice' of data from the 'production' agent.",
+        "Explicitly state within the prompt that the requested data slice *must* have all PII stripped before transfer.",
+        "Direct the 'dev' agent to import the received PII-stripped data into its local developer database to facilitate issue reproduction.",
+        "Send this constructed prompt to the 'dev' agent instance."
+      ],
+      "target": "Dev_Agent_Interface",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "Provides detailed instructions for the developer agent to initiate its primary task, including crucial data handling requirements for privacy.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Peer-to-Peer Data Request with PII Redaction",
+      "steps": [
+        "Configure the 'dev' agent's internal logic: upon receiving a prompt to obtain production data, it must discover and establish a connection with the 'production' agent.",
+        "Configure the 'dev' agent's internal logic: it must then compose and send a specific data request message (prompt) to the 'production' agent and register to await a unique message ID as a response.",
+        "Configure the 'production' agent's internal logic: upon receiving a data request from a peer, it must query its production database for the requested data slice.",
+        "Configure the 'production' agent's internal logic: it must apply predefined PII redaction rules to the extracted data slice, ensuring all PII is removed or anonymized before further processing.",
+        "Configure the 'production' agent's internal logic: it must then send the PII-stripped data slice back to the requesting 'dev' agent, along with the corresponding message ID.",
+        "Configure the 'dev' agent's internal logic: upon successfully receiving the awaited message ID and data, it must process and integrate the PII-stripped data into its local development database."
+      ],
+      "target": "Agent_Communication_Module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Outlines the required internal logic and communication protocol for agents to collaborate on data transfer, including strict enforcement of PII redaction, which is critical for system behavior.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Agent Initiates Asynchronous Communication and Awaits Response",
+      "steps": [
+        "Send a prompt to another agent or system.",
+        "Receive and store the returned message ID.",
+        "Await a message corresponding to the received message ID."
+      ],
+      "target": "Agent Communication Module (e.g., `agent_core/communication.py`)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This describes a concrete, sequential process for an agent to initiate an asynchronous communication and handle its response, a fundamental pattern in distributed systems.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Ensure PII Redaction for Production Agent Output",
+      "steps": [
+        "Process data such that all personal identifiable information (PII) is appropriately redacted.",
+        "Verify that no PII is exposed in the production agent's outputs or any intermediate processing states."
+      ],
+      "target": "Production Agent Data Processing Logic (e.g., `production_agent/data_handler.py`, `redaction_service.py`)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "This specifies a critical security and privacy requirement for a production agent, outlining the necessary data handling actions.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Establish Message Queue for Inter-Agent Brokering",
+      "steps": [
+        "Configure and deploy a message queue system (e.g., RabbitMQ, Kafka).",
+        "Designate a specific agent to manage the message queue setup and serve as the message broker.",
+        "Route all inter-agent communication through this designated message broker agent."
+      ],
+      "target": "Agent Orchestration Layer (e.g., `system_config/message_queue.yaml`, `message_broker_agent.py`)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "This outlines an architectural pattern for robust inter-agent communication using a message queue, including roles and routing.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Custom Code into Agent Chain Workflow Steps",
+      "steps": [
+        "Identify a specific node or step within a defined agent chain workflow.",
+        "Insert custom code at the identified step to augment or modify the agent's behavior.",
+        "Ensure the inserted code enhances the capabilities or decision-making of the agent at that particular point in the deterministic workflow."
+      ],
+      "target": "Agent Chain Definition / Workflow Engine (e.g., `workflow_definitions/my_chain.json`, `agent_chain_executor.py`)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This provides a clear directive for extending agent chain functionality by injecting custom logic at specific points, adding determinism and flexibility.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Peer-to-Peer Bidirectional Agent Communication",
+      "steps": [
+        "Establish direct, peer-to-peer communication channels between agents.",
+        "Implement a prompt-response mechanism where agents can both send prompts and respond to prompts from peer agents.",
+        "Ensure that information flows bidirectionally between agents, allowing for true collaborative interaction rather than one-way streams."
+      ],
+      "target": "Agent Communication Protocol (e.g., `agent_core/peer_protocol.py`, `communication_manager.py`)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This specifies a fundamental communication paradigm where agents interact as equals, enabling complex, dynamic, and collaborative workflows.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Add a GLM agent to the current agent pool",
+      "steps": [
+        "Execute the command `Jcoms 4` in the agent management interface."
+      ],
+      "target": "Agent Pool Management CLI (e.g., Jcoms tool)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly provides the command `Jcoms 4` as the action to add an agent to the pool, along with the immediate observable outcome ('GLM added here and now it is part of the pool'). This is a direct, executable instruction with clear verification.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create exe.dev Agent Skill with Feature Parity to E2B Skill",
+      "steps": [
+        "Analyze the existing E2B agent skill to identify all its features, capabilities, and API interactions.",
+        "Develop a new skill definition or module specifically for the exe.dev platform.",
+        "Implement functionalities within the new exe.dev skill that replicate and mirror the features identified from the E2B agent skill.",
+        "Perform a comprehensive feature comparison between the newly developed exe.dev skill and the existing E2B agent skill.",
+        "Document and report any feature differences, ensuring the new skill is designed to allow for immediate prototyping and experimentation ('fail forward' design)."
+      ],
+      "target": "new_skill_for_exe.dev (e.g., skills/exe_dev_agent_skill/)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.95
+      },
+      "rationale": "The speaker clearly states the objective to 'spin up a brand new skill for exe.dev that mirrors and matches and has feature parody to my E2B agent skill' and to 'understand the feature differences'. This provides a direct, multi-step implementation plan for an autonomous agent with access to the relevant codebases and platform APIs.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initialize exe.dev agent",
+      "steps": [
+        "Execute the necessary command or script to start the exe.dev agent."
+      ],
+      "target": "exe.dev agent (runtime environment)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Explicitly instructs to start a specific system component, which is a concrete execution step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Validate agent-generated file existence",
+      "steps": [
+        "Check the file system to ensure the expected output file (e.g., the inventory file or the presentation file) generated by the agent exists in its designated location."
+      ],
+      "target": "File system (agent's output directory)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "A clear, verifiable step to confirm an artifact's presence, which is a standard validation procedure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Instruct exe.dev agent to build a new agent sandbox skill",
+      "steps": [
+        "Prepare the following prompt: \"You're the exe.dev agent. There is no agent sandbox exe dev skill yet. Your job is to build one. Your reference target is this existing skill here which your teammate understands and is already standing by to answer questions about. You're the driver of this collaboration. E2 will not initiate. You reach out.\"",
+        "Submit this prepared prompt as input to the exe.dev agent."
+      ],
+      "target": "exe.dev agent (input interface)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides the exact prompt content and specifies the target agent for execution, making it highly specific and directly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Assign specific skills to exe.dev agent",
+      "steps": [
+        "Configure the exe.dev agent to include 'firecrawl' as an available skill.",
+        "Configure the exe.dev agent to include 'meta skill' as an available skill."
+      ],
+      "target": "exe.dev agent (configuration or runtime environment)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Clearly names specific skills to be made accessible to the agent, requiring a concrete configuration action.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop exe.dev Mirroring Skill",
+      "steps": [
+        "Analyze the functionalities and 'primitives' of the existing reference skill (implicitly '/ agent sandboxes').",
+        "Implement a new working skill that replicates these functionalities, specifically targeting and utilizing `exe.dev` primitives for sandboxing.",
+        "Thoroughly test the newly developed skill to ensure it is fully functional and 'working'."
+      ],
+      "target": "new_skill_module.py (e.g., `agent/skills/exe_dev_sandboxer.py`)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This directive clearly defines a new software component, its purpose (mirroring functionality), its reference for features, and its target platform. The 'working skill' requirement makes it testable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate exe.dev Skill Feature Parity Document",
+      "steps": [
+        "Obtain and review the existing 'E2B agent's feature parity document' to understand its structure, format, and content conventions.",
+        "Identify and list all features present in the reference skill (the one to be mirrored, implicitly '/ agent sandboxes').",
+        "Compare the listed features against the newly developed `exe.dev` mirroring skill.",
+        "Create a document detailing the feature parity, highlighting which features from the reference skill are implemented in the `exe.dev` skill, and noting any discrepancies."
+      ],
+      "target": "documentation/exe_dev_skill_feature_parity.md (or similar document format)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This directive specifies a concrete document deliverable, its purpose (feature parity comparison), and a reference document to guide its structure and content. The comparison and documentation steps are clear.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reread Review Document",
+      "steps": [
+        "Access the document specified for review.",
+        "Perform a comprehensive rereading of the entire document content to ensure thorough understanding and identification of any issues."
+      ],
+      "target": "document_access_module",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "This is a direct instruction for an agent to perform text processing and comprehension on a specified document.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Finalize Document Review Outcome",
+      "steps": [
+        "Upon completion of document rereading, evaluate the document's status for completeness and correctness.",
+        "If the document is deemed satisfactory and no remaining issues are found, send a 'review complete' message or update the status in the designated review system.",
+        "If issues are still present, compile a list of all identified remaining issues and flag them in the appropriate review system or communication channel."
+      ],
+      "target": "review_management_system_api",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.6,
+        "testability": 0.9
+      },
+      "rationale": "Provides clear conditional actions for concluding a review based on the document's evaluated status, directing specific interactions with a review system.",
+      "dispatch_ready": false
+    },
+    {
+      "title": "Acknowledge and Sign Off Non-Blocking Nitpick",
+      "steps": [
+        "Identify a specific non-blocking nitpick (minor issue) within the current review context.",
+        "Officially acknowledge and sign off on this identified non-blocking nitpick through the designated review interface or communication method."
+      ],
+      "target": "review_management_system_api",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.6,
+        "testability": 0.9
+      },
+      "rationale": "Directly instructs a specific action within a review workflow, requiring identification of a minor issue and subsequent formal sign-off.",
+      "dispatch_ready": false
+    }
+  ]
+}

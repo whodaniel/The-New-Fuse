@@ -1,0 +1,659 @@
+{
+  "source_id": "Q7AYc2kECDI",
+  "generated_at": "2026-05-19T18:58:21.747957+00:00",
+  "total_extracted": 41,
+  "dispatch_ready_count": 41,
+  "directives": [
+    {
+      "title": "Create agents.md File",
+      "steps": [
+        "Create a new markdown file named `agents.md`.",
+        "Place this file at the root of the project directory."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Explicitly specifies the file name and its exact location within the project, making it directly actionable and verifiable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define AI Role in agents.md",
+      "steps": [
+        "Open the `agents.md` file.",
+        "Add a section for the AI's role.",
+        "Specify the AI as 'an expert React Native plus expo engineer'.",
+        "Instruct the AI to 'write clean, simple code'.",
+        "Prioritize 'clarity over abstraction'."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Provides concrete textual content and structural guidance for defining the AI's persona and coding principles.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Add Project Overview to agents.md",
+      "steps": [
+        "Open the `agents.md` file.",
+        "Add a section for a short project overview.",
+        "Include information on what the app is, what it does, and who uses it, ensuring it fits within one paragraph."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "Clearly defines the type of content and length constraint for the project overview section.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Document Project Stack in agents.md",
+      "steps": [
+        "Open the `agents.md` file.",
+        "Add a section to list the project's technology stack.",
+        "For each library and service used, include a separate line describing what it handles."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Explicitly details the content requirements and format (one line per item) for documenting the project's stack.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Folder Structure in agents.md",
+      "steps": [
+        "Open the `agents.md` file.",
+        "Add a section to describe the project's folder structure.",
+        "Specify the designated locations for screens.",
+        "Specify the designated locations for components.",
+        "Specify the designated locations for state management files."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "Lays out the specific organizational details required for the folder structure documentation, enabling an agent to populate it.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Document Styling Rules in agents.md",
+      "steps": [
+        "Open the `agents.md` file.",
+        "Add a section for styling rules.",
+        "Specify the chosen styling approach (e.g., NativeWind).",
+        "List color tokens used in the project.",
+        "Document any styling-related quirks or specific instructions (e.g., 'NativeWind doesn't work with SafeAreaView')."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Provides specific examples and categories of information to include when documenting styling rules.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Project Patterns to Follow in agents.md",
+      "steps": [
+        "Open the `agents.md` file.",
+        "Add a section titled 'Patterns to Follow'.",
+        "Document any architectural or coding patterns that should be adhered to, especially those that would otherwise require repeated instructions across sessions."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.6
+      },
+      "rationale": "Specifies a clear purpose and type of content for this section, despite the abstract nature of 'patterns'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reactively Update agents.md with New Rules",
+      "steps": [
+        "Identify recurring issues or mistakes made by the AI during development (e.g., incorrect usage of a library like NativeWind with SafeAreaView).",
+        "Add a specific rule, clarification, or workaround addressing the identified issue to the relevant section within `agents.md`.",
+        "Verify that the AI adheres to the newly added rule in subsequent interactions."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Outlines a clear, iterative process for maintaining and improving the `agents.md` file based on practical experience.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Structure AI Prompts to Reference agents.md",
+      "steps": [
+        "Begin every AI prompt with a clear directive to read the `agents.md` file.",
+        "Explicitly instruct the AI to 'follow it strictly'."
+      ],
+      "target": "AI Prompt (user input)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides exact phrasing and placement for the initial part of any AI prompt, making it highly specific and easy to implement.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Adhere to Agent System Guidelines",
+      "steps": [
+        "Load and read the `agents.mmd` file.",
+        "Adhere strictly to all instructions, rules, and patterns defined within `agents.mmd` without exception."
+      ],
+      "target": "AI operating context, agents.mmd file",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a clear, foundational instruction for the AI to base its operations on, verifiable by observing adherence to the file's content.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Onboarding Screen According to Design",
+      "steps": [
+        "Develop the onboarding screen to precisely match the attached visual design.",
+        "Utilize image and media assets exclusively from the designated `assets` folder."
+      ],
+      "target": "Onboarding Screen Module, assets folder",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Directs the AI to create a specific UI component with clear visual and resource constraints, allowing for visual comparison and asset path verification.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Onboarding Navigation Link",
+      "steps": [
+        "Establish a navigation link within the `home` route.",
+        "Configure this link to open the newly implemented onboarding screen."
+      ],
+      "target": "home route definition/component, navigation configuration",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "A concrete, functional requirement for application navigation, verifiable through interaction tests.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Apply Specific Logo and Placement",
+      "steps": [
+        "Integrate the `mascot logo image` as the primary logo at the top of the onboarding screen.",
+        "Position the `mascot logo image` directly beside the app's name."
+      ],
+      "target": "Onboarding screen UI, image assets",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides explicit visual design instructions for specific elements, verifiable by visual inspection.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Exclude Pagination Dots from UI",
+      "steps": [
+        "Ensure that no pagination dots are included in the visual design or functionality of the onboarding screen."
+      ],
+      "target": "Onboarding screen UI",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "A precise negative constraint for a UI component, verifiable by visual inspection.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Preserve Existing Screen Design and UI",
+      "steps": [
+        "Do not make any alterations to the current screen design.",
+        "Maintain the existing user interface (UI) exactly as it is."
+      ],
+      "target": "Screen design files, UI components",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Guards against unintended changes to established visual components, verifiable through UI diff checks.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Maintain Existing Stream Audio Flow",
+      "steps": [
+        "Keep the established stream audio flow fully intact.",
+        "Do not introduce any modifications or disruptions to its current state."
+      ],
+      "target": "Audio processing module, streaming service",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Protects a critical functional component from changes, verifiable through audio functionality tests.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prevent Mobile App Secret Exposure",
+      "steps": [
+        "Ensure that no secrets, credentials, or sensitive information are exposed within the mobile application's codebase, configuration, or runtime output."
+      ],
+      "target": "Mobile app codebase, security model",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "A crucial security directive to prevent vulnerabilities, verifiable through security audits and secret scanning.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Request Clarification Before Implementation",
+      "steps": [
+        "If any part of the task or requirements is ambiguous, unclear, or contradictory, pause implementation.",
+        "Initiate a request for clarification from the user/system before proceeding."
+      ],
+      "target": "AI decision-making process, communication channel",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Establishes a clear protocol for handling uncertainty, preventing speculative implementation and verifiable by observing AI behavior in ambiguous scenarios.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Language Selection State Management",
+      "steps": [
+        "Integrate a language selection state mechanism into the application.",
+        "Store the selected language using the Zustand state library.",
+        "Persist the selected language across app sessions using React Native Async Storage."
+      ],
+      "target": "src/state/languageStore.js (or similar state management module)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Provides clear instructions on what state to manage, which libraries to use for state and persistence, making it highly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Language Selection Routing for New Users",
+      "steps": [
+        "Check if the current authenticated user has a selected language.",
+        "If no language is selected for the user, route them to the dedicated language selection screen.",
+        "Ensure that the user can only access the home route *after* successfully selecting a language.",
+        "Preserve the existing UI and navigation flow during this process."
+      ],
+      "target": "src/navigation/AppNavigator.js (or similar navigation module)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Defines a clear conditional navigation flow based on user state, specifying triggers, conditions, and outcomes for routing.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Add Temporary Development Button to Clear Async Storage",
+      "steps": [
+        "Add a temporary button to the Home screen UI.",
+        "Configure this button to clear all data stored in React Native Async Storage when pressed.",
+        "Mark this button as a development utility to be removed later."
+      ],
+      "target": "src/screens/HomeScreen.js (or similar Home screen component)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Provides explicit instructions for adding a temporary UI element for testing purposes, including its location and function.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Replace Mocked Authentication with Clerk",
+      "steps": [
+        "Replace the existing mocked authentication flow with real authentication provided by Clerk.",
+        "Maintain the current application's UI and navigation structure during this integration.",
+        "Implement user authentication features: email signup, email sign-in, and social authentication using Clerk.",
+        "Implement user verification processes through Clerk.",
+        "After successful user verification, navigate the user to the application's home route."
+      ],
+      "target": "src/auth/AuthService.js (or similar authentication module), src/navigation/AuthStack.js",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Details a major system integration, specifying the new authentication provider, the required functionalities (signup, sign-in, social, verification), and post-authentication navigation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set Up Clerk for Authentication and User Management",
+      "steps": [
+        "Access the Clerk signup link (implied from description/context).",
+        "Create a new user account on Clerk.",
+        "Create a new application on the Clerk dashboard.",
+        "Name the new application 'JSM React Native' (or a similar descriptive name)."
+      ],
+      "target": "Clerk Dashboard / External Service Integration",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides clear, sequential steps for integrating an external authentication service by creating an account and a new application instance.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate a Targeted Bug Fix Prompt for AI Agent",
+      "steps": [
+        "Identify and state the specific problem clearly (e.g., 'the verification model is appearing behind the keyboard on iOS').",
+        "Describe the desired correct behavior for the identified problem (e.g., 'it should sit above the keyboard').",
+        "Add a precise constraint to ensure no other model behavior or layout is changed (e.g., 'Don't change any other model behavior or layout')."
+      ],
+      "target": "AI Prompt Generation System",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "Outlines a structured, three-part approach to construct an effective and focused prompt for an AI agent to resolve a specific bug, minimizing unintended side effects.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Scope for an AI Agent Task Prompt",
+      "steps": [
+        "Clearly define 'what is being built right now' as the primary instruction for the AI agent.",
+        "Identify 'what already works that you're not touching' to form explicit constraints for the AI agent.",
+        "Incorporate 'what rules the AI already knows from the file' (e.g., from 'Agents MD' as mentioned) to provide essential context.",
+        "Optionally, add a design reference or paste relevant documentation if further clarity or specific context is required."
+      ],
+      "target": "AI Prompt Generation System",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.85,
+        "testability": 0.75
+      },
+      "rationale": "Provides a comprehensive framework for defining the scope of a prompt, ensuring the AI agent receives all necessary information regarding new tasks, protected elements, and existing rules.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initialize Clerk Application",
+      "steps": [
+        "Navigate to the Clerk registration link (implicitly provided in description).",
+        "Create a new Clerk account.",
+        "Create a new application on the Clerk dashboard.",
+        "Name the new application \"JSM React Native\"."
+      ],
+      "target": "Clerk Platform",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides a clear, ordered sequence of actions to set up an external service account and application.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Register for Stream Account and Obtain API Credentials",
+      "steps": [
+        "Navigate to the Stream registration link (implicitly provided in description).",
+        "Create a free Stream account (e.g., using Google or GitHub).",
+        "Retrieve the generated Stream API key from the dashboard.",
+        "Retrieve the generated Stream API secret from the dashboard."
+      ],
+      "target": "Stream Platform",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Outlines explicit steps for external account creation and credential retrieval.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Register for Posthog Account",
+      "steps": [
+        "Navigate to the Posthog 'get started' link (implicitly provided in description).",
+        "Create a new Posthog account."
+      ],
+      "target": "Posthog Platform",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides direct instructions for signing up to an analytics service.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create Project Directory and Open in Editor",
+      "steps": [
+        "Create a new empty folder on the desktop.",
+        "Rename the folder to \"Dualingo clone\".",
+        "Open the \"Dualingo clone\" folder in a code editor (e.g., VS Code)."
+      ],
+      "target": "Local File System / IDE",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Details the initial physical setup of the project environment.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate New Expo Application",
+      "steps": [
+        "Open the integrated terminal within the \"Dualingo clone\" project folder.",
+        "Execute the command: `npx create-expo-app@latest ./`",
+        "Wait for the command to complete, which includes downloading project files and running `npm install`."
+      ],
+      "target": "Project Root Directory (Terminal)",
+      "metrics": {
+        "specificity": 0.95,
+        "implementability": 0.95,
+        "testability": 0.95
+      },
+      "rationale": "Provides the exact command and context for initializing a new Expo project, including implicit `npm install`.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create New Expo Project",
+      "steps": [
+        "Open an integrated terminal.",
+        "Execute the command 'npx create-expo-app@latest ./' to create the project in the current directory.",
+        "Wait for the command to complete, which includes downloading project files and running dependency installation."
+      ],
+      "target": "Current project directory",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a precise terminal command to create a project, specifying the tool, version, and target location. The outcome (project files) is verifiable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Start Expo Development Server",
+      "steps": [
+        "Open a terminal in the project root.",
+        "Execute the command 'npx expo start' to launch the Metro bundler and development server."
+      ],
+      "target": "Development server process",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "A direct terminal command to initiate the development server. Its operational status can be observed (e.g., listening on a port, QR code generation).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reset Project Boilerplate",
+      "steps": [
+        "Open a new terminal session.",
+        "Execute the command 'npm run reset-project'.",
+        "When prompted 'Do you want to move existing files to an app-example folder instead of deleting them?', respond 'n' (or 'N') to confirm permanent deletion of boilerplate files."
+      ],
+      "target": "Project files (specifically app/index.tsx and related boilerplate)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "A specific `npm` script is provided with clear instructions on how to interact with its prompt for a defined outcome (deleting boilerplate). Verifiable by checking file system changes.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Restart Development Server and Reload App",
+      "steps": [
+        "In the initial terminal running the Expo development server, send a 'Ctrl + C' signal to stop the server.",
+        "Execute the command 'npx expo start' again to restart the development server.",
+        "Once the server is running, send the 'R' keypress to the server's terminal process to reload the app on connected devices."
+      ],
+      "target": "Development server process and connected Expo Go app",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "A sequence of direct terminal actions (stop, start, reload) is provided to refresh the development environment state. The server's output and app's state change are verifiable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Update Main App Entry Point Content",
+      "steps": [
+        "Open the file 'app/index.tsx' in the project root.",
+        "Modify the content of 'app/index.tsx' to display 'Dualingo clone' (replacing the previous boilerplate)."
+      ],
+      "target": "app/index.tsx",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Specifies a precise file path and a clear content modification task. The change can be verified by inspecting the file's content or observing the app's UI.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create agents.md file in application root",
+      "steps": [
+        "Navigate to the root directory of the application.",
+        "Create a new file named `agents.md`."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This directive provides a clear and unambiguous instruction to create a specific file (`agents.md`) at a well-defined location (application root).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Copy `agents.md` content from Video Kit snippets",
+      "steps": [
+        "Access the 'video kit link' provided in the course description.",
+        "Locate the 'snippets to copy' section within the linked resource.",
+        "Identify and copy the entire content designated for the `agents.md` file to the clipboard."
+      ],
+      "target": "External resource (Video Kit link) -> Clipboard",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "This directive outlines the process to retrieve necessary content from an external source, specifying navigation and content identification. While the exact URL is implicit to the 'description', the steps are procedural.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Populate `agents.md` with copied content",
+      "steps": [
+        "Paste the previously copied content into the newly created `agents.md` file."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This directive provides a clear, single, and actionable instruction to fill the `agents.md` file with the content obtained from the previous step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Obtain User Approval Before Library Installation",
+      "steps": [
+        "If a new library is being considered for implementation, clearly explain its utility and benefits to the user.",
+        "Ask the user for explicit permission to add or install the proposed library.",
+        "Only proceed with adding or installing the library if the user grants permission.",
+        "If the user denies permission, do not install or add the library."
+      ],
+      "target": "System (Agent's decision-making process for external dependencies)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive outlines a clear, conditional procedure for integrating new libraries, requiring explicit user interaction and consent, which is highly implementable for an autonomous agent with a user interface.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enforce NativeWind and Tailwind CSS as Primary Styling Methods",
+      "steps": [
+        "Utilize NativeWind and Tailwind CSS class names for all component styling by default.",
+        "Do not use the native stylesheet unless a specific styling requirement cannot be achieved with Tailwind CSS class names.",
+        "Verify the installed NativeWind version by checking `package.json` and ensure that the detected version is consistently used for styling.",
+        "If a `globals.css` file exists in the project, reuse relevant styling definitions from it."
+      ],
+      "target": "Styling System / Component Styling (e.g., .css, .tsx, .jsx files)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive sets clear priorities for styling tools, specifies a fallback mechanism, and includes a concrete step to check `package.json` for version consistency, making it highly actionable for an agent generating code.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Apply Alternative Styling for SafeAreaView Components",
+      "steps": [
+        "When styling `SafeAreaView` components, specifically avoid using `NativeWind` class names via the `className` prop.",
+        "Apply an alternative styling method (e.g., React Native's `StyleSheet.create` or inline styles) to `SafeAreaView` components to ensure proper content containment on all screens."
+      ],
+      "target": "SafeAreaView component styling (e.g., component .tsx, .jsx files)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This directive identifies a specific component and a known incompatibility with a styling library, providing a concrete instruction for a workaround, making it highly specific and implementable.",
+      "dispatch_ready": true
+    }
+  ]
+}

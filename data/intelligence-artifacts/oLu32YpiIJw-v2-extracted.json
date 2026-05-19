@@ -1,0 +1,326 @@
+{
+  "source_id": "oLu32YpiIJw",
+  "generated_at": "2026-05-19T18:23:58.283764+00:00",
+  "total_extracted": 19,
+  "dispatch_ready_count": 19,
+  "directives": [
+    {
+      "title": "Download Pre-made Design System Markdown File",
+      "steps": [
+        "Navigate to the specified resource location (e.g., a website with design.md files).",
+        "Locate and click the designated link or button to initiate the download of a `design.md` file.",
+        "Save the downloaded `design.md` file to the local filesystem."
+      ],
+      "target": "design.md file (local filesystem)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The speaker explicitly states, 'You click here, you download it, and it it contains all of this visual stuff, typography, colors, spacing.' This describes a clear, sequential action to acquire a specific file.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Attach Design System Markdown File to AI Prompt",
+      "steps": [
+        "Ensure a `design.md` file containing the desired design system (e.g., typography, colors, spacing definitions) is readily accessible.",
+        "Access the AI model's prompt interface or API endpoint.",
+        "Utilize the platform's mechanism to attach the `design.md` file as part of the prompt submission.",
+        "Submit the prompt to the AI model, including the `design.md` file as an attachment."
+      ],
+      "target": "AI Prompt Interface/API",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker instructs, '...you put it all into it an MD file and then you put it into your prompt as an attachment and then boom, you have a beautiful design.' This outlines a direct action of file attachment to an AI prompt.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Inspect Design System Markdown File Structure",
+      "steps": [
+        "Open the `design.md` file using a markdown-compatible text editor or viewer.",
+        "Identify and list the top-level markdown elements such as titles (headers).",
+        "Locate and analyze any structured data presented within markdown tables.",
+        "Identify and review any embedded code blocks within the file.",
+        "Document how visual design elements (e.g., typography, colors, spacing) are represented and organized within the markdown structure."
+      ],
+      "target": "design.md file content",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The speaker describes the `design.md` markdown as 'essentially a structured text with tables, uh titles, and code.' This provides concrete elements to look for when inspecting the file's structure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Provide Foundational Design System to AI Agent for Consistency",
+      "steps": [
+        "Locate a `design.md` file that defines a foundational design system, including elements such as process, typography, colors, spacing, and component definitions.",
+        "Ingest the *entire* content of the located `design.md` file as input to the AI agent.",
+        "Instruct the AI agent to utilize this foundational design system to ensure consistency when generating new designs or iterating on existing ones."
+      ],
+      "target": "AI Agent (input), design.md (source file)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The speaker explicitly advocates for `design.md` as a 'foundational system' to provide to an AI agent to achieve 'consistency across the board' and avoid 'design drift,' directly contrasting it with providing 'something too specific.' This is a clear, actionable directive for how an AI agent should interact with design specifications.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prepare UI Screens/Sections from Local Content via Agent",
+      "steps": [
+        "Organize all relevant content (e.g., a podcast transcript, design brief, or data for sections) into local Markdown (`.md`) files. Ensure these files are structured across appropriate folders and nested folders on the local file system.",
+        "Open the root folder containing these organized `.md` files within the 'Codex' application.",
+        "Issue a command to the AI agent (integrated with or accessible via Codex) to process the content. For example, 'Look, I have a great a Greg Eisenberg uh podcast. I want you to prepare all of these screens.' or 'I want you to prepare, you know, 10 sections' based on the content in the opened local `.md` files."
+      ],
+      "target": "Local File System, Codex Application, AI Agent System",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive reconstructs a direct, multi-step workflow described by the speaker, involving local file generation, interaction with a specific tool (Codex), and issuing explicit commands to an AI agent for content preparation. The example ('Greg Eisenberg podcast', 'prepare screens/10 sections') provides concrete context for execution.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Instruct AI Agent to Remember Design Memory",
+      "steps": [
+        "Ensure that the `design.md` file contains the desired design principles, patterns, or 'secret sauce' that should be part of the system's design memory.",
+        "Issue an explicit command to the AI agent to commit the contents of this `design.md` file to its internal memory. Examples of such commands include 'Remember this [design.md]', 'Remember that [design.md]', or 'Remember the workflow you just done [referring to design principles documented in `design.md`]'."
+      ],
+      "target": "AI Agent System / `design.md` file",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The speaker explicitly describes a process of storing design information in `design.md` and then instructing an AI agent to 'remember' it for cross-platform and consistent application. This directly translates into an actionable directive for an agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Instruct AI Agent to Generate Content from Local MD Files",
+      "steps": [
+        "Locate the local folder containing the MD files (e.g., generated from a podcast transcript).",
+        "Open this folder within the Codex or similar AI agent environment.",
+        "Issue an instruction to the AI agent to 'prepare all of these screens' based on the content of the MD files.",
+        "Issue an instruction to the AI agent to 'prepare 10 sections or 10 notes' based on the content of the MD files.",
+        "Issue an instruction to the AI agent to 'do research' based on the content of the MD files.",
+        "Confirm the agent generates all requested output files (screens, sections, notes, research) in a single operation."
+      ],
+      "target": "Local MD files, AI Agent system (e.g., Codex, OpenClaw, CloudCode)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly states the actions to give to an AI agent, the input (MD files), and the expected outputs (screens, sections, notes, research), providing a clear procedural sequence for an autonomous agent with the specified capabilities.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Remix Design Elements on Variant.com for Customization",
+      "steps": [
+        "Navigate to variant.com.",
+        "Access the 'community' section of the website.",
+        "Browse the available 'skills' or design elements.",
+        "Select a desired 'skill' or design element.",
+        "Click the 'remix' button associated with the selected element to apply it.",
+        "Repeat the remixing process until the design flow is satisfactory.",
+        "Once satisfied, identify and copy the prompt associated with the chosen skill or final design."
+      ],
+      "target": "variant.com (web UI automation)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The steps explicitly describe interactions with a specific web platform (variant.com) to customize design elements, including clear actions like navigating, clicking 'remix', and copying a 'prompt'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Download HTML and Design MD Files from Template",
+      "steps": [
+        "Navigate to the page of a chosen design template (e.g., on variant.com or similar platform).",
+        "Locate the download options for the template.",
+        "Initiate the download of the HTML file associated with the template.",
+        "Initiate the download of the design.md file associated with the template."
+      ],
+      "target": "Template download interface (web UI)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The directive explicitly names the files (HTML and design.md) and the action (download), providing a fully clear and actionable sequence for a web automation agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Download Template Design Assets",
+      "steps": [
+        "Navigate to a chosen template's source or page.",
+        "Download the HTML file associated with the template.",
+        "Download the `design.md` file associated with the template."
+      ],
+      "target": "Local file system (e.g., a project's assets directory)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The directive explicitly states which files to download (HTML and design.md) and implies a source (a template), making it highly specific and executable by a file management agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prepare AI Prompt with Design Context and Request",
+      "steps": [
+        "Obtain the content of the downloaded `design.md` file.",
+        "Obtain the content of the downloaded HTML file (if available and required for context).",
+        "Construct an AI prompt that includes these file contents as contextual input.",
+        "Append a specific request for generating a landing page, including details about the startup (e.g., 'create a landing page for my startup called Aura, a chat app that is using AI and that ships stuff to people to their email')."
+      ],
+      "target": "AI Model Prompt Input Interface",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "This sequence outlines how to feed design knowledge into an AI model as context and then make a specific generation request, including an example. It's a clear process for AI interaction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure AI Generation Tool for Web Output",
+      "steps": [
+        "Access the AI generation platform or tool's user interface/API.",
+        "Locate and select the 'web' option for the desired output type.",
+        "Locate and select '3.1' as a specific version or configuration parameter for the generation process."
+      ],
+      "target": "AI Generation Platform's User Interface or API Parameters",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The directive provides concrete, distinct configuration choices ('web', '3.1') that an agent can apply within a specific AI generation tool's settings, making it an implementable UI/API interaction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Design Footer Component",
+      "steps": [
+        "Issue a command to the design generation tool to create a footer component.",
+        "Verify the footer element has been successfully added to the active design."
+      ],
+      "target": "Design generation tool / UI component system",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The speaker explicitly states the action 'create the footer' and the expected outcome of adding it to the design.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Apply Specific Design Skill (e.g., 'Laser') via Prompt Interface",
+      "steps": [
+        "Navigate to the 'prompt' interface of the 'new form' tool.",
+        "Select the 'Laser' skill/setting from the available options.",
+        "Initiate the design generation process to apply the 'Laser' skill to the current design.",
+        "Optionally, queue additional design generations with this or other skills for concurrent processing."
+      ],
+      "target": "new form tool / Prompt interface",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This describes a sequence of UI interactions to select and apply a named skill, followed by the option to queue more.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Convert Current Design to Mobile Layout",
+      "steps": [
+        "Navigate to the 'mobile' conversion feature or view within the design tool.",
+        "Initiate the conversion process to adapt the current design for a mobile layout.",
+        "Verify the design displays correctly and responsively on a mobile viewport."
+      ],
+      "target": "Design tool / Mobile conversion module",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The speaker clearly indicates the action 'turn something into mobile' by 'going to mobile' and seeing the design converted.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Concurrent Multi-Asset Design Generation",
+      "steps": [
+        "Submit a request to the AI design system for a 'slide deck' generation.",
+        "Submit a request to the AI design system for a 'motion design' generation.",
+        "Submit a request to the AI design system for a 'hero section' generation.",
+        "Ensure these generation tasks are executed concurrently by the system.",
+        "Monitor and retrieve the generated 'slide deck', 'motion design', and 'hero section' assets."
+      ],
+      "target": "AI design system / Generation engine",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The speaker outlines requesting multiple distinct design assets ('slide deck', 'motion design', 'hero section') and performing them 'at the same time,' indicating concurrent execution.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Utilize Skeuomorphic Design Skill",
+      "steps": [
+        "Retrieve the prompt string associated with the 'skeuomorphic design' skill from the skill repository.",
+        "Submit the retrieved prompt to the active AI agent as a direct instruction.",
+        "Direct the AI agent to generate a design output that embodies the skeuomorphic style based on the provided prompt."
+      ],
+      "target": "AI Agent / Prompting System",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This sequence details how to programmatically invoke a specific design style by retrieving a predefined skill prompt and instructing an AI agent to use it for design generation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Position 3D Globe Element Over Text",
+      "steps": [
+        "Identify the unique identifier or reference for the 3D globe element that has been generated.",
+        "Identify the unique identifier or reference for the target text element within the design canvas.",
+        "Adjust the Z-index and/or spatial coordinates of the 3D globe element to render it visually 'on top of' the target text element within the design canvas."
+      ],
+      "target": "Design Canvas / UI Rendering Engine / Scene Graph",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This provides explicit, actionable instructions for manipulating the display order and position of specific design elements to achieve a desired visual hierarchy.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Extract Specific Design Components from Skill",
+      "steps": [
+        "Access the data structure or definition of a specified design skill.",
+        "From the skill's data, parse and extract the defined color palette (e.g., a list of hex codes, RGB values, or named colors).",
+        "From the skill's data, parse and extract the defined typography settings (e.g., font families, sizes, weights, line heights, font smoothing properties).",
+        "Make the extracted color and typography components available for further programmatic use (e.g., storing in variables, copying to a clipboard, applying to a new design context)."
+      ],
+      "target": "Skill Data Store / Configuration Parser",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This outlines a precise procedure for programmatically extracting reusable design parameters like colors and typography from a skill's definition, implying they are stored in a machine-readable format.",
+      "dispatch_ready": true
+    }
+  ]
+}

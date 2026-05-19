@@ -1,0 +1,172 @@
+{
+  "source_id": "65IAqRUxg3c",
+  "generated_at": "2026-05-19T18:07:32.400868+00:00",
+  "total_extracted": 10,
+  "dispatch_ready_count": 10,
+  "directives": [
+    {
+      "title": "Generate Multiple-Choice Personality Test JSON",
+      "steps": [
+        "Obtain a predefined list of approximately 15 psychological test 'screens' or questions.",
+        "Utilize Claude Code (or a similar AI agent for structured text generation) to convert each psychological test 'screen' into a multiple-choice question format.",
+        "Integrate and configure a scoring mechanism for the generated multiple-choice test questions.",
+        "Export or save the complete multiple-choice test structure, including questions, options, and scoring logic, into a JSON file."
+      ],
+      "target": "personality_test_definition.json (via Claude Code)",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive clearly specifies the tool (Claude Code), the input type (list of screens), the required transformation (multiple-choice with scoring), and the output format (JSON file). An autonomous agent could process a list of questions and generate the specified JSON structure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Analyze Relationship Dynamics from Personality Test Results",
+      "steps": [
+        "Obtain two JSON files, each containing the completed results (answers) from the multiple-choice personality test for each individual of a couple (e.g., 'partner1_results.json', 'partner2_results.json').",
+        "Provide these two JSON files as input to ChatGPT (or a similar conversational AI model).",
+        "Issue the exact prompt to ChatGPT: 'Without knowing anything about this couple, tell us about their relationship.'",
+        "Capture and review the generated relationship analysis provided by ChatGPT based solely on the input JSON data."
+      ],
+      "target": "ChatGPT API/Interface",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.75
+      },
+      "rationale": "This directive details a clear interaction with an AI model (ChatGPT), specifying the input type (JSON files containing test results), the exact prompt, and the expected output (relationship analysis). An agent could automate this query and data feeding.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate P0 Security Incident Resolution",
+      "steps": [
+        "The Support Agent monitors incoming support emails for P0 (super scary security breach) incidents.",
+        "Upon identifying a P0 incident, the Support Agent dispatches the incident details to the Dev Agent.",
+        "The Dev Agent immediately analyzes the P0 incident and implements a fix.",
+        "The Dev Agent merges the Pull Request (PR) containing the P0 fix directly into the codebase.",
+        "The Support Agent sends an email to the original sender, confirming that the issue has been fixed."
+      ],
+      "target": "Support Agent module, Dev Agent module, Harbor (agent harness), Email Service, Version Control System (e.g., Git)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "Describes a clear, multi-step automated workflow involving distinct agents and system interactions, including conditional logic (P0 vs. non-P0 implied) and direct code modification/deployment.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Non-P0 Bug Fix PR Creation",
+      "steps": [
+        "The Support Agent receives a support email regarding a non-P0 issue.",
+        "If the Support Agent cannot directly resolve the issue, it dispatches the issue details to the Dev Agent.",
+        "The Dev Agent analyzes the dispatched non-P0 issue to determine required code changes.",
+        "The Dev Agent implements the necessary code changes to fix the issue.",
+        "The Dev Agent creates a Pull Request (PR) for the implemented fix, awaiting human review or further automated steps (not immediate merge)."
+      ],
+      "target": "Support Agent module, Dev Agent module, Harbor (agent harness), Version Control System (e.g., Git)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 0.8
+      },
+      "rationale": "Defines a specific automated workflow for a Dev Agent to address non-P0 issues by generating a PR, clearly distinguishing it from P0 handling. The delegation from the Support Agent is also captured.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Marketing Ad Campaign Management and Optimization",
+      "steps": [
+        "The Marketing Agent establishes a connection to PostHog to gather application usage and performance data.",
+        "The Marketing Agent establishes connections to the Meta Ads account API and the Reddit Ads account API.",
+        "The Marketing Agent continuously performs multivariate testing on existing ad campaigns across Meta and Reddit platforms.",
+        "Based on testing results and performance data, the Marketing Agent autonomously generates new ad creative content.",
+        "The Marketing Agent sets and adjusts advertising budgets for campaigns on Meta and Reddit, optimizing for performance.",
+        "The Marketing Agent processes direct commands (e.g., via message) to adjust specific campaign parameters, such as increasing a budget."
+      ],
+      "target": "Marketing Agent module, Harbor (agent harness), PostHog API, Meta Ads API, Reddit Ads API, Messaging Interface (for commands)",
+      "metrics": {
+        "specificity": 0.95,
+        "implementability": 0.85,
+        "testability": 0.9
+      },
+      "rationale": "This directive outlines a comprehensive, multi-faceted autonomous marketing workflow, detailing specific external system integrations, data utilization, and concrete actions performed by the agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Acquire Harbor Project Source Code",
+      "steps": [
+        "Clone the GitHub repository located at `https://github.com/geekforbrains/harbor` to the local development environment."
+      ],
+      "target": "github.com/geekforbrains/harbor",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly provides a direct, verifiable GitHub URL for the Harbor project, implying a procedural step to obtain or interact with its codebase. Cloning the repository is a concrete and executable implementation action for an autonomous agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Automate Meeting Transcript Ingestion into G Brain",
+      "steps": [
+        "Schedule a nightly cron job on the relevant server or system.",
+        "Configure the cron job to make an API call to the Fireflies service to retrieve meeting transcripts or summary data.",
+        "Process the data obtained from the Fireflies API to generate a structured markdown file.",
+        "Integrate with the 'G brain' system to store the newly created markdown file."
+      ],
+      "target": "Cron job scheduler, Fireflies API client, G Brain storage module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This describes a complete, scheduled automation process with a clear trigger (nightly cron), input (Fireflies API), transformation (build markdown), and output (store in G brain). An autonomous agent can implement the scheduling, API interaction, file creation, and storage.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Invest in Data Center Stocks",
+      "steps": [
+        "Identify publicly traded companies primarily involved in the operation and development of data centers.",
+        "Allocate and execute investment into selected data center stocks."
+      ],
+      "target": "Investment Portfolio",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Direct instruction for a financial investment action in a clearly defined industry segment. An autonomous agent can identify such stocks and perform the transaction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Invest in Taiwan Semiconductor Manufacturing Company (TSMC)",
+      "steps": [
+        "Allocate and execute investment into shares of Taiwan Semiconductor Manufacturing Company (TSMC)."
+      ],
+      "target": "Investment Portfolio",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Direct instruction for a financial investment action in a specific, named public company. An autonomous agent can identify the ticker and perform the transaction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Invest in Iron-Related Stocks",
+      "steps": [
+        "Identify publicly traded companies involved in the iron industry (e.g., iron mining, steel production).",
+        "Allocate and execute investment into selected stocks of iron-related companies."
+      ],
+      "target": "Investment Portfolio",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "Direct instruction for a financial investment action in a specified industry segment. While 'Iron' is broad, within the context of stock recommendations, it implies companies involved in the iron industry, which an autonomous agent can research and act upon.",
+      "dispatch_ready": true
+    }
+  ]
+}

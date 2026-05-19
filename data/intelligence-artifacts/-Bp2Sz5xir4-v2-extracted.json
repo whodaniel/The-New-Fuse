@@ -1,0 +1,307 @@
+{
+  "source_id": "-Bp2Sz5xir4",
+  "generated_at": "2026-05-19T18:41:34.063638+00:00",
+  "total_extracted": 19,
+  "dispatch_ready_count": 19,
+  "directives": [
+    {
+      "title": "Upload Multimodal Documents to Gemini File Search Store",
+      "steps": [
+        "Prepare document assets that combine text and visual elements (e.g., PDFs containing diagrams or scanned pages, or a collection of text files and images).",
+        "Invoke the Gemini `files API` to upload these multimodal document assets to the designated `file search store`."
+      ],
+      "target": "Gemini files API endpoint / client library",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript explicitly states the ability to 'drop images into the same store as your PDFs and documents' and mentions 'upload via the files API'. This directive provides concrete steps for performing this ingestion.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Attach Custom Metadata during Document Ingestion",
+      "steps": [
+        "Define a dictionary or equivalent data structure containing key-value metadata labels (e.g., `{'department': 'legal', 'region': 'EU'}`).",
+        "Include this custom metadata as a parameter when calling the Gemini `files API` to upload documents to the `file search store`."
+      ],
+      "target": "Gemini files API endpoint / client library",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript clearly states, 'Now they introduce custom metadata. You can attach arbitrary key-value labels to any document'. This directive details the implementation of this feature during upload.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Execute Multimodal Queries with File Search Tool and Optional Metadata Filtering",
+      "steps": [
+        "Construct a `generate_content` API request payload.",
+        "Specify `file_search` as one of the `tools` within the `generate_content` request.",
+        "(Optional) Configure the `file_search` tool with a `metadata_filter` parameter, providing key-value pairs (e.g., `{'department': 'legal'}`) to narrow down retrieval results based on attached document metadata.",
+        "Send the `generate_content` request to the Gemini API.",
+        "Parse the response to extract grounded answers and verify the presence of page-level citations for retrieved content."
+      ],
+      "target": "Gemini generate_content API endpoint / client library",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript describes querying with `file_search` as a tool, the ability to 'query everything in one call', and to 'filter retrieval against them at query time'. It also mentions 'page-level citation' in the response. This directive combines these elements into an actionable query flow.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create and Populate Multimodal File Search Store",
+      "steps": [
+        "Create a new file search store instance.",
+        "Upload files to the created store, ensuring support for images and PDFs containing images."
+      ],
+      "target": "Gemini File Search API",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "Direct command to initialize and populate the file search capability, which handles diverse file types automatically.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Upload Files with Custom Metadata",
+      "steps": [
+        "Construct a dictionary containing custom metadata key-value pairs (e.g., `{\"department\": \"legal\", \"region\": \"EU\"}`).",
+        "Pass this custom metadata dictionary as an argument during the file upload operation to associate it with the uploaded content."
+      ],
+      "target": "Gemini File Search API / File Upload Method",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Provides clear instructions for enriching uploaded files with searchable attributes by passing a dictionary during upload.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Metadata Filtering for File Search Queries",
+      "steps": [
+        "Access the configuration object for the file search tool.",
+        "Set the `metadata_filter` property on the tool configuration.",
+        "Assign a metadata filter string (e.g., `\"department=legal\"`) to enable filtering search results based on uploaded metadata."
+      ],
+      "target": "Gemini File Search API / Tool Configuration",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Details how to enable a specific query behavior by setting a named configuration property with a structured filter string.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Gemini API Key",
+      "steps": [
+        "Obtain your personal Gemini API key.",
+        "Set the API key in the environment variables or directly within the application code before making any API calls."
+      ],
+      "target": "Application Configuration / Environment Variables",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "A fundamental prerequisite for interacting with the Gemini API, requiring an API key to be set.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prepare Multimodal Demo Data Corpus",
+      "steps": [
+        "Download technical papers (e.g., 'Attention is All You Need', 'Vision Transformer') to a local directory.",
+        "Create synthetic multimodal content, such as plots depicting quarterly revenue, model accuracy over training time, and RAG system architectures.",
+        "Convert the created plots into PDF or image formats for subsequent upload.",
+        "Define and associate metadata (e.g., modality, authors, publication year, topic) for each file."
+      ],
+      "target": "Local Filesystem / Data Generation Scripts",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.7,
+        "testability": 1.0
+      },
+      "rationale": "Outlines the necessary steps to create and structure the dataset for demonstrating multimodal capabilities, including content creation and metadata generation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Clean Up Previous File Search Store Demo Runs",
+      "steps": [
+        "Identify any existing file search stores or associated resources from prior runs of the demo.",
+        "Delete or remove these identified prior runs to ensure a fresh starting state for new demonstrations."
+      ],
+      "target": "Gemini File Search API / Store Management",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "Ensures idempotency and a clean state for repeated executions of the demo by removing artifacts from previous runs.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create an embedding store",
+      "steps": [
+        "Select a unique and descriptive name for the embedding store.",
+        "Execute the API call or SDK method to create a new store for embedding storage, using the selected name."
+      ],
+      "target": "FileSearch store (e.g., Google Cloud's Vertex AI File Search or similar embedding storage service)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states 'the first thing is to create a store uh for storing the embeddings' which is a clear, actionable initial step.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Remove prior demo run data for fresh start",
+      "steps": [
+        "Identify existing data or resources associated with previous demo runs (e.g., files, indexed documents, or store contents).",
+        "Execute the necessary commands or API calls to delete or remove these prior run resources to ensure a clean state."
+      ],
+      "target": "Demo-specific data, potentially the embedding store's contents or associated temporary files.",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript describes a 'cleanup step' to 'delete or uh remove the prior runs from the demo to keep things tidy' for reruns, providing a clear objective.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Upload documents to the embedding store with structured metadata",
+      "steps": [
+        "Confirm or select the name of the target embedding store for the upload.",
+        "For each document (e.g., PDF papers, image charts):",
+        "  Extract or assign the following metadata fields: 'title', 'year', 'topic', and 'modality'.",
+        "  Set the 'modality' field specifically to 'chart' for images like revenue plots, or 'paper' for technical documents.",
+        "  Upload the document along with its corresponding metadata to the specified embedding store."
+      ],
+      "target": "The created embedding store (e.g., `FileSearchClient.upload_document` or similar API method)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript details 'we need to update or upload the documents to the store with the metadata that we created,' specifying metadata fields and the process of uploading 'one by one'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Gemini model to use File Search as a tool",
+      "steps": [
+        "Obtain the identifier or 'name' of the initialized File Search store.",
+        "Integrate this File Search store name as an available 'tool' when initializing or invoking the Gemini model, allowing the model to use it for retrieval during query processing."
+      ],
+      "target": "Gemini model instance configuration or prompt parameters (e.g., `model.generate_content(..., tools=[file_search_tool_config])`)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The transcript clearly states, 'we just provide the file search name as a tool to the Gemini model,' indicating a direct configuration step for tool usage.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement helper function to visualize grounding chunks",
+      "steps": [
+        "Define a new function, e.g., `show_grounding_chunks(retrieval_output)`.",
+        "Within this function, parse the `retrieval_output` from the model's response or tool calls.",
+        "Extract and display the specific text snippets (grounding chunks) and their source information (e.g., document title, page numbers) as identified by the retrieval process."
+      ],
+      "target": "A utility script or the current notebook file (e.g., `utils.py`, `main.ipynb`)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The transcript explicitly mentions, 'this is uh a simple helper function that is going to show what uh the grounding chunks are when we do retrieval,' defining its purpose and context.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Document Similarity Threshold for Filtering",
+      "steps": [
+        "Introduce a configurable similarity threshold variable (e.g., `MIN_SIMILARITY_SCORE`) in the retrieval configuration.",
+        "Modify the document filtering logic to evaluate the similarity score of each retrieved document against `MIN_SIMILARITY_SCORE`.",
+        "Filter out and discard documents that have a similarity score below `MIN_SIMILARITY_SCORE` before they are processed further by the answer generation or synthesis components."
+      ],
+      "target": "retrieval_service.py, config.yaml, document_filter.py (or equivalent modules/files)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The speaker explicitly states the need for 'some sort of threshold below which you want to discard the documents if they're not if they if they don't have enough similarity,' providing a clear, actionable requirement for filtering.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enable Metadata-Based Document Filtering for Retrieval",
+      "steps": [
+        "Ensure the document ingestion pipeline supports tagging documents with structured metadata (e.g., `modality: 'paper'`, `topic: 'vision'`, `time_range: '2020-2023'`).",
+        "Enhance the query parsing component to identify and extract metadata-based filter conditions specified in user prompts.",
+        "Integrate a pre-retrieval or post-retrieval filtering step that applies the extracted metadata conditions to narrow down the set of documents considered for semantic search or answer generation."
+      ],
+      "target": "document_ingestion_pipeline.py, query_parser.py, retrieval_strategy.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript repeatedly highlights the utility of 'metadata-based filter' for 'enterprise use cases' by 'limiting the modality to charts' or 'looking at papers as modality in topics that are vision,' indicating a core feature to implement.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Optimize Retrieval for Multi-Source Answer Synthesis",
+      "steps": [
+        "Review and modify the current document retrieval configuration to allow for 'widening the retrieval' scope beyond a single top-ranked document.",
+        "Ensure the retrieval mechanism is capable of identifying and returning relevant chunks from multiple distinct documents (e.g., two different papers) that collectively address a complex 'multi-source research question.'",
+        "Validate that the subsequent answer generation component can effectively synthesize information from these multiple retrieved document chunks into a coherent final answer."
+      ],
+      "target": "retrieval_strategy.py, generation_component.py, config.yaml",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly describes 'multi-source research questions' that 'need two different papers' and mentions 'widening the retrieval for multi-paper synthesis,' directly pointing to an enhancement in the retrieval strategy.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Answer Grounding with Source Traceability",
+      "steps": [
+        "Modify the answer generation logic to track which specific content chunk(s) from the retrieved documents contribute to each generated sentence or factual statement.",
+        "Implement an internal data structure or annotation mechanism to link generated answer segments back to their original source document IDs and chunk references.",
+        "Develop an API endpoint or integrate a UI feature that, upon request, can display the originating source document and relevant chunk for any given part of a generated answer."
+      ],
+      "target": "answer_generator.py, response_formatter.py, api_interface.py (or UI component)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The speaker highlights the ability to 'grounding your answers so you can inspect where did each chunk come from,' indicating a need for a mechanism to trace generated content back to its source.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Delete Unused Vector Store",
+      "steps": [
+        "Identify vector stores that are no longer actively in use.",
+        "Initiate the deletion process for the identified unused vector store."
+      ],
+      "target": "Vector Store (e.g., cloud resource, local database, or file system)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The directive provides a clear action (delete) on a specific resource (vector store) under a defined condition (not going to be used). An autonomous agent can implement this by interacting with the vector store's management API or system tools, and test by verifying its removal.",
+      "dispatch_ready": true
+    }
+  ]
+}

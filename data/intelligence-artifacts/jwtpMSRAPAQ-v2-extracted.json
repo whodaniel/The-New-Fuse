@@ -1,0 +1,139 @@
+{
+  "source_id": "jwtpMSRAPAQ",
+  "generated_at": "2026-05-19T18:18:13.388521+00:00",
+  "total_extracted": 8,
+  "dispatch_ready_count": 8,
+  "directives": [
+    {
+      "title": "Extract AI Agent Opportunity Signals from Lab Publications",
+      "steps": [
+        "Access and systematically review the official 'hiring lists' or career pages of major AI labs (e.g., OpenAI, Anthropic) to identify roles related to AI agent development and deployment.",
+        "Access and systematically review the official 'launch notes', press releases, or product blogs of major AI labs (e.g., OpenAI, Anthropic) to identify new AI agent product releases, templates, or targeted industry solutions.",
+        "Analyze the collected information to pinpoint specific enterprise workflow areas (e.g., finance, design, coding) where AI labs are demonstrably investing capital, talent, and product development resources for AI agent solutions.",
+        "Generate a summary report of identified high-confidence opportunities for AI agent integration based on the aggregated signals."
+      ],
+      "target": "External AI Lab Publications (e.g., OpenAI/Anthropic Career Pages, Product Blogs, Press Releases)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The speaker explicitly advises to 'read their hiring lists' and 'read their launch notes' as a 'cheat sheet' for where AI labs perceive value in AI agents, providing a clear methodology and objective for an autonomous agent to gather market intelligence.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Engage Development Team for AI Agent Evaluation and Integration Planning",
+      "steps": [
+        "Initiate a discussion or meeting focused on evaluating potential AI agents for enterprise adoption.",
+        "Ensure that key development team members, particularly those responsible for current systems and integrations, are invited and actively participate.",
+        "Direct the development team to assess the technical capabilities and suitability of prospective AI agents within the context of the existing implementation environment.",
+        "Task the development team with analyzing the integration requirements and feasibility with all relevant current SaaS platforms and data platforms.",
+        "Prioritize the evaluation based on the real value an agent can provide within the actual technical and operational capabilities, rather than solely on vendor claims."
+      ],
+      "target": "Project Planning / Technical Evaluation Process",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states 'Bring your developers to table.' This directive is made implementable by incorporating the surrounding context which emphasizes evaluating agents based on their capability within the 'implementation environment you actually have' and 'integrating with' existing 'SaaS platforms, the data platforms'.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Agent Output Evaluation Based on Business Rules",
+      "steps": [
+        "Identify specific business rules that define the correctness, completeness, and safety criteria for the agent's output.",
+        "Develop a scoring mechanism or framework to quantitatively measure the agent's adherence to these identified business rules.",
+        "Integrate the scoring mechanism into an evaluation suite that automatically assesses the agent's output before it is deployed or used downstream."
+      ],
+      "target": "evaluation_suite.py or business_rules_engine.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The directive explicitly states 'Evals are actually the way you score the model's adherence to specific business rules' and 'measure whether the agent's output is correct, complete, and safe', which are direct calls for coding an evaluation framework.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Agent Data Access and Permissions",
+      "steps": [
+        "Identify and list all authoritative sources of truth that the agent is permitted to read.",
+        "Define and apply explicit permissions for the agent at the row and field level for each designated data source.",
+        "Implement mechanisms to clearly distinguish between authoritative (live) and stale records, guiding the agent to prioritize current data."
+      ],
+      "target": "data_access_config.yaml or agent_permissions.py",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The chunk asks 'Which sources of truth does the agent read? Which permissions apply at the row and field level? Which records are authoritative and which are stale?', outlining concrete configuration tasks related to data access.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Define Agent Authority and System Interaction Policies",
+      "steps": [
+        "Specify precisely what actions the agent is allowed to perform within its operational scope.",
+        "Identify and list the specific external systems against which the agent is authorized to interact.",
+        "Establish and configure explicit spending or commitment limits for the agent's actions, particularly for operations involving writes or irreversible changes."
+      ],
+      "target": "agent_policy_engine.py or security_policies.json",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The text poses 'What is the agent allowed to do? Against which systems? With what spending or commitment limits?' These questions directly translate into defining policy rules and authorization configurations for the agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Comprehensive Audit Trail Logging",
+      "steps": [
+        "Determine all critical events, decisions, inputs, and outputs that must be logged to provide a complete audit trail.",
+        "Configure the logging system to capture these events consistently, ensuring each log entry is traceable to an agent action or system state.",
+        "Design the structure and content of log entries to enable auditors to reconstruct agent actions and system conditions comprehensively after a failure or for compliance."
+      ],
+      "target": "logging_middleware.py or audit_log_schema.json",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The chunk directly asks 'What gets logged? What has to get logged? What can an auditor reconstruct after a failure?', which specifies requirements for a logging system and its implementation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Agent Action Reversal and Recovery Mechanisms",
+      "steps": [
+        "Design and implement specific code or service components that can effectively reverse or undo actions performed by the agent.",
+        "Develop error handling and rollback procedures that automatically or semi-automatically trigger when the agent performs an incorrect or undesirable action.",
+        "Ensure that reversal mechanisms account for the distinct risk profiles of different actions, such as reading versus writing data."
+      ],
+      "target": "transaction_rollback_service.py or error_handling_module.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The core question 'How does an action get reversed?' is a direct prompt for implementing rollback or undo functionality, a concrete programming task.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop Customer Support Agent Object Model Layer",
+      "steps": [
+        "Identify and formalize the core business objects for customer support, specifically including 'cases', 'policies', 'customers', 'entitlements', and 'escalation paths'.",
+        "Construct an 'implementation layer' that encapsulates these identified business objects into a 'clear bundle' or cohesive data structure.",
+        "Design and expose an API within this implementation layer that enables an autonomous agent to interact with the bundled objects to perform specific actions, such as closing customer support tickets."
+      ],
+      "target": "Customer Support Agent Implementation Layer / Agent Service API",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive outlines a clear architectural component, specifies the data entities ('cases', 'policies', 'customers', 'entitlements', 'escalation paths'), and defines the functional goal (agent acting to close tickets), providing sufficient detail for a developer to begin modeling and implementing the described layer and its API.",
+      "dispatch_ready": true
+    }
+  ]
+}

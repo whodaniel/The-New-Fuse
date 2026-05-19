@@ -1,0 +1,573 @@
+{
+  "source_id": "vi-2nasppAg",
+  "generated_at": "2026-05-19T18:38:37.373180+00:00",
+  "total_extracted": 35,
+  "dispatch_ready_count": 35,
+  "directives": [
+    {
+      "title": "Design and Implement Purely Event-Sourced Agent Harness",
+      "steps": [
+        "Define a comprehensive event schema for all significant actions and state changes within the agent harness components.",
+        "Integrate an event store or logging mechanism that persistently records every defined event.",
+        "Ensure all state modifications in the agent harness are a direct consequence of processing these recorded events, avoiding side effects outside the event stream.",
+        "Develop a capability to reconstruct the agent's state at any point in time by replaying the sequence of events."
+      ],
+      "target": "Agent Harness Core / Event Management Module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Directly translates the speaker's desire for 'purely event sourced' and 'everything that could possibly happen is in there' into actionable steps for an event-driven architecture, focusing on debuggability.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Modular and Composable Agent Harness Extension System",
+      "steps": [
+        "Define clear, well-documented interfaces and APIs for agent harness components that allow for external extensions.",
+        "Develop a plugin or module loading system that enables dynamic discovery and integration of new components or behaviors.",
+        "Ensure that different extensions can be combined and orchestrated without conflict, promoting composability.",
+        "Design the system to support agent self-modification or self-extension capabilities through these interfaces."
+      ],
+      "target": "Agent Harness Core / Extension Management Module / Component Interfaces",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "Combines the explicit requirements for extensibility ('extensible by itself') and composability ('combine them') into a single set of directives focusing on a modular, plugin-based architecture.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Develop Distributed and Concurrent Agent Harness Runtime",
+      "steps": [
+        "Analyze the existing agent harness architecture to identify components and operations that can run concurrently or be distributed.",
+        "Design a communication and coordination mechanism (e.g., message queues, RPC, shared state management) for distributed components.",
+        "Refactor core agent harness logic to leverage concurrency primitives (e.g., threads, async/await, actors) and/or distribute workloads across multiple processes or machines.",
+        "Implement robust error handling and fault tolerance for distributed operations."
+      ],
+      "target": "Agent Harness Runtime / Execution Engine / Communication Layer",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.7
+      },
+      "rationale": "Addresses the stated limitation that 'everything has to run in a single thread in... one process' by providing steps to build a more scalable and resilient distributed runtime.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Deploy Agent Harness as Publicly Routable Edge Service",
+      "steps": [
+        "Containerize or package the agent harness into a deployable artifact (e.g., Docker image).",
+        "Configure the agent harness to expose its functionality via a standard HTTP API.",
+        "Select and provision an edge computing platform or CDN with serverless/container deployment capabilities.",
+        "Deploy the agent harness instances to the chosen edge locations.",
+        "Set up public DNS records and network routing to make the agent endpoints accessible directly from the internet."
+      ],
+      "target": "Deployment Infrastructure / Agent Runtime / Network Configuration",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Directly translates the desire for the agent harness to be 'on the edge publicly rootable' and 'speaks HTTP' into a clear deployment strategy.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Secure Agent Event Payloads",
+      "steps": [
+        "Design agent event structures to explicitly exclude sensitive secrets (e.g., API keys, passwords, personal identifiable information) from being stored directly in the `payload` field of events.",
+        "For any transient or operational secrets that are absolutely necessary for event processing, implement a mechanism for secure, short-lived storage or rotation outside the event payload (e.g., environment variables, secret management services)."
+      ],
+      "target": "AgentPayloadSchema, AgentEventPublishingModule, SecurityPolicy",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "The transcript explicitly warns against including secrets in event payloads and suggests rotation as a solution, indicating a critical security directive for agent development.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Initialize Agent with Unique Path Prefix",
+      "steps": [
+        "Define a unique identifier string to serve as the agent's hierarchical path prefix (e.g., `/JonasTemplestein`, `/MyOrg/MyAgent`).",
+        "Ensure this path prefix always begins with a forward slash (`/`) to establish a well-defined root.",
+        "When interacting with the `events.iterate.com` service, provide this path prefix for all agent-related event operations. The service is tolerant of URL encoding if required by specific client libraries, but raw slashes are generally preferred for direct usage with tools like cURL."
+      ],
+      "target": "AgentConfigurationModule, EventServiceConfiguration",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly instructs users to 'set ourselves a path prefix here' and details its format and importance for agent routing and API interaction.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Retrieve Agent Path Prefix from Project Repository",
+      "steps": [
+        "Access the designated project repository (e.g., `Misha's repo`).",
+        "Locate and read the `README.md` or `workshop.md` file within the repository.",
+        "Extract the specified agent path prefix provided in these documentation files for initial setup or configuration."
+      ],
+      "target": "Documentation, AgentSetupScript",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript indicates a direct initial setup step: 'If you copy this from the repo that Misha's going to put it in the read me in a second' and confirms 'I added the readme but not the workshop.'",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Access AI Engineer Workshop Materials",
+      "steps": [
+        "Navigate to `github.com/iterate/ai-engineer-workshop` in a web browser.",
+        "Locate and open the `workshop.md` file within the repository.",
+        "Copy the `curl` commands presented in the `workshop.md` file for execution."
+      ],
+      "target": "github.com/iterate/ai-engineer-workshop/workshop.md",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides clear, step-by-step instructions to obtain the necessary `curl` commands from a specified online resource.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Send 'Hello World' Event to a Stream",
+      "steps": [
+        "Identify a unique stream path for your event (e.g., `/yourname/hello/world`).",
+        "Construct a `curl` POST request to the remote stream service, including the chosen stream path in the URL (e.g., `curl -X POST <base_url>/<stream_path>`).",
+        "Add 'hello world' as the data payload to the `curl` request (e.g., `-d 'hello world'`).",
+        "Execute the `curl` command in your terminal."
+      ],
+      "target": "Remote Stream Service",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This instruction describes the action of posting an event to a stream, including the content and general method, which can be implemented with common `curl` usage. The specific URL and path need to be inferred or taken from the `workshop.md` file.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Subscribe to Stream for Live Server-Sent Events (SSE)",
+      "steps": [
+        "Identify the stream path from which to receive events.",
+        "Construct a `curl` GET request targeting the remote stream service using the identified stream path.",
+        "Include the `-N` flag in the `curl` command to enable streaming for Server-Sent Events (SSE).",
+        "Append the `?live=true` query parameter to the URL to maintain an open connection and receive continuous events.",
+        "Execute the `curl` command in your terminal."
+      ],
+      "target": "Remote Stream Service",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides precise `curl` options to establish a persistent connection for receiving real-time events from a stream, including the mechanism to keep the connection open for live updates.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure Client for Live Event Streaming",
+      "steps": [
+        "Make an API call to the event server.",
+        "Include the parameter `live=true` in the request to keep the connection open for continuous event reception."
+      ],
+      "target": "Event Stream Client / API Configuration",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The `live=true` parameter is explicitly stated as the mechanism to maintain an open connection and receive continuous events.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Format Raw Event Data Using jq",
+      "steps": [
+        "Pipe the raw event stream output (e.g., from a `curl` command) to `jq .data` to extract only the data elements.",
+        "Pipe the result of the previous step to `jq .` for pretty-printing and improved formatting."
+      ],
+      "target": "Command-line Shell / jq utility",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Precise `jq` commands (`jq .data` then `jq .`) are provided to achieve 'nicer formatting' of event data.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Ingest Raw Webhook Payloads into LLM Event Server",
+      "steps": [
+        "Construct a raw JSON payload, representing a webhook from any third-party source.",
+        "POST this raw JSON payload to the LLM event server's ingestion endpoint."
+      ],
+      "target": "LLM Event Server API",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The system is described as 'very tolerant' and capable of consuming 'raw web hooks from anywhere', implying a generic endpoint for posting such data.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Append Invalid Event to Trigger Error Handling",
+      "steps": [
+        "Construct a JSON payload for an event that is missing the required `type` property (e.g., `{\"foo\": \"bar\"}`).",
+        "POST this invalid JSON payload to the event server's ingestion endpoint."
+      ],
+      "target": "Event Server API",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly describes sending something that 'doesn't validate like hogwash' by missing the 'type property' to observe the server appending an error event.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Prevent Duplicate Event Appends with Idempotency Key",
+      "steps": [
+        "Generate a unique idempotency key (e.g., a UUID) for the event request.",
+        "Include an `Idempotency-Key` HTTP header with the generated key as its value when sending the event POST request to the server."
+      ],
+      "target": "Event Server API / HTTP Request Headers",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The directive mentions 'put an item potency key in' to prevent 'the event appended twice' if sent with the same key, which aligns with standard `Idempotency-Key` header usage.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Pause Event Stream via Event Append",
+      "steps": [
+        "Construct a JSON payload for a pause event, including a `type` property (e.g., `stream.pause`) and a `reason` property (e.g., `{\"type\": \"stream.pause\", \"reason\": \"demo\"}`).",
+        "POST this pause event payload to the event server's ingestion endpoint."
+      ],
+      "target": "Event Server API",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript clearly states, 'You pause a stream by appending an event that says you're paused,' and demonstrates the specific need for a 'reason' property with an example.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Schedule a Recurring Heartbeat Event",
+      "steps": [
+        "Construct a scheduling event payload, specifying the event to be emitted and its recurrence.",
+        "Set the recurrence interval to 5 seconds.",
+        "Define the event type as 'heartbeat' or similar for the scheduled event.",
+        "Submit this scheduling event to the event stream's API."
+      ],
+      "target": "Event Stream Scheduler API",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly demonstrates 'creating this heartbeat event every 5 seconds' and describes the general event scheduling capability, indicating a clear procedure.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Schedule a One-Time Event for a Future Time",
+      "steps": [
+        "Construct a scheduling event payload, specifying the event to be emitted and its future execution time.",
+        "Set the execution time either as a relative delay (e.g., 10 minutes from now) or an absolute timestamp.",
+        "Define the event type and payload for the scheduled event.",
+        "Submit this scheduling event to the event stream's API."
+      ],
+      "target": "Event Stream Scheduler API",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker clearly states the ability to 'schedule something for 10 minutes in the future or at a certain time,' outlining a specific scheduling action.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure a Push Subscription (Webhook) to an External Endpoint",
+      "steps": [
+        "Construct a subscription configuration event payload.",
+        "Specify the target external endpoint URL (e.g., a server URL, Slack API endpoint).",
+        "Configure the push conditions: either 'every time an event gets added' or a definition for a 'filtered stream'.",
+        "Append this configuration event to the main event stream."
+      ],
+      "target": "Event Stream Subscription Management API",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The speaker describes how to 'tell the stream by appending an event to send your server... an event every time an event gets added' and mentions pushing 'a filtered stream,' detailing a push subscription mechanism.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Establish a Pull Subscription using Server-Sent Events (SSE)",
+      "steps": [
+        "Initialize an HTTP client.",
+        "Formulate an HTTP GET request to the designated event stream server endpoint.",
+        "Send the request to establish a connection for Server-Sent Events (SSE).",
+        "Continuously parse and process the incoming SSE stream to receive events."
+      ],
+      "target": "HTTP Client / Event Stream Server Endpoint",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The speaker provides a very clear, step-by-step description of a pull subscription: 'subscribing in our terminal... doing a pull subscription... connecting to an HTTP server and we're getting an SSE response stream of of streaming events.'",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Submit a Question Event to the 'Questions' Stream",
+      "steps": [
+        "Create an event object.",
+        "Populate the event's payload with the question content.",
+        "Use the system's API to append this event to the 'questions' stream."
+      ],
+      "target": "'questions' Event Stream API",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The explicit instruction 'questions have to be submitted as an event to the questions stream' clearly defines an interaction pattern and its target.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Stream Processor for Coding Agent",
+      "steps": [
+        "Create a new module or class responsible for handling event streaming logic.",
+        "Develop logic within this processor to iteratively process and reduce an incoming stream of events into a coherent state (e.g., aggregating partial responses, maintaining conversation context).",
+        "Integrate mechanisms to trigger external side effects (e.g., making API calls, invoking other programs) based on the processed event stream's state."
+      ],
+      "target": "src/agent/streamProcessor.ts",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.7,
+        "testability": 0.7
+      },
+      "rationale": "The directive clearly outlines the creation of a core component (stream processor) and its primary responsibilities (reducing event stream, performing side effects) for building an AI coding agent, though specific event formats and side effects are not detailed.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Package and Publish Stream Processor Source as Event",
+      "steps": [
+        "Obtain the source code of a stream processor to be dynamically deployed.",
+        "Construct an event object, ensuring its payload explicitly contains the complete source code of the chosen stream processor.",
+        "Publish this specially formatted event to the main event stream.",
+        "Verify that the event system successfully interprets and executes the embedded source code on subsequent events."
+      ],
+      "target": "event_publisher_module",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "This directive describes a concrete method for dynamically deploying processing logic by embedding source code within an event, providing a clear procedural goal.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Generate Iterate API Client from OpenAPI Spec",
+      "steps": [
+        "Access the OpenAPI specification document for the Iterate API, located at `https://events.iterate.com/apidocs`.",
+        "Utilize an OpenAPI client generator tool (e.g., `openapi-generator-cli`, `swagger-codegen`) to create an API client library in the desired programming language (e.g., TypeScript, Python)."
+      ],
+      "target": "api/clients/",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a standard, fully specified procedure to create an API client from a known, accessible OpenAPI specification.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install and Utilize Pre-shipped TypeScript Iterate API Client",
+      "steps": [
+        "Identify the npm package name for the pre-shipped TypeScript client provided for the Iterate API (e.g., `iterate-api-client`).",
+        "Add this package as a dependency to the project's `package.json` file.",
+        "Execute `npm install` (or `yarn add`/`pnpm add`) in the project's root directory to install the client package.",
+        "Import and integrate the client's functionalities within the TypeScript application code to interact with the Iterate API."
+      ],
+      "target": "package.json",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a direct and clear method for integrating with the Iterate API using an existing npm package, following standard dependency management practices.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Update AI Engineer Workshop Repo to Fix Client-Side TypeError",
+      "steps": [
+        "Navigate to the root directory of the local `AI engineer workshop` Git repository.",
+        "Execute `git pull` to fetch and merge the latest changes from the remote repository, which includes the fix for the reported type error.",
+        "Verify that the client-side type error specifically found in the `in.ts` file is no longer present after the update."
+      ],
+      "target": "AI engineer workshop Git repository, file in.ts",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This directive provides precise steps to resolve a known, specific bug by updating a particular Git repository and verifying a change in a specific file.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Clone AI Engineer Workshop Repository",
+      "steps": [
+        "Open a command-line interface or terminal.",
+        "Execute the `git clone <AI_engineer_workshop_repository_URL>` command, replacing `<AI_engineer_workshop_repository_URL>` with the actual Git URL of the AI engineer workshop repository (URL not provided in chunk)."
+      ],
+      "target": "local_development_environment",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Provides a clear and standard initial step for setting up the workshop development environment by cloning a Git repository, with the only missing detail being the exact repository URL.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Add Example Processor Files from Iterate Repository",
+      "steps": [
+        "Identify specific example files that contain 'actual processors' within the 'iterate' repository.",
+        "Copy these identified example files into the newly cloned 'AI engineer workshop' repository."
+      ],
+      "target": "AI engineer workshop repository (specific directory for examples)",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The instruction is clear to copy files from one repository to another, though the exact file names are not specified, 'files with actual processors' gives a filtering criterion.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Install SDK and Project Dependencies",
+      "steps": [
+        "Navigate to the root directory of the cloned 'AI engineer workshop' repository.",
+        "Execute 'pnpm install' to install the packaged SDK and any other declared project dependencies."
+      ],
+      "target": "AI engineer workshop project dependencies (node_modules directory)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a direct and standard command for a pnpm-based project, ensuring all necessary packages are available.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Client-Side Event Handling Logic",
+      "steps": [
+        "Open a designated client-side TypeScript file (e.g., 'example.ts') within the 'AI engineer workshop' repository.",
+        "Import the 'createEventsClient' function from the SDK.",
+        "Instantiate a client using 'createEventsClient', providing 'baseURL: \"events.iterate.com\"' and optionally a 'pathPrefix'. Example: 'const client = createEventsClient({ baseURL: \"events.iterate.com\", pathPrefix: \"/\" });'",
+        "Call the 'stream' function on the created client, passing 'live: true' and a 'streamPath'. Example: 'client.stream({ live: true, streamPath: \"/your-stream\" }, (event) => { /* ... */ });'",
+        "Within the 'stream' event handler, implement conditional logic: 'if (event.type === \"ping\") { client.append(event); }' to process 'ping' events."
+      ],
+      "target": "AI engineer workshop/example.ts (or similar client-side TypeScript file)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Detailed steps are provided for code implementation, including function calls, specific arguments, and conditional logic for event handling.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Execute Example TypeScript File",
+      "steps": [
+        "Ensure that Node.js and a TypeScript execution environment (e.g., 'ts-node') are installed and configured.",
+        "Navigate to the directory containing the 'example.ts' file within the 'AI engineer workshop' repository.",
+        "Execute the TypeScript file using 'ts-node example.ts' or a similar command, or 'node example.js' if transpiled."
+      ],
+      "target": "AI engineer workshop/example.ts",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "Provides a clear command to run a specific TypeScript file, assuming a standard development environment.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create 'agent_processor' example file and install OpenAI SDK",
+      "steps": [
+        "Install the OpenAI SDK using the project's standard package manager (e.g., `npm install openai`).",
+        "Create a new TypeScript file named `agent_processor.ts` in the `examples` directory.",
+        "Populate `agent_processor.ts` with boilerplate code that mirrors the structure and content of the existing `hello_world_processor` example."
+      ],
+      "target": "examples/agent_processor.ts",
+      "metrics": {
+        "specificity": 0.85,
+        "implementability": 0.95,
+        "testability": 0.9
+      },
+      "rationale": "The speaker explicitly asks to install the 'normal OpenAI SDK' and to create 'a third example uh called agent processor' which should 'look like the hello world processor'. This provides clear, actionable steps for an autonomous agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Separate Event Reduction from Side Effects in Processor",
+      "steps": [
+        "Define a `reduce(event, current_state)` method within your `processor` implementation that processes a single event and updates the internal state. This method MUST NOT perform any external side effects (e.g., API calls, I/O).",
+        "Define a separate `side_effect(final_state)` method within your `processor` implementation. This method should be called *after* all pending events have been reduced to produce the `final_state` and will perform any necessary external actions (e.g., making LLM requests, appending events to streams, updating external databases)."
+      ],
+      "target": "event_processor_module/processor_class",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The speaker explicitly states the need to 'split the reduce function from ... append where you should do your side effects' to handle program pauses and prevent redundant actions upon resume. This creates a clear functional separation.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Hierarchical Stream Appending for Sub-Agent Communication",
+      "steps": [
+        "To send a request or command to a sub-agent (e.g., named 'Boris'), append an event to a dedicated stream path representing that sub-agent (e.g., `stream_api.append_event('./Boris', request_event_data)`).",
+        "For a parent agent expecting a response, subscribe to a specific output stream path associated with the sub-agent (e.g., `stream_api.subscribe_to_path('./Boris/results')`).",
+        "Implement logic within the parent agent to process events received on the sub-agent's output stream, allowing the parent to 'be woken up again' when the sub-agent provides a result."
+      ],
+      "target": "event_stream_api/sub_agent_module",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The speaker provides a concrete pattern for building sub-agents by treating the stream like a file system, allowing appending to child paths (e.g., './Boris') and subscribing to specific event outputs.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Integrate Custom Processor with Processor Runtime",
+      "steps": [
+        "Instantiate the core `processor_runtime` component (e.g., `runtime = ProcessorRuntime()`).",
+        "Instantiate your custom `processor` implementation (e.g., `my_processor = MyCustomProcessor()`).",
+        "Register or hook your custom `processor` instance into the `processor_runtime` for event processing (e.g., `runtime.register_processor(my_processor)`).",
+        "Ensure the `processor_runtime` is started to begin ingesting events and orchestrating processor execution (e.g., `runtime.start()`)."
+      ],
+      "target": "main_application_entrypoint/processor_orchestration_module",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "The speaker explicitly mentions that a 'processor... gets hooked up into a processor runtime' and clarifies that 'you need the runtime' to run it, implying a standard component integration pattern.",
+      "dispatch_ready": true
+    }
+  ]
+}

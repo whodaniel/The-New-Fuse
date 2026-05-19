@@ -1,0 +1,80 @@
+{
+  "source_id": "jWDCnJKouhw",
+  "generated_at": "2026-05-19T18:24:49.102189+00:00",
+  "total_extracted": 4,
+  "dispatch_ready_count": 4,
+  "directives": [
+    {
+      "title": "Optimize Agent Prompt Token Efficiency",
+      "steps": [
+        "Analyze current prompt token lengths for all active agents (e.g., Clinical Documentation Agent, Prior Authorization Agent).",
+        "Identify redundant phrases, verbose instructions, or unnecessary examples within agent prompts.",
+        "Refactor identified prompts to reduce token count while maintaining or improving task quality.",
+        "Evaluate the refactored prompts for quality score parity with previous versions.",
+        "Deploy optimized prompts to production."
+      ],
+      "target": "agent_prompts/",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly states reducing prompt tokens from 1,800 to 1,100 with 'exact same quality score', providing clear before/after states and measurable outcomes for prompt tuning.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Reduce Workflow Flowstep Overhead from Incomplete EHR Queries",
+      "steps": [
+        "Analyze workflow logs to identify instances where the initial EHR query returns incomplete data, triggering follow-up steps.",
+        "Investigate the root causes of incomplete EHR query responses (e.g., API issues, malformed requests, data latency).",
+        "Implement logic to anticipate or pre-process EHR queries to minimize incompleteness.",
+        "Refine the workflow orchestration to reduce or consolidate follow-up steps triggered by initial EHR query issues.",
+        "Monitor average flow steps post-deployment."
+      ],
+      "target": "workflow_orchestration/prior_auth_workflow.py, ehr_integration/ehr_query_handler.py",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The chunk explicitly identifies the problem ('initial EHR query comes back incomplete and triggers a follow-up') and quantifies the overhead (1.2 steps), providing a clear focus for optimization efforts to reduce average steps from 7.2 to 6.0.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Enhance Clinical Agent Document Retrieval Precision@5",
+      "steps": [
+        "Evaluate the current clinical agent's document retrieval mechanism, specifically focusing on the top five most relevant clinical notes.",
+        "Identify cases where retrieved documents are deemed irrelevant to the authorization decision.",
+        "Experiment with alternative retrieval algorithms, embedding models, or re-ranking strategies.",
+        "Update the clinical agent's retrieval component with the improved mechanism.",
+        "Measure and report the new Precision@5 score."
+      ],
+      "target": "clinical_agent/retrieval_module.py, clinical_agent/embedding_config.yaml",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "The chunk states the current Precision@5 (0.84) and explicitly directs to 'work on pushing that even higher', providing a clear, measurable improvement goal for the retrieval system.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Build Enhanced Retry Logic for Agent Handoff Failures",
+      "steps": [
+        "Analyze logs for agent-to-agent handoff failures, specifically isolating those caused by 'ehr systems unavailability'.",
+        "Design a robust retry mechanism (e.g., with exponential backoff and maximum retry attempts) for inter-agent communication.",
+        "Implement the designed retry logic within the agent orchestration or handoff service component.",
+        "Simulate EHR system unavailability to thoroughly test the new retry mechanism.",
+        "Monitor the handoff success rate after deployment."
+      ],
+      "target": "agent_orchestration/handoff_service.py, agent_communication/retry_policy.py",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The chunk clearly identifies the failure rate (1.3%), the primary cause ('ehr systems unavailability'), and the concrete solution ('build better retry logic'), making this directive highly actionable and testable.",
+      "dispatch_ready": true
+    }
+  ]
+}

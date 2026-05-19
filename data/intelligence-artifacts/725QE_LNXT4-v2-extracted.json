@@ -1,0 +1,128 @@
+{
+  "source_id": "725QE_LNXT4",
+  "generated_at": "2026-05-19T18:33:45.321197+00:00",
+  "total_extracted": 7,
+  "dispatch_ready_count": 7,
+  "directives": [
+    {
+      "title": "Automate Back-Office Marketing Tasks using AI Tools",
+      "steps": [
+        "Identify repetitive back-office tasks within marketing operations.",
+        "Utilize AI tools (e.g., ChatGPT, Claude) to automate significant portions of these identified tasks."
+      ],
+      "target": "Marketing Operations Workflow / Automation Systems",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.7
+      },
+      "rationale": "The speaker explicitly states that marketers 'automate a bunch of my work with chat GPT or I'm going to automate a bunch of it with Claude' and that 'You do have to do them' for basic competency, even if they don't provide significant competitive advantage.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "AI-Enhance Personal Job Application Materials",
+      "steps": [
+        "Customize resume content to precisely match specific job descriptions and their keywords.",
+        "Tailor cover letters using AI assistance to align with each targeted job application.",
+        "Refine job search parameters to target results that exactly match personal keywords and desired roles."
+      ],
+      "target": "Personal Career Development / Job Search Application Process",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.7
+      },
+      "rationale": "The speaker identifies 'I customize my resume and my cover letter and I I customize where I search to exactly the targeted job search results that match to my keywords' as 'table stakes' that 'everybody does that and that's all AI back office automation.'",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Establish and Maintain a Product 'Truth Layer' for AI Agents",
+      "steps": [
+        "Define and document a comprehensive 'truth layer' for your company's products, emphasizing clear, accurate, and detailed data points.",
+        "Ensure all product data is 'opinionated,' explicitly articulating the unique value proposition, specific benefits, and reasons why the product is superior.",
+        "Structure product data in a format that enables AI agents to reliably read, understand, and trust the information, providing 'provable' evidence for claims.",
+        "Map customer language and common queries to your product's factual and detailed data to ensure AI agents can accurately interpret and respond to user needs.",
+        "For every product claim (e.g., 'special spring system for our heels'), provide concrete, factual data and explanations, including how it works, the materials used, and measurable benefits (e.g., 'unlock more energy on every step').",
+        "Develop mechanisms to reliably distribute this high-quality, high-fidelity product data to various AI agents operating on the internet."
+      ],
+      "target": "Product Information Management (PIM) System / Knowledge Graph / API for Product Data",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "This directive is a core instruction for marketers. The speaker repeatedly emphasizes the need for a 'truth layer,' stating 'Agents need you to prove it,' and 'you need to have clear, accurate, detailed data about your products that enables an AI to get an opinionated signal on what you offer,' specifically outlining the need for 'actual data behind this' and structured information that is 'provable and reliable' for agents.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Optimize Web Pages for Agent Data Extraction and Understanding",
+      "steps": [
+        "Integrate product-specific 'truth layer' data (e.g., materials, energy savings, functional benefits) directly into relevant web pages.",
+        "Structure this integrated data using a highly readable format, explicitly considering a JSON schema (e.g., JSON-LD for structured data).",
+        "Ensure the data structure facilitates efficient extraction of the Document Object Model (DOM) by autonomous agents.",
+        "Design the data structure to enable agents to extract a complete and coherent dataset from the web page.",
+        "Verify that agents can successfully ingest the structured data and accurately comprehend the product's identity and functionality."
+      ],
+      "target": "Web page content and underlying data schemas (e.g., product detail pages, HTML, JSON-LD implementations).",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The transcript explicitly directs that data must be 'translated into web pages where the agent can effectively extract the DOM...extract a data set...it's highly readable, maybe it's a JSON schema...and is able to ingest it and say, 'Okay, I understand what this product is and what it does.'' This provides concrete, actionable steps for structuring web content.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Publish Core Product 'Truth Layer' Data to the Broader Internet",
+      "steps": [
+        "Identify the foundational 'truth layer' data that provides factual evidence for product benefits and claims (e.g., specific materials, tested energy savings, detailed functional attributes).",
+        "Establish a publicly accessible mechanism (e.g., API endpoint, dedicated structured data repository, well-formed public documentation) for this truth layer data.",
+        "Ensure the published data is discoverable, machine-readable, and interpretable by autonomous agents across the broader internet.",
+        "Verify that agents can gather and correctly interpret this information to understand and evaluate the product's details and capabilities."
+      ],
+      "target": "Public web infrastructure, API endpoints, structured data feeds (e.g., `public-api/products/v1`, `data.company.com/products`, `schema.org` implementations outside of specific pages).",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.8
+      },
+      "rationale": "The transcript states, 'you have to have it on the broader internet too if you want to interpret and gather information correctly.' This is a clear directive to make core product data publicly available and accessible for agent consumption, beyond just embedding it within specific web pages.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Publish Marketing Content on LinkedIn",
+      "steps": [
+        "Access the LinkedIn platform using designated credentials.",
+        "Compose new posts or repurpose existing marketing content tailored for self-promotion, product visibility, or company branding.",
+        "Publish the composed content to the designated LinkedIn profile or company page, focusing on attracting attention within the 'attention economy' framework."
+      ],
+      "target": "LinkedIn profile or company page",
+      "metrics": {
+        "specificity": 0.7,
+        "implementability": 0.8,
+        "testability": 0.6
+      },
+      "rationale": "The directives 'Get on LinkedIn. Make those posts.' are direct imperatives. While the specific content is not provided, the platform and the action of posting for marketing are clear enough for an autonomous agent to execute if given content.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Craft Differentiated & Opinionated Digital Content for AI Interpretation",
+      "steps": [
+        "Identify all public-facing digital content assets related to the candidate, product, or company (e.g., resumes, LinkedIn profiles, 'About Us' pages, product descriptions, marketing copy, blog posts).",
+        "Analyze the existing content to identify areas lacking 'differentiated detail' or a 'clean truth layer'.",
+        "Revise or create new content to explicitly explain 'what you are doing', 'why that matters', 'what your product does', 'what your company does', or 'what you as a candidate do'.",
+        "Ensure the content provides a high level of detail and is driven by factual accuracy (a 'clean truth layer').",
+        "Integrate clear, original, and potentially 'spicy' opinions into the content, avoiding generic statements that aim to appeal to everyone.",
+        "Verify that the content is structured and detailed enough for an AI agent to readily interpret, understand, and identify as unique and original, enabling it to 'survive compression' and stand out in AI-driven searches and summaries."
+      ],
+      "target": "Digital Content Assets (e.g., candidate resumes, LinkedIn profiles, company 'About Us' pages, product description pages, marketing copy, blog posts)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.8
+      },
+      "rationale": "The transcript provides specific criteria for content creation: 'differentiated detail driven by a clean truth layer', explaining 'what you are doing'/'product'/'company'/'candidate' to an AI agent, and ensuring it has 'opinions' to be 'spicy' and 'original'. These are actionable characteristics for content generation and optimization.",
+      "dispatch_ready": true
+    }
+  ]
+}

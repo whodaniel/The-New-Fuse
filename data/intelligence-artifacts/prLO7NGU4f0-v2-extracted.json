@@ -1,0 +1,440 @@
+{
+  "source_id": "prLO7NGU4f0",
+  "generated_at": "2026-05-19T18:26:24.612839+00:00",
+  "total_extracted": 29,
+  "dispatch_ready_count": 29,
+  "directives": [
+    {
+      "title": "Configure Codex Settings",
+      "steps": [
+        "Set the Codex model to 'GPT 5.5'.",
+        "Set the Codex reasoning level to 'high'."
+      ],
+      "target": "Codex CLI configuration",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "These are direct configuration instructions for the AI assistant being used, setting its operational parameters.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Scaffold Next.js T3 App",
+      "steps": [
+        "Open a new command prompt window.",
+        "Change the current directory into the project folder.",
+        "Execute the command: `npx create-t3-app@latest .`"
+      ],
+      "target": "Current project folder",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This sequence provides a precise CLI command to initialize a Next.js project with a predefined stack (T3 App), including authentication, Postgres, and Drizzle ORM.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Start Postgres Database Service",
+      "steps": ["Execute the command: `docker compose up -d`"],
+      "target": "Docker environment",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This command explicitly starts the Postgres database in a detached mode, making it available for the application.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Apply Database Migrations",
+      "steps": ["Execute the command: `npm run db migrate`"],
+      "target": "Next.js project (package.json scripts)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This command is used to apply the initial database schema and create necessary user tables as defined by the project's ORM migrations.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Clear Design System File",
+      "steps": ["Clear all existing content from the `design.md` file."],
+      "target": "design.md file",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a direct instruction to modify a specific file, preparing it for a new, custom design system definition.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Redesign Home Page to AI Image Studio Theme",
+      "steps": [
+        "Replace the existing boilerplate Next.js application's front-end code.",
+        "Redesign the home page to represent an AI image studio or YouTube thumbnail generation application.",
+        "Ensure the design is user-friendly and avoids an 'AI slop' aesthetic.",
+        "Set dark mode as the default theme for the application."
+      ],
+      "target": "Next.js front-end files (e.g., src/app/page.tsx, global.css, tailwind.config.js)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive provides clear functional and aesthetic requirements for redesigning the main application interface, including specific theme, usability, and default mode.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Run Development Server",
+      "steps": ["Execute the 'npm run dev' command in the terminal."],
+      "target": "Terminal / Shell",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a direct, unambiguous command that can be executed as-is.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Update Design System Markdown File",
+      "steps": [
+        "Incorporate the details of the approved design system into the 'design.md' file.",
+        "Ensure the 'design.md' file contains sufficient information to reliably recreate components and pages based on the design system."
+      ],
+      "target": "design.md",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "The directive specifies a target file and the type of content to be added, ensuring the file serves as a reproducible design guide.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Commit Design System Changes",
+      "steps": [
+        "Stage all untracked files in the current Git repository.",
+        "Commit the staged changes with the message 'design system'."
+      ],
+      "target": "Git repository",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "These are standard, explicit Git commands with a specified commit message.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Publish Repository to GitHub",
+      "steps": [
+        "Push the local repository's committed changes to the configured remote GitHub repository."
+      ],
+      "target": "GitHub repository",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a standard Git command for pushing changes to a remote.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create Plans Subfolder",
+      "steps": [
+        "Navigate to the 'agents' directory.",
+        "Create a new subfolder named 'plans' within the 'agents' directory."
+      ],
+      "target": "filesystem (agents/plans directory)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a clear, low-level filesystem operation with explicit paths.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Store Current Plan in Plans Folder",
+      "steps": [
+        "Retrieve the current implementation plan artifact from Code Assist.",
+        "Save the plan as a new file within the 'agents/plans' subfolder."
+      ],
+      "target": "agents/plans directory (new file within)",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This directive specifies the content to be saved (the plan) and the exact location for storage, making it actionable for an agent that can interact with Code Assist and the filesystem.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Create 'plans' subfolder for agent plans",
+      "steps": [
+        "Navigate to the 'agents' directory.",
+        "Create a new subfolder named 'plans' within the 'agents' directory."
+      ],
+      "target": "agents/plans/",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a direct and unambiguous file system operation with a clear target and outcome.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Store the current implementation plan in the 'plans' folder",
+      "steps": [
+        "Command the agent to store its current implementation plan.",
+        "Specify the target location for saving the plan as the 'plans' folder (likely creating a new file within it)."
+      ],
+      "target": "Current agent's working context (plan output), saved to agents/plans/",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 1.0
+      },
+      "rationale": "The user explicitly instructs the agent to store its plan in a specific, previously created folder. This implies an agent command like `store_plan(location='agents/plans/')`.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Clear agent context by starting a new conversation",
+      "steps": ["Initiate a new conversation or session with the agent."],
+      "target": "Current agent session/context window",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "This is a standard interaction with conversational agents to reset the current context, which an autonomous agent should be able to trigger.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Load a previously saved plan into the current session",
+      "steps": [
+        "Ensure the agent is not currently in 'planning mode'.",
+        "Pull (load) the desired, previously saved plan into the current agent conversation context for reference or execution."
+      ],
+      "target": "Current agent session/context",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.8,
+        "testability": 0.9
+      },
+      "rationale": "The instruction to 'pull in the plan' implies a command to load a specific artifact, with a clear precondition, which an agent should be able to execute.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Command agent to implement the loaded plan",
+      "steps": [
+        "Provide the agent with the explicit directive: 'Please go ahead and implement this plan.'"
+      ],
+      "target": "Main agent execution",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "This is a direct, unambiguous command to initiate the execution of the plan by the agent.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Set Codex environment permissions to full access",
+      "steps": [
+        "Execute the `permissions` command within the Codex environment.",
+        "Select or input the option to allow 'full access' when prompted by the permissions command."
+      ],
+      "target": "Codex environment permissions",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "The transcript provides a specific command (`permissions`) and a clear parameter ('full access') for an environment setting.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Re-attempt plan implementation, adhering to `agents.md` rules and using sub-agents",
+      "steps": [
+        "Instruct the agent to follow the rules specified in the `agents.md` file for the current task, specifically ensuring the use of sub-agents.",
+        "Command the agent to retry the implementation of the plan, acknowledging a suspected prior permissions issue."
+      ],
+      "target": "Main agent's execution flow",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "This is a clear directive to retry a specific task with explicit constraints (use sub-agents) and context (permissions issue resolved).",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Disable agent testing by modifying `agents.md`",
+      "steps": [
+        "Open the `agents.md` file for editing.",
+        "Locate the entire section within the file that is related to 'testing'.",
+        "Delete the identified 'testing' section from the `agents.md` file.",
+        "Save the modified `agents.md` file."
+      ],
+      "target": "agents.md",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Detailed and explicit instructions for modifying a specific file, including opening, finding a section, deleting it, and saving.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Instruct agent to continue execution",
+      "steps": [
+        "Provide the agent with a command to continue its ongoing, potentially paused, task."
+      ],
+      "target": "Paused agent execution",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "A direct command to an agent to resume activity, assuming the agent has a 'continue' or 'resume' capability.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Restart Development Server",
+      "steps": ["Restart the local development server process."],
+      "target": "Local Development Server",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Direct command to perform a common development operation. An autonomous agent should know the typical command (e.g., `npm run dev` or `yarn dev`) to achieve this based on project context.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Commit Dashboard UI Changes",
+      "steps": [
+        "Stage all modified and new files related to the dashboard UI changes in the Git repository.",
+        "Create a new Git commit.",
+        "Set the commit message for this commit to 'dashboard'."
+      ],
+      "target": "Git Repository",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Explicit and standard Git commands are provided, making this highly implementable and testable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Obtain OpenAI API Key",
+      "steps": [
+        "Navigate to `https://platform.openai.com/api-keys` in a web browser.",
+        "Log in to the OpenAI platform if prompted.",
+        "Initiate the creation of a new API key.",
+        "Copy the newly generated API key for subsequent configuration."
+      ],
+      "target": "OpenAI Platform (Web)",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides a precise URL and clear, sequential steps for obtaining an external resource.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure OpenAI API Key Environment Variable",
+      "steps": [
+        "Open the `.env` file located in the project's root directory.",
+        "Locate the 'AI integration' section within the file. If it does not exist, create a new section.",
+        "Add a new environment variable `OpenAI_API_key` by adding the line `OpenAI_API_key=YOUR_API_KEY`, replacing `YOUR_API_KEY` with the API key obtained from the OpenAI platform."
+      ],
+      "target": ".env file",
+      "metrics": {
+        "specificity": 1.0,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Specifies the exact file, variable name, and the format for adding the environment variable, making it highly implementable.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Remove Open Router Integration Boilerplate",
+      "steps": [
+        "Identify all code and configuration files within the project that implement or support 'open router' AI model integration.",
+        "Remove or comment out the identified 'open router' specific code, configurations, and related dependencies.",
+        "Ensure the project is configured to make direct API calls to OpenAI without routing through 'open router'."
+      ],
+      "target": "Project Configuration / Source Code",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 0.9
+      },
+      "rationale": "While specific file paths are not provided, the directive clearly identifies the target (open router boilerplate) and the desired outcome (removal for direct OpenAI calls), which an agent with project context can implement.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Configure OpenAI API Key",
+      "steps": [
+        "Access platform.openai.com and navigate to the API keys section to create a new API key.",
+        "Open the project's `.env` file.",
+        "Locate the 'AI integration' section within the `.env` file.",
+        "Create a new environment variable named `OpenAI_API_key`.",
+        "Assign the newly created OpenAI API key as the value for `OpenAI_API_key`."
+      ],
+      "target": ".env file, platform.openai.com",
+      "metrics": {
+        "specificity": 0.9,
+        "implementability": 1.0,
+        "testability": 1.0
+      },
+      "rationale": "Provides explicit steps for obtaining an API key and configuring it in the project's environment variables, including the exact variable name and target file.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Implement Live Preview Loading State",
+      "steps": [
+        "Identify the UI component responsible for displaying the live preview of the thumbnail during generation.",
+        "Modify the component's logic to detect when a thumbnail generation process is initiated and ongoing.",
+        "While thumbnail generation is active, display a visual loading or 'generating' state (e.g., a spinner, text overlay) within the live preview component.",
+        "Ensure the loading state is removed or hidden once the thumbnail generation is complete and the final image is ready for display."
+      ],
+      "target": "Live preview UI component (e.g., `src/components/ThumbnailPreview.js`, `LivePreviewArea.vue`)",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Clearly defines a UI enhancement task, specifying the component type, the trigger condition, and the desired visual feedback for the user.",
+      "dispatch_ready": true
+    },
+    {
+      "title": "Redesign Homepage to Restrict Image Generation",
+      "steps": [
+        "Modify the homepage component's UI and logic to remove or disable all functionality that allows users to generate images directly from the homepage.",
+        "Implement or reinforce access control and routing to ensure that image generation features are only accessible from the user's dashboard and require prior login.",
+        "Redesign the homepage layout and content to function exclusively as a marketing landing page, focusing on conveying the product's value proposition rather than providing immediate functionality.",
+        "Add placeholder marketing copy to the redesigned homepage.",
+        "Generate a suitable demonstration image using an available image generation model (e.g., via the Codex CLI) to be featured on the new homepage as part of the marketing content."
+      ],
+      "target": "Homepage component (e.g., `src/pages/HomePage.js`), Authentication/Routing module, Image Generation UI components",
+      "metrics": {
+        "specificity": 0.8,
+        "implementability": 0.9,
+        "testability": 1.0
+      },
+      "rationale": "Outlines a comprehensive redesign of the homepage, detailing functional removals, access control changes, and content re-purposing, breaking it down into actionable sub-steps.",
+      "dispatch_ready": true
+    }
+  ]
+}
