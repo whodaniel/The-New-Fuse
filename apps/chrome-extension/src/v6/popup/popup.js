@@ -27,6 +27,9 @@ class FuseConnectPopup {
         reverseOrder: false,
         segmentDuration: 45,
         processingLevel: 'ai_studio',
+        youtubeChannels: [],
+        selectedYouTubeChannelId: '',
+        requiresYouTubeChannelSelection: false,
         processingState: {
           isProcessing: false,
           isPaused: false,
@@ -244,6 +247,13 @@ class FuseConnectPopup {
 
     document.getElementById('ai-video-refresh-playlists')?.addEventListener('click', () => {
       this.refreshAIVideoPlaylists({ interactiveAuth: true });
+    });
+    document.getElementById('ai-video-refresh-channels')?.addEventListener('click', () => {
+      this.refreshAIVideoPlaylists({ interactiveAuth: true, forceReloadChannels: true });
+    });
+    document.getElementById('ai-video-channel-select')?.addEventListener('change', (e) => {
+      const channelId = String(e.target?.value || '').trim();
+      this.setAIVideoSourceChannel(channelId);
     });
     document.getElementById('ai-video-auth-btn')?.addEventListener('click', () => {
       this.handleAIStudioAuth();
@@ -979,6 +989,10 @@ class FuseConnectPopup {
       if (response?.success) {
         this.showToast('Signed out. Re-authenticate to choose another account.');
         this.state.aiVideo.account = 'None';
+        this.state.aiVideo.youtubeChannels = [];
+        this.state.aiVideo.selectedYouTubeChannelId = '';
+        this.state.aiVideo.requiresYouTubeChannelSelection = false;
+        this.updateAIVideoChannelSelector();
         this.refreshServiceStatus();
       } else {
         this.showToast(response?.error || 'Sign out failed');
@@ -1155,6 +1169,9 @@ class FuseConnectPopup {
           resolve();
           return;
         }
+
+        this.applyAIVideoChannelBundle(response);
+
         const playlists =
           response?.success && Array.isArray(response.playlists) ? response.playlists : [];
         const currentValue = selectEl.value;
@@ -1196,6 +1213,112 @@ class FuseConnectPopup {
         resolve();
       });
     });
+  }
+
+  applyAIVideoChannelBundle(response = {}) {
+    const channelsRaw = Array.isArray(response?.channels) ? response.channels : [];
+    const channels = channelsRaw
+      .map((channel) => {
+        const id = String(channel?.id || '').trim();
+        if (!id) return null;
+        const title = String(channel?.title || channel?.name || id).trim();
+        return {
+          id,
+          title,
+          name: String(channel?.name || title).trim(),
+          description: String(channel?.description || '').trim(),
+          thumbnail: String(channel?.thumbnail || '').trim(),
+        };
+      })
+      .filter(Boolean);
+
+    this.state.aiVideo.youtubeChannels = channels;
+
+    const selectedFromResponse = String(response?.selectedChannelId || '').trim();
+    const selectedExists = channels.some((channel) => channel.id === selectedFromResponse);
+    if (selectedFromResponse && selectedExists) {
+      this.state.aiVideo.selectedYouTubeChannelId = selectedFromResponse;
+    } else if (!selectedFromResponse) {
+      this.state.aiVideo.selectedYouTubeChannelId = '';
+    } else {
+      this.state.aiVideo.selectedYouTubeChannelId = '';
+    }
+
+    this.state.aiVideo.requiresYouTubeChannelSelection =
+      !!response?.requiresChannelSelection &&
+      channels.length > 1 &&
+      !this.state.aiVideo.selectedYouTubeChannelId;
+
+    this.updateAIVideoChannelSelector();
+  }
+
+  updateAIVideoChannelSelector() {
+    const selectEl = document.getElementById('ai-video-channel-select');
+    const hintEl = document.getElementById('ai-video-channel-hint');
+    if (!selectEl) return;
+
+    const channels = Array.isArray(this.state.aiVideo.youtubeChannels)
+      ? this.state.aiVideo.youtubeChannels
+      : [];
+    const selectedChannelId = String(this.state.aiVideo.selectedYouTubeChannelId || '').trim();
+
+    selectEl.innerHTML = '<option value="">Current authorized channel</option>';
+    channels.forEach((channel) => {
+      const option = document.createElement('option');
+      option.value = channel.id;
+      option.textContent = channel.title;
+      selectEl.appendChild(option);
+    });
+
+    if (selectedChannelId && channels.some((channel) => channel.id === selectedChannelId)) {
+      selectEl.value = selectedChannelId;
+    } else {
+      selectEl.value = '';
+    }
+
+    if (!hintEl) return;
+    if (channels.length === 0) {
+      hintEl.textContent = 'No channels returned yet. Authenticate, then refresh.';
+      return;
+    }
+    if (this.state.aiVideo.requiresYouTubeChannelSelection) {
+      hintEl.textContent = 'Select the YouTube brand channel whose playlists you want to load.';
+      return;
+    }
+    if (channels.length === 1 && !selectEl.value) {
+      hintEl.textContent =
+        'Only one YouTube channel is currently authorized. Use Sign Out + Auth to choose a different brand.';
+      return;
+    }
+    if (selectEl.value) {
+      const selected = channels.find((channel) => channel.id === selectEl.value);
+      hintEl.textContent = `Using channel: ${selected?.title || selectEl.value}`;
+      return;
+    }
+    hintEl.textContent = 'Using currently authorized YouTube channel context.';
+  }
+
+  async setAIVideoSourceChannel(channelId = '') {
+    const nextChannelId = String(channelId || '').trim();
+    const selectEl = document.getElementById('ai-video-channel-select');
+    if (selectEl) selectEl.disabled = true;
+
+    chrome.runtime.sendMessage(
+      { type: 'AI_STUDIO_SET_CHANNEL', channelId: nextChannelId },
+      async (response) => {
+        if (selectEl) selectEl.disabled = false;
+
+        if (!response?.success) {
+          this.showToast(response?.error || 'Failed to switch YouTube channel');
+          this.updateAIVideoChannelSelector();
+          return;
+        }
+
+        this.applyAIVideoChannelBundle(response);
+        await this.refreshAIVideoPlaylists();
+        this.showToast(nextChannelId ? 'YouTube channel updated' : 'Using default channel context');
+      }
+    );
   }
 
   async loadSelectedPlaylistIntoQueue() {
@@ -1740,6 +1863,7 @@ class FuseConnectPopup {
       const account = String(this.state.aiVideo.account || 'None').trim();
       authState.textContent = account !== 'None' && account ? account : 'Not authenticated';
     }
+    this.updateAIVideoChannelSelector();
     this.updateAIVideoChannelTarget();
 
     const pState = this.state.aiVideo.processingState || {};

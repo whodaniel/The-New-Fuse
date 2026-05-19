@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-19T05:25:12.463331Z",
+  "generatedAt": "2026-05-19T06:13:08.364902Z",
   "seedSource": "ai5-and-new-may-2026-intake",
   "queue": [
     {
@@ -500,6 +500,13 @@
       "priority": "medium"
     },
     {
+      "source_id": "yt-ai5-kXBXIipl1lQ",
+      "source_type": "video",
+      "discovery_layer": "personal_sensor",
+      "authority_scout_query": "Design Google Docs in a System Design Interview",
+      "priority": "medium"
+    },
+    {
       "source_id": "yt-ai5-lAAcjj5fISE",
       "source_type": "video",
       "discovery_layer": "personal_sensor",
@@ -574,6 +581,13 @@
       "source_type": "video",
       "discovery_layer": "personal_sensor",
       "authority_scout_query": "Make your own event-sourced agent harness using stream processors — Jonas Templestein, Iterate",
+      "priority": "medium"
+    },
+    {
+      "source_id": "yt-ai5-ynJyIKwjonM",
+      "source_type": "video",
+      "discovery_layer": "personal_sensor",
+      "authority_scout_query": "Agentic Search for Context Engineering — Leonie Monigatti, Elastic",
       "priority": "medium"
     }
   ]

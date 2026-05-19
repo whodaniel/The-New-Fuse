@@ -1556,6 +1556,7 @@ class BackgroundService {
     return items.map((item: any) => ({
       id: String(item?.id || ''),
       title: String(item?.snippet?.title || 'Untitled Channel'),
+      name: String(item?.snippet?.title || 'Untitled Channel'),
       description: String(item?.snippet?.description || ''),
       thumbnail: String(item?.snippet?.thumbnails?.default?.url || ''),
       uploadsPlaylistId: String(item?.contentDetails?.relatedPlaylists?.uploads || ''),
@@ -1599,18 +1600,79 @@ class BackgroundService {
     return String(stored.ai_studio_channel_id || '').trim();
   }
 
+  private async resolveSelectedYouTubeChannelId(
+    channels: Array<Record<string, unknown>>
+  ): Promise<string> {
+    const knownIds = new Set(
+      channels
+        .map((channel) => String(channel?.id || '').trim())
+        .filter((channelId) => channelId.length > 0)
+    );
+
+    const selectedChannelId = await this.readSelectedYouTubeChannelId();
+    if (selectedChannelId && knownIds.has(selectedChannelId)) {
+      return selectedChannelId;
+    }
+
+    if (selectedChannelId && !knownIds.has(selectedChannelId)) {
+      await chrome.storage.local.remove(['ai_studio_channel_id']);
+    }
+
+    if (channels.length === 1) {
+      const autoSelectedChannelId = String(channels[0]?.id || '').trim();
+      if (autoSelectedChannelId) {
+        await chrome.storage.local.set({ ai_studio_channel_id: autoSelectedChannelId });
+      }
+      return autoSelectedChannelId;
+    }
+
+    return '';
+  }
+
   private async fetchYouTubePlaylistsBundle(): Promise<{
     playlists: Array<Record<string, unknown>>;
     channels: Array<Record<string, unknown>>;
     selectedChannelId: string;
     requiresChannelSelection: boolean;
   }> {
-    const playlists = await this.fetchYouTubePlaylists();
+    const token = await this.getYouTubeAuthToken();
+    if (!token) throw new Error('Not authenticated');
+
+    let channels: Array<Record<string, unknown>> = [];
+    let channelLookupReliable = true;
+    try {
+      channels = await this.fetchYouTubeChannels();
+    } catch (error) {
+      channelLookupReliable = false;
+      console.warn(
+        '[FuseConnect v7] Unable to enumerate YouTube channels. Falling back to mine=true playlists.',
+        error
+      );
+    }
+    const selectedChannelId = channelLookupReliable
+      ? await this.resolveSelectedYouTubeChannelId(channels)
+      : await this.readSelectedYouTubeChannelId();
+
+    let playlists: Array<Record<string, unknown>> = [];
+    if (selectedChannelId) {
+      try {
+        playlists = await this.fetchYouTubePlaylistsForChannel(token, selectedChannelId);
+      } catch (error) {
+        console.warn(
+          '[FuseConnect v7] Failed to fetch playlists for selected channel, using fallback mine=true',
+          error
+        );
+        playlists = await this.fetchYouTubePlaylists();
+      }
+    } else {
+      playlists = await this.fetchYouTubePlaylists();
+    }
+
     return {
       playlists,
-      channels: [],
-      selectedChannelId: '',
-      requiresChannelSelection: false,
+      channels,
+      selectedChannelId,
+      requiresChannelSelection: channels.length > 1 && !selectedChannelId,
     };
   }
 
@@ -2683,20 +2745,39 @@ class BackgroundService {
                   ai_studio_channel_id: '',
                   isAuthenticated: true,
                 },
-                () => {
+                async () => {
                   chrome.storage.local.get(['firstAuthAt'], (existing) => {
                     if (!existing.firstAuthAt) {
                       chrome.storage.local.set({ firstAuthAt: Date.now() });
                     }
                   });
+
+                  let bundle: {
+                    playlists: Array<Record<string, unknown>>;
+                    channels: Array<Record<string, unknown>>;
+                    selectedChannelId: string;
+                    requiresChannelSelection: boolean;
+                  } = {
+                    playlists: [],
+                    channels: [],
+                    selectedChannelId: '',
+                    requiresChannelSelection: false,
+                  };
+                  try {
+                    bundle = await this.fetchYouTubePlaylistsBundle();
+                  } catch (error) {
+                    console.warn(
+                      '[FuseConnect v7] Auth succeeded but initial playlist bundle failed:',
+                      error
+                    );
+                  }
+
                   sendResponse({
                     success: true,
                     token,
                     data: { authenticated: true, primaryProfile },
                     oauth: this.getOAuthDiagnostics(),
-                    channels: [],
-                    selectedChannelId: '',
-                    requiresChannelSelection: false,
+                    ...bundle,
                     accountSwitched,
                   });
                 }
@@ -2737,11 +2818,57 @@ class BackgroundService {
           return true;
 
         case 'AI_STUDIO_GET_CHANNELS':
-          sendResponse({ success: true, channels: [], selectedChannelId: '' });
+          this.fetchYouTubePlaylistsBundle()
+            .then((bundle) => {
+              sendResponse({
+                success: true,
+                channels: bundle.channels,
+                selectedChannelId: bundle.selectedChannelId,
+                requiresChannelSelection: bundle.requiresChannelSelection,
+              });
+            })
+            .catch((error) => {
+              const err = String(error?.message || error || '');
+              const normalized = err.includes('Quota Protection') ? 'Not authenticated' : err;
+              sendResponse({ success: false, error: normalized });
+            });
           return true;
 
         case 'AI_STUDIO_SET_CHANNEL': {
-          sendResponse({ success: true, channelId: '' });
+          const requestedChannelId = String(
+            message.channelId || message.data?.channelId || ''
+          ).trim();
+          this.fetchYouTubePlaylistsBundle()
+            .then(async (bundle) => {
+              const allowedChannelIds = new Set(
+                (bundle.channels || [])
+                  .map((channel) => String(channel?.id || '').trim())
+                  .filter((channelId) => channelId.length > 0)
+              );
+              const nextChannelId =
+                requestedChannelId &&
+                (allowedChannelIds.size === 0 || allowedChannelIds.has(requestedChannelId))
+                  ? requestedChannelId
+                  : '';
+
+              if (nextChannelId) {
+                await chrome.storage.local.set({ ai_studio_channel_id: nextChannelId });
+              } else {
+                await chrome.storage.local.remove(['ai_studio_channel_id']);
+              }
+
+              const refreshedBundle = await this.fetchYouTubePlaylistsBundle();
+              sendResponse({
+                success: true,
+                channelId: nextChannelId,
+                ...refreshedBundle,
+              });
+            })
+            .catch((error) => {
+              const err = String(error?.message || error || '');
+              const normalized = err.includes('Quota Protection') ? 'Not authenticated' : err;
+              sendResponse({ success: false, error: normalized });
+            });
           return true;
         }
 

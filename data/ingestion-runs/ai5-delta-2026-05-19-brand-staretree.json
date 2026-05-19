@@ -1,0 +1,11 @@
+{
+  "asOfUtc": "2026-05-19T06:13:39.862Z",
+  "playlistId": "PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+  "playlistPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ai-5-playlist.json",
+  "manifestPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-manifest.json",
+  "channelContext": "StarTree.TV",
+  "live_count": 37,
+  "ingested_count": 37,
+  "missing_in_manifest": [],
+  "extra_in_manifest": []
+}
