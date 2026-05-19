@@ -1,0 +1,24 @@
+{
+  "rustc": 18176829334762693738,
+  "features": "[\"alloc\", \"clock\", \"default\", \"iana-time-zone\", \"js-sys\", \"now\", \"oldtime\", \"serde\", \"std\", \"wasm-bindgen\", \"wasmbind\", \"winapi\", \"windows-link\"]",
+  "declared_features": "[\"__internal_bench\", \"alloc\", \"arbitrary\", \"clock\", \"core-error\", \"default\", \"defmt\", \"iana-time-zone\", \"js-sys\", \"libc\", \"now\", \"oldtime\", \"pure-rust-locales\", \"rkyv\", \"rkyv-16\", \"rkyv-32\", \"rkyv-64\", \"rkyv-validation\", \"serde\", \"std\", \"unstable-locales\", \"wasm-bindgen\", \"wasmbind\", \"winapi\", \"windows-link\"]",
+  "target": 15315924755136109342,
+  "profile": 2040997289075261528,
+  "path": 14817990264551696498,
+  "deps": [
+    [5157631553186200874, "num_traits", false, 16575371328242756435],
+    [13548984313718623784, "serde", false, 9840399274054796021],
+    [16619627449254928351, "iana_time_zone", false, 12423845211670212662]
+  ],
+  "local": [
+    {
+      "CheckDepInfo": {
+        "dep_info": "release/.fingerprint/chrono-0770f029240874fe/dep-lib-chrono",
+        "checksum": false
+      }
+    }
+  ],
+  "rustflags": [],
+  "config": 2069994364910194474,
+  "compile_kind": 0
+}
