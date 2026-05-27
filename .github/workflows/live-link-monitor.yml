@@ -3,7 +3,7 @@ name: Live Link Monitor
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 * * * *"
+    - cron: "0 7 * * 1"  # Weekly on Monday at 7am UTC (was hourly — burned ~7k min/month)
 
 concurrency:
   group: live-link-monitor
@@ -28,7 +28,7 @@ jobs:
           version: 10
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Install Playwright Chromium
         working-directory: apps/frontend

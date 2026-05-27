@@ -3,7 +3,7 @@ name: Framework Master Graph Monitor
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "0 6 * * 1"  # Weekly on Monday at 6am UTC (was every 15min — burned ~14k min/month)
 
 concurrency:
   group: framework-master-graph-monitor

@@ -3,7 +3,7 @@ name: Keyword Mentions Monitor
 on:
   workflow_dispatch:
   schedule:
-    - cron: "11 * * * *"
+    - cron: "30 6 * * 1"  # Weekly on Monday at 6:30am UTC (was hourly — burned ~2k min/month)
 
 concurrency:
   group: keyword-mentions-monitor
