@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_DB_CONFIG = void 0;
-exports.DEFAULT_DB_CONFIG = {
+export const DEFAULT_DB_CONFIG = {
     host: 'localhost',
     port: 5432,
     database: 'fuse',

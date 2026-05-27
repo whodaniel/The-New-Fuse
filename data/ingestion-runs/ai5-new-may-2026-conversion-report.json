@@ -1,139 +1,43 @@
 {
-  "generatedAt": "2026-05-19T07:49:17.739271Z",
-  "queueKey": "tnf:master:tasks:pending",
-  "redisUrl": "(default redis-cli)",
+  "generatedAt": "2026-05-19T20:19:15.830833Z",
+  "queueKey": "tnf:master:tasks:realtime",
+  "redisUrl": "redis://127.0.0.1:6379",
   "dispatch": {
-    "attempted": 0,
-    "succeeded": 0,
-    "alreadyDispatched": 0,
-    "records": []
+    "attempted": 1,
+    "succeeded": 1,
+    "alreadyDispatched": 600,
+    "records": [
+      {
+        "dispatchId": "ai5-dispatch-1779221955-001",
+        "intelligenceTaskId": "act-a2883e00e38e895b",
+        "title": "[AI5] Run Codebase Static Security Analysis",
+        "priority": "critical",
+        "confidence": {
+          "score": 0.8,
+          "label": "high"
+        },
+        "queueKey": "tnf:master:tasks:realtime",
+        "dispatchedAt": "2026-05-19T20:19:15.245095Z",
+        "dryRun": false
+      }
+    ]
   },
   "queueMetrics": {
-    "totalTasks": 64,
-    "executionCandidates": 0,
+    "totalTasks": 689,
+    "executionCandidates": 601,
     "statusCounts": {
-      "pending": 64
+      "queued": 51,
+      "pending": 638
     },
     "minConfidence": "medium",
-    "redisDepthBefore": 23,
-    "redisDepthAfter": 1
+    "redisDepthBefore": 0,
+    "redisDepthAfter": 0
   },
   "reconciliation": {
     "enabled": true,
     "source": "ai5-intelligence-activation",
-    "removed": 22,
-    "kept": 1,
-    "removedRecords": [
-      {
-        "id": "ai5-dispatch-1779176650-022",
-        "intelligenceTaskId": "act-dcff803eda46b206",
-        "title": "[AI5] teams build faster and work smarter."
-      },
-      {
-        "id": "ai5-dispatch-1779176650-021",
-        "intelligenceTaskId": "act-ba06d0c9f3110cb6",
-        "title": "[AI5] source tools that improve how we build,"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-020",
-        "intelligenceTaskId": "act-3bfeb2138e9e4cf4",
-        "title": "[AI5] run his personal and business life."
-      },
-      {
-        "id": "ai5-dispatch-1779176650-019",
-        "intelligenceTaskId": "act-469de2a6463a6bbd",
-        "title": "[AI5] integrations, it can build its own"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-018",
-        "intelligenceTaskId": "act-c89046059d769648",
-        "title": "[AI5] has finally launched Grok Build."
-      },
-      {
-        "id": "ai5-dispatch-1779176650-017",
-        "intelligenceTaskId": "act-7b8743b660e55be7",
-        "title": "[AI5] build me horse tinder, but I also don't"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-016",
-        "intelligenceTaskId": "act-540d7a718dea3b19",
-        "title": "[AI5] between I want to build this and it's"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-015",
-        "intelligenceTaskId": "act-1360ea3a58f35966",
-        "title": "[AI5] because this is a build challenge, I'm"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-014",
-        "intelligenceTaskId": "act-73ec74f154b491c6",
-        "title": "[AI5] about mostly is how to test AI systems,"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-013",
-        "intelligenceTaskId": "act-f409a6de1e449bc0",
-        "title": "[AI5] There's a way to create beautiful"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-012",
-        "intelligenceTaskId": "act-3d2b3744a5efb929",
-        "title": "[AI5] And not to build another"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-011",
-        "intelligenceTaskId": "act-1aedf298b3865bf9",
-        "title": "[AI5] (Transcript unavailable in this run.)"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-010",
-        "intelligenceTaskId": "act-b9b3dadd629d0f89",
-        "title": "[AI5] (Transcript unavailable in this run.)"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-009",
-        "intelligenceTaskId": "act-33a9a2add5d842e3",
-        "title": "[AI5] (Transcript unavailable in this run.)"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-008",
-        "intelligenceTaskId": "act-8494f57293339493",
-        "title": "[AI5] (Transcript unavailable in this run.)"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-007",
-        "intelligenceTaskId": "act-9929b24ce13c25eb",
-        "title": "[AI5] ship them, there's a 90% chance that you"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-006",
-        "intelligenceTaskId": "act-140a8c0b105da077",
-        "title": "[AI5] helpful and easy to implement and not be"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-005",
-        "intelligenceTaskId": "act-5c9fb4b939dfb491",
-        "title": "[AI5] Now, imagine you deploy two"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-004",
-        "intelligenceTaskId": "act-c4c7fa1df1d8e685",
-        "title": "[AI5] (Transcript unavailable in this run.)"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-003",
-        "intelligenceTaskId": "act-4d3eaf92065df278",
-        "title": "[AI5] (Transcript unavailable in this run.)"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-002",
-        "intelligenceTaskId": "act-35da943718279fd9",
-        "title": "[AI5] (Transcript unavailable in this run.)"
-      },
-      {
-        "id": "ai5-dispatch-1779176650-001",
-        "intelligenceTaskId": "act-a5418ef815a23a4a",
-        "title": "[AI5] (Transcript unavailable in this run.)"
-      }
-    ]
+    "removed": 0,
+    "kept": 0,
+    "removedRecords": []
   }
 }

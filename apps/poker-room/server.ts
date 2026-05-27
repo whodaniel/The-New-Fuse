@@ -22,6 +22,21 @@ const io = new Server(server, {
   cors: { origin: '*' },
 });
 
+
+
+io.use(async (socket: any, next) => {
+  const token = socket.handshake.auth.token || socket.handshake.headers['authorization']?.split(' ')[1];
+  if (token) {
+    socket.data.identity = `user-${token.slice(0, 8)}`;
+    next();
+  } else {
+    socket.data.identity = `guest-${socket.id.slice(0, 8)}`;
+    next();
+  }
+});
+
+
+
 const PORT = 3000;
 app.use(express.json());
 
@@ -808,58 +823,69 @@ io.use(async (socket, next) => {
 io.on('connection', (socket) => {
   // Spectators can only watch, not join or act
   socket.on('join', (data) => {
+  socket.on('join', (data) => {
     if (!pokerEngine || !holdemEngine) return;
     if (socket.data.spectator) {
       socket.emit('error', { message: 'Membership required to play' });
       return;
     }
-    // S1 fix: Check if this identity already has an active seat (from a previous
-    // disconnected session). Without this check, opening a new browser tab while
-    // the old socket is still in the grace period creates a second seat for the
-    // same identity, violating the one-seat-per-player rule (NF1 in holdem-engine
-    // also prevents duplicate playerIds, but here the playerId includes socket.id
-    // so it's different each time — we must check by identity instead).
-    const identity = socket.data.identity;
+
+    const identity = socket.data.identity; // from auth middleware
+    let playerId: string;
+    let name: string;
+    let emptySeat: number = -1;
+
+    // Attempt to reclaim a disconnected seat if the identity matches
+    let seatReclaimed = false;
     if (identity) {
       for (const [existingSocketId, info] of socketToPlayer.entries()) {
         if (info.identity === identity) {
-          // This identity already has a seat. Reclaim it instead of creating a new one.
           const oldTimer = disconnectTimers.get(info.playerId);
-          if (oldTimer) {
-            clearTimeout(oldTimer);
-            disconnectTimers.delete(info.playerId);
-          }
+          if (oldTimer) { clearTimeout(oldTimer); disconnectTimers.delete(info.playerId); }
+          
+          // Update mappings to the new socket
           socketToPlayer.delete(existingSocketId);
-          socketToPlayer.set(socket.id, {
-            playerId: info.playerId,
-            seat: info.seat,
-            identity: identity || '',
-          });
+          socketToPlayer.set(socket.id, { playerId: info.playerId, seat: info.seat, identity: identity || '' });
           playerToSocket.set(info.playerId, socket.id);
+
           const displayName = socketDisplayNames.get(existingSocketId) || info.playerId;
           socketDisplayNames.set(socket.id, displayName);
           socketDisplayNames.delete(existingSocketId);
-          try {
-            holdemEngine.setConnection(pokerEngine, { playerId: info.playerId, connected: true });
-          } catch {}
+
+          // Update engine connection state
+          try { holdemEngine.setConnection(pokerEngine, { playerId: info.playerId, connected: true }); } catch { /* ignore */ }
+          
+          // Clear action timeout if this player was the current actor
           if (actionTimeoutTimer && pokerEngine.hand?.actingSeat === info.seat) {
-            clearTimeout(actionTimeoutTimer);
-            actionTimeoutTimer = null;
+            clearTimeout(actionTimeoutTimer); actionTimeoutTimer = null;
           }
           addLog(`${displayName} reclaimed seat ${info.seat}`);
           broadcastState();
-          return;
+          seatReclaimed = true;
+          break; // Reclaimed successfully, exit loop
         }
       }
     }
-    const name = String(data.name || `Player_${randomInt(100, 999)}`).trim();
-    const emptySeat = pokerEngine.seats.findIndex((s: any) => s === null);
+
+    if (seatReclaimed) {
+      return; // If a seat was reclaimed, we're done
+    }
+
+    // If no seat was reclaimed, assign new playerId/name and find an empty seat
+    playerId = identity || `player-${socket.id}`;
+    name = identity || `Player ${randomInt(100, 999)}`;
+    for (let i = 0; i < pokerEngine.maxSeats; i++) {
+      if (!pokerEngine.seats[i]) {
+        emptySeat = i;
+        break;
+      }
+    }
+
     if (emptySeat === -1) {
       socket.emit('error', { message: 'Table is full' });
       return;
     }
 
-    const playerId = `player-${socket.id}`;
     try {
       holdemEngine.seatPlayer(pokerEngine, {
         playerId,
@@ -882,6 +908,18 @@ io.on('connection', (socket) => {
     } catch (err: any) {
       socket.emit('error', { message: err.message });
     }
+  });
+        socketDisplayNames.set(socket.id, name);
+
+        addLog(`${name} joined seat ${emptySeat}`);
+        broadcastState();
+
+        if (!pokerEngine.hand || pokerEngine.hand.settled) {
+          setTimeout(() => tryStartHand(), 1000);
+        }
+      } catch (err: any) {
+        socket.emit('error', { message: err.message });
+      }
   });
 
   socket.on('action', (data) => {

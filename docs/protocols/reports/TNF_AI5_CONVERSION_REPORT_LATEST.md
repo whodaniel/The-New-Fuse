@@ -1,19 +1,19 @@
 # TNF AI5 Conversion Report
 
-- Generated: `2026-05-19T07:49:17.739271Z`
-- Queue Key: `tnf:master:tasks:pending`
-- Redis URL: `(default redis-cli)`
-- Dispatch Attempted: `0`
-- Dispatch Succeeded: `0`
-- Already Dispatched: `0`
-- Action Queue Total: `64`
-- Execution Candidates: `0`
-- Status Counts: `{"pending": 64}`
-- Redis Depth Before: `23`
-- Redis Depth After: `1`
+- Generated: `2026-05-19T20:19:15.830833Z`
+- Queue Key: `tnf:master:tasks:realtime`
+- Redis URL: `redis://127.0.0.1:6379`
+- Dispatch Attempted: `1`
+- Dispatch Succeeded: `1`
+- Already Dispatched: `600`
+- Action Queue Total: `689`
+- Execution Candidates: `601`
+- Status Counts: `{"queued": 51, "pending": 638}`
+- Redis Depth Before: `0`
+- Redis Depth After: `0`
 - Reconcile Enabled: `True`
-- Reconcile Removed: `22`
+- Reconcile Removed: `0`
 
 ## Recently Dispatched
 
-- None
+- `2026-05-19T20:19:15.245095Z` `ai5-dispatch-1779221955-001` `critical` [AI5] Run Codebase Static Security Analysis

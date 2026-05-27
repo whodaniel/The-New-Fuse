@@ -764,6 +764,9 @@ export function startHand(engine, { handId, idempotencyKey }) {
  // meet the straddle's raise threshold.
  hand.minRaise = Math.max(hand.minRaise, hand.currentBet);
  straddleSeat.straddleRequested = 0;
+  for (const p of seated) { // NEW-G fix: Clear straddleRequested for all players
+    p.straddleRequested = 0;
+  }
  actingFrom = straddleSeatNo;
   }
 
@@ -1263,23 +1266,16 @@ export function restoreFromRecovery(snapshot) {
   engine.riskCapsBySeat = cloneJson(snapshot.riskCapsBySeat || {});
   engine.hand = snapshot.hand ? cloneJson(snapshot.hand) : null;
   engine.pendingSeatMoves = cloneJson(snapshot.pendingSeatMoves || []);
-  // NEW-C fix: restore idempotency caches. If not restored, any in-flight action
-  // with an idempotency key could be replayed after crash recovery.
-  if (snapshot.idempotency) {
-    engine.idempotency.actions = new Map(snapshot.idempotency.actions || []);
-    engine.idempotency.settlements = new Map(snapshot.idempotency.settlements || []);
-    engine.idempotency.handStarts = new Map(snapshot.idempotency.handStarts || []);
-  }
-  engine.audit = cloneJson(snapshot.audit || { lastEventHash: 'genesis' });
-  engine.seq = Number(snapshot.seq || 0);
-  engine.events = cloneJson(snapshot.events || []);
-  
-  // Restore idempotency caches (NEW-C fix)
-  if (snapshot.idempotency) {
-    engine.idempotency.actions = new Map(snapshot.idempotency.actions || []);
-    engine.idempotency.settlements = new Map(snapshot.idempotency.settlements || []);
-    engine.idempotency.handStarts = new Map(snapshot.idempotency.handStarts || []);
-  }
+  1269|  // NEW-C fix: restore idempotency caches. If not restored, any in-flight action
+  1270|  // with an idempotency key could be replayed after crash recovery.
+  1271|  if (snapshot.idempotency) {
+  1272|    engine.idempotency.actions = new Map(snapshot.idempotency.actions || []);
+  1273|    engine.idempotency.settlements = new Map(snapshot.idempotency.settlements || []);
+  1274|    engine.idempotency.handStarts = new Map(snapshot.idempotency.handStarts || []);
+  1275|  }
+  1276|  engine.audit = cloneJson(snapshot.audit || { lastEventHash: 'genesis' });
+  1277|  engine.seq = Number(snapshot.seq || 0);
+  1278|  engine.events = cloneJson(snapshot.events || []);
   
   return engine;
 }

@@ -515,6 +515,50 @@ def activate_from_manifest(
     }
 
 
+def compute_relevance_score(text: str, source_title: str) -> Dict[str, Any]:
+    score = 0
+    text_lower = text.lower()
+    title_lower = source_title.lower()
+    
+    # 1. Codebase Surface Match (High Signal)
+    if re.search(r"\b(apps/|packages/|scripts/|docs/|infra/)\b", text_lower):
+        score += 40
+    
+    # 2. Specific TNF Component Match
+    tnf_components = [
+        "relay", "adk", "protocol", "contract", "forge", "llvm", "tsgo", 
+        "supabase", "redis", "worker", "d1", "r2", "mcp", "orchestrat",
+        "envelope", "handoff", "identity", "governance", "sgp", "twip"
+    ]
+    for comp in tnf_components:
+        if comp in text_lower:
+            score += 10
+            
+    # 3. Product Lane Match
+    for pattern, lane, _ in LANE_RULES:
+        if pattern.search(text_lower):
+            score += 15
+            break
+            
+    # 4. Action Specificity
+    if DISPATCH_SPECIFICITY_HINTS.search(text_lower):
+        score += 15
+        
+    # 5. TNF Context from Source Title
+    if "tnf" in title_lower or "the new fuse" in title_lower:
+        score += 10
+        
+    score = min(100, score)
+    
+    label = "low"
+    if score >= 70:
+        label = "high"
+    elif score >= 40:
+        label = "medium"
+        
+    return {"score": score, "label": label}
+
+
 def make_task_v2(
     *,
     source_id: str,
@@ -540,14 +584,18 @@ def make_task_v2(
         transcript_status=transcript_status,
         source_type=source_type,
     )
+    
+    relevance = compute_relevance_score(action_text, source_title)
 
     if "dispatch_eligible_override" in overrides:
-        dispatch_eligible = bool(overrides.get("dispatch_eligible_override"))
+        # Combine override with relevance gate
+        dispatch_eligible = bool(overrides.get("dispatch_eligible_override")) and relevance["label"] in {"medium", "high"}
     else:
         dispatch_eligible = (
             plane == "procedural"
             and is_transcript_available(transcript_status)
             and confidence["label"] in {"medium", "high"}
+            and relevance["label"] in {"medium", "high"}
             and is_dispatch_ready_action(action_text)
         )
 
@@ -566,6 +614,7 @@ def make_task_v2(
         "description": action_text,
         "acceptance": f"Execution evidence captured for: {short}",
         "confidence": confidence,
+        "relevance": relevance,
         "dispatchEligible": dispatch_eligible,
         "implementationTarget": target,
         "createdAt": now_iso(),

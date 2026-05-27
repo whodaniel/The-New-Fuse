@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_LOG_CONFIG = void 0;
-exports.DEFAULT_LOG_CONFIG = {
+export const DEFAULT_LOG_CONFIG = {
     level: 'info',
     workspaceDir: process.cwd(),
     logFileName: 'tnf.log',

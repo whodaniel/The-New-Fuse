@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RedisConfig = void 0;
-const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 let RedisConfig = class RedisConfig {
     constructor(configService) {
         this.configService = configService;
@@ -38,15 +35,17 @@ let RedisConfig = class RedisConfig {
             }
             try {
                 const url = new URL(redisUrl);
+                const isSsl = url.protocol === 'rediss:';
                 // Parse database index safely
                 const dbFromPath = url.pathname && url.pathname.length > 1 ? parseInt(url.pathname.slice(1), 10) : 0;
                 const db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
-                console.log(`[RedisConfig] Using REDIS_URL: ${url.hostname}:${url.port || 6379} (db: ${db})`);
+                console.log(`[RedisConfig] Using REDIS_URL: ${url.hostname}:${url.port || 6379} (db: ${db}, ssl: ${isSsl})`);
                 return {
                     host: url.hostname,
                     port: parseInt(url.port || '6379', 10),
                     password: url.password || undefined,
                     db,
+                    tls: isSsl ? {} : undefined,
                 };
             }
             catch (error) {
@@ -58,15 +57,17 @@ let RedisConfig = class RedisConfig {
             port: this.configService.get('REDIS_PORT', 6379),
             password: this.configService.get('REDIS_PASSWORD'),
             db: this.configService.get('REDIS_DB', 0),
+            tls: undefined,
         };
     }
     getConfiguration() {
-        const { host, port, password, db } = this.parseRedisConfig();
+        const { host, port, password, db, tls } = this.parseRedisConfig();
         return {
             host,
             port,
             password,
             db,
+            tls,
             upstash: {
                 restUrl: this.configService.get('UPSTASH_REDIS_REST_URL'),
                 restToken: this.configService.get('UPSTASH_REDIS_REST_TOKEN'),
@@ -113,6 +114,7 @@ let RedisConfig = class RedisConfig {
             family: 4,
             keepAlive: 30000,
             keyPrefix: this.configService.get('REDIS_KEY_PREFIX', ''),
+            tls: config.tls,
         };
     }
     isClusterMode() {
@@ -123,9 +125,9 @@ let RedisConfig = class RedisConfig {
         return nodesStr ? nodesStr.split(',').map((node) => node.trim()) : [];
     }
 };
-exports.RedisConfig = RedisConfig;
-exports.RedisConfig = RedisConfig = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [config_1.ConfigService])
+RedisConfig = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [ConfigService])
 ], RedisConfig);
+export { RedisConfig };
 //# sourceMappingURL=RedisConfig.js.map

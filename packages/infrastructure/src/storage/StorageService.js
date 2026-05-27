@@ -1,7 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StorageService = void 0;
-class StorageService {
+export class StorageService {
 }
-exports.StorageService = StorageService;
 //# sourceMappingURL=StorageService.js.map

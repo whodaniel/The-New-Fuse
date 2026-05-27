@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6,51 +5,49 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RedisModule_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RedisModule = void 0;
-const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
-const RedisConfig_js_1 = require("./RedisConfig.js");
-const UnifiedRedisService_js_1 = require("./UnifiedRedisService.js");
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { RedisConfig } from './RedisConfig.js';
+import { UnifiedRedisService } from './UnifiedRedisService.js';
 let RedisModule = RedisModule_1 = class RedisModule {
     static forRoot(options = {}) {
         return {
             module: RedisModule_1,
             global: options.isGlobal ?? true,
-            imports: [config_1.ConfigModule],
+            imports: [ConfigModule],
             providers: [
                 {
                     provide: 'REDIS_CONFIG_OPTIONS',
                     useValue: options.config ?? {},
                 },
-                RedisConfig_js_1.RedisConfig,
-                UnifiedRedisService_js_1.UnifiedRedisService,
+                RedisConfig,
+                UnifiedRedisService,
             ],
-            exports: [UnifiedRedisService_js_1.UnifiedRedisService, RedisConfig_js_1.RedisConfig],
+            exports: [UnifiedRedisService, RedisConfig],
         };
     }
     static forRootAsync(options) {
         return {
             module: RedisModule_1,
             global: options.isGlobal ?? true,
-            imports: [config_1.ConfigModule],
+            imports: [ConfigModule],
             providers: [
                 {
                     provide: 'REDIS_CONFIG_OPTIONS',
                     useFactory: options.useFactory || (() => ({})),
                     inject: options.inject || [],
                 },
-                RedisConfig_js_1.RedisConfig,
-                UnifiedRedisService_js_1.UnifiedRedisService,
+                RedisConfig,
+                UnifiedRedisService,
             ],
-            exports: [UnifiedRedisService_js_1.UnifiedRedisService, RedisConfig_js_1.RedisConfig],
+            exports: [UnifiedRedisService, RedisConfig],
         };
     }
 };
-exports.RedisModule = RedisModule;
-exports.RedisModule = RedisModule = RedisModule_1 = __decorate([
-    (0, common_1.Module)({
-        imports: [config_1.ConfigModule],
+RedisModule = RedisModule_1 = __decorate([
+    Module({
+        imports: [ConfigModule],
     })
 ], RedisModule);
+export { RedisModule };
 //# sourceMappingURL=RedisModule.js.map

@@ -1,4 +1,6 @@
 ./codebase_tracker.json
+./tools/config-files/mcp_config.json
+./tools/config-files/enhanced_mcp_config.json
 ./stripe.json
 ./archive/voice-history/voice-checkpoints/20260327-012506/app/index.ts
 ./archive/drafts/tmp-poker-room-old/cloudflare-community-api/.wrangler/cache/wrangler-account.json
@@ -96,5 +98,3 @@
 ./node_modules/jest-runtime/node_modules/@types/node/timers/promises.d.ts
 ./node_modules/jest-runtime/node_modules/@types/node/console.d.ts
 ./node_modules/jest-runtime/node_modules/@types/node/async_hooks.d.ts
-./node_modules/jest-runtime/node_modules/@types/node/path/win32.d.ts
-./node_modules/jest-runtime/node_modules/@types/node/path/posix.d.ts

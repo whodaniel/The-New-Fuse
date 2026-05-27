@@ -169,21 +169,24 @@ async function pollTerminalWindows(contentTailChars) {
 
   const script = `
     const Terminal = Application('Terminal');
-    const windows = [];
+    const results = [];
     Terminal.windows().forEach((window) => {
       try {
-        const tab = window.selectedTab();
-        const contents = String(tab.contents() || '');
-        windows.push({
-          windowId: Number(window.id()),
-          tty: String(tab.tty() || '') || null,
-          busy: Boolean(tab.busy()),
-          customTitle: String(tab.customTitle() || '') || null,
-          contentsTail: contents.length > ${contentTailChars} ? contents.slice(-${contentTailChars}) : contents
+        window.tabs().forEach((tab) => {
+          try {
+            const contents = String(tab.contents() || '');
+            results.push({
+              windowId: Number(window.id()),
+              tty: String(tab.tty() || '') || null,
+              busy: Boolean(tab.busy()),
+              customTitle: String(tab.customTitle() || '') || null,
+              contentsTail: contents.length > ${contentTailChars} ? contents.slice(-${contentTailChars}) : contents
+            });
+          } catch (tabError) {}
         });
-      } catch (_error) {}
+      } catch (winError) {}
     });
-    JSON.stringify(windows);
+    JSON.stringify(results);
   `;
 
   try {

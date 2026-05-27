@@ -3547,6 +3547,30 @@ program
   );
 
 program
+  .command('tui')
+  .description('Launch the TNF TUI agent — always-on interactive LLM session')
+  .action(async () => {
+    try {
+      await startTuiAgent();
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('gateway')
+  .description('Start the TNF gateway service — persistent LLM-powered relay')
+  .action(async () => {
+    try {
+      await startGatewayService();
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
   .command('register')
   .description('Register and listen as an agent')
   .argument('[name]', 'Agent name', process.env.AGENT_NAME || 'unnamed-agent')
@@ -7832,15 +7856,100 @@ agents
   });
 
 agents
-  .command('convo')
-  .description('Alias for `tnf convo`')
-  .argument('<action>', 'Action (start|join)')
-  .argument('[param]', 'Topic for start or ID for join')
-  .action(async (action: string, param?: string) => {
-    const args = ['convo', action];
-    if (param) args.push(param);
-    await runSelfCliWithExit(args);
-  });
+ .command('convo')
+ .description('Alias for `tnf convo`')
+ .argument('<action>', 'Action (start|join)')
+ .argument('[param]', 'Topic for start or ID for join')
+ .action(async (action: string, param?: string) => {
+ const args = ['convo', action];
+ if (param) args.push(param);
+ await runSelfCliWithExit(args);
+ });
+
+// ---------------------------------------------------------------------------
+// Persistent Agent Daemon — the live heart of TNF
+// ---------------------------------------------------------------------------
+const agentsLive = agents
+ .command('live')
+ .description('Start persistent agent daemon (LLM + Redis bus + heartbeat + autonomous thinking)');
+
+agentsLive
+ .command('start')
+ .description('Start the persistent agent daemon in live mode')
+ .option('--model <model>', 'Override LLM model')
+ .option('--interval <seconds>', 'Autonomous think interval in seconds', '120')
+ .option('--agent-id <id>', 'Override agent ID')
+ .option('--agent-name <name>', 'Override agent display name')
+ .action(
+ async (options: { model?: string; interval?: string; agentId?: string; agentName?: string }) => {
+ try {
+ const pythonBin =
+ process.env.TNF_PYTHON ||
+ path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+ const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+ const args = [script, 'live'];
+ if (options.model) args.push('--model', options.model);
+ if (options.interval) args.push('--interval', options.interval);
+ if (options.agentId) args.push('--agent-id', options.agentId);
+ if (options.agentName) args.push('--agent-name', options.agentName);
+ await runCommand(pythonBin, args);
+ } catch (err: any) {
+ console.error(chalk.red(`Error: ${err.message}`));
+ process.exit(1);
+ }
+ },
+ );
+
+agentsLive
+ .command('watch')
+ .description('Start bus-listener-only daemon (no LLM, Redis pub/sub + heartbeat)')
+ .option('--agent-id <id>', 'Override agent ID')
+ .action(async (options: { agentId?: string }) => {
+ try {
+ const pythonBin =
+ process.env.TNF_PYTHON ||
+ path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+ const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+ const args = [script, 'watch'];
+ if (options.agentId) args.push('--agent-id', options.agentId);
+ await runCommand(pythonBin, args);
+ } catch (err: any) {
+ console.error(chalk.red(`Error: ${err.message}`));
+ process.exit(1);
+ }
+ });
+
+agentsLive
+ .command('once')
+ .description('Single heartbeat + registration check then exit')
+ .action(async () => {
+ try {
+ const pythonBin =
+ process.env.TNF_PYTHON ||
+ path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+ const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+ await runCommand(pythonBin, [script, 'once']);
+ } catch (err: any) {
+ console.error(chalk.red(`Error: ${err.message}`));
+ process.exit(1);
+ }
+ });
+
+agentsLive
+ .command('status')
+ .description('Show daemon process and bus health')
+ .action(async () => {
+ try {
+ const pythonBin =
+ process.env.TNF_PYTHON ||
+ path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+ const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+ await runCommand(pythonBin, [script, 'status']);
+ } catch (err: any) {
+ console.error(chalk.red(`Error: ${err.message}`));
+ process.exit(1);
+ }
+ });
 
 const agentsBank = agents
   .command('bank')
@@ -10853,14 +10962,134 @@ notesCommand
     }
   );
 
+async function loadTnfSystemPrompt(): Promise<string> {
+  const promptPath = path.join(repoRoot, '.agent/SYSTEM_PROMPT.md');
+  try {
+    if (fs.existsSync(promptPath)) {
+      return fs.readFileSync(promptPath, 'utf8');
+    }
+  } catch {}
+  return 'You are the TNF Orchestrator — the central agent at the heart of The New Fuse network. You coordinate sub-agents, maintain system health, and drive the network forward.';
+}
+
+async function startInteractiveAgent(): Promise<void> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const systemPrompt = await loadTnfSystemPrompt();
+
+  const { LLMClient } = await import('./utils/llm-client.js');
+  const client = new LLMClient('orchestrator');
+
+  const messages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
+    { role: 'system', content: systemPrompt },
+  ];
+
+  console.log('');
+  console.log(chalk.cyan('╔══════════════════════════════════════════════╗'));
+  console.log(chalk.cyan('║') + chalk.bold('  TNF Agent — Interactive Session        ') + chalk.cyan(' ║'));
+  console.log(chalk.cyan('║') + chalk.dim('  Provider: ') + chalk.white(client.baseUrl) + chalk.cyan('  ║'));
+  console.log(chalk.cyan('║') + chalk.dim('  Model:    ') + chalk.white(client.model) + chalk.cyan('     ║'));
+  console.log(chalk.cyan('╚══════════════════════════════════════════════╝'));
+  console.log(chalk.dim('  Type .exit to quit, .clear to clear history, .help for commands\n'));
+
+  const ask = (prompt: string): Promise<string> =>
+    new Promise((resolve, reject) => {
+      if (rl.closed) reject(new Error('stdin closed'));
+      else rl.question(prompt, resolve);
+    });
+
+  while (true) {
+    let input: string;
+    try {
+      input = await ask(chalk.green('\n❯ '));
+    } catch {
+      break;
+    }
+    const trimmed = input.trim();
+
+    if (trimmed === '.exit' || trimmed === '.quit') break;
+    if (trimmed === '.clear') {
+      messages.length = 1;
+      console.log(chalk.dim('  History cleared'));
+      continue;
+    }
+    if (trimmed === '.help') {
+      console.log(chalk.dim('  .exit/.quit  — End session'));
+      console.log(chalk.dim('  .clear       — Clear message history'));
+      console.log(chalk.dim('  .help        — Show this help'));
+      continue;
+    }
+    if (!trimmed) continue;
+
+    messages.push({ role: 'user', content: trimmed });
+
+    try {
+      const response = await client.chatComplete(messages, { temperature: 0.7 });
+      console.log(chalk.cyan('\n  ' + response.replace(/\n/g, '\n  ')));
+      messages.push({ role: 'assistant', content: response });
+    } catch (err: any) {
+      console.error(chalk.red('\n  Error: ' + err.message));
+    }
+  }
+
+  rl.close();
+  console.log(chalk.cyan('\n  TNF Agent session ended.\n'));
+}
+
+async function startTuiAgent(): Promise<void> {
+  console.clear();
+  await renderSplash({ compact: true, animate: false });
+  console.log('');
+  console.log(chalk.bold.cyan('  ⚡ TNF TUI Agent — Always-on LLM session'));
+  console.log(chalk.dim('  ─────────────────────────────────────────────'));
+  await startInteractiveAgent();
+}
+
+async function startGatewayService(): Promise<void> {
+  console.log(chalk.bold.cyan('\n  🔷 Starting TNF Gateway Service\n'));
+
+  const { LLMClient } = await import('./utils/llm-client.js');
+  const client = new LLMClient('orchestrator');
+
+  console.log(chalk.dim(`  Provider: ${client.baseUrl}`));
+  console.log(chalk.dim(`  Model:    ${client.model}`));
+
+  const relayDir = path.join(repoRoot, 'packages/relay-core');
+  const relayEntry = path.join(relayDir, 'dist', 'standalone-relay.js');
+
+  if (fs.existsSync(relayEntry)) {
+    console.log(chalk.dim('  Starting relay gateway on ws://localhost:3000/ws\n'));
+    await runCommand('node', [relayEntry], { cwd: relayDir });
+  } else {
+    const runRelayScript = path.join(relayDir, 'scripts', 'run-relay.cjs');
+    if (fs.existsSync(runRelayScript)) {
+      await runCommand('node', [runRelayScript], { cwd: relayDir });
+    } else {
+      console.log(chalk.yellow('  Relay not built. Running factory boot instead.\n'));
+      const gatewayScript = path.join(repoRoot, 'scripts/orchestrator/factory-boot.sh');
+      if (fs.existsSync(gatewayScript)) {
+        await runCommand('bash', [gatewayScript], {
+          env: { FACTORY_BOOT_REDIS_FAIL_OPEN: 'true' },
+        });
+      }
+      console.log(chalk.green('\n  ✅ Gateway services started. Waiting...\n'));
+      await new Promise<void>((resolve) => {
+        const shutdown = () => { console.log(chalk.cyan('\n  Gateway shutting down...\n')); resolve(); };
+        process.on('SIGINT', shutdown);
+        process.on('SIGTERM', shutdown);
+      });
+    }
+  }
+
+  console.log(chalk.cyan('\n  Gateway service stopped.\n'));
+}
+
 async function main(): Promise<void> {
   if (process.argv.length <= 2) {
-    await renderSplash({
-      compact: false,
-      animate: process.stdout.isTTY,
-    });
-    console.log('');
-    program.outputHelp();
+    await startInteractiveAgent();
     return;
   }
   if (isOpenClawPassthroughArgv(process.argv)) {

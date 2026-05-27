@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6,30 +5,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var StorageModule_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StorageModule = void 0;
-const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
-const GcsStorageService_js_1 = require("./GcsStorageService.js");
-const StorageService_js_1 = require("./StorageService.js");
+import { Global, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { GcsStorageService } from './GcsStorageService.js';
+import { StorageService } from './StorageService.js';
 let StorageModule = StorageModule_1 = class StorageModule {
     static forRoot() {
         return {
             module: StorageModule_1,
-            imports: [config_1.ConfigModule],
+            imports: [ConfigModule],
             providers: [
                 {
-                    provide: StorageService_js_1.StorageService,
-                    useClass: GcsStorageService_js_1.GcsStorageService, // Default to GCS for now as per user request
+                    provide: StorageService,
+                    useClass: GcsStorageService, // Default to GCS for now as per user request
                 },
             ],
-            exports: [StorageService_js_1.StorageService],
+            exports: [StorageService],
         };
     }
 };
-exports.StorageModule = StorageModule;
-exports.StorageModule = StorageModule = StorageModule_1 = __decorate([
-    (0, common_1.Global)(),
-    (0, common_1.Module)({})
+StorageModule = StorageModule_1 = __decorate([
+    Global(),
+    Module({})
 ], StorageModule);
+export { StorageModule };
 //# sourceMappingURL=StorageModule.js.map

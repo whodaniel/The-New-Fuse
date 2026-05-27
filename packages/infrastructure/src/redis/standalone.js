@@ -1,14 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.loadStandaloneRedisConfig = loadStandaloneRedisConfig;
-exports.createStandaloneRedisClient = createStandaloneRedisClient;
-exports.createUpstashRestClient = createUpstashRestClient;
-const redis_1 = require("@upstash/redis");
-const ioredis_1 = require("ioredis");
+import { Redis as UpstashRedis } from '@upstash/redis';
+import { Cluster, Redis } from 'ioredis';
 /**
  * Load Redis configuration from environment variables without NestJS dependencies
  */
-function loadStandaloneRedisConfig() {
+export function loadStandaloneRedisConfig() {
     let redisUrl = process.env.REDIS_URL || '';
     let host = process.env.REDIS_HOST || 'localhost';
     let port = parseInt(process.env.REDIS_PORT || '6379', 10);
@@ -57,7 +52,7 @@ function loadStandaloneRedisConfig() {
 /**
  * Create an ioredis client using standalone configuration
  */
-function createStandaloneRedisClient(config) {
+export function createStandaloneRedisClient(config) {
     const fullConfig = { ...loadStandaloneRedisConfig(), ...config };
     const redisOptions = {
         host: fullConfig.host,
@@ -71,21 +66,21 @@ function createStandaloneRedisClient(config) {
         retryStrategy: (times) => Math.min(times * 50, fullConfig.retryDelay),
     };
     if (fullConfig.clusterMode && fullConfig.clusterNodes.length > 0) {
-        return new ioredis_1.Cluster(fullConfig.clusterNodes, {
+        return new Cluster(fullConfig.clusterNodes, {
             redisOptions,
         });
     }
-    return new ioredis_1.Redis(redisOptions);
+    return new Redis(redisOptions);
 }
 /**
  * Create an Upstash REST client using standalone configuration
  */
-function createUpstashRestClient(config) {
+export function createUpstashRestClient(config) {
     const standaloneConfig = loadStandaloneRedisConfig();
     const restUrl = config?.restUrl || standaloneConfig.upstash?.restUrl;
     const restToken = config?.restToken || standaloneConfig.upstash?.restToken;
     if (restUrl && restToken) {
-        return new redis_1.Redis({
+        return new UpstashRedis({
             url: restUrl,
             token: restToken,
         });

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,18 +8,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var GcsStorageService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GcsStorageService = void 0;
-const common_1 = require("@nestjs/common");
-// @ts-ignore
-const storage_1 = require("@google-cloud/storage");
-const config_1 = require("@nestjs/config");
-const StorageService_js_1 = require("./StorageService.js");
-let GcsStorageService = GcsStorageService_1 = class GcsStorageService extends StorageService_js_1.StorageService {
+import { Injectable, Logger } from '@nestjs/common';
+import { Storage } from '@google-cloud/storage';
+import { ConfigService } from '@nestjs/config';
+import { StorageService } from './StorageService.js';
+let GcsStorageService = GcsStorageService_1 = class GcsStorageService extends StorageService {
     constructor(configService) {
         super();
         this.configService = configService;
-        this.logger = new common_1.Logger(GcsStorageService_1.name);
+        this.logger = new Logger(GcsStorageService_1.name);
         const projectId = this.configService.get('GCP_PROJECT_ID');
         const keyFilename = this.configService.get('GCP_KEY_FILE');
         this.defaultBucket = this.configService.get('GCS_BUCKET', 'tnf-storage');
@@ -29,7 +25,7 @@ let GcsStorageService = GcsStorageService_1 = class GcsStorageService extends St
             options.projectId = projectId;
         if (keyFilename)
             options.keyFilename = keyFilename;
-        this.storage = new storage_1.Storage(options);
+        this.storage = new Storage(options);
     }
     async upload(key, data, options) {
         const bucketName = options?.bucket || this.defaultBucket;
@@ -94,9 +90,9 @@ let GcsStorageService = GcsStorageService_1 = class GcsStorageService extends St
         return files.map((f) => f.name);
     }
 };
-exports.GcsStorageService = GcsStorageService;
-exports.GcsStorageService = GcsStorageService = GcsStorageService_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [config_1.ConfigService])
+GcsStorageService = GcsStorageService_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [ConfigService])
 ], GcsStorageService);
+export { GcsStorageService };
 //# sourceMappingURL=GcsStorageService.js.map

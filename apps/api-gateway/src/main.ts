@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 /**
  * Unified API Gateway for The New Fuse Platform
  * Consolidates multiple API services into a single entry point
@@ -7,6 +9,8 @@
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as express from 'express';
+import { json, urlencoded } from 'express';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
@@ -18,9 +22,10 @@ async function bootstrap() {
   });
 
   // Disable Express "X-Powered-By" header (information leakage)
-  const adapter = app.getHttpAdapter();
-  if (typeof (adapter as any).set === 'function') {
-    (adapter as any).set('x-powered-by', false);
+  // Disable Express "X-Powered-By" header (information leakage)
+  const expressApp = app.getHttpAdapter().getInstance();
+  if (expressApp && typeof expressApp.set === 'function') {
+    expressApp.set('x-powered-by', false);
   }
   // Alternative: app.disable('x-powered-by') — but getHttpAdapter is safer in NestJS
 
@@ -103,20 +108,7 @@ async function bootstrap() {
     next();
   });
 
-  // Back-compat: clients call /api/{resource}/* without the v1 version prefix.
-  // The gateway uses URI versioning (default v1), so routes are at /api/v1/{resource}/*.
-  // This middleware rewrites /api/{resource}/* → /api/v1/{resource}/* so those calls succeed.
-  // It handles ALL unversioned /api/ paths (auth, agents, chat, workflows, webhooks, mcp, sgp, etc.)
-  // and skips paths that already have a version prefix (e.g. /api/v1/*, /api/v2/*).
-  app.use((req, _res, next) => {
-    // Match /api/{segment}/* but NOT /api/v{N}/* (already versioned) and NOT /api/health
-    const unversionedApiPath = /^\/api\/(?!v\d+|health|docs)([^/?#]+)([/?#].*)?$/;
-    const match = req.url.match(unversionedApiPath);
-    if (match) {
-      req.url = `/api/v1/${match[1]}${match[2] || ''}`;
-    }
-    next();
-  });
+
 
   // Global validation pipe
   app.useGlobalPipes(

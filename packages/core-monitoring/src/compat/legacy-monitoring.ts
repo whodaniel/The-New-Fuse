@@ -15,7 +15,7 @@ export interface LegacyMonitoringDependencies {
   securityLogsProvider?: SecurityLogsProvider;
 }
 
-async function resolveProviderValue<T>(provider?: () => Promise<T> | T, fallback: T): Promise<T> {
+async function resolveProviderValue<T>(provider: (() => Promise<T> | T) | undefined = undefined, fallback: T): Promise<T> {
   if (!provider) {
     return fallback;
   }

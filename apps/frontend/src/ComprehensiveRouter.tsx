@@ -12,6 +12,12 @@ const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 // Core components (keep loaded)
 import LoginPage from './pages/auth/Login';
 import RegisterPage from './pages/auth/Register';
+import TestPage from './pages/Test';
+
+// Lazy load pages for code splitting
+const DocsPage = lazy(() => import('./pages/Docs'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Features = lazy(() => import('./pages/Features'));
 
 import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
@@ -95,21 +101,10 @@ import AllPages from './pages/AllPages';
 import BuildInfoPage from './pages/BuildInfo';
 import DebugPageComponent from './pages/Debug';
 import DebugRoutingComponent from './pages/DebugRouting';
-import TestPage from './pages/Test';
+
 
 // Suggestions components
 const SuggestionsPage = lazy(() => import('./pages/Suggestions'));
-const NewSuggestionPage = lazy(() => import('./pages/Suggestions/New'));
-const SuggestionDetailPage = lazy(() => import('./pages/Suggestions/Detail'));
-const GoalsPage = lazy(() => import('./pages/Goals'));
-const GoalDetailPage = lazy(() => import('./pages/Goals/Detail'));
-const PlansPage = lazy(() => import('./pages/Plans'));
-const PlanDetailPage = ({ id }: { id?: string }) => (
-  <LazyPage name="Plan Detail" path={`/plans/${id}`} />
-);
-const TimelinePage = lazy(() => import('./pages/Timeline'));
-const MacroTimelinePage = lazy(() => import('./pages/Timeline/MacroTimelinePage'));
-const TimelineModulePage = lazy(() => import('./pages/Timeline/TimelineModulePage'));
 
 // Additional Admin components
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
@@ -142,7 +137,7 @@ const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
 const SupportPage = lazy(() => import('./pages/Support'));
 const BrandIdentityPage = lazy(() => import('./pages/BrandIdentity'));
-const DocsPage = lazy(() => import('./pages/Docs'));
+
 const BlogPage = lazy(() => import('./pages/Blog').then((module) => ({ default: module.Blog })));
 const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
 const MembershipPage = lazy(() => import('./pages/Membership'));
@@ -405,8 +400,8 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
       '/landing',
       '/home',
       '/pricing',
-      '/community',
-      '/support',
+      '/features',
+      '/docs',
       '/contact',
       '/brand',
       '/blog',
@@ -480,7 +475,9 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 />
               ))}
 
-              {/* Protected Core Routes */}
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/features" element={<Features />} />
+              <Route path="/docs" element={<DocsPage />} />
               <Route
                 path="/dashboard"
                 element={
@@ -1491,21 +1488,8 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={<Navigate to="/admin/feature-flags" replace />}
               />
               <Route path="/admin/onboarding" element={<Navigate to="/onboarding" replace />} />
-              <Route path="/features" element={<RedirectToStatic to="/#features" />} />
-              <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
-              <Route path="/community" element={<CommunityHubPage />} />
-              <Route path="/membership" element={<MembershipPage />} />
-              <Route
-                path="/billing"
-                element={
-                  <RequireAuth>
-                    <MembershipPage />
-                  </RequireAuth>
-                }
-              />
-              <Route path="/support" element={<SupportPage />} />
-              <Route path="/contact" element={<SupportPage />} />
-              <Route path="/onboarding" element={<Navigate to="/onboarding" replace />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/features" element={<Features />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/*" element={<DocsPage />} />
               <Route

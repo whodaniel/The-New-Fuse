@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,14 +8,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var RedisMigrationUtils_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RedisMigrationUtils = void 0;
-const common_1 = require("@nestjs/common");
-const UnifiedRedisService_js_1 = require("./UnifiedRedisService.js");
+import { Injectable, Logger } from '@nestjs/common';
+import { UnifiedRedisService } from './UnifiedRedisService.js';
 let RedisMigrationUtils = RedisMigrationUtils_1 = class RedisMigrationUtils {
     constructor(unifiedRedisService) {
         this.unifiedRedisService = unifiedRedisService;
-        this.logger = new common_1.Logger(RedisMigrationUtils_1.name);
+        this.logger = new Logger(RedisMigrationUtils_1.name);
     }
     /**
      * Create a legacy-compatible wrapper for existing code
@@ -138,9 +135,9 @@ let RedisMigrationUtils = RedisMigrationUtils_1 = class RedisMigrationUtils {
         return [];
     }
 };
-exports.RedisMigrationUtils = RedisMigrationUtils;
-exports.RedisMigrationUtils = RedisMigrationUtils = RedisMigrationUtils_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [UnifiedRedisService_js_1.UnifiedRedisService])
+RedisMigrationUtils = RedisMigrationUtils_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [UnifiedRedisService])
 ], RedisMigrationUtils);
+export { RedisMigrationUtils };
 //# sourceMappingURL=MigrationUtils.js.map

@@ -21,7 +21,9 @@ DEFAULT_ACTION_QUEUE = ROOT / "data" / "ingestion-runs" / "ai5-new-may-2026-acti
 DEFAULT_DISPATCH_LOG = ROOT / "data" / "ingestion-runs" / "ai5-new-may-2026-dispatch-log.json"
 DEFAULT_REPORT_JSON = ROOT / "data" / "ingestion-runs" / "ai5-new-may-2026-conversion-report.json"
 DEFAULT_REPORT_MD = ROOT / "docs" / "protocols" / "reports" / "TNF_AI5_CONVERSION_REPORT_LATEST.md"
-DEFAULT_QUEUE_KEY = "tnf:master:tasks:pending"
+# Broker agent consumes realtime queue by default; keep dispatch aligned so
+# activation tasks do not stall in legacy compat queues.
+DEFAULT_QUEUE_KEY = "tnf:master:tasks:realtime"
 
 
 def now_iso() -> str:
@@ -134,6 +136,7 @@ def main(argv: Sequence[str]) -> int:
         help="Minimum confidence required for dispatch",
     )
     parser.add_argument("--max-dispatch", type=int, default=25)
+    parser.add_argument("--max-per-source", type=int, default=5, help="Maximum tasks to dispatch from a single source")
     parser.add_argument("--redis-url", default=os.environ.get("REDIS_URL", ""))
     parser.add_argument(
         "--reconcile-queue",
@@ -179,13 +182,29 @@ def main(argv: Sequence[str]) -> int:
             dispatch_log = {"generatedAt": now_iso(), "records": []}
 
     already_dispatched_ids = {str(r.get("intelligenceTaskId", "")) for r in dispatch_log["records"]}
+    
+    # Priority sorting and quotas
+    max_dispatch = max(0, int(args.max_dispatch))
+    max_per_source = max(1, int(args.max_per_source))
+    source_counts: Dict[str, int] = {}
+    
+    priority_rank = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+    candidates.sort(key=lambda t: (priority_rank.get(str(t.get("priority", "medium")).lower(), 9), t.get("id")))
+
     planned = []
-    for task in candidates:
-        task_id = str(task.get("id", ""))
-        if task_id and task_id not in already_dispatched_ids:
-            planned.append(task)
-        if len(planned) >= max(0, int(args.max_dispatch)):
-            break
+    if max_dispatch > 0:
+        for task in candidates:
+            if len(planned) >= max_dispatch:
+                break
+            
+            task_id = str(task.get("id", ""))
+            source_id = str(task.get("source", {}).get("source_id", "unknown"))
+            
+            if task_id and task_id not in already_dispatched_ids:
+                count = source_counts.get(source_id, 0)
+                if count < max_per_source:
+                    planned.append(task)
+                    source_counts[source_id] = count + 1
 
     dispatch_records: List[Dict[str, Any]] = []
     dispatch_succeeded = 0

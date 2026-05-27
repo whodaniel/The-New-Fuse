@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,12 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var UnifiedRedisService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UnifiedRedisService = void 0;
-const common_1 = require("@nestjs/common");
-const redis_1 = require("@upstash/redis");
-const ioredis_1 = require("ioredis");
-const RedisConfig_js_1 = require("./RedisConfig.js");
+import { Injectable, Logger } from '@nestjs/common';
+import { Redis as UpstashRedis } from '@upstash/redis';
+import { Cluster, Redis } from 'ioredis';
+import { RedisConfig } from './RedisConfig.js';
 let UnifiedRedisService = UnifiedRedisService_1 = class UnifiedRedisService {
     /**
      * Check if Redis is connected and available
@@ -24,7 +21,7 @@ let UnifiedRedisService = UnifiedRedisService_1 = class UnifiedRedisService {
     }
     constructor(redisConfig) {
         this.redisConfig = redisConfig;
-        this.logger = new common_1.Logger(UnifiedRedisService_1.name);
+        this.logger = new Logger(UnifiedRedisService_1.name);
         this.subscribers = new Map();
         this.patternSubscribers = new Map();
         this.metrics = {
@@ -79,7 +76,7 @@ let UnifiedRedisService = UnifiedRedisService_1 = class UnifiedRedisService {
         // Setup Upstash REST client if available
         if (upstashConfig) {
             try {
-                this.upstashClient = new redis_1.Redis({
+                this.upstashClient = new UpstashRedis({
                     url: upstashConfig.url,
                     token: upstashConfig.token,
                 });
@@ -98,18 +95,18 @@ let UnifiedRedisService = UnifiedRedisService_1 = class UnifiedRedisService {
         try {
             if (this.redisConfig.isClusterMode()) {
                 const nodes = this.redisConfig.getClusterNodes();
-                this.mainClient = new ioredis_1.Cluster(nodes, {
+                this.mainClient = new Cluster(nodes, {
                     redisOptions: config,
                     ...this.redisConfig.getConfiguration().cluster,
                 });
-                this.pubSubClient = new ioredis_1.Cluster(nodes, {
+                this.pubSubClient = new Cluster(nodes, {
                     redisOptions: config,
                     ...this.redisConfig.getConfiguration().cluster,
                 });
             }
             else {
-                this.mainClient = new ioredis_1.Redis(config);
-                this.pubSubClient = new ioredis_1.Redis(config);
+                this.mainClient = new Redis(config);
+                this.pubSubClient = new Redis(config);
             }
             this.setupEventHandlers();
             await this.mainClient.ping();
@@ -136,7 +133,7 @@ let UnifiedRedisService = UnifiedRedisService_1 = class UnifiedRedisService {
      * Create a dummy Redis client that fails gracefully for when Redis is unavailable
      */
     createDummyClient() {
-        const client = new ioredis_1.Redis({
+        const client = new Redis({
             lazyConnect: true,
             maxRetriesPerRequest: 1,
             retryStrategy: () => null, // Never retry
@@ -520,11 +517,11 @@ let UnifiedRedisService = UnifiedRedisService_1 = class UnifiedRedisService {
                 this.logger.warn('Redis is disabled - cannot subscribe to channel');
                 return;
             }
-            const subscriber = this.pubSubClient instanceof ioredis_1.Cluster
-                ? new ioredis_1.Cluster(this.redisConfig.getClusterNodes(), {
+            const subscriber = this.pubSubClient instanceof Cluster
+                ? new Cluster(this.redisConfig.getClusterNodes(), {
                     redisOptions: config,
                 })
-                : new ioredis_1.Redis(config);
+                : new Redis(config);
             await subscriber.subscribe(channel);
             subscriber.on('message', (ch, message) => {
                 if (ch === channel) {
@@ -550,11 +547,11 @@ let UnifiedRedisService = UnifiedRedisService_1 = class UnifiedRedisService {
                 this.logger.warn('Redis is disabled - cannot psubscribe to pattern');
                 return;
             }
-            const subscriber = this.pubSubClient instanceof ioredis_1.Cluster
-                ? new ioredis_1.Cluster(this.redisConfig.getClusterNodes(), {
+            const subscriber = this.pubSubClient instanceof Cluster
+                ? new Cluster(this.redisConfig.getClusterNodes(), {
                     redisOptions: config,
                 })
-                : new ioredis_1.Redis(config);
+                : new Redis(config);
             await subscriber.psubscribe(pattern);
             subscriber.on('pmessage', (p, ch, message) => {
                 if (p === pattern) {
@@ -834,9 +831,9 @@ let UnifiedRedisService = UnifiedRedisService_1 = class UnifiedRedisService {
         }
     }
 };
-exports.UnifiedRedisService = UnifiedRedisService;
-exports.UnifiedRedisService = UnifiedRedisService = UnifiedRedisService_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [RedisConfig_js_1.RedisConfig])
+UnifiedRedisService = UnifiedRedisService_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [RedisConfig])
 ], UnifiedRedisService);
+export { UnifiedRedisService };
 //# sourceMappingURL=UnifiedRedisService.js.map

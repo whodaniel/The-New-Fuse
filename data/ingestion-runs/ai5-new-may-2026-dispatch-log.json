@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-19T07:44:10.713106Z",
+  "generatedAt": "2026-05-19T20:19:15.245132Z",
   "records": [
     {
       "dispatchId": "ai5-dispatch-1779176650-001",
@@ -285,6 +285,669 @@
       },
       "queueKey": "tnf:master:tasks:pending",
       "dispatchedAt": "2026-05-19T07:44:10.713086Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221771-001",
+      "intelligenceTaskId": "act-33b9b216e568f9b2",
+      "title": "[AI5] Analyze Raw Trace Data for Evaluation Planning",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:11.866746Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221771-002",
+      "intelligenceTaskId": "act-4b5efdd5c35be194",
+      "title": "[AI5] Apply Security Fixes using Open Spec",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:11.904328Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221771-003",
+      "intelligenceTaskId": "act-1f6f4dafbd19a29a",
+      "title": "[AI5] Automate P0 Security Incident Resolution",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:11.945015Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221771-004",
+      "intelligenceTaskId": "act-120ad155d18fe804",
+      "title": "[AI5] Configure API Gateway for WebSocket Handling",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:11.985675Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221771-005",
+      "intelligenceTaskId": "act-50220fe6debf8354",
+      "title": "[AI5] Configure Developer Agent for PII-Stripped Local Reproduction",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.029139Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-006",
+      "intelligenceTaskId": "act-efd4b85dfa102f56",
+      "title": "[AI5] Configure LLM-as-a-Judge for Semantic Evaluation",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.069866Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-007",
+      "intelligenceTaskId": "act-4a2f74cbc4aba385",
+      "title": "[AI5] Configure Production Agent for PII Gatekeeping",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.113758Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-008",
+      "intelligenceTaskId": "act-83ca400d33b8bc9b",
+      "title": "[AI5] Deploy and Manage Audio Collections with Avnac",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.154260Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-009",
+      "intelligenceTaskId": "act-b330c8c8eccc8520",
+      "title": "[AI5] Deploy and Utilize Hermes Desktop for AI Agent Workflows",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.193322Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-010",
+      "intelligenceTaskId": "act-cecccebef8e310bd",
+      "title": "[AI5] Develop Core Fleet Agent Management in HyperAgent",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.238171Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-011",
+      "intelligenceTaskId": "act-089d2594328d3e43",
+      "title": "[AI5] Ensure PII Redaction for Production Agent Output",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.289117Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-012",
+      "intelligenceTaskId": "act-833c6e4d6d2fcb4c",
+      "title": "[AI5] Ensure Remote Browser Operator Session Isolation",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.335641Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-013",
+      "intelligenceTaskId": "act-f127aac131e1edab",
+      "title": "[AI5] Extract AI Agent Opportunity Signals from Lab Publications",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.376729Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-014",
+      "intelligenceTaskId": "act-666cffc95c24651e",
+      "title": "[AI5] Fix 'Generate Shopping List' button crash",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.418162Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-015",
+      "intelligenceTaskId": "act-fed230b98722c270",
+      "title": "[AI5] Generate API Key for Spaces Platform",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.461422Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-016",
+      "intelligenceTaskId": "act-4d487de0179ab334",
+      "title": "[AI5] Generate Deep Sec Security Report",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.563869Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-017",
+      "intelligenceTaskId": "act-4de062b0d54758f8",
+      "title": "[AI5] Generate and Refine AI-Powered Video Content",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.604812Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-018",
+      "intelligenceTaskId": "act-6d446e933d199c04",
+      "title": "[AI5] Implement API Rate Limiting",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.650112Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-019",
+      "intelligenceTaskId": "act-e6433f9e0354d7ed",
+      "title": "[AI5] Implement Comprehensive Audit Trail Logging",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.698337Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-020",
+      "intelligenceTaskId": "act-baec55b12aaf9eb9",
+      "title": "[AI5] Implement Document Service for Persistence and Validation",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.767473Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-021",
+      "intelligenceTaskId": "act-23fad0c4275fc8ba",
+      "title": "[AI5] Implement ESQL Search Tool with Robust Error Handling",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.823706Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-022",
+      "intelligenceTaskId": "act-7609cc2c050fe062",
+      "title": "[AI5] Implement Peer-to-Peer Data Request with PII Redaction",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.871354Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-023",
+      "intelligenceTaskId": "act-fb16fdb556269590",
+      "title": "[AI5] Implement Production Safety Parameters and Logging",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.913336Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-024",
+      "intelligenceTaskId": "act-674e12abb8ad6644",
+      "title": "[AI5] Implement Staged Rollout for Victor's Proactive Features",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.951788Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-025",
+      "intelligenceTaskId": "act-6b93e4961aefd9bf",
+      "title": "[AI5] Implement Two-Action Rule for Context Preservation and Error Logging",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:12.993511Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221772-026",
+      "intelligenceTaskId": "act-4d4b3572580983e4",
+      "title": "[AI5] Initialize Grok Build in a Project Folder",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.043980Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-027",
+      "intelligenceTaskId": "act-4a216de71c3461c4",
+      "title": "[AI5] Initiate Video Generation via Runway Agent",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.089686Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-028",
+      "intelligenceTaskId": "act-c986b240a1097b6e",
+      "title": "[AI5] Input Telegram Credentials and Start Bot Service",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.136808Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-029",
+      "intelligenceTaskId": "act-9ab9c8b23bfb8605",
+      "title": "[AI5] Install and Launch UITARS Desktop Application",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.184548Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-030",
+      "intelligenceTaskId": "act-afa701ff3071252b",
+      "title": "[AI5] Integrate Agent Loop and Language Model",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.224987Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-031",
+      "intelligenceTaskId": "act-07e35b7ed5edcfe2",
+      "title": "[AI5] Integrate Core Toolkit from production.py into Project",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.267759Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-032",
+      "intelligenceTaskId": "act-f8e0537dc402cd7d",
+      "title": "[AI5] Integrate Versa Labs for AI Security Testing",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.318584Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-033",
+      "intelligenceTaskId": "act-e38dcec9328aed0c",
+      "title": "[AI5] Invest in Iron-Related Stocks",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.377006Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-034",
+      "intelligenceTaskId": "act-68de7ce5fa383798",
+      "title": "[AI5] Invoke a user-defined skill via Grok TUI command",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.418021Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-035",
+      "intelligenceTaskId": "act-f29cbdce48f91fb7",
+      "title": "[AI5] Launch Agent TARS CLI",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.460783Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-036",
+      "intelligenceTaskId": "act-5662ce1711582870",
+      "title": "[AI5] Launch Agentars Web-Based Interface",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.630400Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-037",
+      "intelligenceTaskId": "act-162efe8af5d21b6e",
+      "title": "[AI5] Launch Grok Build with Always Approve Mode via CLI",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.679377Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-038",
+      "intelligenceTaskId": "act-b9e8a4a78ad40e76",
+      "title": "[AI5] Launch Grok with always-approve mode via CLI",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.721117Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-039",
+      "intelligenceTaskId": "act-464e77a311bc7235",
+      "title": "[AI5] Maintain Existing Stream Audio Flow",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.814846Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-040",
+      "intelligenceTaskId": "act-41ab5229049d3ab0",
+      "title": "[AI5] Open Grok TUI extensions model to MCPs tab",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.884643Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-041",
+      "intelligenceTaskId": "act-b11aeea288e9f80d",
+      "title": "[AI5] Open Grok TUI extensions model to plugins/hooks/skills tab",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.936459Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-042",
+      "intelligenceTaskId": "act-43037b02807f02b0",
+      "title": "[AI5] Optimize Agent Prompt Token Efficiency",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:13.975870Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221773-043",
+      "intelligenceTaskId": "act-36bf56b423c939b2",
+      "title": "[AI5] Prevent Mobile App Secret Exposure",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:14.017254Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221774-044",
+      "intelligenceTaskId": "act-9cf8240c03efb633",
+      "title": "[AI5] Process Deep Sec Scan Findings with Language Model",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:14.060351Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221774-045",
+      "intelligenceTaskId": "act-7f9ace9fd963ee2b",
+      "title": "[AI5] Provision Two-Agent Peer-to-Peer Environment",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:14.104945Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221774-046",
+      "intelligenceTaskId": "act-b5952e65d0a6815b",
+      "title": "[AI5] Refactor production.py into Smaller, Manageable Modules",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:14.146884Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221774-047",
+      "intelligenceTaskId": "act-3de6d167ba9b7346",
+      "title": "[AI5] Register New Telegram Bot with BotFather",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:14.187095Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221774-048",
+      "intelligenceTaskId": "act-339970ebeea88353",
+      "title": "[AI5] Restrict Personal Account Integrations from Team-Wide Access and Enhance Access Control",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:14.231554Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221774-049",
+      "intelligenceTaskId": "act-cf014776b4e63f0b",
+      "title": "[AI5] Revalidate Security Fixes with Deep Sec",
+      "priority": "critical",
+      "confidence": {
+        "score": 1.0,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:14.284056Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221774-050",
+      "intelligenceTaskId": "act-54269a311f3bc853",
+      "title": "[AI5] Review Archon Workflow Plan Summary",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:pending",
+      "dispatchedAt": "2026-05-19T20:16:14.336487Z",
+      "dryRun": false
+    },
+    {
+      "dispatchId": "ai5-dispatch-1779221955-001",
+      "intelligenceTaskId": "act-a2883e00e38e895b",
+      "title": "[AI5] Run Codebase Static Security Analysis",
+      "priority": "critical",
+      "confidence": {
+        "score": 0.8,
+        "label": "high"
+      },
+      "queueKey": "tnf:master:tasks:realtime",
+      "dispatchedAt": "2026-05-19T20:19:15.245095Z",
       "dryRun": false
     }
   ]

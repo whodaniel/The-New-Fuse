@@ -424,10 +424,16 @@ export function rebuyPlayer(t, { playerId }) {
   // Standard rule: rebuys only allowed when at or below starting stack
   if (p.chips > t.startStack) throw new Error('Not eligible for rebuy: chip count too high');
 
- p.rebuys += 1;
- p.entries += 1;
- p.chips += t.rebuy.chipsPerRebuy;
- p.status = 'active';
+  p.rebuys += 1;
+  p.entries += 1;
+  p.chips += t.rebuy.chipsPerRebuy;
+  p.status = 'active';
+  // Reset finishPosition — player is back in the tournament.
+  // Leaving the old finishPosition caused computePayouts to pay
+  // a \"ghost\" finish position for an active player.
+  p.finishPosition = null;
+  // Remove from eliminationOrder — player is no longer eliminated.
+  t.eliminationOrder = t.eliminationOrder.filter((e) => e.playerId !== playerId);
  // Reset finishPosition — player is back in the tournament.
  // Leaving the old finishPosition caused computePayouts to pay
  // a "ghost" finish position for an active player.
