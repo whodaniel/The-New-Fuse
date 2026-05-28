@@ -874,6 +874,34 @@ export async function bootstrapPersonalTimeline(): Promise<{
       };
     }
 
+    if (existingEvents.length === 0) {
+      const genesisEvent: TimelineEvent = {
+        id: `evt_local_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
+        eventType: 'historical_event',
+        timestamp: new Date().toISOString(),
+        actor: userId,
+        userId: userId,
+        payload: {
+          title: 'Genesis Block (Local Fallback)',
+          description:
+            'The timeline service is currently unreachable due to degraded backend infrastructure. This is a local placeholder to initialize your timeline offline.',
+          segment: 'Genesis',
+          confidence: 'high',
+          isPrivate: true,
+          source: 'personal-timeline-bootstrap-local-fallback',
+        },
+      };
+      const newSnapshot = { events: [genesisEvent] };
+      writeLocalTimelineSnapshot(newSnapshot);
+
+      return {
+        message: 'Timeline service degraded. Generated local fallback timeline.',
+        createdCount: 1,
+        totalCount: 1,
+        events: [genesisEvent],
+      };
+    }
+
     const existingKeys = new Set(
       existingEvents
         .map((event) => ((event.payload || {}) as Record<string, unknown>).storyKey)
