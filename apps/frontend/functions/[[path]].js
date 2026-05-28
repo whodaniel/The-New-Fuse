@@ -92,20 +92,8 @@ export async function onRequest(context) {
     }
 
     // All non-asset routes on app domains should resolve through the SPA shell.
-    // This avoids brittle allowlists that miss newly added experience routes.
-    // Fetch the app shell. We use the /app path which is the "Clean URL" target for app.html.
-    let appResponse = await context.env.ASSETS.fetch(new Request(new URL('/app', url.origin)));
-
-    // If /app returns 404 (e.g. Clean URLs disabled), try /app.html
-    if (appResponse.status === 404 || appResponse.status === 308) {
-      appResponse = await context.env.ASSETS.fetch(new Request(new URL('/app.html', url.origin)));
-    }
-
-    // If we got a redirect (308/301), follow it once internally.
-    if (appResponse.status === 308 || appResponse.status === 301) {
-      const loc = appResponse.headers.get('location');
-      appResponse = await context.env.ASSETS.fetch(new Request(new URL(loc, url.origin)));
-    }
+    // Always fetch app.html directly to avoid Clean URL 308 redirect loops.
+    let appResponse = await context.env.ASSETS.fetch(new Request(new URL('/app.html', url.origin)));
 
     // Return the app shell content with a 200 status.
     const newHeaders = new Headers(appResponse.headers);
@@ -123,7 +111,7 @@ export async function onRequest(context) {
 
   // If still 404, serve the appropriate SPA root
   if (response.status === 404) {
-    const rootPath = isLandingDomain ? '/' : '/app';
+    const rootPath = isLandingDomain ? '/' : '/app.html';
     return context.env.ASSETS.fetch(new Request(new URL(rootPath, url.origin)));
   }
 
