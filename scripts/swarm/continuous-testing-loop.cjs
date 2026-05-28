@@ -13,6 +13,13 @@
  * The loop runs continuously until the system is production-ready.
  */
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'continuous-testing-loop', staleMs: 10 * 60 * 1000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');

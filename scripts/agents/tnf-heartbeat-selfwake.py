@@ -8,8 +8,7 @@ Checks:
 3. Are heartbeats flowing? (check Redis for recent heartbeat timestamps)
 
 Exit codes:
-  0 — all healthy
-  1 — recovered from stall
+  0 — all healthy or successfully recovered
   2 — unrecoverable error
 """
 
@@ -195,7 +194,7 @@ def main():
     print(f"  Result: {'RECOVERED' if recovered else 'NOMINAL'}")
     print()
 
-    sys.exit(1 if recovered else 0)
+    sys.exit(0)
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const yaml = require('js-yaml');
+const { singleInstanceGuard } = require('./lib/tnf-single-instance-guard.cjs');
 require('dotenv').config();
 
 const ROOT = process.cwd();
@@ -26,6 +27,46 @@ if (!DATABASE_URL) {
   console.error('❌ DATABASE_URL not set in environment.');
   process.exit(1);
 }
+
+function releaseGuardOnExit(guard) {
+  let released = false;
+  const release = () => {
+    if (released || !guard || typeof guard.release !== 'function') return;
+    released = true;
+    guard.release();
+  };
+
+  process.once('exit', release);
+  process.once('SIGINT', () => {
+    release();
+    process.exit(130);
+  });
+  process.once('SIGTERM', () => {
+    release();
+    process.exit(143);
+  });
+}
+
+const seedGuard = singleInstanceGuard({
+  lockName: 'tnf-seed-control-plane',
+  staleMs: 10 * 60 * 1000,
+});
+if (!seedGuard.acquired) {
+  console.log(
+    JSON.stringify(
+      {
+        ok: true,
+        skipped: 'already-running',
+        reason: 'already-running',
+        lock: seedGuard.existingLock,
+      },
+      null,
+      2
+    )
+  );
+  process.exit(0);
+}
+releaseGuardOnExit(seedGuard);
 
 const postgres = require('postgres');
 const sql = postgres(DATABASE_URL, { max: 1 });

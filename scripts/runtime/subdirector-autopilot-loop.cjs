@@ -6,6 +6,14 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'tnf-subdirector-autopilot-loop', staleMs: 300000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
+
 function parsePositiveInt(value, fallback) {
   const parsed = Number.parseInt(String(value || ''), 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;

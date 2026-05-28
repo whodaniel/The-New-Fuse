@@ -78,7 +78,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
-    "build": "pnpm clean && tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
+    "build": "pnpm clean && tsc --skipLibCheck",
     "build:watch": "tsc --watch --skipLibCheck --noEmitOnError false",
     "migrate:deploy": "SERVICE_PATH=api sh ./run-service.sh",
     "dev": "nest start --watch",

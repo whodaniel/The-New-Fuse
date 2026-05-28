@@ -3,6 +3,12 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+# Single-instance guard — prevents duplicate factory-supervisor processes
+source "${ROOT_DIR}/scripts/lib/tnf-single-instance-guard.sh"
+tnf_single_instance_guard factory-supervisor 300
+if [[ $? -ne 0 ]]; then exit 0; fi
+
 LOG_DIR="${ROOT_DIR}/.agent/runtime-logs"
 STATE_DIR="${ROOT_DIR}/.agent/runtime-state/supervisor"
 SUPERVISOR_LOG="${LOG_DIR}/factory-supervisor.log"

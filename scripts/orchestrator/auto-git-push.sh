@@ -4,6 +4,10 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT_DIR}"
 
+# --- Singleton lock: prevent duplicate concurrent runs from multiple agents ---
+source "${ROOT_DIR}/scripts/lib/tnf-lock.sh"
+tnf_acquire_lock "auto-git-push" 600
+
 GIT_LOG="${ROOT_DIR}/.agent/runtime-logs/auto-git-push.log"
 mkdir -p "$(dirname "${GIT_LOG}")"
 

@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execFile } = require('node:child_process');
 const { promisify } = require('node:util');
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
 
 const execFileAsync = promisify(execFile);
 
@@ -88,6 +89,25 @@ function slugify(value) {
     .replace(/[^a-z0-9._-]+/g, '-');
 }
 
+function releaseGuardOnExit(guard) {
+  let released = false;
+  const release = () => {
+    if (released || !guard || typeof guard.release !== 'function') return;
+    released = true;
+    guard.release();
+  };
+
+  process.once('exit', release);
+  process.once('SIGINT', () => {
+    release();
+    process.exit(130);
+  });
+  process.once('SIGTERM', () => {
+    release();
+    process.exit(143);
+  });
+}
+
 function expandArg(repoRoot, arg) {
   if (
     arg.startsWith('scripts/') ||
@@ -122,6 +142,28 @@ function acquireLock(lockPath, staleAfterMs, payload) {
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
+  const processGuard = singleInstanceGuard({
+    lockName: `run-chrono-${slugify(options.processId)}`,
+    staleMs: 30000,
+  });
+  if (!processGuard.acquired) {
+    console.log(
+      JSON.stringify(
+        {
+          ok: true,
+          skipped: 'already-running',
+          reason: 'already-running',
+          processId: options.processId,
+          lock: processGuard.existingLock,
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+  releaseGuardOnExit(processGuard);
+
   const repoRoot = resolveRepoRoot(options.repoRoot);
   const catalogPath = path.join(repoRoot, 'data', 'protocols', 'chronological-process-catalog.json');
   const registryPath = path.join(repoRoot, 'data', 'protocols', 'cron-jobs.registry.json');

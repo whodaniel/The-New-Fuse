@@ -1,0 +1,950 @@
+[
+  {
+    "path": "tnf acp",
+    "description": "Start ACP (Agent Client Protocol) server"
+  },
+  {
+    "path": "tnf agent",
+    "description": "Manage agents"
+  },
+  {
+    "path": "tnf agent create",
+    "description": "Create a new agent"
+  },
+  {
+    "path": "tnf agent list",
+    "description": "List all available agents"
+  },
+  {
+    "path": "tnf agents",
+    "description": "Agent-focused command paths"
+  },
+  {
+    "path": "tnf agents bank",
+    "description": "Agent bank governance and cross-runtime distribution"
+  },
+  {
+    "path": "tnf agents bank reconcile",
+    "description": "Restore/sync agent banks and provision imported Claude agent definitions across runtime homes"
+  },
+  {
+    "path": "tnf agents convo",
+    "description": "Alias for `tnf convo`"
+  },
+  {
+    "path": "tnf agents list",
+    "description": "Alias for `tnf list`"
+  },
+  {
+    "path": "tnf agents live",
+    "description": "Start persistent agent daemon (LLM + Redis bus + heartbeat + autonomous thinking)"
+  },
+  {
+    "path": "tnf agents live once",
+    "description": "Single heartbeat + registration check then exit"
+  },
+  {
+    "path": "tnf agents live start",
+    "description": "Start the persistent agent daemon in live mode"
+  },
+  {
+    "path": "tnf agents live status",
+    "description": "Show daemon process and bus health"
+  },
+  {
+    "path": "tnf agents live watch",
+    "description": "Start bus-listener-only daemon (no LLM, Redis pub/sub + heartbeat)"
+  },
+  {
+    "path": "tnf agents orchestrate",
+    "description": "Alias for `tnf orchestrate`"
+  },
+  {
+    "path": "tnf agents register",
+    "description": "Alias for `tnf register`"
+  },
+  {
+    "path": "tnf agents send",
+    "description": "Alias for `tnf send`"
+  },
+  {
+    "path": "tnf ai",
+    "description": "AI launcher commands"
+  },
+  {
+    "path": "tnf ai chat",
+    "description": "Interactive chat with LLM (Ctrl+C or .exit to quit)"
+  },
+  {
+    "path": "tnf ai models",
+    "description": "List available models for the current provider"
+  },
+  {
+    "path": "tnf ai start",
+    "description": "Start an AI session helper"
+  },
+  {
+    "path": "tnf auth",
+    "description": "Manage credentials"
+  },
+  {
+    "path": "tnf auth list",
+    "description": "List providers"
+  },
+  {
+    "path": "tnf auth login",
+    "description": "Log in to a provider"
+  },
+  {
+    "path": "tnf auth logout",
+    "description": "Log out from a configured provider"
+  },
+  {
+    "path": "tnf boot",
+    "description": "Master entry point to boot the entire TNF stack"
+  },
+  {
+    "path": "tnf chat",
+    "description": "Start an interactive chat session with the TNF Orchestrator (Gemini OAuth)"
+  },
+  {
+    "path": "tnf claw",
+    "description": "Alias for `tnf openclaw`"
+  },
+  {
+    "path": "tnf compat",
+    "description": "Compatibility and migration utilities"
+  },
+  {
+    "path": "tnf compat openclaw",
+    "description": "Show TNF to OpenClaw command-surface compatibility"
+  },
+  {
+    "path": "tnf compat openclaw cleanup",
+    "description": "Clean duplicate and failing TNF-managed OpenClaw cron jobs"
+  },
+  {
+    "path": "tnf compat openclaw config",
+    "description": "Show redacted OpenClaw settings or a subtree"
+  },
+  {
+    "path": "tnf compat openclaw config-set",
+    "description": "Set an OpenClaw config value through TNF"
+  },
+  {
+    "path": "tnf compat openclaw config-unset",
+    "description": "Unset an OpenClaw config path through TNF"
+  },
+  {
+    "path": "tnf compat openclaw cron",
+    "description": "List OpenClaw cron jobs with TNF schedule mapping"
+  },
+  {
+    "path": "tnf compat openclaw cron-disable",
+    "description": "Disable an OpenClaw cron job through TNF"
+  },
+  {
+    "path": "tnf compat openclaw cron-enable",
+    "description": "Enable an OpenClaw cron job through TNF"
+  },
+  {
+    "path": "tnf compat openclaw cron-schedule",
+    "description": "Change an OpenClaw cron job schedule through TNF"
+  },
+  {
+    "path": "tnf compat openclaw instances",
+    "description": "List OpenClaw installations and instances known to TNF"
+  },
+  {
+    "path": "tnf compat openclaw inventory",
+    "description": "Show redacted OpenClaw config and cron inventory"
+  },
+  {
+    "path": "tnf compat openclaw sync",
+    "description": "Sync live OpenClaw runtime state into TNF control-plane records"
+  },
+  {
+    "path": "tnf completion",
+    "description": "Generate shell completion script"
+  },
+  {
+    "path": "tnf config",
+    "description": "Manage TNF configuration (kilo.jsonc parity)"
+  },
+  {
+    "path": "tnf config get",
+    "description": "Get a specific config value (dot notation)"
+  },
+  {
+    "path": "tnf config paths",
+    "description": "Show config file paths (global + project)"
+  },
+  {
+    "path": "tnf config set",
+    "description": "Set a config value in global tnf.jsonc"
+  },
+  {
+    "path": "tnf config show",
+    "description": "Show resolved configuration (global + project merge)"
+  },
+  {
+    "path": "tnf convo",
+    "description": "Manage conversations"
+  },
+  {
+    "path": "tnf db",
+    "description": "Open an interactive sqlite3 shell or run a query"
+  },
+  {
+    "path": "tnf db migrate",
+    "description": "Migrate JSON data to SQLite (merges with existing data)"
+  },
+  {
+    "path": "tnf db path",
+    "description": "Print the database path"
+  },
+  {
+    "path": "tnf debug",
+    "description": "Debugging and troubleshooting tools"
+  },
+  {
+    "path": "tnf debug agent",
+    "description": "Show agent configuration details"
+  },
+  {
+    "path": "tnf debug config",
+    "description": "Show resolved configuration"
+  },
+  {
+    "path": "tnf debug file",
+    "description": "File system debugging utilities"
+  },
+  {
+    "path": "tnf debug lsp",
+    "description": "LSP debugging utilities"
+  },
+  {
+    "path": "tnf debug paths",
+    "description": "Show global paths (data, config, cache, state)"
+  },
+  {
+    "path": "tnf debug rg",
+    "description": "ripgrep debugging utilities"
+  },
+  {
+    "path": "tnf debug scrap",
+    "description": "List all known projects"
+  },
+  {
+    "path": "tnf debug skill",
+    "description": "List all available skills"
+  },
+  {
+    "path": "tnf debug snapshot",
+    "description": "Snapshot debugging utilities"
+  },
+  {
+    "path": "tnf debug wait",
+    "description": "Wait indefinitely (for debugging)"
+  },
+  {
+    "path": "tnf doctor",
+    "description": "Run TNF diagnostics"
+  },
+  {
+    "path": "tnf export",
+    "description": "Export session data as JSON"
+  },
+  {
+    "path": "tnf extension",
+    "description": "Manage TNF extensions (Chrome, VSCode, Tauri)"
+  },
+  {
+    "path": "tnf extension install",
+    "description": "Build and install an extension locally"
+  },
+  {
+    "path": "tnf extension list",
+    "description": "List available TNF extensions and their status"
+  },
+  {
+    "path": "tnf extension status",
+    "description": "Show detailed status for an extension"
+  },
+  {
+    "path": "tnf feedback",
+    "description": "Feedback management for beta developers"
+  },
+  {
+    "path": "tnf feedback list",
+    "description": "List all feedback"
+  },
+  {
+    "path": "tnf feedback status",
+    "description": "Show feedback status summary"
+  },
+  {
+    "path": "tnf feedback submit",
+    "description": "Submit feedback (bug, feature, or suggestion)"
+  },
+  {
+    "path": "tnf forge",
+    "description": "LLVM-powered JIT compilation and native optimization"
+  },
+  {
+    "path": "tnf forge status",
+    "description": "Check the status of the LLVM/Forge toolchain"
+  },
+  {
+    "path": "tnf forge test-gateway",
+    "description": "Run Omni-TNF Gateway Native Accelerator test (Phase 2 Scaffolding)"
+  },
+  {
+    "path": "tnf forge test-math",
+    "description": "Run a JIT compilation speed test (Python vs Forged C)"
+  },
+  {
+    "path": "tnf forge test-python",
+    "description": "Run a Python Hot-Swap test (Injected Native Code)"
+  },
+  {
+    "path": "tnf full-auto",
+    "description": "Run unattended TNF automation loops with persisted state/logging"
+  },
+  {
+    "path": "tnf full-auto once",
+    "description": "Run one unattended cycle (self-improvement + optional orchestration broadcast)"
+  },
+  {
+    "path": "tnf full-auto provision",
+    "description": "Install full-auto command+skill artifacts into detected agent runtimes"
+  },
+  {
+    "path": "tnf full-auto start",
+    "description": "Run continuous unattended cycles in the current terminal process"
+  },
+  {
+    "path": "tnf full-auto status",
+    "description": "Show persisted full-auto loop state and latest cycle result"
+  },
+  {
+    "path": "tnf gateway",
+    "description": "Start the TNF gateway service — persistent LLM-powered relay"
+  },
+  {
+    "path": "tnf gemini",
+    "description": "Pass through any Gemini CLI command"
+  },
+  {
+    "path": "tnf goals",
+    "description": "Strategic goals and roadmap management"
+  },
+  {
+    "path": "tnf goals create",
+    "description": "Create a new strategic goal"
+  },
+  {
+    "path": "tnf goals list",
+    "description": "List all strategic goals"
+  },
+  {
+    "path": "tnf goals stats",
+    "description": "Show goals summary statistics"
+  },
+  {
+    "path": "tnf hermes",
+    "description": "Pass through any Hermes Agent CLI command"
+  },
+  {
+    "path": "tnf hooks",
+    "description": "HookChain operations (logs, test, replay, explain)"
+  },
+  {
+    "path": "tnf hooks explain",
+    "description": "Explain HookChain decisions for a recorded run"
+  },
+  {
+    "path": "tnf hooks logs",
+    "description": "Read HookChain run logs"
+  },
+  {
+    "path": "tnf hooks replay",
+    "description": "Queue a deterministic replay record for a HookChain run"
+  },
+  {
+    "path": "tnf hooks test",
+    "description": "Validate and dry-run a HookChain against an event fixture"
+  },
+  {
+    "path": "tnf import",
+    "description": "Import session data from JSON file or URL"
+  },
+  {
+    "path": "tnf jules",
+    "description": "Jules automation operations"
+  },
+  {
+    "path": "tnf jules cron-install",
+    "description": "Install local Jules cron loop"
+  },
+  {
+    "path": "tnf jules loop",
+    "description": "Run autonomous Jules loop"
+  },
+  {
+    "path": "tnf jules merge-open",
+    "description": "Merge all open Jules PRs"
+  },
+  {
+    "path": "tnf jules supervisor",
+    "description": "Run continuous Jules follow-up supervisor"
+  },
+  {
+    "path": "tnf jules supervisor-migrate-from-cron",
+    "description": "Disable cron follow-up and switch to supervisor mode"
+  },
+  {
+    "path": "tnf jules supervisor-start",
+    "description": "Start Jules follow-up supervisor in background"
+  },
+  {
+    "path": "tnf jules supervisor-status",
+    "description": "Show Jules follow-up supervisor status"
+  },
+  {
+    "path": "tnf jules supervisor-stop",
+    "description": "Stop Jules follow-up supervisor"
+  },
+  {
+    "path": "tnf library",
+    "description": "Virtual Library consolidation, audit, and mirror sync operations"
+  },
+  {
+    "path": "tnf library audit",
+    "description": "Generate canonical Virtual Library surface map and report"
+  },
+  {
+    "path": "tnf library status",
+    "description": "Show Virtual Library canonicalization status"
+  },
+  {
+    "path": "tnf library sync",
+    "description": "Sync canonical Virtual Library repo into TNF mirror (dry-run by default)"
+  },
+  {
+    "path": "tnf list",
+    "description": "List all registered agents"
+  },
+  {
+    "path": "tnf marketplace",
+    "description": "Marketplace asset management"
+  },
+  {
+    "path": "tnf marketplace crawl-status",
+    "description": "Check marketplace crawl run status"
+  },
+  {
+    "path": "tnf marketplace curate",
+    "description": "Trigger the marketplace research crawl to discover and curate new items"
+  },
+  {
+    "path": "tnf marketplace list",
+    "description": "List published catalog items from the marketplace"
+  },
+  {
+    "path": "tnf marketplace seed",
+    "description": "Run the marketplace seed script against $DATABASE_URL"
+  },
+  {
+    "path": "tnf marketplace stats",
+    "description": "Show marketplace breakdown by kind (counts, free vs paid)"
+  },
+  {
+    "path": "tnf master-clock",
+    "description": "Master clock controls (provider-routed; local default)"
+  },
+  {
+    "path": "tnf master-clock logs",
+    "description": "Tail master-clock logs (local by default, CloudRuntime as provider fallback)"
+  },
+  {
+    "path": "tnf master-clock start",
+    "description": "Start master-clock locally (default) or via a provider adapter"
+  },
+  {
+    "path": "tnf master-clock status",
+    "description": "Show master-clock status (provider-routed)"
+  },
+  {
+    "path": "tnf mcp",
+    "description": "MCP utilities"
+  },
+  {
+    "path": "tnf mcp add",
+    "description": "Add an MCP server"
+  },
+  {
+    "path": "tnf mcp auth",
+    "description": "Authenticate with an OAuth-enabled MCP server"
+  },
+  {
+    "path": "tnf mcp debug",
+    "description": "Debug OAuth connection for an MCP server"
+  },
+  {
+    "path": "tnf mcp disable",
+    "description": "Disable an MCP server without removing it (kilo parity: per-server toggle)"
+  },
+  {
+    "path": "tnf mcp enable",
+    "description": "Enable an MCP server (kilo parity: per-server toggle)"
+  },
+  {
+    "path": "tnf mcp generate",
+    "description": "Generate MCP clients inventory"
+  },
+  {
+    "path": "tnf mcp list",
+    "description": "List MCP servers and their status"
+  },
+  {
+    "path": "tnf mcp logout",
+    "description": "Remove OAuth credentials for an MCP server"
+  },
+  {
+    "path": "tnf menu",
+    "description": "Show an organized TNF command menu"
+  },
+  {
+    "path": "tnf metaskills",
+    "description": "Meta-skills audit utilities"
+  },
+  {
+    "path": "tnf metaskills audit",
+    "description": "Audit meta-skills and scaffolding readiness"
+  },
+  {
+    "path": "tnf mirror",
+    "description": "iPhone mirroring and AI vision operations"
+  },
+  {
+    "path": "tnf mirror setup",
+    "description": "Install dependencies for mirroring (UxPlay, Python libs)"
+  },
+  {
+    "path": "tnf mirror start",
+    "description": "Start the Vision Bridge mirroring server"
+  },
+  {
+    "path": "tnf models",
+    "description": "List all available models"
+  },
+  {
+    "path": "tnf notes",
+    "description": "TNF note-taking workspace commands"
+  },
+  {
+    "path": "tnf notes create",
+    "description": "Create a new note"
+  },
+  {
+    "path": "tnf notes daily",
+    "description": "Create a daily note"
+  },
+  {
+    "path": "tnf notes get",
+    "description": "Get a note by id or exact title"
+  },
+  {
+    "path": "tnf notes list",
+    "description": "List notes"
+  },
+  {
+    "path": "tnf notes search",
+    "description": "Search notes by title and content"
+  },
+  {
+    "path": "tnf notes status",
+    "description": "Show TNF note vault status"
+  },
+  {
+    "path": "tnf onboard",
+    "description": "Run TNF frontload onboarding"
+  },
+  {
+    "path": "tnf openclaw",
+    "description": "Pass through any OpenClaw CLI command"
+  },
+  {
+    "path": "tnf orchestrate",
+    "description": "Run agent orchestration workflow (health-check|code-review|self-improvement)"
+  },
+  {
+    "path": "tnf packages",
+    "description": "Monorepo package reconnect and availability utilities"
+  },
+  {
+    "path": "tnf packages probe",
+    "description": "Probe a single package reconnect status by package name"
+  },
+  {
+    "path": "tnf packages status",
+    "description": "Show reconnect status for all internal workspace packages"
+  },
+  {
+    "path": "tnf paths",
+    "description": "List all command paths in the TNF CLI"
+  },
+  {
+    "path": "tnf permission",
+    "description": "Manage permission rules (bash, read, external_directory)"
+  },
+  {
+    "path": "tnf permission add",
+    "description": "Add a permission rule (category: bash|read|external_directory, action: allow|deny)"
+  },
+  {
+    "path": "tnf permission check",
+    "description": "Check if a bash command is allowed by permission rules"
+  },
+  {
+    "path": "tnf permission list",
+    "description": "List all permission rules"
+  },
+  {
+    "path": "tnf permission remove",
+    "description": "Remove a permission rule"
+  },
+  {
+    "path": "tnf project",
+    "description": "Project-level configuration (tnf.jsonc, .tnf/command, .tnf/agent)"
+  },
+  {
+    "path": "tnf project agents",
+    "description": "List project agent definitions from .tnf/agent/"
+  },
+  {
+    "path": "tnf project commands",
+    "description": "List project command definitions from .tnf/command/"
+  },
+  {
+    "path": "tnf project init",
+    "description": "Initialize project-level tnf.jsonc and .tnf/ directories"
+  },
+  {
+    "path": "tnf project show",
+    "description": "Show project-level configuration"
+  },
+  {
+    "path": "tnf register",
+    "description": "Register and listen as an agent"
+  },
+  {
+    "path": "tnf relay",
+    "description": "Relay operations"
+  },
+  {
+    "path": "tnf relay monitor",
+    "description": "Monitor relay channels"
+  },
+  {
+    "path": "tnf relay start",
+    "description": "Start relay-core relay service"
+  },
+  {
+    "path": "tnf remote",
+    "description": "Enable remote connection for real-time session relay"
+  },
+  {
+    "path": "tnf reports",
+    "description": "Report lifecycle management — rotation, metadata, trending"
+  },
+  {
+    "path": "tnf reports prune",
+    "description": "Prune old reports and regenerate the rolling summary"
+  },
+  {
+    "path": "tnf reports status",
+    "description": "Show report inventory: counts per type, disk usage, and lifecycle metadata"
+  },
+  {
+    "path": "tnf reports summary",
+    "description": "Display the rolling summary dashboard"
+  },
+  {
+    "path": "tnf reports trends",
+    "description": "Show score trends for a specific report type"
+  },
+  {
+    "path": "tnf run",
+    "description": "Execute any root package script through unified TNF CLI"
+  },
+  {
+    "path": "tnf scripts",
+    "description": "Discover and run repo scripts and root package scripts"
+  },
+  {
+    "path": "tnf scripts list",
+    "description": "List runnable scripts from package.json, scripts/**, tools/**, and repo root"
+  },
+  {
+    "path": "tnf scripts run",
+    "description": "Run either a root package script or a runnable file path"
+  },
+  {
+    "path": "tnf self-improvement",
+    "description": "Deterministic TNF self-improvement loop and artifact controls"
+  },
+  {
+    "path": "tnf self-improvement log",
+    "description": "Append a self-improvement note to the run log"
+  },
+  {
+    "path": "tnf self-improvement mermaid",
+    "description": "Generate TNF master framework mermaid architecture map"
+  },
+  {
+    "path": "tnf self-improvement run",
+    "description": "Run full self-improvement loop (build, audits, scorecard, architecture map)"
+  },
+  {
+    "path": "tnf self-improvement scorecard",
+    "description": "Generate self-improvement scorecard from existing audit artifacts"
+  },
+  {
+    "path": "tnf self-improvement status",
+    "description": "Show current self-improvement artifact and scorecard state"
+  },
+  {
+    "path": "tnf send",
+    "description": "Send a single message"
+  },
+  {
+    "path": "tnf serve",
+    "description": "Starts a headless tnf server"
+  },
+  {
+    "path": "tnf session",
+    "description": "Manage sessions"
+  },
+  {
+    "path": "tnf session delete",
+    "description": "Delete a session"
+  },
+  {
+    "path": "tnf session list",
+    "description": "List sessions"
+  },
+  {
+    "path": "tnf skills",
+    "description": "Skill bank operations"
+  },
+  {
+    "path": "tnf skills bank",
+    "description": "Cross-LLM skill bank operations"
+  },
+  {
+    "path": "tnf skills bank ingest",
+    "description": "Ingest skill-bank export rows into resource registry API"
+  },
+  {
+    "path": "tnf skills bank query",
+    "description": "Search skill bank index"
+  },
+  {
+    "path": "tnf skills bank retry-pending",
+    "description": "Retry pending failed skill-bank ingests"
+  },
+  {
+    "path": "tnf skills bank supervisor",
+    "description": "Run continuous skill-bank sync/ingest/retry supervisor"
+  },
+  {
+    "path": "tnf skills bank supervisor-start",
+    "description": "Start skill-bank supervisor in background"
+  },
+  {
+    "path": "tnf skills bank supervisor-status",
+    "description": "Show skill-bank supervisor status"
+  },
+  {
+    "path": "tnf skills bank supervisor-stop",
+    "description": "Stop skill-bank supervisor"
+  },
+  {
+    "path": "tnf skills bank sync",
+    "description": "Build/refresh cross-LLM skill bank index and snapshots"
+  },
+  {
+    "path": "tnf splash",
+    "description": "Render TNF branded splash only"
+  },
+  {
+    "path": "tnf stats",
+    "description": "Show token usage and cost statistics"
+  },
+  {
+    "path": "tnf story",
+    "description": "Story Architect utilities and drafting"
+  },
+  {
+    "path": "tnf story active",
+    "description": "Show the active story session"
+  },
+  {
+    "path": "tnf story capture",
+    "description": "Manually capture a story insight"
+  },
+  {
+    "path": "tnf story create",
+    "description": "Create a new story drafting session"
+  },
+  {
+    "path": "tnf story doctor",
+    "description": "Verify Story Architect auth and database access"
+  },
+  {
+    "path": "tnf story draft",
+    "description": "Start or resume an interactive story drafting session"
+  },
+  {
+    "path": "tnf story list",
+    "description": "List all story sessions"
+  },
+  {
+    "path": "tnf story timeline",
+    "description": "List story timeline events"
+  },
+  {
+    "path": "tnf super-cycle",
+    "description": "Super-cycle controls (provider-routed; local default)"
+  },
+  {
+    "path": "tnf super-cycle event",
+    "description": "Send super-cycle register/heartbeat/unregister event"
+  },
+  {
+    "path": "tnf super-cycle status",
+    "description": "Read super-cycle state snapshot (provider-routed)"
+  },
+  {
+    "path": "tnf traits",
+    "description": "Role/platform and command behavior traits"
+  },
+  {
+    "path": "tnf traits list",
+    "description": "List TNF traits for agents and command families"
+  },
+  {
+    "path": "tnf tui",
+    "description": "Launch the TNF TUI agent — always-on interactive LLM session"
+  },
+  {
+    "path": "tnf types",
+    "description": "Command namespace and script type inventory"
+  },
+  {
+    "path": "tnf types list",
+    "description": "List TNF command namespaces and root script namespaces"
+  },
+  {
+    "path": "tnf uninstall",
+    "description": "Uninstall tnf and remove all related files"
+  },
+  {
+    "path": "tnf upgrade",
+    "description": "Upgrade tnf to the latest or a specific version"
+  },
+  {
+    "path": "tnf voice",
+    "description": "Voice Bridge commands (listen, anchor target, and response audio)"
+  },
+  {
+    "path": "tnf voice activate",
+    "description": "Call local Voice Bridge /activate to auto-heal watcher daemons"
+  },
+  {
+    "path": "tnf voice down",
+    "description": "Stop profile-scoped Voice Bridge background runtime"
+  },
+  {
+    "path": "tnf voice listen",
+    "description": "Start microphone transcription loop (wrapper around `listen`)"
+  },
+  {
+    "path": "tnf voice mic",
+    "description": "Microphone capture controls"
+  },
+  {
+    "path": "tnf voice mic toggle",
+    "description": "Toggle microphone capture on/off"
+  },
+  {
+    "path": "tnf voice protocol",
+    "description": "Observe and watch multi-profile voice cooperation protocol health"
+  },
+  {
+    "path": "tnf voice protocol status",
+    "description": "Show current relay + watcher + signal health for a profile pair"
+  },
+  {
+    "path": "tnf voice protocol watch",
+    "description": "Continuously poll and report cooperation protocol health"
+  },
+  {
+    "path": "tnf voice relay",
+    "description": "Relay transcribed input between Voice Bridge profiles"
+  },
+  {
+    "path": "tnf voice response-audio",
+    "description": "AI response audio playback controls"
+  },
+  {
+    "path": "tnf voice response-audio off",
+    "description": "Disable AI response audio"
+  },
+  {
+    "path": "tnf voice response-audio on",
+    "description": "Enable AI response audio"
+  },
+  {
+    "path": "tnf voice response-audio status",
+    "description": "Show AI response audio state"
+  },
+  {
+    "path": "tnf voice response-audio toggle",
+    "description": "Toggle AI response audio on/off"
+  },
+  {
+    "path": "tnf voice start",
+    "description": "Start Voice Bridge server + injection bridge (wrapper around `voice`)"
+  },
+  {
+    "path": "tnf voice status",
+    "description": "Show local Voice Bridge server + command availability"
+  },
+  {
+    "path": "tnf voice target",
+    "description": "Manage destination anchor for transcribed text"
+  },
+  {
+    "path": "tnf voice target clear",
+    "description": "Clear destination anchor"
+  },
+  {
+    "path": "tnf voice target here",
+    "description": "Anchor transcription destination to current terminal tab"
+  },
+  {
+    "path": "tnf voice target pick",
+    "description": "Anchor destination to currently focused app/window after delay"
+  },
+  {
+    "path": "tnf voice target show",
+    "description": "Show current transcription destination anchor"
+  },
+  {
+    "path": "tnf voice up",
+    "description": "Start profile-scoped Voice Bridge background runtime"
+  }
+]

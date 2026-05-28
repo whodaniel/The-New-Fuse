@@ -2,6 +2,11 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+# --- Singleton lock: prevent duplicate concurrent runs from multiple agents ---
+source "${ROOT_DIR}/scripts/lib/tnf-lock.sh"
+tnf_acquire_lock "marketplace-curation-agent" 600
+
 MARKETPLACE_ITEMS_FILE="${ROOT_DIR}/data/marketplace/catalog-items.json"
 CATALOG_LOG="${ROOT_DIR}/.agent/runtime-logs/marketplace-curation.log"
 STATE_DIR="${ROOT_DIR}/.agent/runtime-state/marketplace"

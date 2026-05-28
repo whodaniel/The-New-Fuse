@@ -4,6 +4,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { createClient } = require('redis');
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+
 const DEFAULT_QUEUE = 'tnf:master:tasks:planning';
 const COMPAT_QUEUE = 'tnf:master:tasks:pending';
 const LOG_QUEUE = 'tnf:master:logs';
@@ -146,6 +148,15 @@ function writeFallbackArtifact(repoRoot, queueItem, targetQueue) {
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
+
+  // Per-process-id single-instance guard: prevents duplicate concurrent dispatches
+  // of the same process-id from multiple agents/cron sources
+  const _guard = singleInstanceGuard({ lockName: `tnf-chrono-dispatch-${options.processId}`, staleMs: 30000 });
+  if (!_guard.acquired) {
+    console.log(JSON.stringify({ ok: true, skipped: 'already-running', processId: options.processId, lock: _guard.existingLock }));
+    process.exit(0);
+  }
+
   const repoRoot = resolveRepoRoot(options.repoRoot);
   const profilesPath = path.join(repoRoot, 'data', 'protocols', 'chronological-dispatch-profiles.json');
   const profiles = readJson(profilesPath, { entries: {} });

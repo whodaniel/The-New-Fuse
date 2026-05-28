@@ -32,7 +32,7 @@ export class PiSynapseAdapter {
   constructor(config: {
     sleeveId: string;
     parentAgentId: string;
-    modelProvider: string;
+    modelProvider: any; // KnownProvider from @mariozechner/pi-ai
     modelName: string;
     customTools: AgentTool<any>[];
   }) {

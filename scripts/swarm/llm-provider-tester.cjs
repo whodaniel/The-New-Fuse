@@ -8,6 +8,13 @@
  * single options and preventing API rate-limit gridlock.
  */
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'llm-provider-tester', staleMs: 10 * 60 * 1000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
 const fs = require('fs');
 const path = require('path');
 const { RedisAgentClient } = require('../../packages/tnf-cli/dist/index');

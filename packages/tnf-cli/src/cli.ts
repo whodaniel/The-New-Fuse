@@ -1175,6 +1175,20 @@ const HOOKS_EXIT_CODES = {
 const HOOK_CHAIN_NAME_PATTERN = /^[a-z0-9]([a-z0-9_-]{1,62}[a-z0-9])?$/;
 const HOOK_EVENT_PATTERN = /^[a-z0-9]+(\.[a-z0-9_]+)+$/;
 const HOOK_CHAIN_EXTENSIONS = new Set(['.json', '.yaml', '.yml']);
+const HOOK_RUN_STATUSES = new Set([
+  'queued',
+  'running',
+  'completed',
+  'failed',
+  'blocked',
+  'cancelled',
+  'dry_run',
+]);
+const HOOK_RUN_LOG_PATH =
+  normalizeToken(process.env.TNF_HOOKS_RUN_LOG) ||
+  (process.env.HOME
+    ? path.join(process.env.HOME, '.tnf', 'hooks', 'runs.jsonl')
+    : path.join(repoRoot, '.tnf', 'hooks', 'runs.jsonl'));
 
 type HookDiagnosticLevel = 'error' | 'warning';
 type HookDiagnostic = {
@@ -1194,6 +1208,16 @@ type HookConditionResult = {
   supported: boolean;
   value: boolean;
   reason: string;
+};
+type HookRunRecord = Record<string, unknown> & {
+  run_id: string;
+  chain?: string;
+  status?: string;
+  trigger_event?: string | null;
+  trace_id?: string | null;
+  started_at?: string;
+  ended_at?: string | null;
+  steps?: unknown[];
 };
 
 class HookCliError extends Error {
@@ -2516,6 +2540,256 @@ function formatHookDiagnostics(
     }));
 }
 
+function parseHookDurationMs(raw: string | undefined): number | null {
+  if (!raw) return null;
+  const match = raw.trim().match(/^(\d+)(ms|s|m|h|d)$/i);
+  if (!match) return null;
+  const amount = Number.parseInt(match[1], 10);
+  const unit = match[2].toLowerCase();
+  if (!Number.isFinite(amount)) return null;
+  switch (unit) {
+    case 'ms':
+      return amount;
+    case 's':
+      return amount * 1000;
+    case 'm':
+      return amount * 60 * 1000;
+    case 'h':
+      return amount * 60 * 60 * 1000;
+    case 'd':
+      return amount * 24 * 60 * 60 * 1000;
+    default:
+      return null;
+  }
+}
+
+function createHookRunId(prefix = 'run'): string {
+  const seed = `${Date.now()}:${process.pid}:${Math.random()}`;
+  const digest = createHash('sha256').update(seed).digest('hex').slice(0, 10);
+  return `${prefix}_${Date.now().toString(36)}_${digest}`;
+}
+
+function readHookRunRecords(filePath = HOOK_RUN_LOG_PATH): HookRunRecord[] {
+  if (!fs.existsSync(filePath)) return [];
+  const raw = fs.readFileSync(filePath, 'utf8');
+  const records: HookRunRecord[] = [];
+  for (const line of raw.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (isPlainObject(parsed) && typeof parsed.run_id === 'string') {
+        records.push(parsed as HookRunRecord);
+      }
+    } catch {
+      // Ignore corrupt historical lines; logs should be readable even after partial writes.
+    }
+  }
+  return records;
+}
+
+function writeHookRunRecord(record: HookRunRecord): void {
+  appendJsonLine(HOOK_RUN_LOG_PATH, record);
+}
+
+function findHookRunRecord(runId: string): HookRunRecord | null {
+  const records = readHookRunRecords();
+  for (let i = records.length - 1; i >= 0; i -= 1) {
+    if (records[i].run_id === runId) return records[i];
+  }
+  return null;
+}
+
+function normalizeHookStatus(raw: string | undefined): string | null {
+  const normalized = normalizeToken(raw)?.toLowerCase();
+  if (!normalized) return null;
+  return HOOK_RUN_STATUSES.has(normalized) ? normalized : null;
+}
+
+function filterHookRunRecords(
+  records: HookRunRecord[],
+  options: {
+    run?: string;
+    chain?: string;
+    since?: string;
+    limit?: string;
+    status?: string;
+    step?: string;
+    tenant?: string;
+    traceId?: string;
+  }
+): HookRunRecord[] {
+  const run = normalizeToken(options.run);
+  const chain = normalizeToken(options.chain);
+  const step = normalizeToken(options.step);
+  const tenant = normalizeToken(options.tenant);
+  const traceId = normalizeToken(options.traceId);
+  const status = normalizeHookStatus(options.status);
+  const sinceMs = parseHookDurationMs(options.since);
+  const sinceCutoff = sinceMs == null ? null : Date.now() - sinceMs;
+  const limitRaw = Number.parseInt(options.limit || '50', 10);
+  const limit = Math.max(1, Math.min(1000, Number.isFinite(limitRaw) ? limitRaw : 50));
+
+  return records
+    .filter((record) => {
+      if (run && record.run_id !== run) return false;
+      if (chain && String(record.chain || '') !== chain) return false;
+      if (status && String(record.status || '').toLowerCase() !== status) return false;
+      if (tenant && String(record.tenant || '') !== tenant) return false;
+      if (traceId && String(record.trace_id || '') !== traceId) return false;
+      if (sinceCutoff != null) {
+        const stamp = Date.parse(String(record.started_at || record.queued_at || ''));
+        if (!Number.isFinite(stamp) || stamp < sinceCutoff) return false;
+      }
+      if (step) {
+        const steps = Array.isArray(record.steps) ? record.steps : [];
+        const hasStep = steps.some((entry) => {
+          const stepRecord = toHookRecord(entry);
+          return String(stepRecord?.id || stepRecord?.step || '') === step;
+        });
+        if (!hasStep) return false;
+      }
+      return true;
+    })
+    .slice(-limit)
+    .reverse();
+}
+
+function printHookLogsSummary(payload: Record<string, unknown>): void {
+  const records = Array.isArray(payload.records) ? payload.records : [];
+  console.log(chalk.bold('\nHookChain Logs\n'));
+  console.log(`Store: ${chalk.dim(String(payload.store || HOOK_RUN_LOG_PATH))}`);
+  console.log(`Records: ${chalk.cyan(String(records.length))}\n`);
+  for (const record of records as HookRunRecord[]) {
+    const status = String(record.status || 'unknown');
+    const statusText =
+      status === 'completed'
+        ? chalk.green(status)
+        : status === 'failed' || status === 'blocked'
+          ? chalk.red(status)
+          : chalk.yellow(status);
+    console.log(
+      `- ${chalk.cyan(record.run_id)} ${statusText} ${chalk.dim(
+        String(record.started_at || record.queued_at || '')
+      )}`
+    );
+    console.log(
+      `  chain=${String(record.chain || 'unknown')} event=${String(
+        record.trigger_event || 'unknown'
+      )} trace=${String(record.trace_id || 'none')}`
+    );
+    const steps = Array.isArray(record.steps) ? record.steps : [];
+    if (steps.length > 0) {
+      console.log(`  steps=${steps.length}`);
+    }
+  }
+  console.log('');
+}
+
+function deriveHookDecisionReason(record: HookRunRecord): string {
+  const status = String(record.status || 'unknown').toLowerCase();
+  if (status === 'blocked') return 'REQUIRE_APPROVAL_OR_POLICY_BLOCK';
+  if (status === 'failed') return 'HOOK_RUN_FAILED';
+  if (status === 'cancelled') return 'HOOK_RUN_CANCELLED';
+  if (status === 'completed') return 'HOOK_RUN_COMPLETED';
+  if (status === 'dry_run') return 'DRY_RUN_NO_SIDE_EFFECTS';
+  if (status === 'queued') return 'REPLAY_QUEUED';
+  return 'STATUS_UNKNOWN';
+}
+
+function buildHookExplainPayload(
+  record: HookRunRecord,
+  options: { step?: string; showPolicySource?: boolean } = {}
+): Record<string, unknown> {
+  const stepFilter = normalizeToken(options.step);
+  const steps = (Array.isArray(record.steps) ? record.steps : [])
+    .map((entry) => toHookRecord(entry))
+    .filter(Boolean) as Array<Record<string, unknown>>;
+  const filteredSteps = stepFilter
+    ? steps.filter((entry) => String(entry.id || entry.step || '') === stepFilter)
+    : steps;
+  const warnings = Array.isArray(record.warnings) ? record.warnings : [];
+  const errors = Array.isArray(record.errors) ? record.errors : [];
+  const gateDecisions = Array.isArray(record.gate_decisions)
+    ? record.gate_decisions
+    : [
+        {
+          gate: 'hook-run-status',
+          decision:
+            String(record.status || '').toLowerCase() === 'blocked'
+              ? 'DENY_OR_REQUIRE_APPROVAL'
+              : errors.length > 0
+                ? 'FAIL'
+                : 'ALLOW',
+          reason: deriveHookDecisionReason(record),
+          ...(options.showPolicySource
+            ? { policy_source: record.policy_pack || record.security_policy || null }
+            : {}),
+        },
+      ];
+
+  return {
+    run_id: record.run_id,
+    decision_summary: {
+      final_status: record.status || 'unknown',
+      reason: deriveHookDecisionReason(record),
+      warning_count: warnings.length,
+      error_count: errors.length,
+    },
+    gate_decisions: gateDecisions,
+    step_analysis: filteredSteps.map((step) => ({
+      id: step.id || step.step || 'unknown',
+      status: step.status || (step.will_run === false ? 'skipped' : 'unknown'),
+      runner: step.runner || null,
+      reason: step.reason || step.error || null,
+      duration_ms: step.duration_ms ?? null,
+      attempt: step.attempt ?? null,
+    })),
+    warnings,
+    errors,
+    source: {
+      log_path: HOOK_RUN_LOG_PATH,
+      trace_id: record.trace_id || null,
+      chain: record.chain || null,
+      source_run_id: record.source_run_id || null,
+    },
+  };
+}
+
+function printHookExplainSummary(payload: Record<string, unknown>): void {
+  const summary = toHookRecord(payload.decision_summary) || {};
+  const gates = Array.isArray(payload.gate_decisions) ? payload.gate_decisions : [];
+  const steps = Array.isArray(payload.step_analysis) ? payload.step_analysis : [];
+  console.log(chalk.bold('\nHookChain Explain\n'));
+  console.log(`Run: ${chalk.cyan(String(payload.run_id || 'unknown'))}`);
+  console.log(
+    `Status: ${chalk.yellow(String(summary.final_status || 'unknown'))} (${String(
+      summary.reason || 'unknown'
+    )})`
+  );
+  if (gates.length > 0) {
+    console.log(chalk.bold('\nGate Decisions:'));
+    for (const gate of gates as Array<Record<string, unknown>>) {
+      console.log(
+        `- ${String(gate.gate || 'gate')}: ${chalk.cyan(
+          String(gate.decision || 'unknown')
+        )} ${chalk.dim(String(gate.reason || ''))}`
+      );
+    }
+  }
+  if (steps.length > 0) {
+    console.log(chalk.bold('\nSteps:'));
+    for (const step of steps as Array<Record<string, unknown>>) {
+      console.log(
+        `- ${String(step.id || 'unknown')}: ${String(step.status || 'unknown')} ${chalk.dim(
+          String(step.reason || '')
+        )}`
+      );
+    }
+  }
+  console.log('');
+}
+
 function printHookTestSummary(payload: Record<string, unknown>): void {
   const chain = toHookRecord(payload.chain) || {};
   const event = toHookRecord(payload.event) || {};
@@ -2915,6 +3189,18 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
         {
           path: 'tnf hooks test --chain <name>|--file <path> --event <event.json>',
           description: 'Validate and dry-run HookChain definitions without side effects',
+        },
+        {
+          path: 'tnf hooks logs [--run <run_id>|--chain <name>]',
+          description: 'Read HookChain run records from the local JSONL store',
+        },
+        {
+          path: 'tnf hooks replay --run <run_id>',
+          description: 'Queue replay records with trace and idempotency lineage',
+        },
+        {
+          path: 'tnf hooks explain --run <run_id>',
+          description: 'Explain HookChain status, gates, and step decisions',
         },
         {
           path: 'tnf self-improvement run',
@@ -7374,6 +7660,7 @@ hooks
   .option('--event <path>', 'Event fixture file (JSON/YAML)')
   .option('--strict', 'Fail when warnings are present')
   .option('--render-plan', 'Include compiled node/edge render plan')
+  .option('--record', `Append this dry-run result to ${HOOK_RUN_LOG_PATH}`)
   .option('--json', 'Output machine-readable JSON')
   .option('--tenant <id>', 'Override tenant/workspace scope')
   .option('--trace-id <uuid>', 'Attach correlation ID')
@@ -7385,6 +7672,7 @@ hooks
       event?: string;
       strict?: boolean;
       renderPlan?: boolean;
+      record?: boolean;
       json?: boolean;
       tenant?: string;
       traceId?: string;
@@ -7545,15 +7833,53 @@ hooks
         if (options.verbose) {
           payload.debug = {
             registry_dirs: resolveHookRegistryDirs(),
+            run_log_path: HOOK_RUN_LOG_PATH,
             evaluated_at: new Date().toISOString(),
             duration_ms: Date.now() - startedAt,
           };
+        }
+
+        if (options.record) {
+          const runId = createHookRunId('dryrun');
+          const runRecord: HookRunRecord = {
+            run_id: runId,
+            status: 'dry_run',
+            chain: chainName,
+            chain_source: chainPath,
+            trigger_event: triggerEvaluation.receivedEvent,
+            expected_event: triggerEvaluation.expectedEvent,
+            trace_id: options.traceId || null,
+            tenant: options.tenant || null,
+            started_at: new Date(startedAt).toISOString(),
+            ended_at: new Date().toISOString(),
+            duration_ms: Date.now() - startedAt,
+            valid,
+            exit_code: exitCode,
+            event_fixture: eventPath,
+            event,
+            plan,
+            steps: plan.map((entry) => ({
+              id: entry.step,
+              runner: entry.runner,
+              status: entry.will_run ? 'planned' : 'skipped',
+              reason: entry.reason || null,
+            })),
+            warnings,
+            errors,
+            dry_run: true,
+          };
+          writeHookRunRecord(runRecord);
+          payload.run_id = runId;
+          payload.recorded_to = HOOK_RUN_LOG_PATH;
         }
 
         if (options.json) {
           console.log(JSON.stringify(payload, null, 2));
         } else {
           printHookTestSummary(payload);
+          if (options.record) {
+            console.log(chalk.dim(`Recorded dry-run: ${payload.run_id} -> ${HOOK_RUN_LOG_PATH}\n`));
+          }
         }
 
         if (exitCode !== HOOKS_EXIT_CODES.SUCCESS) {
@@ -7585,76 +7911,282 @@ hooks
 
 hooks
   .command('logs')
-  .description('Read HookChain run logs (placeholder)')
+  .description('Read HookChain run logs')
+  .option('--run <run_id>', 'Fetch one run timeline')
+  .option('--chain <name>', 'Filter by HookChain name')
+  .option('--since <duration>', 'Relative window, e.g. 15m, 2h, 1d')
+  .option('--limit <n>', 'Maximum records to return (default 50, max 1000)')
+  .option(
+    '--status <status>',
+    'Filter by queued|running|completed|failed|blocked|cancelled|dry_run'
+  )
+  .option('--step <id>', 'Filter to runs containing a step id')
+  .option('--tenant <id>', 'Filter by tenant/workspace scope')
+  .option('--trace-id <uuid>', 'Filter by correlation ID')
+  .option('--verbose', 'Include store and filter debug fields')
   .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    const message = 'tnf hooks logs is not implemented yet. Next phase: runtime log integration.';
-    if (options.json) {
-      console.log(
-        JSON.stringify(
-          {
-            ok: false,
-            exit_code: HOOKS_EXIT_CODES.EXECUTION_FAILURE,
-            message,
-          },
-          null,
-          2
-        )
-      );
-    } else {
-      console.error(chalk.yellow(message));
+  .action(
+    (options: {
+      run?: string;
+      chain?: string;
+      since?: string;
+      limit?: string;
+      status?: string;
+      step?: string;
+      tenant?: string;
+      traceId?: string;
+      verbose?: boolean;
+      json?: boolean;
+    }) => {
+      try {
+        if (options.status && !normalizeHookStatus(options.status)) {
+          throw new HookCliError(
+            `Invalid --status '${options.status}'. Use one of: ${Array.from(HOOK_RUN_STATUSES).join(', ')}`,
+            HOOKS_EXIT_CODES.INVALID_ARGUMENTS
+          );
+        }
+        if (options.since && parseHookDurationMs(options.since) == null) {
+          throw new HookCliError(
+            'Invalid --since duration. Use a number plus ms, s, m, h, or d.',
+            HOOKS_EXIT_CODES.INVALID_ARGUMENTS
+          );
+        }
+
+        const records = filterHookRunRecords(readHookRunRecords(), options);
+        const payload: Record<string, unknown> = {
+          ok: true,
+          exit_code: HOOKS_EXIT_CODES.SUCCESS,
+          store: HOOK_RUN_LOG_PATH,
+          count: records.length,
+          records,
+        };
+        if (options.verbose) {
+          payload.debug = {
+            filters: {
+              run: options.run || null,
+              chain: options.chain || null,
+              since: options.since || null,
+              limit: options.limit || '50',
+              status: options.status || null,
+              step: options.step || null,
+              tenant: options.tenant || null,
+              trace_id: options.traceId || null,
+            },
+            registry_dirs: resolveHookRegistryDirs(),
+          };
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(payload, null, 2));
+        } else {
+          printHookLogsSummary(payload);
+        }
+      } catch (error: any) {
+        const exitCode =
+          error instanceof HookCliError ? error.exitCode : HOOKS_EXIT_CODES.EXECUTION_FAILURE;
+        const message = error?.message || String(error);
+        if (options.json) {
+          console.log(JSON.stringify({ ok: false, exit_code: exitCode, message }, null, 2));
+        } else {
+          console.error(chalk.red(`Error: ${message}`));
+        }
+        process.exit(exitCode);
+      }
     }
-    process.exit(HOOKS_EXIT_CODES.EXECUTION_FAILURE);
-  });
+  );
 
 hooks
   .command('replay')
-  .description('Replay a HookChain run (placeholder)')
+  .description('Queue a deterministic replay record for a HookChain run')
+  .requiredOption('--run <run_id>', 'Source run id')
+  .option(
+    '--from-step <id>',
+    'Restart at specific step (default: first failed/blocked/skipped step)'
+  )
+  .option('--event-override <path>', 'Replace original event payload with a JSON/YAML fixture')
+  .option('--force', 'Allow replay of completed or otherwise safe-looking runs')
+  .option('--tenant <id>', 'Override tenant/workspace scope')
+  .option('--trace-id <uuid>', 'Attach replacement correlation ID')
+  .option('--verbose', 'Include source/debug fields')
   .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    const message =
-      'tnf hooks replay is not implemented yet. Next phase: idempotent replay adapter.';
-    if (options.json) {
-      console.log(
-        JSON.stringify(
-          {
-            ok: false,
-            exit_code: HOOKS_EXIT_CODES.EXECUTION_FAILURE,
-            message,
-          },
-          null,
-          2
-        )
-      );
-    } else {
-      console.error(chalk.yellow(message));
+  .action(
+    async (options: {
+      run: string;
+      fromStep?: string;
+      eventOverride?: string;
+      force?: boolean;
+      tenant?: string;
+      traceId?: string;
+      verbose?: boolean;
+      json?: boolean;
+    }) => {
+      try {
+        const source = findHookRunRecord(options.run);
+        if (!source) {
+          throw new HookCliError(
+            `Hook run not found: ${options.run}`,
+            HOOKS_EXIT_CODES.RESOURCE_NOT_FOUND
+          );
+        }
+
+        const status = String(source.status || '').toLowerCase();
+        const replayable = ['failed', 'blocked', 'cancelled', 'dry_run'].includes(status);
+        if (!replayable && !options.force) {
+          throw new HookCliError(
+            `Run ${source.run_id} has status '${status || 'unknown'}'. Use --force to queue a replay anyway.`,
+            HOOKS_EXIT_CODES.AUTHORIZATION_DENIED
+          );
+        }
+
+        let eventPayload: unknown = source.event || source.original_event || null;
+        let eventOverridePath: string | null = null;
+        if (options.eventOverride) {
+          eventOverridePath = path.isAbsolute(options.eventOverride)
+            ? options.eventOverride
+            : path.resolve(process.cwd(), options.eventOverride);
+          if (!fs.existsSync(eventOverridePath) || !fs.statSync(eventOverridePath).isFile()) {
+            throw new HookCliError(
+              `Event override not found: ${eventOverridePath}`,
+              HOOKS_EXIT_CODES.RESOURCE_NOT_FOUND
+            );
+          }
+          eventPayload = await parseJsonOrYamlFile(eventOverridePath);
+        }
+
+        const steps = Array.isArray(source.steps) ? source.steps : [];
+        const failedStep = steps
+          .map((entry) => toHookRecord(entry))
+          .find((entry) =>
+            ['failed', 'blocked', 'skipped'].includes(String(entry?.status || '').toLowerCase())
+          );
+        const fromStep =
+          normalizeToken(options.fromStep) ||
+          (failedStep ? String(failedStep.id || failedStep.step || '') : null) ||
+          null;
+        if (fromStep) {
+          const hasStep = steps.some((entry) => {
+            const stepRecord = toHookRecord(entry);
+            return String(stepRecord?.id || stepRecord?.step || '') === fromStep;
+          });
+          if (steps.length > 0 && !hasStep) {
+            throw new HookCliError(
+              `Step '${fromStep}' was not found in run ${source.run_id}.`,
+              HOOKS_EXIT_CODES.RESOURCE_NOT_FOUND
+            );
+          }
+        }
+
+        const replayRunId = createHookRunId('replay');
+        const queuedAt = new Date().toISOString();
+        const replayRecord: HookRunRecord = {
+          run_id: replayRunId,
+          source_run_id: source.run_id,
+          status: 'queued',
+          chain: source.chain,
+          chain_source: source.chain_source,
+          trigger_event: source.trigger_event ?? null,
+          trace_id: options.traceId || source.trace_id || null,
+          tenant: options.tenant || source.tenant || null,
+          queued_at: queuedAt,
+          started_at: queuedAt,
+          replay_mode: fromStep ? 'from_step' : 'from_start',
+          from_step: fromStep,
+          force: options.force === true,
+          event_override: eventOverridePath,
+          event: eventPayload,
+          idempotency_lineage: [source.idempotency_key, source.run_id].filter(Boolean),
+          steps: steps.map((entry) => {
+            const stepRecord = toHookRecord(entry) || {};
+            return {
+              ...stepRecord,
+              status:
+                fromStep && String(stepRecord.id || stepRecord.step || '') !== fromStep
+                  ? 'carried_forward'
+                  : 'queued',
+            };
+          }),
+        };
+        writeHookRunRecord(replayRecord);
+
+        const payload: Record<string, unknown> = {
+          ok: true,
+          exit_code: HOOKS_EXIT_CODES.SUCCESS,
+          source_run_id: source.run_id,
+          replay_run_id: replayRunId,
+          status: 'queued',
+          replay_mode: replayRecord.replay_mode,
+          from_step: fromStep,
+          queued_at: queuedAt,
+          store: HOOK_RUN_LOG_PATH,
+        };
+        if (options.verbose) {
+          payload.source = source;
+          payload.replay_record = replayRecord;
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(payload, null, 2));
+        } else {
+          console.log(chalk.bold('\nHookChain Replay\n'));
+          console.log(`Source: ${chalk.cyan(source.run_id)}`);
+          console.log(`Replay: ${chalk.cyan(replayRunId)}`);
+          console.log(`Status: ${chalk.yellow('queued')}`);
+          console.log(`Store: ${chalk.dim(HOOK_RUN_LOG_PATH)}\n`);
+        }
+      } catch (error: any) {
+        const exitCode =
+          error instanceof HookCliError ? error.exitCode : HOOKS_EXIT_CODES.EXECUTION_FAILURE;
+        const message = error?.message || String(error);
+        if (options.json) {
+          console.log(JSON.stringify({ ok: false, exit_code: exitCode, message }, null, 2));
+        } else {
+          console.error(chalk.red(`Error: ${message}`));
+        }
+        process.exit(exitCode);
+      }
     }
-    process.exit(HOOKS_EXIT_CODES.EXECUTION_FAILURE);
-  });
+  );
 
 hooks
   .command('explain')
-  .description('Explain HookChain decisions (placeholder)')
+  .description('Explain HookChain decisions for a recorded run')
+  .requiredOption('--run <run_id>', 'Run id to explain')
+  .option('--step <id>', 'Focus on one step')
+  .option('--show-policy-source', 'Include policy pack/rule source when present')
   .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    const message =
-      'tnf hooks explain is not implemented yet. Next phase: gate + policy rationale traces.';
-    if (options.json) {
-      console.log(
-        JSON.stringify(
-          {
-            ok: false,
-            exit_code: HOOKS_EXIT_CODES.EXECUTION_FAILURE,
-            message,
-          },
-          null,
-          2
-        )
-      );
-    } else {
-      console.error(chalk.yellow(message));
+  .action((options: { run: string; step?: string; showPolicySource?: boolean; json?: boolean }) => {
+    try {
+      const record = findHookRunRecord(options.run);
+      if (!record) {
+        throw new HookCliError(
+          `Hook run not found: ${options.run}`,
+          HOOKS_EXIT_CODES.RESOURCE_NOT_FOUND
+        );
+      }
+      const payload = {
+        ok: true,
+        exit_code: HOOKS_EXIT_CODES.SUCCESS,
+        ...buildHookExplainPayload(record, {
+          step: options.step,
+          showPolicySource: options.showPolicySource,
+        }),
+      };
+      if (options.json) {
+        console.log(JSON.stringify(payload, null, 2));
+      } else {
+        printHookExplainSummary(payload);
+      }
+    } catch (error: any) {
+      const exitCode =
+        error instanceof HookCliError ? error.exitCode : HOOKS_EXIT_CODES.EXECUTION_FAILURE;
+      const message = error?.message || String(error);
+      if (options.json) {
+        console.log(JSON.stringify({ ok: false, exit_code: exitCode, message }, null, 2));
+      } else {
+        console.error(chalk.red(`Error: ${message}`));
+      }
+      process.exit(exitCode);
     }
-    process.exit(HOOKS_EXIT_CODES.EXECUTION_FAILURE);
   });
 
 program
@@ -7856,100 +8388,105 @@ agents
   });
 
 agents
- .command('convo')
- .description('Alias for `tnf convo`')
- .argument('<action>', 'Action (start|join)')
- .argument('[param]', 'Topic for start or ID for join')
- .action(async (action: string, param?: string) => {
- const args = ['convo', action];
- if (param) args.push(param);
- await runSelfCliWithExit(args);
- });
+  .command('convo')
+  .description('Alias for `tnf convo`')
+  .argument('<action>', 'Action (start|join)')
+  .argument('[param]', 'Topic for start or ID for join')
+  .action(async (action: string, param?: string) => {
+    const args = ['convo', action];
+    if (param) args.push(param);
+    await runSelfCliWithExit(args);
+  });
 
 // ---------------------------------------------------------------------------
 // Persistent Agent Daemon — the live heart of TNF
 // ---------------------------------------------------------------------------
 const agentsLive = agents
- .command('live')
- .description('Start persistent agent daemon (LLM + Redis bus + heartbeat + autonomous thinking)');
+  .command('live')
+  .description('Start persistent agent daemon (LLM + Redis bus + heartbeat + autonomous thinking)');
 
 agentsLive
- .command('start')
- .description('Start the persistent agent daemon in live mode')
- .option('--model <model>', 'Override LLM model')
- .option('--interval <seconds>', 'Autonomous think interval in seconds', '120')
- .option('--agent-id <id>', 'Override agent ID')
- .option('--agent-name <name>', 'Override agent display name')
- .action(
- async (options: { model?: string; interval?: string; agentId?: string; agentName?: string }) => {
- try {
- const pythonBin =
- process.env.TNF_PYTHON ||
- path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
- const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
- const args = [script, 'live'];
- if (options.model) args.push('--model', options.model);
- if (options.interval) args.push('--interval', options.interval);
- if (options.agentId) args.push('--agent-id', options.agentId);
- if (options.agentName) args.push('--agent-name', options.agentName);
- await runCommand(pythonBin, args);
- } catch (err: any) {
- console.error(chalk.red(`Error: ${err.message}`));
- process.exit(1);
- }
- },
- );
+  .command('start')
+  .description('Start the persistent agent daemon in live mode')
+  .option('--model <model>', 'Override LLM model')
+  .option('--interval <seconds>', 'Autonomous think interval in seconds', '120')
+  .option('--agent-id <id>', 'Override agent ID')
+  .option('--agent-name <name>', 'Override agent display name')
+  .action(
+    async (options: {
+      model?: string;
+      interval?: string;
+      agentId?: string;
+      agentName?: string;
+    }) => {
+      try {
+        const pythonBin =
+          process.env.TNF_PYTHON ||
+          path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+        const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+        const args = [script, 'live'];
+        if (options.model) args.push('--model', options.model);
+        if (options.interval) args.push('--interval', options.interval);
+        if (options.agentId) args.push('--agent-id', options.agentId);
+        if (options.agentName) args.push('--agent-name', options.agentName);
+        await runCommand(pythonBin, args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
 
 agentsLive
- .command('watch')
- .description('Start bus-listener-only daemon (no LLM, Redis pub/sub + heartbeat)')
- .option('--agent-id <id>', 'Override agent ID')
- .action(async (options: { agentId?: string }) => {
- try {
- const pythonBin =
- process.env.TNF_PYTHON ||
- path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
- const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
- const args = [script, 'watch'];
- if (options.agentId) args.push('--agent-id', options.agentId);
- await runCommand(pythonBin, args);
- } catch (err: any) {
- console.error(chalk.red(`Error: ${err.message}`));
- process.exit(1);
- }
- });
+  .command('watch')
+  .description('Start bus-listener-only daemon (no LLM, Redis pub/sub + heartbeat)')
+  .option('--agent-id <id>', 'Override agent ID')
+  .action(async (options: { agentId?: string }) => {
+    try {
+      const pythonBin =
+        process.env.TNF_PYTHON ||
+        path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+      const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+      const args = [script, 'watch'];
+      if (options.agentId) args.push('--agent-id', options.agentId);
+      await runCommand(pythonBin, args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 agentsLive
- .command('once')
- .description('Single heartbeat + registration check then exit')
- .action(async () => {
- try {
- const pythonBin =
- process.env.TNF_PYTHON ||
- path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
- const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
- await runCommand(pythonBin, [script, 'once']);
- } catch (err: any) {
- console.error(chalk.red(`Error: ${err.message}`));
- process.exit(1);
- }
- });
+  .command('once')
+  .description('Single heartbeat + registration check then exit')
+  .action(async () => {
+    try {
+      const pythonBin =
+        process.env.TNF_PYTHON ||
+        path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+      const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+      await runCommand(pythonBin, [script, 'once']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 agentsLive
- .command('status')
- .description('Show daemon process and bus health')
- .action(async () => {
- try {
- const pythonBin =
- process.env.TNF_PYTHON ||
- path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
- const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
- await runCommand(pythonBin, [script, 'status']);
- } catch (err: any) {
- console.error(chalk.red(`Error: ${err.message}`));
- process.exit(1);
- }
- });
+  .command('status')
+  .description('Show daemon process and bus health')
+  .action(async () => {
+    try {
+      const pythonBin =
+        process.env.TNF_PYTHON ||
+        path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+      const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+      await runCommand(pythonBin, [script, 'status']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 const agentsBank = agents
   .command('bank')
@@ -10977,6 +11514,10 @@ async function startInteractiveAgent(): Promise<void> {
     input: process.stdin,
     output: process.stdout,
   });
+  let rlClosed = false;
+  rl.on('close', () => {
+    rlClosed = true;
+  });
 
   const systemPrompt = await loadTnfSystemPrompt();
 
@@ -10990,17 +11531,29 @@ async function startInteractiveAgent(): Promise<void> {
   console.log('');
   console.log(chalk.cyan('╔══════════════════════════════════════════════╗'));
   console.log(chalk.cyan('║') + chalk.bold(' TNF Agent — Interactive Session ') + chalk.cyan(' ║'));
-  console.log(chalk.cyan('║') + chalk.dim(' Provider: ') + chalk.white((client as any).providerName || 'unknown') + chalk.cyan(' ║'));
-  console.log(chalk.cyan('║') + chalk.dim(' Model: ') + chalk.white(client.model) + chalk.cyan(' ║'));
+  console.log(
+    chalk.cyan('║') +
+      chalk.dim(' Provider: ') +
+      chalk.white((client as any).providerName || 'unknown') +
+      chalk.cyan(' ║')
+  );
+  console.log(
+    chalk.cyan('║') + chalk.dim(' Model: ') + chalk.white(client.model) + chalk.cyan(' ║')
+  );
   const catalog = (client as any).getProviderCatalog?.() || [];
   const availableCount = catalog.filter((p: any) => p.hasKey).length;
-  console.log(chalk.cyan('║') + chalk.dim(' Fallbacks: ') + chalk.white(`${availableCount} providers available`) + chalk.cyan(' ║'));
+  console.log(
+    chalk.cyan('║') +
+      chalk.dim(' Fallbacks: ') +
+      chalk.white(`${availableCount} providers available`) +
+      chalk.cyan(' ║')
+  );
   console.log(chalk.cyan('╚══════════════════════════════════════════════╝'));
   console.log(chalk.dim(' Type .exit to quit, .clear to clear history, .help for commands\n'));
 
   const ask = (prompt: string): Promise<string> =>
     new Promise((resolve, reject) => {
-      if (rl.closed) reject(new Error('stdin closed'));
+      if (rlClosed) reject(new Error('stdin closed'));
       else rl.question(prompt, resolve);
     });
 
@@ -11080,7 +11633,10 @@ async function startGatewayService(): Promise<void> {
       }
       console.log(chalk.green('\n  ✅ Gateway services started. Waiting...\n'));
       await new Promise<void>((resolve) => {
-        const shutdown = () => { console.log(chalk.cyan('\n  Gateway shutting down...\n')); resolve(); };
+        const shutdown = () => {
+          console.log(chalk.cyan('\n  Gateway shutting down...\n'));
+          resolve();
+        };
         process.on('SIGINT', shutdown);
         process.on('SIGTERM', shutdown);
       });
@@ -11090,29 +11646,36 @@ async function startGatewayService(): Promise<void> {
   console.log(chalk.cyan('\n  Gateway service stopped.\n'));
 }
 
+function normalizeEntrypointArgv(argv: string[]): string[] {
+  if (argv[2] !== '--') return argv;
+  return [argv[0], argv[1], ...argv.slice(3)];
+}
+
 async function main(): Promise<void> {
-  if (process.argv.length <= 2) {
+  const argv = normalizeEntrypointArgv(process.argv);
+
+  if (argv.length <= 2) {
     await startInteractiveAgent();
     return;
   }
-  if (isOpenClawPassthroughArgv(process.argv)) {
-    await runPassthrough('openclaw', process.argv.slice(3));
+  if (isOpenClawPassthroughArgv(argv)) {
+    await runPassthrough('openclaw', argv.slice(3));
     return;
   }
-  if (isHermesPassthroughArgv(process.argv)) {
-    await runPassthrough('hermes', process.argv.slice(3));
+  if (isHermesPassthroughArgv(argv)) {
+    await runPassthrough('hermes', argv.slice(3));
     return;
   }
-  if (isGeminiPassthroughArgv(process.argv)) {
-    await runPassthrough('gemini', process.argv.slice(3));
+  if (isGeminiPassthroughArgv(argv)) {
+    await runPassthrough('gemini', argv.slice(3));
     return;
   }
-  const implicitArgs = resolveImplicitPassthroughArgs(process.argv);
+  const implicitArgs = resolveImplicitPassthroughArgs(argv);
   if (implicitArgs) {
     await runPassthrough(implicitArgs.cliName, implicitArgs.args);
     return;
   }
-  await program.parseAsync(process.argv);
+  await program.parseAsync(argv);
 }
 
 main().catch((err: Error) => {

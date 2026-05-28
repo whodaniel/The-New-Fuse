@@ -2,6 +2,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { singleInstanceGuard } = require('./lib/tnf-single-instance-guard.cjs');
 
 const ROOT = process.cwd();
 const ONBOARD_GENERATED_MARKER = 'tnf-onboard --repair';
@@ -26,6 +27,25 @@ const MCP_CONFIG_PATHS = [
 const LEGACY_OPENCLAW_LATEST_MD = process.env.HOME
   ? path.join(process.env.HOME, '.openclaw', 'workspace', 'handoff', 'LATEST.md')
   : null;
+
+function releaseGuardOnExit(guard) {
+  let released = false;
+  const release = () => {
+    if (released || !guard || typeof guard.release !== 'function') return;
+    released = true;
+    guard.release();
+  };
+
+  process.once('exit', release);
+  process.once('SIGINT', () => {
+    release();
+    process.exit(130);
+  });
+  process.once('SIGTERM', () => {
+    release();
+    process.exit(143);
+  });
+}
 
 function exists(relPath) {
   return fs.existsSync(path.join(ROOT, relPath));
@@ -664,6 +684,27 @@ async function main() {
     printUsage();
     process.exit(0);
   }
+
+  const onboardGuard = singleInstanceGuard({
+    lockName: 'tnf-onboard',
+    staleMs: 2 * 60 * 1000,
+  });
+  if (!onboardGuard.acquired) {
+    console.log(
+      JSON.stringify(
+        {
+          ok: true,
+          skipped: 'already-running',
+          reason: 'already-running',
+          lock: onboardGuard.existingLock,
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+  releaseGuardOnExit(onboardGuard);
 
   Object.assign(process.env, parsed.envOverrides);
 

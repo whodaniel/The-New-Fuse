@@ -6,6 +6,13 @@
  * and cross-service communication.
  */
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'integration-test-agent', staleMs: 10 * 60 * 1000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');

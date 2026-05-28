@@ -7,6 +7,14 @@ const os = require('os');
 const path = require('path');
 const { promisify } = require('util');
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'tnf-terminal-heartbeat-pulse', staleMs: 120000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
+
 const execFileAsync = promisify(execFile);
 
 const { RedisAgentClient } = require(path.join(__dirname, '..', 'lib', 'redis-agent-client.cjs'));

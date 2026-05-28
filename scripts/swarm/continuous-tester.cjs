@@ -8,6 +8,13 @@
  * Usage: node scripts/swarm/continuous-tester.cjs
  */
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'continuous-tester', staleMs: 10 * 60 * 1000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
 const { RedisAgentClient } = require('../packages/tnf-cli/dist/RedisAgentClient.js');
 const { spawn } = require('child_process');
 const https = require('https');

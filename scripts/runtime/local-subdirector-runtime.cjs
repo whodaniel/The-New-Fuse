@@ -1,5 +1,12 @@
 #!/usr/bin/env node
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _subdirectorGuard = singleInstanceGuard({ lockName: 'local-subdirector-runtime', staleMs: 5 * 60 * 1000 });
+if (!_subdirectorGuard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _subdirectorGuard.existingLock }));
+  process.exit(0);
+}
+
 const { createHash } = require('crypto');
 const { execFile } = require('child_process');
 const fs = require('fs');
@@ -9,9 +16,23 @@ const path = require('path');
 const { promisify } = require('util');
 
 const execFileAsync = promisify(execFile);
+const WebSocket = globalThis.WebSocket || require('ws');
 
 const KNOWN_SHELLS = new Set(['bash', 'fish', 'sh', 'zsh']);
-const AGENT_COMMAND_HINTS = ['codex', 'claude', 'gemini', 'goose', 'aider'];
+const AGENT_COMMAND_HINTS = [
+  'agy',
+  'aider',
+  'claude',
+  'codex',
+  'gemini',
+  'goose',
+  'hermes',
+  'jules',
+  'kilo',
+  'opencode',
+  'openclaw',
+  'tnf',
+];
 
 const config = {
   actorId: process.env.LOCAL_SUBDIRECTOR_ACTOR_ID || 'tnf-local-subdirector',
@@ -55,6 +76,11 @@ function normalizeTty(tty) {
   return String(tty || '').replace(/^\/dev\//, '');
 }
 
+function normalizeTtyPath(tty) {
+  const normalized = normalizeTty(tty);
+  return normalized ? `/dev/${normalized}` : null;
+}
+
 function getSessionKey(terminal) {
   return terminal.tty ? `tty:${normalizeTty(terminal.tty)}` : `window:${terminal.windowId}`;
 }
@@ -80,6 +106,42 @@ function isAgentLike(foregroundCommand, foregroundArgs, contentsTail) {
     String(contentsTail || '').toLowerCase(),
   ];
   return AGENT_COMMAND_HINTS.some((hint) => haystacks.some((value) => value.includes(hint)));
+}
+
+function isUsefulProcessTty(tty) {
+  const normalized = normalizeTty(tty);
+  return Boolean(normalized && normalized !== '?' && normalized !== '??');
+}
+
+function buildProcessFallbackTerminals(processTable) {
+  const seen = new Set();
+  const terminals = [];
+
+  for (const process of processTable) {
+    if (!isAgentCommand(process.commandName, process.args)) continue;
+
+    const ttyKey = isUsefulProcessTty(process.tty) ? `tty:${normalizeTty(process.tty)}` : null;
+    const key = ttyKey || `pid:${process.pid}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    terminals.push({
+      windowId: `process-${process.pid}`,
+      tty: ttyKey ? normalizeTtyPath(process.tty) : null,
+      busy: true,
+      customTitle: `process:${process.commandName}`,
+      contentsTail: String(process.args || process.command || '').slice(-config.contentTailChars),
+      source: 'process-table-fallback',
+      processContext: {
+        shellPid: null,
+        foregroundPid: process.pid,
+        foregroundCommand: process.commandName,
+        foregroundArgs: process.args,
+      },
+    });
+  }
+
+  return terminals;
 }
 
 function isInteractiveReady(contentsTail) {
@@ -445,8 +507,11 @@ async function scanOnce() {
   await ensureDirectories();
   const now = new Date();
   const nowIso = now.toISOString();
-  const terminals = await pollTerminalWindows(config.contentTailChars);
   const processTable = await collectProcessTable();
+  const terminalWindows = await pollTerminalWindows(config.contentTailChars);
+  const processFallbackTerminals =
+    terminalWindows.length === 0 ? buildProcessFallbackTerminals(processTable) : [];
+  const terminals = terminalWindows.length > 0 ? terminalWindows : processFallbackTerminals;
   const wakePings = [];
   const sessions = [];
   const seenKeys = new Set();
@@ -454,8 +519,12 @@ async function scanOnce() {
   for (const terminal of terminals) {
     const sessionKey = getSessionKey(terminal);
     seenKeys.add(sessionKey);
-    const processContext = resolveProcessContext(terminal, processTable);
-    const cwd = processContext.shellPid ? await resolveCwd(processContext.shellPid) : null;
+    const processContext = terminal.processContext || resolveProcessContext(terminal, processTable);
+    const cwd = processContext.shellPid
+      ? await resolveCwd(processContext.shellPid)
+      : processContext.foregroundPid
+        ? await resolveCwd(processContext.foregroundPid)
+        : null;
     const agentLike = isAgentLike(
       processContext.foregroundCommand,
       processContext.foregroundArgs,
@@ -498,7 +567,10 @@ async function scanOnce() {
       activityAgeMs,
       interactiveReady,
     });
-    const status = rawStatus;
+    const status =
+      terminal.source === 'process-table-fallback' && rawStatus === 'stalled'
+        ? 'active'
+        : rawStatus;
 
     if (status === 'stalled') {
       const wakePing = await emitWakePing(nowIso, sessionKey, nextState, terminal);
@@ -515,6 +587,7 @@ async function scanOnce() {
       sessionKey,
       windowId: terminal.windowId,
       tty: terminal.tty,
+      source: terminal.source || 'terminal-applescript',
       busy: terminal.busy,
       status,
       cwd,
@@ -542,8 +615,10 @@ async function scanOnce() {
     activeSessions: sessions.filter((session) => session.status === 'active').length,
     idleSessions: sessions.filter((session) => session.status === 'idle').length,
     stalledSessions: sessions.filter((session) => session.status === 'stalled').length,
-      wakePingsEmitted: wakePings.length,
-    };
+    wakePingsEmitted: wakePings.length,
+    processFallbackActive: processFallbackTerminals.length > 0 ? 1 : 0,
+    processFallbackSessions: processFallbackTerminals.length,
+  };
 
   const payload = {
     generatedAt: nowIso,
@@ -563,6 +638,9 @@ async function scanOnce() {
       'Wake transport now uses direct TNF relay delivery, but terminal wake action still depends on resident per-agent relay consumers.',
       'Lane ownership still depends on separate coordination artifacts; this loop establishes liveness and stall defense, not semantic task understanding.',
       'Direct terminal prompt injection remains intentionally out-of-band and is not used as the default wake transport.',
+      summary.processFallbackActive > 0
+        ? `Process-table fallback active with ${summary.processFallbackSessions} agent-like session(s); AppleScript Terminal inventory is not the only liveness source.`
+        : 'Process-table fallback is standing by for AppleScript Terminal inventory failures.',
     ],
     recommendations: [
       summary.stalledSessions > 0

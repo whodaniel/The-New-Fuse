@@ -9,6 +9,14 @@ const crypto = require('crypto');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'tnf-agent-poll-pulse', staleMs: 300000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
+
 const execAsync = promisify(exec);
 
 function parseNumber(value, fallback) {

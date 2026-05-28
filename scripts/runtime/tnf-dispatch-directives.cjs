@@ -3,6 +3,14 @@
 const { execSync } = require('child_process');
 const crypto = require('crypto');
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'tnf-dispatch-directives', staleMs: 120000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
+
 const directives = [
   {
     agentId: 'tnf-local-terminal-ttys009',

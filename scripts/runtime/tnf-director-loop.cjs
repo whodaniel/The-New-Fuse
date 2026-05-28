@@ -7,6 +7,13 @@
  * Uses the official TNF Envelope Protocol via Redis Bus to delegate tasks.
  */
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _directorGuard = singleInstanceGuard({ lockName: 'tnf-director-loop', staleMs: 5 * 60 * 1000 });
+if (!_directorGuard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _directorGuard.existingLock }));
+  process.exit(0);
+}
+
 const { RedisAgentClient } = require('../lib/redis-agent-client.cjs');
 const { createSuperAdminFanout } = require('./lib/super-admin-fanout.cjs');
 const fs = require('fs');

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "prebuild": "pnpm --filter @the-new-fuse/database build && pnpm --filter @the-new-fuse/mcp-core build && pnpm --filter @the-new-fuse/ag-ui-core build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/utils build",
-    "build": "tsc --noEmitOnError false || echo 'Build completed with warnings'",
+    "build": "tsc",
     "build:watch": "nest build --watch",
     "dev": "cross-env PORT=3004 nest start --watch --entryFile simple-main",
     "start": "nest start",

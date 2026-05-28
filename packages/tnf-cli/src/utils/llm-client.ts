@@ -180,8 +180,8 @@ export class LLMClient {
       },
       {
         envKey: 'GEMINI_API_KEY',
-        baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-        defaultModel: 'gemini-2.0-flash',
+        baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+        defaultModel: 'gemini-2.5-flash',
         name: 'gemini',
       },
       {
@@ -201,6 +201,18 @@ export class LLMClient {
         baseUrl: 'https://api.openai.com/v1',
         defaultModel: 'gpt-4o-mini',
         name: 'openai',
+      },
+      {
+        envKey: 'CEREBRAS_API_KEY',
+        baseUrl: 'https://api.cerebras.ai/v1',
+        defaultModel: 'llama-3.3-70b',
+        name: 'cerebras',
+      },
+      {
+        envKey: 'SAMBANOVA_API_KEY',
+        baseUrl: 'https://api.sambanova.ai/v1',
+        defaultModel: 'DeepSeek-R1',
+        name: 'sambanova',
       },
     ];
 
@@ -400,9 +412,7 @@ export class LLMClient {
   ): Promise<string | null> {
     if (this.providers.length === 0) return null;
 
-    const sorted = [...this.providers].sort(
-      (a, b) => (a.priority ?? 99) - (b.priority ?? 99)
-    );
+    const sorted = [...this.providers].sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99));
 
     // Skip providers we've already tried (current baseUrl)
     const tried = new Set([this.baseUrl]);

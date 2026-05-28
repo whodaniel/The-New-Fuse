@@ -4,6 +4,11 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
+# Single-instance guard — prevents duplicate supercycle loops
+source "${ROOT_DIR}/scripts/lib/tnf-single-instance-guard.sh"
+tnf_single_instance_guard supercycle-heartbeat-loop 300
+if [[ $? -ne 0 ]]; then exit 0; fi
+
 PROCESS_ID="${PROCESS_ID:-tnf-self-improvement-loop}"
 PROCESS_NAME="${PROCESS_NAME:-tnf-self-improvement-loop}"
 OWNER="${OWNER:-orchestrator}"

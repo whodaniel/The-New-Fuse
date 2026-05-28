@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'hostmaria-preservation-check', staleMs: 30 * 60 * 1000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
 const fs = require('fs');
 const fsp = require('fs/promises');
 const os = require('os');

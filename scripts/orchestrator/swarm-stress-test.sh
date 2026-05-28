@@ -2,6 +2,11 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+# --- Singleton lock: prevent duplicate concurrent runs from multiple agents ---
+source "${ROOT_DIR}/scripts/lib/tnf-lock.sh"
+tnf_acquire_lock "swarm-stress-test" 600
+
 STRESS_LOG="${ROOT_DIR}/.agent/runtime-logs/swarm-stress-test.log"
 STATE_FILE="${ROOT_DIR}/.agent/runtime-state/swarm-stress/state.json"
 mkdir -p "$(dirname "${STRESS_LOG}")" "$(dirname "${STATE_FILE}")"

@@ -1,3 +1,12 @@
+#!/usr/bin/env node
+
+const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const _guard = singleInstanceGuard({ lockName: 'project-planner', staleMs: 10 * 60 * 1000 });
+if (!_guard.acquired) {
+  console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
+  process.exit(0);
+}
+
 const fs = require('fs');
 const path = require('path');
 const { RedisAgentClient } = require('../../packages/tnf-cli/dist/index');

@@ -35,6 +35,14 @@ tnf --help
 tnf menu
 ```
 
+Package-script invocation is also supported. The CLI normalizes the package
+manager separator before Commander parsing, so these forms are valid:
+
+```bash
+pnpm run tnf -- --help
+pnpm run tnf -- menu --compact --theme mono --no-splash
+```
+
 ## Root behavior
 
 Running `tnf` with no arguments prints the TNF-native command menu with splash
@@ -52,6 +60,23 @@ Use full inventory mode when you need the entire command surface:
 
 ```bash
 tnf menu --full
+tnf paths --json
+```
+
+The latest reviewed command inventory is recorded at
+`docs/protocols/reports/tnf-cli-command-paths-2026-05-28.json` and contained 237
+CLI command paths at review time.
+
+TypeScript package boundaries are enforced through project references. Before
+checking or building the CLI after dependency changes, build the referenced
+workspace packages:
+
+```bash
+pnpm --filter @the-new-fuse/tnf-core build
+pnpm --filter @the-new-fuse/infrastructure build
+pnpm --filter @the-new-fuse/tnf-note-taking build
+pnpm --filter @the-new-fuse/tnf-cli type-check
+pnpm --filter @the-new-fuse/tnf-cli build
 ```
 
 ## Splash and Color Options
@@ -95,6 +120,10 @@ tnf menu --full
 ```bash
 tnf onboard
 tnf doctor
+tnf hooks test --file ./chain.json --event ./event.json --record
+tnf hooks logs --chain typescript-validation-chain
+tnf hooks explain --run <run_id>
+tnf hooks replay --run <run_id> --from-step lint
 tnf self-improvement run
 tnf self-improvement status --strict
 tnf full-auto once
