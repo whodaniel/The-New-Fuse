@@ -108,13 +108,13 @@ export async function onRequest(context) {
     }
 
     // Return the app shell content with a 200 status.
+    const newHeaders = new Headers(appResponse.headers);
+    newHeaders.set('Content-Type', 'text/html; charset=utf-8');
+    newHeaders.set('X-TNF-Routing', 'SPA-App');
+
     return new Response(appResponse.body, {
       status: 200,
-      headers: {
-        ...Object.fromEntries(appResponse.headers),
-        'Content-Type': 'text/html; charset=utf-8',
-        'X-TNF-Routing': 'SPA-App',
-      },
+      headers: newHeaders,
     });
   }
 
