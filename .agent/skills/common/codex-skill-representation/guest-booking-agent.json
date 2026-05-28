@@ -1,0 +1,12 @@
+{
+  "skillName": "guest-booking-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/guest-booking-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/guest-booking-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/guest-booking-agent.json",
+  "status": "present"
+}

@@ -1,0 +1,12 @@
+{
+  "skillName": "production-pipeline-segment",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/production-pipeline-segment/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/production-pipeline-segment/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/production-pipeline-segment.json",
+  "status": "present"
+}

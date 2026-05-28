@@ -1,0 +1,12 @@
+{
+  "skillName": "link-building-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/link-building-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/link-building-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/link-building-agent.json",
+  "status": "present"
+}

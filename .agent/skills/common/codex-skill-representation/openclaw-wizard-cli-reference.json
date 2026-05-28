@@ -1,0 +1,12 @@
+{
+  "skillName": "openclaw-wizard-cli-reference",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/openclaw-wizard-cli-reference/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/openclaw-wizard-cli-reference/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/openclaw-wizard-cli-reference.json",
+  "status": "present"
+}

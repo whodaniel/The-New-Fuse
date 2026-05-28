@@ -1,0 +1,12 @@
+{
+  "skillName": "vercel-deploy",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/vercel-deploy/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/vercel-deploy/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/vercel-deploy.json",
+  "status": "present"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Production Pipeline Segment"
+  short_description: "Game asset-to-frontend production pipeline"
+  default_prompt: "Use $production-pipeline-segment to run the game asset-to-frontend production pipeline in this repo."

@@ -1,0 +1,12 @@
+{
+  "skillName": "user-feedback-analysis-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/user-feedback-analysis-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/user-feedback-analysis-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/user-feedback-analysis-agent.json",
+  "status": "present"
+}

@@ -1,0 +1,12 @@
+{
+  "skillName": "gemini",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/gemini/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/gemini/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/gemini.json",
+  "status": "present"
+}

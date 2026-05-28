@@ -1,0 +1,12 @@
+{
+  "skillName": "personalized-content-recommendation-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/personalized-content-recommendation-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/personalized-content-recommendation-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/personalized-content-recommendation-agent.json",
+  "status": "present"
+}

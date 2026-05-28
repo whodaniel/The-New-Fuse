@@ -10989,11 +10989,14 @@ async function startInteractiveAgent(): Promise<void> {
 
   console.log('');
   console.log(chalk.cyan('╔══════════════════════════════════════════════╗'));
-  console.log(chalk.cyan('║') + chalk.bold('  TNF Agent — Interactive Session        ') + chalk.cyan(' ║'));
-  console.log(chalk.cyan('║') + chalk.dim('  Provider: ') + chalk.white(client.baseUrl) + chalk.cyan('  ║'));
-  console.log(chalk.cyan('║') + chalk.dim('  Model:    ') + chalk.white(client.model) + chalk.cyan('     ║'));
+  console.log(chalk.cyan('║') + chalk.bold(' TNF Agent — Interactive Session ') + chalk.cyan(' ║'));
+  console.log(chalk.cyan('║') + chalk.dim(' Provider: ') + chalk.white((client as any).providerName || 'unknown') + chalk.cyan(' ║'));
+  console.log(chalk.cyan('║') + chalk.dim(' Model: ') + chalk.white(client.model) + chalk.cyan(' ║'));
+  const catalog = (client as any).getProviderCatalog?.() || [];
+  const availableCount = catalog.filter((p: any) => p.hasKey).length;
+  console.log(chalk.cyan('║') + chalk.dim(' Fallbacks: ') + chalk.white(`${availableCount} providers available`) + chalk.cyan(' ║'));
   console.log(chalk.cyan('╚══════════════════════════════════════════════╝'));
-  console.log(chalk.dim('  Type .exit to quit, .clear to clear history, .help for commands\n'));
+  console.log(chalk.dim(' Type .exit to quit, .clear to clear history, .help for commands\n'));
 
   const ask = (prompt: string): Promise<string> =>
     new Promise((resolve, reject) => {

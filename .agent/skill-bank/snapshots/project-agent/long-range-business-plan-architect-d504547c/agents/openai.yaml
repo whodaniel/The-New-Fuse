@@ -1,0 +1,4 @@
+interface:
+  display_name: "Long-Range Business Plan Architect"
+  short_description: "Interactive long-range business planning with research"
+  default_prompt: "Use $long-range-business-plan-architect to build a 3-5 year business plan with staged questions and evidence-backed research."

@@ -1,0 +1,63 @@
+{
+  "almanac_version": "1.7.0",
+  "last_updated": "2026-03-18",
+  "definitions": {
+    "primitives": {
+      "Primitives": "Irreducible building blocks of system logic/data",
+      "Composable": "Ability to combine discrete parts into new functionality",
+      "Decomposable": "Ability to break complex systems into atomic parts",
+      "Encapsulation": "Hiding internal logic/state behind formal interfaces",
+      "Interface": "Contract defining interaction between decoupled units",
+      "Invariant": "Logical condition that must always remain true",
+      "Aggregate": "Cluster of objects treated as a unit for consistency",
+      "Index": "Searchable registry of identifiers and locations",
+      "Library": "Collection of reusable assets and logic modules",
+      "ContextuallyRelative": "Significance dependent on environment/session",
+      "Hierarchy": "Structured ordering governing lower levels",
+      "HierarchyOfLogic": "Layered arrangement of decision rules",
+      "Logical": "Consistent with established rules and structure",
+      "Constraints": "Operational limits on action",
+      "LogicalConstraints": "Fixed rules preventing system drift",
+      "Runtime": "Active execution state of a component",
+      "Address": "Unique identifier/URI for mesh routing",
+      "Component": "Discrete functional unit of software/UI",
+      "Modular": "Architectural standard of independent components",
+      "Destination": "Target endpoint or objective state",
+      "Infrastructure": "Underlying services supporting the mesh",
+      "Embedded": "Integrated natively into a host environment",
+      "Abstraction": "Simplified representation of complex logic",
+      "Project": "The aggregate sum of TNF files and state",
+      "Personal": "Data scoped to a specific user or instance",
+      "Subfiles": "Partitioned auxiliary logic files",
+      "Scaffolding": "Foundational structure for bootstrapping",
+      "Prompts": "Natural language behavioral boundaries",
+      "Instructions": "Mandated procedural steps",
+      "Structure": "Formal organization of all components",
+      "Define": "To establish immutable identity and rules",
+      "Encyclopedia": "The cross-referenced sum of system knowledge"
+    },
+    "roles": {
+      "Director": "Autonomous strategy and integrity governor",
+      "Orchestrator": "Workflow designer and handoff manager",
+      "Broker": "Task distribution specialist",
+      "Worker": "Specialized execution node",
+      "KnowledgeScout": "Specialist in external standard assimilation",
+      "Participant": "Interaction entity (Human/AI)",
+      "SuperAdmin": "Ultimate human authority"
+    },
+    "disciplines": {
+      "StrictAttribution": "Rigorous discipline of citing sources; non-negotiable operational constraint",
+      "EvidentiaryPrecision": "Providing high-fidelity verifiable evidence for all claims",
+      "Auditability": "Traceability of decisions to attributed sources and reasoning"
+    },
+    "philosophical_anchors": {
+      "Attribution": "Legal and logical cornerstone of truth and justice",
+      "AttributionCornerstone": "Human knowledge (Scientific/Historical) overrules AI distillation",
+      "ContextualTruth": "Truth established via IP integrity and scientific provenance",
+      "SovereignIndividual": "The highest unit of consideration; a reflection of Unitary Creation",
+      "LeastAmongUsBarometer": "System greatness measured by treatment of the marginalized/lowest-resource",
+      "AttributionOverrule": "Nullification of AI claims lacking attributed lineage",
+      "TruthPersistence": "Maintenance of resonance with human and empirical origin"
+    }
+  }
+}

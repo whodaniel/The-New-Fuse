@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ab Testing Optimizer Agent"
+  short_description: "Help with Ab Testing Optimizer Agent tasks"
+  default_prompt: "Run the Ab Testing Optimizer Agent workflow using SKILL.md instructions."

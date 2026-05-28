@@ -1,0 +1,4 @@
+interface:
+  display_name: "Business Law Specialist Agent"
+  short_description: "Business-law risk review and compliance planning"
+  default_prompt: "Use $business-law-specialist-agent to review a business decision, flag legal risks, and produce an attorney-ready escalation brief."

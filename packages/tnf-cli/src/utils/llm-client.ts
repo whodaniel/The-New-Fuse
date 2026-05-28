@@ -12,19 +12,57 @@ export interface LLMOptions {
   maxTokens?: number;
 }
 
+/**
+ * Provider descriptor — mirrors the entries in data/model-providers.json
+ * and ~/.tnf/model-providers.json
+ */
+export interface ProviderDescriptor {
+  id: string;
+  name: string;
+  model: string;
+  priority: number;
+  endpoint: string;
+  envKey?: string;
+  apiKeyRequired?: boolean;
+  reliabilityTarget?: number;
+  maxLatencyMs?: number;
+  costPerMtokens?: number;
+  note?: string;
+  provider?: string; // logical provider name for special routing
+}
+
+/**
+ * LLMClient — unified multi-provider client for the TNF CLI.
+ *
+ * Resolution order (first usable wins):
+ *   1. Explicit env vars (TNF_LLM_BASE_URL + TNF_LLM_API_KEY + TNF_LLM_MODEL)
+ *   2. model-providers.json fallback chain (probed in priority order)
+ *   3. .env auto-detection (NVIDIA_API_KEY, GEMINI_API_KEY, GROQ_API_KEY, etc.)
+ *   4. Hardcoded safe fallback (NVIDIA with GPT-OSS-120B)
+ *
+ * All providers except Gemini-native use the OpenAI-compatible chat/completions
+ * endpoint. Gemini-native is kept as a legacy fallback only.
+ */
 export class LLMClient {
   private apiKey!: string;
   public baseUrl!: string;
   public model!: string;
+  public providerName!: string;
   private readonly role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent';
+  private envVars: Record<string, string> = {};
+  private providers: ProviderDescriptor[] = [];
 
   constructor(role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent' = 'worker') {
     this.role = role;
+    this.loadEnv();
+    this.loadProviders();
     this.resolveProvider();
   }
 
-  public resolveProvider(): void {
-    // 0. Load env vars if not already loaded (simple manual parse if dotenv not handy)
+  // ── Environment loading ──────────────────────────────────────────────
+
+  /** Load .env / .env.local from repo root into this.envVars (not process.env) */
+  private loadEnv(): void {
     try {
       const currentDir = path.dirname(fileURLToPath(import.meta.url));
       const rootDir = path.resolve(currentDir, '../../../..');
@@ -38,6 +76,8 @@ export class LLMClient {
               if (match) {
                 const key = match[1].trim();
                 const val = match[2].trim().replace(/^["'](.*)["']$/, '$1');
+                if (!this.envVars[key]) this.envVars[key] = val;
+                // Also set in process.env for broader compatibility
                 if (!process.env[key]) process.env[key] = val;
               }
             });
@@ -46,82 +86,247 @@ export class LLMClient {
     } catch (e) {
       // Ignore errors in env loading
     }
+  }
 
-    // 1. Try to load dynamic status from the LLM Provider Tester agent
-    const statusPath = path.resolve(process.cwd(), 'data/llm-provider-status.json');
+  private getEnv(key: string): string {
+    return process.env[key] || this.envVars[key] || '';
+  }
 
-    if (fs.existsSync(statusPath)) {
-      try {
-        const status = JSON.parse(fs.readFileSync(statusPath, 'utf8'));
-        const allocation = status.allocations?.[this.role] || status.bestAvailable;
+  // ── Provider catalog loading ─────────────────────────────────────────
 
-        if (allocation && allocation.active) {
-          this.apiKey = process.env[allocation.envKey] || '';
+  /** Load the provider catalog from model-providers.json files */
+  private loadProviders(): void {
+    const candidates = [
+      path.resolve(process.cwd(), 'data/model-providers.json'),
+      path.join(process.env.HOME || '/tmp', '.tnf/model-providers.json'),
+    ];
 
-          if (allocation.id === 'gemini') {
-            this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
-            this.model = process.env.GEMINI_MODEL || process.env.TNF_LLM_MODEL || 'gemini-pro';
-          } else if (allocation.id === 'groq') {
-            this.baseUrl = 'https://api.groq.com/openai/v1';
-            this.model = process.env.GROQ_MODEL || process.env.TNF_LLM_MODEL || 'llama3-8b-8192';
-          } else if (allocation.id === 'deepseek') {
-            this.baseUrl = 'https://api.deepseek.com/v1';
-            this.model = process.env.DEEPSEEK_MODEL || process.env.TNF_LLM_MODEL || 'deepseek-chat';
-          } else if (allocation.id === 'openrouter') {
-            this.baseUrl = 'https://openrouter.ai/api/v1';
-            this.model =
-              process.env.OPENROUTER_MODEL || process.env.TNF_LLM_MODEL || 'openrouter/auto';
-          } else {
-            this.baseUrl = allocation.testUrl.replace(
-              /\/chat\/completions$|\/models$|\/messages$/,
-              ''
-            );
-            this.model = process.env.TNF_LLM_MODEL || process.env.OPENAI_MODEL || 'model-auto';
+    // Also check the repo-root relative path
+    try {
+      const currentDir = path.dirname(fileURLToPath(import.meta.url));
+      const rootDir = path.resolve(currentDir, '../../../..');
+      candidates.unshift(path.join(rootDir, 'data/model-providers.json'));
+    } catch {}
+
+    for (const p of candidates) {
+      if (fs.existsSync(p)) {
+        try {
+          const raw = JSON.parse(fs.readFileSync(p, 'utf8'));
+          if (raw.providers && Array.isArray(raw.providers)) {
+            this.providers = raw.providers;
+            return;
           }
-
-          if (this.apiKey) return;
-        }
-      } catch (err) {
-        // Fallback to environment variables if file is corrupt
+        } catch {}
       }
-    }
-
-    // 2. Fallback to standard environment variables if dynamic resolution fails
-    this.apiKey =
-      process.env.TNF_LLM_API_KEY || process.env.OPENAI_API_KEY || process.env.NVIDIA_API_KEY || '';
-    const explicitBaseUrl = process.env.TNF_LLM_BASE_URL || process.env.OPENAI_API_BASE;
-
-    if (explicitBaseUrl) {
-      this.baseUrl = explicitBaseUrl;
-      this.model = process.env.TNF_LLM_MODEL || process.env.OPENAI_MODEL || 'model-auto';
-    } else if (process.env.NVIDIA_API_KEY) {
-      this.baseUrl = 'https://integrate.api.nvidia.com/v1';
-      this.model = process.env.NVIDIA_MODEL || process.env.TNF_LLM_MODEL || 'nemotron';
-    } else {
-      this.baseUrl = 'https://api.openai.com/v1';
-      this.model = process.env.OPENAI_MODEL || process.env.TNF_LLM_MODEL || 'gpt-auto';
     }
   }
 
+  // ── Provider resolution ──────────────────────────────────────────────
+
+  public resolveProvider(): void {
+    // ─── Strategy 1: Explicit TNF_LLM env vars ───────────────────────
+    const explicitBaseUrl = this.getEnv('TNF_LLM_BASE_URL');
+    const explicitApiKey = this.getEnv('TNF_LLM_API_KEY');
+    const explicitModel = this.getEnv('TNF_LLM_MODEL');
+
+    if (explicitBaseUrl && explicitApiKey) {
+      this.baseUrl = explicitBaseUrl;
+      this.apiKey = explicitApiKey;
+      this.model = explicitModel || 'model-auto';
+      this.providerName = this.detectProviderFromUrl(explicitBaseUrl);
+      if (this.model !== explicitModel || this.isProviderAlive(this.providerName)) {
+        return; // Explicit config works
+      }
+      // If explicit config points to a dead model, fall through
+    }
+
+    // ─── Strategy 2: Walk the model-providers.json fallback chain ─────
+    const sortedProviders = [...this.providers].sort(
+      (a, b) => (a.priority ?? 99) - (b.priority ?? 99)
+    );
+
+    for (const provider of sortedProviders) {
+      const key = this.resolveApiKey(provider);
+      if (!key) continue;
+
+      // Quick liveness check — skip if marked dead
+      if (provider.note && /402|410|exhausted|gone/i.test(provider.note)) continue;
+
+      this.baseUrl = provider.endpoint;
+      this.apiKey = key;
+      this.model = provider.model;
+      this.providerName = provider.id;
+      return;
+    }
+
+    // ─── Strategy 3: Auto-detect from available API keys ──────────────
+    const autoProviders: Array<{
+      envKey: string;
+      baseUrl: string;
+      defaultModel: string;
+      name: string;
+    }> = [
+      {
+        envKey: 'NVIDIA_API_KEY',
+        baseUrl: 'https://integrate.api.nvidia.com/v1',
+        defaultModel: 'openai/gpt-oss-120b',
+        name: 'nvidia',
+      },
+      {
+        envKey: 'GROQ_API_KEY',
+        baseUrl: 'https://api.groq.com/openai/v1',
+        defaultModel: 'llama3-8b-8192',
+        name: 'groq',
+      },
+      {
+        envKey: 'GEMINI_API_KEY',
+        baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+        defaultModel: 'gemini-2.0-flash',
+        name: 'gemini',
+      },
+      {
+        envKey: 'OPENROUTER_API_KEY',
+        baseUrl: 'https://openrouter.ai/api/v1',
+        defaultModel: 'openrouter/auto',
+        name: 'openrouter',
+      },
+      {
+        envKey: 'DEEPSEEK_API_KEY',
+        baseUrl: 'https://api.deepseek.com/v1',
+        defaultModel: 'deepseek-chat',
+        name: 'deepseek',
+      },
+      {
+        envKey: 'OPENAI_API_KEY',
+        baseUrl: 'https://api.openai.com/v1',
+        defaultModel: 'gpt-4o-mini',
+        name: 'openai',
+      },
+    ];
+
+    for (const ap of autoProviders) {
+      const key = this.getEnv(ap.envKey);
+      if (key) {
+        this.baseUrl = ap.baseUrl;
+        this.apiKey = key;
+        this.model = this.getEnv('TNF_LLM_MODEL') || ap.defaultModel;
+        this.providerName = ap.name;
+
+        // If this is a Gemini endpoint but model name is not a Gemini model,
+        // fix the mismatch — NVIDIA/Groq models can't run on Gemini API
+        if (ap.name === 'gemini' && this.model.includes('/')) {
+          this.model = ap.defaultModel;
+        }
+        return;
+      }
+    }
+
+    // ─── Strategy 4: Hardcoded safe fallback ──────────────────────────
+    this.baseUrl = 'https://integrate.api.nvidia.com/v1';
+    this.apiKey = this.getEnv('NVIDIA_API_KEY') || 'missing-key';
+    this.model = 'openai/gpt-oss-120b';
+    this.providerName = 'nvidia-fallback';
+  }
+
+  /** Detect provider name from URL pattern */
+  private detectProviderFromUrl(url: string): string {
+    if (url.includes('nvidia.com')) return 'nvidia';
+    if (url.includes('groq.com')) return 'groq';
+    if (url.includes('generativelanguage.googleapis')) return 'gemini';
+    if (url.includes('openrouter.ai')) return 'openrouter';
+    if (url.includes('deepseek.com')) return 'deepseek';
+    if (url.includes('api.openai.com')) return 'openai';
+    if (url.includes('anthropic.com')) return 'anthropic';
+    if (url.includes('localhost') || url.includes('127.0.0.1')) return 'local';
+    return 'custom';
+  }
+
+  /** Resolve the API key for a provider descriptor */
+  private resolveApiKey(provider: ProviderDescriptor): string {
+    // Provider-specific env keys
+    const envKeyMap: Record<string, string> = {
+      nvidia: 'NVIDIA_API_KEY',
+      groq: 'GROQ_API_KEY',
+      gemini: 'GEMINI_API_KEY',
+      google: 'GEMINI_API_KEY',
+      openrouter: 'OPENROUTER_API_KEY',
+      deepseek: 'DEEPSEEK_API_KEY',
+      openai: 'OPENAI_API_KEY',
+    };
+
+    // Check explicit envKey from descriptor first
+    if (provider.envKey) {
+      const key = this.getEnv(provider.envKey);
+      if (key) return key;
+    }
+
+    // Check provider.id prefix for known providers
+    for (const [prefix, envKey] of Object.entries(envKeyMap)) {
+      if (provider.id.startsWith(prefix)) {
+        const key = this.getEnv(envKey);
+        if (key) return key;
+      }
+    }
+
+    // Check logical provider field
+    if (provider.provider && envKeyMap[provider.provider]) {
+      const key = this.getEnv(envKeyMap[provider.provider]);
+      if (key) return key;
+    }
+
+    // Fall back to TNF_LLM_API_KEY
+    return this.getEnv('TNF_LLM_API_KEY');
+  }
+
+  /** Rough liveness check — true if we have no evidence the provider is dead */
+  private isProviderAlive(providerName: string): boolean {
+    return true; // Optimistic — actual failures caught at call time
+  }
+
+  // ── Chat completion ──────────────────────────────────────────────────
+
   async chatComplete(messages: LLMMessage[], options: LLMOptions = {}): Promise<string> {
-    if (!this.apiKey) {
-      // Re-resolve in case the tester agent just finished its first run
+    if (!this.apiKey || this.apiKey === 'missing-key') {
+      // Re-resolve in case env was just loaded
       this.resolveProvider();
-      if (!this.apiKey) {
+      if (!this.apiKey || this.apiKey === 'missing-key') {
         throw new Error(
-          'LLM API key not found. Please set TNF_LLM_API_KEY or run tnf boot goldberg.'
+          'LLM API key not found. Set one of: NVIDIA_API_KEY, GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY, or TNF_LLM_API_KEY'
         );
       }
     }
 
-    // Handle different API formats (Gemini vs OpenAI-compatible)
+    // Try primary provider
+    try {
+      return await this._callProvider(messages, options);
+    } catch (primaryErr: any) {
+      // If primary fails, try fallback chain
+      const fallbackResult = await this._tryFallbacks(messages, options, primaryErr);
+      if (fallbackResult !== null) return fallbackResult;
+
+      // All providers exhausted
+      throw primaryErr;
+    }
+  }
+
+  /** Route to the correct API format for the current baseUrl */
+  private async _callProvider(messages: LLMMessage[], options: LLMOptions): Promise<string> {
+    // Gemini native API (legacy)
     if (this.baseUrl.includes('generativelanguage.googleapis.com')) {
+      // Validate model name is actually a Gemini model
+      if (this.model.includes('/')) {
+        // Cross-provider mismatch! Model looks like NVIDIA/OpenRouter format
+        // Switch to a valid Gemini model
+        this.model = 'gemini-2.5-flash';
+      }
       return this.callGemini(messages, options);
     }
 
+    // All other providers: OpenAI-compatible chat/completions
     return this.callOpenAICompatible(messages, options);
   }
 
+  /** OpenAI-compatible chat/completions endpoint (NVIDIA, Groq, OpenRouter, etc.) */
   private async callOpenAICompatible(messages: LLMMessage[], options: LLMOptions): Promise<string> {
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
@@ -143,14 +348,29 @@ export class LLMClient {
     }
 
     const data = (await response.json()) as any;
-    return data.choices[0]?.message?.content || '';
+    const choice = data.choices?.[0]?.message;
+    // Some models (e.g. GPT-OSS-120B, reasoning models) put output in
+    // reasoning_content when content is null. Fall back gracefully.
+    return choice?.content || choice?.reasoning_content || '';
   }
 
+  /** Gemini native API (generateContent endpoint) */
   private async callGemini(messages: LLMMessage[], options: LLMOptions): Promise<string> {
-    const geminiMessages = messages.map((m) => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }],
-    }));
+    const geminiMessages = messages
+      .filter((m) => m.role !== 'system') // Gemini doesn't support system role in contents
+      .map((m) => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: m.content }],
+      }));
+
+    // Add system message as first user turn if present
+    const systemMsg = messages.find((m) => m.role === 'system');
+    if (systemMsg) {
+      geminiMessages.unshift({
+        role: 'user',
+        parts: [{ text: `System instructions: ${systemMsg.content}` }],
+      });
+    }
 
     const response = await fetch(
       `${this.baseUrl}/models/${this.model}:generateContent?key=${this.apiKey}`,
@@ -170,15 +390,73 @@ export class LLMClient {
     return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   }
 
+  // ── Fallback chain ──────────────────────────────────────────────────
+
+  /** Try remaining providers from the catalog when the primary fails */
+  private async _tryFallbacks(
+    messages: LLMMessage[],
+    options: LLMOptions,
+    primaryError: any
+  ): Promise<string | null> {
+    if (this.providers.length === 0) return null;
+
+    const sorted = [...this.providers].sort(
+      (a, b) => (a.priority ?? 99) - (b.priority ?? 99)
+    );
+
+    // Skip providers we've already tried (current baseUrl)
+    const tried = new Set([this.baseUrl]);
+
+    for (const provider of sorted) {
+      if (tried.has(provider.endpoint)) continue;
+      tried.add(provider.endpoint);
+
+      // Skip known-dead providers
+      if (provider.note && /402|410|exhausted|gone/i.test(provider.note)) continue;
+
+      const key = this.resolveApiKey(provider);
+      if (!key) continue;
+
+      const savedBaseUrl = this.baseUrl;
+      const savedApiKey = this.apiKey;
+      const savedModel = this.model;
+      const savedProvider = this.providerName;
+
+      try {
+        this.baseUrl = provider.endpoint;
+        this.apiKey = key;
+        this.model = provider.model;
+        this.providerName = provider.id;
+        const result = await this._callProvider(messages, options);
+        console.log(`[tnf] Fallback succeeded: ${provider.name} (${provider.model})`);
+        return result;
+      } catch {
+        // Restore and try next
+        this.baseUrl = savedBaseUrl;
+        this.apiKey = savedApiKey;
+        this.model = savedModel;
+        this.providerName = savedProvider;
+      }
+    }
+
+    return null;
+  }
+
+  // ── Model discovery ──────────────────────────────────────────────────
+
   async fetchAvailableModels(): Promise<string[]> {
     if (!this.apiKey) return [];
 
     // Gemini has a different models endpoint structure
     if (this.baseUrl.includes('generativelanguage.googleapis.com')) {
-      const response = await fetch(`${this.baseUrl}/models?key=${this.apiKey}`);
-      if (!response.ok) return [];
-      const data = (await response.json()) as any;
-      return data.models?.map((m: any) => m.name.replace('models/', '')) || [];
+      try {
+        const response = await fetch(`${this.baseUrl}/models?key=${this.apiKey}`);
+        if (!response.ok) return [];
+        const data = (await response.json()) as any;
+        return data.models?.map((m: any) => m.name.replace('models/', '')) || [];
+      } catch {
+        return [];
+      }
     }
 
     try {
@@ -187,13 +465,22 @@ export class LLMClient {
       });
       if (!response.ok) return [];
       const data = (await response.json()) as any;
-      // OpenAI format: data is an array of objects with 'id'
       if (Array.isArray(data.data)) {
         return data.data.map((m: any) => m.id);
       }
       return [];
-    } catch (err) {
+    } catch {
       return [];
     }
+  }
+
+  /** Return all configured providers with their status */
+  getProviderCatalog(): { id: string; name: string; model: string; hasKey: boolean }[] {
+    return this.providers.map((p) => ({
+      id: p.id,
+      name: p.name,
+      model: p.model,
+      hasKey: !!this.resolveApiKey(p),
+    }));
   }
 }

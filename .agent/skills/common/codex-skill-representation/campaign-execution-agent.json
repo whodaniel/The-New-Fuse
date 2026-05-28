@@ -1,0 +1,12 @@
+{
+  "skillName": "campaign-execution-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/campaign-execution-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/campaign-execution-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/campaign-execution-agent.json",
+  "status": "present"
+}

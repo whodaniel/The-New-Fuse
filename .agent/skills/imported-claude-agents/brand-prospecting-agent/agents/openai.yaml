@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brand Prospecting Agent"
+  short_description: "Help with Brand Prospecting Agent tasks"
+  default_prompt: "Run the Brand Prospecting Agent workflow using SKILL.md instructions."

@@ -1,0 +1,12 @@
+{
+  "skillName": "customer-journey-map-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/customer-journey-map-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/customer-journey-map-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/customer-journey-map-agent.json",
+  "status": "present"
+}

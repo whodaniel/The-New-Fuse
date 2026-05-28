@@ -1,0 +1,12 @@
+{
+  "skillName": "niche-analyst-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/niche-analyst-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/niche-analyst-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/niche-analyst-agent.json",
+  "status": "present"
+}

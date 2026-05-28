@@ -1,0 +1,12 @@
+{
+  "skillName": "lead-magnet-funnel-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/lead-magnet-funnel-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/lead-magnet-funnel-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/lead-magnet-funnel-agent.json",
+  "status": "present"
+}

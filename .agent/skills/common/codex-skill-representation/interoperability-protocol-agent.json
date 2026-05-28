@@ -1,0 +1,12 @@
+{
+  "skillName": "interoperability-protocol-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/interoperability-protocol-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/interoperability-protocol-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/interoperability-protocol-agent.json",
+  "status": "present"
+}

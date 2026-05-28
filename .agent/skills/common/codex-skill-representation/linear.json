@@ -1,0 +1,12 @@
+{
+  "skillName": "linear",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/linear/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/linear/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/linear.json",
+  "status": "present"
+}

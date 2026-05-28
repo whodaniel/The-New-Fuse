@@ -1,0 +1,12 @@
+{
+  "skillName": "asset-sourcer-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/asset-sourcer-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/asset-sourcer-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/asset-sourcer-agent.json",
+  "status": "present"
+}

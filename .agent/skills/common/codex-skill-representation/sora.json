@@ -1,0 +1,12 @@
+{
+  "skillName": "sora",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/sora/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/sora/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/sora.json",
+  "status": "present"
+}

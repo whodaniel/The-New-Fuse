@@ -1,0 +1,4 @@
+interface:
+  display_name: "Orchestrator Agent Copy"
+  short_description: "Help with Orchestrator Agent Copy tasks"
+  default_prompt: "Run the Orchestrator Agent Copy workflow using SKILL.md instructions."

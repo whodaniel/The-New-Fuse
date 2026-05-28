@@ -1,0 +1,4 @@
+interface:
+  display_name: "Oto Sequence Architect Agent"
+  short_description: "Help with Oto Sequence Architect Agent tasks"
+  default_prompt: "Run the Oto Sequence Architect Agent workflow using SKILL.md instructions."

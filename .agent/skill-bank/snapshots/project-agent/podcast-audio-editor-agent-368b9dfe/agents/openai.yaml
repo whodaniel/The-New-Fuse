@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Audio Editor Agent"
+  short_description: "Help with Podcast Audio Editor Agent tasks"
+  default_prompt: "Run the Podcast Audio Editor Agent workflow using SKILL.md instructions."

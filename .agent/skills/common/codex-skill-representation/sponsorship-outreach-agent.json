@@ -1,0 +1,12 @@
+{
+  "skillName": "sponsorship-outreach-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/sponsorship-outreach-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/sponsorship-outreach-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/sponsorship-outreach-agent.json",
+  "status": "present"
+}

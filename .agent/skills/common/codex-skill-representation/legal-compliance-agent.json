@@ -1,0 +1,12 @@
+{
+  "skillName": "legal-compliance-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/legal-compliance-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/legal-compliance-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/legal-compliance-agent.json",
+  "status": "present"
+}

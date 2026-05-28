@@ -1,0 +1,12 @@
+{
+  "skillName": "framework-consciousness",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/framework-consciousness/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/framework-consciousness/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/framework-consciousness.json",
+  "status": "present"
+}

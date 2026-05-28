@@ -1,0 +1,12 @@
+{
+  "skillName": "podcast-monetization-strategy-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-monetization-strategy-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/podcast-monetization-strategy-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/podcast-monetization-strategy-agent.json",
+  "status": "present"
+}

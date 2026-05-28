@@ -1,0 +1,4 @@
+interface:
+  display_name: "Digital Product Factory Agent"
+  short_description: "Help with Digital Product Factory Agent tasks"
+  default_prompt: "Run the Digital Product Factory Agent workflow using SKILL.md instructions."

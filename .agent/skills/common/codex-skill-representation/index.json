@@ -1,0 +1,2146 @@
+{
+  "generatedAt": "2026-03-24T22:37:29.845112Z",
+  "codexSkillCount": 178,
+  "tnfSkillNameCount": 224,
+  "missingCount": 0,
+  "missingSkillNames": [],
+  "entries": [
+    {
+      "skillName": "ab-testing-optimizer-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/ab-testing-optimizer-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/ab-testing-optimizer-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/ab-testing-optimizer-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "ad-network-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/ad-network-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/ad-network-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/ad-network-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "affiliate-link-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/affiliate-link-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/affiliate-link-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/affiliate-link-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "agent-registry-manager",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/agent-registry-manager/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/agent-registry-manager/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/agent-registry-manager.json",
+      "status": "present"
+    },
+    {
+      "skillName": "agent-relationship-autopilot",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/agent-relationship-autopilot/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/agent-relationship-autopilot/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/agent-relationship-autopilot.json",
+      "status": "present"
+    },
+    {
+      "skillName": "agent-relationship-grapher",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/agent-relationship-grapher/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/agent-relationship-grapher/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/agent-relationship-grapher.json",
+      "status": "present"
+    },
+    {
+      "skillName": "agent-search-engine",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/agent-search-engine/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/agent-search-engine/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/agent-search-engine.json",
+      "status": "present"
+    },
+    {
+      "skillName": "agent-tagger",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/agent-tagger/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/agent-tagger/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/agent-tagger.json",
+      "status": "present"
+    },
+    {
+      "skillName": "algorithm-adaptation-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/algorithm-adaptation-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/algorithm-adaptation-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/algorithm-adaptation-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "analytics-and-reporting-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/analytics-and-reporting-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/analytics-and-reporting-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/analytics-and-reporting-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "asset-sourcer-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/asset-sourcer-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/asset-sourcer-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/asset-sourcer-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "audience-growth-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/audience-growth-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/audience-growth-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/audience-growth-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "audience-persona-architect-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/audience-persona-architect-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/audience-persona-architect-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/audience-persona-architect-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "audience-segmentation-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/audience-segmentation-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/audience-segmentation-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/audience-segmentation-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "audio-recording-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/audio-recording-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/audio-recording-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/audio-recording-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "brand-identity-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/brand-identity-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/brand-identity-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/brand-identity-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "brand-outreach-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/brand-outreach-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/brand-outreach-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/brand-outreach-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "brand-prospecting-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/brand-prospecting-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/brand-prospecting-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/brand-prospecting-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "business-law-specialist-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/business-law-specialist-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/business-law-specialist-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/business-law-specialist-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "business-model-architect-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/business-model-architect-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/business-model-architect-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/business-model-architect-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "campaign-execution-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/campaign-execution-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/campaign-execution-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/campaign-execution-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "campaign-reporting-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/campaign-reporting-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/campaign-reporting-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/campaign-reporting-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "chatgpt-apps",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/chatgpt-apps/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/chatgpt-apps/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/chatgpt-apps.json",
+      "status": "present"
+    },
+    {
+      "skillName": "clawhub-skill-scout",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/clawhub-skill-scout/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/clawhub-skill-scout/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/clawhub-skill-scout.json",
+      "status": "present"
+    },
+    {
+      "skillName": "cloudflare-deploy",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/cloudflare-deploy/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/cloudflare-deploy/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/cloudflare-deploy.json",
+      "status": "present"
+    },
+    {
+      "skillName": "codebase-pathway-tracer",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/codebase-pathway-tracer/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/codebase-pathway-tracer/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/codebase-pathway-tracer.json",
+      "status": "present"
+    },
+    {
+      "skillName": "cognitive-bias-optimizer-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/cognitive-bias-optimizer-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/cognitive-bias-optimizer-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/cognitive-bias-optimizer-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "community-engagement-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/community-engagement-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/community-engagement-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/community-engagement-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "community-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/community-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/community-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/community-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "competitive-intelligence-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/competitive-intelligence-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/competitive-intelligence-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/competitive-intelligence-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "content-calendar-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/content-calendar-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/content-calendar-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/content-calendar-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "content-calendar-orchestrator-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/content-calendar-orchestrator-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/content-calendar-orchestrator-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/content-calendar-orchestrator-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "content-refresh-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/content-refresh-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/content-refresh-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/content-refresh-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "content-repurposing-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/content-repurposing-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/content-repurposing-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/content-repurposing-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "content-writer-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/content-writer-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/content-writer-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/content-writer-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "context-frontloader",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/context-frontloader/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/context-frontloader/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/context-frontloader.json",
+      "status": "present"
+    },
+    {
+      "skillName": "contract-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/contract-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/contract-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/contract-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "cro-process-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/cro-process-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/cro-process-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/cro-process-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "custom-slash-command-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/custom-slash-command-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/custom-slash-command-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/custom-slash-command-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "customer-journey-map-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/customer-journey-map-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/customer-journey-map-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/customer-journey-map-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "customer-support-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/customer-support-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/customer-support-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/customer-support-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "deal-negotiator-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/deal-negotiator-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/deal-negotiator-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/deal-negotiator-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "design-md",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/design-md/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/design-md/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/design-md.json",
+      "status": "present"
+    },
+    {
+      "skillName": "develop-web-game",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/develop-web-game/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/develop-web-game/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/develop-web-game.json",
+      "status": "present"
+    },
+    {
+      "skillName": "digital-asset-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/digital-asset-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/digital-asset-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/digital-asset-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "digital-product-creator-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/digital-product-creator-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/digital-product-creator-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/digital-product-creator-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "digital-product-factory-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/digital-product-factory-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/digital-product-factory-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/digital-product-factory-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "doc",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/doc/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/doc/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/doc.json",
+      "status": "present"
+    },
+    {
+      "skillName": "ecom-platform-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/ecom-platform-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/ecom-platform-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/ecom-platform-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "email-custodian-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/email-custodian-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/email-custodian-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/email-custodian-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "email-marketing-automation-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/email-marketing-automation-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/email-marketing-automation-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/email-marketing-automation-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "enhance-prompt",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/enhance-prompt/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/enhance-prompt/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/enhance-prompt.json",
+      "status": "present"
+    },
+    {
+      "skillName": "episode-planner-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/episode-planner-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/episode-planner-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/episode-planner-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "equipment-recommendation-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/equipment-recommendation-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/equipment-recommendation-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/equipment-recommendation-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "ethical-bias-auditor-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/ethical-bias-auditor-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/ethical-bias-auditor-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/ethical-bias-auditor-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "facebook-strategy-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/facebook-strategy-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/facebook-strategy-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/facebook-strategy-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "fan-funding-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/fan-funding-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/fan-funding-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/fan-funding-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "figma",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/figma/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/figma/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/figma.json",
+      "status": "present"
+    },
+    {
+      "skillName": "figma-implement-design",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/figma-implement-design/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/figma-implement-design/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/figma-implement-design.json",
+      "status": "present"
+    },
+    {
+      "skillName": "financial-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/financial-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/financial-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/financial-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "framework-consciousness",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/framework-consciousness/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/framework-consciousness/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/framework-consciousness.json",
+      "status": "present"
+    },
+    {
+      "skillName": "frontend-debugger-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/frontend-debugger-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/frontend-debugger-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/frontend-debugger-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "funnel-economics-analyst-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/funnel-economics-analyst-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/funnel-economics-analyst-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/funnel-economics-analyst-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "gemini",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/gemini/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/gemini/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/gemini.json",
+      "status": "present"
+    },
+    {
+      "skillName": "gh-address-comments",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/gh-address-comments/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/gh-address-comments/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/gh-address-comments.json",
+      "status": "present"
+    },
+    {
+      "skillName": "gh-fix-ci",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/gh-fix-ci/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/gh-fix-ci/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/gh-fix-ci.json",
+      "status": "present"
+    },
+    {
+      "skillName": "graph-writer",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/graph-writer/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/graph-writer/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/graph-writer.json",
+      "status": "present"
+    },
+    {
+      "skillName": "guest-booking-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/guest-booking-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/guest-booking-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/guest-booking-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "guest-relationship-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/guest-relationship-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/guest-relationship-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/guest-relationship-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "imagegen",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imagegen/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imagegen/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/imagegen.json",
+      "status": "present"
+    },
+    {
+      "skillName": "influencer-media-kit-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/influencer-media-kit-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/influencer-media-kit-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/influencer-media-kit-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "influencer-niche-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/influencer-niche-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/influencer-niche-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/influencer-niche-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "information-retrieval-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/information-retrieval-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/information-retrieval-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/information-retrieval-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "instagram-strategy-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/instagram-strategy-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/instagram-strategy-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/instagram-strategy-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "inter-agentic-workflow-definer",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/inter-agentic-workflow-definer/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/inter-agentic-workflow-definer/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/inter-agentic-workflow-definer.json",
+      "status": "present"
+    },
+    {
+      "skillName": "interoperability-protocol-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/interoperability-protocol-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/interoperability-protocol-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/interoperability-protocol-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "jules-cli-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/jules-cli-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/jules-cli-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/jules-cli-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "jules-followup-ops",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/jules-followup-ops/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/jules-followup-ops/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/jules-followup-ops.json",
+      "status": "present"
+    },
+    {
+      "skillName": "jupyter-notebook",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/jupyter-notebook/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/jupyter-notebook/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/jupyter-notebook.json",
+      "status": "present"
+    },
+    {
+      "skillName": "keyword-research-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/keyword-research-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/keyword-research-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/keyword-research-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "lead-capture-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/lead-capture-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/lead-capture-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/lead-capture-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "lead-magnet-funnel-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/lead-magnet-funnel-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/lead-magnet-funnel-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/lead-magnet-funnel-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "legal-compliance-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/legal-compliance-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/legal-compliance-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/legal-compliance-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "library-of-living-knowledge",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/library-of-living-knowledge/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/library-of-living-knowledge/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/library-of-living-knowledge.json",
+      "status": "present"
+    },
+    {
+      "skillName": "limitation-challenge-schema-loop",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/limitation-challenge-schema-loop/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/limitation-challenge-schema-loop/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/limitation-challenge-schema-loop.json",
+      "status": "present"
+    },
+    {
+      "skillName": "linear",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/linear/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/linear/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/linear.json",
+      "status": "present"
+    },
+    {
+      "skillName": "link-building-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/link-building-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/link-building-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/link-building-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "live-stream-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/live-stream-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/live-stream-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/live-stream-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "logical-reasoning-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/logical-reasoning-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/logical-reasoning-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/logical-reasoning-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "long-range-business-plan-architect",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/long-range-business-plan-architect/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/long-range-business-plan-architect/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/long-range-business-plan-architect.json",
+      "status": "present"
+    },
+    {
+      "skillName": "meta-agent-architect",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/meta-agent-architect/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/meta-agent-architect/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/meta-agent-architect.json",
+      "status": "present"
+    },
+    {
+      "skillName": "monetization-strategy-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/monetization-strategy-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/monetization-strategy-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/monetization-strategy-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "netlify-deploy",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/netlify-deploy/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/netlify-deploy/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/netlify-deploy.json",
+      "status": "present"
+    },
+    {
+      "skillName": "niche-analyst-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/niche-analyst-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/niche-analyst-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/niche-analyst-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "notion-knowledge-capture",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/notion-knowledge-capture/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/notion-knowledge-capture/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/notion-knowledge-capture.json",
+      "status": "present"
+    },
+    {
+      "skillName": "notion-meeting-intelligence",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/notion-meeting-intelligence/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/notion-meeting-intelligence/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/notion-meeting-intelligence.json",
+      "status": "present"
+    },
+    {
+      "skillName": "notion-research-documentation",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/notion-research-documentation/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/notion-research-documentation/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/notion-research-documentation.json",
+      "status": "present"
+    },
+    {
+      "skillName": "notion-spec-to-implementation",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/notion-spec-to-implementation/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/notion-spec-to-implementation/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/notion-spec-to-implementation.json",
+      "status": "present"
+    },
+    {
+      "skillName": "openai-docs",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/openai-docs/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/openai-docs/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/openai-docs.json",
+      "status": "present"
+    },
+    {
+      "skillName": "openclaw-assistant-setup",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/openclaw-assistant-setup/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/openclaw-assistant-setup/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/openclaw-assistant-setup.json",
+      "status": "present"
+    },
+    {
+      "skillName": "openclaw-onboarding-wizard",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/openclaw-onboarding-wizard/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/openclaw-onboarding-wizard/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/openclaw-onboarding-wizard.json",
+      "status": "present"
+    },
+    {
+      "skillName": "openclaw-wizard-cli-automation",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/openclaw-wizard-cli-automation/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/openclaw-wizard-cli-automation/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/openclaw-wizard-cli-automation.json",
+      "status": "present"
+    },
+    {
+      "skillName": "openclaw-wizard-cli-reference",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/openclaw-wizard-cli-reference/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/openclaw-wizard-cli-reference/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/openclaw-wizard-cli-reference.json",
+      "status": "present"
+    },
+    {
+      "skillName": "orchestrator-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/orchestrator-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/orchestrator-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/orchestrator-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "orchestrator-agent-copy",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/orchestrator-agent-copy/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/orchestrator-agent-copy/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/orchestrator-agent-copy.json",
+      "status": "present"
+    },
+    {
+      "skillName": "oto-sequence-architect-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/oto-sequence-architect-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/oto-sequence-architect-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/oto-sequence-architect-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "pdf",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/pdf/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/pdf/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/pdf.json",
+      "status": "present"
+    },
+    {
+      "skillName": "personal-brand-architect-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/personal-brand-architect-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/personal-brand-architect-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/personal-brand-architect-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "personalized-content-recommendation-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/personalized-content-recommendation-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/personalized-content-recommendation-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/personalized-content-recommendation-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "platform-selection-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/platform-selection-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/platform-selection-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/platform-selection-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "playwright",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/playwright/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/playwright/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/playwright.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-ad-network-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-ad-network-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-ad-network-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-ad-network-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-affiliate-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-affiliate-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-affiliate-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-affiliate-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-analytics-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-analytics-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-analytics-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-analytics-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-audio-editor-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-audio-editor-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-audio-editor-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-audio-editor-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-distribution-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-distribution-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-distribution-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-distribution-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-equipment-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-equipment-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-equipment-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-equipment-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-format-designer-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-format-designer-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-format-designer-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-format-designer-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-hosting-setup-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-hosting-setup-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-hosting-setup-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-hosting-setup-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-monetization-strategy-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-monetization-strategy-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-monetization-strategy-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-monetization-strategy-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-niche-analyst-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-niche-analyst-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-niche-analyst-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-niche-analyst-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-promotion-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-promotion-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-promotion-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-promotion-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-seo-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-seo-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-seo-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-seo-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "podcast-video-editor-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-video-editor-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/podcast-video-editor-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/podcast-video-editor-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "print-on-demand-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/print-on-demand-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/print-on-demand-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/print-on-demand-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "production-pipeline-segment",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/production-pipeline-segment/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/production-pipeline-segment/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/production-pipeline-segment.json",
+      "status": "present"
+    },
+    {
+      "skillName": "productivity-and-burnout-prevention-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/productivity-and-burnout-prevention-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/productivity-and-burnout-prevention-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/productivity-and-burnout-prevention-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "react:components",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/react-components/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/react-components/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/react:components.json",
+      "status": "present"
+    },
+    {
+      "skillName": "remotion",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/remotion/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/remotion/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/remotion.json",
+      "status": "present"
+    },
+    {
+      "skillName": "render-deploy",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/render-deploy/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/render-deploy/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/render-deploy.json",
+      "status": "present"
+    },
+    {
+      "skillName": "reputation-management-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/reputation-management-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/reputation-management-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/reputation-management-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "sales-funnel-architect-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/sales-funnel-architect-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/sales-funnel-architect-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/sales-funnel-architect-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "screenshot",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/screenshot/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/screenshot/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/screenshot.json",
+      "status": "present"
+    },
+    {
+      "skillName": "scriptwriter-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/scriptwriter-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/scriptwriter-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/scriptwriter-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "security-best-practices",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/security-best-practices/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/security-best-practices/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/security-best-practices.json",
+      "status": "present"
+    },
+    {
+      "skillName": "security-ownership-map",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/security-ownership-map/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/security-ownership-map/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/security-ownership-map.json",
+      "status": "present"
+    },
+    {
+      "skillName": "security-threat-model",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/security-threat-model/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/security-threat-model/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/security-threat-model.json",
+      "status": "present"
+    },
+    {
+      "skillName": "sentry",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/sentry/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/sentry/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/sentry.json",
+      "status": "present"
+    },
+    {
+      "skillName": "seo-optimizer-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/seo-optimizer-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/seo-optimizer-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/seo-optimizer-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "shadcn-ui",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/shadcn-ui/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/shadcn-ui/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/shadcn-ui.json",
+      "status": "present"
+    },
+    {
+      "skillName": "skill-builder",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/skill-builder/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/skill-builder/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/skill-builder.json",
+      "status": "present"
+    },
+    {
+      "skillName": "skill-creator",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/.system/skill-creator/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/skill-creator/SKILL.md",
+        ".skills/.system/skill-creator/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/skill-creator.json",
+      "status": "present"
+    },
+    {
+      "skillName": "skill-installer",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/.system/skill-installer/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/.system/skill-installer/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/skill-installer.json",
+      "status": "present"
+    },
+    {
+      "skillName": "social-selling-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/social-selling-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/social-selling-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/social-selling-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "sora",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/sora/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/sora/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/sora.json",
+      "status": "present"
+    },
+    {
+      "skillName": "speech",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/speech/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/speech/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/speech.json",
+      "status": "present"
+    },
+    {
+      "skillName": "sponsorship-outreach-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/sponsorship-outreach-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/sponsorship-outreach-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/sponsorship-outreach-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "spreadsheet",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/spreadsheet/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/spreadsheet/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/spreadsheet.json",
+      "status": "present"
+    },
+    {
+      "skillName": "stitch-loop",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/stitch-loop/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/stitch-loop/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/stitch-loop.json",
+      "status": "present"
+    },
+    {
+      "skillName": "storyboard-artist-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/storyboard-artist-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/storyboard-artist-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/storyboard-artist-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "talent-manager-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/talent-manager-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/talent-manager-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/talent-manager-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "task-agent-router",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/task-agent-router/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/task-agent-router/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/task-agent-router.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tax-compliance-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/tax-compliance-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/tax-compliance-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tax-compliance-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "technical-seo-auditor-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/technical-seo-auditor-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/technical-seo-auditor-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/technical-seo-auditor-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "technical-setup-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/technical-setup-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/technical-setup-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/technical-setup-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "temporal-agent-reclassifier",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/temporal-agent-reclassifier/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/temporal-agent-reclassifier/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/temporal-agent-reclassifier.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tiktok-strategy-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/tiktok-strategy-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/tiktok-strategy-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tiktok-strategy-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tnf-execution-audit-trail",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/tnf-execution-audit-trail/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/tnf-execution-audit-trail/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tnf-execution-audit-trail.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tnf-frontload-protocols",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/tnf-frontload-protocols/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/tnf-frontload-protocols/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tnf-frontload-protocols.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tnf-live-session-coordination",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/tnf-live-session-coordination/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/tnf-live-session-coordination/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tnf-live-session-coordination.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tnf-master-clock-sync",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/tnf-master-clock-sync/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/tnf-master-clock-sync/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tnf-master-clock-sync.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tnf-skill-bridging",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/tnf-skill-bridging/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/tnf-skill-bridging/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tnf-skill-bridging.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tnf-skill-types",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/tnf-skill-types/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/tnf-skill-types/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tnf-skill-types.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tnf-stack-self-improvement-loop",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/tnf-stack-self-improvement-loop/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/tnf-stack-self-improvement-loop/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tnf-stack-self-improvement-loop.json",
+      "status": "present"
+    },
+    {
+      "skillName": "tnf-task-production-pipeline",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/tnf-task-production-pipeline/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/tnf-task-production-pipeline/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/tnf-task-production-pipeline.json",
+      "status": "present"
+    },
+    {
+      "skillName": "traffic-generation-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/traffic-generation-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/traffic-generation-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/traffic-generation-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "transcribe",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/transcribe/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/transcribe/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/transcribe.json",
+      "status": "present"
+    },
+    {
+      "skillName": "user-feedback-analysis-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/user-feedback-analysis-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/user-feedback-analysis-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/user-feedback-analysis-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "value-ladder-architect-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/value-ladder-architect-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/value-ladder-architect-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/value-ladder-architect-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "vercel-deploy",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/vercel-deploy/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/vercel-deploy/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/vercel-deploy.json",
+      "status": "present"
+    },
+    {
+      "skillName": "video-editor-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/video-editor-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/video-editor-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/video-editor-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "visual-asset-creator-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/visual-asset-creator-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/visual-asset-creator-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/visual-asset-creator-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "web-game-deterministic-loop",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/web-game-deterministic-loop/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/web-game-deterministic-loop/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/web-game-deterministic-loop.json",
+      "status": "present"
+    },
+    {
+      "skillName": "x-strategy-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/x-strategy-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/x-strategy-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/x-strategy-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "yeet",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/yeet/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/yeet/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/yeet.json",
+      "status": "present"
+    },
+    {
+      "skillName": "yt-content-strategy-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/yt-content-strategy-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/yt-content-strategy-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/yt-content-strategy-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "yt-niche-strategy-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/yt-niche-strategy-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/yt-niche-strategy-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/yt-niche-strategy-agent.json",
+      "status": "present"
+    },
+    {
+      "skillName": "yt-seo-optimizer-agent",
+      "codexPaths": [
+        "/Users/<owner>/.codex/skills/imported-claude-agents/yt-seo-optimizer-agent/SKILL.md"
+      ],
+      "tnfSkillPaths": [
+        ".skills/imported-claude-agents/yt-seo-optimizer-agent/SKILL.md"
+      ],
+      "representedInTnfCommon": true,
+      "commonRepresentationRef": "common/codex-skill-representation/yt-seo-optimizer-agent.json",
+      "status": "present"
+    }
+  ]
+}

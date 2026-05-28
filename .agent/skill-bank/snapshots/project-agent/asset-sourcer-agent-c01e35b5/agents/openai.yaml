@@ -1,0 +1,4 @@
+interface:
+  display_name: "Asset Sourcer Agent"
+  short_description: "Help with Asset Sourcer Agent tasks"
+  default_prompt: "Run the Asset Sourcer Agent workflow using SKILL.md instructions."

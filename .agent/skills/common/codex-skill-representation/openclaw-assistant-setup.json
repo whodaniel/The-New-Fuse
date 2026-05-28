@@ -1,0 +1,12 @@
+{
+  "skillName": "openclaw-assistant-setup",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/openclaw-assistant-setup/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/openclaw-assistant-setup/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/openclaw-assistant-setup.json",
+  "status": "present"
+}

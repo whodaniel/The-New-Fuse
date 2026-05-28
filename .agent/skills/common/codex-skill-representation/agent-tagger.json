@@ -1,0 +1,12 @@
+{
+  "skillName": "agent-tagger",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/agent-tagger/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/agent-tagger/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/agent-tagger.json",
+  "status": "present"
+}

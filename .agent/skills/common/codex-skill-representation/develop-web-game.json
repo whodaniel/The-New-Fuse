@@ -1,0 +1,12 @@
+{
+  "skillName": "develop-web-game",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/develop-web-game/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/develop-web-game/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/develop-web-game.json",
+  "status": "present"
+}

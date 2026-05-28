@@ -1,0 +1,12 @@
+{
+  "skillName": "netlify-deploy",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/netlify-deploy/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/netlify-deploy/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/netlify-deploy.json",
+  "status": "present"
+}

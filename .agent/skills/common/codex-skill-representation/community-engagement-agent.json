@@ -1,0 +1,12 @@
+{
+  "skillName": "community-engagement-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/community-engagement-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/community-engagement-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/community-engagement-agent.json",
+  "status": "present"
+}

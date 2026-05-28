@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Registry Manager"
+  short_description: "Build and import TNF agent registry"
+  default_prompt: "Use this skill to build, verify, and import The New Fuse agent registry snapshot safely and deterministically."
