@@ -19,10 +19,10 @@ const DocsPage = lazy(() => import('./pages/Docs'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Features = lazy(() => import('./pages/Features'));
 
-import ErrorBoundary from './components/ErrorBoundary';
-import RequireAuth from './components/RequireAuth';
 import RequireMembership from './components/auth/RequireMembership';
 import RequirePermission from './components/auth/RequirePermission';
+import ErrorBoundary from './components/ErrorBoundary';
+import RequireAuth from './components/RequireAuth';
 
 // Lazy load heavy components for better performance
 const MultiAgentChat = lazy(() => import('./components/MultiAgentChat'));
@@ -102,9 +102,23 @@ import BuildInfoPage from './pages/BuildInfo';
 import DebugPageComponent from './pages/Debug';
 import DebugRoutingComponent from './pages/DebugRouting';
 
-
 // Suggestions components
 const SuggestionsPage = lazy(() => import('./pages/Suggestions'));
+const NewSuggestionPage = lazy(() => import('./pages/Suggestions/New'));
+const SuggestionDetailPage = lazy(() => import('./pages/Suggestions/Detail'));
+
+// Goals components
+const GoalsPage = lazy(() => import('./pages/Goals'));
+const GoalDetailPage = lazy(() => import('./pages/Goals/Detail'));
+
+// Plans components
+const PlansPage = lazy(() => import('./pages/Plans'));
+const PlanDetailPage = lazy(() => import('./pages/Plans/Detail'));
+
+// Timeline components
+const TimelinePage = lazy(() => import('./pages/Timeline'));
+const MacroTimelinePage = lazy(() => import('./pages/Timeline/MacroTimelinePage'));
+const TimelineModulePage = lazy(() => import('./pages/Timeline/TimelineModulePage'));
 
 // Additional Admin components
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
