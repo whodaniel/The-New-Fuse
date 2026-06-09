@@ -10,7 +10,7 @@ interface TNFLogEntry {
   data?: unknown;
 }
 
-const getOrCreateMonitor = (): HTMLElement => {
+export const getOrCreateMonitor = (): HTMLElement => {
   let monitor = document.getElementById(TNF_MONITOR_ID);
   if (!monitor) {
     monitor = document.createElement('div');

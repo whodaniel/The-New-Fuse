@@ -348,75 +348,46 @@ export const SocialProofSection: React.FC<SocialProofSectionProps> = ({
 // Default data for quick setup
 export const defaultStats: Stat[] = [
   {
-    value: '10,000+',
-    label: 'Active Users',
+    value: 'Open Source',
+    label: 'MIT License',
     icon: <Users className="w-6 h-6 text-white" />,
-    trend: '+23%',
   },
   {
-    value: '99.9%',
-    label: 'Uptime',
+    value: 'Multi-Agent',
+    label: 'Agent Orchestration',
     icon: <TrendingUp className="w-6 h-6 text-white" />,
   },
   {
-    value: '4.9/5',
-    label: 'User Rating',
+    value: 'Cloud + Local',
+    label: 'Deploy Anywhere',
     icon: <Star className="w-6 h-6 text-white" />,
   },
   {
-    value: '24/7',
-    label: 'Support',
+    value: 'Early Access',
+    label: 'Public Preview',
     icon: <Award className="w-6 h-6 text-white" />,
   },
 ];
 
-export const defaultTestimonials: Testimonial[] = [
-  {
-    id: '1',
-    name: 'Sarah Chen',
-    role: 'CTO',
-    company: 'TechCorp',
-    content:
-      "The New Fuse has completely transformed how our team collaborates. We've seen a 40% increase in productivity since implementing it.",
-    rating: 5,
-  },
-  {
-    id: '2',
-    name: 'Michael Rodriguez',
-    role: 'Engineering Manager',
-    company: 'StartupXYZ',
-    content:
-      'The agent-to-agent collaboration features are game-changing. Setup was incredibly easy, and the support team is fantastic.',
-    rating: 5,
-  },
-  {
-    id: '3',
-    name: 'Emily Watson',
-    role: 'Product Lead',
-    company: 'Innovation Labs',
-    content:
-      'We tried several solutions, but The New Fuse is the only one that delivered on its promises. Highly recommended!',
-    rating: 5,
-  },
-];
+export const defaultTestimonials: Testimonial[] = [];
 
 export const defaultTrustBadges: TrustBadge[] = [
   {
     id: '1',
-    name: 'SOC 2 Certified',
+    name: 'Open Source',
     icon: <CheckCircle2 className="w-5 h-5" />,
-    description: 'Security and compliance certified',
+    description: 'MIT Licensed - inspect the code yourself',
   },
   {
     id: '2',
-    name: 'GDPR Compliant',
+    name: 'Self-Hostable',
     icon: <CheckCircle2 className="w-5 h-5" />,
-    description: 'Privacy regulation compliant',
+    description: 'Run locally or deploy to your own cloud',
   },
   {
     id: '3',
-    name: '256-bit Encryption',
+    name: 'Multi-LLM',
     icon: <CheckCircle2 className="w-5 h-5" />,
-    description: 'Enterprise-grade security',
+    description: 'Compatible with Claude, Gemini, OpenAI, and open models',
   },
 ];

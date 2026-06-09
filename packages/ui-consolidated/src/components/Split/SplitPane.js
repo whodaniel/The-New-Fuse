@@ -1,5 +1,5 @@
+import { jsx as _jsx } from "react/jsx-runtime";
 import * as React from 'react';
-import { jsx as _jsx } from 'react/jsx-runtime';
 import { cn } from '../../utils';
 /**
  * SplitPane component for use within a Split component
@@ -25,19 +25,8 @@ import { cn } from '../../utils';
  *   </SplitPane>
  * </Split>
  */
-const SplitPane = React.forwardRef(
-  ({ className, minSize, maxSize, defaultSize, collapsible = false, children, ...props }, ref) => {
-    return _jsx('div', {
-      ref: ref,
-      className: cn('h-full w-full', className),
-      'data-min-size': minSize,
-      'data-max-size': maxSize,
-      'data-default-size': defaultSize,
-      'data-collapsible': collapsible,
-      ...props,
-      children: children,
-    });
-  }
-);
+const SplitPane = React.forwardRef(({ className, minSize, maxSize, defaultSize, collapsible = false, children, ...props }, ref) => {
+    return (_jsx("div", { ref: ref, className: cn('h-full w-full', className), "data-min-size": minSize, "data-max-size": maxSize, "data-default-size": defaultSize, "data-collapsible": collapsible, ...props, children: children }));
+});
 SplitPane.displayName = 'SplitPane';
 export { SplitPane };

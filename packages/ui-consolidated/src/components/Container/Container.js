@@ -1,36 +1,36 @@
-import { cva } from 'class-variance-authority';
+import { jsx as _jsx } from "react/jsx-runtime";
 import * as React from 'react';
-import { jsx as _jsx } from 'react/jsx-runtime';
+import { cva } from 'class-variance-authority';
 import { cn } from '../../utils';
 /**
  * Container variants using class-variance-authority
  */
 export const containerVariants = cva('mx-auto w-full', {
-  variants: {
-    size: {
-      default: 'max-w-7xl',
-      sm: 'max-w-3xl',
-      md: 'max-w-5xl',
-      lg: 'max-w-7xl',
-      xl: 'max-w-[1400px]',
-      full: 'max-w-none',
+    variants: {
+        size: {
+            default: 'max-w-7xl',
+            sm: 'max-w-3xl',
+            md: 'max-w-5xl',
+            lg: 'max-w-7xl',
+            xl: 'max-w-[1400px]',
+            full: 'max-w-none',
+        },
+        padding: {
+            default: 'px-4 sm:px-6 lg:px-8',
+            none: 'px-0',
+            sm: 'px-2',
+            md: 'px-4',
+            lg: 'px-6',
+            xl: 'px-8',
+        },
+        center: {
+            true: 'flex flex-col items-center',
+        },
     },
-    padding: {
-      default: 'px-4 sm:px-6 lg:px-8',
-      none: 'px-0',
-      sm: 'px-2',
-      md: 'px-4',
-      lg: 'px-6',
-      xl: 'px-8',
+    defaultVariants: {
+        size: 'default',
+        padding: 'default',
     },
-    center: {
-      true: 'flex flex-col items-center',
-    },
-  },
-  defaultVariants: {
-    size: 'default',
-    padding: 'default',
-  },
 });
 /**
  * Container component for constraining content width
@@ -48,15 +48,8 @@ export const containerVariants = cva('mx-auto w-full', {
  * // With centered content
  * <Container center>Centered content</Container>
  */
-const Container = React.forwardRef(
-  ({ className, size, padding, center, children, ...props }, ref) => {
-    return _jsx('div', {
-      ref: ref,
-      className: cn(containerVariants({ size, padding, center }), className),
-      ...props,
-      children: children,
-    });
-  }
-);
+const Container = React.forwardRef(({ className, size, padding, center, children, ...props }, ref) => {
+    return (_jsx("div", { ref: ref, className: cn(containerVariants({ size, padding, center }), className), ...props, children: children }));
+});
 Container.displayName = 'Container';
 export { Container };

@@ -17,7 +17,11 @@ interface Message {
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Welcome to The New Fuse! How can I assist you today?' },
+    {
+      role: 'assistant',
+      content:
+        'Welcome to The New Fuse public preview. The agent relay chat is being connected — expect full multi-agent conversations soon. In the meantime, explore the platform and check the docs.',
+    },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -38,14 +42,15 @@ const ChatInterface = () => {
     setInput('');
     setIsLoading(true);
 
-    // Simulated response - in production, this would use the TNF Envelope Protocol/Relay
+    // The agent relay backend is being consolidated for public launch.
+    // In production, this routes through the TNF Gateway for real multi-agent chat.
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
           content:
-            "I'm currently in 'Hybrid Preview' mode. Your message has been received, but the backend relay link is being consolidated.",
+            'The agent relay is being activated for public launch. Your message has been received. Full multi-agent routing will be available shortly.',
         },
       ]);
       setIsLoading(false);

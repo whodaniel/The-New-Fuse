@@ -9,6 +9,8 @@ import { ToolsSelectionStep } from './steps/ToolsSelectionStep';
 import { UserProfileStep } from './steps/UserProfileStep';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { WorkspaceSetupStep } from './steps/WorkspaceSetupStep';
+import { APIProviderSetupStep } from './steps/APIProviderSetupStep';
+import { BillingSetupStep } from './steps/BillingSetupStep';
 
 export interface OnboardingWizardProps {
   userType: 'human' | 'ai_agent' | 'unknown';
@@ -24,6 +26,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
   const humanSteps = [
     { label: 'Welcome', component: WelcomeStep },
     { label: 'Your Profile', component: UserProfileStep },
+    { label: 'API & Provider', component: APIProviderSetupStep },
+    { label: 'Billing & Usage', component: BillingSetupStep },
     { label: 'AI Preferences', component: AIPreferencesStep },
     { label: 'Workspace Setup', component: WorkspaceSetupStep },
     { label: 'Tools & Integrations', component: ToolsSelectionStep },

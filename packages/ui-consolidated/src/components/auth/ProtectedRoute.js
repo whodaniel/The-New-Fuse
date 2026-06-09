@@ -1,4 +1,4 @@
-import { Fragment as _Fragment, jsx as _jsx } from 'react/jsx-runtime';
+import { jsx as _jsx, Fragment as _Fragment } from "react/jsx-runtime";
 import { useAuthContext } from '../../providers/AuthProvider';
 /**
  * Protected route component
@@ -21,15 +21,10 @@ import { useAuthContext } from '../../providers/AuthProvider';
  *   <Dashboard />
  * </ProtectedRoute>
  */
-export function ProtectedRoute({
-  children,
-  fallback = null,
-  showLoading = true,
-  loadingComponent = _jsx('div', { children: 'Loading...' }),
-}) {
-  const { isAuthenticated, isLoading } = useAuthContext();
-  if (isLoading && showLoading) {
-    return _jsx(_Fragment, { children: loadingComponent });
-  }
-  return _jsx(_Fragment, { children: isAuthenticated ? children : fallback });
+export function ProtectedRoute({ children, fallback = null, showLoading = true, loadingComponent = _jsx("div", { children: "Loading..." }), }) {
+    const { isAuthenticated, isLoading } = useAuthContext();
+    if (isLoading && showLoading) {
+        return _jsx(_Fragment, { children: loadingComponent });
+    }
+    return _jsx(_Fragment, { children: isAuthenticated ? children : fallback });
 }

@@ -72,7 +72,7 @@ export const LandingFooter = () => {
                 </li>
                 <li>
                   <Link
-                    to="/support"
+                    to="/docs"
                     className="hover:text-foreground transition-colors focus:outline-none focus:underline"
                   >
                     Support

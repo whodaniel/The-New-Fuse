@@ -26,7 +26,12 @@ import ReactFlow, {
   useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import codebaseData from '../../data/codebase_map.json';
+import codebaseMapUrl from '../../data/codebase_map.json?url';
+
+type CodebaseMapData = {
+  nodes: Node[];
+  edges: Edge[];
+};
 
 // Dagre layouting engine
 const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'LR') => {
@@ -124,6 +129,8 @@ const nodeTypes = {
 };
 
 const CodebaseMapInner = () => {
+  const [codebaseData, setCodebaseData] = useState<CodebaseMapData | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [currentRoot, setCurrentRoot] = useState('TNF');
@@ -133,6 +140,8 @@ const CodebaseMapInner = () => {
 
   const refreshGraph = useCallback(
     (rootId: string) => {
+      if (!codebaseData) return;
+
       const directChildren = codebaseData.nodes.filter((n) => n.data.parentId === rootId);
       const rootNode = codebaseData.nodes.find((n) => n.id === rootId);
 
@@ -154,12 +163,38 @@ const CodebaseMapInner = () => {
       // Zoom to fit after layout
       setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 50);
     },
-    [setNodes, setEdges, fitView]
+    [codebaseData, setNodes, setEdges, fitView]
   );
 
   useEffect(() => {
+    let cancelled = false;
+
+    fetch(codebaseMapUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Codebase map request failed with ${response.status}`);
+        }
+        return response.json() as Promise<CodebaseMapData>;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        setCodebaseData(data);
+        setLoadError(null);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setLoadError(error instanceof Error ? error.message : String(error));
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!codebaseData) return;
     refreshGraph('TNF');
-  }, [refreshGraph]);
+  }, [codebaseData, refreshGraph]);
 
   const onNodeClick = (_: any, node: Node) => {
     setSelectedNode(node);
@@ -171,7 +206,7 @@ const CodebaseMapInner = () => {
 
   const handleGlobalSearch = (term: string) => {
     setSearchTerm(term);
-    if (!term) return;
+    if (!term || !codebaseData) return;
 
     // Search all 15k nodes for label match
     const match = codebaseData.nodes.find((n) =>
@@ -188,6 +223,8 @@ const CodebaseMapInner = () => {
   };
 
   const goBack = () => {
+    if (!codebaseData) return;
+
     const currentNode = codebaseData.nodes.find((n) => n.id === currentRoot);
     if (currentNode?.data.parentId) {
       setCurrentRoot(currentNode.data.parentId);
@@ -200,14 +237,42 @@ const CodebaseMapInner = () => {
 
   // Breadcrumb path calculation
   const path = useMemo(() => {
+    if (!codebaseData) return [];
+
     const segments = [];
     let curr = codebaseData.nodes.find((n) => n.id === currentRoot);
     while (curr) {
       segments.unshift(curr);
-      curr = codebaseData.nodes.find((n) => n.id === curr.data.parentId);
+      curr = codebaseData.nodes.find((n) => n.id === curr?.data?.parentId);
     }
     return segments;
-  }, [currentRoot]);
+  }, [codebaseData, currentRoot]);
+
+  if (loadError) {
+    return (
+      <div className="w-full h-full bg-[#050505] text-white flex items-center justify-center p-8">
+        <div className="max-w-lg rounded-3xl border border-red-500/20 bg-red-500/10 p-8">
+          <h2 className="text-xl font-black uppercase tracking-tight mb-3">
+            Codebase map unavailable
+          </h2>
+          <p className="text-sm text-red-100/80">{loadError}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!codebaseData) {
+    return (
+      <div className="w-full h-full bg-[#050505] text-white flex items-center justify-center">
+        <div className="flex items-center gap-3 text-white/60">
+          <Activity className="w-4 h-4 animate-pulse text-blue-400" />
+          <span className="text-xs font-black uppercase tracking-widest">
+            Loading codebase map
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full bg-[#050505] text-white flex overflow-hidden font-sans">

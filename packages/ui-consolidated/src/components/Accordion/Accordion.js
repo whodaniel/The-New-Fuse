@@ -1,88 +1,82 @@
-import { cva } from 'class-variance-authority';
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import * as React from 'react';
-import { jsx as _jsx, jsxs as _jsxs } from 'react/jsx-runtime';
+import { cva } from 'class-variance-authority';
 import { cn } from '../../utils';
 /**
  * Accordion variants using class-variance-authority
  */
 export const accordionVariants = cva('w-full', {
-  variants: {
-    variant: {
-      default: 'border rounded-md',
-      bordered: 'border rounded-md divide-y',
-      ghost: '',
+    variants: {
+        variant: {
+            default: 'border rounded-md',
+            bordered: 'border rounded-md divide-y',
+            ghost: '',
+        },
     },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
+    defaultVariants: {
+        variant: 'default',
+    },
 });
 /**
  * Accordion item variants using class-variance-authority
  */
 export const accordionItemVariants = cva('', {
-  variants: {
-    variant: {
-      default: 'border-b last:border-0',
-      bordered: '',
-      ghost: 'border-b last:border-0',
+    variants: {
+        variant: {
+            default: 'border-b last:border-0',
+            bordered: '',
+            ghost: 'border-b last:border-0',
+        },
     },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
+    defaultVariants: {
+        variant: 'default',
+    },
 });
 /**
  * Accordion trigger variants using class-variance-authority
  */
-export const accordionTriggerVariants = cva(
-  'flex w-full items-center justify-between py-4 text-sm font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180',
-  {
+export const accordionTriggerVariants = cva('flex w-full items-center justify-between py-4 text-sm font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180', {
     variants: {
-      variant: {
-        default: 'px-4',
-        bordered: 'px-4',
-        ghost: 'px-0',
-      },
+        variant: {
+            default: 'px-4',
+            bordered: 'px-4',
+            ghost: 'px-0',
+        },
     },
     defaultVariants: {
-      variant: 'default',
+        variant: 'default',
     },
-  }
-);
+});
 /**
  * Accordion content variants using class-variance-authority
  */
-export const accordionContentVariants = cva(
-  'overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down',
-  {
+export const accordionContentVariants = cva('overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down', {
     variants: {
-      variant: {
-        default: 'px-4',
-        bordered: 'px-4',
-        ghost: 'px-0',
-      },
+        variant: {
+            default: 'px-4',
+            bordered: 'px-4',
+            ghost: 'px-0',
+        },
     },
     defaultVariants: {
-      variant: 'default',
+        variant: 'default',
     },
-  }
-);
+});
 const AccordionContext = React.createContext(undefined);
 const useAccordion = () => {
-  const context = React.useContext(AccordionContext);
-  if (!context) {
-    throw new Error('Accordion components must be used within an Accordion component');
-  }
-  return context;
+    const context = React.useContext(AccordionContext);
+    if (!context) {
+        throw new Error('Accordion components must be used within an Accordion component');
+    }
+    return context;
 };
 const AccordionItemContext = React.createContext(undefined);
 const useAccordionItem = () => {
-  const context = React.useContext(AccordionItemContext);
-  if (!context) {
-    throw new Error('AccordionTrigger/AccordionContent must be used within an AccordionItem');
-  }
-  return context;
+    const context = React.useContext(AccordionItemContext);
+    if (!context) {
+        throw new Error('AccordionTrigger/AccordionContent must be used within an AccordionItem');
+    }
+    return context;
 };
 /**
  * Accordion component for displaying collapsible content
@@ -120,172 +114,85 @@ const useAccordionItem = () => {
  *   </AccordionItem>
  * </Accordion>
  */
-const Accordion = React.forwardRef(
-  (
-    {
-      className,
-      variant,
-      type = 'single',
-      defaultValue,
-      value,
-      onValueChange,
-      collapsible = true,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const [internalValue, setInternalValue] = React.useState(
-      defaultValue || (type === 'multiple' ? [] : '')
-    );
+const Accordion = React.forwardRef(({ className, variant, type = 'single', defaultValue, value, onValueChange, collapsible = true, children, ...props }, ref) => {
+    const [internalValue, setInternalValue] = React.useState(defaultValue || (type === 'multiple' ? [] : ''));
     const currentValue = value !== undefined ? value : internalValue;
-    const handleValueChange = React.useCallback(
-      (newValue) => {
+    const handleValueChange = React.useCallback((newValue) => {
         if (value === undefined) {
-          setInternalValue(newValue);
+            setInternalValue(newValue);
         }
         onValueChange?.(newValue);
-      },
-      [value, onValueChange]
-    );
-    return _jsx(AccordionContext.Provider, {
-      value: {
-        value: currentValue,
-        onValueChange: handleValueChange,
-        type,
-        collapsible,
-        variant: variant || 'default',
-      },
-      children: _jsx('div', {
-        ref: ref,
-        className: cn(accordionVariants({ variant }), className),
-        ...props,
-        children: children,
-      }),
-    });
-  }
-);
+    }, [value, onValueChange]);
+    return (_jsx(AccordionContext.Provider, { value: {
+            value: currentValue,
+            onValueChange: handleValueChange,
+            type,
+            collapsible,
+            variant: variant || 'default',
+        }, children: _jsx("div", { ref: ref, className: cn(accordionVariants({ variant }), className), ...props, children: children }) }));
+});
 Accordion.displayName = 'Accordion';
 /**
  * Accordion item component for containing accordion content
  */
-const AccordionItem = React.forwardRef(
-  ({ className, variant, value, disabled = false, children, ...props }, ref) => {
-    const {
-      value: accordionValue,
-      onValueChange,
-      type,
-      collapsible,
-      variant: accordionVariant,
-    } = useAccordion();
-    const isOpen =
-      type === 'single'
+const AccordionItem = React.forwardRef(({ className, variant, value, disabled = false, children, ...props }, ref) => {
+    const { value: accordionValue, onValueChange, type, collapsible, variant: accordionVariant } = useAccordion();
+    const isOpen = type === 'single'
         ? accordionValue === value
         : Array.isArray(accordionValue) && accordionValue.includes(value);
     const toggle = React.useCallback(() => {
-      if (disabled) return;
-      if (type === 'single') {
-        if (collapsible && accordionValue === value) {
-          onValueChange('');
-        } else {
-          onValueChange(value);
+        if (disabled)
+            return;
+        if (type === 'single') {
+            if (collapsible && accordionValue === value) {
+                onValueChange('');
+            }
+            else {
+                onValueChange(value);
+            }
         }
-      } else {
-        if (Array.isArray(accordionValue)) {
-          if (accordionValue.includes(value)) {
-            onValueChange(accordionValue.filter((v) => v !== value));
-          } else {
-            onValueChange([...accordionValue, value]);
-          }
+        else {
+            if (Array.isArray(accordionValue)) {
+                if (accordionValue.includes(value)) {
+                    onValueChange(accordionValue.filter((v) => v !== value));
+                }
+                else {
+                    onValueChange([...accordionValue, value]);
+                }
+            }
         }
-      }
     }, [accordionValue, collapsible, disabled, onValueChange, type, value]);
-    return _jsx(AccordionItemContext.Provider, {
-      value: {
-        value,
-        isOpen,
-        isDisabled: disabled,
-        toggle,
-      },
-      children: _jsx('div', {
-        ref: ref,
-        className: cn(
-          accordionItemVariants({ variant: variant || accordionVariant }),
-          disabled && 'opacity-50 cursor-not-allowed',
-          className
-        ),
-        'data-state': isOpen ? 'open' : 'closed',
-        'data-disabled': disabled || undefined,
-        ...props,
-        children: children,
-      }),
-    });
-  }
-);
+    return (_jsx(AccordionItemContext.Provider, { value: {
+            value,
+            isOpen,
+            isDisabled: disabled,
+            toggle,
+        }, children: _jsx("div", { ref: ref, className: cn(accordionItemVariants({ variant: variant || accordionVariant }), disabled && 'opacity-50 cursor-not-allowed', className), "data-state": isOpen ? 'open' : 'closed', "data-disabled": disabled || undefined, ...props, children: children }) }));
+});
 AccordionItem.displayName = 'AccordionItem';
 /**
  * Accordion trigger component for toggling accordion content
  */
-const AccordionTrigger = React.forwardRef(
-  ({ className, variant, showChevron = true, chevron, children, ...props }, ref) => {
+const AccordionTrigger = React.forwardRef(({ className, variant, showChevron = true, chevron, children, ...props }, ref) => {
     const { isOpen, isDisabled, toggle } = useAccordionItem();
     const { variant: accordionVariant } = useAccordion();
-    return _jsxs('button', {
-      ref: ref,
-      type: 'button',
-      className: cn(accordionTriggerVariants({ variant: variant || accordionVariant }), className),
-      onClick: toggle,
-      onKeyDown: (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggle();
-        }
-      },
-      disabled: isDisabled,
-      'aria-expanded': isOpen,
-      'aria-controls': `accordion-content-${String(props.id || '')}`,
-      'data-state': isOpen ? 'open' : 'closed',
-      ...props,
-      children: [
-        children,
-        showChevron &&
-          _jsx('div', {
-            className: 'shrink-0 transition-transform duration-200',
-            children:
-              chevron ||
-              _jsx('svg', {
-                xmlns: 'http://www.w3.org/2000/svg',
-                width: '16',
-                height: '16',
-                viewBox: '0 0 24 24',
-                fill: 'none',
-                stroke: 'currentColor',
-                strokeWidth: '2',
-                strokeLinecap: 'round',
-                strokeLinejoin: 'round',
-                className: 'h-4 w-4 transition-transform duration-200',
-                children: _jsx('polyline', { points: '6 9 12 15 18 9' }),
-              }),
-          }),
-      ],
-    });
-  }
-);
+    return (_jsxs("button", { ref: ref, type: "button", className: cn(accordionTriggerVariants({ variant: variant || accordionVariant }), className), onClick: toggle, onKeyDown: (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggle();
+            }
+        }, disabled: isDisabled, "aria-expanded": isOpen, "aria-controls": `accordion-content-${String(props.id || '')}`, "data-state": isOpen ? 'open' : 'closed', ...props, children: [children, showChevron && (_jsx("div", { className: "shrink-0 transition-transform duration-200", children: chevron || (_jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "h-4 w-4 transition-transform duration-200", children: _jsx("polyline", { points: "6 9 12 15 18 9" }) })) }))] }));
+});
 AccordionTrigger.displayName = 'AccordionTrigger';
 /**
  * Accordion content component for displaying accordion content
  */
 const AccordionContent = React.forwardRef(({ className, variant, children, ...props }, ref) => {
-  const { isOpen } = useAccordionItem();
-  const { variant: accordionVariant } = useAccordion();
-  if (!isOpen) return null;
-  return _jsx('div', {
-    ref: ref,
-    className: cn(accordionContentVariants({ variant: variant || accordionVariant }), className),
-    'data-state': isOpen ? 'open' : 'closed',
-    ...props,
-    children: _jsx('div', { className: 'pb-4 pt-0', children: children }),
-  });
+    const { isOpen } = useAccordionItem();
+    const { variant: accordionVariant } = useAccordion();
+    if (!isOpen)
+        return null;
+    return (_jsx("div", { ref: ref, className: cn(accordionContentVariants({ variant: variant || accordionVariant }), className), "data-state": isOpen ? 'open' : 'closed', ...props, children: _jsx("div", { className: "pb-4 pt-0", children: children }) }));
 });
 AccordionContent.displayName = 'AccordionContent';
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent, };

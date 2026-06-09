@@ -29,11 +29,14 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
   const sections: Array<{ key: SidebarNavItem['section']; label: string }> = [
     { key: 'dashboard', label: 'Dashboard' },
     { key: 'workspace', label: 'Workspace' },
-    { key: 'forge', label: 'Forge' },
-    { key: 'nexus', label: 'Nexus' },
-    { key: 'apex', label: 'Apex' },
   ];
-  const advancedItems = navigation.filter((item) => item.section === 'advanced');
+  const advancedItems = navigation.filter(
+    (item) =>
+      item.section === 'advanced' ||
+      item.section === 'forge' ||
+      item.section === 'nexus' ||
+      item.section === 'apex'
+  );
   const hasAdvancedItems = advancedItems.length > 0;
 
   // State for advanced toggle
@@ -145,7 +148,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                   aria-expanded={showAdvanced}
                   aria-controls="advanced-nav-items"
                 >
-                  <span>Advanced</span>
+                  <span>Advanced Controls</span>
                   {showAdvanced ? (
                     <ChevronUp className="w-3.5 h-3.5" />
                   ) : (

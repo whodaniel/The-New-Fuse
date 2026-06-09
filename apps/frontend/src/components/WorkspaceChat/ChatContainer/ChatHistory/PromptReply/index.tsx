@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { WorkspaceData } from '@/types/workspace';
 import renderMarkdown from '@/utils/chat/markdown';
+import DOMPurify from 'dompurify';
 import { Warning } from '@phosphor-icons/react';
 import { memo } from 'react';
 import UserIcon from '../../../../UserIcon';
@@ -67,11 +68,11 @@ const PromptReply = ({
       <div className="py-8 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col">
         <div className="flex gap-x-5">
           <WorkspaceProfileImage workspace={workspace} />
-          {/* SECURITY: dangerouslySetInnerHTML is safe here because renderMarkdown()
-              uses DOMPurify to sanitize all HTML and prevent XSS attacks */}
+          {/* SECURITY: dangerouslySetInnerHTML is safe here because DOMPurify
+              sanitizes all HTML before it reaches the DOM */}
           <span
             className={`overflow-x-scroll break-words no-scroll`}
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(reply) }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderMarkdown(reply)) }}
           />
         </div>
         <Citations sources={sources} />

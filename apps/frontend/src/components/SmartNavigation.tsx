@@ -491,7 +491,7 @@ function SmartNavigation() {
                     <span className="text-sm">Account Settings</span>
                   </Link>
                   <Link
-                    to="/billing"
+                    to="/pricing"
                     className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-md"
                   >
                     <CreditCard className="w-4 h-4 text-slate-400" />

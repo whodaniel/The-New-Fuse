@@ -1,11 +1,11 @@
 // Export all components
-export * from './components.js';
+export * from './components/index.js';
 
 // Export providers
-export * from './providers.js';
+export * from './providers/index.js';
 
 // Export hooks
-export * from './hooks.js';
+export * from './hooks/index.js';
 
 // Export utilities
 export * from './utils/index.js';

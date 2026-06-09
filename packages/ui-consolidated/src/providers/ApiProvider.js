@@ -1,5 +1,5 @@
+import { jsx as _jsx } from "react/jsx-runtime";
 import { createContext, useContext, useMemo } from 'react';
-import { jsx as _jsx } from 'react/jsx-runtime';
 const ApiContext = createContext(undefined);
 /**
  * Hook to access the API context
@@ -20,11 +20,11 @@ const ApiContext = createContext(undefined);
  * };
  */
 export function useApi() {
-  const context = useContext(ApiContext);
-  if (!context) {
-    throw new Error('useApi must be used within an ApiProvider');
-  }
-  return context;
+    const context = useContext(ApiContext);
+    if (!context) {
+        throw new Error('useApi must be used within an ApiProvider');
+    }
+    return context;
 }
 /**
  * API provider component
@@ -54,25 +54,14 @@ export function useApi() {
  *   <App />
  * </ApiProvider>
  */
-export function ApiProvider({
-  apiClient,
-  tokenStorage,
-  authService,
-  userService,
-  agentService,
-  workflowService,
-  children,
-}) {
-  const value = useMemo(
-    () => ({
-      apiClient,
-      tokenStorage,
-      authService,
-      userService,
-      agentService,
-      workflowService,
-    }),
-    [apiClient, tokenStorage, authService, userService, agentService, workflowService]
-  );
-  return _jsx(ApiContext.Provider, { value: value, children: children });
+export function ApiProvider({ apiClient, tokenStorage, authService, userService, agentService, workflowService, children, }) {
+    const value = useMemo(() => ({
+        apiClient,
+        tokenStorage,
+        authService,
+        userService,
+        agentService,
+        workflowService,
+    }), [apiClient, tokenStorage, authService, userService, agentService, workflowService]);
+    return _jsx(ApiContext.Provider, { value: value, children: children });
 }
