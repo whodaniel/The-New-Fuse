@@ -37,7 +37,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const promises_1 = require("node:fs/promises");
 const path = __importStar(require("node:path"));
 const infrastructure_1 = require("@the-new-fuse/infrastructure");
-const ioredis_1 = require("ioredis");
 const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
@@ -58,6 +57,7 @@ const CONFIG = {
     EGRESS_PREFIX: process.env.BROKER_EGRESS_PREFIX || 'tnf:bus:egress',
     HEARTBEAT_CHANNEL: process.env.BROKER_HEARTBEAT_CHANNEL || 'tnf:heartbeat',
     AGENT_REGISTRY_KEY: process.env.BROKER_AGENT_REGISTRY_KEY || 'tnf:agent-registry',
+    AGENT_STALE_MS: parseInt(process.env.BROKER_AGENT_STALE_MS || '', 10) || 120000,
     DIRECTOR_REVIEW_QUEUE: process.env.BROKER_DIRECTOR_REVIEW_QUEUE || 'tnf:director:review:pending',
     GATE_METRICS_HASH: process.env.BROKER_GATE_METRICS_HASH || 'tnf:broker:federation-gate:metrics',
     POLICY_MODE: process.env.BROKER_POLICY_MODE || 'strict',
@@ -95,18 +95,14 @@ class BrokerAgent {
         this.redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
         this.redisBlocking = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
         this.upstash = (0, infrastructure_1.createUpstashRestClient)();
-        if (this.redis instanceof ioredis_1.Redis) {
-            this.redis.on('error', (err) => console.error('[Broker] Redis error:', err?.message || err));
-        }
-        if (this.redisBlocking instanceof ioredis_1.Redis) {
-            this.redisBlocking.on('error', (err) => console.error('[Broker] Redis blocking error:', err?.message || err));
-        }
+        this.redis.on('error', (err) => console.error('[Broker] Redis error:', err?.message || err));
+        this.redisBlocking.on('error', (err) => console.error('[Broker] Redis blocking error:', err?.message || err));
     }
     async start() {
-        if (this.redis instanceof ioredis_1.Redis)
-            await this.redis.connect();
-        if (this.redisBlocking instanceof ioredis_1.Redis)
-            await this.redisBlocking.connect();
+        if (this.redis)
+            await (0, infrastructure_1.connectStandaloneRedisClient)(this.redis);
+        if (this.redisBlocking)
+            await (0, infrastructure_1.connectStandaloneRedisClient)(this.redisBlocking);
         this.running = true;
         await this.registerBroker();
         this.startHeartbeat();
@@ -721,6 +717,11 @@ class BrokerAgent {
         if (agent.isOnline === false)
             return false;
         if (!['active', 'idle', 'ready', 'online'].includes(status))
+            return false;
+        const lastSeenMs = Date.parse(String(agent.lastSeen || ''));
+        if (!Number.isFinite(lastSeenMs))
+            return false;
+        if (Date.now() - lastSeenMs > CONFIG.AGENT_STALE_MS)
             return false;
         return !['broker', 'orchestrator', 'director'].includes(role);
     }

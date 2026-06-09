@@ -9,6 +9,8 @@ import * as path from 'path';
 import 'reflect-metadata';
 import { AppModule } from './app.module';
 import { validateGcpEnvironment } from './config/gcp.config';
+
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 dotenv.config();
 
 const logger = new Logger('Bootstrap');

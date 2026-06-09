@@ -320,17 +320,22 @@ export class N8nWorkflowsController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   async importWorkflow(@Body() request: WorkflowImportRequest) {
     try {
-      if (!request.workflowId || !request.n8nInstanceUrl) {
+      const n8nInstanceUrl =
+        request.n8nInstanceUrl?.trim() ||
+        process.env.N8N_TEMPLATE_HOST_URL ||
+        'http://n8n-template-host:5678';
+
+      if (!request.workflowId || !n8nInstanceUrl) {
         throw new HttpException(
           {
             success: false,
-            error: 'Missing required fields: workflowId and n8nInstanceUrl',
+            error: 'Missing required field: workflowId',
           },
           HttpStatus.BAD_REQUEST
         );
       }
 
-      const result = await this.workflowService.importToN8n(request);
+      const result = await this.workflowService.importToN8n({ ...request, n8nInstanceUrl });
 
       if (!result.success) {
         throw new HttpException(

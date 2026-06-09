@@ -1,0 +1,38 @@
+{
+  "action_id": "act-2102cf2f511590b6",
+  "title": "[AI5] Prompt Hermes Agent to Generate NA10 MCP Connection Command",
+  "state": "verified",
+  "verified_at": "2026-06-09T09:50:45Z",
+  "summary": "Added a Hermes NA10 MCP command generator and exposed it through TNF MCP servers. The generated command preserves the exact Hermes prompt, routes through `tnf hermes`, uses NA10 URL/token placeholders, and avoids committing credentials.",
+  "files_changed": [
+    "src/mcp/hermes-na10-command.ts",
+    "src/mcp/server.ts",
+    "src/mcp/enhanced-tnf-mcp-server.ts",
+    "src/mcp/complete-api-mcp-server.ts",
+    "scripts/hermes-na10-mcp-command.cjs",
+    "data/mcp.clients/hermes.mcp.json"
+  ],
+  "verification": [
+    {
+      "command": "node scripts/hermes-na10-mcp-command.cjs --server-name na10-test",
+      "result": "passed",
+      "notes": "Emitted JSON containing the safe TNF-routed Hermes command template."
+    },
+    {
+      "command": "pnpm exec tsx -e \"import { buildHermesNa10McpCommandPlan } from './src/mcp/hermes-na10-command.ts'; const plan = buildHermesNa10McpCommandPlan({ serverName: 'na10-test' }); if (!plan.command.includes('tnf hermes chat')) process.exit(1);\"",
+      "result": "passed"
+    },
+    {
+      "command": "pnpm exec tsc --ignoreConfig --noEmit --target ES2022 --module ESNext --moduleResolution bundler --types node --skipLibCheck --esModuleInterop --allowSyntheticDefaultImports src/mcp/hermes-na10-command.ts src/mcp/server.ts src/mcp/enhanced-tnf-mcp-server.ts src/mcp/complete-api-mcp-server.ts",
+      "result": "passed"
+    },
+    {
+      "command": "node --check scripts/hermes-na10-mcp-command.cjs",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check -- src/mcp/hermes-na10-command.ts src/mcp/server.ts src/mcp/enhanced-tnf-mcp-server.ts src/mcp/complete-api-mcp-server.ts scripts/hermes-na10-mcp-command.cjs data/mcp.clients/hermes.mcp.json",
+      "result": "passed"
+    }
+  ]
+}

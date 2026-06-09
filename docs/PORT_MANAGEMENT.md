@@ -1,298 +1,107 @@
-# Port Management System Documentation
+# Port Management
 
-## Overview
-
-The New Fuse includes a comprehensive port management system designed to eliminate port conflicts, provide visibility into service allocation, and automate configuration management.
-
-## Quick Start
+TNF port management is active through the root CLI:
 
 ```bash
-# Check current port status
-tnf-ports status
-
-# Check for conflicts
-tnf-ports conflicts
-
-# Check service health
-tnf-ports health
-
-# Start development with optimized setup
-./dev-with-port-management.sh
+./tnf ports status
+./tnf ports conflicts
+./tnf ports preflight
+./tnf ports clear --port 3000 --yes
 ```
 
-## System Architecture
+The standalone wrapper is also available for scripts:
 
-### Core Components
-
-1. **Port Registry Service** (`packages/port-management/`)
-   - Tracks all service ports across environments
-   - Manages port allocation and conflict detection
-   - Provides real-time monitoring capabilities
-
-2. **Frontend Dashboard** (`apps/frontend/src/components/PortManagement/`)
-   - Visual port allocation map
-   - Conflict resolution interface
-   - Service health monitoring
-   - Real-time updates via WebSocket
-
-3. **CLI Tools** (`tools/port-manager/`)
-   - `tnf-ports status` - Show port allocation
-   - `tnf-ports conflicts` - Detect and resolve conflicts
-   - `tnf-ports health` - Monitor service health
-   - `tnf-ports register` - Register or update service port assignments
-   - `tnf-ports dev` - Optimize development environment
-
-4. **Configuration Auto-Update**
-   - Automatically updates Vite configurations
-   - Modifies package.json scripts
-   - Updates Docker Compose port mappings
-   - Synchronizes environment files
-
-## Default Port Allocation
-
-| Service | Development | Production | Purpose |
-|---------|------------|------------|----------|
-| Frontend | 3000 | 3000 | React/Vite application |
-| API Server | 3001 | 3001 | NestJS API endpoints |
-| Backend | 3004 | - | Additional backend services |
-| Message Broker | - | 3002 | WebSocket/messaging |
-| Database | 5432 | 5432 | PostgreSQL |
-| Redis | 6379 | 6379 | Caching/sessions |
-
-## Features
-
-### Automatic Conflict Resolution
-- **Smart Detection**: Identifies port conflicts across all services
-- **Intelligent Suggestions**: Provides optimal resolution strategies
-- **One-Click Resolution**: Apply suggested fixes instantly
-- **Priority-Based**: Frontend > API > Backend service prioritization
-
-### Real-Time Monitoring
-- **Health Checks**: Continuous monitoring of service endpoints
-- **Status Updates**: Live updates via WebSocket connections
-- **Visual Dashboard**: Interactive port allocation map
-- **Alerting**: Immediate notification of issues
-
-### Configuration Management
-- **Dynamic Updates**: Configuration files update automatically
-- **Backup & Restore**: Automatic backup before changes
-- **Validation**: Ensures configuration integrity
-- **Rollback**: Easy restoration if issues occur
-
-### Development Workflow Integration
-- **VS Code Integration**: Updated launch configurations
-- **Docker Support**: Automatic Docker Compose updates
-- **Environment Sync**: Consistent port allocation across environments
-- **CLI Automation**: Scriptable port management operations
-
-## CLI Reference
-
-### Status Commands
 ```bash
-# Show all ports
-tnf-ports status
-
-# Filter by environment
-tnf-ports status -e development
-
-# Filter by service
-tnf-ports status -s frontend
+./tnf-ports status
 ```
 
-### Conflict Management
+## Safety Model
+
+- `status`, `conflicts`, and `preflight` are non-destructive.
+- `preflight` is warning-only by default.
+- `preflight --strict` exits non-zero when required non-protected ports are occupied.
+- `conflicts --auto-resolve` and `clear --yes` are opt-in destructive actions.
+- Protected ports such as Redis, Postgres, Drizzle Studio, and the protected Skideancer socket are never terminated unless `--include-protected` is also passed.
+
+## Local Profile
+
+Port policy can be configured in exported shell env, `.env`, `.env.local`, or `.tnf.local.env`.
+
+Precedence:
+
+```text
+exported shell env > .tnf.local.env > .env.local > .env > built-in defaults
+```
+
+Useful variables:
+
 ```bash
-# Check for conflicts
-tnf-ports conflicts
+# Add project-specific ports to the catalog.
+TNF_PORTS=8080:custom-api,9000:custom-ws
 
-# Auto-resolve all conflicts
-tnf-ports conflicts --auto-resolve
+# Allow intentional listeners during preflight.
+TNF_PORTS_ALLOW_OCCUPIED=3005,6379
+
+# Make factory boot fail when required ports are occupied.
+FACTORY_BOOT_PORT_PREFLIGHT_STRICT=true
 ```
 
-### Health Monitoring
+See `docs/reference/local-runtime-profile.md` for the broader local-assets policy.
+
+## Default Catalog
+
+| Port | Service | Protected |
+| ---: | --- | --- |
+| 3000 | frontend | no |
+| 3001 | api/backend | no |
+| 3004 | backend | no |
+| 3005 | api-gateway/ws-bridge | no |
+| 3006 | skideancer/ws | no |
+| 3007 | skideancer/ide | no |
+| 3008 | skideancer websocket | yes |
+| 5173 | vite | no |
+| 5174 | vite-alt | no |
+| 5555 | drizzle-studio | yes |
+| 6379 | redis | yes |
+| 5432 | postgres | yes |
+
+## Boot Integration
+
+`./tnf boot --plan` lists port preflight as an early boot step.
+
+During real boot, TNF runs:
+
 ```bash
-# Check all services
-tnf-ports health
-
-# Check specific port
-tnf-ports health -p 3000
-
-# Check specific service
-tnf-ports health -s api
+node scripts/tnf-ports.cjs preflight
 ```
 
-### Service Registration
-```bash
-# Register or update a service port
-tnf-ports register -s frontend -e development -p 3000 -t frontend
-```
-
-### Development Environment
-```bash
-# Prepare optimized development environment
-tnf-ports dev --optimize
-
-# Start with conflict resolution
-./dev-with-port-management.sh
-```
-
-## Integration Guide
-
-### Frontend Integration
-
-```typescript
-// Import the port management hook
-import { usePortRegistry } from '@/hooks/usePortRegistry';
-
-function PortDashboard() {
-  const { ports, conflicts, reassignPort } = usePortRegistry();
-  
-  return (
-    <div>
-      {/* Port management UI */}
-    </div>
-  );
-}
-```
-
-### Backend Integration
-
-```typescript
-// Import the port registry service
-import { PortRegistryService } from '@the-new-fuse/port-management';
-
-const portRegistry = new PortRegistryService();
-
-// Register a service port
-await portRegistry.registerPort({
-  serviceName: 'my-service',
-  serviceType: 'api',
-  environment: 'development',
-  port: 3005
-});
-```
-
-### Configuration Files
-
-The system automatically updates:
-
-- `apps/frontend/vite.config.ts` - Vite development server port
-- `apps/frontend/package.json` - Dev and preview script ports
-- `docker-compose.yml` - Container port mappings
-- `.env.development` - Environment-specific port variables
-- `.vscode/launch.json` - VS Code debug configurations
+When `--strict-gates` is used, TNF runs strict preflight and blocks boot on occupied required ports.
 
 ## Troubleshooting
 
-### Common Issues
-
-1. **Port Already in Use**
-   ```bash
-   # Check what's using the port
-   lsof -i :3000
-   
-   # Use port management to find alternative
-   tnf-ports conflicts --auto-resolve
-   ```
-
-2. **Service Not Responding**
-   ```bash
-   # Check service health
-   tnf-ports health -s frontend
-   
-   # Verify port allocation
-   tnf-ports status
-   ```
-
-3. **Configuration Out of Sync**
-   ```bash
-   # Re-register service with correct port
-   tnf-ports register -s frontend -e development -p 3000
-   ```
-
-### Reset Port Configuration
+Inspect listeners:
 
 ```bash
-# Stop all services
-pkill -f "node.*3000\|node.*3001\|vite"
-
-# Clear port registry (if needed)
-rm -rf node_modules/.port-registry
-
-# Re-register services
-tnf-ports register -s frontend -e development -p 3000 -t frontend
-tnf-ports register -s api -e development -p 3001 -t api
+./tnf ports status
 ```
 
-## Advanced Features
+Check whether boot would be blocked in strict mode:
 
-### Custom Port Ranges
-Configure preferred port ranges for different service types:
-
-```javascript
-// Port configuration
-const serviceConfig = {
-  frontend: { range: [3000, 3099], preferred: 3000 },
-  api: { range: [3100, 3199], preferred: 3101 },
-  backend: { range: [3200, 3299], preferred: 3201 }
-};
+```bash
+./tnf ports preflight --strict
 ```
 
-### Health Check Configuration
-Set up custom health check endpoints:
+Allow an intentional local listener:
 
-```javascript
-// Health check configuration
-const healthConfig = {
-  path: '/health',
-  interval: 30000,
-  timeout: 5000,
-  expectedStatus: 200
-};
+```bash
+printf "TNF_PORTS_ALLOW_OCCUPIED=3005\n" >> .tnf.local.env
+./tnf ports preflight --strict
 ```
 
-### Environment-Specific Settings
-Different port allocation per environment:
+Clear one non-protected port:
 
-```javascript
-// Environment-specific ports
-const envPorts = {
-  development: { frontend: 3000, api: 3001 },
-  staging: { frontend: 4000, api: 4001 },
-  production: { frontend: 80, api: 443 }
-};
+```bash
+./tnf ports clear --port 3000 --yes
 ```
 
-## Performance Considerations
-
-- **Monitoring Frequency**: Default 30-second health checks
-- **Conflict Detection**: Real-time during service startup
-- **Configuration Updates**: Atomic file operations with backup
-- **Memory Usage**: Minimal overhead with efficient registry storage
-
-## Security Notes
-
-- **Local Development**: Port management operates in development context
-- **Production Deployment**: Extended for container orchestration
-- **Access Control**: Future integration with service authentication
-- **Audit Trail**: All port changes logged for review
-
-## Future Enhancements
-
-1. **AI-Powered Optimization**: Machine learning for optimal port allocation
-2. **Kubernetes Integration**: Automatic service discovery and port management
-3. **Load Balancer Integration**: Dynamic port configuration for scaling
-4. **Performance Analytics**: Port usage patterns and optimization suggestions
-5. **Team Collaboration**: Shared port allocation across development teams
-
-## Support
-
-For issues or questions about the port management system:
-
-1. Check the troubleshooting section above
-2. Run `tnf-ports --help` for CLI assistance
-3. Review logs in `.port-management-backups/`
-4. Consult the development team documentation
-
----
-
-*This documentation is part of The New Fuse platform and is automatically updated as features evolve.*
+Do not use ad hoc `kill` commands until `./tnf ports status` has identified the owning process.

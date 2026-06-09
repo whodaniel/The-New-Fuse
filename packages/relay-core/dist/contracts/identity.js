@@ -51,7 +51,10 @@ function normalizeCanonicalEntityId(input) {
     if (!value) {
         throw new Error('canonical entity id cannot be empty');
     }
-    const segments = value.split(':').map((segment) => segment.trim()).filter(Boolean);
+    const segments = value
+        .split(':')
+        .map((segment) => segment.trim())
+        .filter(Boolean);
     if (segments.length < 5 || segments.length > 6) {
         throw new Error(`invalid canonical entity id: ${input}`);
     }
@@ -82,7 +85,9 @@ function normalizeOperationalHandle(input) {
     return String(input || '').trim();
 }
 function normalizeAlias(input) {
-    const value = String(input || '').trim().toLowerCase();
+    const value = String(input || '')
+        .trim()
+        .toLowerCase();
     return value || null;
 }
 function buildIdentityAliases(input) {

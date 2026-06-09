@@ -159,6 +159,24 @@ service_healthy() {
         return "${status}"
       fi
       ;;
+    project-planner)
+      process_running "scripts/swarm/project-planner.cjs"
+      local status=$?
+      if (( status == 2 )); then
+        is_log_fresh "${LOG_DIR}/project-planner.log"
+      else
+        return "${status}"
+      fi
+      ;;
+    impetus-loop)
+      process_running "scripts/orchestrator/impetus-loop.cjs loop"
+      local status=$?
+      if (( status == 2 )); then
+        is_log_fresh "${LOG_DIR}/impetus-loop.log"
+      else
+        return "${status}"
+      fi
+      ;;
     workflow-router)
       process_running "ts-node --compiler-options.*src/orchestrator/start.ts"
       local status=$?
@@ -176,7 +194,7 @@ service_healthy() {
 
 collect_unhealthy() {
   local unhealthy=""
-  local services="relay master-clock broker-agent director-agent"
+  local services="relay master-clock broker-agent director-agent project-planner impetus-loop"
   if [[ "${REQUIRE_WORKFLOW_ROUTER}" == "true" ]]; then
     services="${services} workflow-router"
   fi

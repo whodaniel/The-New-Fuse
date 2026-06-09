@@ -1,0 +1,44 @@
+{
+  "action_id": "act-4d487de0179ab334",
+  "title": "[AI5] Generate Deep Sec Security Report",
+  "state": "blocked",
+  "updatedAt": "2026-06-09T10:25:52Z",
+  "summary": "Executed the Deep Sec report command after a process-stage attempt. The report command refused to generate markdown/JSON because Deep Sec has no analyzed files for project `The-New-Fuse`.",
+  "blocker": {
+    "type": "deepsec-no-analyzed-files",
+    "required_inputs": [
+      "successful Deep Sec scan that tracks candidate files",
+      "non-empty Deep Sec analyzed-file state"
+    ]
+  },
+  "artifacts": [
+    ".deepsec/data/The-New-Fuse/runs/20260609102035-a57d3de5eb712a3a.json",
+    ".deepsec/data/The-New-Fuse/runs/20260609102518-7438e8003fe9cce6.json"
+  ],
+  "checks": [
+    {
+      "command": "cd .deepsec && pnpm deepsec scan --project-id The-New-Fuse",
+      "result": "bounded-terminated",
+      "notes": "The scanner remained CPU-active for several minutes without growing the project file state; the local run metadata was marked terminated after process shutdown."
+    },
+    {
+      "command": "cd .deepsec && pnpm deepsec process --project-id The-New-Fuse --concurrency 5",
+      "result": "passed",
+      "notes": "Completed with filesProcessed: 0."
+    },
+    {
+      "command": "cd .deepsec && pnpm deepsec report --project-id The-New-Fuse",
+      "result": "blocked",
+      "notes": "CLI output: No analyzed files found. Run `deepsec process` first."
+    },
+    {
+      "command": "cd .deepsec && pnpm deepsec status --project-id The-New-Fuse",
+      "result": "passed",
+      "notes": "Status reports Files tracked: 0, analyzed: 0, pending: 0."
+    }
+  ],
+  "next_steps": [
+    "Investigate why `deepsec scan` does not materialize tracked files for this monorepo under bounded local execution.",
+    "Once Deep Sec tracks files and `process` analyzes them, rerun `pnpm deepsec report --project-id The-New-Fuse` and replace this blocker with generated report artifacts."
+  ]
+}

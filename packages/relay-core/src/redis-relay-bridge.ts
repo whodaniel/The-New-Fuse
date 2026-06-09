@@ -13,12 +13,18 @@
  * 6. Bridge subscribes and forwards back to Relay
  */
 
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import {
+  connectStandaloneRedisClient,
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+  describeStandaloneRedisClient,
+} from '@the-new-fuse/infrastructure';
 import { Redis as UpstashRedis } from '@upstash/redis';
 import { EventEmitter } from 'events';
-import Redis, { Cluster } from 'ioredis';
+import type { Cluster, Redis } from 'ioredis';
 import { createClient, RedisClientType } from 'redis';
 import { createAgentIdentityRecord } from './contracts/identity.js';
+import { getNativeEnvelopeValidatorStatus } from './protocol/native-envelope-validator.js';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope.js';
 
 export interface RedisRelayBridgeConfig {
@@ -59,6 +65,16 @@ export class RedisRelayBridge extends EventEmitter {
     // Create Upstash REST client if available
     this.upstashClient = createUpstashRestClient();
 
+    const validatorStatus = getNativeEnvelopeValidatorStatus();
+    console.log(
+      `[Redis-Bridge] Envelope validator: ${validatorStatus.mode}` +
+        (validatorStatus.available && validatorStatus.libraryPath
+          ? ` (${validatorStatus.libraryPath})`
+          : validatorStatus.reason
+            ? ` (${validatorStatus.reason})`
+            : '')
+    );
+
     this.setupErrorHandlers();
   }
 
@@ -79,15 +95,17 @@ export class RedisRelayBridge extends EventEmitter {
    */
   async connect(): Promise<void> {
     try {
-      // ioredis connects automatically or via .connect() if lazyConnect is true
-      if (this.redisClient instanceof Redis) await (this.redisClient as Redis).connect();
-      if (this.redisSubscriber instanceof Redis) await (this.redisSubscriber as Redis).connect();
+      await connectStandaloneRedisClient(this.redisClient);
+      await connectStandaloneRedisClient(this.redisSubscriber);
 
       this.connected = true;
+      const redisMode = describeStandaloneRedisClient(this.redisClient);
       if (this.upstashClient) {
-        console.log('[Redis-Bridge] Connected to Redis (Hybrid: Upstash REST + ioredis TCP)');
+        console.log(
+          `[Redis-Bridge] Connected to Redis (Hybrid: Upstash REST + ioredis ${redisMode})`
+        );
       } else {
-        console.log('[Redis-Bridge] Connected to Redis (ioredis TCP)');
+        console.log(`[Redis-Bridge] Connected to Redis (ioredis ${redisMode})`);
       }
       this.emit('connected');
     } catch (error) {

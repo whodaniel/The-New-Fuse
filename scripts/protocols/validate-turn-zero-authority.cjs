@@ -40,6 +40,9 @@ const requiredReferences = [
   'docs/core/AGENTS.md',
   'docs/TNF_SESSION_ONBOARDING.md',
   'scripts/tnf-onboard.cjs',
+  '.agent/SYSTEM_PROMPT.md',
+  '.agent/context/resource-map.md',
+  '.agent/context/agent-onboarding.md',
   '.agent/workflows/frontload.md',
 ];
 
@@ -57,6 +60,61 @@ const livingStateRel = 'docs/protocols/LIVING_STATE.md';
 const livingState = read(livingStateRel);
 if (livingState.includes('Codify "Turn Zero" Mandate in `GEMINI.md`.')) {
   fail(`${livingStateRel} still claims GEMINI.md as canonical Turn Zero source`);
+}
+
+const runtimeInstructionFiles = [
+  '.agent/SYSTEM_PROMPT.md',
+  '.agent/context/resource-map.md',
+  '.agent/context/agent-onboarding.md',
+  '.agent/workflows/frontload.md',
+  'scripts/tnf-onboard.cjs',
+  'docs/TNF_SESSION_ONBOARDING.md',
+  'docs/core/AGENTS.md',
+];
+
+const forbiddenRuntimePatterns = [
+  {
+    pattern: /Read this file FIRST/,
+    reason: 'resource map cannot precede Turn Zero',
+  },
+  {
+    pattern: /ws:\/\/localhost:3001\/ws/,
+    reason: 'relay endpoint must be environment-configurable',
+  },
+  {
+    pattern: /Handoff updated[`*_\s-]*.*\.agent\/handoff_notes\.txt/i,
+    reason: 'legacy handoff cannot be a quality gate',
+  },
+  {
+    pattern: /echo\s+"Session \$\(date\).*\.agent\/handoff_notes\.txt/,
+    reason: 'runtime prompt cannot write legacy handoff notes',
+  },
+  {
+    pattern: /\/Users\/danielgoldberg\//,
+    reason: 'runtime instructions cannot contain personal absolute paths',
+  },
+  {
+    pattern: /Desktop\/A1-Inter-LLM-Com\/The-New-Fuse/,
+    reason: 'runtime instructions cannot contain personal workspace paths',
+  },
+];
+
+for (const rel of runtimeInstructionFiles) {
+  const content = read(rel);
+  for (const { pattern, reason } of forbiddenRuntimePatterns) {
+    if (pattern.test(content)) {
+      fail(`${rel} violates Turn Zero runtime guard (${reason})`);
+    }
+  }
+}
+
+const requiredPrompt =
+  'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md.';
+for (const rel of ['.agent/SYSTEM_PROMPT.md', '.agent/context/agent-onboarding.md', '.agent/workflows/frontload.md', 'scripts/tnf-onboard.cjs']) {
+  const content = read(rel);
+  if (!content.includes(requiredPrompt)) {
+    fail(`${rel} does not expose the repository-relative raw-agent onboarding prompt`);
+  }
 }
 
 ok('canonical Turn Zero authority and references are aligned');

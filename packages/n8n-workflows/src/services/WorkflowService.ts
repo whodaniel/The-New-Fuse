@@ -176,7 +176,11 @@ export class WorkflowService {
   public async importToN8n(request: WorkflowImportRequest): Promise<WorkflowImportResponse> {
     await this.initialize();
 
-    const validationError = this.validateN8nInstanceUrl(request.n8nInstanceUrl);
+    const n8nInstanceUrl =
+      request.n8nInstanceUrl?.trim() ||
+      process.env.N8N_TEMPLATE_HOST_URL ||
+      'http://n8n-template-host:5678';
+    const validationError = this.validateN8nInstanceUrl(n8nInstanceUrl);
     if (validationError) {
       return {
         success: false,
@@ -184,7 +188,7 @@ export class WorkflowService {
       };
     }
 
-    const baseUrl = new URL(request.n8nInstanceUrl);
+    const baseUrl = new URL(n8nInstanceUrl);
     const importUrl = new URL('/api/v1/workflows', baseUrl).toString();
 
     const workflow = this.registry.getWorkflow(request.workflowId);
@@ -298,6 +302,10 @@ export class WorkflowService {
     }
 
     const host = parsed.hostname.toLowerCase();
+    if (this.isDockerComposeHostname(host)) {
+      return null;
+    }
+
     if (host === 'localhost' || host === '127.0.0.1' || host === '::1') {
       return 'Loopback URLs are not allowed';
     }
@@ -310,5 +318,12 @@ export class WorkflowService {
     }
 
     return null;
+  }
+
+  private isDockerComposeHostname(host: string): boolean {
+    if (process.env.TNF_RUNTIME !== 'docker-compose') {
+      return false;
+    }
+    return /^[a-z0-9][a-z0-9-]*$/.test(host);
   }
 }

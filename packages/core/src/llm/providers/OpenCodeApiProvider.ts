@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import { LLMProvider } from '../LLMProvider.js';
 import { LLMMessage, LLMResponse, LLMConfig } from '@the-new-fuse/types';
+import { assertDevLoopBudget } from '../../utils/dev-loop-guard.js';
+import { loadRootEnv } from '../../utils/root-env.js';
 
 export interface OpenCodeApiConfig extends LLMConfig {
   baseURL?: string;
@@ -54,6 +56,7 @@ export class OpenCodeApiProvider extends LLMProvider {
 
   constructor(private readonly config: OpenCodeApiConfig) {
     super();
+    loadRootEnv();
 
     const baseURL = this.config.baseURL || 'http://localhost:4096';
 
@@ -116,6 +119,7 @@ export class OpenCodeApiProvider extends LLMProvider {
    * Generate completion from prompt using OpenCode API
    */
   async generate(prompt: string): Promise<string> {
+    assertDevLoopBudget('core.opencode.generate', { prompt });
     try {
       const sessionId = await this.getSession();
       const model = this.config.modelName || 'anthropic/claude-sonnet-4-5';
@@ -147,6 +151,7 @@ export class OpenCodeApiProvider extends LLMProvider {
    */
   async chat(messages: LLMMessage[], config?: Partial<LLMConfig>): Promise<LLMResponse> {
     const mergedConfig = { ...this.config, ...config };
+    assertDevLoopBudget('core.opencode.chat', config);
 
     try {
       const sessionId = await this.getSession();

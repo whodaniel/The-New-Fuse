@@ -11,10 +11,198 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as express from 'express';
 import { json, urlencoded } from 'express';
+import * as net from 'node:net';
+import * as tls from 'node:tls';
+import type { IncomingMessage, Server } from 'node:http';
+import type { Duplex } from 'node:stream';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
+
+interface WebSocketProxyRoute {
+  prefix: string;
+  target: URL;
+}
+
+interface HttpRateLimitEntry {
+  count: number;
+  resetAt: number;
+}
+
+const httpRateLimitStore = new Map<string, HttpRateLimitEntry>();
+
+function parsePositiveInteger(value: string | undefined, fallback: number, min: number, max: number): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+  return Math.min(Math.max(Math.floor(parsed), min), max);
+}
+
+function getGatewayClientIp(req: any): string {
+  const forwardedFor = req.headers?.['x-forwarded-for'];
+  if (typeof forwardedFor === 'string' && forwardedFor.trim()) {
+    return forwardedFor.split(',')[0].trim();
+  }
+
+  const realIp = req.headers?.['x-real-ip'];
+  if (typeof realIp === 'string' && realIp.trim()) {
+    return realIp.trim();
+  }
+
+  return req.ip || req.socket?.remoteAddress || req.connection?.remoteAddress || 'unknown';
+}
+
+function shouldSkipHttpRateLimit(req: any): boolean {
+  if (req.method === 'OPTIONS') {
+    return true;
+  }
+
+  const path = req.path || req.url || '/';
+  return path === '/' || path === '/health' || path === '/api/health' || path === '/api/v1/health' || path.startsWith('/docs');
+}
+
+function pruneHttpRateLimitStore(now: number, maxEntries: number): void {
+  if (httpRateLimitStore.size <= maxEntries) {
+    return;
+  }
+
+  for (const [key, entry] of httpRateLimitStore.entries()) {
+    if (entry.resetAt <= now || httpRateLimitStore.size > maxEntries) {
+      httpRateLimitStore.delete(key);
+    }
+  }
+}
+
+function attachHttpRateLimit(app: any): void {
+  if (process.env.API_GATEWAY_RATE_LIMIT_ENABLED === 'false') {
+    return;
+  }
+
+  const windowMs = parsePositiveInteger(process.env.API_GATEWAY_RATE_LIMIT_WINDOW_MS, 60_000, 1_000, 86_400_000);
+  const maxRequests = parsePositiveInteger(process.env.API_GATEWAY_RATE_LIMIT_REQUESTS, 600, 1, 1_000_000);
+  const maxEntries = parsePositiveInteger(process.env.API_GATEWAY_RATE_LIMIT_MAX_KEYS, 10_000, 100, 1_000_000);
+
+  app.use((req: any, res: any, next: any) => {
+    if (shouldSkipHttpRateLimit(req)) {
+      next();
+      return;
+    }
+
+    const now = Date.now();
+    pruneHttpRateLimitStore(now, maxEntries);
+
+    const key = getGatewayClientIp(req);
+    const existing = httpRateLimitStore.get(key);
+    const entry =
+      existing && existing.resetAt > now
+        ? existing
+        : {
+            count: 0,
+            resetAt: now + windowMs,
+          };
+
+    entry.count += 1;
+    httpRateLimitStore.set(key, entry);
+
+    const retryAfterSeconds = Math.max(1, Math.ceil((entry.resetAt - now) / 1000));
+    const remaining = Math.max(0, maxRequests - entry.count);
+    res.setHeader('X-RateLimit-Limit', String(maxRequests));
+    res.setHeader('X-RateLimit-Remaining', String(remaining));
+    res.setHeader('X-RateLimit-Reset', String(Math.ceil(entry.resetAt / 1000)));
+
+    if (entry.count > maxRequests) {
+      res.setHeader('Retry-After', String(retryAfterSeconds));
+      res.status(429).json({
+        statusCode: 429,
+        error: 'Too Many Requests',
+        message: 'Rate limit exceeded. Please try again later.',
+      });
+      return;
+    }
+
+    next();
+  });
+}
+
+function buildWebSocketProxyRoutes(): WebSocketProxyRoute[] {
+  const relayTarget =
+    process.env.API_GATEWAY_RELAY_WS_TARGET ||
+    process.env.API_GATEWAY_WS_TARGET ||
+    process.env.TNF_RELAY_URL ||
+    process.env.RELAY_WS_URL ||
+    process.env.RELAY_URL ||
+    'ws://127.0.0.1:3000/ws';
+  const bridgeTarget =
+    process.env.API_GATEWAY_REDIS_BRIDGE_WS_TARGET ||
+    `ws://127.0.0.1:${process.env.WS_BRIDGE_PORT || '3005'}/redis-bridge`;
+
+  return [
+    { prefix: '/ws', target: new URL(relayTarget) },
+    { prefix: '/api/ws', target: new URL(relayTarget) },
+    { prefix: '/redis-bridge', target: new URL(bridgeTarget) },
+    { prefix: '/api/redis-bridge', target: new URL(bridgeTarget) },
+  ];
+}
+
+function targetPathForRequest(req: IncomingMessage, target: URL): string {
+  const incoming = new URL(req.url || '/', 'http://api-gateway.local');
+  const pathname = target.pathname && target.pathname !== '/' ? target.pathname : incoming.pathname;
+  return `${pathname}${incoming.search || target.search || ''}`;
+}
+
+function writeUpgradeNotFound(socket: Duplex) {
+  socket.write('HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n');
+  socket.destroy();
+}
+
+function attachWebSocketUpgradeProxy(server: Server) {
+  const routes = buildWebSocketProxyRoutes();
+
+  server.on('upgrade', (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+    const incoming = new URL(req.url || '/', 'http://api-gateway.local');
+    const route = routes.find((candidate) => incoming.pathname === candidate.prefix);
+    if (!route) {
+      writeUpgradeNotFound(socket);
+      return;
+    }
+
+    const target = route.target;
+    const secure = target.protocol === 'wss:';
+    const port = Number(target.port || (secure ? 443 : 80));
+    const onConnected = () => {
+      const headers = {
+        ...req.headers,
+        host: target.host,
+        'x-forwarded-host': req.headers.host,
+        'x-forwarded-proto': secure ? 'wss' : 'ws',
+        'x-gateway': 'the-new-fuse-api-gateway',
+      };
+      const headerLines = Object.entries(headers)
+        .filter(([, value]) => value !== undefined)
+        .flatMap(([key, value]) =>
+          Array.isArray(value) ? value.map((entry) => `${key}: ${entry}`) : [`${key}: ${value}`]
+        )
+        .join('\r\n');
+
+      outbound.write(`${req.method || 'GET'} ${targetPathForRequest(req, target)} HTTP/${req.httpVersion}\r\n`);
+      outbound.write(`${headerLines}\r\n\r\n`);
+      if (head.length > 0) {
+        outbound.write(head);
+      }
+      outbound.pipe(socket);
+      socket.pipe(outbound);
+    };
+    const outbound = secure
+      ? tls.connect({ host: target.hostname, port }, onConnected)
+      : net.connect({ host: target.hostname, port }, onConnected);
+
+    outbound.on('error', () => socket.destroy());
+    socket.on('error', () => outbound.destroy());
+    socket.on('close', () => outbound.destroy());
+  });
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -86,6 +274,8 @@ async function bootstrap() {
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
+
+  attachHttpRateLimit(app);
 
   // Pseudo-domain Identity Mapping (Sovereign Agent Identity)
   app.use((req, res, next) => {
@@ -282,7 +472,8 @@ async function bootstrap() {
 
   // Listen on provided API_GATEWAY_PORT, default to PORT provided by CloudRuntime, fallback to 8080
   const port = Number(process.env.API_GATEWAY_PORT || process.env.PORT || 8080);
-  await app.listen(port, '0.0.0.0');
+  const server = await app.listen(port, '0.0.0.0');
+  attachWebSocketUpgradeProxy(server as Server);
   console.log(`🚀 API Gateway listening on http://localhost:${port}`);
 }
 

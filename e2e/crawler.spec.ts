@@ -1,8 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// Set a long timeout for the entire crawling process
-test.setTimeout(5 * 60 * 1000);
-
 const VISITED_URLS = new Set<string>();
 const ERRORS: { url: string; error: string }[] = [];
 
@@ -40,6 +37,7 @@ async function gotoWithRetry(page: Page, url: string): Promise<void> {
 
 test.describe('Crawler', () => {
   test('should visit all buttons and links systematically', async ({ page, baseURL }) => {
+    test.setTimeout(5 * 60 * 1000);
     VISITED_URLS.clear();
     ERRORS.length = 0;
 

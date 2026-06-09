@@ -1,18 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>The New Fuse - Features</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The New Fuse Features</title>
+  <link rel="canonical" href="https://thenewfuse.com/#features">
   <meta http-equiv="refresh" content="0;url=https://thenewfuse.com/#features">
-  <script>
-    // Redirect to features section on the main landing page
-    // On app subdomain, hash routes must go to thenewfuse.com (the landing site)
-      window.location.replace('https://thenewfuse.com/#features');
-    } else {
-      window.location.replace('/#features');
-    }
-  </script>
+  <script>window.location.replace('https://thenewfuse.com/#features');</script>
 </head>
 <body>
-  <p>Redirecting to features...</p>
+  <p><a href="https://thenewfuse.com/#features">View features</a></p>
 </body>
 </html>

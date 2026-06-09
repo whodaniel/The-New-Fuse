@@ -40,8 +40,8 @@ guide you through complex tasks. Each matrix is:
 ```
 Phase 1: Context Recovery (10 minutes)
 ─────────────────────────────────────────
-[ ] Step 1.1: Read .agent/handoff_notes.txt
-    ├─ Location: /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/handoff_notes.txt
+[ ] Step 1.1: Read docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+    ├─ Location: /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/SESSION_HANDOFF_LATEST.json
     ├─ Purpose: Understand what was done in last session
     ├─ Extract: Accomplishments, blockers, next steps
     └─ Time: 2 minutes
@@ -83,7 +83,7 @@ Phase 2: Protocol Loading (15 minutes)
     └─ Time: 5 minutes
 
 [ ] Step 2.3: Review current task type
-    ├─ From: handoff_notes.txt or user request
+    ├─ From: docs/protocols/reports/SESSION_HANDOFF_LATEST.json or user request
     ├─ Options: Development, Debugging, Documentation, etc.
     ├─ Purpose: Load appropriate protocols
     └─ Time: 2 minutes
@@ -165,8 +165,8 @@ Phase 1: Work Review (5 minutes)
 
 Phase 2: Status Documentation (5-10 minutes)
 ─────────────────────────────────────────
-[ ] Step 2.1: Update handoff_notes.txt
-    ├─ Location: .agent/handoff_notes.txt
+[ ] Step 2.1: Update docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+    ├─ Location: docs/protocols/reports/SESSION_HANDOFF_LATEST.json
     ├─ Format: Use handoff template
     ├─ Include: Accomplishments, learnings, next steps
     └─ Time: 5 minutes
@@ -206,7 +206,7 @@ Phase 4: Handoff Preparation (5 minutes)
     └─ Time: 3 minutes
 
 [ ] Step 4.2: Prepare context files
-    ├─ Ensure handoff_notes.txt is complete
+    ├─ Ensure docs/protocols/reports/SESSION_HANDOFF_LATEST.json is complete
     ├─ Update PRD if task ongoing
     ├─ Create TODO_CHECKLIST.md if needed
     └─ Time: 2 minutes

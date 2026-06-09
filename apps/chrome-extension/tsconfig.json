@@ -23,7 +23,10 @@
       "@styles/*": ["src/styles/*"],
       "@components/*": ["src/components/*"],
       "@packages/types": ["../../../packages/types/src/index"],
-      "@packages/utils": ["../../../packages/utils/src/index"]
+      "@packages/utils": ["../../../packages/utils/src/index"],
+      "@the-new-fuse/workflow-engine/sequencer": [
+        "../../packages/workflow-engine/src/sequencer/ProgressiveDisclosureSequencer.ts"
+      ]
     },
     "types": ["chrome", "node"]
   },

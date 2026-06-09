@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.pnpm-store/
 **/client_secret.json
 .pnp
 .pnp.js
@@ -36,12 +37,15 @@ out/
 
 # Environment variables
 .env
+.env.full-auto
 .env.local
 .env.*.local
 .env.development.local
 .env.test.local
 .env.production.local
 .env.production
+.tnf.local.env
+.tnf.local.env.*
 
 # IDE
 .vscode/*
@@ -100,6 +104,9 @@ docs/project-management/*analysis*.md
 .agent/*
 !.agent/agents/
 !.agent/agents/**
+!.agent/skills/
+!.agent/skills/skill-management/
+!.agent/skills/skill-management/**
 !.agent/fleet/
 !.agent/fleet/agent-pathway-matrix.json
 .playwright-cli/
@@ -238,6 +245,13 @@ apps/frontend/public/visualizations/terminals/data/
 **/firebase-credentials.json
 **/firebase-credentials.json.removed
 **/*-service-account*.json
+
+# Personal archaeology local secrets and generated data
+scripts/personal-archaeology/credentials.json
+scripts/personal-archaeology/token.json
+scripts/personal-archaeology/wallet.json
+scripts/personal-archaeology/downloads/
+scripts/personal-archaeology/archaeology.sqlite*
 
 # Google MCP Server Credentials
 packages/google-docs-mcp-server/credentials.json

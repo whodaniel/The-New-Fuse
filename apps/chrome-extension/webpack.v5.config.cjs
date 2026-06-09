@@ -31,6 +31,12 @@ module.exports = (env, argv) => {
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      alias: {
+        '@the-new-fuse/workflow-engine/sequencer': path.resolve(
+          __dirname,
+          '../../packages/workflow-engine/src/sequencer/ProgressiveDisclosureSequencer.ts'
+        ),
+      },
       extensionAlias: {
         '.js': ['.ts', '.js'],
       },

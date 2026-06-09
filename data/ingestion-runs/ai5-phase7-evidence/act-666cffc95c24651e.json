@@ -1,0 +1,30 @@
+{
+  "action_id": "act-666cffc95c24651e",
+  "title": "[AI5] Fix 'Generate Shopping List' button crash",
+  "state": "blocked",
+  "updatedAt": "2026-06-09T10:28:33Z",
+  "summary": "No first-party shopping-list, grocery, meal, or recipe UI/API surface exists in the TNF repo paths searched. The directive appears to be a low-relevance transcript extraction rather than an actionable TNF bug.",
+  "blocker": {
+    "type": "no-first-party-shopping-list-surface",
+    "required_inputs": [
+      "repo path or product surface containing the Generate Shopping List button",
+      "reproduction steps or error output for the crash"
+    ]
+  },
+  "checks": [
+    {
+      "command": "rg -n \"shopping list|shopping-list|Generate Shopping|generate.*shopping|shoppingList|ShoppingList|grocery|grocer\" -S apps packages src scripts --glob '!apps/external/**' --glob '!**/node_modules/**'",
+      "result": "passed",
+      "notes": "No first-party matches."
+    },
+    {
+      "command": "rg --files apps packages src scripts | rg -v '^apps/external/' | rg -i 'shopping|grocery|grocer|meal|recipe'",
+      "result": "passed",
+      "notes": "No first-party files matched."
+    }
+  ],
+  "next_steps": [
+    "Provide the actual app/repo path for the shopping-list feature if it exists outside this TNF workspace.",
+    "Reclassify the AI5 extraction as non-dispatchable if no such product surface exists."
+  ]
+}

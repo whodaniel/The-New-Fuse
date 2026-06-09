@@ -142,7 +142,7 @@ const DocsPage: React.FC = () => {
                     Get help from other developers and share your projects.
                   </p>
                 </div>
-                <Link to="/community">
+                <Link to="/docs">
                   <PremiumButton variant="gradient">Visit Community Hub</PremiumButton>
                 </Link>
               </div>

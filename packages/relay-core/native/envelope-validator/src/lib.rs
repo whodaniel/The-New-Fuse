@@ -77,6 +77,7 @@ pub struct TNFEnvelope {
     pub to: Recipient,
     pub payload: HashMap<String, Value>,
     pub context: Option<MessageContext>,
+    pub resource: Option<Value>,
     pub metadata: Option<HashMap<String, Value>>,
 }
 

@@ -1,13 +1,13 @@
 
 import { describe, expect, it, jest, beforeEach, afterEach } from '@jest/globals';
-import { UnifiedWorkflowEngine, WorkflowEngineConfig } from '../engine/WorkflowEngine.js';
+import { UnifiedWorkflowEngine, WorkflowEngineConfig } from '../engine/WorkflowEngine';
 import { Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import {
   WorkflowExecutionStatus,
   WorkflowNodeType,
   UnifiedWorkflow,
   NodeExecutionStatus
-} from '../types/WorkflowTypes.js';
+} from '../types/WorkflowTypes';
 
 // Mock dependencies
 const mockLogger = {
@@ -55,6 +55,11 @@ describe('UnifiedWorkflowEngine', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockDrizzle.workflow.findUnique.mockResolvedValue(null);
+    mockDrizzle.workflowExecution.create.mockResolvedValue({});
+    mockDrizzle.workflowExecution.update.mockResolvedValue({});
+    mockDrizzle.workflowExecution.findUnique.mockResolvedValue(null);
+    mockDrizzle.workflowExecution.findMany.mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -129,6 +134,68 @@ describe('UnifiedWorkflowEngine', () => {
       expect(nodeUpdateCall).toBeDefined();
       expect(nodeUpdateCall![0].data.nodeExecutions[0].nodeId).toBe('start');
     });
+
+    it('should route condition nodes by selected output handle', async () => {
+      const workflow: UnifiedWorkflow = {
+        id: 'wf-condition',
+        name: 'Conditional Workflow',
+        definition: {
+          nodes: [
+            { id: 'start', type: WorkflowNodeType.START, name: 'Start', position: { x: 0, y: 0 }, config: {}, inputs: [], outputs: [], metadata: {} },
+            {
+              id: 'condition',
+              type: WorkflowNodeType.CONDITION,
+              name: 'Condition',
+              position: { x: 0, y: 0 },
+              config: { expression: 'flag === true', truthyOutput: 'truthy', falsyOutput: 'falsy' },
+              inputs: [],
+              outputs: [],
+              metadata: {},
+            },
+            { id: 'true-end', type: WorkflowNodeType.END, name: 'True End', position: { x: 0, y: 0 }, config: {}, inputs: [], outputs: [], metadata: {} },
+            { id: 'false-end', type: WorkflowNodeType.END, name: 'False End', position: { x: 0, y: 0 }, config: {}, inputs: [], outputs: [], metadata: {} },
+          ],
+          connections: [
+            { id: 'c1', sourceNodeId: 'start', sourceOutputId: 'o1', targetNodeId: 'condition', targetInputId: 'i1', metadata: {} },
+            { id: 'c2', sourceNodeId: 'condition', sourceOutputId: 'truthy', targetNodeId: 'true-end', targetInputId: 'i1', metadata: {} },
+            { id: 'c3', sourceNodeId: 'condition', sourceOutputId: 'falsy', targetNodeId: 'false-end', targetInputId: 'i1', metadata: {} },
+          ],
+          variables: [],
+          triggers: [],
+          settings: {} as any,
+          version: '1',
+        },
+        status: 'PUBLISHED' as any,
+        version: '1',
+        tags: [],
+        isTemplate: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        executionCount: 0,
+        statistics: {} as any,
+        metadata: {} as any,
+      };
+
+      mockDrizzle.workflow.findUnique.mockResolvedValue(workflow);
+
+      engine = new UnifiedWorkflowEngine(defaultConfig, mockDrizzle, mockAgentRegistry, mockHeartbeatService, mockLogger);
+
+      await engine.executeWorkflow('wf-condition', { flag: true });
+
+      let completedCall: any;
+      for (let attempts = 0; attempts < 20; attempts++) {
+        completedCall = (mockDrizzle.workflowExecution.update.mock.calls as any[]).find(
+          (args: any) => args[0].data.status === WorkflowExecutionStatus.COMPLETED
+        );
+        if (completedCall) break;
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      expect(completedCall).toBeDefined();
+      const executedNodeIds = completedCall![0].data.nodeExecutions.map((nodeExecution: any) => nodeExecution.nodeId);
+      expect(executedNodeIds).toEqual(['start', 'condition', 'true-end']);
+      expect(executedNodeIds).not.toContain('false-end');
+    });
   });
 
   describe('Crash Recovery', () => {
@@ -196,12 +263,6 @@ describe('UnifiedWorkflowEngine', () => {
       // Give time for async recovery
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Check if execution was added to active executions
-      const activeExecutions = engine.getActiveExecutions();
-      expect(activeExecutions.length).toBe(1);
-      expect(activeExecutions[0].id).toBe('exec-interrupted');
-      expect(activeExecutions[0].context.variables).toEqual({ foo: 'bar' });
-
       // Wait for completion
       let attempts = 0;
       while (attempts < 20) {
@@ -219,6 +280,12 @@ describe('UnifiedWorkflowEngine', () => {
 
       expect(completedCall).toBeDefined();
       expect(completedCall![0].where.id).toBe('exec-interrupted');
+      expect(completedCall![0].data.nodeExecutions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ nodeId: 'start', status: NodeExecutionStatus.COMPLETED }),
+          expect.objectContaining({ nodeId: 'step2', status: NodeExecutionStatus.COMPLETED }),
+        ])
+      );
     });
   });
 });

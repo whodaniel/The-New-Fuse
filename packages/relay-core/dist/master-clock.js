@@ -64,7 +64,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = require("crypto");
 const fs_1 = require("fs");
-const ioredis_1 = require("ioredis");
 const node_child_process_1 = require("node:child_process");
 const path_1 = __importDefault(require("path"));
 const util_1 = require("util");
@@ -386,15 +385,15 @@ class MasterClock {
             this.redis = infra.createStandaloneRedisClient({ lazyConnect: true });
             this.redisSub = infra.createStandaloneRedisClient({ lazyConnect: true });
             this.upstash = infra.createUpstashRestClient();
-            if (this.redis instanceof ioredis_1.Redis) {
+            if (this.redis) {
                 this.redis.on('error', (err) => log('error', 'REDIS', `Client error: ${err.message}`));
-                await this.redis.connect().catch((err) => {
+                await infra.connectStandaloneRedisClient(this.redis).catch((err) => {
                     log('warn', 'REDIS', `Failed to connect primary client (TCP): ${err.message}`);
                 });
             }
-            if (this.redisSub instanceof ioredis_1.Redis) {
+            if (this.redisSub) {
                 this.redisSub.on('error', (err) => log('error', 'REDIS', `Subscriber error: ${err.message}`));
-                await this.redisSub.connect().catch((err) => {
+                await infra.connectStandaloneRedisClient(this.redisSub).catch((err) => {
                     log('warn', 'REDIS', `Failed to connect subscriber client (TCP): ${err.message}`);
                 });
                 // Subscribe to ingress for messages from other components
@@ -749,6 +748,9 @@ class MasterClock {
                 const response = await fetch(url, { method: 'GET' });
                 if (!response.ok) {
                     lastError = `HTTP ${response.status} (${url})`;
+                    if (response.status === 401 || response.status === 404) {
+                        continue;
+                    }
                     continue;
                 }
                 const rows = (await response.json());
@@ -757,6 +759,9 @@ class MasterClock {
             catch (error) {
                 lastError = `${error.message || String(error)} (${url})`;
             }
+        }
+        if (lastError && /\bHTTP (401|404)\b/.test(lastError)) {
+            return [];
         }
         throw new Error(`Ledger poll failed: ${lastError || 'unknown error'}`);
     }

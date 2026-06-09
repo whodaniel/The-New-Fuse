@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import Anthropic from '@anthropic-ai/sdk';
 import { LLMProvider } from '../LLMProvider.js';
 import { LLMMessage, LLMResponse, LLMConfig } from '@the-new-fuse/types';
+import { assertDevLoopBudget } from '../../utils/dev-loop-guard.js';
+import { loadRootEnv } from '../../utils/root-env.js';
 
 export interface AnthropicConfig extends LLMConfig {
   apiKey: string;
@@ -32,8 +34,9 @@ export class AnthropicProvider extends LLMProvider {
 
   constructor(private readonly config: AnthropicConfig) {
     super();
+    loadRootEnv();
     this.client = new Anthropic({
-      apiKey: config.apiKey,
+      apiKey: config.apiKey || process.env.ANTHROPIC_API_KEY || '',
       baseURL: config.baseURL,
       maxRetries: config.maxRetries ?? 3,
       timeout: config.timeout ?? 600000, // 10 minutes for long-running tasks
@@ -44,6 +47,7 @@ export class AnthropicProvider extends LLMProvider {
    * Generate completion from prompt
    */
   async generate(prompt: string): Promise<string> {
+    assertDevLoopBudget('core.anthropic.generate', this.config);
     try {
       const response = await this.client.messages.create({
         model: this.config.modelName || 'claude-3-5-sonnet-20241022',
@@ -73,6 +77,7 @@ export class AnthropicProvider extends LLMProvider {
    * Chat completion with message history
    */
   async chat(messages: LLMMessage[], config?: Partial<LLMConfig>): Promise<LLMResponse> {
+    assertDevLoopBudget('core.anthropic.chat', config);
     try {
       const mergedConfig = { ...this.config, ...config };
 
@@ -123,6 +128,7 @@ export class AnthropicProvider extends LLMProvider {
     messages: LLMMessage[],
     config?: Partial<LLMConfig>,
   ): AsyncGenerator<string, void, unknown> {
+    assertDevLoopBudget('core.anthropic.streamChat', config);
     try {
       const mergedConfig = { ...this.config, ...config };
       const anthropicMessages = this.convertMessages(messages);

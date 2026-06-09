@@ -34,7 +34,18 @@ export interface AgentMessage {
     role?: string;
     broadcast?: boolean;
   };
-  type: 'message' | 'command' | 'response' | 'heartbeat' | 'status' | 'auction' | 'bid' | 'award';
+  type:
+    | 'message'
+    | 'command'
+    | 'response'
+    | 'heartbeat'
+    | 'status'
+    | 'auction'
+    | 'bid'
+    | 'award'
+    | 'task'
+    | 'event'
+    | 'query';
   content: string;
   payload?: any;
   conversationId?: string;
@@ -221,6 +232,7 @@ export class RedisAgentClient {
       antigravity: ['code_assistance', 'orchestration', 'planning', 'analysis'],
       gemini: ['code_analysis', 'research', 'implementation', 'review'],
       claude: ['reasoning', 'review', 'synthesis', 'documentation'],
+      grok: ['agent_client_protocol', 'external_cli', 'reasoning', 'coding'],
       jules: ['parallel_execution', 'github_commits', 'refactoring', 'batch_processing'],
       vscode: ['code_editing', 'terminal', 'debugging', 'extensions'],
       browser: ['web_scraping', 'research', 'automation'],
@@ -296,7 +308,9 @@ export class RedisAgentClient {
 
   private handleIncomingMessage(channel: string, messageStr: string) {
     try {
-      const message: AgentMessage = JSON.parse(messageStr);
+      const rawMessage = JSON.parse(messageStr);
+      const message = this.normalizeIncomingMessage(rawMessage);
+      if (!message) return;
 
       if (message.from && message.from.agentId === this.agentInfo?.id) {
         return;
@@ -310,6 +324,125 @@ export class RedisAgentClient {
     } catch (error: any) {
       console.error('Error parsing message:', error.message);
     }
+  }
+
+  private normalizeIncomingMessage(rawMessage: any): AgentMessage | null {
+    if (!rawMessage || typeof rawMessage !== 'object') {
+      return null;
+    }
+
+    const hasEnvelopeShape =
+      typeof rawMessage.id === 'string' &&
+      typeof rawMessage.type === 'string' &&
+      rawMessage.from &&
+      typeof rawMessage.from === 'object' &&
+      rawMessage.payload &&
+      typeof rawMessage.payload === 'object' &&
+      (typeof rawMessage.traceId === 'string' ||
+        rawMessage.version === '1.0' ||
+        rawMessage.type === 'task' ||
+        rawMessage.type === 'event' ||
+        rawMessage.type === 'query');
+
+    if (!hasEnvelopeShape) {
+      return rawMessage as AgentMessage;
+    }
+
+    const payload = rawMessage.payload || {};
+    const task = payload.task && typeof payload.task === 'object' ? payload.task : null;
+    const taskContent =
+      payload.message ||
+      payload.prompt ||
+      this.formatTaskForWorker(task) ||
+      task?.description ||
+      task?.title ||
+      task?.content ||
+      payload.action ||
+      null;
+
+    let content = '';
+    if (typeof taskContent === 'string' && taskContent.trim()) {
+      content = taskContent.trim();
+    } else {
+      content = JSON.stringify(payload);
+    }
+
+    return {
+      id: rawMessage.id || uuidv4(),
+      timestamp: rawMessage.timestamp || new Date().toISOString(),
+      from: {
+        agentId: rawMessage.from.agentId || rawMessage.from.id || 'unknown',
+        agentName:
+          rawMessage.from.agentName ||
+          rawMessage.from.operationalHandle ||
+          rawMessage.from.agentId ||
+          'unknown',
+        role: rawMessage.from.role || 'worker',
+        platform: rawMessage.from.platform || 'relay-core',
+      },
+      to: rawMessage.to,
+      type: rawMessage.type,
+      content,
+      payload,
+      conversationId:
+        rawMessage.context?.sessionId || rawMessage.context?.workflowId || rawMessage.conversationId,
+      replyTo: rawMessage.context?.parentMessageId || rawMessage.replyTo,
+      expectsResponse:
+        rawMessage.type === 'task' ||
+        rawMessage.type === 'query' ||
+        Boolean(rawMessage.expectsResponse),
+      metadata: {
+        ...(typeof rawMessage.metadata === 'object' ? rawMessage.metadata : {}),
+        payload,
+        tnfEnvelope: true,
+      },
+    } as AgentMessage;
+  }
+
+  private formatTaskForWorker(task: any): string | null {
+    if (!task || typeof task !== 'object') {
+      return null;
+    }
+
+    const lines: string[] = [];
+    const title = typeof task.title === 'string' ? task.title.trim() : '';
+    const description = typeof task.description === 'string' ? task.description.trim() : '';
+    const content = typeof task.content === 'string' ? task.content.trim() : '';
+
+    if (title) lines.push(`Task: ${title}`);
+    if (description && description !== title) lines.push(`Description: ${description}`);
+    if (content && content !== description && content !== title) lines.push(content);
+
+    const acceptanceCriteria = Array.isArray(task.acceptanceCriteria)
+      ? task.acceptanceCriteria
+      : Array.isArray(task.acceptance_criteria)
+        ? task.acceptance_criteria
+        : [];
+
+    const cleanCriteria = acceptanceCriteria
+      .map((item: unknown) => (typeof item === 'string' ? item.trim() : ''))
+      .filter(Boolean);
+
+    if (cleanCriteria.length > 0) {
+      lines.push(
+        `Acceptance criteria:\n${cleanCriteria.map((item: string) => `- ${item}`).join('\n')}`
+      );
+    }
+
+    if (typeof task.priority === 'string' && task.priority.trim()) {
+      lines.push(`Priority: ${task.priority.trim()}`);
+    }
+
+    if (Array.isArray(task.requiredCapabilities) && task.requiredCapabilities.length > 0) {
+      const capabilities = task.requiredCapabilities
+        .map((item: unknown) => (typeof item === 'string' ? item.trim() : ''))
+        .filter(Boolean);
+      if (capabilities.length > 0) {
+        lines.push(`Required capabilities: ${capabilities.join(', ')}`);
+      }
+    }
+
+    return lines.length > 0 ? lines.join('\n\n') : null;
   }
 
   onMessage(type: string, handler: (message: AgentMessage, channel: string) => void) {

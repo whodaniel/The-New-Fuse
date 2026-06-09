@@ -224,6 +224,7 @@ export class AdminOpenClawOAuthController {
         tenantId: binding.tenantId,
         service: binding.service,
         provider: binding.provider,
+        accessScope: binding.accessScope,
       },
     });
     return binding;

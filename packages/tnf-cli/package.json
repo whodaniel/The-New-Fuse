@@ -18,7 +18,7 @@
     "clean": "rm -rf dist .turbo .tsbuildinfo tsconfig.tsbuildinfo",
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
-    "type-check": "tsc --build --noEmit",
+    "type-check": "tsc -p tsconfig.json --noEmit",
     "test": "echo \"No tests for this package\" && exit 0"
   },
   "dependencies": {

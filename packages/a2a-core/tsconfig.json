@@ -25,6 +25,9 @@
     },
     {
       "path": "../infrastructure"
+    },
+    {
+      "path": "../security"
     }
   ]
 }

@@ -202,10 +202,16 @@ export class ResourceSearchPolicyService {
     }
 
     const configuredBase = this.configService.get<string>('AGENT_REGISTRY_API_BASE_URL');
+    const defaultApiBase =
+      process.env.TNF_RUNTIME === 'docker-compose'
+        ? 'http://api-server:8080/api/agent-registry'
+        : 'http://localhost:3001/api/agent-registry';
     const urls = [
       configuredBase?.trim() ? `${configuredBase.trim().replace(/\/+$/, '')}/traits/screen` : '',
-      'http://localhost:3002/api/agent-registry/traits/screen',
-      'http://localhost:3001/api/agent-registry/traits/screen',
+      `${defaultApiBase}/traits/screen`,
+      process.env.TNF_RUNTIME === 'docker-compose'
+        ? ''
+        : 'http://localhost:3002/api/agent-registry/traits/screen',
     ];
 
     return Array.from(new Set(urls.filter(Boolean)));

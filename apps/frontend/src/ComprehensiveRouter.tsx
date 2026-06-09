@@ -16,10 +16,9 @@ import TestPage from './pages/Test';
 
 // Lazy load pages for code splitting
 const DocsPage = lazy(() => import('./pages/Docs'));
-const Pricing = lazy(() => import('./pages/Pricing'));
-const Features = lazy(() => import('./pages/Features'));
 
 import RequireMembership from './components/auth/RequireMembership';
+import { AgentTruthLayer } from './components/AgentTruthLayer';
 import RequirePermission from './components/auth/RequirePermission';
 import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
@@ -68,6 +67,7 @@ const SettingsNotifications = lazy(() => import('./pages/settings/Notifications'
 const SettingsSecurity = lazy(() => import('./pages/settings/Security'));
 const SettingsAPI = lazy(() => import('./pages/settings/API'));
 const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview'));
+const ProjectView = lazy(() => import('./pages/Projects/ProjectView'));
 const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
 const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat'));
 const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
@@ -139,6 +139,11 @@ const OpenClawSecurity = lazy(() => import('./pages/Admin/OpenClawSecurity'));
 const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
 const NexusVisualizer = lazy(() => import('./pages/SynapticNexus'));
 
+// Unified UI Components (from Hermes merge refactoring)
+const UnifiedCommunicationCanvas = lazy(() => import('./components/UnifiedChat/UnifiedCommunicationCanvas').then(m => ({ default: m.UnifiedCommunicationCanvas })));
+const CommandCenterDashboard = lazy(() => import('./components/CommandCenter/CommandCenterDashboard').then(m => ({ default: m.CommandCenterDashboard })));
+const ScheduleBuilderPage = lazy(() => import('./components/Scheduler/ScheduleBuilder').then(m => ({ default: m.ScheduleBuilder })));
+
 // Auth components
 const AuthIndexPage = lazy(() => import('./pages/auth'));
 const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPassword'));
@@ -148,13 +153,12 @@ const GoogleCallbackPage = lazy(() => import('./pages/auth/GoogleCallback'));
 const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 
 // Landing components archived to static HTML - These routes now redirect or are handled by static hosting
-const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
-const SupportPage = lazy(() => import('./pages/Support'));
 const BrandIdentityPage = lazy(() => import('./pages/BrandIdentity'));
 
 const BlogPage = lazy(() => import('./pages/Blog').then((module) => ({ default: module.Blog })));
 const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
-const MembershipPage = lazy(() => import('./pages/Membership'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Features = lazy(() => import('./pages/Features'));
 const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const VisualizationSurfaceViewerPage = lazy(() => import('./pages/VisualizationSurfaceViewer'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
@@ -462,6 +466,8 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
 
   return (
     <div>
+      <AgentTruthLayer pathname={location.pathname} isAppHost={isAppHost} />
+
       {/* Primary Universal Navigation */}
       <Suspense fallback={<div className="h-16 bg-slate-950 border-b border-white/10" />}>
         {!location.pathname.startsWith('/auth') &&
@@ -497,6 +503,30 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={
                   <RequireMemberAccess>
                     <Dashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/command-center"
+                element={
+                  <RequireMemberAccess>
+                    <CommandCenterDashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/unified-chat"
+                element={
+                  <RequireMemberAccess>
+                    <UnifiedCommunicationCanvas />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/schedule"
+                element={
+                  <RequireMemberAccess>
+                    <ScheduleBuilderPage />
                   </RequireMemberAccess>
                 }
               />
@@ -845,6 +875,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={
                   <RequireMemberAccess>
                     <CatalogProfilePage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/workspace/projects"
+                element={
+                  <RequireMemberAccess>
+                    <ProjectView />
                   </RequireMemberAccess>
                 }
               />
@@ -1463,8 +1501,8 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               {/* Route catalog parity aliases (first-principles no-prune pass) */}
               <Route path="/landing-page" element={<Navigate to="/landing" replace />} />
               <Route path="/simple-landing" element={<Navigate to="/landing" replace />} />
-              <Route path="/ambassador" element={<Navigate to="/community" replace />} />
-              <Route path="/careers" element={<Navigate to="/community" replace />} />
+              <Route path="/ambassador" element={<RedirectToStatic to="/community" />} />
+              <Route path="/careers" element={<RedirectToStatic to="/community" />} />
               <Route path="/testimonials" element={<Navigate to="/landing" replace />} />
               <Route path="/comparisons" element={<Navigate to="/product-map" replace />} />
               <Route path="/faq" element={<Navigate to="/docs" replace />} />
@@ -1490,7 +1528,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/system" element={<Navigate to="/system-status" replace />} />
               <Route
                 path="/general-settings/community-hub"
-                element={<Navigate to="/community" replace />}
+                element={<RedirectToStatic to="/community" />}
               />
               <Route
                 path="/agents/unified-creator"
@@ -1501,9 +1539,9 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 path="/admin/experimental-features"
                 element={<Navigate to="/admin/feature-flags" replace />}
               />
-              <Route path="/admin/onboarding" element={<Navigate to="/onboarding" replace />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/features" element={<Features />} />
+              <Route path="/admin/onboarding" element={<Navigate to="/onboarding/ai-agent" replace />} />
+              <Route path="/pricing" element={<RedirectToStatic to="/pricing" />} />
+              <Route path="/features" element={<RedirectToStatic to="/features" />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/*" element={<DocsPage />} />
               <Route

@@ -9,8 +9,38 @@ This is a **self-referential discovery document** that helps Claude understand:
 - How resources relate hierarchically
 - How to compose context for complex tasks
 
-**Read this file FIRST** when starting any TNF task to understand available
-capabilities.
+Read `./docs/protocols/TURN_ZERO_MANDATE.md` first when starting a TNF
+session. Read this file after Turn Zero when you need to choose skills, agents,
+or supporting resources.
+
+## 🚨 Canonical TNF Governance
+
+**WARNING:** The legacy BMAD + Manus planning files (`task_plan.md`, `.agent/handoff_notes.txt`) are compatibility fallbacks only and are deprecated in the core orchestration flow.
+
+The canonical operating loop and state memory for this swarm are located at:
+- **Turn Zero Mandate**: `./docs/protocols/TURN_ZERO_MANDATE.md`
+- **Swarm Memory**: `./docs/protocols/LIVING_STATE.md`
+- **Persistent Handoff**: `./docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
+
+If you are just booting up, you **MUST** execute the Turn Zero Mandate before
+proposing task plans, creating tracking files, reporting status, or writing
+code.
+
+Use this raw-agent prompt when TNF auto-injection is unavailable:
+
+```text
+Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
+```
+
+Launch raw agents from the TNF repository root so the relative paths resolve.
+
+Machine-specific assets such as personal paths, local relay endpoints, and
+known occupied development ports belong in the local runtime profile, not in
+distributed source:
+
+- Local profile reference: `./docs/reference/local-runtime-profile.md`
+- Port runbook: `./docs/PORT_MANAGEMENT.md`
+- Active port commands: `./tnf ports status` and `./tnf ports preflight`
 
 ---
 
@@ -74,7 +104,17 @@ capabilities.
 - **Use When**: User requests new capabilities, extending TNF
 - **Special**: This is a meta-skill - it builds other skills
 
-### 6. **framework-consciousness** (Meta-Skill) ⭐⭐⭐
+### 8. **skill-management** (Meta-Skill) ⭐⭐⭐
+
+- **Location**: `.agent/skills/skill-management/SKILL.md`
+- **Purpose**: Keeps active skills lean while preserving specialized skills in
+  inactive vaults.
+- **Use When**: Loading inactive skills, pruning active skills, or preventing
+  context-budget bloat.
+- **Key Rule**: Prefer read-in-place or copy-based activation; do not delete the
+  only copy of a skill.
+
+### 9. **framework-consciousness** (Meta-Skill) ⭐⭐⭐
 
 - **Location**: `.claude/skills/framework-consciousness.md`
 - **Purpose**: P0 Foundation - Achieve holistic, multi-dimensional understanding
@@ -86,7 +126,7 @@ capabilities.
 - **Directives**: Survival, Thriving, Learning, Growing, Adapting, Providing
   Compounding Value.
 
-### 7. **planning-with-files** (Context Engineering) ⭐⭐
+### 10. **planning-with-files** (Context Engineering) ⭐⭐
 
 - **Location**: `.agent/skills/planning-with-files/SKILL.md`
 - **Purpose**: Manus-style + BMAD-inspired file-based planning
@@ -426,7 +466,7 @@ Done (New skill now available)
 | Send relay message      | relay-communication  | relay-protocol.md, browser-automation  |
 | Check system status     | system-diagnostics   | -                                      |
 | Create new skill        | skill-builder (meta) | All existing skills, pattern library   |
-| Complex task (>5 steps) | planning-with-files  | BMAD workflow, handoff notes           |
+| Complex task (>5 steps) | planning-with-files  | Optional legacy planning files after Turn Zero |
 | Long-running task       | jules-delegation     | Jules CLI, async execution             |
 | High-performance work   | trait-antigravity    | Ralph Wiggum, 3-Strike, High-Aesthetic |
 | CLI Orchestration       | tnf-cli-agent        | CLI ops, trait-alignment               |
@@ -442,8 +482,8 @@ Done (New skill now available)
 | "news", "trend", "scout", "competitor"           | news-scouting          |
 | "audit", "tech debt", "improver"                 | continuous-improvement |
 | "create skill", "new capability", "add function" | skill-builder (meta)   |
-| "plan", "complex", "multi-step", "phases"        | planning-with-files    |
-| "findings", "progress", "handoff", "session"     | planning-with-files    |
+| "plan", "complex", "multi-step", "phases"        | planning-with-files after Turn Zero |
+| "findings", "progress", "handoff", "session"     | Canonical protocol state first; planning-with-files only if requested |
 | "delegate", "jules", "async", "parallel"         | jules-delegation       |
 | "antigravity", "trait", "high-performance"       | trait-antigravity      |
 | "tnf cli", "cli agent", "orchestrate cli"        | tnf-cli-agent          |

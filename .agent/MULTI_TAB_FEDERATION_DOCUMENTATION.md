@@ -49,7 +49,7 @@ independent "Page Agent" that can send/receive messages to/from other agents.
                                     ▼
                     ┌───────────────────────────────┐
                     │        RELAY SERVER           │
-                    │     ws://localhost:3001/ws    │
+                    │  ${TNF_RELAY_URL:-...}        │
                     │                               │
                     │  • Message routing            │
                     │  • Channel management         │
@@ -196,11 +196,11 @@ const isExternalAgent = !isSelfMessage;
 1. ✅ **Start the Relay Server**
 
    ```bash
-   cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+   cd <TNF repo root>
    pnpm relay:start
    ```
 
-   Should show: `[Relay] Server started on ws://localhost:3001/ws`
+   Should show the configured relay URL from `TNF_RELAY_URL`, `RELAY_WS_URL`, or `RELAY_URL`
 
 2. ✅ **Reload the Extension**
    - Go to `chrome://extensions`

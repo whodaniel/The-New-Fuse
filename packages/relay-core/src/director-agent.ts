@@ -1,6 +1,10 @@
 #!/usr/bin/env node
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
-import { Cluster, Redis } from 'ioredis';
+import {
+  connectStandaloneRedisClient,
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
+import type { Cluster, Redis } from 'ioredis';
 
 type QueueTask = {
   id: string;
@@ -68,21 +72,17 @@ class DirectorAgent {
     this.redisBlocking = createStandaloneRedisClient({ lazyConnect: true });
     this.upstash = createUpstashRestClient();
 
-    if (this.redis instanceof Redis) {
-      this.redis.on('error', (err: any) =>
-        console.error('[Director] Redis error:', err?.message || err)
-      );
-    }
-    if (this.redisBlocking instanceof Redis) {
-      this.redisBlocking.on('error', (err: any) =>
-        console.error('[Director] Redis blocking error:', err?.message || err)
-      );
-    }
+    this.redis.on('error', (err: any) =>
+      console.error('[Director] Redis error:', err?.message || err)
+    );
+    this.redisBlocking.on('error', (err: any) =>
+      console.error('[Director] Redis blocking error:', err?.message || err)
+    );
   }
 
   async start(): Promise<void> {
-    if (this.redis instanceof Redis) await this.redis.connect();
-    if (this.redisBlocking instanceof Redis) await this.redisBlocking.connect();
+    if (this.redis) await connectStandaloneRedisClient(this.redis);
+    if (this.redisBlocking) await connectStandaloneRedisClient(this.redisBlocking);
     this.running = true;
 
     await this.registerDirector();

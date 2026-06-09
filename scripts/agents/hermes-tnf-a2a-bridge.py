@@ -28,12 +28,16 @@ import json
 import logging
 import os
 import signal
+import ssl
 import sys
 import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
+
+# Disable SSL verification for Redis SSL connections (self-signed certs)
+ssl._create_default_https_context = ssl._create_unverified_context
 
 try:
     import redis as redis_py
@@ -46,6 +50,15 @@ except ImportError:
 # ---------------------------------------------------------------------------
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
 REDIS_DB = int(os.environ.get("REDIS_DB", "0"))
+
+# Fix SSL certificate verification for Upstash Redis (rediss:// URLs)
+# redis-py 7.4.x doesn't accept 'ssl' parameter, must embed in URL
+if REDIS_URL.startswith("rediss://"):
+    if "?ssl_cert_reqs=none" not in REDIS_URL:
+        if "?" not in REDIS_URL:
+            REDIS_URL = REDIS_URL + "?ssl_cert_reqs=none"
+        else:
+            REDIS_URL = REDIS_URL + "&ssl_cert_reqs=none"
 
 # Hermes channels
 HERMES_RECENT_KEY = "hermes:memory:recent"

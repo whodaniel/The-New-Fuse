@@ -49,7 +49,7 @@ backend (`apps/api`) for live Stripe processing.
 ## 2. ENVIRONMENT VARIABLES
 
 Create a new `.env` file in
-`/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/` (or update the
+`$TNF_ROOT` (or update the
 existing one) with the following:
 
 ```env

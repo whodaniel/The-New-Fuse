@@ -29,6 +29,7 @@ export * from './contracts/audit.js';
 export * from './contracts/identity.js';
 export * from './contracts/lifecycle.js';
 export * from './protocol/handoff-protocol.js';
+export * from './protocol/native-envelope-validator.js';
 export * from './protocol/resource-protocol.js';
 export * from './protocol/task-protocol.js';
 export * from './protocol/tnf-envelope.js';

@@ -1,6 +1,4 @@
 
-import React from 'react';
-
 const Pricing = () => {
   return (
     <div className="container mx-auto p-8">

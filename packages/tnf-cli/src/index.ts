@@ -19,3 +19,4 @@ export { MemoryService } from './services/MemoryService.js';
 export { PermissionService } from './services/PermissionService.js';
 export { ProjectConfigService } from './services/ProjectConfigService.js';
 export { StoryService } from './services/StoryService.js';
+export * from './slashCommands.js';

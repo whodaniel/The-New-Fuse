@@ -1,0 +1,28 @@
+{
+  "action_id": "act-bf84cee462426096",
+  "title": "[AI5] Enable Software Coding and External Tool Interaction in UITARS 2",
+  "state": "verified",
+  "verified_at": "2026-06-09T09:30:02Z",
+  "summary": "Added a TNF-owned UITARS-style capability manager for code and external tool interaction. It supports capability discovery, risky tool approval enforcement, tool-call argument validation, JSON/stdout output parsing, and mode transition planning across visual, code, tool, and orchestration modes.",
+  "files_changed": [
+    "scripts/autonomy/uitars_capabilities_manager.py"
+  ],
+  "verification": [
+    {
+      "command": "python3 -m py_compile scripts/autonomy/uitars_capabilities_manager.py",
+      "result": "passed"
+    },
+    {
+      "command": "python3 scripts/autonomy/uitars_capabilities_manager.py --self-test",
+      "result": "passed"
+    },
+    {
+      "command": "python3 scripts/autonomy/uitars_capabilities_manager.py --discover",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check -- scripts/autonomy/uitars_capabilities_manager.py",
+      "result": "passed"
+    }
+  ]
+}

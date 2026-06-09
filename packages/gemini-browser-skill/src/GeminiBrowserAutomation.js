@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 /**
  * Gemini Browser Automation Service
  *
@@ -12,202 +12,205 @@
  * - Leverages Gemini's ability to see tab contents
  * - Free compute for non-critical tasks
  */
-Object.defineProperty(exports, '__esModule', { value: true });
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.geminiBrowser = exports.GeminiBrowserAutomation = void 0;
-const playwright_1 = require('playwright');
+const playwright_1 = require("playwright");
 class GeminiBrowserAutomation {
-  constructor() {
-    this.browser = null;
-    this.context = null;
-    this.geminiPage = null;
-    this.isInitialized = false;
-  }
-  /**
-   * Initialize Chrome with Gemini enabled
-   */
-  async initialize() {
-    try {
-      console.log('[GeminiBrowser] Launching Chrome with Gemini...');
-      // Launch Chrome with specific flags to enable Gemini
-      this.browser = await playwright_1.chromium.launch({
-        headless: false, // Gemini UI requires visible browser
-        channel: 'chrome', // Use installed Chrome (not Chromium)
-        args: [
-          '--enable-features=Gemini,OptimizationGuideOnDeviceModel,PromptAPIForGeminiNano',
-          '--no-first-run',
-          '--no-default-browser-check',
-        ],
-      });
-      this.context = await this.browser.newContext({
-        viewport: { width: 1280, height: 720 },
-      });
-      // Open a new page
-      this.geminiPage = await this.context.newPage();
-      // Navigate to a page where we can trigger Gemini
-      await this.geminiPage.goto('https://gemini.google.com');
-      console.log('[GeminiBrowser] Chrome launched successfully');
-      this.isInitialized = true;
-      return true;
-    } catch (error) {
-      console.error('[GeminiBrowser] Failed to initialize:', error);
-      return false;
+    constructor() {
+        this.browser = null;
+        this.context = null;
+        this.geminiPage = null;
+        this.isInitialized = false;
     }
-  }
-  /**
-   * Open Gemini side panel using keyboard shortcut
-   */
-  async openGeminiPanel() {
-    if (!this.geminiPage) {
-      throw new Error('Browser not initialized');
+    /**
+     * Initialize Chrome with Gemini enabled
+     */
+    async initialize() {
+        try {
+            console.log('[GeminiBrowser] Launching Chrome with Gemini...');
+            // Launch Chrome with specific flags to enable Gemini
+            this.browser = await playwright_1.chromium.launch({
+                headless: false, // Gemini UI requires visible browser
+                channel: 'chrome', // Use installed Chrome (not Chromium)
+                args: [
+                    '--enable-features=Gemini,OptimizationGuideOnDeviceModel,PromptAPIForGeminiNano',
+                    '--no-first-run',
+                    '--no-default-browser-check',
+                ],
+            });
+            this.context = await this.browser.newContext({
+                viewport: { width: 1280, height: 720 },
+            });
+            // Open a new page
+            this.geminiPage = await this.context.newPage();
+            // Navigate to a page where we can trigger Gemini
+            await this.geminiPage.goto('https://gemini.google.com');
+            console.log('[GeminiBrowser] Chrome launched successfully');
+            this.isInitialized = true;
+            return true;
+        }
+        catch (error) {
+            console.error('[GeminiBrowser] Failed to initialize:', error);
+            return false;
+        }
     }
-    try {
-      // Try Ctrl+G (or Cmd+G on Mac) to open Gemini side panel
-      const isMac = process.platform === 'darwin';
-      const modifier = isMac ? 'Meta' : 'Control';
-      await this.geminiPage.keyboard.press(`${modifier}+KeyG`);
-      // Wait for side panel to appear
-      await this.geminiPage.waitForTimeout(1000);
-      return true;
-    } catch (error) {
-      console.error('[GeminiBrowser] Failed to open Gemini panel:', error);
-      return false;
+    /**
+     * Open Gemini side panel using keyboard shortcut
+     */
+    async openGeminiPanel() {
+        if (!this.geminiPage) {
+            throw new Error('Browser not initialized');
+        }
+        try {
+            // Try Ctrl+G (or Cmd+G on Mac) to open Gemini side panel
+            const isMac = process.platform === 'darwin';
+            const modifier = isMac ? 'Meta' : 'Control';
+            await this.geminiPage.keyboard.press(`${modifier}+KeyG`);
+            // Wait for side panel to appear
+            await this.geminiPage.waitForTimeout(1000);
+            return true;
+        }
+        catch (error) {
+            console.error('[GeminiBrowser] Failed to open Gemini panel:', error);
+            return false;
+        }
     }
-  }
-  /**
-   * Type a prompt into Gemini's input field
-   */
-  async typePrompt(prompt) {
-    if (!this.geminiPage) {
-      throw new Error('Browser not initialized');
+    /**
+     * Type a prompt into Gemini's input field
+     */
+    async typePrompt(prompt) {
+        if (!this.geminiPage) {
+            throw new Error('Browser not initialized');
+        }
+        try {
+            // Look for Gemini's chat input
+            // This selector may need adjustment based on Gemini's actual UI
+            const inputSelector = 'textarea[placeholder*="Ask"], textarea[aria-label*="chat"], .chat-input, [contenteditable="true"]';
+            await this.geminiPage.waitForSelector(inputSelector, { timeout: 5000 });
+            await this.geminiPage.click(inputSelector);
+            await this.geminiPage.fill(inputSelector, prompt);
+            // Press Enter to send
+            await this.geminiPage.keyboard.press('Enter');
+            return true;
+        }
+        catch (error) {
+            console.error('[GeminiBrowser] Failed to type prompt:', error);
+            return false;
+        }
     }
-    try {
-      // Look for Gemini's chat input
-      // This selector may need adjustment based on Gemini's actual UI
-      const inputSelector =
-        'textarea[placeholder*="Ask"], textarea[aria-label*="chat"], .chat-input, [contenteditable="true"]';
-      await this.geminiPage.waitForSelector(inputSelector, { timeout: 5000 });
-      await this.geminiPage.click(inputSelector);
-      await this.geminiPage.fill(inputSelector, prompt);
-      // Press Enter to send
-      await this.geminiPage.keyboard.press('Enter');
-      return true;
-    } catch (error) {
-      console.error('[GeminiBrowser] Failed to type prompt:', error);
-      return false;
+    /**
+     * Extract Gemini's response from the UI
+     */
+    async extractResponse(timeout = 30000) {
+        if (!this.geminiPage) {
+            throw new Error('Browser not initialized');
+        }
+        try {
+            // Wait for response to appear
+            // This selector may need adjustment based on Gemini's actual UI
+            const responseSelector = '.model-response, .message-content, [data-message-author="model"]';
+            await this.geminiPage.waitForSelector(responseSelector, { timeout });
+            // Get the latest response
+            const responses = await this.geminiPage.$$eval(responseSelector, (elements) => elements.map((el) => el.textContent || ''));
+            // Return the last response
+            return responses[responses.length - 1] || '';
+        }
+        catch (error) {
+            console.error('[GeminiBrowser] Failed to extract response:', error);
+            throw error;
+        }
     }
-  }
-  /**
-   * Extract Gemini's response from the UI
-   */
-  async extractResponse(timeout = 30000) {
-    if (!this.geminiPage) {
-      throw new Error('Browser not initialized');
+    /**
+     * Open context URLs in tabs for Gemini to see
+     */
+    async openContextTabs(urls) {
+        if (!this.context) {
+            throw new Error('Browser not initialized');
+        }
+        const pages = [];
+        for (const url of urls) {
+            try {
+                const page = await this.context.newPage();
+                await page.goto(url, { waitUntil: 'domcontentloaded' });
+                pages.push(page);
+                console.log(`[GeminiBrowser] Opened context tab: ${url}`);
+            }
+            catch (error) {
+                console.error(`[GeminiBrowser] Failed to open ${url}:`, error);
+            }
+        }
+        return pages;
     }
-    try {
-      // Wait for response to appear
-      // This selector may need adjustment based on Gemini's actual UI
-      const responseSelector = '.model-response, .message-content, [data-message-author="model"]';
-      await this.geminiPage.waitForSelector(responseSelector, { timeout });
-      // Get the latest response
-      const responses = await this.geminiPage.$$eval(responseSelector, (elements) =>
-        elements.map((el) => el.textContent || '')
-      );
-      // Return the last response
-      return responses[responses.length - 1] || '';
-    } catch (error) {
-      console.error('[GeminiBrowser] Failed to extract response:', error);
-      throw error;
+    /**
+     * Send a prompt to Gemini and get response
+     */
+    async prompt(request) {
+        if (!this.isInitialized) {
+            const initialized = await this.initialize();
+            if (!initialized) {
+                return {
+                    response: '',
+                    success: false,
+                    error: 'Failed to initialize browser',
+                    timestamp: Date.now(),
+                };
+            }
+        }
+        try {
+            // Open context tabs if provided
+            let contextPages = [];
+            if (request.contextUrls && request.contextUrls.length > 0) {
+                contextPages = await this.openContextTabs(request.contextUrls);
+                // Give Gemini time to process the tabs
+                await this.geminiPage.waitForTimeout(2000);
+            }
+            // Open Gemini panel
+            await this.openGeminiPanel();
+            // Type the prompt
+            const typed = await this.typePrompt(request.prompt);
+            if (!typed) {
+                throw new Error('Failed to type prompt');
+            }
+            // Extract response
+            const response = await this.extractResponse(request.timeout || 30000);
+            // Close context tabs
+            for (const page of contextPages) {
+                await page.close();
+            }
+            return {
+                response,
+                success: true,
+                timestamp: Date.now(),
+            };
+        }
+        catch (error) {
+            return {
+                response: '',
+                success: false,
+                error: error instanceof Error ? error.message : 'Unknown error',
+                timestamp: Date.now(),
+            };
+        }
     }
-  }
-  /**
-   * Open context URLs in tabs for Gemini to see
-   */
-  async openContextTabs(urls) {
-    if (!this.context) {
-      throw new Error('Browser not initialized');
+    /**
+     * Close the browser
+     */
+    async close() {
+        if (this.browser) {
+            await this.browser.close();
+            this.browser = null;
+            this.context = null;
+            this.geminiPage = null;
+            this.isInitialized = false;
+            console.log('[GeminiBrowser] Browser closed');
+        }
     }
-    const pages = [];
-    for (const url of urls) {
-      try {
-        const page = await this.context.newPage();
-        await page.goto(url, { waitUntil: 'domcontentloaded' });
-        pages.push(page);
-        console.log(`[GeminiBrowser] Opened context tab: ${url}`);
-      } catch (error) {
-        console.error(`[GeminiBrowser] Failed to open ${url}:`, error);
-      }
+    /**
+     * Check if browser is initialized
+     */
+    isReady() {
+        return this.isInitialized;
     }
-    return pages;
-  }
-  /**
-   * Send a prompt to Gemini and get response
-   */
-  async prompt(request) {
-    if (!this.isInitialized) {
-      const initialized = await this.initialize();
-      if (!initialized) {
-        return {
-          response: '',
-          success: false,
-          error: 'Failed to initialize browser',
-          timestamp: Date.now(),
-        };
-      }
-    }
-    try {
-      // Open context tabs if provided
-      let contextPages = [];
-      if (request.contextUrls && request.contextUrls.length > 0) {
-        contextPages = await this.openContextTabs(request.contextUrls);
-        // Give Gemini time to process the tabs
-        await this.geminiPage.waitForTimeout(2000);
-      }
-      // Open Gemini panel
-      await this.openGeminiPanel();
-      // Type the prompt
-      const typed = await this.typePrompt(request.prompt);
-      if (!typed) {
-        throw new Error('Failed to type prompt');
-      }
-      // Extract response
-      const response = await this.extractResponse(request.timeout || 30000);
-      // Close context tabs
-      for (const page of contextPages) {
-        await page.close();
-      }
-      return {
-        response,
-        success: true,
-        timestamp: Date.now(),
-      };
-    } catch (error) {
-      return {
-        response: '',
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: Date.now(),
-      };
-    }
-  }
-  /**
-   * Close the browser
-   */
-  async close() {
-    if (this.browser) {
-      await this.browser.close();
-      this.browser = null;
-      this.context = null;
-      this.geminiPage = null;
-      this.isInitialized = false;
-      console.log('[GeminiBrowser] Browser closed');
-    }
-  }
-  /**
-   * Check if browser is initialized
-   */
-  isReady() {
-    return this.isInitialized;
-  }
 }
 exports.GeminiBrowserAutomation = GeminiBrowserAutomation;
 // Export singleton instance

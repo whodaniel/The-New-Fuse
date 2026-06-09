@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { LLMProvider } from '../LLMProvider.js';
 import { LLMMessage, LLMResponse, LLMConfig } from '@the-new-fuse/types';
+import { assertDevLoopBudget } from '../../utils/dev-loop-guard.js';
+import { loadRootEnv } from '../../utils/root-env.js';
 
 export interface GoogleADKConfig extends LLMConfig {
   baseURL?: string;
@@ -43,7 +45,15 @@ export class GoogleADKProvider extends LLMProvider {
 
   constructor(private readonly config: GoogleADKConfig) {
     super();
-    this.baseURL = (config.baseURL || 'http://localhost:8089').replace(/\/+$/, '');
+    loadRootEnv();
+    const defaultBaseURL =
+      process.env.TNF_RUNTIME === 'docker-compose'
+        ? 'http://adk-gateway:8080'
+        : 'http://localhost:8089';
+    this.baseURL = (config.baseURL || process.env.GOOGLE_ADK_BASE_URL || defaultBaseURL).replace(
+      /\/+$/,
+      '',
+    );
   }
 
   async generate(prompt: string): Promise<string> {
@@ -58,6 +68,7 @@ export class GoogleADKProvider extends LLMProvider {
 
   async chat(messages: LLMMessage[], config?: Partial<LLMConfig>): Promise<LLMResponse> {
     const mergedConfig = { ...this.config, ...config };
+    const devLoopIteration = assertDevLoopBudget('core.google-adk.chat', config);
     const payload = {
       requestId: randomUUID(),
       traceId: randomUUID(),
@@ -71,6 +82,7 @@ export class GoogleADKProvider extends LLMProvider {
       metadata: {
         source: 'tnf-google-adk-provider',
         policyProfile: 'default',
+        devLoopIteration,
       },
       timeoutMs: mergedConfig.timeout || 120000,
     };
@@ -107,6 +119,7 @@ export class GoogleADKProvider extends LLMProvider {
     config?: Partial<LLMConfig>,
   ): AsyncGenerator<string, void, unknown> {
     const mergedConfig = { ...this.config, ...config };
+    const devLoopIteration = assertDevLoopBudget('core.google-adk.streamChat', config);
     const payload = {
       requestId: randomUUID(),
       traceId: randomUUID(),
@@ -120,6 +133,7 @@ export class GoogleADKProvider extends LLMProvider {
       metadata: {
         source: 'tnf-google-adk-provider',
         policyProfile: 'default',
+        devLoopIteration,
       },
       timeoutMs: mergedConfig.timeout || 120000,
     };

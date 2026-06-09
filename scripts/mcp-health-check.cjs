@@ -32,6 +32,7 @@ for (const candidate of CONFIG_CANDIDATES) {
 
 const TIMEOUT_MS = 3000;
 const MAX_CONCURRENT_CHECKS = 5;
+const LOCAL_HOSTS = new Set(['127.0.0.1', 'localhost', '::1']);
 
 /**
  * ANSI color codes for terminal output
@@ -207,9 +208,15 @@ async function testServerHealth(name, config) {
   
   try {
     // Try to connect to the server
-    await checkServerConnection(config.host, config.port, config.protocol || 'http');
+    await checkServerConnection(config);
     return { status: 'healthy', message: 'Server is responding' };
   } catch (error) {
+    if (LOCAL_HOSTS.has(String(config.host).toLowerCase()) && process.env.TNF_MCP_HEALTH_STRICT !== '1') {
+      return {
+        status: 'warning',
+        message: `Local service is not reachable during boot: ${error.message}`,
+      };
+    }
     return { status: 'unhealthy', message: `Cannot connect to server: ${error.message}` };
   }
 }
@@ -217,25 +224,41 @@ async function testServerHealth(name, config) {
 /**
  * Check server connection
  */
-function checkServerConnection(host, port, protocol = 'http') {
+async function checkServerConnection(config) {
+  const host = config.host;
+  const port = config.port;
+  const protocol = config.protocol || 'http';
+  const paths = Array.from(
+    new Set([config.healthPath, '/health', '/api/health', '/'].filter(Boolean))
+  );
+  const errors = [];
+
+  for (const pathname of paths) {
+    try {
+      await checkHttpUrl(`${protocol}://${host}:${port}${pathname}`);
+      return true;
+    } catch (error) {
+      errors.push(`${pathname}: ${error.message}`);
+    }
+  }
+
+  throw new Error(errors.join('; '));
+}
+
+function checkHttpUrl(url) {
   return new Promise((resolve, reject) => {
-    const url = `${protocol}://${host}:${port}`;
-    
     const req = http.get(url, { timeout: TIMEOUT_MS }, (res) => {
       if (res.statusCode >= 200 && res.statusCode < 400) {
         resolve(true);
       } else {
         reject(new Error(`HTTP status: ${res.statusCode}`));
       }
-      
-      // Consume response data to free up memory
+
       res.resume();
     });
-    
-    req.on('error', (err) => {
-      reject(err);
-    });
-    
+
+    req.on('error', reject);
+
     req.on('timeout', () => {
       req.destroy();
       reject(new Error('Connection timeout'));
@@ -299,6 +322,14 @@ async function checkCommandAvailability(serverExecutions) {
  * Generate recommendations for fixing issues
  */
 function generateRecommendations(results, portConflicts, serverConfigs, serverExecutions) {
+  const hasUnhealthy = Object.values(results).some(result => result.status === 'unhealthy');
+  if (!hasUnhealthy && portConflicts.length === 0) {
+    console.log(`${Colors.yellow}1. Warning-only state detected. This is non-fatal for cloud-first boot.${Colors.reset}`);
+    console.log(`   - Local API services may be intentionally offline when cloud API routing is healthy.`);
+    console.log(`   - Set TNF_MCP_HEALTH_STRICT=1 to make local service misses fail this check.`);
+    return;
+  }
+
   // Recommend fixing port conflicts
   if (portConflicts.length > 0) {
     console.log(`${Colors.yellow}1. Fix port conflicts by updating the configuration file:${Colors.reset}`);

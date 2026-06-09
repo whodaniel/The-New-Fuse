@@ -1,0 +1,33 @@
+{
+  "action_id": "act-7e7c58e404d1309a",
+  "title": "[AI5] Conduct Automated Frontier AI Agent Capability Exploration",
+  "state": "verified",
+  "verifiedAt": "2026-06-09T10:02:00Z",
+  "summary": "Implemented a repeatable frontier-agent capability exploration harness. It emits ambitious multi-turn scenarios for long-running agent tests and scores captured traces for coherence, task completion, autonomy, problem-solving depth, multi-turn coverage, and ambition.",
+  "filesChanged": [
+    "scripts/autonomy/frontier_agent_capability_explorer.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 -m py_compile scripts/autonomy/frontier_agent_capability_explorer.py",
+      "result": "passed"
+    },
+    {
+      "command": "python3 scripts/autonomy/frontier_agent_capability_explorer.py --self-test",
+      "result": "passed"
+    },
+    {
+      "command": "python3 scripts/autonomy/frontier_agent_capability_explorer.py --emit-plan --duration-hours 48",
+      "result": "passed",
+      "notes": "Emitted a 48-hour exploration plan with three ambitious multi-turn scenarios."
+    },
+    {
+      "command": "git diff --check -- scripts/autonomy/frontier_agent_capability_explorer.py",
+      "result": "passed"
+    }
+  ],
+  "usage": {
+    "emitPlan": "python3 scripts/autonomy/frontier_agent_capability_explorer.py --emit-plan --duration-hours 48 --output frontier-plan.json",
+    "scoreTrace": "python3 scripts/autonomy/frontier_agent_capability_explorer.py --trace captured-agent-trace.json --output frontier-score.json"
+  }
+}

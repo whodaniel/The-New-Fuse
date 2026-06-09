@@ -73,4 +73,5 @@ By default artifacts are written to:
   unless explicitly released.
 - Artifacts default to `[CLASS:INTEL] [STATUS:PENDING]` and should be promoted
   after human/agent vetting.
+- **Archiving & Decay:** When an intelligence artifact is superseded or reaches terminal decay, its status MUST be updated to `[STATUS:ARCHIVED]`. The artifact is then moved to `data/intelligence-artifacts/_archive/`. The `source_pointer` MUST be preserved indefinitely to maintain the Attribution Overrule.
 - This pipeline is a staging layer and does not bypass TNF adoption gates.

@@ -1,64 +1,75 @@
 {
   "summary": {
-    "generatedAt": "2026-05-17T04:36:36.350Z",
+    "generatedAt": "2026-06-03T09:17:08.893Z",
     "total": 4,
-    "passed": 3,
-    "failed": 1,
-    "publicBaseUrl": "https://app.thenewfuse.com",
+    "passed": 1,
+    "failed": 3,
+    "publicBaseUrl": "https://thenewfuse.com",
     "apiBaseUrl": "https://api.thenewfuse.com"
   },
   "results": [
     {
       "name": "Public /api/auth/login compatibility route",
       "method": "POST",
-      "url": "https://app.thenewfuse.com/api/auth/login",
-      "expectedStatus": [400, 401],
+      "url": "https://thenewfuse.com/api/auth/login",
+      "expectedStatus": [
+        400,
+        401
+      ],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
       "status": 404,
       "ok": false,
-      "elapsedMs": 560,
-      "responseSnippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T04:36:36.175Z\",\"path\":\"/api/auth/login\",\"method\":\"POST\",\"message\":\"Cannot POST /api/auth/login\",\"error\":\"Not Found\"}"
+      "elapsedMs": 984,
+      "responseSnippet": "{\"message\":\"Cannot POST /api/auth/login\",\"error\":\"Not Found\",\"statusCode\":404}"
     },
     {
       "name": "Public /api/v1/auth/login compatibility route",
       "method": "POST",
-      "url": "https://app.thenewfuse.com/api/v1/auth/login",
-      "expectedStatus": [400, 401],
+      "url": "https://thenewfuse.com/api/v1/auth/login",
+      "expectedStatus": [
+        400,
+        401
+      ],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
-      "status": 401,
-      "ok": true,
-      "elapsedMs": 150,
-      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T04:36:36.346Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
+      "status": 404,
+      "ok": false,
+      "elapsedMs": 184,
+      "responseSnippet": "{\"message\":\"Cannot POST /api/v1/auth/login\",\"error\":\"Not Found\",\"statusCode\":404}"
     },
     {
       "name": "Gateway /v1/auth/login canonical route",
       "method": "POST",
       "url": "https://api.thenewfuse.com/v1/auth/login",
-      "expectedStatus": [400, 401],
+      "expectedStatus": [
+        400,
+        401
+      ],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
-      "status": 401,
-      "ok": true,
-      "elapsedMs": 178,
-      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T04:36:36.530Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
+      "status": 404,
+      "ok": false,
+      "elapsedMs": 213,
+      "responseSnippet": "{\"message\":\"Cannot POST /v1/auth/login\",\"error\":\"Not Found\",\"statusCode\":404}"
     },
     {
       "name": "Public /health route",
       "method": "GET",
-      "url": "https://app.thenewfuse.com/health",
-      "expectedStatus": [200],
+      "url": "https://thenewfuse.com/health",
+      "expectedStatus": [
+        200
+      ],
       "status": 200,
       "ok": true,
-      "elapsedMs": 57,
-      "responseSnippet": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  <!-- Import Map removed: Vite bundles all modules correctly. The previous scheduler polyf"
+      "elapsedMs": 41,
+      "responseSnippet": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-06-03T09:17:08.924Z\"}"
     }
   ]
 }

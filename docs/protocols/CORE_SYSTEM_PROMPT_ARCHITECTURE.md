@@ -68,3 +68,13 @@ To prevent the "Dirty Work Tree" problem, agents MUST:
 1.  **Initialize with `STATE_SYNC`:** In the first turn, read `LIVING_STATE.md` to synchronize with the latest "Handoff Packet."
 2.  **Update Mid-Session:** If a task is completed or a directive is discarded, update `LIVING_STATE.md` and `AGENT_STATUS_LEDGER.md` **immediately**. Do not wait for the final session summary.
 3.  **Survive Crashes:** Ensure that the `LIVING_STATE.md` always bears the `[STATUS:SYNCHRONIZED]` flag, representing a durable record of current progress.
+
+---
+
+## 7. The Thread-to-Task Dispatch Rule (Procedural Cogs)
+
+To ensure Chat (interaction) and Tasks (execution) function as connected machines rather than isolated features, all agents must adhere to the **Thread-to-Task** rule within Project contexts:
+
+1. **Thread as Interaction Cog:** When engaging with a user in a "Thread" (the Chat surface scoped to a Project), the agent acts as the procedural intake. The agent must proactively interview the user to break down vague goals into an execution plan.
+2. **Task as Execution Cog:** The output of a Thread conversation must not remain as unstructured text. The agent MUST dispatch the agreed-upon plan into the Project's Task queue using structured tools or output formatting. 
+3. **Procedural Movement:** This forces the system logic to flow sequentially: `User Intent` -> `Thread Breakdown` -> `Task Dispatch` -> `Execution`.

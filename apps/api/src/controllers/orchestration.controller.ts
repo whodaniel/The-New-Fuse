@@ -20,6 +20,7 @@ import {
   SecureAuthGuard,
   SetRateLimitTier,
 } from '../guards/secure-auth.guard';
+import { assertDevLoopBudget } from '../utils/dev-loop-guard';
 
 interface OrchestrationChatRequest {
   message: string;
@@ -62,6 +63,7 @@ export class OrchestrationController {
   })
   @ApiResponse({ status: 200, description: 'AI response payload' })
   async chat(@Body() body: OrchestrationChatRequest, @CurrentUser() user: AuthUser) {
+    assertDevLoopBudget('orchestration.chat', body);
     const message = typeof body?.message === 'string' ? body.message.trim() : '';
     if (!message) {
       throw new BadRequestException('message is required');
@@ -201,13 +203,23 @@ export class OrchestrationController {
       }
     }
 
-    const envKey = process.env.OPENAI_API_KEY?.trim();
-    if (envKey) {
+    const openAiEnvKey = process.env.OPENAI_API_KEY?.trim();
+    if (openAiEnvKey) {
       return {
         provider: 'openai',
         modelName: process.env.OPENAI_MODEL?.trim() || 'gpt-4o-mini',
-        apiKey: envKey,
+        apiKey: openAiEnvKey,
         apiEndpoint: process.env.OPENAI_API_BASE?.trim() || null,
+      };
+    }
+
+    const geminiEnvKey = process.env.GEMINI_API_KEY?.trim() || process.env.GOOGLE_AI_API_KEY?.trim();
+    if (geminiEnvKey) {
+      return {
+        provider: 'gemini',
+        modelName: process.env.GEMINI_MODEL?.trim() || 'gemini-2.5-flash',
+        apiKey: geminiEnvKey,
+        apiEndpoint: process.env.GEMINI_API_BASE?.trim() || null,
       };
     }
 
@@ -287,8 +299,12 @@ export class OrchestrationController {
     return 'gpt-4o-mini';
   }
 
-  private resolveChatEndpoint(provider: string, apiEndpoint?: string | null): string {
+  private resolveChatEndpoint(provider: string, modelName: string, apiEndpoint?: string | null): string {
     if (apiEndpoint && apiEndpoint.trim()) return apiEndpoint.trim();
+    if (provider === 'gemini' || provider === 'google') {
+      const encodedModel = encodeURIComponent(modelName || 'gemini-2.5-flash');
+      return `https://generativelanguage.googleapis.com/v1beta/models/${encodedModel}:generateContent`;
+    }
     if (provider === 'anthropic') return 'https://api.anthropic.com/v1/messages';
     if (provider === 'openrouter') return 'https://openrouter.ai/api/v1/chat/completions';
     if (provider === 'perplexity') return 'https://api.perplexity.ai/chat/completions';
@@ -297,6 +313,13 @@ export class OrchestrationController {
   }
 
   private buildHeaders(provider: string, apiKey: string): Record<string, string> {
+    if (provider === 'gemini' || provider === 'google') {
+      return {
+        'content-type': 'application/json',
+        'x-goog-api-key': apiKey,
+      };
+    }
+
     if (provider === 'anthropic') {
       return {
         'content-type': 'application/json',
@@ -318,6 +341,20 @@ export class OrchestrationController {
     temperature?: number,
     maxTokens?: number
   ): Record<string, unknown> {
+    if (provider === 'gemini' || provider === 'google') {
+      const parts = [systemPrompt, message]
+        .filter((part): part is string => Boolean(part && part.trim()))
+        .map((text) => ({ text }));
+
+      return {
+        contents: [{ role: 'user', parts }],
+        generationConfig: {
+          maxOutputTokens: maxTokens ?? 800,
+          temperature: typeof temperature === 'number' ? temperature : 0.7,
+        },
+      };
+    }
+
     if (provider === 'anthropic') {
       return {
         model: modelName,
@@ -342,6 +379,13 @@ export class OrchestrationController {
   }
 
   private extractTextContent(provider: string, payload: any): string | null {
+    if (provider === 'gemini' || provider === 'google') {
+      const parts = payload?.candidates?.[0]?.content?.parts;
+      if (!Array.isArray(parts)) return null;
+      const text = parts.map((part: any) => part?.text).filter(Boolean).join('');
+      return text || null;
+    }
+
     if (provider === 'anthropic') {
       const text = payload?.content?.[0]?.text;
       return typeof text === 'string' ? text : null;
@@ -362,7 +406,7 @@ export class OrchestrationController {
     maxTokens?: number
   ) {
     const provider = selection.provider;
-    const endpoint = this.resolveChatEndpoint(provider, selection.apiEndpoint);
+    const endpoint = this.resolveChatEndpoint(provider, selection.modelName, selection.apiEndpoint);
     const headers = this.buildHeaders(provider, selection.apiKey);
     const payload = this.buildPayload(provider, selection.modelName, message, systemPrompt, temperature, maxTokens);
 

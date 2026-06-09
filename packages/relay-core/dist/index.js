@@ -44,6 +44,7 @@ __exportStar(require("./contracts/audit.js"), exports);
 __exportStar(require("./contracts/identity.js"), exports);
 __exportStar(require("./contracts/lifecycle.js"), exports);
 __exportStar(require("./protocol/handoff-protocol.js"), exports);
+__exportStar(require("./protocol/native-envelope-validator.js"), exports);
 __exportStar(require("./protocol/resource-protocol.js"), exports);
 __exportStar(require("./protocol/task-protocol.js"), exports);
 __exportStar(require("./protocol/tnf-envelope.js"), exports);

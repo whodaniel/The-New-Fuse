@@ -129,7 +129,7 @@ const HelpLayout: React.FC = () => {
               </p>
               <div className="mt-3">
                 <Link
-                  to="/support"
+                  to="/docs"
                   className="text-sm font-medium text-blue-600 hover:text-blue-500"
                 >
                   Contact Support <span aria-hidden="true">&rarr;</span>

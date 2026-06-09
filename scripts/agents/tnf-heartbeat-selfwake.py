@@ -94,7 +94,16 @@ def main():
     print(f"\n  TNF Heartbeat Self-Wake — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("  " + "=" * 55)
 
-    r = redis_py.Redis.from_url(REDIS_URL, db=REDIS_DB, decode_responses=True)
+    # Handle Upstash SSL URLs (rediss://) - redis-py 7.4.x needs URL params
+    if REDIS_URL.startswith("rediss://"):
+        if "?" not in REDIS_URL:
+            redis_url = REDIS_URL + "?ssl_cert_reqs=none"
+        else:
+            redis_url = REDIS_URL + "&ssl_cert_reqs=none"
+    else:
+        redis_url = REDIS_URL
+    
+    r = redis_py.Redis.from_url(redis_url, db=REDIS_DB, decode_responses=True)
     redis_ok = r.ping()
     print(f"  Redis: {'OK' if redis_ok else 'DOWN'}")
     if not redis_ok:

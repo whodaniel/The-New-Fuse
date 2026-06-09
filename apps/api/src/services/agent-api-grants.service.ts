@@ -13,6 +13,7 @@ import { and, DatabaseService, desc, eq, gte } from '@the-new-fuse/database';
 import { drizzleConfigurationRepository } from '@the-new-fuse/database/drizzle/repositories';
 import { agentApiGrants } from '@the-new-fuse/database/drizzle/schema';
 import { CreateAgentGrantDto } from '../dto/agent-grants.dto';
+import { assertDevLoopBudget, withNextDevLoopIteration } from '../utils/dev-loop-guard';
 
 type GrantTokenPayload = {
   typ: 'agent-grant';
@@ -182,6 +183,7 @@ export class AgentApiGrantsService {
 
   private async executeProxyForGrant(grant: any, body: any, started: number) {
     const provider = grant.provider;
+    const devLoopIteration = assertDevLoopBudget(`agent-proxy.${provider}`, body);
 
     const usage = await this.db.agentApiGrants.getUsageSummary(grant.id);
     if (usage.requestsLastMinute >= grant.maxRequestsPerMinute) {
@@ -213,7 +215,10 @@ export class AgentApiGrantsService {
     }
 
     const endpoint = this.getProviderEndpoint(provider, body?.endpoint);
-    const outboundBody = this.buildOutboundPayload(provider, body);
+    const outboundBody = this.buildOutboundPayload(
+      provider,
+      provider === 'google-adk' ? withNextDevLoopIteration(body || {}, devLoopIteration) : body
+    );
     const headers = this.buildProviderHeaders(provider, providerKey.apiKey, body);
 
     let statusCode = 500;
@@ -581,7 +586,9 @@ export class AgentApiGrantsService {
     const raw =
       process.env.GOOGLE_ADK_BASE_URL?.trim() ||
       process.env.ADK_GATEWAY_URL?.trim() ||
-      'http://localhost:8089';
+      (process.env.TNF_RUNTIME === 'docker-compose'
+        ? 'http://adk-gateway:8080'
+        : 'http://localhost:8089');
     const withoutExecutePath = raw.replace(/\/v1\/execute(?:\/stream)?$/, '');
     return withoutExecutePath.replace(/\/+$/, '');
   }

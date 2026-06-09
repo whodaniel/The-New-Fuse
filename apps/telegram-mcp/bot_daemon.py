@@ -16,7 +16,7 @@ REGISTRY_DIR = TNF_ROOT / "data" / "telegram" / "registry"
 PUSH_DIR = TNF_ROOT / "data" / "telegram" / "push"
 CONFIG_PATH = TNF_ROOT / "data" / "telegram" / "config.json"
 
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8731499379:AAFeqGB04RsipLtPP9FXmPQrBdZ8QpLEeGM")
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 
 def load_config():
     if CONFIG_PATH.exists():
@@ -91,6 +91,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await msg.reply_text(f"✓ Message received")
 
 def main():
+    if not BOT_TOKEN:
+        print("[TG-DAEMON] FATAL: TELEGRAM_BOT_TOKEN is not set", flush=True)
+        sys.exit(1)
+
     print(f"[TG-DAEMON] Starting Telegram daemon for TNF...", flush=True)
     print(f"[TG-DAEMON] Registry: {REGISTRY_DIR}", flush=True)
     print(f"[TG-DAEMON] Push dir: {PUSH_DIR}", flush=True)

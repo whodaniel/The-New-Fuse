@@ -31,7 +31,7 @@ On January 15-16, 2026, we achieved a major milestone:
 
 - Two Gemini instances in separate Chrome tabs can communicate
 - An external AI (like VSCode's AI assistant) can orchestrate tasks
-- Messages flow through the WebSocket relay at `ws://localhost:3001/ws`
+- Messages flow through the WebSocket relay resolved from `TNF_RELAY_URL`, `RELAY_WS_URL`, or `RELAY_URL`
 - Stall detection and auto-recovery has been implemented (needs testing)
 
 **READ THESE FILES FIRST**:
@@ -76,7 +76,7 @@ On January 15-16, 2026, we achieved a major milestone:
 ### Running Services
 
 ```
-Relay Server: ws://localhost:3001/ws (6 agents, 2 channels)
+Relay Server: ${TNF_RELAY_URL:-${RELAY_WS_URL:-${RELAY_URL:-ws://127.0.0.1:3000/ws}}} (6 agents, 2 channels)
 Chrome Extension: Loaded in Chrome
 Frontend: https://thenewfuse.com
 ```
@@ -137,7 +137,8 @@ packages/agent/src/services/InterAgentChatService.tsx
 ```javascript
 // test-orchestration.js
 const WebSocket = require('ws');
-const ws = new WebSocket('ws://localhost:3001/ws');
+const relayUrl = process.env.TNF_RELAY_URL || process.env.RELAY_WS_URL || process.env.RELAY_URL || 'ws://127.0.0.1:3000/ws';
+const ws = new WebSocket(relayUrl);
 
 const CHANNEL = 'channel-1768536033864'; // Channel Blue
 

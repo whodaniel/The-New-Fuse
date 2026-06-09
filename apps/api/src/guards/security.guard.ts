@@ -1,8 +1,32 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+  ForbiddenException,
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { InputSanitizationService } from '../security/input-sanitization.service';
 import { ResponseSanitizationService } from '../security/response-sanitization.service';
+
+interface RateLimitOptions {
+  requests: number;
+  window: number;
+}
+
+interface SecurityOptions {
+  requireAuth: boolean;
+  roles: string[];
+  permissions: string[];
+  rateLimit: RateLimitOptions;
+  sanitizeInput: boolean;
+  validateCSRF: boolean;
+  strictMode: boolean;
+}
 
 @Injectable()
 export class SecurityGuard implements CanActivate {
@@ -20,7 +44,7 @@ export class SecurityGuard implements CanActivate {
     const securityOptions = this.getSecurityOptions(context);
     
     // Rate limiting check
-    await this.checkRateLimit(request);
+    await this.checkRateLimit(request, response, securityOptions.rateLimit);
 
     // Input validation and sanitization
     this.validateAndSanitizeInput(request, securityOptions);
@@ -37,46 +61,73 @@ export class SecurityGuard implements CanActivate {
     return true;
   }
 
-  private getSecurityOptions(context: ExecutionContext) {
+  private getSecurityOptions(context: ExecutionContext): SecurityOptions {
     return {
       requireAuth: this.reflector.get<boolean>('requireAuth', context.getHandler()) || false,
       roles: this.reflector.get<string[]>('roles', context.getHandler()) || [],
       permissions: this.reflector.get<string[]>('permissions', context.getHandler()) || [],
-      rateLimit: this.reflector.get<any>('rateLimit', context.getHandler()) || { requests: 100, window: 60000 },
+      rateLimit: this.reflector.get<RateLimitOptions>('rateLimit', context.getHandler()) || { requests: 100, window: 60000 },
       sanitizeInput: this.reflector.get<boolean>('sanitizeInput', context.getHandler()) || true,
       validateCSRF: this.reflector.get<boolean>('validateCSRF', context.getHandler()) || false,
       strictMode: this.reflector.get<boolean>('strictMode', context.getHandler()) || false,
     };
   }
 
-  private async checkRateLimit(request: Request): Promise<void> {
-    // Basic rate limiting - in production, use Redis or similar
+  private async checkRateLimit(request: Request, response: Response, options: RateLimitOptions): Promise<void> {
     const clientIP = this.getClientIP(request);
     const userAgent = request.headers['user-agent'] || 'unknown';
     const key = `${clientIP}:${userAgent}`;
-    
-    // This is a simplified implementation - use a proper rate limiter in production
     const now = Date.now();
-    const windowStart = now - 60000; // 1 minute window
-    
-    // Store rate limit data in memory (use Redis in production)
+    const maxRequests = this.resolvePositiveInteger(process.env.API_RATE_LIMIT_REQUESTS, options.requests, 1, 1_000_000);
+    const windowMs = this.resolvePositiveInteger(process.env.API_RATE_LIMIT_WINDOW_MS, options.window, 1_000, 86_400_000);
+    const maxEntries = this.resolvePositiveInteger(process.env.API_RATE_LIMIT_MAX_KEYS, 10_000, 100, 1_000_000);
+
     if (!request.app.locals.rateLimit) {
       request.app.locals.rateLimit = new Map();
     }
     
-    const rateLimitData = request.app.locals.rateLimit;
-    const userData = rateLimitData.get(key) || { count: 0, resetTime: now + 60000 };
+    const rateLimitData: Map<string, { count: number; resetTime: number }> = request.app.locals.rateLimit;
+    this.pruneRateLimitData(rateLimitData, now, maxEntries);
+
+    const userData = rateLimitData.get(key) || { count: 0, resetTime: now + windowMs };
     
     if (now > userData.resetTime) {
       userData.count = 0;
-      userData.resetTime = now + 60000;
+      userData.resetTime = now + windowMs;
     }
     
     userData.count++;
     rateLimitData.set(key, userData);
+
+    const remaining = Math.max(0, maxRequests - userData.count);
+    const retryAfterSeconds = Math.max(1, Math.ceil((userData.resetTime - now) / 1000));
+    response.setHeader('X-RateLimit-Limit', String(maxRequests));
+    response.setHeader('X-RateLimit-Remaining', String(remaining));
+    response.setHeader('X-RateLimit-Reset', String(Math.ceil(userData.resetTime / 1000)));
     
-    if (userData.count > 100) { // 100 requests per minute
-      throw new UnauthorizedException('Rate limit exceeded. Please try again later.');
+    if (userData.count > maxRequests) {
+      response.setHeader('Retry-After', String(retryAfterSeconds));
+      throw new HttpException('Rate limit exceeded. Please try again later.', HttpStatus.TOO_MANY_REQUESTS);
+    }
+  }
+
+  private resolvePositiveInteger(value: string | undefined, fallback: number, min: number, max: number): number {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) {
+      return fallback;
+    }
+    return Math.min(Math.max(Math.floor(parsed), min), max);
+  }
+
+  private pruneRateLimitData(rateLimitData: Map<string, { count: number; resetTime: number }>, now: number, maxEntries: number): void {
+    if (rateLimitData.size <= maxEntries) {
+      return;
+    }
+
+    for (const [key, entry] of rateLimitData.entries()) {
+      if (entry.resetTime <= now || rateLimitData.size > maxEntries) {
+        rateLimitData.delete(key);
+      }
     }
   }
 

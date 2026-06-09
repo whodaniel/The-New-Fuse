@@ -120,6 +120,12 @@ const checkCriticalNoMockFallbacks = () => {
   }
 };
 
+const checkLocalRuntimeBoundary = () => {
+  section('Local Runtime + Clean Room Boundary');
+  run('node', ['scripts/protocols/validate-local-runtime-boundary.cjs']);
+  run('node', ['scripts/protocols/validate-cleanroom-boundary.cjs']);
+};
+
 const checkCommandGates = () => {
   section('Build + Type Gates');
 
@@ -161,6 +167,7 @@ const main = () => {
   console.log(`TNF release gate starting (${strictMode ? 'strict' : 'quick'} mode)`);
 
   checkRequiredEnvExamples();
+  checkLocalRuntimeBoundary();
   checkCriticalNoMockFallbacks();
   checkCommandGates();
 

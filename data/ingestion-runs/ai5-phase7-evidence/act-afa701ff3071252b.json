@@ -1,0 +1,33 @@
+{
+  "action_id": "act-afa701ff3071252b",
+  "title": "[AI5] Integrate Agent Loop and Language Model",
+  "state": "verified",
+  "verifiedAt": "2026-06-09T10:20:00Z",
+  "summary": "Implemented a minimal inspect-act-verify agent loop harness with mock and OpenAI-compatible model clients. The harness supports offline deterministic testing and credential-backed provider execution through environment variables without logging secret values.",
+  "filesChanged": [
+    "scripts/autonomy/agent_loop_llm_harness.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 -m py_compile scripts/autonomy/agent_loop_llm_harness.py",
+      "result": "passed"
+    },
+    {
+      "command": "python3 scripts/autonomy/agent_loop_llm_harness.py --self-test",
+      "result": "passed"
+    },
+    {
+      "command": "python3 scripts/autonomy/agent_loop_llm_harness.py --provider nvidia --task '<redacted test prompt>' --output /tmp/tnf-agent-loop-live.json",
+      "result": "passed",
+      "notes": "Used configured NVIDIA provider credentials from the environment; verification passed and model output length was 44 characters."
+    },
+    {
+      "command": "git diff --check -- scripts/autonomy/agent_loop_llm_harness.py",
+      "result": "passed"
+    }
+  ],
+  "usage": {
+    "offline": "python3 scripts/autonomy/agent_loop_llm_harness.py --provider mock --task 'Plan the next loop.'",
+    "nvidia": "TNF_AGENT_LOOP_PROVIDER=nvidia python3 scripts/autonomy/agent_loop_llm_harness.py --task 'Plan the next loop.'"
+  }
+}

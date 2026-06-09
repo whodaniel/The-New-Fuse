@@ -1,0 +1,37 @@
+{
+  "action_id": "act-50220fe6debf8354",
+  "title": "[AI5] Configure Developer Agent for PII-Stripped Local Reproduction",
+  "state": "verified",
+  "updatedAt": "2026-06-09T10:52:45Z",
+  "summary": "Added a developer repro bundle generator that reads an explicit repo-relative file list and writes redacted JSON suitable for local agent reproduction. The generator redacts emails, phone-like numbers, SSNs, bearer tokens, credential assignments, and local home paths while skipping unsafe absolute paths.",
+  "filesChanged": [
+    "scripts/security/pii-stripped-local-repro.cjs",
+    "package.json",
+    "data/ingestion-runs/ai5-phase7-evidence/act-50220fe6debf8354.json"
+  ],
+  "checks": [
+    {
+      "command": "node --check scripts/security/pii-stripped-local-repro.cjs",
+      "result": "passed"
+    },
+    {
+      "command": "node scripts/security/pii-stripped-local-repro.cjs with a repo-relative temporary fixture",
+      "result": "passed",
+      "notes": "Generated one-file repro with 4 redactions and verified raw fake PII/credential strings were absent from output."
+    },
+    {
+      "command": "node scripts/security/pii-stripped-local-repro.cjs with an absolute-path file list entry",
+      "result": "passed",
+      "notes": "Absolute path was skipped as unsafe."
+    },
+    {
+      "command": "git diff --check -- scripts/security/pii-stripped-local-repro.cjs package.json",
+      "result": "passed"
+    }
+  ],
+  "runtime_contract": {
+    "root_alias": "pnpm run agent:pii-repro:developer -- --file-list <files.txt> --out <redacted-repro.json>",
+    "requires_explicit_file_list": true,
+    "path_policy": "repo-relative files only"
+  }
+}

@@ -538,6 +538,7 @@ async function main() {
     const checks = whatsappPayload.checks || {};
     const runtime = whatsappPayload.runtime || {};
     const filesystem = whatsappPayload.filesystem || {};
+    const lifecycle = whatsappPayload.lifecycle || "unknown";
     const httpReachable = checks.httpReachable === true;
     const connected = checks.connected === true;
     const sessionPresent = checks.sessionPresent === true;
@@ -551,6 +552,7 @@ async function main() {
     console.log(
       `- ${httpReachable ? "OK" : "WARN"} HTTP ${httpStatusCode || "n/a"} status=${status} queue=${queueLength}`
     );
+    console.log(`- INFO lifecycle=${lifecycle}`);
     console.log(
       `- ${connected ? "OK" : "WARN"} connected=${connected ? "yes" : "no"} session=${
         sessionPresent ? "present" : "missing"

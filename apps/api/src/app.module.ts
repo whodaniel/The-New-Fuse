@@ -102,6 +102,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     GlobalSecurityModule, // Global security services
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['../../.env', '.env.local', '.env'],
       load: [llmProviderConfig, securityConfig],
     }) as any,
     // Event Emitter for inter-service communication (must be configured at root level)

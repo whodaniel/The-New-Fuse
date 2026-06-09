@@ -5,6 +5,7 @@ import json
 import sys
 import time
 import uuid
+import asyncio
 from pathlib import Path
 from datetime import datetime
 from typing import Any
@@ -23,7 +24,7 @@ try:
 except ImportError:
     TELEGRAM_AVAILABLE = False
 
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8731499379:AAFeqGB04RsipLtPP9FXmPQrBdZ8QpLEeGM")
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 
 def register_agent(agent_id: str = None):
     """Register this agent to receive push notifications"""
@@ -85,6 +86,8 @@ def get_pushed_messages(agent_id: str, clear: bool = True):
 async def get_bot_info():
     if not TELEGRAM_AVAILABLE:
         return {"error": "python-telegram-bot not installed"}
+    if not BOT_TOKEN:
+        return {"error": "TELEGRAM_BOT_TOKEN is not set"}
     bot = Bot(token=BOT_TOKEN)
     me = await bot.get_me()
     return {"id": me.id, "username": me.username, "first_name": me.first_name, "is_bot": me.is_bot}
@@ -92,6 +95,8 @@ async def get_bot_info():
 async def send_message(chat_id: int, text: str):
     if not TELEGRAM_AVAILABLE:
         return {"error": "python-telegram-bot not installed"}
+    if not BOT_TOKEN:
+        return {"error": "TELEGRAM_BOT_TOKEN is not set"}
     bot = Bot(token=BOT_TOKEN)
     await bot.send_message(chat_id=chat_id, text=text)
     return {"success": True, "chat_id": chat_id}
@@ -99,6 +104,8 @@ async def send_message(chat_id: int, text: str):
 async def get_updates():
     if not TELEGRAM_AVAILABLE:
         return {"error": "python-telegram-bot not installed"}
+    if not BOT_TOKEN:
+        return {"error": "TELEGRAM_BOT_TOKEN is not set"}
     bot = Bot(token=BOT_TOKEN)
     updates = await bot.get_updates(limit=20)
     messages = []

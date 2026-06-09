@@ -11,11 +11,14 @@ REDIS_FAIL_OPEN="${FACTORY_BOOT_REDIS_FAIL_OPEN:-true}"
 LOCAL_REDIS_URL="${FACTORY_BOOT_LOCAL_REDIS_URL:-redis://localhost:6379}"
 START_LOCAL_REDIS_ON_FALLBACK="${FACTORY_BOOT_START_LOCAL_REDIS:-true}"
 RELAY_FORCE_RESTART="${FACTORY_BOOT_RELAY_FORCE_RESTART:-false}"
+RELAY_PORT="${RELAY_PORT:-3000}"
+PORT_PREFLIGHT_ENABLED="${FACTORY_BOOT_PORT_PREFLIGHT:-true}"
+PORT_PREFLIGHT_STRICT="${FACTORY_BOOT_PORT_PREFLIGHT_STRICT:-false}"
 mkdir -p "${LOG_DIR}"
 mkdir -p "${RUNTIME_STATE_DIR}"
 
 get_port_3000_pids() {
-  lsof -ti :3000 2>/dev/null | sort -u || true
+  lsof -ti :"${RELAY_PORT}" 2>/dev/null | sort -u || true
 }
 
 is_relay_pid() {
@@ -73,7 +76,11 @@ if [[ -z "${REDIS_URL:-}" ]]; then
     exit 1
   fi
 fi
-RELAY_URL="${RELAY_URL:-${TNF_RELAY_URL:-${RELAY_WS_URL:-ws://127.0.0.1:3000/ws}}}"
+RELAY_URL_WAS_EXPLICIT="false"
+if [[ -n "${RELAY_URL:-${TNF_RELAY_URL:-${RELAY_WS_URL:-}}}" ]]; then
+  RELAY_URL_WAS_EXPLICIT="true"
+fi
+RELAY_URL="${RELAY_URL:-${TNF_RELAY_URL:-${RELAY_WS_URL:-ws://127.0.0.1:${RELAY_PORT}/ws}}}"
 LEDGER_API_BASE="${LEDGER_API_BASE:-${CLOUD_RUNTIME_API_URL:-${LIVE_API_BASE_URL:-${API_BASE_URL:-${TNF_API_BASE:-http://localhost:3001}}}}}"
 AUTO_DETECT_CLOUD_RUNTIME_API="${AUTO_DETECT_CLOUD_RUNTIME_API:-true}"
 
@@ -88,6 +95,18 @@ SUPERVISOR_PID_FILE="${SUPERVISOR_STATE_DIR}/supervisor.pid"
 
 echo "[factory-boot] root=${ROOT_DIR}"
 echo "[factory-boot] log_dir=${LOG_DIR}"
+
+if [[ "${PORT_PREFLIGHT_ENABLED}" == "true" ]]; then
+  port_preflight_args=("scripts/tnf-ports.cjs" "preflight")
+  if [[ "${PORT_PREFLIGHT_STRICT}" == "true" ]]; then
+    port_preflight_args+=("--strict")
+  fi
+  echo "[factory-boot] port preflight (${PORT_PREFLIGHT_STRICT})"
+  if ! (cd "${ROOT_DIR}" && node "${port_preflight_args[@]}") 2>&1 | sed 's/^/[factory-boot] /'; then
+    echo "[factory-boot] ERROR: port preflight failed"
+    exit 1
+  fi
+fi
 
 if [[ "${REDIS_URL}" == *"localhost"* ]] || [[ "${REDIS_URL}" == *"127.0.0.1"* ]]; then
   echo "[factory-boot] redis target=local (${REDIS_URL})"
@@ -147,12 +166,17 @@ if curl -fsS --max-time 2 "${LEDGER_API_BASE%/}/api/health" >/dev/null 2>&1; the
   echo "[factory-boot] ledger api healthy at ${LEDGER_API_BASE%/}/api/health"
 elif curl -fsS --max-time 2 "${LEDGER_API_BASE%/}/health" >/dev/null 2>&1; then
   echo "[factory-boot] ledger api healthy at ${LEDGER_API_BASE%/}/health"
+elif [[ "${LEDGER_API_BASE}" == "http://localhost:3001" ]] && curl -fsS --max-time 2 "https://api.thenewfuse.com/api/health" >/dev/null 2>&1; then
+  LEDGER_API_BASE="https://api.thenewfuse.com"
+  echo "[factory-boot] local ledger unavailable; using live ledger api at ${LEDGER_API_BASE}"
+  printf "%s\n" "${LEDGER_API_BASE}" > "${LIVE_API_CACHE_FILE}"
 else
   echo "[factory-boot] WARNING: ledger api not reachable at ${LEDGER_API_BASE} (master-clock/director persistence may degrade)"
 fi
 
-if curl -fsS --max-time 2 http://localhost:3000/health >/dev/null 2>&1; then
-  echo "[factory-boot] relay already healthy on :3000"
+relay_health="$(curl -fsS --max-time 2 "http://localhost:${RELAY_PORT}/health" 2>/dev/null || true)"
+if echo "${relay_health}" | grep -q '"relay":"running"'; then
+  echo "[factory-boot] relay already healthy on :${RELAY_PORT}"
 else
   can_start_relay="true"
   relay_pid_on_port="$(find_relay_pid_on_port_3000 || true)"
@@ -161,23 +185,36 @@ else
   if [[ -n "${port_3000_pids}" ]]; then
     if [[ -n "${relay_pid_on_port}" ]]; then
       if [[ "${RELAY_FORCE_RESTART}" == "true" ]]; then
-        echo "[factory-boot] relay on :3000 is unhealthy; force restarting pid=${relay_pid_on_port}"
+        echo "[factory-boot] relay on :${RELAY_PORT} is unhealthy; force restarting pid=${relay_pid_on_port}"
         terminate_relay_pid "${relay_pid_on_port}"
       else
-        echo "[factory-boot] relay on :3000 is unhealthy (pid=${relay_pid_on_port}); leaving it untouched"
+        echo "[factory-boot] relay on :${RELAY_PORT} is unhealthy (pid=${relay_pid_on_port}); leaving it untouched"
         echo "[factory-boot] hint: set FACTORY_BOOT_RELAY_FORCE_RESTART=true to allow forced relay restart"
         can_start_relay="false"
       fi
     else
-      echo "[factory-boot] port :3000 occupied by non-relay pid(s): ${port_3000_pids}"
-      echo "[factory-boot] refusing to kill unknown process; skipping relay start"
-      can_start_relay="false"
+      if [[ "${RELAY_PORT}" == "3000" ]]; then
+        echo "[factory-boot] port :3000 occupied by non-relay pid(s): ${port_3000_pids}"
+        RELAY_PORT="${FACTORY_BOOT_ALT_RELAY_PORT:-3010}"
+        if [[ "${RELAY_URL_WAS_EXPLICIT}" != "true" ]]; then
+          RELAY_URL="ws://127.0.0.1:${RELAY_PORT}/ws"
+        fi
+        echo "[factory-boot] using alternate relay port :${RELAY_PORT}"
+        if lsof -ti :"${RELAY_PORT}" >/dev/null 2>&1; then
+          echo "[factory-boot] alternate relay port :${RELAY_PORT} is occupied; skipping relay start"
+          can_start_relay="false"
+        fi
+      else
+        echo "[factory-boot] port :${RELAY_PORT} occupied by non-relay pid(s): ${port_3000_pids}"
+        echo "[factory-boot] refusing to kill unknown process; skipping relay start"
+        can_start_relay="false"
+      fi
     fi
   fi
 
   if [[ "${can_start_relay}" == "true" ]]; then
     echo "[factory-boot] starting relay-core relay (compiled)"
-    nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
+    nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && PORT='${RELAY_PORT}' REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
       > "${LOG_DIR}/relay-dev.log" 2>&1 &
     sleep 3
   fi
@@ -210,6 +247,24 @@ else
   sleep 2
 fi
 
+if pgrep -f "scripts/swarm/project-planner.cjs" >/dev/null 2>&1; then
+  echo "[factory-boot] project-planner already running"
+else
+  echo "[factory-boot] starting project-planner"
+  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' node scripts/swarm/project-planner.cjs" \
+    > "${LOG_DIR}/project-planner.log" 2>&1 &
+  sleep 2
+fi
+
+if pgrep -f "scripts/orchestrator/impetus-loop.cjs loop" >/dev/null 2>&1; then
+  echo "[factory-boot] impetus-loop already running"
+else
+  echo "[factory-boot] starting impetus-loop"
+  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' node scripts/orchestrator/impetus-loop.cjs loop" \
+    > "${LOG_DIR}/impetus-loop.log" 2>&1 &
+  sleep 2
+fi
+
 if pgrep -f "ts-node --compiler-options.*src/orchestrator/start.ts" >/dev/null 2>&1; then
   echo "[factory-boot] workflow router already running"
 else
@@ -220,7 +275,7 @@ else
 fi
 
 echo "[factory-boot] relay health:"
-curl -sS --max-time 2 http://localhost:3000/health || true
+curl -sS --max-time 2 "http://localhost:${RELAY_PORT}/health" || true
 echo
 echo "[factory-boot] orchestrator state:"
 redis-cli -u "${REDIS_URL}" HGET tnf:master:state orchestrator || true
@@ -234,6 +289,8 @@ echo "[factory-boot] director review queue:"
 redis-cli -u "${REDIS_URL}" LLEN tnf:director:review:pending || true
 echo "[factory-boot] director decisions:"
 redis-cli -u "${REDIS_URL}" PUBSUB NUMSUB tnf:director:decisions || true
+echo "[factory-boot] impetus inbox:"
+redis-cli -u "${REDIS_URL}" LLEN tnf:impetus:inbox || true
 echo
 
 if [[ "${FACTORY_SUPERVISOR_ENABLED}" == "true" ]]; then

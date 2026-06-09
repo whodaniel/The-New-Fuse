@@ -10,7 +10,7 @@ This procedure defines the mandatory gates every unit of information must pass t
 
 ---
 
-## 1. The Gating Sequence (The Four Gates)
+## 1. The Gating Sequence (The Five Gates)
 
 Every file/doc unit must be vetted by an agent or human operator before progressing.
 
@@ -31,6 +31,12 @@ Every file/doc unit must be vetted by an agent or human operator before progress
 - **Requirement:** Every unit must have a verifiable source pointer (URL, timestamp, or parent project ID).
 - **Requirement:** Procedural disclosure must be complete (e.g., if it's a script, it must link to its requirement doc).
 
+### GATE 5: The Challenge & Verify Step
+- **Requirement:** Any mutation or proposed replacement of a `[STATUS:LOCKED]` document requires a verified and logged `challenge_rationale`.
+- **Cutting-Edge Assumption Check:** If the proposed replacement relies on experimental or cutting-edge AI architecture, it MUST log a verifiable baseline performance comparison against the legacy protocol it seeks to replace before the status can be superseded.
+- **Action:** Agents must explicitly verify the provided rationale against established facts before allowing the document drift to be superseded.
+
+
 ---
 
 ## 2. Regular Effectiveness Vetting
@@ -47,3 +53,10 @@ The vetting procedure itself must be vetted monthly.
 - **Trigger:** Any time a `[STATUS:PENDING]` unit is processed.
 - **Action:** The processing agent must ask: *"Is there a simpler, zero-cost way to store this information?"* and *"Does this unit align with the Axiom of Optimal Utility?"*
 - **Outcome:** Log findings to the `Staff Review Agent` for future optimization.
+
+---
+
+## 4. Deprecated Fact Archiving Protocol
+- **Trigger:** Any time a fact or rule in a `[STATUS:LOCKED]` document (or `MEMORY.md`) is successfully challenged and replaced.
+- **Action:** The agent must physically move the deprecated fact from the active knowledge base into the designated `## History Archive` section of the relevant memory file.
+- **Requirement:** Archiving is **mandatory** for maintaining a verifiable audit trail of system growth. Silent deletions or overwrites without archiving are strictly prohibited and violate the Integrity Protocol.

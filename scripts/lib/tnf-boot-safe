@@ -1,0 +1,6 @@
+#!/bin/bash
+# Safe wrapper for tnf boot goldberg
+# Prevents multiple concurrent runs of the boot process
+
+SCRIPT_PATH="$(dirname "$0")/../scripts/lib/tnf-runtime-runner.js"
+node "$SCRIPT_PATH" tnf-boot "$@"

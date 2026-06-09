@@ -502,13 +502,86 @@ export class WorkflowExecutor extends EventEmitter {
 
     this.logger.info(`🗄️ Database query: ${config.operation}`);
 
+    const rawResult = config.result ?? config.mockResult ?? {
+      status: 'ok',
+      message: `Database ${config.operation} completed`,
+    };
+    const result = this.applyQueryDefaults(rawResult, config.defaultValues);
+    const completeness = this.evaluateQueryCompleteness(result, config.requiredFields);
+
+    if (!completeness.complete && config.failOnIncompleteQuery === true) {
+      throw new Error(
+        `Database query result incomplete: missing fields ${completeness.missingFields.join(', ')}`
+      );
+    }
+
     // Database operation would be implemented here
     return {
       operation: config.operation,
       query: config.query,
-      result: `Database ${config.operation} completed`,
+      result,
+      completeness,
+      followUp: {
+        required: !completeness.complete && config.allowFollowUpOnIncomplete === true,
+        reason: completeness.complete
+          ? 'query result complete'
+          : 'query result incomplete; follow-up suppressed unless allowFollowUpOnIncomplete is true',
+      },
       timestamp: new Date(),
     };
+  }
+
+  private applyQueryDefaults(result: any, defaultValues?: Record<string, any>): any {
+    if (!defaultValues || typeof defaultValues !== 'object') {
+      return result;
+    }
+
+    if (Array.isArray(result)) {
+      return result.map((item) => this.applyQueryDefaults(item, defaultValues));
+    }
+
+    if (!result || typeof result !== 'object') {
+      return result;
+    }
+
+    return {
+      ...defaultValues,
+      ...result,
+    };
+  }
+
+  private evaluateQueryCompleteness(
+    result: any,
+    requiredFields?: string[]
+  ): { complete: boolean; missingFields: string[]; checkedFields: string[] } {
+    const checkedFields = Array.isArray(requiredFields) ? requiredFields : [];
+    if (checkedFields.length === 0) {
+      return { complete: true, missingFields: [], checkedFields };
+    }
+
+    const rows = Array.isArray(result) ? result : [result];
+    const missingFields = new Set<string>();
+
+    for (const row of rows) {
+      for (const field of checkedFields) {
+        const value = this.getNestedValue(row, field);
+        if (value === null || typeof value === 'undefined' || value === '') {
+          missingFields.add(field);
+        }
+      }
+    }
+
+    return {
+      complete: missingFields.size === 0,
+      missingFields: Array.from(missingFields),
+      checkedFields,
+    };
+  }
+
+  private getNestedValue(value: any, path: string): any {
+    return String(path)
+      .split('.')
+      .reduce((current, key) => (current && typeof current === 'object' ? current[key] : undefined), value);
   }
 
   private async executeFileOperationNode(

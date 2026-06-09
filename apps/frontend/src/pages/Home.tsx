@@ -978,7 +978,7 @@ export default function HomePage() {
                     </li>
                     <li>
                       <Link
-                        to="/community"
+                        to="/docs"
                         className="text-sm leading-6 text-gray-300 hover:text-white"
                       >
                         Community Forum

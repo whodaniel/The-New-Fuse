@@ -1,0 +1,100 @@
+# TNF Web Dev Agent Swarm — Agent Registry
+#
+# Six specialist agents for comprehensive TNF codebase scrutiny.
+# Each agent targets a specific domain and produces actionable findings
+# in a standardized report format consumed by the human operator.
+#
+# Usage:
+#   node scripts/agents/webdev-swarm-orchestrator.cjs --target <component-path>
+#
+# Agents:
+#   1. Frontend/UI/UX Agent — React/Next.js, Tailwind, component architecture
+#   2. API/Backend Agent — routes, data flow, caching, error handling
+#   3. Performance/SEO Agent — Lighthouse, Core Web Vitals, bundles
+#   4. Accessibility Agent — WCAG 2.1 AA, ARIA, screen readers, keyboard
+#   5. Security Agent — XSS, CSRF, auth, injection, deps audit
+#   6. DevOps/Build Agent — Docker, CI/CD, bundling, deployments
+
+registry:
+  spec: "tnf/webdev-agent-swarm/1.0"
+  updated_at: "2026-05-28T17:00:00Z"
+  agents:
+    - id: "tnf-frontend-ui-ux"
+      name: "Frontend/UI/UX Specialist"
+      lockName: "webdev-swarm-frontend"
+      focus:
+        - React/Next.js patterns (hooks, SSR/CSR, suspense)
+        - Tailwind CSS architecture (utility classes, custom config)
+        - Component design (reusability, composition, prop drilling)
+        - State management (context, zustand, redux)
+        - Routing (Next.js, React Router)
+        - Visual polish (animations, transitions, micro-interactions)
+      produces: "frontend-audit-report.json"
+      severity_levels: ["critical", "warning", "suggestion", "praise"]
+
+    - id: "tnf-api-backend"
+      name: "API/Backend Specialist"
+      lockName: "webdev-swarm-api"
+      focus:
+        - REST/GraphQL endpoint design
+        - Data fetching patterns (SWR, React Query, fetch)
+        - Caching strategy (stale-while-revalidate, Cache-Control)
+        - Error handling (boundaries, fallback UI, retries)
+        - Rate limiting exposure
+        - Authentication flow integrity
+      produces: "api-audit-report.json"
+      severity_levels: ["critical", "warning", "suggestion", "praise"]
+
+    - id: "tnf-performance-seo"
+      name: "Performance & SEO Specialist"
+      lockName: "webdev-swarm-perf"
+      focus:
+        - Lighthouse score (target: 90+ all categories)
+        - Core Web Vitals (LCP <2.5s, INP <200ms, CLS <0.1)
+        - Bundle analysis (tree shaking, code splitting, lazy loading)
+        - Image optimization (format, size, loading strategy)
+        - Critical CSS inlining
+        - Meta tags, OG tags, structured data
+        - robots.txt, sitemap.xml
+      produces: "performance-audit-report.json"
+      severity_levels: ["critical", "warning", "suggestion", "praise"]
+
+    - id: "tnf-a11y"
+      name: "Accessibility Specialist"
+      lockName: "webdev-swarm-a11y"
+      focus:
+        - WCAG 2.1 AA compliance
+        - Keyboard navigation (tab order, focus traps, skip links)
+        - Screen reader support (ARIA labels, live regions, headings)
+        - Color contrast (4.5:1 text, 3:1 UI components)
+        - Motion sensitivity (prefers-reduced-motion)
+        - Form labels, error messaging, error association
+      produces: "a11y-audit-report.json"
+      severity_levels: ["critical", "warning", "suggestion", "praise"]
+
+    - id: "tnf-security"
+      name: "Security Specialist"
+      lockName: "webdev-swarm-security"
+      focus:
+        - XSS (sanitization, CSP, safe innerHTML)
+        - CSRF tokens on state-changing requests
+        - SQL/NoSQL injection in API routes
+        - Auth flow (JWT handling, refresh token rotation, session mgmt)
+        - Dependency audit (npm audit, known CVEs)
+        - Secret exposure (env vars in client bundle, source maps)
+        - HTTPS enforcement, HSTS, secure cookies
+      produces: "security-audit-report.json"
+      severity_levels: ["critical", "warning", "suggestion", "praise"]
+
+    - id: "tnf-devops-build"
+      name: "DevOps & Build Specialist"
+      lockName: "webdev-swarm-devops"
+      focus:
+        - Docker images (layer caching, multi-stage, image size)
+        - CI/CD pipeline (tests, lint, build, deploy gates)
+        - Bundle optimization (minification, dead code elimination)
+        - Environment parity (dev/staging/prod alignment)
+        - Deployment strategy (blue/green, canary, rollback)
+        - Monitoring (error tracking, performance RUM, alerts)
+      produces: "devops-audit-report.json"
+      severity_levels: ["critical", "warning", "suggestion", "praise"]

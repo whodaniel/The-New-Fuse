@@ -1,0 +1,36 @@
+{
+  "action_id": "act-43037b02807f02b0",
+  "title": "[AI5] Optimize Agent Prompt Token Efficiency",
+  "state": "verified",
+  "updatedAt": "2026-06-09T10:42:07Z",
+  "summary": "Added a deterministic frontload token-budget report to `tnf-onboard`. The report separates eager Turn Zero context from deferred reference context and recommends staged reading when the complete frontload packet exceeds the configured budget.",
+  "filesChanged": [
+    "scripts/tnf-onboard.cjs",
+    "data/ingestion-runs/ai5-phase7-evidence/act-43037b02807f02b0.json"
+  ],
+  "checks": [
+    {
+      "command": "node --check scripts/tnf-onboard.cjs",
+      "result": "passed"
+    },
+    {
+      "command": "node scripts/tnf-onboard.cjs --help",
+      "result": "passed",
+      "notes": "Help now documents --frontload-budget-words."
+    },
+    {
+      "command": "node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000 --frontload-budget-words 3500",
+      "result": "passed",
+      "notes": "Reported eager Turn Zero packet: 1677 words, deferred reference context: 4263 words, full frontload packet: 6047 words (~8043 rough tokens), mode: staged-read recommended."
+    },
+    {
+      "command": "git diff --check -- scripts/tnf-onboard.cjs",
+      "result": "passed"
+    }
+  ],
+  "runtime_contract": {
+    "default_budget_words": 3500,
+    "new_option": "--frontload-budget-words",
+    "staging_rule": "Read eager Turn Zero packet first; defer resource map, workflow guide, onboarding guide, and ledger until task selection requires them."
+  }
+}

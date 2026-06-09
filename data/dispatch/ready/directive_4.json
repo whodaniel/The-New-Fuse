@@ -1,0 +1,14 @@
+{
+  "title": "Generate Deep Sec Security Report",
+  "steps": [
+    "Execute the `report` command."
+  ],
+  "target": "Deep Sec CLI tool",
+  "metrics": {
+    "specificity": 1.0,
+    "implementability": 1.0,
+    "testability": 1.0
+  },
+  "rationale": "This directive provides a direct and complete command to generate the final categorized security reports (markdown and JSON) from the processed findings, concluding the assessment workflow. It implicitly operates on the results of the 'process' command.",
+  "dispatch_ready": true
+}

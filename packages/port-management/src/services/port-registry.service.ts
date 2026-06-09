@@ -2,6 +2,7 @@
 
 import { EventEmitter } from 'events';
 import * as net from 'net';
+import { execFileSync } from 'node:child_process';
 
 
 export interface PortRegistration {
@@ -47,6 +48,58 @@ export interface ServiceConfiguration {
     interval: number;
     timeout: number;
   };
+}
+
+export interface RuntimePortCatalogEntry {
+  port: number;
+  serviceName: string;
+  protected: boolean;
+}
+
+export interface RuntimePortProcess {
+  pid: number;
+  command: string;
+}
+
+export interface RuntimePortInspection extends RuntimePortCatalogEntry {
+  status: 'clear' | 'occupied';
+  processes: RuntimePortProcess[];
+}
+
+export interface RuntimePortPreflightResult {
+  ok: boolean;
+  blocked: RuntimePortInspection[];
+  allowedOccupiedPorts: number[];
+}
+
+const DEFAULT_RUNTIME_PORTS: RuntimePortCatalogEntry[] = [
+  { port: 3000, serviceName: 'frontend', protected: false },
+  { port: 3001, serviceName: 'api/backend', protected: false },
+  { port: 3004, serviceName: 'backend', protected: false },
+  { port: 3005, serviceName: 'api-gateway/ws-bridge', protected: false },
+  { port: 3006, serviceName: 'skideancer/ws', protected: false },
+  { port: 3007, serviceName: 'skideancer/ide', protected: false },
+  { port: 3008, serviceName: 'skideancer websocket', protected: true },
+  { port: 5173, serviceName: 'vite', protected: false },
+  { port: 5174, serviceName: 'vite-alt', protected: false },
+  { port: 5555, serviceName: 'drizzle-studio', protected: true },
+  { port: 6379, serviceName: 'redis', protected: true },
+  { port: 5432, serviceName: 'postgres', protected: true },
+];
+
+function run(command: string, args: string[]): string {
+  try {
+    return execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch {
+    return '';
+  }
+}
+
+function parsePortList(value: string | undefined): number[] {
+  return String(value || '')
+    .split(',')
+    .map((item) => Number.parseInt(item.trim(), 10))
+    .filter(Number.isInteger);
 }
 
 export class PortRegistryService extends EventEmitter {
@@ -160,7 +213,65 @@ export class PortRegistryService extends EventEmitter {
    * Detect port conflicts
    */
   async detectConflicts(): Promise<PortConflict[]> {
-    return [];
+    const byPort = new Map<number, PortRegistration[]>();
+    for (const registration of this.registry.values()) {
+      const registrations = byPort.get(registration.port) || [];
+      registrations.push(registration);
+      byPort.set(registration.port, registrations);
+    }
+
+    return Array.from(byPort.entries())
+      .filter(([, registrations]) => registrations.length > 1)
+      .map(([port, conflictingServices]) => ({
+        port,
+        conflictingServices,
+        suggestedResolutions: conflictingServices.slice(1).map((registration) => ({
+          type: 'reassign' as const,
+          targetService: registration.id,
+          description: `Reassign ${registration.serviceName} from shared port ${port}`,
+        })),
+      }));
+  }
+
+  getRuntimePortCatalog(extraPorts: RuntimePortCatalogEntry[] = []): RuntimePortCatalogEntry[] {
+    const byPort = new Map<number, RuntimePortCatalogEntry>();
+    for (const entry of [...DEFAULT_RUNTIME_PORTS, ...extraPorts]) {
+      byPort.set(entry.port, entry);
+    }
+    return Array.from(byPort.values()).sort((a, b) => a.port - b.port);
+  }
+
+  inspectRuntimePorts(extraPorts: RuntimePortCatalogEntry[] = []): RuntimePortInspection[] {
+    return this.getRuntimePortCatalog(extraPorts).map((entry) => {
+      const processes = this.findProcessesOnPort(entry.port);
+      return {
+        ...entry,
+        status: processes.length > 0 ? 'occupied' : 'clear',
+        processes,
+      };
+    });
+  }
+
+  detectRuntimeConflicts(options: {
+    includeProtected?: boolean;
+    allowOccupiedPorts?: number[];
+    extraPorts?: RuntimePortCatalogEntry[];
+  } = {}): RuntimePortPreflightResult {
+    const allowed = new Set([
+      ...parsePortList(process.env.TNF_PORTS_ALLOW_OCCUPIED),
+      ...(options.allowOccupiedPorts || []),
+    ]);
+    const blocked = this.inspectRuntimePorts(options.extraPorts).filter((entry) => {
+      if (entry.status !== 'occupied') return false;
+      if (entry.protected && !options.includeProtected) return false;
+      return !allowed.has(entry.port);
+    });
+
+    return {
+      ok: blocked.length === 0,
+      blocked,
+      allowedOccupiedPorts: Array.from(allowed).sort((a, b) => a - b),
+    };
   }
 
   /**
@@ -229,6 +340,34 @@ export class PortRegistryService extends EventEmitter {
 
   findByPort(port: number): PortRegistration | undefined {
     return Array.from(this.registry.values()).find(reg => reg.port === port);
+  }
+
+  private findProcessesOnPort(port: number): RuntimePortProcess[] {
+    const pids = this.findPidsWithLsof(port);
+    const fallbackPids = pids.length > 0 ? [] : this.findPidsWithSs(port);
+    return Array.from(new Set([...pids, ...fallbackPids])).map((pid) => ({
+      pid,
+      command: this.getPidCommand(pid),
+    }));
+  }
+
+  private findPidsWithLsof(port: number): number[] {
+    return run('lsof', ['-nP', `-iTCP:${port}`, '-sTCP:LISTEN', '-t'])
+      .split(/\s+/)
+      .map((value) => Number.parseInt(value, 10))
+      .filter(Number.isInteger);
+  }
+
+  private findPidsWithSs(port: number): number[] {
+    const pids = new Set<number>();
+    for (const match of run('ss', ['-ltnp', `sport = :${port}`]).matchAll(/pid=(\d+)/g)) {
+      pids.add(Number.parseInt(match[1], 10));
+    }
+    return Array.from(pids);
+  }
+
+  private getPidCommand(pid: number): string {
+    return run('ps', ['-p', String(pid), '-o', 'comm=']).trim() || 'unknown';
   }
 
   getByService(serviceName: string, environment?: string): PortRegistration[] {

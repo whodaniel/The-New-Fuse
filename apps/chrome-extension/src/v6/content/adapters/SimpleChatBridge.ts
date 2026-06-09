@@ -20,7 +20,13 @@ export interface ChatBridgeCallbacks {
   onError?: (error: string) => void;
 
   // Optional: raw transcript events (edge DO)
-  onTranscriptEntry?: (entry: { role: string; content: string; ts: number; seq?: number }) => void;
+  onTranscriptEntry?: (entry: {
+    role: string;
+    content: string;
+    ts: number;
+    seq?: number;
+    id?: string;
+  }) => void;
 }
 
 import { DEFAULT_NODES } from '../../shared/constants';

@@ -260,11 +260,13 @@ class JulesRedisAgent {
       // Register as agent
       await this.client.register(CONFIG.agentName, CONFIG.agentRole, CONFIG.platform, [
         'code_implementation',
+        'implementation',
         'pull_request',
         'autonomous_coding',
         'feature_development',
         'bug_fixing',
         'jules_async',
+        'task_execution',
       ]);
 
       // Set up message handlers

@@ -22,6 +22,7 @@ const maxTableEvents = 200;
 const maxLedgerEntries = 200;
 const rateLimitWindowMs = 60_000;
 const rateLimitMax = 240;
+const DEFAULT_DEV_LOOP_MAX_ITERATIONS = 5;
 const holdemLobbyTables = [
   { id: 'lobby-1', name: 'CYBER-NODE #1', maxSeats: 6, smallBlind: 1, bigBlind: 2, bots: 4 },
   { id: 'neon-grind', name: 'NEON GRIND', maxSeats: 9, smallBlind: 5, bigBlind: 10, bots: 6 },
@@ -31,6 +32,60 @@ const holdemLobbyTables = [
 const holdemBotStack = 20000;
 const holdemBotLoopIntervalMs = 2500;
 const holdemLobbyNameById = new Map(holdemLobbyTables.map((t) => [t.id, t.name]));
+
+class DevLoopException extends Error {
+  constructor(scope, iteration, maxIterations) {
+    super(
+      `Development loop budget exceeded for ${scope}: iteration ${iteration} is greater than max ${maxIterations}`
+    );
+    this.name = 'DevLoopException';
+    this.statusCode = 508;
+    this.scope = scope;
+    this.iteration = iteration;
+    this.maxIterations = maxIterations;
+  }
+}
+
+function isDevelopmentEnv() {
+  return (
+    process.env.ENV === 'development' ||
+    process.env.NODE_ENV === 'development' ||
+    process.env.TNF_RUNTIME === 'docker-compose'
+  );
+}
+
+function getDevLoopMaxIterations() {
+  const parsed = Number(process.env.DEV_LOOP_MAX_ITERATIONS || DEFAULT_DEV_LOOP_MAX_ITERATIONS);
+  return Number.isFinite(parsed) && parsed > 0
+    ? Math.floor(parsed)
+    : DEFAULT_DEV_LOOP_MAX_ITERATIONS;
+}
+
+function getDevLoopIteration(input) {
+  if (!input || typeof input !== 'object') return 0;
+  const candidates = [
+    input.devLoopIteration,
+    input.iteration,
+    input.loopIteration,
+    input.metadata?.devLoopIteration,
+    input.context?.devLoopIteration,
+  ];
+  for (const candidate of candidates) {
+    const parsed = Number(candidate);
+    if (Number.isFinite(parsed) && parsed >= 0) return Math.floor(parsed);
+  }
+  return 0;
+}
+
+function assertDevLoopBudget(scope, input) {
+  if (!isDevelopmentEnv()) return 0;
+  const iteration = getDevLoopIteration(input);
+  const maxIterations = getDevLoopMaxIterations();
+  if (iteration > maxIterations) {
+    throw new DevLoopException(scope, iteration, maxIterations);
+  }
+  return iteration;
+}
 
 const mime = {
   '.html': 'text/html; charset=utf-8',
@@ -7267,22 +7322,24 @@ async function handleGeminiContent(req, res) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return writeJson(res, 500, { ok: false, error: 'GEMINI_API_KEY not configured' });
   const body = await readBodyJson(req);
-  const model = sanitizeGeminiModel(body.model);
-  const sysText =
-    typeof body.config?.systemInstruction === 'string'
-      ? body.config.systemInstruction
-      : typeof body.systemInstruction === 'string'
-        ? body.systemInstruction
-        : '';
-  const sysInst = sysText.trim() ? { parts: [{ text: sysText.trim() }] } : undefined;
-  const contents = buildGeminiContents(body.contents);
-  const maxAttempts = Math.max(1, Math.min(4, Number(process.env.CASIN8_GEMINI_MAX_ATTEMPTS || 3)));
-  const maxRetryWaitMs = Math.max(
-    500,
-    Math.min(30_000, Number(process.env.CASIN8_GEMINI_MAX_RETRY_WAIT_MS || 4000))
-  );
 
   try {
+    assertDevLoopBudget('casin8.gemini.content', body);
+    const model = sanitizeGeminiModel(body.model);
+    const sysText =
+      typeof body.config?.systemInstruction === 'string'
+        ? body.config.systemInstruction
+        : typeof body.systemInstruction === 'string'
+          ? body.systemInstruction
+          : '';
+    const sysInst = sysText.trim() ? { parts: [{ text: sysText.trim() }] } : undefined;
+    const contents = buildGeminiContents(body.contents);
+    const maxAttempts = Math.max(1, Math.min(4, Number(process.env.CASIN8_GEMINI_MAX_ATTEMPTS || 3)));
+    const maxRetryWaitMs = Math.max(
+      500,
+      Math.min(30_000, Number(process.env.CASIN8_GEMINI_MAX_RETRY_WAIT_MS || 4000))
+    );
+
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       const gRes = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
@@ -7353,7 +7410,8 @@ async function handleGeminiContent(req, res) {
 
     writeJson(res, 500, { ok: false, error: 'Gemini retries exhausted', model });
   } catch (err) {
-    writeJson(res, 500, { ok: false, error: err.message });
+    const status = err?.name === 'DevLoopException' ? err.statusCode : 500;
+    writeJson(res, status, { ok: false, error: err.message, code: err?.name || 'Error' });
   }
 }
 
@@ -7362,6 +7420,7 @@ async function handleGeminiImages(req, res) {
   if (!apiKey) return writeJson(res, 500, { ok: false, error: 'GEMINI_API_KEY not configured' });
   const body = await readBodyJson(req);
   try {
+    assertDevLoopBudget('casin8.gemini.images', body);
     const gRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${apiKey}`,
       {
@@ -7385,7 +7444,8 @@ async function handleGeminiImages(req, res) {
     const b64 = data.predictions?.[0]?.bytesBase64Encoded || '';
     writeJson(res, 200, { ok: true, base64: b64 ? `data:image/jpeg;base64,${b64}` : '' });
   } catch (err) {
-    writeJson(res, 500, { ok: false, error: err.message });
+    const status = err?.name === 'DevLoopException' ? err.statusCode : 500;
+    writeJson(res, status, { ok: false, error: err.message, code: err?.name || 'Error' });
   }
 }
 

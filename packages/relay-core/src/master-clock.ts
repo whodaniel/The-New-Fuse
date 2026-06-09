@@ -60,7 +60,7 @@
 
 import { randomUUID } from 'crypto';
 import { existsSync, promises as fs } from 'fs';
-import { Cluster, Redis } from 'ioredis';
+import type { Cluster, Redis } from 'ioredis';
 import { execFile } from 'node:child_process';
 import path from 'path';
 import { promisify } from 'util';
@@ -576,18 +576,18 @@ class MasterClock {
       this.redisSub = infra.createStandaloneRedisClient({ lazyConnect: true });
       this.upstash = infra.createUpstashRestClient();
 
-      if (this.redis instanceof Redis) {
+      if (this.redis) {
         this.redis.on('error', (err: any) => log('error', 'REDIS', `Client error: ${err.message}`));
-        await this.redis.connect().catch((err) => {
+        await infra.connectStandaloneRedisClient(this.redis).catch((err: any) => {
           log('warn', 'REDIS', `Failed to connect primary client (TCP): ${err.message}`);
         });
       }
 
-      if (this.redisSub instanceof Redis) {
+      if (this.redisSub) {
         this.redisSub.on('error', (err: any) =>
           log('error', 'REDIS', `Subscriber error: ${err.message}`)
         );
-        await this.redisSub.connect().catch((err) => {
+        await infra.connectStandaloneRedisClient(this.redisSub).catch((err: any) => {
           log('warn', 'REDIS', `Failed to connect subscriber client (TCP): ${err.message}`);
         });
 
@@ -993,6 +993,9 @@ class MasterClock {
         const response = await fetch(url, { method: 'GET' });
         if (!response.ok) {
           lastError = `HTTP ${response.status} (${url})`;
+          if (response.status === 401 || response.status === 404) {
+            continue;
+          }
           continue;
         }
         const rows = (await response.json()) as any[];
@@ -1000,6 +1003,10 @@ class MasterClock {
       } catch (error) {
         lastError = `${(error as Error).message || String(error)} (${url})`;
       }
+    }
+
+    if (lastError && /\bHTTP (401|404)\b/.test(lastError)) {
+      return [];
     }
 
     throw new Error(`Ledger poll failed: ${lastError || 'unknown error'}`);

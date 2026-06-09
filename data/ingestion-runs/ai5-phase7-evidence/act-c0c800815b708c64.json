@@ -1,0 +1,26 @@
+{
+  "action_id": "act-c0c800815b708c64",
+  "title": "[AI5] Run Grok as an Agent Client Protocol (ACP) agent",
+  "state": "verified",
+  "verified_at": "2026-06-09T09:50:45Z",
+  "summary": "Added a TNF ACP launch path for Grok. `tnf acp grok --dry-run` now emits the external-agent contract, and the live path starts an ACP server, exports endpoint metadata, optionally registers a Grok worker in Redis, and forwards execution to the Grok CLI when installed.",
+  "files_changed": [
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/RedisAgentClient.ts"
+  ],
+  "verification": [
+    {
+      "command": "pnpm --dir packages/tnf-cli exec tsx src/cli.ts acp grok --dry-run -- agent test -o",
+      "result": "passed",
+      "notes": "Dry-run emitted the Grok ACP launch contract with command `grok agent test -o` and ACP endpoint environment."
+    },
+    {
+      "command": "pnpm --dir packages/tnf-cli run type-check",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check -- packages/tnf-cli/src/cli.ts packages/tnf-cli/src/RedisAgentClient.ts",
+      "result": "passed"
+    }
+  ]
+}

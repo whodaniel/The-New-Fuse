@@ -6,8 +6,11 @@
  * master clock can treat cron/automation loops as first-class participants.
  */
 
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
-import Redis from 'ioredis';
+import {
+  connectStandaloneRedisClient,
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
 
 type Action = 'register' | 'heartbeat' | 'unregister' | 'status' | 'self-prompts';
 
@@ -114,12 +117,10 @@ async function main() {
   const redis = createStandaloneRedisClient({ lazyConnect: true } as any);
   const upstash = createUpstashRestClient();
 
-  if (redis instanceof Redis) {
-    redis.on('error', (err: any) => {
-      console.error(`[super-cycle] redis error: ${err?.message || String(err)}`);
-    });
-    await redis.connect().catch(() => {});
-  }
+  redis.on('error', (err: any) => {
+    console.error(`[super-cycle] redis error: ${err?.message || String(err)}`);
+  });
+  await connectStandaloneRedisClient(redis).catch(() => {});
 
   try {
     if (args.action === 'status') {
@@ -206,7 +207,7 @@ async function main() {
     }
     console.log(`[super-cycle] sent ${event.type} for ${args.processId}`);
   } finally {
-    if (redis instanceof Redis) await redis.quit();
+    await redis.quit();
   }
 }
 

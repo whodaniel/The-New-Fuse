@@ -8,7 +8,7 @@ low-latency communication between agents, the orchestrator, and external clients
 
 ## Connection Details
 
-- **URL**: `ws://localhost:3001/ws` (Default)
+- **URL**: `TNF_RELAY_URL -> RELAY_WS_URL -> RELAY_URL -> ws://127.0.0.1:3000/ws`
 - **Protocol**: WebSocket (RFC 6455)
 - **Serialization**: JSON
 

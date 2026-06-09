@@ -224,7 +224,7 @@ P4 (LOW): Nice-to-have, optional
 
 | Priority | Skill                         | Time     | Purpose                | Location                                                 |
 | -------- | ----------------------------- | -------- | ---------------------- | -------------------------------------------------------- |
-| P0       | Read Handoff Notes            | 2 min    | Session continuity     | `.agent/handoff_notes.txt`                               |
+| P0       | Read Handoff Notes            | 2 min    | Session continuity     | `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`     |
 | P0       | Load Information Sequencing   | 5 min    | Understand methodology | `docs/INFORMATION_SEQUENCING_PROTOCOL.md`                |
 | P0       | Review System Architecture    | 5 min    | Mental model           | See orientation phase                                    |
 | P1       | Load Agent Communication      | 10 min   | Inter-agent messaging  | `docs/agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md` |
@@ -344,6 +344,7 @@ Every task should follow this meta-sequence:
 │  ◆ Full test suite                              │
 │  ◆ Type checking                                │
 │  ◆ Build validation                             │
+│  ◆ Assumption Challenge Protocol                │
 └─────────────┬───────────────────────────────────┘
               │
               ▼
@@ -352,7 +353,7 @@ Every task should follow this meta-sequence:
 │  ◆ Summarize accomplishments                    │
 │  ◆ Document learnings                           │
 │  ◆ List remaining work                          │
-│  ◆ Update handoff notes                         │
+│  ◆ Update docs/protocols/reports/SESSION_HANDOFF_LATEST.json │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -426,7 +427,7 @@ Success Criteria:
 ```
 START
   │
-  ├─→ [P0] Read .agent/handoff_notes.txt
+  ├─→ [P0] Read docs/protocols/reports/SESSION_HANDOFF_LATEST.json
   │         ↓
   │    Understand: What was accomplished last session?
   │         ↓
@@ -450,7 +451,7 @@ START
   │         ↓
   │    Track: Progress with TodoWrite
   │         ↓
-  └─→ [HANDOFF] Update .agent/handoff_notes.txt
+  └─→ [HANDOFF] Update docs/protocols/reports/SESSION_HANDOFF_LATEST.json
             ↓
          COMPLETE
 ```

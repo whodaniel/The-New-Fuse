@@ -49,7 +49,7 @@ export default function LandingPage() {
                   onWatchDemo={() => {
                     /* Demo handler */
                   }}
-                  stats={{ users: '10,000+', rating: '4.9/5' }}
+                  stats={{ users: 'Open Source', rating: 'Public Preview' }}
                 />
               </div>
             </div>
@@ -142,11 +142,15 @@ export default function LandingPage() {
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-2xl sm:text-2xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Simple Pricing
+              Pricing
             </h2>
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Choose the plan that fits your needs
+              Free during public preview. Plans below are indicative for the full launch.
             </p>
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-900/30 rounded-full">
+              <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+              <span className="text-sm font-medium text-amber-800 dark:text-amber-200">Early Access</span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-4 max-w-5xl mx-auto">
@@ -241,15 +245,15 @@ export default function LandingPage() {
       {/* Secondary CTA Section */}
       <SecondaryCTA
         variant="gradient"
-        title="Ready to Transform Your Workflow?"
-        description="Join thousands of teams already using The New Fuse to streamline their agent-to-agent collaboration."
+        title="Ready to Build with AI Agents?"
+        description="The New Fuse is an open-source, multi-agent orchestration platform you can run locally or in the cloud."
         benefits={[
-          'Set up in minutes, not hours',
-          'No coding required',
-          'Cancel anytime',
-          '24/7 customer support',
+          'Run locally with Docker in minutes',
+          'Multi-agent + multi-LLM architecture',
+          'MIT Licensed - truly open source',
+          'Community support and docs',
         ]}
-        ctaText="Start Your Free Trial"
+        ctaText="Get Started"
         onCtaClick={() => navigate('/login')}
       />
 

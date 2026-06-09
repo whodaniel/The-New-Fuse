@@ -56,6 +56,23 @@ spec:
 
 ## Application Configuration
 
+### TNF Local Runtime Profile
+
+TNF CLI helpers load `.env`, `.env.local`, and `.tnf.local.env` from the repo
+root without executing shell code. Exported shell variables take precedence,
+then `.tnf.local.env`, `.env.local`, and `.env`.
+
+Use `.tnf.local.env` for machine-specific assets such as:
+
+```bash
+TNF_ROOT=/absolute/path/for/one/operator
+TNF_RELAY_URL=ws://127.0.0.1:3000/ws
+TNF_PORTS=8080:custom-api,9000:custom-ws
+TNF_PORTS_ALLOW_OCCUPIED=3005,6379
+```
+
+See `docs/reference/local-runtime-profile.md`.
+
 ### Environment Variables
 ```bash
 NODE_ENV=production

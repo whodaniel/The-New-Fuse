@@ -1,0 +1,279 @@
+name: the-new-fuse-local
+
+x-node-service: &node-service
+  image: node:22-bookworm-slim
+  working_dir: /workspace
+  env_file:
+    - .env
+  environment:
+    ENV: development
+    NODE_ENV: development
+    CI: "true"
+    TNF_RUNTIME: docker-compose
+    N8N_TEMPLATE_HOST_URL: http://n8n-template-host:5678
+    RELAY_SERVER_URL: http://relay-server:8080
+    TNF_RELAY_URL: http://relay-server:8080
+    API_SERVER_URL: http://api-server:8080
+    API_BASE_URL: http://api-server:8080
+    MARKETPLACE_API_URL: http://marketplace-api:8080
+    CASIN8_GAMES_URL: http://casin8-games:8080
+    VIRTUAL_LIBRARY_URL: http://virtual-library:8080
+    DEV_LOOP_MAX_ITERATIONS: 5
+  volumes:
+    - .:/workspace
+    - tnf-node-modules:/workspace/node_modules
+  command: sh -lc "corepack enable && pnpm run dev"
+
+services:
+  node-deps:
+    <<: *node-service
+    command: >
+      sh -lc "corepack enable &&
+      pnpm --filter @the-new-fuse/api-server... --filter @the-new-fuse/api-gateway...
+      --filter tnf-relay-complete... --filter virtual-library-blueprints...
+      --filter casin8-games-backend... install --no-frozen-lockfile"
+    restart: "no"
+
+  api-gateway:
+    <<: *node-service
+    command: sh -lc "corepack enable && pnpm --filter @the-new-fuse/api-gateway dev"
+    environment:
+      ENV: development
+      NODE_ENV: development
+      CI: "true"
+      TNF_RUNTIME: docker-compose
+      PORT: 8080
+      API_GATEWAY_PORT: 8080
+      BACKEND_SERVICE_URL: http://api-server:8080
+      BACKEND_URL: http://api-server:8080
+      API_URL: http://api-server:8080
+      WEBHOOKS_SERVICE_URL: http://api-server:8080
+      AGENTS_SERVICE_URL: http://api-server:8080
+      MARKETPLACE_API_URL: http://marketplace-api:8080
+      RELAY_SERVER_URL: http://relay-server:8080
+      N8N_TEMPLATE_HOST_URL: http://n8n-template-host:5678
+      DEV_LOOP_MAX_ITERATIONS: 5
+    ports:
+      - "8080:8080"
+    depends_on:
+      node-deps:
+        condition: service_completed_successfully
+      api-server:
+        condition: service_started
+      relay-server:
+        condition: service_started
+      marketplace-api:
+        condition: service_started
+
+  api-gateway-v2:
+    <<: *node-service
+    command: sh -lc "corepack enable && pnpm --filter @the-new-fuse/api-gateway dev"
+    environment:
+      ENV: development
+      NODE_ENV: development
+      CI: "true"
+      TNF_RUNTIME: docker-compose
+      PORT: 8080
+      API_GATEWAY_PORT: 8080
+      BACKEND_SERVICE_URL: http://api-server:8080
+      BACKEND_URL: http://api-server:8080
+      API_URL: http://api-server:8080
+      WEBHOOKS_SERVICE_URL: http://api-server:8080
+      AGENTS_SERVICE_URL: http://api-server:8080
+      MARKETPLACE_API_URL: http://marketplace-api:8080
+      RELAY_SERVER_URL: http://relay-server:8080
+      N8N_TEMPLATE_HOST_URL: http://n8n-template-host:5678
+      DEV_LOOP_MAX_ITERATIONS: 5
+    ports:
+      - "8081:8080"
+    depends_on:
+      node-deps:
+        condition: service_completed_successfully
+      api-server:
+        condition: service_started
+      relay-server:
+        condition: service_started
+      marketplace-api:
+        condition: service_started
+
+  api-server:
+    <<: *node-service
+    command: sh -lc "corepack enable && pnpm --filter @the-new-fuse/api-server dev"
+    environment:
+      ENV: development
+      NODE_ENV: development
+      CI: "true"
+      TNF_RUNTIME: docker-compose
+      PORT: 8080
+      RELAY_SERVER_URL: http://relay-server:8080
+      N8N_TEMPLATE_HOST_URL: http://n8n-template-host:5678
+      MARKETPLACE_API_URL: http://marketplace-api:8080
+      DEV_LOOP_MAX_ITERATIONS: 5
+    ports:
+      - "3001:8080"
+    depends_on:
+      node-deps:
+        condition: service_completed_successfully
+      n8n-template-host:
+        condition: service_started
+      relay-server:
+        condition: service_started
+      marketplace-api:
+        condition: service_started
+
+  marketplace-api:
+    <<: *node-service
+    command: sh -lc "corepack enable && node scripts/orchestrator/marketplace-api-server.cjs"
+    environment:
+      ENV: development
+      NODE_ENV: development
+      CI: "true"
+      TNF_RUNTIME: docker-compose
+      MARKETPLACE_API_PORT: 8080
+      DEV_LOOP_MAX_ITERATIONS: 5
+    ports:
+      - "4567:8080"
+    depends_on:
+      node-deps:
+        condition: service_completed_successfully
+
+  relay-server:
+    <<: *node-service
+    command: sh -lc "corepack enable && pnpm --dir apps/relay-server start"
+    environment:
+      ENV: development
+      NODE_ENV: development
+      CI: "true"
+      TNF_RUNTIME: docker-compose
+      PORT: 8080
+      PROXY_PORT: 8888
+      API_SERVER_URL: http://api-server:8080
+      N8N_TEMPLATE_HOST_URL: http://n8n-template-host:5678
+      DEV_LOOP_MAX_ITERATIONS: 5
+    ports:
+      - "3000:8080"
+      - "8888:8888"
+    depends_on:
+      node-deps:
+        condition: service_completed_successfully
+
+  virtual-library:
+    <<: *node-service
+    command: sh -lc "corepack enable && pnpm --filter virtual-library-blueprints dev -- --host 0.0.0.0 --port 8080"
+    environment:
+      ENV: development
+      NODE_ENV: development
+      CI: "true"
+      TNF_RUNTIME: docker-compose
+      PORT: 8080
+      VITE_AI_RELAY_URL: http://relay-server:8080
+      VITE_N8N_TEMPLATE_HOST_URL: http://n8n-template-host:5678
+      DEV_LOOP_MAX_ITERATIONS: 5
+    ports:
+      - "5173:8080"
+    depends_on:
+      node-deps:
+        condition: service_completed_successfully
+      relay-server:
+        condition: service_started
+      n8n-template-host:
+        condition: service_started
+
+  casin8-games:
+    <<: *node-service
+    command: sh -lc "corepack enable && pnpm --dir apps/casin8-games start"
+    environment:
+      ENV: development
+      NODE_ENV: development
+      CI: "true"
+      TNF_RUNTIME: docker-compose
+      PORT: 8080
+      DEV_LOOP_MAX_ITERATIONS: 5
+    ports:
+      - "8088:8080"
+    depends_on:
+      node-deps:
+        condition: service_completed_successfully
+
+  n8n-template-host:
+    image: n8nio/n8n:latest
+    env_file:
+      - .env
+    environment:
+      ENV: development
+      NODE_ENV: development
+      N8N_HOST: n8n-template-host
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://n8n-template-host:5678
+      N8N_SECURE_COOKIE: "false"
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n-template-data:/home/node/.n8n
+
+  tnf-full-auto:
+    image: node:22-bookworm-slim
+    profiles:
+      - full-auto
+    working_dir: /workspace
+    env_file:
+      - path: .env.full-auto
+        required: false
+    environment:
+      ENV: development
+      NODE_ENV: development
+      CI: "true"
+      TNF_RUNTIME: docker-compose
+      DEV_LOOP_MAX_ITERATIONS: 5
+      RELAY_SERVER_URL: http://relay-server:8080
+      TNF_RELAY_URL: http://relay-server:8080
+      API_SERVER_URL: http://api-server:8080
+      API_BASE_URL: http://api-server:8080
+      MARKETPLACE_API_URL: http://marketplace-api:8080
+      CASIN8_GAMES_URL: http://casin8-games:8080
+      VIRTUAL_LIBRARY_URL: http://virtual-library:8080
+    volumes:
+      - .:/workspace
+      - tnf-node-modules:/workspace/node_modules
+    command: >
+      sh -lc "corepack enable &&
+      if [ -z \"$${TNF_FULL_AUTO_SUPER_ADMIN_TOKEN:-}\" ]; then
+        echo 'TNF_FULL_AUTO_SUPER_ADMIN_TOKEN is required for tnf-full-auto' >&2;
+        exit 1;
+      fi &&
+      if [ -z \"$${TNF_FULL_AUTO_GEMINI_API_KEY:-}$${TNF_FULL_AUTO_OPENAI_API_KEY:-}$${TNF_FULL_AUTO_ANTHROPIC_API_KEY:-}$${TNF_FULL_AUTO_OPENROUTER_API_KEY:-}$${TNF_FULL_AUTO_GROQ_API_KEY:-}$${TNF_FULL_AUTO_LLM_API_KEY:-}\" ] ||
+        [ \"$${TNF_FULL_AUTO_GEMINI_API_KEY:-}\" = 'your_capped_gemini_key_here' ]; then
+        echo 'At least one real capped TNF_FULL_AUTO_* provider key is required for tnf-full-auto' >&2;
+        exit 1;
+      fi &&
+      export TNF_SUPER_ADMIN_TOKEN=\"$${TNF_FULL_AUTO_SUPER_ADMIN_TOKEN}\" &&
+      export TNF_SUPER_ADMIN_INPUT_TOKEN=\"$${TNF_FULL_AUTO_SUPER_ADMIN_TOKEN}\" &&
+      export OPENAI_API_KEY=\"$${TNF_FULL_AUTO_OPENAI_API_KEY:-}\" &&
+      export ANTHROPIC_API_KEY=\"$${TNF_FULL_AUTO_ANTHROPIC_API_KEY:-}\" &&
+      export GEMINI_API_KEY=\"$${TNF_FULL_AUTO_GEMINI_API_KEY:-}\" &&
+      export OPENROUTER_API_KEY=\"$${TNF_FULL_AUTO_OPENROUTER_API_KEY:-}\" &&
+      export GROQ_API_KEY=\"$${TNF_FULL_AUTO_GROQ_API_KEY:-}\" &&
+      export TNF_LLM_API_KEY=\"$${TNF_FULL_AUTO_LLM_API_KEY:-}\" &&
+      pnpm exec tsx packages/tnf-cli/src/cli.ts full-auto start
+      --interval-minutes \"$${TNF_FULL_AUTO_INTERVAL_MINUTES:-30}\"
+      --max-cycles \"$${TNF_FULL_AUTO_MAX_CYCLES:-5}\"
+      --base-url \"$${TNF_FULL_AUTO_BASE_URL:-http://api-gateway:8080}\"
+      --api-url \"$${TNF_FULL_AUTO_API_URL:-http://api-gateway:8080}\"
+      $${TNF_FULL_AUTO_FLAGS:---skip-live-links --skip-semantic --skip-auth --skip-scorecard --skip-strict-status}"
+    restart: "no"
+    depends_on:
+      node-deps:
+        condition: service_completed_successfully
+      api-gateway:
+        condition: service_started
+      api-server:
+        condition: service_started
+      relay-server:
+        condition: service_started
+      marketplace-api:
+        condition: service_started
+
+volumes:
+  n8n-template-data:
+  tnf-node-modules:

@@ -19,6 +19,8 @@
     "dev": "webpack --mode development --watch",
     "package": "node scripts/package-extension.js",
     "test": "jest",
+    "test:self-prompter": "jest --config jest.self-prompter.config.cjs --runInBand",
+    "test:self-prompter:coverage": "jest --config jest.self-prompter.config.cjs --runInBand --coverage",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
@@ -27,6 +29,7 @@
     "clean:v5": "rm -rf dist-v5",
     "clean:v6": "rm -rf dist-v6",
     "typecheck": "tsc --noEmit",
+    "typecheck:self-prompter": "tsc -p tsconfig.self-prompter.json --noEmit",
     "build:package": "pnpm run build && pnpm run package",
     "aivi:inventory": "find aivi -maxdepth 3 -type d | sort",
     "aivi:backend:install": "pnpm --dir aivi/backend install",
@@ -46,7 +49,8 @@
     "dompurify": "^3.3.2",
     "highlight.js": "^11.11.1",
     "pako": "^2.1.0",
-    "@the-new-fuse/infrastructure": "workspace:*"
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/workflow-engine": "workspace:*"
   },
   "overrides": {
     "serialize-javascript": "7.0.3"

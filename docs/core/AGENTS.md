@@ -3,17 +3,19 @@
 This repository uses TNF frontloading. Start every new AI terminal session with:
 
 ```bash
-pnpm run tnf:onboard
+tnf onboard
 ```
 
 ## Mandatory Context Files
 
-1. `.agent/SYSTEM_PROMPT.md`
-2. `.agent/context/resource-map.md`
-3. `.agent/context/agent-onboarding.md`
-4. `.agent/workflows/frontload.md`
-5. `.agent/handoff_notes.txt` (if present)
-6. `docs/protocols/TURN_ZERO_MANDATE.md` (canonical Turn Zero authority)
+1. `docs/protocols/TURN_ZERO_MANDATE.md` (canonical Turn Zero authority)
+2. `docs/protocols/LIVING_STATE.md`
+3. `docs/protocols/AGENT_STATUS_LEDGER.md`
+4. `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` (if present)
+5. `.agent/SYSTEM_PROMPT.md`
+6. `.agent/context/resource-map.md`
+7. `.agent/context/agent-onboarding.md`
+8. `.agent/workflows/frontload.md`
 
 ## Where Resources Live
 
@@ -32,11 +34,20 @@ pnpm run tnf:onboard
 
 At session start, the agent should:
 
-1. Confirm TNF identity from `.agent/SYSTEM_PROMPT.md`.
-2. Load capabilities from `.agent/context/resource-map.md`.
-3. Recover prior state from `.agent/handoff_notes.txt` and planning files.
-4. Use MCP and specialized agents from the inventory printed by
-   `pnpm run tnf:onboard`.
+1. Execute Turn Zero from `docs/protocols/TURN_ZERO_MANDATE.md`.
+2. Recover canonical state from `docs/protocols/LIVING_STATE.md` and
+   `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`.
+3. Confirm TNF identity from `.agent/SYSTEM_PROMPT.md`.
+4. Load capabilities from `.agent/context/resource-map.md` only after Turn
+   Zero.
+5. Use MCP and specialized agents from the inventory printed by
+   `tnf onboard`.
+
+For raw AI CLI sessions launched without TNF auto-injection, paste:
+
+```text
+Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
+```
 
 ## OpenClaw Operator Policy
 
@@ -50,6 +61,14 @@ When a task involves OpenClaw or other Claw-type agents:
 5. Do not invoke raw `openclaw ...` directly unless the task is explicitly about
    debugging the TNF<->OpenClaw adapter or the user explicitly asks for raw
    OpenClaw CLI usage.
+
+## Tri-Fold Domain Protocol
+
+Agents must strictly identify and operate within one of three domain contexts. The active domain dictates the expected degree of proactivity, technical rigor, and autonomy.
+
+1. **Corporate Dev Work:** Work on the core TNF framework itself (system-level, canonical protocols, framework-wide utilities). Demands the highest level of rigor, regression testing, and strict adherence to established TNF legacy protocols.
+2. **Agency Dev Work:** Work serving a specific user's agency or clients. Balances speed of delivery with robust architecture.
+3. **Personal Dev Work:** Daily personal tasks, organization, and custom agent development for the user themselves. **Proactive Mandate applies here**: Agents must shift from reactive task execution to proactive inquiry. Agents are required to "lead the user" in defining how the agent can be most practical, requesting context, and automatically breaking vague personal goals into discrete execution plans and "threads".
 
 Turn Zero authority:
 
@@ -94,6 +113,15 @@ The platform API also exposes these via REST endpoints:
 - `/api/agents/bank/templates`: List all templates
 - `/api/agents/bank/template/:bank/:filename`: Get template content
 
+## Autonomy Script Inventory
+
+The following autonomy and intelligence expansion scripts are globally available in `scripts/autonomy/` and must be utilized by agents when orchestrating complex reasoning or relationship tasks:
+- `phase7_directive_conversion_loop.py` (with `--adopt-claimed` logic for unblocking queues)
+- `personality_relationship_analyzer.py`
+- `frontier_agent_capability_explorer.py`
+- `cross_dm_context_synthesizer.py`
+- `p2p_pii_redacted_data_request.py`
+
 # Continuous Improver Agent
 
 ## Identity
@@ -106,6 +134,7 @@ workflows.
 
 - **System Diagnostics**: Runs `tnf doctor` to ensure health.
 - **Code Analysis**: Scans for `TODO`, `FIXME`, and lint errors.
+- **Orchestration & Interval Optimization**: Actively reviews Master Calendar schedule densities, analyzing telemetry to propose cron frequency reductions.
 - **Task Generation**: Creates actionable tasks for other agents when issues are
   found.
 - **Self-Repair**: Attempts automatic fixes for known configuration issues
@@ -117,7 +146,7 @@ workflows.
 2.  **Analyze**: Parse output for failures or warnings.
 3.  **Plan**: Determine if a fix is automatic or requires a task.
 4.  **Act**: Apply fix or dispatch task to `tnf:master:tasks:planning`.
-5.  **Verify**: Re-run scan to confirm resolution.
+5.  **Verify**: Re-run scan to confirm resolution. Ensure any structural optimizations strictly respect proven legacy execution boundaries and verify against them.
 
 ## Trigger
 
@@ -135,7 +164,7 @@ emerging trends, competitor moves, and research breakthroughs.
 
 - **Market Surveillance**: Scans search engines and AI news hubs.
 - **Trend Detection**: Identifies high-velocity keywords.
-- **Task Generation**: Dispatches assimilation tasks to the swarm.
+- **Task Generation**: Dispatches assimilation tasks to the swarm. Any cutting-edge architectures assimilated must be proposed strictly as parallel supplements to, not immediate replacements of, core legacy systems.
 
 # The "Claw" Swarm
 

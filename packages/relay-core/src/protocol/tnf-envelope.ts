@@ -42,6 +42,7 @@ import {
   type TnfAuditTrace,
 } from '../contracts/audit.js';
 import { createAgentIdentityRecord } from '../contracts/identity.js';
+import { assertNativeEnvelopeValid } from './native-envelope-validator.js';
 
 // Re-export values and types with unified names for back-compat
 export const MessageType = MessageTypeSchema;
@@ -78,6 +79,11 @@ export interface CreateTNFEnvelopeOptions {
   metadata?: Record<string, unknown>;
   traceId?: string;
   audit?: Partial<TnfAuditTrace>;
+}
+
+export interface ValidateTNFEnvelopeOptions {
+  native?: boolean;
+  requireNative?: boolean;
 }
 
 /**
@@ -226,8 +232,15 @@ export function createTNFEnvelope(
   };
 }
 
-export function validateTNFEnvelope(data: unknown): TNFEnvelope {
-  return normalizeTNFEnvelope(TNFEnvelopeSchema.parse(data));
+export function validateTNFEnvelope(
+  data: unknown,
+  options: ValidateTNFEnvelopeOptions = {}
+): TNFEnvelope {
+  const envelope = normalizeTNFEnvelope(TNFEnvelopeSchema.parse(data));
+  if (options.native !== false) {
+    assertNativeEnvelopeValid(envelope, { required: options.requireNative });
+  }
+  return envelope;
 }
 
 export function isTaskMessage(envelope: TNFEnvelope): boolean {

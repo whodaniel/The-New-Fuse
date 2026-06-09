@@ -11,6 +11,7 @@
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
 import './guard'; // MUST BE FIRST - Patches customElements.define
 import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
+import { SelfPrompter } from './self-prompting';
 import { accessibilityTree } from './utils/AccessibilityTree';
 import { captchaHandler } from './utils/CaptchaHandler';
 import { humanSimulator } from './utils/HumanBehaviorSimulator';
@@ -44,6 +45,9 @@ declare global {
       sendTestMessage: (msg: string) => void;
       checkExtensionContext: () => boolean;
       findElements: () => object;
+      enableSelfPrompter: () => object;
+      disableSelfPrompter: () => object;
+      getSelfPrompterStatus: () => object;
     };
   }
 }
@@ -56,6 +60,8 @@ class FuseConnectContentScript {
   private pageAgentId: string | null = null;
   private currentChannel: string | null = null;
   private pausedChannels: Set<string> = new Set();
+  private selfPrompter = new SelfPrompter();
+  private selfPrompterInterval: number | null = null;
 
   // DEDUPE GUARD: Track message IDs we have already processed (injected or shown)
   // to prevent infinite loops from the relay-Cloudflare-Extension circle.
@@ -111,6 +117,7 @@ class FuseConnectContentScript {
     simpleChatBridge.init({
       onResponse: (content) => {
         console.log('[FuseConnect v7] AI Response received, length:', content.length);
+        this.selfPrompter.updateActivity();
 
         // Forward to panel
         if (this.panel) {
@@ -290,6 +297,22 @@ class FuseConnectContentScript {
         console.log('[FuseConnect Debug] Found elements:', elements);
         return elements;
       },
+
+      enableSelfPrompter: () => {
+        this.enableSelfPrompter();
+        return this.selfPrompter.getStatus();
+      },
+
+      disableSelfPrompter: () => {
+        this.disableSelfPrompter();
+        return this.selfPrompter.getStatus();
+      },
+
+      getSelfPrompterStatus: () => {
+        const status = this.selfPrompter.getStatus();
+        console.log('[FuseConnect Debug] SelfPrompter status:', status);
+        return status;
+      },
     };
 
     console.debug('[FuseConnect v7] Debug utils available at window.__FUSE_DEBUG');
@@ -425,6 +448,34 @@ class FuseConnectContentScript {
             });
             return true;
           }
+
+          case 'ENABLE_SELF_PROMPTER':
+            this.enableSelfPrompter();
+            safeSendResponse({ success: true, status: this.selfPrompter.getStatus() });
+            return true;
+
+          case 'DISABLE_SELF_PROMPTER':
+            this.disableSelfPrompter();
+            safeSendResponse({ success: true, status: this.selfPrompter.getStatus() });
+            return true;
+
+          case 'RESET_SELF_PROMPTER':
+            this.selfPrompter.resetConversation();
+            safeSendResponse({ success: true, status: this.selfPrompter.getStatus() });
+            return true;
+
+          case 'SET_SELF_PROMPTER_STEPS':
+            if (!Array.isArray(message.steps) || message.steps.length === 0) {
+              safeSendResponse({ success: false, error: 'steps must be a non-empty array' });
+              return true;
+            }
+            this.selfPrompter.setWorkflowSteps(message.steps);
+            safeSendResponse({ success: true, status: this.selfPrompter.getStatus() });
+            return true;
+
+          case 'GET_SELF_PROMPTER_STATUS':
+            safeSendResponse({ success: true, status: this.selfPrompter.getStatus() });
+            return true;
 
           // Accessibility tree commands
           case 'GET_ACCESSIBILITY_TREE': {
@@ -845,12 +896,30 @@ class FuseConnectContentScript {
     const success = await simpleChatBridge.sendMessage(content);
 
     if (success) {
+      this.selfPrompter.updateActivity();
       console.log('[FuseConnect v7] Message sent successfully');
     } else {
       console.error('[FuseConnect v7] Message send failed');
     }
 
     return success;
+  }
+
+  private enableSelfPrompter(): void {
+    this.selfPrompter.enable();
+    if (this.selfPrompterInterval !== null) return;
+
+    this.selfPrompterInterval = window.setInterval(() => {
+      this.selfPrompter.checkAndPrompt();
+    }, 5000);
+  }
+
+  private disableSelfPrompter(): void {
+    this.selfPrompter.disable();
+    if (this.selfPrompterInterval === null) return;
+
+    window.clearInterval(this.selfPrompterInterval);
+    this.selfPrompterInterval = null;
   }
 
   /**

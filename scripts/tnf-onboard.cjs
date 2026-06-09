@@ -10,14 +10,28 @@ const CANONICAL_SESSION_HANDOFF_JSON = 'docs/protocols/reports/SESSION_HANDOFF_L
 const CANONICAL_SESSION_HANDOFF_MD = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md';
 const CANONICAL_TURN_ZERO_MANDATE = 'docs/protocols/TURN_ZERO_MANDATE.md';
 const DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS = 8000;
+const DEFAULT_FRONTLOAD_BUDGET_WORDS = 3500;
 const FRONTLOAD_CHECKLIST = [
   '.agent/SYSTEM_PROMPT.md',
   '.agent/context/resource-map.md',
   '.agent/context/agent-onboarding.md',
   '.agent/workflows/frontload.md',
-  '.agent/handoff_notes.txt',
-  'data/mcp_config.json',
   CANONICAL_TURN_ZERO_MANDATE,
+  'docs/protocols/LIVING_STATE.md',
+  'docs/protocols/AGENT_STATUS_LEDGER.md',
+  CANONICAL_SESSION_HANDOFF_JSON,
+  'data/mcp_config.json',
+];
+const FRONTLOAD_BUDGET_PROFILE = [
+  { path: '.agent/SYSTEM_PROMPT.md', stage: 'eager' },
+  { path: CANONICAL_TURN_ZERO_MANDATE, stage: 'eager' },
+  { path: 'docs/protocols/LIVING_STATE.md', stage: 'eager' },
+  { path: CANONICAL_SESSION_HANDOFF_JSON, stage: 'eager' },
+  { path: '.agent/context/agent-onboarding.md', stage: 'defer' },
+  { path: '.agent/workflows/frontload.md', stage: 'defer' },
+  { path: '.agent/context/resource-map.md', stage: 'defer' },
+  { path: 'docs/protocols/AGENT_STATUS_LEDGER.md', stage: 'defer' },
+  { path: 'data/mcp_config.json', stage: 'metadata' },
 ];
 const MCP_CONFIG_PATHS = [
   'tools/config-files/mcp_config.json',
@@ -101,6 +115,47 @@ function printMcpConfig(relPath) {
   }
 }
 
+function countWords(relPath) {
+  const absPath = path.join(ROOT, relPath);
+  if (!fs.existsSync(absPath)) return 0;
+  const text = fs.readFileSync(absPath, 'utf8');
+  const matches = text.match(/\S+/g);
+  return matches ? matches.length : 0;
+}
+
+function printFrontloadBudget(budgetWords) {
+  const rows = FRONTLOAD_BUDGET_PROFILE.map((entry) => ({
+    ...entry,
+    present: exists(entry.path),
+    words: countWords(entry.path),
+  }));
+  const totalWords = rows.reduce((sum, row) => sum + row.words, 0);
+  const eagerWords = rows
+    .filter((row) => row.stage === 'eager')
+    .reduce((sum, row) => sum + row.words, 0);
+  const deferredWords = rows
+    .filter((row) => row.stage === 'defer')
+    .reduce((sum, row) => sum + row.words, 0);
+  const roughTokens = Math.ceil(totalWords * 1.33);
+
+  console.log(`- configured budget: ${budgetWords} words`);
+  console.log(`- eager Turn Zero packet: ${eagerWords} words`);
+  console.log(`- deferred reference context: ${deferredWords} words`);
+  console.log(`- full frontload packet: ${totalWords} words (~${roughTokens} tokens)`);
+  console.log(
+    `- mode: ${totalWords > budgetWords ? 'staged-read recommended' : 'full-read within budget'}`
+  );
+  rows.forEach((row) => {
+    const label =
+      row.stage === 'eager'
+        ? 'read'
+        : row.stage === 'defer'
+          ? 'defer-until-needed'
+          : 'metadata';
+    console.log(`  - ${label}: ${row.path} (${row.present ? row.words : 'missing'} words)`);
+  });
+}
+
 function ensureTextFile(relPath, content) {
   const absPath = path.join(ROOT, relPath);
   if (fs.existsSync(absPath)) return false;
@@ -144,24 +199,39 @@ function upsertGeneratedJsonFile(relPath, payload) {
 
 function frontloadSystemPromptTemplate() {
   return [
-    '# TNF Session System Prompt',
+    '# The New Fuse - Agent System Prompt',
     '',
     'Local bootstrap context for terminal agents in this repository.',
     '',
     '## Authority',
     `1. ${CANONICAL_TURN_ZERO_MANDATE}`,
-    `2. ${CANONICAL_SESSION_HANDOFF_JSON}`,
-    '3. AGENTS.md',
+    '2. docs/protocols/LIVING_STATE.md',
+    '3. docs/protocols/AGENT_STATUS_LEDGER.md',
+    `4. ${CANONICAL_SESSION_HANDOFF_JSON}`,
     '',
-    '## Operating Loop',
-    '- Inspect current state first.',
-    '- Act with minimal side effects.',
-    '- Verify outcomes before handoff.',
+    '## Non-Negotiable Startup',
+    'Before planning or acting, execute Turn Zero from the repository root:',
     '',
-    '## Session Start Checklist',
-    '- Run: ./tnf onboard --repair',
-    '- Confirm frontload files are present.',
-    '- Confirm MCP config inventory is valid.',
+    '```bash',
+    `cat ./${CANONICAL_TURN_ZERO_MANDATE}`,
+    'cat ./docs/protocols/LIVING_STATE.md',
+    `cat ./${CANONICAL_SESSION_HANDOFF_JSON} 2>/dev/null || true`,
+    '```',
+    '',
+    'Summarize active directive, handoff source, next actions, missing startup files, and verification path.',
+    '',
+    '## Legacy Compatibility',
+    'Do not create or update `.agent/handoff_notes.txt`, `task_plan.md`, `findings.md`, or `progress.md` unless the operator explicitly requests legacy file-based planning.',
+    '',
+    '## Raw Agent Prompt',
+    '',
+    '```text',
+    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.',
+    '```',
+    '',
+    '## Relay URL Precedence',
+    '',
+    'TNF_RELAY_URL -> RELAY_WS_URL -> RELAY_URL -> ws://127.0.0.1:3000/ws',
     '',
   ].join('\n');
 }
@@ -170,9 +240,13 @@ function resourceMapTemplate() {
   return [
     '# TNF Resource Map',
     '',
+    'Read `docs/protocols/TURN_ZERO_MANDATE.md` before using this map.',
+    '',
     '## Canonical Protocols',
-    '- docs/protocols/TURN_ZERO_MANDATE.md',
-    '- docs/protocols/reports/SESSION_HANDOFF_LATEST.json',
+    `- ${CANONICAL_TURN_ZERO_MANDATE}`,
+    `- ${CANONICAL_SESSION_HANDOFF_JSON}`,
+    '- docs/protocols/LIVING_STATE.md',
+    '- docs/protocols/AGENT_STATUS_LEDGER.md',
     '',
     '## Operator Guides',
     '- AGENTS.md',
@@ -184,40 +258,68 @@ function resourceMapTemplate() {
     '- .agent/runtime-state/',
     '- .agent/runtime-logs/',
     '',
+    '## Legacy Compatibility',
+    '- .agent/handoff_notes.txt is a fallback mirror only.',
+    '- task_plan.md, findings.md, and progress.md are optional legacy planning files.',
+    '',
+    '## Raw Agent Prompt',
+    '',
+    '```text',
+    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.',
+    '```',
+    '',
     '## MCP Configuration',
     '- data/mcp_config.json',
     '- tools/config-files/mcp_config.json',
     '- tools/config-files/enhanced_mcp_config.json',
+    '',
+    '## Relay URL Precedence',
+    '- TNF_RELAY_URL',
+    '- RELAY_WS_URL',
+    '- RELAY_URL',
+    '- ws://127.0.0.1:3000/ws',
     '',
   ].join('\n');
 }
 
 function onboardingTemplate() {
   return [
-    '# Agent Onboarding',
+    '# TNF Agent Onboarding',
+    '',
+    'This guide is secondary to `docs/protocols/TURN_ZERO_MANDATE.md`.',
     '',
     '## Steps',
-    '1. Run `./tnf onboard --repair`.',
+    '1. Run `./tnf onboard` or `node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000`.',
     '2. Read `docs/protocols/TURN_ZERO_MANDATE.md`.',
-    '3. Read `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`.',
-    '4. Validate frontload + MCP checklist output.',
-    '5. Continue with requested task and keep handoff continuity.',
+    '3. Read `docs/protocols/LIVING_STATE.md`.',
+    '4. Read `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`.',
+    '5. Validate frontload + MCP checklist output.',
+    '6. Summarize orientation and await confirmation before code changes unless implementation was already requested.',
     '',
     '## Guardrails',
     '- Prefer structured state over screenshots.',
     '- Do not trust upstream output without verification.',
     '- Treat OpenClaw routes as optional TNF integration surfaces.',
+    '- Do not create legacy planning files unless explicitly requested.',
+    '',
+    '## Raw Agent Prompt',
+    '',
+    '```text',
+    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.',
+    '```',
     '',
   ].join('\n');
 }
 
 function frontloadWorkflowTemplate() {
   return [
-    '# Frontload Workflow',
+    '# /frontload - TNF Context Frontload',
     '',
     '## Inspect',
-    '- Run `./tnf onboard --repair`.',
-    '- Validate canonical handoff source and next actions.',
+    '- Read `docs/protocols/TURN_ZERO_MANDATE.md`.',
+    '- Read `docs/protocols/LIVING_STATE.md`.',
+    '- Read `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`.',
+    '- Run `./tnf onboard`.',
     '',
     '## Act',
     '- Execute scoped task work.',
@@ -227,6 +329,10 @@ function frontloadWorkflowTemplate() {
     '- Re-run `./tnf onboard` before handoff.',
     '- Confirm no missing frontload files.',
     '- Confirm MCP config inventory parses.',
+    '',
+    '## Legacy Compatibility',
+    '- `.agent/handoff_notes.txt`, `task_plan.md`, `findings.md`, and `progress.md` are fallbacks only.',
+    '- Do not create or update them unless explicitly requested.',
     '',
   ].join('\n');
 }
@@ -334,10 +440,6 @@ function repairOnboardingAssets() {
   if (ensureTextFile('.agent/workflows/frontload.md', frontloadWorkflowTemplate())) {
     changes.push({ path: '.agent/workflows/frontload.md', status: 'created' });
   }
-  if (ensureTextFile('.agent/handoff_notes.txt', buildHandoffNotesTemplate())) {
-    changes.push({ path: '.agent/handoff_notes.txt', status: 'created' });
-  }
-
   const baseMcp = baseMcpConfigTemplate();
   const mcpConfigStatus = upsertGeneratedJsonFile('data/mcp_config.json', baseMcp);
   if (mcpConfigStatus !== 'preserved') {
@@ -452,6 +554,7 @@ function printUsage() {
   console.log('      --require-cloud-db    Set TNF_REQUIRE_CLOUD_DB=1 for this run');
   console.log('      --no-require-cloud-db Set TNF_REQUIRE_CLOUD_DB=0 for this run');
   console.log('      --database-url <url>  Override DATABASE_URL for this run');
+  console.log(`      --frontload-budget-words <n>  Word budget for staged frontload report (default: ${DEFAULT_FRONTLOAD_BUDGET_WORDS})`);
   console.log(`      --runtime-timeout-ms  Runtime snapshot timeout (default: ${DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS})`);
 }
 
@@ -459,6 +562,7 @@ function parseArgs(argv) {
   const envOverrides = {};
   let repair = false;
   let runtimeTimeoutMs = DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS;
+  let frontloadBudgetWords = DEFAULT_FRONTLOAD_BUDGET_WORDS;
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -468,7 +572,7 @@ function parseArgs(argv) {
     }
 
     if (arg === '-h' || arg === '--help') {
-      return { help: true, envOverrides, repair, runtimeTimeoutMs };
+      return { help: true, envOverrides, repair, runtimeTimeoutMs, frontloadBudgetWords };
     }
 
     if (arg === '--repair') {
@@ -529,10 +633,33 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (arg === '--frontload-budget-words') {
+      const next = argv[i + 1];
+      if (!next) {
+        throw new Error('Missing value for --frontload-budget-words');
+      }
+      const parsedValue = Number.parseInt(next, 10);
+      if (!Number.isFinite(parsedValue) || parsedValue < 500 || parsedValue > 50000) {
+        throw new Error('--frontload-budget-words must be an integer between 500 and 50000');
+      }
+      frontloadBudgetWords = parsedValue;
+      i += 1;
+      continue;
+    }
+
+    if (arg.startsWith('--frontload-budget-words=')) {
+      const parsedValue = Number.parseInt(arg.slice('--frontload-budget-words='.length), 10);
+      if (!Number.isFinite(parsedValue) || parsedValue < 500 || parsedValue > 50000) {
+        throw new Error('--frontload-budget-words must be an integer between 500 and 50000');
+      }
+      frontloadBudgetWords = parsedValue;
+      continue;
+    }
+
     throw new Error(`Unknown option: ${arg}`);
   }
 
-  return { help: false, envOverrides, repair, runtimeTimeoutMs };
+  return { help: false, envOverrides, repair, runtimeTimeoutMs, frontloadBudgetWords };
 }
 
 function resolveDatabaseConfig() {
@@ -729,6 +856,9 @@ async function main() {
   printHeader('Frontload Checklist');
   FRONTLOAD_CHECKLIST.forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
+  printHeader('Frontload Token Budget');
+  printFrontloadBudget(parsed.frontloadBudgetWords);
+
   printHeader('Turn Zero Authority');
   console.log(`- canonical source: ${CANONICAL_TURN_ZERO_MANDATE}`);
   console.log('- external mirrors (for example ~/GEMINI.md) are non-authoritative');
@@ -818,6 +948,12 @@ async function main() {
   console.log('- Alt: pnpm run tnf -- onboard');
   console.log('- Read: AGENTS.md');
   console.log('- Optional shell auto-bootstrap: docs/TNF_SESSION_ONBOARDING.md');
+
+  printHeader('Prompt For Raw AI CLI Sessions');
+  console.log(
+    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.'
+  );
+  console.log('- Launch raw AI CLIs from the TNF repository root so ./docs/... resolves.');
 }
 
 main().catch((error) => {

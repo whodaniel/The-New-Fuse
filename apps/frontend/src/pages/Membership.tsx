@@ -129,7 +129,7 @@ export default function Membership() {
                 support@thenewfuse.com
               </a>{' '}
               or jump into the live Discord. You can also visit{' '}
-              <Link className="text-cyan-300 underline" to="/support">
+              <Link className="text-cyan-300 underline" to="/docs">
                 Support
               </Link>{' '}
               to open a ticket.

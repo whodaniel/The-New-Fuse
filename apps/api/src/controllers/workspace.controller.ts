@@ -285,7 +285,7 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
       .trim()
       .toLowerCase();
     if (!raw) {
-      return true;
+      return false;
     }
     return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on';
   }

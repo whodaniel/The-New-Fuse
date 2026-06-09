@@ -1,6 +1,8 @@
 import { Redis as UpstashRedis } from '@upstash/redis';
 import { Cluster, Redis, type RedisOptions } from 'ioredis';
 
+export type StandaloneRedisClient = Redis | Cluster;
+
 export interface StandaloneRedisConfig {
   host: string;
   port: number;
@@ -77,7 +79,7 @@ export function loadStandaloneRedisConfig(): StandaloneRedisConfig {
  */
 export function createStandaloneRedisClient(
   config?: Partial<StandaloneRedisConfig>
-): Redis | Cluster {
+): StandaloneRedisClient {
   const fullConfig = { ...loadStandaloneRedisConfig(), ...config };
 
   const redisOptions: RedisOptions = {
@@ -99,6 +101,19 @@ export function createStandaloneRedisClient(
   }
 
   return new Redis(redisOptions);
+}
+
+export function describeStandaloneRedisClient(client: StandaloneRedisClient): 'cluster' | 'standalone' {
+  return client instanceof Cluster ? 'cluster' : 'standalone';
+}
+
+export async function connectStandaloneRedisClient(client: StandaloneRedisClient): Promise<void> {
+  const status = (client as { status?: string }).status;
+  if (status === 'ready' || status === 'connecting' || status === 'connect') {
+    return;
+  }
+
+  await client.connect();
 }
 
 /**

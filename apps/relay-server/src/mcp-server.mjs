@@ -23,6 +23,9 @@ import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const DEFAULT_RELAY_ENDPOINT =
+  process.env.RELAY_SERVER_URL ||
+  (process.env.TNF_RUNTIME === 'docker-compose' ? 'http://relay-server:8080' : 'http://localhost:3000');
 
 class TNFRelayMCPServer {
   constructor() {
@@ -164,7 +167,7 @@ class TNFRelayMCPServer {
                 relay_endpoint: {
                   type: 'string',
                   description: 'Relay endpoint URL',
-                  default: 'http://localhost:3000',
+                  default: DEFAULT_RELAY_ENDPOINT,
                 },
               },
               required: ['target_agent', 'message'],
@@ -213,7 +216,7 @@ class TNFRelayMCPServer {
                 relay_endpoint: {
                   type: 'string',
                   description: 'Relay endpoint URL',
-                  default: 'http://localhost:3000',
+                  default: DEFAULT_RELAY_ENDPOINT,
                 },
               },
             },
@@ -673,7 +676,7 @@ class TNFRelayMCPServer {
       // Try to get status from running relay if available
       if (this.relayProcesses.size > 0) {
         try {
-          const response = await fetch('http://localhost:3000/status');
+          const response = await fetch(`${DEFAULT_RELAY_ENDPOINT}/status`);
           if (response.ok) {
             const relayStatus = await response.json();
             status.relay_details = relayStatus;
@@ -808,7 +811,7 @@ class TNFRelayMCPServer {
   }
 
   async sendAgentMessage(args) {
-    const { target_agent, message, relay_endpoint = 'http://localhost:3000' } = args;
+    const { target_agent, message, relay_endpoint = DEFAULT_RELAY_ENDPOINT } = args;
 
     try {
       const response = await fetch(`${relay_endpoint}/send`, {
@@ -852,7 +855,7 @@ class TNFRelayMCPServer {
     const { hostname, action, target = 'claude_desktop', enabled = true } = args;
 
     try {
-      const response = await fetch('http://localhost:3000/intercept-rules', {
+      const response = await fetch(`${DEFAULT_RELAY_ENDPOINT}/intercept-rules`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -893,7 +896,7 @@ class TNFRelayMCPServer {
   }
 
   async getInterceptedMessages(args = {}) {
-    const { limit = 10, relay_endpoint = 'http://localhost:3000' } = args;
+    const { limit = 10, relay_endpoint = DEFAULT_RELAY_ENDPOINT } = args;
 
     try {
       const response = await fetch(`${relay_endpoint}/intercepted-messages?limit=${limit}`);
@@ -932,7 +935,7 @@ class TNFRelayMCPServer {
       const config = {
         extension_id,
         websocket_url: `ws://localhost:${websocket_port}`,
-        relay_endpoint: `http://localhost:3000`,
+        relay_endpoint: DEFAULT_RELAY_ENDPOINT,
         setup_timestamp: new Date().toISOString(),
       };
 

@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-06-09T14:01:23.769230Z",
+  "phase": "phase7-directive-conversion",
+  "actionQueuePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-action-queue.json",
+  "ledgerPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-directive-conversion-ledger.json",
+  "batchPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json",
+  "summary": {
+    "total": 689,
+    "stateCounts": {
+      "ready": 0,
+      "claimed": 0,
+      "running": 0,
+      "verified": 24,
+      "landed": 0,
+      "blocked": 665,
+      "failed": 0
+    },
+    "laneCounts": {
+      "backend-contracts": 114,
+      "frontend-p0-truth": 90,
+      "orchestration-runtime": 182,
+      "performance-budget": 25,
+      "platform-release": 32,
+      "product-intel-activation": 211,
+      "security-audit": 35
+    },
+    "active": 0,
+    "converted": 24,
+    "conversionRate": 3.48,
+    "ready": 0,
+    "blocked": 665,
+    "blockReasonCounts": {
+      "deepsec-no-analyzed-files": 1,
+      "low-relevance": 658,
+      "missing-local-pi-cli": 1,
+      "no-first-party-agentars-surface": 1,
+      "no-first-party-shopping-list-surface": 1,
+      "not-dispatch-eligible": 2,
+      "requires-interactive-botfather-registration": 1
+    }
+  },
+  "batch": {
+    "batchId": "ai5-phase7-batch-001",
+    "state": "planned",
+    "size": 0,
+    "owner": "local-subdirector"
+  }
+}

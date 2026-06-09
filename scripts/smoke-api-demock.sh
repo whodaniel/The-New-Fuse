@@ -23,16 +23,58 @@ if [[ -z "${DATABASE_URL:-}" ]]; then
   exit 1
 fi
 
-has_provider_keys() {
-  [[ -n "${OPENAI_API_KEY:-}" ]] || [[ -n "${ANTHROPIC_API_KEY:-}" ]] || [[ -n "${GEMINI_API_KEY:-}" ]] || [[ -n "${MISTRAL_API_KEY:-}" ]] || [[ -n "${AZURE_OPENAI_API_KEY:-}" ]]
+is_placeholder_key() {
+  local value
+  value="$(printf '%s' "${1:-}" | tr '[:upper:]' '[:lower:]')"
+  [[ -z "$value" ]] && return 0
+  [[ "$value" == *placeholder* ]] && return 0
+  [[ "$value" == *changeme* ]] && return 0
+  [[ "$value" == *change-me* ]] && return 0
+  [[ "$value" == *dummy* ]] && return 0
+  [[ "$value" == *example* ]] && return 0
+  [[ "$value" == *your-api-key* ]] && return 0
+  [[ "$value" == *your_api_key* ]] && return 0
+  [[ "$value" == *your-openai* ]] && return 0
+  [[ "$value" == *your_openai* ]] && return 0
+  [[ "$value" == *sk-your* ]] && return 0
+  [[ "$value" == *test-key* ]] && return 0
+  return 1
 }
+
+has_valid_key() {
+  local value="${1:-}"
+  [[ -n "$value" ]] && ! is_placeholder_key "$value"
+}
+
+has_text_provider_keys() {
+  has_valid_key "${OPENAI_API_KEY:-}" ||
+    has_valid_key "${ANTHROPIC_API_KEY:-}" ||
+    has_valid_key "${GEMINI_API_KEY:-}" ||
+    has_valid_key "${GOOGLE_AI_API_KEY:-}" ||
+    has_valid_key "${MISTRAL_API_KEY:-}" ||
+    has_valid_key "${AZURE_OPENAI_API_KEY:-}" ||
+    has_valid_key "${GROQ_API_KEY:-}" ||
+    has_valid_key "${OPENROUTER_API_KEY:-}"
+}
+
+has_image_provider_keys() {
+  has_valid_key "${OPENAI_API_KEY:-}" || has_valid_key "${AZURE_OPENAI_API_KEY:-}"
+}
+
+echo "[smoke] building api workspace dependencies..."
+cd "$ROOT_DIR"
+pnpm --filter '@the-new-fuse/api-server^...' run build >/dev/null
 
 echo "[smoke] building api..."
 cd "$API_DIR"
 pnpm build >/dev/null
 
 echo "[smoke] starting api on ${BASE_URL}..."
-JWT_SECRET="$JWT_SECRET" NODE_ENV=development PORT="$PORT" node dist/main.js >"$LOG_FILE" 2>&1 &
+JWT_SECRET="$JWT_SECRET" \
+  NODE_ENV=development \
+  HOSTMARIA_AUTO_SYNC_ENABLED=false \
+  PORT="$PORT" \
+  node dist/main.js >"$LOG_FILE" 2>&1 &
 PID=$!
 
 cleanup() {
@@ -102,6 +144,7 @@ probe() {
 probe_ai() {
   local path="$1"
   local body="$2"
+  local capability="${3:-text}"
   local out
   out="$(mktemp)"
   local code
@@ -112,9 +155,10 @@ probe_ai() {
   head -c 500 "$out"
   echo
 
-  if has_provider_keys; then
-    if [[ "$code" == "500" || "$code" == "000" ]]; then
-      echo "[smoke] provider keys detected but $path returned $code"
+  if { [[ "$capability" == "image" ]] && has_image_provider_keys; } ||
+    { [[ "$capability" != "image" ]] && has_text_provider_keys; }; then
+    if [[ ! "$code" =~ ^2[0-9][0-9]$ ]]; then
+      echo "[smoke] usable $capability provider key detected but $path returned non-success status $code"
       FAILURES=$((FAILURES + 1))
     fi
   else
@@ -137,8 +181,8 @@ probe GET /api/health '^2[0-9][0-9]$'
 probe GET /api/system/logs '^([1-5][0-9][0-9])$'
 probe GET /api/a2a/system/stats '^([1-5][0-9][0-9])$'
 probe GET /api/a2a/status '^([1-5][0-9][0-9])$'
-probe_ai /api/ai/text-completion '{"prompt":"healthcheck"}'
-probe_ai /api/ai/image-generation '{"prompt":"healthcheck image"}'
+probe_ai /api/ai/text-completion '{"prompt":"healthcheck"}' text
+probe_ai /api/ai/image-generation '{"prompt":"healthcheck image"}' image
 probe GET /api/chat/chats '^(200|401|403)$'
 
 echo

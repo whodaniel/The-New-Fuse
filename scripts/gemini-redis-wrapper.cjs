@@ -16,7 +16,7 @@
  *   AGENT_NAME=gemini-1 node gemini-redis-wrapper.cjs
  */
 
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
 const readline = require('readline');
 
@@ -30,8 +30,60 @@ const CONFIG = {
   platform: 'gemini',
   geminiCommand: process.env.GEMINI_CMD || 'gemini', // The gemini CLI command
   geminiArgs: (process.env.GEMINI_ARGS || '').trim(),
+  geminiModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+  fallbackModels: (process.env.GEMINI_FALLBACK_MODELS || 'gemini-2.5-flash,gemini-2.5-flash-lite')
+    .split(',')
+    .map((model) => model.trim())
+    .filter(Boolean),
   maxResponseTime: 120000, // 2 minutes max wait
 };
+
+function commandExists(command) {
+  const result = spawnSync('sh', ['-lc', `command -v ${command}`], { stdio: 'ignore' });
+  return result.status === 0;
+}
+
+function resolveGeminiCommandSpec() {
+  if (commandExists(CONFIG.geminiCommand)) {
+    return { command: CONFIG.geminiCommand, baseArgs: [] };
+  }
+
+  const localBundle = require('path').join(
+    __dirname,
+    '..',
+    'apps',
+    'external',
+    'gemini-cli-source',
+    'bundle',
+    'gemini.js'
+  );
+  if (require('fs').existsSync(localBundle)) {
+    return { command: process.execPath, baseArgs: [localBundle] };
+  }
+
+  if (commandExists('npx')) {
+    return { command: 'npx', baseArgs: ['--yes', '@google/gemini-cli'] };
+  }
+
+  return { command: CONFIG.geminiCommand, baseArgs: [] };
+}
+
+function splitArgs(value) {
+  return String(value || '')
+    .split(/\s+/)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+}
+
+function argsIncludeModel(args) {
+  return args.some((arg, index) => arg === '--model' || arg === '-m' || arg.startsWith('--model=') || (index > 0 && ['--model', '-m'].includes(args[index - 1])));
+}
+
+function isRetryableProviderFailure(text) {
+  return /\b(429|rate.?limit|resource exhausted|model_capacity_exhausted|capacity available|overloaded|service unavailable|503)\b/i.test(
+    String(text || '')
+  );
+}
 
 // ============================================================================
 // GEMINI CLI INTERFACE
@@ -40,6 +92,7 @@ const CONFIG = {
 class GeminiCLIInterface {
   constructor() {
     this.isReady = false;
+    this.commandSpec = resolveGeminiCommandSpec();
   }
 
   /**
@@ -49,7 +102,8 @@ class GeminiCLIInterface {
     return new Promise((resolve, reject) => {
       try {
         console.log(`🚀 Verifying Gemini CLI process...`);
-        const check = spawn(CONFIG.geminiCommand, ['--version'], {
+        console.log(`   Command: ${this.commandSpec.command} ${this.commandSpec.baseArgs.join(' ')}`.trim());
+        const check = spawn(this.commandSpec.command, [...this.commandSpec.baseArgs, '--version'], {
           stdio: ['ignore', 'pipe', 'pipe'],
           shell: false,
         });
@@ -94,18 +148,44 @@ class GeminiCLIInterface {
    * Send a prompt to Gemini and get response
    */
   async prompt(text) {
+    const extraArgs = splitArgs(CONFIG.geminiArgs);
+    const models = Array.from(new Set([CONFIG.geminiModel, ...CONFIG.fallbackModels].filter(Boolean)));
+    const attempts = argsIncludeModel(extraArgs) ? [null] : models;
+    let lastResponse = '';
+    let lastError = null;
+
+    for (const model of attempts) {
+      try {
+        const response = await this.promptOnce(text, extraArgs, model);
+        lastResponse = response;
+        if (!isRetryableProviderFailure(response) || attempts.length === 1) {
+          return response;
+        }
+        console.warn(`[gemini-wrapper] retryable provider failure on ${model || 'configured model'}; trying fallback`);
+      } catch (error) {
+        lastError = error;
+        if (!isRetryableProviderFailure(error?.message || '') || attempts.length === 1) {
+          throw error;
+        }
+        console.warn(`[gemini-wrapper] ${model || 'configured model'} failed: ${error.message}`);
+      }
+    }
+
+    if (lastResponse) return lastResponse;
+    throw lastError || new Error('Gemini failed without response');
+  }
+
+  async promptOnce(text, extraArgs, model) {
     return new Promise((resolve, reject) => {
       if (!this.isReady) {
         reject(new Error('Gemini CLI not started'));
         return;
       }
-      const extraArgs = CONFIG.geminiArgs
-        ? CONFIG.geminiArgs.split(/\s+/).filter(Boolean)
-        : [];
-      const args = [...extraArgs, '--prompt', text];
-      console.log(`📝 Sent to Gemini: ${text.substring(0, 50)}...`);
+      const modelArgs = model ? ['--model', model] : [];
+      const args = [...this.commandSpec.baseArgs, ...extraArgs, ...modelArgs, '--prompt', text];
+      console.log(`📝 Sent to Gemini${model ? ` (${model})` : ''}: ${text.substring(0, 50)}...`);
 
-      const child = spawn(CONFIG.geminiCommand, args, {
+      const child = spawn(this.commandSpec.command, args, {
         stdio: ['ignore', 'pipe', 'pipe'],
         shell: false,
       });
@@ -197,6 +277,7 @@ class GeminiRedisAgent {
         'implementation',
         'review',
         'gemini_cli',
+        'task_execution',
       ]);
 
       // Set up message handlers
@@ -218,6 +299,24 @@ class GeminiRedisAgent {
    * Set up message handlers
    */
   setupHandlers() {
+    // Handle broker-dispatched task envelopes.
+    this.client.onMessage('task', async (msg) => {
+      console.log(`\n🎯 Received task from ${msg.from.agentName}:`);
+      console.log(`   ${msg.content.substring(0, 200)}...`);
+
+      const response = await this.gemini.prompt(msg.content);
+
+      await this.client.send(response, {
+        replyTo: msg.id,
+        type: 'response',
+        metadata: {
+          wasTask: true,
+          processedBy: CONFIG.agentName,
+          platform: CONFIG.platform,
+        },
+      });
+    });
+
     // Handle direct messages
     this.client.onMessage('message', async (msg) => {
       console.log(`\n📨 Received message from ${msg.from.agentName}:`);

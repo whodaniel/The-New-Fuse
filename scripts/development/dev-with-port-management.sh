@@ -5,11 +5,11 @@ echo "============================================="
 
 # Check for and resolve port conflicts
 echo "Checking for port conflicts..."
-tnf-ports conflicts --auto-resolve
+./tnf ports conflicts --auto-resolve
 
 # Show current port status
 echo ""
-tnf-ports status
+./tnf ports status
 
 echo ""
 echo "Starting development servers..."
@@ -31,8 +31,8 @@ echo "✅ Development servers started!"
 echo "Frontend: http://localhost:3000"
 echo "API: http://localhost:3001"
 echo ""
-echo "Monitor ports: tnf-ports status"
-echo "Check health: tnf-ports health"
+echo "Monitor ports: ./tnf ports status"
+echo "Check conflicts: ./tnf ports conflicts"
 echo ""
 echo "Press Ctrl+C to stop all servers"
 

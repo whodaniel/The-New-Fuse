@@ -1,6 +1,5 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RedisAgentRegistry } from '@the-new-fuse/agent';
-import { AgentInbox } from '@the-new-fuse/core';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from '@the-new-fuse/relay-core';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { SystemQueueName, SystemQueueService } from './services/system-queue.service';
@@ -11,6 +10,42 @@ export interface RouterConfig {
   ingressChannel: string;
   egressChannelPrefix: string;
   enableInboxRouting?: boolean; // NEW: Enable agent inbox integration
+}
+
+interface RoutedAgentTask {
+  id: string;
+  type: string;
+  data: unknown;
+  priority: number;
+  createdAt: Date;
+  delegatedFrom?: string;
+  requiresSkills: string[];
+  metadata: Record<string, unknown>;
+}
+
+class RouterAgentInbox {
+  constructor(
+    private readonly agentId: string,
+    private readonly redisService: UnifiedRedisService,
+    private readonly eventEmitter: EventEmitter2
+  ) {}
+
+  private get pendingKey(): string {
+    return `agent:${this.agentId}:inbox:tasks:pending`;
+  }
+
+  async receiveTask(task: RoutedAgentTask): Promise<void> {
+    await this.redisService.lpush(this.pendingKey, JSON.stringify(task));
+    this.eventEmitter.emit('agent.inbox.task_received', {
+      agentId: this.agentId,
+      taskId: task.id,
+      timestamp: new Date(),
+    });
+  }
+
+  async getPendingCount(): Promise<number> {
+    return this.redisService.llen(this.pendingKey);
+  }
 }
 
 export class TNFRouter {
@@ -53,7 +88,9 @@ export class TNFRouter {
 
     // Subscribe to ingress
     await this.redisService.subscribe(this.config.ingressChannel, (message) => {
-      this.handleIngressMessage(message.message);
+      const payload =
+        typeof message.message === 'string' ? message.message : JSON.stringify(message.message);
+      this.handleIngressMessage(payload);
     });
 
     console.log(`[Router] Listening on ${this.config.ingressChannel}`);
@@ -154,7 +191,7 @@ export class TNFRouter {
    */
   private async routeToInbox(agentId: string, envelope: TNFEnvelope): Promise<void> {
     try {
-      const inbox = new AgentInbox(agentId, this.redisService, this.eventEmitter);
+      const inbox = new RouterAgentInbox(agentId, this.redisService, this.eventEmitter);
 
       // Convert TNFEnvelope to AgentTask
       const task = {
@@ -206,7 +243,7 @@ export class TNFRouter {
     // Check inbox load for each agent
     for (const agentId of agentIds) {
       try {
-        const inbox = new AgentInbox(agentId, this.redisService, this.eventEmitter);
+        const inbox = new RouterAgentInbox(agentId, this.redisService, this.eventEmitter);
         const pendingCount = await inbox.getPendingCount();
         loadMap.set(agentId, pendingCount);
       } catch (error) {
@@ -341,7 +378,7 @@ export class TNFRouter {
 
     for (const agent of agents) {
       try {
-        const inbox = new AgentInbox(agent.id, this.redisService, this.eventEmitter);
+        const inbox = new RouterAgentInbox(agent.id, this.redisService, this.eventEmitter);
         const pendingCount = await inbox.getPendingCount();
         loadMap.set(agent.id, pendingCount);
       } catch (error) {

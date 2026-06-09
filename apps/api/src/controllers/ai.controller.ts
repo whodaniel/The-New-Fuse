@@ -8,6 +8,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
+import { assertDevLoopBudget } from '../utils/dev-loop-guard';
 
 @Controller('ai')
 export class AiController {
@@ -17,11 +18,16 @@ export class AiController {
 
   @Post('text-completion')
   async textCompletion(@Body() body: { prompt: string; systemPrompt?: string }) {
+    assertDevLoopBudget('ai.text-completion', body);
     const { prompt, systemPrompt } = body;
     const provider = await this.getPreferredProvider();
     const providerName = provider.provider.trim().toLowerCase();
 
-    const endpoint = this.resolveTextEndpoint(providerName, provider.apiEndpoint ?? undefined);
+    const endpoint = this.resolveTextEndpoint(
+      providerName,
+      provider.modelName,
+      provider.apiEndpoint ?? undefined
+    );
     const headers = this.buildProviderHeaders(providerName, provider.apiKey);
     const payload = this.buildTextPayload(providerName, provider.modelName, prompt, systemPrompt);
 
@@ -65,6 +71,7 @@ export class AiController {
 
   @Post('image-generation')
   async imageGeneration(@Body() body: { prompt: string }) {
+    assertDevLoopBudget('ai.image-generation', body);
     const provider = await this.getPreferredProvider();
     const providerName = provider.provider.trim().toLowerCase();
 
@@ -169,9 +176,17 @@ export class AiController {
       );
     }
 
-    const preferred = [...enabled].sort((a, b) => a.priority - b.priority)[0];
-    if (!preferred.apiKey || !preferred.apiKey.trim()) {
-      throw new ServiceUnavailableException('Configured LLM provider has no API key.');
+    const preferred = [...enabled]
+      .sort((a, b) => a.priority - b.priority)
+      .find((config) => this.isUsableApiKey(config.apiKey));
+    if (!preferred) {
+      const fallback = this.getEnvFallbackProvider();
+      if (fallback) {
+        this.logger.warn('Configured LLM providers have no usable API key, using env fallback');
+        return fallback;
+      }
+
+      throw new ServiceUnavailableException('Configured LLM providers have no usable API key.');
     }
 
     return preferred as {
@@ -190,21 +205,47 @@ export class AiController {
     apiEndpoint: string | null;
     priority: number;
   } | null {
-    const apiKey = process.env.OPENAI_API_KEY?.trim();
-    if (!apiKey) {
-      return null;
+    const openaiKey = process.env.OPENAI_API_KEY?.trim();
+    if (this.isUsableApiKey(openaiKey)) {
+      return {
+        provider: 'openai',
+        modelName: process.env.OPENAI_MODEL?.trim() || 'gpt-4o-mini',
+        apiKey: openaiKey,
+        apiEndpoint: process.env.OPENAI_API_BASE?.trim() || null,
+        priority: 1,
+      };
     }
 
-    return {
-      provider: 'openai',
-      modelName: process.env.OPENAI_MODEL?.trim() || 'gpt-4o-mini',
-      apiKey,
-      apiEndpoint: process.env.OPENAI_API_BASE?.trim() || null,
-      priority: 1,
-    };
+    const geminiKey = process.env.GEMINI_API_KEY?.trim() || process.env.GOOGLE_AI_API_KEY?.trim();
+    if (this.isUsableApiKey(geminiKey)) {
+      return {
+        provider: 'gemini',
+        modelName: process.env.GEMINI_MODEL?.trim() || 'gemini-2.5-flash',
+        apiKey: geminiKey,
+        apiEndpoint: process.env.GEMINI_API_BASE?.trim() || null,
+        priority: 2,
+      };
+    }
+
+    return null;
   }
 
-  private resolveTextEndpoint(provider: string, apiEndpoint?: string): string {
+  private resolveTextEndpoint(provider: string, model: string, apiEndpoint?: string): string {
+    if (provider === 'gemini' || provider === 'google') {
+      const encodedModel = encodeURIComponent(model);
+      if (apiEndpoint && apiEndpoint.trim()) {
+        const trimmed = apiEndpoint.trim();
+        if (trimmed.includes('{model}')) {
+          return trimmed.replace('{model}', encodedModel);
+        }
+        if (trimmed.includes(':generateContent')) {
+          return trimmed;
+        }
+        return `${trimmed.replace(/\/$/, '')}/v1beta/models/${encodedModel}:generateContent`;
+      }
+      return `https://generativelanguage.googleapis.com/v1beta/models/${encodedModel}:generateContent`;
+    }
+
     if (apiEndpoint && apiEndpoint.trim()) {
       return apiEndpoint.trim();
     }
@@ -234,6 +275,13 @@ export class AiController {
   }
 
   private buildProviderHeaders(provider: string, apiKey: string): Record<string, string> {
+    if (provider === 'gemini' || provider === 'google') {
+      return {
+        'content-type': 'application/json',
+        'x-goog-api-key': apiKey,
+      };
+    }
+
     if (provider === 'anthropic') {
       return {
         'content-type': 'application/json',
@@ -254,6 +302,24 @@ export class AiController {
     prompt: string,
     systemPrompt?: string
   ): Record<string, unknown> {
+    if (provider === 'gemini' || provider === 'google') {
+      const parts = [systemPrompt, prompt]
+        .filter((part): part is string => Boolean(part && part.trim()))
+        .map((text) => ({ text }));
+
+      return {
+        contents: [
+          {
+            role: 'user',
+            parts,
+          },
+        ],
+        generationConfig: {
+          maxOutputTokens: 800,
+        },
+      };
+    }
+
     if (provider === 'anthropic') {
       return {
         model,
@@ -282,6 +348,16 @@ export class AiController {
       return typeof text === 'string' ? text : null;
     }
 
+    if (provider === 'gemini' || provider === 'google') {
+      const parts = payload?.candidates?.[0]?.content?.parts;
+      if (!Array.isArray(parts)) {
+        return null;
+      }
+
+      const text = parts.map((part: any) => part?.text).filter(Boolean).join('');
+      return text || null;
+    }
+
     const text = payload?.choices?.[0]?.message?.content;
     return typeof text === 'string' ? text : null;
   }
@@ -295,6 +371,32 @@ export class AiController {
 
   private isOpenAIProvider(provider: string): boolean {
     return provider === 'openai' || provider === 'openai-codex';
+  }
+
+  private isUsableApiKey(apiKey: string | undefined | null): apiKey is string {
+    const normalized = apiKey?.trim();
+    if (!normalized) {
+      return false;
+    }
+
+    return !this.isPlaceholderApiKey(normalized);
+  }
+
+  private isPlaceholderApiKey(apiKey: string): boolean {
+    const normalized = apiKey.toLowerCase();
+    return [
+      'placeholder',
+      'changeme',
+      'change-me',
+      'dummy',
+      'example',
+      'your-api-key',
+      'your_api_key',
+      'your-openai',
+      'your_openai',
+      'sk-your',
+      'test-key',
+    ].some((token) => normalized.includes(token));
   }
 
   private tryParseJson(text: string): any {

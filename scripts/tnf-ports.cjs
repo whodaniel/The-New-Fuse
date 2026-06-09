@@ -1,0 +1,383 @@
+#!/usr/bin/env node
+/* eslint-disable no-console */
+const { execFileSync, spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const repoRoot = path.resolve(__dirname, '..');
+const LOCAL_ENV_FILES = ['.env', '.env.local', '.tnf.local.env'];
+
+const DEFAULT_PORTS = [
+  { port: 3000, service: 'relay-core/frontend', protected: false },
+  { port: 3001, service: 'api/backend', protected: false },
+  { port: 3004, service: 'backend', protected: false },
+  { port: 3005, service: 'api-gateway/ws-bridge', protected: false },
+  { port: 3006, service: 'skideancer/ws', protected: false },
+  { port: 3007, service: 'skideancer/ide', protected: false },
+  { port: 3008, service: 'skideancer websocket', protected: true },
+  { port: 5173, service: 'vite', protected: false },
+  { port: 5174, service: 'vite-alt', protected: false },
+  { port: 5555, service: 'drizzle-studio', protected: true },
+  { port: 6379, service: 'redis', protected: true },
+  { port: 5432, service: 'postgres', protected: true },
+];
+
+function parseArgs(argv) {
+  const command = argv[0] || 'help';
+  const options = {
+    json: false,
+    autoResolve: false,
+    yes: false,
+    includeProtected: false,
+    strict: false,
+    allowOccupied: [],
+    port: null,
+  };
+
+  for (let i = 1; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--json') options.json = true;
+    else if (arg === '--auto-resolve') options.autoResolve = true;
+    else if (arg === '--yes' || arg === '-y') options.yes = true;
+    else if (arg === '--include-protected') options.includeProtected = true;
+    else if (arg === '--strict') options.strict = true;
+    else if (arg === '--allow-occupied') {
+      options.allowOccupied.push(...parsePortList(argv[i + 1] || ''));
+      i += 1;
+    } else if (arg.startsWith('--allow-occupied=')) {
+      options.allowOccupied.push(...parsePortList(arg.slice('--allow-occupied='.length)));
+    }
+    else if (arg === '--port' || arg === '-p') {
+      const value = Number.parseInt(argv[i + 1], 10);
+      if (!Number.isInteger(value)) throw new Error('Missing or invalid --port value');
+      options.port = value;
+      i += 1;
+    } else if (arg.startsWith('--port=')) {
+      const value = Number.parseInt(arg.slice('--port='.length), 10);
+      if (!Number.isInteger(value)) throw new Error('Invalid --port value');
+      options.port = value;
+    } else {
+      throw new Error(`Unknown option: ${arg}`);
+    }
+  }
+
+  return { command, options };
+}
+
+function parsePortList(value) {
+  return String(value || '')
+    .split(',')
+    .map((item) => Number.parseInt(item.trim(), 10))
+    .filter(Number.isInteger);
+}
+
+function parseEnvValue(rawValue) {
+  const value = rawValue.trim();
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
+    return value.slice(1, -1);
+  }
+  return value;
+}
+
+function loadLocalEnv(rootDir) {
+  const exportedKeys = new Set(Object.keys(process.env));
+  for (const envFile of LOCAL_ENV_FILES) {
+    const envPath = path.join(rootDir, envFile);
+    if (!fs.existsSync(envPath)) continue;
+
+    for (const rawLine of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith('#')) continue;
+      const normalizedLine = line.startsWith('export ') ? line.slice('export '.length).trim() : line;
+      const separatorIndex = normalizedLine.indexOf('=');
+      if (separatorIndex <= 0) continue;
+
+      const key = normalizedLine.slice(0, separatorIndex).trim();
+      if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key) || exportedKeys.has(key)) continue;
+
+      process.env[key] = parseEnvValue(normalizedLine.slice(separatorIndex + 1));
+    }
+  }
+}
+
+loadLocalEnv(repoRoot);
+
+function parsePortEnv() {
+  const raw = process.env.TNF_PORTS || '';
+  if (!raw.trim()) return [];
+  return raw
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => {
+      const [portPart, servicePart = 'custom'] = entry.split(':');
+      const port = Number.parseInt(portPart, 10);
+      if (!Number.isInteger(port)) return null;
+      return { port, service: servicePart || 'custom', protected: false };
+    })
+    .filter(Boolean);
+}
+
+function getCatalog() {
+  const byPort = new Map();
+  for (const entry of [...DEFAULT_PORTS, ...parsePortEnv()]) {
+    byPort.set(entry.port, entry);
+  }
+  return Array.from(byPort.values()).sort((a, b) => a.port - b.port);
+}
+
+function getAllowedOccupiedPorts(options) {
+  return new Set([
+    ...parsePortList(process.env.TNF_PORTS_ALLOW_OCCUPIED || ''),
+    ...options.allowOccupied,
+  ]);
+}
+
+function run(command, args) {
+  try {
+    return execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch {
+    return '';
+  }
+}
+
+function getPidCommand(pid) {
+  const output = run('ps', ['-p', String(pid), '-o', 'comm=']);
+  return output.trim() || 'unknown';
+}
+
+function pidsFromLsof(port) {
+  const output = run('lsof', ['-nP', `-iTCP:${port}`, '-sTCP:LISTEN', '-t']);
+  return output
+    .split(/\s+/)
+    .map((value) => Number.parseInt(value, 10))
+    .filter(Number.isInteger);
+}
+
+function pidsFromSs(port) {
+  const output = run('ss', ['-ltnp', `sport = :${port}`]);
+  const pids = new Set();
+  for (const match of output.matchAll(/pid=(\d+)/g)) {
+    pids.add(Number.parseInt(match[1], 10));
+  }
+  return Array.from(pids);
+}
+
+function pidsOnPort(port) {
+  const pids = pidsFromLsof(port);
+  if (pids.length > 0) return pids;
+  return pidsFromSs(port);
+}
+
+function getRuntimeHealth(entry) {
+  if (entry.port !== 3000 && entry.port !== 3005) return null;
+
+  const raw = run('curl', ['-fsS', '--max-time', '1', `http://127.0.0.1:${entry.port}/health`]);
+  if (!raw.trim()) return null;
+
+  try {
+    const body = JSON.parse(raw);
+    if (entry.port === 3000 && body.relay === 'running') {
+      return { ok: true, service: 'relay-core', status: body.status || 'ok' };
+    }
+    if (
+      entry.port === 3000 &&
+      Object.prototype.hasOwnProperty.call(body, 'queueLength') &&
+      ['ok', 'connected', 'disconnected'].includes(String(body.status || ''))
+    ) {
+      return { ok: true, service: 'hermes/whatsapp-bridge', status: body.status };
+    }
+    if (entry.port === 3005 && body.status === 'ok') {
+      return { ok: true, service: 'api-gateway/ws-bridge', status: body.status };
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function inspectPorts() {
+  return getCatalog().map((entry) => {
+    const pids = pidsOnPort(entry.port);
+    return {
+      ...entry,
+      status: pids.length > 0 ? 'occupied' : 'clear',
+      processes: pids.map((pid) => ({ pid, command: getPidCommand(pid) })),
+      runtimeHealth: pids.length > 0 ? getRuntimeHealth(entry) : null,
+    };
+  });
+}
+
+function printTable(rows) {
+  const view = rows.map((row) => ({
+    port: row.port,
+    service: row.service,
+    status: row.status,
+    protected: row.protected ? 'yes' : 'no',
+    processes: row.processes.map((process) => `${process.pid}:${process.command}`).join(', ') || '-',
+  }));
+  console.table(view);
+}
+
+function terminatePid(pid) {
+  const term = spawnSync('kill', ['-TERM', String(pid)], { stdio: 'ignore' });
+  if (term.status !== 0) return false;
+  return true;
+}
+
+async function sleep(ms) {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function clearRows(rows, options) {
+  const targets = rows.filter((row) => {
+    if (row.status !== 'occupied') return false;
+    if (row.protected && !options.includeProtected) return false;
+    return row.processes.length > 0;
+  });
+
+  if (targets.length === 0) {
+    console.log('No eligible occupied ports to clear.');
+    return [];
+  }
+
+  if (!options.yes && !options.autoResolve) {
+    console.log('Refusing to terminate processes without --yes or --auto-resolve.');
+    return [];
+  }
+
+  const killed = [];
+  for (const row of targets) {
+    for (const process of row.processes) {
+      const ok = terminatePid(process.pid);
+      killed.push({ port: row.port, pid: process.pid, command: process.command, ok });
+    }
+  }
+  await sleep(500);
+  return killed;
+}
+
+function printUsage() {
+  console.log(`Usage: tnf ports <command> [options]
+
+Commands:
+  status                  Show configured TNF ports and current listeners
+  conflicts               Show occupied TNF ports; use --auto-resolve to clear eligible ports
+  preflight               Check whether non-protected required ports are already occupied
+  clear --port <port>     Clear one port; requires --yes
+
+Options:
+  --json                  Print JSON
+  --auto-resolve          For conflicts, terminate eligible listeners
+  --yes, -y               Confirm termination for clear
+  --include-protected     Allow protected ports such as Redis/Postgres/3008
+  --strict                Exit non-zero when preflight finds blocked ports
+  --allow-occupied <csv>  Ports allowed to be occupied during preflight
+  --port, -p <port>       Port for clear
+
+Environment:
+  TNF_PORTS="8080:custom-api,9000:custom-ws" adds local project ports.
+  TNF_PORTS_ALLOW_OCCUPIED="3005,6379" allows occupied ports during preflight.
+
+Notes:
+  Destructive operations are opt-in. Protected ports are never killed unless
+  --include-protected is also provided.`);
+}
+
+async function main() {
+  const { command, options } = parseArgs(process.argv.slice(2));
+  const rows = inspectPorts();
+
+  if (command === 'help' || command === '--help' || command === '-h') {
+    printUsage();
+    return;
+  }
+
+  if (command === 'status') {
+    if (options.json) console.log(JSON.stringify({ ports: rows }, null, 2));
+    else printTable(rows);
+    return;
+  }
+
+  if (command === 'conflicts') {
+    const conflicts = rows.filter((row) => row.status === 'occupied');
+    if (options.autoResolve) {
+      const killed = await clearRows(conflicts, options);
+      const after = inspectPorts().filter((row) => row.status === 'occupied');
+      if (options.json) console.log(JSON.stringify({ before: conflicts, killed, after }, null, 2));
+      else {
+        console.log('Termination attempts:');
+        console.table(killed);
+        console.log('Remaining occupied ports:');
+        printTable(after);
+      }
+      return;
+    }
+    if (options.json) console.log(JSON.stringify({ conflicts }, null, 2));
+    else {
+      if (conflicts.length === 0) console.log('No occupied TNF ports detected.');
+      else printTable(conflicts);
+    }
+    return;
+  }
+
+  if (command === 'preflight') {
+    const allowed = getAllowedOccupiedPorts(options);
+    const blocked = rows.filter((row) => {
+      if (row.status !== 'occupied') return false;
+      if (row.protected && !options.includeProtected) return false;
+      if (row.runtimeHealth?.ok) return false;
+      return !allowed.has(row.port);
+    });
+    const healthyOccupied = rows.filter((row) => row.status === 'occupied' && row.runtimeHealth?.ok);
+    const payload = {
+      ok: blocked.length === 0,
+      blocked,
+      allowedOccupiedPorts: Array.from(allowed).sort((a, b) => a - b),
+      healthyOccupied,
+    };
+    if (options.json) {
+      console.log(JSON.stringify(payload, null, 2));
+    } else if (blocked.length === 0) {
+      console.log('Port preflight OK.');
+    } else {
+      console.log('Port preflight found occupied required ports:');
+      printTable(blocked);
+      console.log('Set TNF_PORTS_ALLOW_OCCUPIED or pass --allow-occupied for intentional listeners.');
+    }
+    if (!options.json && healthyOccupied.length > 0) {
+      console.log('Healthy occupied TNF runtimes were detected and allowed:');
+      printTable(healthyOccupied);
+    }
+    if (options.strict && blocked.length > 0) {
+      process.exit(1);
+    }
+    return;
+  }
+
+  if (command === 'clear') {
+    if (!options.port) throw new Error('clear requires --port <port>');
+    const target = rows.find((row) => row.port === options.port) || {
+      port: options.port,
+      service: 'custom',
+      protected: false,
+      status: pidsOnPort(options.port).length > 0 ? 'occupied' : 'clear',
+      processes: pidsOnPort(options.port).map((pid) => ({ pid, command: getPidCommand(pid) })),
+    };
+    const killed = await clearRows([target], options);
+    if (options.json) console.log(JSON.stringify({ target, killed }, null, 2));
+    else console.table(killed);
+    return;
+  }
+
+  throw new Error(`Unknown command: ${command}`);
+}
+
+main().catch((error) => {
+  console.error(`tnf ports failed: ${error.message}`);
+  process.exit(1);
+});

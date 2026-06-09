@@ -1,4 +1,6 @@
 ./codebase_tracker.json
+./test_sim.js
+./.gemini/settings.json
 ./tools/config-files/mcp_config.json
 ./tools/config-files/enhanced_mcp_config.json
 ./stripe.json
@@ -96,5 +98,3 @@
 ./node_modules/jest-runtime/node_modules/@types/node/inspector/promises.d.ts
 ./node_modules/jest-runtime/node_modules/@types/node/worker_threads.d.ts
 ./node_modules/jest-runtime/node_modules/@types/node/timers/promises.d.ts
-./node_modules/jest-runtime/node_modules/@types/node/console.d.ts
-./node_modules/jest-runtime/node_modules/@types/node/async_hooks.d.ts

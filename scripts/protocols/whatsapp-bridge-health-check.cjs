@@ -92,11 +92,20 @@ function listSessionArtifacts(sessionPath) {
   }
 }
 
-function tailFile(filePath, lineCount = 12) {
+function tailFile(filePath, lineCount = 12, maxBytes = 64 * 1024) {
   try {
     if (!fs.existsSync(filePath)) return [];
-    const content = fs.readFileSync(filePath, 'utf8');
-    return content.split(/\r?\n/).filter(Boolean).slice(-lineCount);
+    const st = fs.statSync(filePath);
+    const bytesToRead = Math.min(st.size, maxBytes);
+    const fd = fs.openSync(filePath, 'r');
+    try {
+      const buffer = Buffer.alloc(bytesToRead);
+      fs.readSync(fd, buffer, 0, bytesToRead, Math.max(0, st.size - bytesToRead));
+      const content = buffer.toString('utf8');
+      return content.split(/\r?\n/).filter(Boolean).slice(-lineCount);
+    } finally {
+      fs.closeSync(fd);
+    }
   } catch (error) {
     return [`<tail unavailable: ${error.message}>`];
   }
@@ -164,6 +173,12 @@ async function run() {
   };
 
   const ok = checks.httpReachable && (!args.expectConnected || checks.connected);
+  const lifecycle =
+    checks.connected ? 'connected' :
+      checks.httpReachable ? 'reachable-not-connected' :
+        checks.processPresent && checks.sessionPresent ? 'pairing-or-startup-pending' :
+          checks.sessionPresent ? 'session-present-bridge-offline' :
+            'not-configured';
 
   const result = {
     bridge: {
@@ -187,6 +202,7 @@ async function run() {
       processMatches,
     },
     checks,
+    lifecycle,
     ok,
     startedAt,
     repoRoot,
@@ -200,6 +216,7 @@ async function run() {
     console.log(`Bridge: http://${args.host}:${args.port}`);
     console.log(`HTTP reachable: ${checks.httpReachable ? 'yes' : 'no'}`);
     console.log(`Connected: ${checks.connected ? 'yes' : 'no'} (status=${status})`);
+    console.log(`Lifecycle: ${lifecycle}`);
     console.log(`Queue length: ${queueLength}`);
     console.log(`Uptime: ${uptime}`);
     console.log(`Session path present: ${checks.sessionPresent ? 'yes' : 'no'} (${args.sessionPath})`);

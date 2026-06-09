@@ -1,0 +1,30 @@
+{
+  "action_id": "act-5662ce1711582870",
+  "title": "[AI5] Launch Agentars Web-Based Interface",
+  "state": "blocked",
+  "updatedAt": "2026-06-09T10:54:07Z",
+  "summary": "No first-party Agentars web interface or launchable Agentars app was found in the TNF workspace. Search results only found generic avatar references, Agentverse concept documentation, and AgentArena smoke-test URLs.",
+  "blocker": {
+    "type": "no-first-party-agentars-surface",
+    "required_inputs": [
+      "Agentars application path or repository",
+      "launch command or deployment target"
+    ]
+  },
+  "checks": [
+    {
+      "command": "rg -n \"agentars|agentar|agent avatar|web-based interface|web based interface|Agentars\" -S apps packages src scripts docs --glob '!**/node_modules/**' --glob '!apps/external/**'",
+      "result": "passed",
+      "notes": "No Agentars implementation found."
+    },
+    {
+      "command": "rg --files apps packages src scripts docs | rg -i 'agentar|avatar|interface|agent.*web'",
+      "result": "passed",
+      "notes": "No launchable Agentars app path found."
+    }
+  ],
+  "next_steps": [
+    "Provide the concrete Agentars repo/app path if this directive refers to an external project.",
+    "Otherwise reclassify this AI5 extraction as non-dispatchable for TNF."
+  ]
+}

@@ -9,6 +9,8 @@ import {
 } from '@google/generative-ai';
 import { LLMProvider } from '../LLMProvider.js';
 import { LLMMessage, LLMResponse, LLMConfig } from '@the-new-fuse/types';
+import { assertDevLoopBudget } from '../../utils/dev-loop-guard.js';
+import { loadRootEnv } from '../../utils/root-env.js';
 
 export interface GeminiConfig extends LLMConfig {
   apiKey: string;
@@ -42,7 +44,9 @@ export class GeminiProvider extends LLMProvider {
 
   constructor(private readonly config: GeminiConfig) {
     super();
-    this.client = new GoogleGenerativeAI(config.apiKey);
+    loadRootEnv();
+    const apiKey = config.apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || '';
+    this.client = new GoogleGenerativeAI(apiKey);
     this.model = this.client.getGenerativeModel({
       model: config.modelName || 'gemini-2.0-flash-exp',
       safetySettings: config.safetySettings || this.getDefaultSafetySettings(),
@@ -53,6 +57,7 @@ export class GeminiProvider extends LLMProvider {
    * Generate completion from prompt
    */
   async generate(prompt: string): Promise<string> {
+    assertDevLoopBudget('core.gemini.generate', this.config);
     try {
       const result = await this.model.generateContent({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -76,6 +81,7 @@ export class GeminiProvider extends LLMProvider {
    * Chat completion with message history
    */
   async chat(messages: LLMMessage[], config?: Partial<LLMConfig>): Promise<LLMResponse> {
+    assertDevLoopBudget('core.gemini.chat', config);
     try {
       const mergedConfig = { ...this.config, ...config };
 
@@ -126,6 +132,7 @@ export class GeminiProvider extends LLMProvider {
     messages: LLMMessage[],
     config?: Partial<LLMConfig>,
   ): AsyncGenerator<string, void, unknown> {
+    assertDevLoopBudget('core.gemini.streamChat', config);
     try {
       const mergedConfig = { ...this.config, ...config };
       const geminiMessages = this.convertMessages(messages);

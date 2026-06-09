@@ -33,7 +33,7 @@ presented to AI agents working on TNF. The sequence is critical because:
 │     ├── Sets: What exists vs what's stubbed                   │
 │     └── Time: ~3 min read                                     │
 │                                                                │
-│  3. .agent/handoff_notes.txt (if exists)                      │
+│  3. docs/protocols/reports/SESSION_HANDOFF_LATEST.json (if exists) │
 │     ├── Purpose: Previous session context                     │
 │     ├── Sets: Continuity from last session                    │
 │     └── Time: ~1 min read                                     │
@@ -262,7 +262,7 @@ Brief description of what needs to be built/changed.
 
 ```
 1. "Read HANDOFF_PROMPT.md to understand methodology"
-2. "Read handoff_notes.txt for previous context"
+2. "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.json for previous context"
 3. "Summarize: What is the current state?"
 4. "What are the priority next steps?"
 ```
@@ -283,7 +283,7 @@ Brief description of what needs to be built/changed.
 1. "Summarize what was accomplished"
 2. "What did you learn about the codebase?"
 3. "What remains to be done?"
-4. "Update handoff_notes.txt with this context"
+4. "Update docs/protocols/reports/SESSION_HANDOFF_LATEST.json with this context"
 ```
 
 ### Chain 4: Self-Improvement Cycle
@@ -341,7 +341,7 @@ handoff before ending
 - [ ] Summarize what was accomplished
 - [ ] Note any unexpected learnings
 - [ ] Document what remains
-- [ ] Update handoff_notes.txt
+- [ ] Update docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - [ ] Create/update PRD if needed
 
 ---
@@ -352,7 +352,7 @@ handoff before ending
 | --------------------- | ----------------------------------------------------------------- |
 | System Architecture   | `docs/TNF_AUTONOMOUS_SYSTEMS_ANALYSIS.md`                         |
 | Implementation Status | `docs/VERIFIED_CODEBASE_AUDIT.md`                                 |
-| Handoff Notes         | `.agent/handoff_notes.txt`                                        |
+| Handoff Notes         | `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`              |
 | Audit Methodology     | `.agent/HANDOFF_PROMPT.md`                                        |
 | Workflows             | `.agent/workflows/*.md`                                           |
 | Claude Commands       | `.claude/commands/*.md`                                           |

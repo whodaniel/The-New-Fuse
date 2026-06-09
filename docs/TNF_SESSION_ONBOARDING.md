@@ -6,14 +6,23 @@ sessions.
 ## One-Command Bootstrap
 
 ```bash
-pnpm run tnf:onboard
+tnf onboard
 ```
 
 If baseline frontload files/config stubs are missing, self-heal in one pass:
 
 ```bash
-./tnf onboard --repair
+tnf onboard --repair
 ```
+
+`tnf onboard` prints the exact prompt to paste into a raw AI CLI session:
+
+```text
+Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
+```
+
+The prompt uses repository-relative paths. Start raw AI CLIs from the TNF repo
+root or run `tnf onboard` first.
 
 When TNF is installed via `scripts/install-tnf-cli.sh` (including
 `pnpm run tnf:install` and `pnpm run tnf:install:local`), this onboarding step
@@ -108,6 +117,28 @@ pnpm run tnf:start -- gemini
 3. `tnf:doctor`
 4. Launches selected AI CLI with `TNF_MCP_CONFIG_PATH` and `MCP_CONFIG_PATH`
    exported
+
+The native `tnf boot` and `tnf tui` entrypoints also run the Turn Zero
+onboarding surface before starting their runtime. `tnf boot` performs that
+read-only onboarding before the Super Admin gate so a new operator still sees
+the correct prompt and canonical state even if boot authentication is not yet
+configured.
+
+## Local Runtime Profile
+
+Personal paths, local WebSocket endpoints, and known occupied development ports
+are valid operator assets when they are stored in the local runtime profile
+instead of committed source:
+
+```bash
+touch .tnf.local.env
+./tnf ports status
+./tnf ports preflight
+```
+
+Use `.tnf.local.env` for `TNF_ROOT`, `TNF_RELAY_URL`, custom `TNF_PORTS`, and
+`TNF_PORTS_ALLOW_OCCUPIED`. See `docs/reference/local-runtime-profile.md` and
+`docs/PORT_MANAGEMENT.md`.
 
 ## Orchestration Runtime (Web/Cloud-First)
 

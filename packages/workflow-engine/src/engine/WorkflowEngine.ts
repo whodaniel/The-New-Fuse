@@ -20,8 +20,11 @@ import {
   WorkflowExecution,
   WorkflowExecutionStatus,
   WorkflowNode,
+  WorkflowNodeType,
+  NodeExecutionStatus,
 } from '../types/WorkflowTypes.js';
 import { getErrorMessage } from '../utils/errorUtils.js';
+import { assertDevLoopBudget } from '../utils/dev-loop-guard.js';
 
 // Import actual types from relay-core
 import { MasterAgentRegistry } from '@the-new-fuse/relay-core';
@@ -153,9 +156,17 @@ export class UnifiedWorkflowEngine extends EventEmitter {
             });
             this.logger.info(`🔄 Re-queued interrupted execution: ${dbExecution.id}`);
           } else {
-            this.logger.warn(
-              `Cannot recover execution ${dbExecution.id}: WorkflowQueue not initialized.`
-            );
+            const execution = await this.loadExecution(dbExecution.id);
+            if (!execution) {
+              this.logger.warn(`Cannot recover execution ${dbExecution.id}: execution not found.`);
+              continue;
+            }
+
+            this.activeExecutions.set(execution.id, execution);
+            void this.runExecutionInProcess(execution).catch(async (error) => {
+              await this.failExecution(execution, error);
+            });
+            this.logger.info(`🔄 Resuming interrupted execution in-process: ${dbExecution.id}`);
           }
         } catch (err) {
           this.logger.error(
@@ -177,10 +188,12 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     triggeredBy: string = 'system',
     triggerType: string = 'manual'
   ): Promise<string> {
+    const devLoopIteration = assertDevLoopBudget(`workflow.${workflowId}`, input);
     return telemetry.startActiveSpan('executeWorkflow', async (span) => {
       span.setAttribute('workflowId', workflowId);
       span.setAttribute('triggeredBy', triggeredBy);
       span.setAttribute('triggerType', triggerType);
+      span.setAttribute('devLoopIteration', devLoopIteration);
 
       try {
         this.logger.info(`🚀 Starting workflow execution: ${workflowId}`);
@@ -194,10 +207,15 @@ export class UnifiedWorkflowEngine extends EventEmitter {
           throw new Error('Maximum concurrent executions reached');
         }
 
-        const execution = await this.createExecution(workflow, input, triggeredBy, triggerType);
+        const execution = await this.createExecution(
+          workflow,
+          { ...input, devLoopIteration },
+          triggeredBy,
+          triggerType
+        );
         span.setAttribute('executionId', execution.id);
 
-        await this.startExecution(execution);
+        await this.startExecution(execution, workflow);
 
         this.metrics.totalExecutions++;
         this.logger.info(`✅ Workflow execution started: ${execution.id}`);
@@ -317,7 +335,10 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     return execution;
   }
 
-  private async startExecution(execution: WorkflowExecution): Promise<void> {
+  private async startExecution(
+    execution: WorkflowExecution,
+    workflow?: UnifiedWorkflow
+  ): Promise<void> {
     this.activeExecutions.set(execution.id, execution);
 
     if (this.workflowQueue) {
@@ -326,7 +347,10 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         workflowId: execution.workflowId,
       });
     } else {
-      this.logger.warn('WorkflowQueue not initialized. Execution will not start automatically.');
+      this.logger.info('WorkflowQueue not initialized. Running execution in-process.');
+      void this.runExecutionInProcess(execution, workflow).catch(async (error) => {
+        await this.failExecution(execution, error);
+      });
     }
 
     this.emitWorkflowEvent({
@@ -343,11 +367,374 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     }
   }
 
+  private async runExecutionInProcess(
+    execution: WorkflowExecution,
+    workflow?: UnifiedWorkflow
+  ): Promise<void> {
+    const activeWorkflow = workflow || (await this.loadWorkflow(execution.workflowId));
+    if (!activeWorkflow) {
+      throw new Error(`Workflow not found: ${execution.workflowId}`);
+    }
+
+    execution.status = WorkflowExecutionStatus.RUNNING;
+    this.appendExecutionLog(execution, 'info', 'Workflow execution started');
+
+    const pendingNodes = this.getStartNodes(activeWorkflow);
+    if (pendingNodes.length === 0) {
+      throw new Error(`Workflow ${activeWorkflow.id} has no executable start nodes`);
+    }
+
+    const completedNodeIds = new Set(
+      execution.nodeExecutions
+        .filter((nodeExecution) => nodeExecution.status === NodeExecutionStatus.COMPLETED)
+        .map((nodeExecution) => nodeExecution.nodeId)
+    );
+    const queuedNodeIds = new Set(pendingNodes.map((node) => node.id));
+    const visitCounts = new Map<string, number>();
+    const maxSteps = this.getMaxSequencerSteps(activeWorkflow);
+    let steps = 0;
+
+    while (pendingNodes.length > 0) {
+      if (!this.isRunning || execution.status !== WorkflowExecutionStatus.RUNNING) {
+        return;
+      }
+
+      if (steps >= maxSteps) {
+        throw new Error(`Workflow ${activeWorkflow.id} exceeded max sequencer steps (${maxSteps})`);
+      }
+
+      const node = pendingNodes.shift()!;
+      queuedNodeIds.delete(node.id);
+
+      if (completedNodeIds.has(node.id) && !this.nodeAllowsRepeat(node)) {
+        for (const nextNode of this.findNextNodes(node, activeWorkflow, execution.context)) {
+          if (!completedNodeIds.has(nextNode.id) && !queuedNodeIds.has(nextNode.id)) {
+            pendingNodes.push(nextNode);
+            queuedNodeIds.add(nextNode.id);
+          }
+        }
+        continue;
+      }
+
+      const visitCount = (visitCounts.get(node.id) || 0) + 1;
+      visitCounts.set(node.id, visitCount);
+      if (visitCount > this.getNodeMaxVisits(node)) {
+        this.recordSkippedNode(execution, node, 'Node max visit count reached');
+        continue;
+      }
+
+      steps++;
+      const nodeExecution = await this.executeNodeInSequence(node, execution);
+      execution.nodeExecutions.push(nodeExecution);
+
+      if (nodeExecution.status === NodeExecutionStatus.COMPLETED) {
+        completedNodeIds.add(node.id);
+        execution.statistics.completedNodes++;
+        const contextOutput = this.createSerializableNodeOutput(node, nodeExecution.output);
+        nodeExecution.output = contextOutput;
+        execution.context.temporaryData[node.id] = contextOutput;
+        if (node.type !== WorkflowNodeType.END) {
+          execution.context.variables[node.id] = contextOutput;
+          execution.context.variables[`${node.id}Output`] = contextOutput;
+        }
+
+        this.emitWorkflowEvent({
+          id: `event_${Date.now()}_${this.generateSecureId()}`,
+          type: WorkflowEventType.NODE_COMPLETED,
+          workflowId: execution.workflowId,
+          executionId: execution.id,
+          nodeId: node.id,
+          timestamp: new Date(),
+          data: {
+            duration: nodeExecution.duration,
+            output: nodeExecution.output,
+          },
+        });
+
+        await this.persistExecutionProgress(execution);
+
+        for (const nextNode of this.findNextNodes(node, activeWorkflow, execution.context)) {
+          if (
+            (this.nodeAllowsRepeat(nextNode) || !completedNodeIds.has(nextNode.id)) &&
+            !queuedNodeIds.has(nextNode.id)
+          ) {
+            pendingNodes.push(nextNode);
+            queuedNodeIds.add(nextNode.id);
+          }
+        }
+      } else if (this.shouldContinueAfterNodeError(activeWorkflow)) {
+        execution.statistics.failedNodes++;
+        await this.persistExecutionProgress(execution);
+      } else {
+        execution.statistics.failedNodes++;
+        execution.error = nodeExecution.error;
+        execution.status = WorkflowExecutionStatus.FAILED;
+        await this.finalizeExecution(execution);
+        return;
+      }
+    }
+
+    execution.status = WorkflowExecutionStatus.COMPLETED;
+    execution.completedAt = new Date();
+    execution.duration = execution.completedAt.getTime() - execution.startedAt.getTime();
+    execution.statistics.totalDuration = execution.duration;
+    execution.statistics.averageNodeDuration =
+      execution.statistics.completedNodes > 0
+        ? execution.statistics.totalDuration / execution.statistics.completedNodes
+        : 0;
+    execution.output = {
+      variables: execution.context.variables,
+      temporaryData: execution.context.temporaryData,
+      completedNodes: execution.statistics.completedNodes,
+      failedNodes: execution.statistics.failedNodes,
+      skippedNodes: execution.statistics.skippedNodes,
+    };
+    this.appendExecutionLog(execution, 'info', 'Workflow execution completed');
+
+    await this.finalizeExecution(execution);
+  }
+
+  private getStartNodes(workflow: UnifiedWorkflow): WorkflowNode[] {
+    const startNodes = workflow.definition.nodes.filter(
+      (node) => node.type === WorkflowNodeType.START
+    );
+    if (startNodes.length > 0) {
+      return startNodes;
+    }
+
+    const targetNodeIds = new Set(
+      workflow.definition.connections.map((connection) => connection.targetNodeId)
+    );
+    return workflow.definition.nodes.filter((node) => !targetNodeIds.has(node.id));
+  }
+
+  private getMaxSequencerSteps(workflow: UnifiedWorkflow): number {
+    const configuredMax = (workflow.definition.settings as any)?.maxSequencerSteps;
+    if (typeof configuredMax === 'number' && configuredMax > 0) {
+      return configuredMax;
+    }
+
+    return Math.max(workflow.definition.nodes.length * 10, 100);
+  }
+
+  private getNodeMaxVisits(node: WorkflowNode): number {
+    const configuredMax = node.config?.maxVisits;
+    return typeof configuredMax === 'number' && configuredMax > 0 ? configuredMax : 1;
+  }
+
+  private nodeAllowsRepeat(node: WorkflowNode): boolean {
+    return node.config?.allowRepeat === true || node.type === WorkflowNodeType.LOOP;
+  }
+
+  private async executeNodeInSequence(
+    node: WorkflowNode,
+    execution: WorkflowExecution
+  ): Promise<NodeExecution> {
+    const startedAt = new Date();
+    this.appendExecutionLog(execution, 'info', `Executing node: ${node.name}`, node.id);
+
+    this.emitWorkflowEvent({
+      id: `event_${Date.now()}_${this.generateSecureId()}`,
+      type: WorkflowEventType.NODE_STARTED,
+      workflowId: execution.workflowId,
+      executionId: execution.id,
+      nodeId: node.id,
+      timestamp: startedAt,
+      data: {
+        nodeType: node.type,
+        nodeName: node.name,
+      },
+    });
+
+    try {
+      const output = await this.executor.executeStep(node, execution.context, execution);
+      const completedAt = new Date();
+      return {
+        id: `node_exec_${Date.now()}_${this.generateSecureId()}`,
+        nodeId: node.id,
+        status: NodeExecutionStatus.COMPLETED,
+        input: this.extractNodeExecutionInput(node, execution.context),
+        output,
+        startedAt,
+        completedAt,
+        duration: completedAt.getTime() - startedAt.getTime(),
+        retryCount: 0,
+        metadata: {
+          nodeType: node.type,
+          nodeName: node.name,
+        },
+      };
+    } catch (error) {
+      const completedAt = new Date();
+      const executionError = {
+        code: 'NODE_EXECUTION_FAILED',
+        message: getErrorMessage(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        nodeId: node.id,
+        timestamp: completedAt,
+        recoverable: false,
+        metadata: {},
+      };
+
+      this.appendExecutionLog(
+        execution,
+        'error',
+        `Node execution failed: ${getErrorMessage(error)}`,
+        node.id
+      );
+      this.emitWorkflowEvent({
+        id: `event_${Date.now()}_${this.generateSecureId()}`,
+        type: WorkflowEventType.NODE_FAILED,
+        workflowId: execution.workflowId,
+        executionId: execution.id,
+        nodeId: node.id,
+        timestamp: completedAt,
+        data: {
+          error: executionError,
+        },
+      });
+
+      return {
+        id: `node_exec_${Date.now()}_${this.generateSecureId()}`,
+        nodeId: node.id,
+        status: NodeExecutionStatus.FAILED,
+        input: this.extractNodeExecutionInput(node, execution.context),
+        error: executionError,
+        startedAt,
+        completedAt,
+        duration: completedAt.getTime() - startedAt.getTime(),
+        retryCount: 0,
+        metadata: {
+          nodeType: node.type,
+          nodeName: node.name,
+        },
+      };
+    }
+  }
+
+  private extractNodeExecutionInput(
+    node: WorkflowNode,
+    context: ExecutionContext
+  ): Record<string, any> {
+    if (!Array.isArray(node.inputs) || node.inputs.length === 0) {
+      return {};
+    }
+
+    return node.inputs.reduce<Record<string, any>>((input, nodeInput) => {
+      if (context.variables[nodeInput.name] !== undefined) {
+        input[nodeInput.name] = context.variables[nodeInput.name];
+      } else if (nodeInput.defaultValue !== undefined) {
+        input[nodeInput.name] = nodeInput.defaultValue;
+      }
+      return input;
+    }, {});
+  }
+
+  private createSerializableNodeOutput(node: WorkflowNode, output: any): any {
+    if (node.type === WorkflowNodeType.END && output && typeof output === 'object') {
+      return {
+        ...output,
+        finalOutput: this.cloneSerializable(output.finalOutput || {}),
+      };
+    }
+
+    return this.cloneSerializable(output);
+  }
+
+  private cloneSerializable(value: any): any {
+    if (value === undefined || value === null) {
+      return value;
+    }
+
+    try {
+      return JSON.parse(JSON.stringify(value));
+    } catch {
+      return {
+        unserializable: true,
+        type: typeof value,
+        summary: String(value),
+      };
+    }
+  }
+
+  private recordSkippedNode(execution: WorkflowExecution, node: WorkflowNode, reason: string): void {
+    const timestamp = new Date();
+    execution.nodeExecutions.push({
+      id: `node_exec_${Date.now()}_${this.generateSecureId()}`,
+      nodeId: node.id,
+      status: NodeExecutionStatus.SKIPPED,
+      startedAt: timestamp,
+      completedAt: timestamp,
+      duration: 0,
+      retryCount: 0,
+      metadata: {
+        nodeType: node.type,
+        nodeName: node.name,
+        reason,
+      },
+    });
+    execution.statistics.skippedNodes++;
+    this.appendExecutionLog(execution, 'debug', `Skipped node: ${reason}`, node.id);
+  }
+
+  private shouldContinueAfterNodeError(workflow: UnifiedWorkflow): boolean {
+    const onError = workflow.definition.settings?.errorHandling?.onError;
+    return onError === 'continue' || onError === 'skip';
+  }
+
+  private async persistExecutionProgress(execution: WorkflowExecution): Promise<void> {
+    await this.drizzle.workflowExecution.update({
+      where: { id: execution.id },
+      data: {
+        status: execution.status,
+        nodeExecutions: execution.nodeExecutions,
+        context: this.serializeContext(execution.context),
+        statistics: execution.statistics,
+        logs: execution.logs,
+        metadata: execution.metadata,
+      },
+    });
+  }
+
+  private appendExecutionLog(
+    execution: WorkflowExecution,
+    level: 'debug' | 'info' | 'warn' | 'error',
+    message: string,
+    nodeId?: string,
+    metadata: Record<string, any> = {}
+  ): void {
+    execution.logs.push({
+      id: `log_${Date.now()}_${this.generateSecureId()}`,
+      timestamp: new Date(),
+      level,
+      message,
+      nodeId,
+      metadata,
+    });
+  }
+
+  private async failExecution(execution: WorkflowExecution, error: unknown): Promise<void> {
+    execution.status = WorkflowExecutionStatus.FAILED;
+    execution.completedAt = new Date();
+    execution.duration = execution.completedAt.getTime() - execution.startedAt.getTime();
+    execution.error = {
+      code: 'WORKFLOW_EXECUTION_FAILED',
+      message: getErrorMessage(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: execution.completedAt,
+      recoverable: false,
+      metadata: {},
+    };
+    this.appendExecutionLog(execution, 'error', `Workflow execution failed: ${getErrorMessage(error)}`);
+    await this.finalizeExecution(execution);
+  }
+
   public stop(): void {
     this.isRunning = false;
   }
 
   public async executeNode(node: WorkflowNode, context: ExecutionContext): Promise<any> {
+    assertDevLoopBudget(`workflow-node.${node.type}`, context);
     return telemetry.startActiveSpan('executeNode', async (span) => {
       span.setAttribute('nodeId', node.id);
       span.setAttribute('nodeType', node.type);
@@ -398,6 +785,10 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     const nextNodes: WorkflowNode[] = [];
 
     for (const connection of connections) {
+      if (!this.connectionMatchesSelectedOutput(currentNode, connection, context)) {
+        continue;
+      }
+
       if (connection.condition) {
         try {
           const conditionResult = this.evaluateExpression(connection.condition, context.variables);
@@ -415,6 +806,25 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     }
 
     return nextNodes;
+  }
+
+  private connectionMatchesSelectedOutput(
+    currentNode: WorkflowNode,
+    connection: { sourceOutputId?: string; sourceHandle?: string },
+    context: ExecutionContext
+  ): boolean {
+    if (currentNode.type !== WorkflowNodeType.CONDITION) {
+      return true;
+    }
+
+    const nodeOutput =
+      context.temporaryData[currentNode.id] || context.variables[`${currentNode.id}Output`];
+    const selectedOutput = nodeOutput?.selectedOutput;
+    if (typeof selectedOutput !== 'string' || selectedOutput.length === 0) {
+      return true;
+    }
+
+    return connection.sourceOutputId === selectedOutput || connection.sourceHandle === selectedOutput;
   }
 
   public async finalizeExecution(execution: WorkflowExecution): Promise<void> {
@@ -616,7 +1026,10 @@ export class UnifiedWorkflowEngine extends EventEmitter {
   async updateExecutionState(executionId: string, context: any): Promise<void> {
     const execution = this.activeExecutions.get(executionId);
     if (execution) {
-      (execution.context as any).variables = { ...execution.variables, ...context.variables };
+      (execution.context as any).variables = {
+        ...execution.context.variables,
+        ...(context.variables || {}),
+      };
     }
   }
 

@@ -1,5 +1,12 @@
 // Core types and interfaces
 export type * from './types.js';
+export {
+  A2AMessageType,
+  A2APriority,
+  AgentStatus,
+  AgentType,
+  LoadBalancingStrategy,
+} from './types.js';
 
 // Services and adapters
 export { A2AService } from './a2a.service.js';

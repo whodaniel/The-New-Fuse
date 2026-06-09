@@ -3,6 +3,8 @@
  */
 
 import { TNFRouter } from './tnf-router.js';
+import { ConfigService } from '@nestjs/config';
+import { RedisConfig, UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 // Load env vars
 const REDIS_URL =
@@ -17,7 +19,14 @@ async function main() {
   console.log('🚀 Starting TNF Orchestrator Router...');
   console.log(`Connecting to Redis at ${REDIS_URL}`);
 
-  const router = new TNFRouter({
+  process.env.REDIS_URL = REDIS_URL;
+
+  const configService = new ConfigService({ REDIS_URL });
+  const redisConfig = new RedisConfig(configService);
+  const redisService = new UnifiedRedisService(redisConfig);
+  await redisService.onModuleInit();
+
+  const router = new TNFRouter(redisService, {
     redisUrl: REDIS_URL,
   });
 
@@ -29,6 +38,7 @@ async function main() {
   process.on('SIGINT', async () => {
     console.log('\nStopping router...');
     await router.stop();
+    await redisService.onModuleDestroy();
     console.log('Router stopped');
     process.exit(0);
   });

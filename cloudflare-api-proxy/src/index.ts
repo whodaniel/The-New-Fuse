@@ -16,29 +16,17 @@ export default {
       });
     }
 
-    // AUTH FIX: Rewrite /api/auth/* → /api/v1/auth/*
-    // The Cloud Run gateway uses NestJS URI versioning (default v1),
-    // so all routes are at /api/v1/auth/*. Clients calling /api/auth/* get 404.
-    // This rewrite ensures unversioned auth paths reach the correct versioned routes.
-    if (url.pathname.startsWith('/api/auth/')) {
-      url.pathname = url.pathname.replace('/api/auth/', '/api/v1/auth/');
-    }
-    // Also handle /api/auth (no trailing slash) → /api/v1/auth
-    if (url.pathname === '/api/auth') {
-      url.pathname = '/api/v1/auth';
+    // The public API now proxies to the core API server, whose routes are
+    // mounted at /api/* without URI versioning. Preserve unversioned client
+    // paths and normalize legacy /api/v1/* or /v1/* callers back to /api/*.
+    if (url.pathname.startsWith('/api/v1/')) {
+      url.pathname = url.pathname.replace('/api/v1/', '/api/');
+    } else if (url.pathname === '/api/v1') {
+      url.pathname = '/api';
     }
 
-    // General back-compat: rewrite /api/{resource}/* → /api/v1/{resource}/*
-    // for ALL unversioned API paths (agents, chat, workflows, etc.)
-    // Skips paths already containing a version prefix (/api/v1/*, /api/v2/*)
-    const unversionedMatch = url.pathname.match(/^\/api\/(?!v\d+|health|docs)([^/?#]+)([/?#].*)?$/);
-    if (unversionedMatch) {
-      url.pathname = `/api/v1/${unversionedMatch[1]}${unversionedMatch[2] || ''}`;
-    }
-
-    // Back-compat: rewrite /v1/* → /api/v1/*
     if (url.pathname.startsWith('/v1/') || url.pathname === '/v1') {
-      url.pathname = `/api${url.pathname}`;
+      url.pathname = url.pathname.replace(/^\/v1/, '/api');
     }
 
     // Construct the target URL on GCP Cloud Run

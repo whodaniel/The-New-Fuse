@@ -1,34 +1,28 @@
 # TNF Self-Improvement Scorecard
 
-- Generated: 2026-03-09T11:18:37.490Z
+- Generated: 2026-06-03T09:17:24.831Z
 - Overall: FAIL
 - Required audits present: yes
 
 ## Live Link Crawl
-
-- checked: 40
-- broken: 10
-- semantic broken: 10
+- checked: 93
+- broken: 9
+- semantic broken: 5
 - passed: false
 
 ## Semantic Route Audit
-
-- routes: 190
+- routes: 224
 - hard broken: 0
 - network broken: 0
-- same as root: 0
-- duplicate groups: 14
-- passed: true
+- same as root: 116
+- duplicate groups: 3
+- passed: false
 
 ## Auth Path Audit
-
 - checks: 4
-- failed checks: 0
-- passed: true
+- failed checks: 3
+- passed: false
 
 ## Notes
-
-- This scorecard is produced by
-  scripts/ci/generate-self-improvement-scorecard.mjs.
-- Failures should trigger immediate route/auth remediation before release
-  promotion.
+- This scorecard is produced by scripts/ci/generate-self-improvement-scorecard.mjs.
+- Failures should trigger immediate route/auth remediation before release promotion.

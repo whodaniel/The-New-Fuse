@@ -1,0 +1,20 @@
+{
+  "action_id": "act-9a235dc563d3b663",
+  "title": "[AI5] Reduce Workflow Flowstep Overhead from Incomplete EHR Queries",
+  "state": "verified",
+  "verified_at": "2026-06-09T09:27:13Z",
+  "summary": "Added generic incomplete-query handling to the workflow-engine database query node. Query nodes can now apply default values, check required fields, expose completeness metadata, optionally fail on incompleteness, and suppress follow-up requirements unless explicitly enabled.",
+  "files_changed": [
+    "packages/workflow-engine/src/executor/WorkflowExecutor.ts"
+  ],
+  "verification": [
+    {
+      "command": "pnpm --dir packages/workflow-engine run type-check",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check -- packages/workflow-engine/src/executor/WorkflowExecutor.ts",
+      "result": "passed"
+    }
+  ]
+}

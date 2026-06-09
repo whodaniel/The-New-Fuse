@@ -71,6 +71,13 @@
       "when": 1778258400000,
       "tag": "0011_add_task_tenant_workspace_scope",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1780257600000,
+      "tag": "0012_add_project_runtime_configuration",
+      "breakpoints": true
     }
   ]
 }

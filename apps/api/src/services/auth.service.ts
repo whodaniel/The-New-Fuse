@@ -5,6 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { DatabaseService, sql, User } from '@the-new-fuse/database';
 import { compare, hash } from 'bcrypt';
 import * as crypto from 'node:crypto';
+import WebSocket from 'ws';
 import {
   GenerateInviteCodeDto,
   LoginDto,
@@ -92,7 +93,11 @@ export class AuthService {
     const supabaseUrl = this.configService.get('SUPABASE_URL');
     const supabaseKey = this.configService.get('SUPABASE_ANON_KEY');
     if (supabaseUrl && supabaseKey) {
-      this.supabase = createClient(supabaseUrl, supabaseKey);
+      this.supabase = createClient(supabaseUrl, supabaseKey, {
+        realtime: {
+          transport: WebSocket as any,
+        },
+      });
     }
   }
 

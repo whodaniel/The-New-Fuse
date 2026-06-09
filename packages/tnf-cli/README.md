@@ -63,6 +63,39 @@ tnf menu --full
 tnf paths --json
 ```
 
+## Slash Commands
+
+TNF exposes a standard slash-command surface in direct CLI mode, `tnf tui`, and
+`tnf ai chat`.
+
+```bash
+tnf /help
+tnf /review public distribution readiness
+tnf slash list
+tnf slash show /apply
+tnf slash run /commands
+tnf slash run /agent browser-helper
+tnf slash run /workflow release-triage
+```
+
+Built-in standard commands include `/help`, `/clear`, `/compact`, `/cost`,
+`/exit`, `/quit`, `/review`, and `/apply`. TNF operational shortcuts include
+`/commands`, `/status`, `/doctor`, `/agents`, `/sessions`, `/models`, `/config`,
+`/mcp`, `/skills`, `/agent`, `/skill`, `/workflow`, and `/mcp-server`.
+
+The creation shortcuts scaffold files in the caller project:
+
+```bash
+tnf project create agent browser-helper
+tnf project create skill prompt-auditor
+tnf project create workflow release-triage
+tnf project create mcp-server browser-tools
+```
+
+Project commands are loaded from `.tnf/command/*.md` and become available as
+slash commands automatically. For example, `.tnf/command/release-check.md`
+becomes `/release-check`.
+
 The latest reviewed command inventory is recorded at
 `docs/protocols/reports/tnf-cli-command-paths-2026-05-28.json` and contained 237
 CLI command paths at review time.
@@ -118,6 +151,8 @@ tnf menu --full
 ### Core operations
 
 ```bash
+tnf boot --plan
+tnf boot
 tnf onboard
 tnf doctor
 tnf hooks test --file ./chain.json --event ./event.json --record

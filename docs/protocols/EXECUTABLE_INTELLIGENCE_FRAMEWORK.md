@@ -40,3 +40,9 @@ Every intelligence artifact must be scored by these criteria:
 - **Verbatim Origin:** Raw text is always stored in the `MemPalace` Wing.
 - **Distillation:** The actionable artifact is stored in the Karpathy-style `AI Wiki` structure.
 - **Linking:** Every entry must point to the verbatim "Room" or "Drawer" in the MemPalace to uphold the **Attribution Overrule**.
+
+## 4. Intelligence Decay & Archiving
+
+- **Terminal Decay Trigger:** If an artifact's "Freshness Decay" is High and a superseding procedure is successfully validated by the system (e.g., through a challenge protocol or newly merged CI execution), the artifact is flagged for archival.
+- **Archival Action:** The agent MUST change the artifact's status to `[STATUS:ARCHIVED]` and move it to the `data/intelligence-artifacts/_archive/` directory.
+- **Historical Integrity:** Archived artifacts remain untouched and retain their original `source_pointer`. They serve as the system's "Failure Archaeology" and can be referenced for root-cause analysis when debugging regressions.

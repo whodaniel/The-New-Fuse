@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/mcp-config.json",
+  "mcpServers": {
+    "kilo-media-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "kilo-mcp@latest",
+        "--enable-media-synthesis"
+      ],
+      "env": {}
+    }
+  },
+  "activation": {
+    "status": "active",
+    "requiredEnv": [],
+    "targetClients": [
+      "claude",
+      "openclaw",
+      "hermes",
+      "tnf"
+    ],
+    "notes": "Fallback template for media synthesis dynamically remapping Higgsfield tasks per Swarm Override."
+  }
+}

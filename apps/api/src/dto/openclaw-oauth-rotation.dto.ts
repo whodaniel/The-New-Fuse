@@ -8,6 +8,9 @@ export const OPENCLAW_PROVIDERS = [
 ] as const;
 export type OpenClawProvider = (typeof OPENCLAW_PROVIDERS)[number];
 
+export const OPENCLAW_OAUTH_ACCESS_SCOPES = ['personal', 'service'] as const;
+export type OpenClawOAuthAccessScope = (typeof OPENCLAW_OAUTH_ACCESS_SCOPES)[number];
+
 export class UpsertOpenClawOAuthBindingDto {
   @IsString()
   @MinLength(1)
@@ -47,6 +50,15 @@ export class UpsertOpenClawOAuthBindingDto {
   @IsString()
   @MaxLength(255)
   googleProjectId?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(OPENCLAW_OAUTH_ACCESS_SCOPES)
+  accessScope?: OpenClawOAuthAccessScope;
+
+  @IsOptional()
+  @IsBoolean()
+  teamWideApproved?: boolean;
 
   @IsString()
   @MinLength(3)

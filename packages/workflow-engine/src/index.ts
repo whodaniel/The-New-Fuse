@@ -21,6 +21,19 @@ export * from './types/WorkflowTypes.js';
 
 // Utilities
 export { getErrorMessage, isError, createExecutionError } from './utils/errorUtils.js';
+export {
+  ProgressiveDisclosureSequencer,
+  ProgressiveSelfPrompter,
+  DEFAULT_PROGRESSIVE_DISCLOSURE_STEPS,
+  DEFAULT_PROGRESSIVE_PROMPT_STEPS,
+  type ProgressiveDisclosureSequencerOptions,
+  type ProgressiveDisclosureSequencerStatus,
+  type ProgressiveDisclosureStep,
+  type ProgressivePromptBridge,
+  type ProgressivePromptStep,
+  type ProgressiveSelfPrompterOptions,
+  type ProgressiveSelfPrompterStatus,
+} from './sequencer/ProgressiveDisclosureSequencer.js';
 
 // Utility functions
 export {

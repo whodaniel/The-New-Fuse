@@ -36,6 +36,11 @@
       "require": "./dist/executor/WorkflowExecutor.js",
       "types": "./dist/executor/WorkflowExecutor.d.ts"
     },
+    "./sequencer": {
+      "import": "./dist/sequencer/ProgressiveDisclosureSequencer.js",
+      "require": "./dist/sequencer/ProgressiveDisclosureSequencer.js",
+      "types": "./dist/sequencer/ProgressiveDisclosureSequencer.d.ts"
+    },
     "./repository": {
       "import": "./dist/repository/WorkflowRepository.js",
       "require": "./dist/repository/WorkflowRepository.js",
@@ -74,6 +79,7 @@
   "license": "MIT",
   "dependencies": {
     "@nestjs/event-emitter": "^3.0.1",
+    "@nestjs/config": "^4.0.2",
     "@the-new-fuse/agent": "workspace:*",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/mcp-core": "workspace:*",

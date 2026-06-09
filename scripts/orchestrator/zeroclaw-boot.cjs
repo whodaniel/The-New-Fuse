@@ -1,6 +1,15 @@
 #!/usr/bin/env node
 const { execSync } = require('child_process');
 
+function commandExists(command) {
+  try {
+    execSync(`command -v ${command}`, { stdio: 'ignore', shell: '/bin/sh' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * ZeroClaw Sandbox On-Demand Bootstrapper
  * 
@@ -16,6 +25,12 @@ async function bootSandbox() {
   try {
     // 1. Check if CloudRuntime CLI is authenticated (already verified by tnf doctor)
     // 2. Identify the sandbox service ID (assuming 'sandbox' service in production)
+    if (!commandExists('cloud_runtime')) {
+      console.warn('⚠️ [ZeroClaw] CloudRuntime CLI not installed; skipping optional sandbox wake-up.');
+      console.warn('   Install cloud_runtime or use local sandbox routing when sandbox execution is required.');
+      return;
+    }
+
     console.log('📡 [ZeroClaw] Signaling CloudRuntime to wake up sandbox cluster...');
     
     // In a real environment, we'd use:

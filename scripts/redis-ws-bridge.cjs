@@ -72,12 +72,15 @@ class RedisBridgeServer {
             })
           );
         } else if (req.url === '/agents') {
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(
-            JSON.stringify({
-              agents: Array.from(this.clients.values()),
+          void this.getAgentSnapshot()
+            .then((snapshot) => {
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify(snapshot));
             })
-          );
+            .catch((error) => {
+              res.writeHead(500, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: error.message }));
+            });
         } else {
           res.writeHead(404);
           res.end('Not Found');
@@ -113,6 +116,41 @@ class RedisBridgeServer {
       console.error('Failed to start bridge server:', error);
       process.exit(1);
     }
+  }
+
+  /**
+   * Handle new WebSocket connection
+   */
+  async getAgentSnapshot() {
+    const websocketAgents = Array.from(this.clients.values());
+    let redisAgents = [];
+
+    if (this.redis?.publisher?.hgetall) {
+      const registry = await this.redis.publisher.hgetall('tnf:agent-registry');
+      redisAgents = Object.values(registry)
+        .map((raw) => {
+          try {
+            return JSON.parse(raw);
+          } catch {
+            return null;
+          }
+        })
+        .filter(Boolean)
+        .map((agent) => {
+          const lastSeenMs = Date.parse(String(agent.lastSeen || ''));
+          const isOnline =
+            Number.isFinite(lastSeenMs) &&
+            Date.now() - lastSeenMs <= CONFIG.pingInterval * 2;
+          return { ...agent, isOnline };
+        });
+    }
+
+    return {
+      websocketClients: websocketAgents,
+      websocketClientCount: websocketAgents.length,
+      redisAgents,
+      redisAgentCount: redisAgents.length,
+    };
   }
 
   /**

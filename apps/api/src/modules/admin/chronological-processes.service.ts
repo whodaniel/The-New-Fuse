@@ -519,6 +519,52 @@ export class ChronologicalProcessesService {
     };
   }
 
+  async auditChronologicalProcesses(actor: ProcessActorContext) {
+    this.logger.log('Initiating Chronological Process Governance Audit...');
+    const snapshot = await this.listProcesses();
+    const warnings: string[] = [];
+    const processes = snapshot.processes;
+
+    for (const process of processes) {
+      if (process.canonical.layer === 'canonical' && !process.canonical.ownerAgentId && !process.canonical.ownerUserId) {
+        warnings.push(`[ORPHANED] Process '${process.id}' has no assigned owner. All jobs must have accountable owners.`);
+      }
+
+      if (process.runtime.status === 'error') {
+        warnings.push(`[UNHEALTHY] Process '${process.id}' is currently failing. Last error: ${process.runtime.lastError}`);
+      }
+
+      const recentRuns = process.runtime.recentRuns || [];
+      const failingRuns = recentRuns.filter(r => r.status === 'error');
+      if (recentRuns.length > 0 && failingRuns.length === recentRuns.length) {
+         warnings.push(`[OPTIMAL UTILITY WARNING] Process '${process.id}' has failed continuously on recent runs. Consider pausing or refactoring to save compute resources.`);
+      }
+
+      if (process.canonical.locked) {
+        this.logger.debug(`[LOCKED] Process '${process.id}' is protected by governance policy.`);
+      }
+    }
+
+    if (warnings.length > 0) {
+      this.logger.warn(`Governance Audit found ${warnings.length} issues:`);
+      warnings.forEach((w) => this.logger.warn(w));
+    } else {
+      this.logger.log('Governance Audit passed successfully. No anomalies detected.');
+    }
+
+    // Log the audit event
+    const state = await this.readState();
+    state.updated_at = new Date().toISOString();
+    await this.writeState(state);
+
+    return {
+      status: warnings.length === 0 ? 'healthy' : 'degraded',
+      auditedAt: new Date().toISOString(),
+      issuesFound: warnings.length,
+      warnings,
+    };
+  }
+
   private async getProcessById(processId: string) {
     const snapshot = await this.listProcesses();
     const process = snapshot.processes.find((item) => item.id === processId);

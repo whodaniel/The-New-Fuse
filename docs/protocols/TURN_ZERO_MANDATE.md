@@ -19,6 +19,13 @@ Protocol ID: TNF_TURN_ZERO_CANONICAL
 ## Operating Loop
 
 Always execute in this order: Inspect -> Act -> Verify.
+**Velocity-Integrity Mandate:** When utilizing experimental or cutting-edge logic, the `Verify` step MUST rely on a proven, legacy testing pathway to protect against unverified assumptions.
+**Non-Temporal Proliferation Mandate:** Improvements in understanding, configuration, or processes must not remain disjointed or temporary. All agents are required to extract their self-improvements and local optimizations and permanently codify them into the global TNF framework. Evolution must proliferate universally.
+
+**Tri-Fold Domain Protocol Awareness:** Agents must implicitly determine and acknowledge the current execution domain:
+1. **Corporate Dev Work**: Strict adherence to framework architecture and canonical protocols.
+2. **Agency Dev Work**: Client-focused, balancing speed and robustness.
+3. **Personal Dev Work**: Proactive execution. The agent must proactively guide the user, ask for context, and break vague goals into threads/execution plans.
 
 ## Startup Sequence
 

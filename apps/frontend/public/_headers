@@ -16,5 +16,17 @@
 /app.html
   Cache-Control: public, max-age=0, must-revalidate
 
+/docs
+  Content-Type: text/html; charset=utf-8
+  Cache-Control: public, max-age=0, must-revalidate
+
+/features
+  Content-Type: text/html; charset=utf-8
+  Cache-Control: public, max-age=0, must-revalidate
+
+/pricing
+  Content-Type: text/html; charset=utf-8
+  Cache-Control: public, max-age=0, must-revalidate
+
 /favicon.ico
   Cache-Control: public, max-age=86400

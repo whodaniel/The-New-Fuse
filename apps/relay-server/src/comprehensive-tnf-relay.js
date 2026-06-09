@@ -15,6 +15,8 @@ const path = require('path');
 const { execSync } = require('child_process');
 const express = require('express');
 
+
+
 class ComprehensiveTNFRelay {
   constructor() {
     this.relayId = process.env.RELAY_ID || 'TNF-RELAY-CLOUD-001';
@@ -285,7 +287,9 @@ class ComprehensiveTNFRelay {
 
     ws.on('message', async (data) => {
       try {
-        const message = JSON.parse(data.toString());
+        const dataStr = data.toString();
+
+        const message = JSON.parse(dataStr);
         await this.handleWebSocketMessage(ws, message);
       } catch (error) {
         // Silent error for malformed JSON

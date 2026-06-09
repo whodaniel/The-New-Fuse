@@ -6,10 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HandoffStoreService = void 0;
 const crypto_1 = __importDefault(require("crypto"));
 const infrastructure_1 = require("@the-new-fuse/infrastructure");
-const ioredis_1 = __importDefault(require("ioredis"));
 const handoff_protocol_js_1 = require("../protocol/handoff-protocol.js");
 const DEFAULT_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 const DEFAULT_MAX_INBOX_ITEMS = 2000;
+const DEFAULT_MAX_RETRIES = 3;
+const DEFAULT_RETRY_BASE_DELAY_MS = 100;
 class HandoffStoreService {
     constructor(options = {}) {
         this.client = null;
@@ -18,6 +19,8 @@ class HandoffStoreService {
         this.keyPrefix = options.keyPrefix ?? 'tnf:handoff:v1';
         this.defaultTtlSeconds = options.defaultTtlSeconds ?? DEFAULT_TTL_SECONDS;
         this.maxInboxItemsPerAgent = options.maxInboxItemsPerAgent ?? DEFAULT_MAX_INBOX_ITEMS;
+        this.maxRetries = Math.max(options.maxRetries ?? DEFAULT_MAX_RETRIES, 0);
+        this.retryBaseDelayMs = Math.max(options.retryBaseDelayMs ?? DEFAULT_RETRY_BASE_DELAY_MS, 0);
         this.now = options.now ?? (() => new Date());
     }
     async connect() {
@@ -26,9 +29,7 @@ class HandoffStoreService {
         }
         this.client = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
         this.upstash = (0, infrastructure_1.createUpstashRestClient)();
-        if (this.client instanceof ioredis_1.default) {
-            await this.client.connect().catch(() => { });
-        }
+        await (0, infrastructure_1.connectStandaloneRedisClient)(this.client).catch(() => { });
         this.connected = true;
     }
     async close() {
@@ -54,52 +55,60 @@ class HandoffStoreService {
         });
         const ttlSeconds = this.computeTtlSeconds(packet.expiresAt);
         const packetKey = this.packetKey(packet.id);
-        if (this.upstash) {
-            const pipeline = this.upstash.pipeline();
-            pipeline.set(packetKey, JSON.stringify(packet), { ex: ttlSeconds });
-            for (const agentId of packet.targets.agentIds) {
-                const inboxKey = this.agentInboxKey(agentId);
-                pipeline.lpush(inboxKey, packet.id);
-                pipeline.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-                pipeline.expire(inboxKey, ttlSeconds);
+        await this.withRetry('publish handoff packet', async () => {
+            if (this.upstash) {
+                const pipeline = this.upstash.pipeline();
+                pipeline.set(packetKey, JSON.stringify(packet), { ex: ttlSeconds });
+                for (const agentId of packet.targets.agentIds) {
+                    const inboxKey = this.agentInboxKey(agentId);
+                    pipeline.lpush(inboxKey, packet.id);
+                    pipeline.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+                    pipeline.expire(inboxKey, ttlSeconds);
+                }
+                if (packet.scope.sessionKey) {
+                    const sessionKey = this.sessionIndexKey(packet.scope.sessionKey);
+                    pipeline.lpush(sessionKey, packet.id);
+                    pipeline.ltrim(sessionKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+                    pipeline.expire(sessionKey, ttlSeconds);
+                }
+                await pipeline.exec();
+                return;
             }
-            if (packet.scope.sessionKey) {
-                const sessionKey = this.sessionIndexKey(packet.scope.sessionKey);
-                pipeline.lpush(sessionKey, packet.id);
-                pipeline.ltrim(sessionKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-                pipeline.expire(sessionKey, ttlSeconds);
+            if (this.client) {
+                const multi = this.client.multi();
+                multi.set(packetKey, JSON.stringify(packet), 'EX', ttlSeconds);
+                for (const agentId of packet.targets.agentIds) {
+                    const inboxKey = this.agentInboxKey(agentId);
+                    multi.lpush(inboxKey, packet.id);
+                    multi.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+                    multi.expire(inboxKey, ttlSeconds);
+                }
+                if (packet.scope.sessionKey) {
+                    const sessionKey = this.sessionIndexKey(packet.scope.sessionKey);
+                    multi.lpush(sessionKey, packet.id);
+                    multi.ltrim(sessionKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+                    multi.expire(sessionKey, ttlSeconds);
+                }
+                await multi.exec();
+                return;
             }
-            await pipeline.exec();
-        }
-        else if (this.client) {
-            const multi = this.client.multi();
-            multi.set(packetKey, JSON.stringify(packet), 'EX', ttlSeconds);
-            for (const agentId of packet.targets.agentIds) {
-                const inboxKey = this.agentInboxKey(agentId);
-                multi.lpush(inboxKey, packet.id);
-                multi.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-                multi.expire(inboxKey, ttlSeconds);
-            }
-            if (packet.scope.sessionKey) {
-                const sessionKey = this.sessionIndexKey(packet.scope.sessionKey);
-                multi.lpush(sessionKey, packet.id);
-                multi.ltrim(sessionKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-                multi.expire(sessionKey, ttlSeconds);
-            }
-            await multi.exec();
-        }
+            throw new Error('No handoff store backend is available');
+        });
         return packet;
     }
     async getPacket(packetId) {
         await this.connect();
         let raw = null;
-        if (this.upstash) {
-            // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
-            raw = await this.upstash.get(this.packetKey(packetId));
-        }
-        else if (this.client) {
-            raw = await this.client.get(this.packetKey(packetId));
-        }
+        raw = await this.withRetry('get handoff packet', async () => {
+            if (this.upstash) {
+                // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
+                return await this.upstash.get(this.packetKey(packetId));
+            }
+            if (this.client) {
+                return await this.client.get(this.packetKey(packetId));
+            }
+            throw new Error('No handoff store backend is available');
+        });
         if (!raw) {
             return null;
         }
@@ -112,12 +121,15 @@ class HandoffStoreService {
         const result = [];
         const inboxKey = this.agentInboxKey(agentId);
         let candidateIds = [];
-        if (this.upstash) {
-            candidateIds = await this.upstash.lrange(inboxKey, 0, limit * 10 - 1);
-        }
-        else if (this.client) {
-            candidateIds = await this.client.lrange(inboxKey, 0, limit * 10 - 1);
-        }
+        candidateIds = await this.withRetry('list handoff inbox', async () => {
+            if (this.upstash) {
+                return await this.upstash.lrange(inboxKey, 0, limit * 10 - 1);
+            }
+            if (this.client) {
+                return await this.client.lrange(inboxKey, 0, limit * 10 - 1);
+            }
+            throw new Error('No handoff store backend is available');
+        });
         for (const packetId of candidateIds) {
             if (result.length >= limit) {
                 break;
@@ -152,19 +164,32 @@ class HandoffStoreService {
         }
         const ackKey = this.ackKey(ack.packetId);
         const ttlSeconds = this.computeTtlSeconds(packet.expiresAt);
-        if (this.upstash) {
-            await this.upstash.hset(ackKey, { [ack.agentId]: JSON.stringify(ack) });
-            await this.upstash.expire(ackKey, ttlSeconds);
-        }
-        else if (this.client) {
-            await this.client.hset(ackKey, ack.agentId, JSON.stringify(ack));
-            await this.client.expire(ackKey, ttlSeconds);
-        }
+        await this.withRetry('acknowledge handoff packet', async () => {
+            if (this.upstash) {
+                await this.upstash.hset(ackKey, { [ack.agentId]: JSON.stringify(ack) });
+                await this.upstash.expire(ackKey, ttlSeconds);
+                return;
+            }
+            if (this.client) {
+                await this.client.hset(ackKey, ack.agentId, JSON.stringify(ack));
+                await this.client.expire(ackKey, ttlSeconds);
+                return;
+            }
+            throw new Error('No handoff store backend is available');
+        });
         return ack;
     }
     async listBySession(sessionKey, limit = 50) {
         await this.connect();
-        const ids = await this.client.lrange(this.sessionIndexKey(sessionKey), 0, Math.max(limit, 1) - 1);
+        const ids = await this.withRetry('list session handoffs', async () => {
+            if (this.upstash) {
+                return await this.upstash.lrange(this.sessionIndexKey(sessionKey), 0, Math.max(limit, 1) - 1);
+            }
+            if (this.client) {
+                return await this.client.lrange(this.sessionIndexKey(sessionKey), 0, Math.max(limit, 1) - 1);
+            }
+            throw new Error('No handoff store backend is available');
+        });
         const packets = [];
         for (const id of ids) {
             const packet = await this.getPacket(id);
@@ -177,13 +202,16 @@ class HandoffStoreService {
     async getAck(packetId, agentId) {
         let raw = null;
         const key = this.ackKey(packetId);
-        // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
-        if (this.upstash) {
-            raw = await this.upstash.hget(key, agentId);
-        }
-        else if (this.client) {
-            raw = await this.client.hget(key, agentId);
-        }
+        raw = await this.withRetry('get handoff ack', async () => {
+            // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
+            if (this.upstash) {
+                return await this.upstash.hget(key, agentId);
+            }
+            if (this.client) {
+                return await this.client.hget(key, agentId);
+            }
+            throw new Error('No handoff store backend is available');
+        });
         if (!raw) {
             return null;
         }
@@ -236,6 +264,29 @@ class HandoffStoreService {
     computeTtlSeconds(expiresAt) {
         const remainingSeconds = Math.ceil((new Date(expiresAt).getTime() - this.now().getTime()) / 1000);
         return Math.max(remainingSeconds, 1);
+    }
+    async withRetry(operation, fn) {
+        let lastError;
+        for (let attempt = 0; attempt <= this.maxRetries; attempt += 1) {
+            try {
+                return await fn();
+            }
+            catch (error) {
+                lastError = error;
+                if (attempt >= this.maxRetries) {
+                    break;
+                }
+                await this.sleep(this.retryBaseDelayMs * 2 ** attempt);
+            }
+        }
+        const message = lastError instanceof Error ? lastError.message : String(lastError);
+        throw new Error(`Handoff store ${operation} failed after ${this.maxRetries + 1} attempt(s): ${message}`);
+    }
+    sleep(ms) {
+        if (ms <= 0) {
+            return Promise.resolve();
+        }
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }
 exports.HandoffStoreService = HandoffStoreService;

@@ -5,6 +5,7 @@ import * as crypto from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import {
+  OpenClawOAuthAccessScope,
   OpenClawProvider,
   UpsertOpenClawOAuthBindingDto,
 } from '../dto/openclaw-oauth-rotation.dto';
@@ -25,6 +26,7 @@ interface OpenClawOAuthSecretPayload {
   accountId?: string;
   googleEmail?: string;
   googleProjectId?: string;
+  accessScope?: OpenClawOAuthAccessScope;
   primaryModel: string;
   fallbackModels: string;
 }
@@ -34,6 +36,7 @@ export interface OpenClawOAuthBindingSummary {
   tenantId: string;
   service: string;
   provider: OpenClawProvider;
+  accessScope: OpenClawOAuthAccessScope;
   hasAccountId: boolean;
   updatedAt: Date;
   updatedBy: string | null;
@@ -109,11 +112,13 @@ export class OpenClawOAuthRotationService {
       .flatMap((row: any) => {
         const parsed = this.parseKey(row.key);
         let hasAccountId = false;
+        let accessScope: OpenClawOAuthAccessScope = 'personal';
         let deleted = false;
         try {
           const payload = JSON.parse(this.decrypt(row.value)) as OpenClawOAuthSecretPayload;
           deleted = Boolean(payload.deleted);
           hasAccountId = Boolean(payload.accountId);
+          accessScope = payload.accessScope || 'personal';
         } catch {
           hasAccountId = false;
         }
@@ -124,6 +129,7 @@ export class OpenClawOAuthRotationService {
             tenantId: parsed.tenantId,
             service: parsed.service,
             provider: parsed.provider,
+            accessScope,
             hasAccountId,
             updatedAt: row.updatedAt,
             updatedBy: row.updatedBy ?? null,
@@ -137,6 +143,11 @@ export class OpenClawOAuthRotationService {
     userId: string,
     dto: UpsertOpenClawOAuthBindingDto
   ): Promise<OpenClawOAuthBindingSummary> {
+    const accessScope = dto.accessScope || 'personal';
+    if (accessScope === 'service' && dto.teamWideApproved !== true) {
+      throw new Error('teamWideApproved=true is required for service-scoped OAuth bindings');
+    }
+
     const key = this.makeKey(dto.tenantId, dto.service, dto.provider);
     const payload: OpenClawOAuthSecretPayload = {
       tenantId: dto.tenantId.trim(),
@@ -147,6 +158,7 @@ export class OpenClawOAuthRotationService {
       accountId: dto.accountId?.trim() || undefined,
       googleEmail: dto.googleEmail?.trim() || undefined,
       googleProjectId: dto.googleProjectId?.trim() || undefined,
+      accessScope,
       primaryModel: dto.primaryModel.trim(),
       fallbackModels: dto.fallbackModels.trim(),
     };
@@ -157,6 +169,7 @@ export class OpenClawOAuthRotationService {
       tenantId: payload.tenantId,
       service: payload.service,
       provider: payload.provider,
+      accessScope: payload.accessScope || 'personal',
       hasAccountId: Boolean(payload.accountId),
       updatedAt: row.updatedAt,
       updatedBy: row.updatedBy ?? null,
@@ -179,6 +192,7 @@ export class OpenClawOAuthRotationService {
           provider,
           accessToken: '',
           refreshToken: '',
+          accessScope: 'personal',
           primaryModel: '',
           fallbackModels: '',
         })
@@ -275,6 +289,11 @@ export class OpenClawOAuthRotationService {
     }
     if (!payload.accessToken || !payload.refreshToken) {
       throw new Error(`Binding ${key} is missing tokens`);
+    }
+    if ((payload.accessScope || 'personal') !== 'service') {
+      throw new Error(
+        `Personal OAuth binding ${key} cannot be executed into team-wide service variables`
+      );
     }
 
     const setArgs = ['variables', 'set'];

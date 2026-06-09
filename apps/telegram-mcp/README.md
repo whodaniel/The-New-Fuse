@@ -79,7 +79,7 @@ pip3 install python-telegram-bot
 ### Environment
 
 ```bash
-export TELEGRAM_BOT_TOKEN="8731499379:AAFeqGB04RsipLtPP9FXmPQrBdZ8QpLEeGM"
+export TELEGRAM_BOT_TOKEN="<telegram-bot-token-from-botfather>"
 ```
 
 ### Start All Services
@@ -196,11 +196,11 @@ data/handoff/
 
 ## Current Status
 
-- **Bot**: @tnf_kilo_bot (ID: 8731499379)
+- **Bot**: configured with `TELEGRAM_BOT_TOKEN`
 - **Daemon**: Running (PID: check with `pgrep -f bot_daemon`)
 - **Push Service**: Running (PID: check with `pgrep -f agent-push-service`)
 - **MCP**: Connected to Kilo
-- **Agent Registration**: `kilo-glm5-session` registered
+- **Agent Registration**: register each agent with the `register` tool
 
 ## Usage in Kilo
 

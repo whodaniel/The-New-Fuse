@@ -6,12 +6,8 @@
  * Publishes scheduled process lifecycle events into TNF ingress so the
  * master clock can treat cron/automation loops as first-class participants.
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const infrastructure_1 = require("@the-new-fuse/infrastructure");
-const ioredis_1 = __importDefault(require("ioredis"));
 const DEFAULTS = {
     redisUrl: process.env.REDIS_URL ||
         process.env.CLOUD_RUNTIME_REDIS_URL ||
@@ -92,12 +88,10 @@ async function main() {
     // Use unified standalone utilities
     const redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
     const upstash = (0, infrastructure_1.createUpstashRestClient)();
-    if (redis instanceof ioredis_1.default) {
-        redis.on('error', (err) => {
-            console.error(`[super-cycle] redis error: ${err?.message || String(err)}`);
-        });
-        await redis.connect().catch(() => { });
-    }
+    redis.on('error', (err) => {
+        console.error(`[super-cycle] redis error: ${err?.message || String(err)}`);
+    });
+    await (0, infrastructure_1.connectStandaloneRedisClient)(redis).catch(() => { });
     try {
         if (args.action === 'status') {
             let raw = null;
@@ -172,8 +166,7 @@ async function main() {
         console.log(`[super-cycle] sent ${event.type} for ${args.processId}`);
     }
     finally {
-        if (redis instanceof ioredis_1.default)
-            await redis.quit();
+        await redis.quit();
     }
 }
 function parsePositiveNumber(value) {

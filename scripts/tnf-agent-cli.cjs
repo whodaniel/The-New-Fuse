@@ -354,10 +354,11 @@ class RedisAgentClient {
     const taskContent =
       payload.message ||
       payload.prompt ||
-      payload.action ||
+      this.formatTaskForWorker(task) ||
       task?.description ||
       task?.title ||
       task?.content ||
+      payload.action ||
       null;
 
     let content = '';
@@ -397,6 +398,50 @@ class RedisAgentClient {
         tnfEnvelope: true,
       },
     };
+  }
+
+  formatTaskForWorker(task) {
+    if (!task || typeof task !== 'object') {
+      return null;
+    }
+
+    const lines = [];
+    const title = typeof task.title === 'string' ? task.title.trim() : '';
+    const description = typeof task.description === 'string' ? task.description.trim() : '';
+    const content = typeof task.content === 'string' ? task.content.trim() : '';
+
+    if (title) lines.push(`Task: ${title}`);
+    if (description && description !== title) lines.push(`Description: ${description}`);
+    if (content && content !== description && content !== title) lines.push(content);
+
+    const acceptanceCriteria = Array.isArray(task.acceptanceCriteria)
+      ? task.acceptanceCriteria
+      : Array.isArray(task.acceptance_criteria)
+        ? task.acceptance_criteria
+        : [];
+
+    const cleanCriteria = acceptanceCriteria
+      .map((item) => (typeof item === 'string' ? item.trim() : ''))
+      .filter(Boolean);
+
+    if (cleanCriteria.length > 0) {
+      lines.push(`Acceptance criteria:\n${cleanCriteria.map((item) => `- ${item}`).join('\n')}`);
+    }
+
+    if (typeof task.priority === 'string' && task.priority.trim()) {
+      lines.push(`Priority: ${task.priority.trim()}`);
+    }
+
+    if (Array.isArray(task.requiredCapabilities) && task.requiredCapabilities.length > 0) {
+      const capabilities = task.requiredCapabilities
+        .map((item) => (typeof item === 'string' ? item.trim() : ''))
+        .filter(Boolean);
+      if (capabilities.length > 0) {
+        lines.push(`Required capabilities: ${capabilities.join(', ')}`);
+      }
+    }
+
+    return lines.length > 0 ? lines.join('\n\n') : null;
   }
 
   /**

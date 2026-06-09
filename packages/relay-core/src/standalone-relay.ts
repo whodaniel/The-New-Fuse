@@ -20,11 +20,16 @@ import { EventEmitter } from 'events';
 import http from 'http';
 
 import { Redis as UpstashRedis } from '@upstash/redis';
-import { Cluster, Redis } from 'ioredis';
+import type { Cluster, Redis } from 'ioredis';
 import { createClient, RedisClientType } from 'redis';
 import WebSocket, { WebSocketServer } from 'ws';
 
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import {
+  connectStandaloneRedisClient,
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+  type StandaloneRedisClient,
+} from '@the-new-fuse/infrastructure';
 
 import { createAuthService } from './auth/JWTAuthService.js';
 import { attachAuditTrace } from './contracts/audit.js';
@@ -260,12 +265,10 @@ export class TNFRelayServer extends EventEmitter {
       this.activityRedis = createStandaloneRedisClient({ lazyConnect: true });
       this.activityUpstash = createUpstashRestClient();
       this.activityRedisConnectPromise = (async () => {
-        if (this.activityRedis instanceof Redis) {
-          try {
-            await this.activityRedis.connect();
-          } catch (err) {
-            console.warn('[Relay] Failed to connect activity Redis (TCP):', err);
-          }
+        try {
+          await connectStandaloneRedisClient(this.activityRedis as StandaloneRedisClient);
+        } catch (err) {
+          console.warn('[Relay] Failed to connect activity Redis (TCP):', err);
         }
       })();
     }

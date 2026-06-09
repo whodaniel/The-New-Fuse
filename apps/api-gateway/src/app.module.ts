@@ -26,7 +26,7 @@ import { ProxyModule } from './proxy/proxy.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: ['../../.env', '.env.local', '.env'],
     }),
 
     // Authentication module

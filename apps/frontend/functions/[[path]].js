@@ -6,6 +6,19 @@ export async function onRequest(context) {
   const isLandingDomain = host === 'thenewfuse.com' || host === 'www.thenewfuse.com';
   const isAppDomain = !isLandingDomain; // Treat everything else as app subdomain
 
+  // Public machine-readable endpoints must not fall through to an HTML SPA shell.
+  if (path === '/health' || path === '/status') {
+    return Response.json({
+      status: 'ok',
+      service: isLandingDomain ? 'tnf-landing' : 'tnf-app',
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  if (path === '/robots.txt' || path === '/sitemap.xml' || path === '/.well-known/security.txt') {
+    return context.env.ASSETS.fetch(context.request);
+  }
+
   // 1. API & WebSocket Routes - Proxy to backend services
   const API_GATEWAY = 'https://api.thenewfuse.com';
   const RELAY_SERVER = 'https://relay.thenewfuse.com';

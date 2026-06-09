@@ -39,6 +39,8 @@ WS_BRIDGE_PORT=3005
 
 # PID file for tracking
 PID_FILE="$SCRIPT_DIR/.agent-network-pids"
+WS_BRIDGE_LAUNCHD_LABEL="com.thenewfuse.redis-ws-bridge"
+WS_BRIDGE_LAUNCHD_PLIST="$HOME/Library/LaunchAgents/${WS_BRIDGE_LAUNCHD_LABEL}.plist"
 
 # =============================================================================
 # FUNCTIONS
@@ -81,6 +83,34 @@ check_redis() {
     fi
 }
 
+check_ws_bridge_health() {
+    curl -fsS --max-time 2 "http://127.0.0.1:$WS_BRIDGE_PORT/health" 2>/dev/null | grep -q '"status":"ok"'
+}
+
+is_wrapper_running() {
+    local script_name=$1
+    pgrep -f "$SCRIPT_DIR/$script_name" > /dev/null 2>&1 || pgrep -f "$script_name" > /dev/null 2>&1
+}
+
+wait_for_wrapper() {
+    local name=$1
+    local script_name=$2
+    local timeout_seconds=${3:-20}
+    local elapsed=0
+
+    while [ "$elapsed" -lt "$timeout_seconds" ]; do
+        if is_wrapper_running "$script_name"; then
+            echo -e "  ${GREEN}✓${NC} $name wrapper is running"
+            return 0
+        fi
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+
+    echo -e "  ${RED}✗${NC} $name tab launched but wrapper is not running after ${timeout_seconds}s"
+    return 1
+}
+
 start_redis() {
     echo -e "${BLUE}[1/4]${NC} Starting Redis server..."
 
@@ -104,16 +134,61 @@ start_ws_bridge() {
     # Check if already running
     if lsof -i :$WS_BRIDGE_PORT > /dev/null 2>&1; then
         echo -e "  ${YELLOW}!${NC} Port $WS_BRIDGE_PORT is already in use"
-        echo -e "  ${GREEN}✓${NC} Assuming WS Bridge is running"
+        if check_ws_bridge_health; then
+            echo -e "  ${GREEN}✓${NC} WS Bridge is already healthy"
+        else
+            echo -e "  ${RED}✗${NC} Port $WS_BRIDGE_PORT is occupied but WS Bridge health check failed"
+            return 1
+        fi
     else
-        cd "$SCRIPT_DIR"
-        PORT=$WS_BRIDGE_PORT node redis-ws-bridge.cjs > /dev/null 2>&1 &
-        WS_PID=$!
-        echo $WS_PID >> "$PID_FILE"
-        sleep 2
+        if [[ "$OSTYPE" == "darwin"* ]] && command -v launchctl >/dev/null 2>&1; then
+            mkdir -p "$HOME/Library/LaunchAgents" "$PROJECT_ROOT/.agent/runtime-logs"
+            NODE_BIN="$(command -v node)"
+            cat > "$WS_BRIDGE_LAUNCHD_PLIST" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>${WS_BRIDGE_LAUNCHD_LABEL}</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>${NODE_BIN}</string>
+    <string>${SCRIPT_DIR}/redis-ws-bridge.cjs</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>${SCRIPT_DIR}</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PORT</key>
+    <string>${WS_BRIDGE_PORT}</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>${PROJECT_ROOT}/.agent/runtime-logs/redis-ws-bridge.log</string>
+  <key>StandardErrorPath</key>
+  <string>${PROJECT_ROOT}/.agent/runtime-logs/redis-ws-bridge.log</string>
+</dict>
+</plist>
+PLIST
+            launchctl bootout "gui/$(id -u)" "$WS_BRIDGE_LAUNCHD_PLIST" >/dev/null 2>&1 || true
+            launchctl bootstrap "gui/$(id -u)" "$WS_BRIDGE_LAUNCHD_PLIST" >/dev/null 2>&1 || true
+            launchctl kickstart -k "gui/$(id -u)/${WS_BRIDGE_LAUNCHD_LABEL}" >/dev/null 2>&1 || true
+            sleep 3
+        else
+            cd "$SCRIPT_DIR"
+            PORT=$WS_BRIDGE_PORT node redis-ws-bridge.cjs > /dev/null 2>&1 &
+            WS_PID=$!
+            echo $WS_PID >> "$PID_FILE"
+            sleep 2
+        fi
 
         if lsof -i :$WS_BRIDGE_PORT > /dev/null 2>&1; then
-            echo -e "  ${GREEN}✓${NC} WS Bridge started on port $WS_BRIDGE_PORT (PID: $WS_PID)"
+            echo -e "  ${GREEN}✓${NC} WS Bridge started on port $WS_BRIDGE_PORT"
         else
             echo -e "  ${RED}✗${NC} Failed to start WS Bridge"
         fi
@@ -123,16 +198,21 @@ start_ws_bridge() {
 start_antigravity() {
     echo -e "${BLUE}[3/4]${NC} Starting Antigravity Orchestrator..."
 
-    cd "$SCRIPT_DIR"
+    cd "$PROJECT_ROOT"
+
+    if is_wrapper_running "antigravity-redis-wrapper.cjs"; then
+        echo -e "  ${GREEN}✓${NC} Antigravity is already running"
+        return 0
+    fi
 
     # Run in a new terminal or background
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS - open in new Terminal tab
-        osascript -e "tell application \"Terminal\" to do script \"cd '$SCRIPT_DIR' && node antigravity-redis-wrapper.cjs\""
-        echo -e "  ${GREEN}✓${NC} Antigravity started in new Terminal tab"
+        osascript -e "tell application \"Terminal\" to do script \"cd '$PROJECT_ROOT' && node '$SCRIPT_DIR/antigravity-redis-wrapper.cjs'\""
+        wait_for_wrapper "Antigravity" "antigravity-redis-wrapper.cjs" 20
     else
         # Linux - run in background with logs
-        node antigravity-redis-wrapper.cjs > /tmp/antigravity.log 2>&1 &
+        node "$SCRIPT_DIR/antigravity-redis-wrapper.cjs" > /tmp/antigravity.log 2>&1 &
         AG_PID=$!
         echo $AG_PID >> "$PID_FILE"
         echo -e "  ${GREEN}✓${NC} Antigravity started (PID: $AG_PID)"
@@ -147,13 +227,18 @@ start_agent_wrapper() {
 
     echo -e "${PURPLE}[Agent]${NC} Starting $name..."
 
-    cd "$SCRIPT_DIR"
+    cd "$PROJECT_ROOT"
+
+    if is_wrapper_running "$script"; then
+        echo -e "  ${GREEN}✓${NC} $name is already running"
+        return 0
+    fi
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        osascript -e "tell application \"Terminal\" to do script \"cd '$SCRIPT_DIR' && node $script\""
-        echo -e "  ${GREEN}✓${NC} $name started in new Terminal tab"
+        osascript -e "tell application \"Terminal\" to do script \"cd '$PROJECT_ROOT' && node '$SCRIPT_DIR/$script'\""
+        wait_for_wrapper "$name" "$script" 25
     else
-        node "$script" > "/tmp/${name,,}.log" 2>&1 &
+        node "$SCRIPT_DIR/$script" > "/tmp/${name,,}.log" 2>&1 &
         local pid=$!
         echo $pid >> "$PID_FILE"
         echo -e "  ${GREEN}✓${NC} $name started (PID: $pid)"
@@ -175,6 +260,9 @@ stop_all() {
     fi
 
     # Kill node processes by name
+    if [[ "$OSTYPE" == "darwin"* ]] && command -v launchctl >/dev/null 2>&1; then
+        launchctl bootout "gui/$(id -u)" "$WS_BRIDGE_LAUNCHD_PLIST" >/dev/null 2>&1 || true
+    fi
     pkill -f "redis-ws-bridge.cjs" 2>/dev/null || true
     pkill -f "antigravity-redis-wrapper.cjs" 2>/dev/null || true
     pkill -f "claude-redis-wrapper.cjs" 2>/dev/null || true
@@ -198,49 +286,49 @@ show_status() {
     fi
 
     # WS Bridge
-    if lsof -i :$WS_BRIDGE_PORT > /dev/null 2>&1; then
+    if check_ws_bridge_health; then
         echo -e "  ${GREEN}●${NC} WS Bridge      - Running on port $WS_BRIDGE_PORT"
     else
         echo -e "  ${RED}○${NC} WS Bridge      - Not running"
     fi
 
     # Antigravity
-    if pgrep -f "antigravity-redis-wrapper" > /dev/null; then
+    if is_wrapper_running "antigravity-redis-wrapper.cjs"; then
         echo -e "  ${GREEN}●${NC} Antigravity    - Running"
     else
         echo -e "  ${RED}○${NC} Antigravity    - Not running"
     fi
 
     # Claude
-    if pgrep -f "claude-redis-wrapper" > /dev/null; then
+    if is_wrapper_running "claude-redis-wrapper.cjs"; then
         echo -e "  ${GREEN}●${NC} Claude         - Running"
     else
         echo -e "  ${YELLOW}○${NC} Claude         - Not running"
     fi
 
     # Gemini
-    if pgrep -f "gemini-redis-wrapper" > /dev/null; then
+    if is_wrapper_running "gemini-redis-wrapper.cjs"; then
         echo -e "  ${GREEN}●${NC} Gemini         - Running"
     else
         echo -e "  ${YELLOW}○${NC} Gemini         - Not running"
     fi
 
     # Jules
-    if pgrep -f "jules-redis-wrapper" > /dev/null; then
+    if is_wrapper_running "jules-redis-wrapper.cjs"; then
         echo -e "  ${GREEN}●${NC} Jules          - Running"
     else
         echo -e "  ${YELLOW}○${NC} Jules          - Not running"
     fi
 
     # Pi
-    if pgrep -f "pi-redis-wrapper" > /dev/null; then
+    if is_wrapper_running "pi-redis-wrapper.cjs"; then
         echo -e "  ${GREEN}●${NC} Pi             - Running"
     else
         echo -e "  ${YELLOW}○${NC} Pi             - Not running"
     fi
 
     # Model Watchdog
-    if pgrep -f "model-watchdog-failover-consumer" > /dev/null; then
+    if is_wrapper_running "model-watchdog-failover-consumer.cjs"; then
         echo -e "  ${GREEN}●${NC} Model Watchdog - Running"
     else
         echo -e "  ${YELLOW}○${NC} Model Watchdog - Not running"

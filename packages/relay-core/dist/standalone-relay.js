@@ -55,7 +55,6 @@ exports.TNFRelayServer = void 0;
  */
 const events_1 = require("events");
 const http_1 = __importDefault(require("http"));
-const ioredis_1 = require("ioredis");
 const redis_1 = require("redis");
 const ws_1 = __importStar(require("ws"));
 const infrastructure_1 = require("@the-new-fuse/infrastructure");
@@ -165,13 +164,11 @@ class TNFRelayServer extends events_1.EventEmitter {
             this.activityRedis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
             this.activityUpstash = (0, infrastructure_1.createUpstashRestClient)();
             this.activityRedisConnectPromise = (async () => {
-                if (this.activityRedis instanceof ioredis_1.Redis) {
-                    try {
-                        await this.activityRedis.connect();
-                    }
-                    catch (err) {
-                        console.warn('[Relay] Failed to connect activity Redis (TCP):', err);
-                    }
+                try {
+                    await (0, infrastructure_1.connectStandaloneRedisClient)(this.activityRedis);
+                }
+                catch (err) {
+                    console.warn('[Relay] Failed to connect activity Redis (TCP):', err);
                 }
             })();
         }

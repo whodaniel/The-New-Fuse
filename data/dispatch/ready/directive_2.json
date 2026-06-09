@@ -1,0 +1,15 @@
+{
+  "title": "Run Initial Deep Sec Project Scan",
+  "steps": [
+    "Navigate to the Deep Sec project folder.",
+    "Execute the command `scan <project ID>`, replacing `<project ID>` with the specific identifier for the project."
+  ],
+  "target": "Deep Sec CLI tool",
+  "metrics": {
+    "specificity": 0.9,
+    "implementability": 0.9,
+    "testability": 0.9
+  },
+  "rationale": "This directive specifies the command to initiate the first stage of a security scan, including the required navigation and parameter, which is crucial for an autonomous agent. The only missing piece for full 1.0 implementability is the actual 'project ID' value, which is external to this chunk.",
+  "dispatch_ready": true
+}

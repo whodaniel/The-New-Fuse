@@ -1,0 +1,45 @@
+FROM ubuntu:22.04
+
+# Avoid tzdata interactive prompt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install core dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    python3 \
+    python3-pip \
+    zsh \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20 and pnpm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g pnpm
+
+# Create a non-root user to simulate a real developer
+RUN useradd -m -s /usr/bin/zsh tnfuser \
+    && echo "tnfuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+USER tnfuser
+WORKDIR /home/tnfuser
+
+# Setup the TNF workspace
+RUN mkdir -p /home/tnfuser/Projects/The-New-Fuse
+ENV TNF_ROOT=/home/tnfuser/Projects/The-New-Fuse
+ENV TNF_RELAY_URL=ws://127.0.0.1:3000/ws
+ENV RELAY_WS_URL=ws://127.0.0.1:3000/ws
+ENV RELAY_URL=ws://127.0.0.1:3000/ws
+
+# Copy the environment-agnostic codebase
+COPY --chown=tnfuser:tnfuser . $TNF_ROOT/
+WORKDIR $TNF_ROOT
+
+# Fail the build early if the release-critical onboarding surface is missing.
+RUN test -f ./docs/protocols/TURN_ZERO_MANDATE.md \
+    && test -f ./docs/protocols/LIVING_STATE.md \
+    && test -f ./scripts/protocols/validate-local-runtime-boundary.cjs
+
+# Default command runs a bash shell so we can execute Turn Zero manually
+CMD ["/usr/bin/zsh"]

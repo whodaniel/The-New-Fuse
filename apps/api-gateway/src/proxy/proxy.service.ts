@@ -30,13 +30,17 @@ export class ProxyService {
   }
 
   private initializeServices() {
+    const apiServerUrl = this.defaultServiceUrl('api-server', 8080, 3001);
+    const backendUrl = this.defaultServiceUrl('api-server', 8080, 3004);
+    const casin8Url = this.defaultServiceUrl('casin8-games', 8080, 8088);
+
     // Register backend services
     // Updated port assignments to avoid conflicts
     this.registerService({
       name: 'backend',
       baseUrl: this.configService.get(
         'BACKEND_SERVICE_URL',
-        this.configService.get('BACKEND_URL', 'http://localhost:3004')
+        this.configService.get('BACKEND_URL', backendUrl)
       ),
       healthPath: '/health',
       timeout: 30000,
@@ -45,7 +49,7 @@ export class ProxyService {
 
     this.registerService({
       name: 'webhooks',
-      baseUrl: this.configService.get('WEBHOOKS_SERVICE_URL', 'http://localhost:3002'),
+      baseUrl: this.configService.get('WEBHOOKS_SERVICE_URL', apiServerUrl),
       healthPath: '/health',
       timeout: 30000,
       retries: 3,
@@ -55,7 +59,7 @@ export class ProxyService {
       name: 'agents',
       baseUrl: this.configService.get(
         'AGENTS_SERVICE_URL',
-        this.configService.get('API_URL', 'http://localhost:3001')
+        this.configService.get('API_URL', apiServerUrl)
       ),
       healthPath: '/health',
       timeout: 30000,
@@ -70,7 +74,7 @@ export class ProxyService {
         'API_SERVICE_URL',
         this.configService.get(
           'API_URL',
-          this.configService.get('AGENTS_SERVICE_URL', 'http://localhost:3001')
+          this.configService.get('AGENTS_SERVICE_URL', apiServerUrl)
         )
       ),
       healthPath: '/health',
@@ -90,7 +94,7 @@ export class ProxyService {
       name: 'casin8',
       baseUrl: this.configService.get(
         'CASIN8_SERVICE_URL',
-        'https://casin8-games-production-b06e.thenewfuse.com'
+        this.configService.get('CASIN8_GAMES_URL', casin8Url)
       ),
       healthPath: '/health',
       timeout: 30000,
@@ -98,6 +102,13 @@ export class ProxyService {
     });
 
     this.logger.log(`Registered ${this.services.size} backend services`);
+  }
+
+  private defaultServiceUrl(serviceName: string, dockerPort: number, hostPort: number): string {
+    if (process.env.TNF_RUNTIME === 'docker-compose') {
+      return `http://${serviceName}:${dockerPort}`;
+    }
+    return `http://localhost:${hostPort}`;
   }
 
   registerService(config: ServiceConfig) {

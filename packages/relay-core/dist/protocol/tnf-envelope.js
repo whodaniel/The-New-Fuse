@@ -25,6 +25,7 @@ const crypto_1 = __importDefault(require("crypto"));
 const protocol_contracts_1 = require("@the-new-fuse/protocol-contracts");
 const audit_js_1 = require("../contracts/audit.js");
 const identity_js_1 = require("../contracts/identity.js");
+const native_envelope_validator_js_1 = require("./native-envelope-validator.js");
 // Re-export values and types with unified names for back-compat
 exports.MessageType = protocol_contracts_1.MessageTypeSchema;
 exports.AgentIdentity = protocol_contracts_1.AgentIdentitySchema;
@@ -59,7 +60,9 @@ function normalizeAgentIdentity(identity) {
     catch {
         return {
             ...identity,
-            aliases: [...new Set([identity.agentId, ...aliases].map((alias) => alias.trim()).filter(Boolean))],
+            aliases: [
+                ...new Set([identity.agentId, ...aliases].map((alias) => alias.trim()).filter(Boolean)),
+            ],
         };
     }
 }
@@ -137,8 +140,12 @@ function createTNFEnvelope(type, from, to, payload, context, options) {
         metadata: (0, audit_js_1.attachAuditTrace)(options?.metadata, resolveEnvelopeAuditTrace(traceId, normalizedFrom, context, options?.metadata, options?.audit)),
     };
 }
-function validateTNFEnvelope(data) {
-    return normalizeTNFEnvelope(protocol_contracts_1.TNFEnvelopeSchema.parse(data));
+function validateTNFEnvelope(data, options = {}) {
+    const envelope = normalizeTNFEnvelope(protocol_contracts_1.TNFEnvelopeSchema.parse(data));
+    if (options.native !== false) {
+        (0, native_envelope_validator_js_1.assertNativeEnvelopeValid)(envelope, { required: options.requireNative });
+    }
+    return envelope;
 }
 function isTaskMessage(envelope) {
     return envelope.type === 'task';

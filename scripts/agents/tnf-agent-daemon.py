@@ -46,6 +46,9 @@ except ImportError:
 try:
     import urllib.request
     import urllib.error
+    import ssl
+    # Disable SSL verification for NVIDIA API calls (self-signed certs)
+    ssl._create_default_https_context = ssl._create_unverified_context
     HAS_URLLIB = True
 except ImportError:
     HAS_URLLIB = False
@@ -218,8 +221,20 @@ class TNFAgentDaemon:
     def __init__(self, mode: str = "live", model: Optional[str] = None, think_interval: int = 120):
         self.mode = mode
         self.running = False
-        self.r = redis_py.Redis.from_url(REDIS_URL, db=REDIS_DB, decode_responses=True)
-        self.r_sub = redis_py.Redis.from_url(REDIS_URL, db=REDIS_DB, decode_responses=True)
+        
+        # Handle Upstash SSL URLs (rediss://)
+        # For redis-py 5.x, pass ssl params via URL or use connection class
+        if REDIS_URL.startswith("rediss://"):
+            # Add SSL query params to URL for redis-py 5.x
+            if "?" not in REDIS_URL:
+                redis_url = REDIS_URL + "?ssl_cert_reqs=none"
+            else:
+                redis_url = REDIS_URL + "&ssl_cert_reqs=none"
+        else:
+            redis_url = REDIS_URL
+        
+        self.r = redis_py.Redis.from_url(redis_url, db=REDIS_DB, decode_responses=True)
+        self.r_sub = redis_py.Redis.from_url(redis_url, db=REDIS_DB, decode_responses=True)
         self.pubsub = self.r_sub.pubsub()
         self.llm: Optional[LLMClient] = None
         self.think_interval = think_interval

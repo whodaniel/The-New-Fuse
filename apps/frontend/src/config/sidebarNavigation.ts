@@ -62,14 +62,14 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     name: 'Timeline',
     href: '/timeline',
     icon: Activity,
-    section: 'dashboard',
+    section: 'advanced',
     access: 'authenticated',
   },
   {
     name: 'Analytics',
     href: '/analytics',
     icon: BarChart3,
-    section: 'dashboard',
+    section: 'advanced',
     access: 'authenticated',
   },
 
@@ -82,8 +82,8 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     access: 'authenticated',
   },
   {
-    name: 'Workspace',
-    href: '/workspace/overview',
+    name: 'Projects & Threads',
+    href: '/workspace/projects',
     icon: Users,
     section: 'workspace',
     access: 'authenticated',
@@ -99,7 +99,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     name: 'Suggestions',
     href: '/suggestions',
     icon: Lightbulb,
-    section: 'workspace',
+    section: 'advanced',
     access: 'authenticated',
   },
 

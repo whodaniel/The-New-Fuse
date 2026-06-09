@@ -40,6 +40,8 @@ CI remains the strict policy surface:
 - Session handoff enforcement
 - Supabase strict RLS audit
 - Conflict tier gating (escalate -> fail in PR flow)
+- Intelligence Emission (PRs with procedural/strategic changes MUST invoke `tnf:intel:ingest` CI equivalent, or explicitly declare `NO_INTEL_DELTA`)
+- Orchestration Audit Gate (Schedule changes must include a `challenge_rationale`)
 
 ## 3) Integration Branch Release Train
 
@@ -90,6 +92,8 @@ Automation:
 - Privacy/security strict gate: `.github/workflows/privacy-security-gate.yml`
 - Gitlink integrity + reachability: `.github/workflows/gitlink-integrity.yml`
 - Integration promotion policy: `.github/workflows/integration-train-gate.yml`
+- Super Cycle Intelligence Extractor: `.github/workflows/intelligence-emission-gate.yml`
+- Orchestration Governance: `.github/workflows/orchestration-audit-gate.yml`
 
 ## Operator Rule
 
