@@ -10,6 +10,7 @@ export interface LLMMessage {
 export interface LLMOptions {
   temperature?: number;
   maxTokens?: number;
+  timeoutMs?: number;
 }
 
 /**
@@ -346,6 +347,7 @@ export class LLMClient {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.apiKey}`,
       },
+      signal: AbortSignal.timeout(options.timeoutMs ?? 60000),
       body: JSON.stringify({
         model: this.model,
         messages,
@@ -389,6 +391,7 @@ export class LLMClient {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(options.timeoutMs ?? 60000),
         body: JSON.stringify({ contents: geminiMessages }),
       }
     );
