@@ -1,5 +1,5 @@
 {
-  "root": "35ded9b6983340c9f672a3fdec7b523f6c7ddfbf701e5f76ffb8a3a91aa8beab",
+  "root": "7ffc3339ad751a771a2eb83cecc9212592d5a85d5eb1b5f5ea0123ce1033d2fc",
   "libraries": {
     "Library:Intelligence": {
       "hash": "574a2f1e5f043032b7f2398a84909e13e78f917ff64180affc74331ce0632d56",
@@ -3261,10 +3261,10 @@
       }
     },
     "Library:Protocols": {
-      "hash": "87a4e56e20671f2fe9cf433b8e720fbb0e59f9cf471100a8794e0a4c4aa23f7e",
+      "hash": "5439be26a0e2a4828328be57b4c7ddf9077266a91955d4f603833d7da1ff1c75",
       "files": {
         "AGENT_STATUS_LEDGER.md": {
-          "hash": "420f298badd75a80d5c48e17ef966599e5703965dc6446222b44b147f9cd9e39"
+          "hash": "b0463f011b2a11e8b7d4f8b03340378c92f27edc40085d2a126a9f8a258e38b0"
         },
         "AGENT_TARGETED_HANDOFF_V1.md": {
           "hash": "2159d2ac8c40c68a46221c0446ffe14303a217f720e810e69e9b5d4b73f77709"
@@ -3273,19 +3273,19 @@
           "hash": "14a76e187154200e42639d016c7fe6db6339780b0c182e85e7760c4528e72c06"
         },
         "CONNECTIVE_JOURNAL_TEMPLATE.md": {
-          "hash": "f59aa61f8288a9b5cb0219d29d12b50cd24556ebceab36c7f37e3be9c99b9cbb"
+          "hash": "66e19f5b7b92034158325bb28ed5ff2113e27f3df22151a76a81e18e122b021d"
         },
         "CORE_SYSTEM_PROMPT_ARCHITECTURE.md": {
-          "hash": "79150b46f7224037a3c6c905656889fed2ca0c1b8ccbdf405579356cd4928308"
+          "hash": "26f37f6261d041aeacd3d04453c224c4e9abdbd81fbc52d2b68aed974291f4b7"
         },
         "EXECUTABLE_INTELLIGENCE_FRAMEWORK.md": {
-          "hash": "1376ce73bbdac72c276ac27755a858930e1346cd528f6d4cb537e2d8bff572bf"
+          "hash": "7b05f7440a01cdc38961b37c0728f00844b9a22652e2b867c33bd84ba70df8ca"
         },
         "INFORMATION_INTENTIONS.md": {
           "hash": "67152444251d6cb81111222197821808ff2b7f58cc84918e3c67c91412d4d169"
         },
         "LIVING_STATE.md": {
-          "hash": "61e310029a8435de6aee1d75fed13bd1c5255f1c617456ffe4683329d8690dfc"
+          "hash": "488f78746f3a215062bb5fa21a70543bdde2720f5d6fd84b4943ec93f4f78283"
         },
         "MCP-COMPLETE-GUIDE.md": {
           "hash": "5e0afcf1d4c02dbe5f526d8355386182d6dce490fe7ba4500265fcdbeb309a79"
@@ -3293,8 +3293,20 @@
         "MEMPALACE_META_CHART.md": {
           "hash": "147f3ed016eee37169cb5a0d2d470238cc0b9f7660111f2538fa252077e4f912"
         },
+        "MULTI_AGENT_INTEGRATION_PROTOCOL.md": {
+          "hash": "dc74acbd285061aefebb2a936b2889199e14546aa9307b0ab7f06da17ae1d92e"
+        },
+        "SESSION_HANDOFF_ENFORCEMENT.md": {
+          "hash": "c614c196de03f135f37c996976b39e03186e73dc31ab76594075d7198a1f7d7e"
+        },
+        "SESSION_HANDOFF_TEMPLATE.md": {
+          "hash": "164a5fb7eaaf084c9cf13aebd92f12e6b87b045c4b4097a4c9fbd8b8103d3c2d"
+        },
+        "THE_VELOCITY_INTEGRITY_BALANCE.md": {
+          "hash": "e35c0a4b84d3792b2d314331f645794f1b007dac75134de0bda3fe97405ddc6d"
+        },
         "TNF_BOOK_OF_AXIOMS.md": {
-          "hash": "bb716dd7ca7b526c8ef494b5148b75e7670be54e1391819726b5ede1a4c5130c"
+          "hash": "00dd9e6788d423112874072cfd6a54f2d491ce837a259319bb5d5493f511529e"
         },
         "TNF_CORPORATE_DEPARTMENT_ORCHESTRATION_MANUAL.md": {
           "hash": "2e651eb0c041ef0c40c328a492551a747d08eddb6f11839bcf84bf7a92858658"
@@ -3303,22 +3315,34 @@
           "hash": "9f5240ca3032d4559ec61fafa790546b848dcd7cb6b476c2bc0bfc759b1c0ce4"
         },
         "TNF_DOCUMENT_VETTING_PROCEDURE.md": {
-          "hash": "bcc3950da27f8f1d37b9de44bf98e9b57a6d8344869eb5410150dd963b5e0901"
+          "hash": "b6f5a5170a9a260374707e7a5616c217f47c06913aa96717da7515d9b6825c2c"
+        },
+        "TNF_GOVERNANCE_SYNTHESIS_v2.0.md": {
+          "hash": "a74372e7c8ef81ac07b4337231595f75cdf059332ac6532d0bea9ddd5a9607a0"
         },
         "TNF_GOVERNANCE_TENETS.md": {
-          "hash": "b0650c4ef52565dfeaf32c77d8bfe9a1d3a61a81cd8f299a002fc861b66d7c14"
+          "hash": "7f57e748f2a9f5ff3500f8fcc4d09a4432ccecf2b7b60706793a70dd2f1f9bb0"
         },
         "TNF_INFORMATION_INGESTION_PIPELINE.md": {
-          "hash": "9195a48f7c2c79c27ef9e0b4682561262601242e6d0e2312809eb0111c4de83a"
+          "hash": "df5fb9464a7bc013bf40eba3944598aabc9050d86228b43f84e6c9beab026fae"
+        },
+        "TNF_ORCHESTRATION_GOVERNANCE_PROTOCOL.md": {
+          "hash": "b01a738d206b65f1d7cff20e3d9ed78ec1e7047b722fa9c18b82410312412955"
         },
         "TNF_RESOURCE_STRATEGY.md": {
           "hash": "9144ffdb8ea3e366ebfaf0f493e2ea17b82d2ce54b8736e72ca04ac829a854df"
         },
         "TNF_SYSTEM_LEXICON.md": {
-          "hash": "89fc0670b9b0da05c4a7020fd4eb604d3fe6d9b8dedaa14ed4fa22dbb5c1db74"
+          "hash": "5d870fdfeeb01f3fd63fbe6689eb3a3602be9a3f2b3b4ff1cd1fb5e550ac0647"
         },
         "TNF_VIRTUAL_LIBRARY_CONSOLIDATION_PROTOCOL.md": {
-          "hash": "9ba5bc39216a62a560d8cec5eeca3e00bc549bc07e6d663612c4ae1fbf96cef7"
+          "hash": "4ef9fef62b452f1b1129e0167f06d6dcce1b77b74f51d0ec30604da117e24982"
+        },
+        "TS_FIRST_CONTRACT_MIGRATION_PLAN_2026-05-17.md": {
+          "hash": "4bc15bae94cee9fa6dec01e2e372448055568d029e90378faa8d2dfc68366003"
+        },
+        "TURN_ZERO_MANDATE.md": {
+          "hash": "4dfe109218a7ca0c1feaaa3bff671f13fe59e3dfb04fa3661abef4ee895f7642"
         },
         "UTP_SPEC_v1.0.md": {
           "hash": "f79090439dfcb9574a49781aa9b35bea4808b2875453cd16677d09c84103a08e"
@@ -3333,7 +3357,7 @@
           "hash": "985303358292f3cbd359001a71df520b0c908f08e474cdf30e78f852f0079732"
         },
         "draft-twip-0001.md": {
-          "hash": "627246afa1a41dca329a9667a26db316f764b1d8a162a81185b767be7db5442b"
+          "hash": "f4da41217a0c11a7bdcd94a35ca50553d4058ae68e99943720011d94c88d182b"
         },
         "mcp-nestjs-integration.md": {
           "hash": "4a7a8cb76cda002f1e7815579d92542a1c3c73f3ad544eece6c4ed14d8762d1e"
@@ -3366,7 +3390,7 @@
           "hash": "eccc5f0cfaf676670e49f0bedac6842161a111a44322d853510851a7e3396c53"
         },
         "twip-terminal-macro-board.md": {
-          "hash": "630165a5945db52c5cf44a952c06c5e78cdd70529b9c997d40fbd4cbaffedfc0"
+          "hash": "48637a7abcdbb5f10a9874520a3a617e6c4439cc4a3dd969a343c142f6ac8a87"
         },
         "twip-universalization-playbook.md": {
           "hash": "ecc9f95c62046ecd8a6f21ba32f0f3aeea3c1d11b284ded290c80c399342b428"
