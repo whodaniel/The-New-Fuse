@@ -65,7 +65,7 @@ export class CostOptimizedRouter {
       capabilities: ['file-operations', 'simple-analysis', 'code-formatting', 'basic-refactoring'],
       averageExecutionTime: 500,
       successRate: 0.95,
-      maxConcurrency: 10,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     registry.set('codebase-indexer', {
@@ -80,7 +80,7 @@ export class CostOptimizedRouter {
       ],
       averageExecutionTime: 5000,
       successRate: 0.9,
-      maxConcurrency: 3,
+      maxConcurrency: 3, // Retained at 3 to mitigate concurrency collisions
     });
 
     // AI agents (API-based, more expensive)
@@ -98,7 +98,7 @@ export class CostOptimizedRouter {
       ],
       averageExecutionTime: 1500,
       successRate: 0.93,
-      maxConcurrency: 8,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     registry.set('claude-3-5-sonnet', {
@@ -116,7 +116,7 @@ export class CostOptimizedRouter {
       ],
       averageExecutionTime: 4000,
       successRate: 0.96,
-      maxConcurrency: 5,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     registry.set('claude-3-opus', {
@@ -134,7 +134,7 @@ export class CostOptimizedRouter {
       ],
       averageExecutionTime: 9000,
       successRate: 0.98,
-      maxConcurrency: 3,
+      maxConcurrency: 3, // Retained at 3 to mitigate concurrency collisions
     });
 
     // Google Gemini Models (as of January 2026)
@@ -153,7 +153,7 @@ export class CostOptimizedRouter {
       ],
       averageExecutionTime: 1200,
       successRate: 0.92,
-      maxConcurrency: 10,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     registry.set('gemini-1.5-flash', {
@@ -172,7 +172,7 @@ export class CostOptimizedRouter {
       ],
       averageExecutionTime: 1500,
       successRate: 0.91,
-      maxConcurrency: 8,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     registry.set('gemini-1.5-pro', {
@@ -192,7 +192,7 @@ export class CostOptimizedRouter {
       ],
       averageExecutionTime: 3500,
       successRate: 0.95,
-      maxConcurrency: 5,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     // Free Providers (Arbitrage Swarm)
@@ -203,7 +203,7 @@ export class CostOptimizedRouter {
       capabilities: ['complex-reasoning', 'code-generation', 'large-context', 'fast-responses'],
       averageExecutionTime: 2000,
       successRate: 0.94,
-      maxConcurrency: 20,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     registry.set('z-ai/glm-5:free', {
@@ -213,7 +213,7 @@ export class CostOptimizedRouter {
       capabilities: ['advanced-reasoning', 'complex-problem-solving', 'research', 'large-context'],
       averageExecutionTime: 3000,
       successRate: 0.95,
-      maxConcurrency: 15,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     registry.set('glm-4.7-free', {
@@ -223,7 +223,7 @@ export class CostOptimizedRouter {
       capabilities: ['reasoning', 'text-processing', 'code-generation'],
       averageExecutionTime: 1800,
       successRate: 0.92,
-      maxConcurrency: 10,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     registry.set('google-ai-mode', {
@@ -233,7 +233,7 @@ export class CostOptimizedRouter {
       capabilities: ['research', 'web-search', 'fact-checking', 'deep-analysis'],
       averageExecutionTime: 5000,
       successRate: 0.96,
-      maxConcurrency: 5,
+      maxConcurrency: 3, // Reduced to mitigate concurrency collisions
     });
 
     return registry;

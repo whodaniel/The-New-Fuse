@@ -332,7 +332,11 @@ export class PayPalService {
 
     const tier = await this.getUserTier(user.id);
     const override = await this.getActiveMembershipOverride(user.id);
-    const configuredMasters = (this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') || '')
+    const configuredMasters = (
+      this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') ||
+      this.configService.get<string>('HOSTMARIA_OWNER_EMAILS') ||
+      ''
+    )
       .split(',')
       .map((email) => email.trim().toLowerCase())
       .filter(Boolean);
@@ -398,7 +402,9 @@ export class PayPalService {
           new Set([...(Array.isArray(user.roles) ? user.roles : []), user.role].filter(Boolean))
         ).map((r: string) => r.toUpperCase());
         const configuredMasters = (
-          this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') || ''
+          this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') ||
+          this.configService.get<string>('HOSTMARIA_OWNER_EMAILS') ||
+          ''
         )
           .split(',')
           .map((email) => email.trim().toLowerCase())

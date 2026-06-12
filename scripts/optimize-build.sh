@@ -60,38 +60,38 @@ optimized_build() {
     case $strategy in
         "fast")
             print_status "Running fast build (high concurrency)..."
-            turbo run build --concurrency=50
+            turbo run build
             ;;
         "parallel")
             print_status "Running parallel build..."
-            turbo run build --concurrency=50
+            turbo run build
             ;;
         "incremental")
             print_status "Running incremental build (changes since last commit)..."
-            turbo run build --filter='[HEAD~1]' --concurrency=50
+            turbo run build --filter='[HEAD~1]'
             ;;
         "affected")
             print_status "Running affected build..."
-            turbo run build --affected --concurrency=50
+            turbo run build --affected
             ;;
         "production")
             print_status "Running production build..."
-            NODE_ENV=production turbo run build:production --concurrency=50
+            NODE_ENV=production turbo run build:production
             ;;
         "watch")
             print_status "Running watch build..."
-            turbo run build --watch --no-cache --concurrency=50
+            turbo run build --watch --no-cache
             ;;
         "types-first")
             print_status "Running types-first build strategy..."
-            turbo run build:types --concurrency=50
-            turbo run build --filter='!@the-new-fuse/types' --concurrency=50
+            turbo run build:types
+            turbo run build --filter='!@the-new-fuse/types'
             ;;
         "full")
             print_status "Running full clean build..."
             clean_cache
             check_turbo_daemon
-            turbo run build --concurrency=50
+            turbo run build
             ;;
         *)
             print_error "Unknown strategy: $strategy"
@@ -104,7 +104,7 @@ optimized_build() {
 # Function to show build profile
 show_profile() {
     print_status "Running build with profiling..."
-    turbo run build --profile --timeline --concurrency=50
+    turbo run build --profile --timeline
     print_success "Build completed. Check the generated profile for optimization insights."
 }
 

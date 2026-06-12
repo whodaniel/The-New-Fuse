@@ -194,13 +194,13 @@ class IntelligentDevServer {
     process.env.NODE_OPTIONS = `--max-old-space-size=${memoryLimit}`;
     
     // Start development servers
-    const command = `turbo run dev ${filters} --concurrency=${concurrency}`;
+    const command = `turbo run dev ${filters}`;
     
     this.log(`🔄 Executing: ${command}`, 'cyan');
     this.log('', 'reset');
     
     try {
-      const child = spawn('bun', ['exec', 'turbo', 'run', 'dev', ...filters.split(' '), `--concurrency=${concurrency}`], {
+      const child = spawn('bun', ['exec', 'turbo', 'run', 'dev', ...filters.split(' ')], {
         stdio: 'inherit',
         env: { ...process.env }
       });

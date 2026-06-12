@@ -7,19 +7,19 @@ export async function initializeAndConnectMcpServer(
   registerTools: (server: McpServer) => void,
   serverDescription: string
 ) {
-  let SERVER_NAME: string;
-  let SERVER_VERSION: string;
+  let name: string;
+  let version: string;
 
   try {
-    ({ name: SERVER_NAME, version: SERVER_VERSION } = getTnfServerConfig(serverType));
+    ({ name, version } = getTnfServerConfig(serverType));
   } catch (configError) {
     console.error(`Fatal error getting server config for ${serverDescription}:`, configError);
     return false;
   }
 
   const server = new McpServer({
-    name: SERVER_NAME,
-    version: SERVER_VERSION,
+    name,
+    version,
   });
 
   registerTools(server);

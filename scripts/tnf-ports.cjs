@@ -173,27 +173,39 @@ function pidsOnPort(port) {
 }
 
 function getRuntimeHealth(entry) {
-  if (entry.port !== 3000 && entry.port !== 3005) return null;
+  // Only attempt health checks for HTTP-based services
+  // Ports like Redis (6379) or Postgres (5432) do not expose HTTP health endpoints
+  if (
+    ![3000, 3001, 3004, 3005, 3006, 3007, 5173, 5174].includes(entry.port)
+  ) {
+    return null;
+  }
 
   const raw = run('curl', ['-fsS', '--max-time', '1', `http://127.0.0.1:${entry.port}/health`]);
   if (!raw.trim()) return null;
 
   try {
     const body = JSON.parse(raw);
-    if (entry.port === 3000 && body.relay === 'running') {
-      return { ok: true, service: 'relay-core', status: body.status || 'ok' };
-    }
-    if (
-      entry.port === 3000 &&
-      Object.prototype.hasOwnProperty.call(body, 'queueLength') &&
-      ['ok', 'connected', 'disconnected'].includes(String(body.status || ''))
-    ) {
-      return { ok: true, service: 'hermes/whatsapp-bridge', status: body.status };
+    // Specific health checks for known services
+    if (entry.port === 3000) {
+      if (body.relay === 'running') {
+        return { ok: true, service: 'relay-core', status: body.status || 'ok' };
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'queueLength') &&
+          ['ok', 'connected', 'disconnected'].includes(String(body.status || ''))) {
+        return { ok: true, service: 'hermes/whatsapp-bridge', status: body.status };
+      }
     }
     if (entry.port === 3005 && body.status === 'ok') {
       return { ok: true, service: 'api-gateway/ws-bridge', status: body.status };
     }
+
+    // Generic health check for services returning { status: "ok" } or similar
+    if (body.status === 'ok' || body.health === 'ok' || body.healthy === true) {
+      return { ok: true, service: entry.service, status: body.status || 'ok' };
+    }
   } catch {
+    // Non-JSON response or other parsing error, treat as unhealthy
     return null;
   }
 

@@ -24,47 +24,55 @@ pnpm run clean:build || echo "No previous builds to clean"
 
 # Step 3: Install dependencies if needed
 echo -e "\n${YELLOW}Step 3: Installing dependencies${NC}"
-pnpm install || echo "Dependencies already installed"
+NODE_OPTIONS=--max-old-space-size=4096 pnpm install || echo "Dependencies already installed"
 
 # Step 4: Build core packages first
 echo -e "\n${YELLOW}Step 4: Building core packages${NC}"
 echo -e "${BLUE}Building types package...${NC}"
-cd packages/types && pnpm run build && cd ../..
+(cd packages/types && pnpm run build)
 echo -e "${BLUE}Building api-types package...${NC}"
-cd packages/api-types && pnpm run build && cd ../..
+(cd packages/api-types && pnpm run build)
 echo -e "${BLUE}Building utils package...${NC}"
-cd packages/utils && pnpm run build && cd ../..
+(cd packages/utils && pnpm run build)
 echo -e "${BLUE}Building shared package...${NC}"
-cd packages/shared && pnpm run build && cd ../..
+(cd packages/shared && pnpm run build)
 echo -e "${BLUE}Building features package...${NC}"
-cd packages/features && pnpm run build && cd ../..
+(cd packages/features && pnpm run build)
 echo -e "${BLUE}Building core package...${NC}"
-cd packages/core && pnpm run build && cd ../..
+(cd packages/core && pnpm run build)
 
 # Step 5: Build API and client packages
 echo -e "\n${YELLOW}Step 5: Building API and client packages${NC}"
 echo -e "${BLUE}Building API package...${NC}"
-cd packages/api && pnpm run build && cd ../..
+(cd packages/api && pnpm run build)
 echo -e "${BLUE}Building client package...${NC}"
-cd packages/client && pnpm run build && cd ../..
+(cd packages/client && pnpm run build)
 echo -e "${BLUE}Building hooks package...${NC}"
-cd packages/hooks && pnpm run build && cd ../..
-
-# Step 6: Build API server
-echo -e "\n${YELLOW}Step 6: Building API server${NC}"
-echo -e "${BLUE}Building API server...${NC}"
-cd apps/api && pnpm run build && cd ../..
+(cd packages/hooks && pnpm run build)
 
 # Step 7: Build backend
 echo -e "\n${YELLOW}Step 7: Building backend server${NC}"
 echo -e "${BLUE}Building backend server...${NC}"
-cd apps/backend && pnpm run build && cd ../..
+(cd apps/backend && pnpm run build)
 
 # Step 8: Build frontend
 echo -e "\n${YELLOW}Step 8: Building frontend application${NC}"
 echo -e "${BLUE}Building frontend application...${NC}"
-cd apps/frontend && pnpm run build && cd ../..
-cd apps/api && pnpm run build && cd ../..
+echo -e "\n${YELLOW}Step 8: Building API server and frontend applications (in parallel)${NC}"
+(cd apps/api && pnpm run build) &
+API_PID=$!
+(cd apps/frontend && pnpm run build) &
+FRONTEND_PID=$!
+
+wait $API_PID
+API_STATUS=$?
+wait $FRONTEND_PID
+FRONTEND_STATUS=$?
+
+if [ $API_STATUS -ne 0 ] || [ $FRONTEND_STATUS -ne 0 ]; then
+    echo -e "${RED}❌ Parallel build of API or Frontend failed!${NC}"
+    exit 1
+fi
 
 echo -e "\n${GREEN}========================================${NC}"
 echo -e "${GREEN}Comprehensive build complete!${NC}"

@@ -1,29 +1,39 @@
 # The-New-Fuse
 
-> Replace each section. Target 50–100 lines total. INFO.md is injected
-> into every AI scan batch — verbose context dilutes signal.
-> See `SETUP.md` for the rubric + a coding-agent prompt.
+AI agent orchestration platform for coordinating multi-agent workflows across web, mobile, and messaging channels.
+
+Stack: TypeScript/Node.js, React/Vite, PostgreSQL, Redis, Cloud Run (GCP), Cloudflare, Supabase.
 
 ## What this codebase does
 
-<one paragraph: what the app does, what stack, what users it serves>
+Multi-agent swarming platform with bidirectional relay bus, handoff protocol, and security-envelope validation. TNF coordinates specialist agents (research, devops, creative, data-science) through a deterministic governance layer — the Gauntlet of Filters.
+
+Public: thenewfuse.com | App: app.thenewfuse.com | Docs: thenewfuse.com/docs
 
 ## Auth shape
 
-<the 3–5 most important auth primitives BY NAME. The scanner doesn't
-need every helper — just enough to recognize when one is missing>
+- JWT-based session tokens (compact nested JWTs for federation scopes)
+- `withAuthentication` HOC for route protection
+- `auth.can()` capability checks
+- `isTeamAdmin` / `isTenantAdmin` primitives
+- HmacSHA256 request signing with `X-Signature` + `X-Session` headers
 
 ## Threat model
 
-<2–4 sentences: what an attacker would want, ranked by impact.
-Skip generic security boilerplate>
+Highest impact: unauthorized tenant/namespace access, handoff envelope tampering, AI5 directive injection, agent impersonation via forged federation scopes. Attackers would target: auth bypass in relay, directive state manipulation, cross-tenant data leakage.
 
 ## Project-specific patterns to flag
 
-<3–5 patterns unique to THIS codebase, one example each. Avoid
-generic CWE categories — built-in matchers cover those>
+- Handoff matrix (`~/.tnf/handoff-current.json`) — governs agent task dispatch
+- Envelope validation (Rust-backed, 9500+ env/sec) — security contract for AI directives
+- AI5 directive conversion pipeline — state machine (ready→claimed→running→verified→landed)
+- Synaptic Bus (Redis pub/sub) — agent communication channel
+- `tnf-cli` commands — entrypoint for all agent operations
 
 ## Known false-positives
 
-<3–5 paths/patterns that look risky but are intentional —
-fork-specific stubs, dev fixtures, intended-public endpoints>
+- `packages/tnf-cli/src/commands/openclaw.ts` — stubs for OAuth device flow (intentional no-op in dev)
+- `apps/api/src/middleware/backCompatMiddleware.ts` — legacy auth shim (deprecated, being removed)
+- `data/ingestion-runs/` — test fixtures with mock tokens (non-production)
+- `scripts/test-*.sh` — dev scripts with placeholder credentials
+- `.env.example` — template only, no secrets

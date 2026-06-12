@@ -20,10 +20,10 @@ echo "📦 Building services in parallel..."
 echo ""
 
 # Build API and Frontend in parallel
-./docker-build-api.sh ${TAG} &
+bash scripts/deployment/docker-build-api.sh ${TAG} &
 API_PID=$!
 
-./docker-build-frontend.sh ${TAG} &
+bash scripts/deployment/docker-build-frontend.sh ${TAG} &
 FRONTEND_PID=$!
 
 # Wait for both builds to complete

@@ -1,0 +1,38 @@
+{
+  "directiveId": "directive-1",
+  "title": "Initialize Deep Sec Scanner and Install Dependencies",
+  "attemptedAt": "2026-06-12T08:30:00Z",
+  "executor": "local-subdirector",
+  "outcome": "partial-success",
+  "evidence": {
+    "deepsecInstalled": true,
+    "deepsecVersion": "2.0.12",
+    "deepsecPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.deepsec",
+    "projectRegistered": true,
+    "projectConfig": {
+      "projectId": "The-New-Fuse",
+      "rootPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+      "registeredAt": "2026-06-09T05:56:00Z"
+    }
+  },
+  "blocker": {
+    "type": "scan-timeout",
+    "description": "Deep Sec scan initiated but hangs on large monorepo (174 directories, 35+ files discovered in initial pass). Process ran for 7+ minutes with no completion.",
+    "attemptedCommands": [
+      "npx deepsec init (blocked - directory already exists)",
+      "pnpm deepsec scan --project-id The-New-Fuse (timeout after 463s)"
+    ],
+    "existingInfrastructure": {
+      "runsFolder": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.deepsec/data/The-New-Fuse/runs/",
+      "totalRuns": 3,
+      "completedRuns": 1,
+      "stuckRuns": 2
+    }
+  },
+  "nextSteps": [
+    "Reduce scan scope to specific directories (packages/*, apps/*)",
+    "Fill INFO.md with actual context to improve AI processing efficiency",
+    "Consider running scan with --fast mode or excluding node_modules more aggressively"
+  ],
+  "verificationStatus": "blocked-infrastructure"
+}

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto.js';
+import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto';
 import { Resource, ResourceAction, SearchResult } from '../types/index.js';
 
 @Injectable()

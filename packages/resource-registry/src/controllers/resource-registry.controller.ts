@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto.js';
+import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto';
 import {
   AccessContext,
   ResourceAccessControlService,

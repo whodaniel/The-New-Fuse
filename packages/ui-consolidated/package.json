@@ -21,7 +21,7 @@
     "*.css"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
     "dev": "tsup --watch",
     "lint": "eslint src",
     "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",

@@ -65,21 +65,6 @@ export function buildHermesNa10McpCommandPlan(
   const envPrefix = Object.entries(env)
     .map(([key, value]) => `${key}=${shellQuote(value)}`)
     .join(' ');
-  const addServerArgs = [
-    MCP_CMD,
-    ADD_CMD,
-    mcpServerName,
-    TYPE_FLAG,
-    REMOTE_TYPE,
-    COMMAND_FLAG,
-    NPX_CMD,
-    ARGS_FLAG,
-    Y_FLAG,
-    MCP_REMOTE_CMD,
-    `\${${urlEnv}}`,
-    ENV_FLAG,
-    JSON.stringify({ [urlEnv]: `<${urlEnv}>`, [tokenEnv]: `<${tokenEnv}>` }),
-  ];
 
   const addServerEnvJson = JSON.stringify({
     [urlEnv]: `<${urlEnv}>`,
@@ -105,9 +90,10 @@ export function buildHermesNa10McpCommandPlan(
   const quotedAddServerArgs = addServerArgs.map(shellQuote).join(' ');
   const hermesCommandString = [TNF_CMD, HERMES_CMD, ...hermesArgs].map(shellQuote).join(' ');
 
-  const fullAddServerCommand = `${TNF_CMD} ${quotedAddServerArgs}`;
-  const finalCommand = `${envPrefix} ${fullAddServerCommand} && ${envPrefix} ${hermesCommandString}`;
+  const addServerExec = `${TNF_CMD} ${quotedAddServerArgs}`;
+  const hermesExec = [TNF_CMD, HERMES_CMD, ...hermesArgs].map(shellQuote).join(' ');
 
+  const finalCommand = `${envPrefix} ${addServerExec} && ${envPrefix} ${hermesExec}`;
   const command = finalCommand;
 
   return {

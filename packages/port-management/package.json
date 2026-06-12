@@ -8,6 +8,9 @@
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "find-available-port": "./scripts/find-available-port.cjs"
+  },
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc --watch",

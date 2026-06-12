@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: var(--vscode-font-family); padding: 20px; }
+          h1 { color: var(--vscode-foreground); }
+          h2 { color: var(--vscode-foreground); margin-top: 24px; }
+          .agent-card {
+            background: var(--vscode-editor-background);
+            border: 1px solid var(--vscode-editor-lineHighlightBorder);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+          }
+          .agent-header { display: flex; justify-content: space-between; }
+          .agent-name { font-weight: bold; }
+          .agent-role { color: var(--vscode-descriptionForeground); }
+          .agent-status.idle { color: #4caf50; }
+          .agent-status.busy { color: #ff9800; }
+          .agent-status.error { color: #f44336; }
+          .agent-task { margin-top: 8px; font-size: 12px; color: var(--vscode-disabledForeground); }
+          .task-card {
+            background: var(--vscode-editor-background);
+            border: 1px solid var(--vscode-editor-lineHighlightBorder);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+          }
+          .task-header { display: flex; justify-content: space-between; }
+          .task-name { font-weight: bold; }
+          .task-status.pending { color: #ff9800; }
+          .task-status.in_progress { color: #2196f3; }
+          .task-status.completed { color: #4caf50; }
+          .task-status.failed { color: #f44336; }
+          .task-desc { color: var(--vscode-descriptionForeground); margin-top: 8px; }
+          .mode-selector { margin-bottom: 20px; }
+        </style>
+        <script>
+          const vscode = acquireVsCodeApi();
+
+          function setMode(mode) {
+            vscode.postMessage({
+              command: 'setOrchestratorMode',
+              mode: mode
+            });
+          }
+        </script>
+      </head>
+      <body>
+        <h1>Collective Orchestrator</h1>
+        <div class="mode-selector">
+          <label>Mode: </label>
+          <select id="modeSelect" onchange="setMode(this.value)">
+            <option value="parallel" {{#if isParallel}}selected{{/if}}>Parallel</option>
+            <option value="sequential" {{#if isSequential}}selected{{/if}}>Sequential</option>
+            <option value="hybrid" {{#if isHybrid}}selected{{/if}}>Hybrid</option>
+          </select>
+        </div>
+
+        <h2>Agents ({{agentsCount}})</h2>
+        <div id="agents-container">
+          {{agentsHtml}}
+        </div>
+
+        <h2>Tasks ({{tasksCount}})</h2>
+        <div id="tasks-container">
+          {{tasksHtml}}
+        </div>
+      </body>
+      </html>

@@ -19,7 +19,7 @@
     "./browser-control/protocol": "./dist/browser-control/protocol.js"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --build",
+    "build": "tsc --build",
     "test": "echo \"Tests temporarily disabled for this package\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --passWithNoTests",

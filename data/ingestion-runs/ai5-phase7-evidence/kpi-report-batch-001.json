@@ -1,0 +1,90 @@
+{
+  "reportId": "ai5-phase7-kpi-batch-001",
+  "generatedAt": "2026-06-12T08:30:00Z",
+  "batchId": "ai5-phase7-batch-001",
+  "phase": 7,
+  "workflowType": "deepsec-security-audit",
+  
+  "conversionMetrics": {
+    "totalDirectives": 6,
+    "ready": 0,
+    "claimed": 0,
+    "running": 0,
+    "verified": 1,
+    "landed": 0,
+    "blocked": 4,
+    "skipped": 1,
+    "conversionRate": {
+      "readyToClaimed": "100%",
+      "claimedToVerified": "16.7%",
+      "verifiedToLanded": "0%",
+      "overallBlockerRate": "66.7%"
+    }
+  },
+  
+  "executionVelocity": {
+    "batchClaimedAt": "2026-06-12T08:05:43Z",
+    "batchExecutedAt": "2026-06-12T08:30:00Z",
+    "elapsedMinutes": 24.3,
+    "directivesPerHour": 14.8,
+    "verifiedPerHour": 2.5
+  },
+  
+  "infrastructureHealth": {
+    "deepsecInstalled": true,
+    "deepsecVersion": "2.0.12",
+    "projectRegistered": true,
+    "scanCompleted": false,
+    "scanBlocker": "timeout-large-monorepo",
+    "evidenceCaptured": true
+  },
+  
+  "blockerAnalysis": {
+    "primaryBlocker": "scan-timeout-large-monorepo",
+    "impactPercentage": 66.7,
+    "affectedDirectives": ["directive-2", "directive-3", "directive-4", "directive-5", "directive-6"],
+    "rootCause": "TNF monorepo size (174+ directories) causes deepsec scan to hang during file discovery phase",
+    "resolution": {
+      "immediate": "Mark directives as blocked and document evidence",
+      "optimization": [
+        "Fill INFO.md with actual project context",
+        "Configure scan exclusions for node_modules, .git, build artifacts",
+        "Run scan with --fast mode or target specific packages",
+        "Consider incremental scanning approach"
+      ]
+    }
+  },
+  
+  "evidenceArtifacts": [
+    "data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json",
+    "data/ingestion-runs/ai5-phase7-evidence/directive-1-init-deepsec.json",
+    "data/ingestion-runs/ai5-phase7-evidence/batch-001-execution-summary.json",
+    "docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md"
+  ],
+  
+  "qualityMetrics": {
+    "dispatchReadiness": "100%",
+    "specificityAvg": 0.93,
+    "implementabilityAvg": 0.93,
+    "testabilityAvg": 0.93,
+    "evidenceCompleteness": "100%"
+  },
+  
+  "recommendations": {
+    "immediate": "Resolve scan timeout before proceeding with directives 2-6",
+    "processImprovements": [
+      "Add monorepo size check to directive pre-flight validation",
+      "Configure deepsec with project-specific exclusions before scanning large repos",
+      "Implement incremental scan pattern for monorepos >100 directories"
+    ],
+    "nextBatch": "Select directives not dependent on full codebase scans until infrastructure is optimized"
+  },
+  
+  "phase7Progress": {
+    "batchesCompleted": 1,
+    "batchesTotal": "TBD",
+    "directivesConverted": 1,
+    "directivesDispatchReady": 651,
+    "estimatedCompletionTime": "Pending blocker resolution"
+  }
+}

@@ -28,8 +28,6 @@ docker buildx build \
     --platform ${PLATFORMS} \
     --file apps/api/Dockerfile.production \
     --tag ${DOCKER_HUB_USER}/${IMAGE_NAME}:${TAG} \
-    --tag ${DOCKER_HUB_USER}/${IMAGE_NAME}:$(git rev-parse --short HEAD) \
-    --push \
     --progress=plain \
     .
 

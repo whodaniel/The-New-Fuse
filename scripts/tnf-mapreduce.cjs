@@ -153,9 +153,35 @@ async function runDistributedMapReduce(dataset, mapFn, reduceFn, concurrency, re
   const coordinator = new Coordinator(redisUrl, agentPoolConfig);
   const mapReduce = new MapReducePattern(coordinator);
 
+  // Debug event listeners
+  coordinator.on('task:submitted', (task) => {
+    console.log(`[DEBUG] Task submitted: ${task.id} (${task.type})`);
+  });
+  coordinator.on('task:assigned', (task, assignment) => {
+    console.log(`[DEBUG] Task assigned: ${task.id} to agent ${assignment.agentId}`);
+  });
+  coordinator.on('task:started', (task, agentId) => {
+    console.log(`[DEBUG] Task started: ${task.id} on agent ${agentId}`);
+  });
+  coordinator.on('task:completed', (task) => {
+    console.log(`[DEBUG] Task completed: ${task.id}`);
+  });
+  coordinator.on('task:failed', (task, error) => {
+    console.log(`[DEBUG] Task failed: ${task.id} - ${error?.message || error}`);
+  });
+  coordinator.agentPool.on('agent:registered', (agentInfo) => {
+    console.log(`[DEBUG] Agent registered: ${agentInfo.id}`);
+  });
+
   // Connect to Redis and start coordinator
   await coordinator.start();
   console.log(`${colors.green}✓ Coordinator started.${colors.reset}`);
+
+  // Clear any existing jobs from previous runs to prevent infinite assignment loops
+  console.log(`${colors.dim}Clearing stale tasks from queue...${colors.reset}`);
+  for (const queue of coordinator.taskQueue.queues.values()) {
+    await queue.empty();
+  }
 
   // Register a worker in the pool to run tasks
   console.log(`${colors.dim}Registering worker agent in the coordinator pool...${colors.reset}`);
@@ -170,6 +196,11 @@ async function runDistributedMapReduce(dataset, mapFn, reduceFn, concurrency, re
     createdAt: new Date(),
     lastHeartbeat: new Date()
   });
+
+  // Keep the worker agent heartbeat alive periodically
+  const heartbeatInterval = setInterval(() => {
+    coordinator.agentPool.heartbeat(agent.id);
+  }, 1000);
 
   // Intercept when a task starts and run it locally via worker
   coordinator.on('task:started', async (task, agentId) => {
@@ -216,6 +247,26 @@ async function runDistributedMapReduce(dataset, mapFn, reduceFn, concurrency, re
       }
     }
   });
+  // Diagnostic interval
+  const diagInterval = setInterval(async () => {
+    try {
+      const agents = coordinator.agentPool.getAvailableAgents();
+      console.log(`[DIAG] Available agents count: ${agents.length}`);
+      if (agents.length > 0) {
+        console.log(`[DIAG] Agent ID: ${agents[0].id}, Status: ${agents[0].status}, Load: ${agents[0].currentLoad}/${agents[0].maxConcurrentTasks}`);
+      } else {
+        const allAgents = coordinator.agentPool.getAllAgents();
+        console.log(`[DIAG] Total registered agents: ${allAgents.length}`);
+        if (allAgents.length > 0) {
+          console.log(`[DIAG] Agent status: ${allAgents[0].status}`);
+        }
+      }
+      const depth = await coordinator.taskQueue.getQueueDepth();
+      console.log(`[DIAG] Task queue depth: ${depth}`);
+    } catch (err) {
+      console.error('[DIAG] Error:', err.message);
+    }
+  }, 2000);
 
   console.log(`${colors.cyan}⚡ Executing Map-Reduce pattern...${colors.reset}`);
 
@@ -227,6 +278,8 @@ async function runDistributedMapReduce(dataset, mapFn, reduceFn, concurrency, re
 
   // Cleanup
   console.log(`${colors.dim}Cleaning up Coordinator...${colors.reset}`);
+  clearInterval(diagInterval);
+  clearInterval(heartbeatInterval);
   await coordinator.stop();
   await coordinator.close();
 

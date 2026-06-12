@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
+    "dev": "PORT=$(node ../../../../scripts/find-available-port.cjs gemini-aivi-backend) nodemon server.js",
     "migrate": "node scripts/migrate.js",
     "seed": "node scripts/seed.js",
     "billing:notice": "echo 'Use TNF billing: apps/api/src/modules/billing/paypal.service.ts'"

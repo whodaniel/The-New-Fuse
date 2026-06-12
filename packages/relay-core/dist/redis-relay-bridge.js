@@ -33,12 +33,13 @@ class RedisRelayBridge extends events_1.EventEmitter {
             enableLegacyShim: config.enableLegacyShim ?? true,
         };
         // Create Redis clients using unified standalone utility
+        const parsedRedisConfig = (0, infrastructure_1.parseRedisUrl)(this.config.redisUrl);
         this.redisClient = (0, infrastructure_1.createStandaloneRedisClient)({
-            redisUrl: this.config.redisUrl,
+            ...parsedRedisConfig,
             lazyConnect: true,
         });
         this.redisSubscriber = (0, infrastructure_1.createStandaloneRedisClient)({
-            redisUrl: this.config.redisUrl,
+            ...parsedRedisConfig,
             lazyConnect: true,
         });
         // Create Upstash REST client if available
@@ -114,15 +115,19 @@ class RedisRelayBridge extends events_1.EventEmitter {
                 // Wrap legacy message in envelope
                 console.log('[Redis-Bridge] Legacy message detected, wrapping in envelope');
                 envelope = this.wrapLegacyMessage(rawMessage, agentId);
+                // Ensure the wrapped legacy message is also fully normalized and validated
+                envelope = (0, tnf_envelope_js_1.validateTNFEnvelope)(envelope);
             }
             else {
                 console.error('[Redis-Bridge] Invalid envelope, dropping:', error);
                 return;
             }
         }
+        // Now 'envelope' is guaranteed to be a valid and normalized TNFEnvelope
+        // No need for a second validateTNFEnvelope call here.
+        const normalizedEnvelope = envelope;
         // Publish to ingress
         try {
-            const normalizedEnvelope = (0, tnf_envelope_js_1.validateTNFEnvelope)(envelope);
             await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(normalizedEnvelope));
             console.log(`[Redis-Bridge] Published to ${this.config.ingressChannel}:`, normalizedEnvelope.id);
             this.emit('ingress', normalizedEnvelope);

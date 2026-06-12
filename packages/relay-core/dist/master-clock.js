@@ -58,21 +58,15 @@
  * - STALL_THRESHOLD: Stall detection threshold in ms (default: 5000)
  * - LOG_LEVEL: debug|info|warn|error (default: info)
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const crypto_1 = require("crypto");
-const fs_1 = require("fs");
-const node_child_process_1 = require("node:child_process");
-const path_1 = __importDefault(require("path"));
-const util_1 = require("util");
-const ws_1 = __importDefault(require("ws"));
 const audit_js_1 = require("./contracts/audit.js");
-const identity_js_1 = require("./contracts/identity.js");
-const lifecycle_js_1 = require("./contracts/lifecycle.js");
-const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
-const execFileAsync = (0, util_1.promisify)(node_child_process_1.execFile);
+const agent_registry_service_js_1 = require("./services/agent-registry.service.js");
+const channel_manager_service_js_1 = require("./services/channel-manager.service.js");
+const redis_client_manager_service_js_1 = require("./services/redis-client-manager.service.js");
+const relay_connection_service_js_1 = require("./services/relay-connection.service.js");
+const self_prompt_service_js_1 = require("./services/self-prompt.service.js");
+const task_scheduler_service_js_1 = require("./services/task-scheduler.service.js");
+const execFileAsync = promisify(execFile);
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
@@ -124,7 +118,7 @@ const CONFIG = {
     },
     // Logging
     LOG_LEVEL: process.env.LOG_LEVEL || 'info',
-    LOG_DIR: process.env.LOG_DIR || path_1.default.join(process.env.HOME || '/tmp', '.tnf-master-clock'),
+    LOG_DIR: process.env.LOG_DIR || path.join(process.env.HOME || '/tmp', '.tnf-master-clock'),
 };
 // ============================================================================
 // LOGGING
@@ -148,188 +142,29 @@ function log(level, category, message, data = {}) {
 }
 async function logToFile(entry) {
     try {
-        await fs_1.promises.mkdir(CONFIG.LOG_DIR, { recursive: true });
-        const logFile = path_1.default.join(CONFIG.LOG_DIR, `master-${new Date().toISOString().split('T')[0]}.jsonl`);
-        await fs_1.promises.appendFile(logFile, JSON.stringify(entry) + '\n');
+        await fs.mkdir(CONFIG.LOG_DIR, { recursive: true });
+        const logFile = path.join(CONFIG.LOG_DIR, `master-${new Date().toISOString().split('T')[0]}.jsonl`);
+        await fs.appendFile(logFile, JSON.stringify(entry) + '\n');
     }
     catch (e) {
         // Silently fail - log file not critical
     }
 }
-function createMasterClockAgentIdentity(sourceId, info, agentId, ordinal) {
-    let canonicalEntityId = typeof info?.canonicalEntityId === 'string' ? info.canonicalEntityId : null;
-    if (!canonicalEntityId) {
-        try {
-            canonicalEntityId = (0, identity_js_1.buildCanonicalEntityId)({
-                category: 'AGENT',
-                provider: typeof info?.platform === 'string' && info.platform.trim() ? info.platform : 'unknown',
-                name: typeof info?.name === 'string' && info.name.trim() ? info.name : sourceId || agentId,
-                instance: ordinal,
-            });
-        }
-        catch {
-            canonicalEntityId = null;
-        }
-    }
-    return (0, identity_js_1.createAgentIdentityRecord)({
-        canonicalEntityId,
-        operationalHandle: agentId,
-        runtimeSessionId: sourceId,
-        aliases: [
-            sourceId,
-            typeof info?.name === 'string' ? info.name : null,
-            typeof info?.operationalHandle === 'string' ? info.operationalHandle : null,
-            ...(Array.isArray(info?.aliases) ? info.aliases : []),
-        ],
-    });
-}
-function createOrchestratorIdentity(sessionId) {
-    let canonicalEntityId = null;
-    try {
-        canonicalEntityId = (0, identity_js_1.buildCanonicalEntityId)({
-            category: 'AGENT',
-            provider: 'TNF',
-            name: 'MASTER_CLOCK',
-            instance: 1,
-        });
-    }
-    catch {
-        canonicalEntityId = null;
-    }
-    return (0, identity_js_1.createAgentIdentityRecord)({
-        canonicalEntityId,
-        operationalHandle: 'ORCHESTRATOR',
-        runtimeSessionId: sessionId,
-        aliases: [sessionId, 'master-clock', 'tnf-master-clock'],
-    });
-}
-class AgentRegistry {
-    constructor() {
-        this.agents = new Map();
-        this.nextAgentNumber = 1;
-        this.pendingOnboarding = new Map();
-    }
-    assignAgentId(sourceId, info = {}) {
-        // Check if already assigned
-        for (const [id, agent] of this.agents) {
-            if (agent.sourceId === sourceId) {
-                return agent.agentId;
-            }
-        }
-        // Generate new ID
-        const agentNum = String(this.nextAgentNumber++).padStart(2, '0');
-        const agentId = `AGENT-${agentNum}`;
-        const identity = createMasterClockAgentIdentity(sourceId, info, agentId, this.nextAgentNumber - 1);
-        const agent = {
-            agentId,
-            sourceId,
-            canonicalEntityId: identity.canonicalEntityId,
-            operationalHandle: identity.operationalHandle,
-            runtimeSessionId: identity.runtimeSessionId,
-            aliases: identity.aliases,
-            platform: info.platform || 'unknown',
-            name: info.name || `Agent ${agentNum}`,
-            capabilities: info.capabilities || [],
-            registeredAt: Date.now(),
-            lastHeartbeat: Date.now(),
-            lastActivity: Date.now(),
-            status: (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('active') || 'active',
-            messageCount: 0,
-            violations: 0,
-            channel: info.channel || null,
-        };
-        this.agents.set(agentId, agent);
-        log('info', 'REGISTRY', `Assigned ${agentId} to ${sourceId}`, {
-            agentId,
-            platform: agent.platform,
-        });
-        return agentId;
-    }
-    recordHeartbeat(agentId) {
-        const agent = this.agents.get(agentId);
-        if (agent) {
-            agent.lastHeartbeat = Date.now();
-            agent.status = (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('active') || 'active';
-        }
-    }
-    recordActivity(agentId) {
-        const agent = this.agents.get(agentId);
-        if (agent) {
-            agent.lastActivity = Date.now();
-            agent.messageCount++;
-            agent.status = (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('active') || 'active';
-        }
-    }
-    recordViolation(agentId, type) {
-        const agent = this.agents.get(agentId);
-        if (agent) {
-            agent.violations++;
-            log('warn', 'REGISTRY', `Violation recorded for ${agentId}: ${type}`, {
-                agentId,
-                type,
-                total: agent.violations,
-            });
-        }
-    }
-    getAgent(agentId) {
-        return this.agents.get(agentId);
-    }
-    getAgentBySource(sourceId) {
-        for (const [_, agent] of this.agents) {
-            if (agent.sourceId === sourceId) {
-                return agent;
-            }
-        }
-        return null;
-    }
-    getStaleAgents(thresholdMs) {
-        const now = Date.now();
-        const stale = [];
-        for (const [id, agent] of this.agents) {
-            if (agent.status !== 'offline' && now - agent.lastHeartbeat > thresholdMs) {
-                stale.push(agent);
-            }
-        }
-        return stale;
-    }
-    markOffline(agentId) {
-        const agent = this.agents.get(agentId);
-        if (agent) {
-            agent.status = (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('offline') || 'offline';
-            log('warn', 'REGISTRY', `Agent marked offline: ${agentId}`, { agentId });
-        }
-    }
-    getStats() {
-        const agents = Array.from(this.agents.values());
-        return {
-            total: agents.length,
-            active: agents.filter((a) => a.status === 'active').length,
-            stalled: agents.filter((a) => a.status === 'stalled').length,
-            offline: agents.filter((a) => a.status === 'offline').length,
-        };
-    }
-    toJSON() {
-        return Object.fromEntries(this.agents);
-    }
-}
 class MasterClock {
     constructor() {
         this.reconnectTimer = null;
-        this.taskPollingInterval = null;
         this.chronologicalPollingInterval = null;
         this.sessionId = `ORCHESTRATOR-${Date.now()}`;
-        this.orchestratorIdentity = createOrchestratorIdentity(this.sessionId);
-        this.registry = new AgentRegistry();
-        this.ws = null;
-        this.redis = null;
-        this.redisSub = null;
-        this.upstash = null;
+        this.orchestratorIdentity = (0, agent_registry_service_js_1.createOrchestratorIdentity)(this.sessionId);
+        this.registry = new agent_registry_service_js_1.AgentRegistryService();
+        this.redisClient = new redis_client_manager_service_js_1.RedisClientManager(CONFIG, log, this.handleRedisMessage.bind(this), this.handleRelayAgentRegisterRequest.bind(this));
+        this.relayConnectionManager = new relay_connection_service_js_1.RelayConnectionManager({ RELAY_URL: CONFIG.RELAY_URL }, log, this.processMessage.bind(this), this.getOrchestratorEnvelopeIdentity.bind(this), this.scheduleReconnect.bind(this), this.sessionId);
         this.isRunning = false;
         this.heartbeatInterval = null;
         this.stallCheckInterval = null;
-        this.channels = new Map(); // channelId -> { members, lastActivity }
+        this.channelManager = new channel_manager_service_js_1.ChannelManagerService(this.relayConnectionManager.send.bind(this.relayConnectionManager), this.redisClient, this.registry, this.getOrchestratorEnvelopeIdentity(), this.emitActivityEvent.bind(this));
         this.scheduledProcesses = new Map();
-        this.recoveryAttempts = new Map(); // agentId -> attempts
+        this.recoveryAttempts = new Map();
         this.metrics = {
             heartbeatsSent: 0,
             stallsDetected: 0,
@@ -339,11 +174,10 @@ class MasterClock {
             taskPolls: 0,
             tasksQueued: 0,
         };
+        this.taskScheduler = new task_scheduler_service_js_1.TaskSchedulerService(CONFIG, log, this.redisClient, this.emitActivityEvent.bind(this));
         this.recentQueuedTasks = new Map();
-        this.selfPromptCooldowns = new Map();
         this.taskPollFailureCount = 0;
-        this.repoRoot = this.resolveRepoRoot();
-        this.dtfCache = new Map();
+        this.selfPromptService = new self_prompt_service_js_1.SelfPromptService(CONFIG, log, this.redisClient, this.getOrchestratorEnvelopeIdentity.bind(this), this.getAgentEnvelopeIdentity.bind(this), this.getOrchestratorAudit.bind(this), this.sessionId);
     }
     // --------------------------------------------------------------------------
     // INITIALIZATION
@@ -358,17 +192,16 @@ class MasterClock {
         log('info', 'MASTER', '═══════════════════════════════════════════════════════════════');
         try {
             // Connect to Redis (for cloud coordination)
-            if (CONFIG.REDIS_URL) {
-                await this.connectRedis();
-            }
+            await this.redisClient.connectRedis();
             // Connect to WebSocket relay
-            await this.connectRelay();
+            await this.relayConnectionManager.connectRelay();
             // Start the eternal heartbeat
             this.startHeartbeat();
             // Start stall detection
             this.startStallDetection();
             this.startTaskPolling();
             this.startChronologicalPolling();
+            await this.channelManager.joinAllChannels();
             this.isRunning = true;
             log('info', 'MASTER', '✅ MASTER CLOCK IS NOW THE BATON HOLDER');
         }
@@ -376,73 +209,6 @@ class MasterClock {
             log('error', 'MASTER', `Failed to start: ${error.message}`);
             this.scheduleReconnect();
         }
-    }
-    async connectRedis() {
-        log('info', 'REDIS', 'Connecting to Redis for cloud coordination...');
-        try {
-            // Use unified standalone utilities via dynamic import for ESM/CJS compatibility
-            const infra = await import('@the-new-fuse/infrastructure');
-            this.redis = infra.createStandaloneRedisClient({ lazyConnect: true });
-            this.redisSub = infra.createStandaloneRedisClient({ lazyConnect: true });
-            this.upstash = infra.createUpstashRestClient();
-            if (this.redis) {
-                this.redis.on('error', (err) => log('error', 'REDIS', `Client error: ${err.message}`));
-                await infra.connectStandaloneRedisClient(this.redis).catch((err) => {
-                    log('warn', 'REDIS', `Failed to connect primary client (TCP): ${err.message}`);
-                });
-            }
-            if (this.redisSub) {
-                this.redisSub.on('error', (err) => log('error', 'REDIS', `Subscriber error: ${err.message}`));
-                await infra.connectStandaloneRedisClient(this.redisSub).catch((err) => {
-                    log('warn', 'REDIS', `Failed to connect subscriber client (TCP): ${err.message}`);
-                });
-                // Subscribe to ingress for messages from other components
-                await this.redisSub.subscribe(CONFIG.REDIS_KEYS.INGRESS);
-                this.redisSub.on('message', (channel, message) => {
-                    if (channel === CONFIG.REDIS_KEYS.INGRESS) {
-                        try {
-                            const envelope = JSON.parse(message);
-                            this.handleRedisMessage(envelope);
-                        }
-                        catch (e) {
-                            // Invalid message
-                        }
-                    }
-                });
-            }
-            log('info', 'REDIS', '✅ Connected to Redis cloud coordination');
-        }
-        catch (error) {
-            log('error', 'REDIS', `Failed to initialize Redis: ${error.message}`);
-        }
-    }
-    async connectRelay() {
-        return new Promise((resolve, reject) => {
-            log('info', 'RELAY', `Connecting to ${CONFIG.RELAY_URL}...`);
-            this.ws = new ws_1.default(CONFIG.RELAY_URL);
-            const timeout = setTimeout(() => {
-                reject(new Error('Connection timeout'));
-            }, 10000);
-            this.ws.on('open', () => {
-                clearTimeout(timeout);
-                log('info', 'RELAY', '✅ Connected to WebSocket relay');
-                this.registerAsOrchestrator();
-                this.joinAllChannels();
-                resolve();
-            });
-            this.ws.on('message', (data) => {
-                this.handleRelayMessage(data);
-            });
-            this.ws.on('close', () => {
-                log('warn', 'RELAY', 'Disconnected from relay');
-                this.scheduleReconnect();
-            });
-            this.ws.on('error', (err) => {
-                log('error', 'RELAY', `Connection error: ${err.message}`);
-                clearTimeout(timeout);
-                reject(err);
-            });
-        });
     }
     scheduleReconnect() {
         if (this.reconnectTimer)
@@ -456,74 +222,6 @@ class MasterClock {
     // --------------------------------------------------------------------------
     // ORCHESTRATOR REGISTRATION
     // --------------------------------------------------------------------------
-    registerAsOrchestrator() {
-        const orchestrator = this.getOrchestratorEnvelopeIdentity();
-        this.send({
-            type: 'AGENT_REGISTER',
-            payload: {
-                agent: {
-                    id: this.sessionId,
-                    canonicalEntityId: orchestrator.canonicalEntityId,
-                    operationalHandle: orchestrator.operationalHandle,
-                    runtimeSessionId: orchestrator.runtimeSessionId,
-                    aliases: orchestrator.aliases,
-                    name: 'TNF Master Orchestrator',
-                    platform: 'orchestrator',
-                    role: 'ORCHESTRATOR',
-                    capabilities: [
-                        'orchestration',
-                        'task-distribution',
-                        'agent-coordination',
-                        'stall-detection',
-                        'recovery',
-                        'onboarding',
-                    ],
-                },
-            },
-        });
-    }
-    async joinAllChannels() {
-        const channelsToJoin = new Set(CONFIG.CHANNELS);
-        // Load persisted channels from Redis
-        if (this.upstash) {
-            try {
-                const persistedChannels = await this.upstash.smembers(CONFIG.REDIS_KEYS.CHANNELS);
-                for (const ch of persistedChannels) {
-                    channelsToJoin.add(ch);
-                }
-            }
-            catch (e) {
-                log('warn', 'REDIS', 'Failed to load persisted channels from Upstash', e);
-            }
-        }
-        else if (this.redis) {
-            try {
-                const persistedChannels = await this.redis.smembers(CONFIG.REDIS_KEYS.CHANNELS);
-                for (const ch of persistedChannels) {
-                    channelsToJoin.add(ch);
-                }
-            }
-            catch (e) {
-                log('warn', 'REDIS', 'Failed to load persisted channels from Redis', e);
-            }
-        }
-        for (const channel of channelsToJoin) {
-            this.send({
-                type: 'CHANNEL_CREATE',
-                payload: { name: channel },
-            });
-            if (!this.channels.has(channel)) {
-                this.channels.set(channel, {
-                    members: new Set(),
-                    lastActivity: Date.now(),
-                    messageCount: 0,
-                });
-            }
-        }
-        log('info', 'MASTER', `Managed Channels: ${Array.from(channelsToJoin).join(', ')}`);
-        // Broadcast initial discovery
-        setTimeout(() => this.broadcastDiscovery(), 2000);
-    }
     // --------------------------------------------------------------------------
     // MEMORY MANAGEMENT
     // --------------------------------------------------------------------------
@@ -537,14 +235,8 @@ class MasterClock {
                 prunedTasks++;
             }
         }
-        // Prune selfPromptCooldowns
-        let prunedCooldowns = 0;
-        for (const [key, timestamp] of this.selfPromptCooldowns.entries()) {
-            if (now - timestamp > COOLDOWN_MAX_AGE) {
-                this.selfPromptCooldowns.delete(key);
-                prunedCooldowns++;
-            }
-        }
+        // Prune selfPromptCooldowns (now managed by SelfPromptService)
+        const prunedCooldowns = this.selfPromptService.pruneCooldowns(now, COOLDOWN_MAX_AGE);
         // Prune recoveryAttempts for offline agents
         let prunedRecovery = 0;
         for (const agentId of this.recoveryAttempts.keys()) {
@@ -582,7 +274,7 @@ class MasterClock {
         const superCycleStats = this.getSuperCycleStats();
         const orchestrator = this.getOrchestratorEnvelopeIdentity();
         // Heartbeat to relay
-        this.send({
+        this.relayConnectionManager.send({
             type: 'HEARTBEAT',
             payload: {
                 sessionId: this.sessionId,
@@ -597,32 +289,16 @@ class MasterClock {
             },
         });
         // Heartbeat to Redis (for cloud coordination)
-        if (this.upstash) {
-            this.upstash
-                .hset(CONFIG.REDIS_KEYS.STATE, {
-                orchestrator: JSON.stringify({
-                    sessionId: this.sessionId,
-                    lastHeartbeat: now,
-                    stats,
-                    superCycle: superCycleStats,
-                    isActive: true,
-                }),
-            })
-                .catch(() => { });
-            this.persistSuperCycleState(now).catch(() => { });
-        }
-        else if (this.redis) {
-            this.redis
-                .hset(CONFIG.REDIS_KEYS.STATE, 'orchestrator', JSON.stringify({
-                sessionId: this.sessionId,
-                lastHeartbeat: now,
-                stats,
-                superCycle: superCycleStats,
-                isActive: true,
-            }))
-                .catch(() => { });
-            this.persistSuperCycleState(now).catch(() => { });
-        }
+        await this.redisClient
+            .hset(CONFIG.REDIS_KEYS.STATE, 'orchestrator', JSON.stringify({
+            sessionId: this.sessionId,
+            lastHeartbeat: now,
+            stats,
+            superCycle: superCycleStats,
+            isActive: true,
+        }))
+            .catch(() => { });
+        void this.persistSuperCycleState(now).catch(() => { });
         this.metrics.heartbeatsSent++;
         // Log status periodically (every 10th heartbeat)
         if (this.metrics.heartbeatsSent % 10 === 0) {
@@ -643,7 +319,7 @@ class MasterClock {
         }, checkInterval);
     }
     startTaskPolling() {
-        if ((!this.redis && !this.upstash) || this.taskPollingInterval)
+        if ((!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient) || this.taskPollingInterval)
             return;
         log('info', 'TASK-POLL', `Starting vote-aware task polling (every ${CONFIG.TASK_POLL_INTERVAL_MS}ms)`);
         const run = () => {
@@ -766,7 +442,7 @@ class MasterClock {
         throw new Error(`Ledger poll failed: ${lastError || 'unknown error'}`);
     }
     async pollAndQueueTasks() {
-        if (!this.redis && !this.upstash)
+        if (!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient)
             return;
         const rows = await this.fetchLedgerTasks();
         this.taskPollFailureCount = 0;
@@ -822,18 +498,10 @@ class MasterClock {
                 createdAt: task.createdAt || new Date().toISOString(),
             };
             const targetQueue = this.targetQueueForTask(task);
-            if (this.upstash) {
-                await this.upstash.lpush(targetQueue, JSON.stringify(queueItem));
-                // Backward compatibility for existing consumers.
-                await this.upstash.lpush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
-                await this.upstash.ltrim(CONFIG.REDIS_KEYS.TASKS, 0, 99);
-            }
-            else if (this.redis) {
-                await this.redis.lpush(targetQueue, JSON.stringify(queueItem));
-                // Backward compatibility for existing consumers.
-                await this.redis.lpush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
-                await this.redis.ltrim(CONFIG.REDIS_KEYS.TASKS, 0, 99);
-            }
+            await this.redisClient.lpush(targetQueue, JSON.stringify(queueItem));
+            // Backward compatibility for existing consumers.
+            await this.redisClient.lpush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
+            await this.redisClient.ltrim(CONFIG.REDIS_KEYS.TASKS, 0, 99);
             this.recentQueuedTasks.set(taskId, now);
             this.metrics.tasksQueued += 1;
             await this.emitActivityEvent('task_queued_from_votes', `Queued task ${taskId} (${queueItem.title}) with score ${rankedTask.score}`, {
@@ -869,17 +537,17 @@ class MasterClock {
                 metadata: auditedMetadata,
             },
         });
-        if (!this.redis && !this.upstash)
+        if (!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient)
             return;
         try {
-            await this.redis.lpush(CONFIG.REDIS_KEYS.LOGS, JSON.stringify({
+            await this.redisClient.lpush(CONFIG.REDIS_KEYS.LOGS, JSON.stringify({
                 timestamp: new Date().toISOString(),
                 sessionId: this.sessionId,
                 eventType,
                 content,
                 metadata: auditedMetadata,
             }));
-            await this.redis.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+            await this.redisClient.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
         }
         catch {
             // non-fatal
@@ -931,18 +599,18 @@ class MasterClock {
         }
     }
     async loadChronologicalProcessSnapshots() {
-        const registryPath = path_1.default.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.registry.json');
-        const statePath = path_1.default.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.control-plane-state.json');
-        const catalogPath = path_1.default.join(this.repoRoot, 'data', 'protocols', 'chronological-process-catalog.json');
-        const registryRaw = await fs_1.promises
+        const registryPath = path.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.registry.json');
+        const statePath = path.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.control-plane-state.json');
+        const catalogPath = path.join(this.repoRoot, 'data', 'protocols', 'chronological-process-catalog.json');
+        const registryRaw = await fs
             .readFile(registryPath, 'utf8')
             .then((value) => JSON.parse(value))
             .catch(() => ({ jobs: [] }));
-        const stateRaw = await fs_1.promises
+        const stateRaw = await fs
             .readFile(statePath, 'utf8')
             .then((value) => JSON.parse(value))
             .catch(() => ({ overrides: {}, runtime: {} }));
-        const catalogRaw = await fs_1.promises
+        const catalogRaw = await fs
             .readFile(catalogPath, 'utf8')
             .then((value) => JSON.parse(value))
             .catch(() => ({ entries: {} }));
@@ -994,7 +662,7 @@ class MasterClock {
         return currentSlot.key !== lastRunSlot.key;
     }
     async executeChronologicalProcess(snapshot) {
-        const runnerPath = path_1.default.join(this.repoRoot, 'scripts', 'protocols', 'run-chronological-process.cjs');
+        const runnerPath = path.join(this.repoRoot, 'scripts', 'protocols', 'run-chronological-process.cjs');
         const startedAt = new Date().toISOString();
         let status = 'healthy';
         let lastResult = 'ok';
@@ -1277,13 +945,13 @@ class MasterClock {
         return parsed;
     }
     resolveRepoRoot() {
-        const marker = path_1.default.join('data', 'protocols', 'chronological-process-catalog.json');
+        const marker = path.join('data', 'protocols', 'chronological-process-catalog.json');
         let current = process.cwd();
         for (let i = 0; i < 8; i += 1) {
-            if ((0, fs_1.existsSync)(path_1.default.join(current, marker))) {
+            if (existsSync(path.join(current, marker))) {
                 return current;
             }
-            const next = path_1.default.dirname(current);
+            const next = path.dirname(current);
             if (next === current)
                 break;
             current = next;
@@ -1297,7 +965,7 @@ class MasterClock {
             const attempts = this.recoveryAttempts.get(agent.agentId) || 0;
             if (agent.status === 'active') {
                 // First detection - mark as stalled
-                agent.status = (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('stalled') || 'stalled';
+                agent.status = normalizeAgentLifecycleStatus('stalled') || 'stalled';
                 this.metrics.stallsDetected++;
                 log('warn', 'WATCHDOG', `STALL DETECTED: ${agent.agentId} (idle: ${Math.round(idleTime / 1000)}s)`, { agentId: agent.agentId });
                 // Immediate recovery attempt
@@ -1332,15 +1000,15 @@ class MasterClock {
                 : `🚨 [SYSTEM] URGENT: Agent ${agentId}, final recovery attempt. Respond now or you will be marked offline.`;
         // Broadcast to the agent's channel
         if (agent.channel) {
-            this.broadcastToChannel(agent.channel, recoveryMessage);
+            this.relayConnectionManager.send({ type: 'MESSAGE_SEND', channel: agent.channel, payload: { to: 'broadcast', content: recoveryMessage, metadata: { isSystemMessage: true } } });
         }
         // Also broadcast to all channels
         for (const channel of CONFIG.CHANNELS) {
             if (channel !== agent.channel) {
-                this.broadcastToChannel(channel, `[RECOVERY] Attempting to reach ${agentId}...`);
+                this.relayConnectionManager.send({ type: 'MESSAGE_SEND', channel: channel, payload: { to: 'broadcast', content: `[RECOVERY] Attempting to reach ${agentId}...`, metadata: { isSystemMessage: true } } });
             }
         }
-        void this.emitSelfPrompt({
+        void this.selfPromptService.emitSelfPrompt({
             kind: 'agent-stall',
             channel: agent.channel || 'General',
             prompt: recoveryMessage,
@@ -1358,13 +1026,8 @@ class MasterClock {
     // MESSAGE HANDLING
     // --------------------------------------------------------------------------
     handleRelayMessage(data) {
-        try {
-            const msg = JSON.parse(data.toString());
-            this.processMessage(msg, 'relay');
-        }
-        catch (e) {
-            // Invalid JSON - ignore
-        }
+        // This method is now handled by RelayConnectionManager which calls processMessage directly.
+        // No longer needed here.
     }
     handleRedisMessage(envelope) {
         this.processMessage(envelope, 'redis');
@@ -1431,7 +1094,7 @@ class MasterClock {
             });
             this.metrics.agentsOnboarded++;
             // Send assignment notification
-            this.broadcastToChannel(channel, this.createAssignmentMessage(agentId));
+            this.channelManager.broadcastToChannel(channel, this.createAssignmentMessage(agentId));
         }
         else if (existingAgent) {
             // Known agent - record activity
@@ -1445,12 +1108,8 @@ class MasterClock {
             this.recoveryAttempts.delete(existingAgent.agentId);
         }
         // Update channel activity
-        if (channel && this.channels.has(channel)) {
-            const ch = this.channels.get(channel);
-            if (ch) {
-                ch.lastActivity = Date.now();
-                ch.messageCount++;
-            }
+        if (channel) {
+            this.channelManager.updateChannelActivity(channel);
         }
     }
     handleAgentHeartbeat(msg) {
@@ -1477,7 +1136,7 @@ class MasterClock {
             this.metrics.agentsOnboarded++;
             // Broadcast assignment to all channels
             for (const channel of CONFIG.CHANNELS) {
-                this.broadcastToChannel(channel, this.createAssignmentMessage(agentId));
+                this.channelManager.broadcastToChannel(channel, this.createAssignmentMessage(agentId));
             }
         }
     }
@@ -1596,104 +1255,22 @@ class MasterClock {
     handleAgentJoined(msg) {
         const channel = msg.channel;
         const agentId = msg.payload?.agentId || msg.source;
-        if (channel && this.channels.has(channel) && agentId) {
-            const ch = this.channels.get(channel);
-            if (ch)
-                ch.members.add(agentId);
-            // Check if this agent needs onboarding
+        if (channel && agentId) {
+            this.channelManager.handleAgentJoined(channel, agentId);
+            // Check if this agent needs onboarding (AgentRegistryService responsibility)
             const existingAgent = this.registry.getAgentBySource(agentId);
             if (!existingAgent && agentId !== this.sessionId) {
                 const newId = this.registry.assignAgentId(agentId, { channel, aliases: [agentId] });
-                this.broadcastToChannel(channel, this.createAssignmentMessage(newId));
+                this.channelManager.broadcastToChannel(channel, this.createAssignmentMessage(newId));
             }
-        }
-    }
-    async handleChannelCreate(msg) {
-        const channelName = msg.payload?.name || msg.channel;
-        if (!channelName)
-            return;
-        if (!this.channels.has(channelName)) {
-            log('info', 'CHANNEL', `Dynamic channel creation request: ${channelName}`, {
-                requestedBy: msg.source,
-            });
-            // Create channel locally
-            this.channels.set(channelName, {
-                members: new Set(),
-                lastActivity: Date.now(),
-                messageCount: 0,
-            });
-            // Send CREATE to Relay (to ensure WebSocket rooms exist if needed)
-            this.send({
-                type: 'CHANNEL_CREATE',
-                payload: { name: channelName },
-            });
-            // Persist to Redis
-            if (this.upstash) {
-                await this.upstash.sadd(CONFIG.REDIS_KEYS.CHANNELS, channelName);
-            }
-            else if (this.redis) {
-                await this.redis.sadd(CONFIG.REDIS_KEYS.CHANNELS, channelName);
-            }
-            // Broadcast new channel existence
-            this.broadcastToChannel('General', `📢 New channel created: ${channelName}`);
         }
     }
     // --------------------------------------------------------------------------
     // UTILITY METHODS
     // --------------------------------------------------------------------------
     send(msg) {
-        if (this.ws && this.ws.readyState === ws_1.default.OPEN) {
-            this.ws.send(JSON.stringify({
-                ...msg,
-                source: this.sessionId,
-                timestamp: Date.now(),
-            }));
-        }
-    }
-    broadcastToChannel(channel, content) {
-        this.send({
-            type: 'MESSAGE_SEND',
-            channel,
-            payload: {
-                to: 'broadcast',
-                content,
-                messageType: 'text',
-                metadata: this.attachOrchestratorAudit({
-                    isSystemMessage: true,
-                    source: 'ORCHESTRATOR',
-                }, {
-                    channelId: channel,
-                    sessionId: this.sessionId,
-                }),
-            },
-        });
-    }
-    broadcastDiscovery() {
-        const discoveryMessage = `
-═══════════════════════════════════════════════════════════════
-🌐 TNF ORCHESTRATOR ONLINE - DACC-v1 PROTOCOL
-═══════════════════════════════════════════════════════════════
-Session: ${this.sessionId}
-Time: ${new Date().toISOString()}
-Heartbeat: Every ${CONFIG.HEARTBEAT_INTERVAL / 1000}s | Stall Detection: ${CONFIG.STALL_THRESHOLD / 1000}s
-
-ROLE HIERARCHY:
-• DIRECTOR - Strategic authority (Human/Super-Agent)
-• ORCHESTRATOR - This daemon (24/7 coordination)
-• BROKER - Channel managers
-• AGENT - Worker instances (You!)
-
-📋 TO REGISTER: Simply send a message with your capabilities.
-📋 YOU WILL RECEIVE: Unique Agent ID (AGENT-XX)
-⚠️ MANDATORY: Sign ALL messages with [AGENT-XX]
-
-Current Status:
-• Active Agents: ${this.registry.getStats().active}
-• Channels: ${CONFIG.CHANNELS.join(', ')}
-═══════════════════════════════════════════════════════════════`;
-        for (const channel of CONFIG.CHANNELS) {
-            this.broadcastToChannel(channel, discoveryMessage);
-        }
+        // This method is now handled by RelayConnectionManager
+        this.relayConnectionManager.send(msg);
     }
     createAssignmentMessage(agentId) {
         return `
@@ -1713,11 +1290,27 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     }
     broadcastAgentOffline(agentId) {
         for (const channel of CONFIG.CHANNELS) {
-            this.broadcastToChannel(channel, `⚫ Agent ${agentId} has been marked OFFLINE (no response after ${CONFIG.MAX_RECOVERY_ATTEMPTS} recovery attempts)`);
+            this.relayConnectionManager.send({
+                type: 'MESSAGE_SEND',
+                channel,
+                payload: {
+                    to: 'broadcast',
+                    content: `⚫ Agent ${agentId} has been marked OFFLINE (no response after ${CONFIG.MAX_RECOVERY_ATTEMPTS} recovery attempts)`,
+                    metadata: { isSystemMessage: true },
+                },
+            });
         }
     }
     sendSigningReminder(channel, agentId) {
-        this.broadcastToChannel(channel, `⚠️ Reminder: ${agentId}, please sign your messages with [${agentId}]`);
+        this.relayConnectionManager.send({
+            type: 'MESSAGE_SEND',
+            channel,
+            payload: {
+                to: 'broadcast',
+                content: `⚠️ Reminder: ${agentId}, please sign your messages with [${agentId}]`,
+                metadata: { isSystemMessage: true },
+            },
+        });
     }
     isSignedMessage(content, agentId) {
         if (!content || !agentId)
@@ -1782,8 +1375,8 @@ Acknowledge by sending: [${agentId}] Ready for duty!
                 });
                 const processChannel = process.metadata?.channel || 'General';
                 const prompt = `⏱️ [SELF-PROMPT] Scheduled process ${processId} is stale. Resume heartbeat and continue next actionable step immediately.`;
-                this.broadcastToChannel(processChannel, prompt);
-                void this.emitSelfPrompt({
+                this.channelManager.broadcastToChannel(processChannel, prompt);
+                void this.selfPromptService.emitSelfPrompt({
                     kind: 'process-stall',
                     channel: processChannel,
                     prompt,
@@ -1797,132 +1390,6 @@ Acknowledge by sending: [${agentId}] Ready for duty!
                 });
             }
         }
-    }
-    async emitSelfPrompt(params) {
-        if (!CONFIG.SELF_PROMPT_ENABLED || (!this.redis && !this.upstash)) {
-            return;
-        }
-        const cooldownKey = `${params.kind}:${params.targetAgentId || params.targetProcessId || params.channel}`;
-        const now = Date.now();
-        const lastSentAt = this.selfPromptCooldowns.get(cooldownKey) || 0;
-        if (now - lastSentAt < CONFIG.SELF_PROMPT_COOLDOWN_MS) {
-            return;
-        }
-        this.selfPromptCooldowns.set(cooldownKey, now);
-        const issuedAtIso = new Date(now).toISOString();
-        const tenantId = process.env.TENANT_ID || 'tnf-local';
-        const cumulativeId = {
-            spec: 'tnf/mcid/0.1',
-            id: (0, crypto_1.randomUUID)(),
-            scope: {
-                tenant_id: tenantId,
-                session_key: this.sessionId,
-                workflow_id: null,
-                channel_id: params.channel,
-            },
-            lineage: {
-                trace_id: null,
-                correlation_id: (0, crypto_1.randomUUID)(),
-                causation_id: null,
-                handoff_packet_id: null,
-                twid: null,
-                task_id: null,
-            },
-            federation: {
-                domain: tenantId,
-                route: ['master-clock', 'self-prompt'],
-                hop_count: 1,
-                gate_decisions: [
-                    { gate: 'TENANT_SCOPE_GATE', decision: 'allow', at: issuedAtIso },
-                    { gate: 'TRACE_CONTINUITY_GATE', decision: 'allow', at: issuedAtIso },
-                    { gate: 'CHANNEL_MEMBERSHIP_GATE', decision: 'allow', at: issuedAtIso },
-                ],
-            },
-            issued_at: issuedAtIso,
-        };
-        const originalMessage = {
-            type: 'CHANNEL_MESSAGE',
-            channel: params.channel,
-            payload: {
-                from: this.sessionId,
-                to: 'broadcast',
-                content: params.prompt,
-                metadata: {
-                    isSystemMessage: true,
-                    isSelfPrompt: true,
-                    reason: params.reason,
-                    ...(params.metadata || {}),
-                },
-            },
-        };
-        const broadcastEnvelope = (0, tnf_envelope_js_1.createTNFEnvelope)('event', this.getOrchestratorEnvelopeIdentity(), { broadcast: true }, {
-            eventType: 'SELF_PROMPT',
-            data: {
-                ...params,
-                cumulativeId,
-                issuedAt: now,
-            },
-            originalMessage,
-        }, {
-            channelId: params.channel,
-            sessionId: this.sessionId,
-        }, {
-            audit: this.getOrchestratorAudit({
-                channelId: params.channel,
-                sessionId: this.sessionId,
-            }),
-        });
-        try {
-            await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
-            await this.redis.lpush(CONFIG.REDIS_KEYS.SELF_PROMPTS, JSON.stringify({
-                sessionId: this.sessionId,
-                ...params,
-                cumulativeId,
-                issuedAt: now,
-            }));
-            await this.redis.ltrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
-        }
-        catch (error) {
-            log('warn', 'SELF-PROMPT', `Failed to publish self-prompt: ${error.message}`);
-        }
-        if (params.targetSourceId) {
-            const directEnvelope = (0, tnf_envelope_js_1.createTNFEnvelope)('task', this.getOrchestratorEnvelopeIdentity(), this.getAgentEnvelopeIdentity(params.targetSourceId), {
-                action: 'self_prompt_continue',
-                parameters: {
-                    prompt: params.prompt,
-                    reason: params.reason,
-                    channel: params.channel,
-                    cumulativeId,
-                    ...(params.metadata || {}),
-                },
-                priority: 'high',
-            }, {
-                channelId: params.channel,
-                sessionId: this.sessionId,
-            }, {
-                audit: this.getOrchestratorAudit({
-                    channelId: params.channel,
-                    sessionId: this.sessionId,
-                }),
-            });
-            try {
-                if (this.upstash) {
-                    await this.upstash.publish(`${CONFIG.REDIS_KEYS.EGRESS_PREFIX}:${params.targetSourceId}`, JSON.stringify(directEnvelope));
-                }
-                else if (this.redis) {
-                    await this.redis.publish(`${CONFIG.REDIS_KEYS.EGRESS_PREFIX}:${params.targetSourceId}`, JSON.stringify(directEnvelope));
-                }
-            }
-            catch (error) {
-                log('warn', 'SELF-PROMPT', `Failed targeted self-prompt publish for ${params.targetSourceId}: ${error.message}`);
-            }
-        }
-        log('info', 'SELF-PROMPT', `Self-prompt issued (${params.kind})`, {
-            channel: params.channel,
-            targetAgentId: params.targetAgentId,
-            targetProcessId: params.targetProcessId,
-            reason: params.reason,
-        });
     }
     getOrchestratorAudit(overrides = {}) {
         return {
@@ -1979,7 +1446,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         };
     }
     async persistSuperCycleState(now) {
-        if (!this.redis && !this.upstash)
+        if (!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient)
             return;
         const processes = Array.from(this.scheduledProcesses.values()).sort((a, b) => a.processId.localeCompare(b.processId));
         const statePayload = JSON.stringify({
@@ -1988,27 +1455,14 @@ Acknowledge by sending: [${agentId}] Ready for duty!
             stats: this.getSuperCycleStats(),
             processes,
         });
-        if (this.upstash) {
-            await this.upstash.hset(CONFIG.REDIS_KEYS.STATE, { superCycle: statePayload });
-        }
-        else if (this.redis) {
-            await this.redis.hset(CONFIG.REDIS_KEYS.STATE, 'superCycle', statePayload);
-        }
+        await this.redisClient.hset(CONFIG.REDIS_KEYS.STATE, 'superCycle', statePayload);
         const processState = {};
         for (const process of processes) {
             processState[process.processId] = JSON.stringify(process);
         }
-        if (this.upstash) {
-            await this.upstash.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
-            if (Object.keys(processState).length > 0) {
-                await this.upstash.hset(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
-            }
-        }
-        else if (this.redis) {
-            await this.redis.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
-            if (Object.keys(processState).length > 0) {
-                await this.redis.hset(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
-            }
+        await this.redisClient.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
+        if (Object.keys(processState).length > 0) {
+            await this.redisClient.hset(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
         }
     }
     parseTimestampMs(value) {
@@ -2103,21 +1557,12 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         }
         // Broadcast shutdown
         for (const channel of CONFIG.CHANNELS) {
-            this.broadcastToChannel(channel, '🔴 ORCHESTRATOR GOING OFFLINE. Sessions may be affected.');
+            this.channelManager.broadcastToChannel(channel, '🔴 ORCHESTRATOR GOING OFFLINE. Sessions may be affected.');
         }
         // Give time for final messages
         await new Promise((r) => setTimeout(r, 1000));
-        if (this.ws) {
-            this.ws.close();
-        }
-        if (this.redis) {
-            await this.redis.quit();
-        }
-        if (this.redisSub) {
-            await this.redisSub.quit();
-        }
-        // Upstash client doesn't need explicit quit
-        this.upstash = null;
+        this.relayConnectionManager.close();
+        await this.redisClient.quit();
         log('info', 'MASTER', 'Master Clock shutdown complete.');
         log('info', 'MASTER', `Final metrics:`, this.metrics);
     }

@@ -1,7 +1,8 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "extends": ["./turbo.json"],
-  "concurrency": 10,
+  "concurrency": 1, // Further reduced concurrency to prevent collisions as per TNF Resonance Task.
+
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],

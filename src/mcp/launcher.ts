@@ -2,7 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { completeApiTools, enhancedTnfTools, mainServerTools } from './tool-sets.js';
 import { initializeAndConnectMcpServer } from './utils/server-utils.js';
 
-type ToolRegistrationFunction = (server: McpServer) => void;
+import { ToolRegistrationFunction } from './types/mcp.js';
 
 interface ServerConfig {
   name: string;

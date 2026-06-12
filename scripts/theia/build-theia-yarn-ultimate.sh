@@ -81,7 +81,7 @@ echo "✅ SkIDEancer IDE build complete."
 # 6. Build the rest of the packages
 echo "
 --- Step 6: Building remaining project packages (excluding web-scraping) ---"
-yarn turbo run build --filter="!@the-new-fuse/web-scraping" --concurrency=50
+yarn turbo run build --filter="!@the-new-fuse/web-scraping"
 
 echo "
 🎉🎉🎉 BUILD SUCCEEDED! 🎉🎉🎉"

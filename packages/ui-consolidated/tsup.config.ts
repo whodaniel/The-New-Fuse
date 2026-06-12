@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
-  dts: false, // Disabled for CloudRuntime build: TS2882 regression on CSS side imports
+  dts: true,
   splitting: true,
   sourcemap: true,
   clean: true,

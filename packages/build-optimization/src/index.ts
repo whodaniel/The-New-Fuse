@@ -40,6 +40,15 @@ export const DEFAULT_CONFIG = {
   /** Default memory threshold percentage for large monorepo */
   MEMORY_THRESHOLD: 70,
 
+  /** Default system-wide memory threshold in MB for BuildProcessThrottler */
+  MEMORY_THRESHOLD_MB: 4096, // 4GB
+
+  /** Default estimated memory usage per process in MB */
+  PROCESS_MEMORY_LIMIT_MB: 512,
+
+  /** Default timeout for individual build tasks in milliseconds (15 minutes) */
+  DEFAULT_BUILD_TIMEOUT: 900000,
+
   /** Default monitoring interval in milliseconds */
   MONITORING_INTERVAL: 1500,
 

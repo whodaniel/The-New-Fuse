@@ -11,8 +11,8 @@ export class ConcurrencyController implements IConcurrencyController {
   private maxConcurrency: number;
   private minConcurrency: number = 1;
   private defaultConcurrency: number;
-  private memoryThreshold: number = 0.8; // 80% memory threshold
-  private adjustmentFactor: number = 0.25; // 25% adjustment per step
+  private memoryThreshold: number = 0.7; // 70% memory threshold (more conservative)
+  private adjustmentFactor: number = 0.33; // 33% adjustment per step (more aggressive reduction)
 
   constructor(initialConcurrency?: number, maxConcurrency?: number) {
     this.currentConcurrency = initialConcurrency || 2;

@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 TURBO_CONFIG="turbo.test.json"
-DEFAULT_CONCURRENCY=4
+DEFAULT_CONCURRENCY=1 # Reduced to prevent persistent collisions as per TNF Resonance Task.
 CI=${CI:-false}
 
 # Check if turbo supports --root-turbo-json flag

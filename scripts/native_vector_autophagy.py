@@ -99,6 +99,8 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use dashmap::DashMap;
+use std::env;
+use log::{info, error};
 
 extern "C" {
     fn batch_cosine_similarity(query: *const f32, matrix: *const f32, count: i32, dim: i32, results: *mut f32);
@@ -129,6 +131,7 @@ type Store = Arc<DashMap<String, VectorDoc>>;
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
     let store: Store = Arc::new(DashMap::new());
 
     let app = Router::new()
@@ -136,9 +139,12 @@ async fn main() {
         .route("/search", post(search_vectors))
         .route("/health", get(|| async { "healthy" }))
         .with_state(store);
+    
+    let port_str = env::var("VECTOR_SYNAPSE_PORT").unwrap_or_else(|_| "3007".to_string());
+    let port: u16 = port_str.parse().expect("Invalid port number");
 
-    println!("[🧬] Native Vector Synapse Active on Port 3007");
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3007").await.unwrap();
+    info!("[🧬] Native Vector Synapse Active on Port {}", port);
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
@@ -146,9 +152,8 @@ async fn add_vectors(
     axum::extract::State(store): axum::extract::State<Store>,
     Json(docs): Json<Vec<VectorDoc>>,
 ) -> Json<serde_json::Value> {
-    println!("[+] Adding {} vectors to store", docs.len());
+    info!("[+] Adding {} vectors to store", docs.len());
     for doc in docs {
-        // println!("    Vector {}: size={}", doc.id, doc.embedding.len());
         store.insert(doc.id.clone(), doc);
     }
     Json(serde_json::json!({ "status": "ok" }))
@@ -160,7 +165,7 @@ async fn search_vectors(
 ) -> Json<Vec<SearchResult>> {
     let dim = query.embedding.len();
     let count = store.len();
-    println!("[?] Searching {} vectors (dim: {})", count, dim);
+    info!("[?] Searching {} vectors (dim: {})", count, dim);
     if count == 0 { return Json(vec![]); }
 
     let mut ids = Vec::with_capacity(count);
@@ -169,7 +174,7 @@ async fn search_vectors(
 
     for entry in store.iter() {
         if entry.value().embedding.len() != dim {
-           println!("[!] Warning: Vector {} has dim {}, expected {}", entry.key(), entry.value().embedding.len(), dim);
+           error!("[!] Warning: Vector {} has dim {}, expected {}", entry.key(), entry.value().embedding.len(), dim);
            continue;
         }
         ids.push(entry.key().clone());
@@ -194,14 +199,13 @@ async fn search_vectors(
         .zip(results.into_iter())
         .zip(metadatas.into_iter())
         .map(|((id, score), metadata)| {
-            // println!("    Doc {}: score={}", id, score);
             SearchResult { id, score, metadata }
         })
         .filter(|r| r.score >= query.threshold)
         .collect();
 
     final_results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
-    println!("[!] Found {} matches above threshold", final_results.len());
+    info!("[!] Found {} matches above threshold", final_results.len());
     final_results.truncate(query.limit);
 
     Json(final_results)

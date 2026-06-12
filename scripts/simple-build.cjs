@@ -83,7 +83,7 @@ async function buildPackages() {
   
   try {
     // Build with reduced concurrency for memory efficiency
-    await runCommand('turbo', ['run', 'build', '--concurrency=4']);
+    await runCommand('turbo', ['run', 'build']);
     console.log('✅ Package build completed successfully');
     return true;
   } catch (error) {

@@ -235,7 +235,9 @@ export class AuthService {
 
   private isMasterSuperAdmin(email: string): boolean {
     const masterSuperAdmins = (
-      this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') || 'owner@example.com'
+      this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') ||
+      this.configService.get<string>('HOSTMARIA_OWNER_EMAILS') ||
+      'owner@example.com'
     )
       .split(',')
       .map((e) => e.trim().toLowerCase())
@@ -496,7 +498,9 @@ export class AuthService {
       Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
     const roles = new Set<string>();
     const masterSuperAdmins = (
-      this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') || 'owner@example.com'
+      this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') ||
+      this.configService.get<string>('HOSTMARIA_OWNER_EMAILS') ||
+      'owner@example.com'
     )
       .split(',')
       .map((email) => email.trim().toLowerCase())

@@ -168,7 +168,11 @@ function normalizedRoleSet(principal: AuthPrincipal): Set<string> {
 }
 
 function masterSuperAdminEmails(): string[] {
-  return (process.env.MASTER_SUPER_ADMIN_EMAILS || DEFAULT_MASTER_SUPER_ADMIN_EMAIL)
+  return (
+    process.env.MASTER_SUPER_ADMIN_EMAILS ||
+    process.env.HOSTMARIA_OWNER_EMAILS ||
+    DEFAULT_MASTER_SUPER_ADMIN_EMAIL
+  )
     .split(',')
     .map((email) => email.trim().toLowerCase())
     .filter((email) => email.length > 0);

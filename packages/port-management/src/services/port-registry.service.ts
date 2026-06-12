@@ -3,6 +3,8 @@
 import { EventEmitter } from 'events';
 import * as net from 'net';
 import { execFileSync } from 'node:child_process';
+import * as portfinder from 'portfinder';
+import { checkPort } from 'node-port-check'; // Import checkPort from node-port-check
 
 
 export interface PortRegistration {
@@ -73,10 +75,10 @@ export interface RuntimePortPreflightResult {
 }
 
 const DEFAULT_RUNTIME_PORTS: RuntimePortCatalogEntry[] = [
-  { port: 3000, serviceName: 'frontend', protected: false },
+
   { port: 3001, serviceName: 'api/backend', protected: false },
   { port: 3004, serviceName: 'backend', protected: false },
-  { port: 3005, serviceName: 'api-gateway/ws-bridge', protected: false },
+  { port: 3003, serviceName: 'api-gateway/ws-bridge-secondary', protected: false },
   { port: 3006, serviceName: 'skideancer/ws', protected: false },
   { port: 3007, serviceName: 'skideancer/ide', protected: false },
   { port: 3008, serviceName: 'skideancer websocket', protected: true },
@@ -106,6 +108,7 @@ export class PortRegistryService extends EventEmitter {
   private registry: Map<string, PortRegistration> = new Map();
   private configurations: Map<string, ServiceConfiguration> = new Map();
   private monitoringInterval: NodeJS.Timeout | null = null;
+  private temporaryReservations: Map<number, net.Server> = new Map();
 
   constructor() {
     super();
@@ -137,14 +140,24 @@ export class PortRegistryService extends EventEmitter {
 
     let { port } = config;
 
-    // If no port specified, find an available one
+    let preReservedPort = false;
+
+    // If no port specified, find an available one using the new robust method
     if (!port) {
       port = await this.findAvailablePort(serviceName, environment);
+      preReservedPort = true; // Flag that this port was temporarily reserved by findAvailablePort
+    } else {
+      // MODIFIED: Directly attempt to temporarily reserve the explicitly provided port
+      const reservedServer = await this.reservePortTemporarily(port);
+      if (!reservedServer) {
+        throw new Error(`Failed to temporarily reserve explicitly provided port ${port}. It might be in use or have been taken concurrently.`);
+      }
+      preReservedPort = true; // Mark as pre-reserved
     }
 
     const registration: PortRegistration = {
       id: `${serviceName}-${environment}-${port}`,
-      port,
+      port: port!,
       serviceName,
       serviceType,
       environment: environment as PortRegistration['environment'],
@@ -160,7 +173,23 @@ export class PortRegistryService extends EventEmitter {
     this.registry.set(registration.id, registration);
     this.emit('portRegistered', registration);
 
+    // If the port was pre-reserved by this instance, release the temporary hold
+    if (preReservedPort) {
+      this.releaseTemporaryReservation(port!);
+    }
+
     return registration;
+  }
+
+// New helper to release temporary reservation
+  private releaseTemporaryReservation(port: number): void {
+    const server = this.temporaryReservations.get(port);
+    if (server) {
+      server.close(() => {
+        this.temporaryReservations.delete(port);
+        // console.log(`Temporary reservation for port ${port} released by PortRegistryService.`);
+      });
+    }
   }
 
   /**
@@ -168,45 +197,35 @@ export class PortRegistryService extends EventEmitter {
    */
   async findAvailablePort(serviceName: string, environment: PortRegistration['environment']): Promise<number> {
     const config = this.getServiceConfiguration(serviceName, environment);
-    
-    // Try preferred port first
-    if (config.preferredPort && await this.isPortAvailable(config.preferredPort)) {
-      return config.preferredPort;
-    }
 
-    // Try fallback ports
-    for (const port of config.fallbackPorts) {
-      if (await this.isPortAvailable(port)) {
-        return port;
-      }
-    }
+    // Retry finding and reserving a port until successful
+    for (let i = 0; i < 20; i++) { // Max 20 retries
+      try {
+        const potentialPort = await portfinder.getPortPromise({
+          port: config.preferredPort || config.portRangeMin,
+          stopPort: config.portRangeMax,
+        });
 
-    // Auto-assign from range
-    if (config.autoAssign) {
-      for (let port = config.portRangeMin; port <= config.portRangeMax; port++) {
-        if (await this.isPortAvailable(port)) {
-          return port;
+        const reservedServer = await this.reservePortTemporarily(potentialPort);
+        if (reservedServer) {
+          return potentialPort;
         }
+      } catch (err: unknown) {
+        // Log the error but continue retrying
+        console.error(`Error in findAvailablePort for ${serviceName}-${environment}:`, err);
       }
+      await new Promise(resolve => setTimeout(resolve, 50 * (i + 1))); // Exponential backoff before retrying
     }
 
-    throw new Error(`No available ports found for service ${serviceName} in environment ${environment}`);
+    throw new Error(`No available and reservable ports found for service ${serviceName} in environment ${environment} within range ${config.portRangeMin}-${config.portRangeMax} after multiple attempts.`);
   }
 
   /**
    * Check if a port is available
    */
   async isPortAvailable(port: number, host: string = 'localhost'): Promise<boolean> {
-    return new Promise((resolve) => {
-      const server = net.createServer();
-      
-      server.listen(port, host, () => {
-        server.once('close', () => resolve(true));
-        server.close();
-      });
-
-      server.on('error', () => resolve(false));
-    });
+    // Use node-port-check for port availability
+    return checkPort(port, host).then(() => true).catch(() => false);
   }
 
   /**
@@ -325,6 +344,15 @@ export class PortRegistryService extends EventEmitter {
         autoAssign: true,
         portRangeMin: 3001,
         portRangeMax: 3199
+      },
+      {
+        serviceName: 'api-gateway/ws-bridge',
+        environment: 'development',
+        preferredPort: 3005,
+        fallbackPorts: [3015, 3025, 3035],
+        autoAssign: true,
+        portRangeMin: 3005,
+        portRangeMax: 3105
       }
     ];
 
@@ -368,6 +396,30 @@ export class PortRegistryService extends EventEmitter {
 
   private getPidCommand(pid: number): string {
     return run('ps', ['-p', String(pid), '-o', 'comm=']).trim() || 'unknown';
+  }
+
+  /**
+   * Temporarily binds to a port to reserve it. Keeps the server open.
+   * Returns the server instance if the port was successfully reserved, null otherwise.
+   */
+  private async reservePortTemporarily(port: number): Promise<net.Server | null> {
+    return new Promise((resolve) => {
+      const server = net.createServer();
+      server.listen(port, 'localhost', () => {
+        // Port successfully bound, keep it open temporarily
+        this.temporaryReservations.set(port, server);
+        resolve(server); // Return the server instance
+      });
+      server.on('error', (err: any) => {
+        // Port not available or other error
+        if (err.code === 'EADDRINUSE') {
+          resolve(null); // Port in use
+        } else {
+          console.error(`Error attempting to temporarily reserve port ${port}:`, err);
+          resolve(null);
+        }
+      });
+    });
   }
 
   getByService(serviceName: string, environment?: string): PortRegistration[] {

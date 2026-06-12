@@ -12,7 +12,7 @@
   "remoteCache": {
     "signature": true
   },
-  "concurrency": 4,
+
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

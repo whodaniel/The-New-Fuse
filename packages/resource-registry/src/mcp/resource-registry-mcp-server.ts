@@ -5,7 +5,7 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from '@modelcontextprotocol/sdk/types';
-import { SearchResourceDto } from '../dto.js';
+import { SearchResourceDto } from '../dto';
 import { ResourceAccessControlService } from '../services/resource-access-control.service.js';
 import { ResourceRegistryService } from '../services/resource-registry.service.js';
 import {
