@@ -1,43 +1,28 @@
 {
-  "generatedAt": "2026-05-19T20:19:15.830833Z",
+  "generatedAt": "2026-06-11T18:37:57.845814Z",
   "queueKey": "tnf:master:tasks:realtime",
-  "redisUrl": "redis://127.0.0.1:6379",
+  "redisUrl": "(default redis-cli)",
   "dispatch": {
-    "attempted": 1,
-    "succeeded": 1,
-    "alreadyDispatched": 600,
-    "records": [
-      {
-        "dispatchId": "ai5-dispatch-1779221955-001",
-        "intelligenceTaskId": "act-a2883e00e38e895b",
-        "title": "[AI5] Run Codebase Static Security Analysis",
-        "priority": "critical",
-        "confidence": {
-          "score": 0.8,
-          "label": "high"
-        },
-        "queueKey": "tnf:master:tasks:realtime",
-        "dispatchedAt": "2026-05-19T20:19:15.245095Z",
-        "dryRun": false
-      }
-    ]
+    "attempted": 0,
+    "succeeded": 0,
+    "alreadyDispatched": 49,
+    "records": []
   },
   "queueMetrics": {
     "totalTasks": 689,
-    "executionCandidates": 601,
+    "executionCandidates": 49,
     "statusCounts": {
-      "queued": 51,
-      "pending": 638
+      "pending": 87,
+      "queued": 602
     },
     "minConfidence": "medium",
-    "redisDepthBefore": 0,
-    "redisDepthAfter": 0
+    "redisDepthBefore": -1,
+    "redisDepthAfter": -1
   },
   "reconciliation": {
-    "enabled": true,
+    "enabled": false,
     "source": "ai5-intelligence-activation",
     "removed": 0,
-    "kept": 0,
-    "removedRecords": []
+    "kept": 0
   }
 }

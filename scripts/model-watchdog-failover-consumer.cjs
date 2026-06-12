@@ -10,9 +10,7 @@
 
 function parseList(value) {
   if (Array.isArray(value)) {
-    return value
-      .map((entry) => String(entry || '').trim())
-      .filter(Boolean);
+    return value.map((entry) => String(entry || '').trim()).filter(Boolean);
   }
 
   if (typeof value !== 'string') {
@@ -73,7 +71,8 @@ function normalizeMessagePreview(value) {
 function parseWatchdogSignal(message) {
   if (!message || typeof message !== 'object') return null;
   if (message.type !== 'status') return null;
-  if (message?.metadata?.event !== 'pi_provider_failure') return null;
+  const event = message?.metadata?.event;
+  if (event !== 'pi_provider_failure' && event !== 'provider_failure') return null;
 
   const signal = message?.metadata?.signal;
   if (!signal || typeof signal !== 'object') return null;
@@ -102,9 +101,7 @@ function thresholdForCategory(category, config) {
 }
 
 function chooseFallbackProvider(currentProvider, providerChain) {
-  const chain = providerChain
-    .map((entry) => normalizeToken(entry))
-    .filter(Boolean);
+  const chain = providerChain.map((entry) => normalizeToken(entry)).filter(Boolean);
 
   if (chain.length === 0) return null;
 
@@ -140,26 +137,18 @@ function resolveConfig(overrides = {}) {
     agentName: process.env.MODEL_WATCHDOG_AGENT_NAME || 'model-watchdog',
     agentRole: process.env.MODEL_WATCHDOG_AGENT_ROLE || 'broker',
     platform: process.env.MODEL_WATCHDOG_PLATFORM || 'watchdog',
-    modelWatchdogChannel:
-      process.env.PI_MODEL_WATCHDOG_CHANNEL || 'tnf:model-watchdog:signals',
+    modelWatchdogChannel: process.env.PI_MODEL_WATCHDOG_CHANNEL || 'tnf:model-watchdog:signals',
     orchestratorChannel: process.env.MODEL_WATCHDOG_ORCHESTRATOR_CHANNEL || 'tnf:orchestrator',
     brokerChannel: process.env.MODEL_WATCHDOG_BROKER_CHANNEL || 'tnf:broker',
-    brokerDecisionChannel:
-      process.env.MODEL_WATCHDOG_DECISION_CHANNEL || 'tnf:broker:decisions',
+    brokerDecisionChannel: process.env.MODEL_WATCHDOG_DECISION_CHANNEL || 'tnf:broker:decisions',
     statePrefix: process.env.MODEL_WATCHDOG_STATE_PREFIX || 'tnf:model-watchdog:v1',
     failureWindowMs: parsePositiveInt(process.env.MODEL_WATCHDOG_WINDOW_MS, 10 * 60 * 1000),
     escalationCooldownMs: parsePositiveInt(
       process.env.MODEL_WATCHDOG_ESCALATION_COOLDOWN_MS,
       5 * 60 * 1000
     ),
-    defaultFailoverThreshold: parsePositiveInt(
-      process.env.MODEL_WATCHDOG_FAILOVER_THRESHOLD,
-      2
-    ),
-    authFailoverThreshold: parsePositiveInt(
-      process.env.MODEL_WATCHDOG_AUTH_FAILOVER_THRESHOLD,
-      1
-    ),
+    defaultFailoverThreshold: parsePositiveInt(process.env.MODEL_WATCHDOG_FAILOVER_THRESHOLD, 2),
+    authFailoverThreshold: parsePositiveInt(process.env.MODEL_WATCHDOG_AUTH_FAILOVER_THRESHOLD, 1),
     creditsFailoverThreshold: parsePositiveInt(
       process.env.MODEL_WATCHDOG_CREDITS_FAILOVER_THRESHOLD,
       1
@@ -350,9 +339,10 @@ class ModelWatchdogFailoverConsumer {
       recentFailureEpochMs.splice(0, recentFailureEpochMs.length - this.config.maxRecentFailures);
     }
 
-    const categories = existing.categories && typeof existing.categories === 'object'
-      ? { ...existing.categories }
-      : {};
+    const categories =
+      existing.categories && typeof existing.categories === 'object'
+        ? { ...existing.categories }
+        : {};
     categories[signal.category] = parsePositiveInt(categories[signal.category], 0, 0) + 1;
 
     const threshold = thresholdForCategory(signal.category, this.config);
@@ -382,10 +372,7 @@ class ModelWatchdogFailoverConsumer {
     const shouldEscalate = recentFailureEpochMs.length >= threshold && !inCooldown;
 
     if (shouldEscalate) {
-      const fallbackProvider = chooseFallbackProvider(
-        signal.provider,
-        this.config.providerChain
-      );
+      const fallbackProvider = chooseFallbackProvider(signal.provider, this.config.providerChain);
       const recommendation = {
         fallbackProvider,
         fallbackModel: signal.model,

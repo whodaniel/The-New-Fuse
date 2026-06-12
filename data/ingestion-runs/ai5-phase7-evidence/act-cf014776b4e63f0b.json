@@ -1,0 +1,9 @@
+{
+  "id": "act-cf014776b4e63f0b",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:53.564677Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests using Deep Sec. Extracted from a Vercel tutorial video. Not applicable to TNF."
+  }
+}

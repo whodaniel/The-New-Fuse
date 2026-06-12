@@ -1,17 +1,16 @@
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
+import { AgentPool } from '../core/AgentPool.js';
+import { TaskAssigner } from '../core/TaskAssigner.js';
+import { TaskQueue } from '../core/TaskQueue.js';
 import {
+  AgentInfo,
+  CoordinationConfig,
   Task,
-  TaskStatus,
   TaskPriority,
   TaskResult,
-  AgentInfo,
-  ExecutionMode,
-  CoordinationConfig,
+  TaskStatus,
 } from '../core/types.js';
-import { TaskQueue } from '../core/TaskQueue.js';
-import { TaskAssigner } from '../core/TaskAssigner.js';
-import { AgentPool } from '../core/AgentPool.js';
 
 /**
  * Master coordinator for multi-agent task execution
@@ -25,11 +24,7 @@ export class Coordinator extends EventEmitter {
   private isRunning: boolean = false;
   private processingInterval?: NodeJS.Timeout;
 
-  constructor(
-    redisUrl: string,
-    agentPoolConfig: any,
-    coordinationConfig?: CoordinationConfig
-  ) {
+  constructor(redisUrl: string, agentPoolConfig: any, coordinationConfig?: CoordinationConfig) {
     super();
 
     this.taskQueue = new TaskQueue(redisUrl);
@@ -79,10 +74,7 @@ export class Coordinator extends EventEmitter {
     this.emit('coordinator:started');
 
     // Start processing loop
-    this.processingInterval = setInterval(
-      () => this.processNextTask(),
-      1000
-    );
+    this.processingInterval = setInterval(() => this.processNextTask(), 1000);
   }
 
   /**
@@ -147,10 +139,12 @@ export class Coordinator extends EventEmitter {
       }
     }
 
-    // Add to queue
-    await this.taskQueue.addTask(task);
+    // Add to activeTasks first to prevent race condition before queue execution
     task.status = TaskStatus.QUEUED;
     this.activeTasks.set(task.id, task);
+
+    // Add to queue
+    await this.taskQueue.addTask(task);
 
     this.emit('task:submitted', task);
     return task;
@@ -188,6 +182,11 @@ export class Coordinator extends EventEmitter {
     const task = await this.taskQueue.getNextTask();
     if (!task) {
       return; // No tasks in queue
+    }
+
+    // Ensure task is tracked in activeTasks to handle races or legacy tasks gracefully
+    if (!this.activeTasks.has(task.id)) {
+      this.activeTasks.set(task.id, task);
     }
 
     // Assign task to agent

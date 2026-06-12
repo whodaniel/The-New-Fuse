@@ -1,0 +1,9 @@
+{
+  "id": "act-1d09c1ef654e863b",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests running a tutorial's production.py script, which does not exist in the TNF codebase."
+  }
+}

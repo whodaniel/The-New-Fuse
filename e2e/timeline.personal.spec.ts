@@ -146,7 +146,7 @@ test.describe('Personal Timeline', () => {
 
     await page.goto('/timeline', { waitUntil: 'domcontentloaded' });
 
-    await expect(page.getByRole('heading', { name: 'My Timeline' })).toBeVisible({
+    await expect(page.getByRole('heading', { name: 'Unified Timeline' })).toBeVisible({
       timeout: 30000,
     });
     await expect(page.getByTestId('timeline-create-card')).toBeVisible();

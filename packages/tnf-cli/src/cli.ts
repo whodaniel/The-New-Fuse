@@ -11,16 +11,24 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
+import { registerAssimilateCommand } from './commands/assimilate.js';
 import { Orchestrator } from './orchestration.js';
+import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
+import { CronService } from './services/CronService.js';
 import { GoalsService } from './services/GoalsService.js';
+import { KanbanService } from './services/KanbanService.js';
+import { MemoryProviderService } from './services/MemoryProviderService.js';
+import { PluginsService } from './services/PluginsService.js';
 import { StoryService } from './services/StoryService.js';
+import { ToolsService } from './services/ToolsService.js';
+import { WebhookService } from './services/WebhookService.js';
 import {
   findSlashCommand,
   formatPromptSlashCommand,
+  getAllSlashCommands,
   parseSlashCommand,
   renderSlashCommandDetail,
   renderSlashCommandList,
-  getAllSlashCommands,
   type SlashCommandDefinition,
 } from './slashCommands.js';
 
@@ -71,7 +79,9 @@ function loadLocalEnv(rootDir: string): void {
     for (const rawLine of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
       const line = rawLine.trim();
       if (!line || line.startsWith('#')) continue;
-      const normalizedLine = line.startsWith('export ') ? line.slice('export '.length).trim() : line;
+      const normalizedLine = line.startsWith('export ')
+        ? line.slice('export '.length).trim()
+        : line;
       const separatorIndex = normalizedLine.indexOf('=');
       if (separatorIndex <= 0) continue;
 
@@ -90,7 +100,9 @@ try {
     process.chdir(repoRoot);
   }
 } catch (error: any) {
-  console.warn(chalk.yellow(`Warning: failed to switch to TNF repo root: ${error?.message || error}`));
+  console.warn(
+    chalk.yellow(`Warning: failed to switch to TNF repo root: ${error?.message || error}`)
+  );
 }
 
 async function runCommand(
@@ -906,6 +918,7 @@ const DEFAULT_SELF_IMPROVEMENT_API_URL = 'https://api.thenewfuse.com';
 const DEFAULT_FULL_AUTO_INTERVAL_MINUTES = 30;
 const FULL_AUTO_STATE_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-state.json');
 const FULL_AUTO_RUN_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-runs.jsonl');
+const FULL_AUTO_DAEMON_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-daemon.log');
 
 const SELF_IMPROVEMENT_ARTIFACTS: SelfImprovementArtifactsIndex = {
   liveLinkCrawlJson: path.join(repoRoot, 'apps/frontend/docs/audits/live-link-crawl.json'),
@@ -3445,6 +3458,43 @@ async function runSelfCli(args: string[]): Promise<void> {
   await runCommand(process.execPath, [...process.execArgv, cliEntryPath, ...args]);
 }
 
+function findFullAutoStartProcesses(): Array<{ pid: number; cmd: string }> {
+  return parseProcessTable().filter((entry) => {
+    if (entry.pid === process.pid) return false;
+    return /\bfull-auto\s+start\b/.test(entry.cmd);
+  });
+}
+
+function buildFullAutoStartArgs(
+  options: SelfImprovementRunCliOptions & {
+    intervalMinutes?: string;
+    maxCycles?: string;
+    broadcast?: boolean;
+    strict?: boolean;
+    skipStrictStatus?: boolean;
+  }
+): string[] {
+  const args = ['full-auto', 'start'];
+  if (options.intervalMinutes) args.push('--interval-minutes', options.intervalMinutes);
+  if (options.maxCycles) args.push('--max-cycles', options.maxCycles);
+  if (options.baseUrl) args.push('--base-url', options.baseUrl);
+  if (options.apiUrl) args.push('--api-url', options.apiUrl);
+  if (options.maxDepth) args.push('--max-depth', options.maxDepth);
+  if (options.maxPages) args.push('--max-pages', options.maxPages);
+  if (options.maxExternal) args.push('--max-external', options.maxExternal);
+  if (options.skipBuild) args.push('--skip-build');
+  if (options.skipLiveLinks) args.push('--skip-live-links');
+  if (options.skipSemantic) args.push('--skip-semantic');
+  if (options.skipAuth) args.push('--skip-auth');
+  if (options.skipScorecard) args.push('--skip-scorecard');
+  if (options.skipMermaid) args.push('--skip-mermaid');
+  if (options.skipStrictStatus) args.push('--skip-strict-status');
+  if (options.broadcast) args.push('--broadcast');
+  if (options.strict) args.push('--strict');
+  if (options.superAdminToken) args.push('--super-admin-token', options.superAdminToken);
+  return args;
+}
+
 async function runSelfCliWithExit(args: string[]): Promise<void> {
   try {
     await runSelfCli(args);
@@ -3715,7 +3765,9 @@ function buildBootPlan(nonInteractive?: boolean): BootPlanStep[] {
       label: 'Turn Zero onboarding surface',
       critical: true,
       launches: ['node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000'],
-      notes: ['Prints canonical state and the raw-agent prompt before boot auth or runtime launch.'],
+      notes: [
+        'Prints canonical state and the raw-agent prompt before boot auth or runtime launch.',
+      ],
     },
     {
       label: 'Port preflight',
@@ -3734,7 +3786,9 @@ function buildBootPlan(nonInteractive?: boolean): BootPlanStep[] {
     {
       label: 'Mounting volumes',
       critical: true,
-      launches: ['mkdir -p .agent/runtime-state .agent/runtime-logs .agent/test-reports data/agent-registry'],
+      launches: [
+        'mkdir -p .agent/runtime-state .agent/runtime-logs .agent/test-reports data/agent-registry',
+      ],
     },
     {
       label: 'MCP health check',
@@ -3790,7 +3844,9 @@ function buildBootPlan(nonInteractive?: boolean): BootPlanStep[] {
         'scripts/pi-redis-wrapper.cjs',
         'scripts/model-watchdog-failover-consumer.cjs',
       ],
-      notes: ['macOS Terminal tab launches are verified by process check before success is printed.'],
+      notes: [
+        'macOS Terminal tab launches are verified by process check before success is printed.',
+      ],
     },
     {
       label: 'OpenClaw MCP/client surface',
@@ -3806,7 +3862,9 @@ function buildBootPlan(nonInteractive?: boolean): BootPlanStep[] {
     {
       label: 'Browser control panel',
       critical: false,
-      launches: nonInteractive ? ['skipped by --non-interactive'] : ['open https://thenewfuse.com/health'],
+      launches: nonInteractive
+        ? ['skipped by --non-interactive']
+        : ['open https://thenewfuse.com/health'],
     },
     {
       label: 'System health verification',
@@ -3855,9 +3913,7 @@ type InteractiveSlashContext = {
   };
 };
 
-type SlashCommandOutcome =
-  | { handled: false }
-  | { handled: true; exit?: boolean; prompt?: string };
+type SlashCommandOutcome = { handled: false } | { handled: true; exit?: boolean; prompt?: string };
 
 function printSlashText(text: string): void {
   console.log('');
@@ -3891,10 +3947,7 @@ type SlashDropdownState = {
   selectedCommand: string | null;
 };
 
-function getSlashCommandMatches(
-  projectRoot: string,
-  line: string
-): SlashCommandDefinition[] {
+function getSlashCommandMatches(projectRoot: string, line: string): SlashCommandDefinition[] {
   const normalizedLine = line.startsWith('/') ? line : `/${line}`;
   const query = normalizedLine.slice(1).toLowerCase();
   return getAllSlashCommands(projectRoot)
@@ -3912,8 +3965,14 @@ function renderSlashCommandDropdown(
   limit = 14
 ): string {
   const allCommands = getSlashCommandMatches(projectRoot, state.query);
-  const safeSelectedIndex = Math.min(Math.max(state.selectedIndex, 0), Math.max(0, allCommands.length - 1));
-  const startIndex = Math.max(0, Math.min(safeSelectedIndex - limit + 1, Math.max(0, allCommands.length - limit)));
+  const safeSelectedIndex = Math.min(
+    Math.max(state.selectedIndex, 0),
+    Math.max(0, allCommands.length - 1)
+  );
+  const startIndex = Math.max(
+    0,
+    Math.min(safeSelectedIndex - limit + 1, Math.max(0, allCommands.length - limit))
+  );
   const commands = allCommands.slice(startIndex, startIndex + limit);
   const maxNameLength = Math.max(...commands.map((command) => command.name.length), 4);
   const lines = [
@@ -3959,7 +4018,10 @@ function resolveSlashDropdownInput(input: string, state: SlashDropdownState): st
   return input;
 }
 
-function attachSlashCommandDropdown(rl: readline.Interface, projectRoot: string): SlashDropdownState {
+function attachSlashCommandDropdown(
+  rl: readline.Interface,
+  projectRoot: string
+): SlashDropdownState {
   const state: SlashDropdownState = {
     visible: false,
     query: '',
@@ -3978,9 +4040,10 @@ function attachSlashCommandDropdown(rl: readline.Interface, projectRoot: string)
       return;
     }
 
-    const currentLine = state.visible && ['up', 'down'].includes(keyName)
-      ? state.query
-      : String((rl as any).line || '');
+    const currentLine =
+      state.visible && ['up', 'down'].includes(keyName)
+        ? state.query
+        : String((rl as any).line || '');
     if (!currentLine.startsWith('/') || currentLine.includes(' ')) {
       state.visible = false;
       state.selectedCommand = null;
@@ -4040,10 +4103,7 @@ async function showCurrentModel(): Promise<void> {
   console.log('');
 }
 
-function setInteractiveModel(
-  client: InteractiveSlashContext['client'],
-  modelName: string
-): void {
+function setInteractiveModel(client: InteractiveSlashContext['client'], modelName: string): void {
   process.env.TNF_LLM_MODEL = modelName;
   if (client) {
     client.model = modelName;
@@ -4146,7 +4206,9 @@ async function handleOneShotSlashInput(input: string): Promise<boolean> {
   if (command.name === 'cost') {
     console.log(chalk.bold('\nCost\n'));
     console.log(chalk.dim('  No active chat transcript in one-shot CLI mode.'));
-    console.log(chalk.dim('  Run /cost inside `tnf tui` or `tnf ai chat` for session estimates.\n'));
+    console.log(
+      chalk.dim('  Run /cost inside `tnf tui` or `tnf ai chat` for session estimates.\n')
+    );
     return true;
   }
 
@@ -4215,7 +4277,9 @@ async function handleInteractiveSlashCommand(
 
   if (command.name === 'clear' || command.name === 'compact') {
     context.messages.length = context.systemMessageCount;
-    console.log(chalk.dim(`  ${command.name === 'compact' ? 'Transcript compacted' : 'History cleared'}`));
+    console.log(
+      chalk.dim(`  ${command.name === 'compact' ? 'Transcript compacted' : 'History cleared'}`)
+    );
     return { handled: true };
   }
 
@@ -4407,7 +4471,9 @@ program
                 args.push('--no-launch');
                 if (!findExecutableOnPath('openclaw')) {
                   console.log(
-                    chalk.dim('   OpenClaw CLI not found; provisioning MCP config without launching client')
+                    chalk.dim(
+                      '   OpenClaw CLI not found; provisioning MCP config without launching client'
+                    )
                   );
                 }
               }
@@ -4477,7 +4543,9 @@ program
         }
 
         if (options.attachAgent !== false && !options.nonInteractive && process.stdin.isTTY) {
-          console.log(chalk.cyan('Attaching TNF Agent operator lane. Use /exit to return to the shell.'));
+          console.log(
+            chalk.cyan('Attaching TNF Agent operator lane. Use /exit to return to the shell.')
+          );
           await startInteractiveAgent();
         } else if (options.attachAgent === false) {
           console.log(chalk.dim('Interactive TNF Agent attach skipped (--no-attach-agent).'));
@@ -4648,6 +4716,43 @@ program
           args.push(options.requireCloudDb ? '--require-cloud-db' : '--no-require-cloud-db');
         }
         if (options.databaseUrl) args.push('--database-url', options.databaseUrl);
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+program
+  .command('mapreduce')
+  .description('Run a Map-Reduce agent coordination workflow')
+  .option('-i, --input <path>', 'JSON file containing input data array')
+  .option('-m, --map <script>', 'Path to JavaScript file defining mapFn')
+  .option('-r, --reduce <script>', 'Path to JavaScript file defining reduceFn')
+  .option('-c, --concurrency <number>', 'Map concurrency level', '5')
+  .option('-d, --redis <url>', 'Redis URL for agent network')
+  .option('--no-local-fallback', 'Disable local fallback if Redis connection fails')
+  .option('--demo', 'Run a beautiful word-count demo workflow')
+  .action(
+    async (options: {
+      input?: string;
+      map?: string;
+      reduce?: string;
+      concurrency?: string;
+      redis?: string;
+      localFallback?: boolean;
+      demo?: boolean;
+    }) => {
+      try {
+        const args = ['scripts/tnf-mapreduce.cjs'];
+        if (options.input) args.push('--input', options.input);
+        if (options.map) args.push('--map', options.map);
+        if (options.reduce) args.push('--reduce', options.reduce);
+        if (options.concurrency) args.push('--concurrency', options.concurrency);
+        if (options.redis) args.push('--redis', options.redis);
+        if (options.localFallback === false) args.push('--no-local-fallback');
+        if (options.demo) args.push('--demo');
         await runCommand('node', args);
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
@@ -7174,6 +7279,170 @@ fullAuto
     }
   );
 
+const fullAutoDaemon = fullAuto
+  .command('daemon')
+  .description('Compatibility wrapper for detached full-auto loop operations');
+
+fullAutoDaemon
+  .command('start')
+  .description('Start `tnf full-auto start` as a detached background process')
+  .option(
+    '--interval-minutes <n>',
+    'Wait time between cycles',
+    String(DEFAULT_FULL_AUTO_INTERVAL_MINUTES)
+  )
+  .option('--max-cycles <n>', 'Number of cycles before stop (0 = run forever)', '0')
+  .option('--base-url <url>', 'Public base URL used by semantic/auth audits')
+  .option('--api-url <url>', 'API base URL used by auth audit')
+  .option('--max-depth <n>', 'Max crawl depth for live link audit')
+  .option('--max-pages <n>', 'Max page count for live link audit')
+  .option('--max-external <n>', 'Max external URL checks for live link audit')
+  .option('--skip-build', 'Skip frontend build stage')
+  .option('--skip-live-links', 'Skip live-link crawl stage')
+  .option('--skip-semantic', 'Skip semantic route audit stage')
+  .option('--skip-auth', 'Skip auth path audit stage')
+  .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
+  .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
+  .option('--skip-strict-status', 'Do not fail cycles on self-improvement status')
+  .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after each cycle')
+  .option('--strict', 'Stop loop on first cycle failure')
+  .option('--force', 'Start another detached loop even if one is already visible')
+  .option('--json', 'Output machine-readable JSON')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
+  .action(
+    async (
+      options: SelfImprovementRunCliOptions & {
+        intervalMinutes?: string;
+        maxCycles?: string;
+        broadcast?: boolean;
+        strict?: boolean;
+        skipStrictStatus?: boolean;
+        force?: boolean;
+        json?: boolean;
+      }
+    ) => {
+      try {
+        requireSuperAdmin(options, 'full-auto daemon start');
+
+        const existing = findFullAutoStartProcesses();
+        if (existing.length > 0 && !options.force) {
+          const payload = {
+            started: false,
+            reason: 'already-running',
+            processes: existing,
+            logPath: path.relative(repoRoot, FULL_AUTO_DAEMON_LOG_PATH),
+          };
+          if (options.json) {
+            console.log(JSON.stringify(payload, null, 2));
+            return;
+          }
+          console.log(chalk.yellow('TNF full-auto daemon is already running.'));
+          for (const proc of existing) {
+            console.log(`- pid=${chalk.cyan(String(proc.pid))} ${chalk.dim(proc.cmd)}`);
+          }
+          console.log(`Log: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_DAEMON_LOG_PATH))}`);
+          return;
+        }
+
+        ensureParentDir(FULL_AUTO_DAEMON_LOG_PATH);
+        const outFd = fs.openSync(FULL_AUTO_DAEMON_LOG_PATH, 'a');
+        const errFd = fs.openSync(FULL_AUTO_DAEMON_LOG_PATH, 'a');
+        const args = buildFullAutoStartArgs(options);
+        const child = spawn(process.execPath, [...process.execArgv, cliEntryPath, ...args], {
+          cwd: repoRoot,
+          detached: true,
+          env: {
+            ...process.env,
+            TNF_INVOCATION_CWD: invocationCwd,
+            [SUPER_ADMIN_INPUT_ENV_KEY]:
+              process.env[SUPER_ADMIN_INPUT_ENV_KEY] ||
+              process.env[SUPER_ADMIN_ENV_KEY] ||
+              options.superAdminToken ||
+              '',
+          },
+          stdio: ['ignore', outFd, errFd],
+        });
+        child.unref();
+        fs.closeSync(outFd);
+        fs.closeSync(errFd);
+
+        const payload = {
+          started: true,
+          pid: child.pid,
+          command: ['tnf', ...args],
+          logPath: path.relative(repoRoot, FULL_AUTO_DAEMON_LOG_PATH),
+        };
+        if (options.json) {
+          console.log(JSON.stringify(payload, null, 2));
+          return;
+        }
+
+        console.log(chalk.green('TNF full-auto daemon started.'));
+        console.log(`PID: ${chalk.cyan(String(child.pid))}`);
+        console.log(`Command: ${chalk.dim(payload.command.join(' '))}`);
+        console.log(`Log: ${chalk.dim(payload.logPath)}`);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+fullAutoDaemon
+  .command('status')
+  .description('Show detached full-auto loop process and persisted state')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean } = {}) => {
+    try {
+      const state = readFullAutoState();
+      const lastRun = readLastJsonLine(FULL_AUTO_RUN_LOG_PATH);
+      const processes = findFullAutoStartProcesses();
+      const payload = {
+        running: processes.length > 0,
+        processes,
+        state,
+        lastRun,
+        statePath: path.relative(repoRoot, FULL_AUTO_STATE_PATH),
+        runLogPath: path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH),
+        daemonLogPath: path.relative(repoRoot, FULL_AUTO_DAEMON_LOG_PATH),
+      };
+
+      if (options.json) {
+        console.log(JSON.stringify(payload, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nTNF Full-Auto Daemon Status\n'));
+      console.log(`Running: ${payload.running ? chalk.green('yes') : chalk.yellow('no')}`);
+      for (const proc of processes) {
+        console.log(`- pid=${chalk.cyan(String(proc.pid))} ${chalk.dim(proc.cmd)}`);
+      }
+      if (state) {
+        console.log(
+          `Mode: ${state.mode === 'running' ? chalk.green('running') : chalk.cyan('idle')}`
+        );
+        console.log(`Updated: ${chalk.dim(state.updatedAt)}`);
+        console.log(`Completed cycles: ${chalk.green(String(state.completedCycles))}`);
+        console.log(
+          `Failed cycles: ${state.failedCycles > 0 ? chalk.yellow(String(state.failedCycles)) : chalk.green('0')}`
+        );
+      }
+      if (lastRun) {
+        console.log(
+          `Last cycle: cycle=${lastRun.cycle} ok=${lastRun.ok} durationMs=${lastRun.durationMs}`
+        );
+      }
+      console.log(`Log: ${chalk.dim(payload.daemonLogPath)}`);
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 fullAuto
   .command('status')
   .description('Show persisted full-auto loop state and latest cycle result')
@@ -9124,8 +9393,7 @@ agentsLive
     }) => {
       try {
         const pythonBin =
-          process.env.TNF_PYTHON ||
-          path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+          process.env.TNF_PYTHON || path.join(os.homedir(), '.tnf', 'venv', 'bin', 'python3');
         const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
         const args = [script, 'live'];
         if (options.model) args.push('--model', options.model);
@@ -9147,8 +9415,7 @@ agentsLive
   .action(async (options: { agentId?: string }) => {
     try {
       const pythonBin =
-        process.env.TNF_PYTHON ||
-        path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+        process.env.TNF_PYTHON || path.join(os.homedir(), '.tnf', 'venv', 'bin', 'python3');
       const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
       const args = [script, 'watch'];
       if (options.agentId) args.push('--agent-id', options.agentId);
@@ -9165,8 +9432,7 @@ agentsLive
   .action(async () => {
     try {
       const pythonBin =
-        process.env.TNF_PYTHON ||
-        path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+        process.env.TNF_PYTHON || path.join(os.homedir(), '.tnf', 'venv', 'bin', 'python3');
       const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
       await runCommand(pythonBin, [script, 'once']);
     } catch (err: any) {
@@ -9181,8 +9447,7 @@ agentsLive
   .action(async () => {
     try {
       const pythonBin =
-        process.env.TNF_PYTHON ||
-        path.join(os.homedir(), '.hermes', 'hermes-agent', 'venv', 'bin', 'python3');
+        process.env.TNF_PYTHON || path.join(os.homedir(), '.tnf', 'venv', 'bin', 'python3');
       const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
       await runCommand(pythonBin, [script, 'status']);
     } catch (err: any) {
@@ -9316,6 +9581,7 @@ program
     const client = new RedisAgentClient();
     try {
       await client.initialize();
+      await client.register(process.env.AGENT_NAME || 'orchestrator-cli', 'orchestrator', 'tnf');
       const orchestrator = new Orchestrator(client);
       const ok = await orchestrator.executeWorkflow(workflow, {
         path: options.path || '.',
@@ -10862,9 +11128,7 @@ projectCmd
   });
 
 // Slash command registry and dispatch
-const slashCmd = program
-  .command('slash')
-  .description('List and inspect TNF slash commands');
+const slashCmd = program.command('slash').description('List and inspect TNF slash commands');
 
 slashCmd
   .command('list')
@@ -11264,6 +11528,7 @@ program
 // Upgrade command
 program
   .command('upgrade')
+  .alias('update')
   .description('Upgrade tnf to the latest or a specific version')
   .argument('[target]', 'Version to upgrade to')
   .option('-m, --method <method>', 'Installation method (curl|npm|pnpm|bun|brew)')
@@ -12451,6 +12716,96 @@ notesCommand
     }
   );
 
+const toolsCommand = program.command('tools').description('Tools and toolset management');
+toolsCommand
+  .command('list')
+  .description('List all discovered tools/toolsets')
+  .action(async () => {
+    const service = new ToolsService();
+    const toolsets = await service.getToolsets();
+    console.log(chalk.bold('\nDiscovered Tools/Toolsets:\n'));
+    for (const tool of toolsets) {
+      console.log(
+        `- ${tool.enabled ? chalk.green('[ON]') : chalk.red('[OFF]')} ${chalk.cyan(tool.name)}: ${tool.description} (${tool.source || 'builtin'})`
+      );
+    }
+  });
+
+const pluginsCommand = program.command('plugins').description('Plugins and skills management');
+pluginsCommand
+  .command('list')
+  .description('List all installed plugins/skills')
+  .action(async () => {
+    const service = new PluginsService();
+    const plugins = await service.list();
+    console.log(chalk.bold('\nInstalled Plugins & Skills:\n'));
+    for (const plugin of plugins) {
+      console.log(
+        `- ${chalk.cyan(plugin.name)} (v${plugin.version}): ${plugin.description} [${plugin.category}]`
+      );
+    }
+  });
+
+const cronCommand = program.command('cron').description('Cron and scheduled tasks management');
+cronCommand
+  .command('list')
+  .description('List all scheduled jobs')
+  .action(async () => {
+    const service = new CronService();
+    const jobs = await service.list();
+    console.log(chalk.bold('\nScheduled Cron Jobs:\n'));
+    for (const job of jobs) {
+      console.log(
+        `- ${job.enabled ? chalk.green('[ON]') : chalk.red('[OFF]')} ${chalk.cyan(job.name)} (${job.schedule}) -> ${job.command}`
+      );
+    }
+  });
+
+registerAssimilateCommand(program, repoRoot);
+
+const webhookCommand = program.command('webhook').description('Webhook management');
+webhookCommand
+  .command('list')
+  .description('List all configured webhooks')
+  .action(async () => {
+    const service = new WebhookService();
+    const webhooks = await service.list();
+    console.log(chalk.bold('\nConfigured Webhooks:\n'));
+    for (const webhook of webhooks) {
+      console.log(
+        `- ${webhook.active ? chalk.green('[ON]') : chalk.red('[OFF]')} ${chalk.cyan(webhook.event)}: ${webhook.url}`
+      );
+    }
+  });
+
+const kanbanCommand = program.command('kanban').description('Kanban board operations');
+kanbanCommand
+  .command('status')
+  .description('Show kanban board status')
+  .action(async () => {
+    const service = new KanbanService();
+    const boards = await service.listBoards();
+    console.log(chalk.bold('\nKanban Boards:\n'));
+    for (const board of boards) {
+      console.log(`- ${chalk.cyan(board.name)}: ${board.columns.length} columns`);
+    }
+  });
+
+const memoryCommand = program.command('memory').description('Memory provider management');
+memoryCommand
+  .command('list')
+  .description('List all configured memory providers')
+  .action(async () => {
+    const service = new MemoryProviderService();
+    const providers = await service.getProviders();
+    console.log(chalk.bold('\nMemory Providers:\n'));
+    for (const provider of providers) {
+      console.log(
+        `- ${provider.enabled ? chalk.green('[ON]') : chalk.red('[OFF]')} ${chalk.cyan(provider.name)} [${provider.type}]`
+      );
+    }
+  });
+
 async function loadTnfSystemPrompt(): Promise<string> {
   const promptPath = path.join(repoRoot, '.agent/SYSTEM_PROMPT.md');
   const fallbackPrompt =
@@ -12590,8 +12945,34 @@ async function startInteractiveAgent(): Promise<void> {
 
   const ask = (prompt: string): Promise<string> =>
     new Promise((resolve, reject) => {
-      if (rlClosed) reject(new Error('stdin closed'));
-      else rl.question(prompt, resolve);
+      if (rlClosed) return reject(new Error('stdin closed'));
+
+      const timeoutSec = parseInt(process.env.TNF_STALL_DEFENSE_TIMEOUT || '0', 10);
+
+      if (timeoutSec > 0) {
+        const ac = new AbortController();
+        let answered = false;
+
+        const timer = setTimeout(() => {
+          if (answered) return;
+          answered = true;
+          ac.abort();
+          console.log(chalk.yellow('\n⏳ Stall timeout reached. Self-prompting to continue...'));
+          resolve(
+            process.env.TNF_STALL_DEFENSE_PROMPT ||
+              'Continue autonomous execution. Follow your overarching directive.'
+          );
+        }, timeoutSec * 1000);
+
+        (rl as any).question(prompt, { signal: ac.signal }, (answer: string) => {
+          if (answered) return;
+          answered = true;
+          clearTimeout(timer);
+          resolve(answer);
+        });
+      } else {
+        rl.question(prompt, resolve);
+      }
     });
 
   while (true) {
@@ -12700,6 +13081,9 @@ function normalizeEntrypointArgv(argv: string[]): string[] {
 
 async function main(): Promise<void> {
   const argv = normalizeEntrypointArgv(process.argv);
+
+  const interceptor = new ProtocolInterceptor(repoRoot);
+  interceptor.runPreFlightChecks();
 
   if (argv.length <= 2) {
     await startInteractiveAgent();

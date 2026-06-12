@@ -1,7 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "extends": ["./turbo.json"],
-  "concurrency": 1,
+  "concurrency": 10,
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
@@ -34,8 +34,24 @@
       "dependsOn": ["^build:types"],
       "cache": false,
       "persistent": true,
-      "env": ["NODE_ENV", "PORT", "API_PORT", "FRONTEND_PORT", "API_URL", "BACKEND_URL", "BUILD_MEMORY_LIMIT"],
-      "passThroughEnv": ["NODE_ENV", "PORT", "API_PORT", "FRONTEND_PORT", "API_URL", "BACKEND_URL", "BUILD_MEMORY_LIMIT"]
+      "env": [
+        "NODE_ENV",
+        "PORT",
+        "API_PORT",
+        "FRONTEND_PORT",
+        "API_URL",
+        "BACKEND_URL",
+        "BUILD_MEMORY_LIMIT"
+      ],
+      "passThroughEnv": [
+        "NODE_ENV",
+        "PORT",
+        "API_PORT",
+        "FRONTEND_PORT",
+        "API_URL",
+        "BACKEND_URL",
+        "BUILD_MEMORY_LIMIT"
+      ]
     },
     "test": {
       "dependsOn": ["^build"],

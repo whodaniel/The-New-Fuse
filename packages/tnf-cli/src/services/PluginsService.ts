@@ -160,63 +160,101 @@ export class PluginsService {
     fs.writeFileSync(this.registryPath, JSON.stringify(plugins, null, 2));
   }
 
+  /**
+   * Discover real installed plugins/skills from the filesystem.
+   * Scans .agent/skills/, .claude/skills/, and .gemini/config/plugins/.
+   */
   private getDefaultPlugins(): Plugin[] {
-    return [
-      {
-        name: 'rate-limit-failover',
-        version: '1.2.0',
-        description: 'Rate limit & failover routing for LLM providers',
-        author: 'TNF',
-        status: 'active',
-        category: 'infrastructure',
-        dependencies: [],
-        installedAt: '2026-04-01',
-        updatedAt: '2026-04-15',
-      },
-      {
-        name: 'model-health-monitor',
-        version: '0.8.0',
-        description: 'Real-time provider health monitoring',
-        author: 'TNF',
-        status: 'active',
-        category: 'infrastructure',
-        dependencies: [],
-        installedAt: '2026-04-05',
-        updatedAt: '2026-04-10',
-      },
-      {
-        name: 'webpilot',
-        version: '0.5.0',
-        description: 'CDP-free browser automation',
-        author: 'TNF',
-        status: 'installed',
-        category: 'automation',
-        dependencies: [],
-        installedAt: '2026-04-10',
-        updatedAt: '2026-04-10',
-      },
-      {
-        name: 'xurl',
-        version: '1.0.0',
-        description: 'X/Twitter integration',
-        author: 'TNF',
-        status: 'installed',
-        category: 'social',
-        dependencies: [],
-        installedAt: '2026-04-12',
-        updatedAt: '2026-04-12',
-      },
-      {
-        name: 'spotify',
-        version: '0.9.0',
-        description: 'Spotify playback & management',
-        author: 'TNF',
-        status: 'disabled',
-        category: 'media',
-        dependencies: [],
-        installedAt: '2026-04-01',
-        updatedAt: '2026-04-08',
-      },
+    const discovered: Plugin[] = [];
+    const projectRoot = this.findProjectRoot();
+
+    const skillDirs = [
+      { base: path.join(projectRoot, '.agent', 'skills'), category: 'tnf-skill' },
+      { base: path.join(projectRoot, '.claude', 'skills'), category: 'claude-skill' },
+      { base: path.join(os.homedir(), '.gemini', 'config', 'plugins'), category: 'gemini-plugin' },
     ];
+
+    for (const { base, category } of skillDirs) {
+      if (!fs.existsSync(base)) continue;
+      try {
+        const entries = fs.readdirSync(base, { withFileTypes: true });
+        for (const entry of entries) {
+          if (!entry.isDirectory()) continue;
+          const skillMd = path.join(base, entry.name, 'SKILL.md');
+          const pluginJson = path.join(base, entry.name, 'plugin.json');
+          const hasSkill = fs.existsSync(skillMd);
+          const hasPlugin = fs.existsSync(pluginJson);
+
+          if (hasSkill || hasPlugin) {
+            // Read description from first few lines of SKILL.md if available
+            let description = `${category}: ${entry.name}`;
+            if (hasSkill) {
+              try {
+                const content = fs.readFileSync(skillMd, 'utf8').slice(0, 500);
+                const descMatch = content.match(/description:\s*(.+)/i);
+                if (descMatch) description = descMatch[1].trim();
+              } catch {
+                /* skip */
+              }
+            }
+
+            discovered.push({
+              name: entry.name,
+              version: '1.0.0',
+              description,
+              author:
+                category === 'tnf-skill'
+                  ? 'TNF'
+                  : category === 'claude-skill'
+                    ? 'Anthropic'
+                    : 'Google',
+              status: 'active',
+              category,
+              dependencies: [],
+              installedAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+      } catch {
+        /* skip unreadable dirs */
+      }
+    }
+
+    // If no plugins discovered, return a minimal set
+    if (discovered.length === 0) {
+      return [
+        {
+          name: 'rate-limit-failover',
+          version: '1.2.0',
+          description: 'Rate limit & failover routing for LLM providers',
+          author: 'TNF',
+          status: 'active',
+          category: 'infrastructure',
+          dependencies: [],
+          installedAt: '2026-04-01',
+          updatedAt: '2026-04-15',
+        },
+      ];
+    }
+
+    return discovered;
+  }
+
+  private findProjectRoot(): string {
+    const candidates = [
+      process.cwd(),
+      path.join(process.cwd(), '..', '..'),
+      path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'The-New-Fuse'),
+    ];
+    for (const candidate of candidates) {
+      if (
+        fs.existsSync(path.join(candidate, 'tnf')) ||
+        fs.existsSync(path.join(candidate, 'packages', 'tnf-cli'))
+      ) {
+        return candidate;
+      }
+    }
+    return process.cwd();
   }
 }

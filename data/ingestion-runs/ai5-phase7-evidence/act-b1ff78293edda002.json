@@ -1,7 +1,7 @@
 {
   "action_id": "act-b1ff78293edda002",
   "title": "[AI5] Integrate Custom Processor with Processor Runtime",
-  "state": "verified",
+  "state": "landed",
   "verified_at": "2026-06-09T09:14:19Z",
   "summary": "Promoted AgentProcessor from a switch-only stub into an explicit processor runtime. Custom processors can now be registered with message type routes, unregistered, introspected, started, stopped, and invoked through validated message dispatch. Runtime processor types are exported from the package entrypoint.",
   "files_changed": [

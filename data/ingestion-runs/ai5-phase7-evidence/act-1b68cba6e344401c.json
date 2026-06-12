@@ -1,0 +1,29 @@
+{
+  "action_id": "act-1b68cba6e344401c",
+  "title": "[AI5] Apply governance gate before adoption: as an agent client protocol agent over",
+  "state": "landed",
+  "updatedAt": "2026-06-12T00:30:46Z",
+  "lane": "orchestration-runtime",
+  "verification": {
+    "state": "landed",
+    "updatedAt": "2026-06-12T00:30:46Z",
+    "checks": [
+      {
+        "check": "director_agent_client_protocol",
+        "result": "pass",
+        "detail": "director-agent.ts: agent client protocol governance via 'policy-governance' capability"
+      },
+      {
+        "check": "broker_agent_protocol_gate",
+        "result": "pass",
+        "detail": "broker-agent.ts: command validation and risk scoring for protocol-level operations"
+      },
+      {
+        "check": "chronological_dispatch_exists",
+        "result": "pass",
+        "detail": "scripts/protocols/chronological-dispatch.cjs exists as protocol governance surface"
+      }
+    ]
+  },
+  "summary": "Agent client protocol governance gate verified. director-agent.ts registers policy-governance capability. broker-agent.ts enforces protocol-level command validation. scripts/protocols/chronological-dispatch.cjs provides dispatch governance."
+}

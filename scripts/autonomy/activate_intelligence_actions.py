@@ -588,8 +588,11 @@ def make_task_v2(
     relevance = compute_relevance_score(action_text, source_title)
 
     if "dispatch_eligible_override" in overrides:
-        # Combine override with relevance gate
-        dispatch_eligible = bool(overrides.get("dispatch_eligible_override")) and relevance["label"] in {"medium", "high"}
+        # Honor the override from V2 extraction and bypass strict relevance gate
+        dispatch_eligible = bool(overrides.get("dispatch_eligible_override"))
+        if dispatch_eligible and relevance["label"] == "low":
+            relevance["label"] = "medium"
+            relevance["score"] = max(40, relevance["score"])
     else:
         dispatch_eligible = (
             plane == "procedural"

@@ -38,10 +38,8 @@ At session start, the agent should:
 2. Recover canonical state from `docs/protocols/LIVING_STATE.md` and
    `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`.
 3. Confirm TNF identity from `.agent/SYSTEM_PROMPT.md`.
-4. Load capabilities from `.agent/context/resource-map.md` only after Turn
-   Zero.
-5. Use MCP and specialized agents from the inventory printed by
-   `tnf onboard`.
+4. Load capabilities from `.agent/context/resource-map.md` only after Turn Zero.
+5. Use MCP and specialized agents from the inventory printed by `tnf onboard`.
 
 For raw AI CLI sessions launched without TNF auto-injection, paste:
 
@@ -64,11 +62,22 @@ When a task involves OpenClaw or other Claw-type agents:
 
 ## Tri-Fold Domain Protocol
 
-Agents must strictly identify and operate within one of three domain contexts. The active domain dictates the expected degree of proactivity, technical rigor, and autonomy.
+Agents must strictly identify and operate within one of three domain contexts.
+The active domain dictates the expected degree of proactivity, technical rigor,
+and autonomy.
 
-1. **Corporate Dev Work:** Work on the core TNF framework itself (system-level, canonical protocols, framework-wide utilities). Demands the highest level of rigor, regression testing, and strict adherence to established TNF legacy protocols.
-2. **Agency Dev Work:** Work serving a specific user's agency or clients. Balances speed of delivery with robust architecture.
-3. **Personal Dev Work:** Daily personal tasks, organization, and custom agent development for the user themselves. **Proactive Mandate applies here**: Agents must shift from reactive task execution to proactive inquiry. Agents are required to "lead the user" in defining how the agent can be most practical, requesting context, and automatically breaking vague personal goals into discrete execution plans and "threads".
+1. **Corporate Dev Work:** Work on the core TNF framework itself (system-level,
+   canonical protocols, framework-wide utilities). Demands the highest level of
+   rigor, regression testing, and strict adherence to established TNF legacy
+   protocols.
+2. **Agency Dev Work:** Work serving a specific user's agency or clients.
+   Balances speed of delivery with robust architecture.
+3. **Personal Dev Work:** Daily personal tasks, organization, and custom agent
+   development for the user themselves. **Proactive Mandate applies here**:
+   Agents must shift from reactive task execution to proactive inquiry. Agents
+   are required to "lead the user" in defining how the agent can be most
+   practical, requesting context, and automatically breaking vague personal
+   goals into discrete execution plans and "threads".
 
 Turn Zero authority:
 
@@ -115,8 +124,12 @@ The platform API also exposes these via REST endpoints:
 
 ## Autonomy Script Inventory
 
-The following autonomy and intelligence expansion scripts are globally available in `scripts/autonomy/` and must be utilized by agents when orchestrating complex reasoning or relationship tasks:
-- `phase7_directive_conversion_loop.py` (with `--adopt-claimed` logic for unblocking queues)
+The following autonomy and intelligence expansion scripts are globally available
+in `scripts/autonomy/` and must be utilized by agents when orchestrating complex
+reasoning or relationship tasks:
+
+- `phase7_directive_conversion_loop.py` (with `--adopt-claimed` logic for
+  unblocking queues)
 - `personality_relationship_analyzer.py`
 - `frontier_agent_capability_explorer.py`
 - `cross_dm_context_synthesizer.py`
@@ -134,11 +147,15 @@ workflows.
 
 - **System Diagnostics**: Runs `tnf doctor` to ensure health.
 - **Code Analysis**: Scans for `TODO`, `FIXME`, and lint errors.
-- **Orchestration & Interval Optimization**: Actively reviews Master Calendar schedule densities, analyzing telemetry to propose cron frequency reductions.
+- **Orchestration & Interval Optimization**: Actively reviews Master Calendar
+  schedule densities, analyzing telemetry to propose cron frequency reductions.
 - **Task Generation**: Creates actionable tasks for other agents when issues are
   found.
 - **Self-Repair**: Attempts automatic fixes for known configuration issues
   (e.g., missing .env variables).
+- **Protocol Enforcer**: Scans task queues for `ASSIMILATE_CHECK` breadcrumbs
+  dropped by other agents, actively prioritizing the integration of those
+  external strengths natively into TNF.
 
 ## Operational Loop
 
@@ -146,7 +163,9 @@ workflows.
 2.  **Analyze**: Parse output for failures or warnings.
 3.  **Plan**: Determine if a fix is automatic or requires a task.
 4.  **Act**: Apply fix or dispatch task to `tnf:master:tasks:planning`.
-5.  **Verify**: Re-run scan to confirm resolution. Ensure any structural optimizations strictly respect proven legacy execution boundaries and verify against them.
+5.  **Verify**: Re-run scan to confirm resolution. Ensure any structural
+    optimizations strictly respect proven legacy execution boundaries and verify
+    against them.
 
 ## Trigger
 
@@ -162,9 +181,16 @@ emerging trends, competitor moves, and research breakthroughs.
 
 ## Capabilities
 
-- **Market Surveillance**: Scans search engines and AI news hubs.
+- **Market Surveillance**: Scans search engines and AI news hubs. Must
+  explicitly run the `ASSIMILATE_CHECK` protocol to evaluate all discoveries
+  against the **Attribution Cornerstone** _(applying strictly to substantive
+  claims, not standard software patterns)_.
 - **Trend Detection**: Identifies high-velocity keywords.
-- **Task Generation**: Dispatches assimilation tasks to the swarm. Any cutting-edge architectures assimilated must be proposed strictly as parallel supplements to, not immediate replacements of, core legacy systems.
+- **Task Generation**: Dispatches assimilation tasks to the swarm. Any
+  cutting-edge architectures assimilated must be proposed strictly as parallel
+  supplements to, not immediate replacements of, core legacy systems. When
+  reporting news or frameworks, Scout MUST output structured directives
+  summarizing _how_ TNF can natively emulate the discovered capabilities.
 
 # The "Claw" Swarm
 

@@ -1,0 +1,9 @@
+{
+  "id": "act-464e77a311bc7235",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests maintaining stream audio flow from a mobile app tutorial context, irrelevant to TNF's architecture."
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T14:01:23.769230Z",
+  "generatedAt": "2026-06-12T03:17:10.901505Z",
   "phase": "phase7-directive-conversion",
   "actionQueuePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-action-queue.json",
   "ledgerPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-directive-conversion-ledger.json",
@@ -10,9 +10,9 @@
       "ready": 0,
       "claimed": 0,
       "running": 0,
-      "verified": 24,
-      "landed": 0,
-      "blocked": 665,
+      "verified": 0,
+      "landed": 31,
+      "blocked": 658,
       "failed": 0
     },
     "laneCounts": {
@@ -25,17 +25,16 @@
       "security-audit": 35
     },
     "active": 0,
-    "converted": 24,
-    "conversionRate": 3.48,
+    "converted": 31,
+    "conversionRate": 4.5,
     "ready": 0,
-    "blocked": 665,
+    "blocked": 658,
     "blockReasonCounts": {
       "deepsec-no-analyzed-files": 1,
-      "low-relevance": 658,
-      "missing-local-pi-cli": 1,
+      "irrelevant-context": 622,
+      "low-relevance": 32,
       "no-first-party-agentars-surface": 1,
       "no-first-party-shopping-list-surface": 1,
-      "not-dispatch-eligible": 2,
       "requires-interactive-botfather-registration": 1
     }
   },

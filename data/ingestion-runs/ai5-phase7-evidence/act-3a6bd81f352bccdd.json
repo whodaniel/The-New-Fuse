@@ -1,0 +1,9 @@
+{
+  "id": "act-3a6bd81f352bccdd",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests adding project overview to a mobile-app agents.md, violating TNF's existing AGENTS.md governance."
+  }
+}

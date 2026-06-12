@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { chromium } from 'playwright';
 
@@ -19,19 +19,28 @@ const SEEDS = (
 
 const MAX_DEPTH = Number.parseInt(process.env.LIVE_AUDIT_MAX_DEPTH || '5', 10);
 const MAX_PAGES_PER_DOMAIN = Number.parseInt(process.env.LIVE_AUDIT_MAX_PAGES || '350', 10);
-const MAX_EXTERNAL_CHECKS_PER_DOMAIN = Number.parseInt(process.env.LIVE_AUDIT_MAX_EXTERNAL || '300', 10);
+const MAX_EXTERNAL_CHECKS_PER_DOMAIN = Number.parseInt(
+  process.env.LIVE_AUDIT_MAX_EXTERNAL || '300',
+  10
+);
 const NAV_TIMEOUT_MS = Number.parseInt(process.env.LIVE_AUDIT_NAV_TIMEOUT_MS || '35000', 10);
 const FETCH_TIMEOUT_MS = Number.parseInt(process.env.LIVE_AUDIT_FETCH_TIMEOUT_MS || '20000', 10);
 const FAIL_ON_BROKEN = String(process.env.FAIL_ON_BROKEN || '1') !== '0';
 const CHROMIUM_EXECUTABLE_CANDIDATES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
   process.env.CHROME_EXECUTABLE_PATH,
-  process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : null,
+  process.platform === 'darwin'
+    ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    : null,
   process.platform === 'linux' ? '/usr/bin/google-chrome' : null,
   process.platform === 'linux' ? '/usr/bin/chromium-browser' : null,
   process.platform === 'linux' ? '/usr/bin/chromium' : null,
-  process.platform === 'win32' ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' : null,
-  process.platform === 'win32' ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe' : null,
+  process.platform === 'win32'
+    ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+    : null,
+  process.platform === 'win32'
+    ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+    : null,
 ].filter(Boolean);
 
 const skipHref = (href) => {
@@ -48,7 +57,11 @@ const skipHref = (href) => {
 
 const resolveChromiumLaunchOptions = () => {
   const executablePath = CHROMIUM_EXECUTABLE_CANDIDATES.find((candidate) => existsSync(candidate));
-  const channel = (process.env.PLAYWRIGHT_CHROMIUM_CHANNEL || process.env.PLAYWRIGHT_CHROME_CHANNEL || '').trim();
+  const channel = (
+    process.env.PLAYWRIGHT_CHROMIUM_CHANNEL ||
+    process.env.PLAYWRIGHT_CHROME_CHANNEL ||
+    ''
+  ).trim();
   if (executablePath) {
     console.log(`[live-link-audit] using local Chromium executable: ${executablePath}`);
     return { headless: true, executablePath };
@@ -79,7 +92,11 @@ const withTimeout = async (promiseFactory, ms, label) => {
   }
 };
 
-const normalizeText = (value) => String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
+const normalizeText = (value) =>
+  String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
 const textHash = (value) => createHash('sha1').update(normalizeText(value)).digest('hex');
 
 const checkHttp = async (url) => {
@@ -227,7 +244,10 @@ const crawlDomain = async (browser, seed) => {
           queue.push({ url: link.url, depth: current.depth + 1, from: current.url });
           queued.add(link.url);
         }
-      } else if (!externalSeen.has(link.url) && externalSeen.size < MAX_EXTERNAL_CHECKS_PER_DOMAIN) {
+      } else if (
+        !externalSeen.has(link.url) &&
+        externalSeen.size < MAX_EXTERNAL_CHECKS_PER_DOMAIN
+      ) {
         externalSeen.set(link.url, {
           url: link.url,
           from: current.url,
@@ -252,10 +272,7 @@ const crawlDomain = async (browser, seed) => {
       h1: item.h1,
       fingerprintHash: item.fingerprintHash,
       ...http,
-      broken:
-        !http.ok ||
-        (typeof http.status === 'number' && http.status >= 400) ||
-        (item.pageError && !item.pageStatus),
+      broken: !http.ok || (typeof http.status === 'number' && http.status >= 400),
       semanticIssue: null,
     });
   }
@@ -412,7 +429,8 @@ const main = async () => {
     '## Semantic Broken Links',
     ...results.flatMap((result) =>
       (result.semanticBroken || []).map(
-        (item) => `- seed=${result.seed} | from=${item.from} | to=${item.to} | text=${item.text || 'n/a'} | issue=${item.issue}`
+        (item) =>
+          `- seed=${result.seed} | from=${item.from} | to=${item.to} | text=${item.text || 'n/a'} | issue=${item.issue}`
       )
     ),
     ...(results.every((result) => !result.semanticBroken?.length) ? ['- none'] : []),

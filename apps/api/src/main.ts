@@ -1,16 +1,26 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 import * as express from 'express';
-import * as fs from 'fs';
-import * as yaml from 'js-yaml';
-import * as path from 'path';
 import 'reflect-metadata';
 import { AppModule } from './app.module';
+import {
+  DEFAULT_HOST,
+  DEFAULT_PORT,
+  GLOBAL_API_PREFIX,
+  HEALTH_CHECK_PATH,
+  ROOT_PATH,
+  SERVICE_NAME_API,
+  SERVICE_STATUS_HEALTHY,
+} from './config/app.constants';
+import { getCorsOptions } from './config/cors.config';
 import { validateGcpEnvironment } from './config/gcp.config';
+import { setupSwagger } from './config/swagger.config';
+import { backCompatMiddleware } from './middleware/back-compat.middleware';
+import { routeFallbackMiddleware } from './middleware/route-fallback.middleware';
+import { securityMiddleware } from './middleware/security.middleware';
 
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+// Load environment variables specific to the API service from apps/api/.env
 dotenv.config();
 
 const logger = new Logger('Bootstrap');
@@ -22,51 +32,11 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
     // Enable CORS with strict configuration
-    cors: {
-      origin:
-        process.env.NODE_ENV === 'production'
-          ? [
-              ...(process.env.ALLOWED_ORIGINS?.split(',') || [
-                'https://thenewfuse.com',
-                'https://www.thenewfuse.com',
-                'https://app.thenewfuse.com',
-                'https://tnf-saas-app.pages.dev',
-                'https://api-gateway-241337102384.us-central1.run.app',
-              ]),
-              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
-            ]
-          : [
-              'http://localhost:3000',
-              'http://localhost:3001',
-              'http://localhost:5173',
-              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
-              'https://fae7326d.ai-arcade-poker.pages.dev',
-            ],
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-      allowedHeaders: [
-        'Content-Type',
-        'Authorization',
-        'X-Requested-With',
-        'X-CSRF-Token',
-        'X-Request-ID',
-        'X-Client-IP',
-      ],
-    },
+    cors: getCorsOptions(),
   });
 
   // Back-compat middleware for /api/auth/* -> /api/v1/auth/* (if versioning is implicitly active)
-  app.use((req: any, _res: any, next: any) => {
-    const originalUrl = req.url;
-    if (originalUrl.startsWith('/api/auth/')) {
-      req.url = originalUrl.replace('/api/auth', '/api/v1/auth');
-      logger.log(`Rewrote: ${originalUrl} -> ${req.url}`);
-    } else if (originalUrl === '/api/auth') {
-      req.url = '/api/v1/auth';
-      logger.log(`Rewrote: ${originalUrl} -> ${req.url}`);
-    }
-    next();
-  });
+  app.use(backCompatMiddleware);
 
   // Explicitly add body parsers (essential for POST data processing)
   app.use(express.json());
@@ -93,133 +63,27 @@ async function bootstrap(): Promise<void> {
   // They should be applied via MiddlewareConsumer in AppModule
 
   // Set global prefix for API routes
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix(GLOBAL_API_PREFIX);
 
   // Swagger API Documentation Setup
-  if (process.env.ENABLE_API_DOCS !== 'false') {
-    try {
-      // Try to load OpenAPI spec from YAML file
-      const openapiPath = path.join(__dirname, '../../..', 'openapi.yaml');
-
-      let document;
-      if (fs.existsSync(openapiPath)) {
-        const fileContents = fs.readFileSync(openapiPath, 'utf8');
-        document = yaml.load(fileContents) as any;
-        logger.log('Loaded OpenAPI specification from openapi.yaml');
-      } else {
-        // Fallback to generating from decorators
-        const config = new DocumentBuilder()
-          .setTitle('The New Fuse API')
-          .setDescription(
-            'Comprehensive API for multi-agent orchestration, workflow automation, and blockchain integration'
-          )
-          .setVersion('1.0.0')
-          .addBearerAuth(
-            {
-              type: 'http',
-              scheme: 'bearer',
-              bearerFormat: 'JWT',
-              description: 'Enter JWT token',
-            },
-            'BearerAuth'
-          )
-          .addServer('http://localhost:3001/api', 'Development API Server')
-          .addServer('http://localhost:4000/api/v1', 'API Gateway (Development)')
-          .addTag('auth', 'Authentication and authorization endpoints')
-          .addTag('Agents', 'Agent management and orchestration')
-          .addTag('chat', 'Chat rooms and messaging')
-          .addTag('workflows', 'Workflow creation and execution')
-          .addTag('wallets', 'Web3 wallet management')
-          .addTag('transactions', 'Blockchain transaction operations')
-          .addTag('smart-accounts', 'ERC-4337 Smart Account operations')
-          .addTag('mcp', 'Model Context Protocol operations')
-          .build();
-
-        document = SwaggerModule.createDocument(app, config);
-        logger.log('Generated OpenAPI specification from code decorators');
-      }
-
-      // Setup Swagger UI
-      SwaggerModule.setup('api-docs', app, document, {
-        swaggerOptions: {
-          persistAuthorization: true,
-          tagsSorter: 'alpha',
-          operationsSorter: 'alpha',
-          docExpansion: 'none',
-          filter: true,
-          tryItOutEnabled: true,
-        },
-        customSiteTitle: 'The New Fuse API Documentation',
-        customfavIcon: 'https://thenewfuse.com/favicon.ico',
-        customCss: '.swagger-ui .topbar { display: none }',
-      });
-
-      logger.log(`API Documentation available at: http://localhost:3001/api-docs`);
-    } catch (error) {
-      logger.error('Failed to setup API documentation', error);
-    }
-  }
+  setupSwagger(app);
 
   // Enhanced security headers
-  app.use((req: any, res: any, next: any) => {
-    // Content Security Policy
-    res.setHeader(
-      'Content-Security-Policy',
-      "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-        "style-src 'self' 'unsafe-inline'; " +
-        "img-src 'self' data: https:; " +
-        "font-src 'self'; " +
-        "connect-src 'self' wss: https:; " +
-        "frame-src 'none'; " +
-        "object-src 'none'; " +
-        "base-uri 'self'; " +
-        "form-action 'self';"
-    );
-
-    // Additional security headers
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-XSS-Protection', '1; mode=block');
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=()');
-
-    // Remove server information
-    res.removeHeader('X-Powered-By');
-
-    next();
-  });
+  app.use(securityMiddleware);
 
   // Route fallback: when users hit SPA paths on the API host, redirect to frontend app.
-  app.use((req: any, res: any, next: any) => {
-    const isGet = req.method === 'GET';
-    const path = req.path || '';
-    const isApi = path.startsWith('/api');
-    const isApiDocs = path.startsWith('/api-docs');
-    const acceptsHtml = String(req.headers.accept || '').includes('text/html');
-    if (!isGet || isApi || isApiDocs || !acceptsHtml) {
-      return next();
-    }
-
-    const frontendBase = process.env.FRONTEND_URL || 'https://thenewfuse.com';
-    try {
-      const target = new URL(req.originalUrl || '/', frontendBase).toString();
-      return res.redirect(302, target);
-    } catch {
-      return res.redirect(302, frontendBase);
-    }
-  });
+  app.use(routeFallbackMiddleware);
 
   // Root endpoint for health checks
-  app.getHttpAdapter().get('/', (req: any, res: any) => {
-    res.json({ status: 'healthy', service: 'api' });
+  app.getHttpAdapter().get(ROOT_PATH, (req: any, res: any) => {
+    res.json({ status: SERVICE_STATUS_HEALTHY, service: SERVICE_NAME_API });
   });
-  app.getHttpAdapter().get('/health', (req: any, res: any) => {
-    res.json({ status: 'healthy', service: 'api' });
+  app.getHttpAdapter().get(HEALTH_CHECK_PATH, (req: any, res: any) => {
+    res.json({ status: SERVICE_STATUS_HEALTHY, service: SERVICE_NAME_API });
   });
 
-  const port = process.env.PORT || 3001;
-  await app.listen(port, '0.0.0.0');
+  const port = process.env.PORT || DEFAULT_PORT;
+  await app.listen(port, DEFAULT_HOST);
   logger.log(`API Server running on port ${port} and host 0.0.0.0`);
 }
 

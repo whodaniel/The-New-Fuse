@@ -1,0 +1,9 @@
+{
+  "id": "act-4d4b3572580983e4",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests initializing Grok Build in a project folder. Irrelevant to TNF."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "act-23fad0c4275fc8ba",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:53.564677Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests implementing an ESQL search tool. TNF does not use Elasticsearch."
+  }
+}

@@ -1,7 +1,7 @@
 {
   "action_id": "act-fd96afdd027928d5",
   "title": "[AI5] Optimize Web Pages for Agent Data Extraction and Understanding",
-  "state": "verified",
+  "state": "landed",
   "verified_at": "2026-06-09T09:21:00Z",
   "summary": "Added an agent-readable truth layer to the frontend router shell. Every route now exposes JSON-LD, a stable application/json data island, and a deterministic DOM section containing TNF product identity, functional benefits, route context, host mode, canonical URL, and extraction contract identifiers.",
   "files_changed": [

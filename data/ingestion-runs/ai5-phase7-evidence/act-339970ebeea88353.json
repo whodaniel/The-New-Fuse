@@ -1,7 +1,7 @@
 {
   "action_id": "act-339970ebeea88353",
   "title": "[AI5] Restrict Personal Account Integrations from Team-Wide Access and Enhance Access Control",
-  "state": "verified",
+  "state": "landed",
   "updatedAt": "2026-06-09T10:38:52Z",
   "summary": "Added explicit OpenClaw OAuth binding access scopes. Bindings now default to `personal`, service-scoped bindings require `teamWideApproved=true` at upsert, and personal bindings are blocked from being executed into team-wide Cloud Runtime service variables.",
   "filesChanged": [

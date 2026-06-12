@@ -1,7 +1,7 @@
 {
   "action_id": "act-4a2f74cbc4aba385",
   "title": "[AI5] Configure Production Agent for PII Gatekeeping",
-  "state": "verified",
+  "state": "landed",
   "updatedAt": "2026-06-09T10:49:55Z",
   "summary": "Added a production agent PII gate wrapper that runs privacy, secret, and docs PII guards as one policy. The wrapper supports explicit file lists for agent handoffs and applies per-check timeouts so guard discovery cannot hang a production agent indefinitely.",
   "filesChanged": [
@@ -32,11 +32,7 @@
   "runtime_contract": {
     "root_alias": "pnpm run agent:pii-gate:production",
     "recommended_agent_command": "node scripts/security/agent-pii-gate.cjs --profile=production --mode=staged --file-list <changed-files.txt>",
-    "underlying_guards": [
-      "privacy-guard",
-      "secret-sweep",
-      "docs-pii-guard"
-    ],
+    "underlying_guards": ["privacy-guard", "secret-sweep", "docs-pii-guard"],
     "default_timeout_ms": 30000
   }
 }

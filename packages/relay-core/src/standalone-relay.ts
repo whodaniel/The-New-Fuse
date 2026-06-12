@@ -775,7 +775,6 @@ export class TNFRelayServer extends EventEmitter {
 
     switch (type) {
       case 'AGENT_REGISTER': {
-        // Authenticate if token provided
         const token =
           ((payload as Record<string, unknown>)?.token as string) ||
           ((message as unknown as Record<string, unknown>)?.token as string);
@@ -801,96 +800,61 @@ export class TNFRelayServer extends EventEmitter {
 
         const agentData =
           ((payload as Record<string, unknown>)?.agent as Record<string, unknown>) || {};
-        const id =
-          verifiedToken?.agentId || (agentData.id as string) || agentId || `agent-${Date.now()}`;
-        const identity = buildRelayAgentIdentity({
-          id,
-          canonicalEntityId: agentData.canonicalEntityId,
-          operationalHandle: agentData.operationalHandle,
-          runtimeSessionId: agentData.runtimeSessionId,
-          aliases: agentData.aliases,
-        });
+        const requestedAgentId =
+          verifiedToken?.agentId ||
+          (agentData.id as string) ||
+          currentAgentId ||
+          `agent-${Date.now()}`;
         const remoteAddress = this.socketRemoteAddresses.get(ws) || null;
 
-        const agent: Agent = {
-          id,
-          canonicalEntityId: identity.canonicalEntityId,
-          operationalHandle: identity.operationalHandle,
-          runtimeSessionId: identity.runtimeSessionId,
-          aliases: identity.aliases,
-          name: verifiedToken?.name || (agentData.name as string) || 'Unknown Agent',
+        const registrationRequest = {
+          agentId: requestedAgentId,
+          sourceId: requestedAgentId, // For master-clock to use as a unique identifier
           platform: verifiedToken?.platform || (agentData.platform as string) || 'unknown',
-          status: resolveRelayAgentStatus(agentData.status),
+          name: verifiedToken?.name || (agentData.name as string) || 'Unknown Agent',
           capabilities: verifiedToken?.capabilities || (agentData.capabilities as string[]) || [],
           channels: (agentData.channels as string[]) || [],
-          connectedAt: Date.now(),
-          lastSeen: Date.now(),
-          metadata: attachAuditTrace(
-            {
-              ...(agentData.metadata as Record<string, unknown>),
-              authenticated: !!verifiedToken,
-              remoteAddress,
-            },
-            {
-              source: 'standalone-relay',
-              actor: identity.operationalHandle,
-              sessionId: identity.runtimeSessionId || id,
-              canonicalEntityId: identity.canonicalEntityId,
-              operationalHandle: identity.operationalHandle,
-              runtimeSessionId: identity.runtimeSessionId,
-            }
-          ),
+          runtimeSessionId: requestedAgentId, // Use requestedAgentId for now
+          metadata: {
+            ...((agentData.metadata as Record<string, unknown>) || {}),
+            authenticated: !!verifiedToken,
+            remoteAddress,
+            relaySessionId: this.sessionId, // Add relay's session ID
+          },
         };
 
-        this.agents.set(id, agent);
-        this.sockets.set(id, ws);
-        this.agentChannels.set(id, new Set(agent.channels));
-        this.ensureBridgeSubscription(id);
-        for (const channelId of agent.channels) {
-          this.syncAgentChannelMembership(id, channelId);
-        }
-
-        // Register capabilities
-        for (const cap of agent.capabilities) {
-          this.subscriptionRegistry.register(id, `capability:${cap}`);
-        }
-
-        fmt.agentRegistered(agent.name, id, agent.platform, !!verifiedToken);
-        this.emit('agent:registered', agent);
-
-        // Send current state to new agent
-        this.send(ws, {
-          type: 'AGENT_LIST',
-          payload: { agents: Array.from(this.agents.values()) },
-        });
-
-        this.send(ws, {
-          type: 'CHANNEL_LIST',
-          payload: { channels: Array.from(this.channels.values()) },
-        });
-
-        // Send registration confirmation with auth status
-        this.send(ws, {
-          type: 'REGISTRATION_CONFIRMED',
-          payload: {
-            relayInfo: {
-              id: 'relay-standalone',
-              version: '1.0.0',
-              authenticated: !!verifiedToken,
+        // Publish registration request to Redis for Master Clock
+        if (this.bridge) {
+          this.bridge.publish(
+            'tnf:relay:agent_register_requests',
+            JSON.stringify({
+              ...registrationRequest,
+              replyTo: `tnf:master:agent_registry_updates:${requestedAgentId}`, // Master clock replies here
+            })
+          );
+          fmt.log(`[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`);
+        } else {
+          // Fallback if bridge is not connected (local mode)
+          console.warn(
+            `[Relay] Redis bridge not connected. Cannot forward AGENT_REGISTER for ${requestedAgentId}.`
+          );
+          this.send(ws, {
+            type: 'REGISTRATION_ERROR',
+            payload: {
+              error: 'Relay bridge not connected, cannot register agent.',
+              code: 'RELAY_BRIDGE_ERROR',
             },
-          },
-        });
+          });
+          return null;
+        }
 
-        // Notify other agents
-        this.broadcast(
-          {
-            type: 'AGENT_STATUS',
-            payload: { agent },
-          },
-          id
-        );
-
-        return id;
+        // We will store minimal info locally just to map WS to an ID,
+        // but the authoritative agent state will come from Master Clock.
+        // For now, temporarily store to keep the WS connection associated with an ID.
+        // This will be replaced by a proper subscription to Master Clock's updates.
+        this.sockets.set(requestedAgentId, ws);
+        // Do not return `requestedAgentId` yet, wait for master-clock confirmation
+        return null;
       }
 
       case 'AGENT_UNREGISTER': {

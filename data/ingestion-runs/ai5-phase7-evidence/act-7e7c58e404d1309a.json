@@ -1,12 +1,10 @@
 {
   "action_id": "act-7e7c58e404d1309a",
   "title": "[AI5] Conduct Automated Frontier AI Agent Capability Exploration",
-  "state": "verified",
+  "state": "landed",
   "verifiedAt": "2026-06-09T10:02:00Z",
   "summary": "Implemented a repeatable frontier-agent capability exploration harness. It emits ambitious multi-turn scenarios for long-running agent tests and scores captured traces for coherence, task completion, autonomy, problem-solving depth, multi-turn coverage, and ambition.",
-  "filesChanged": [
-    "scripts/autonomy/frontier_agent_capability_explorer.py"
-  ],
+  "filesChanged": ["scripts/autonomy/frontier_agent_capability_explorer.py"],
   "checks": [
     {
       "command": "python3 -m py_compile scripts/autonomy/frontier_agent_capability_explorer.py",

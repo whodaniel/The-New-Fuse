@@ -4,7 +4,7 @@
 
 **Current Directive:** Phase 7: Directive Conversion Loop. **Project ID:**
 `FORGE-003` **Session Key:**
-`agent:local-subdirector:session:2026-06-11T18:20:06.341911Z`
+`agent:local-subdirector:session:2026-06-12T03:17:10.901505Z`
 
 ---
 
@@ -60,6 +60,17 @@
 29. [✅] Frontend UI Consolidation: Created Hermes-inspired Unified
     Communication Canvas, SlashPopover, ScheduleBuilder, and Command Center to
     unify fragmented agent interfaces without legacy functionality loss.
+30. [✅] Playwright Test Fix: Resolved Playwright test dependency conflicts for
+    E2E crawler.
+31. [✅] CLI Service De-Stubbing: Aligned `cli.ts` service endpoints with
+    implementation, ensuring all top-level TNF CLI lists correctly pull from
+    state.
+32. [✅] TNF Decoupling: Fully transitioned TNF daemon execution and
+    `MemoryProviderService` from legacy `~/.hermes` state dir to `~/.tnf`.
+33. [✅] Frontend Type Safety: Removed `@ts-nocheck` overrides from `main.tsx`
+    and `App.tsx` securing base React rendering chain.
+34. [✅] Phase 7 Triage: Promoted 14 targeted CLI and orchestration directives
+    to `ready` state for consumption.
 
 ---
 
@@ -79,8 +90,9 @@
 
 ## 🕒 Last Update
 
-2026-06-03T07:48:55Z - TNF boot resilience repair completed; full
-non-interactive boot verified operational with health-aware port management.
+2026-06-12T02:40:41Z - Antigravity completed TNF decoupling, CLI de-stubbing,
+frontend entry type-safety enforcement, Playwright E2E fix, and Phase 7 pipeline
+promotion.
 
 ## 🛡️ Contract Migration Status
 

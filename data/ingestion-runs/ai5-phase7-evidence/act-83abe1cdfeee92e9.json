@@ -1,0 +1,9 @@
+{
+  "id": "act-83abe1cdfeee92e9",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:25:53.192258Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests defining AI as an expert React Native engineer, violating TNF's orchestrator/auditor personas."
+  }
+}

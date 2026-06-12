@@ -17,8 +17,8 @@ import TestPage from './pages/Test';
 // Lazy load pages for code splitting
 const DocsPage = lazy(() => import('./pages/Docs'));
 
-import RequireMembership from './components/auth/RequireMembership';
 import { AgentTruthLayer } from './components/AgentTruthLayer';
+import RequireMembership from './components/auth/RequireMembership';
 import RequirePermission from './components/auth/RequirePermission';
 import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
@@ -140,9 +140,19 @@ const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminContro
 const NexusVisualizer = lazy(() => import('./pages/SynapticNexus'));
 
 // Unified UI Components (from Hermes merge refactoring)
-const UnifiedCommunicationCanvas = lazy(() => import('./components/UnifiedChat/UnifiedCommunicationCanvas').then(m => ({ default: m.UnifiedCommunicationCanvas })));
-const CommandCenterDashboard = lazy(() => import('./components/CommandCenter/CommandCenterDashboard').then(m => ({ default: m.CommandCenterDashboard })));
-const ScheduleBuilderPage = lazy(() => import('./components/Scheduler/ScheduleBuilder').then(m => ({ default: m.ScheduleBuilder })));
+const UnifiedCommunicationCanvas = lazy(() =>
+  import('./components/UnifiedChat/UnifiedCommunicationCanvas').then((m) => ({
+    default: m.UnifiedCommunicationCanvas,
+  }))
+);
+const CommandCenterDashboard = lazy(() =>
+  import('./components/CommandCenter/CommandCenterDashboard').then((m) => ({
+    default: m.CommandCenterDashboard,
+  }))
+);
+const ScheduleBuilderPage = lazy(() =>
+  import('./components/Scheduler/ScheduleBuilder').then((m) => ({ default: m.ScheduleBuilder }))
+);
 
 // Auth components
 const AuthIndexPage = lazy(() => import('./pages/auth'));
@@ -1539,7 +1549,10 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 path="/admin/experimental-features"
                 element={<Navigate to="/admin/feature-flags" replace />}
               />
-              <Route path="/admin/onboarding" element={<Navigate to="/onboarding/ai-agent" replace />} />
+              <Route
+                path="/admin/onboarding"
+                element={<Navigate to="/onboarding/ai-agent" replace />}
+              />
               <Route path="/pricing" element={<RedirectToStatic to="/pricing" />} />
               <Route path="/features" element={<RedirectToStatic to="/features" />} />
               <Route path="/docs" element={<DocsPage />} />
@@ -1993,6 +2006,18 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </Suspense>
                 }
               />
+              <Route path="/billing" element={<LazyPage name="Billing" path="/billing" />} />
+              <Route path="/community" element={<LazyPage name="Community" path="/community" />} />
+              <Route path="/contact" element={<LazyPage name="Contact" path="/contact" />} />
+              <Route
+                path="/membership"
+                element={<LazyPage name="Membership" path="/membership" />}
+              />
+              <Route
+                path="/onboarding"
+                element={<LazyPage name="Onboarding" path="/onboarding" />}
+              />
+              <Route path="/support" element={<LazyPage name="Support" path="/support" />} />
               <Route
                 path="*"
                 element={

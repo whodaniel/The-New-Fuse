@@ -43,7 +43,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/swagger": "^11.2.1",
     "@nestjs/testing": "^11.1.16",
-    "@playwright/test": "^1.56.1",
+    "@playwright/test": "^1.59.1",
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/types": "workspace:^",
     "@types/archiver": "^6.0.3",

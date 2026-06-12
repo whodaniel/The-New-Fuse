@@ -1,0 +1,9 @@
+{
+  "id": "act-1256f810d5e7caa1",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:27:29.859814Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+  }
+}

@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-06-03T09:17:24.831Z",
+  "generatedAt": "2026-06-11T19:26:47.946Z",
   "overall": {
-    "passed": false,
+    "passed": true,
     "requiredAuditsPresent": true
   },
   "live": {
     "available": true,
-    "passed": false,
-    "totalChecked": 93,
-    "totalBroken": 9,
-    "semanticBroken": 5,
-    "generatedAt": "2026-06-03T09:07:31.364Z"
+    "passed": true,
+    "totalChecked": 86,
+    "totalBroken": 0,
+    "semanticBroken": 0,
+    "generatedAt": "2026-06-11T19:17:24.609Z"
   },
   "semantic": {
     "available": true,
-    "passed": false,
+    "passed": true,
     "totalRoutes": 224,
     "hardBroken": 0,
     "networkBroken": 0,
-    "sameAsRoot": 116,
-    "duplicateFingerprintGroups": 3,
-    "generatedAt": "2026-06-03T09:16:54.119Z"
+    "sameAsRoot": 0,
+    "duplicateFingerprintGroups": 11,
+    "generatedAt": "2026-06-11T19:26:39.160Z"
   },
   "auth": {
     "available": true,
-    "passed": false,
+    "passed": true,
     "totalChecks": 4,
-    "passedChecks": 1,
-    "failedChecks": 3,
-    "generatedAt": "2026-06-03T09:17:08.893Z"
+    "passedChecks": 4,
+    "failedChecks": 0,
+    "generatedAt": "2026-06-11T19:26:44.860Z"
   }
 }

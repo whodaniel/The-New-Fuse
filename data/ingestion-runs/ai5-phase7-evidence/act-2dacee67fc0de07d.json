@@ -1,0 +1,9 @@
+{
+  "id": "act-2dacee67fc0de07d",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:25:53.192258Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests defining React Native folder structure in agents.md, irrelevant to TNF."
+  }
+}

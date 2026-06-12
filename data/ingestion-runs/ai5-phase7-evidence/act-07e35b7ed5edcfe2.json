@@ -1,0 +1,9 @@
+{
+  "id": "act-07e35b7ed5edcfe2",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests integrating a tutorial's production.py into the project. TNF does not use this Python RAG backend."
+  }
+}

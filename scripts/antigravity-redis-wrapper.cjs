@@ -83,6 +83,14 @@ class AntigravityOrchestrator {
     this.activeWorkflows = new Map();
     this.agentResponses = new Map();
     this.pendingTasks = new Map();
+    this.providerFailoverMap = new Map();
+
+    // Pre-populate failover map based on environment omission
+    const providerChain = process.env.MODEL_WATCHDOG_PROVIDER_CHAIN || 'claude,gemini,pi';
+    if (!providerChain.includes('claude')) {
+      console.log(`\\n⚠️ [PREFLIGHT ALERT] 'claude' is omitted from provider chain. Pre-emptively mapping 'claude' to 'gemini'.`);
+      this.providerFailoverMap.set('claude', 'gemini');
+    }
   }
 
   /**
@@ -155,7 +163,7 @@ class AntigravityOrchestrator {
       }
     });
 
-    // Handle workflow requests
+    // Handle workflow requests and commands
     this.client.onMessage('command', async (msg) => {
       if (msg.content.toLowerCase().startsWith('workflow:')) {
         const workflowId = msg.content.split(':')[1].trim();
@@ -166,6 +174,15 @@ class AntigravityOrchestrator {
             `Unknown workflow: ${workflowId}. Available: ${Object.keys(WORKFLOWS).join(', ')}`,
             { replyTo: msg.id, type: 'response' }
           );
+        }
+      } else if (msg.metadata && msg.metadata.event === 'model_failover_recommended') {
+        const { signal, recommendation } = msg.metadata;
+        if (signal && recommendation && recommendation.fallbackProvider) {
+          console.log(`\\n🚨 [FAILOVER ALERT] Orchestrator mapping provider '${signal.provider}' -> '${recommendation.fallbackProvider}' due to failure signal.`);
+          this.providerFailoverMap.set(signal.provider, recommendation.fallbackProvider);
+        } else if (signal) {
+          console.log(`\\n🚨 [FAILOVER ALERT] Orchestrator marking provider '${signal.provider}' as FAILED with no fallback.`);
+          this.providerFailoverMap.set(signal.provider, 'FAILED');
         }
       }
     });
@@ -252,13 +269,24 @@ class AntigravityOrchestrator {
    * Assign a task to a specific agent
    */
   async assignTask(agentName, task, metadata = {}) {
+    let targetAgent = agentName;
+    if (this.providerFailoverMap.has(agentName)) {
+      const fallback = this.providerFailoverMap.get(agentName);
+      if (fallback === 'FAILED') {
+         console.warn(`⚠️ Cannot route task to ${agentName}: Provider is marked as FAILED with no fallback. Aborting step.`);
+         return { content: `[${agentName} failed - no fallback available]` };
+      }
+      console.log(`🔀 Routing task originally for ${agentName} to fallback provider ${fallback}`);
+      targetAgent = fallback;
+    }
+
     return new Promise((resolve, reject) => {
       const taskId = `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       // Set up timeout
       const timeout = setTimeout(() => {
         this.pendingTasks.delete(taskId);
-        resolve({ content: `[${agentName} timed out]` });
+        resolve({ content: `[${targetAgent} timed out]` });
       }, CONFIG.taskTimeout);
 
       // Store pending task
@@ -268,15 +296,15 @@ class AntigravityOrchestrator {
           resolve(result);
         },
         reject,
-        agent: agentName,
+        agent: targetAgent,
         task,
       });
 
       // Send task
       this.client.send(`[Task from Antigravity]\n\n${task}`, {
         type: 'task',
-        to: agentName,
-        metadata: { taskId, ...metadata },
+        to: targetAgent,
+        metadata: { taskId, originalAgent: agentName, ...metadata },
       });
     });
   }

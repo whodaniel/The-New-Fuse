@@ -64,6 +64,59 @@ export default defineConfig(({ mode }) => {
     plugins: [
       // Resolve ethers Node.js-only modules to browser versions
       ethersBrowserResolve(),
+      // Custom SPA fallback and CORS plugin
+      {
+        name: 'spa-fallback-plugin',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            res.setHeader(
+              'Access-Control-Allow-Headers',
+              'Content-Type, Authorization, X-Requested-With'
+            );
+            res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+            if (req.method === 'OPTIONS') {
+              res.writeHead(204);
+              res.end();
+              return;
+            }
+            next();
+          });
+
+          // SPA fallback - rewrite non-API HTML requests to /app.html
+          // We rewrite req.url instead of manually serving the file so that
+          // Vite's built-in HTML pipeline handles the response. This ensures
+          // proper HTTP lifecycle signals (DOMContentLoaded, etc.) that
+          // browsers and Playwright rely on for navigation completion.
+          server.middlewares.use((req, _res, next) => {
+            if (!req.url) return next();
+
+            // Only rewrite GET requests
+            if (req.method !== 'GET') return next();
+
+            // Skip static assets, API, and websocket routes
+            if (
+              req.url.startsWith('/api') ||
+              req.url.startsWith('/ws') ||
+              req.url.startsWith('/@') || // Vite internal (/@vite, /@fs, etc.)
+              req.url.startsWith('/node_modules') ||
+              req.url.startsWith('/src') ||
+              /\.\w+$/.test(req.url.split('?')[0]) // Has file extension (.js, .css, .png, etc.)
+            ) {
+              return next();
+            }
+
+            // Rewrite HTML requests to app.html, unless it's explicitly the root
+            // (root serves index.html by default, which SubdomainRouter handles)
+            if (req.url !== '/' && req.headers.accept && req.headers.accept.includes('text/html')) {
+              console.log(`[SPA Fallback] Rewriting ${req.url} → /app.html`);
+              req.url = '/app.html';
+            }
+            next();
+          });
+        },
+      },
       react(),
       tsconfigPaths({
         ignoreConfigErrors: true,
@@ -452,44 +505,6 @@ export default defineConfig(({ mode }) => {
             // Vite will proxy requests regardless of missing/unknown Origin
           }
         : undefined,
-      // Add CORS headers for development and SPA fallback
-      configureServer: (server: {
-        middlewares: { use: (handler: (req: any, res: any, next: () => void) => void) => void };
-      }) => {
-        server.middlewares.use((req: any, res: any, next: () => void) => {
-          res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins for development
-          res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-          res.setHeader(
-            'Access-Control-Allow-Headers',
-            'Content-Type, Authorization, X-Requested-With'
-          );
-          res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-          if (req.method === 'OPTIONS') {
-            res.writeHead(204);
-            res.end();
-            return;
-          }
-          next();
-        });
-
-        // SPA fallback - serve app.html for all non-API routes, except root
-        server.middlewares.use((req: any, res: any, next: () => void) => {
-          if (!req.url) return next();
-
-          if (
-            req.url &&
-            req.url !== '/' &&
-            !req.url.startsWith('/api') &&
-            !req.url.startsWith('/ws') &&
-            // Allow explicit file requests (like .js, .css, .png) to fall through
-            !req.url.match(/\.[a-zA-Z0-9]+$/) &&
-            req.method === 'GET'
-          ) {
-            req.url = '/app.html';
-          }
-          next();
-        });
-      },
     },
     preview: {
       host: '0.0.0.0',

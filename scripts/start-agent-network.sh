@@ -59,8 +59,8 @@ print_help() {
     echo "Usage: $0 [options]"
     echo ""
     echo "Options:"
-    echo "  --all        Start all agent wrappers (Claude, Gemini, Jules, Pi, Watchdog)"
-    echo "  --claude     Also start Claude wrapper"
+    echo "  --all        Start default agent wrappers (Gemini, Jules, Pi, Watchdog)"
+    echo "  --claude     Also start Claude wrapper when quota/auth are available"
     echo "  --gemini     Also start Gemini wrapper"
     echo "  --jules      Also start Jules wrapper"
     echo "  --pi         Also start Pi wrapper"
@@ -90,6 +90,67 @@ check_ws_bridge_health() {
 is_wrapper_running() {
     local script_name=$1
     pgrep -f "$SCRIPT_DIR/$script_name" > /dev/null 2>&1 || pgrep -f "$script_name" > /dev/null 2>&1
+}
+
+command_available() {
+    local command_name=$1
+    command -v "$command_name" > /dev/null 2>&1
+}
+
+contains_csv_token() {
+    local csv=$1
+    local token=$2
+    local entry
+
+    IFS=',' read -ra entries <<< "$csv"
+    for entry in "${entries[@]}"; do
+        entry="$(echo "$entry" | xargs)"
+        if [ "$entry" = "$token" ]; then
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+append_csv_token() {
+    local csv=$1
+    local token=$2
+
+    if [ -z "$token" ] || contains_csv_token "$csv" "$token"; then
+        echo "$csv"
+        return
+    fi
+
+    if [ -z "$csv" ]; then
+        echo "$token"
+    else
+        echo "$csv,$token"
+    fi
+}
+
+build_watchdog_provider_chain() {
+    local default_chain="${MODEL_WATCHDOG_PROVIDER_CHAIN:-google,anthropic,openai,openrouter,nvidia,deepseek}"
+    local disabled="${MODEL_WATCHDOG_DISABLED_PROVIDERS:-${TNF_DISABLED_PROVIDERS:-}}"
+    local claude_cmd="${CLAUDE_CMD:-claude}"
+    local chain=""
+    local provider
+
+    if [ "$START_CLAUDE" != true ] || ! command_available "$claude_cmd"; then
+        disabled="$(append_csv_token "$disabled" "anthropic")"
+    fi
+
+    IFS=',' read -ra providers <<< "$default_chain"
+    for provider in "${providers[@]}"; do
+        provider="$(echo "$provider" | xargs)"
+        if [ -z "$provider" ] || contains_csv_token "$disabled" "$provider"; then
+            continue
+        fi
+
+        chain="$(append_csv_token "$chain" "$provider")"
+    done
+
+    echo "$chain"
 }
 
 wait_for_wrapper() {
@@ -208,7 +269,7 @@ start_antigravity() {
     # Run in a new terminal or background
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS - open in new Terminal tab
-        osascript -e "tell application \"Terminal\" to do script \"cd '$PROJECT_ROOT' && node '$SCRIPT_DIR/antigravity-redis-wrapper.cjs'\""
+        osascript -e "tell application \"Terminal\" to do script \"export TNF_ONBOARDED=1 && cd '$PROJECT_ROOT' && node '$SCRIPT_DIR/antigravity-redis-wrapper.cjs'\""
         wait_for_wrapper "Antigravity" "antigravity-redis-wrapper.cjs" 20
     else
         # Linux - run in background with logs
@@ -234,14 +295,13 @@ start_agent_wrapper() {
         return 0
     fi
 
+    local agent_id="tnf-${script%.*}"
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        osascript -e "tell application \"Terminal\" to do script \"cd '$PROJECT_ROOT' && node '$SCRIPT_DIR/$script'\""
+        osascript -e "tell application \"Terminal\" to do script \"export TNF_ONBOARDED=1 && export AGENT_ID='$agent_id' && cd '$PROJECT_ROOT' && node '$SCRIPT_DIR/$script'\""
         wait_for_wrapper "$name" "$script" 25
     else
-        node "$SCRIPT_DIR/$script" > "/tmp/${name,,}.log" 2>&1 &
-        local pid=$!
-        echo $pid >> "$PID_FILE"
-        echo -e "  ${GREEN}✓${NC} $name started (PID: $pid)"
+        bash -c "source ~/.zshrc && source ~/.tnf-claude-env && AGENT_ID='$agent_id' node '$SCRIPT_DIR/$script' > '/tmp/$(echo "$name" | tr A-Z a-z).log' 2>&1 & echo \$! >> '$PID_FILE'"
+        echo -e "  ${GREEN}✓${NC} $name started (headless fallback)"
     fi
 }
 
@@ -355,7 +415,6 @@ START_WATCHDOG=false
 while [[ $# -gt 0 ]]; do
     case $1 in
         --all)
-            START_CLAUDE=true
             START_GEMINI=true
             START_JULES=true
             START_PI=true
@@ -432,6 +491,8 @@ if [ "$START_PI" = true ]; then
 fi
 
 if [ "$START_WATCHDOG" = true ]; then
+    export MODEL_WATCHDOG_PROVIDER_CHAIN="$(build_watchdog_provider_chain)"
+    echo -e "  ${CYAN}ℹ${NC}  Model watchdog provider chain: ${MODEL_WATCHDOG_PROVIDER_CHAIN:-none}"
     start_agent_wrapper "ModelWatchdog" "model-watchdog-failover-consumer.cjs"
 fi
 

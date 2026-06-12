@@ -1,0 +1,9 @@
+{
+  "id": "act-36bf56b423c939b2",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests preventing Mobile App secret exposure. TNF does not contain a mobile app."
+  }
+}

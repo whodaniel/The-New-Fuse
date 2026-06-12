@@ -1,4 +1,7 @@
+import * as crypto from 'crypto';
 import * as fs from 'fs';
+import * as http from 'http';
+import * as https from 'https';
 import * as os from 'os';
 import * as path from 'path';
 
@@ -55,7 +58,16 @@ export class WebhookService {
     return this.readWebhooks();
   }
 
-  async add(event: string, url: string, options: { secret?: string; description?: string; headers?: Record<string, string>; timeout?: number } = {}): Promise<WebhookSubscription> {
+  async add(
+    event: string,
+    url: string,
+    options: {
+      secret?: string;
+      description?: string;
+      headers?: Record<string, string>;
+      timeout?: number;
+    } = {}
+  ): Promise<WebhookSubscription> {
     const webhooks = this.readWebhooks();
     const id = `wh-${Date.now().toString(36)}`;
 
@@ -105,11 +117,6 @@ export class WebhookService {
       throw new Error(`No active webhook subscription for event: ${event}`);
     }
 
-    subscription.lastTriggered = new Date().toISOString();
-    subscription.triggerCount++;
-    subscription.updatedAt = new Date().toISOString();
-
-    // In production, this would actually send the HTTP request
     const webhookEvent: WebhookEvent = {
       event,
       timestamp: new Date().toISOString(),
@@ -118,7 +125,90 @@ export class WebhookService {
       deliveryId: `delivery-${Date.now()}`,
     };
 
-    this.writeWebhooks(webhooks);
+    const body = JSON.stringify(webhookEvent);
+    const url = new URL(subscription.url);
+    const isHttps = url.protocol === 'https:';
+    const lib = isHttps ? https : http;
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(body).toString(),
+      'X-Webhook-Event': event,
+      'X-Webhook-Delivery': webhookEvent.deliveryId,
+      ...(subscription.headers || {}),
+    };
+
+    if (subscription.secret) {
+      const sig = crypto.createHmac('sha256', subscription.secret).update(body).digest('hex');
+      headers['X-Webhook-Signature'] = `sha256=${sig}`;
+    }
+
+    const maxAttempts = subscription.retryCount + 1;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const req = lib.request(
+            {
+              hostname: url.hostname,
+              port: url.port || (isHttps ? 443 : 80),
+              path: url.pathname + url.search,
+              method: 'POST',
+              headers,
+              timeout: subscription.timeout || 30000,
+            },
+            (res) => {
+              let data = '';
+              res.on('data', (chunk) => {
+                data += chunk;
+              });
+              res.on('end', () => {
+                if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+                  resolve();
+                } else {
+                  reject(
+                    new Error(
+                      `Webhook ${subscription.url} returned ${res.statusCode}: ${data.slice(0, 200)}`
+                    )
+                  );
+                }
+              });
+            }
+          );
+          req.on('error', reject);
+          req.on('timeout', () => {
+            req.destroy();
+            reject(new Error(`Webhook ${subscription.url} timed out`));
+          });
+          req.write(body);
+          req.end();
+        });
+
+        subscription.lastTriggered = new Date().toISOString();
+        subscription.triggerCount++;
+        subscription.updatedAt = new Date().toISOString();
+        subscription.failCount = Math.max(0, subscription.failCount - 1);
+        this.writeWebhooks(webhooks);
+        lastError = null;
+        break;
+      } catch (err: any) {
+        lastError = err;
+        if (attempt < maxAttempts) {
+          await new Promise((r) => setTimeout(r, 1000 * attempt));
+        }
+      }
+    }
+
+    if (lastError) {
+      subscription.failCount++;
+      subscription.updatedAt = new Date().toISOString();
+      this.writeWebhooks(webhooks);
+      throw new Error(
+        `Webhook delivery failed after ${maxAttempts} attempts: ${lastError.message}`
+      );
+    }
+
     return webhookEvent;
   }
 
@@ -150,7 +240,10 @@ export class WebhookService {
     return webhook;
   }
 
-  async update(id: string, updates: Partial<Omit<WebhookSubscription, 'id'>>): Promise<WebhookSubscription> {
+  async update(
+    id: string,
+    updates: Partial<Omit<WebhookSubscription, 'id'>>
+  ): Promise<WebhookSubscription> {
     const webhooks = this.readWebhooks();
     const webhook = webhooks.find((w) => w.id === id);
 

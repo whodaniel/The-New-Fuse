@@ -3,9 +3,16 @@
   "tasks": {
     "build": { "dependsOn": ["^build"], "outputs": ["dist/**", "lib/**"] },
     "dev": { "dependsOn": ["^build"], "persistent": true },
+    "lint": { "dependsOn": ["^build"] },
+    "lint:fix": { "dependsOn": ["^build"] },
+    "type-check": { "dependsOn": ["^build"] },
     "test": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**", "test-results/**"]
+    },
+    "clean": {
+      "dependsOn": [],
+      "cache": false
     }
   }
 }

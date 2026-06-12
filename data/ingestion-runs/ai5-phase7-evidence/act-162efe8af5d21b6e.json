@@ -1,0 +1,9 @@
+{
+  "id": "act-162efe8af5d21b6e",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests launching Grok Build CLI. TNF uses Antigravity, OpenClaw, Hermes, and Jules, not Grok Build."
+  }
+}

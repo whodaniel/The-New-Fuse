@@ -1,0 +1,9 @@
+{
+  "id": "act-4a216de71c3461c4",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:53.564677Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests initiating Runway Agent. TNF does not use Runway Agent."
+  }
+}

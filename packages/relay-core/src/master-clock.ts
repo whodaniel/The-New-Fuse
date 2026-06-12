@@ -408,6 +408,18 @@ class AgentRegistry {
 // MASTER CLOCK
 // ============================================================================
 
+interface RelayAgentRegistrationRequest {
+  agentId: string; // The requested ID from the relay
+  sourceId: string; // Unique identifier from the relay, usually same as agentId initially
+  platform: string;
+  name: string;
+  capabilities: string[];
+  channels: string[];
+  runtimeSessionId: string;
+  metadata?: Record<string, unknown>;
+  replyTo: string; // Redis channel for the master clock to reply to
+}
+
 interface Metrics {
   heartbeatsSent: number;
   stallsDetected: number;
@@ -591,16 +603,28 @@ class MasterClock {
           log('warn', 'REDIS', `Failed to connect subscriber client (TCP): ${err.message}`);
         });
 
-        // Subscribe to ingress for messages from other components
-        await this.redisSub.subscribe(CONFIG.REDIS_KEYS.INGRESS);
+        // Subscribe to ingress for messages from other components and agent registration requests from relay
+        await this.redisSub.subscribe(
+          CONFIG.REDIS_KEYS.INGRESS,
+          'tnf:relay:agent_register_requests'
+        );
         this.redisSub.on('message', (channel, message) => {
-          if (channel === CONFIG.REDIS_KEYS.INGRESS) {
-            try {
-              const envelope = JSON.parse(message);
+          try {
+            const envelope = JSON.parse(message);
+            if (channel === CONFIG.REDIS_KEYS.INGRESS) {
               this.handleRedisMessage(envelope);
-            } catch (e) {
-              // Invalid message
+            } else if (channel === 'tnf:relay:agent_register_requests') {
+              void this.handleRelayAgentRegisterRequest(envelope).catch((e) => {
+                log('error', 'REDIS', `Error handling relay agent register request: ${e.message}`);
+              });
             }
+          } catch (e) {
+            // Invalid message
+            log(
+              'warn',
+              'REDIS',
+              `Invalid Redis message on channel ${channel}: ${(e as Error).message}`
+            );
           }
         });
       }

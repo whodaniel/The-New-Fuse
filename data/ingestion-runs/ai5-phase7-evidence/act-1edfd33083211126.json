@@ -1,0 +1,9 @@
+{
+  "id": "act-1edfd33083211126",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:25:53.192258Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Directive applies to a tutorial on Iterate API, which is not part of the TNF orchestration stack."
+  }
+}

@@ -103,7 +103,9 @@ export function createStandaloneRedisClient(
   return new Redis(redisOptions);
 }
 
-export function describeStandaloneRedisClient(client: StandaloneRedisClient): 'cluster' | 'standalone' {
+export function describeStandaloneRedisClient(
+  client: StandaloneRedisClient
+): 'cluster' | 'standalone' {
   return client instanceof Cluster ? 'cluster' : 'standalone';
 }
 
@@ -132,4 +134,43 @@ export function createUpstashRestClient(config?: { restUrl?: string; restToken?:
   }
 
   return null;
+}
+
+/**
+ * Parse a Redis URL string into a Partial<StandaloneRedisConfig>
+ */
+export function parseRedisUrl(redisUrl: string): Partial<StandaloneRedisConfig> {
+  let host: string | undefined;
+  let port: number | undefined;
+  let password: string | undefined;
+  let db: number | undefined;
+
+  if (redisUrl) {
+    try {
+      const redisPrefix = 'redis://';
+      const secondIndex = redisUrl.indexOf(redisPrefix, redisPrefix.length);
+      if (secondIndex !== -1) {
+        redisUrl = redisUrl.substring(0, secondIndex);
+      }
+
+      const url = new URL(redisUrl);
+      host = url.hostname;
+      port = parseInt(url.port || '6379', 10);
+      password = url.password || undefined;
+      const dbFromPath =
+        url.pathname && url.pathname.length > 1 ? parseInt(url.pathname.slice(1), 10) : 0;
+      db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
+    } catch (error) {
+      console.error(
+        '[Standalone-Redis] Failed to parse Redis URL, using defaults for URL component parsing:',
+        error
+      );
+      // Fallback to default host/port if URL parsing fails
+      host = 'localhost';
+      port = 6379;
+      db = 0;
+    }
+  }
+
+  return { host, port, password, db };
 }

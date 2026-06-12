@@ -15,8 +15,6 @@ const path = require('path');
 const { execSync } = require('child_process');
 const express = require('express');
 
-
-
 class ComprehensiveTNFRelay {
   constructor() {
     this.relayId = process.env.RELAY_ID || 'TNF-RELAY-CLOUD-001';
@@ -59,6 +57,7 @@ class ComprehensiveTNFRelay {
 
     this.setupInterceptRules();
     this.initializeSynapseBridge();
+    this.lock = Promise.resolve(); // Concurrency lock
   }
 
   initializeSynapseBridge() {
@@ -282,7 +281,9 @@ class ComprehensiveTNFRelay {
     ws.clientId = clientId;
     ws.isAlive = true;
 
-    this.systemStatus.activeConnections++;
+    await this.lock.then(async () => {
+      this.systemStatus.activeConnections++;
+    });
     await this.log(`WebSocket client connected: ${clientId}`);
 
     ws.on('message', async (data) => {
@@ -297,10 +298,12 @@ class ComprehensiveTNFRelay {
     });
 
     ws.on('close', async () => {
-      this.systemStatus.activeConnections--;
+      await this.lock.then(async () => {
+        this.systemStatus.activeConnections--;
+        this.agents.delete(clientId);
+        this.chromeExtensions.delete(clientId);
+      });
       await this.log(`WebSocket client disconnected: ${clientId}`);
-      this.agents.delete(clientId);
-      this.chromeExtensions.delete(clientId);
     });
 
     ws.send(
@@ -362,8 +365,14 @@ class ComprehensiveTNFRelay {
         timestamp: new Date().toISOString(),
         source: 'http_proxy',
       };
-      this.interceptedMessages.push({ ...data, id: `MSG_${Date.now()}` });
-      this.systemStatus.interceptCount++;
+
+      // Acquire lock for critical section
+      this.lock = this.lock.then(async () => {
+        this.interceptedMessages.push({ ...data, id: `MSG_${Date.now()}` });
+        this.systemStatus.interceptCount++;
+        // Release lock implicitly by returning from the promise chain
+      });
+      await this.lock; // Wait for the update to complete
 
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Intercepted by TNF Cloud Relay' }));
@@ -435,9 +444,13 @@ class ComprehensiveTNFRelay {
     };
 
     if (payload.type === 'chrome_extension') {
-      this.chromeExtensions.set(ws.clientId, clientInfo);
+      await this.lock.then(async () => {
+        this.chromeExtensions.set(ws.clientId, clientInfo);
+      });
     } else {
-      this.agents.set(ws.clientId, clientInfo);
+      await this.lock.then(async () => {
+        this.agents.set(ws.clientId, clientInfo);
+      });
     }
 
     ws.send(

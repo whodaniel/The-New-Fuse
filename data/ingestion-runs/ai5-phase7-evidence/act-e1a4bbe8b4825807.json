@@ -1,0 +1,9 @@
+{
+  "id": "act-e1a4bbe8b4825807",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:25:53.192258Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests running 'Verscel React Best Practices Audit', a non-existent skill in this environment extracted from a tutorial."
+  }
+}

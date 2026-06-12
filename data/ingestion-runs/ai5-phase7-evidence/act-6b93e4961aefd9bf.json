@@ -1,0 +1,9 @@
+{
+  "id": "act-6b93e4961aefd9bf",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:53.564677Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests implementing Manis-style two-action rule. From a Claude Code tutorial, not TNF protocol."
+  }
+}

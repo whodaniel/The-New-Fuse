@@ -1,0 +1,9 @@
+{
+  "id": "act-3807865fd783700b",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:53.564677Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests running Deep Sec scan. Extracted from a Vercel tutorial video."
+  }
+}

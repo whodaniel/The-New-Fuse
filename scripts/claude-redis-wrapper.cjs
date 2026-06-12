@@ -18,6 +18,7 @@
 
 const { spawn } = require('child_process');
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
+const { publishProviderFailureSignal } = require('./watchdog-signal-utils.cjs');
 const readline = require('readline');
 
 // ============================================================================
@@ -31,6 +32,7 @@ const CONFIG = {
   claudeCommand: process.env.CLAUDE_CMD || 'claude', // The claude CLI command (claude-cli, mcp-client-cli, etc.)
   maxResponseTime: 180000, // 3 minutes max wait for Claude (it can be slow)
   streamMode: true, // Claude CLI supports streaming
+  modelWatchdogChannel: process.env.CLAUDE_MODEL_WATCHDOG_CHANNEL || 'tnf:model-watchdog:signals',
 };
 
 // ============================================================================
@@ -54,45 +56,71 @@ class ClaudeCLIInterface {
       try {
         console.log(`🚀 Starting Claude CLI process...`);
 
-        // Start Claude in interactive/chat mode
-        this.process = spawn(CONFIG.claudeCommand, ['chat'], {
-          stdio: ['pipe', 'pipe', 'pipe'],
-          shell: true,
-          env: { ...process.env, CLAUDE_MCP_ENABLED: 'true' },
-        });
+        // PREFLIGHT: Check auth status
+        const authCheck = spawn(CONFIG.claudeCommand, ['auth', 'status'], { shell: true });
+        let authOutput = '';
+        authCheck.stdout.on('data', (d) => (authOutput += d));
+        authCheck.stderr.on('data', (d) => (authOutput += d));
 
-        this.process.stdout.on('data', (data) => {
-          this.handleOutput(data.toString());
-        });
-
-        this.process.stderr.on('data', (data) => {
-          // Claude CLI often sends progress to stderr
-          const msg = data.toString();
-          if (!msg.includes('Loading') && !msg.includes('Connecting')) {
-            console.error(`Claude stderr: ${msg}`);
-          }
-        });
-
-        this.process.on('error', (error) => {
-          console.error(`Claude process error: ${error.message}`);
+        authCheck.on('error', (error) => {
           reject(error);
         });
 
-        this.process.on('close', (code) => {
-          console.log(`Claude process exited with code ${code}`);
-          if (code !== 0 && this.isProcessing) {
-            this.isProcessing = false;
-            if (this.responseCallback) {
-              this.responseCallback('[Claude process ended unexpectedly]');
-            }
+        authCheck.on('close', (code) => {
+          if (
+            code !== 0 ||
+            authOutput.includes('Not logged in') ||
+            authOutput.includes('Please run /login')
+          ) {
+            console.error('❌ Preflight failed: Claude is unavailable or not logged in.');
+            reject(
+              new Error(
+                `Provider Authentication Failure: Claude CLI auth status failed (${authOutput.trim() || `code ${code}`})`
+              )
+            );
+            return;
           }
-        });
 
-        // Give it time to initialize
-        setTimeout(() => {
-          console.log('✅ Claude CLI started');
-          resolve();
-        }, 3000);
+          // Start Claude in interactive/chat mode
+          this.process = spawn(CONFIG.claudeCommand, ['chat'], {
+            stdio: ['pipe', 'pipe', 'pipe'],
+            shell: true,
+            env: { ...process.env, CLAUDE_MCP_ENABLED: 'true' },
+          });
+
+          this.process.stdout.on('data', (data) => {
+            this.handleOutput(data.toString());
+          });
+
+          this.process.stderr.on('data', (data) => {
+            // Claude CLI often sends progress to stderr
+            const msg = data.toString();
+            if (!msg.includes('Loading') && !msg.includes('Connecting')) {
+              console.error(`Claude stderr: ${msg}`);
+            }
+          });
+
+          this.process.on('error', (error) => {
+            console.error(`Claude process error: ${error.message}`);
+            reject(error);
+          });
+
+          this.process.on('close', (code) => {
+            console.log(`Claude process exited with code ${code}`);
+            if (code !== 0 && this.isProcessing) {
+              this.isProcessing = false;
+              if (this.responseCallback) {
+                this.responseCallback('[Claude process ended unexpectedly]');
+              }
+            }
+          });
+
+          // Give it time to initialize
+          setTimeout(() => {
+            console.log('✅ Claude CLI started');
+            resolve();
+          }, 3000);
+        });
       } catch (error) {
         reject(error);
       }
@@ -104,6 +132,21 @@ class ClaudeCLIInterface {
    */
   handleOutput(text) {
     this.responseBuffer += text;
+
+    // Rate limit detection
+    if (/\b(429|rate[\s_-]?limit|quota|resource exhausted)\b/i.test(text)) {
+      console.error('🚨 Rate limit detected from Claude CLI');
+      publishProviderFailureSignal(this.client, {
+          channel: CONFIG.modelWatchdogChannel,
+          sourceAgent: CONFIG.agentName,
+          agentRole: CONFIG.agentRole,
+          platform: CONFIG.platform,
+          provider: 'anthropic',
+          model: 'claude-code-cli',
+          category: 'rate_limit',
+          message: text,
+      }).catch(console.error);
+    }
 
     // Reset stream timeout on new data
     if (this.streamTimeout) {
@@ -277,6 +320,21 @@ class ClaudeRedisAgent {
       await this.waitForShutdown();
     } catch (error) {
       console.error('Failed to start Claude agent:', error.message);
+      try {
+        await publishProviderFailureSignal(this.client, {
+          channel: CONFIG.modelWatchdogChannel,
+          sourceAgent: CONFIG.agentName,
+          agentRole: CONFIG.agentRole,
+          platform: CONFIG.platform,
+          provider: 'anthropic',
+          model: 'claude-code-cli',
+          category: error.message.includes('Authentication') ? 'auth' : 'availability',
+          message: error.message,
+        });
+        console.log('📡 Emitted watchdog failover signal');
+      } catch (e) {
+        // Ignore errors sending signal
+      }
       await this.stop();
       process.exit(1);
     }
@@ -286,6 +344,29 @@ class ClaudeRedisAgent {
    * Set up message handlers
    */
   setupHandlers() {
+    // Handle direct messages
+    // Handle events (like wake_ping from the orchestrator)
+    this.client.onMessage('event', async (msg) => {
+      if (
+        msg.payload?.eventType === 'wake_ping' &&
+        msg.payload?.data?.targetAgentId !== this.client.agentInfo.id
+      ) {
+        return;
+      }
+      console.log(`\n👑 Received event from ${msg.from.agentName}:`);
+      console.log(`   ${msg.content.substring(0, 200)}...`);
+
+      let promptText = msg.content;
+      if (msg.payload?.eventType === 'wake_ping' && msg.payload?.data?.customPrompt) {
+        promptText = msg.payload.data.customPrompt;
+      }
+
+      msg.content = promptText;
+      msg.type = 'message';
+      msg.metadata = { ...(msg.metadata || {}), wasEvent: true };
+      this.queueTask(msg);
+    });
+
     // Handle direct messages
     this.client.onMessage('message', async (msg) => {
       console.log(`\n📨 Received message from ${msg.from.agentName}:`);

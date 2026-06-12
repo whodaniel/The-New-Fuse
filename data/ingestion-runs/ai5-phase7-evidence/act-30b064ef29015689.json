@@ -1,0 +1,9 @@
+{
+  "id": "act-30b064ef29015689",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:25:53.192258Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Directive requests deleting testing sections from a tutorial's agents.md, irrelevant to TNF's strict AGENTS.md rules."
+  }
+}

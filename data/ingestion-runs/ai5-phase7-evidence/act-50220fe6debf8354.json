@@ -1,7 +1,7 @@
 {
   "action_id": "act-50220fe6debf8354",
   "title": "[AI5] Configure Developer Agent for PII-Stripped Local Reproduction",
-  "state": "verified",
+  "state": "landed",
   "updatedAt": "2026-06-09T10:52:45Z",
   "summary": "Added a developer repro bundle generator that reads an explicit repo-relative file list and writes redacted JSON suitable for local agent reproduction. The generator redacts emails, phone-like numbers, SSNs, bearer tokens, credential assignments, and local home paths while skipping unsafe absolute paths.",
   "filesChanged": [

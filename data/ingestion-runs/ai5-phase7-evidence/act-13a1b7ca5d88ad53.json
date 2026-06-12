@@ -1,0 +1,9 @@
+{
+  "id": "act-13a1b7ca5d88ad53",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:53.564677Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests launching the Gemini mobile app. TNF is a backend orchestrator."
+  }
+}

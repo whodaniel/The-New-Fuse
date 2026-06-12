@@ -1,7 +1,7 @@
 {
   "action_id": "act-43037b02807f02b0",
   "title": "[AI5] Optimize Agent Prompt Token Efficiency",
-  "state": "verified",
+  "state": "landed",
   "updatedAt": "2026-06-09T10:42:07Z",
   "summary": "Added a deterministic frontload token-budget report to `tnf-onboard`. The report separates eager Turn Zero context from deferred reference context and recommends staged reading when the complete frontload packet exceeds the configured budget.",
   "filesChanged": [

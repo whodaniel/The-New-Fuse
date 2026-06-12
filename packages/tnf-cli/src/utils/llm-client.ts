@@ -32,6 +32,21 @@ export interface ProviderDescriptor {
   provider?: string; // logical provider name for special routing
 }
 
+function parsePositiveIntegerEnv(name: string): number | null {
+  const raw = process.env[name];
+  if (!raw) return null;
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function defaultProviderTimeoutMs(): number {
+  return (
+    parsePositiveIntegerEnv('TNF_LLM_TIMEOUT_MS') ??
+    parsePositiveIntegerEnv('TNF_PROVIDER_TIMEOUT_MS') ??
+    180000
+  );
+}
+
 /**
  * LLMClient — unified multi-provider client for the TNF CLI.
  *
@@ -347,7 +362,7 @@ export class LLMClient {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.apiKey}`,
       },
-      signal: AbortSignal.timeout(options.timeoutMs ?? 60000),
+      signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
       body: JSON.stringify({
         model: this.model,
         messages,
@@ -391,7 +406,7 @@ export class LLMClient {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(options.timeoutMs ?? 60000),
+        signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
         body: JSON.stringify({ contents: geminiMessages }),
       }
     );
@@ -417,12 +432,15 @@ export class LLMClient {
 
     const sorted = [...this.providers].sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99));
 
-    // Skip providers we've already tried (current baseUrl)
-    const tried = new Set([this.baseUrl]);
+    // Skip only exact endpoint/model pairs. A 404/function-missing response can
+    // be model-specific, so the same endpoint may still recover with a
+    // different catalog model.
+    const tried = new Set([`${this.baseUrl}::${this.model}`]);
 
     for (const provider of sorted) {
-      if (tried.has(provider.endpoint)) continue;
-      tried.add(provider.endpoint);
+      const providerAttemptKey = `${provider.endpoint}::${provider.model}`;
+      if (tried.has(providerAttemptKey)) continue;
+      tried.add(providerAttemptKey);
 
       // Skip known-dead providers
       if (provider.note && /402|410|exhausted|gone/i.test(provider.note)) continue;

@@ -37,16 +37,16 @@ export {
   TaskDependency,
   TaskQueue,
   TaskResult,
-} from './core.js';
+} from './core/index.js';
 
 // Orchestration
-export * from './orchestration.js';
+export * from './orchestration/index.js';
 
 // State management
-export * from './state.js';
+export * from './state/index.js';
 
 // Coordination patterns
-export * from './patterns.js';
+export * from './patterns/index.js';
 
 // Monitoring
 export * from './monitoring/index.js';

@@ -19,6 +19,7 @@
 const Redis = require('ioredis');
 const { v4: uuidv4 } = require('uuid');
 const readline = require('readline');
+const crypto = require('crypto');
 
 // ============================================================================
 // CONFIGURATION
@@ -206,6 +207,28 @@ class RedisAgentClient {
   /**
    * Send a message to the network
    */
+
+  signMessage(data, type, channel) {
+    const secret = process.env.A2A_SECRET_KEY || 'default-secret';
+    const header = {
+      agent_id: this.agentInfo.id,
+      alg: 'HS256',
+      nonce: crypto.randomBytes(16).toString('hex'),
+      timestamp: Date.now(),
+    };
+
+    const payload = {
+      type,
+      channel,
+      data,
+    };
+
+    const messageToSign = JSON.stringify({ header, payload });
+    const signature = crypto.createHmac('sha256', secret).update(messageToSign).digest('hex');
+
+    return { header, payload, signature };
+  }
+
   async send(content, options = {}) {
     if (!this.agentInfo) {
       throw new Error('Agent not registered. Call register() first.');
@@ -235,7 +258,8 @@ class RedisAgentClient {
     const channel = directAgentId
       ? `${CONFIG.channels.directPrefix}:${this.agentInfo.id}:${directAgentId}`
       : options.channel || CONFIG.channels.conversations;
-    await this.publisher.publish(channel, JSON.stringify(message));
+    const signedMessage = this.signMessage(message, message.type, channel);
+    await this.publisher.publish(channel, JSON.stringify(signedMessage));
 
     console.log(
       `📤 Sent [${message.type}]: ${content.substring(0, 50)}${content.length > 50 ? '...' : ''}`
@@ -332,24 +356,32 @@ class RedisAgentClient {
       return null;
     }
 
-    const hasEnvelopeShape =
-      typeof rawMessage.id === 'string' &&
-      typeof rawMessage.type === 'string' &&
-      rawMessage.from &&
-      typeof rawMessage.from === 'object' &&
-      rawMessage.payload &&
-      typeof rawMessage.payload === 'object' &&
-      (typeof rawMessage.traceId === 'string' ||
-        rawMessage.version === '1.0' ||
-        rawMessage.type === 'task' ||
-        rawMessage.type === 'event' ||
-        rawMessage.type === 'query');
-
-    if (!hasEnvelopeShape) {
-      return rawMessage;
+    // Unpack signed messages if present
+    let msg = rawMessage;
+    if (rawMessage.header && rawMessage.payload && rawMessage.signature) {
+      if (rawMessage.payload.data && typeof rawMessage.payload.data === 'object') {
+        msg = rawMessage.payload.data;
+      }
     }
 
-    const payload = rawMessage.payload || {};
+    const hasEnvelopeShape =
+      typeof msg.id === 'string' &&
+      typeof msg.type === 'string' &&
+      msg.from &&
+      typeof msg.from === 'object' &&
+      msg.payload &&
+      typeof msg.payload === 'object' &&
+      (typeof msg.traceId === 'string' ||
+        msg.version === '1.0' ||
+        msg.type === 'task' ||
+        msg.type === 'event' ||
+        msg.type === 'query');
+
+    if (!hasEnvelopeShape) {
+      return msg;
+    }
+
+    const payload = msg.payload || {};
     const task = payload.task && typeof payload.task === 'object' ? payload.task : null;
     const taskContent =
       payload.message ||
@@ -369,31 +401,31 @@ class RedisAgentClient {
     }
 
     return {
-      id: rawMessage.id || uuidv4(),
-      timestamp: rawMessage.timestamp || new Date().toISOString(),
+      id: msg.id || uuidv4(),
+      timestamp: msg.timestamp || new Date().toISOString(),
       from: {
-        agentId: rawMessage.from.agentId || rawMessage.from.id || 'unknown',
+        agentId: msg.from.agentId || msg.from.id || 'unknown',
         agentName:
-          rawMessage.from.agentName ||
-          rawMessage.from.operationalHandle ||
-          rawMessage.from.agentId ||
+          msg.from.agentName ||
+          msg.from.operationalHandle ||
+          msg.from.agentId ||
           'unknown',
-        role: rawMessage.from.role || 'worker',
-        platform: rawMessage.from.platform || 'relay-core',
+        role: msg.from.role || 'worker',
+        platform: msg.from.platform || 'relay-core',
       },
-      to: rawMessage.to,
-      type: rawMessage.type,
+      to: msg.to,
+      type: msg.type,
       content,
       payload,
       conversationId:
-        rawMessage.context?.sessionId || rawMessage.context?.workflowId || rawMessage.conversationId,
-      replyTo: rawMessage.context?.parentMessageId || rawMessage.replyTo,
+        msg.context?.sessionId || msg.context?.workflowId || msg.conversationId,
+      replyTo: msg.context?.parentMessageId || msg.replyTo,
       expectsResponse:
-        rawMessage.type === 'task' ||
-        rawMessage.type === 'query' ||
-        Boolean(rawMessage.expectsResponse),
+        msg.type === 'task' ||
+        msg.type === 'query' ||
+        Boolean(msg.expectsResponse),
       metadata: {
-        ...(typeof rawMessage.metadata === 'object' ? rawMessage.metadata : {}),
+        ...(typeof msg.metadata === 'object' ? msg.metadata : {}),
         payload,
         tnfEnvelope: true,
       },

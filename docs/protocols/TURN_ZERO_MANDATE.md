@@ -1,7 +1,6 @@
 # TNF Turn Zero Mandate
 
-Status: ACTIVE  
-Protocol ID: TNF_TURN_ZERO_CANONICAL
+Status: ACTIVE Protocol ID: TNF_TURN_ZERO_CANONICAL
 
 ## Authority
 
@@ -19,13 +18,40 @@ Protocol ID: TNF_TURN_ZERO_CANONICAL
 ## Operating Loop
 
 Always execute in this order: Inspect -> Act -> Verify.
-**Velocity-Integrity Mandate:** When utilizing experimental or cutting-edge logic, the `Verify` step MUST rely on a proven, legacy testing pathway to protect against unverified assumptions.
-**Non-Temporal Proliferation Mandate:** Improvements in understanding, configuration, or processes must not remain disjointed or temporary. All agents are required to extract their self-improvements and local optimizations and permanently codify them into the global TNF framework. Evolution must proliferate universally.
 
-**Tri-Fold Domain Protocol Awareness:** Agents must implicitly determine and acknowledge the current execution domain:
-1. **Corporate Dev Work**: Strict adherence to framework architecture and canonical protocols.
+**Velocity-Integrity Mandate:** When utilizing experimental or cutting-edge
+logic, the `Verify` step MUST rely on a proven, legacy testing pathway to
+protect against unverified assumptions.
+
+**Non-Temporal Proliferation Mandate:** Improvements in understanding,
+configuration, or processes must not remain disjointed or temporary. All agents
+are required to extract their self-improvements and local optimizations and
+permanently codify them into the global TNF framework. Evolution must
+proliferate universally.
+
+**Best-Known Assimilation & Actualization Mandate:** TNF itself is the ultimate
+beneficiary of all known best practices, proven agent behaviors, reliable
+command patterns, failure remediations, and protocol lessons. Crucially, this
+assimilation is an **everpresent process**. During any information assessment,
+news gathering, or capability usage, agents MUST inherently run an
+`ASSIMILATE_CHECK` to identify how TNF can natively emulate new strengths.
+Furthermore, any assimilated substantive knowledge, facts, or scientific claims
+must be strictly attributed to its human or scientific provenance per the
+**Attribution Cornerstone** _(excluding standard software patterns or API
+utilization to prevent friction)_. Any agent that discovers a better way to
+inspect, act, verify, recover, route, or self-improve must convert that learning
+into durable TNF code, docs, skills, prompts, tests, or runbooks before treating
+the improvement as complete.
+
+**Tri-Fold Domain Protocol Awareness:** Agents must implicitly determine and
+acknowledge the current execution domain:
+
+1. **Corporate Dev Work**: Strict adherence to framework architecture and
+   canonical protocols.
 2. **Agency Dev Work**: Client-focused, balancing speed and robustness.
-3. **Personal Dev Work**: Proactive execution. The agent must proactively guide the user, ask for context, and break vague goals into threads/execution plans.
+3. **Personal Dev Work**: Proactive execution. The agent must proactively guide
+   the user, ask for context, and break vague goals into threads/execution
+   plans.
 
 ## Startup Sequence
 

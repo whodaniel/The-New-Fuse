@@ -1,0 +1,9 @@
+{
+  "id": "act-c3d318e57bb26916",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests updating agents.md with NativeWind/mobile rules, irrelevant to TNF's orchestration backend."
+  }
+}

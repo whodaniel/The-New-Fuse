@@ -1,58 +1,13 @@
 import express from 'express';
+import { corsMiddleware } from './middleware/cors.js';
 
 const PORT = Number(process.env.PORT || process.env.API_SERVER_PORT || 8080);
 const TNF_MARKETPLACE_API_BASE = String(process.env.TNF_MARKETPLACE_API_BASE || '')
   .trim()
   .replace(/\/+$/, '');
-const CORS_ALLOW_ORIGINS = String(process.env.CORS_ALLOW_ORIGINS || '*')
-  .split(',')
-  .map((s) => s.trim())
-  .filter(Boolean);
-
-function isMarketplacePath(pathname) {
-  return /^\/(?:api\/)?marketplace(?:\/|$)/.test(String(pathname || ''));
-}
-
-function canonicalMarketplacePath(pathname) {
-  return String(pathname || '').replace(/^\/api/, '');
-}
-
-function buildTnfTarget(pathname) {
-  const canonicalPath = canonicalMarketplacePath(pathname);
-  if (!TNF_MARKETPLACE_API_BASE) return canonicalPath;
-  return `${TNF_MARKETPLACE_API_BASE}${canonicalPath}`;
-}
 
 const app = express();
-app.use((req, res, next) => {
- const requestOrigin = String(req.headers.origin || '');
- const isAllowedOrigin = CORS_ALLOW_ORIGINS.includes('*') || 
-  (requestOrigin && CORS_ALLOW_ORIGINS.includes(requestOrigin));
- 
- if (isAllowedOrigin) {
- if (CORS_ALLOW_ORIGINS.includes('*')) {
- res.setHeader('Access-Control-Allow-Origin', '*');
- } else {
- res.setHeader('Access-Control-Allow-Origin', requestOrigin);
- res.setHeader('Vary', 'Origin');
- }
- res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
- res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
- 
- if (req.method === 'OPTIONS') {
- return res.status(204).end();
- }
- return next();
- } else {
- // Invalid origin: reject preflight requests with 403
- if (req.method === 'OPTIONS') {
- return res.status(403).json({ error: 'Forbidden', message: 'CORS origin not allowed' });
- }
- // For non-preflight requests, simply don't set CORS headers
- // This allows the browser to handle the CORS failure silently
- return next();
- }
-});
+app.use(corsMiddleware);
 app.use(express.json({ limit: '1mb' }));
 
 app.get('/', (_req, res) => res.send('API running on port ' + PORT));
@@ -90,16 +45,18 @@ app.get('/health', (_req, res) =>
 );
 
 app.all(['/marketplace*', '/api/marketplace*'], (req, res) => {
-  const target = buildTnfTarget(req.path);
+  const successorTarget = TNF_MARKETPLACE_API_BASE
+    ? `${TNF_MARKETPLACE_API_BASE}/marketplace-new`
+    : null;
   res.setHeader('X-TNF-Marketplace-Legacy', 'removed');
   res.setHeader('Deprecation', 'true');
   res.setHeader('Sunset', 'Tue, 30 Jun 2026 00:00:00 GMT');
-  if (TNF_MARKETPLACE_API_BASE) {
-    res.setHeader('Link', `<${target}>; rel="successor-version"`);
+  if (successorTarget) {
+    res.setHeader('Link', `<${successorTarget}>; rel="successor-version"`);
   }
   return res.status(410).json({
     message: 'Legacy marketplace component removed. Use TNF API marketplace endpoints.',
-    target,
+    target: successorTarget || 'removed',
   });
 });
 

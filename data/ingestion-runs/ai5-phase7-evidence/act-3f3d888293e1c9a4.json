@@ -1,0 +1,9 @@
+{
+  "id": "act-3f3d888293e1c9a4",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests starting an Expo development server. TNF does not use Expo or React Native."
+  }
+}

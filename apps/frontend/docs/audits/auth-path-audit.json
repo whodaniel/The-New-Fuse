@@ -1,9 +1,9 @@
 {
   "summary": {
-    "generatedAt": "2026-06-03T09:17:08.893Z",
+    "generatedAt": "2026-06-11T19:26:44.860Z",
     "total": 4,
-    "passed": 1,
-    "failed": 3,
+    "passed": 4,
+    "failed": 0,
     "publicBaseUrl": "https://thenewfuse.com",
     "apiBaseUrl": "https://api.thenewfuse.com"
   },
@@ -12,64 +12,53 @@
       "name": "Public /api/auth/login compatibility route",
       "method": "POST",
       "url": "https://thenewfuse.com/api/auth/login",
-      "expectedStatus": [
-        400,
-        401
-      ],
+      "expectedStatus": [400, 401],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
-      "status": 404,
-      "ok": false,
-      "elapsedMs": 984,
-      "responseSnippet": "{\"message\":\"Cannot POST /api/auth/login\",\"error\":\"Not Found\",\"statusCode\":404}"
+      "status": 401,
+      "ok": true,
+      "elapsedMs": 800,
+      "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "Public /api/v1/auth/login compatibility route",
       "method": "POST",
       "url": "https://thenewfuse.com/api/v1/auth/login",
-      "expectedStatus": [
-        400,
-        401
-      ],
+      "expectedStatus": [400, 401],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
-      "status": 404,
-      "ok": false,
-      "elapsedMs": 184,
-      "responseSnippet": "{\"message\":\"Cannot POST /api/v1/auth/login\",\"error\":\"Not Found\",\"statusCode\":404}"
+      "status": 401,
+      "ok": true,
+      "elapsedMs": 462,
+      "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "Gateway /v1/auth/login canonical route",
       "method": "POST",
       "url": "https://api.thenewfuse.com/v1/auth/login",
-      "expectedStatus": [
-        400,
-        401
-      ],
+      "expectedStatus": [400, 401],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
-      "status": 404,
-      "ok": false,
-      "elapsedMs": 213,
-      "responseSnippet": "{\"message\":\"Cannot POST /v1/auth/login\",\"error\":\"Not Found\",\"statusCode\":404}"
+      "status": 401,
+      "ok": true,
+      "elapsedMs": 295,
+      "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "Public /health route",
       "method": "GET",
       "url": "https://thenewfuse.com/health",
-      "expectedStatus": [
-        200
-      ],
+      "expectedStatus": [200],
       "status": 200,
       "ok": true,
-      "elapsedMs": 41,
-      "responseSnippet": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-06-03T09:17:08.924Z\"}"
+      "elapsedMs": 46,
+      "responseSnippet": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-06-11T19:26:45.030Z\"}"
     }
   ]
 }

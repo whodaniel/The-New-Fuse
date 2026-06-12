@@ -1,10 +1,7 @@
 // Optimized WebSocket Service - Connection pooling, message batching, and performance optimization
 // Handles real-time communication for multi-agent systems with intelligent load balancing
 
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import * as crypto from 'crypto';
-import { Server, Socket } from 'socket.io';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   OnGatewayConnection,
@@ -14,6 +11,7 @@ import {
 } from '@nestjs/websockets';
 import * as crypto from 'crypto';
 import { Server, Socket } from 'socket.io';
+import { AgentAuthService } from '../../auth/src/jwt/AgentAuthService';
 import { RedisCacheService } from '../../cache/src/redis-cache.service';
 
 export interface WebSocketMessage {
@@ -119,7 +117,8 @@ export class OptimizedWebSocketService
 
   constructor(
     private configService: ConfigService,
-    private cacheService: RedisCacheService
+    private cacheService: RedisCacheService,
+    private authService: AgentAuthService
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -182,9 +181,8 @@ export class OptimizedWebSocketService
       }
 
       // Implement your JWT verification logic here
-      // For now, we'll extract userId from token (implement proper JWT verification)
-      const userId = this.extractUserIdFromToken(token);
-      if (!userId) {
+      const { valid, userId } = await this.authService.validateToken(token);
+      if (!valid || !userId) {
         this.logger.warn(`Invalid token for connection: ${client.id}`);
         return null;
       }
@@ -605,12 +603,6 @@ export class OptimizedWebSocketService
 
   private async handleChatMessage(userId: string, payload: any): Promise<void> {
     // Implement chat message handling
-  }
-
-  private extractUserIdFromToken(token: string): string | null {
-    // Implement JWT token extraction
-    // This is a placeholder - implement proper JWT verification
-    return 'user_123';
   }
 
   private generateMessageId(): string {

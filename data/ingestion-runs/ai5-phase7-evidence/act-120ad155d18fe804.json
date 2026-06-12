@@ -1,7 +1,7 @@
 {
   "action_id": "act-120ad155d18fe804",
   "title": "[AI5] Configure API Gateway for WebSocket Handling",
-  "state": "verified",
+  "state": "landed",
   "updatedAt": "2026-06-09T10:33:46Z",
   "summary": "Configured the Nest API gateway to explicitly handle HTTP upgrade requests for TNF WebSocket paths. `/ws` and `/api/ws` now proxy to the relay target, while `/redis-bridge` and `/api/redis-bridge` proxy to the Redis bridge target. Targets are configurable by environment and require no new dependency.",
   "filesChanged": [
@@ -23,14 +23,8 @@
     }
   ],
   "runtime_contract": {
-    "relay_paths": [
-      "/ws",
-      "/api/ws"
-    ],
-    "redis_bridge_paths": [
-      "/redis-bridge",
-      "/api/redis-bridge"
-    ],
+    "relay_paths": ["/ws", "/api/ws"],
+    "redis_bridge_paths": ["/redis-bridge", "/api/redis-bridge"],
     "env_overrides": [
       "API_GATEWAY_RELAY_WS_TARGET",
       "API_GATEWAY_WS_TARGET",

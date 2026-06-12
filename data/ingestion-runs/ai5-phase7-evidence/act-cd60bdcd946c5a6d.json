@@ -1,0 +1,9 @@
+{
+  "id": "act-cd60bdcd946c5a6d",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:25:53.192258Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests populating a mobile-app agents.md, violating TNF's existing AGENTS.md governance."
+  }
+}

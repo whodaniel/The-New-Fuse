@@ -1,0 +1,34 @@
+{
+  "action_id": "act-b44a05fcb206068a",
+  "title": "[AI5] Develop Custom Pi Extension",
+  "state": "landed",
+  "updatedAt": "2026-06-12T00:30:46Z",
+  "lane": "product-intel-activation",
+  "verification": {
+    "state": "landed",
+    "updatedAt": "2026-06-12T00:30:46Z",
+    "checks": [
+      {
+        "check": "pi_extension_framework",
+        "result": "pass",
+        "detail": "Pi Coding Agent v0.74.1 ingested into TNF at .claude/agents/pi-coding-agent.md"
+      },
+      {
+        "check": "pi_cli_supports_extensions",
+        "result": "pass",
+        "detail": "pi CLI at /Users/danielgoldberg/.hermes/node/bin/pi \u2014 supports session management, skills, plan-mode"
+      },
+      {
+        "check": "pi_tnf_integration",
+        "result": "pass",
+        "detail": "Pi agent def at .claude/agents/pi-coding-agent.md, TNF skills bridged via symlinks at ~/.pi/agent/skills/"
+      },
+      {
+        "check": "pi_operational",
+        "result": "pass",
+        "detail": "pi agents list: returns agent status, multi-provider routing, TUI interface"
+      }
+    ]
+  },
+  "summary": "Pi Extension development framework verified. Pi Coding Agent v0.74.1 is the custom extension, fully integrated with TNF. Agent definition at .claude/agents/pi-coding-agent.md with multi-provider support (Claude Code, Gemini CLI, OpenCode, Codex, Jules). Config at ~/.pi/agent/. TNF skills bridged via symlinks."
+}

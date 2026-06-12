@@ -1,47 +1,38 @@
 /**
- * Cleanup Script for The New Fuse
+ * Analysis and Cleanup Script for The New Fuse
  */
 
-import fs from 'fs';
 import path from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
-import { fileURLToPath } from 'url';
-
-// ES modules don't have __dirname, so we need to create it
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const execPromise = promisify(exec);
-const PROJECT_ROOT = path.resolve(__dirname, '..');
-
-// Directories to exclude from analysis
-const EXCLUDE_DIRS = ['node_modules', '.git', 'dist', 'build', 'coverage', 'cleanup-backups', 'reports'];
+import {
+  EXCLUDE_DIRS,
+  findFiles,
+  getFileLineCount,
+  getGitLastModifiedDate,
+  grepFiles,
+} from './utils/fs-utils.js';
 
 async function findUnusedFiles() {
-  
-  );
-  
-  // Add exclusion flags for find command with proper path quoting
-  const excludeFlags = EXCLUDE_DIRS.map(dir => `-not -path "*/${dir}/*"`).join(' ');
-  
   try {
-    const { stdout } = await execPromise(
-      `find "${PROJECT_ROOT}" ${excludeFlags} -type f -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | xargs grep -l "export" | sort`,
-      { cwd: PROJECT_ROOT }
-    );
-    
-    const exportingFiles = stdout.split('\n').filter(Boolean);
-    
+    const allSourceFiles = await findFiles(['*.ts', '*.tsx', '*.js', '*.jsx'], EXCLUDE_DIRS);
+
+    const exportingFiles = [];
+    for (const file of allSourceFiles) {
+      const content = await grepFiles('export', [path.basename(file)], [], path.dirname(file)); // Only grep in the file itself
+      if (content) {
+        exportingFiles.push(file);
+      }
+    }
+
     for (const file of exportingFiles) {
       const basename = path.basename(file, path.extname(file));
-      const { stdout: importResults } = await execPromise(
-        `grep -r "import.*${basename}" ${PROJECT_ROOT} --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" || true`,
-        { cwd: PROJECT_ROOT }
+      const importResults = await grepFiles(
+        `import.*${basename}`,
+        ['*.ts', '*.tsx', '*.js', '*.jsx'],
+        EXCLUDE_DIRS
       );
-      
+
       if (!importResults.trim()) {
-        
+        console.log(`Potential unused file: ${file}`);
       }
     }
   } catch (error) {
@@ -50,46 +41,63 @@ async function findUnusedFiles() {
 }
 
 async function findDuplicateCode() {
-
   // Simple pattern-based duplication finder
   // In a real scenario, you might want to use a tool like jscpd
   try {
-    // Find files with similar function names as a starting point
-    const { stdout } = await execPromise(
-      `grep -r "function" ${PROJECT_ROOT} --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" | sort | uniq -c | sort -nr | head -20`,
-      { cwd: PROJECT_ROOT }
+    const functionLines = await grepFiles(
+      'function ',
+      ['*.ts', '*.tsx', '*.js', '*.jsx'],
+      EXCLUDE_DIRS
     );
-    
-    :');
-    
+    const lines = functionLines.split('\n').filter(Boolean);
+
+    const functionNames = {};
+    lines.forEach((line) => {
+      const match = line.match(/function\s+([a-zA-Z0-9_]+)/);
+      if (match && match[1]) {
+        functionNames[match[1]] = (functionNames[match[1]] || 0) + 1;
+      }
+    });
+
+    console.log('Top 20 potentially duplicated function names:');
+    Object.entries(functionNames)
+      .filter(([, count]) => count > 1)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 20)
+      .forEach(([name, count]) => {
+        console.log(`- ${name}: ${count} occurrences`);
+      });
   } catch (error) {
     console.error('Error finding duplicate code:', error);
   }
 }
 
 async function checkDocumentationSync() {
-
   try {
-    // Find README files and their last modification dates
-    const { stdout: readmeFiles } = await execPromise(
-      `find ${PROJECT_ROOT} -name "README.md"`,
-      { cwd: PROJECT_ROOT }
-    );
-    
-    const readmes = readmeFiles.split('\n').filter(Boolean);
-    
-    for (const readme of readmes) {
+    const readmeFiles = await findFiles(['README.md']);
+
+    for (const readme of readmeFiles) {
       const dir = path.dirname(readme);
-      const { stdout: readmeDate } = await execPromise(`git log -1 --format=%cd ${readme}`, { cwd: PROJECT_ROOT });
-      const { stdout: codeDate } = await execPromise(
-        `find ${dir} -type f -not -path "*/node_modules/*" -not -name "README.md" -not -name "*.md" | xargs git log -1 --format=%cd {} | sort -r | head -1`, 
-        { cwd: PROJECT_ROOT }
+      const readmeDate = await getGitLastModifiedDate(readme);
+
+      const codeFilesInDir = await findFiles(
+        ['*.ts', '*.tsx', '*.js', '*.jsx'],
+        EXCLUDE_DIRS.concat(['README.md', '*.md']), // Exclude README and other markdown from code comparison
+        dir
       );
-      
-      if (new Date(readmeDate) < new Date(codeDate)) {
-        
-        }`);
-        }`);
+
+      let latestCodeDate = null;
+      for (const codeFile of codeFilesInDir) {
+        const codeFileDate = await getGitLastModifiedDate(codeFile);
+        if (codeFileDate && (!latestCodeDate || codeFileDate > latestCodeDate)) {
+          latestCodeDate = codeFileDate;
+        }
+      }
+
+      if (readmeDate && latestCodeDate && readmeDate < latestCodeDate) {
+        console.log(
+          `Documentation might be out of sync for ${readme}. Last code change: ${latestCodeDate.toDateString()}, Last README change: ${readmeDate.toDateString()}`
+        );
       }
     }
   } catch (error) {
@@ -98,149 +106,147 @@ async function checkDocumentationSync() {
 }
 
 async function analyzeDependencyGraph() {
-
   try {
-    // Create a map of imports across the codebase
-    const { stdout: importLines } = await execPromise(
-      `grep -r "import.*from" ${PROJECT_ROOT} --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx"`,
-      { cwd: PROJECT_ROOT }
+    const importLines = await grepFiles(
+      'import.*from',
+      ['*.ts', '*.tsx', '*.js', '*.jsx'],
+      EXCLUDE_DIRS
     );
-    
+
     const imports = {};
     const lines = importLines.split('\n').filter(Boolean);
-    
+
     for (const line of lines) {
-      const [filePath, importStatement] = line.split(':', 2);
+      const parts = line.split(':', 2);
+      if (parts.length < 2) continue; // Skip malformed lines
+
+      const [filePath, importStatement] = parts;
       if (!imports[filePath]) {
         imports[filePath] = [];
       }
-      
-      // Extract the module being imported
+
       const match = importStatement.match(/from ['"]([^'"]+)['"]/);
       if (match && match[1]) {
         imports[filePath].push(match[1]);
       }
     }
-    
-    // Find highly connected components (potential refactoring candidates)
+
     const importCounts = {};
-    Object.values(imports).forEach(moduleImports => {
-      moduleImports.forEach(importPath => {
+    Object.values(imports).forEach((moduleImports) => {
+      moduleImports.forEach((importPath) => {
         importCounts[importPath] = (importCounts[importPath] || 0) + 1;
       });
     });
-    
-    // Sort by import count
+
     const sortedImports = Object.entries(importCounts)
-      .filter(([module, count]) => count > 2) // Only show modules imported in more than 2 files
+      .filter(([module, count]) => count > 2)
       .sort((a, b) => b[1] - a[1]);
-    
-    :');
-    sortedImports.forEach(([module, count]) => {
-      
+
+    console.log('Top 10 highly connected modules (potential refactoring candidates):');
+    sortedImports.slice(0, 10).forEach(([module, count]) => {
+      console.log(`- ${module}: imported in ${count} files`);
     });
-    
   } catch (error) {
     console.error('Error analyzing dependency graph:', error);
   }
 }
 
 async function checkNamingConsistency() {
-
   try {
-    // Check component naming patterns
-    const { stdout: componentFiles } = await execPromise(
-      `find ${PROJECT_ROOT} -type f -name "*.tsx" -o -name "*.jsx"`,
-      { cwd: PROJECT_ROOT }
-    );
-    
-    const components = componentFiles.split('\n').filter(Boolean);
+    const components = await findFiles(['*.tsx', '*.jsx'], EXCLUDE_DIRS);
     const namingPatterns = {};
-    
+
     for (const component of components) {
-      const basename = path.basename(component);
+      const basename = path.basename(component).split('.')[0]; // Get name without extension
       // Extract the naming pattern (e.g., PascalCase, camelCase)
-      const pattern = basename.match(/^[A-Z]/) ? 'PascalCase' : 
-                     basename.match(/^[a-z][a-zA-Z0-9]*$/) ? 'camelCase' : 'other';
-      
+      const pattern = basename.match(/^[A-Z][a-zA-Z0-9]*$/)
+        ? 'PascalCase'
+        : basename.match(/^[a-z][a-zA-Z0-9]*$/)
+          ? 'camelCase'
+          : 'other';
+
       namingPatterns[pattern] = (namingPatterns[pattern] || 0) + 1;
     }
 
+    console.log('Component Naming Consistency:');
     Object.entries(namingPatterns).forEach(([pattern, count]) => {
-      
+      console.log(`- ${pattern}: ${count} components`);
     });
-    
-    // If there's a mix, flag it as an inconsistency
-    if (Object.keys(namingPatterns).length > 1) {
-      
+
+    if (
+      Object.keys(namingPatterns).length > 1 &&
+      namingPatterns['other'] !== Object.keys(namingPatterns).length
+    ) {
+      // Adjusted condition
+      console.warn(
+        '⚠️ Inconsistent component naming patterns detected. Consider standardizing (e.g., all PascalCase for components).'
+      );
     }
-    
   } catch (error) {
     console.error('Error checking naming consistency:', error);
   }
 }
 
 async function analyzeComponentComplexity() {
-
   try {
-    // Find component files
-    const { stdout: componentFiles } = await execPromise(
-      `find ${PROJECT_ROOT} -type f -name "*.tsx" -o -name "*.jsx"`,
-      { cwd: PROJECT_ROOT }
-    );
-    
-    const components = componentFiles.split('\n').filter(Boolean);
+    const components = await findFiles(['*.tsx', '*.jsx'], EXCLUDE_DIRS);
     const complexityResults = [];
-    
+
     for (const component of components) {
-      // Count lines as a simple proxy for complexity
-      const { stdout: lineCount } = await execPromise(`wc -l ${component}`, { cwd: PROJECT_ROOT });
-      const lines = parseInt(lineCount.trim().split(' ')[0], 10);
-      
+      const lines = await getFileLineCount(component);
+
       // Count hooks as another complexity indicator
-      const { stdout: hookCount } = await execPromise(
-        `grep -c "use[A-Z]" ${component} || echo "0"`,
-        { cwd: PROJECT_ROOT }
+      const hookContent = await grepFiles(
+        'use[A-Z]',
+        [path.basename(component)],
+        [],
+        path.dirname(component)
       );
-      const hooks = parseInt(hookCount.trim(), 10);
-      
+      const hooks = hookContent.split('\n').filter(Boolean).length;
+
       complexityResults.push({
         component,
         lines,
         hooks,
-        // Simple complexity score
-        complexity: lines + (hooks * 10)
+        complexity: lines + hooks * 10,
       });
     }
-    
-    // Sort by complexity
+
     complexityResults.sort((a, b) => b.complexity - a.complexity);
-    
-    :');
-    complexityResults.slice(0, 10).forEach((result, index) => {
-      }`);
-      
+
+    console.log('Top 10 most complex components (potential refactoring candidates):');
+    complexityResults.slice(0, 10).forEach((result) => {
+      console.log(
+        `- ${result.component}: Lines=${result.lines}, Hooks=${result.hooks}, Complexity Score=${result.complexity}`
+      );
     });
-    
   } catch (error) {
     console.error('Error analyzing component complexity:', error);
   }
 }
 
 async function main() {
+  console.log('\n--- Running Codebase Analysis for Refactoring ---\n');
 
+  console.log('\n--- Unused Files Check ---\n');
   await findUnusedFiles();
 
+  console.log('\n--- Duplicate Code Check ---\n');
   await findDuplicateCode();
 
+  console.log('\n--- Documentation Sync Check ---\n');
   await checkDocumentationSync();
 
+  console.log('\n--- Dependency Graph Analysis ---\n');
   await analyzeDependencyGraph();
 
+  console.log('\n--- Naming Consistency Check ---\n');
   await checkNamingConsistency();
 
+  console.log('\n--- Component Complexity Analysis ---\n');
   await analyzeComponentComplexity();
 
+  console.log('\n--- Codebase Analysis Complete ---\n');
 }
 
 main().catch(console.error);

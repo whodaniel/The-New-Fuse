@@ -18,6 +18,7 @@
  */
 
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
+const { publishProviderFailureSignal } = require('./watchdog-signal-utils.cjs');
 const readline = require('readline');
 
 // ============================================================================
@@ -323,7 +324,23 @@ class JulesRedisAgent {
       }
     });
 
-    // Handle status queries
+    // Handle events (like wake_ping from the orchestrator)
+    this.client.onMessage('event', async (msg) => {
+      if (msg.payload?.eventType === 'wake_ping' && msg.payload?.data?.targetAgentId !== this.client.agentInfo.id) {
+        return;
+      }
+      console.log(`\n👑 Received event from ${msg.from.agentName}:`);
+      console.log(`   ${msg.content.substring(0, 200)}...`);
+
+      let promptText = msg.content;
+      if (msg.payload?.eventType === 'wake_ping' && msg.payload?.data?.customPrompt) {
+        promptText = msg.payload.data.customPrompt;
+      }
+
+      await this.processWithJules(msg, promptText, 'response', { wasEvent: true });
+    });
+
+    // Handle broker-dispatched task envelopes.
     this.client.onMessage('command', async (msg) => {
       console.log(`\n📋 Received command from ${msg.from.agentName}:`);
       console.log(`   ${msg.content}`);
@@ -397,6 +414,18 @@ class JulesRedisAgent {
 
       console.log(`✅ Task ${sessionId} completed with status: ${result.status}`);
     } catch (error) {
+      if (/\b(429|rate[\s_-]?limit|quota|resource exhausted|API rate limit)\b/i.test(error.message)) {
+         publishProviderFailureSignal(this.client, {
+            channel: 'tnf:model-watchdog:signals',
+            sourceAgent: CONFIG.agentName,
+            agentRole: CONFIG.agentRole,
+            platform: CONFIG.platform,
+            provider: 'github',
+            model: 'jules',
+            category: 'rate_limit',
+            message: error.message,
+        }).catch(console.error);
+      }
       console.error(`❌ Error processing task:`, error.message);
 
       await this.client.send(`Error processing task: ${error.message}`, {

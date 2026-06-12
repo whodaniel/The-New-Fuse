@@ -31,10 +31,10 @@
 ## 2026-03-26 10:20:54 UTC
 
 - Note: 2026-03-26 post-deploy verification: deployed TheNewFuse service
-  (CloudRuntime deployment 3d4db2f6-1e56-43af-a243-f300e25f87d2) and reran strict TNF
-  loop with no LIVE_AUDIT_EXTERNAL_ALLOWLIST. Live links: 51 checked, 0 broken,
-  0 allowlisted. Semantic: 190 routes, 0 hard/network/sameAsRoot. Auth: 4/4
-  passed. Scorecard overall passed.
+  (CloudRuntime deployment 3d4db2f6-1e56-43af-a243-f300e25f87d2) and reran
+  strict TNF loop with no LIVE_AUDIT_EXTERNAL_ALLOWLIST. Live links: 51 checked,
+  0 broken, 0 allowlisted. Semantic: 190 routes, 0 hard/network/sameAsRoot.
+  Auth: 4/4 passed. Scorecard overall passed.
 - Branch: main
 - Commit: fb60e2353
 
@@ -86,103 +86,164 @@
   remained green).
 - Branch: chore/tnf-self-improvement-loop-20260326
 - Commit: 3683e00d2
+
 ## 2026-06-03 09:17:36.166 UTC
-- Note: zero-turn bootstrap: production audit gates skipped after blockers recorded in apps/frontend/docs/audits
+
+- Note: zero-turn bootstrap: production audit gates skipped after blockers
+  recorded in apps/frontend/docs/audits
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 09:20:23.972 UTC
-- Note: zero-turn bootstrap: production audit gates and broadcast skipped after blockers recorded in apps/frontend/docs/audits
+
+- Note: zero-turn bootstrap: production audit gates and broadcast skipped after
+  blockers recorded in apps/frontend/docs/audits
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 09:21:38.311 UTC
-- Note: zero-turn bootstrap: production audit gates skipped; status recorded non-strict after blockers documented
+
+- Note: zero-turn bootstrap: production audit gates skipped; status recorded
+  non-strict after blockers documented
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 09:22:37.115 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 09:26:07.171 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 09:58:32.735 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 10:31:05.561 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 11:03:44.371 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 11:36:22.775 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 12:08:41.497 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 12:41:09.543 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 13:13:40.138 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 13:48:32.236 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 14:23:21.269 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 14:56:53.519 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 15:30:05.543 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 16:03:59.735 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 16:36:56.493 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 17:12:23.020 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
 ## 2026-06-03 17:46:56.634 UTC
-- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com, api-url=https://api.thenewfuse.com)
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
 - Branch: main
 - Commit: 773a01b44
 
+## 2026-06-11 19:04:57.653 UTC
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
+- Branch: main
+- Commit: 8f204a6082
+
+## 2026-06-11 19:06:47.920 UTC
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
+- Branch: main
+- Commit: 8f204a6082
+
+## 2026-06-11 19:26:48.293 UTC
+
+- Note: Executed via tnf self-improvement run (base-url=https://thenewfuse.com,
+  api-url=https://api.thenewfuse.com)
+- Branch: main
+- Commit: 8f204a6082

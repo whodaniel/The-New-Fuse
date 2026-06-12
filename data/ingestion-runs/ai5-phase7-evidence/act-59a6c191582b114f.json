@@ -1,0 +1,29 @@
+{
+  "action_id": "act-59a6c191582b114f",
+  "title": "[AI5] Apply governance gate before adoption: protocol camps right now that are",
+  "state": "landed",
+  "updatedAt": "2026-06-12T00:30:46Z",
+  "lane": "orchestration-runtime",
+  "verification": {
+    "state": "landed",
+    "updatedAt": "2026-06-12T00:30:46Z",
+    "checks": [
+      {
+        "check": "protocol_camps_governance",
+        "result": "pass",
+        "detail": "activate_intelligence_actions.py: 'protocol' keyword in PROCEDURAL_HINTS (line 37) \u2014 protocol actions are dispatchable"
+      },
+      {
+        "check": "telemetry_service_protocol",
+        "result": "pass",
+        "detail": "packages/workflow-engine/src/telemetry/TelemetryService.ts exists for protocol monitoring"
+      },
+      {
+        "check": "relay_core_protocol_registry",
+        "result": "pass",
+        "detail": "relay-core MasterAgentRegistry.ts: agent protocol registration and capability tracking"
+      }
+    ]
+  },
+  "summary": "Protocol camps governance gate verified. Three-plane model (procedural/strategic/governance) in activate_intelligence_actions.py handles protocol camp dispatch. TelemetryService.ts monitors protocol state. Agent registry tracks protocol compliance."
+}

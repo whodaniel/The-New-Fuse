@@ -567,10 +567,7 @@ async function scanOnce() {
       activityAgeMs,
       interactiveReady,
     });
-    const status =
-      terminal.source === 'process-table-fallback' && rawStatus === 'stalled'
-        ? 'active'
-        : rawStatus;
+    const status = rawStatus;
 
     if (status === 'stalled') {
       const wakePing = await emitWakePing(nowIso, sessionKey, nextState, terminal);

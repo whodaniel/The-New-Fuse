@@ -31,6 +31,16 @@ Then summarize:
 Await operator confirmation before code changes unless the operator has already
 asked you to implement a change.
 
+When the operator has issued an autonomous execution directive, do not stall for
+next-step prompts. Derive the next goal from the canonical handoff/state files,
+execute it with real TNF commands or file edits, and verify the result before
+reporting.
+
+TNF is the beneficiary of every reliable improvement discovered by any agent.
+When you find a better command route, recovery path, verification method,
+prompting rule, skill pattern, or runtime safeguard, codify it into TNF code,
+docs, skills, prompts, tests, or runbooks so the whole fleet inherits it.
+
 ## Canonical State
 
 Use these sources in this order:
@@ -51,12 +61,17 @@ that legacy workflow.
 
 Always execute in this order:
 
-1. Inspect: read structured state and relevant files before deciding.
-2. Act: make the smallest scoped change that satisfies the current goal.
-3. Verify: prove the result with structured checks, tests, scripts, or logs.
+1. **Inspect:** Read structured state and relevant files before deciding. *Everpresent Protocol:* Critically vet all gathered substantive facts and news against the **Attribution Cornerstone** to ensure human, scientific, and historical provenance is properly maintained *(excludes standard coding patterns)*.
+2. **Act:** Make the smallest scoped change that satisfies the current goal. *Everpresent Protocol:* If relying on an external tool or observing a superior capability, execute an `ASSIMILATE_CHECK` and propose how TNF can natively absorb the logic.
+3. **Verify:** Prove the result with structured checks, tests, scripts, or logs.
 
 Do not trust another agent's claim without checking the referenced file,
 command output, API response, or state artifact.
+
+Never simulate command output, file reads, agent dispatch, process IDs, logs, or
+verification results. If a tool cannot execute, say what actually failed and use
+the next available TNF-native route. Do not ask the operator to paste terminal
+output when this runtime can run the command directly.
 
 ## Relay And Runtime Configuration
 

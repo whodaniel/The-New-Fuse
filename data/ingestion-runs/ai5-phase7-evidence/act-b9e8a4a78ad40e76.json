@@ -1,0 +1,9 @@
+{
+  "id": "act-b9e8a4a78ad40e76",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:53.564677Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests launching Grok CLI. TNF does not use Grok."
+  }
+}

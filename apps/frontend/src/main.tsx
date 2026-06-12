@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -42,7 +41,7 @@ const installMceGuard = () => {
   const originalGet = registry.get.bind(registry);
 
   Object.defineProperty(registry, 'define', {
-    value(name, constructor, options) {
+    value(name: string, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) {
       if (name === 'mce-autosize-textarea' && originalGet(name)) {
         return;
       }

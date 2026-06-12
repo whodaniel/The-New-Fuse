@@ -1,28 +1,28 @@
 {
   "summary": {
-    "generatedAt": "2026-05-17T06:05:01.980Z",
+    "generatedAt": "2026-06-11T18:42:15.557Z",
     "appBaseUrl": "https://app.thenewfuse.com",
     "apiBaseUrl": "https://api.thenewfuse.com",
     "routeSurface": {
-      "routerCount": 234,
-      "catalogCount": 234,
+      "routerCount": 242,
+      "catalogCount": 239,
       "sidebarCount": 54,
       "catalogNotInRouter": 0,
       "routerNotInCatalog": 0,
       "sidebarNotInRouter": 0
     },
     "httpSweep": {
-      "totalRoutes": 220,
-      "ok200": 218,
-      "non200": 2,
+      "totalRoutes": 221,
+      "ok200": 221,
+      "non200": 0,
       "react185Pages": 0,
       "somethingWentWrongPages": 0,
       "signInShellPages": 0
     },
     "apiContracts": {
       "total": 9,
-      "failed": 7,
-      "notFound": 7
+      "failed": 0,
+      "notFound": 0
     }
   },
   "routeSurface": {
@@ -31,14 +31,19 @@
       "/landing",
       "/home",
       "/app",
+      "/pricing",
+      "/features",
+      "/docs",
       "/dashboard",
+      "/dashboard/command-center",
+      "/dashboard/unified-chat",
+      "/dashboard/schedule",
       "/dashboard/launchpad",
       "/dashboard/files",
       "/dashboard/datasets",
       "/dashboard/architecture",
       "/dashboard/observability",
       "/dashboard/logs",
-      "/dashboard/command-center",
       "/dashboard/fairtable",
       "/fairtable",
       "/fairtable/:viewType",
@@ -77,10 +82,16 @@
       "/agents/pfp-catalog",
       "/agents/pfp-prompts",
       "/agents/catalog/:id",
+      "/workspace/projects",
       "/workspace/overview",
       "/workspace/analytics",
       "/workspace/members",
       "/workspace/settings",
+      "/workspace/:workspaceId",
+      "/workspace/:workspaceId/overview",
+      "/workspace/:workspaceId/analytics",
+      "/workspace/:workspaceId/members",
+      "/workspace/:workspaceId/settings",
       "/tasks",
       "/workflows",
       "/workflows/builder",
@@ -186,15 +197,6 @@
       "/admin/dashboard",
       "/admin/experimental-features",
       "/admin/onboarding",
-      "/features",
-      "/pricing",
-      "/community",
-      "/membership",
-      "/billing",
-      "/support",
-      "/contact",
-      "/onboarding",
-      "/docs",
       "/docs/*",
       "/3d-library",
       "/visualizations",
@@ -260,6 +262,12 @@
       "/html/tasks",
       "/html/workflows",
       "/404",
+      "/billing",
+      "/community",
+      "/contact",
+      "/membership",
+      "/onboarding",
+      "/support",
       "*"
     ],
     "catalogPaths": [
@@ -375,9 +383,6 @@
       "/debug-routing",
       "/all-pages",
       "/test",
-      "/api/admin/database",
-      "/api/admin/features",
-      "/api/admin/features/:id/evaluate",
       "/404",
       "/not-found",
       "/package/dashboard",
@@ -496,14 +501,22 @@
       "/workflows/builder-enhanced",
       "/workflows/builder-n8n",
       "/workflows/nexus",
-      "/3d-library"
+      "/3d-library",
+      "/dashboard/schedule",
+      "/dashboard/unified-chat",
+      "/workspace/:workspaceId",
+      "/workspace/:workspaceId/analytics",
+      "/workspace/:workspaceId/members",
+      "/workspace/:workspaceId/overview",
+      "/workspace/:workspaceId/settings",
+      "/workspace/projects"
     ],
     "sidebarPaths": [
       "/dashboard",
       "/timeline",
       "/analytics",
       "/chat",
-      "/workspace/overview",
+      "/workspace/projects",
       "/tasks",
       "/suggestions",
       "/ai-portal",
@@ -1236,32 +1249,6 @@
       }
     },
     {
-      "route": "/api/admin/database",
-      "url": "https://app.thenewfuse.com/api/admin/database",
-      "status": 404,
-      "finalUrl": "https://app.thenewfuse.com/api/admin/database",
-      "bodyBytes": 164,
-      "flags": {
-        "react185": false,
-        "somethingWentWrong": false,
-        "signInShell": false,
-        "notFoundShell": true
-      }
-    },
-    {
-      "route": "/api/admin/features",
-      "url": "https://app.thenewfuse.com/api/admin/features",
-      "status": 404,
-      "finalUrl": "https://app.thenewfuse.com/api/admin/features",
-      "bodyBytes": 164,
-      "flags": {
-        "react185": false,
-        "somethingWentWrong": false,
-        "signInShell": false,
-        "notFoundShell": true
-      }
-    },
-    {
       "route": "/app",
       "url": "https://app.thenewfuse.com/app",
       "status": 200,
@@ -1847,10 +1834,36 @@
       }
     },
     {
+      "route": "/dashboard/schedule",
+      "url": "https://app.thenewfuse.com/dashboard/schedule",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/schedule",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/dashboard/settings",
       "url": "https://app.thenewfuse.com/dashboard/settings",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/dashboard/settings",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
+      "route": "/dashboard/unified-chat",
+      "url": "https://app.thenewfuse.com/dashboard/unified-chat",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/dashboard/unified-chat",
       "bodyBytes": 26208,
       "flags": {
         "react185": false,
@@ -2839,7 +2852,7 @@
       "url": "https://app.thenewfuse.com/status",
       "status": 200,
       "finalUrl": "https://app.thenewfuse.com/status",
-      "bodyBytes": 26208,
+      "bodyBytes": 74,
       "flags": {
         "react185": false,
         "somethingWentWrong": false,
@@ -3407,6 +3420,19 @@
       }
     },
     {
+      "route": "/workspace/projects",
+      "url": "https://app.thenewfuse.com/workspace/projects",
+      "status": 200,
+      "finalUrl": "https://app.thenewfuse.com/workspace/projects",
+      "bodyBytes": 26208,
+      "flags": {
+        "react185": false,
+        "somethingWentWrong": false,
+        "signInShell": false,
+        "notFoundShell": false
+      }
+    },
+    {
       "route": "/workspace/settings",
       "url": "https://app.thenewfuse.com/workspace/settings",
       "status": 200,
@@ -3420,34 +3446,7 @@
       }
     }
   ],
-  "badRoutes": [
-    {
-      "route": "/api/admin/database",
-      "url": "https://app.thenewfuse.com/api/admin/database",
-      "status": 404,
-      "finalUrl": "https://app.thenewfuse.com/api/admin/database",
-      "bodyBytes": 164,
-      "flags": {
-        "react185": false,
-        "somethingWentWrong": false,
-        "signInShell": false,
-        "notFoundShell": true
-      }
-    },
-    {
-      "route": "/api/admin/features",
-      "url": "https://app.thenewfuse.com/api/admin/features",
-      "status": 404,
-      "finalUrl": "https://app.thenewfuse.com/api/admin/features",
-      "bodyBytes": 164,
-      "flags": {
-        "react185": false,
-        "somethingWentWrong": false,
-        "signInShell": false,
-        "notFoundShell": true
-      }
-    }
-  ],
+  "badRoutes": [],
   "apiRows": [
     {
       "name": "App auth compat login",
@@ -3458,9 +3457,9 @@
         "password": "invalid-password"
       },
       "expectNot404": true,
-      "status": 404,
-      "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:04:59.947Z\",\"path\":\"/api/auth/login\",\"method\":\"POST\",\"message\":\"Cannot POST /api/auth/login\",\"error\":\"Not Found\"}"
+      "status": 401,
+      "ok": true,
+      "snippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "App auth canonical login",
@@ -3473,7 +3472,7 @@
       "expectNot404": true,
       "status": 401,
       "ok": true,
-      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T06:05:00.092Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
+      "snippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "Gateway auth canonical login",
@@ -3486,55 +3485,55 @@
       "expectNot404": true,
       "status": 401,
       "ok": true,
-      "snippet": "{\"statusCode\":401,\"timestamp\":\"2026-05-17T06:05:00.344Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Cloudflare Turnstile token is required\",\"error\":\"Unauthorized\"}"
+      "snippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "App agents list",
       "url": "https://app.thenewfuse.com/api/agents",
       "expectNot404": true,
-      "status": 404,
-      "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.411Z\",\"path\":\"/api/agents\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents\",\"error\":\"Not Found\"}"
+      "status": 401,
+      "ok": true,
+      "snippet": "{\"message\":\"Authentication required\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "App agent template bank",
       "url": "https://app.thenewfuse.com/api/agents/bank/templates",
       "expectNot404": true,
-      "status": 404,
-      "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.475Z\",\"path\":\"/api/agents/bank/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /api/agents/bank/templates\",\"error\":\"Not Found\"}"
+      "status": 401,
+      "ok": true,
+      "snippet": "{\"message\":\"Authentication required\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "API workspaces list",
       "url": "https://api.thenewfuse.com/api/workspaces",
       "expectNot404": true,
-      "status": 404,
-      "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.540Z\",\"path\":\"/api/workspaces\",\"method\":\"GET\",\"message\":\"Cannot GET /api/workspaces\",\"error\":\"Not Found\"}"
+      "status": 401,
+      "ok": true,
+      "snippet": "{\"statusCode\":401,\"message\":\"Authentication required\"}"
     },
     {
       "name": "API current workspace",
       "url": "https://api.thenewfuse.com/api/workspaces/current",
       "expectNot404": true,
-      "status": 404,
-      "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.723Z\",\"path\":\"/api/workspaces/current\",\"method\":\"GET\",\"message\":\"Cannot GET /api/workspaces/current\",\"error\":\"Not Found\"}"
+      "status": 401,
+      "ok": true,
+      "snippet": "{\"statusCode\":401,\"message\":\"Authentication required\"}"
     },
     {
       "name": "API resources templates",
       "url": "https://api.thenewfuse.com/api/resources/templates",
       "expectNot404": true,
-      "status": 404,
-      "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.794Z\",\"path\":\"/api/resources/templates\",\"method\":\"GET\",\"message\":\"Cannot GET /api/resources/templates\",\"error\":\"Not Found\"}"
+      "status": 200,
+      "ok": true,
+      "snippet": "[{\"id\":\"template-ops-director\",\"name\":\"Ops Director Template\",\"description\":\"The Ops Director Template provides a foundational structure for agents designed to manage and oversee operational processes. This template incl"
     },
     {
       "name": "API marketplace catalog",
       "url": "https://api.thenewfuse.com/api/marketplace/catalog?status=published",
       "expectNot404": true,
-      "status": 404,
-      "ok": false,
-      "snippet": "{\"statusCode\":404,\"timestamp\":\"2026-05-17T06:05:00.869Z\",\"path\":\"/api/marketplace/catalog?status=published\",\"method\":\"GET\",\"message\":\"Cannot GET /api/marketplace/catalog?status=published\",\"error\":\"Not Found\"}"
+      "status": 200,
+      "ok": true,
+      "snippet": "{\"items\":[{\"id\":\"prim-native-vision-simd\",\"slug\":\"native-vision-simd\",\"name\":\"SIMD Vision Module\",\"description\":\"High-fidelity Tier-1 native vision capture/encode (MSS + TurboJPEG), achieving 34 FPS mirroring.\",\"kind\":\"s"
     }
   ],
   "dependencyRefs": {

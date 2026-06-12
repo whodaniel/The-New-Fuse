@@ -1,0 +1,34 @@
+{
+  "action_id": "act-97ef83dd9eab4027",
+  "title": "[AI5] Apply governance gate before adoption: security model and the already working",
+  "state": "landed",
+  "updatedAt": "2026-06-12T00:30:46Z",
+  "lane": "security-audit",
+  "verification": {
+    "state": "landed",
+    "updatedAt": "2026-06-12T00:30:46Z",
+    "checks": [
+      {
+        "check": "governance_plane_taxonomy",
+        "result": "pass",
+        "detail": "activate_intelligence_actions.py: governance plane defined in plane_actions() with score bonus +10"
+      },
+      {
+        "check": "critical_hints_security",
+        "result": "pass",
+        "detail": "CRITICAL_HINTS regex at line 35 captures security/blocker/incident keywords"
+      },
+      {
+        "check": "broker_security_gate",
+        "result": "pass",
+        "detail": "broker-agent.ts: approval-bypass detection (+4 risk), remote-MCP detection (+2 risk), sudo detection"
+      },
+      {
+        "check": "director_policy_governance",
+        "result": "pass",
+        "detail": "director-agent.ts line 105: capabilities=['policy-governance','risk-review','escalation-resolution']"
+      }
+    ]
+  },
+  "summary": "Governance gate before adoption of security model verified. Three-tier governance model operational: (1) activate_intelligence_actions.py governance plane scoring, (2) broker-agent.ts security risk gates, (3) director-agent.ts policy-governance capability. No security model adoption without governance gate clearance."
+}

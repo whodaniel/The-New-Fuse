@@ -1,6 +1,6 @@
 # 📊 TNF Intelligence Activation KPIs
 
-**Generated:** 2026-06-11T18:20:54.867859+00:00 **Status:** 🟢 HEALTHY
+**Generated:** 2026-06-11T18:27:41.721148+00:00 **Status:** 🟢 HEALTHY
 
 ## 📈 Pipeline Funnel
 

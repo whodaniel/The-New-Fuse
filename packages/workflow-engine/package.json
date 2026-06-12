@@ -55,7 +55,8 @@
   "scripts": {
     "build": "tsc -b",
     "build:watch": "tsc --watch",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo coverage test-results",
+    "clean:test": "rm -rf coverage test-results",
     "dev": "tsc --watch",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",

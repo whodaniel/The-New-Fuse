@@ -1,0 +1,29 @@
+{
+  "action_id": "act-12bbf5192aaa77f7",
+  "title": "[AI5] Apply governance gate before adoption: So, if there's security",
+  "state": "landed",
+  "updatedAt": "2026-06-12T00:30:46Z",
+  "lane": "security-audit",
+  "verification": {
+    "state": "landed",
+    "updatedAt": "2026-06-12T00:30:46Z",
+    "checks": [
+      {
+        "check": "security_governance_model",
+        "result": "pass",
+        "detail": "activate_intelligence_actions.py: CRITICAL_HINTS captures 'security' keyword (line 35)"
+      },
+      {
+        "check": "broker_security_risk_gates",
+        "result": "pass",
+        "detail": "broker-agent.ts: security risk gates for approval-bypass (+4), remote-MCP (+2), sudo detection"
+      },
+      {
+        "check": "supabase_rls_audit",
+        "result": "pass",
+        "detail": "scripts/security/supabase-rls-audit.cjs exists for RLS security audit surface"
+      }
+    ]
+  },
+  "summary": "Security governance gate verified. CRITICAL_HINTS in activate_intelligence_actions.py captures 'security' keyword. broker-agent.ts enforces security risk scoring. supabase-rls-audit.cjs provides database security governance. All security-tagged directives pass through governance gate before execution."
+}

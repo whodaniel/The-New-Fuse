@@ -1,0 +1,9 @@
+{
+  "id": "act-7f9ace9fd963ee2b",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:53.564677Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests provisioning Pi Coding Agent. TNF does not use Pi."
+  }
+}

@@ -25,6 +25,8 @@ test.describe('Homepage', () => {
 
 test.describe('Authentication', () => {
   test('should show login page for unauthenticated users', async ({ page }) => {
+    page.on('console', (msg) => console.log('BROWSER LOG:', msg.text()));
+    page.on('pageerror', (error) => console.log('BROWSER ERROR:', error.message));
     await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
 
     // Should redirect to login

@@ -18,11 +18,11 @@ import {
   createStandaloneRedisClient,
   createUpstashRestClient,
   describeStandaloneRedisClient,
+  parseRedisUrl,
 } from '@the-new-fuse/infrastructure';
 import { Redis as UpstashRedis } from '@upstash/redis';
 import { EventEmitter } from 'events';
 import type { Cluster, Redis } from 'ioredis';
-import { createClient, RedisClientType } from 'redis';
 import { createAgentIdentityRecord } from './contracts/identity.js';
 import { getNativeEnvelopeValidatorStatus } from './protocol/native-envelope-validator.js';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope.js';
@@ -52,15 +52,16 @@ export class RedisRelayBridge extends EventEmitter {
     };
 
     // Create Redis clients using unified standalone utility
+    const parsedRedisConfig = parseRedisUrl(this.config.redisUrl);
     this.redisClient = createStandaloneRedisClient({
-      redisUrl: this.config.redisUrl,
+      ...parsedRedisConfig,
       lazyConnect: true,
-    } as any);
+    });
 
     this.redisSubscriber = createStandaloneRedisClient({
-      redisUrl: this.config.redisUrl,
+      ...parsedRedisConfig,
       lazyConnect: true,
-    } as any);
+    });
 
     // Create Upstash REST client if available
     this.upstashClient = createUpstashRestClient();
@@ -146,15 +147,20 @@ export class RedisRelayBridge extends EventEmitter {
         // Wrap legacy message in envelope
         console.log('[Redis-Bridge] Legacy message detected, wrapping in envelope');
         envelope = this.wrapLegacyMessage(rawMessage, agentId);
+        // Ensure the wrapped legacy message is also fully normalized and validated
+        envelope = validateTNFEnvelope(envelope);
       } else {
         console.error('[Redis-Bridge] Invalid envelope, dropping:', error);
         return;
       }
     }
 
+    // Now 'envelope' is guaranteed to be a valid and normalized TNFEnvelope
+    // No need for a second validateTNFEnvelope call here.
+    const normalizedEnvelope = envelope;
+
     // Publish to ingress
     try {
-      const normalizedEnvelope = validateTNFEnvelope(envelope);
       await this.redisClient.publish(
         this.config.ingressChannel,
         JSON.stringify(normalizedEnvelope)

@@ -279,23 +279,6 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   { name: 'All Pages List', path: '/all-pages', description: 'Page Directory (Current Page)' },
   { name: 'Test Page', path: '/test', description: 'Testing Interface' },
 
-  // API Endpoints (Admin Access)
-  {
-    name: 'Admin Database API',
-    path: '/api/admin/database',
-    description: 'Database Administration API',
-  },
-  {
-    name: 'Admin Features API',
-    path: '/api/admin/features',
-    description: 'Feature Management API',
-  },
-  {
-    name: 'Feature Evaluation API',
-    path: '/api/admin/features/:id/evaluate',
-    description: 'Feature Evaluation API',
-  },
-
   // Error Handling
   { name: '404 Page', path: '/404', description: 'Not Found Page' },
   { name: 'Not Found', path: '/not-found', description: 'Alternative Not Found Page' },
@@ -764,6 +747,46 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     name: '3D Library',
     path: '/3d-library',
     description: '3D virtual library surface',
+  },
+  {
+    name: 'Dashboard Schedule',
+    path: '/dashboard/schedule',
+    description: 'Dashboard schedule surface',
+  },
+  {
+    name: 'Dashboard Unified Chat',
+    path: '/dashboard/unified-chat',
+    description: 'Dashboard unified chat surface',
+  },
+  {
+    name: 'Workspace Dynamic',
+    path: '/workspace/:workspaceId',
+    description: 'Workspace dynamic route',
+  },
+  {
+    name: 'Workspace Analytics Dynamic',
+    path: '/workspace/:workspaceId/analytics',
+    description: 'Workspace analytics dynamic route',
+  },
+  {
+    name: 'Workspace Members Dynamic',
+    path: '/workspace/:workspaceId/members',
+    description: 'Workspace members dynamic route',
+  },
+  {
+    name: 'Workspace Overview Dynamic',
+    path: '/workspace/:workspaceId/overview',
+    description: 'Workspace overview dynamic route',
+  },
+  {
+    name: 'Workspace Settings Dynamic',
+    path: '/workspace/:workspaceId/settings',
+    description: 'Workspace settings dynamic route',
+  },
+  {
+    name: 'Workspace Projects',
+    path: '/workspace/projects',
+    description: 'Workspace projects route',
   },
 ];
 

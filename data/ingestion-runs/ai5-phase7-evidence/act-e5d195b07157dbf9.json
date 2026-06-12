@@ -1,7 +1,7 @@
 {
   "action_id": "act-e5d195b07157dbf9",
   "title": "[AI5] Implement Modular and Composable Agent Harness Extension System",
-  "state": "verified",
+  "state": "landed",
   "verified_at": "2026-06-09T09:33:20Z",
   "summary": "Added an agent harness extension host that composes extension lifecycle hooks and processor registrations into AgentProcessor. Extensions can validate a harness context, register one or more runtime processors, activate/deactivate, unregister cleanly, and be listed for introspection without introducing a dependency cycle with the generic extension-system package.",
   "files_changed": [

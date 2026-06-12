@@ -1,7 +1,7 @@
 {
   "action_id": "act-5e5048287d1ae68a",
   "title": "[AI5] Integrate Redis Cluster for Real-time Edits and Caching",
-  "state": "verified",
+  "state": "landed",
   "verified_at": "2026-06-09T09:09:59Z",
   "summary": "Redis cluster mode already existed in the infrastructure client factory, but relay-core only explicitly connected standalone Redis clients in multiple runtime entry points. Added a shared infrastructure connection helper and applied it across relay bridge, handoff store, broker, director, master-clock, super-cycle client, and standalone relay activity persistence so standalone and cluster clients share the same lifecycle path.",
   "files_changed": [

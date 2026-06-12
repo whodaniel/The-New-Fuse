@@ -1,0 +1,9 @@
+{
+  "id": "act-4d88ea0e091fc1d8",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:25:53.192258Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests documenting Expo/React Native stack, irrelevant to TNF's actual stack."
+  }
+}

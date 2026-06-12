@@ -1,10 +1,8 @@
 {
   "id": "act-d80448550c1cd202",
-  "state": "verified",
+  "state": "landed",
   "verifiedAt": "2026-06-09T08:34:00Z",
-  "filesChanged": [
-    "packages/relay-core/src/services/HandoffStoreService.ts"
-  ],
+  "filesChanged": ["packages/relay-core/src/services/HandoffStoreService.ts"],
   "checks": [
     {
       "command": "pnpm --dir packages/relay-core run type-check",

@@ -1,5 +1,5 @@
 // @ts-ignore
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 
 export interface StorySession {
   id: string;
@@ -42,12 +42,17 @@ export class StoryService {
 
   constructor() {
     const supabaseUrl = process.env.SUPABASE_URL || 'https://wslydgtgindrywldatbv.supabase.co';
-    const anonKey =
-      process.env.SUPABASE_ANON_KEY ||
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbHlkZ3RnaW5kcnl3bGRhdGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NjY4NTIsImV4cCI6MjA4NzU0Mjg1Mn0.5Vg04tY3XdhSuXw3HQmek4wT0Zi317n5xgKq5m9E_GI';
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const explicitStoryKey = process.env.STORY_SUPABASE_KEY;
+    const anonKey = process.env.SUPABASE_ANON_KEY;
     const supabaseKey = explicitStoryKey || serviceRoleKey || anonKey;
+
+    if (!supabaseKey) {
+      throw new Error(
+        'StoryService requires SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, or STORY_SUPABASE_KEY env var. ' +
+          'Hardcoded keys removed for security — set one in your shell or .env file.'
+      );
+    }
 
     this.authMode = supabaseKey === serviceRoleKey && !!serviceRoleKey ? 'service-role' : 'anon';
     this.defaultOwnerPrincipalId = this.resolveOwnerPrincipalId(
@@ -76,7 +81,7 @@ export class StoryService {
 
   async getActiveSession(ownerPrincipalId?: string): Promise<StorySession | null> {
     const sessions = await this.listSessions(ownerPrincipalId);
-    return sessions.find(s => s.status === 'active') || null;
+    return sessions.find((s) => s.status === 'active') || null;
   }
 
   async createSession(params: {
@@ -85,7 +90,7 @@ export class StoryService {
     ownerPrincipalId?: string;
   }): Promise<StorySession> {
     const resolvedOwner = this.resolveOwnerPrincipalId(params.ownerPrincipalId);
-    
+
     const { data, error } = await this.supabase
       .from('story_sessions')
       .insert({
@@ -105,21 +110,141 @@ export class StoryService {
 
   getQuestions(): StoryQuestion[] {
     return [
-      { id: 1, ring: 1, text: "What was the emotional catalyst for starting TNF in May 2025?", answer: '', captured: false, shelfCode: '000', ddcLabel: 'Computer Science & General Works' },
-      { id: 2, ring: 1, text: "Why 'The New Fuse'? What does the name mean to you?", answer: '', captured: false, shelfCode: '000', ddcLabel: 'Computer Science & General Works' },
-      { id: 3, ring: 1, text: "What is the connecting thread between your 120+ projects?", answer: '', captured: false, shelfCode: '300', ddcLabel: 'Social Sciences' },
-      { id: 4, ring: 2, text: "What happened between June and August 2025? The git history goes quiet.", answer: '', captured: false, shelfCode: '900', ddcLabel: 'History & Geography' },
-      { id: 5, ring: 2, text: "What is the Crystal of Consciousness? It's both a philosophy book and a synth preset.", answer: '', captured: false, shelfCode: '100', ddcLabel: 'Philosophy & Psychology' },
-      { id: 6, ring: 2, text: "What is the empire's SECRET — the thing it tells itself about itself that isn't true?", answer: '', captured: false, shelfCode: '100', ddcLabel: 'Philosophy & Psychology' },
-      { id: 7, ring: 3, text: "You have 8 books but only TNF is monetized. Why haven't you monetized the books?", answer: '', captured: false, shelfCode: '800', ddcLabel: 'Literature' },
-      { id: 8, ring: 3, text: "Aeon and EXTREAMIX seem related. Are they the same vision?", answer: '', captured: false, shelfCode: '600', ddcLabel: 'Technology' },
-      { id: 9, ring: 3, text: "Where do Aeon (blockchain freedom) and TNF (centralized orchestration) agree?", answer: '', captured: false, shelfCode: '200', ddcLabel: 'Religion' },
-      { id: 10, ring: 4, text: "Every project follows Build→Crisis→Fix→Evolve. Is this conscious methodology?", answer: '', captured: false, shelfCode: '500', ddcLabel: 'Science' },
-      { id: 11, ring: 4, text: "What is this story REALLY about — not the plot, the theme?", answer: '', captured: false, shelfCode: '800', ddcLabel: 'Literature' },
-      { id: 12, ring: 4, text: "What would this story look like told from the antagonist's perspective?", answer: '', captured: false, shelfCode: '100', ddcLabel: 'Philosophy & Psychology' },
-      { id: 13, ring: 5, text: "What part of this story are you AVOIDING?", answer: '', captured: false, shelfCode: '100', ddcLabel: 'Philosophy & Psychology' },
-      { id: 14, ring: 5, text: "What do you want the reader to FEEL when they finish this book?", answer: '', captured: false, shelfCode: '700', ddcLabel: 'Arts & Recreation' },
-      { id: 15, ring: 5, text: "What is the story you're telling yourself by telling this story?", answer: '', captured: false, shelfCode: '400', ddcLabel: 'Language' },
+      {
+        id: 1,
+        ring: 1,
+        text: 'What was the emotional catalyst for starting TNF in May 2025?',
+        answer: '',
+        captured: false,
+        shelfCode: '000',
+        ddcLabel: 'Computer Science & General Works',
+      },
+      {
+        id: 2,
+        ring: 1,
+        text: "Why 'The New Fuse'? What does the name mean to you?",
+        answer: '',
+        captured: false,
+        shelfCode: '000',
+        ddcLabel: 'Computer Science & General Works',
+      },
+      {
+        id: 3,
+        ring: 1,
+        text: 'What is the connecting thread between your 120+ projects?',
+        answer: '',
+        captured: false,
+        shelfCode: '300',
+        ddcLabel: 'Social Sciences',
+      },
+      {
+        id: 4,
+        ring: 2,
+        text: 'What happened between June and August 2025? The git history goes quiet.',
+        answer: '',
+        captured: false,
+        shelfCode: '900',
+        ddcLabel: 'History & Geography',
+      },
+      {
+        id: 5,
+        ring: 2,
+        text: "What is the Crystal of Consciousness? It's both a philosophy book and a synth preset.",
+        answer: '',
+        captured: false,
+        shelfCode: '100',
+        ddcLabel: 'Philosophy & Psychology',
+      },
+      {
+        id: 6,
+        ring: 2,
+        text: "What is the empire's SECRET — the thing it tells itself about itself that isn't true?",
+        answer: '',
+        captured: false,
+        shelfCode: '100',
+        ddcLabel: 'Philosophy & Psychology',
+      },
+      {
+        id: 7,
+        ring: 3,
+        text: "You have 8 books but only TNF is monetized. Why haven't you monetized the books?",
+        answer: '',
+        captured: false,
+        shelfCode: '800',
+        ddcLabel: 'Literature',
+      },
+      {
+        id: 8,
+        ring: 3,
+        text: 'Aeon and EXTREAMIX seem related. Are they the same vision?',
+        answer: '',
+        captured: false,
+        shelfCode: '600',
+        ddcLabel: 'Technology',
+      },
+      {
+        id: 9,
+        ring: 3,
+        text: 'Where do Aeon (blockchain freedom) and TNF (centralized orchestration) agree?',
+        answer: '',
+        captured: false,
+        shelfCode: '200',
+        ddcLabel: 'Religion',
+      },
+      {
+        id: 10,
+        ring: 4,
+        text: 'Every project follows Build→Crisis→Fix→Evolve. Is this conscious methodology?',
+        answer: '',
+        captured: false,
+        shelfCode: '500',
+        ddcLabel: 'Science',
+      },
+      {
+        id: 11,
+        ring: 4,
+        text: 'What is this story REALLY about — not the plot, the theme?',
+        answer: '',
+        captured: false,
+        shelfCode: '800',
+        ddcLabel: 'Literature',
+      },
+      {
+        id: 12,
+        ring: 4,
+        text: "What would this story look like told from the antagonist's perspective?",
+        answer: '',
+        captured: false,
+        shelfCode: '100',
+        ddcLabel: 'Philosophy & Psychology',
+      },
+      {
+        id: 13,
+        ring: 5,
+        text: 'What part of this story are you AVOIDING?',
+        answer: '',
+        captured: false,
+        shelfCode: '100',
+        ddcLabel: 'Philosophy & Psychology',
+      },
+      {
+        id: 14,
+        ring: 5,
+        text: 'What do you want the reader to FEEL when they finish this book?',
+        answer: '',
+        captured: false,
+        shelfCode: '700',
+        ddcLabel: 'Arts & Recreation',
+      },
+      {
+        id: 15,
+        ring: 5,
+        text: "What is the story you're telling yourself by telling this story?",
+        answer: '',
+        captured: false,
+        shelfCode: '400',
+        ddcLabel: 'Language',
+      },
     ];
   }
 
@@ -130,7 +255,7 @@ export class StoryService {
       .eq('session_id', sessionId);
 
     if (error) throw this.wrapSupabaseError('fetch captured questions', error);
-    
+
     const ids: number[] = [];
     for (const row of data || []) {
       if (Array.isArray(row.tags)) {
@@ -229,7 +354,7 @@ export class StoryService {
     }
 
     const eventId = `story-capture-${params.sessionId}-${params.questionId}`;
-    
+
     // 1. Save to timeline_events (for library and synced timeline)
     // We include Codex's new tag format: session:<id> and question:<id>
     const { data, error } = await this.supabase
@@ -243,11 +368,11 @@ export class StoryService {
         description: `Q: ${params.questionText}\n\nA: ${params.answerText}`,
         source_type: 'story-architect-cli',
         tags: [
-          'story-architect', 
-          'cli-capture', 
+          'story-architect',
+          'cli-capture',
           params.shelfCode,
           `session:${params.sessionId}`,
-          `question:${params.questionId}`
+          `question:${params.questionId}`,
         ],
       })
       .select()

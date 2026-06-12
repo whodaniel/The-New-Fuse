@@ -16,6 +16,7 @@ const path = require('path');
 const readline = require('readline');
 
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
+const { publishProviderFailureSignal } = require('./watchdog-signal-utils.cjs');
 // Lazy-load pi-session-handoff to avoid pulling in monorepo deps at startup
 // const { publishPiSessionHandoff, buildGateDecisions } = require('./pi-session-handoff.cjs');
 
@@ -63,7 +64,8 @@ const PROVIDER_FAILURE_PATTERNS = [
   { category: 'rate_limit', regex: /\b(429|rate[\s_-]?limit|quota|resource exhausted)\b/i },
   {
     category: 'auth',
-    regex: /\b(401|403|unauthorized|forbidden|invalid api key|no api key|missing api key|api key not found|authentication failed)\b/i,
+    regex:
+      /\b(401|403|unauthorized|forbidden|invalid api key|no api key|missing api key|api key not found|authentication failed)\b/i,
   },
   { category: 'timeout', regex: /\b(timeout|timed out|deadline exceeded|etimedout)\b/i },
   {
@@ -77,7 +79,11 @@ const PROVIDER_FAILURE_PATTERNS = [
 ];
 
 function parseList(value) {
-  if (Array.isArray(value)) return value.filter(Boolean).map((v) => String(v).trim()).filter(Boolean);
+  if (Array.isArray(value))
+    return value
+      .filter(Boolean)
+      .map((v) => String(v).trim())
+      .filter(Boolean);
   if (typeof value !== 'string') return [];
   return value
     .split(',')
@@ -104,6 +110,16 @@ function commandExists(command) {
     stdio: 'ignore',
   });
   return result.status === 0;
+}
+
+function resolvePiCommand(command) {
+  const candidate = String(command || '').trim() || 'pi';
+  if (candidate.includes('/') || commandExists(candidate)) return candidate;
+
+  const homePi = path.join(process.env.HOME || '', '.hermes', 'node', 'bin', 'pi');
+  if (homePi && fs.existsSync(homePi)) return homePi;
+
+  return candidate;
 }
 
 function resolveValidatorPath(scriptPath) {
@@ -175,8 +191,7 @@ async function runNodeScript(scriptPath, timeoutMs, env = {}) {
   }
 
   const configuredRunner = normalizeValidationRunner(CONFIG.validationRunner);
-  const candidateRunners =
-    configuredRunner === 'auto' ? ['node', 'bun'] : [configuredRunner];
+  const candidateRunners = configuredRunner === 'auto' ? ['node', 'bun'] : [configuredRunner];
   const availableRunners = candidateRunners.filter((runner) => commandExists(runner));
   if (availableRunners.length === 0) {
     return {
@@ -259,11 +274,12 @@ async function runNodeScript(scriptPath, timeoutMs, env = {}) {
 class PiCLIInterface {
   constructor() {
     this.isReady = false;
+    this.piCommand = resolvePiCommand(CONFIG.piCommand);
   }
 
   async start() {
     return new Promise((resolve, reject) => {
-      const check = spawn(CONFIG.piCommand, ['--version'], {
+      const check = spawn(this.piCommand, ['--version'], {
         stdio: ['ignore', 'pipe', 'pipe'],
         shell: false,
       });
@@ -324,7 +340,7 @@ class PiCLIInterface {
     const args = this.buildArgs(promptText, options);
 
     return new Promise((resolve) => {
-      const child = spawn(CONFIG.piCommand, args, {
+      const child = spawn(this.piCommand, args, {
         cwd: options.cwd || process.cwd(),
         env: {
           ...process.env,
@@ -355,7 +371,11 @@ class PiCLIInterface {
           response,
           durationMs: Date.now() - startedAt,
           command: [CONFIG.piCommand, ...args],
-          providerFailures: detectProviderFailures(`${stdout}\n${stderr}`, options.provider, options.model),
+          providerFailures: detectProviderFailures(
+            `${stdout}\n${stderr}`,
+            options.provider,
+            options.model
+          ),
           timedOut: true,
           sessionKey: options.sessionKey || null,
         });
@@ -377,7 +397,11 @@ class PiCLIInterface {
           response: `[Pi spawn error] ${error.message}`,
           durationMs: Date.now() - startedAt,
           command: [CONFIG.piCommand, ...args],
-          providerFailures: detectProviderFailures(`${stdout}\n${stderr}\n${error.message}`, options.provider, options.model),
+          providerFailures: detectProviderFailures(
+            `${stdout}\n${stderr}\n${error.message}`,
+            options.provider,
+            options.model
+          ),
           timedOut: false,
           sessionKey: options.sessionKey || null,
         });
@@ -395,7 +419,11 @@ class PiCLIInterface {
           response,
           durationMs: Date.now() - startedAt,
           command: [CONFIG.piCommand, ...args],
-          providerFailures: detectProviderFailures(`${stdout}\n${stderr}`, options.provider, options.model),
+          providerFailures: detectProviderFailures(
+            `${stdout}\n${stderr}`,
+            options.provider,
+            options.model
+          ),
           timedOut: false,
           sessionKey: options.sessionKey || null,
         });
@@ -424,28 +452,47 @@ class PiRedisAgent {
 ╚═══════════════════════════════════════════════════╝
 `);
 
-    await this.client.initialize();
-    await this.pi.start();
-    if (!String(process.env.AGENT_ID || '').trim()) {
-      process.env.AGENT_ID = `agent_${CONFIG.agentName}`;
+    try {
+      await this.client.initialize();
+      await this.pi.start();
+      if (!String(process.env.AGENT_ID || '').trim()) {
+        process.env.AGENT_ID = `agent_${CONFIG.agentName}`;
+      }
+
+      await this.client.register(CONFIG.agentName, CONFIG.agentRole, CONFIG.platform, [
+        'autonomous_code_editing',
+        'multi_provider_inference',
+        'tnf_handoff_export',
+        'model_watchdog_reporting',
+        'validation_pipeline',
+        'director_callable_worker',
+        'broker_routed_task_execution',
+        'task_execution',
+      ]);
+
+      this.setupHandlers();
+      this.isRunning = true;
+
+      console.log('\n🎧 Pi wrapper listening on TNF Redis channels...\n');
+      await this.waitForShutdown();
+    } catch (error) {
+      console.error('Failed to start Pi agent:', error.message);
+      try {
+        await publishProviderFailureSignal(this.client, {
+          channel: CONFIG.modelWatchdogChannel,
+          sourceAgent: CONFIG.agentName,
+          agentRole: CONFIG.agentRole,
+          platform: CONFIG.platform,
+          provider: CONFIG.provider || 'unknown',
+          model: CONFIG.model || 'unknown',
+          category: 'availability',
+          message: error.message,
+        });
+        console.log('📡 Emitted watchdog failover signal');
+      } catch (e) {}
+      await this.stop();
+      process.exit(1);
     }
-
-    await this.client.register(CONFIG.agentName, CONFIG.agentRole, CONFIG.platform, [
-      'autonomous_code_editing',
-      'multi_provider_inference',
-      'tnf_handoff_export',
-      'model_watchdog_reporting',
-      'validation_pipeline',
-      'director_callable_worker',
-      'broker_routed_task_execution',
-      'task_execution',
-    ]);
-
-    this.setupHandlers();
-    this.isRunning = true;
-
-    console.log('\n🎧 Pi wrapper listening on TNF Redis channels...\n');
-    await this.waitForShutdown();
   }
 
   setupHandlers() {
@@ -457,6 +504,9 @@ class PiRedisAgent {
     });
     this.client.onMessage('message', async (msg) => {
       await this.processMessage(msg, 'message');
+    });
+    this.client.onMessage('event', async (msg) => {
+      await this.processMessage(msg, 'event');
     });
   }
 
@@ -547,9 +597,10 @@ class PiRedisAgent {
         title: 'Pi Worker Session Export',
         summary,
         prompt,
-        acceptanceCriteria: validation?.post?.ok === false
-          ? ['Post-validation failures acknowledged and triaged']
-          : ['Downstream agent can resume from exported Pi context'],
+        acceptanceCriteria:
+          validation?.post?.ok === false
+            ? ['Post-validation failures acknowledged and triaged']
+            : ['Downstream agent can resume from exported Pi context'],
         nextActions: piRunResult.ok
           ? ['Review Pi response output', 'Acknowledge or continue the task in Director lane']
           : ['Inspect Pi stderr diagnostics', 'Trigger fallback model/provider if required'],
@@ -574,7 +625,12 @@ class PiRedisAgent {
           schedule_id: null,
           schedule_run_id: null,
         },
-        federation: { domain: 'tnf-local', route: ['pi', 'handoff-service'], hop_count: 1, gate_decisions: buildGateDecisions(nowIso) },
+        federation: {
+          domain: 'tnf-local',
+          route: ['pi', 'handoff-service'],
+          hop_count: 1,
+          gate_decisions: buildGateDecisions(nowIso),
+        },
         issued_at: nowIso,
       },
       gateDecisions: buildGateDecisions(nowIso),
@@ -588,7 +644,12 @@ class PiRedisAgent {
     const keyPrefix = process.env.TNF_HANDOFF_KEY_PREFIX || 'tnf:handoff:v1';
     const redis = this.client.publisher || this.client.redis || this.client._redis;
     if (redis && typeof redis.set === 'function') {
-      await redis.set(`${keyPrefix}:packet:${packetId}`, JSON.stringify(packet), 'EX', 30 * 24 * 60 * 60);
+      await redis.set(
+        `${keyPrefix}:packet:${packetId}`,
+        JSON.stringify(packet),
+        'EX',
+        30 * 24 * 60 * 60
+      );
       await redis.rpush(`${keyPrefix}:index:session:${sessionKey}`, packetId);
       await redis.rpush(`${keyPrefix}:index:from:${fromAgentId}`, packetId);
       for (const targetId of [toAgent]) {
@@ -603,6 +664,19 @@ class PiRedisAgent {
   }
 
   async processMessage(msg, messageType) {
+    if (messageType === 'event') {
+      if (
+        msg.payload?.eventType === 'wake_ping' &&
+        msg.payload?.data?.targetAgentId !== this.client.agentInfo.id
+      ) {
+        return;
+      }
+      if (msg.payload?.eventType === 'wake_ping' && msg.payload?.data?.customPrompt) {
+        msg.content = msg.payload.data.customPrompt;
+        messageType = 'task'; // process it as a task
+      }
+    }
+
     const sessionKey = this.resolveSessionKey(msg);
     const validation = { pre: null, post: null };
     let handoffPacketId = null;
@@ -686,10 +760,10 @@ class PiRedisAgent {
           },
         }
       );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`[pi-wrapper] processMessage error: ${message}`);
-    await this.client.send(`[Pi wrapper error] ${message}`, {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[pi-wrapper] processMessage error: ${message}`);
+      await this.client.send(`[Pi wrapper error] ${message}`, {
         replyTo: msg.id,
         type: 'response',
         metadata: {

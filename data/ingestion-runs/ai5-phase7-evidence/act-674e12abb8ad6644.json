@@ -1,0 +1,9 @@
+{
+  "id": "act-674e12abb8ad6644",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:53.564677Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests configuring Victor's proactive features. TNF does not use Victor (a Slack bot from a tutorial)."
+  }
+}

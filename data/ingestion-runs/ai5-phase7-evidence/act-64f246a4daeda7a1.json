@@ -1,0 +1,9 @@
+{
+  "id": "act-64f246a4daeda7a1",
+  "state": "blocked",
+  "updatedAt": "2026-06-11T18:26:23.620785Z",
+  "blocker": {
+    "type": "irrelevant-context",
+    "description": "Requests defining mobile project patterns in agents.md, irrelevant to TNF."
+  }
+}
