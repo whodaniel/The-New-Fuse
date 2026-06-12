@@ -143,13 +143,19 @@ export class OrchestrationController {
     return typeof value === 'string' ? value.trim().toLowerCase() : '';
   }
 
-  private async resolveProviderForUser(user: AuthUser, requested?: string, requestedModel?: string) {
+  private async resolveProviderForUser(
+    user: AuthUser,
+    requested?: string,
+    requestedModel?: string
+  ) {
     const normalizedRequested = this.normalizeProvider(requested);
     const enabledConfigs = await this.safeLoadEnabledConfigs();
     const orderedConfigs = [...enabledConfigs].sort((a, b) => a.priority - b.priority);
 
     const userProviders = user?.id ? await this.db.providerApiKeys.listByUser(user.id) : [];
-    const userProviderSet = new Set(userProviders.map((row) => this.normalizeProvider(row.provider)));
+    const userProviderSet = new Set<string>(
+      userProviders.map((row) => this.normalizeProvider(row.provider))
+    );
 
     if (normalizedRequested) {
       return this.resolveSpecificProvider(
@@ -180,7 +186,10 @@ export class OrchestrationController {
 
     if (userProviderSet.size > 0 && user?.id) {
       const provider = [...userProviderSet][0];
-      const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(user.id, provider);
+      const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(
+        user.id,
+        provider
+      );
       if (userKey?.apiKey) {
         return {
           provider,
@@ -213,7 +222,8 @@ export class OrchestrationController {
       };
     }
 
-    const geminiEnvKey = process.env.GEMINI_API_KEY?.trim() || process.env.GOOGLE_AI_API_KEY?.trim();
+    const geminiEnvKey =
+      process.env.GEMINI_API_KEY?.trim() || process.env.GOOGLE_AI_API_KEY?.trim();
     if (geminiEnvKey) {
       return {
         provider: 'gemini',
@@ -244,10 +254,14 @@ export class OrchestrationController {
     const config = orderedConfigs.find(
       (entry) => this.normalizeProvider(entry.provider) === provider
     );
-    const modelName = requestedModel?.trim() || config?.modelName || this.defaultModelForProvider(provider);
+    const modelName =
+      requestedModel?.trim() || config?.modelName || this.defaultModelForProvider(provider);
 
     if (userProviderSet.has(provider) && user?.id) {
-      const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(user.id, provider);
+      const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(
+        user.id,
+        provider
+      );
       if (!userKey?.apiKey) {
         throw new BadRequestException(`No API key configured for provider "${provider}"`);
       }
@@ -299,7 +313,11 @@ export class OrchestrationController {
     return 'gpt-4o-mini';
   }
 
-  private resolveChatEndpoint(provider: string, modelName: string, apiEndpoint?: string | null): string {
+  private resolveChatEndpoint(
+    provider: string,
+    modelName: string,
+    apiEndpoint?: string | null
+  ): string {
     if (apiEndpoint && apiEndpoint.trim()) return apiEndpoint.trim();
     if (provider === 'gemini' || provider === 'google') {
       const encodedModel = encodeURIComponent(modelName || 'gemini-2.5-flash');
@@ -382,7 +400,10 @@ export class OrchestrationController {
     if (provider === 'gemini' || provider === 'google') {
       const parts = payload?.candidates?.[0]?.content?.parts;
       if (!Array.isArray(parts)) return null;
-      const text = parts.map((part: any) => part?.text).filter(Boolean).join('');
+      const text = parts
+        .map((part: any) => part?.text)
+        .filter(Boolean)
+        .join('');
       return text || null;
     }
 
@@ -408,7 +429,14 @@ export class OrchestrationController {
     const provider = selection.provider;
     const endpoint = this.resolveChatEndpoint(provider, selection.modelName, selection.apiEndpoint);
     const headers = this.buildHeaders(provider, selection.apiKey);
-    const payload = this.buildPayload(provider, selection.modelName, message, systemPrompt, temperature, maxTokens);
+    const payload = this.buildPayload(
+      provider,
+      selection.modelName,
+      message,
+      systemPrompt,
+      temperature,
+      maxTokens
+    );
 
     try {
       const response = await fetch(endpoint, {

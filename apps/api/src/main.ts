@@ -16,7 +16,6 @@ import {
 import { getCorsOptions } from './config/cors.config';
 import { validateGcpEnvironment } from './config/gcp.config';
 import { setupSwagger } from './config/swagger.config';
-import { backCompatMiddleware } from './middleware/back-compat.middleware';
 import { routeFallbackMiddleware } from './middleware/route-fallback.middleware';
 import { securityMiddleware } from './middleware/security.middleware';
 
@@ -36,7 +35,7 @@ async function bootstrap(): Promise<void> {
   });
 
   // Back-compat middleware for /api/auth/* -> /api/v1/auth/* (if versioning is implicitly active)
-  app.use(backCompatMiddleware);
+  // app.use(backCompatMiddleware);
 
   // Explicitly add body parsers (essential for POST data processing)
   app.use(express.json());
