@@ -4,11 +4,17 @@ import { LLMClient } from '../utils/llm-client.js';
 
 export class MemoryService {
   private readonly memoryTreePath: string;
-  private readonly llm: LLMClient;
+  private llm: LLMClient | null = null;
 
   constructor(projectRoot: string) {
     this.memoryTreePath = path.join(projectRoot, '.tnf', 'memory-tree');
-    this.llm = new LLMClient();
+  }
+
+  private async getLlm(): Promise<LLMClient> {
+    if (!this.llm) {
+      this.llm = await LLMClient.create();
+    }
+    return this.llm;
   }
 
   async ensureTree() {
@@ -51,7 +57,8 @@ export class MemoryService {
 
     const userMessage = `Prompt: ${prompt}\n${categoryOverride ? `Requested Category: ${categoryOverride}\n` : ''}\nContext Files:${context}`;
 
-    const response = await this.llm.chatComplete([
+    const llm = await this.getLlm();
+    const response = await llm.chatComplete([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userMessage },
     ]);
@@ -138,10 +145,10 @@ If the information is not in the context, say you don't know.
 Always cite the memory files you use.
 `;
 
-    return await this.llm.chatComplete([
+    return await this.getLlm().then(llm => llm.chatComplete([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: `Context:\n${context}\n\nQuery: ${query}` },
-    ]);
+    ]));
   }
 
   async getTree() {

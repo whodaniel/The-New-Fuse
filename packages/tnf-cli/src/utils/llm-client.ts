@@ -52,9 +52,9 @@ function defaultProviderTimeoutMs(): number {
  *
  * Resolution order (first usable wins):
  *   1. Explicit env vars (TNF_LLM_BASE_URL + TNF_LLM_API_KEY + TNF_LLM_MODEL)
- *   2. model-providers.json fallback chain (probed in priority order)
- *   3. .env auto-detection (NVIDIA_API_KEY, GEMINI_API_KEY, GROQ_API_KEY, etc.)
- *   4. Hardcoded safe fallback (NVIDIA with GPT-OSS-120B)
+ *   2. Dynamic provider detection (inspects env, verifies connectivity)
+ *   3. model-providers.json fallback chain (probed in priority order)
+ *   4. Hardcoded safe fallback (NVIDIA with verified model)
  *
  * All providers except Gemini-native use the OpenAI-compatible chat/completions
  * endpoint. Gemini-native is kept as a legacy fallback only.
@@ -72,7 +72,14 @@ export class LLMClient {
     this.role = role;
     this.loadEnv();
     this.loadProviders();
-    this.resolveProvider();
+    // Provider resolution deferred to async create() method
+  }
+
+  /** Static async factory for proper async initialization */
+  static async create(role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent' = 'worker'): Promise<LLMClient> {
+    const client = new LLMClient(role);
+    await client.resolveProvider();
+    return client;
   }
 
   // ── Environment loading ──────────────────────────────────────────────
@@ -86,12 +93,12 @@ export class LLMClient {
         const p = path.join(rootDir, file);
         if (fs.existsSync(p)) {
           fs.readFileSync(p, 'utf8')
-            .split('\n')
+            .split('\\n')
             .forEach((line) => {
               const match = line.match(/^([^#=]+)=(.*)$/);
               if (match) {
                 const key = match[1].trim();
-                const val = match[2].trim().replace(/^["'](.*)["']$/, '$1');
+                const val = match[2].trim().replace(/^[\"'](.*)[\"']$/, '$1');
                 if (!this.envVars[key]) this.envVars[key] = val;
                 // Also set in process.env for broader compatibility
                 if (!process.env[key]) process.env[key] = val;
@@ -139,7 +146,8 @@ export class LLMClient {
 
   // ── Provider resolution ──────────────────────────────────────────────
 
-  public resolveProvider(): void {
+  /** Resolve the LLM provider configuration. Returns a promise that resolves when resolution is complete. */
+  public async resolveProvider(): Promise<void> {
     // ─── Strategy 1: Explicit TNF_LLM env vars ───────────────────────
     const explicitBaseUrl = this.getEnv('TNF_LLM_BASE_URL');
     const explicitApiKey = this.getEnv('TNF_LLM_API_KEY');
@@ -150,10 +158,9 @@ export class LLMClient {
       this.apiKey = explicitApiKey;
       this.model = explicitModel || 'model-auto';
       this.providerName = this.detectProviderFromUrl(explicitBaseUrl);
-      if (this.model !== explicitModel || this.isProviderAlive(this.providerName)) {
-        return; // Explicit config works
-      }
-      // If explicit config points to a dead model, fall through
+      // We consider explicit config as working even if the model is not alive; 
+      // the caller will handle errors at call time.
+      return;
     }
 
     // ─── Strategy 2: Walk the model-providers.json fallback chain ─────
@@ -175,84 +182,33 @@ export class LLMClient {
       return;
     }
 
-    // ─── Strategy 3: Auto-detect from available API keys ──────────────
-    const autoProviders: Array<{
-      envKey: string;
-      baseUrl: string;
-      defaultModel: string;
-      name: string;
-    }> = [
-      {
-        envKey: 'NVIDIA_API_KEY',
-        baseUrl: 'https://integrate.api.nvidia.com/v1',
-        defaultModel: 'openai/gpt-oss-120b',
-        name: 'nvidia',
-      },
-      {
-        envKey: 'GROQ_API_KEY',
-        baseUrl: 'https://api.groq.com/openai/v1',
-        defaultModel: 'llama3-8b-8192',
-        name: 'groq',
-      },
-      {
-        envKey: 'GEMINI_API_KEY',
-        baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-        defaultModel: 'gemini-2.5-flash',
-        name: 'gemini',
-      },
-      {
-        envKey: 'OPENROUTER_API_KEY',
-        baseUrl: 'https://openrouter.ai/api/v1',
-        defaultModel: 'openrouter/auto',
-        name: 'openrouter',
-      },
-      {
-        envKey: 'DEEPSEEK_API_KEY',
-        baseUrl: 'https://api.deepseek.com/v1',
-        defaultModel: 'deepseek-chat',
-        name: 'deepseek',
-      },
-      {
-        envKey: 'OPENAI_API_KEY',
-        baseUrl: 'https://api.openai.com/v1',
-        defaultModel: 'gpt-4o-mini',
-        name: 'openai',
-      },
-      {
-        envKey: 'CEREBRAS_API_KEY',
-        baseUrl: 'https://api.cerebras.ai/v1',
-        defaultModel: 'llama-3.3-70b',
-        name: 'cerebras',
-      },
-      {
-        envKey: 'SAMBANOVA_API_KEY',
-        baseUrl: 'https://api.sambanova.ai/v1',
-        defaultModel: 'DeepSeek-R1',
-        name: 'sambanova',
-      },
-    ];
+    // ─── Strategy 3: Dynamic Provider Detection ─────────────────────
+    // If we reach here, no explicit or catalog provider worked.
+    // Try dynamic detection.
+    try {
+      const { detectProviders, reportDetection } = await import('./llm-provider-detector.js');
+      const detection = await detectProviders();
+      if (detection.selected) {
+        this.baseUrl = detection.selected.baseUrl;
+        this.apiKey = this.getEnv(detection.selected.envKey);
+        this.model = this.getEnv('TNF_LLM_MODEL') || detection.selected.selectedModel || (detection.selected.models ?? [])[0] || 'nvidia/nemotron-3-ultra-550b-a55b';
 
-    for (const ap of autoProviders) {
-      const key = this.getEnv(ap.envKey);
-      if (key) {
-        this.baseUrl = ap.baseUrl;
-        this.apiKey = key;
-        this.model = this.getEnv('TNF_LLM_MODEL') || ap.defaultModel;
-        this.providerName = ap.name;
-
-        // If this is a Gemini endpoint but model name is not a Gemini model,
-        // fix the mismatch — NVIDIA/Groq models can't run on Gemini API
-        if (ap.name === 'gemini' && this.model.includes('/')) {
-          this.model = ap.defaultModel;
+        if (process.env.TNF_DEBUG_PROVIDERS === 'true') {
+          reportDetection(detection);
         }
         return;
       }
+    } catch (err) {
+      // Dynamic detection failed; fall through to hardcoded fallback
+      if (process.env.TNF_DEBUG_PROVIDERS === 'true') {
+        console.error('[tnf] Dynamic provider detection failed:', err);
+      }
     }
 
-    // ─── Strategy 4: Hardcoded safe fallback ──────────────────────────
+    // ─── Hardcoded Fallback ───────────────────────────────────────
     this.baseUrl = 'https://integrate.api.nvidia.com/v1';
     this.apiKey = this.getEnv('NVIDIA_API_KEY') || 'missing-key';
-    this.model = 'openai/gpt-oss-120b';
+    this.model = 'nvidia/nemotron-3-ultra-550b-a55b';
     this.providerName = 'nvidia-fallback';
   }
 
@@ -316,7 +272,7 @@ export class LLMClient {
   async chatComplete(messages: LLMMessage[], options: LLMOptions = {}): Promise<string> {
     if (!this.apiKey || this.apiKey === 'missing-key') {
       // Re-resolve in case env was just loaded
-      this.resolveProvider();
+      await this.resolveProvider();
       if (!this.apiKey || this.apiKey === 'missing-key') {
         throw new Error(
           'LLM API key not found. Set one of: NVIDIA_API_KEY, GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY, or TNF_LLM_API_KEY'

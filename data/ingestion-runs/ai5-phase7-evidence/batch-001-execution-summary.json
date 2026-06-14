@@ -34,7 +34,5 @@
     ]
   },
   "verificationState": "partially-executed-blocked",
-  "landedArtifacts": [
-    "evidence/directive-1-init-deepsec.json"
-  ]
+  "landedArtifacts": ["evidence/directive-1-init-deepsec.json"]
 }

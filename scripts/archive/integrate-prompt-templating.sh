@@ -43,7 +43,7 @@ fi
 
 # 5. Build all packages to ensure integration
 echo "🔧 Building all packages..."
-pnpm run turbo run build --concurrency=20
+pnpm run turbo run build --concurrency=4
 
 # 6. Test the integration
 echo "🧪 Testing integration..."

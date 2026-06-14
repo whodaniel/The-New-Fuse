@@ -64,11 +64,13 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
     this.memoryMonitor = memoryMonitor || MemoryMonitor.getInstance();
     this.dependencyAnalyzer = dependencyAnalyzer || new DependencyGraphAnalyzer();
     this.concurrencyController = concurrencyController || new ConcurrencyController();
-    this.buildThrottler = buildThrottler || new BuildProcessThrottler({
-      maxConcurrency: this.concurrencyController.getCurrentConcurrency(),
-      memoryThreshold: DEFAULT_CONFIG.MEMORY_THRESHOLD_MB, // Use a default or strategy-defined threshold
-      processMemoryLimit: DEFAULT_CONFIG.PROCESS_MEMORY_LIMIT_MB,
-    });
+    this.buildThrottler =
+      buildThrottler ||
+      new BuildProcessThrottler({
+        maxConcurrency: this.concurrencyController.getCurrentConcurrency(),
+        memoryThreshold: DEFAULT_CONFIG.MEMORY_THRESHOLD_MB, // Use a default or strategy-defined threshold
+        processMemoryLimit: DEFAULT_CONFIG.PROCESS_MEMORY_LIMIT_MB,
+      });
     this.typescriptManager = typescriptManager || new TypeScriptCompilationManager();
 
     // Set up memory monitoring callbacks

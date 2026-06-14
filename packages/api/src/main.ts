@@ -19,7 +19,7 @@ async function bootstrap() {
   
   // Get configuration
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT', 3000);
+  const port = configService.get<number>('API_PORT', 3000);
   
   // Set global prefix for all routes
   app.setGlobalPrefix('api/v1');

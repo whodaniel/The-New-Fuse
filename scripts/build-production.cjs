@@ -25,6 +25,7 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const fsp = require('node:fs/promises'); // For async file operations like locking
 
 // ANSI color codes for better output
 const colors = {
@@ -36,6 +37,58 @@ const colors = {
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
 };
+
+const LOCK_FILE = path.join(__dirname, '.build-production.lock');
+
+async function acquireLock() {
+  try {
+    // Attempt to create the lock file exclusively
+    await fsp.mkdir(path.dirname(LOCK_FILE), { recursive: true });
+    await fsp.open(LOCK_FILE, 'wx');
+    console.log(`${colors.green}[LOCK]${colors.reset} Acquired build lock.`);
+    return true;
+  } catch (error) {
+    if (error.code === 'EEXIST') {
+      console.error(`${colors.red}[LOCK ERROR]${colors.reset} Another build is already running. Exiting.`);
+      return false;
+    }
+    console.error(`${colors.red}[LOCK ERROR]${colors.reset} Failed to acquire lock: ${error.message}`);
+    return false;
+  }
+}
+
+async function releaseLock() {
+  try {
+    if (fs.existsSync(LOCK_FILE)) {
+      await fsp.unlink(LOCK_FILE);
+      console.log(`${colors.green}[LOCK]${colors.reset} Released build lock.`);
+    }
+  } catch (error) {
+    console.error(`${colors.red}[LOCK ERROR]${colors.reset} Failed to release lock: ${error.message}`);
+  }
+}
+
+process.on('exit', async () => {
+  // Ensure lock is released even on premature exit
+  if (fs.existsSync(LOCK_FILE)) {
+    await releaseLock();
+  }
+});
+
+process.on('SIGINT', async () => {
+  // Handle Ctrl+C gracefully
+  console.log(`${colors.yellow}[WARN]${colors.reset} Build interrupted. Releasing lock...`);
+  await releaseLock();
+  process.exit(1);
+});
+
+process.on('SIGTERM', async () => {
+  // Handle termination signals
+  console.log(`${colors.yellow}[WARN]${colors.reset} Build terminated. Releasing lock...`);
+  await releaseLock();
+  process.exit(1);
+});
+
 
 class BuildOrchestrator {
   constructor(options = {}) {
@@ -336,9 +389,18 @@ function parseArgs() {
 
 // Main execution
 if (require.main === module) {
-  const options = parseArgs();
-  const orchestrator = new BuildOrchestrator(options);
-  orchestrator.build();
+  (async () => {
+    const options = parseArgs();
+    if (!(await acquireLock())) {
+      process.exit(1);
+    }
+    const orchestrator = new BuildOrchestrator(options);
+    try {
+      await orchestrator.build();
+    } finally {
+      await releaseLock();
+    }
+  })();
 }
 
 module.exports = BuildOrchestrator;

@@ -138,7 +138,7 @@ yarn install
 # 7. Build port management package
 echo "7. Building port management package..."
 cd packages/port-management
-yarn build
+pnpm turbo run build
 cd "$PROJECT_ROOT"
 
 # 8. Install CLI globally for development

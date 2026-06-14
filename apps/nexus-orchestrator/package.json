@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "PORT=$(node ../../scripts/find-available-port.cjs nexus-orchestrator) vite --host=0.0.0.0 --port=\"$PORT\"",
+    "dev": "PORT=$(node ../../packages/port-management/scripts/find-available-port.cjs nexus-orchestrator) vite --host=0.0.0.0 --port=\"$PORT\"",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",

@@ -20,6 +20,9 @@ const OAuthCallback = () => {
   useEffect(() => {
     const run = async () => {
       const params = new URLSearchParams(location.search);
+      const hashParams = new URLSearchParams(
+        location.hash.startsWith('#') ? location.hash.slice(1) : location.hash
+      );
       const error = extractCallbackError(location);
       if (error) {
         console.error('Authentication failed:', error);
@@ -33,9 +36,30 @@ const OAuthCallback = () => {
         navigate('/dashboard', { replace: true });
         return;
       }
-      // Supabase OAuth callback flow
-      await handleSSOCallback('supabase', params.get('code') || '');
-      navigate('/dashboard', { replace: true });
+      // Magic link: token comes in hash as access_token
+      const magicLinkToken = hashParams.get('access_token');
+      if (magicLinkToken) {
+        await login(magicLinkToken);
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+      // Magic link: Supabase also sends token as 'token' in hash sometimes
+      const magicToken = hashParams.get('token');
+      if (magicToken) {
+        await login(magicToken);
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+      // Supabase OAuth callback flow (uses ?code= query param)
+      const code = params.get('code');
+      if (code) {
+        await handleSSOCallback('supabase', code);
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+      // No valid auth data found
+      console.error('OAuthCallback: No code, token, or access_token found in URL');
+      navigate('/auth/login?error=no_auth_data', { replace: true });
     };
     run().catch(() => navigate('/auth/login?error=auth_failed', { replace: true }));
   }, [location, navigate, login, handleSSOCallback]);

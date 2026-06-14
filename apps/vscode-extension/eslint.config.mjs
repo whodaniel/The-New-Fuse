@@ -17,7 +17,7 @@ export default tseslint.config(
 	},
 	js.configs.recommended,
 	...tseslint.configs.recommended,
-	...tseslint.configs.stylistic,
+	...stylistic.configs.recommended,
 	{
 		plugins: {
 			'@stylistic': stylistic

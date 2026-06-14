@@ -65,7 +65,7 @@ class IntelligentDevServer {
     if (memoryUsage > 80 || freeMem < 1024 * 1024 * 1024) {
       return {
         name: 'conservative',
-        concurrency: Math.max(1, Math.floor(cpus / 2)),
+        concurrency: Math.min(4, Math.max(1, Math.floor(cpus / 2))),
         services: ['electron-desktop', 'api-gateway'], // Browser Hub + essential API
         memoryLimit: '2048',
         description: 'Conservative mode - Browser Hub + essential services'
@@ -76,7 +76,7 @@ class IntelligentDevServer {
     if (memoryUsage > 60 || freeMem < 2048 * 1024 * 1024) {
       return {
         name: 'balanced',
-        concurrency: Math.max(2, Math.floor(cpus * 0.75)),
+        concurrency: Math.min(4, Math.max(2, Math.floor(cpus * 0.75))),
         services: ['electron-desktop', 'api-gateway', 'frontend-app'],
         memoryLimit: '3072',
         description: 'Balanced mode - Browser Hub + core services'
@@ -86,7 +86,7 @@ class IntelligentDevServer {
     // Good memory - full development (all services)
     return {
       name: 'full',
-      concurrency: cpus,
+      concurrency: Math.min(4, cpus),
       services: allServices,  // All available dev services
       memoryLimit: '4096',
       description: 'Full mode - Browser Hub + all development services'
@@ -156,7 +156,7 @@ class IntelligentDevServer {
         env: { 
           ...process.env, 
           BUILD_MEMORY_LIMIT: this.devStrategy.memoryLimit,
-          BUILD_CONCURRENCY: this.devStrategy.concurrency.toString()
+          TURBO_CONCURRENCY: this.devStrategy.concurrency.toString()
         }
       });
       this.log(`✅ Build completed successfully`, 'green');
@@ -190,7 +190,7 @@ class IntelligentDevServer {
     
     // Set memory environment variables
     process.env.BUILD_MEMORY_LIMIT = memoryLimit;
-    process.env.BUILD_CONCURRENCY = concurrency.toString();
+    process.env.TURBO_CONCURRENCY = concurrency.toString();
     process.env.NODE_OPTIONS = `--max-old-space-size=${memoryLimit}`;
     
     // Start development servers

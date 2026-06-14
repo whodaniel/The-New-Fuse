@@ -4,11 +4,17 @@ import { LLMClient } from '../utils/llm-client.js';
 
 export class SkillsService {
   private readonly skillBankPath: string;
-  private readonly llm: LLMClient;
+  private llm: LLMClient | null = null;
 
   constructor(projectRoot: string) {
     this.skillBankPath = path.join(projectRoot, 'packages', 'agent', 'src', 'skill-bank', 'compiled');
-    this.llm = new LLMClient();
+  }
+
+  private async getLlm(): Promise<LLMClient> {
+    if (!this.llm) {
+      this.llm = await LLMClient.create();
+    }
+    return this.llm;
   }
 
   async ensureBank() {
@@ -52,7 +58,8 @@ export class SkillsService {
 
     const userMessage = `Workflow Prompt: ${prompt}\n\nContext Files:${context}`;
     
-    const response = await this.llm.chatComplete([
+    const llm = await this.getLlm();
+    const response = await llm.chatComplete([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userMessage }
     ]);

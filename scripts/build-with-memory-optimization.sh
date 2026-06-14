@@ -8,7 +8,6 @@ echo "🚀 Starting memory-optimized build process..."
 # Set memory limits
 export NODE_OPTIONS="--max-old-space-size=6144"
 export BUILD_MEMORY_LIMIT="6144"
-export BUILD_CONCURRENCY="1"
 
 # Use memory-optimized turbo config
 echo "📊 Using memory-optimized turbo configuration..."

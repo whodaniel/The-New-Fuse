@@ -13,7 +13,7 @@ echo -e "${YELLOW}Starting comprehensive build process...${NC}"
 
 # Step 1: Install dependencies
 echo -e "${YELLOW}Installing dependencies...${NC}"
-yarn install
+pnpm install
 
 # Check if installation was successful
 if [ $? -eq 0 ]; then
@@ -25,21 +25,7 @@ fi
 
 # Step 2: Build ui-components package first
 echo -e "${YELLOW}Building ui-components package...${NC}"
-cd packages/ui-components
-yarn build
-
-# Check if ui-components build was successful
-if [ $? -eq 0 ]; then
-  echo -e "${GREEN}ui-components built successfully!${NC}"
-else
-  echo -e "${RED}Failed to build ui-components.${NC}"
-  exit 1
-fi
-
-# Step 3: Return to the root directory and build all packages
-cd ../..
-echo -e "${YELLOW}Building all packages...${NC}"
-yarn build
+pnpm turbo run build
 
 # Check if the build was successful
 if [ $? -eq 0 ]; then

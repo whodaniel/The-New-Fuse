@@ -9,7 +9,7 @@
     "build:watch": "tsc -p tsconfig.build.json --watch --skipLibCheck --noEmitOnError false",
     "dev": "PORT=3005 DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start",
     "start": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start",
-    "start:dev": "PORT=$(node ../../scripts/find-available-port.cjs api-gateway/ws-bridge) DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start --watch",
+    "start:dev": "PORT=$(node ../../packages/port-management/scripts/find-available-port.cjs api-gateway/ws-bridge) DATABASE_URL=${DATABASE_URL:-postgresql://postgres:***@localhost:5432/thenewfuse} nest start --watch",
     "start:debug": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start --debug --watch",
     "start:prod": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} node --max-http-header-size=65536 dist/main",
     "test": "jest --passWithNoTests",

@@ -209,7 +209,7 @@ const config = {
   name: 'google-sheets-mcp-server',
   version: '1.0.0',
   host: 'localhost',
-  port: parseInt(process.env.PORT || '3000'),
+  port: parseInt(process.env.GOOGLE_SHEETS_MCP_PORT || '3006'),
 };
 
 // Start the server

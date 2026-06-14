@@ -5,8 +5,8 @@ set -e
 echo "Setting up The New Fuse project..."
 
 # Check if yarn is installed
-if ! command -v yarn &> /dev/null; then
-  echo "Yarn is not installed. Please install yarn first."
+if ! command -v pnpm &> /dev/null; then
+  echo "pnpm is not installed. Please install pnpm first."
   exit 1
 fi
 
@@ -16,7 +16,7 @@ node scripts/install-yarn-plugins.js
 
 # Install dependencies
 echo "Installing dependencies..."
-yarn install
+pnpm install
 
 # Fix path aliases in source files
 echo "Fixing path aliases in source files..."
@@ -44,12 +44,10 @@ fi
 # Build packages in correct order
 echo "Building packages in correct order..."
 # Use direct TypeScript calls instead of relying on Yarn workspaces initially
-node_modules/.bin/tsc -p packages/types/tsconfig.json
-node_modules/.bin/tsc -p packages/core/tsconfig.json
-node_modules/.bin/tsc -p packages/hooks/tsconfig.json
+pnpm turbo run build --filter=@the-new-fuse/types --filter=@the-new-fuse/core --filter=@the-new-fuse/hooks
 
 # Run type checks
 echo "Running type checks..."
-node scripts/run-tsc.js
+pnpm turbo run type-check
 
-echo "Setup complete! You can now run 'yarn dev' to start the development server."
+echo "Setup complete! You can now run 'pnpm run dev' to start the development server."

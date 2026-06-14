@@ -8,28 +8,16 @@ echo "🚀 Starting complete project rebuild..."
 
 # Step 1: Clean everything
 echo "Step 1: Running clean-all script..."
-bash "$PROJECT_ROOT/scripts/manage/clean-all.sh"
+pnpm run clean:all
 
 # Step 2: Install dependencies
 echo "Step 2: Installing dependencies..."
 cd "$PROJECT_ROOT"
-yarn install
+pnpm install
 
 # Step 3: Build packages in the correct order
 echo "Step 3: Building packages..."
-cd "$PROJECT_ROOT/packages/types"
-yarn build
-
-cd "$PROJECT_ROOT/packages/core"
-yarn build
-
-cd "$PROJECT_ROOT/packages/database"
-yarn build
-
-cd "$PROJECT_ROOT/packages/feature-tracker"
-yarn build
-
-# Additional packages would be built here in the correct dependency order
+pnpm turbo run build --filter=./packages/*
 
 # Step 4: Start services
 echo "Step 4: Starting services..."
@@ -39,6 +27,6 @@ docker-compose up -d
 # Step 5: Launch development environment
 echo "Step 5: Launching development environment..."
 cd "$PROJECT_ROOT"
-yarn dev
+pnpm run dev
 
 echo "✅ Rebuild complete! The application should now be running."

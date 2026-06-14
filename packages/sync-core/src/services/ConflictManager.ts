@@ -528,8 +528,9 @@ export class ConflictManager extends EventEmitter {
         return this.canMerge(conflict.localVersion, conflict.remoteVersion) ? 'merge' : null;
 
       case 'concurrent':
-        // Concurrent modifications require manual intervention
-        return null;
+        // TNF Resonance Fix: Changed concurrent modifications from manual intervention to latest_wins
+        // to address Turbo concurrency collisions. This can be made configurable if needed.
+        return 'latest_wins';
 
       default:
         return null;

@@ -6,6 +6,7 @@
  */
 
 import { Logger, HeartbeatMonitoringService, MasterAgentRegistry } from '@the-new-fuse/relay-core';
+import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -64,7 +65,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   }
 
   // Create test data directory
-  const testDataDir = path.join(process.cwd(), 'test-data');
+  const testDataDir = path.join(os.tmpdir(), `tnf-test-data-${process.env.JEST_WORKER_ID || Date.now()}-${Math.random().toString(36).substring(2, 9)}`);
   await fs.ensureDir(testDataDir);
 
   // Setup Logger

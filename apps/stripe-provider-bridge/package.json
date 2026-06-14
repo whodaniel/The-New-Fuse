@@ -6,7 +6,7 @@
   "description": "TNF Bridge for Stripe Agentic Provisioning Protocol (APP)",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "STRIPE_PROVIDER_PORT=$(node ../../scripts/find-available-port.cjs stripe-provider-bridge) tsx src/index.ts",
+    "dev": "STRIPE_PROVIDER_PORT=$(node ../../packages/port-management/scripts/find-available-port.cjs stripe-provider-bridge) tsx src/index.ts",
     "build": "tsc -b",
     "start": "node dist/index.js"
   },

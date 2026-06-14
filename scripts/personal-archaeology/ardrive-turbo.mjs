@@ -1,4 +1,37 @@
 import { TurboFactory } from '@ardrive/turbo-sdk';
+
+// A simple p-limit equivalent for controlling concurrency
+const pLimit = (concurrency) => {
+  const queue = [];
+  let activeCount = 0;
+
+  const next = () => {
+    activeCount--;
+    if (queue.length > 0) {
+      queue.shift()();
+    }
+  };
+
+  const run = async (fn) => {
+    activeCount++;
+    try {
+      return await fn();
+    } finally {
+      next();
+    }
+  };
+
+  return (fn) =>
+    new Promise((resolve, reject) => {
+      const task = () => run(fn).then(resolve).catch(reject);
+      if (activeCount < concurrency) {
+        task();
+      } else {
+        queue.push(task);
+      }
+    });
+};
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -34,37 +67,48 @@ export async function uploadToArweave({ maxUploadSize, dryRun, uploadEnabled }) 
 
   console.log(`Found ${filesToUpload.length} files ready for upload.`);
 
-  for (const file of filesToUpload) {
-    if (!fs.existsSync(file.local_path)) {
-      console.warn(`File ${file.local_path} is missing locally. Skipping upload.`);
-      continue;
-    }
+  const CONCURRENCY_LIMIT = parseInt(process.env.TURBO_UPLOAD_CONCURRENCY_LIMIT || '1', 10);
+  const limit = pLimit(CONCURRENCY_LIMIT);
+  console.log(`Uploading with a concurrency limit of ${CONCURRENCY_LIMIT}.`);
 
-    const actualSize = fs.statSync(file.local_path).size;
-    if (actualSize > maxUploadSize) {
-      console.warn(`File ${file.local_path} is ${actualSize} bytes, above max upload size. Skipping upload.`);
-      continue;
-    }
+  const uploadPromises = filesToUpload.map((file) =>
+    limit(async () => {
+      if (!fs.existsSync(file.local_path)) {
+        console.warn(`File ${file.local_path} is missing locally. Skipping upload.`);
+        return { status: 'skipped', reason: 'file missing', file };
+      }
 
-    console.log(`Uploading ${file.name} to Arweave via Turbo...`);
-    try {
-      const uploadResult = await turbo.uploadFile({
-        fileStreamFactory: () => fs.createReadStream(file.local_path),
-        fileSizeFactory: () => actualSize,
-        dataItemOpts: {
-          tags: [
-            { name: 'Content-Type', value: file.mime_type || 'application/octet-stream' },
-            { name: 'File-Name', value: file.name },
-            { name: 'App-Name', value: 'TNF-Personal-Archaeology' },
-            { name: 'Google-Drive-ID', value: file.id }
-          ],
-        }
-      });
+      const actualSize = fs.statSync(file.local_path).size;
+      if (actualSize > maxUploadSize) {
+        console.warn(`File ${file.local_path} is ${actualSize} bytes, above max upload size. Skipping upload.`);
+        return { status: 'skipped', reason: 'oversize', file };
+      }
 
-      console.log(`Upload successful for ${file.name}. TxID: ${uploadResult.id}`);
-      await updateArweaveTxid(file.id, uploadResult.id);
-    } catch (uploadErr) {
-      console.error(`Failed to upload ${file.name}:`, uploadErr.message);
-    }
-  }
+      console.log(`Uploading ${file.name} to Arweave via Turbo...`);
+      try {
+        const uploadResult = await turbo.uploadFile({
+          fileStreamFactory: () => fs.createReadStream(file.local_path),
+          fileSizeFactory: () => actualSize,
+          dataItemOpts: {
+            tags: [
+              { name: 'Content-Type', value: file.mime_type || 'application/octet-stream' },
+              { name: 'File-Name', value: file.name },
+              { name: 'App-Name', value: 'TNF-Personal-Archaeology' },
+              { name: 'Google-Drive-ID', value: file.id }
+            ],
+          }
+        });
+
+        console.log(`Upload successful for ${file.name}. TxID: ${uploadResult.id}`);
+        await updateArweaveTxid(file.id, uploadResult.id);
+        return { status: 'fulfilled', value: uploadResult.id, file };
+      } catch (uploadErr) {
+        console.error(`Failed to upload ${file.name}:`, uploadErr.message);
+        return { status: 'rejected', reason: uploadErr, file };
+      }
+    })
+  );
+
+  await Promise.allSettled(uploadPromises);
+  console.log('All upload tasks have completed.');
 }

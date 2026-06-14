@@ -638,50 +638,59 @@
           "items": {
             "type": "object",
             "properties": {
-            "name": {
-              "type": "string",
-              "description": "Server name"
-            },
-            "type": {
-              "type": "string",
-              "enum": ["local", "remote", "sse", "ws"],
-              "default": "local",
-              "description": "Server type (local=stdio, remote=HTTP, sse=Server-Sent Events, ws=WebSocket)"
-            },
-            "command": {
-              "type": "string",
-              "description": "Command to start the server"
-            },
-            "args": {
-              "type": "array",
-              "items": {
-                "type": "string"
+              "name": {
+                "type": "string",
+                "description": "Server name"
               },
-              "description": "Command arguments"
-            },
-            "env": {
-              "type": "object",
-              "description": "Environment variables"
-            },
-            "cwd": {
-              "type": "string",
-              "description": "Working directory for the server process"
-            },
-            "transport": {
-              "type": "string",
-              "enum": ["stdio", "sse", "ws"],
-              "default": "stdio",
-              "description": "Transport protocol for the MCP server"
-            },
-            "url": {
-              "type": "string",
-              "description": "URL for SSE/WS transport servers"
-            },
-            "enabled": {
-              "type": "boolean",
-              "default": true,
-              "description": "Whether the server is enabled"
-            }
+              "type": {
+                "type": "string",
+                "enum": [
+                  "local",
+                  "remote",
+                  "sse",
+                  "ws"
+                ],
+                "default": "local",
+                "description": "Server type (local=stdio, remote=HTTP, sse=Server-Sent Events, ws=WebSocket)"
+              },
+              "command": {
+                "type": "string",
+                "description": "Command to start the server"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Command arguments"
+              },
+              "env": {
+                "type": "object",
+                "description": "Environment variables"
+              },
+              "cwd": {
+                "type": "string",
+                "description": "Working directory for the server process"
+              },
+              "transport": {
+                "type": "string",
+                "enum": [
+                  "stdio",
+                  "sse",
+                  "ws"
+                ],
+                "default": "stdio",
+                "description": "Transport protocol for the MCP server"
+              },
+              "url": {
+                "type": "string",
+                "description": "URL for SSE/WS transport servers"
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether the server is enabled"
+              }
             },
             "required": [
               "name",
@@ -900,7 +909,8 @@
     "markdown-it": "^14.1.1",
     "typescript": "^6.0.2",
     "typescript-eslint": "^0.0.1-alpha.0",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.0",
+    "@stylistic/eslint-plugin": "*"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

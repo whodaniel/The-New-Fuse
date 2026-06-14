@@ -3,6 +3,8 @@
 const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const glob = require('glob');
+const yaml = require('js-yaml'); // Moved js-yaml to top-level require
 
 const repoRoot = path.resolve(__dirname, '..');
 const LOCAL_ENV_FILES = ['.env', '.env.local', '.tnf.local.env'];
@@ -121,12 +123,111 @@ function parsePortEnv() {
     .filter(Boolean);
 }
 
-function getCatalog() {
-  const byPort = new Map();
-  for (const entry of [...DEFAULT_PORTS, ...parsePortEnv()]) {
-    byPort.set(entry.port, entry);
+async function getCatalog() {
+  let allPorts = [...DEFAULT_PORTS, ...parsePortEnv()];
+
+  // Dynamically discover ports from workspace package.json files
+  const workspacePorts = await discoverWorkspacePorts();
+  allPorts = allPorts.concat(workspacePorts);
+
+  // Filter out duplicates based on port number, but keep the latest service name if duplicated
+  const uniquePortsMap = new Map();
+  for (const entry of allPorts) {
+    uniquePortsMap.set(entry.port, entry);
   }
-  return Array.from(byPort.values()).sort((a, b) => a.port - b.port);
+
+  return Array.from(uniquePortsMap.values()).sort((a, b) => a.port - b.port);
+}
+
+async function discoverWorkspacePorts() {
+  const workspacePaths = getWorkspacePaths();
+  const discoveredPorts = [];
+
+  for (const wsPath of workspacePaths) {
+    const packageJsonPath = path.join(repoRoot, wsPath, 'package.json');
+    if (fs.existsSync(packageJsonPath)) {
+      try {
+        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+        const packageName = packageJson.name || path.basename(wsPath);
+        if (packageJson.scripts) {
+          for (const scriptName of ['dev', 'start', 'serve']) {
+            const script = packageJson.scripts[scriptName];
+            if (script) {
+              console.log(`Checking script: ${packageName}:${scriptName} -> ${script}`); // Debug log
+              let portsFound = [];
+
+              // 1. Regex to find explicit port definitions
+              const explicitPortMatches = script.match(/(?:PORT=|--port\s+)(\d{3,5})|:(\d{3,5})/g);
+              if (explicitPortMatches) {
+                for (const match of explicitPortMatches) {
+                  const port = Number.parseInt(match.replace(/[^\d]/g, ''), 10);
+                  if (Number.isInteger(port)) {
+                    portsFound.push(port);
+                  }
+                }
+              }
+
+              // 2. Add default ports for known frameworks if script indicates usage
+              if (script.includes('next dev') || script.includes('next start')) {
+                portsFound.push(3000); // Default Next.js port
+              }
+              if (script.includes('vite')) {
+                portsFound.push(5173); // Default Vite port
+              }
+              if (script.includes('nest start') || script.includes('nestjs')) {
+                portsFound.push(3000); // Default NestJS port (often for API)
+              }
+
+              // Add found ports to discoveredPorts
+              for (const port of portsFound) {
+                discoveredPorts.push({ port, service: `${packageName}/${scriptName}`, protected: false });
+              }
+              if (portsFound.length > 0) {
+                console.log(`Discovered ports for ${packageName}:${scriptName}:`, portsFound); // Debug log
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error(`Error parsing package.json in ${packageJsonPath}: ${e.message}`);
+        console.error(e); // Added to log full error for debugging
+      }
+    }
+  }
+  return discoveredPorts;
+}
+
+function getWorkspacePaths() {
+  const pnpmWorkspacePath = path.join(repoRoot, 'pnpm-workspace.yaml');
+  if (fs.existsSync(pnpmWorkspacePath)) {
+    const workspaceConfig = yaml.load(fs.readFileSync(pnpmWorkspacePath, 'utf8'));
+    const patterns = workspaceConfig.packages || [];
+    console.log('Workspace patterns:', patterns); // Debug log
+    let workspacePaths = [];
+
+    for (const pattern of patterns) {
+      if (pattern.startsWith('!')) {
+        // Exclude pattern, filter out existing matches
+        const excludePattern = pattern.slice(1);
+        const excluded = glob.sync(excludePattern, { cwd: repoRoot, absolute: false });
+        workspacePaths = workspacePaths.filter(p => !excluded.includes(p));
+      } else {
+        // Include pattern
+        const matchedPaths = glob.sync(pattern, { cwd: repoRoot, absolute: false });
+        console.log(`Glob pattern: ${pattern}, matched: ${matchedPaths.length} paths`); // Debug log
+        workspacePaths.push(...matchedPaths);
+      }
+    }
+    // Filter out duplicate paths and return unique ones
+    const uniqueWorkspacePaths = Array.from(new Set(workspacePaths));
+    console.log('Discovered unique workspace paths:', uniqueWorkspacePaths); // Debug log
+    return uniqueWorkspacePaths;
+  }
+
+  // Fallback if pnpm-workspace.yaml is not found or malformed
+  // This would typically involve reading the 'workspaces' field from the root package.json
+  // For simplicity, assuming pnpm-workspace.yaml is present and correct.
+  return [];
 }
 
 function getAllowedOccupiedPorts(options) {
@@ -212,8 +313,9 @@ function getRuntimeHealth(entry) {
   return null;
 }
 
-function inspectPorts() {
-  return getCatalog().map((entry) => {
+async function inspectPorts() {
+  const catalog = await getCatalog();
+  return catalog.map((entry) => {
     const pids = pidsOnPort(entry.port);
     return {
       ...entry,
@@ -242,8 +344,29 @@ function terminatePid(pid) {
 }
 
 async function sleep(ms) {
-  await new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+async function retryTerminatePid(pid, retries = 5, delay = 200) {
+  for (let i = 0; i < retries; i += 1) {
+    const term = spawnSync('kill', ['-TERM', String(pid)], { stdio: 'ignore' });
+    if (term.status === 0) {
+      await sleep(delay); // Give some time for the process to exit
+      const remainingPids = pidsOnPortByPid(pid); // Check if *this specific* pid is still on port
+      if (remainingPids.length === 0) {
+        return true; // Successfully terminated
+      }
+    }
+    await sleep(delay); // Wait before retrying
+  }
+  return false; // Failed to terminate after retries
+}
+
+function pidsOnPortByPid(targetPid) {
+  const pids = pidsFromLsof().concat(pidsFromSs()); // Get all PIDs on any port
+  return pids.filter(pid => pid === targetPid); // Filter for the specific PID
+}
+
 
 async function clearRows(rows, options) {
   const targets = rows.filter((row) => {
@@ -265,7 +388,7 @@ async function clearRows(rows, options) {
   const killed = [];
   for (const row of targets) {
     for (const process of row.processes) {
-      const ok = terminatePid(process.pid);
+      const ok = await retryTerminatePid(process.pid);
       killed.push({ port: row.port, pid: process.pid, command: process.command, ok });
     }
   }
@@ -302,7 +425,7 @@ Notes:
 
 async function main() {
   const { command, options } = parseArgs(process.argv.slice(2));
-  const rows = inspectPorts();
+  const rows = await inspectPorts();
 
   if (command === 'help' || command === '--help' || command === '-h') {
     printUsage();
@@ -319,13 +442,14 @@ async function main() {
     const conflicts = rows.filter((row) => row.status === 'occupied');
     if (options.autoResolve) {
       const killed = await clearRows(conflicts, options);
-      const after = inspectPorts().filter((row) => row.status === 'occupied');
-      if (options.json) console.log(JSON.stringify({ before: conflicts, killed, after }, null, 2));
+      const after = await inspectPorts();
+    const remainingConflicts = after.filter((row) => row.status === 'occupied');
+      if (options.json) console.log(JSON.stringify({ before: conflicts, killed, after: remainingConflicts }, null, 2));
       else {
         console.log('Termination attempts:');
         console.table(killed);
         console.log('Remaining occupied ports:');
-        printTable(after);
+        printTable(remainingConflicts);
       }
       return;
     }

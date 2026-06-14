@@ -67,8 +67,33 @@ const GoogleCallback = () => {
         return;
       }
 
-      await handleSSOCallback('supabase', searchParams.get('code') || '');
-      navigate('/dashboard', { replace: true });
+      // Magic link: token may come in hash as access_token
+      const magicLinkToken = hashParams.get('access_token');
+      if (magicLinkToken) {
+        await login(magicLinkToken);
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+
+      // Magic link: token may also come as 'token' in hash
+      const magicToken = hashParams.get('token');
+      if (magicToken) {
+        await login(magicToken);
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+
+      // Supabase OAuth callback flow (uses ?code= query param)
+      const code = searchParams.get('code');
+      if (code) {
+        await handleSSOCallback('supabase', code);
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+
+      // No valid auth data found
+      console.error('GoogleCallback: No code, token, or access_token found in URL');
+      navigate('/auth/login?error=no_auth_data', { replace: true });
     };
 
     run().catch((error) => {

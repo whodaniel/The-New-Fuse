@@ -14,7 +14,7 @@ mkdir -p "$LOGS_DIR"
 
 # Step 1: Build and prepare
 echo "📦 Step 1: Building and preparing..."
-yarn build > "$LOGS_DIR/build.log" 2>&1
+pnpm turbo run build > "$LOGS_DIR/build.log" 2>&1
 yarn drizzle:generate >> "$LOGS_DIR/build.log" 2>&1
 echo "✅ Build and preparation completed"
 

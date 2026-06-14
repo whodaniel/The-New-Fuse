@@ -1,0 +1,13 @@
+# deepsec parse-failure debug dump
+# phase: investigate
+# agentType: claude-agent-sdk
+# timestamp: 2026-06-12T17:17:47.428Z
+# error: Error: Agent produced output that wasn't a parseable JSON findings array: Unexpected token 'N', "Not logged"... is not valid JSON. First 400 chars: Not logged in · Please run /login
+# batch (5 files):
+  - apps/api/src/main.ts
+  - apps/api/src/middleware/auth.middleware.ts
+  - apps/api/src/middleware/auth.ts
+  - apps/api/src/middleware/csrf-protection.middleware.ts
+  - apps/api/src/modules/agent-tracking/agent-tracking.service.ts
+# --- raw agent output begins on next line ---
+Not logged in · Please run /login

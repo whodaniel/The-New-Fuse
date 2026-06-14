@@ -4095,7 +4095,7 @@ async function runSlashCliCommand(command: SlashCommandDefinition, args: string[
 
 async function showCurrentModel(): Promise<void> {
   const { LLMClient } = await import('./utils/llm-client.js');
-  const client = new LLMClient('orchestrator');
+  const client = await LLMClient.create('orchestrator');
   console.log(chalk.bold('\nModel\n'));
   console.log(`  Provider: ${chalk.cyan(client.providerName || 'unknown')}`);
   console.log(`  Model:    ${chalk.cyan(client.model)}`);
@@ -5303,7 +5303,7 @@ ai.command('models')
   .action(async () => {
     try {
       const { LLMClient } = await import('./utils/llm-client.js');
-      const client = new LLMClient();
+      const client = await LLMClient.create();
       console.log(chalk.blue('\nFetching available models...'));
       const models = await client.fetchAvailableModels();
       if (models.length === 0) {
@@ -5328,12 +5328,12 @@ ai.command('chat')
     try {
       const readline = await import('readline');
       const { LLMClient } = await import('./utils/llm-client.js');
-      const client = new LLMClient('orchestrator');
+      const client = await LLMClient.create('orchestrator');
 
       // Override model if specified
       if (opts.model) {
         process.env.TNF_LLM_MODEL = opts.model;
-        client.resolveProvider(); // Re-resolve with new model
+        await client.resolveProvider(); // Re-resolve with new model
       }
 
       const messages: ChatMessage[] = [];
@@ -5448,8 +5448,26 @@ program
 
 program
   .command('gemini')
-  .description('Pass through any Gemini CLI command')
+  .description('DEPRECATED: Use `tnf agy` instead. Pass through any Gemini CLI command')
   .argument('[args...]', 'Arguments forwarded to gemini');
+
+program
+  .command('agy')
+  .description('Pass through any Antigravity Agent CLI command (uses Gemini models)')
+  .argument('[args...]', 'Arguments forwarded to agy')
+  .option('--dangerously-skip-permissions', 'Skip all permission prompts')
+  .action(async (args: string[], options: { dangerouslySkipPermissions?: boolean }) => {
+    try {
+      const agyArgs = [...args];
+      if (options.dangerouslySkipPermissions) {
+        agyArgs.unshift('--dangerously-skip-permissions');
+      }
+      await runCommand('agy', agyArgs);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 const relay = program.command('relay').description('Relay operations');
 relay
@@ -7492,6 +7510,311 @@ fullAuto
       console.log(`\nState file: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
       console.log(`Run log: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH))}`);
       console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const zeroTurnCommand = program
+  .command('zero-turn')
+  .description('TNF zero-turn autonomous boot — native self-contained operation without external dependencies');
+
+zeroTurnCommand
+  .command('boot')
+  .description('Boot TNF for indefinite autonomous operation with zero manual turns')
+  .option('--profile <name>', 'Profile/instance name', 'default')
+  .option('--model <model>', 'LLM model to use', 'nvidia/z-ai/glm-5')
+  .option('--no-daemon', 'Run in foreground mode (for debugging)')
+  .option('--plan', 'Print boot plan without executing')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
+  .action(
+    async (
+      options: {
+        profile?: string;
+        model?: string;
+        daemon?: boolean;
+        plan?: boolean;
+        superAdminToken?: string;
+      }
+    ) => {
+      try {
+        requireSuperAdmin(options, 'zero-turn boot');
+
+        console.log(chalk.bold.cyan('\n🚀 TNF Zero-Turn Autonomous Boot\n'));
+        console.log(chalk.dim(`Profile: ${options.profile}`));
+        console.log(chalk.dim(`Model: ${options.model}`));
+        console.log(chalk.dim(`Mode: ${options.daemon !== false ? 'daemon' : 'foreground'}\n`));
+
+        if (options.plan) {
+          console.log(chalk.bold('\nBoot Plan:\n'));
+          console.log('  [1] Set working model configuration');
+          console.log('  [2] Start TNF agent daemon (autonomous thinking every 120s)');
+          console.log('  [3] Start TNF director loop (local orchestration)');
+          console.log('  [4] Start terminal heartbeat pulse (session monitoring)');
+          console.log('  [5] Register agents on TNF bus');
+          console.log('  [6] Verify autonomous operation\n');
+          return;
+        }
+
+        type BootStep = {
+          label: string;
+          critical: boolean;
+          action: () => Promise<void>;
+        };
+
+        const steps: BootStep[] = [
+          {
+            label: 'Setting working model',
+            critical: true,
+            action: async () => {
+              await runCommand('hermes', ['config', 'set', 'model', options.model || 'nvidia/z-ai/glm-5']);
+            },
+          },
+          {
+            label: 'Starting TNF agent daemon',
+            critical: true,
+            action: async () => {
+              const daemonArgs = options.daemon !== false ? ['live'] : ['live', '--foreground'];
+              await runCommand('python3', [path.join(os.homedir(), '.hermes/scripts/tnf-agent-daemon.py'), ...daemonArgs], {
+                isBackground: options.daemon !== false,
+              });
+            },
+          },
+          {
+            label: 'Starting TNF director loop',
+            critical: false,
+            action: async () => {
+              await runCommand('node', [path.join(os.homedir(), '.tnf/bin/tnf-director-loop.cjs')], {
+                isBackground: true,
+              });
+            },
+          },
+          {
+            label: 'Starting terminal heartbeat pulse',
+            critical: false,
+            action: async () => {
+              await runCommand('node', [path.join(os.homedir(), '.tnf/bin/terminal-heartbeat-pulse.cjs')], {
+                isBackground: true,
+              });
+            },
+          },
+          {
+            label: 'Verifying agent registration',
+            critical: true,
+            action: async () => {
+              const { execSync } = await import('child_process');
+              try {
+                const output = execSync('redis-cli HGETALL tnf:agent-registry', { encoding: 'utf8' });
+                if (output.trim()) {
+                  console.log(chalk.dim('   Agents registered on TNF bus'));
+                } else {
+                  throw new Error('No agents found in tnf:agent-registry');
+                }
+              } catch (err: any) {
+                if (err.message.includes('redis-cli')) {
+                  console.log(chalk.yellow('   Redis CLI not available, skipping verification'));
+                } else {
+                  throw err;
+                }
+              }
+            },
+          },
+          {
+            label: 'Verifying heartbeat cron',
+            critical: false,
+            action: async () => {
+              try {
+                const { execSync } = await import('child_process');
+                const output = execSync('hermes cronjob action=list', { encoding: 'utf8' });
+                if (output.includes('heartbeat')) {
+                  console.log(chalk.dim('   Heartbeat self-wake cron active'));
+                } else {
+                  console.log(chalk.yellow('   Heartbeat cron not found, installing...'));
+                  await runCommand('hermes', [
+                    'cronjob',
+                    'action=create',
+                    '--schedule', '*/5 * * * *',
+                    '--script', path.join(os.homedir(), '.hermes/scripts/tnf-heartbeat-selfwake.py'),
+                    '--name', 'TNF Heartbeat Self-Wake',
+                    '--no-agent',
+                  ]);
+                }
+              } catch (err: any) {
+                console.log(chalk.yellow('   Cron verification skipped'));
+              }
+            },
+          },
+        ];
+
+        const warnings: string[] = [];
+        for (let i = 0; i < steps.length; i++) {
+          const step = steps[i];
+          process.stdout.write(chalk.white(`[${i + 1}/${steps.length}] ${step.label}... `));
+          try {
+            await step.action();
+            process.stdout.write(chalk.green('OK\n'));
+          } catch (err: any) {
+            process.stdout.write(chalk.red('FAILED\n'));
+            const message = err?.message || String(err);
+            if (step.critical) {
+              console.error(chalk.red(`   Error: ${message}`));
+              throw new Error(`Critical boot failure in step: ${step.label}`);
+            }
+            warnings.push(`${step.label}: ${message}`);
+            console.error(chalk.yellow(`   Warning: ${message}`));
+          }
+        }
+
+        console.log(chalk.bold.green('\n✅ TNF Zero-Turn Autonomous Boot Complete!\n'));
+        console.log(chalk.dim('   The system is now running autonomously indefinitely.\n'));
+        console.log(chalk.dim('   Autonomous signals:\n'));
+        console.log(chalk.dim('   - Thinks autonomously every 120s (daemon live mode)'));
+        console.log(chalk.dim('   - Publishes health assessments to TNF bus'));
+        console.log(chalk.dim('   - Self-heals via heartbeat cron (restarts dead processes)'));
+        console.log(chalk.dim('   - Consumes tasks from tnf:master:tasks:realtime\n'));
+
+        if (warnings.length > 0) {
+          console.log(chalk.yellow(`⚠️  Completed with ${warnings.length} warning(s):\n`));
+          for (const warning of warnings) {
+            console.log(chalk.yellow(`   - ${warning}\n`));
+          }
+        }
+
+        console.log(chalk.dim('   Reference commands:\n'));
+        console.log(chalk.dim('   - pgrep -af tnf-agent-daemon'));
+        console.log(chalk.dim('   - pgrep -af tnf-director-loop'));
+        console.log(chalk.dim('   - redis-cli HGETALL tnf:agent-registry'));
+        console.log(chalk.dim('   - tail -f ~/.tnf/logs/daemon.log\n'));
+      } catch (err: any) {
+        console.error(chalk.red(`\n❌ Zero-turn boot aborted: ${err.message}\n`));
+        process.exit(1);
+      }
+    }
+  );
+
+zeroTurnCommand
+  .command('status')
+  .description('Check TNF zero-turn autonomous operation status')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (options: { json?: boolean } = {}) => {
+    try {
+      const status: any = {
+        timestamp: new Date().toISOString(),
+        daemon: false,
+        director: false,
+        heartbeat: false,
+        agents: [],
+      };
+
+      const { execSync } = await import('child_process');
+
+      try {
+        const daemonOutput = execSync('pgrep -af tnf-agent-daemon', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+        status.daemon = daemonOutput.trim().length > 0;
+        if (status.daemon) {
+          console.log(chalk.green('✅ TNF Agent Daemon: running'));
+        } else {
+          console.log(chalk.red('❌ TNF Agent Daemon: not running'));
+        }
+      } catch {
+        console.log(chalk.red('❌ TNF Agent Daemon: not running'));
+      }
+
+      try {
+        const directorOutput = execSync('pgrep -af tnf-director-loop', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+        status.director = directorOutput.trim().length > 0;
+        if (status.director) {
+          console.log(chalk.green('✅ TNF Director Loop: running'));
+        } else {
+          console.log(chalk.red('❌ TNF Director Loop: not running'));
+        }
+      } catch {
+        console.log(chalk.red('❌ TNF Director Loop: not running'));
+      }
+
+      try {
+        const heartbeatOutput = execSync('pgrep -af terminal-heartbeat-pulse', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+        status.heartbeat = heartbeatOutput.trim().length > 0;
+        if (status.heartbeat) {
+          console.log(chalk.green('✅ Terminal Heartbeat: running'));
+        } else {
+          console.log(chalk.red('❌ Terminal Heartbeat: not running'));
+        }
+      } catch {
+        console.log(chalk.red('❌ Terminal Heartbeat: not running'));
+      }
+
+      try {
+        const registryOutput = execSync('redis-cli HGETALL tnf:agent-registry', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+        const lines = registryOutput.trim().split('\n');
+        for (let i = 0; i < lines.length; i += 2) {
+          const agentId = lines[i];
+          const agentData = lines[i + 1];
+          if (agentId && agentData) {
+            try {
+              const parsed = JSON.parse(agentData);
+              status.agents.push({
+                id: agentId,
+                name: parsed.name,
+                role: parsed.role,
+                status: parsed.status,
+                lastSeen: parsed.lastSeen,
+              });
+            } catch {
+              status.agents.push({ id: agentId, raw: agentData });
+            }
+          }
+        }
+        if (status.agents.length > 0) {
+          console.log(chalk.green(`\n✅ ${status.agents.length} agent(s) registered on TNF bus:`));
+          for (const agent of status.agents) {
+            console.log(chalk.dim(`   - ${agent.id} (${agent.name || 'unknown'}) - ${agent.role || 'unknown'}`));
+          }
+        } else {
+          console.log(chalk.yellow('\n⚠️  No agents registered on TNF bus'));
+        }
+      } catch {
+        console.log(chalk.yellow('\n⚠️  Could not query agent registry (Redis unavailable)'));
+      }
+
+      if (options.json) {
+        console.log(JSON.stringify(status, null, 2));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+zeroTurnCommand
+  .command('stop')
+  .description('Stop TNF zero-turn autonomous operation')
+  .action(async () => {
+    try {
+      console.log(chalk.yellow('Stopping TNF zero-turn autonomous services...\n'));
+
+      const { execSync } = await import('child_process');
+
+      const processes = [
+        { name: 'TNF Agent Daemon', pattern: 'tnf-agent-daemon' },
+        { name: 'TNF Director Loop', pattern: 'tnf-director-loop' },
+        { name: 'Terminal Heartbeat', pattern: 'terminal-heartbeat-pulse' },
+      ];
+
+      for (const proc of processes) {
+        try {
+          execSync(`pkill -f ${proc.pattern}`, { stdio: 'ignore' });
+          console.log(chalk.green(`✅ ${proc.name}: stopped`));
+        } catch {
+          console.log(chalk.dim(`   ${proc.name}: not running`));
+        }
+      }
+
+      console.log(chalk.green('\n✅ TNF zero-turn autonomous operation stopped\n'));
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -12916,7 +13239,7 @@ async function startInteractiveAgent(): Promise<void> {
   const systemPrompt = await loadTnfSystemPrompt();
 
   const { LLMClient } = await import('./utils/llm-client.js');
-  const client = new LLMClient('orchestrator');
+  const client = await LLMClient.create('orchestrator');
 
   const messages: ChatMessage[] = [{ role: 'system', content: systemPrompt }];
 
@@ -12926,13 +13249,13 @@ async function startInteractiveAgent(): Promise<void> {
   console.log(
     chalk.cyan('║') +
       chalk.dim(' Provider: ') +
-      chalk.white((client as any).providerName || 'unknown') +
+      chalk.white(client.providerName || 'unknown') +
       chalk.cyan(' ║')
   );
   console.log(
     chalk.cyan('║') + chalk.dim(' Model: ') + chalk.white(client.model) + chalk.cyan(' ║')
   );
-  const catalog = (client as any).getProviderCatalog?.() || [];
+  const catalog = client.getProviderCatalog?.() || [];
   const availableCount = catalog.filter((p: any) => p.hasKey).length;
   console.log(
     chalk.cyan('║') +
@@ -12942,6 +13265,36 @@ async function startInteractiveAgent(): Promise<void> {
   );
   console.log(chalk.cyan('╚══════════════════════════════════════════════╝'));
   console.log(chalk.dim(' Type /help for commands, /exit to quit, /clear to clear history\n'));
+
+  // Start heartbeat to keep session alive
+  const heartbeatInterval = setInterval(async () => {
+    try {
+      // Simple heartbeat via terminal pulse script
+      const pulseScript = path.join(process.env.HOME || '/tmp', '.tnf/bin/terminal-heartbeat-pulse.cjs');
+      if (fs.existsSync(pulseScript)) {
+        await runCommand('node', [pulseScript]);
+      }
+    } catch {
+      // Silent fail - heartbeat is best-effort
+    }
+  }, 30000);
+
+  // Self-prompting: inject fresh context every 5 minutes
+  const contextRefreshInterval = setInterval(async () => {
+    try {
+      // Read living state and handoff for fresh context
+      const handoffPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
+      if (fs.existsSync(handoffPath)) {
+        const handoff = JSON.parse(fs.readFileSync(handoffPath, 'utf8'));
+        if (handoff.next_actions?.length > 0) {
+          const autoPrompt = `\n[Auto-Context Refresh] Current pending actions from handoff:\n${JSON.stringify(handoff.next_actions, null, 2)}\n\nContinue autonomous execution toward these goals.`;
+          messages.push({ role: 'system', content: autoPrompt });
+        }
+      }
+    } catch {
+      // Silent fail - context refresh is best-effort
+    }
+  }, 300000);
 
   const ask = (prompt: string): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -13019,6 +13372,10 @@ async function startInteractiveAgent(): Promise<void> {
     }
   }
 
+  // Cleanup heartbeat and context refresh
+  clearInterval(heartbeatInterval);
+  clearInterval(contextRefreshInterval);
+
   rl.close();
   console.log(chalk.cyan('\n  TNF Agent session ended.\n'));
 }
@@ -13036,7 +13393,7 @@ async function startGatewayService(): Promise<void> {
   console.log(chalk.bold.cyan('\n  🔷 Starting TNF Gateway Service\n'));
 
   const { LLMClient } = await import('./utils/llm-client.js');
-  const client = new LLMClient('orchestrator');
+  const client = await LLMClient.create('orchestrator');
 
   console.log(chalk.dim(`  Provider: ${client.baseUrl}`));
   console.log(chalk.dim(`  Model:    ${client.model}`));

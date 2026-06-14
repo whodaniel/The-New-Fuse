@@ -71,7 +71,7 @@ turbo run clean
 
 # Build with maximum optimization
 NODE_ENV=production turbo run build:production \
-  --concurrency=75 \
+  --concurrency=4 \
   --cache-dir=.turbo \
   --output-logs=errors-only
 
@@ -375,7 +375,7 @@ cat > scripts/run-optimized.js << 'EOF'
 const { execSync } = require('child_process');
 
 const script = process.argv[2];
-const concurrency = process.argv[3] || '50';
+const concurrency = process.argv[3] || '4';
 
 if (!script) {
   console.log('Usage: node scripts/run-optimized.js <script> [concurrency]');

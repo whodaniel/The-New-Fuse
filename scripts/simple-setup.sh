@@ -5,7 +5,7 @@ set -e
 echo "Setting up The New Fuse project (simple mode)..."
 
 # Make sure node_modules exists
-pnpm install --no-package-lock typescript@4.9.5
+pnpm install
 
 # Create package directories
 mkdir -p packages/types/src packages/types/dist
@@ -86,10 +86,10 @@ echo '{
 
 # Compile types package
 echo "Compiling types package..."
-node_modules/.bin/tsc -p packages/types/tsconfig.json
+pnpm turbo run build --filter=@the-new-fuse/types
 
 # Run TypeScript check
 echo "Running TypeScript check directly..."
-node scripts/direct-tsc.js
+pnpm turbo run type-check
 
 echo "Basic setup complete!"

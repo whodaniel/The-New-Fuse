@@ -11,11 +11,20 @@
     "javascriptFiles": 3186
   },
   "topFiles": [
-    {"path": "apps/casin8-games/server.js", "hits": 2},
-    {"path": "packages/tnf-cli/src/cli.ts", "hits": 2},
-    {"path": "clean_landing/assets/js/SuperAdminControlPanel.DDQ9oPXX.js", "hits": 2},
-    {"path": "app_deploy_final/assets/js/SuperAdminControlPanel.DDQ9oPXX.js", "hits": 2},
-    {"path": "apps/frontend/src/pages/Admin/SuperAdminControlPanel.tsx", "hits": 2}
+    { "path": "apps/casin8-games/server.js", "hits": 2 },
+    { "path": "packages/tnf-cli/src/cli.ts", "hits": 2 },
+    {
+      "path": "clean_landing/assets/js/SuperAdminControlPanel.DDQ9oPXX.js",
+      "hits": 2
+    },
+    {
+      "path": "app_deploy_final/assets/js/SuperAdminControlPanel.DDQ9oPXX.js",
+      "hits": 2
+    },
+    {
+      "path": "apps/frontend/src/pages/Admin/SuperAdminControlPanel.tsx",
+      "hits": 2
+    }
   ],
   "techDetected": ["github-actions", "mcp", "nestjs", "node"],
   "blocker": {

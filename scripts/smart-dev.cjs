@@ -131,7 +131,7 @@ function runDev() {
         log('   • Electron Desktop - Browser hub interface', 'blue');
         log('');
         
-        execSync('turbo run dev --filter=@the-new-fuse/api-gateway --filter=@the-new-fuse/electron-desktop --filter=@the-new-fuse/theia-ide --filter=@the-new-fuse/backend-app --filter=@the-new-fuse/frontend-app --concurrency=6', { 
+        execSync('turbo run dev --filter=@the-new-fuse/api-gateway --filter=@the-new-fuse/electron-desktop --filter=@the-new-fuse/theia-ide --filter=@the-new-fuse/backend-app --filter=@the-new-fuse/frontend-app --concurrency=1', { 
             stdio: 'inherit',
             cwd: process.cwd(),
             shell: true

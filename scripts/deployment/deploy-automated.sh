@@ -326,7 +326,7 @@ run_tests() {
   log STEP "Running test suite..."
 
   # Run tests with memory optimization
-  BUILD_MEMORY_LIMIT=2048 BUILD_CONCURRENCY=2 pnpm run test:memory-optimized || {
+  pnpm run test:memory-optimized || {
     log ERROR "Tests failed"
 
     if [[ "${ALLOW_TEST_FAILURES:-false}" == "true" ]]; then

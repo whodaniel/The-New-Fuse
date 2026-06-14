@@ -6,7 +6,7 @@
     "prebuild": "pnpm --filter @the-new-fuse/database build && pnpm --filter @the-new-fuse/mcp-core build && pnpm --filter @the-new-fuse/ag-ui-core build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/utils build",
     "build": "tsc",
     "build:watch": "nest build --watch",
-    "dev": "PORT=$(node ../../scripts/find-available-port.cjs backend) cross-env nest start --watch --entryFile simple-main",
+    "dev": "PORT=$(node ../../packages/port-management/scripts/find-available-port.cjs backend) cross-env nest start --watch --entryFile simple-main",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

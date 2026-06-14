@@ -11,7 +11,7 @@ fi
 
 # Build all packages and applications
 echo "📦 Building all packages..."
-yarn build
+pnpm turbo run build
 
 # Generate Drizzle client
 echo "🗄️ Generating database client..."

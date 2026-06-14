@@ -2,10 +2,30 @@
 
 import { EventEmitter } from 'events';
 import * as net from 'net';
+import { checkPort } from 'node-port-check'; // Import checkPort from node-port-check
 import { execFileSync } from 'node:child_process';
 import * as portfinder from 'portfinder';
-import { checkPort } from 'node-port-check'; // Import checkPort from node-port-check
+import { createClient } from 'redis'; // Assume redis client is available or mocked
 
+// Mock Redis client and lock functions for now
+const mockRedisClient = {
+  connect: async () => {}, // Mock connect
+  disconnect: async () => {}, // Mock disconnect
+  setnx: async (key: string, value: string) => {
+    // Mock setnx (set if not exists)
+    const isLocked = process.env[key] === 'locked';
+    if (!isLocked) {
+      process.env[key] = 'locked';
+      return 1; // Successfully acquired lock
+    }
+    return 0; // Failed to acquire lock
+  },
+  del: async (key: string) => {
+    // Mock del
+    delete process.env[key];
+    return 1; // Successfully released lock
+  },
+};
 
 export interface PortRegistration {
   id: string;
@@ -75,7 +95,6 @@ export interface RuntimePortPreflightResult {
 }
 
 const DEFAULT_RUNTIME_PORTS: RuntimePortCatalogEntry[] = [
-
   { port: 3001, serviceName: 'api/backend', protected: false },
   { port: 3004, serviceName: 'backend', protected: false },
   { port: 3003, serviceName: 'api-gateway/ws-bridge-secondary', protected: false },
@@ -105,12 +124,19 @@ function parsePortList(value: string | undefined): number[] {
 }
 
 export class PortRegistryService extends EventEmitter {
+  private redisClient: typeof mockRedisClient; // Using mock client for now
+
   private registry: Map<string, PortRegistration> = new Map();
   private configurations: Map<string, ServiceConfiguration> = new Map();
   private monitoringInterval: NodeJS.Timeout | null = null;
   private temporaryReservations: Map<number, net.Server> = new Map();
 
   constructor() {
+    super();
+    this.redisClient = mockRedisClient; // Initialize mock client
+    this.redisClient.connect().catch(console.error); // Connect mock client
+    this.loadConfigurations();
+  }
     super();
     this.loadConfigurations();
   }
@@ -135,7 +161,7 @@ export class PortRegistryService extends EventEmitter {
       host = 'localhost',
       protocol = 'http',
       healthCheckUrl,
-      metadata = {}
+      metadata = {},
     } = config;
 
     let { port } = config;
@@ -150,9 +176,19 @@ export class PortRegistryService extends EventEmitter {
       // MODIFIED: Directly attempt to temporarily reserve the explicitly provided port
       const reservedServer = await this.reservePortTemporarily(port);
       if (!reservedServer) {
-        throw new Error(`Failed to temporarily reserve explicitly provided port ${port}. It might be in use or have been taken concurrently.`);
+        throw new Error(
+          `Failed to acquire temporary reservation or lock for explicitly provided port ${port}. It might be in use or have been taken concurrently.`
+        );
       }
       preReservedPort = true; // Mark as pre-reserved
+    } else {
+      // If an explicit port is provided, try to acquire a lock immediately
+      const lockAcquired = await this.acquirePortLock(port);
+      if (!lockAcquired) {
+        throw new Error(
+          `Failed to acquire a lock for explicitly provided port ${port}. Another process might be holding it.`
+        );
+      }
     }
 
     const registration: PortRegistration = {
@@ -167,7 +203,7 @@ export class PortRegistryService extends EventEmitter {
       healthCheckUrl,
       createdAt: new Date(),
       updatedAt: new Date(),
-      metadata
+      metadata,
     };
 
     this.registry.set(registration.id, registration);
@@ -176,12 +212,16 @@ export class PortRegistryService extends EventEmitter {
     // If the port was pre-reserved by this instance, release the temporary hold
     if (preReservedPort) {
       this.releaseTemporaryReservation(port!);
+    } else {
+      // If not pre-reserved, but an explicit port was given and locked, release the lock
+      await this.releasePortLock(port!); 
+    }
     }
 
     return registration;
   }
 
-// New helper to release temporary reservation
+  // New helper to release temporary reservation
   private releaseTemporaryReservation(port: number): void {
     const server = this.temporaryReservations.get(port);
     if (server) {
@@ -195,11 +235,15 @@ export class PortRegistryService extends EventEmitter {
   /**
    * Find an available port for a service
    */
-  async findAvailablePort(serviceName: string, environment: PortRegistration['environment']): Promise<number> {
+  async findAvailablePort(
+    serviceName: string,
+    environment: PortRegistration['environment']
+  ): Promise<number> {
     const config = this.getServiceConfiguration(serviceName, environment);
 
     // Retry finding and reserving a port until successful
-    for (let i = 0; i < 20; i++) { // Max 20 retries
+    for (let i = 0; i < 20; i++) {
+      // Max 20 retries
       try {
         const potentialPort = await portfinder.getPortPromise({
           port: config.preferredPort || config.portRangeMin,
@@ -207,17 +251,27 @@ export class PortRegistryService extends EventEmitter {
         });
 
         const reservedServer = await this.reservePortTemporarily(potentialPort);
-        if (reservedServer) {
-          return potentialPort;
+        // Try to acquire a lock before attempting to bind
+        const lockAcquired = await this.acquirePortLock(potentialPort);
+        if (lockAcquired) {
+          const reservedServer = await this.reservePortTemporarily(potentialPort);
+          if (reservedServer) {
+            return potentialPort;
+          } else {
+            // If temporary reservation failed, release the lock
+            await this.releasePortLock(potentialPort);
+          }
         }
       } catch (err: unknown) {
         // Log the error but continue retrying
         console.error(`Error in findAvailablePort for ${serviceName}-${environment}:`, err);
       }
-      await new Promise(resolve => setTimeout(resolve, 50 * (i + 1))); // Exponential backoff before retrying
+      await new Promise((resolve) => setTimeout(resolve, 50 * (i + 1))); // Exponential backoff before retrying
     }
 
-    throw new Error(`No available and reservable ports found for service ${serviceName} in environment ${environment} within range ${config.portRangeMin}-${config.portRangeMax} after multiple attempts.`);
+    throw new Error(
+      `No available and reservable ports found for service ${serviceName} in environment ${environment} within range ${config.portRangeMin}-${config.portRangeMax} after multiple attempts.`
+    );
   }
 
   /**
@@ -225,7 +279,9 @@ export class PortRegistryService extends EventEmitter {
    */
   async isPortAvailable(port: number, host: string = 'localhost'): Promise<boolean> {
     // Use node-port-check for port availability
-    return checkPort(port, host).then(() => true).catch(() => false);
+    return checkPort(port, host)
+      .then(() => true)
+      .catch(() => false);
   }
 
   /**
@@ -271,11 +327,13 @@ export class PortRegistryService extends EventEmitter {
     });
   }
 
-  detectRuntimeConflicts(options: {
-    includeProtected?: boolean;
-    allowOccupiedPorts?: number[];
-    extraPorts?: RuntimePortCatalogEntry[];
-  } = {}): RuntimePortPreflightResult {
+  detectRuntimeConflicts(
+    options: {
+      includeProtected?: boolean;
+      allowOccupiedPorts?: number[];
+      extraPorts?: RuntimePortCatalogEntry[];
+    } = {}
+  ): RuntimePortPreflightResult {
     const allowed = new Set([
       ...parsePortList(process.env.TNF_PORTS_ALLOW_OCCUPIED),
       ...(options.allowOccupiedPorts || []),
@@ -310,16 +368,21 @@ export class PortRegistryService extends EventEmitter {
   /**
    * Get service configuration
    */
-  private getServiceConfiguration(serviceName: string, environment: PortRegistration['environment']): ServiceConfiguration {
+  private getServiceConfiguration(
+    serviceName: string,
+    environment: PortRegistration['environment']
+  ): ServiceConfiguration {
     const key = `${serviceName}-${environment}`;
-    return this.configurations.get(key) || {
-      serviceName,
-      environment,
-      fallbackPorts: [],
-      autoAssign: true,
-      portRangeMin: 3000,
-      portRangeMax: 9999
-    };
+    return (
+      this.configurations.get(key) || {
+        serviceName,
+        environment,
+        fallbackPorts: [],
+        autoAssign: true,
+        portRangeMin: 3000,
+        portRangeMax: 9999,
+      }
+    );
   }
 
   /**
@@ -334,7 +397,7 @@ export class PortRegistryService extends EventEmitter {
         fallbackPorts: [3010, 3020, 3030],
         autoAssign: true,
         portRangeMin: 3000,
-        portRangeMax: 3099
+        portRangeMax: 3099,
       },
       {
         serviceName: 'api',
@@ -343,7 +406,7 @@ export class PortRegistryService extends EventEmitter {
         fallbackPorts: [3011, 3021, 3031],
         autoAssign: true,
         portRangeMin: 3001,
-        portRangeMax: 3199
+        portRangeMax: 3199,
       },
       {
         serviceName: 'api-gateway/ws-bridge',
@@ -352,8 +415,8 @@ export class PortRegistryService extends EventEmitter {
         fallbackPorts: [3015, 3025, 3035],
         autoAssign: true,
         portRangeMin: 3005,
-        portRangeMax: 3105
-      }
+        portRangeMax: 3105,
+      },
     ];
 
     for (const config of defaultConfigs) {
@@ -367,7 +430,7 @@ export class PortRegistryService extends EventEmitter {
   }
 
   findByPort(port: number): PortRegistration | undefined {
-    return Array.from(this.registry.values()).find(reg => reg.port === port);
+    return Array.from(this.registry.values()).find((reg) => reg.port === port);
   }
 
   private findProcessesOnPort(port: number): RuntimePortProcess[] {
@@ -402,8 +465,15 @@ export class PortRegistryService extends EventEmitter {
    * Temporarily binds to a port to reserve it. Keeps the server open.
    * Returns the server instance if the port was successfully reserved, null otherwise.
    */
+  /**
+   * Temporarily binds to a port to reserve it. Keeps the server open.
+   * Assumes a lock for this port has already been acquired if this is called after findAvailablePort.
+   * Returns the server instance if the port was successfully reserved, null otherwise.
+   */
   private async reservePortTemporarily(port: number): Promise<net.Server | null> {
     return new Promise((resolve) => {
+      // No need to acquire lock here, as it should be acquired before calling this function.
+      // This function only attempts to bind the port physically.
       const server = net.createServer();
       server.listen(port, 'localhost', () => {
         // Port successfully bound, keep it open temporarily
@@ -423,10 +493,40 @@ export class PortRegistryService extends EventEmitter {
   }
 
   getByService(serviceName: string, environment?: string): PortRegistration[] {
-    return Array.from(this.registry.values()).filter(reg => 
-      reg.serviceName === serviceName && 
-      (!environment || reg.environment === environment)
+    return Array.from(this.registry.values()).filter(
+      (reg) => reg.serviceName === serviceName && (!environment || reg.environment === environment)
     );
+  }
+
+  private async acquirePortLock(port: number, timeoutMs: number = 2000): Promise<boolean> {
+    const lockKey = `port_lock:${port}`;
+    const startTime = Date.now();
+    while (Date.now() - startTime < timeoutMs) {
+      try {
+        const acquired = await this.redisClient.setnx(lockKey, 'locked');
+        if (acquired === 1) {
+          // console.log(`Acquired lock for port ${port}`);
+          return true;
+        }
+      } catch (err) {
+        console.error(`Error acquiring Redis lock for port ${port}:`, err);
+        // In case of Redis error, proceed without lock to avoid blocking indefinitely
+        return true; 
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Wait a bit before retrying
+    }
+    console.warn(`Failed to acquire lock for port ${port} after ${timeoutMs}ms.`);
+    return false;
+  }
+
+  private async releasePortLock(port: number): Promise<void> {
+    const lockKey = `port_lock:${port}`;
+    try {
+      await this.redisClient.del(lockKey);
+      // console.log(`Released lock for port ${port}`);
+    } catch (err) {
+      console.error(`Error releasing Redis lock for port ${port}:`, err);
+    }
   }
 
   destroy(): void {
@@ -435,5 +535,7 @@ export class PortRegistryService extends EventEmitter {
       this.monitoringInterval = null;
     }
     this.removeAllListeners();
+    // Disconnect Redis client on destroy
+    this.redisClient.disconnect().catch(console.error);
   }
 }

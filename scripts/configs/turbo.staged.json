@@ -1,10 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "extends": ["./turbo.json"],
-  "concurrency": 1, // Further reduced concurrency to resolve persistent collisions as per TNF Resonance Task.
-
   "tasks": {
     "build:stage-1": {
+      "concurrency": 4,
       "dependsOn": ["^db:generate"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
@@ -20,6 +19,7 @@
       "cache": true
     },
     "build:stage-2": {
+      "concurrency": 4,
       "dependsOn": ["^build:stage-1"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
@@ -35,6 +35,7 @@
       "cache": true
     },
     "build:stage-3": {
+      "concurrency": 4,
       "dependsOn": ["^build:stage-2"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",

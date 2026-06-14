@@ -1,4 +1,3 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import {
   registerGetAgentDetailsTool,
   registerGetSystemStatusTool,
@@ -16,9 +15,7 @@ export const mainServerTools: ToolRegistrationFunction[] = [
   registerHermesNa10McpCommandTool,
 ];
 
-export const completeApiTools: ToolRegistrationFunction[] = [
-  registerPlaceholderTool,
-];
+export const completeApiTools: ToolRegistrationFunction[] = [registerPlaceholderTool];
 
 export const enhancedTnfTools: ToolRegistrationFunction[] = [
   registerListAgentsTool,

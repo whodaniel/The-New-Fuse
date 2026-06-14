@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nest
 import { DrizzleService } from '@the-new-fuse/database';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
+import { ConflictManager } from './ConflictManager'; // Import ConflictManager
 import { EventEmitter } from 'events';
 import {
   ConflictResolution,
@@ -87,7 +88,8 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
     private readonly redisService: UnifiedRedisService,
     @Inject('IWebSocketService') private readonly wsService: IWebSocketService,
     private readonly dbService: DrizzleService,
-    private readonly promptTemplateService: PromptTemplateServiceImpl
+    private readonly promptTemplateService: PromptTemplateServiceImpl,
+    private readonly conflictManager: ConflictManager // Inject ConflictManager
   ) {
     super();
   }
@@ -430,9 +432,18 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
         operation.tenantId
       );
 
-      if (existingState && this.hasConflict(operation, existingState)) {
-        await this.createConflict(operation, existingState);
-        return;
+      if (existingState) {
+        // Determine the actual conflict type using ConflictManager's logic
+        const conflictType = this.conflictManager.determineConflictType(
+          existingState,
+          existingState.metadata, // localVersion is the existing state's metadata
+          operation.data // remoteVersion is the incoming operation data
+        );
+
+        if (conflictType) {
+          await this.createConflict(operation, existingState, conflictType);
+          return;
+        }
       }
 
       // Apply sync operation
@@ -567,7 +578,9 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       case 'checksum':
         return 'merge';
       case 'concurrent':
-        return 'manual';
+        // TNF Resonance Fix: Changed concurrent modifications from manual intervention to latest_wins
+        // to address Turbo concurrency collisions. This can be made configurable if needed.
+        return 'latest_wins';
       default:
         return 'latest_wins';
     }
@@ -628,14 +641,15 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
 
   private async createConflict(
     operation: SyncOperation,
-    existingState: SyncStateData
+    existingState: SyncStateData,
+    conflictType: string // Pass the determined conflict type
   ): Promise<void> {
     const conflict: SyncConflictData = {
       id: this.generateOperationId(),
       resourceType: operation.resourceType,
       resourceId: operation.resourceId,
       tenantId: operation.tenantId,
-      conflictType: 'checksum',
+      conflictType: conflictType, // Use the determined conflict type
       localVersion: existingState.metadata,
       remoteVersion: operation.data,
       createdAt: new Date(),

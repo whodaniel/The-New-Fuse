@@ -2579,6 +2579,9 @@ importers:
         specifier: ^3.25.1
         version: 3.25.2(zod@4.4.3)
     devDependencies:
+      '@stylistic/eslint-plugin':
+        specifier: '*'
+        version: 5.10.0(eslint@10.3.0(jiti@2.7.0))
       '@the-new-fuse/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -12454,6 +12457,12 @@ packages:
     resolution: {integrity: sha512-n6OEjEtHupa2PdTwWzRepr7cO8NkDd4rgF6BKLitRbujOspLxzMBEqdphs+QLcuiCIgf33SqmEA64QWnbSMhPw==}
     peerDependencies:
       storybook: '>=8.6.17'
+
+  '@stylistic/eslint-plugin@5.10.0':
+    resolution: {integrity: sha512-nPK52ZHvot8Ju/0A4ucSX1dcPV2/1clx0kLcH5wDmrE4naKso7TUC/voUyU1O9OTKTrR6MYip6LP0ogEMQ9jPQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^9.0.0 || ^10.0.0
 
   '@supabase/auth-js@2.105.3':
     resolution: {integrity: sha512-hMFuzP++mjRfe0/BUq4/e82CXIDgyjUgg0khLN8waol/gzoM1t2iGmhfJSGvQHQ1dr3XqWpP6ThAw4bLHMot5Q==}
@@ -33061,6 +33070,16 @@ snapshots:
   '@storybook/theming@8.6.18(storybook@10.3.6(@testing-library/dom@10.4.1)(bufferutil@4.1.0)(prettier@3.8.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(utf-8-validate@6.0.6))':
     dependencies:
       storybook: 10.3.6(@testing-library/dom@10.4.1)(bufferutil@4.1.0)(prettier@3.8.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(utf-8-validate@6.0.6)
+
+  '@stylistic/eslint-plugin@5.10.0(eslint@10.3.0(jiti@2.7.0))':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.9.1(eslint@10.3.0(jiti@2.7.0))
+      '@typescript-eslint/types': 8.59.2
+      eslint: 10.3.0(jiti@2.7.0)
+      eslint-visitor-keys: 4.2.1
+      espree: 10.4.0
+      estraverse: 5.3.0
+      picomatch: 4.0.4
 
   '@supabase/auth-js@2.105.3':
     dependencies:

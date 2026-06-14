@@ -166,16 +166,16 @@ run_parallel_tests() {
     
     case "$test_type" in
         "unit")
-            run_turbo test:unit --concurrency="$concurrency" "$@"
+            run_turbo test:unit --concurrency=1 "$@"
             ;;
         "integration")
-            run_turbo test:integration --concurrency="$concurrency" "$@"
+            run_turbo test:integration --concurrency=1 "$@"
             ;;
         "e2e")
             run_turbo test:e2e --concurrency=1 "$@"
             ;;
         "all"|*)
-            run_turbo test --concurrency="$concurrency" "$@"
+            run_turbo test --concurrency=1 "$@"
             ;;
     esac
     
@@ -307,18 +307,18 @@ run_ci_tests() {
     
     case "$test_type" in
         "unit")
-            run_turbo test:ci --filter="./packages/*" "$@"
+            run_turbo test:ci --filter="./packages/*" --concurrency=1 "$@"
             ;;
         "integration")
-            run_turbo test:integration --filter="./apps/*" "$@"
+            run_turbo test:integration --filter="./apps/*" --concurrency=1 "$@"
             ;;
         "e2e")
             run_turbo test:e2e --concurrency=1 "$@"
             ;;
         "all"|*)
             # Run in stages for CI
-            run_turbo test:ci --filter="./packages/*" "$@"
-            run_turbo test:integration --filter="./apps/*" "$@"
+            run_turbo test:ci --filter="./packages/*" --concurrency=1 "$@"
+            run_turbo test:integration --filter="./apps/*" --concurrency=1 "$@"
             run_turbo test:e2e --concurrency=1 "$@"
             ;;
     esac

@@ -1,21 +1,44 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": [
+    "**/.env.*local"
+  ],
   "globalEnv": [
     "NODE_ENV",
     "DATABASE_URL",
     "REDIS_URL",
     "JWT_SECRET",
     "API_PORT",
-    "FRONTEND_PORT"
+    "FRONTEND_PORT",
+    "PORT",
+    "GRPC_URL",
+    "VECTOR_DB_HTTP_PORT",
+    "GOOGLE_SHEETS_MCP_PORT",
+    "RELAY_PORT",
+    "SYNC_CORE_PORT"
   ],
   "remoteCache": {
     "signature": true
   },
-
-  "tasks": {
+  "pipeline": {
+    "format": {
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx,json,md,css}"
+      ],
+      "outputs": [],
+      "outputLogs": "errors-only"
+    },
+    "format:check": {
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx,json,md,css}"
+      ],
+      "outputs": [],
+      "outputLogs": "errors-only"
+    },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",
@@ -25,20 +48,32 @@
         "!**/*.spec.*"
       ],
       "outputs": [
+        "dist",
         "dist/**",
+        ".next",
         ".next/**",
         "!.next/cache/**",
+        "lib",
         "lib/**",
+        "build",
         "build/**",
+        "out",
         "out/**",
+        "types",
         "types/**",
+        "esm",
         "esm/**",
+        "cjs",
         "cjs/**"
       ],
-      "outputLogs": "new-only"
+      "outputLogs": "full"
     },
     "build:production": {
-      "dependsOn": ["^build:production", "^db:generate"],
+      "dependsOn": [
+        "^clean",
+        "^build",
+        "^db:generate"
+      ],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",
@@ -58,83 +93,208 @@
         "esm/**",
         "cjs/**"
       ],
-      "env": ["NODE_ENV=production"],
+      "env": [
+        "NODE_ENV=production"
+      ],
       "outputLogs": "new-only"
     },
     "build:types": {
-      "dependsOn": ["^build:types"],
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json", "!**/*.test.*"],
-      "outputs": ["dist/**", "types/**", "lib/**/*.d.ts"],
-      "outputLogs": "errors-only"
+      "dependsOn": [
+        "^build:types"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "package.json",
+        "tsconfig.json",
+        "!**/*.test.*"
+      ],
+      "outputs": [
+        "dist/**",
+        "types/**",
+        "lib/**/*.d.ts"
+      ],
+      "outputLogs": "errors-only",
+      "concurrency": 1
     },
     "build:utils": {
-      "dependsOn": ["^build:utils", "build:types"],
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json", "!**/*.test.*"],
-      "outputs": ["dist/**", "lib/**"],
-      "outputLogs": "errors-only"
+      "dependsOn": [
+        "^build:utils",
+        "build:types"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "package.json",
+        "tsconfig.json",
+        "!**/*.test.*"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**"
+      ],
+      "outputLogs": "errors-only",
+      "concurrency": 1
     },
     "build:core": {
-      "dependsOn": ["^build:core", "build:types", "build:utils"],
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json", "!**/*.test.*"],
-      "outputs": ["dist/**", "lib/**"],
-      "outputLogs": "errors-only"
+      "dependsOn": [
+        "^build:core",
+        "build:types",
+        "build:utils"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "package.json",
+        "tsconfig.json",
+        "!**/*.test.*"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**"
+      ],
+      "outputLogs": "errors-only",
+      "concurrency": 1
     },
     "build:database": {
-      "dependsOn": ["^build:database", "build:types", "db:generate"],
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json", "drizzle/**", "!**/*.test.*"],
-      "outputs": ["dist/**", "lib/**"],
-      "outputLogs": "errors-only"
+      "dependsOn": [
+        "^build:database",
+        "build:types",
+        "db:generate"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "package.json",
+        "tsconfig.json",
+        "drizzle/**",
+        "!**/*.test.*"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**"
+      ],
+      "outputLogs": "errors-only",
+      "concurrency": 1
     },
     "build:api": {
-      "dependsOn": ["^build:api", "build:core", "build:database", "build:types"],
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json", "!**/*.test.*"],
-      "outputs": ["dist/**", "lib/**"],
-      "outputLogs": "errors-only"
+      "dependsOn": [
+        "^build:api",
+        "build:core",
+        "build:database",
+        "build:types"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "package.json",
+        "tsconfig.json",
+        "!**/*.test.*"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**"
+      ],
+      "outputLogs": "errors-only",
+      "concurrency": 1
     },
     "build:ui": {
-      "dependsOn": ["^build:ui", "build:types"],
-      "inputs": ["src/**/*.{ts,tsx,js,jsx}", "package.json", "tsconfig.json", "!**/*.test.*"],
-      "outputs": ["dist/**", "lib/**", "esm/**", "cjs/**"],
-      "outputLogs": "errors-only"
+      "dependsOn": [
+        "^build:ui",
+        "build:types"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "!**/*.test.*"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**",
+        "esm/**",
+        "cjs/**"
+      ],
+      "outputLogs": "errors-only",
+      "concurrency": 1
     },
     "build:packages": {
-      "dependsOn": ["build:types", "build:utils", "build:core", "build:database"],
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**", "lib/**"]
+      "dependsOn": [
+        "build:types",
+        "build:utils",
+        "build:core",
+        "build:database"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**"
+      ],
+      "concurrency": 1
     },
     "build:apps": {
-      "dependsOn": ["build:packages"],
-      "inputs": ["src/**/*.{ts,tsx,js,jsx}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**", "build/**", ".next/**"]
+      "dependsOn": [
+        "build:packages"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": [
+        "dist/**",
+        "build/**",
+        ".next/**"
+      ],
+      "concurrency": 1
     },
     "lint": {
-      "inputs": ["src/**/*.{ts,tsx,js,jsx}", ".eslintrc*", "package.json"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        ".eslintrc*",
+        "package.json"
+      ],
       "outputs": [],
       "outputLogs": "errors-only"
     },
     "lint:fix": {
-      "inputs": ["src/**/*.{ts,tsx,js,jsx}", ".eslintrc*", "package.json"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        ".eslintrc*",
+        "package.json"
+      ],
       "outputs": [],
       "cache": false
     },
     "type-check": {
-      "dependsOn": ["^build:types"],
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
+      "dependsOn": [
+        "^build:types"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "package.json",
+        "tsconfig.json"
+      ],
       "outputs": [],
       "outputLogs": "errors-only"
     },
     "dev": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": [
+        "^build:types"
+      ],
       "cache": false,
       "persistent": true
     },
     "start": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": false,
       "persistent": true
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "test/**/*.{ts,tsx,js,jsx}",
@@ -144,11 +304,15 @@
         "jest.config.*",
         "vitest.config.*"
       ],
-      "outputs": ["coverage/**"],
+      "outputs": [
+        "coverage/**"
+      ],
       "outputLogs": "new-only"
     },
     "test:unit": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": [
+        "^build:types"
+      ],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "**/*.test.*",
@@ -156,50 +320,84 @@
         "package.json",
         "jest.config.*"
       ],
-      "outputs": ["coverage/**"]
+      "outputs": [
+        "coverage/**"
+      ]
     },
     "test:integration": {
-      "dependsOn": ["^build", "^db:generate"],
+      "dependsOn": [
+        "^clean",
+        "^build",
+        "^db:generate"
+      ],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "test/**/*.{ts,tsx,js,jsx}",
         "package.json"
       ],
-      "outputs": ["coverage/**"]
+      "outputs": [
+        "coverage/**"
+      ],
+      "concurrency": 1
     },
     "test:e2e": {
-      "dependsOn": ["^build", "^db:generate"],
+      "dependsOn": [
+        "^clean",
+        "^build",
+        "^db:generate"
+      ],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "e2e/**/*.{ts,js}",
         "playwright.config.*"
       ],
-      "outputs": ["test-results/**", "playwright-report/**"]
+      "outputs": [
+        "test-results/**",
+        "playwright-report/**"
+      ],
+      "concurrency": 1
     },
     "clean": {
       "cache": false,
       "outputLogs": "errors-only"
     },
     "db:generate": {
-      "inputs": ["drizzle/schema.drizzle"],
-      "outputs": ["node_modules/.drizzle/**", "drizzle/generated/**"],
+      "inputs": [
+        "drizzle/schema.drizzle"
+      ],
+      "outputs": [
+        "node_modules/.drizzle/**",
+        "drizzle/generated/**"
+      ],
       "cache": false,
-      "outputLogs": "errors-only"
+      "outputLogs": "errors-only",
+      "concurrency": 1
     },
     "db:migrate": {
-      "inputs": ["drizzle/migrations/**", "drizzle/schema.drizzle"],
+      "inputs": [
+        "drizzle/migrations/**",
+        "drizzle/schema.drizzle"
+      ],
       "cache": false,
-      "outputLogs": "new-only"
+      "outputLogs": "new-only",
+      "concurrency": 1
     },
     "db:studio": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "concurrency": 1
     },
     "docker:build": {
-      "dependsOn": ["build:production"],
-      "inputs": ["Dockerfile*", "docker-compose*.yml"],
+      "dependsOn": [
+        "build:production"
+      ],
+      "inputs": [
+        "Dockerfile*",
+        "docker-compose*.yml"
+      ],
       "outputs": [],
-      "cache": false
+      "cache": false,
+      "concurrency": 1
     }
   }
 }

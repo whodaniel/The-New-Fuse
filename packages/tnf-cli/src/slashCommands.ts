@@ -85,6 +85,15 @@ const STANDARD_SLASH_COMMANDS: SlashCommandDefinition[] = [
     prompt:
       'Apply the following requested change to the TNF workspace. Inspect state first, keep edits scoped, and verify the result. Instruction:',
   },
+  {
+    name: 'new',
+    summary: 'Start a new conversation with a clean state',
+    usage: '/new',
+    source: 'standard',
+    mode: 'prompt',
+    prompt:
+      'Start a new conversation. Clear the current context, chat history, and any temporary state. Begin fresh with the system prompt.',
+  },
 ];
 
 const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [

@@ -11,7 +11,7 @@ if [ -f "./comprehensive-build.sh" ]; then
   ./comprehensive-build.sh
 else
   echo "Building with yarn..."
-  yarn build
+  pnpm turbo run build
 fi
 
 # 2. Run the tests

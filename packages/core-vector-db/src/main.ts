@@ -12,7 +12,7 @@ async function bootstrap() {
   const grpcUrl = process.env.GRPC_URL || '0.0.0.0:50051';
   const protoPath =
     process.env.PROTO_PATH || join(__dirname, '../../proto-definitions/proto/vector_store.proto');
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+  const httpPort = process.env.VECTOR_DB_HTTP_PORT ? parseInt(process.env.VECTOR_DB_HTTP_PORT) : 3005;
 
   logger.log(`Starting Vector Database service`);
   logger.log(`Using proto file: ${protoPath}`);
@@ -93,8 +93,8 @@ async function bootstrap() {
   logger.log(`gRPC microservice running on ${grpcUrl}`);
 
   // Start HTTP server for health checks
-  await app.listen(port);
-  logger.log(`HTTP server listening on port ${port}`);
+  await app.listen(httpPort);
+  logger.log(`HTTP server listening on port ${httpPort}`);
 }
 
 bootstrap().catch((error) => {

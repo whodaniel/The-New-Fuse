@@ -1,0 +1,13 @@
+# deepsec parse-failure debug dump
+# phase: investigate
+# agentType: claude-agent-sdk
+# timestamp: 2026-06-12T17:17:52.389Z
+# error: Error: Agent produced output that wasn't a parseable JSON findings array: Unexpected token 'N', "Not logged"... is not valid JSON. First 400 chars: Not logged in · Please run /login
+# batch (5 files):
+  - apps/chrome-extension/aivi/backend/routes/auth.js
+  - apps/chrome-extension/aivi/backend/routes/queue.js
+  - apps/chrome-extension/aivi/backend/routes/reports.js
+  - apps/chrome-extension/aivi/backend/routes/subscriptions.js
+  - apps/chrome-extension/aivi/backend/routes/users.js
+# --- raw agent output begins on next line ---
+Not logged in · Please run /login

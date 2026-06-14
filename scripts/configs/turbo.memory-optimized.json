@@ -1,10 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "extends": ["./turbo.json"],
-  "concurrency": 1, // Further reduced concurrency to prevent collisions as per TNF Resonance Task.
 
   "tasks": {
     "build": {
+      "concurrency": 4,
       "dependsOn": ["^build", "^db:generate"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
@@ -55,6 +55,7 @@
       ]
     },
     "test": {
+      "concurrency": 4,
       "dependsOn": ["^build"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",

@@ -104,7 +104,7 @@ echo "Installing dependencies..."
 yarn install --silent
 
 echo "Building airtable packages..."
-if yarn build --filter="@the-new-fuse/airtable-*" > /dev/null 2>&1; then
+if pnpm turbo run build --filter="@the-new-fuse/airtable-*" > /dev/null 2>&1; then
     echo "✅ Airtable packages build successfully"
 else
     echo "❌ Airtable packages failed to build"

@@ -85,9 +85,9 @@ export class AggregateService {
     };
   }
 }
+import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { execSync } from 'child_process';
 
 const ROOT_DIR = process.cwd();
 
@@ -107,40 +107,45 @@ async function run() {
       agentId: 'analyzer-agent',
       opinion: 'approve',
       weight: 0.9,
-      reason: 'No references to backCompatMiddleware are left in active code paths. It is safe to remove.'
+      reason:
+        'No references to backCompatMiddleware are left in active code paths. It is safe to remove.',
     },
     {
       agentId: 'architect-agent',
       opinion: 'approve',
       weight: 0.95,
-      reason: 'API routing versioning should be handled via decorators or gateway configuration, not rewrite middleware.'
+      reason:
+        'API routing versioning should be handled via decorators or gateway configuration, not rewrite middleware.',
     },
     {
       agentId: 'implementer-agent',
       opinion: 'approve',
       weight: 0.85,
-      reason: 'Verified that all TypeScript imports and main.ts registration have been removed. Compiling and running will succeed.'
+      reason:
+        'Verified that all TypeScript imports and main.ts registration have been removed. Compiling and running will succeed.',
     },
     {
       agentId: 'reviewer-agent',
       opinion: 'approve',
       weight: 0.9,
-      reason: 'Code quality and cleanliness check passed. Removal of dead code is highly approved.'
-    }
+      reason: 'Code quality and cleanliness check passed. Removal of dead code is highly approved.',
+    },
   ];
 
   console.log('\nGathered opinions:');
-  opinions.forEach(op => {
+  opinions.forEach((op) => {
     console.log(`- [${op.agentId}] (weight: ${op.weight}): ${op.opinion} - "${op.reason}"`);
   });
 
   // 2. Evaluate Consensus
   const aggregator = new AggregateService();
-  const result = await aggregator.findConsensus(opinions.map(op => ({
-    agentId: op.agentId,
-    opinion: op.opinion,
-    weight: op.weight
-  })));
+  const result = await aggregator.findConsensus(
+    opinions.map((op) => ({
+      agentId: op.agentId,
+      opinion: op.opinion,
+      weight: op.weight,
+    }))
+  );
 
   console.log('\n--- Consensus Evaluation Result ---');
   console.log(`Winner Opinion: ${result.consensus}`);
@@ -160,26 +165,28 @@ async function run() {
       console.log('Running type check on API package...');
       execSync('pnpm --filter @the-new-fuse/api-server run type-check', {
         cwd: ROOT_DIR,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
       console.log('✅ Type check passed.');
 
       console.log('Running build validation...');
       execSync('pnpm --filter @the-new-fuse/api-server run build', {
         cwd: ROOT_DIR,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
       console.log('✅ Build successful.');
-      
+
       // Update Living State and report
       updateLivingState();
       generateReport(result);
-      
+
       console.log('\n🎉 Refactoring consensus loop completed successfully and verified!');
     } catch (err: any) {
       console.error('❌ Verification failed. Restoring middleware...');
       // Rollback
-      fs.writeFileSync(middlewarePath, `import { Logger } from '@nestjs/common';
+      fs.writeFileSync(
+        middlewarePath,
+        `import { Logger } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 
 const logger = new Logger('BackCompatMiddleware');
@@ -195,7 +202,8 @@ export function backCompatMiddleware(req: Request, _res: Response, next: NextFun
   }
   next();
 }
-`);
+`
+      );
       console.error(err.message);
       process.exit(1);
     }
@@ -209,10 +217,11 @@ function updateLivingState() {
   const livingStatePath = path.join(ROOT_DIR, 'docs/protocols/LIVING_STATE.md');
   if (fs.existsSync(livingStatePath)) {
     let content = fs.readFileSync(livingStatePath, 'utf-8');
-    
+
     // Add active step completion or status update
-    const newStep = '35. [✅] Execute Consensus round for refactoring: verified removal of deprecated backCompatMiddleware.';
-    
+    const newStep =
+      '35. [✅] Execute Consensus round for refactoring: verified removal of deprecated backCompatMiddleware.';
+
     if (!content.includes('verified removal of deprecated backCompatMiddleware')) {
       // Find the last completed step in Active Steps
       const activeStepsHeader = '## ⚡ Active Steps';
@@ -221,9 +230,12 @@ function updateLivingState() {
         const insertPos = content.indexOf('\n', lastStepIndex) + 1;
         content = content.slice(0, insertPos) + `${newStep}\n` + content.slice(insertPos);
       } else {
-        content = content.replace(activeStepsHeader, `${activeStepsHeader}\n\n- [✅] Execute Consensus round for refactoring.`);
+        content = content.replace(
+          activeStepsHeader,
+          `${activeStepsHeader}\n\n- [✅] Execute Consensus round for refactoring.`
+        );
       }
-      
+
       // Update last update timestamp
       const lastUpdateHeader = '## 🕒 Last Update';
       const timestampPos = content.indexOf('\n', content.indexOf(lastUpdateHeader)) + 1;
@@ -232,7 +244,7 @@ function updateLivingState() {
       if (timestampPos !== -1 && nextNewline !== -1) {
         content = content.slice(0, timestampPos) + newUpdateStr + content.slice(nextNewline);
       }
-      
+
       fs.writeFileSync(livingStatePath, content, 'utf-8');
       console.log('📝 Updated doc: LIVING_STATE.md');
     }

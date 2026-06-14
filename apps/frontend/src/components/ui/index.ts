@@ -61,3 +61,4 @@ export {
 
 // Default export for Switch as required by some components
 export { Switch as default } from './switch';
+export * from './radio';

@@ -3,6 +3,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { singleInstanceGuard } from '../lib/tnf-single-instance-guard.cjs';
 
 const DEFAULT_OUT_DIR = path.join(process.cwd(), 'reports', 'personal-archaeology');
 const PROGRAM_SPEC = 'tnf/personal-archaeology-program/0.2';
@@ -889,6 +890,13 @@ async function runBlockerWatch(options) {
 }
 
 async function main() {
+  const guard = singleInstanceGuard({ lockName: 'personal-archaeology-orchestrator' });
+  if (!guard.acquired) {
+    console.error(JSON.stringify({ ok: false, skipped: 'already-running', lock: guard.existingLock }, null, 2));
+    process.exit(0);
+  }
+
+  try {
   const options = parseArgs(process.argv.slice(2));
   let result;
   if (options.command === 'init') {
@@ -920,4 +928,6 @@ main().catch((error) => {
     )
   );
   process.exit(1);
+}).finally(() => {
+  guard.release();
 });

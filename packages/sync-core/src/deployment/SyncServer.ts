@@ -45,7 +45,7 @@ export class SyncServer {
       await this.setupMetrics();
 
       // Start server
-      const port = process.env.PORT || 3003;
+      const port = process.env.SYNC_CORE_PORT || 3003;
       await this.app.listen(port);
 
       this.logger.log(`Sync Core server started on port ${port}`);
