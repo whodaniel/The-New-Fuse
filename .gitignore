@@ -330,3 +330,7 @@ reports/
 !docs/protocols/reports/TNF_VIRTUAL_LIBRARY_SURFACE_AUDIT.md
 apps/external/h17-webpilot/profile/
 apps/external/hardware/lightpanda
+
+# Large data files
+data/transcript*.json
+dump.rdb
