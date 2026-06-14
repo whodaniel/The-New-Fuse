@@ -32,6 +32,8 @@ import { EXPERIENCE_SURFACES } from '../config/experienceArchitecture';
 import { useAuth } from '../hooks/useAuth';
 import { useAuthorization } from '../hooks/useAuthorization';
 
+const TNF_LOGO_URL = 'https://thenewfuse.com/assets/brand/tnf-logo.png';
+
 interface DomainMenuItem {
   to: string;
   label: string;
@@ -273,7 +275,7 @@ function SmartNavigation() {
             <div className="flex items-center">
               <Link to="/" className="shrink-0 flex items-center group">
                 <img
-                  src="/assets/brand/logo-monogram-neon.png"
+                  src={TNF_LOGO_URL}
                   alt="The New Fuse Logo"
                   className="h-10 w-10 rounded-md shadow-none group-hover:scale-105 transition-transform object-cover"
                 />

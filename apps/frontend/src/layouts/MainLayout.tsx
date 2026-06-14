@@ -3,6 +3,8 @@ import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.tsx';
 
+const TNF_LOGO_URL = 'https://thenewfuse.com/assets/brand/tnf-logo.png';
+
 const MainLayout: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
 
@@ -15,7 +17,7 @@ const MainLayout: React.FC = () => {
             <div className="flex items-center gap-8">
               <Link to="/" className="flex-shrink-0 flex items-center gap-3 group">
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(56,189,248,0.3)]">
-                  <img className="h-5 w-5" src="/assets/brand/tnf-logo.png" alt="TNF" />
+                  <img className="h-5 w-5" src={TNF_LOGO_URL} alt="TNF" />
                 </div>
                 <span className="font-headline text-lg font-black tracking-widest uppercase hidden sm:block">
                   The New Fuse

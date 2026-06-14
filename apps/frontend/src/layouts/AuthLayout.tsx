@@ -1,6 +1,8 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
+const TNF_LOGO_URL = 'https://thenewfuse.com/assets/brand/tnf-logo.png';
+
 /**
  * Layout for authentication pages (login, register, etc.)
  */
@@ -9,6 +11,11 @@ const AuthLayout: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
+          <img
+            src={TNF_LOGO_URL}
+            alt="The New Fuse"
+            className="mx-auto h-16 w-auto mb-4"
+          />
           <h2 className="text-3xl font-extrabold text-gray-900">The New Fuse</h2>
           <p className="mt-2 text-sm text-gray-600">
             AI Agent Management Platform

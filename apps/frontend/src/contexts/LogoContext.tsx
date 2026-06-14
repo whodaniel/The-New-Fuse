@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { createContext, useContext, useEffect, useState } from 'react';
 import DefaultLoginLogoLight from '../media/illustrations/login-logo.svg';
-import TNFLogo from '/assets/brand/tnf-logo.png';
+const TNF_LOGO_URL = 'https://thenewfuse.com/assets/brand/tnf-logo.png';
+const TNFLogo = TNF_LOGO_URL;
 import TNFLogoAbstract from '/assets/brand/logo-abstract-gradient.png';
 import System from '../models/system';
 

@@ -5,6 +5,8 @@ import { SIDEBAR_NAVIGATION, type SidebarNavItem } from '../../config/sidebarNav
 import { useAuth } from '../../hooks/useAuth';
 import { useAuthorization } from '../../hooks/useAuthorization';
 
+const TNF_LOGO_URL = 'https://thenewfuse.com/assets/brand/tnf-logo.png';
+
 interface PremiumSidebarProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -73,9 +75,20 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
             <div
               className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}
             >
-              <div className="w-7 h-7 rounded-md bg-slate-800 flex items-center justify-center shrink-0">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
+              {!isCollapsed && (
+                <img
+                  src={TNF_LOGO_URL}
+                  alt="The New Fuse"
+                  className="h-7 w-auto object-contain"
+                />
+              )}
+              {isCollapsed && (
+                <img
+                  src={TNF_LOGO_URL}
+                  alt="TNF"
+                  className="h-7 w-7 object-contain"
+                />
+              )}
               {!isCollapsed && (
                 <span className="text-base font-semibold text-slate-100 whitespace-nowrap">
                   The New Fuse
