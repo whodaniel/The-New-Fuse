@@ -1,0 +1,1 @@
+import{j as e}from"./react-vendor.ZgPL6Mwk.js";const t=()=>e.jsxs("div",{className:"p-4",children:[e.jsx("h1",{className:"text-2xl font-bold",children:"Simple Test Page"}),e.jsx("p",{children:"If you can see this, React routing is working!"}),e.jsxs("p",{children:["Current time: ",new Date().toLocaleString()]})]});export{t as default};

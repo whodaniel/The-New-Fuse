@@ -207,6 +207,15 @@ class RedisRelayBridge extends events_1.EventEmitter {
         });
     }
     /**
+     * Publish a raw message to a specific Redis channel
+     */
+    async publish(channel, message) {
+        if (!this.connected) {
+            throw new Error('Not connected to Redis');
+        }
+        return this.redisClient.publish(channel, message);
+    }
+    /**
      * Publish message to ingress (for direct use)
      */
     async publishToIngress(envelope) {

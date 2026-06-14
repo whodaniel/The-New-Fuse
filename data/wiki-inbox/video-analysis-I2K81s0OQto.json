@@ -1,0 +1,16 @@
+{
+  "id": "video-analysis-I2K81s0OQto",
+  "title": "Andrej Karpathy's Math Proves Agent Skills Will Fail. Here's What to Build Instead.",
+  "category": "video-analysis",
+  "content": "**JSON Data Extraction and Analysis: YouTube Video on AI Agent Reliability**  Okay, here's the breakdown of my analysis of this YouTube video, focusing on extracting the core concepts and structuring them into a valid JSON object. My task is to act as a technical data extraction mechanism.  First, I need to get the gist of the content. It’s all about the challenges of making AI agents reliable in complex business workflows, specifically the compounding failure problem, which impacts agentic work",
+  "visual_intelligence": [],
+  "backlinks": [],
+  "metadata": {
+    "agentId": "transcript-processor-v4",
+    "timestamp": "2026-05-10T06:54:17.288Z",
+    "videoId": "I2K81s0OQto",
+    "url": "https://www.youtube.com/watch?v=I2K81s0OQto",
+    "qualityScore": 10,
+    "idNumber": "ID#:CT"
+  }
+}

@@ -34,7 +34,8 @@ class TaskSchedulerService {
         this.recentQueuedTasks = new Map();
     }
     startTaskPolling() {
-        if ((!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient) || this.taskPollingInterval) {
+        if ((!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient) ||
+            this.taskPollingInterval) {
             return;
         }
         this.logger('info', 'TASK-POLL', `Starting vote-aware task polling (every ${this.config.TASK_POLL_INTERVAL_MS}ms)`);
@@ -55,6 +56,16 @@ class TaskSchedulerService {
             this.taskPollingInterval = null;
             this.logger('info', 'TASK-POLL', 'Task polling stopped.');
         }
+    }
+    pruneTasks(now, maxAgeMs) {
+        let pruned = 0;
+        for (const [taskId, timestamp] of this.recentQueuedTasks.entries()) {
+            if (now - timestamp > maxAgeMs) {
+                this.recentQueuedTasks.delete(taskId);
+                pruned++;
+            }
+        }
+        return pruned;
     }
     taskPriorityWeight(priority) {
         const normalized = String(priority || 'medium').toLowerCase();

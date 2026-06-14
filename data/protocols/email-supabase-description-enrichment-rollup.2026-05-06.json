@@ -1,0 +1,46 @@
+{
+  "sourceType": "email-supabase-description-enrichment-rollup",
+  "generatedAt": "2026-05-06T20:38:39.320Z",
+  "sourceQueue": "data/protocols/email-supabase-description-enrichment-queue.2026-05-06.json",
+  "sourceValidation": "data/protocols/email-supabase-timeline-validation.2026-05-06.json",
+  "ownerPrincipalId": "daniel",
+  "sessionId": "fcae5be6-333a-4999-86ce-933fe4590fb2",
+  "batches": [
+    {
+      "batchId": "enrichment-batch-001",
+      "offset": 0,
+      "limit": 50,
+      "updatedCount": 50,
+      "updateFailureCount": 0,
+      "status": "applied"
+    },
+    {
+      "batchId": "enrichment-batch-002",
+      "offset": 0,
+      "limit": 50,
+      "updatedCount": 50,
+      "updateFailureCount": 0,
+      "status": "applied"
+    },
+    {
+      "batchId": "enrichment-batch-003",
+      "offset": 0,
+      "limit": 1000,
+      "updatedCount": 309,
+      "updateFailureCount": 0,
+      "status": "applied"
+    }
+  ],
+  "progress": {
+    "totalRows": 425,
+    "enrichedRows": 425,
+    "remainingGenericDescriptions": 0,
+    "completionRate": 100
+  },
+  "notes": [
+    "Batch 001 applied proposedDescription updates for first 50 generic description rows.",
+    "Batch 002 applied next 50 rows after queue refresh.",
+    "Batch 003 applied remaining queue in one pass to close enrichment backlog.",
+    "Generic-description queue is now empty."
+  ]
+}

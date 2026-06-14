@@ -1,0 +1,5 @@
+/**
+ * Types barrel — re-exports from types/ directory
+ * Needed for '../types' imports with Bundler/NodeNext resolution
+ */
+export * from './types/index';

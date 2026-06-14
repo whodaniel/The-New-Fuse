@@ -1,0 +1,34 @@
+{
+  "sourceType": "supabase-email-archaeology-backup-manifest",
+  "generatedAt": "2026-05-07T19:31:52.063Z",
+  "ownerPrincipalId": "daniel",
+  "sessionId": null,
+  "backupFile": "data/private/supabase-backups/email-archaeology-events-owner-daniel-2026-05-07.json",
+  "backupSha256": "bea91254e860e0e7c08daefe5e5e27c98780bf8c32781aa5b51e089346860884",
+  "bytes": 534410,
+  "eventCount": 439,
+  "dateRange": {
+    "min": "1999-02-16",
+    "max": "2026-05-05"
+  },
+  "counts": {
+    "sourceType": {
+      "inferred": 439
+    },
+    "project": {
+      "daniel-who-s-media-empire": 120,
+      "daniel-adam-goldberg-life-story": 316,
+      "the-new-fuse-novel": 3
+    },
+    "track": {
+      "daniel-whos-media-empire": 120,
+      "daniel-personal-life-story": 316,
+      "the-new-fuse-novel": 3
+    },
+    "confidence": {
+      "hard": 230,
+      "soft": 13,
+      "moderate": 196
+    }
+  }
+}

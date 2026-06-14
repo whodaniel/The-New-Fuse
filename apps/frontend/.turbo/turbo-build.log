@@ -1,0 +1,750 @@
+
+> @the-new-fuse/frontend-app@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend
+> node ../../scripts/parsers/mermaid_to_reactflow.mjs && node scripts/build-docs.mjs && vite build --mode production
+
+Parsing Core AST from /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/TNF_EXHAUSTIVE_AST_MAP.md...
+Injecting Deep Data (Agents, Protocols, Auth Matrix)...
+Successfully generated 15703 nodes and 15702 edges at /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map.json
+Converted: AG-UI-INTEGRATION-ANALYSIS.md -> AG-UI-INTEGRATION-ANALYSIS.html
+Converted: AG-UI-INTEGRATION-GUIDE.md -> AG-UI-INTEGRATION-GUIDE.html
+Converted: CAPABILITY-PACKAGING-COMPLETE.md -> CAPABILITY-PACKAGING-COMPLETE.html
+Converted: CLAUDE-CODE-AT-SCALE.md -> CLAUDE-CODE-AT-SCALE.html
+Converted: GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.md -> GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.html
+Converted: GEMINI-CODE-ASSIST-INTEGRATION.md -> GEMINI-CODE-ASSIST-INTEGRATION.html
+Converted: NINE-MULTIPLIER-HACKS.md -> NINE-MULTIPLIER-HACKS.html
+Converted: PROJECT-SUMMARY.md -> PROJECT-SUMMARY.html
+Converted: PROJECT_SUMMARY.md -> PROJECT_SUMMARY.html
+Converted: QUICKSTART.md -> QUICKSTART.html
+Converted: README.md -> README.html
+Converted: VISUAL-DEMO.md -> VISUAL-DEMO.html
+✅ All markdown files converted successfully!
+NODE_ENV=production is not supported in the .env file. Only NODE_ENV=development is supported to create a development build of your project. If you need to set process.env.NODE_ENV, you can set it in the Vite config instead.
+vite v7.3.3 building client environment for production...
+transforming...
+[plugin vite:resolve] Module "http2" has been externalized for browser compatibility, imported by "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/axios/lib/adapters/http.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin vite:resolve] Module "tty" has been externalized for browser compatibility, imported by "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/debug/src/node.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin vite:resolve] Module "vm" has been externalized for browser compatibility, imported by "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/asn1.js/lib/asn1/api.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+✓ 9582 modules transformed.
+rendering chunks...
+[plugin vite:reporter] 
+(!) /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/pages/ConnectExtension.tsx is dynamically imported by /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/ComprehensiveRouter.tsx but also statically imported by /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/routers/SubdomainRouter.tsx, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/pages/Marketplace/MarketplacePublicPage.tsx is dynamically imported by /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/ComprehensiveRouter.tsx but also statically imported by /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/routers/SubdomainRouter.tsx, dynamic import will not move module into another chunk.
+
+computing gzip size...
+dist/app.html                                              26.21 kB │ gzip:   7.14 kB
+dist/index.html                                            37.64 kB │ gzip:   8.25 kB
+dist/assets/codebase_map.NLRVZxKk.json                  6,699.98 kB │ gzip: 306.93 kB
+dist/assets/index.B4YDebE6.css                              1.06 kB │ gzip:   0.47 kB
+dist/assets/index.JJgrCIlE.css                              2.78 kB │ gzip:   0.93 kB
+dist/assets/reactflow.Fd0xVSp_.css                          7.04 kB │ gzip:   1.58 kB
+dist/assets/Calendar.BSwzzYnC.css                          10.88 kB │ gzip:   2.48 kB
+dist/assets/app.BOa2ppfl.css                              393.51 kB │ gzip:  49.04 kB
+dist/assets/js/config.BejY5GRQ.js                           0.08 kB │ gzip:   0.09 kB
+dist/assets/js/useToast.DZnrIXl5.js                         0.22 kB │ gzip:   0.19 kB
+dist/assets/js/_commonjs-dynamic-modules.TDtrdbi3.js        0.24 kB │ gzip:   0.19 kB
+dist/assets/js/ports.ybe81G9A.js                            0.24 kB │ gzip:   0.19 kB
+dist/assets/js/label.jDICRyAr.js                            0.31 kB │ gzip:   0.24 kB
+dist/assets/js/Pricing.Bm4n9G5D.js                          0.32 kB │ gzip:   0.24 kB
+dist/assets/js/SimpleTest.DI5E4tOK.js                       0.34 kB │ gzip:   0.26 kB
+dist/assets/js/Docs.D7mJzeep.js                             0.50 kB │ gzip:   0.30 kB
+dist/assets/js/NotFound.BijUZsdZ.js                         0.50 kB │ gzip:   0.31 kB
+dist/assets/js/paths.vSQkhoa8.js                            0.53 kB │ gzip:   0.25 kB
+dist/assets/js/badge.BN-fYGcR.js                            0.54 kB │ gzip:   0.34 kB
+dist/assets/js/Features.DXzVyB-V.js                         0.54 kB │ gzip:   0.29 kB
+dist/assets/js/tenancy.BJOBHCDG.js                          0.55 kB │ gzip:   0.27 kB
+dist/assets/js/textarea.Cf5Qfbay.js                         0.56 kB │ gzip:   0.34 kB
+dist/assets/js/IconBase.es.jtjBCglp.js                      0.59 kB │ gzip:   0.40 kB
+dist/assets/js/progress.CInZLYI5.js                         0.61 kB │ gzip:   0.40 kB
+dist/assets/js/OpsPageHeader.CW_rgHZF.js                    0.66 kB │ gzip:   0.36 kB
+dist/assets/js/SystemObservatory.D2hL42ca.js                0.76 kB │ gzip:   0.45 kB
+dist/assets/js/switch.y9tvxqBC.js                           0.77 kB │ gzip:   0.45 kB
+dist/assets/js/scroll-area.h4uMO-Sa.js                      0.84 kB │ gzip:   0.44 kB
+dist/assets/js/card.vON5t4Hc.js                             0.88 kB │ gzip:   0.28 kB
+dist/assets/js/SSO.BCU9VaTu.js                              0.93 kB │ gzip:   0.56 kB
+dist/assets/js/input.BdenXZVJ.js                            1.03 kB │ gzip:   0.59 kB
+dist/assets/js/Appearance.Dy68G4BQ.js                       1.20 kB │ gzip:   0.57 kB
+dist/assets/js/index.uVV5Zdic.js                            1.21 kB │ gzip:   0.63 kB
+dist/assets/js/OAuthCallback.qgbE2f98.js                    1.32 kB │ gzip:   0.69 kB
+dist/assets/js/ConcordanceViewer.W4QEHf7Z.js                1.46 kB │ gzip:   0.75 kB
+dist/assets/js/websocket.Dmuo61Du.js                        1.47 kB │ gzip:   0.67 kB
+dist/assets/js/tabs.BlAb-dlF.js                             1.53 kB │ gzip:   0.65 kB
+dist/assets/js/useGetProvidersModels.TknZnTsM.js            1.54 kB │ gzip:   0.74 kB
+dist/assets/js/dialog.DMr4IaxF.js                           1.60 kB │ gzip:   0.70 kB
+dist/assets/js/BackupRestore.ZgLzbBEs.js                    1.67 kB │ gzip:   0.77 kB
+dist/assets/js/tooltip.DuEwNQou.js                          1.69 kB │ gzip:   0.77 kB
+dist/assets/js/preload-helper.DD1OZmLC.js                   1.82 kB │ gzip:   0.93 kB
+dist/assets/js/GoogleCallback.DKvpD0HG.js                   1.87 kB │ gzip:   0.94 kB
+dist/assets/js/ResetPassword.DjSrS9eB.js                    1.88 kB │ gzip:   0.94 kB
+dist/assets/js/dropdown-menu.C1YmGG3k.js                    1.90 kB │ gzip:   0.92 kB
+dist/assets/js/Unauthorized.OopGL0s9.js                     1.98 kB │ gzip:   0.87 kB
+dist/assets/js/Notifications.ClKNPZz1.js                    2.03 kB │ gzip:   0.69 kB
+dist/assets/js/EmbeddingPreference.3MR3qEAk.js              2.08 kB │ gzip:   0.86 kB
+dist/assets/js/timeline-demo.Bq9ngwoI.js                    2.09 kB │ gzip:   0.94 kB
+dist/assets/js/useWorkspace.CmfHJ6BK.js                     2.12 kB │ gzip:   0.81 kB
+dist/assets/js/index.ClhlrhyE.js                            2.24 kB │ gzip:   0.87 kB
+dist/assets/js/ScheduleBuilder.KAg8g4ca.js                  2.25 kB │ gzip:   0.92 kB
+dist/assets/js/iconBase.CRvbfhzD.js                         2.46 kB │ gzip:   1.09 kB
+dist/assets/js/PortManagement.CwMZjQIq.js                   2.49 kB │ gzip:   1.08 kB
+dist/assets/js/useTimeline.ChTkXHAa.js                      2.54 kB │ gzip:   1.29 kB
+dist/assets/js/ApiClient.B1FbqjFD.js                        2.65 kB │ gzip:   1.08 kB
+dist/assets/js/index.DXbMiYwH.js                            2.79 kB │ gzip:   1.03 kB
+dist/assets/js/BaseBrowser.D8HbY58u.js                      2.81 kB │ gzip:   1.31 kB
+dist/assets/js/index.BTqwuUOB.js                            2.96 kB │ gzip:   1.10 kB
+dist/assets/js/Settings.Cg8b4zn1.js                         3.12 kB │ gzip:   1.23 kB
+dist/assets/js/index.38fkSFmY.js                            3.28 kB │ gzip:   1.20 kB
+dist/assets/js/useWorkspaceDomains.DCda52QQ.js              3.31 kB │ gzip:   1.37 kB
+dist/assets/js/ForgotPassword.Ca0pYpik.js                   3.38 kB │ gzip:   1.38 kB
+dist/assets/js/PrivacyPolicy.BG8UKeau.js                    3.41 kB │ gzip:   1.33 kB
+dist/assets/js/AgencyOnboarding.C1Ga9hpY.js                 3.49 kB │ gzip:   1.51 kB
+dist/assets/js/TimelineModulePage.C4mLfuEs.js               3.49 kB │ gzip:   1.61 kB
+dist/assets/js/index.B9CsxXta.js                            3.50 kB │ gzip:   0.93 kB
+dist/assets/js/select.CHVvfESt.js                           3.53 kB │ gzip:   1.36 kB
+dist/assets/js/Blog.Tqn6VULi.js                             3.61 kB │ gzip:   1.33 kB
+dist/assets/js/Members.xbVIf50T.js                          3.70 kB │ gzip:   1.48 kB
+dist/assets/js/General.BM8fwTg6.js                          3.77 kB │ gzip:   1.32 kB
+dist/assets/js/index.6TWF2ltS.js                            3.90 kB │ gzip:   1.69 kB
+dist/assets/js/PremiumInput.Dd_Rf4Wd.js                     4.03 kB │ gzip:   1.19 kB
+dist/assets/js/FeatureFlags.B3kPGRdN.js                     4.06 kB │ gzip:   1.48 kB
+dist/assets/js/Detail.CHSZncSa.js                           4.14 kB │ gzip:   1.46 kB
+dist/assets/js/zustand-vendor.cDbrwZ9_.js                   4.24 kB │ gzip:   1.79 kB
+dist/assets/js/UserManagement.BGDHr-M_.js                   4.38 kB │ gzip:   1.45 kB
+dist/assets/js/MemoryVisualizer.CjsEOwd1.js                 4.39 kB │ gzip:   1.85 kB
+dist/assets/js/New.ClMt7srn.js                              4.53 kB │ gzip:   1.75 kB
+dist/assets/js/Detail.CRi8wlUr.js                           4.56 kB │ gzip:   1.62 kB
+dist/assets/js/TermsOfService.CbwtBNJR.js                   4.60 kB │ gzip:   2.06 kB
+dist/assets/js/index.BL0H37m-.js                            4.61 kB │ gzip:   1.68 kB
+dist/assets/js/PublicLayout.Cq-3ie0A.js                     4.63 kB │ gzip:   1.73 kB
+dist/assets/js/ProjectView.EDpcL_0B.js                      4.64 kB │ gzip:   1.72 kB
+dist/assets/js/LaunchpadDashboard.Y_SsCek0.js               4.69 kB │ gzip:   1.96 kB
+dist/assets/js/index.C-nuXgtO.js                            4.69 kB │ gzip:   1.67 kB
+dist/assets/js/LiveView.D3xtdDJ3.js                         5.30 kB │ gzip:   2.06 kB
+dist/assets/js/PlatformParityDashboard.CschiCrW.js          5.58 kB │ gzip:   1.57 kB
+dist/assets/js/Execution.LtnOu0c2.js                        5.59 kB │ gzip:   2.03 kB
+dist/assets/js/AgentService.dOMqEsn_.js                     5.60 kB │ gzip:   2.07 kB
+dist/assets/js/Security.BzWUCMiR.js                         5.74 kB │ gzip:   1.83 kB
+dist/assets/js/OpenClawSecurity.WKMI6g-S.js                 5.77 kB │ gzip:   2.16 kB
+dist/assets/js/VisualizationSurfaceViewer.D-SC37qM.js       6.02 kB │ gzip:   2.09 kB
+dist/assets/js/workflow.BSjdFato.js                         6.04 kB │ gzip:   1.07 kB
+dist/assets/js/PerpetualStatus.Bdx5xZ5D.js                  6.07 kB │ gzip:   2.20 kB
+dist/assets/js/index.nutLBVVm.js                            6.18 kB │ gzip:   1.10 kB
+dist/assets/js/KnowledgeHub.DeVPmIuB.js                     6.34 kB │ gzip:   2.11 kB
+dist/assets/js/useApi.-aIl268H.js                           6.34 kB │ gzip:   2.00 kB
+dist/assets/js/Templates.fIir5QHG.js                        6.36 kB │ gzip:   2.01 kB
+dist/assets/js/TimelineView.C1aF27ak.js                     6.38 kB │ gzip:   2.31 kB
+dist/assets/js/ExecutionConsole.BVl14QKr.js                 6.63 kB │ gzip:   2.08 kB
+dist/assets/js/FrontendShowcase.B1eucx12.js                 6.97 kB │ gzip:   2.19 kB
+dist/assets/js/FilesWorkspace.BMzmmxqM.js                   7.24 kB │ gzip:   2.40 kB
+dist/assets/js/system.pBKFzr_U.js                           7.27 kB │ gzip:   2.92 kB
+dist/assets/js/API.CLGClPsk.js                              7.31 kB │ gzip:   2.66 kB
+dist/assets/js/Detail.DkKRNcXC.js                           7.48 kB │ gzip:   2.26 kB
+dist/assets/js/AgentIdentity.CAChzg90.js                    7.54 kB │ gzip:   2.36 kB
+dist/assets/js/MCPHub.BVWeEUNN.js                           7.77 kB │ gzip:   2.45 kB
+dist/assets/js/MacroTimelinePage.Bpj2NoN9.js                7.89 kB │ gzip:   2.38 kB
+dist/assets/js/design-system.DWhBg0GP.js                    7.95 kB │ gzip:   2.42 kB
+dist/assets/js/graph-demo.CHeqrbmh.js                       7.96 kB │ gzip:   2.50 kB
+dist/assets/js/PfpPromptCatalog.CXEgs1Qz.js                 8.04 kB │ gzip:   2.84 kB
+dist/assets/js/DatasetsWorkbench.DZbow3x-.js                8.10 kB │ gzip:   2.83 kB
+dist/assets/js/AgencyDashboard.DjcA0VzT.js                  8.36 kB │ gzip:   2.58 kB
+dist/assets/js/Edit.CWmHCWdc.js                             8.36 kB │ gzip:   2.70 kB
+dist/assets/js/useWorkflow.Dn7-pkzB.js                      8.45 kB │ gzip:   2.36 kB
+dist/assets/js/ComponentsShowcase.B5QkUxYR.js               8.75 kB │ gzip:   2.10 kB
+dist/assets/js/Detail.QpysuOUB.js                           8.91 kB │ gzip:   2.76 kB
+dist/assets/js/ConfigurationManagement.WfUm4pVx.js          8.96 kB │ gzip:   2.45 kB
+dist/assets/js/CatalogProfile.CKcOAgYQ.js                   9.09 kB │ gzip:   2.48 kB
+dist/assets/js/SystemHealth.Bgdx35A-.js                     9.13 kB │ gzip:   3.10 kB
+dist/assets/js/DatabaseAdminPanel.CGn-JCV8.js               9.14 kB │ gzip:   2.60 kB
+dist/assets/js/index.Cs6OVfqE.js                            9.18 kB │ gzip:   2.97 kB
+dist/assets/js/AIAgentOnboarding.De3iASbg.js                9.24 kB │ gzip:   2.64 kB
+dist/assets/js/index.BvDkH8qR.js                            9.56 kB │ gzip:   2.98 kB
+dist/assets/js/WorkflowBrowser.MH8m6eq-.js                  9.59 kB │ gzip:   2.89 kB
+dist/assets/js/APIAnalyticsFull.Ca5lcFPl.js                 9.86 kB │ gzip:   2.68 kB
+dist/assets/js/MultiAgentChat.CEzlwO9U.js                   9.95 kB │ gzip:   3.34 kB
+dist/assets/js/SystemStatus.DWW6Azd8.js                    10.18 kB │ gzip:   3.68 kB
+dist/assets/js/resources.service.BWxD_63J.js               10.27 kB │ gzip:   3.50 kB
+dist/assets/js/TNFConsoleDashboard.BdMMDuxn.js             10.33 kB │ gzip:   3.20 kB
+dist/assets/js/WorkspaceManagement.BoFxgOA7.js             10.36 kB │ gzip:   2.93 kB
+dist/assets/js/WorkspaceAnalytics.BkX0vYb8.js              10.44 kB │ gzip:   3.07 kB
+dist/assets/js/Workflows.BWe8sUnn.js                       10.46 kB │ gzip:   3.01 kB
+dist/assets/js/New.B7tjfuzG.js                             10.69 kB │ gzip:   3.30 kB
+dist/assets/js/Overview.gWxsk6U9.js                        10.71 kB │ gzip:   2.95 kB
+dist/assets/js/AgentTemplatesBrowser.CouzkszE.js           10.75 kB │ gzip:   3.19 kB
+dist/assets/js/A2AControl.DaOJ_Xze.js                      10.94 kB │ gzip:   3.43 kB
+dist/assets/js/SystemMetricsDashboard.CXqovOFM.js          10.97 kB │ gzip:   2.91 kB
+dist/assets/js/SmartNavigation.B16w9yVX.js                 11.04 kB │ gzip:   3.23 kB
+dist/assets/js/LLMRankingsDashboard.Df0MnRwg.js            11.07 kB │ gzip:   2.82 kB
+dist/assets/js/AgentManagementFull.C2sMaiDN.js             11.09 kB │ gzip:   2.99 kB
+dist/assets/js/AuditLogViewer.DYptCfLi.js                  11.19 kB │ gzip:   2.86 kB
+dist/assets/js/TerminalGraph.Bnb4S14q.js                   11.53 kB │ gzip:   3.67 kB
+dist/assets/js/Detail.BJfw2tbI.js                          11.62 kB │ gzip:   3.35 kB
+dist/assets/js/index.BYgMrOyi.js                           11.94 kB │ gzip:   4.80 kB
+dist/assets/js/SpacesOverview.sheFbmrr.js                  11.97 kB │ gzip:   3.42 kB
+dist/assets/js/CodebaseMap._XAbXFr8.js                     11.98 kB │ gzip:   3.71 kB
+dist/assets/js/TasksPage.ci-FadG9.js                       12.00 kB │ gzip:   3.45 kB
+dist/assets/js/AgentsRevolution.CluYZO-m.js                12.12 kB │ gzip:   3.66 kB
+dist/assets/js/SkillsBrowser.pTOZt9JU.js                   12.43 kB │ gzip:   3.76 kB
+dist/assets/js/AgentDashboard.DJsCq9zd.js                  12.45 kB │ gzip:   3.82 kB
+dist/assets/js/agentPfpStore.mYnyg2T_.js                   12.64 kB │ gzip:   3.78 kB
+dist/assets/js/workspace.quaQHqKH.js                       13.22 kB │ gzip:   2.88 kB
+dist/assets/js/HostingControlCenter.pE3sL2KR.js            13.28 kB │ gzip:   3.78 kB
+dist/assets/js/AIAgentDashboard.CZbKuSNp.js                13.84 kB │ gzip:   4.02 kB
+dist/assets/js/Settings.BXv633py.js                        13.88 kB │ gzip:   3.81 kB
+dist/assets/js/RevenueDashboardPage.4MeGNnKg.js            13.98 kB │ gzip:   3.87 kB
+dist/assets/js/GraphVisualizer.IwPCE4St.js                 14.29 kB │ gzip:   4.34 kB
+dist/assets/js/AdminSettings.7ZW3kO-_.js                   14.35 kB │ gzip:   3.33 kB
+dist/assets/js/monaco-editor.Dt9qSYro.js                   14.36 kB │ gzip:   4.98 kB
+dist/assets/js/index.CLlCuwar.js                           14.74 kB │ gzip:   4.84 kB
+dist/assets/js/Onboard.D4azHNVq.js                         14.93 kB │ gzip:   4.31 kB
+dist/assets/js/BrandIdentity.D_sHd4BP.js                   15.08 kB │ gzip:   2.91 kB
+dist/assets/js/Detail.BxZHLW5s.js                          15.58 kB │ gzip:   4.08 kB
+dist/assets/js/Builder.gdfEeyB1.js                         16.64 kB │ gzip:   4.50 kB
+dist/assets/js/unifiedLedgerApi.Br6n3afE.js                16.89 kB │ gzip:   5.41 kB
+dist/assets/js/ProviderApiKeyList.BGIrKeDA.js              17.04 kB │ gzip:   5.09 kB
+dist/assets/js/skills.dX28iTPR.js                          17.51 kB │ gzip:   4.74 kB
+dist/assets/js/LayoutExamples.W7Ibn3n6.js                  17.81 kB │ gzip:   3.75 kB
+dist/assets/js/ResourcesDashboard.-id6KwtK.js              18.37 kB │ gzip:   4.98 kB
+dist/assets/js/TNFCommandCenter.Btr5OvTi.js                19.24 kB │ gzip:   5.58 kB
+dist/assets/js/UserManagementFull.CAKqDLGu.js              19.41 kB │ gzip:   4.56 kB
+dist/assets/js/index.BaDjx1yk.js                           19.88 kB │ gzip:   6.50 kB
+dist/assets/js/SophisticatedTNFHub.XCCILR9V.js             20.47 kB │ gzip:   4.97 kB
+dist/assets/js/api.Cwkdfgk8.js                             21.87 kB │ gzip:   5.55 kB
+dist/assets/js/PfpStudio.CvgcCOnN.js                       22.18 kB │ gzip:   6.89 kB
+dist/assets/js/UserProfilePage.DQcInzJJ.js                 22.90 kB │ gzip:   5.56 kB
+dist/assets/js/date-fns-vendor.B_YXvuZl.js                 23.31 kB │ gzip:   6.66 kB
+dist/assets/js/PremiumLayout.CH0PEHaG.js                   23.40 kB │ gzip:   6.51 kB
+dist/assets/js/Analytics.Bv6FdS5f.js                       23.72 kB │ gzip:   6.18 kB
+dist/assets/js/UnifiedCommunicationCanvas.t8ScGyld.js      24.06 kB │ gzip:   7.24 kB
+dist/assets/js/NFTMarketplacePage.WreX_HU7.js              25.43 kB │ gzip:   5.88 kB
+dist/assets/js/ui-libs.O6ACVZ0H.js                         26.75 kB │ gzip:   7.55 kB
+dist/assets/js/WorkflowBuilderEnhanced.Ba5er17m.js         27.01 kB │ gzip:   7.56 kB
+dist/assets/js/zod.DUAvghtk.js                             27.93 kB │ gzip:  10.23 kB
+dist/assets/js/ChatPage.CDcmLXCA.js                        28.89 kB │ gzip:   7.29 kB
+dist/assets/js/index.jsHFN1Ug.js                           30.45 kB │ gzip:   7.56 kB
+dist/assets/js/WorkflowsEnhanced.D5FFkYx8.js               31.36 kB │ gzip:   8.82 kB
+dist/assets/js/CommandCenterDashboard.DkPpE3mV.js          31.41 kB │ gzip:   9.04 kB
+dist/assets/js/react-query-vendor.DCH_Nud3.js              37.02 kB │ gzip:  11.21 kB
+dist/assets/js/VirtualLibraryPage.DiqgurAQ.js              37.25 kB │ gzip:   9.57 kB
+dist/assets/js/ComprehensiveAdminDashboard.Aq7HSK6E.js     37.98 kB │ gzip:   8.67 kB
+dist/assets/js/content-vendor.DSzjXB2x.js                  41.34 kB │ gzip:  12.51 kB
+dist/assets/js/index.DskQid3L.js                           42.38 kB │ gzip:  13.29 kB
+dist/assets/js/index.aZ_MD77f.js                           44.24 kB │ gzip:  15.12 kB
+dist/assets/js/Visualizations.BkjBX_gV.js                  45.21 kB │ gzip:  12.29 kB
+dist/assets/js/CreateAgent.DdJ4bauj.js                     47.14 kB │ gzip:  11.50 kB
+dist/assets/js/SynapticNexus.2Eh87q50.js                   50.72 kB │ gzip:  13.69 kB
+dist/assets/js/FairtableDashboard.DRH1SO8b.js              56.20 kB │ gzip:  15.07 kB
+dist/assets/js/SuperAdminControlPanel.By4ipS4N.js          59.84 kB │ gzip:  14.75 kB
+dist/assets/js/lodash-vendor.DUoLyaZY.js                   60.66 kB │ gzip:  21.97 kB
+dist/assets/js/OnboardingPreview.YF29Vz_l.js               61.21 kB │ gzip:  13.52 kB
+dist/assets/js/CommandCore.B-wKCGhm.js                     68.43 kB │ gzip:  24.05 kB
+dist/assets/js/zod-vendor.C7QW91B5.js                      75.77 kB │ gzip:  20.15 kB
+dist/assets/js/reactflow.CknaLMAg.js                       91.55 kB │ gzip:  29.94 kB
+dist/assets/js/WorkflowAIAssistantPanel.Cs1hK2gH.js       112.49 kB │ gzip:  26.60 kB
+dist/assets/js/framer-motion.BZdbmtgE.js                  126.42 kB │ gzip:  41.47 kB
+dist/assets/js/Calendar.D_EAFn8N.js                       191.82 kB │ gzip:  61.09 kB
+dist/assets/js/web3-vendor.mI8YWscQ.js                    315.59 kB │ gzip: 114.32 kB
+dist/assets/js/index.oACR6rxo.js                          366.20 kB │ gzip: 120.25 kB
+dist/assets/js/recharts.Wlj53pb4.js                       369.00 kB │ gzip: 101.50 kB
+dist/assets/js/app.GEpuo-AF.js                            534.27 kB │ gzip: 153.10 kB
+dist/assets/js/agentVisualProfiles.mgjAKn3S.js            546.23 kB │ gzip:  44.21 kB
+dist/assets/js/react-vendor.ZgPL6Mwk.js                   596.04 kB │ gzip: 194.01 kB
+dist/assets/js/d3-vendor.DRqLgs30.js                      775.09 kB │ gzip: 205.23 kB
+dist/assets/js/three-vendor.DLP12Gzk.js                 1,147.09 kB │ gzip: 325.10 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 10m 56s
+
+✨ [vite-plugin-compression]:algorithm=gzip - compressed file successfully: 
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/app.html.gz                                                                                            25.60kb / gzip: 6.92kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/A2AControl.DaOJ_Xze.js.gz                                                                    10.68kb / gzip: 3.34kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/index.B4YDebE6.css.gz                                                                           1.03kb / gzip: 0.46kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AIAgentDashboard.CZbKuSNp.js.gz                                                              13.52kb / gzip: 3.92kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AIAgentOnboarding.De3iASbg.js.gz                                                             9.03kb / gzip: 2.58kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/Calendar.BSwzzYnC.css.gz                                                                        10.63kb / gzip: 2.42kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/index.JJgrCIlE.css.gz                                                                           2.71kb / gzip: 0.91kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/API.CLGClPsk.js.gz                                                                           7.13kb / gzip: 2.60kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AdminSettings.7ZW3kO-_.js.gz                                                                 14.02kb / gzip: 3.24kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/APIAnalyticsFull.Ca5lcFPl.js.gz                                                              9.63kb / gzip: 2.60kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentDashboard.DJsCq9zd.js.gz                                                                12.16kb / gzip: 3.72kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgencyOnboarding.C1Ga9hpY.js.gz                                                              3.41kb / gzip: 1.47kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgencyDashboard.DjcA0VzT.js.gz                                                               8.16kb / gzip: 2.52kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentIdentity.CAChzg90.js.gz                                                                 7.37kb / gzip: 2.30kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ApiClient.B1FbqjFD.js.gz                                                                     2.58kb / gzip: 1.06kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentService.dOMqEsn_.js.gz                                                                  5.47kb / gzip: 2.02kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentManagementFull.C2sMaiDN.js.gz                                                           10.83kb / gzip: 2.92kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentsRevolution.CluYZO-m.js.gz                                                              11.84kb / gzip: 3.57kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Analytics.Bv6FdS5f.js.gz                                                                     23.17kb / gzip: 6.03kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Appearance.Dy68G4BQ.js.gz                                                                    1.17kb / gzip: 0.55kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/BackupRestore.ZgLzbBEs.js.gz                                                                 1.63kb / gzip: 0.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentTemplatesBrowser.CouzkszE.js.gz                                                         10.50kb / gzip: 3.10kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Blog.Tqn6VULi.js.gz                                                                          3.52kb / gzip: 1.30kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AuditLogViewer.DYptCfLi.js.gz                                                                10.93kb / gzip: 2.79kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/BaseBrowser.D8HbY58u.js.gz                                                                   2.74kb / gzip: 1.28kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/BrandIdentity.D_sHd4BP.js.gz                                                                 14.73kb / gzip: 2.82kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Builder.gdfEeyB1.js.gz                                                                       16.25kb / gzip: 4.39kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CodebaseMap._XAbXFr8.js.gz                                                                   11.70kb / gzip: 3.61kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CatalogProfile.CKcOAgYQ.js.gz                                                                8.88kb / gzip: 2.42kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ChatPage.CDcmLXCA.js.gz                                                                      28.21kb / gzip: 7.11kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CommandCenterDashboard.DkPpE3mV.js.gz                                                        30.67kb / gzip: 8.80kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ConcordanceViewer.W4QEHf7Z.js.gz                                                             1.43kb / gzip: 0.73kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ComponentsShowcase.B5QkUxYR.js.gz                                                            8.55kb / gzip: 2.05kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ConfigurationManagement.WfUm4pVx.js.gz                                                       8.75kb / gzip: 2.39kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CreateAgent.DdJ4bauj.js.gz                                                                   46.04kb / gzip: 11.21kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ComprehensiveAdminDashboard.Aq7HSK6E.js.gz                                                   37.09kb / gzip: 8.41kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.BJfw2tbI.js.gz                                                                        11.34kb / gzip: 3.26kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.CHSZncSa.js.gz                                                                        4.04kb / gzip: 1.42kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/DatasetsWorkbench.DZbow3x-.js.gz                                                             7.91kb / gzip: 2.76kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.BxZHLW5s.js.gz                                                                        15.21kb / gzip: 3.98kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Edit.CWmHCWdc.js.gz                                                                          8.17kb / gzip: 2.63kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.QpysuOUB.js.gz                                                                        8.70kb / gzip: 2.69kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Execution.LtnOu0c2.js.gz                                                                     5.46kb / gzip: 1.98kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ExecutionConsole.BVl14QKr.js.gz                                                              6.47kb / gzip: 2.03kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/FairtableDashboard.DRH1SO8b.js.gz                                                            54.89kb / gzip: 14.68kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/FeatureFlags.B3kPGRdN.js.gz                                                                  3.96kb / gzip: 1.44kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.CRi8wlUr.js.gz                                                                        4.45kb / gzip: 1.58kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/DatabaseAdminPanel.CGn-JCV8.js.gz                                                            8.93kb / gzip: 2.53kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.DkKRNcXC.js.gz                                                                        7.30kb / gzip: 2.21kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/FilesWorkspace.BMzmmxqM.js.gz                                                                7.07kb / gzip: 2.35kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/FrontendShowcase.B1eucx12.js.gz                                                              6.81kb / gzip: 2.13kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/EmbeddingPreference.3MR3qEAk.js.gz                                                           2.03kb / gzip: 0.84kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ForgotPassword.Ca0pYpik.js.gz                                                                3.30kb / gzip: 1.35kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/GoogleCallback.DKvpD0HG.js.gz                                                                1.83kb / gzip: 0.92kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/KnowledgeHub.DeVPmIuB.js.gz                                                                  6.19kb / gzip: 2.06kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/General.BM8fwTg6.js.gz                                                                       3.68kb / gzip: 1.29kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/LLMRankingsDashboard.Df0MnRwg.js.gz                                                          10.81kb / gzip: 2.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/LiveView.D3xtdDJ3.js.gz                                                                      5.17kb / gzip: 2.01kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/LayoutExamples.W7Ibn3n6.js.gz                                                                17.39kb / gzip: 3.65kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/MCPHub.BVWeEUNN.js.gz                                                                        7.58kb / gzip: 2.39kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/MacroTimelinePage.Bpj2NoN9.js.gz                                                             7.71kb / gzip: 2.32kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/MemoryVisualizer.CjsEOwd1.js.gz                                                              4.29kb / gzip: 1.80kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/LaunchpadDashboard.Y_SsCek0.js.gz                                                            4.58kb / gzip: 1.91kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/NFTMarketplacePage.WreX_HU7.js.gz                                                            24.83kb / gzip: 5.71kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/HostingControlCenter.pE3sL2KR.js.gz                                                          12.97kb / gzip: 3.69kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/New.B7tjfuzG.js.gz                                                                           10.44kb / gzip: 3.21kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/GraphVisualizer.IwPCE4St.js.gz                                                               13.96kb / gzip: 4.23kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Members.xbVIf50T.js.gz                                                                       3.61kb / gzip: 1.45kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/New.ClMt7srn.js.gz                                                                           4.42kb / gzip: 1.71kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/MultiAgentChat.CEzlwO9U.js.gz                                                                9.71kb / gzip: 3.26kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/OpenClawSecurity.WKMI6g-S.js.gz                                                              5.64kb / gzip: 2.10kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Onboard.D4azHNVq.js.gz                                                                       14.58kb / gzip: 4.20kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/OAuthCallback.qgbE2f98.js.gz                                                                 1.29kb / gzip: 0.68kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PerpetualStatus.Bdx5xZ5D.js.gz                                                               5.92kb / gzip: 2.13kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PlatformParityDashboard.CschiCrW.js.gz                                                       5.45kb / gzip: 1.53kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PfpStudio.CvgcCOnN.js.gz                                                                     21.66kb / gzip: 6.72kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/OnboardingPreview.YF29Vz_l.js.gz                                                             59.78kb / gzip: 13.16kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PfpPromptCatalog.CXEgs1Qz.js.gz                                                              7.85kb / gzip: 2.77kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Notifications.ClKNPZz1.js.gz                                                                 1.98kb / gzip: 0.67kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PortManagement.CwMZjQIq.js.gz                                                                2.43kb / gzip: 1.05kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PremiumInput.Dd_Rf4Wd.js.gz                                                                  3.94kb / gzip: 1.16kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Overview.gWxsk6U9.js.gz                                                                      10.46kb / gzip: 2.88kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PublicLayout.Cq-3ie0A.js.gz                                                                  4.52kb / gzip: 1.69kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ProviderApiKeyList.BGIrKeDA.js.gz                                                            16.64kb / gzip: 4.97kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PremiumLayout.CH0PEHaG.js.gz                                                                 22.85kb / gzip: 6.34kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ResetPassword.DjSrS9eB.js.gz                                                                 1.84kb / gzip: 0.92kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ProjectView.EDpcL_0B.js.gz                                                                   4.53kb / gzip: 1.67kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PrivacyPolicy.BG8UKeau.js.gz                                                                 3.33kb / gzip: 1.30kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Security.BzWUCMiR.js.gz                                                                      5.60kb / gzip: 1.79kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ResourcesDashboard.-id6KwtK.js.gz                                                            17.94kb / gzip: 4.84kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Settings.Cg8b4zn1.js.gz                                                                      3.05kb / gzip: 1.20kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Settings.BXv633py.js.gz                                                                      13.55kb / gzip: 3.71kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/RevenueDashboardPage.4MeGNnKg.js.gz                                                          13.65kb / gzip: 3.76kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ScheduleBuilder.KAg8g4ca.js.gz                                                               2.20kb / gzip: 0.90kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SmartNavigation.B16w9yVX.js.gz                                                               10.79kb / gzip: 3.14kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SkillsBrowser.pTOZt9JU.js.gz                                                                 12.14kb / gzip: 3.66kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SophisticatedTNFHub.XCCILR9V.js.gz                                                           19.99kb / gzip: 4.83kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SpacesOverview.sheFbmrr.js.gz                                                                11.69kb / gzip: 3.33kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SystemHealth.Bgdx35A-.js.gz                                                                  8.92kb / gzip: 3.03kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SystemStatus.DWW6Azd8.js.gz                                                                  9.94kb / gzip: 3.59kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SystemMetricsDashboard.CXqovOFM.js.gz                                                        10.71kb / gzip: 2.83kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TNFCommandCenter.Btr5OvTi.js.gz                                                              18.79kb / gzip: 5.44kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TasksPage.ci-FadG9.js.gz                                                                     11.71kb / gzip: 3.36kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SynapticNexus.2Eh87q50.js.gz                                                                 49.53kb / gzip: 13.32kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TerminalGraph.Bnb4S14q.js.gz                                                                 11.26kb / gzip: 3.58kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TermsOfService.CbwtBNJR.js.gz                                                                4.49kb / gzip: 2.01kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SuperAdminControlPanel.By4ipS4N.js.gz                                                        58.44kb / gzip: 14.33kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Unauthorized.OopGL0s9.js.gz                                                                  1.94kb / gzip: 0.85kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TimelineModulePage.C4mLfuEs.js.gz                                                            3.41kb / gzip: 1.57kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/UnifiedCommunicationCanvas.t8ScGyld.js.gz                                                    23.50kb / gzip: 7.05kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/UserManagement.BGDHr-M_.js.gz                                                                4.27kb / gzip: 1.42kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/UserManagementFull.CAKqDLGu.js.gz                                                            18.96kb / gzip: 4.44kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/UserProfilePage.DQcInzJJ.js.gz                                                               22.36kb / gzip: 5.42kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/VisualizationSurfaceViewer.D-SC37qM.js.gz                                                    5.88kb / gzip: 2.04kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/VirtualLibraryPage.DiqgurAQ.js.gz                                                            36.38kb / gzip: 9.31kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Visualizations.BkjBX_gV.js.gz                                                                44.15kb / gzip: 11.97kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkflowBrowser.MH8m6eq-.js.gz                                                               9.37kb / gzip: 2.82kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Workflows.BWe8sUnn.js.gz                                                                     10.21kb / gzip: 2.94kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Templates.fIir5QHG.js.gz                                                                     6.21kb / gzip: 1.96kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TimelineView.C1aF27ak.js.gz                                                                  6.23kb / gzip: 2.25kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkflowsEnhanced.D5FFkYx8.js.gz                                                             30.62kb / gzip: 8.59kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkspaceAnalytics.BkX0vYb8.js.gz                                                            10.19kb / gzip: 2.99kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkspaceManagement.BoFxgOA7.js.gz                                                           10.12kb / gzip: 2.86kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/api.Cwkdfgk8.js.gz                                                                           21.35kb / gzip: 5.39kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/agentPfpStore.mYnyg2T_.js.gz                                                                 12.35kb / gzip: 3.69kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/content-vendor.DSzjXB2x.js.gz                                                                40.37kb / gzip: 12.19kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/design-system.DWhBg0GP.js.gz                                                                 7.76kb / gzip: 2.36kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/dropdown-menu.C1YmGG3k.js.gz                                                                 1.85kb / gzip: 0.90kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/dialog.DMr4IaxF.js.gz                                                                        1.56kb / gzip: 0.68kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/iconBase.CRvbfhzD.js.gz                                                                      2.40kb / gzip: 1.06kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/graph-demo.CHeqrbmh.js.gz                                                                    7.77kb / gzip: 2.44kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/date-fns-vendor.B_YXvuZl.js.gz                                                               22.76kb / gzip: 6.50kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.6TWF2ltS.js.gz                                                                         3.81kb / gzip: 1.65kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.38fkSFmY.js.gz                                                                         3.20kb / gzip: 1.17kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BL0H37m-.js.gz                                                                         4.50kb / gzip: 1.64kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BTqwuUOB.js.gz                                                                         2.89kb / gzip: 1.07kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BYgMrOyi.js.gz                                                                         11.66kb / gzip: 4.69kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BaDjx1yk.js.gz                                                                         19.41kb / gzip: 6.35kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BvDkH8qR.js.gz                                                                         9.33kb / gzip: 2.91kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.CLlCuwar.js.gz                                                                         14.39kb / gzip: 4.72kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.C-nuXgtO.js.gz                                                                         4.58kb / gzip: 1.63kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.ClhlrhyE.js.gz                                                                         2.18kb / gzip: 0.85kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.Cs6OVfqE.js.gz                                                                         8.96kb / gzip: 2.89kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.B9CsxXta.js.gz                                                                         3.42kb / gzip: 0.90kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.DXbMiYwH.js.gz                                                                         2.73kb / gzip: 1.00kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.aZ_MD77f.js.gz                                                                         43.21kb / gzip: 14.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.nutLBVVm.js.gz                                                                         6.03kb / gzip: 1.04kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.jsHFN1Ug.js.gz                                                                         29.74kb / gzip: 7.34kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.uVV5Zdic.js.gz                                                                         1.18kb / gzip: 0.61kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/input.BdenXZVJ.js.gz                                                                         1.01kb / gzip: 0.57kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/preload-helper.DD1OZmLC.js.gz                                                                1.78kb / gzip: 0.91kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/monaco-editor.Dt9qSYro.js.gz                                                                 14.02kb / gzip: 4.86kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.DskQid3L.js.gz                                                                         41.39kb / gzip: 12.93kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/react-query-vendor.DCH_Nud3.js.gz                                                            36.15kb / gzip: 10.92kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/select.CHVvfESt.js.gz                                                                        3.45kb / gzip: 1.33kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/skills.dX28iTPR.js.gz                                                                        17.10kb / gzip: 4.62kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/resources.service.BWxD_63J.js.gz                                                             10.03kb / gzip: 3.41kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/tabs.BlAb-dlF.js.gz                                                                          1.49kb / gzip: 0.63kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/system.pBKFzr_U.js.gz                                                                        7.10kb / gzip: 2.85kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/timeline-demo.Bq9ngwoI.js.gz                                                                 2.04kb / gzip: 0.92kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/tooltip.DuEwNQou.js.gz                                                                       1.65kb / gzip: 0.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ui-libs.O6ACVZ0H.js.gz                                                                       26.12kb / gzip: 7.37kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useApi.-aIl268H.js.gz                                                                        6.19kb / gzip: 1.96kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useTimeline.ChTkXHAa.js.gz                                                                   2.48kb / gzip: 1.26kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useGetProvidersModels.TknZnTsM.js.gz                                                         1.50kb / gzip: 0.72kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/unifiedLedgerApi.Br6n3afE.js.gz                                                              16.49kb / gzip: 5.28kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useWorkspace.CmfHJ6BK.js.gz                                                                  2.07kb / gzip: 0.79kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useWorkspaceDomains.DCda52QQ.js.gz                                                           3.24kb / gzip: 1.34kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useWorkflow.Dn7-pkzB.js.gz                                                                   8.25kb / gzip: 2.31kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/workflow.BSjdFato.js.gz                                                                      5.90kb / gzip: 1.04kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/workspace.quaQHqKH.js.gz                                                                     12.91kb / gzip: 2.81kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/websocket.Dmuo61Du.js.gz                                                                     1.44kb / gzip: 0.65kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/zustand-vendor.cDbrwZ9_.js.gz                                                                4.14kb / gzip: 1.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/zod.DUAvghtk.js.gz                                                                           27.28kb / gzip: 10.00kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TNFConsoleDashboard.BdMMDuxn.js.gz                                                           10.09kb / gzip: 3.12kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkflowBuilderEnhanced.Ba5er17m.js.gz                                                       26.37kb / gzip: 7.37kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/docs.html.gz                                                                                           2.48kb / gzip: 1.08kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/sitemap.html.gz                                                                                        2.23kb / gzip: 0.69kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/landing.html.gz                                                                                        35.96kb / gzip: 7.93kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/index.html.gz                                                                                          36.76kb / gzip: 8.02kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/AG-UI-INTEGRATION-GUIDE.html.gz                                                         22.59kb / gzip: 6.40kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/AG-UI-INTEGRATION-ANALYSIS.html.gz                                                      27.19kb / gzip: 8.03kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/CLAUDE-CODE-AT-SCALE.html.gz                                                            33.43kb / gzip: 9.84kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/GEMINI-CODE-ASSIST-INTEGRATION.html.gz                                                  29.24kb / gzip: 7.69kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/CAPABILITY-PACKAGING-COMPLETE.html.gz                                                   19.17kb / gzip: 5.72kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/NINE-MULTIPLIER-HACKS.html.gz                                                           26.60kb / gzip: 8.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/PROJECT-SUMMARY.html.gz                                                                 23.13kb / gzip: 6.88kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.html.gz                                          27.70kb / gzip: 7.52kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/PROJECT_SUMMARY.html.gz                                                                 15.49kb / gzip: 5.12kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/QUICKSTART.html.gz                                                                      12.24kb / gzip: 3.87kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/README.html.gz                                                                          21.09kb / gzip: 7.19kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/VISUAL-DEMO.html.gz                                                                     28.61kb / gzip: 6.25kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/dashboard.html.gz                                                                       23.18kb / gzip: 5.73kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/examples/index.html.gz                                                                  1.49kb / gzip: 0.67kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/reactflow.Fd0xVSp_.css.gz                                                                       6.88kb / gzip: 1.53kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.html.gz   12.42kb / gzip: 2.87kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.html.gz     17.41kb / gzip: 3.09kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.html.gz    16.15kb / gzip: 3.12kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.html.gz       11.39kb / gzip: 2.74kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.html.gz   17.04kb / gzip: 3.09kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.html.gz       12.44kb / gzip: 2.81kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.html.gz    13.47kb / gzip: 2.86kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/monitoring-dashboard.html.gz                                                            19.37kb / gzip: 3.67kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/service-architecture-map.html.gz                                                        17.09kb / gzip: 3.65kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/templates/index.html.gz                                                                 1.49kb / gzip: 0.67kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/templates/visualization-template.html.gz                                                12.37kb / gzip: 3.95kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/terminals/index.html.gz                                                                 11.39kb / gzip: 3.29kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/tools/ag-ui-tool.js.gz                                                                  9.27kb / gzip: 3.19kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/tools/cli.js.gz                                                                         6.21kb / gzip: 1.95kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/tools/generate.js.gz                                                                    7.50kb / gzip: 2.62kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/forms/create-ag-ui-analysis-agent.html.gz                                    3.70kb / gzip: 1.24kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/forms/generate-self-contained-visualization.html.gz                          4.88kb / gzip: 1.43kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/wizards/generate-self-contained-visualization.html.gz                        2.29kb / gzip: 0.78kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/one-click/create-ag-ui-analysis-agent.html.gz                                2.80kb / gzip: 1.06kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/wizards/create-ag-ui-analysis-agent.html.gz                                  2.27kb / gzip: 0.78kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/one-click/generate-self-contained-visualization.html.gz                      2.85kb / gzip: 1.06kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/workflow-dependencies.html.gz                                                           16.67kb / gzip: 4.03kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/workflow-preview.html.gz                                                                5.75kb / gzip: 2.02kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/functions/[[path]].js.gz                                                                               5.69kb / gzip: 1.86kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/examples/minimal-example.html.gz                                                        14.34kb / gzip: 4.45kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/bundle-size-analyzer.html.gz                                                            17.30kb / gzip: 4.07kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CommandCore.B-wKCGhm.js.gz                                                                   66.83kb / gzip: 23.48kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkflowAIAssistantPanel.Cs1hK2gH.js.gz                                                      109.86kb / gzip: 25.91kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/lodash-vendor.DUoLyaZY.js.gz                                                                 59.24kb / gzip: 21.36kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/reactflow.CknaLMAg.js.gz                                                                     89.40kb / gzip: 29.20kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/zod-vendor.C7QW91B5.js.gz                                                                    74.00kb / gzip: 19.62kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/TNF_CONCORDANCE_VISUALIZER.html.gz                                                      199.66kb / gzip: 27.34kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/agent-communication-flow.html.gz                                                        59.93kb / gzip: 16.81kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/visualizations/agent-communication-flow.html.gz                                         59.93kb / gzip: 16.81kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/app.BOa2ppfl.css.gz                                                                             384.29kb / gzip: 46.57kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/framer-motion.BZdbmtgE.js.gz                                                                 123.45kb / gzip: 40.38kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/TNF_INTELLIGENCE_DASHBOARD.html.gz                                                      323.33kb / gzip: 41.18kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Calendar.D_EAFn8N.js.gz                                                                      187.32kb / gzip: 59.51kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/agentVisualProfiles.mgjAKn3S.js.gz                                                           533.42kb / gzip: 43.04kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/web3-vendor.mI8YWscQ.js.gz                                                                   308.19kb / gzip: 111.59kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/recharts.Wlj53pb4.js.gz                                                                      360.35kb / gzip: 98.93kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.oACR6rxo.js.gz                                                                         357.62kb / gzip: 117.28kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/app.GEpuo-AF.js.gz                                                                           521.75kb / gzip: 149.10kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/react-vendor.ZgPL6Mwk.js.gz                                                                  582.07kb / gzip: 189.13kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/d3-vendor.DRqLgs30.js.gz                                                                     756.92kb / gzip: 199.68kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/three-vendor.DLP12Gzk.js.gz                                                                  1120.20kb / gzip: 316.65kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/bundle-analysis.html.gz                                                                                4143.19kb / gzip: 354.18kb
+
+
+
+✨ [vite-plugin-compression]:algorithm=brotliCompress - compressed file successfully: 
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/app.html.br                                                                                            25.60kb / brotliCompress: 5.76kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/index.B4YDebE6.css.br                                                                           1.03kb / brotliCompress: 0.36kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/Calendar.BSwzzYnC.css.br                                                                        10.63kb / brotliCompress: 2.07kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/index.JJgrCIlE.css.br                                                                           2.71kb / brotliCompress: 0.70kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AIAgentDashboard.CZbKuSNp.js.br                                                              13.52kb / brotliCompress: 3.38kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/A2AControl.DaOJ_Xze.js.br                                                                    10.68kb / brotliCompress: 2.96kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/API.CLGClPsk.js.br                                                                           7.13kb / brotliCompress: 2.26kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AIAgentOnboarding.De3iASbg.js.br                                                             9.03kb / brotliCompress: 2.23kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/APIAnalyticsFull.Ca5lcFPl.js.br                                                              9.63kb / brotliCompress: 2.29kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AdminSettings.7ZW3kO-_.js.br                                                                 14.02kb / brotliCompress: 2.83kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgencyDashboard.DjcA0VzT.js.br                                                               8.16kb / brotliCompress: 2.19kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgencyOnboarding.C1Ga9hpY.js.br                                                              3.41kb / brotliCompress: 1.29kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentIdentity.CAChzg90.js.br                                                                 7.37kb / brotliCompress: 2.01kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentDashboard.DJsCq9zd.js.br                                                                12.16kb / brotliCompress: 3.28kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentManagementFull.C2sMaiDN.js.br                                                           10.83kb / brotliCompress: 2.57kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentService.dOMqEsn_.js.br                                                                  5.47kb / brotliCompress: 1.76kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentTemplatesBrowser.CouzkszE.js.br                                                         10.50kb / brotliCompress: 2.71kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ApiClient.B1FbqjFD.js.br                                                                     2.58kb / brotliCompress: 0.92kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Appearance.Dy68G4BQ.js.br                                                                    1.17kb / brotliCompress: 0.47kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AgentsRevolution.CluYZO-m.js.br                                                              11.84kb / brotliCompress: 3.13kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/BackupRestore.ZgLzbBEs.js.br                                                                 1.63kb / brotliCompress: 0.63kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/BaseBrowser.D8HbY58u.js.br                                                                   2.74kb / brotliCompress: 1.12kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Blog.Tqn6VULi.js.br                                                                          3.52kb / brotliCompress: 1.10kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/AuditLogViewer.DYptCfLi.js.br                                                                10.93kb / brotliCompress: 2.44kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Analytics.Bv6FdS5f.js.br                                                                     23.17kb / brotliCompress: 5.31kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/BrandIdentity.D_sHd4BP.js.br                                                                 14.73kb / brotliCompress: 2.41kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Builder.gdfEeyB1.js.br                                                                       16.25kb / brotliCompress: 3.88kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CatalogProfile.CKcOAgYQ.js.br                                                                8.88kb / brotliCompress: 2.13kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CodebaseMap._XAbXFr8.js.br                                                                   11.70kb / brotliCompress: 3.21kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ChatPage.CDcmLXCA.js.br                                                                      28.21kb / brotliCompress: 6.27kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CommandCenterDashboard.DkPpE3mV.js.br                                                        30.67kb / brotliCompress: 7.73kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ComponentsShowcase.B5QkUxYR.js.br                                                            8.55kb / brotliCompress: 1.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ConcordanceViewer.W4QEHf7Z.js.br                                                             1.43kb / brotliCompress: 0.64kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ConfigurationManagement.WfUm4pVx.js.br                                                       8.75kb / brotliCompress: 2.07kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/DatabaseAdminPanel.CGn-JCV8.js.br                                                            8.93kb / brotliCompress: 2.23kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.BJfw2tbI.js.br                                                                        11.34kb / brotliCompress: 2.86kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ComprehensiveAdminDashboard.Aq7HSK6E.js.br                                                   37.09kb / brotliCompress: 7.39kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.CHSZncSa.js.br                                                                        4.04kb / brotliCompress: 1.27kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.BxZHLW5s.js.br                                                                        15.21kb / brotliCompress: 3.46kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.CRi8wlUr.js.br                                                                        4.45kb / brotliCompress: 1.42kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.DkKRNcXC.js.br                                                                        7.30kb / brotliCompress: 1.93kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/DatasetsWorkbench.DZbow3x-.js.br                                                             7.91kb / brotliCompress: 2.47kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/EmbeddingPreference.3MR3qEAk.js.br                                                           2.03kb / brotliCompress: 0.70kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Detail.QpysuOUB.js.br                                                                        8.70kb / brotliCompress: 2.37kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Execution.LtnOu0c2.js.br                                                                     5.46kb / brotliCompress: 1.79kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ExecutionConsole.BVl14QKr.js.br                                                              6.47kb / brotliCompress: 1.79kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/FeatureFlags.B3kPGRdN.js.br                                                                  3.96kb / brotliCompress: 1.24kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/FilesWorkspace.BMzmmxqM.js.br                                                                7.07kb / brotliCompress: 2.09kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Edit.CWmHCWdc.js.br                                                                          8.17kb / brotliCompress: 2.30kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/FrontendShowcase.B1eucx12.js.br                                                              6.81kb / brotliCompress: 1.80kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ForgotPassword.Ca0pYpik.js.br                                                                3.30kb / brotliCompress: 1.17kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/GoogleCallback.DKvpD0HG.js.br                                                                1.83kb / brotliCompress: 0.78kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/General.BM8fwTg6.js.br                                                                       3.68kb / brotliCompress: 1.13kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/HostingControlCenter.pE3sL2KR.js.br                                                          12.97kb / brotliCompress: 3.26kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/GraphVisualizer.IwPCE4St.js.br                                                               13.96kb / brotliCompress: 3.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/KnowledgeHub.DeVPmIuB.js.br                                                                  6.19kb / brotliCompress: 1.79kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/LaunchpadDashboard.Y_SsCek0.js.br                                                            4.58kb / brotliCompress: 1.66kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/LiveView.D3xtdDJ3.js.br                                                                      5.17kb / brotliCompress: 1.78kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/LLMRankingsDashboard.Df0MnRwg.js.br                                                          10.81kb / brotliCompress: 2.44kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/MacroTimelinePage.Bpj2NoN9.js.br                                                             7.71kb / brotliCompress: 2.02kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Members.xbVIf50T.js.br                                                                       3.61kb / brotliCompress: 1.28kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/MemoryVisualizer.CjsEOwd1.js.br                                                              4.29kb / brotliCompress: 1.58kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/MCPHub.BVWeEUNN.js.br                                                                        7.58kb / brotliCompress: 2.08kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/LayoutExamples.W7Ibn3n6.js.br                                                                17.39kb / brotliCompress: 3.12kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/MultiAgentChat.CEzlwO9U.js.br                                                                9.71kb / brotliCompress: 2.89kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/New.ClMt7srn.js.br                                                                           4.42kb / brotliCompress: 1.49kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Notifications.ClKNPZz1.js.br                                                                 1.98kb / brotliCompress: 0.56kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/OAuthCallback.qgbE2f98.js.br                                                                 1.29kb / brotliCompress: 0.58kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/New.B7tjfuzG.js.br                                                                           10.44kb / brotliCompress: 2.77kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/OpenClawSecurity.WKMI6g-S.js.br                                                              5.64kb / brotliCompress: 1.84kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/NFTMarketplacePage.WreX_HU7.js.br                                                            24.83kb / brotliCompress: 5.02kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PerpetualStatus.Bdx5xZ5D.js.br                                                               5.92kb / brotliCompress: 1.85kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Overview.gWxsk6U9.js.br                                                                      10.46kb / brotliCompress: 2.55kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Onboard.D4azHNVq.js.br                                                                       14.58kb / brotliCompress: 3.58kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PfpPromptCatalog.CXEgs1Qz.js.br                                                              7.85kb / brotliCompress: 2.42kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PlatformParityDashboard.CschiCrW.js.br                                                       5.45kb / brotliCompress: 1.28kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PremiumInput.Dd_Rf4Wd.js.br                                                                  3.94kb / brotliCompress: 1.00kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PortManagement.CwMZjQIq.js.br                                                                2.43kb / brotliCompress: 0.90kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PrivacyPolicy.BG8UKeau.js.br                                                                 3.33kb / brotliCompress: 1.01kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PfpStudio.CvgcCOnN.js.br                                                                     21.66kb / brotliCompress: 5.88kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ProjectView.EDpcL_0B.js.br                                                                   4.53kb / brotliCompress: 1.43kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/OnboardingPreview.YF29Vz_l.js.br                                                             59.78kb / brotliCompress: 11.22kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PublicLayout.Cq-3ie0A.js.br                                                                  4.52kb / brotliCompress: 1.46kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ResetPassword.DjSrS9eB.js.br                                                                 1.84kb / brotliCompress: 0.80kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ScheduleBuilder.KAg8g4ca.js.br                                                               2.20kb / brotliCompress: 0.79kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ProviderApiKeyList.BGIrKeDA.js.br                                                            16.64kb / brotliCompress: 4.36kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/PremiumLayout.CH0PEHaG.js.br                                                                 22.85kb / brotliCompress: 5.55kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ResourcesDashboard.-id6KwtK.js.br                                                            17.94kb / brotliCompress: 4.21kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/RevenueDashboardPage.4MeGNnKg.js.br                                                          13.65kb / brotliCompress: 3.34kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Security.BzWUCMiR.js.br                                                                      5.60kb / brotliCompress: 1.55kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Settings.Cg8b4zn1.js.br                                                                      3.05kb / brotliCompress: 1.04kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SmartNavigation.B16w9yVX.js.br                                                               10.79kb / brotliCompress: 2.72kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SkillsBrowser.pTOZt9JU.js.br                                                                 12.14kb / brotliCompress: 3.17kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Settings.BXv633py.js.br                                                                      13.55kb / brotliCompress: 3.22kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SpacesOverview.sheFbmrr.js.br                                                                11.69kb / brotliCompress: 2.95kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SystemHealth.Bgdx35A-.js.br                                                                  8.92kb / brotliCompress: 2.66kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SystemMetricsDashboard.CXqovOFM.js.br                                                        10.71kb / brotliCompress: 2.47kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SystemStatus.DWW6Azd8.js.br                                                                  9.94kb / brotliCompress: 3.12kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/FairtableDashboard.DRH1SO8b.js.br                                                            54.89kb / brotliCompress: 12.86kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TNFCommandCenter.Btr5OvTi.js.br                                                              18.79kb / brotliCompress: 4.81kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SynapticNexus.2Eh87q50.js.br                                                                 49.53kb / brotliCompress: 11.72kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TNFConsoleDashboard.BdMMDuxn.js.br                                                           10.09kb / brotliCompress: 2.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Templates.fIir5QHG.js.br                                                                     6.21kb / brotliCompress: 1.72kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TasksPage.ci-FadG9.js.br                                                                     11.71kb / brotliCompress: 2.98kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TerminalGraph.Bnb4S14q.js.br                                                                 11.26kb / brotliCompress: 3.22kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TermsOfService.CbwtBNJR.js.br                                                                4.49kb / brotliCompress: 1.48kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TimelineView.C1aF27ak.js.br                                                                  6.23kb / brotliCompress: 1.99kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/TimelineModulePage.C4mLfuEs.js.br                                                            3.41kb / brotliCompress: 1.39kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Unauthorized.OopGL0s9.js.br                                                                  1.94kb / brotliCompress: 0.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SuperAdminControlPanel.By4ipS4N.js.br                                                        58.44kb / brotliCompress: 12.63kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/UserManagement.BGDHr-M_.js.br                                                                4.27kb / brotliCompress: 1.26kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/UnifiedCommunicationCanvas.t8ScGyld.js.br                                                    23.50kb / brotliCompress: 6.21kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/SophisticatedTNFHub.XCCILR9V.js.br                                                           19.99kb / brotliCompress: 4.24kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/UserManagementFull.CAKqDLGu.js.br                                                            18.96kb / brotliCompress: 3.88kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/UserProfilePage.DQcInzJJ.js.br                                                               22.36kb / brotliCompress: 4.71kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/VisualizationSurfaceViewer.D-SC37qM.js.br                                                    5.88kb / brotliCompress: 1.79kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkflowBrowser.MH8m6eq-.js.br                                                               9.37kb / brotliCompress: 2.47kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Workflows.BWe8sUnn.js.br                                                                     10.21kb / brotliCompress: 2.60kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkflowBuilderEnhanced.Ba5er17m.js.br                                                       26.37kb / brotliCompress: 6.52kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Visualizations.BkjBX_gV.js.br                                                                44.15kb / brotliCompress: 10.39kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkspaceManagement.BoFxgOA7.js.br                                                           10.12kb / brotliCompress: 2.50kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkspaceAnalytics.BkX0vYb8.js.br                                                            10.19kb / brotliCompress: 2.62kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkflowsEnhanced.D5FFkYx8.js.br                                                             30.62kb / brotliCompress: 7.36kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/agentPfpStore.mYnyg2T_.js.br                                                                 12.35kb / brotliCompress: 2.89kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/design-system.DWhBg0GP.js.br                                                                 7.76kb / brotliCompress: 2.08kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/api.Cwkdfgk8.js.br                                                                           21.35kb / brotliCompress: 4.68kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/content-vendor.DSzjXB2x.js.br                                                                40.37kb / brotliCompress: 11.13kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/date-fns-vendor.B_YXvuZl.js.br                                                               22.76kb / brotliCompress: 5.82kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/dialog.DMr4IaxF.js.br                                                                        1.56kb / brotliCompress: 0.58kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/dropdown-menu.C1YmGG3k.js.br                                                                 1.85kb / brotliCompress: 0.76kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/graph-demo.CHeqrbmh.js.br                                                                    7.77kb / brotliCompress: 2.10kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/iconBase.CRvbfhzD.js.br                                                                      2.40kb / brotliCompress: 0.94kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.38fkSFmY.js.br                                                                         3.20kb / brotliCompress: 0.95kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.6TWF2ltS.js.br                                                                         3.81kb / brotliCompress: 1.48kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.B9CsxXta.js.br                                                                         3.42kb / brotliCompress: 0.77kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BL0H37m-.js.br                                                                         4.50kb / brotliCompress: 1.43kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BTqwuUOB.js.br                                                                         2.89kb / brotliCompress: 0.93kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BYgMrOyi.js.br                                                                         11.66kb / brotliCompress: 4.23kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BaDjx1yk.js.br                                                                         19.41kb / brotliCompress: 5.59kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.BvDkH8qR.js.br                                                                         9.33kb / brotliCompress: 2.52kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.C-nuXgtO.js.br                                                                         4.58kb / brotliCompress: 1.43kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.CLlCuwar.js.br                                                                         14.39kb / brotliCompress: 4.21kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.ClhlrhyE.js.br                                                                         2.18kb / brotliCompress: 0.75kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.Cs6OVfqE.js.br                                                                         8.96kb / brotliCompress: 2.54kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.DXbMiYwH.js.br                                                                         2.73kb / brotliCompress: 0.85kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.DskQid3L.js.br                                                                         41.39kb / brotliCompress: 11.73kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/VirtualLibraryPage.DiqgurAQ.js.br                                                            36.38kb / brotliCompress: 7.76kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.aZ_MD77f.js.br                                                                         43.21kb / brotliCompress: 13.18kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.nutLBVVm.js.br                                                                         6.03kb / brotliCompress: 0.93kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.uVV5Zdic.js.br                                                                         1.18kb / brotliCompress: 0.53kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/input.BdenXZVJ.js.br                                                                         1.01kb / brotliCompress: 0.49kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.jsHFN1Ug.js.br                                                                         29.74kb / brotliCompress: 6.46kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/monaco-editor.Dt9qSYro.js.br                                                                 14.02kb / brotliCompress: 4.30kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/preload-helper.DD1OZmLC.js.br                                                                1.78kb / brotliCompress: 0.78kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/react-query-vendor.DCH_Nud3.js.br                                                            36.15kb / brotliCompress: 9.89kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/resources.service.BWxD_63J.js.br                                                             10.03kb / brotliCompress: 3.00kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CreateAgent.DdJ4bauj.js.br                                                                   46.04kb / brotliCompress: 9.66kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/select.CHVvfESt.js.br                                                                        3.45kb / brotliCompress: 1.14kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/skills.dX28iTPR.js.br                                                                        17.10kb / brotliCompress: 3.89kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/system.pBKFzr_U.js.br                                                                        7.10kb / brotliCompress: 2.50kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/tabs.BlAb-dlF.js.br                                                                          1.49kb / brotliCompress: 0.52kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/tooltip.DuEwNQou.js.br                                                                       1.65kb / brotliCompress: 0.66kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/timeline-demo.Bq9ngwoI.js.br                                                                 2.04kb / brotliCompress: 0.74kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/unifiedLedgerApi.Br6n3afE.js.br                                                              16.49kb / brotliCompress: 4.63kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useGetProvidersModels.TknZnTsM.js.br                                                         1.50kb / brotliCompress: 0.64kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useApi.-aIl268H.js.br                                                                        6.19kb / brotliCompress: 1.74kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/ui-libs.O6ACVZ0H.js.br                                                                       26.12kb / brotliCompress: 6.44kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useWorkspace.CmfHJ6BK.js.br                                                                  2.07kb / brotliCompress: 0.70kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useTimeline.ChTkXHAa.js.br                                                                   2.48kb / brotliCompress: 1.13kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useWorkspaceDomains.DCda52QQ.js.br                                                           3.24kb / brotliCompress: 1.19kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/useWorkflow.Dn7-pkzB.js.br                                                                   8.25kb / brotliCompress: 2.02kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/websocket.Dmuo61Du.js.br                                                                     1.44kb / brotliCompress: 0.57kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/workflow.BSjdFato.js.br                                                                      5.90kb / brotliCompress: 0.89kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/workspace.quaQHqKH.js.br                                                                     12.91kb / brotliCompress: 2.45kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/zustand-vendor.cDbrwZ9_.js.br                                                                4.14kb / brotliCompress: 1.56kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/zod.DUAvghtk.js.br                                                                           27.28kb / brotliCompress: 9.16kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/reactflow.Fd0xVSp_.css.br                                                                       6.88kb / brotliCompress: 1.30kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/docs.html.br                                                                                           2.48kb / brotliCompress: 0.81kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/functions/[[path]].js.br                                                                               5.69kb / brotliCompress: 1.55kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/sitemap.html.br                                                                                        2.23kb / brotliCompress: 0.48kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/index.html.br                                                                                          36.76kb / brotliCompress: 6.56kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/landing.html.br                                                                                        35.96kb / brotliCompress: 6.49kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/AG-UI-INTEGRATION-ANALYSIS.html.br                                                      27.19kb / brotliCompress: 6.68kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/AG-UI-INTEGRATION-GUIDE.html.br                                                         22.59kb / brotliCompress: 5.44kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/CAPABILITY-PACKAGING-COMPLETE.html.br                                                   19.17kb / brotliCompress: 4.61kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.html.br                                          27.70kb / brotliCompress: 6.04kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/CLAUDE-CODE-AT-SCALE.html.br                                                            33.43kb / brotliCompress: 8.07kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/GEMINI-CODE-ASSIST-INTEGRATION.html.br                                                  29.24kb / brotliCompress: 6.41kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/NINE-MULTIPLIER-HACKS.html.br                                                           26.60kb / brotliCompress: 7.17kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/PROJECT-SUMMARY.html.br                                                                 23.13kb / brotliCompress: 5.66kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/QUICKSTART.html.br                                                                      12.24kb / brotliCompress: 3.17kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/PROJECT_SUMMARY.html.br                                                                 15.49kb / brotliCompress: 4.07kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/README.html.br                                                                          21.09kb / brotliCompress: 5.97kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/VISUAL-DEMO.html.br                                                                     28.61kb / brotliCompress: 5.05kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/agent-communication-flow.html.br                                                        59.93kb / brotliCompress: 14.85kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/bundle-size-analyzer.html.br                                                            17.30kb / brotliCompress: 3.41kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/examples/index.html.br                                                                  1.49kb / brotliCompress: 0.47kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/dashboard.html.br                                                                       23.18kb / brotliCompress: 4.68kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/examples/minimal-example.html.br                                                        14.34kb / brotliCompress: 3.64kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.html.br     17.41kb / brotliCompress: 2.56kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.html.br   12.42kb / brotliCompress: 2.38kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.html.br    16.15kb / brotliCompress: 2.59kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.html.br       11.39kb / brotliCompress: 2.29kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.html.br       12.44kb / brotliCompress: 2.34kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.html.br   17.04kb / brotliCompress: 2.56kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.html.br    13.47kb / brotliCompress: 2.37kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/monitoring-dashboard.html.br                                                            19.37kb / brotliCompress: 3.00kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/templates/index.html.br                                                                 1.49kb / brotliCompress: 0.47kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/service-architecture-map.html.br                                                        17.09kb / brotliCompress: 3.04kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/templates/visualization-template.html.br                                                12.37kb / brotliCompress: 3.27kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/terminals/index.html.br                                                                 11.39kb / brotliCompress: 2.76kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/tools/ag-ui-tool.js.br                                                                  9.27kb / brotliCompress: 2.66kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/tools/cli.js.br                                                                         6.21kb / brotliCompress: 1.66kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/forms/create-ag-ui-analysis-agent.html.br                                    3.70kb / brotliCompress: 0.92kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/one-click/create-ag-ui-analysis-agent.html.br                                2.80kb / brotliCompress: 0.78kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/wizards/create-ag-ui-analysis-agent.html.br                                  2.27kb / brotliCompress: 0.56kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/one-click/generate-self-contained-visualization.html.br                      2.85kb / brotliCompress: 0.79kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/tools/generate.js.br                                                                    7.50kb / brotliCompress: 2.21kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/forms/generate-self-contained-visualization.html.br                          4.88kb / brotliCompress: 1.06kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/ui-package/wizards/generate-self-contained-visualization.html.br                        2.29kb / brotliCompress: 0.56kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/workflow-preview.html.br                                                                5.75kb / brotliCompress: 1.64kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/workflow-dependencies.html.br                                                           16.67kb / brotliCompress: 3.39kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/CommandCore.B-wKCGhm.js.br                                                                   66.83kb / brotliCompress: 20.94kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/visualizations/agent-communication-flow.html.br                                         59.93kb / brotliCompress: 14.85kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/WorkflowAIAssistantPanel.Cs1hK2gH.js.br                                                      109.86kb / brotliCompress: 21.91kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/lodash-vendor.DUoLyaZY.js.br                                                                 59.24kb / brotliCompress: 17.33kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/reactflow.CknaLMAg.js.br                                                                     89.40kb / brotliCompress: 25.57kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/zod-vendor.C7QW91B5.js.br                                                                    74.00kb / brotliCompress: 17.35kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/TNF_CONCORDANCE_VISUALIZER.html.br                                                      199.66kb / brotliCompress: 21.97kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/framer-motion.BZdbmtgE.js.br                                                                 123.45kb / brotliCompress: 36.21kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/agentVisualProfiles.mgjAKn3S.js.br                                                           533.42kb / brotliCompress: 27.78kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/visualizations/TNF_INTELLIGENCE_DASHBOARD.html.br                                                      323.33kb / brotliCompress: 31.91kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/Calendar.D_EAFn8N.js.br                                                                      187.32kb / brotliCompress: 52.65kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/app.BOa2ppfl.css.br                                                                             384.29kb / brotliCompress: 34.10kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/recharts.Wlj53pb4.js.br                                                                      360.35kb / brotliCompress: 82.71kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/web3-vendor.mI8YWscQ.js.br                                                                   308.19kb / brotliCompress: 98.23kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/index.oACR6rxo.js.br                                                                         357.62kb / brotliCompress: 99.10kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/app.GEpuo-AF.js.br                                                                           521.75kb / brotliCompress: 122.64kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/react-vendor.ZgPL6Mwk.js.br                                                                  582.07kb / brotliCompress: 158.07kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/d3-vendor.DRqLgs30.js.br                                                                     756.92kb / brotliCompress: 163.46kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/assets/js/three-vendor.DLP12Gzk.js.br                                                                  1120.20kb / brotliCompress: 242.07kb
+dist//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/bundle-analysis.html.br                                                                                4143.19kb / brotliCompress: 229.14kb
+
+

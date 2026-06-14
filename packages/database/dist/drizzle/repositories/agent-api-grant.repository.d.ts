@@ -1,0 +1,131 @@
+import { NewAgentApiGrant, NewAgentApiGrantUsage } from '../types/index.js';
+export declare class DrizzleAgentApiGrantRepository {
+    listByUser(userId: string): Promise<{
+        id: string;
+        userId: string;
+        agentId: string;
+        provider: string;
+        allowedModels: string[];
+        maxRequestsPerMinute: number;
+        dailyTokenBudget: number;
+        monthlyUsdCap: number;
+        expiresAt: Date;
+        revoked: boolean;
+        tokenVersion: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }[]>;
+    findByIdForUser(id: string, userId: string): Promise<{
+        id: string;
+        userId: string;
+        agentId: string;
+        provider: string;
+        allowedModels: string[];
+        maxRequestsPerMinute: number;
+        dailyTokenBudget: number;
+        monthlyUsdCap: number;
+        expiresAt: Date;
+        revoked: boolean;
+        tokenVersion: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    findById(id: string): Promise<{
+        id: string;
+        userId: string;
+        agentId: string;
+        provider: string;
+        allowedModels: string[];
+        maxRequestsPerMinute: number;
+        dailyTokenBudget: number;
+        monthlyUsdCap: number;
+        expiresAt: Date;
+        revoked: boolean;
+        tokenVersion: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    create(data: NewAgentApiGrant): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        agentId: string;
+        expiresAt: Date;
+        provider: string;
+        allowedModels: string[];
+        maxRequestsPerMinute: number;
+        dailyTokenBudget: number;
+        monthlyUsdCap: number;
+        revoked: boolean;
+        tokenVersion: number;
+    }>;
+    revoke(id: string, userId: string): Promise<{
+        id: string;
+        userId: string;
+        agentId: string;
+        provider: string;
+        allowedModels: string[];
+        maxRequestsPerMinute: number;
+        dailyTokenBudget: number;
+        monthlyUsdCap: number;
+        expiresAt: Date;
+        revoked: boolean;
+        tokenVersion: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    rotateTokenVersion(id: string, userId: string): Promise<{
+        id: string;
+        userId: string;
+        agentId: string;
+        provider: string;
+        allowedModels: string[];
+        maxRequestsPerMinute: number;
+        dailyTokenBudget: number;
+        monthlyUsdCap: number;
+        expiresAt: Date;
+        revoked: boolean;
+        tokenVersion: number;
+        createdAt: Date;
+        updatedAt: Date;
+    } | null>;
+    isGrantActive(grantId: string, expectedTokenVersion: number): Promise<{
+        id: string;
+        userId: string;
+        agentId: string;
+        provider: string;
+        allowedModels: string[];
+        maxRequestsPerMinute: number;
+        dailyTokenBudget: number;
+        monthlyUsdCap: number;
+        expiresAt: Date;
+        revoked: boolean;
+        tokenVersion: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    logUsage(data: NewAgentApiGrantUsage): Promise<{
+        id: string;
+        createdAt: Date;
+        userId: string;
+        agentId: string;
+        provider: string;
+        statusCode: number;
+        error: string | null;
+        grantId: string;
+        model: string | null;
+        promptTokens: number;
+        completionTokens: number;
+        totalTokens: number;
+        estimatedCostCents: number;
+        durationMs: number;
+    }>;
+    getUsageSummary(grantId: string): Promise<{
+        requestsLastMinute: number;
+        dailyTokens: number;
+        monthlyCostCents: number;
+    }>;
+}
+export declare const drizzleAgentApiGrantRepository: DrizzleAgentApiGrantRepository;
+//# sourceMappingURL=agent-api-grant.repository.d.ts.map

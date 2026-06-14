@@ -1,0 +1,1221 @@
+{
+  "sourceType": "email-wave2-import-dedupe-audit",
+  "generatedAt": "2026-05-07T20:11:31.280Z",
+  "sourceAdjudication": "data/protocols/email-wave2-adjudication-pass10-bulk.2026-05-07.json",
+  "initialImportCount": 289,
+  "dedupedImportCount": 116,
+  "skippedCount": 173,
+  "skipped": [
+    {
+      "factId": "email-fact-wave2-2008-09-07-msgid-0a258f10-2b87-4d63-89ac-138a0473feed-roche",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "msilberg@rochester.rr.com|motu 896 firewire interface 500 spencerport",
+      "previousFactId": "email-fact-wave2-2008-09-06-msgid-000e01c91055-9a076410-78884242-d8yqkk61",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-09-08-msgid-20080908020501-ulnn4606-hrndva-omta05-mail",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jscarini@rochester.rr.com|roland sc 7 gen midi sound module 30 spencerport",
+      "previousFactId": "email-fact-wave2-2008-09-05-msgid-20080905205223-dngn16835-hrndva-omta06-mai",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-09-17-msgid-702103-25573-qm-web36108-mail-mud-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "brian_h73@yahoo.com|1992 camry",
+      "previousFactId": "email-fact-wave2-2008-09-17-msgid-319927-36964-qm-web36101-mail-mud-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-09-17-msgid-64430-93819-qm-web36106-mail-mud-yahoo-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "brian_h73@yahoo.com|1992 camry",
+      "previousFactId": "email-fact-wave2-2008-09-17-msgid-319927-36964-qm-web36101-mail-mud-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-09-17-msgid-757248-48556-qm-web36108-mail-mud-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "brian_h73@yahoo.com|1992 camry",
+      "previousFactId": "email-fact-wave2-2008-09-17-msgid-319927-36964-qm-web36101-mail-mud-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-09-19-msgid-985357-80884-qm-web35901-mail-mud-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "adamiff@yahoo.com|dude",
+      "previousFactId": "email-fact-wave2-2008-08-14-msgid-270510-51552-qm-web35904-mail-mud-yahoo-co",
+      "previousSource": "pass9b"
+    },
+    {
+      "factId": "email-fact-wave2-2008-09-29-msgid-cc93cac20809290744j315a6055s87949fb867ca3f",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jkk@existence.org|carbon dioxide tank 45 spencerport",
+      "previousFactId": "email-fact-wave2-2008-09-29-msgid-cc93cac20809290637g1a446f39j5f7c7c99636545",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-10-03-msgid-528737-44189-qm-web35908-mail-mud-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "adamiff@yahoo.com|dude",
+      "previousFactId": "email-fact-wave2-2008-10-02-msgid-656415-94350-qm-web35902-mail-mud-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-10-29-msgid-860569-42128-qm-web50102-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-10-30-msgid-4e02d14c9d2a447db719ed7e8d633139-local-erb",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chuck@erbfinancial.com|free couch",
+      "previousFactId": "email-fact-wave2-2008-10-30-msgid-dfcaf9d84d114e8fbb8d8076d1f5aac1-local-erb",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-10-31-msgid-729589-82966-qm-web50107-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-10-31-msgid-8cb09c0ab41a6b8-7f8-a14-webmail-dc17-sysop",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "cmfabry33@aol.com|3 bedroom colonial for rent",
+      "previousFactId": "email-fact-wave2-2008-10-24-msgid-be4-42bea712-36334778-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-11-01-msgid-425650-14754-qm-web50106-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-11-01-msgid-993045-1821-qm-web50112-mail-re2-yahoo-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-11-01-msgid-449575-16511-qm-web50112-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-11-01-msgid-128758-95498-qm-web50104-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-11-01-msgid-326241-15700-qm-web50107-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-11-03-msgid-287136-36422-qm-web50111-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-11-03-msgid-509864-76103-qm-web50108-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-11-04-msgid-77652-65198-qm-web50106-mail-re2-yahoo-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "callistazm@yahoo.com|co2 tank",
+      "previousFactId": "email-fact-wave2-2008-10-29-msgid-245514-39390-qm-web50102-mail-re2-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-12-24-msgid-c4a-42f44459-3683e7c1-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-12-29-msgid-be8-446cef72-368a6f86-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-12-29-msgid-cec-4b8e14af-368a703e-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2008-12-30-msgid-d67-3ba9f367-368bcb2f-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-04-msgid-caf-3db4181c-36922c7c-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-13-msgid-cd9-4640dd73-369d370e-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-15-msgid-bbb-42d75b5d-36a11051-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-16-msgid-ce9-4a3ec88b-36a26b2c-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-20-msgid-cc7-4a0c4a2f-36a7a5a5-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-21-msgid-583399-42522-qm-web35902-mail-mud-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "adamiff@yahoo.com|hey this may interest you",
+      "previousFactId": "email-fact-wave2-2009-01-21-msgid-944460-4988-qm-web35902-mail-mud-yahoo-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-26-msgid-000901c97fb5-4d885c00-e8991400-rr-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "htorregrossa@rochester.rr.com|bassinet",
+      "previousFactId": "email-fact-wave2-2009-01-26-msgid-000c01c97f4a-b8048060-280d8120-rr-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-27-msgid-806761-10176-qm-web53608-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "smh240sx@yahoo.com|baby items",
+      "previousFactId": "email-fact-wave2-2009-01-18-msgid-72551-74921-qm-web53611-mail-re2-yahoo-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-31-msgid-bea-36a12ab9-36b5e78e-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-31-msgid-c76-3e854016-36b628e0-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-01-31-msgid-c40-517679d4-36b636a4-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-02-msgid-179136-17516-qm-web51311-mail-re2-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrareina@yahoo.com|crib mattress changing table",
+      "previousFactId": "email-fact-wave2-2009-02-01-msgid-417011-2688-qm-web51301-mail-re2-yahoo-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-05-msgid-bb8-4704f6ec-36bc7656-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-06-msgid-d36-3be74e43-36bd8f08-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-06-msgid-cf2-4d72d44f-36bda640-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-07-msgid-c34-4e8b528d-36bee440-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "samsfatboy@aol.com|lakeshore precision manufacturing",
+      "previousFactId": "email-fact-wave2-2008-12-24-msgid-c46-499033a7-36838e66-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120456p38bc6b7anbc55ddeca73749",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120500o41bcc099k4ec31faea3c71e",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120540l46a797awaf21adcc04a0ea3",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120630ib696ac6h31d214ae1ef0bac",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120638ic4c0f28m81a3262180bccd5",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120705s641b094bo8db3ed53735db1",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120729h62e90f1fwa3932b82599a31",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120740u356bbe28l92c0e05cc4af80",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120741g2d79ea4bme80e36bf07555c",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120824r7ba731c5l3958fa8b363ad3",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120945k136b5c3dk2719c7f16e1bc8",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120947y5e87ecdk926f5762a7c2a00",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121110g51aad931tb2bbcb4e92982e",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121154k7fd305b8ha1b948c550b95c",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121235r66636836u74694f57741300",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121306y4aebdfd5y2c2ba4a79ce7e4",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121336o1a62e069kb573f8af81f3c0",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121344p1e19686fr1863e3c7ebde7c",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121348s2576ca27m7b70b5ef05a546",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121410y1053edd2p4eee677282c89e",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121410s39b61261laf7d647e7ed6ed",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902121439l2b7004ag4dd7773c9a95c07",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-13-msgid-83704d0f0902130800la0f49b9r7838974ea7bcd11",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-13-msgid-83704d0f0902131010u3e61a121w9f768e3c31dbb8",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-13-msgid-83704d0f0902131533t4911a013ide6316013a0289",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-16-msgid-83704d0f0902151752i2c9bdf6ia95c9eec8fb3bc3",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-16-msgid-83704d0f0902160902r3a56616bi761831a473cfea",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-16-msgid-c2192b3e0902161356s7429d8f8o31c4d2ef7ed571",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jayg123@gmail.com|template",
+      "previousFactId": "email-fact-wave2-2009-02-16-msgid-ced94103-9b9a-4563-bce6-94d77ef07bc6-gmail",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-16-msgid-83704d0f0902161451m72ced86et74428b6eecd96a",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-16-msgid-83704d0f0902161517q437f2fb7hb3c4dda955e138",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-17-msgid-6ac86efa-a0f4-4b07-b08f-9bbca1cdb0bf-regon",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "kontakt@regon.de|message from regon de",
+      "previousFactId": "email-fact-wave2-2009-02-16-msgid-c355bdb2-ce52-4f80-be80-8560e439aa6c-regon",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-17-msgid-499aec5e-7060902-gmail-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-19-msgid-83704d0f0902181649h7331e482we5c9d694ec57df",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-19-msgid-6a3c9e6b-4232-4163-85fe-8dda2572cd10-regon",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "kontakt@regon.de|message from regon de",
+      "previousFactId": "email-fact-wave2-2009-02-16-msgid-c355bdb2-ce52-4f80-be80-8560e439aa6c-regon",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-20-msgid-83704d0f0902200827p62510d0dt9901e7743ff833",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-20-msgid-83704d0f0902201009t2ce7b82r3acaa571d0ca448",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-20-msgid-83704d0f0902201126u6618541eof0b1f48fb541c8",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-20-msgid-83704d0f0902201128u7c1d3c5exda06179d7392c9",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-20-msgid-83704d0f0902201131k6d5f7621g4c359ced62b685",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-22-msgid-83704d0f0902221115h55622891v4c840e682aceb2",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-23-msgid-83704d0f0902230539kc26217k1b2c6107ecc7a4b4",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-23-msgid-83704d0f0902230733w2b6cdc83p35ae12a09e801d",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-02-24-msgid-83704d0f0902241253p1da83d48v9d765d108f757a",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-01-msgid-e0ac77270903011103p69b29a20qecb4be16feebaf",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|hi this is chanus phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-01-msgid-e0ac77270903011052o23110542kf822d9277b90b9",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903011949p41af2e9ajd65a98f46a5e97",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|hi this is chanus phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-01-msgid-e0ac77270903011052o23110542kf822d9277b90b9",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-03-msgid-e0ac77270903031025m190d21e1qa302a384517bf0",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-04-msgid-83704d0f0903040452k557996e1ifc65ae51a78fd0",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-04-msgid-83704d0f0903040455r17ef82b8w5c029eceed0df6",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "schwarzes.himmel@gmail.com|startree",
+      "previousFactId": "email-fact-wave2-2009-02-12-msgid-83704d0f0902120316w44e811b0o840d40f930eb18",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-06-msgid-e0ac77270903060948i240e8e79g47c9ff9ab57ae6",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-06-msgid-e0ac77270903061102l53beaf40rc3e8b0668edf8b",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-07-msgid-e0ac77270903061755x12a51c8fi7fbc455c1d40c6",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-08-msgid-e0ac77270903071818l47bffc42i9cb96f2df90c6a",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-08-msgid-e0ac77270903080000v612f6fe4s96cf9824633617",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-09-msgid-e0ac77270903081939x5d02f848s1b8d47785babd3",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-09-msgid-7d9627dd-032e-4af7-8a01-be6e090a2f35-sefja",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "stevex@sefjam.com|index template for daniel startree tv",
+      "previousFactId": "email-fact-wave2-2009-03-09-msgid-ca650124-72cf-4ad1-91eb-2c9111629590-sefja",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-09-msgid-e0ac77270903091153s220b628bn2f7019df9b33ce",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-09-msgid-4cc2f51f-9653-4254-8e4f-c140c7964e7a-sefja",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "stevex@sefjam.com|index template for daniel startree tv",
+      "previousFactId": "email-fact-wave2-2009-03-09-msgid-ca650124-72cf-4ad1-91eb-2c9111629590-sefja",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-10-msgid-e0ac77270903101300g141ed54er2a46d57609bff9",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-12-msgid-e0ac77270903112031q330add2eg27d23b9ec32783",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-19-msgid-e0ac77270903182015i3aa0556bqa5335f6e9a6cd6",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-19-msgid-e0ac77270903190958lbcf7de2g6704bfaa0b1708d",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "chandrupalani@gmail.com|phpld project regarding",
+      "previousFactId": "email-fact-wave2-2009-03-02-msgid-e0ac77270903020846u3c0863cr79ad6abf624d6af",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-31-msgid-c2f763160903302144g3cfcbebaj1306569efe191e",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "snscode@gmail.com|smart template work",
+      "previousFactId": "email-fact-wave2-2009-03-31-msgid-c2f763160903302135l3c8b597as83af32869bc4bb",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-03-31-msgid-c2f763160903302155w1de21c4dl32eb1adf71c2f9",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "snscode@gmail.com|smart template work",
+      "previousFactId": "email-fact-wave2-2009-03-31-msgid-c2f763160903302135l3c8b597as83af32869bc4bb",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-01-msgid-525997-21622-qm-web35903-mail-mud-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "adamiff@yahoo.com|you online",
+      "previousFactId": "email-fact-wave2-2009-04-01-msgid-76512-84672-qm-web35904-mail-mud-yahoo-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-01-msgid-466088-99749-qm-web35904-mail-mud-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "adamiff@yahoo.com|you online",
+      "previousFactId": "email-fact-wave2-2009-04-01-msgid-76512-84672-qm-web35904-mail-mud-yahoo-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-11-msgid-184174-64730-qm-web35903-mail-mud-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "adamiff@yahoo.com|its official",
+      "previousFactId": "email-fact-wave2-2009-04-11-msgid-965692-47578-qm-web35902-mail-mud-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-12-msgid-aaaaaaaaaaayaaaaaaaaapeveuunatbjvqct1q031l",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "gabe_k@comcast.net|startree tv templates",
+      "previousFactId": "email-fact-wave2-2009-04-11-msgid-aaaaaaaaaaayaaaaaaaaapeveuunatbjvqct1q031l",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-12-msgid-aaaaaaaaaaayaaaaaaaaapeveuunatbjvqct1q031l",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "gabe_k@comcast.net|startree tv templates",
+      "previousFactId": "email-fact-wave2-2009-04-11-msgid-aaaaaaaaaaayaaaaaaaaapeveuunatbjvqct1q031l",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-12-msgid-aaaaaaaaaaayaaaaaaaaapeveuunatbjvqct1q031l",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "gabe_k@comcast.net|startree tv templates",
+      "previousFactId": "email-fact-wave2-2009-04-11-msgid-aaaaaaaaaaayaaaaaaaaapeveuunatbjvqct1q031l",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-13-msgid-aaaaaaaaaaayaaaaaaaaapeveuunatbjvqct1q031l",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "gabe_k@comcast.net|startree tv templates",
+      "previousFactId": "email-fact-wave2-2009-04-11-msgid-aaaaaaaaaaayaaaaaaaaapeveuunatbjvqct1q031l",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-20-msgid-ae27a1360904200102v1ec78aeevc7a0f760fd6d52",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "lisamarie521@gmail.com|php work needed",
+      "previousFactId": "email-fact-wave2-2009-04-19-msgid-ae27a1360904182258j51e715c5ubf9e0143443d79",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-20-msgid-aaaaaaaaaaayaaaaaaaaajg4ctgudrrpnvse1xpi-f",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "julian@uaradio.net|projam light oinkba template",
+      "previousFactId": "email-fact-wave2-2009-04-20-msgid-aaaaaaaaaaayaaaaaaaaajg4ctgudrrpnvse1xpi-f",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-04-20-msgid-aaaaaaaaaaayaaaaaaaaajg4ctgudrrpnvse1xpi-f",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "julian@uaradio.net|projam light oinkba template",
+      "previousFactId": "email-fact-wave2-2009-04-20-msgid-aaaaaaaaaaayaaaaaaaaajg4ctgudrrpnvse1xpi-f",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-07-18-msgid-f1cda850907180846g589ff748l4cd53a9f62cfc34",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "sumit31@gmail.com|startree tv shop",
+      "previousFactId": "email-fact-wave2-2009-07-18-msgid-f1cda850907180839k3cfba9e7ya71da5fc274c6bb",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-07-18-msgid-f1cda850907180852y4090c08ajcb1ee4cf6adfd12",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "sumit31@gmail.com|startree tv shop",
+      "previousFactId": "email-fact-wave2-2009-07-18-msgid-f1cda850907180839k3cfba9e7ya71da5fc274c6bb",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-07-24-msgid-4a69e919-1090203-gmail-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "unclearbit@gmail.com|jamroon mod specs",
+      "previousFactId": "email-fact-wave2-2009-07-24-msgid-4a693666-7050200-gmail-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-07-24-msgid-28efc60b4063c34788e6cb1c2bfb0eab0a892f5e83",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jeff.stolberg@proforma.com|daniel",
+      "previousFactId": "email-fact-wave2-2009-07-22-msgid-28efc60b4063c34788e6cb1c2bfb0eab0a892f5e65",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-07-28-msgid-28efc60b4063c34788e6cb1c2bfb0eab0a892f5e8e",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jeff.stolberg@proforma.com|daniel",
+      "previousFactId": "email-fact-wave2-2009-07-22-msgid-28efc60b4063c34788e6cb1c2bfb0eab0a892f5e65",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-07-30-msgid-105576-57308-qm-web65412-mail-ac4-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "superyetkin@yahoo.com|startree tv random",
+      "previousFactId": "email-fact-wave2-2009-07-30-msgid-711748-27205-qm-web65414-mail-ac4-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-07-30-msgid-216223-14024-qm-web65407-mail-ac4-yahoo-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "superyetkin@yahoo.com|startree tv random",
+      "previousFactId": "email-fact-wave2-2009-07-30-msgid-711748-27205-qm-web65414-mail-ac4-yahoo-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-08-04-msgid-4a779a20-5040805-apicos-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "info@apicos.com|contact us build me a website",
+      "previousFactId": "email-fact-wave2-2009-08-04-msgid-4a7788d9-70100-apicos-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-08-31-msgid-000301ca2a56-d19f9110-6501a8c0-gcfire",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "daddysylem@dsplayerskins.com|startree tv chart tpl",
+      "previousFactId": "email-fact-wave2-2009-08-31-msgid-000c01ca2a49-72174fb0-6501a8c0-gcfire",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-08-31-msgid-000501ca2a65-417bdb20-6501a8c0-gcfire",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "daddysylem@dsplayerskins.com|startree tv chart tpl",
+      "previousFactId": "email-fact-wave2-2009-08-31-msgid-000c01ca2a49-72174fb0-6501a8c0-gcfire",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-08-31-msgid-001101ca2a6b-6c6e0fa0-6501a8c0-gcfire",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "daddysylem@dsplayerskins.com|startree tv chart tpl",
+      "previousFactId": "email-fact-wave2-2009-08-31-msgid-000c01ca2a49-72174fb0-6501a8c0-gcfire",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-08-31-msgid-000701ca2a91-e2154630-6501a8c0-gcfire",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "daddysylem@dsplayerskins.com|startree tv chart tpl",
+      "previousFactId": "email-fact-wave2-2009-08-31-msgid-000c01ca2a49-72174fb0-6501a8c0-gcfire",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-09-01-msgid-000b01ca2aaf-a49741a0-6501a8c0-gcfire",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "daddysylem@dsplayerskins.com|startree tv chart tpl",
+      "previousFactId": "email-fact-wave2-2009-08-31-msgid-000c01ca2a49-72174fb0-6501a8c0-gcfire",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-09-02-msgid-003801ca2b65-01380420-6501a8c0-gcfire",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "daddysylem@dsplayerskins.com|startree tv chart tpl",
+      "previousFactId": "email-fact-wave2-2009-08-31-msgid-000c01ca2a49-72174fb0-6501a8c0-gcfire",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-09-02-msgid-000501ca2b78-be4233c0-6501a8c0-gcfire",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "daddysylem@dsplayerskins.com|startree tv chart tpl",
+      "previousFactId": "email-fact-wave2-2009-08-31-msgid-000c01ca2a49-72174fb0-6501a8c0-gcfire",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-09-02-msgid-000401ca2bda-e6f17850-6501a8c0-gcfire",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "daddysylem@dsplayerskins.com|startree tv chart tpl",
+      "previousFactId": "email-fact-wave2-2009-08-31-msgid-000c01ca2a49-72174fb0-6501a8c0-gcfire",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-09-08-msgid-000801ca3035-e84c12a0-6501a8c0-gcfire",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "daddysylem@dsplayerskins.com|startree tv chart tpl",
+      "previousFactId": "email-fact-wave2-2009-08-31-msgid-000c01ca2a49-72174fb0-6501a8c0-gcfire",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-11-09-msgid-3058d3675317497c934b1ef9af4973a0-timsnewbi",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "timm@music-creatures.com|mcclassifiedads module for mediapro testing",
+      "previousFactId": "email-fact-wave2-2009-11-03-msgid-f8c8caf8258d41c6ba65675abf0e0ab7-timsnewbi",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-02-msgid-fecf687f0912020512s6d40bdeeud6fbdf2f191c96",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-fecf687f0912010352q5bbc5658xfda9d83ccdd6e2",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-02-msgid-9777bfb40912021110qcfee680t64d17b99610580c",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "fhnegron@gmail.com|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-9777bfb40911301912h5e73c0c4t4749645121b8bb",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-02-msgid-fecf687f0912021205j5a4d6a6t2aa4258fa68621c",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-fecf687f0912010352q5bbc5658xfda9d83ccdd6e2",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-03-msgid-fecf687f0912022323x6fd4cc2bob5defcabab47a4",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-fecf687f0912010352q5bbc5658xfda9d83ccdd6e2",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-03-msgid-fecf687f0912030839q3c8111f4kfeeb610783feb1",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-fecf687f0912010352q5bbc5658xfda9d83ccdd6e2",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-04-msgid-fecf687f0912040621p791c4a33j3ccec740785cf9",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-fecf687f0912010352q5bbc5658xfda9d83ccdd6e2",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-06-msgid-fecf687f0912060311y7f2a648dl7b706a0e741985",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-fecf687f0912010352q5bbc5658xfda9d83ccdd6e2",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-06-msgid-fecf687f0912060916k5dbc4b24u73a93b839ac445",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-fecf687f0912010352q5bbc5658xfda9d83ccdd6e2",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-06-msgid-7-0-1-0-2-20091207030245-03dec3b0-gmail-co",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "masukmian@gmail.com|startree tv shop",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-7-0-1-0-2-20091201123432-03eae148-gmail-co",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-29-msgid-fecf687f0912290935l56a758fx8032beb401776c8",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-fecf687f0912010352q5bbc5658xfda9d83ccdd6e2",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2009-12-29-msgid-fecf687f0912291246j212a97d1h5a0db93adb16cd",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|pajrshare module v0 1 0",
+      "previousFactId": "email-fact-wave2-2009-12-01-msgid-fecf687f0912010352q5bbc5658xfda9d83ccdd6e2",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-01-14-msgid-c6de-6274137e-3880cce6-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "onechoiceyukon@aol.com|12 macintosh g4 s for parts 125 macedon",
+      "previousFactId": "email-fact-wave2-2010-01-14-msgid-c1f0-525293fc-3880ca9c-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-01-14-msgid-c0c8-53b9e6a7-3880d010-aol-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "onechoiceyukon@aol.com|12 macintosh g4 s for parts 125 macedon",
+      "previousFactId": "email-fact-wave2-2010-01-14-msgid-c1f0-525293fc-3880ca9c-aol-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-02-18-msgid-be36fc061002181401y2856af51s697c425b673027",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "areyoulisteningmusic@gmail.com|mac g4s",
+      "previousFactId": "email-fact-wave2-2010-02-09-msgid-a19116e7-ab71-429d-b97b-c6c3c09cffbb-gmail",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-02-21-msgid-de51e55b-ef46-4896-8da2-abcb009dd719-mac-c",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jfr_holley@mac.com|8 mac desktop g4s for fix or parts last chance 100 spencerport",
+      "previousFactId": "email-fact-wave2-2010-02-20-msgid-4c31b9aa-9d5f-4119-afa8-1daa7f10bead-mac-c",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-02-21-msgid-8da26bb7-46c5-4f22-b729-76d4a8be5eb1-mac-c",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jfr_holley@mac.com|8 mac desktop g4s for fix or parts last chance 100 spencerport",
+      "previousFactId": "email-fact-wave2-2010-02-20-msgid-4c31b9aa-9d5f-4119-afa8-1daa7f10bead-mac-c",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-02-23-msgid-03512d0b-b845-4e0f-8015-22b93628659e-mac-c",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jfr_holley@mac.com|8 mac desktop g4s for fix or parts last chance 100 spencerport",
+      "previousFactId": "email-fact-wave2-2010-02-20-msgid-4c31b9aa-9d5f-4119-afa8-1daa7f10bead-mac-c",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-03-04-msgid-be36fc061003041556k27944b22pb83eafc4e812ea",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "areyoulisteningmusic@gmail.com|mac g4s",
+      "previousFactId": "email-fact-wave2-2010-02-09-msgid-a19116e7-ab71-429d-b97b-c6c3c09cffbb-gmail",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-03-05-msgid-be36fc061003041704m5d36926q251ca55d382e495",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "areyoulisteningmusic@gmail.com|mac g4s",
+      "previousFactId": "email-fact-wave2-2010-02-09-msgid-a19116e7-ab71-429d-b97b-c6c3c09cffbb-gmail",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-04-02-msgid-8cca0b441f7714a-1fa4-cde0-web-mmc-m04-syso",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "angelos@mail.com|trade",
+      "previousFactId": "email-fact-wave2-2010-04-02-msgid-8cca0b008719905-1fa4-cccd-web-mmc-m04-syso",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-04-05-msgid-chilkat-mid-88ec2d8d-e24b-c58e-db96-3d5668",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "sally.morgan@prplus1.info|we re in need of a few new looks",
+      "previousFactId": "email-fact-wave2-2010-04-01-msgid-chilkat-mid-7450fac7-e6ad-d823-42d5-adf724",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-04-09-msgid-884752075-1270832337-cardhu-decombobulator",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "omikeljr@msn.com|artist management rochester surrounding areas",
+      "previousFactId": "email-fact-wave2-2010-03-25-msgid-878237508-1269546641-cardhu-decombobulator",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-04-09-msgid-1125471908-1270832390-cardhu-decombobulato",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "omikeljr@msn.com|artist management rochester surrounding areas",
+      "previousFactId": "email-fact-wave2-2010-03-25-msgid-878237508-1269546641-cardhu-decombobulator",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-04-09-msgid-1445374101-1270834348-cardhu-decombobulato",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "omikeljr@msn.com|artist management rochester surrounding areas",
+      "previousFactId": "email-fact-wave2-2010-03-25-msgid-878237508-1269546641-cardhu-decombobulator",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-04-12-msgid-584639742-1271096798-cardhu-decombobulator",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "omikeljr@msn.com|artist management rochester surrounding areas",
+      "previousFactId": "email-fact-wave2-2010-03-25-msgid-878237508-1269546641-cardhu-decombobulator",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-04-12-msgid-724118610-1271105529-cardhu-decombobulator",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "omikeljr@msn.com|artist management rochester surrounding areas",
+      "previousFactId": "email-fact-wave2-2010-03-25-msgid-878237508-1269546641-cardhu-decombobulator",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-04-22-msgid-4bd060c4e4e22-9b13f978533ba381282-dxb-dopp",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "feedback@dopplr.com|your twitter message to dopplr",
+      "previousFactId": "email-fact-wave2-2010-04-22-msgid-4bd0609be33bb-9b13f978533ba3811ce-dxb-dopp",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-04-27-msgid-4bd6b44e-1090000-apicos-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "info@apicos.com|contact us adtrackz",
+      "previousFactId": "email-fact-wave2-2010-04-14-msgid-4bc51160-3090008-apicos-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-06-03-msgid-aanlktik0a3ewii7ab0lnxnexrhqomrtrn74dvsmhn",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "pradeep@net2nettechnologies.com|startree tv shop",
+      "previousFactId": "email-fact-wave2-2010-06-03-msgid-aanlktik-d9gizqvl07tdinjn8t3rx0b1vs0f-gktc",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-06-03-msgid-aanlktim86isadqeie5xd-l3unvvmngrowj9ybwmfz",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "pradeep@net2nettechnologies.com|startree tv shop",
+      "previousFactId": "email-fact-wave2-2010-06-03-msgid-aanlktik-d9gizqvl07tdinjn8t3rx0b1vs0f-gktc",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-06-07-msgid-aanlktinzol85cqt7uxdylhvboa80-d-fp6c1slk7s",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "pradeep@net2nettechnologies.com|startree tv shop",
+      "previousFactId": "email-fact-wave2-2010-06-03-msgid-aanlktik-d9gizqvl07tdinjn8t3rx0b1vs0f-gktc",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-09-12-msgid-aanlktinxkdee44junw1xz0rz2a1lmkelrth4kep97",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|paytseamless module",
+      "previousFactId": "email-fact-wave2-2010-09-11-msgid-aanlkti-27ej5xq13-bjcy2p0z-s6gypj-espb4ocy",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-09-14-msgid-aanlktim-vwubmispcevjcqrrmrtqvccng65a-ue8v",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|paytseamless module",
+      "previousFactId": "email-fact-wave2-2010-09-11-msgid-aanlkti-27ej5xq13-bjcy2p0z-s6gypj-espb4ocy",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-09-16-msgid-aanlktikgqym2crcfn2eezg47x06g26ok-9jaf4ie0",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|paytseamless module",
+      "previousFactId": "email-fact-wave2-2010-09-11-msgid-aanlkti-27ej5xq13-bjcy2p0z-s6gypj-espb4ocy",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-09-19-msgid-aanlktikuflgm3-dwueavykgjv24a-jjdpnjo4sx4s",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|paytseamless module",
+      "previousFactId": "email-fact-wave2-2010-09-11-msgid-aanlkti-27ej5xq13-bjcy2p0z-s6gypj-espb4ocy",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-09-20-msgid-aanlktinwonvy7nepp-23gv-248aabju5e-nxtfjaa",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|paytseamless module",
+      "previousFactId": "email-fact-wave2-2010-09-11-msgid-aanlkti-27ej5xq13-bjcy2p0z-s6gypj-espb4ocy",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-09-26-msgid-aanlktinxt5bpnfz-q2fhaxmc7i3xq2au05vlje-jw",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|paytseamless module",
+      "previousFactId": "email-fact-wave2-2010-09-11-msgid-aanlkti-27ej5xq13-bjcy2p0z-s6gypj-espb4ocy",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-09-26-msgid-aanlktinkh0wagcxpe5dgcanu-recczt89zh3p8uzr",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|paytseamless module",
+      "previousFactId": "email-fact-wave2-2010-09-11-msgid-aanlkti-27ej5xq13-bjcy2p0z-s6gypj-espb4ocy",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-09-26-msgid-aanlktik3p-pdsub0t-vkkexfuettm1c7r9-2pquf9",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "paul@motagator.net|paytseamless module",
+      "previousFactId": "email-fact-wave2-2010-09-11-msgid-aanlkti-27ej5xq13-bjcy2p0z-s6gypj-espb4ocy",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-10-06-msgid-04e001cb656f-776c69c0-66453d40-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "yoni@plymedia.com|partnering details please",
+      "previousFactId": "email-fact-wave2-2010-10-06-msgid-03c201cb6537-b1ae2de0-150a89a0-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-10-06-msgid-059201cb659d-9c2c7060-d4855120-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "yoni@plymedia.com|partnering details please",
+      "previousFactId": "email-fact-wave2-2010-10-06-msgid-03c201cb6537-b1ae2de0-150a89a0-com",
+      "previousSource": "pass10"
+    },
+    {
+      "factId": "email-fact-wave2-2010-10-27-msgid-aanlktind00-ujojjlh6gxmhhdpfr7jpj-mqk-p5wg",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "etskyward@googlemail.com|famboom",
+      "previousFactId": "email-fact-wave2-2010-10-27-msgid-aanlktimjw-c-o1brktz4m-o8v2g-tu2aehmkqng0-",
+      "previousSource": "pass10"
+    }
+  ]
+}

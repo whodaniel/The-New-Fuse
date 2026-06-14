@@ -1,0 +1,10 @@
+import { DynamicModule } from '@nestjs/common';
+import { A2AConfig } from './types.js';
+export declare class A2ACoreModule {
+    static forRoot(config?: Partial<A2AConfig>): DynamicModule;
+    static forRootAsync(options: {
+        imports?: any[];
+        useFactory: (...args: any[]) => Promise<A2AConfig> | A2AConfig;
+        inject?: any[];
+    }): DynamicModule;
+}

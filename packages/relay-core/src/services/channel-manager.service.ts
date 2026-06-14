@@ -13,6 +13,7 @@ const CONFIG = {
   },
   HEARTBEAT_INTERVAL: 3000,
   STALL_THRESHOLD: 5000,
+  MAX_RECOVERY_ATTEMPTS: 5,
 };
 
 export interface ChannelData {
@@ -34,14 +35,22 @@ export class ChannelManagerService {
   private redisClient: any; // Will be RedisClientManager
   private agentRegistry: any; // Will be AgentRegistryService
   private orchestratorIdentity: any; // TnfAgentIdentityRecord like object
-  private emitActivityEvent: (eventType: string, content: string, metadata: Record<string, unknown>) => Promise<void>;
+  private emitActivityEvent: (
+    eventType: string,
+    content: string,
+    metadata: Record<string, unknown>
+  ) => Promise<void>;
 
   constructor(
     sendToRelay: (msg: any) => void,
     redisClient: any, // Placeholder for RedisClientManager
     agentRegistry: any, // Placeholder for AgentRegistryService
     orchestratorIdentity: any,
-    emitActivityEvent: (eventType: string, content: string, metadata: Record<string, unknown>) => Promise<void>,
+    emitActivityEvent: (
+      eventType: string,
+      content: string,
+      metadata: Record<string, unknown>
+    ) => Promise<void>
   ) {
     this.channels = new Map();
     this.sendToRelay = sendToRelay;
@@ -78,7 +87,9 @@ export class ChannelManagerService {
     // Load persisted channels from Redis
     if (this.redisClient?.upstash) {
       try {
-        const persistedChannels = await this.redisClient.upstash.smembers(CONFIG.REDIS_KEYS.CHANNELS);
+        const persistedChannels = await this.redisClient.upstash.smembers(
+          CONFIG.REDIS_KEYS.CHANNELS
+        );
         for (const ch of persistedChannels) {
           channelsToJoin.add(ch);
         }

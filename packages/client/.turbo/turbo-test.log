@@ -1,0 +1,8 @@
+
+> @the-new-fuse/client@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/client
+> echo "No tests for this package" && exit 0 --passWithNoTests
+
+No tests for this package
+sh: line 0: exit: too many arguments
+ ELIFECYCLE  Test failed. See above for more details.
+ WARN   Local package.json exists, but node_modules missing, did you mean to install?

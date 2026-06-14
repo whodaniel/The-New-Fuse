@@ -1,0 +1,36 @@
+{
+  "id": "video-analysis-ZYeE4sYoRkw",
+  "title": "Introducing Keras Recommenders: state-of-the-art recommendation techniques at your fingertips",
+  "category": "video-analysis",
+  "content": "Keras now integrates with the JAX backend and the Flax/NNX module system, enhancing Keras with JAX's high performance and NNX's state management. This is enabled via environment variables. The integration enables two main workflows: running NNX modules within Keras or using Keras models within custom JAX/NNX training loops.",
+  "visual_intelligence": [
+    {
+      "timestamp": 295,
+      "reason": "Transcription error in frame caption.",
+      "context": "Visual frame shows diagram and code for 'Workflow 2: Custom NNX Training Loops'. The caption incorrectly states 'is entirely NGINX and Ajax code', but the correct transcription (and context) should be 'is entirely NNX and JAX code'."
+    }
+  ],
+  "backlinks": [
+    "Deep Learning Frameworks (Keras, JAX, Flax)",
+    "State Management in Neural Networks",
+    "Just-In-Time (JIT) Compilation",
+    "Automatic Differentiation",
+    "Custom Training Loops",
+    "Model Interoperability",
+    "Set environment variables: `os.environ[\"KERAS_BACKEND\"] = \"jax\"` and `os.environ[\"KERAS_NNX_ENABLED\"] = \"true\"`.",
+    "`keras.Variable` is an `nnx.Variable` when the integration is active.",
+    "Verify by checking for `trace_state` attribute and `nnx.variables()` output.",
+    "Workflow 1: NNX modules in Keras, train with `model.compile()` and `model.fit()`.",
+    "Workflow 2: Keras models as `nnx.Module`s in custom JAX/NNX training.",
+    "Use `nnx.jit` and `nnx.grad` in custom training loops.",
+    "Use libraries like Optax for optimizers in custom loops."
+  ],
+  "metadata": {
+    "agentId": "transcript-processor-v4",
+    "timestamp": "2026-05-10T08:45:21.011Z",
+    "videoId": "ZYeE4sYoRkw",
+    "url": "https://www.youtube.com/watch?v=ZYeE4sYoRkw",
+    "qualityScore": 100,
+    "idNumber": "ID#:CB"
+  }
+}

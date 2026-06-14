@@ -1,0 +1,492 @@
+{
+  "generated_at": "2026-05-02T01:07:08.472Z",
+  "source": {
+    "repo_root": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+    "generator": "scripts/visualizations/generate-dashboard-metrics.cjs"
+  },
+  "intelligence": {
+    "master_library": 647,
+    "executable_artifacts": 645,
+    "extraction_density": "99.7%",
+    "status": "[STATUS:SYNCHRONIZED]"
+  },
+  "agents": {
+    "raw_files": 288,
+    "unique_names": 176,
+    "by_source": {
+      "agent_agents": 171,
+      "claude_agents": 117,
+      "config_ai_agents": 0,
+      "config_agents": 0
+    },
+    "duplicates": [
+      {
+        "name": "ab-testing-optimizer-agent",
+        "count": 2
+      },
+      {
+        "name": "ad-network-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "affiliate-link-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "agent-registry-manager",
+        "count": 2
+      },
+      {
+        "name": "agent-relationship-grapher",
+        "count": 2
+      },
+      {
+        "name": "agent-search-engine",
+        "count": 2
+      },
+      {
+        "name": "agent-tagger",
+        "count": 2
+      },
+      {
+        "name": "algorithm-adaptation-agent",
+        "count": 2
+      },
+      {
+        "name": "analytics-and-reporting-agent",
+        "count": 2
+      },
+      {
+        "name": "asset-sourcer-agent",
+        "count": 2
+      },
+      {
+        "name": "audience-growth-agent",
+        "count": 2
+      },
+      {
+        "name": "audience-persona-architect-agent",
+        "count": 2
+      },
+      {
+        "name": "audience-segmentation-agent",
+        "count": 2
+      },
+      {
+        "name": "audio-recording-agent",
+        "count": 2
+      },
+      {
+        "name": "brand-identity-agent",
+        "count": 2
+      },
+      {
+        "name": "brand-outreach-agent",
+        "count": 2
+      },
+      {
+        "name": "brand-prospecting-agent",
+        "count": 2
+      },
+      {
+        "name": "business-model-architect-agent",
+        "count": 2
+      },
+      {
+        "name": "campaign-execution-agent",
+        "count": 2
+      },
+      {
+        "name": "campaign-reporting-agent",
+        "count": 2
+      },
+      {
+        "name": "codebase-pathway-tracer",
+        "count": 2
+      },
+      {
+        "name": "cognitive-bias-optimizer-agent",
+        "count": 2
+      },
+      {
+        "name": "community-engagement-agent",
+        "count": 2
+      },
+      {
+        "name": "community-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "competitive-intelligence-agent",
+        "count": 2
+      },
+      {
+        "name": "content-calendar-agent",
+        "count": 2
+      },
+      {
+        "name": "content-calendar-orchestrator-agent",
+        "count": 2
+      },
+      {
+        "name": "content-refresh-agent",
+        "count": 2
+      },
+      {
+        "name": "content-repurposing-agent",
+        "count": 2
+      },
+      {
+        "name": "content-writer-agent",
+        "count": 2
+      },
+      {
+        "name": "contract-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "cro-process-agent",
+        "count": 2
+      },
+      {
+        "name": "cursor-watch-learn-operator",
+        "count": 2
+      },
+      {
+        "name": "custom-slash-command-agent",
+        "count": 2
+      },
+      {
+        "name": "customer-journey-map-agent",
+        "count": 2
+      },
+      {
+        "name": "customer-support-agent",
+        "count": 2
+      },
+      {
+        "name": "deal-negotiator-agent",
+        "count": 2
+      },
+      {
+        "name": "digital-asset-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "digital-product-creator-agent",
+        "count": 2
+      },
+      {
+        "name": "digital-product-factory-agent",
+        "count": 2
+      },
+      {
+        "name": "ecom-platform-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "email-marketing-automation-agent",
+        "count": 2
+      },
+      {
+        "name": "episode-planner-agent",
+        "count": 2
+      },
+      {
+        "name": "equipment-recommendation-agent",
+        "count": 2
+      },
+      {
+        "name": "ethical-bias-auditor-agent",
+        "count": 2
+      },
+      {
+        "name": "facebook-strategy-agent",
+        "count": 2
+      },
+      {
+        "name": "fan-funding-agent",
+        "count": 2
+      },
+      {
+        "name": "financial-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "funnel-economics-analyst-agent",
+        "count": 2
+      },
+      {
+        "name": "gemini",
+        "count": 2
+      },
+      {
+        "name": "graph-writer",
+        "count": 2
+      },
+      {
+        "name": "guest-booking-agent",
+        "count": 2
+      },
+      {
+        "name": "guest-relationship-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "influencer-media-kit-agent",
+        "count": 2
+      },
+      {
+        "name": "influencer-niche-agent",
+        "count": 2
+      },
+      {
+        "name": "information-retrieval-agent",
+        "count": 2
+      },
+      {
+        "name": "instagram-strategy-agent",
+        "count": 2
+      },
+      {
+        "name": "inter-agentic-workflow-definer",
+        "count": 2
+      },
+      {
+        "name": "interoperability-protocol-agent",
+        "count": 2
+      },
+      {
+        "name": "keyword-research-agent",
+        "count": 2
+      },
+      {
+        "name": "lead-capture-agent",
+        "count": 2
+      },
+      {
+        "name": "lead-magnet-funnel-agent",
+        "count": 2
+      },
+      {
+        "name": "legal-compliance-agent",
+        "count": 2
+      },
+      {
+        "name": "link-building-agent",
+        "count": 2
+      },
+      {
+        "name": "live-stream-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "logical-reasoning-agent",
+        "count": 2
+      },
+      {
+        "name": "meta-agent-architect",
+        "count": 2
+      },
+      {
+        "name": "monetization-strategy-agent",
+        "count": 2
+      },
+      {
+        "name": "niche-analyst-agent",
+        "count": 2
+      },
+      {
+        "name": "orchestrator-agent copy",
+        "count": 2
+      },
+      {
+        "name": "orchestrator-agent",
+        "count": 2
+      },
+      {
+        "name": "oto-sequence-architect-agent",
+        "count": 2
+      },
+      {
+        "name": "personal-brand-architect-agent",
+        "count": 2
+      },
+      {
+        "name": "personalized-content-recommendation-agent",
+        "count": 2
+      },
+      {
+        "name": "platform-selection-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-ad-network-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-affiliate-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-analytics-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-audio-editor-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-distribution-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-equipment-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-format-designer-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-hosting-setup-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-monetization-strategy-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-niche-analyst-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-promotion-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-seo-agent",
+        "count": 2
+      },
+      {
+        "name": "podcast-video-editor-agent",
+        "count": 2
+      },
+      {
+        "name": "print-on-demand-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "productivity-and-burnout-prevention-agent",
+        "count": 2
+      },
+      {
+        "name": "reputation-management-agent",
+        "count": 2
+      },
+      {
+        "name": "sales-funnel-architect-agent",
+        "count": 2
+      },
+      {
+        "name": "scriptwriter-agent",
+        "count": 2
+      },
+      {
+        "name": "seo-optimizer-agent",
+        "count": 2
+      },
+      {
+        "name": "social-selling-agent",
+        "count": 2
+      },
+      {
+        "name": "sponsorship-outreach-agent",
+        "count": 2
+      },
+      {
+        "name": "storyboard-artist-agent",
+        "count": 2
+      },
+      {
+        "name": "talent-manager-agent",
+        "count": 2
+      },
+      {
+        "name": "tax-compliance-agent",
+        "count": 2
+      },
+      {
+        "name": "technical-seo-auditor-agent",
+        "count": 2
+      },
+      {
+        "name": "technical-setup-agent",
+        "count": 2
+      },
+      {
+        "name": "temporal-agent-reclassifier",
+        "count": 2
+      },
+      {
+        "name": "tiktok-strategy-agent",
+        "count": 2
+      },
+      {
+        "name": "traffic-generation-agent",
+        "count": 2
+      },
+      {
+        "name": "user-feedback-analysis-agent",
+        "count": 2
+      },
+      {
+        "name": "value-ladder-architect-agent",
+        "count": 2
+      },
+      {
+        "name": "video-editor-agent",
+        "count": 2
+      },
+      {
+        "name": "visual-asset-creator-agent",
+        "count": 2
+      },
+      {
+        "name": "x-strategy-agent",
+        "count": 2
+      },
+      {
+        "name": "yt-content-strategy-agent",
+        "count": 2
+      },
+      {
+        "name": "yt-niche-strategy-agent",
+        "count": 2
+      },
+      {
+        "name": "yt-seo-optimizer-agent",
+        "count": 2
+      }
+    ]
+  },
+  "skills": {
+    "permanent_dot_skills": 231,
+    "permanent_agent_skills": 508,
+    "permanent_total": 739,
+    "snapshot_skills": 729,
+    "promoted_snapshot_skills": 24
+  },
+  "graph": {
+    "domain_subgraphs": 0,
+    "domain_list": [],
+    "relationship_nodes": 0,
+    "relationship_edges": 0
+  },
+  "dashboard": {
+    "graph_cards": 7,
+    "system_cards": 6,
+    "docs_cards": 8,
+    "interactive_visualizations": 14
+  }
+}

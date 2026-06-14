@@ -1,0 +1,1 @@
+{"version":3,"file":"setup.d.ts","sourceRoot":"","sources":["../../../../../src/e2e/setup.tsx"],"names":[],"mappings":"AACA,UAAU,UAAU;IAClB,CAAC,GAAG,EAAE,MAAM,GAAG,OAAO,CAAC;CACxB;AAcD,qBAAa,gBAAgB;IAGf,OAAO,CAAC,MAAM;IAF1B,OAAO,CAAC,eAAe,CAAkB;gBAErB,MAAM,EAAE,UAAU;IAQhC,gBAAgB,IAAI,OAAO,CAAC,IAAI,CAAC;CAKxC"}

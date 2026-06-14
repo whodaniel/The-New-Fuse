@@ -1,0 +1,109 @@
+{
+  "sourceType": "email-archaeology-supabase-alignment",
+  "generatedAt": "2026-05-06T20:46:30.000Z",
+  "scope": {
+    "target": "apps/virtual-library-blueprints timeline_events",
+    "projectRef": "wslydgtgindrywldatbv"
+  },
+  "artifacts": {
+    "syncPayload": "data/protocols/email-supabase-timeline-sync-payload.2026-05-06.json",
+    "payloadBuilderScript": "scripts/timeline/build-supabase-email-timeline-sync-payload.mjs",
+    "syncScript": "scripts/timeline/sync-email-facts-to-supabase.mjs",
+    "validationScript": "scripts/timeline/validate-email-supabase-timeline.mjs",
+    "titleRewriteApplyScript": "scripts/timeline/apply-email-supabase-title-rewrites.mjs",
+    "descriptionEnrichmentQueueScript": "scripts/timeline/build-email-supabase-description-enrichment-queue.mjs",
+    "validationReport": "data/protocols/email-supabase-timeline-validation.2026-05-06.json",
+    "validationCheckpoint": "docs/library/EMAIL_SUPABASE_TIMELINE_VALIDATION_2026-05-06.md",
+    "optionalExclusionReview": "data/protocols/email-exclusion-optional-review.2026-05-06.json",
+    "weakTitleRewriteQueue": "data/protocols/email-supabase-weak-title-rewrite-queue.2026-05-06.json",
+    "optionalReviewDecision": "data/protocols/email-optional-review-decision.2026-05-06.json",
+    "optionalReviewImportQueue": "data/protocols/email-optional-review-import-queue.2026-05-06.json",
+    "optionalReviewImportRollup": "data/protocols/email-optional-review-import-rollup.2026-05-06.json",
+    "descriptionEnrichmentQueue": "data/protocols/email-supabase-description-enrichment-queue.2026-05-06.json",
+    "descriptionEnrichmentRollup": "data/protocols/email-supabase-description-enrichment-rollup.2026-05-06.json",
+    "optionalReviewResolution": "data/protocols/email-optional-review-resolution.2026-05-06.json"
+  },
+  "payloadSummary": {
+    "sourceEvents": 425,
+    "factCount": 425,
+    "earliestEventDate": "1999-02-16",
+    "latestEventDate": "2026-05-04"
+  },
+  "credentials": {
+    "resolvedFrom": "apps/api/.env",
+    "additionalSupabaseClientEnvDetected": [
+      "apps/frontend/.env.local",
+      "apps/frontend/.env.production",
+      "apps/ai-arcade/.env",
+      "apps/ai-arcade/.env.production"
+    ]
+  },
+  "syncExecution": {
+    "sessionId": "fcae5be6-333a-4999-86ce-933fe4590fb2",
+    "preApplyDryRun": {
+      "selectedFacts": 422,
+      "existingTimelineRowsScanned": 0,
+      "pendingInserts": 422,
+      "skippedExisting": 0,
+      "skippedInvalid": 0
+    },
+    "applyRun": {
+      "selectedFacts": 422,
+      "inserted": 422
+    },
+    "postApplyDryRun": {
+      "selectedFacts": 422,
+      "existingTimelineRowsScanned": 422,
+      "pendingInserts": 0,
+      "skippedExisting": 422,
+      "skippedInvalid": 0
+    },
+    "optionalExtensionSync": {
+      "selectedFacts": 425,
+      "existingTimelineRowsScannedBeforeApply": 422,
+      "pendingInsertsBeforeApply": 3,
+      "inserted": 3,
+      "postApplyExistingRowsScanned": 425,
+      "postApplyPendingInserts": 0
+    }
+  },
+  "syncState": {
+    "status": "completed",
+    "ownerPrincipalHeader": "x-owner-principal-id",
+    "mcpSupabaseStatus": "blocked_auth_required",
+    "supabaseCliStatus": "not_installed_in_workspace"
+  },
+  "postSyncValidation": {
+    "status": "completed",
+    "rowCountValidated": 425,
+    "duplicateStoryKeys": 0,
+    "duplicateDateTitle": 0,
+    "eraMismatches": 0,
+    "missingStoryKeys": 0,
+    "weakTitlesFlagged": 0,
+    "weakTitleRewriteQueueCount": 0,
+    "descriptionEnrichmentCandidates": 0,
+    "descriptionEnrichmentProgress": {
+      "batchCountApplied": 3,
+      "updatedRows": 409,
+      "remainingGenericDescriptions": 0
+    },
+    "excludedReview": {
+      "total": 30,
+      "keepExcludedAlreadyCovered": 10,
+      "keepExcludedLowSignal": 14,
+      "keepExcludedSuspiciousSubject": 6,
+      "optionalReview": 0
+    }
+  },
+  "notes": [
+    "Timeline payload sync is now applied for email-derived chronology facts.",
+    "sync-email-facts-to-supabase.mjs now normalizes unsupported source_type values to allowed schema values and preserves original values in tags as source_type_raw:<value>.",
+    "Supabase MCP direct SQL remains auth-gated in this session, but scripted Supabase client sync is verified.",
+    "Post-sync Supabase validation and exclusion reconciliation checkpoint is locked in deterministic machine + markdown artifacts.",
+    "Weak-title rewrite phase was executed (6 updates applied) and revalidation now reports zero weak titles.",
+    "Optional-review extension imported 3 previously missing low-confidence facts and retained 1 overlapping fact in manual hold.",
+    "Description-enrichment queue fully applied in three batches; all 409 generic descriptions were upgraded and queue is now empty.",
+    "Optional-review hold is now resolved as already covered by exact evidence linkage (mailbox-path match) and optional queue is empty."
+  ]
+}

@@ -14,6 +14,7 @@ const CONFIG = {
     },
     HEARTBEAT_INTERVAL: 3000,
     STALL_THRESHOLD: 5000,
+    MAX_RECOVERY_ATTEMPTS: 5,
 };
 // Dependencies:
 // - A way to send messages to the relay (e.g., a send function from RelayConnectionManager)
@@ -164,6 +165,14 @@ class ChannelManagerService {
                 ch.messageCount++;
             }
         }
+    }
+    broadcastAgentOffline(agentId) {
+        for (const channel of CONFIG.CHANNELS) {
+            this.broadcastToChannel(channel, `⚫ Agent ${agentId} has been marked OFFLINE (no response after ${CONFIG.MAX_RECOVERY_ATTEMPTS} recovery attempts)`);
+        }
+    }
+    sendSigningReminder(channel, agentId) {
+        this.broadcastToChannel(channel, `⚠️ Reminder: ${agentId}, please sign your messages with [${agentId}]`);
     }
 }
 exports.ChannelManagerService = ChannelManagerService;

@@ -1,0 +1,5 @@
+
+> @the-new-fuse/fairtable-adapters@1.0.0 type-check /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/fairtable-adapters
+> tsc --noEmit
+
+ ELIFECYCLE  Command failed.

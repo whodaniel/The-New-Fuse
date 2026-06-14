@@ -1,0 +1,33 @@
+{
+  "id": "video-analysis-YYsBvMZKWm8",
+  "title": "Paperclip vs AionUI for Claude Code, Codex and OpenClaw",
+  "category": "video-analysis",
+  "content": "This video contrasts Paperclip and Ion UI as open-source solutions for managing multiple AI agents. Paperclip is an 'AI Company Operating System' addressing the 'infrastructure problem' via agent hierarchy, budget controls, and a heartbeat system for persistent state. Ion UI (or AionUI) focuses on the 'interface problem', providing a unified frontend with scheduling and platform integration for enhanced personal productivity. Both tools address different challenges, complement each other, and are open-source.",
+  "visual_intelligence": [
+    {
+      "timestamp": 3828,
+      "reason": "Irrelevant advertisement for a smart bike.",
+      "context": "A frame promoting a smart bike, which is unrelated to the technical content of the video."
+    }
+  ],
+  "backlinks": [
+    "Multi-Agent Systems",
+    "Agent Coordination",
+    "Agent State Management",
+    "Autonomous Agents",
+    "Agent Governance",
+    "Hierarchical Agent Architectures",
+    "Resource Management (Token Budgeting)",
+    "Human-in-the-loop (as \"board of directors\")",
+    "**Paperclip:** Open-source for multi-agent coordination. Solves 'Momento Man' with 'heartbeat' scheduling. Budget caps prevent runaway costs. Immutable audit trail for all agent actions. Supports Multi-Company data isolation and is extensible via out-of-process plugin system and SDK. Roadmap includes a marketplace ('Clipart').",
+    "**Ion UI (AionUI):** Open-source for a unified agent interface. Supports >20 AI platforms (Anthropic, OpenAI, etc.). Natural language cron for scheduling. Integrates with notification platforms. Unified client to avoid separate windows and configs."
+  ],
+  "metadata": {
+    "agentId": "transcript-processor-v4",
+    "timestamp": "2026-05-10T05:25:14.642Z",
+    "videoId": "YYsBvMZKWm8",
+    "url": "https://www.youtube.com/watch?v=YYsBvMZKWm8",
+    "qualityScore": 100,
+    "idNumber": "ID#:Ch"
+  }
+}

@@ -141,6 +141,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         this.activityUpstash = null;
         this.activityRedisConnectPromise = null;
         this.port = port;
+        this.sessionId = `RELAY-${Date.now()}`;
         // Auth is optional for local development
         try {
             this.authService = (0, JWTAuthService_js_1.createAuthService)();
@@ -639,7 +640,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                         ...registrationRequest,
                         replyTo: `tnf:master:agent_registry_updates:${requestedAgentId}`, // Master clock replies here
                     }));
-                    TerminalFormatter_js_1.relay.log(`[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`);
+                    console.log(`[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`);
                 }
                 else {
                     // Fallback if bridge is not connected (local mode)

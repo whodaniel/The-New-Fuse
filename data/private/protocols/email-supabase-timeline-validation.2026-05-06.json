@@ -1,0 +1,63 @@
+{
+  "sourceType": "email-supabase-timeline-validation",
+  "generatedAt": "2026-05-06T21:42:15.889Z",
+  "ownerPrincipalId": "daniel",
+  "sessionId": "fcae5be6-333a-4999-86ce-933fe4590fb2",
+  "timeline": {
+    "rowCount": 425,
+    "firstEventDate": "1999-02-16",
+    "lastEventDate": "2026-05-04",
+    "sourceTypeCounts": {
+      "inferred": 425
+    },
+    "tagCoverage": {
+      "storyKey": 425,
+      "project": 425,
+      "timelineCategory": 425,
+      "confidence": 425,
+      "track": 425,
+      "sourceTypeRaw": 425
+    },
+    "projectCounts": {
+      "daniel-who-s-media-empire": 118,
+      "daniel-adam-goldberg-life-story": 304,
+      "the-new-fuse-novel": 3
+    },
+    "timelineCategoryCounts": {
+      "email-archaeology": 425
+    },
+    "confidenceCounts": {
+      "hard": 228,
+      "moderate": 194,
+      "soft": 3
+    },
+    "trackCounts": {
+      "daniel-whos-media-empire": 118,
+      "daniel-personal-life-story": 304,
+      "the-new-fuse-novel": 3
+    },
+    "findings": {
+      "weakTitles": [],
+      "sourceTypeViolations": [],
+      "missingStoryKeys": [],
+      "duplicateStoryKeys": [],
+      "duplicateDateTitle": [],
+      "eraMismatches": [],
+      "futureDated": [],
+      "genericDescriptions": []
+    }
+  },
+  "excludedReview": {
+    "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/private/protocols/email-ledger-excluded-review.2026-05-06.json",
+    "found": false,
+    "error": "ENOENT: no such file or directory, open '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/private/protocols/email-ledger-excluded-review.2026-05-06.json'",
+    "ledgerPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/unified-task-ledger.json",
+    "ledgerFound": true,
+    "ledgerError": null,
+    "factCount": 0,
+    "queueCounts": {},
+    "coverageCounts": {},
+    "recommendationCounts": {},
+    "outcomes": []
+  }
+}

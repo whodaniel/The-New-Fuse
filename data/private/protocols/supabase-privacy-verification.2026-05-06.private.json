@@ -1,0 +1,301 @@
+{
+    "spec": "tnf/supabase-privacy-verification/1.0",
+    "policies": [
+        {
+            "cmd": "ALL",
+            "roles": [
+                "authenticated"
+            ],
+            "policyname": "owner_manage_artifact",
+            "table_name": "artifact",
+            "schema_name": "librarian"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "authenticated"
+            ],
+            "policyname": "owner_manage_artifact_blob",
+            "table_name": "artifact_blob",
+            "schema_name": "librarian"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "authenticated"
+            ],
+            "policyname": "owner_manage_artifact_text",
+            "table_name": "artifact_text",
+            "schema_name": "librarian"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "authenticated"
+            ],
+            "policyname": "owner_manage_source",
+            "table_name": "source",
+            "schema_name": "librarian"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "authenticated"
+            ],
+            "policyname": "owner_manage_text_chunk",
+            "table_name": "text_chunk",
+            "schema_name": "librarian"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "authenticated"
+            ],
+            "policyname": "owner_manage_timeline_event",
+            "table_name": "timeline_event",
+            "schema_name": "librarian"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "authenticated"
+            ],
+            "policyname": "owner_manage_timeline_event_artifact",
+            "table_name": "timeline_event_artifact",
+            "schema_name": "librarian"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "authenticated"
+            ],
+            "policyname": "owner_manage_ingestion_artifact_result",
+            "table_name": "ingestion_artifact_result",
+            "schema_name": "librarian_ingest"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "authenticated"
+            ],
+            "policyname": "owner_manage_ingestion_run",
+            "table_name": "ingestion_run",
+            "schema_name": "librarian_ingest"
+        },
+        {
+            "cmd": "SELECT",
+            "roles": [
+                "public"
+            ],
+            "policyname": "Agents can read granted sessions",
+            "table_name": "story_sessions",
+            "schema_name": "public"
+        },
+        {
+            "cmd": "UPDATE",
+            "roles": [
+                "public"
+            ],
+            "policyname": "Agents can update granted sessions",
+            "table_name": "story_sessions",
+            "schema_name": "public"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "public"
+            ],
+            "policyname": "Owners can manage own sessions",
+            "table_name": "story_sessions",
+            "schema_name": "public"
+        },
+        {
+            "cmd": "SELECT",
+            "roles": [
+                "public"
+            ],
+            "policyname": "Released sessions are readable by scope",
+            "table_name": "story_sessions",
+            "schema_name": "public"
+        },
+        {
+            "cmd": "SELECT",
+            "roles": [
+                "public"
+            ],
+            "policyname": "Owner and granted agents can read timeline events",
+            "table_name": "timeline_events",
+            "schema_name": "public"
+        },
+        {
+            "cmd": "ALL",
+            "roles": [
+                "public"
+            ],
+            "policyname": "Owner and granted agents can write timeline events",
+            "table_name": "timeline_events",
+            "schema_name": "public"
+        }
+    ],
+    "connection": {
+        "schema_name": "public",
+        "database_name": "postgres",
+        "checked_at_utc": "2026-05-06T21:47:08.515971"
+    },
+    "rls_tables": [
+        {
+            "table_name": "artifact",
+            "rls_enabled": true,
+            "schema_name": "librarian"
+        },
+        {
+            "table_name": "artifact_blob",
+            "rls_enabled": true,
+            "schema_name": "librarian"
+        },
+        {
+            "table_name": "artifact_text",
+            "rls_enabled": true,
+            "schema_name": "librarian"
+        },
+        {
+            "table_name": "source",
+            "rls_enabled": true,
+            "schema_name": "librarian"
+        },
+        {
+            "table_name": "text_chunk",
+            "rls_enabled": true,
+            "schema_name": "librarian"
+        },
+        {
+            "table_name": "timeline_event",
+            "rls_enabled": true,
+            "schema_name": "librarian"
+        },
+        {
+            "table_name": "timeline_event_artifact",
+            "rls_enabled": true,
+            "schema_name": "librarian"
+        },
+        {
+            "table_name": "ingestion_artifact_result",
+            "rls_enabled": true,
+            "schema_name": "librarian_ingest"
+        },
+        {
+            "table_name": "ingestion_run",
+            "rls_enabled": true,
+            "schema_name": "librarian_ingest"
+        },
+        {
+            "table_name": "story_sessions",
+            "rls_enabled": true,
+            "schema_name": "public"
+        },
+        {
+            "table_name": "timeline_events",
+            "rls_enabled": true,
+            "schema_name": "public"
+        }
+    ],
+    "row_counts": [
+        {
+            "rows": 3,
+            "table_name": "librarian.source",
+            "owner_nulls": 0
+        },
+        {
+            "rows": 1650,
+            "table_name": "librarian.timeline_event",
+            "owner_nulls": 0
+        },
+        {
+            "rows": 4,
+            "table_name": "librarian_ingest.ingestion_run",
+            "owner_nulls": 0
+        },
+        {
+            "rows": 3,
+            "table_name": "public.story_sessions",
+            "owner_nulls": 0
+        },
+        {
+            "rows": 426,
+            "table_name": "public.timeline_events",
+            "owner_nulls": null
+        }
+    ],
+    "schema_usage": [
+        {
+            "usage": false,
+            "role_name": "anon",
+            "schema_name": "librarian"
+        },
+        {
+            "usage": false,
+            "role_name": "anon",
+            "schema_name": "librarian_ingest"
+        },
+        {
+            "usage": true,
+            "role_name": "authenticated",
+            "schema_name": "librarian"
+        },
+        {
+            "usage": true,
+            "role_name": "authenticated",
+            "schema_name": "librarian_ingest"
+        },
+        {
+            "usage": true,
+            "role_name": "service_role",
+            "schema_name": "librarian"
+        },
+        {
+            "usage": true,
+            "role_name": "service_role",
+            "schema_name": "librarian_ingest"
+        }
+    ],
+    "public_exposure": {
+        "public_tables_without_rls": 0,
+        "public_tables_rls_no_policies": 72,
+        "public_tables_no_rls_anon_select": 0,
+        "public_tables_no_rls_authenticated_select": 0
+    },
+    "generated_at_utc": "2026-05-06T21:47:08.515971",
+    "security_definer_functions": [
+        {
+            "schema_name": "public",
+            "function_name": "agent_has_story_session_read_access",
+            "execute_grantees": [
+                "anon",
+                "authenticated",
+                "postgres",
+                "service_role"
+            ],
+            "security_definer": true
+        },
+        {
+            "schema_name": "public",
+            "function_name": "agent_has_story_session_write_access",
+            "execute_grantees": [
+                "anon",
+                "authenticated",
+                "postgres",
+                "service_role"
+            ],
+            "security_definer": true
+        },
+        {
+            "schema_name": "public",
+            "function_name": "rls_auto_enable",
+            "execute_grantees": [
+                "postgres",
+                "service_role"
+            ],
+            "security_definer": true
+        }
+    ]
+}

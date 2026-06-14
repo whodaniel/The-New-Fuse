@@ -1,0 +1,40 @@
+{
+  "sourceType": "email-optional-review-import-rollup",
+  "generatedAt": "2026-05-06T20:16:51.242Z",
+  "sourceDecision": "data/protocols/email-optional-review-decision.2026-05-06.json",
+  "sourceQueue": "data/protocols/email-optional-review-import-queue.2026-05-06.json",
+  "sourceValidation": "data/protocols/email-supabase-timeline-validation.2026-05-06.json",
+  "sourceSyncPayload": "data/protocols/email-supabase-timeline-sync-payload.2026-05-06.json",
+  "ownerPrincipalId": "daniel",
+  "sessionId": "fcae5be6-333a-4999-86ce-933fe4590fb2",
+  "actions": {
+    "titleRewriteAppliedCount": 6,
+    "optionalLowConfidenceFactsImported": 3,
+    "optionalLowConfidenceFactsHeld": 1
+  },
+  "importedFactIds": [
+    "email-fact-2002-11-08-welcome-to-addesigner-com",
+    "email-fact-2002-11-18-daniel-your-bannersgomlm-account",
+    "email-fact-2005-10-25-help-with-your-bodog-account"
+  ],
+  "heldFactIds": [
+    "email-fact-1999-11-16-welcome-aboard"
+  ],
+  "postState": {
+    "ledgerEmailTimelineEvents": 425,
+    "supabaseTimelineEvents": 425,
+    "weakTitleRewriteQueueCount": 0,
+    "optionalReviewQueueCount": 1,
+    "excludedRecommendationCounts": {
+      "keepExcludedAlreadyCovered": 9,
+      "keepExcludedLowSignal": 14,
+      "keepExcludedSuspiciousSubject": 6,
+      "optionalReview": 1
+    }
+  },
+  "notes": [
+    "Three optional low-confidence facts absent from Supabase were imported for chronology completeness.",
+    "One optional fact (Welcome Aboard, 1999-11-16) remains held to avoid duplicate onboarding narrative overlap.",
+    "All previously flagged weak titles were rewritten; weak-title validation now returns zero."
+  ]
+}

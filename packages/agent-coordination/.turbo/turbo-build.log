@@ -1,0 +1,11 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides", "pnpm.onlyBuiltDependencies". See https://pnpm.io/settings for the new home of each setting.
+
+> @the-new-fuse/agent-coordination@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/agent-coordination
+> tsc -b
+
+error TS5083: Cannot read file '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tsconfig.json'.
+src/index.ts(40,8): error TS2307: Cannot find module './core.js' or its corresponding type declarations.
+src/index.ts(43,15): error TS2307: Cannot find module './orchestration.js' or its corresponding type declarations.
+src/index.ts(46,15): error TS2307: Cannot find module './state.js' or its corresponding type declarations.
+src/index.ts(49,15): error TS2307: Cannot find module './patterns.js' or its corresponding type declarations.
+ ELIFECYCLE  Command failed with exit code 1.

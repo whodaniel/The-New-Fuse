@@ -26,7 +26,11 @@ export class TaskSchedulerService {
   private config: typeof CONFIG;
   private logger: (level: string, category: string, message: string, data?: any) => void;
   private redisClient: any; // Will be RedisClientManager
-  private emitActivityEvent: (eventType: string, content: string, metadata: Record<string, unknown>) => Promise<void>;
+  private emitActivityEvent: (
+    eventType: string,
+    content: string,
+    metadata: Record<string, unknown>
+  ) => Promise<void>;
 
   private taskPollingInterval: NodeJS.Timeout | null = null;
   private recentQueuedTasks: Map<string, number>;
@@ -36,7 +40,11 @@ export class TaskSchedulerService {
     config: typeof CONFIG,
     logger: (level: string, category: string, message: string, data?: any) => void,
     redisClient: any, // RedisClientManager instance
-    emitActivityEvent: (eventType: string, content: string, metadata: Record<string, unknown>) => Promise<void>,
+    emitActivityEvent: (
+      eventType: string,
+      content: string,
+      metadata: Record<string, unknown>
+    ) => Promise<void>
   ) {
     this.config = config;
     this.logger = logger;
@@ -46,7 +54,10 @@ export class TaskSchedulerService {
   }
 
   startTaskPolling() {
-    if ((!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient) || this.taskPollingInterval) {
+    if (
+      (!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient) ||
+      this.taskPollingInterval
+    ) {
       return;
     }
 

@@ -1,0 +1,2 @@
+# _redirects cleared to prevent loops. 
+# Redirection logic moved to functions/[[path]].js to support domain-aware routing.

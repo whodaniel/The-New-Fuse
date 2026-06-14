@@ -10,7 +10,7 @@ class SelfPromptService {
         this.redisClient = redisClient;
         this.selfPromptCooldowns = new Map();
         this.getOrchestratorEnvelopeIdentity = getOrchestratorEnvelopeIdentity;
-        this.getAgentEnvelopeIdentity = getAgentIdentityFunction;
+        this.getAgentEnvelopeIdentity = getAgentEnvelopeIdentity;
         this.getOrchestratorAudit = getOrchestratorAudit;
         this.sessionId = sessionId;
     }
@@ -28,7 +28,8 @@ class SelfPromptService {
         return prunedCount;
     }
     async emitSelfPrompt(params) {
-        if (!this.config.SELF_PROMPT_ENABLED || (!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient)) {
+        if (!this.config.SELF_PROMPT_ENABLED ||
+            (!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient)) {
             return;
         }
         const cooldownKey = `${params.kind}:${params.targetAgentId || params.targetProcessId || params.channel}`;

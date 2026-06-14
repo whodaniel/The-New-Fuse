@@ -1,6 +1,5 @@
 // packages/relay-core/src/services/agent-registry.service.ts
 
-import { randomUUID } from 'crypto';
 import {
   buildCanonicalEntityId,
   createAgentIdentityRecord,

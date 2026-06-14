@@ -1,0 +1,1 @@
+{"version":3,"file":"Session.d.ts","sourceRoot":"","sources":["../../../src/database/entities/Session.ts"],"names":[],"mappings":"AASA,OAAO,EAAE,IAAI,EAAE,MAAM,WAAW,CAAC;AAGjC,qBACa,OAAO;IAElB,EAAE,EAAG,MAAM,CAAC;IAGZ,MAAM,EAAG,MAAM,CAAC;IAGhB,KAAK,EAAG,MAAM,CAAC;IAGf,SAAS,EAAG,IAAI,CAAC;IAGjB,SAAS,EAAG,IAAI,CAAC;IAIjB,IAAI,CAAC,EAAE,IAAI,CAAC;IAGZ,aAAa;CAKd"}

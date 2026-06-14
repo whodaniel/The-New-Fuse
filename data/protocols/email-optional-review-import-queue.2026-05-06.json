@@ -1,0 +1,94 @@
+{
+  "sourceType": "email-optional-review-import-queue",
+  "generatedAt": "2026-05-06T20:14:42.526Z",
+  "sourceCandidateQueue": "data/protocols/email-fact-candidate-queue.2026-05-06.json",
+  "sourceOptionalReviewQueue": "data/protocols/email-exclusion-optional-review.2026-05-06.json",
+  "factCount": 3,
+  "facts": [
+    {
+      "factId": "email-fact-2002-11-08-welcome-to-addesigner-com",
+      "date": "2002-11-08",
+      "domain": "Cross-Domain",
+      "project": "Daniel Who's Media Empire",
+      "title": "Welcome to AdDesigner.com!",
+      "statement": "On 2002-11-08, an email from membership@AdDesigner.com with subject \"Welcome to AdDesigner.com!\" was captured as a timeline marker across creative, business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.341Z",
+      "relevanceTags": [
+        "domain:creative",
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:creative-business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_e18a6ah_0002ai_00_webalias_net_",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292565.emlx",
+        "from": "membership@AdDesigner.com",
+        "subject": "Welcome to AdDesigner.com!",
+        "dateIso": "2002-11-08T10:42:19.000Z",
+        "score": 11
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2002-11-18-daniel-your-bannersgomlm-account",
+      "date": "2002-11-18",
+      "domain": "Business & Projects",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Daniel Your BannersGoMLM Account",
+      "statement": "On 2002-11-18, an email from BgMLM@BannersGoMLM.com with subject \"Daniel Your BannersGoMLM Account\" was captured as a timeline marker across business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.341Z",
+      "relevanceTags": [
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_200211182025_gaikpkdh048326_web_mysiteinc_com_",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292099.emlx",
+        "from": "BgMLM@BannersGoMLM.com",
+        "subject": "Daniel Your BannersGoMLM Account",
+        "dateIso": "2002-11-18T20:25:46.000Z",
+        "score": 11
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2005-10-25-help-with-your-bodog-account",
+      "date": "2005-10-25",
+      "domain": "Business & Projects",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Help with your Bodog account",
+      "statement": "On 2005-10-25, an email from \"Scott Delbeck\" <scott@bodog.com> with subject \"Help with your Bodog account\" was captured as a timeline marker across business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.342Z",
+      "relevanceTags": [
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_e659e83cea0d5e4689d821031bfe353209858489_exchange2000_corp_kazootek_com_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270461.emlx",
+        "from": "\"Scott Delbeck\" <scott@bodog.com>",
+        "subject": "Help with your Bodog account",
+        "dateIso": "2005-10-25T16:25:53.000Z",
+        "score": 15
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    }
+  ]
+}

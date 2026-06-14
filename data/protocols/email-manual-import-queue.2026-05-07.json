@@ -1,0 +1,293 @@
+{
+  "sourceType": "email-manual-import-queue",
+  "generatedAt": "2026-05-07T19:04:50.216Z",
+  "sourceDecisionArtifact": "data/protocols/email-manual-adjudication.2026-05-07.json",
+  "factCount": 10,
+  "facts": [
+    {
+      "factId": "email-fact-1999-08-31-no-subject",
+      "date": "1999-08-31",
+      "domain": "Business & Projects",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "(no-subject)",
+      "statement": "On 1999-08-31, an email from \"Larisa Washburn\" <lwashburn@students.wisc.edu> with subject \"(no-subject)\" was captured as a timeline marker across business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.341Z",
+      "relevanceTags": [
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_001b01bef3fe_be63b200_6c316880_larisaw_",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292398.emlx",
+        "from": "\"Larisa Washburn\" <lwashburn@students.wisc.edu>",
+        "subject": "(no-subject)",
+        "dateIso": "1999-08-31T22:18:23.000Z",
+        "score": 9
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2003-05-31-re-indie-bible-dist",
+      "date": "2003-05-31",
+      "domain": "Business & Projects",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: \"Indie Bible Dist.\"",
+      "statement": "On 2003-05-31, an email from \"The Indie Bible\" <indiebible@rogers.com> with subject \"Re: \"Indie Bible Dist.\"\" was captured as a timeline marker across business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.341Z",
+      "relevanceTags": [
+        "domain:business",
+        "classification:transactional",
+        "strand:business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_053301c3272b_bd9b89b0_7de62a18_mdgyajhyzmp5z6_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271411.emlx",
+        "from": "\"The Indie Bible\" <indiebible@rogers.com>",
+        "subject": "Re: \"Indie Bible Dist.\"",
+        "dateIso": "2003-05-31T04:18:51.000Z",
+        "score": 12
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2003-06-04-re-supatools-contact-form",
+      "date": "2003-06-04",
+      "domain": "Business & Projects",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: Supatools Contact Form",
+      "statement": "On 2003-06-04, an email from <info@supatools.com> with subject \"Re: Supatools Contact Form\" was captured as a timeline marker across business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.341Z",
+      "relevanceTags": [
+        "domain:business",
+        "classification:transactional",
+        "strand:business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_083101c32a48_bec0bca0_1a1232d2_xp1800_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270911.emlx",
+        "from": "<info@supatools.com>",
+        "subject": "Re: Supatools Contact Form",
+        "dateIso": "2003-06-04T02:19:28.000Z",
+        "score": 14
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2003-06-05-messageid-4257574-new-message-for-install-cgi-and-php-scrip",
+      "date": "2003-06-05",
+      "domain": "Cross-Domain",
+      "project": "Daniel Who's Media Empire",
+      "title": "[MessageID: 4257574] New Message for 'Install CGI and PHP scripts' RFP",
+      "statement": "On 2003-06-05, an email from pmb@elanceonline.com with subject \"[MessageID: 4257574] New Message for 'Install CGI and PHP scripts' RFP\" was captured as a timeline marker across creative, business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.341Z",
+      "relevanceTags": [
+        "domain:creative",
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:creative-business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_20030605182953_6429323894_notify01_elance_com_",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/startree.tv.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/1/Messages/16213.emlx",
+        "from": "pmb@elanceonline.com",
+        "subject": "[MessageID: 4257574] New Message for 'Install CGI and PHP scripts' RFP",
+        "dateIso": "2003-06-05T18:29:53.000Z",
+        "score": 14
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2005-05-05-random-subversion-and-the-just-soness",
+      "date": "2005-05-05",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "random subversion and the just soness",
+      "statement": "On 2005-05-05, an email from doug whisker <jackoval6@yahoo.com> with subject \"random subversion and the just soness\" was captured as a timeline marker across personal domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.342Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:low_interaction_misc",
+        "strand:education-training"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_20050505063517_98449_qmail_web52807_mail_yahoo_com_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271469.emlx",
+        "from": "doug whisker <jackoval6@yahoo.com>",
+        "subject": "random subversion and the just soness",
+        "dateIso": "2005-05-05T06:35:17.000Z",
+        "score": 11
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2005-09-08-hey-there-my-brother",
+      "date": "2005-09-08",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "hey there my brother.....",
+      "statement": "On 2005-09-08, an email from doug whisker <jackoval6@yahoo.com> with subject \"hey there my brother.....\" was captured as a timeline marker across personal domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.342Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:low_interaction_misc",
+        "strand:personal-family-life"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_20050908202538_51887_qmail_web52815_mail_yahoo_com_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272469.emlx",
+        "from": "doug whisker <jackoval6@yahoo.com>",
+        "subject": "hey there my brother.....",
+        "dateIso": "2005-09-08T20:25:38.000Z",
+        "score": 11
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2005-09-27-hey-man",
+      "date": "2005-09-27",
+      "domain": "Cross-Domain",
+      "project": "Daniel Who's Media Empire",
+      "title": "hey man.....",
+      "statement": "On 2005-09-27, an email from adam iff <adamiff@yahoo.com> with subject \"hey man.....\" was captured as a timeline marker across personal, creative, business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.342Z",
+      "relevanceTags": [
+        "domain:personal",
+        "domain:creative",
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:personal-family-life"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_20050927154738_72892_qmail_web35613_mail_mud_yahoo_com_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273494.emlx",
+        "from": "adam iff <adamiff@yahoo.com>",
+        "subject": "hey man.....",
+        "dateIso": "2005-09-27T15:47:38.000Z",
+        "score": 14
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2009-02-18-re-probable-spam-phpld-mods",
+      "date": "2009-02-18",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: [?? Probable Spam] phpld mods",
+      "statement": "On 2009-02-18, an email from \"Rob C\" <contact@activeweblinks.com> with subject \"Re: [?? Probable Spam] phpld mods\" was captured as a timeline marker across personal domains.",
+      "confidence": "high",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.342Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "strand:general-correspondence"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_c12a703363014ec0aa038d64afeb8c63_script_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272347.emlx",
+        "from": "\"Rob C\" <contact@activeweblinks.com>",
+        "subject": "Re: [?? Probable Spam] phpld mods",
+        "dateIso": "2009-02-18T01:46:09.000Z",
+        "score": 24
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2010-05-03-re-hello-sir-urgent",
+      "date": "2010-05-03",
+      "domain": "Cross-Domain",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: hello sir (urgent)",
+      "statement": "On 2010-05-03, an email from Raheel Zaki <raheelzaki01@yahoo.com> with subject \"Re: hello sir (urgent)\" was captured as a timeline marker across personal, business domains.",
+      "confidence": "medium",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.342Z",
+      "relevanceTags": [
+        "domain:personal",
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:personal-family-life"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_592696_83998_qm_web24502_mail_ird_yahoo_com_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/3/2/Messages/235751.emlx",
+        "from": "Raheel Zaki <raheelzaki01@yahoo.com>",
+        "subject": "Re: hello sir (urgent)",
+        "dateIso": "2010-05-03T15:15:29.000Z",
+        "score": 22
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2012-09-12-re-hello-again",
+      "date": "2012-09-12",
+      "domain": "Cross-Domain",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: Hello.again",
+      "statement": "On 2012-09-12, an email from jennifer Cronin-arceneaux <ongerie@gmail.com> with subject \"Re: Hello.again\" was captured as a timeline marker across personal, business domains.",
+      "confidence": "high",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.343Z",
+      "relevanceTags": [
+        "domain:personal",
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:personal-family-life"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_capnyqr3y4pms9_9ydmi_vozl40ddj_6yqcjsj6t3afveni_mg_mail_gmail_com_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272493.emlx",
+        "from": "jennifer Cronin-arceneaux <ongerie@gmail.com>",
+        "subject": "Re: Hello.again",
+        "dateIso": "2012-09-12T18:13:41.000Z",
+        "score": 27
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    }
+  ]
+}

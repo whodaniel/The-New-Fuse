@@ -1,0 +1,30 @@
+{
+  "sourceType": "email-wave2-sync-rollup-pass7",
+  "generatedAt": "2026-05-07T19:49:51.982Z",
+  "sourceQueue": "data/private/protocols/email-fact-candidate-queue-wave2.2026-05-07.json",
+  "sourceAdjudication": "data/protocols/email-wave2-adjudication-pass7.2026-05-07.json",
+  "sourceImportQueue": "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+  "sourceImportDedupeAudit": "data/protocols/email-wave2-import-dedupe-audit-pass7b.2026-05-07.json",
+  "sourceBackupManifest": "data/private/protocols/supabase-email-archaeology-backup-manifest.2026-05-07-wave2-pass7.json",
+  "reviewedCount": 50,
+  "pendingCount": 450,
+  "decisionCounts": {
+    "import_to_timeline": 41,
+    "keep_excluded_already_covered": 7,
+    "keep_excluded": 2
+  },
+  "dedupedImportCounts": {
+    "initialImportCount": 41,
+    "dedupedImportCount": 22,
+    "skippedThreadDuplicates": 19
+  },
+  "supabaseSnapshot": {
+    "ownerPrincipalId": "daniel",
+    "emailArchaeologyEvents": 461,
+    "dateRange": {
+      "min": "1999-02-16",
+      "max": "2026-05-05"
+    },
+    "insertedThisPass": 22
+  }
+}

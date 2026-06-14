@@ -1,0 +1,1007 @@
+[0:00] Everybody talks about agent harnesses,
+[0:02] Everybody talks about agent harnesses,
+[0:02] Everybody talks about agent harnesses, but what exactly is a harness? Now, even
+[0:05] but what exactly is a harness? Now, even
+[0:05] but what exactly is a harness? Now, even people who are actively building agents
+[0:07] people who are actively building agents
+[0:07] people who are actively building agents can't always give you a clean answer. Uh
+[0:10] can't always give you a clean answer. Uh
+[0:10] can't always give you a clean answer. Uh the word gets thrown around constantly,
+[0:13] the word gets thrown around constantly,
+[0:13] the word gets thrown around constantly, but nobody really agrees on what exactly
+[0:15] but nobody really agrees on what exactly
+[0:15] but nobody really agrees on what exactly it means. So, in this video, I want to
+[0:18] it means. So, in this video, I want to
+[0:18] it means. So, in this video, I want to do three things.
+[0:20] do three things.
+[0:20] do three things. First, define what a harness actually
+[0:22] First, define what a harness actually
+[0:22] First, define what a harness actually is.
+[0:23] is.
+[0:24] is. And [snorts] just as more importantly,
+[0:26] And [snorts] just as more importantly,
+[0:26] And [snorts] just as more importantly, what it's not.
+[0:28] what it's not.
+[0:28] what it's not. Then, we will walk through nine
+[0:30] Then, we will walk through nine
+[0:30] Then, we will walk through nine components that I think makes a modern
+[0:33] components that I think makes a modern
+[0:33] components that I think makes a modern harness. And finally, we'll build a tiny
+[0:35] harness. And finally, we'll build a tiny
+[0:36] harness. And finally, we'll build a tiny one in Python, so you can see exactly
+[0:39] one in Python, so you can see exactly
+[0:39] one in Python, so you can see exactly what is going inside.
+[0:42] what is going inside.
+[0:42] what is going inside. This is going to be especially important
+[0:43] This is going to be especially important
+[0:43] This is going to be especially important for people who are thinking about
+[0:45] for people who are thinking about
+[0:45] for people who are thinking about building agents and harnesses. In simple
+[0:48] building agents and harnesses. In simple
+[0:48] building agents and harnesses. In simple term, a harness is a fixed architecture
+[0:50] term, a harness is a fixed architecture
+[0:50] term, a harness is a fixed architecture that turns a model into an agent.
+[0:53] that turns a model into an agent.
+[0:53] that turns a model into an agent. So, if you think about modern LLMs or
+[0:56] So, if you think about modern LLMs or
+[0:56] So, if you think about modern LLMs or models,
+[0:57] models,
+[0:57] models, these are just one-shot text generators.
+[1:01] these are just one-shot text generators.
+[1:01] these are just one-shot text generators. You ask a question,
+[1:02] You ask a question,
+[1:02] You ask a question, it answers and stops. A harness is what
+[1:05] it answers and stops. A harness is what
+[1:05] it answers and stops. A harness is what gives it the ability to take action, see
+[1:08] gives it the ability to take action, see
+[1:08] gives it the ability to take action, see the consequences, and keep going until
+[1:11] the consequences, and keep going until
+[1:11] the consequences, and keep going until the problem is actually solved. So,
+[1:13] the problem is actually solved. So,
+[1:13] the problem is actually solved. So, think of
+[1:15] think of
+[1:15] think of a model as the engine and the harness
+[1:18] a model as the engine and the harness
+[1:18] a model as the engine and the harness around it as the car. That what's make
+[1:21] around it as the car. That what's make
+[1:21] around it as the car. That what's make an agent.
+[1:23] an agent.
+[1:23] an agent. So, a really good example of this is
+[1:27] So, a really good example of this is
+[1:27] So, a really good example of this is agentic coding tools like Codex, Cursor,
+[1:31] agentic coding tools like Codex, Cursor,
+[1:31] agentic coding tools like Codex, Cursor, uh Cloud Code, Windswept. These are all
+[1:34] uh Cloud Code, Windswept. These are all
+[1:34] uh Cloud Code, Windswept. These are all harnesses.
+[1:35] harnesses.
+[1:35] harnesses. Each one started from a concrete problem
+[1:38] Each one started from a concrete problem
+[1:38] Each one started from a concrete problem making a model write and edit code
+[1:41] making a model write and edit code
+[1:41] making a model write and edit code across a real repository.
+[1:44] across a real repository.
+[1:44] across a real repository. And I think they have uh converged on
+[1:46] And I think they have uh converged on
+[1:46] And I think they have uh converged on remarkably similar architectures.
+[1:50] remarkably similar architectures.
+[1:50] remarkably similar architectures. Now, we're going to look at that
+[1:51] Now, we're going to look at that
+[1:51] Now, we're going to look at that architecture in a minute, but first, I
+[1:53] architecture in a minute, but first, I
+[1:53] architecture in a minute, but first, I want to talk about something else that
+[1:55] want to talk about something else that
+[1:55] want to talk about something else that you probably have heard about. And this
+[1:57] you probably have heard about. And this
+[1:57] you probably have heard about. And this is frameworks.
+[1:59] is frameworks.
+[1:59] is frameworks. So, think about things like LangChain,
+[2:01] So, think about things like LangChain,
+[2:01] So, think about things like LangChain, LangGraph, AutoGen, CrewAI. These are
+[2:03] LangGraph, AutoGen, CrewAI. These are
+[2:03] LangGraph, AutoGen, CrewAI. These are not harnesses.
+[2:05] not harnesses.
+[2:05] not harnesses. And I think this distinction is really
+[2:07] And I think this distinction is really
+[2:07] And I think this distinction is really worth making because right now, people
+[2:09] worth making because right now, people
+[2:09] worth making because right now, people are using these terms interchangeably.
+[2:12] are using these terms interchangeably.
+[2:12] are using these terms interchangeably. And
+[2:13] And
+[2:13] And it's kind of getting confusing.
+[2:15] it's kind of getting confusing.
+[2:15] it's kind of getting confusing. So, a framework gives you abstraction.
+[2:18] So, a framework gives you abstraction.
+[2:18] So, a framework gives you abstraction. Uh think about state crafts, chains,
+[2:21] Uh think about state crafts, chains,
+[2:21] Uh think about state crafts, chains, memory connections, and retrievers.
+[2:24] memory connections, and retrievers.
+[2:24] memory connections, and retrievers. You as a user have to wire them
+[2:26] You as a user have to wire them
+[2:26] You as a user have to wire them together.
+[2:28] together.
+[2:28] together. The fundamental assumption is that you,
+[2:30] The fundamental assumption is that you,
+[2:30] The fundamental assumption is that you, the human architect, will configure
+[2:32] the human architect, will configure
+[2:32] the human architect, will configure these pieces together.
+[2:34] these pieces together.
+[2:35] these pieces together. Now, harness on the other side
+[2:37] Now, harness on the other side
+[2:37] Now, harness on the other side uh
+[2:38] uh
+[2:38] uh is from opposite direction.
+[2:41] is from opposite direction.
+[2:41] is from opposite direction. There's no assembly step.
+[2:43] There's no assembly step.
+[2:43] There's no assembly step. It basically uh
+[2:45] It basically uh
+[2:45] It basically uh ships a working agent.
+[2:47] ships a working agent.
+[2:47] ships a working agent. And in simple terms, it's just a while
+[2:51] And in simple terms, it's just a while
+[2:51] And in simple terms, it's just a while loop with a tool registry and permission
+[2:54] loop with a tool registry and permission
+[2:54] loop with a tool registry and permission layer.
+[2:54] layer.
+[2:55] layer. And everything comes wired together.
+[2:57] And everything comes wired together.
+[2:57] And everything comes wired together. Now, another way to think about this is
+[2:59] Now, another way to think about this is
+[2:59] Now, another way to think about this is that framework is built for a human to
+[3:01] that framework is built for a human to
+[3:01] that framework is built for a human to assemble an agent. A harness is built
+[3:04] assemble an agent. A harness is built
+[3:04] assemble an agent. A harness is built for the agent itself to a task. And in
+[3:07] for the agent itself to a task. And in
+[3:07] for the agent itself to a task. And in big picture, you just provide the goal,
+[3:10] big picture, you just provide the goal,
+[3:10] big picture, you just provide the goal, the harness will handle the rest.
+[3:12] the harness will handle the rest.
+[3:12] the harness will handle the rest. So, in the rest of the video, we're
+[3:14] So, in the rest of the video, we're
+[3:14] So, in the rest of the video, we're going to primarily focus on harnesses
+[3:16] going to primarily focus on harnesses
+[3:16] going to primarily focus on harnesses and what they make them interesting.
+[3:18] and what they make them interesting.
+[3:18] and what they make them interesting. Okay, so what exactly is inside a
+[3:20] Okay, so what exactly is inside a
+[3:20] Okay, so what exactly is inside a harness? I would say there are nine main
+[3:23] harness? I would say there are nine main
+[3:23] harness? I would say there are nine main components that you need to consider if
+[3:25] components that you need to consider if
+[3:25] components that you need to consider if you're building an agentic harness.
+[3:28] you're building an agentic harness.
+[3:28] you're building an agentic harness. Now, we're going to uh go through the
+[3:30] Now, we're going to uh go through the
+[3:30] Now, we're going to uh go through the list. This is mostly opinionated
+[3:34] list. This is mostly opinionated
+[3:34] list. This is mostly opinionated uh architecture, uh but something that I
+[3:36] uh architecture, uh but something that I
+[3:36] uh architecture, uh but something that I have seen to work really nicely in
+[3:38] have seen to work really nicely in
+[3:38] have seen to work really nicely in practice. I'll try to tie together to
+[3:41] practice. I'll try to tie together to
+[3:41] practice. I'll try to tie together to Cloud Code because I think this is um an
+[3:44] Cloud Code because I think this is um an
+[3:44] Cloud Code because I think this is um an example of a really great harness put
+[3:46] example of a really great harness put
+[3:46] example of a really great harness put together.
+[3:48] together.
+[3:48] together. Okay, so the first component is the
+[3:50] Okay, so the first component is the
+[3:50] Okay, so the first component is the while loop. Um this is basically the
+[3:53] while loop. Um this is basically the
+[3:53] while loop. Um this is basically the foundation. It's the outer
+[3:56] foundation. It's the outer
+[3:56] foundation. It's the outer iteration loop.
+[3:58] iteration loop.
+[3:58] iteration loop. The harness is at its core of while
+[4:01] The harness is at its core of while
+[4:01] The harness is at its core of while loop. The model reads its system uh
+[4:04] loop. The model reads its system uh
+[4:04] loop. The model reads its system uh prompt, decides which tool to call, runs
+[4:08] prompt, decides which tool to call, runs
+[4:08] prompt, decides which tool to call, runs the tool, feeds the result back into the
+[4:09] the tool, feeds the result back into the
+[4:10] the tool, feeds the result back into the context, and loops again.
+[4:13] context, and loops again.
+[4:13] context, and loops again. And this process keeps repeating till
+[4:15] And this process keeps repeating till
+[4:15] And this process keeps repeating till the uh model produces a text-only
+[4:18] the uh model produces a text-only
+[4:18] the uh model produces a text-only response or it
+[4:21] response or it
+[4:21] response or it uh hits a maximum iteration cap. Now,
+[4:24] uh hits a maximum iteration cap. Now,
+[4:24] uh hits a maximum iteration cap. Now, we're talking about uh text-only models,
+[4:26] we're talking about uh text-only models,
+[4:26] we're talking about uh text-only models, but the same can apply to multimodal
+[4:29] but the same can apply to multimodal
+[4:29] but the same can apply to multimodal models as well. So, think of
+[4:32] models as well. So, think of
+[4:32] models as well. So, think of this outer loop as the whole engine that
+[4:35] this outer loop as the whole engine that
+[4:35] this outer loop as the whole engine that runs everything.
+[4:37] runs everything.
+[4:37] runs everything. Now, number two is context management.
+[4:40] Now, number two is context management.
+[4:40] Now, number two is context management. On every turn, the tree grows um as you
+[4:44] On every turn, the tree grows um as you
+[4:44] On every turn, the tree grows um as you encounter more uh user messages, more
+[4:47] encounter more uh user messages, more
+[4:47] encounter more uh user messages, more tool calls, more you're going to see
+[4:49] tool calls, more you're going to see
+[4:49] tool calls, more you're going to see that
+[4:50] that
+[4:50] that uh you hit
+[4:53] uh you hit
+[4:53] uh you hit the context limit of your large language
+[4:55] the context limit of your large language
+[4:55] the context limit of your large language model.
+[4:57] model.
+[4:57] model. So, the harness has to decide what to
+[4:59] So, the harness has to decide what to
+[5:00] So, the harness has to decide what to keep verbatim, what to summarize, and
+[5:01] keep verbatim, what to summarize, and
+[5:01] keep verbatim, what to summarize, and what to throw away.
+[5:03] what to throw away.
+[5:03] what to throw away. In Cloud Code's example, the budget used
+[5:06] In Cloud Code's example, the budget used
+[5:06] In Cloud Code's example, the budget used to be around 200,000 tokens. Now, they
+[5:08] to be around 200,000 tokens. Now, they
+[5:08] to be around 200,000 tokens. Now, they have increased it to 1 million token in
+[5:10] have increased it to 1 million token in
+[5:10] have increased it to 1 million token in case of Opus.
+[5:12] case of Opus.
+[5:12] case of Opus. Uh but let's say when you are uh
+[5:13] Uh but let's say when you are uh
+[5:13] Uh but let's say when you are uh reaching almost half of it, um or maybe
+[5:17] reaching almost half of it, um or maybe
+[5:17] reaching almost half of it, um or maybe 80 to 90%, it triggers a compaction.
+[5:20] 80 to 90%, it triggers a compaction.
+[5:20] 80 to 90%, it triggers a compaction. Some of the most recent messages are
+[5:22] Some of the most recent messages are
+[5:22] Some of the most recent messages are going to stay in full. Everything older
+[5:24] going to stay in full. Everything older
+[5:24] going to stay in full. Everything older gets summarized. Now, this compaction is
+[5:28] gets summarized. Now, this compaction is
+[5:28] gets summarized. Now, this compaction is very important um and it can have some
+[5:32] very important um and it can have some
+[5:32] very important um and it can have some real bad consequences if not um properly
+[5:36] real bad consequences if not um properly
+[5:36] real bad consequences if not um properly did.
+[5:37] did.
+[5:37] did. So, you need to be very careful about
+[5:39] So, you need to be very careful about
+[5:39] So, you need to be very careful about context management. Now, the third
+[5:41] context management. Now, the third
+[5:41] context management. Now, the third component uh is skills and tools. So,
+[5:44] component uh is skills and tools. So,
+[5:44] component uh is skills and tools. So, tools are the primitives that reads a
+[5:47] tools are the primitives that reads a
+[5:47] tools are the primitives that reads a file, edit a file, run bash, search
+[5:50] file, edit a file, run bash, search
+[5:50] file, edit a file, run bash, search code. Skills
+[5:52] code. Skills
+[5:52] code. Skills are a top uh a layer on the top. So,
+[5:56] are a top uh a layer on the top. So,
+[5:56] are a top uh a layer on the top. So, they are how organizational knowledge
+[5:58] they are how organizational knowledge
+[5:58] they are how organizational knowledge gets encoded. Uh usually, you're going
+[6:01] gets encoded. Uh usually, you're going
+[6:01] gets encoded. Uh usually, you're going to see them in model files.
+[6:03] to see them in model files.
+[6:03] to see them in model files. Now, to think about uh
+[6:05] Now, to think about uh
+[6:05] Now, to think about uh tools and skills, I would say tools are
+[6:07] tools and skills, I would say tools are
+[6:07] tools and skills, I would say tools are universal. Uh skills are specific to
+[6:10] universal. Uh skills are specific to
+[6:10] universal. Uh skills are specific to your team, your workflow.
+[6:12] your team, your workflow.
+[6:13] your team, your workflow. And then, there is the registry. Uh so,
+[6:15] And then, there is the registry. Uh so,
+[6:15] And then, there is the registry. Uh so, it tells what is available, uh what
+[6:17] it tells what is available, uh what
+[6:17] it tells what is available, uh what permission each uh thing needs, how the
+[6:20] permission each uh thing needs, how the
+[6:20] permission each uh thing needs, how the call gets dispatched. Now, the fourth
+[6:23] call gets dispatched. Now, the fourth
+[6:23] call gets dispatched. Now, the fourth component is sub-agent management. Now,
+[6:26] component is sub-agent management. Now,
+[6:26] component is sub-agent management. Now, at some point um
+[6:28] at some point um
+[6:28] at some point um a task gets too big or too parallel for
+[6:30] a task gets too big or too parallel for
+[6:30] a task gets too big or too parallel for a single conversation thread. So, the
+[6:32] a single conversation thread. So, the
+[6:33] a single conversation thread. So, the harness uh is going to create sub-agents
+[6:36] harness uh is going to create sub-agents
+[6:36] harness uh is going to create sub-agents that work in isolation. Each sub-agent
+[6:39] that work in isolation. Each sub-agent
+[6:39] that work in isolation. Each sub-agent gets its own session, its own restricted
+[6:42] gets its own session, its own restricted
+[6:42] gets its own session, its own restricted set of tools,
+[6:44] set of tools,
+[6:44] set of tools, and a focused system prompt that says,
+[6:46] and a focused system prompt that says,
+[6:46] and a focused system prompt that says, uh "You're working on this specific
+[6:48] uh "You're working on this specific
+[6:48] uh "You're working on this specific task." Now, the idea over there is to
+[6:51] task." Now, the idea over there is to
+[6:51] task." Now, the idea over there is to span, restrict, and collect
+[6:54] span, restrict, and collect
+[6:54] span, restrict, and collect uh the outputs. That's kind of the
+[6:55] uh the outputs. That's kind of the
+[6:56] uh the outputs. That's kind of the pattern you want to use.
+[6:57] pattern you want to use.
+[6:57] pattern you want to use. If you want to learn about generative AI
+[7:00] If you want to learn about generative AI
+[7:00] If you want to learn about generative AI in a structured way, you will love
+[7:01] in a structured way, you will love
+[7:02] in a structured way, you will love today's sponsor,
+[7:03] today's sponsor,
+[7:03] today's sponsor, which is Coursera. They have a number of
+[7:06] which is Coursera. They have a number of
+[7:06] which is Coursera. They have a number of different courses on generative AI.
+[7:08] different courses on generative AI.
+[7:08] different courses on generative AI. Here are the four that I highly
+[7:10] Here are the four that I highly
+[7:10] Here are the four that I highly recommend for you as a beginner.
+[7:13] recommend for you as a beginner.
+[7:13] recommend for you as a beginner. Start with Google AI Essentials. It's
+[7:16] Start with Google AI Essentials. It's
+[7:16] Start with Google AI Essentials. It's about 10 hours taught by Google's own AI
+[7:19] about 10 hours taught by Google's own AI
+[7:19] about 10 hours taught by Google's own AI team. Over 1.7 million people have
+[7:23] team. Over 1.7 million people have
+[7:23] team. Over 1.7 million people have already enrolled. Next, Vanderbilt's
+[7:25] already enrolled. Next, Vanderbilt's
+[7:25] already enrolled. Next, Vanderbilt's prompt engineering for ChatGPT. This is
+[7:28] prompt engineering for ChatGPT. This is
+[7:28] prompt engineering for ChatGPT. This is where you learn the actual patterns,
+[7:29] where you learn the actual patterns,
+[7:30] where you learn the actual patterns, chain of thought, few-shot, persona
+[7:31] chain of thought, few-shot, persona
+[7:31] chain of thought, few-shot, persona prompting, etc.
+[7:34] prompting, etc.
+[7:34] prompting, etc. If you're a developer, jump to their
+[7:36] If you're a developer, jump to their
+[7:36] If you're a developer, jump to their generative AI with large language models
+[7:39] generative AI with large language models
+[7:39] generative AI with large language models built with AWS.
+[7:41] built with AWS.
+[7:41] built with AWS. It's a hands-on lab. You fine-tune,
+[7:43] It's a hands-on lab. You fine-tune,
+[7:43] It's a hands-on lab. You fine-tune, deploy, and ship real LLM applications.
+[7:46] deploy, and ship real LLM applications.
+[7:46] deploy, and ship real LLM applications. And if you want a full career on-ramp,
+[7:49] And if you want a full career on-ramp,
+[7:49] And if you want a full career on-ramp, IBM's AI developer professional
+[7:51] IBM's AI developer professional
+[7:51] IBM's AI developer professional certificate is for you. You get to build
+[7:54] certificate is for you. You get to build
+[7:54] certificate is for you. You get to build chatbots, apps, RAG, and agents.
+[7:59] chatbots, apps, RAG, and agents.
+[7:59] chatbots, apps, RAG, and agents. Right now, get 40% off off 3 months of
+[8:02] Right now, get 40% off off 3 months of
+[8:02] Right now, get 40% off off 3 months of Coursera Plus through the link in the
+[8:04] Coursera Plus through the link in the
+[8:04] Coursera Plus through the link in the description. Now, back to the video.
+[8:07] description. Now, back to the video.
+[8:07] description. Now, back to the video. Number five is built-in skills. So, we
+[8:09] Number five is built-in skills. So, we
+[8:09] Number five is built-in skills. So, we already talked about skills um that you
+[8:12] already talked about skills um that you
+[8:12] already talked about skills um that you provide as a user, but every harness
+[8:15] provide as a user, but every harness
+[8:15] provide as a user, but every harness ships with a baseline set of skills that
+[8:18] ships with a baseline set of skills that
+[8:18] ships with a baseline set of skills that are going to work out of the box. So,
+[8:20] are going to work out of the box. So,
+[8:20] are going to work out of the box. So, think about file operation, read, write,
+[8:23] think about file operation, read, write,
+[8:23] think about file operation, read, write, edit, search, or cell execution, um code
+[8:26] edit, search, or cell execution, um code
+[8:26] edit, search, or cell execution, um code navigation, things like that. Now, for
+[8:28] navigation, things like that. Now, for
+[8:29] navigation, things like that. Now, for modern harnesses, these are really
+[8:30] modern harnesses, these are really
+[8:30] modern harnesses, these are really non-negotiable. If your agent cannot
+[8:33] non-negotiable. If your agent cannot
+[8:33] non-negotiable. If your agent cannot read or edit files,
+[8:35] read or edit files,
+[8:35] read or edit files, it isn't a coding agent.
+[8:38] it isn't a coding agent.
+[8:38] it isn't a coding agent. So, beyond the primitives, modern
+[8:40] So, beyond the primitives, modern
+[8:40] So, beyond the primitives, modern harnesses also ship with high-level
+[8:42] harnesses also ship with high-level
+[8:42] harnesses also ship with high-level skills. Um for example, you
+[8:46] skills. Um for example, you
+[8:46] skills. Um for example, you a harness can have a skill of how to
+[8:47] a harness can have a skill of how to
+[8:47] a harness can have a skill of how to make a Git commit, um how to open a pull
+[8:50] make a Git commit, um how to open a pull
+[8:50] make a Git commit, um how to open a pull request, how to run tests results.
+[8:54] request, how to run tests results.
+[8:54] request, how to run tests results. Now, some of these built-in skills are
+[8:55] Now, some of these built-in skills are
+[8:55] Now, some of these built-in skills are going to be uh specific to the vendor or
+[9:01] going to be uh specific to the vendor or
+[9:01] going to be uh specific to the vendor or creator of the harness.
+[9:03] creator of the harness.
+[9:03] creator of the harness. Number six is session persistence or
+[9:06] Number six is session persistence or
+[9:06] Number six is session persistence or memory. So, a long agent session is
+[9:08] memory. So, a long agent session is
+[9:08] memory. So, a long agent session is stateful. If the process crashes, you
+[9:10] stateful. If the process crashes, you
+[9:10] stateful. If the process crashes, you lose everything unless the harness
+[9:13] lose everything unless the harness
+[9:13] lose everything unless the harness writes state to disk.
+[9:16] writes state to disk.
+[9:16] writes state to disk. And the modern uh the way the modern
+[9:18] And the modern uh the way the modern
+[9:18] And the modern uh the way the modern harnesses do this is pretty elegant. So,
+[9:20] harnesses do this is pretty elegant. So,
+[9:20] harnesses do this is pretty elegant. So, typically, uh they're going to use
+[9:23] typically, uh they're going to use
+[9:23] typically, uh they're going to use append-only JSON files or maybe Markdown
+[9:26] append-only JSON files or maybe Markdown
+[9:26] append-only JSON files or maybe Markdown files. So, every message, every tool
+[9:29] files. So, every message, every tool
+[9:29] files. So, every message, every tool results, every compaction event gets one
+[9:32] results, every compaction event gets one
+[9:32] results, every compaction event gets one line.
+[9:33] line.
+[9:33] line. Now, the beauty of this is that you can
+[9:34] Now, the beauty of this is that you can
+[9:34] Now, the beauty of this is that you can resume exactly where you left off. Uh
+[9:38] resume exactly where you left off. Uh
+[9:38] resume exactly where you left off. Uh actually, recently uh attended a talk
+[9:41] actually, recently uh attended a talk
+[9:41] actually, recently uh attended a talk from
+[9:42] from
+[9:42] from the Anthropic team where they were
+[9:43] the Anthropic team where they were
+[9:43] the Anthropic team where they were discussing about how they built managed
+[9:46] discussing about how they built managed
+[9:46] discussing about how they built managed agents. Uh I'm going to create uh cover
+[9:49] agents. Uh I'm going to create uh cover
+[9:49] agents. Uh I'm going to create uh cover that in another video, but they had the
+[9:52] that in another video, but they had the
+[9:52] that in another video, but they had the session uh management separate from the
+[9:55] session uh management separate from the
+[9:55] session uh management separate from the harness itself, which was I think a very
+[9:57] harness itself, which was I think a very
+[9:57] harness itself, which was I think a very interesting design.
+[9:59] interesting design.
+[9:59] interesting design. Number seven is system prompt assembly.
+[10:03] Number seven is system prompt assembly.
+[10:03] Number seven is system prompt assembly. Now, this is the one that will surprise
+[10:05] Now, this is the one that will surprise
+[10:05] Now, this is the one that will surprise most people. The system prompt is not a
+[10:07] most people. The system prompt is not a
+[10:07] most people. The system prompt is not a static string. It's basically a pipeline
+[10:11] static string. It's basically a pipeline
+[10:11] static string. It's basically a pipeline that just walks
+[10:13] that just walks
+[10:13] that just walks um ancestor directories looking for
+[10:16] um ancestor directories looking for
+[10:16] um ancestor directories looking for specific types of instructions. So, if
+[10:18] specific types of instructions. So, if
+[10:18] specific types of instructions. So, if you have cloud.md or agents.md,
+[10:21] you have cloud.md or agents.md,
+[10:21] you have cloud.md or agents.md, it's going to inject those into the
+[10:24] it's going to inject those into the
+[10:24] it's going to inject those into the system prompt.
+[10:26] system prompt.
+[10:26] system prompt. Now, you also want to be a little
+[10:27] Now, you also want to be a little
+[10:27] Now, you also want to be a little careful here um
+[10:29] careful here um
+[10:29] careful here um because most of these
+[10:31] because most of these
+[10:31] because most of these um third-party harnesses
+[10:33] um third-party harnesses
+[10:33] um third-party harnesses or even the first-party harnesses have
+[10:35] or even the first-party harnesses have
+[10:35] or even the first-party harnesses have really strict record prompt caching. Uh
+[10:38] really strict record prompt caching. Uh
+[10:38] really strict record prompt caching. Uh if you dynamically introduce
+[10:41] if you dynamically introduce
+[10:41] if you dynamically introduce uh components to system prompt, that is
+[10:42] uh components to system prompt, that is
+[10:42] uh components to system prompt, that is going to break the caching, right? So,
+[10:44] going to break the caching, right? So,
+[10:44] going to break the caching, right? So, you need to be careful about that, but
+[10:47] you need to be careful about that, but
+[10:47] you need to be careful about that, but in certain situations, you want to clean
+[10:49] in certain situations, you want to clean
+[10:50] in certain situations, you want to clean uh assemble the system prompts.
+[10:53] uh assemble the system prompts.
+[10:53] uh assemble the system prompts. Okay, number eight is going to be life
+[10:55] Okay, number eight is going to be life
+[10:55] Okay, number eight is going to be life cycle hooks. So, this is
+[10:57] cycle hooks. So, this is
+[10:57] cycle hooks. So, this is extensibility scene. Um hooks let you
+[11:00] extensibility scene. Um hooks let you
+[11:00] extensibility scene. Um hooks let you inject custom logic before or after a
+[11:03] inject custom logic before or after a
+[11:03] inject custom logic before or after a tool runs
+[11:04] tool runs
+[11:04] tool runs without touching the harness itself.
+[11:06] without touching the harness itself.
+[11:06] without touching the harness itself. So, a pre-tool hook fires before
+[11:09] So, a pre-tool hook fires before
+[11:09] So, a pre-tool hook fires before execution. Uh it receives the tool name,
+[11:13] execution. Uh it receives the tool name,
+[11:13] execution. Uh it receives the tool name, the input, and can allow, deny, or
+[11:16] the input, and can allow, deny, or
+[11:16] the input, and can allow, deny, or modify the call.
+[11:17] modify the call.
+[11:17] modify the call. A post-tool hook uh runs after and can
+[11:21] A post-tool hook uh runs after and can
+[11:21] A post-tool hook uh runs after and can inspect the results. So, the protocol is
+[11:24] inspect the results. So, the protocol is
+[11:24] inspect the results. So, the protocol is kind of structured. Uh think about
+[11:26] kind of structured. Uh think about
+[11:26] kind of structured. Uh think about uh a JSON file
+[11:28] uh a JSON file
+[11:28] uh a JSON file with exit codes for allow or deny.
+[11:31] with exit codes for allow or deny.
+[11:31] with exit codes for allow or deny. Now, the beauty is that hooks also
+[11:32] Now, the beauty is that hooks also
+[11:32] Now, the beauty is that hooks also enable uh intercommunication between
+[11:35] enable uh intercommunication between
+[11:35] enable uh intercommunication between different har- and hooks are how
+[11:37] different har- and hooks are how
+[11:37] different har- and hooks are how enterprises today adopt harnesses
+[11:39] enterprises today adopt harnesses
+[11:39] enterprises today adopt harnesses themselves.
+[11:41] themselves.
+[11:41] themselves. Now, let's talk about number nine,
+[11:42] Now, let's talk about number nine,
+[11:42] Now, let's talk about number nine, permissions and safety. So, this is the
+[11:44] permissions and safety. So, this is the
+[11:44] permissions and safety. So, this is the layer that makes the difference between
+[11:46] layer that makes the difference between
+[11:46] layer that makes the difference between a useful tool and a dangerous one.
+[11:49] a useful tool and a dangerous one.
+[11:49] a useful tool and a dangerous one. Modern harnesses define a hierarchy of
+[11:52] Modern harnesses define a hierarchy of
+[11:52] Modern harnesses define a hierarchy of permission modes.
+[11:55] permission modes.
+[11:55] permission modes. You can have read-only space right, um
+[11:57] You can have read-only space right, um
+[11:57] You can have read-only space right, um full access. Each tool declares the
+[11:59] full access. Each tool declares the
+[11:59] full access. Each tool declares the minimum permission it requires.
+[12:02] minimum permission it requires.
+[12:02] minimum permission it requires. Now, the job of the harness is to
+[12:03] Now, the job of the harness is to
+[12:03] Now, the job of the harness is to enforce that at dispatch time
+[12:07] enforce that at dispatch time
+[12:07] enforce that at dispatch time before the tool even um
+[12:09] before the tool even um
+[12:09] before the tool even um ever runs.
+[12:11] ever runs.
+[12:11] ever runs. And for tools like bash, the harness
+[12:13] And for tools like bash, the harness
+[12:13] And for tools like bash, the harness even classifies the commands
+[12:14] even classifies the commands
+[12:14] even classifies the commands dynamically.
+[12:16] dynamically.
+[12:16] dynamically. So, let's say uh
+[12:17] So, let's say uh
+[12:17] So, let's say uh if you say list files,
+[12:20] if you say list files,
+[12:20] if you say list files, uh it's going to be read-only. Uh if you
+[12:22] uh it's going to be read-only. Uh if you
+[12:22] uh it's going to be read-only. Uh if you want to delete something,
+[12:24] want to delete something,
+[12:24] want to delete something, that will need full access.
+[12:26] that will need full access.
+[12:26] that will need full access. And uh the harness figures it out by
+[12:29] And uh the harness figures it out by
+[12:29] And uh the harness figures it out by parsing the command string.
+[12:31] parsing the command string.
+[12:31] parsing the command string. On top of the static permission, you get
+[12:34] On top of the static permission, you get
+[12:34] On top of the static permission, you get interactive approvals. The agent can
+[12:36] interactive approvals. The agent can
+[12:36] interactive approvals. The agent can pause, ask, "Should I run this?" right?
+[12:39] pause, ask, "Should I run this?" right?
+[12:39] pause, ask, "Should I run this?" right? So, before executing anything dangerous,
+[12:41] So, before executing anything dangerous,
+[12:41] So, before executing anything dangerous, you want to have this safety layer built
+[12:43] you want to have this safety layer built
+[12:43] you want to have this safety layer built into the harness.
+[12:46] into the harness.
+[12:46] into the harness. All right, so these are uh the nine
+[12:48] All right, so these are uh the nine
+[12:48] All right, so these are uh the nine uh components that I think every uh
+[12:50] uh components that I think every uh
+[12:50] uh components that I think every uh harness needs to have. Iteration loop,
+[12:52] harness needs to have. Iteration loop,
+[12:52] harness needs to have. Iteration loop, context management, skills and tools,
+[12:55] context management, skills and tools,
+[12:55] context management, skills and tools, sub-agents, built-in
+[12:56] sub-agents, built-in
+[12:56] sub-agents, built-in uh skills, session persistence or
+[12:58] uh skills, session persistence or
+[12:58] uh skills, session persistence or memory, system prompt assembly, life
+[13:01] memory, system prompt assembly, life
+[13:01] memory, system prompt assembly, life cycle hooks, and permissions.
+[13:04] cycle hooks, and permissions.
+[13:04] cycle hooks, and permissions. Now, the easiest way to actually
+[13:05] Now, the easiest way to actually
+[13:05] Now, the easiest way to actually understand um
+[13:07] understand um
+[13:07] understand um a harness is to build one. So, let's
+[13:09] a harness is to build one. So, let's
+[13:09] a harness is to build one. So, let's write a minimal version of Python. Um
+[13:12] write a minimal version of Python. Um
+[13:12] write a minimal version of Python. Um Nothing fancy.
+[13:13] Nothing fancy.
+[13:13] Nothing fancy. Just enough to see all these components
+[13:15] Just enough to see all these components
+[13:15] Just enough to see all these components together.
+[13:18] Okay, so in this part, we're going to
+[13:19] Okay, so in this part, we're going to
+[13:19] Okay, so in this part, we're going to quickly go over a reference
+[13:21] quickly go over a reference
+[13:21] quickly go over a reference implementation. Uh so, think of this as
+[13:25] implementation. Uh so, think of this as
+[13:25] implementation. Uh so, think of this as a structure or template that you want to
+[13:27] a structure or template that you want to
+[13:27] a structure or template that you want to use if you're building a harness.
+[13:30] use if you're building a harness.
+[13:30] use if you're building a harness. Okay, so the main engine is the while
+[13:32] Okay, so the main engine is the while
+[13:32] Okay, so the main engine is the while loop uh that basically controls
+[13:34] loop uh that basically controls
+[13:34] loop uh that basically controls everything. It assembles the system
+[13:36] everything. It assembles the system
+[13:36] everything. It assembles the system prompt and starts looping. Now, on every
+[13:39] prompt and starts looping. Now, on every
+[13:39] prompt and starts looping. Now, on every iteration, um
+[13:41] iteration, um
+[13:41] iteration, um the context
+[13:43] the context
+[13:43] the context is going to be compacted if it grows too
+[13:46] is going to be compacted if it grows too
+[13:46] is going to be compacted if it grows too large.
+[13:47] large.
+[13:47] large. All of these things plus the tool calls
+[13:50] All of these things plus the tool calls
+[13:50] All of these things plus the tool calls and uh calling to sub-agents are going
+[13:53] and uh calling to sub-agents are going
+[13:53] and uh calling to sub-agents are going to be implemented within this while
+[13:55] to be implemented within this while
+[13:55] to be implemented within this while loop.
+[13:56] loop.
+[13:56] loop. You also want to cap how many iterations
+[13:59] You also want to cap how many iterations
+[13:59] You also want to cap how many iterations are going to be in this loop so that it
+[14:02] are going to be in this loop so that it
+[14:02] are going to be in this loop so that it never runs forever. This is really the
+[14:04] never runs forever. This is really the
+[14:04] never runs forever. This is really the entire engine. Uh every other file in
+[14:07] entire engine. Uh every other file in
+[14:07] entire engine. Uh every other file in the project exists to support these few
+[14:09] the project exists to support these few
+[14:09] the project exists to support these few lines.
+[14:10] lines.
+[14:10] lines. Now, uh this code implements simple
+[14:12] Now, uh this code implements simple
+[14:12] Now, uh this code implements simple context management. Um
+[14:14] context management. Um
+[14:14] context management. Um In in this very simple form, we are just
+[14:17] In in this very simple form, we are just
+[14:17] In in this very simple form, we are just doing compaction. So, if
+[14:20] doing compaction. So, if
+[14:20] doing compaction. So, if the
+[14:21] the
+[14:21] the history uh grows beyond a certain point,
+[14:24] history uh grows beyond a certain point,
+[14:24] history uh grows beyond a certain point, we just summarize uh some of the older
+[14:28] we just summarize uh some of the older
+[14:28] we just summarize uh some of the older conversations and put them together.
+[14:30] conversations and put them together.
+[14:30] conversations and put them together. Now, there are more advanced uh
+[14:31] Now, there are more advanced uh
+[14:31] Now, there are more advanced uh compaction techniques, but this is a
+[14:34] compaction techniques, but this is a
+[14:34] compaction techniques, but this is a very simple reference implementation.
+[14:37] very simple reference implementation.
+[14:37] very simple reference implementation. Now, if you're making tool calls, you
+[14:38] Now, if you're making tool calls, you
+[14:38] Now, if you're making tool calls, you also need to decide whether you're going
+[14:40] also need to decide whether you're going
+[14:40] also need to decide whether you're going to bring in
+[14:42] to bring in
+[14:42] to bring in everything that is done within the tool
+[14:44] everything that is done within the tool
+[14:44] everything that is done within the tool call or only the input and outputs. So,
+[14:46] call or only the input and outputs. So,
+[14:46] call or only the input and outputs. So, those are the design design decisions
+[14:48] those are the design design decisions
+[14:48] those are the design design decisions that you'll have to take as an
+[14:50] that you'll have to take as an
+[14:50] that you'll have to take as an architect.
+[14:51] architect.
+[14:51] architect. Okay, this code uh implements a simple
+[14:53] Okay, this code uh implements a simple
+[14:53] Okay, this code uh implements a simple tool and skills registry. So, every tool
+[14:56] tool and skills registry. So, every tool
+[14:56] tool and skills registry. So, every tool in the harness is described by a small
+[14:58] in the harness is described by a small
+[14:58] in the harness is described by a small um data class, a name,
+[15:00] um data class, a name,
+[15:01] um data class, a name, what type of permissions they're going
+[15:02] what type of permissions they're going
+[15:02] what type of permissions they're going to have, and a handler function, and one
+[15:05] to have, and a handler function, and one
+[15:05] to have, and a handler function, and one line line um description.
+[15:08] line line um description.
+[15:08] line line um description. The registry is just a dictionary that
+[15:10] The registry is just a dictionary that
+[15:10] The registry is just a dictionary that maps the tool name to that record.
+[15:14] maps the tool name to that record.
+[15:14] maps the tool name to that record. Now, there are a few functions. Uh
+[15:16] Now, there are a few functions. Uh
+[15:16] Now, there are a few functions. Uh calling register adds a new tool.
+[15:18] calling register adds a new tool.
+[15:18] calling register adds a new tool. Calling get uh retrieves one for
+[15:22] Calling get uh retrieves one for
+[15:22] Calling get uh retrieves one for dispatch.
+[15:23] dispatch.
+[15:23] dispatch. Calling descriptors return a lightweight
+[15:27] Calling descriptors return a lightweight
+[15:27] Calling descriptors return a lightweight version of the list, which is going to
+[15:28] version of the list, which is going to
+[15:28] version of the list, which is going to contain name, permissions, description
+[15:32] contain name, permissions, description
+[15:32] contain name, permissions, description that we're going to send to the model so
+[15:34] that we're going to send to the model so
+[15:34] that we're going to send to the model so it knows what is available. Skills are
+[15:37] it knows what is available. Skills are
+[15:37] it knows what is available. Skills are registered
+[15:38] registered
+[15:38] registered um
+[15:39] um
+[15:39] um the exact same way. They're just tools
+[15:41] the exact same way. They're just tools
+[15:41] the exact same way. They're just tools whose handle handler uh reads a markdown
+[15:44] whose handle handler uh reads a markdown
+[15:44] whose handle handler uh reads a markdown file at invocation time.
+[15:48] Next is sub-agents. Uh so, you can
+[15:51] Next is sub-agents. Uh so, you can
+[15:51] Next is sub-agents. Uh so, you can implement multiple different sub-agents.
+[15:53] implement multiple different sub-agents.
+[15:53] implement multiple different sub-agents. This code looks at three different
+[15:55] This code looks at three different
+[15:55] This code looks at three different things for
+[15:57] things for
+[15:57] things for uh exploration, general, and then
+[15:59] uh exploration, general, and then
+[15:59] uh exploration, general, and then verification.
+[16:02] Now, each archetype has its own
+[16:04] Now, each archetype has its own
+[16:04] Now, each archetype has its own permission levels, its own restricted
+[16:06] permission levels, its own restricted
+[16:06] permission levels, its own restricted tool list, and its own focus uh system
+[16:09] tool list, and its own focus uh system
+[16:09] tool list, and its own focus uh system prompt.
+[16:10] prompt.
+[16:10] prompt. Now, every uh harness also needs to have
+[16:12] Now, every uh harness also needs to have
+[16:12] Now, every uh harness also needs to have built-in primitives. Uh these are the
+[16:14] built-in primitives. Uh these are the
+[16:14] built-in primitives. Uh these are the non-negotiable tools every coding
+[16:17] non-negotiable tools every coding
+[16:17] non-negotiable tools every coding harness must ship with. Uh example of
+[16:19] harness must ship with. Uh example of
+[16:19] harness must ship with. Uh example of this would be reading files, running
+[16:21] this would be reading files, running
+[16:21] this would be reading files, running bash commands. Now, this also depends on
+[16:25] bash commands. Now, this also depends on
+[16:25] bash commands. Now, this also depends on uh the type of work you want your agent
+[16:28] uh the type of work you want your agent
+[16:28] uh the type of work you want your agent to perform.
+[16:30] to perform.
+[16:30] to perform. Now, in this case, one thing to keep in
+[16:31] Now, in this case, one thing to keep in
+[16:31] Now, in this case, one thing to keep in mind um
+[16:33] mind um
+[16:33] mind um these primitives
+[16:35] these primitives
+[16:35] these primitives need to use pure standard libraries. You
+[16:37] need to use pure standard libraries. You
+[16:37] need to use pure standard libraries. You don't want to rely on uh framework
+[16:40] don't want to rely on uh framework
+[16:40] don't want to rely on uh framework dependencies um
+[16:42] dependencies um
+[16:42] dependencies um which is going to be critical because
+[16:44] which is going to be critical because
+[16:44] which is going to be critical because that actually enables the model to take
+[16:46] that actually enables the model to take
+[16:46] that actually enables the model to take actions.
+[16:49] Okay, so here is a simple reference
+[16:51] Okay, so here is a simple reference
+[16:51] Okay, so here is a simple reference implementation for um session memory
+[16:54] implementation for um session memory
+[16:55] implementation for um session memory or
+[16:56] or
+[16:56] or uh
+[16:57] uh
+[16:57] uh context uh persistence.
+[17:00] context uh persistence.
+[17:00] context uh persistence. Now, every event the agent generates
+[17:02] Now, every event the agent generates
+[17:02] Now, every event the agent generates gets written to disk as one line of
+[17:05] gets written to disk as one line of
+[17:05] gets written to disk as one line of JSON. You can also use markdowns, but
+[17:07] JSON. You can also use markdowns, but
+[17:07] JSON. You can also use markdowns, but JSON seems to be
+[17:08] JSON seems to be
+[17:08] JSON seems to be um the better choice.
+[17:11] um the better choice.
+[17:11] um the better choice. The append method opens the file in uh
+[17:15] The append method opens the file in uh
+[17:15] The append method opens the file in uh append mode, writes the event, and
+[17:17] append mode, writes the event, and
+[17:17] append mode, writes the event, and immediately flushes it.
+[17:19] immediately flushes it.
+[17:19] immediately flushes it. That way, if the process crashes after
+[17:22] That way, if the process crashes after
+[17:22] That way, if the process crashes after the next line, this one is already safe
+[17:25] the next line, this one is already safe
+[17:25] the next line, this one is already safe on disk. The replay method reads the uh
+[17:29] on disk. The replay method reads the uh
+[17:29] on disk. The replay method reads the uh file back line by line and reconstructs
+[17:32] file back line by line and reconstructs
+[17:32] file back line by line and reconstructs the full session. Because the file is
+[17:34] the full session. Because the file is
+[17:34] the full session. Because the file is append-only, uh two runs of the harness
+[17:37] append-only, uh two runs of the harness
+[17:37] append-only, uh two runs of the harness can share the same log without stepping
+[17:40] can share the same log without stepping
+[17:40] can share the same log without stepping on each other. If the harness dies, the
+[17:43] on each other. If the harness dies, the
+[17:43] on each other. If the harness dies, the file does not. This is the whole
+[17:45] file does not. This is the whole
+[17:45] file does not. This is the whole durability story. Uh if you want to
+[17:48] durability story. Uh if you want to
+[17:48] durability story. Uh if you want to persist memory,
+[17:52] persist memory,
+[17:52] persist memory, Okay, uh next one is system prompt
+[17:54] Okay, uh next one is system prompt
+[17:54] Okay, uh next one is system prompt assembly. Uh so, you don't have to have
+[17:57] assembly. Uh so, you don't have to have
+[17:57] assembly. Uh so, you don't have to have a fixed system prompt. You can actually
+[17:59] a fixed system prompt. You can actually
+[17:59] a fixed system prompt. You can actually dynamically uh load things into the
+[18:02] dynamically uh load things into the
+[18:02] dynamically uh load things into the system prompt. So, for example, uh you
+[18:04] system prompt. So, for example, uh you
+[18:04] system prompt. So, for example, uh you can load
+[18:06] can load
+[18:06] can load agents.md, cloud.md, or any other memory
+[18:10] agents.md, cloud.md, or any other memory
+[18:10] agents.md, cloud.md, or any other memory files that you have stored into the
+[18:12] files that you have stored into the
+[18:12] files that you have stored into the system prompt dynamically just by
+[18:14] system prompt dynamically just by
+[18:14] system prompt dynamically just by reading a directory
+[18:16] reading a directory
+[18:16] reading a directory uh and reading files from disk.
+[18:20] uh and reading files from disk.
+[18:20] uh and reading files from disk. One thing to uh be aware of, the order
+[18:25] One thing to uh be aware of, the order
+[18:25] One thing to uh be aware of, the order matters here. So, keep the static part
+[18:27] matters here. So, keep the static part
+[18:27] matters here. So, keep the static part first, uh and then dynamically load
+[18:30] first, uh and then dynamically load
+[18:30] first, uh and then dynamically load content second. Otherwise, you're going
+[18:33] content second. Otherwise, you're going
+[18:33] content second. Otherwise, you're going to break the prefix caching.
+[18:37] to break the prefix caching.
+[18:37] to break the prefix caching. Okay, so next one is hooks, uh which are
+[18:39] Okay, so next one is hooks, uh which are
+[18:39] Okay, so next one is hooks, uh which are used for extensibility.
+[18:41] used for extensibility.
+[18:41] used for extensibility. Now, there are two different types of
+[18:43] Now, there are two different types of
+[18:43] Now, there are two different types of hooks. Uh one is pre-tool hook, and the
+[18:45] hooks. Uh one is pre-tool hook, and the
+[18:45] hooks. Uh one is pre-tool hook, and the other one is post-tool hook. And the
+[18:48] other one is post-tool hook. And the
+[18:48] other one is post-tool hook. And the idea is the pre-tool hook fires before
+[18:50] idea is the pre-tool hook fires before
+[18:50] idea is the pre-tool hook fires before any tool runs and can um either allow or
+[18:54] any tool runs and can um either allow or
+[18:54] any tool runs and can um either allow or deny the call.
+[18:56] deny the call.
+[18:56] deny the call. A post-tool hook fires after the tool
+[18:59] A post-tool hook fires after the tool
+[18:59] A post-tool hook fires after the tool runs and sees the output. Uh
+[19:02] runs and sees the output. Uh
+[19:02] runs and sees the output. Uh It cannot block anything.
+[19:04] It cannot block anything.
+[19:04] It cannot block anything. It's there to audit. Uh
+[19:07] It's there to audit. Uh
+[19:07] It's there to audit. Uh can be used for logging and
+[19:08] can be used for logging and
+[19:08] can be used for logging and observability.
+[19:10] observability.
+[19:10] observability. Okay, the last component is permissions
+[19:13] Okay, the last component is permissions
+[19:13] Okay, the last component is permissions um
+[19:14] um
+[19:14] um and safety. So, each tool declares the
+[19:17] and safety. So, each tool declares the
+[19:17] and safety. So, each tool declares the minimum permissions it needs. Uh it can
+[19:19] minimum permissions it needs. Uh it can
+[19:20] minimum permissions it needs. Uh it can be read, workspace, or full. Uh now, the
+[19:22] be read, workspace, or full. Uh now, the
+[19:22] be read, workspace, or full. Uh now, the harness needs to uh provide that
+[19:25] harness needs to uh provide that
+[19:25] harness needs to uh provide that extensibility and uh control the
+[19:28] extensibility and uh control the
+[19:28] extensibility and uh control the permissions of every tool.
+[19:31] permissions of every tool.
+[19:31] permissions of every tool. Now, there's one more thing that you
+[19:32] Now, there's one more thing that you
+[19:32] Now, there's one more thing that you need to be aware of. Uh the same tool
+[19:34] need to be aware of. Uh the same tool
+[19:34] need to be aware of. Uh the same tool can be safe or dangerous depending on
+[19:36] can be safe or dangerous depending on
+[19:36] can be safe or dangerous depending on the command. Uh so, we
+[19:39] the command. Uh so, we
+[19:39] the command. Uh so, we uh classify it dynamically. Safe
+[19:42] uh classify it dynamically. Safe
+[19:42] uh classify it dynamically. Safe commands like
+[19:44] commands like
+[19:44] commands like list, uh concatenation, and grep
+[19:46] list, uh concatenation, and grep
+[19:46] list, uh concatenation, and grep uh stay at read-only. Dangerous commands
+[19:49] uh stay at read-only. Dangerous commands
+[19:49] uh stay at read-only. Dangerous commands like uh delete, pseudo, or shutdown jump
+[19:53] like uh delete, pseudo, or shutdown jump
+[19:53] like uh delete, pseudo, or shutdown jump straight to the full access. So,
+[19:55] straight to the full access. So,
+[19:55] straight to the full access. So, anything else gets workspace level. On
+[19:58] anything else gets workspace level. On
+[19:58] anything else gets workspace level. On top of these static rules, the agent can
+[20:01] top of these static rules, the agent can
+[20:01] top of these static rules, the agent can also pause and ask the user for explicit
+[20:05] also pause and ask the user for explicit
+[20:05] also pause and ask the user for explicit approval before running anything
+[20:07] approval before running anything
+[20:07] approval before running anything destructive. And this is the part that
+[20:10] destructive. And this is the part that
+[20:10] destructive. And this is the part that you need to implement within your
+[20:12] you need to implement within your
+[20:12] you need to implement within your harness.
+[20:13] harness.
+[20:13] harness. Now, these are the components that I
+[20:15] Now, these are the components that I
+[20:15] Now, these are the components that I think every harness needs to have.
+[20:17] think every harness needs to have.
+[20:17] think every harness needs to have. Now, do let me know your thoughts. What
+[20:19] Now, do let me know your thoughts. What
+[20:19] Now, do let me know your thoughts. What are
+[20:20] are
+[20:20] are uh components your harness have? And if
+[20:23] uh components your harness have? And if
+[20:23] uh components your harness have? And if you're interested in technical contents
+[20:25] you're interested in technical contents
+[20:25] you're interested in technical contents like this, make sure to subscribe to the
+[20:28] like this, make sure to subscribe to the
+[20:28] like this, make sure to subscribe to the channel. Anyways, thanks for watching
+[20:30] channel. Anyways, thanks for watching
+[20:30] channel. Anyways, thanks for watching and I'll see you in the next one.

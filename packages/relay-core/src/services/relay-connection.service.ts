@@ -1,12 +1,16 @@
 import WebSocket from 'ws';
-import { createTNFEnvelope } from '../protocol/tnf-envelope.js';
 import { TnfAgentEnvelopeIdentity } from '../contracts/envelope.js';
 
 interface RelayConnectionConfig {
   RELAY_URL: string;
 }
 
-type LogFunction = (level: string, category: string, message: string, data?: Record<string, any>) => void;
+type LogFunction = (
+  level: string,
+  category: string,
+  message: string,
+  data?: Record<string, any>
+) => void;
 type ProcessMessageFunction = (msg: any, source: string) => void;
 type GetOrchestratorIdentityFunction = () => TnfAgentEnvelopeIdentity;
 type OnDisconnectFunction = () => void;
@@ -27,7 +31,7 @@ export class RelayConnectionManager {
     processMessage: ProcessMessageFunction,
     getOrchestratorEnvelopeIdentity: GetOrchestratorIdentityFunction,
     onDisconnect: OnDisconnectFunction,
-    sessionId: string,
+    sessionId: string
   ) {
     this.config = config;
     this.log = log;

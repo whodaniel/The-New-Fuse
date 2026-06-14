@@ -1,0 +1,90 @@
+{
+  "spec": "tnf/courseforge-librarian-coverage/1.0",
+  "generated_at_utc": "2026-05-06T01:13:20Z",
+  "repo_root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "source": {
+    "source_label": "courseforge-manuscript-branches",
+    "source_id": "0a232d41-5683-44ba-95e4-dfbae235284f",
+    "inventory": "data/protocols/courseforge-manuscript-inventory.2026-05-05.json"
+  },
+  "runs": {
+    "artifact_ingest": {
+      "ingestion_run_id": "18988939-b9ae-49f1-9108-973dad9881d1",
+      "status": "success",
+      "started_at_utc": "2026-05-06T00:44:40.734Z",
+      "ended_at_utc": "2026-05-06T00:50:21.098Z",
+      "result_status_counts": {
+        "created": 166
+      },
+      "non_markdown_skipped": 4,
+      "non_markdown_skip_detail": [
+        "main:.gitignore",
+        "anthropic-cookbook:.gitignore",
+        "opensource-cookbook:.gitignore",
+        "the-new-fuse-novel:.gitignore"
+      ]
+    },
+    "text_chunking": {
+      "ingestion_run_id": "f31ab9b6-2504-469d-8a9b-5aac14492f3c",
+      "status": "success",
+      "started_at_utc": "2026-05-06T01:02:49.800Z",
+      "ended_at_utc": "2026-05-06T01:07:01.590Z",
+      "text_records": 166,
+      "chunks_created": 657,
+      "result_status_counts": {
+        "created": 166
+      }
+    }
+  },
+  "totals": {
+    "artifact_count": 166,
+    "artifact_text_count": 166,
+    "chunk_count": 657,
+    "artifacts_with_chunks": 166,
+    "artifacts_missing_chunks": 0
+  },
+  "branch_coverage": [
+    {
+      "branch": "anthropic-cookbook",
+      "artifacts": 48,
+      "text_records": 48,
+      "chunks": 157
+    },
+    {
+      "branch": "main",
+      "artifacts": 52,
+      "text_records": 52,
+      "chunks": 152
+    },
+    {
+      "branch": "opensource-cookbook",
+      "artifacts": 46,
+      "text_records": 46,
+      "chunks": 162
+    },
+    {
+      "branch": "the-new-fuse-novel",
+      "artifacts": 20,
+      "text_records": 20,
+      "chunks": 186
+    }
+  ],
+  "retrieval_smoke_test": {
+    "checked_at_utc": "2026-05-06T01:13:20Z",
+    "method": "Postgres full-text search over librarian.text_chunk",
+    "probes": [
+      {
+        "query": "google ecosystem cookbook",
+        "top_hit_external_ref": "courseforge|branch:main|path:00-Front-Cover.md|blob:463207e4e1e16f7a373da85a16fff418f068953c"
+      },
+      {
+        "query": "chapter 23 constitutional ai principles policies transparency claude behavior",
+        "top_hit_external_ref": "courseforge|branch:anthropic-cookbook|path:Chapter-23-Constitutional-AI.md|blob:02d5fb90db101d950b496e4fe068d227015cf3da"
+      },
+      {
+        "query": "open source ai ecosystem cookbook",
+        "top_hit_external_ref": "courseforge|branch:opensource-cookbook|path:README.md|blob:f63af1da4dddf715c8d7721bc6ee2c95b07a7b85"
+      }
+    ]
+  }
+}

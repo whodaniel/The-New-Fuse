@@ -1,0 +1,265 @@
+{
+  "generatedAt": "2026-05-06T19:05:00.000Z",
+  "sourceType": "email-history-discovery",
+  "ownerPrincipalId": "daniel",
+  "sourceArtifact": "reports/personal-archaeology/email-discovery-full-2026-05-06-v2/email-discovery-classified.jsonl",
+  "facts": [
+    {
+      "factId": "email-1999-02-16-amazon-associates-approved",
+      "date": "1999-02-16",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "Amazon Associates approval",
+      "statement": "An email confirms approval to the Amazon Associates program with associate ID \"whodanie,\" indicating early affiliate marketing activity.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["affiliate-marketing", "early-business-infrastructure", "media-empire-origins"],
+      "evidence": {
+        "messageId": "<199902162012.maa05856@associates-1.amazon.com>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292313.emlx"
+      }
+    },
+    {
+      "factId": "email-1999-07-21-earthads-referral-activation",
+      "date": "1999-07-21",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "Referral account activation",
+      "statement": "A referral program activation email includes username \"danielwho\" and a personalized referral URL, showing early internet referral monetization setup.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["referral-systems", "identity-handle", "early-monetization"],
+      "evidence": {
+        "messageId": "<199907210454.aaa18259@tigger.awc.net>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292729.emlx"
+      }
+    },
+    {
+      "factId": "email-1999-11-16-outsource2000-onboarding",
+      "date": "1999-11-16",
+      "domain": "Business & Projects",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Telecommuter onboarding record",
+      "statement": "An onboarding email from OutSource2000 addresses Daniel Goldberg directly and provides an IMR ID, login, and onboarding workflow for remote work.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["remote-work", "early-online-business", "identity-confirmation"],
+      "evidence": {
+        "messageId": "<199911161856.naa00784@www6.clever.net>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292718.emlx"
+      }
+    },
+    {
+      "factId": "email-2001-07-26-spark-registration-response-code",
+      "date": "2001-07-26",
+      "domain": "Creativity",
+      "project": "Daniel Who's Media Empire",
+      "title": "Audio software registration evidence",
+      "statement": "A registration response email for Spark software (S/N 91602331) confirms paid software authorization activity tied to creative tooling.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["software-tools", "music-production", "creative-infrastructure"],
+      "evidence": {
+        "messageId": "<3b5fd7bd.8d7aed59@tcworks.de>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292352.emlx"
+      }
+    },
+    {
+      "factId": "email-2002-11-11-cj-publisher-account",
+      "date": "2002-11-11",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "Commission Junction publisher account setup",
+      "statement": "A Commission Junction account message confirms publisher account setup for Daniel with account number 1128754 and associated login credentials.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["affiliate-networks", "publisher-operations", "monetization-stack"],
+      "evidence": {
+        "messageId": "<2474550.1037050496549.javamail.root@sgn_10_1_30_34.cj.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/My Affiliate Acounts.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/6/2/Messages/266581.emlx"
+      }
+    },
+    {
+      "factId": "email-2003-04-12-pmachine-pro-purchase",
+      "date": "2003-04-12",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "pMachine Pro commercial license purchase",
+      "statement": "A purchase receipt shows Daniel Goldberg bought pMachine Pro (commercial) and identifies company context as Indi-Visible Media Inc. with website startree.tv.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["platform-buildout", "content-management", "indi-visible-media"],
+      "evidence": {
+        "messageId": "<200304121500.h3cf0eh16730@cd137.gippy.net>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292417.emlx"
+      }
+    },
+    {
+      "factId": "email-2003-04-12-smarterscripts-invoice",
+      "date": "2003-04-12",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "Smarter Scripts package purchase",
+      "statement": "A SmarterScripts invoice confirms another software acquisition in the same period, indicating active investment in web-business tooling.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["software-acquisition", "operations-tooling", "business-automation"],
+      "evidence": {
+        "messageId": "<20030412225114.10594.qmail@mail.r3n3.com>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292360.emlx"
+      }
+    },
+    {
+      "factId": "email-2003-05-09-paypal-dh-softwares-payment",
+      "date": "2003-05-09",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "PayPal payment for DH-MLM software",
+      "statement": "A PayPal receipt confirms a $377 payment by Indi-Visible Media Inc. to DH Softwares for DH-MLM, documenting direct expenditure on business software.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["payment-evidence", "mlm-software", "business-investment"],
+      "evidence": {
+        "messageId": "<1052472892.29477@paypal.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270404.emlx"
+      }
+    },
+    {
+      "factId": "email-2003-05-09-dh-softwares-support-thread",
+      "date": "2003-05-09",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "Post-purchase software support interaction",
+      "statement": "A direct reply from DH Softwares shows active troubleshooting/support correspondence immediately after software purchase.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["vendor-support", "implementation", "software-operations"],
+      "evidence": {
+        "messageId": "<000c01c31614$978293e0$0201a8c0@pentium4>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/STARTREE-09.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/8/5/2/Messages/258935.emlx"
+      }
+    },
+    {
+      "factId": "email-2003-05-12-agriya-installation-thread",
+      "date": "2003-05-12",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "Third-party script installation workflow",
+      "statement": "A reply from Agriya confirms completion and continuation of multiple script installations, evidencing outsourced technical implementation workflows.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["outsourced-development", "script-stack", "execution-operations"],
+      "evidence": {
+        "messageId": "<20030512182257.88104.qmail@web14305.mail.yahoo.com>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292353.emlx"
+      }
+    },
+    {
+      "factId": "email-2003-06-02-sitereplicator-order",
+      "date": "2003-06-02",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "SiteReplicator purchase order",
+      "statement": "An order confirmation documents a $249 SiteReplicator Wizard purchase with billing/shipping tied to Daniel Goldberg and Indi-Visible Media Inc. in Rochester, NY.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["purchase-order", "business-address", "tool-investment"],
+      "evidence": {
+        "messageId": "<200306020634.xaa21196@ecommercetoolbox.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270409.emlx"
+      }
+    },
+    {
+      "factId": "email-2003-06-02-accugraphix-isbn-upc-quote",
+      "date": "2003-06-02",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "ISBN/UPC label quote exchange",
+      "statement": "A direct quote exchange references ISBN/UPC labeling for Daniel Goldberg and Indi-Visible Media Inc., indicating publishing/distribution preparation activity.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["publishing-logistics", "isbn-upc", "distribution-prep"],
+      "evidence": {
+        "messageId": "<5.2.0.9.0.20030602125833.00ac8e40@pop.webcom.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271911.emlx"
+      }
+    },
+    {
+      "factId": "email-2003-06-03-degree-plan-correspondence",
+      "date": "2003-06-03",
+      "domain": "Personal",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Academic degree plan coordination",
+      "statement": "An email thread with a SUNY Geneseo faculty contact discusses Daniel Goldberg's degree completion planning and course sequencing.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["education", "life-timeline", "academic-milestone"],
+      "evidence": {
+        "messageId": "<1ed4bf94-95db-11d7-b4c5-00306557d50a@geneseo.edu>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270410.emlx"
+      }
+    },
+    {
+      "factId": "email-2003-07-10-baby-gift-annikah-reference",
+      "date": "2003-07-10",
+      "domain": "Family",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Family contact references baby gift",
+      "statement": "A personal correspondence references a baby gift for Annikah and discusses family visitation logistics.",
+      "confidence": "moderate",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["family-history", "child-reference", "personal-life"],
+      "evidence": {
+        "messageId": "<7e6f7f09-b2cb-11d7-8b97-000393ab9eb0@access4less.net>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280598.emlx"
+      }
+    },
+    {
+      "factId": "email-2004-04-06-swiftcd-strategic-account-thread",
+      "date": "2004-04-06",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "SwiftCD strategic account communications",
+      "statement": "A SwiftCD email thread addresses strategic account handling for Indi-Visible Media Inc., indicating scaling conversations around media fulfillment operations.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["media-operations", "vendor-relationship", "scaling-discussions"],
+      "evidence": {
+        "messageId": "<40732f92.3e005e9a@swiftcd.com>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/0/3/Messages/309041.emlx"
+      }
+    },
+    {
+      "factId": "email-2004-04-12-swiftcd-implementation-handoff",
+      "date": "2004-04-12",
+      "domain": "Business & Projects",
+      "project": "Daniel Who's Media Empire",
+      "title": "SwiftCD implementation handoff and onboarding",
+      "statement": "SwiftCD contacts discuss implementation specifics and operational onboarding for customer ID WHODANIE, showing active execution of media infrastructure.",
+      "confidence": "high",
+      "enteredBy": "codex-email-discovery",
+      "capturedAt": "2026-05-06T19:05:00.000Z",
+      "relevanceTags": ["implementation", "customer-onboarding", "execution-phase"],
+      "evidence": {
+        "messageId": "<0db001c420cb$7de70ac0$9701a8c0@domain.swiftcd.com>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280403.emlx"
+      }
+    }
+  ]
+}
+

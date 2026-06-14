@@ -1,0 +1,137 @@
+{
+  "generatedAt": "2026-05-12T02:40:02.787Z",
+  "args": {
+    "tenantId": "tnf-local",
+    "limit": 500,
+    "includeCommands": true,
+    "includeContent": true,
+    "contentMaxLines": 80,
+    "contentMaxChars": 8000,
+    "scan": true,
+    "writeHistory": false,
+    "json": true
+  },
+  "snapshotMeta": {
+    "lastScanAt": "2026-05-12T02:40:01.477Z",
+    "totalTerminals": 6,
+    "returned": 6,
+    "source": "ps+tmux+capture+terminal-history",
+    "tenant_id": "tnf-local",
+    "include_commands": true,
+    "include_content": true,
+    "content_max_lines": 80,
+    "content_max_chars": 8000,
+    "terminal_history_tabs": 6,
+    "content_excerpts_captured": 6
+  },
+  "summary": {
+    "totalTerminals": 6,
+    "activeTerminals": 4,
+    "idleTerminals": 2,
+    "activeRatio": 0.667,
+    "topWorkExecutables": [
+      {
+        "name": "node",
+        "count": 2
+      },
+      {
+        "name": "npm",
+        "count": 2
+      },
+      {
+        "name": "codex",
+        "count": 1
+      },
+      {
+        "name": "opencode",
+        "count": 1
+      },
+      {
+        "name": "python3",
+        "count": 1
+      }
+    ],
+    "activeSessions": [
+      {
+        "twid": "9c9ba74f-deef-54d2-b15d-0299344b0099",
+        "tty": "/dev/ttys001",
+        "paneId": "tty:ttys001",
+        "shellPid": 45119,
+        "processCount": 18,
+        "multiplexer": "none",
+        "workExecutables": [
+          "node",
+          "npm"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": true,
+        "contextPreview": "│   3. No, suggest changes (esc)                                               │ | ╰──────────────────────────────────────────────────────────────────────────────╯",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "405df1e6-09bc-5398-ba8f-82d61f26ef39",
+        "tty": "/dev/ttys002",
+        "paneId": "tty:ttys002",
+        "shellPid": 511,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "opencode"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "● Tip Press Ctrl+Alt+G or End to jump to the most recent message | ~                                                                    1.14.41",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "57685c40-7a4c-517a-aced-6ebcccb6d734",
+        "tty": "/dev/ttys007",
+        "paneId": "tty:ttys007",
+        "shellPid": 56470,
+        "processCount": 15,
+        "multiplexer": "none",
+        "workExecutables": [
+          "node",
+          "codex",
+          "npm"
+        ],
+        "bypassApproval": true,
+        "usesRemoteMcp": false,
+        "contextPreview": "› Improve documentation in @filename | gpt-5.3-codex xhigh · ~",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "fa5c5912-b359-5546-953b-08858c4d0e18",
+        "tty": "/dev/ttys133",
+        "paneId": "tty:ttys133",
+        "shellPid": 20086,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "python3"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "❯ | ────────────────────────────────────────────────────────────────────────────────",
+        "contextRedactions": 0,
+        "hasContext": true
+      }
+    ],
+    "safetySignals": {
+      "approvalsBypassTerminals": 1,
+      "remoteMcpTerminals": 1,
+      "contextCapturedTerminals": 4,
+      "contextRedactions": 0
+    }
+  },
+  "delta": {
+    "hasBaseline": true,
+    "terminalDelta": 0,
+    "activeDelta": 0,
+    "activeGained": [],
+    "activeLost": []
+  }
+}

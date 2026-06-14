@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AG-UI Protocol Integration Analysis — The New Fuse Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #06080f;
+        --surface: #0f1319;
+        --border: #1c2333;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+        --accent: #3b82f6;
+      }
+      body {
+        font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+        padding: 0;
+      }
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(6, 8, 15, 0.85);
+        backdrop-filter: blur(16px) saturate(1.8);
+        -webkit-backdrop-filter: blur(16px) saturate(1.8);
+        border-bottom: 1px solid var(--border);
+        padding: 0 40px;
+      }
+      .nav-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+      }
+      .nav-brand {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: var(--text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .back-link {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .back-link:hover {
+        color: var(--text);
+      }
+      .md-viewer {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 40px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      .md-viewer h1 { font-size: 28px; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
+      .md-viewer h2 { font-size: 22px; margin: 32px 0 16px; color: var(--accent); font-weight: 700; letter-spacing: -0.3px; }
+      .md-viewer h3 { font-size: 18px; margin: 24px 0 12px; font-weight: 600; }
+      .md-viewer p { margin-bottom: 16px; color: #cbd5e1; }
+      .md-viewer a { color: var(--accent); text-decoration: none; }
+      .md-viewer a:hover { text-decoration: underline; }
+      .md-viewer ul, .md-viewer ol { margin: 12px 0 20px 24px; color: #cbd5e1; }
+      .md-viewer li { margin: 6px 0; }
+      .md-viewer code {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13.5px;
+        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+      }
+      .md-viewer pre {
+        background: #0a0f18;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+      .md-viewer pre code {
+        background: none;
+        padding: 0;
+        color: #7dd3fc;
+      }
+      .md-viewer blockquote {
+        margin: 20px 0;
+        padding: 12px 20px;
+        border-left: 4px solid var(--accent);
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 0 8px 8px 0;
+        color: #94a3b8;
+      }
+      .md-viewer table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      .md-viewer th, .md-viewer td {
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        clear: left;
+        font-size: 14px;
+      }
+      .md-viewer th {
+        background: rgba(255, 255, 255, 0.04);
+        font-weight: 600;
+        text-align: left;
+      }
+      @media (max-width: 768px) {
+        .md-viewer {
+          margin: 0;
+          padding: 24px;
+          border-radius: 0;
+          border-left: none;
+          border-right: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="nav-brand">
+          The New Fuse Docs
+        </div>
+        <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+      </div>
+    </nav>
+    <div class="md-viewer">
+      <h1>AG-UI Protocol Integration Analysis</h1>
+<h2>Executive Summary</h2>
+<p><strong>AG-UI (Agent-User Interaction Protocol)</strong> announced by Microsoft (Dec 11, 2025) represents a paradigm shift in how AI agents communicate with frontend applications. While our <strong>Self-Contained Visualization</strong> toolkit operates in the <strong>static, embedded data</strong> space, AG-UI operates in the <strong>dynamic, real-time agent</strong> space.</p>
+<p>This document explores:</p>
+<ol>
+<li>What AG-UI is and how it works</li>
+<li>How it contrasts with our self-contained approach</li>
+<li>Powerful synergies between the two paradigms</li>
+<li>Evolution paths for our toolkit</li>
+</ol>
+<hr>
+<h2>What is AG-UI Protocol?</h2>
+<h3>Definition</h3>
+<p><strong>AG-UI</strong> (Agent-User Interaction Protocol) is an open, lightweight, event-based protocol that standardizes how AI agents connect to user-facing applications.</p>
+<h3>The Problem It Solves</h3>
+<p>Traditional request-response architectures fail with AI agents because agents are:</p>
+<ul>
+<li>✗ <strong>Long-running</strong> - Multi-turn sessions with streaming intermediate work</li>
+<li>✗ <strong>Nondeterministic</strong> - Control UI unpredictably</li>
+<li>✗ <strong>Multi-modal</strong> - Mix structured and unstructured I/O simultaneously</li>
+<li>✗ <strong>Interactive</strong> - Require human-in-the-loop approval workflows</li>
+</ul>
+<p>AG-UI bridges this gap with <strong>dynamic, bidirectional communication</strong> designed for the agentic era.</p>
+<h3>Technical Architecture</h3>
+<pre><code>┌─────────────────┐         AG-UI Protocol        ┌──────────────────┐
+│  Frontend App   │◄────────────────────────────►│  Agent Backend   │
+│  (React/Vue/    │   WebSockets / HTTP/SSE      │  (LangGraph,     │
+│   Angular)      │                               │   CrewAI, etc)   │
+└─────────────────┘                               └──────────────────┘
+        ▲                                                   ▲
+        │                                                   │
+        └───────────── Streaming Events ──────────────────┘
+           • Chat messages (token streaming)
+           • Tool executions
+           • State updates
+           • Generative UI components
+           • Human approval requests
+</code></pre>
+<h3>Core Capabilities</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Agentic Chat</strong></td>
+<td>Streaming conversations with automatic tool execution</td>
+</tr>
+<tr>
+<td><strong>Backend Tool Rendering</strong></td>
+<td>Server-side tool execution with results streamed to UI</td>
+</tr>
+<tr>
+<td><strong>Human-in-the-Loop</strong></td>
+<td>User approval workflows before agent actions</td>
+</tr>
+<tr>
+<td><strong>Generative UI</strong></td>
+<td>Agents dynamically generate custom UI components</td>
+</tr>
+<tr>
+<td><strong>Shared State</strong></td>
+<td>Bidirectional client-server state synchronization</td>
+</tr>
+<tr>
+<td><strong>Predictive Updates</strong></td>
+<td>Optimistic UI updates while tools execute</td>
+</tr>
+<tr>
+<td><strong>Multi-modal</strong></td>
+<td>Files, images, audio, structured data</td>
+</tr>
+</tbody></table>
+<h3>Microsoft Integration (Dec 11, 2025)</h3>
+<p>Microsoft&#39;s Agent Framework now fully supports AG-UI:</p>
+<pre><code class="language-bash"># .NET
+dotnet add package Microsoft.Agents.AI.Hosting.AGUI.AspNetCore
+
+# Python
+pip install agent-framework-ag-ui --pre
+</code></pre>
+<p><strong>Supported Frameworks:</strong></p>
+<ul>
+<li>Microsoft Agent Framework ⭐ (NEW - Dec 11, 2025)</li>
+<li>LangGraph</li>
+<li>CrewAI</li>
+<li>Google ADK</li>
+<li>AWS Strands</li>
+<li>Mastra</li>
+</ul>
+<hr>
+<h2>Our Self-Contained Visualization Approach</h2>
+<h3>Paradigm</h3>
+<p><strong>Static, Embedded, Offline-First</strong></p>
+<pre><code>┌─────────────────────────────────────┐
+│     Single HTML File (500 KB)      │
+├─────────────────────────────────────┤
+│  ✓ Embedded D3.js Library (80 KB)  │
+│  ✓ Embedded Data (320 KB)          │
+│  ✓ Embedded Visualization (60 KB)  │
+│  ✓ Embedded Styles (5 KB)          │
+└─────────────────────────────────────┘
+          │
+          ▼
+    Open in Browser
+    (No server, no network, no dependencies)
+</code></pre>
+<h3>Core Principles</h3>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Zero Dependencies</strong></td>
+<td>Works anywhere, forever</td>
+</tr>
+<tr>
+<td><strong>Offline-First</strong></td>
+<td>No network = no failure</td>
+</tr>
+<tr>
+<td><strong>Single File</strong></td>
+<td>Easy to share, archive, audit</td>
+</tr>
+<tr>
+<td><strong>Embedded Data</strong></td>
+<td>Point-in-time snapshot</td>
+</tr>
+<tr>
+<td><strong>Self-Documenting</strong></td>
+<td>Complete artifact for posterity</td>
+</tr>
+</tbody></table>
+<h3>Use Cases</h3>
+<ol>
+<li><strong>Bundle Analysis</strong> - Webpack/Rollup output visualization</li>
+<li><strong>Static Reports</strong> - Quarterly reviews, audit trails</li>
+<li><strong>Documentation</strong> - API structure, config browsers</li>
+<li><strong>Archival</strong> - Historical snapshots, compliance records</li>
+<li><strong>Shareability</strong> - Email attachments, Slack uploads</li>
+</ol>
+<hr>
+<h2>Comparison: AG-UI vs Self-Contained Visualizations</h2>
+<h3>Fundamental Differences</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>AG-UI Protocol</th>
+<th>Self-Contained Viz</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Data Source</strong></td>
+<td>Dynamic (agent-generated)</td>
+<td>Static (pre-embedded)</td>
+</tr>
+<tr>
+<td><strong>Connection</strong></td>
+<td>Real-time streaming</td>
+<td>Offline, no network</td>
+</tr>
+<tr>
+<td><strong>Lifecycle</strong></td>
+<td>Ephemeral sessions</td>
+<td>Permanent artifacts</td>
+</tr>
+<tr>
+<td><strong>Interactivity</strong></td>
+<td>Bidirectional (user ↔ agent)</td>
+<td>Unidirectional (user → viz)</td>
+</tr>
+<tr>
+<td><strong>Generation</strong></td>
+<td>Runtime by agent</td>
+<td>Build-time by tooling</td>
+</tr>
+<tr>
+<td><strong>State</strong></td>
+<td>Shared, synchronized</td>
+<td>Local, isolated</td>
+</tr>
+<tr>
+<td><strong>Updates</strong></td>
+<td>Live (agent pushes)</td>
+<td>None (static snapshot)</td>
+</tr>
+<tr>
+<td><strong>Dependencies</strong></td>
+<td>Requires backend agent</td>
+<td>Zero dependencies</td>
+</tr>
+</tbody></table>
+<h3>Complementary Strengths</h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Best Approach</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Real-time agent analysis</strong></td>
+<td>AG-UI ✓</td>
+</tr>
+<tr>
+<td><strong>Historical archival</strong></td>
+<td>Self-Contained ✓</td>
+</tr>
+<tr>
+<td><strong>Live data exploration</strong></td>
+<td>AG-UI ✓</td>
+</tr>
+<tr>
+<td><strong>Compliance audit trail</strong></td>
+<td>Self-Contained ✓</td>
+</tr>
+<tr>
+<td><strong>Interactive Q&amp;A about data</strong></td>
+<td>AG-UI ✓</td>
+</tr>
+<tr>
+<td><strong>Offline viewing</strong></td>
+<td>Self-Contained ✓</td>
+</tr>
+<tr>
+<td><strong>Dynamic UI generation</strong></td>
+<td>AG-UI ✓</td>
+</tr>
+<tr>
+<td><strong>Permanent documentation</strong></td>
+<td>Self-Contained ✓</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Powerful Synergies: Hybrid Approaches</h2>
+<h3>1. <strong>Agent-Generated Self-Contained Visualizations</strong></h3>
+<p><strong>Concept:</strong> Use AG-UI agents to <strong>create</strong> self-contained HTML visualizations</p>
+<pre><code>User Request
+    ↓
+AG-UI Agent
+    ↓
+Analyze Data
+    ↓
+Generate Config
+    ↓
+Our Toolkit
+    ↓
+Self-Contained HTML ← delivered to user
+</code></pre>
+<p><strong>Example Flow:</strong></p>
+<pre><code class="language-javascript">// User asks agent
+User: &quot;Analyze our Q4 bundle sizes and create a shareable report&quot;
+
+// AG-UI agent processes
+Agent:
+  1. Fetches bundle data from CI/CD
+  2. Analyzes trends and anomalies
+  3. Generates configuration for our toolkit
+  4. Calls our generator
+  5. Returns self-contained HTML file
+
+// User receives
+→ q4-bundle-analysis.html (permanent, shareable artifact)
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✓ AI-powered data analysis + curation</li>
+<li>✓ Automatic insight generation</li>
+<li>✓ Human-readable configuration</li>
+<li>✓ Permanent, archivable output</li>
+<li>✓ No ongoing dependencies</li>
+</ul>
+<h3>2. <strong>Live Agent + Static Snapshots</strong></h3>
+<p><strong>Concept:</strong> AG-UI session generates snapshots at key moments</p>
+<pre><code>┌─────────────────────────────────────────┐
+│     Live AG-UI Session                  │
+│  User ↔ Agent exploring data            │
+├─────────────────────────────────────────┤
+│  &quot;Save this view&quot; → Generate HTML       │
+│  &quot;Email to team&quot; → Generate HTML        │
+│  &quot;Archive findings&quot; → Generate HTML     │
+└─────────────────────────────────────────┘
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">// During AG-UI session
+Agent: &quot;I&#39;ve identified 3 large dependencies causing bloat&quot;
+User: &quot;Save this analysis for the team meeting&quot;
+
+// Agent generates
+→ bundle-bloat-findings-2025-12-21.html
+  (self-contained, embedded data, interactive)
+
+// Team members can:
+✓ Open without agent access
+✓ Explore findings interactively
+✓ Share via email
+✓ Archive for compliance
+</code></pre>
+<h3>3. <strong>Self-Contained Viz as Agent Tool</strong></h3>
+<p><strong>Concept:</strong> Make our generator available as an <strong>AG-UI tool</strong></p>
+<pre><code class="language-python"># AG-UI Tool Definition
+@tool
+def generate_visualization(
+    data: dict,
+    title: str,
+    metrics: list[str]
+) -&gt; str:
+    &quot;&quot;&quot;
+    Generate a self-contained interactive HTML visualization.
+    Returns: URL to generated HTML file
+    &quot;&quot;&quot;
+    config = {
+        &quot;title&quot;: title,
+        &quot;data&quot;: data,
+        &quot;metrics&quot;: {m: m.title() for m in metrics}
+    }
+
+    generator = VisualizationGenerator()
+    html = await generator.generate(config)
+
+    # Save and return
+    path = f&quot;output/{title.lower().replace(&#39; &#39;, &#39;-&#39;)}.html&quot;
+    await generator.saveToFile(html, path)
+
+    return f&quot;Generated: {path}&quot;
+</code></pre>
+<p><strong>Agent Workflow:</strong></p>
+<pre><code>User: &quot;Visualize our API response times by endpoint&quot;
+
+Agent:
+  1. Queries metrics database
+  2. Aggregates data hierarchically
+  3. Calls generate_visualization() tool
+  4. Returns shareable HTML file
+
+User receives: api-performance-2025-12-21.html
+</code></pre>
+<h3>4. <strong>Embedded Agent Insights</strong></h3>
+<p><strong>Concept:</strong> Pre-generate visualizations with AI-generated commentary</p>
+<pre><code class="language-html">&lt;!-- Generated by AG-UI agent --&gt;
+&lt;div class=&quot;ai-insights&quot;&gt;
+  &lt;h3&gt;🤖 Agent Analysis&lt;/h3&gt;
+  &lt;p&gt;The largest contributor is framer-motion (156 KB),
+     accounting for 23% of total bundle size.&lt;/p&gt;
+
+  &lt;h4&gt;Recommendations:&lt;/h4&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Consider lazy-loading framer-motion&lt;/li&gt;
+    &lt;li&gt;Evaluate alternative animation libraries&lt;/li&gt;
+    &lt;li&gt;Tree-shake unused motion features&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;!-- Self-contained visualization --&gt;
+&lt;div id=&quot;chart&quot;&gt;...&lt;/div&gt;
+</code></pre>
+<p><strong>Value:</strong></p>
+<ul>
+<li>AI insights frozen in time with data</li>
+<li>Permanent record of agent reasoning</li>
+<li>No agent access needed to view findings</li>
+</ul>
+<hr>
+<h2>Evolution Paths for Our Toolkit</h2>
+<h3>Phase 1: Standalone (Current) ✅</h3>
+<pre><code>User Data → Our Generator → Self-Contained HTML
+</code></pre>
+<h3>Phase 2: AG-UI Tool Integration (NEW)</h3>
+<pre><code>User Request → AG-UI Agent → Our Generator → Self-Contained HTML
+                    ↓
+            (Agent analyzes, curates, configures)
+</code></pre>
+<p><strong>Implementation:</strong></p>
+<pre><code class="language-javascript">// tools/ag-ui-integration.js
+
+import { VisualizationGenerator } from &#39;./generate.js&#39;;
+
+export class AGUIVisualizationTool {
+  name = &quot;generate_visualization&quot;;
+  description = &quot;Generate interactive self-contained HTML visualizations&quot;;
+
+  async execute(params) {
+    const { data, title, metrics, insights } = params;
+
+    const config = {
+      title,
+      data,
+      metrics,
+      customHTML: insights ? `
+        &lt;div class=&quot;ai-insights&quot;&gt;
+          &lt;h3&gt;🤖 AI Analysis&lt;/h3&gt;
+          ${insights}
+        &lt;/div&gt;
+      ` : &#39;&#39;
+    };
+
+    const generator = new VisualizationGenerator();
+    const html = await generator.generate(config);
+
+    return {
+      type: &quot;file&quot;,
+      filename: `${title.toLowerCase().replace(/\s+/g, &#39;-&#39;)}.html`,
+      content: html,
+      mimeType: &quot;text/html&quot;
+    };
+  }
+}
+</code></pre>
+<h3>Phase 3: Hybrid Live + Static (Future)</h3>
+<pre><code>AG-UI Session ──┬─► Live Exploration (dynamic)
+                │
+                └─► Save Snapshot → Self-Contained HTML (static)
+</code></pre>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Session recording</li>
+<li>Key moment capture</li>
+<li>Automatic archival</li>
+<li>Compliance snapshots</li>
+</ul>
+<h3>Phase 4: Agent-Curated Templates (Future)</h3>
+<pre><code>Agent analyzes patterns → Generates custom template → Reusable viz type
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code>User: &quot;We frequently analyze bundle sizes. Create a standard template.&quot;
+
+Agent:
+  1. Analyzes past visualizations
+  2. Identifies common patterns
+  3. Creates custom template with:
+     - Standard metrics
+     - Color scheme
+     - Filtering rules
+     - Threshold alerts
+  4. Saves as reusable template
+
+Output: bundle-analysis-template.html
+  (customized for organization&#39;s needs)
+</code></pre>
+<hr>
+<h2>Practical Integration Roadmap</h2>
+<h3>Immediate (Week 1)</h3>
+<p><strong>1. Create AG-UI Tool Wrapper</strong></p>
+<pre><code class="language-bash"># New file structure
+tools/
+  ├── generate.js          # Existing
+  ├── cli.js              # Existing
+  └── ag-ui-tool.js       # NEW - AG-UI integration
+</code></pre>
+<p><strong>2. Example Integration</strong></p>
+<pre><code class="language-python"># example-ag-ui-agent.py
+
+from agent_framework import Agent, tool
+from visualization_generator import generate_viz
+
+@tool
+async def create_bundle_visualization(bundle_data: dict):
+    &quot;&quot;&quot;Analyze bundle and create shareable visualization&quot;&quot;&quot;
+
+    # Agent analyzes data
+    insights = analyze_bundle_patterns(bundle_data)
+
+    # Generate viz with insights
+    html = generate_viz(
+        data=bundle_data,
+        title=&quot;Bundle Analysis&quot;,
+        insights=insights
+    )
+
+    return html
+
+agent = Agent(tools=[create_bundle_visualization])
+</code></pre>
+<h3>Short-term (Month 1)</h3>
+<p><strong>1. Enhanced Template System</strong></p>
+<ul>
+<li>Add AI-insights placeholder</li>
+<li>Configurable commentary sections</li>
+<li>Agent-generated recommendations</li>
+</ul>
+<p><strong>2. Session Snapshot Feature</strong></p>
+<ul>
+<li>Export AG-UI state to static HTML</li>
+<li>Preserve conversation context</li>
+<li>Embed agent reasoning</li>
+</ul>
+<h3>Medium-term (Quarter 1)</h3>
+<p><strong>1. Full AG-UI Integration Package</strong></p>
+<pre><code class="language-bash">npm install @self-contained-viz/ag-ui-adapter
+</code></pre>
+<p><strong>2. Live-to-Static Bridge</strong></p>
+<ul>
+<li>Capture AG-UI sessions</li>
+<li>Generate archival snapshots</li>
+<li>Compliance mode</li>
+</ul>
+<p><strong>3. Agent Template Generator</strong></p>
+<ul>
+<li>Learn from patterns</li>
+<li>Generate custom templates</li>
+<li>Organization-specific defaults</li>
+</ul>
+<hr>
+<h2>Use Case Examples</h2>
+<h3>Use Case 1: CI/CD Bundle Analysis Agent</h3>
+<p><strong>Scenario:</strong> Every build, an agent analyzes bundle size</p>
+<pre><code>GitHub Actions
+    ↓
+Build Complete
+    ↓
+AG-UI Agent Analyzes
+    ↓
+Generates Self-Contained Report
+    ↓
+Commits to Repo + Posts to Slack
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✓ Automated analysis</li>
+<li>✓ Permanent historical record</li>
+<li>✓ Easy comparison over time</li>
+<li>✓ No dashboard to maintain</li>
+</ul>
+<h3>Use Case 2: Data Exploration → Report Generation</h3>
+<p><strong>Scenario:</strong> Analyst uses AG-UI to explore data, then generates report</p>
+<pre><code>User: &quot;Show me Q4 sales by region&quot;
+Agent: [Interactive exploration via AG-UI]
+User: &quot;This looks good, create a shareable report&quot;
+Agent: [Generates self-contained HTML]
+User: Emails report to stakeholders
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✓ AI-assisted exploration</li>
+<li>✓ Static artifact for sharing</li>
+<li>✓ No backend access needed to view</li>
+<li>✓ Permanent record</li>
+</ul>
+<h3>Use Case 3: Compliance Archival</h3>
+<p><strong>Scenario:</strong> Regulatory requirement to archive analysis</p>
+<pre><code>Quarterly Audit
+    ↓
+AG-UI Agent Runs Analysis
+    ↓
+Generates Self-Contained HTML
+    ↓
+Stored in Compliance System
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✓ Point-in-time snapshot</li>
+<li>✓ Self-contained (no dependencies)</li>
+<li>✓ Auditable (view in browser anytime)</li>
+<li>✓ Tamper-evident (hash + sign)</li>
+</ul>
+<hr>
+<h2>Technical Synergies</h2>
+<h3>Data Flow Comparison</h3>
+<p><strong>AG-UI (Real-time):</strong></p>
+<pre><code class="language-javascript">// Live streaming
+agent.stream((event) =&gt; {
+  if (event.type === &#39;tool_result&#39;) {
+    updateUI(event.data);
+  }
+});
+</code></pre>
+<p><strong>Our Toolkit (Static):</strong></p>
+<pre><code class="language-javascript">// Pre-embedded
+const data = {{DATA_JSON}};
+render(data);
+</code></pre>
+<p><strong>Hybrid (Best of Both):</strong></p>
+<pre><code class="language-javascript">// AG-UI session
+const sessionData = await agent.analyze(input);
+
+// Generate static artifact
+const html = await generateVisualization({
+  data: sessionData.results,
+  insights: sessionData.insights,
+  recommendations: sessionData.recommendations
+});
+
+// Deliver permanent artifact
+return html;
+</code></pre>
+<h3>State Management</h3>
+<p><strong>AG-UI:</strong> Shared, synchronized state</p>
+<pre><code class="language-javascript">// Client and server share state
+const [state, setState] = useAgentState(&#39;analysis&#39;);
+</code></pre>
+<p><strong>Our Toolkit:</strong> Frozen state</p>
+<pre><code class="language-javascript">// State embedded at generation time
+const FROZEN_STATE = {{STATE_JSON}};
+</code></pre>
+<p><strong>Synergy:</strong> Agent generates, freezes, and delivers</p>
+<pre><code class="language-javascript">// Agent determines final state
+const finalState = agent.conclude();
+
+// Freeze into artifact
+const artifact = freeze(finalState);
+
+// Deliver
+return artifact;
+</code></pre>
+<hr>
+<h2>Recommendations</h2>
+<h3>For Self-Contained Visualization Users</h3>
+<ol>
+<li><p><strong>Keep using for:</strong></p>
+<ul>
+<li>Historical archives</li>
+<li>Compliance records</li>
+<li>Offline viewing</li>
+<li>Email sharing</li>
+</ul>
+</li>
+<li><p><strong>Add AG-UI when you need:</strong></p>
+<ul>
+<li>Real-time data analysis</li>
+<li>Interactive exploration</li>
+<li>Human-in-the-loop workflows</li>
+<li>Dynamic UI generation</li>
+</ul>
+</li>
+<li><p><strong>Use both for:</strong></p>
+<ul>
+<li>Agent-curated reports</li>
+<li>Session snapshots</li>
+<li>Automated documentation</li>
+<li>Intelligent archival</li>
+</ul>
+</li>
+</ol>
+<h3>For AG-UI Developers</h3>
+<ol>
+<li><p><strong>Consider our toolkit for:</strong></p>
+<ul>
+<li>Persistent artifacts from ephemeral sessions</li>
+<li>Shareable outputs</li>
+<li>Offline capabilities</li>
+<li>Compliance requirements</li>
+</ul>
+</li>
+<li><p><strong>Integration opportunities:</strong></p>
+<ul>
+<li>Add as AG-UI tool</li>
+<li>Session export feature</li>
+<li>Report generation</li>
+<li>Archival automation</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>Conclusion</h2>
+<p><strong>AG-UI</strong> and <strong>Self-Contained Visualizations</strong> represent complementary paradigms:</p>
+<table>
+<thead>
+<tr>
+<th>AG-UI</th>
+<th>Self-Contained Viz</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🔴 Live</td>
+<td>🔵 Static</td>
+</tr>
+<tr>
+<td>🔴 Dynamic</td>
+<td>🔵 Frozen</td>
+</tr>
+<tr>
+<td>🔴 Ephemeral</td>
+<td>🔵 Permanent</td>
+</tr>
+<tr>
+<td>🔴 Connected</td>
+<td>🔵 Offline</td>
+</tr>
+</tbody></table>
+<p><strong>Together, they enable:</strong></p>
+<ul>
+<li>✅ <strong>Intelligent creation</strong> (AG-UI) + <strong>Permanent artifacts</strong> (our toolkit)</li>
+<li>✅ <strong>Real-time exploration</strong> (AG-UI) + <strong>Shareable snapshots</strong> (our toolkit)</li>
+<li>✅ <strong>Agent reasoning</strong> (AG-UI) + <strong>Human-readable output</strong> (our toolkit)</li>
+<li>✅ <strong>Dynamic generation</strong> (AG-UI) + <strong>Static delivery</strong> (our toolkit)</li>
+</ul>
+<p><strong>The Future:</strong> Agents that not only analyze data, but also generate perfect, self-contained visualizations for sharing, archival, and compliance.</p>
+<hr>
+<h2>Next Steps</h2>
+<h3>Week 1: Quick Integration</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Create AG-UI tool wrapper</li>
+<li><input disabled="" type="checkbox"> Test with Microsoft Agent Framework</li>
+<li><input disabled="" type="checkbox"> Document integration example</li>
+</ul>
+<h3>Month 1: Enhanced Features</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Add AI insights placeholder to template</li>
+<li><input disabled="" type="checkbox"> Build session snapshot prototype</li>
+<li><input disabled="" type="checkbox"> Create example agents</li>
+</ul>
+<h3>Quarter 1: Full Platform</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Publish AG-UI integration package</li>
+<li><input disabled="" type="checkbox"> Build template learning system</li>
+<li><input disabled="" type="checkbox"> Create compliance archival mode</li>
+</ul>
+<hr>
+<p><strong>Created:</strong> December 21, 2025
+<strong>Version:</strong> 1.0.0
+<strong>Status:</strong> Analysis Complete</p>
+<p><strong>References:</strong></p>
+<ul>
+<li>AG-UI Protocol: <a href="https://docs.ag-ui.com/">https://docs.ag-ui.com/</a></li>
+<li>Microsoft Agent Framework: <a href="https://learn.microsoft.com/en-us/agent-framework/">https://learn.microsoft.com/en-us/agent-framework/</a></li>
+<li>Our Toolkit: /self-contained-visualizations/</li>
+</ul>
+
+    </div>
+  </body>
+</html>

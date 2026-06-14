@@ -1,0 +1,52 @@
+{
+  "id": "video-analysis-mYSRn6PC1mc",
+  "title": "Full Workshop: Build Your Own Deep Research Agents - Louis-François Bouchard, Paul Iusztin, Samridhi",
+  "category": "video-analysis",
+  "content": "This presentation discusses an automated system for creating technical content by distinguishing a system of LLM-based 'workflows' from true 'agents.' The speaker addresses the issue of generic AI content and introduces a pipeline with a 'deep research agent' and 'technical writing agent.' The key concept revolves around the 'Autonomy Slider' – a trade-off between control, cost, and autonomy. The speaker advocates for starting with the simplest solution (simple prompts or workflows) before building agentic systems. Workflows, the presentation shows, can be sophisticated, incorporating prompt chaining, routers, and loops, but they remain pre-defined processes rather than autonomous systems. The system the speaker has built is an example of a multi-agent system, but the talk emphasizes starting with simpler workflows first. Visual aids, like the 'Autonomy Slider' and workflow diagrams, are key in clarifying these distinctions.",
+  "visual_intelligence": [
+    {
+      "timestamp": "3:00",
+      "reason": "This is around the time of the 'Context' slide.",
+      "context": "The diagram clearly represents the proposed system: Topic in -> deep research agent -> technical article. This is the core architecture."
+    },
+    {
+      "timestamp": "7:04",
+      "reason": "This corresponds to the 'Autonomy Slider' slide.",
+      "context": "The slide visually represents the core trade-off in AI engineering: Control/Cost vs. Autonomy. It shows the progression from Simple Prompts -> Workflows -> Single Agent -> Multi-Agent Systems."
+    },
+    {
+      "timestamp": "9:05",
+      "reason": "This marks the time of the workflow diagram.",
+      "context": "This slide visually represents a conditional workflow with an 'LLM Call,' a 'Gate' (router), and multiple potential paths, illustrating prompt chaining and routing."
+    },
+    {
+      "timestamp": "9:56",
+      "reason": "The 'is not an AI Agent' meme is shown here",
+      "context": "The meme emphasizes the argument, distinguishing complex automation workflows from true AI agents."
+    }
+  ],
+  "backlinks": [
+    "AI Agents / Agentic Systems",
+    "Multi-Agent Systems",
+    "LLM Workflows / Orchestration",
+    "Prompt Engineering / Prompt Chaining",
+    "Retrieval-Augmented Generation (RAG)",
+    "Tool Use / Function Calling",
+    "LLM Hallucinations",
+    "AI Engineering",
+    "LLM Routing",
+    "The system consists of a 'deep research agent' and a 'technical writing agent.'",
+    "The research agent uses tools and searches websites.",
+    "The writing agent aims to generate technical articles with code and images.",
+    "The workshop offers a public GitHub repository with a simplified system version.",
+    "Workflows can implement routers, parallel execution with voting, and loops with a 'judge' component."
+  ],
+  "metadata": {
+    "agentId": "transcript-processor-v4",
+    "timestamp": "2026-05-10T08:38:35.330Z",
+    "videoId": "mYSRn6PC1mc",
+    "url": "https://www.youtube.com/watch?v=mYSRn6PC1mc",
+    "qualityScore": 100,
+    "idNumber": "ID#:CC"
+  }
+}

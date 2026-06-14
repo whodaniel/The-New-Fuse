@@ -1,0 +1,1 @@
+{"version":3,"file":"web-scraping.d.ts","sourceRoot":"","sources":["../src/web-scraping.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,CAAC,EAAE,MAAM,KAAK,CAAC;AAExB,eAAO,MAAM,mBAAmB;;;;;kBAOrB,CAAC;AAEZ,eAAO,MAAM,oBAAoB;;;;;;;kBAStB,CAAC;AAEZ,MAAM,MAAM,aAAa,GAAG,CAAC,CAAC,KAAK,CAAC,OAAO,mBAAmB,CAAC,CAAC;AAChE,MAAM,MAAM,cAAc,GAAG,CAAC,CAAC,KAAK,CAAC,OAAO,oBAAoB,CAAC,CAAC"}

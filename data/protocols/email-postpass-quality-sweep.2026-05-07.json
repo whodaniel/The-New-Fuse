@@ -1,0 +1,746 @@
+{
+  "sourceType": "email-archaeology-postpass-quality-sweep",
+  "generatedAt": "2026-05-07T20:24:54.849Z",
+  "scope": {
+    "ledgerEventsScanned": 1615,
+    "dateFrom": "2011-04-24T01:58:32.000Z",
+    "dateTo": "2026-05-04T14:32:05.000Z"
+  },
+  "thresholds": {
+    "weakTitlePatterns": [
+      "/^re:\\s*$/i",
+      "/^re:\\s*\\.{2,}\\s*$/i",
+      "/^fwd:\\s*$/i",
+      "/^\\(no-?subject\\)$/i",
+      "/^re:\\s*hi\\s*$/i",
+      "/^re:\\s*yo\\s*$/i"
+    ],
+    "suspiciousTerms": [
+      "lottery",
+      "viagra",
+      "casino",
+      "urgent respond",
+      "winning prize",
+      "western union",
+      "shadowshopper"
+    ],
+    "lowSignalLTE": 11,
+    "heavyThreadClusterGTE": 8
+  },
+  "counts": {
+    "flaggedTotal": 41,
+    "bySeverity": {
+      "medium": 3,
+      "low": 38
+    },
+    "byReason": {
+      "low_signal": 39,
+      "low_specificity_transactional": 3,
+      "soft_confidence": 3
+    },
+    "topThreadClusters": []
+  },
+  "flagged": [
+    {
+      "reviewId": "flag-0001",
+      "severity": "medium",
+      "reasons": [
+        "low_signal",
+        "low_specificity_transactional"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-716750-63407-qm-web121419-mail-ne1-yahoo-c",
+      "timestamp": "2011-04-24T01:58:32.000Z",
+      "title": "re: Traders Insider",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Adam Mirelez <amirelez1982@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/3/2/Messages/235026.emlx"
+    },
+    {
+      "reviewId": "flag-0002",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-e188fcd2af749bcf81212043cc67046f-startcom",
+      "timestamp": "2011-09-27T16:53:18.000Z",
+      "title": "StartSSL Account Request, 27 Sep 2011 07:53",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"StartCom CertMaster (Nikolay Duhman)\" <certmaster@startcom.org>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/3/2/Messages/236931.emlx"
+    },
+    {
+      "reviewId": "flag-0003",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-e1rgfla-0006xq-n3-web22-justhost-com",
+      "timestamp": "2011-10-19T23:41:20.000Z",
+      "title": "StarTree.TV Retail Shop Online - RECEIPT",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "StarTree.TV Retail  Shop Online<admin@startree.tv>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/3/2/Messages/235924.emlx"
+    },
+    {
+      "reviewId": "flag-0004",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-1326023113-5556-paypal-com",
+      "timestamp": "2012-01-08T11:45:13.000Z",
+      "title": "Your payment is temporarily held",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 10,
+      "from": "\"service@paypal.com\" <service@paypal.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/3/2/Messages/235413.emlx"
+    },
+    {
+      "reviewId": "flag-0005",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-1328502590-13030-paypal-com",
+      "timestamp": "2012-02-06T04:29:50.000Z",
+      "title": "Item #140563914282 Instant payment received from gotucker3 (gtuckeriii@gmail.com)",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 10,
+      "from": "\"gtuckeriii@gmail.com\" <gtuckeriii@gmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272549.emlx"
+    },
+    {
+      "reviewId": "flag-0006",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-blu123-w17f6073ca4960296394a4bb3620-phx-gb",
+      "timestamp": "2012-02-16T12:02:02.000Z",
+      "title": "RE: Payment!",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Muhammad Fayyaz Mughal <mughalf@hotmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/3/2/Messages/235625.emlx"
+    },
+    {
+      "reviewId": "flag-0007",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-021901ccfd71-1fc556a0-5f5003e0-com",
+      "timestamp": "2012-03-08T21:19:18.000Z",
+      "title": "RE: Daniel Goldberg (client order#1)",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Michael Stevens\" <mstevens@rochestersp.com>",
+      "threadSize": 1,
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/9/2/Messages/291241.emlx"
+    },
+    {
+      "reviewId": "flag-0008",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-1331669061-17295-yahoomailneo-web130106-ma",
+      "timestamp": "2012-03-13T20:04:21.000Z",
+      "title": "Re: 2000 Ford Windstar",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Ihor <eyesore57@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272134.emlx"
+    },
+    {
+      "reviewId": "flag-0009",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-1345559827-85380-yahoomailneo-web112616-ma",
+      "timestamp": "2012-08-21T14:37:07.000Z",
+      "title": "Re: Hey Babe!",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Abby Summers <abbyhot99@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271616.emlx"
+    },
+    {
+      "reviewId": "flag-0010",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-1368027742-5884-paypal-com",
+      "timestamp": "2013-05-08T15:42:22.000Z",
+      "title": "You've received a payment request",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Notification via PayPal <member@paypal.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271417.emlx"
+    },
+    {
+      "reviewId": "flag-0011",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-l4xr74szwjyt7jlsh3b06xrq8qmetqyzu2cdj2vwiw",
+      "timestamp": "2013-09-30T20:30:12.000Z",
+      "title": "Re: Football & Baseball Cards",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"John Ryd\" <2f6d6dcf358b393ea1afaafef3dc3152@reply.craigslist.org>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/3/2/Messages/235661.emlx"
+    },
+    {
+      "reviewId": "flag-0012",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-capt6wb-ribujk05pbxu9l-kpxr-rab3tbg-dip9kv",
+      "timestamp": "2015-08-29T07:27:00.000Z",
+      "title": "Re: Profits Play Bonuses",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Mike Thomas <mike@mikefrommaine.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/2016.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/7/2/Messages/275532.emlx"
+    },
+    {
+      "reviewId": "flag-0013",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-1xmsdmw8ohjqw6bkmt7cagge-alir-iedlp4wps2z6",
+      "timestamp": "2015-11-29T22:35:59.000Z",
+      "title": "Wanted- Scrap metal",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"EV\" <a16821366e01328ba3359017a289cde0@reply.craigslist.org>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Spamx#2.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/6/2/Messages/262504.emlx"
+    },
+    {
+      "reviewId": "flag-0014",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-cajdu-8wy2xgcdxxp7xbzho7n-nvroquahcu0j-55j",
+      "timestamp": "2016-01-12T20:36:32.000Z",
+      "title": "Re: Craigslist ad",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Lucy Smith <lucyowelp1928@gmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Spamx#2.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/6/2/Messages/260685.emlx"
+    },
+    {
+      "reviewId": "flag-0015",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-177634312-4956328-1469399819458-javamail-y",
+      "timestamp": "2016-07-24T22:36:59.000Z",
+      "title": "100% FREE TO JOIN! NEVER A FEE EVER! 100% NO SCAM YOU ACTUALLY GET PAID!!! NO SURVEY TAKING!",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Jeannie Merino <msjmerino@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Archive.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/6/2/Messages/269498.emlx"
+    },
+    {
+      "reviewId": "flag-0016",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-24144952-12308272-1470834921286-javamail-y",
+      "timestamp": "2016-08-10T13:15:21.000Z",
+      "title": "Re: Here is your Product login info for Social Connect Lead Generating Chat System(Unlimited)",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Drafts.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/4/2/Messages/241210.emlx"
+    },
+    {
+      "reviewId": "flag-0017",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-374594035-4237564-1487046279758-mail-yahoo",
+      "timestamp": "2017-02-14T04:24:39.000Z",
+      "title": "Re: Heads up 5th attempt Website",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Archive.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/3/2/Messages/239648.emlx"
+    },
+    {
+      "reviewId": "flag-0018",
+      "severity": "low",
+      "reasons": [
+        "soft_confidence",
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-01c2df3d-a0f2-4445-bbff-b2580b293d93-yahoo",
+      "timestamp": "2017-05-27T20:04:56.000Z",
+      "title": "Unsubscribe",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "soft",
+      "signal": 8,
+      "from": "whodaniel@yahoo.com",
+      "threadSize": 2,
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/4/1/3/Messages/314603.emlx"
+    },
+    {
+      "reviewId": "flag-0019",
+      "severity": "medium",
+      "reasons": [
+        "low_specificity_transactional"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-27cae51a-770f-4665-a432-58f4f9b91a5b-yahoo",
+      "timestamp": "2017-06-19T19:50:28.000Z",
+      "title": "Re: Contact Form",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "hard",
+      "signal": 22,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Archive.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/3/2/Messages/239177.emlx"
+    },
+    {
+      "reviewId": "flag-0020",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-mwhp11501mb00649c4413826514b9c60ff7ee690-m",
+      "timestamp": "2017-09-12T17:39:07.000Z",
+      "title": "RE: Daniel Goldberg; 555-245603; Erie Construction",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Mendoza, Melissa\" <Melissa.Mendoza@AIG.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/2016.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/7/2/Messages/275914.emlx"
+    },
+    {
+      "reviewId": "flag-0021",
+      "severity": "low",
+      "reasons": [
+        "soft_confidence",
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-af0507c7-52ea-43f5-a49d-1564a23b418a-yahoo",
+      "timestamp": "2018-08-26T15:59:52.000Z",
+      "title": "unsubscribe;zOwcjKwMHLRsjKzMnEwsTLRGtCwM7CxM7MyM",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "soft",
+      "signal": 8,
+      "from": "whodaniel@yahoo.com",
+      "threadSize": 1,
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/4/1/3/Messages/314045.emlx"
+    },
+    {
+      "reviewId": "flag-0022",
+      "severity": "low",
+      "reasons": [
+        "soft_confidence",
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-5bf243dd-18e9-4dd9-921f-cda11568c9a5-yahoo",
+      "timestamp": "2018-10-11T23:25:06.000Z",
+      "title": "Fwd: Your Order Summary (Order #22933239) Tickets",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "soft",
+      "signal": 9,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Archive.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/4/2/Messages/240245.emlx"
+    },
+    {
+      "reviewId": "flag-0023",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-jc2uumbvqtmopexhcccwrq-ismtpd0002p1las1-se",
+      "timestamp": "2019-11-18T03:18:09.000Z",
+      "title": "STORIEBOT - Your purchased account!",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 10,
+      "from": "StorieBot",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/1- My Sort later.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276891.emlx"
+    },
+    {
+      "reviewId": "flag-0024",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-983170244-22056-1574733165093-mail-yahoo-c",
+      "timestamp": "2019-11-26T01:52:45.000Z",
+      "title": "Re: Hi from thinQ",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/2016.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276013.emlx"
+    },
+    {
+      "reviewId": "flag-0025",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-937829647-2837369-1576990765950-mail-yahoo",
+      "timestamp": "2019-12-22T04:59:25.000Z",
+      "title": "Re: 📞1-800 Number ( Phone Automation Platform )",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Archive.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/4/2/Messages/240822.emlx"
+    },
+    {
+      "reviewId": "flag-0026",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-19874976-8598934-1578302359363-mail-yahoo",
+      "timestamp": "2020-01-06T09:19:19.000Z",
+      "title": "Re: CourseIndex Affiliate Program",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Archive.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/4/2/Messages/240809.emlx"
+    },
+    {
+      "reviewId": "flag-0027",
+      "severity": "medium",
+      "reasons": [
+        "low_specificity_transactional"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-354455146-15629898-1579370357093-mail-yaho",
+      "timestamp": "2020-01-18T17:59:17.000Z",
+      "title": "Re: Contact form - Affiliate Program",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "hard",
+      "signal": 22,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Archive.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/4/2/Messages/241150.emlx"
+    },
+    {
+      "reviewId": "flag-0028",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-f626946e-5a3ba619-1596993946-1632660000007",
+      "timestamp": "2020-08-09T17:25:46.000Z",
+      "title": "Re: Please send my login details",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Prince from Stormerce\" <prince.omega@stormerce.intercom-mail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/MY PRODUCT PURCHASES.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/5/2/Messages/256774.emlx"
+    },
+    {
+      "reviewId": "flag-0029",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-cahtcz-h-du0cghlpikhzkv9-ipogzisbtd110bbh0",
+      "timestamp": "2020-08-14T09:47:03.000Z",
+      "title": "Re: Bonus Claim - VideoDashboard Whitelabel Brand Manager (Unlimited)",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "All DigiSoft <alldigisoft@gmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/RECEIPTS.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/6/2/Messages/266369.emlx"
+    },
+    {
+      "reviewId": "flag-0030",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-918e75aedd96f3c833908e928b95246f-richardke",
+      "timestamp": "2020-10-01T23:54:55.000Z",
+      "title": "Re: Richard Kenvin Blog \"Bonus claim for Purchase Details: ----------------- Product: ProfileMate - Whitelabel 10 Account Key Price: $197.00 Payment Id: AP-73H80098NB9590301 whodaniel@yahoo.com\"",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "contact@richardkenvin.com",
+      "threadSize": 1,
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/9/2/Messages/290602.emlx"
+    },
+    {
+      "reviewId": "flag-0031",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-ce88dc36-dc86-47bc-b614-ec36e0895fdb-fyi-t",
+      "timestamp": "2021-07-06T12:52:15.000Z",
+      "title": "Re: Upgrade",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "FYI Team <info@fyi.to>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/1-MY PRODUCTS SORTED 1.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276582.emlx"
+    },
+    {
+      "reviewId": "flag-0032",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-da7e3fa7-6681-cd57-a462-09100b8c7851-vidpr",
+      "timestamp": "2021-07-15T05:30:59.000Z",
+      "title": "Re: Fw: [Receipt] VidProposals Bundle Purchase",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Mike - VidProposals\" <mike@vidproposals.on.crisp.email>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/got a refund.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/6/2/Messages/266698.emlx"
+    },
+    {
+      "reviewId": "flag-0033",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-tbxl0wruq2sbsiohryp6pw-geopod-ismtpd-23",
+      "timestamp": "2023-12-10T15:01:01.000Z",
+      "title": "LAST DAY to Order Tops for Christmas Arrival",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Pair Eyewear <hello@paireyewear.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/whodaniel@yahoo.com-spam 1?.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/2/2/Messages/220318.emlx"
+    },
+    {
+      "reviewId": "flag-0034",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-65763717c9a7f-591fb92ac43292b-fd31a31063ad",
+      "timestamp": "2023-12-10T22:09:27.000Z",
+      "title": "Your order update: delivery canceled",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 10,
+      "from": "Instacart <orders@instacart.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/whodaniel@yahoo.com-spam 1?.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/1/2/Messages/219275.emlx"
+    },
+    {
+      "reviewId": "flag-0035",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-9e718fd0-99dd-11ee-ad8b-0dae63c6f27a-faceb",
+      "timestamp": "2023-12-13T17:32:41.000Z",
+      "title": "23918901 is your Facebook account recovery code",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Facebook\" <security@facebookmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/whodaniel@yahoo.com-spam 1?.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/1/2/Messages/219242.emlx"
+    },
+    {
+      "reviewId": "flag-0036",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-cb186c18-9d3c-11ee-9e7e-83c895255953-faceb",
+      "timestamp": "2023-12-18T00:31:32.000Z",
+      "title": "88663125 is your Facebook account recovery code",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Facebook\" <security@facebookmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/whodaniel@yahoo.com-spam 1?.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/2/2/Messages/225702.emlx"
+    },
+    {
+      "reviewId": "flag-0037",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-2952cdda-9ef7-11ee-aea6-5505065032ef-faceb",
+      "timestamp": "2023-12-20T05:18:08.000Z",
+      "title": "75172588 is your Facebook account recovery code",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Facebook\" <security@facebookmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/whodaniel@yahoo.com-spam 1?.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/8/1/2/Messages/218664.emlx"
+    },
+    {
+      "reviewId": "flag-0038",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-6fa7ff20-a0ba-11ee-8866-bb59f8a7d42b-faceb",
+      "timestamp": "2023-12-22T11:08:29.000Z",
+      "title": "32809180 is your Facebook account recovery code",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Facebook\" <security@facebookmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/whodaniel@yahoo.com-spam 1?.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/2/2/Messages/226114.emlx"
+    },
+    {
+      "reviewId": "flag-0039",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-2bd7bab0-a1fa-11ee-b645-3b6fcf7b38f1-faceb",
+      "timestamp": "2023-12-24T01:17:14.000Z",
+      "title": "63502277 is your Facebook account recovery code",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Facebook\" <security@facebookmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/whodaniel@yahoo.com-spam 1?.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/7/2/2/Messages/227629.emlx"
+    },
+    {
+      "reviewId": "flag-0040",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-2563013e-a4da-11ee-beb1-3fd8c21fc620-faceb",
+      "timestamp": "2023-12-27T17:05:33.000Z",
+      "title": "03496023 is your Facebook account recovery code",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "\"Facebook\" <security@facebookmail.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/whodaniel@yahoo.com-spam 1?.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/1/2/Messages/219032.emlx"
+    },
+    {
+      "reviewId": "flag-0041",
+      "severity": "low",
+      "reasons": [
+        "low_signal"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-1643018045-1447048-1777905125412-mail-yaho",
+      "timestamp": "2026-05-04T14:32:05.000Z",
+      "title": "Subject: Lease Renewal Inquiry - 1090 South Ave #2 - Daniel Goldberg",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "moderate",
+      "signal": 10,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/Sent.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/0/3/Messages/305389.emlx"
+    }
+  ]
+}

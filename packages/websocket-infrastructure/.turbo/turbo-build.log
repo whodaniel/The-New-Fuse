@@ -1,0 +1,5 @@
+
+> @the-new-fuse/websocket-infrastructure@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/websocket-infrastructure
+> tsc -b
+
+ ELIFECYCLE  Command failed.

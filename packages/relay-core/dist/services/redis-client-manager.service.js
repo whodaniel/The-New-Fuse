@@ -2,6 +2,7 @@
 // packages/relay-core/src/services/redis-client-manager.service.ts
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RedisClientManager = void 0;
+// Assuming @the-new-fuse/infrastructure is available or its utilities are moved here
 // Assume a logger is passed or imported
 function log(level, category, message, data = {}) {
     console.log(`[${level.toUpperCase()}] [${category}] ${message}`, data);

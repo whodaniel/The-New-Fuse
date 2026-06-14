@@ -1,0 +1,1414 @@
+[0:00] [music]
+[0:05] >> There's there's a few people who want to
+[0:10] >> There's there's a few people who want to
+[0:15] >> There's there's a few people who want to start earlier.
+[0:20] start earlier.
+[0:25] start earlier. I know I'm going to take the opportunity
+[0:30] I know I'm going to take the opportunity
+[0:35] I know I'm going to take the opportunity to officially open kind of the
+[0:40] to officially open kind of the
+[0:45] to officially open kind of the architect track. There's no track host,
+[0:50] architect track. There's no track host,
+[0:55] architect track. There's no track host, so I do it myself. So, thank you for
+[1:00] so I do it myself. So, thank you for
+[1:05] so I do it myself. So, thank you for coming here. I hope you already had like
+[1:10] coming here. I hope you already had like
+[1:15] coming here. I hope you already had like a good conference. Um
+[1:20] a good conference. Um
+[1:25] a good conference. Um It's amazing that like so many people
+[1:30] It's amazing that like so many people
+[1:35] It's amazing that like so many people showed up. Um maybe before I start, um
+[1:40] showed up. Um maybe before I start, um
+[1:45] showed up. Um maybe before I start, um who's used any AI coding agent in this
+[1:50] who's used any AI coding agent in this
+[1:55] who's used any AI coding agent in this room? Raise your hand.
+[2:00] room? Raise your hand.
+[2:05] room? Raise your hand. Like lower it. Who hasn't? Raise your
+[2:10] Like lower it. Who hasn't? Raise your
+[2:15] Like lower it. Who hasn't? Raise your hand.
+[2:20] hand.
+[2:25] hand. Okay, my kind of people. Perfect. All
+[2:30] Okay, my kind of people. Perfect. All
+[2:35] Okay, my kind of people. Perfect. All right.
+[2:40] right.
+[2:45] right. Um
+[2:50] Um
+[2:55] Um Okay. Context is a new code.
+[3:00] Okay. Context is a new code.
+[3:05] Okay. Context is a new code. Or context development life cycle. Um I
+[3:10] Or context development life cycle. Um I
+[3:15] Or context development life cycle. Um I feel honored to be here. Every time I
+[3:20] feel honored to be here. Every time I
+[3:25] feel honored to be here. Every time I try to do a different talk at the AI
+[3:30] try to do a different talk at the AI
+[3:35] try to do a different talk at the AI engineering.
+[3:40] engineering.
+[3:45] engineering. So, this is a little bit of um
+[3:50] So, this is a little bit of um
+[3:55] So, this is a little bit of um you know, thinking ahead. It's an
+[4:00] you know, thinking ahead. It's an
+[4:05] you know, thinking ahead. It's an unpolished thought. It's not like
+[4:10] unpolished thought. It's not like
+[4:15] unpolished thought. It's not like everything's there, but is there
+[4:20] everything's there, but is there
+[4:25] everything's there, but is there anything there in AI anyway? But
+[4:30] anything there in AI anyway? But
+[4:35] anything there in AI anyway? But So,
+[4:40] So,
+[4:45] So, let's start.
+[4:50] let's start.
+[4:55] let's start. I assume
+[5:00] I assume
+[5:05] I assume you all are now vibe coding with
+[5:10] you all are now vibe coding with
+[5:15] you all are now vibe coding with prompts. I barely touch anymore kind of
+[5:20] prompts. I barely touch anymore kind of
+[5:25] prompts. I barely touch anymore kind of the code. I just tell the AI to do
+[5:30] the code. I just tell the AI to do
+[5:35] the code. I just tell the AI to do something different.
+[5:40] something different.
+[5:45] something different. So, I would say like
+[5:50] So, I would say like
+[5:55] So, I would say like context is the new code because it's
+[6:00] context is the new code because it's
+[6:05] context is the new code because it's being generated.
+[6:10] being generated.
+[6:15] being generated. A little bit more advanced maybe is
+[6:20] A little bit more advanced maybe is
+[6:25] A little bit more advanced maybe is I see myself having a tendency is I had
+[6:30] I see myself having a tendency is I had
+[6:35] I see myself having a tendency is I had large pieces of code that I was using
+[6:40] large pieces of code that I was using
+[6:45] large pieces of code that I was using maybe some helpers and some other
+[6:50] maybe some helpers and some other
+[6:55] maybe some helpers and some other pieces.
+[7:00] pieces.
+[7:05] pieces. And I just turned them into a skill.
+[7:10] And I just turned them into a skill.
+[7:15] And I just turned them into a skill. We had that in our into our product. It
+[7:20] We had that in our into our product. It
+[7:25] We had that in our into our product. It was an onboarding from, you know, AI
+[7:30] was an onboarding from, you know, AI
+[7:35] was an onboarding from, you know, AI agents. Um
+[7:40] agents. Um
+[7:45] agents. Um People have Python, Node.js, all the
+[7:50] People have Python, Node.js, all the
+[7:55] People have Python, Node.js, all the various things. Then they have different
+[8:00] various things. Then they have different
+[8:05] various things. Then they have different tools for packaging and
+[8:10] tools for packaging and
+[8:15] tools for packaging and it is impossible to actually code that.
+[8:20] it is impossible to actually code that.
+[8:25] it is impossible to actually code that. Like it will require a lot of coding.
+[8:30] Like it will require a lot of coding.
+[8:35] Like it will require a lot of coding. But if I just say a skill says
+[8:40] But if I just say a skill says
+[8:45] But if I just say a skill says please first figure out what their
+[8:50] please first figure out what their
+[8:55] please first figure out what their package manager is, then figure out what
+[9:00] package manager is, then figure out what
+[9:05] package manager is, then figure out what their ecosystem is, and then do these
+[9:10] their ecosystem is, and then do these
+[9:15] their ecosystem is, and then do these steps together with the user.
+[9:20] steps together with the user.
+[9:25] steps together with the user. You know, it's solved a lot more
+[9:30] You know, it's solved a lot more
+[9:35] You know, it's solved a lot more problems that we could ever code. So,
+[9:40] problems that we could ever code. So,
+[9:45] problems that we could ever code. So, that is another piece that I would say
+[9:50] that is another piece that I would say
+[9:55] that is another piece that I would say code is also transforming back into
+[10:00] code is also transforming back into
+[10:05] code is also transforming back into context as a skill as well, as a
+[10:10] context as a skill as well, as a
+[10:15] context as a skill as well, as a workflow that's reusable. And
+[10:20] workflow that's reusable. And
+[10:25] workflow that's reusable. And leave that with you.
+[10:30] leave that with you.
+[10:35] leave that with you. I like to think in parallels.
+[10:40] I like to think in parallels.
+[10:45] I like to think in parallels. In 2009, I don't know if there is any
+[10:50] In 2009, I don't know if there is any
+[10:55] In 2009, I don't know if there is any DevOps people in the room. It was kind
+[11:00] DevOps people in the room. It was kind
+[11:05] DevOps people in the room. It was kind of me saying like what if ops looked
+[11:10] of me saying like what if ops looked
+[11:15] of me saying like what if ops looked more like dev? And then we got like,
+[11:20] more like dev? And then we got like,
+[11:25] more like dev? And then we got like, hey, collaboration, kind of our
+[11:30] hey, collaboration, kind of our
+[11:35] hey, collaboration, kind of our deployment, all that stuff. So, kind of,
+[11:40] deployment, all that stuff. So, kind of,
+[11:45] deployment, all that stuff. So, kind of, you know, last year I started thinking,
+[11:50] you know, last year I started thinking,
+[11:55] you know, last year I started thinking, what if context
+[12:00] what if context
+[12:05] what if context is the code?
+[12:10] is the code?
+[12:15] is the code? How do we deal with this in a more
+[12:20] How do we deal with this in a more
+[12:25] How do we deal with this in a more consistent way?
+[12:30] consistent way?
+[12:35] consistent way? And
+[12:40] And
+[12:45] And it's basically saying if we have a
+[12:50] it's basically saying if we have a
+[12:55] it's basically saying if we have a software development life cycle
+[13:00] software development life cycle
+[13:05] software development life cycle how does a context development life
+[13:10] how does a context development life
+[13:15] how does a context development life cycle look like? Because we're basically
+[13:20] cycle look like? Because we're basically
+[13:25] cycle look like? Because we're basically shifting somewhere else. It's context,
+[13:30] shifting somewhere else. It's context,
+[13:35] shifting somewhere else. It's context, it's not code. How does it look like?
+[13:40] it's not code. How does it look like?
+[13:45] it's not code. How does it look like? I came up with this, you know, of course
+[13:50] I came up with this, you know, of course
+[13:55] I came up with this, you know, of course an infinity loop with some DevOps
+[14:00] an infinity loop with some DevOps
+[14:05] an infinity loop with some DevOps background. But the whole idea is that
+[14:10] background. But the whole idea is that
+[14:15] background. But the whole idea is that we generate a lot of context.
+[14:20] we generate a lot of context.
+[14:25] we generate a lot of context. Then hopefully we test the context. We
+[14:30] Then hopefully we test the context. We
+[14:35] Then hopefully we test the context. We distribute context maybe to some
+[14:40] distribute context maybe to some
+[14:45] distribute context maybe to some colleagues, to some other parts of the
+[14:50] colleagues, to some other parts of the
+[14:55] colleagues, to some other parts of the organization. We observe whether it
+[15:00] organization. We observe whether it
+[15:05] organization. We observe whether it works, and if it doesn't work or works,
+[15:10] works, and if it doesn't work or works,
+[15:15] works, and if it doesn't work or works, we call like, you know, adapt and
+[15:20] we call like, you know, adapt and
+[15:25] we call like, you know, adapt and regenerate the context and then go from
+[15:30] regenerate the context and then go from
+[15:35] regenerate the context and then go from there. So, that's kind of the
+[15:40] there. So, that's kind of the
+[15:45] there. So, that's kind of the loop of the talk that I'll be going for
+[15:50] loop of the talk that I'll be going for
+[15:55] loop of the talk that I'll be going for with some examples.
+[16:00] with some examples.
+[16:05] with some examples. So, step by step going through.
+[16:10] So, step by step going through.
+[16:15] So, step by step going through. Generate. It's probably the one that
+[16:20] Generate. It's probably the one that
+[16:25] Generate. It's probably the one that you're all most familiar with.
+[16:30] you're all most familiar with.
+[16:35] you're all most familiar with. Because you're all prompting.
+[16:40] Because you're all prompting.
+[16:45] Because you're all prompting. You're like the human context creation
+[16:50] You're like the human context creation
+[16:55] You're like the human context creation typing things, right? I was actually
+[17:00] typing things, right? I was actually
+[17:05] typing things, right? I was actually amazed that I just asked, tell me when
+[17:10] amazed that I just asked, tell me when
+[17:15] amazed that I just asked, tell me when my talk is at AI engineer, that it would
+[17:20] my talk is at AI engineer, that it would
+[17:25] my talk is at AI engineer, that it would fetch the website and it would just say,
+[17:30] fetch the website and it would just say,
+[17:35] fetch the website and it would just say, here's your talk. Like blew my mind. But
+[17:40] here's your talk. Like blew my mind. But
+[17:45] here's your talk. Like blew my mind. But hey, I I said like the context that I've
+[17:50] hey, I I said like the context that I've
+[17:55] hey, I I said like the context that I've given it, I'm Patrick, all that stuff,
+[18:00] given it, I'm Patrick, all that stuff,
+[18:05] given it, I'm Patrick, all that stuff, right? So, very simple context. It's
+[18:10] right? So, very simple context. It's
+[18:15] right? So, very simple context. It's what you do probably a lot in your
+[18:20] what you do probably a lot in your
+[18:25] what you do probably a lot in your setup.
+[18:30] setup.
+[18:35] setup. If you get a little bit more advanced,
+[18:40] If you get a little bit more advanced,
+[18:45] If you get a little bit more advanced, you say that prompting is tedious. I
+[18:50] you say that prompting is tedious. I
+[18:55] you say that prompting is tedious. I want to have reusable prompts. So, you
+[19:00] want to have reusable prompts. So, you
+[19:05] want to have reusable prompts. So, you know, depending on the flavor of your
+[19:10] know, depending on the flavor of your
+[19:15] know, depending on the flavor of your coding agents, they call it
+[19:20] coding agents, they call it
+[19:25] coding agents, they call it instructions.
+[19:30] instructions.
+[19:35] instructions. Luckily, there's a little bit of a
+[19:40] Luckily, there's a little bit of a
+[19:45] Luckily, there's a little bit of a standardization now happening where it's
+[19:50] standardization now happening where it's
+[19:55] standardization now happening where it's like an agent.md and some pieces like
+[20:00] like an agent.md and some pieces like
+[20:05] like an agent.md and some pieces like that. Boo Claude for still calling it
+[20:10] that. Boo Claude for still calling it
+[20:15] that. Boo Claude for still calling it Claude.md, but anyway, you get the
+[20:20] Claude.md, but anyway, you get the
+[20:25] Claude.md, but anyway, you get the picture. There's like reusable prompts,
+[20:30] picture. There's like reusable prompts,
+[20:35] picture. There's like reusable prompts, reusable pieces of context that we're
+[20:40] reusable pieces of context that we're
+[20:45] reusable pieces of context that we're doing.
+[20:50] We can also bring other context in.
+[20:55] We can also bring other context in.
+[21:00] We can also bring other context in. If we have documentation of libraries
+[21:05] If we have documentation of libraries
+[21:10] If we have documentation of libraries that we use day to day
+[21:15] that we use day to day
+[21:20] that we use day to day we want to pull that in because the LLMs
+[21:25] we want to pull that in because the LLMs
+[21:30] we want to pull that in because the LLMs might not have the latest documentation.
+[21:35] might not have the latest documentation.
+[21:40] might not have the latest documentation. And so it's hallucinating. Is it version
+[21:45] And so it's hallucinating. Is it version
+[21:50] And so it's hallucinating. Is it version two, version three? We don't know. So,
+[21:55] two, version three? We don't know. So,
+[22:00] two, version three? We don't know. So, we give it a context and say, please
+[22:05] we give it a context and say, please
+[22:10] we give it a context and say, please download the documentation. Hopefully
+[22:15] download the documentation. Hopefully
+[22:20] download the documentation. Hopefully then agent optimized. And then they will
+[22:25] then agent optimized. And then they will
+[22:30] then agent optimized. And then they will do a better job at generating the code
+[22:35] do a better job at generating the code
+[22:40] do a better job at generating the code for that version of the library.
+[22:45] for that version of the library.
+[22:50] for that version of the library. Another piece of getting better context
+[22:55] Another piece of getting better context
+[23:00] Another piece of getting better context and creating context from libraries.
+[23:05] and creating context from libraries.
+[23:10] and creating context from libraries. And of course, it wouldn't be complete
+[23:15] And of course, it wouldn't be complete
+[23:20] And of course, it wouldn't be complete if we would say
+[23:25] if we would say
+[23:30] if we would say pull context from wherever. MC
+[23:35] Get it from your GitLab, GitHub, kind of
+[23:40] Get it from your GitLab, GitHub, kind of
+[23:45] Get it from your GitLab, GitHub, kind of Slack.
+[23:50] Slack.
+[23:55] Slack. All context we're pulling in, we're
+[24:00] All context we're pulling in, we're
+[24:05] All context we're pulling in, we're creating. Even a ticket is creating
+[24:10] creating. Even a ticket is creating
+[24:15] creating. Even a ticket is creating context because we're pulling that in
+[24:20] context because we're pulling that in
+[24:25] context because we're pulling that in while we go there.
+[24:30] And then maybe the new kid on the block
+[24:35] And then maybe the new kid on the block
+[24:40] And then maybe the new kid on the block is, okay, what if we
+[24:45] is, okay, what if we
+[24:50] is, okay, what if we start like writing our prompts as
+[24:55] start like writing our prompts as
+[25:00] start like writing our prompts as specification spec-driven development
+[25:05] specification spec-driven development
+[25:10] specification spec-driven development which then gets broken down by the agent
+[25:15] which then gets broken down by the agent
+[25:20] which then gets broken down by the agent into a planning mode into step by step
+[25:25] into a planning mode into step by step
+[25:30] into a planning mode into step by step kind of prompts that it then kind of
+[25:35] kind of prompts that it then kind of
+[25:40] kind of prompts that it then kind of runs through. So, a lot creation
+[25:45] runs through. So, a lot creation
+[25:50] runs through. So, a lot creation happening in that field.
+[25:55] happening in that field.
+[26:00] happening in that field. You know, simple. This is probably what
+[26:05] You know, simple. This is probably what
+[26:10] You know, simple. This is probably what you're closest to.
+[26:15] you're closest to.
+[26:20] you're closest to. But
+[26:25] But
+[26:30] But when you're typing all that context and
+[26:35] when you're typing all that context and
+[26:40] when you're typing all that context and creating all that context
+[26:45] creating all that context
+[26:50] creating all that context you change two lines in your Claude.md.
+[26:55] you change two lines in your Claude.md.
+[27:00] you change two lines in your Claude.md. Do you know the impact?
+[27:05] Do you know the impact?
+[27:10] Do you know the impact? Is it like YOLO? Looks good to me. Let's
+[27:15] Is it like YOLO? Looks good to me. Let's
+[27:20] Is it like YOLO? Looks good to me. Let's do it. You have to think about how do we
+[27:25] do it. You have to think about how do we
+[27:30] do it. You have to think about how do we test things?
+[27:35] test things?
+[27:40] test things? It's not just about we have a piece of
+[27:45] It's not just about we have a piece of
+[27:50] It's not just about we have a piece of code and we have a piece of context now.
+[27:55] code and we have a piece of context now.
+[28:00] code and we have a piece of context now. We need to write tests to see what is
+[28:05] We need to write tests to see what is
+[28:10] We need to write tests to see what is the impact. New coding agent? We don't
+[28:15] the impact. New coding agent? We don't
+[28:20] the impact. New coding agent? We don't know where the lines still work.
+[28:25] know where the lines still work.
+[28:30] know where the lines still work. Now, it's not new in the world of AI
+[28:35] Now, it's not new in the world of AI
+[28:40] Now, it's not new in the world of AI engineering but it's not that common yet
+[28:45] engineering but it's not that common yet
+[28:50] engineering but it's not that common yet in the world of coding with AI that you
+[28:55] in the world of coding with AI that you
+[29:00] in the world of coding with AI that you start writing evals for which are tests
+[29:05] start writing evals for which are tests
+[29:10] start writing evals for which are tests for your kind of code context.
+[29:15] for your kind of code context.
+[29:20] for your kind of code context. Uh a little bit hard to read, but you
+[29:25] Uh a little bit hard to read, but you
+[29:30] Uh a little bit hard to read, but you know, if you think in parallels
+[29:35] know, if you think in parallels
+[29:40] know, if you think in parallels we have different levels of testing in
+[29:45] we have different levels of testing in
+[29:50] we have different levels of testing in code, and the simple one could be
+[29:55] code, and the simple one could be
+[30:00] code, and the simple one could be linting. Your IDE is has the swiggly
+[30:05] linting. Your IDE is has the swiggly
+[30:10] linting. Your IDE is has the swiggly lines like, hey, this is not like, you
+[30:15] lines like, hey, this is not like, you
+[30:20] lines like, hey, this is not like, you know
+[30:25] know
+[30:30] know there's some
+[30:35] there's some
+[30:40] there's some incorrect syntax or you could do better
+[30:45] incorrect syntax or you could do better
+[30:50] incorrect syntax or you could do better like that.
+[30:55] like that.
+[31:00] like that. Here's an example of a validation of a
+[31:05] Here's an example of a validation of a
+[31:10] Here's an example of a validation of a skill where we say, well, you need to
+[31:15] skill where we say, well, you need to
+[31:20] skill where we say, well, you need to have the description. It can only be so
+[31:25] have the description. It can only be so
+[31:30] have the description. It can only be so long. So, it's validating according to
+[31:35] long. So, it's validating according to
+[31:40] long. So, it's validating according to the spec of the format of the context in
+[31:45] the spec of the format of the context in
+[31:50] the spec of the format of the context in this case.
+[31:55] this case.
+[32:00] this case. Simple analogy, simple linter that you
+[32:05] Simple analogy, simple linter that you
+[32:10] Simple analogy, simple linter that you can run.
+[32:15] And then you can do other things like
+[32:20] And then you can do other things like
+[32:25] And then you can do other things like and and I haven't found maybe the good
+[32:30] and and I haven't found maybe the good
+[32:35] and and I haven't found maybe the good coding equivalent, but think of this as
+[32:40] coding equivalent, but think of this as
+[32:45] coding equivalent, but think of this as a Grammarly.
+[32:50] a Grammarly.
+[32:55] a Grammarly. Right? So, if you write context
+[33:00] Right? So, if you write context
+[33:05] Right? So, if you write context um
+[33:10] um
+[33:15] um is it actually can the agent understand
+[33:20] is it actually can the agent understand
+[33:25] is it actually can the agent understand what you're writing? If you write two
+[33:30] what you're writing? If you write two
+[33:35] what you're writing? If you write two words, it's not verbose enough for it to
+[33:40] words, it's not verbose enough for it to
+[33:45] words, it's not verbose enough for it to actually understand the context. So,
+[33:50] actually understand the context. So,
+[33:55] actually understand the context. So, what you can do is you can say ask is
+[34:00] what you can do is you can say ask is
+[34:05] what you can do is you can say ask is like, okay, you know, given this
+[34:10] like, okay, you know, given this
+[34:15] like, okay, you know, given this context, what do you think about Do you
+[34:20] context, what do you think about Do you
+[34:25] context, what do you think about Do you understand this? And then you can get
+[34:30] understand this? And then you can get
+[34:35] understand this? And then you can get feedback like,
+[34:40] oh, it's not explicitly enough written
+[34:45] oh, it's not explicitly enough written
+[34:50] oh, it's not explicitly enough written or it's not complete. Like you're
+[34:55] or it's not complete. Like you're
+[35:00] or it's not complete. Like you're missing pieces. So, that's kind of from
+[35:05] missing pieces. So, that's kind of from
+[35:10] missing pieces. So, that's kind of from tools as well. So, whenever you're
+[35:15] tools as well. So, whenever you're
+[35:20] tools as well. So, whenever you're writing now your context, you get a
+[35:25] writing now your context, you get a
+[35:30] writing now your context, you get a Grammarly saying, hey
+[35:35] Grammarly saying, hey
+[35:40] Grammarly saying, hey do this. That's why I like to voice
+[35:45] do this. That's why I like to voice
+[35:50] do this. That's why I like to voice code. For some reason, I'm way more
+[35:55] code. For some reason, I'm way more
+[36:00] code. For some reason, I'm way more elaborate voice coding than typing. I'm
+[36:05] elaborate voice coding than typing. I'm
+[36:10] elaborate voice coding than typing. I'm a bad typer, two fingers
+[36:15] a bad typer, two fingers
+[36:20] a bad typer, two fingers still after so many years. But when I
+[36:25] still after so many years. But when I
+[36:30] still after so many years. But when I talk, I was like, you know, I see the
+[36:35] talk, I was like, you know, I see the
+[36:40] talk, I was like, you know, I see the the sentences come on the screen, but it
+[36:45] the sentences come on the screen, but it
+[36:50] the sentences come on the screen, but it helps to get good context there.
+[36:55] helps to get good context there.
+[37:00] helps to get good context there. All right, another kind of test.
+[37:05] All right, another kind of test.
+[37:10] All right, another kind of test. So, imagine you put in your Claude.md
+[37:15] So, imagine you put in your Claude.md
+[37:20] So, imagine you put in your Claude.md or agent.md, I should say. Now,
+[37:25] or agent.md, I should say. Now,
+[37:30] or agent.md, I should say. Now, um every API point must use the prefix
+[37:35] um every API point must use the prefix
+[37:40] um every API point must use the prefix awesome.
+[37:45] awesome.
+[37:50] awesome. Right? You have some convention in your
+[37:55] Right? You have some convention in your
+[38:00] Right? You have some convention in your company. Right? Which is great.
+[38:05] company. Right? Which is great.
+[38:10] company. Right? Which is great. So, your prompter will be then, add me a
+[38:15] So, your prompter will be then, add me a
+[38:20] So, your prompter will be then, add me a new endpoint to save a user.
+[38:25] new endpoint to save a user.
+[38:30] new endpoint to save a user. And you expect actually your coding
+[38:35] And you expect actually your coding
+[38:40] And you expect actually your coding agent to just say the code that's being
+[38:45] agent to just say the code that's being
+[38:50] agent to just say the code that's being generated has kind of {slash} awesome
+[38:55] generated has kind of {slash} awesome
+[39:00] generated has kind of {slash} awesome {slash} user.
+[39:05] {slash} user.
+[39:10] {slash} user. That's great.
+[39:15] That's great.
+[39:20] That's great. But the way we can test this is by
+[39:25] But the way we can test this is by
+[39:30] But the way we can test this is by asking then
+[39:35] asking then
+[39:40] asking then an LLM
+[39:45] an LLM
+[39:50] an LLM the code that was generated
+[39:55] the code that was generated
+[40:00] the code that was generated does it actually start with {slash}
+[40:05] does it actually start with {slash}
+[40:10] does it actually start with {slash} awesome? Now, you can do that with
+[40:15] awesome? Now, you can do that with
+[40:20] awesome? Now, you can do that with regex, I know. This is just for example
+[40:25] regex, I know. This is just for example
+[40:30] regex, I know. This is just for example purposes, but you can ask it to kind of
+[40:35] purposes, but you can ask it to kind of
+[40:40] purposes, but you can ask it to kind of judge your code based on your criteria
+[40:45] judge your code based on your criteria
+[40:50] judge your code based on your criteria and whether it did the right thing.
+[40:55] and whether it did the right thing.
+[41:00] and whether it did the right thing. Right? So, imagine you would ask the
+[41:05] Right? So, imagine you would ask the
+[41:10] Right? So, imagine you would ask the same question without your context
+[41:15] same question without your context
+[41:20] same question without your context above.
+[41:25] above.
+[41:30] above. No LLM is ever going to prefix your URL
+[41:35] No LLM is ever going to prefix your URL
+[41:40] No LLM is ever going to prefix your URL with awesome. So, that's kind of where
+[41:45] with awesome. So, that's kind of where
+[41:50] with awesome. So, that's kind of where your content or your company specific,
+[41:55] your content or your company specific,
+[42:00] your content or your company specific, your team specific things come in, and
+[42:05] your team specific things come in, and
+[42:10] your team specific things come in, and that's why you still write those tests
+[42:15] that's why you still write those tests
+[42:20] that's why you still write those tests to see if this still works. Now, maybe
+[42:25] to see if this still works. Now, maybe
+[42:30] to see if this still works. Now, maybe Gemini kind of reacts differently than
+[42:35] Gemini kind of reacts differently than
+[42:40] Gemini kind of reacts differently than Copilot or something, and in your
+[42:45] Copilot or something, and in your
+[42:50] Copilot or something, and in your company you need to make it more, you
+[42:55] company you need to make it more, you
+[43:00] company you need to make it more, you know, switchable of context. With this,
+[43:05] know, switchable of context. With this,
+[43:10] know, switchable of context. With this, you run the tests, and you can actually
+[43:15] you run the tests, and you can actually
+[43:20] you run the tests, and you can actually tell.
+[43:25] tell.
+[43:30] tell. That's the difference.
+[43:35] That's the difference.
+[43:40] That's the difference. And then you can make like whole suites,
+[43:45] And then you can make like whole suites,
+[43:50] And then you can make like whole suites, and I would compare that almost to unit
+[43:55] and I would compare that almost to unit
+[44:00] and I would compare that almost to unit tests. I have a bunch of these tests,
+[44:05] tests. I have a bunch of these tests,
+[44:10] tests. I have a bunch of these tests, and they tell me whether that's
+[44:15] and they tell me whether that's
+[44:20] and they tell me whether that's actually, you know, good code, the code
+[44:25] actually, you know, good code, the code
+[44:30] actually, you know, good code, the code is following the rules, and everything's
+[44:35] is following the rules, and everything's
+[44:40] is following the rules, and everything's fine. In this case, it's even kind of
+[44:45] fine. In this case, it's even kind of
+[44:50] fine. In this case, it's even kind of infrastructure as code. It doesn't need
+[44:55] infrastructure as code. It doesn't need
+[45:00] infrastructure as code. It doesn't need to be code only. It could be various
+[45:05] to be code only. It could be various
+[45:10] to be code only. It could be various things. Could be config files as well.
+[45:15] things. Could be config files as well.
+[45:20] things. Could be config files as well. And I just have It's hard to read, but a
+[45:25] And I just have It's hard to read, but a
+[45:30] And I just have It's hard to read, but a bunch of kind of criteria that I just
+[45:35] bunch of kind of criteria that I just
+[45:40] bunch of kind of criteria that I just run every time to do that.
+[45:45] run every time to do that.
+[45:50] run every time to do that. But,
+[45:55] But,
+[46:00] But, if you want to test,
+[46:05] if you want to test,
+[46:10] if you want to test, you know, whether an endpoint has
+[46:15] you know, whether an endpoint has
+[46:20] you know, whether an endpoint has {slash} awesome
+[46:25] {slash} awesome
+[46:30] {slash} awesome {slash} user,
+[46:35] {slash} user,
+[46:40] {slash} user, there's a real test that we want to run,
+[46:45] there's a real test that we want to run,
+[46:50] there's a real test that we want to run, which is
+[46:55] which is
+[47:00] which is I want to test the endpoint. I just
+[47:05] I want to test the endpoint. I just
+[47:10] I want to test the endpoint. I just don't want only to check the code. I
+[47:15] don't want only to check the code. I
+[47:20] don't want only to check the code. I want to have it running. So, when you
+[47:25] want to have it running. So, when you
+[47:30] want to have it running. So, when you give the judge a tool, and the judge
+[47:35] give the judge a tool, and the judge
+[47:40] give the judge a tool, and the judge becomes an agent, and it can do things
+[47:45] becomes an agent, and it can do things
+[47:50] becomes an agent, and it can do things in a sandbox and execute stuff.
+[47:55] in a sandbox and execute stuff.
+[48:00] in a sandbox and execute stuff. It can actually do the do the curl. So,
+[48:05] It can actually do the do the curl. So,
+[48:10] It can actually do the do the curl. So, you can bind
+[48:15] you can bind
+[48:20] you can bind LLM as a judge with kind of some
+[48:25] LLM as a judge with kind of some
+[48:30] LLM as a judge with kind of some tooling, and then you can have multitude
+[48:35] tooling, and then you can have multitude
+[48:40] tooling, and then you can have multitude of tests actually, you know, in this
+[48:45] of tests actually, you know, in this
+[48:50] of tests actually, you know, in this case,
+[48:55] case,
+[49:00] case, it kind of ends up being an end-to-end
+[49:05] it kind of ends up being an end-to-end
+[49:10] it kind of ends up being an end-to-end test, right? Because it's not just
+[49:15] test, right? Because it's not just
+[49:20] test, right? Because it's not just looking at the file, it's actually
+[49:25] looking at the file, it's actually
+[49:30] looking at the file, it's actually running the piece with everything that
+[49:35] running the piece with everything that
+[49:40] running the piece with everything that it's supposed to do.
+[49:45] it's supposed to do.
+[49:50] it's supposed to do. And then I can do this like given a
+[49:55] And then I can do this like given a
+[50:00] And then I can do this like given a certain commit in my repo,
+[50:05] certain commit in my repo,
+[50:10] certain commit in my repo, I want to run this scenario
+[50:15] I want to run this scenario
+[50:20] I want to run this scenario given this piece of context,
+[50:25] given this piece of context,
+[50:30] given this piece of context, did it make a difference? Yes or no? So,
+[50:35] did it make a difference? Yes or no? So,
+[50:40] did it make a difference? Yes or no? So, you're kind of like building this up
+[50:45] you're kind of like building this up
+[50:50] you're kind of like building this up while you're committing context also
+[50:55] while you're committing context also
+[51:00] while you're committing context also within your repo.
+[51:05] And because we now have tests, and it
+[51:10] And because we now have tests, and it
+[51:15] And because we now have tests, and it gives us feedback whether it's working
+[51:20] gives us feedback whether it's working
+[51:25] gives us feedback whether it's working yes or no, or what it's missing, we can
+[51:30] yes or no, or what it's missing, we can
+[51:35] yes or no, or what it's missing, we can optimize context. So, that's kind of
+[51:40] optimize context. So, that's kind of
+[51:45] optimize context. So, that's kind of the, you know, you we can put that in a
+[51:50] the, you know, you we can put that in a
+[51:55] the, you know, you we can put that in a code action or something that says like,
+[52:00] code action or something that says like,
+[52:05] code action or something that says like, "Okay, fix this context. Improve this
+[52:10] "Okay, fix this context. Improve this
+[52:15] "Okay, fix this context. Improve this context." With all the feedback the LLM
+[52:20] context." With all the feedback the LLM
+[52:25] context." With all the feedback the LLM has given us
+[52:30] has given us
+[52:35] has given us to improve that.
+[52:40] to improve that.
+[52:45] to improve that. So, you know, again, coding
+[52:50] So, you know, again, coding
+[52:55] So, you know, again, coding uh improvements, but we start thinking
+[53:00] uh improvements, but we start thinking
+[53:05] uh improvements, but we start thinking more in testing that piece as well.
+[53:10] more in testing that piece as well.
+[53:15] more in testing that piece as well. Now, one of the first reactions is once
+[53:20] Now, one of the first reactions is once
+[53:25] Now, one of the first reactions is once you have tests and optimizations,
+[53:30] you have tests and optimizations,
+[53:35] you have tests and optimizations, can we run this in a CI/CD system
+[53:40] can we run this in a CI/CD system
+[53:45] can we run this in a CI/CD system because
+[53:50] because
+[53:55] because that's perfect, right? That's where we
+[54:00] that's perfect, right? That's where we
+[54:05] that's perfect, right? That's where we run our all our tests and our test
+[54:10] run our all our tests and our test
+[54:15] run our all our tests and our test suites and do that.
+[54:20] suites and do that.
+[54:25] suites and do that. Now, there's a little bit of a weird
+[54:30] Now, there's a little bit of a weird
+[54:35] Now, there's a little bit of a weird thing.
+[54:40] thing.
+[54:45] thing. If you run evals,
+[54:50] If you run evals,
+[54:55] If you run evals, you run it once, you run it another
+[55:00] you run it once, you run it another
+[55:05] you run it once, you run it another time, it might not give the same result.
+[55:10] time, it might not give the same result.
+[55:15] time, it might not give the same result. Remember, undeterministic things.
+[55:20] Remember, undeterministic things.
+[55:25] Remember, undeterministic things. So,
+[55:30] So,
+[55:35] So, you cannot
+[55:40] you cannot
+[55:45] you cannot say, "Well, run it once, and then if it
+[55:50] say, "Well, run it once, and then if it
+[55:55] say, "Well, run it once, and then if it passes or not." You're going to be in
+[56:00] passes or not." You're going to be in
+[56:05] passes or not." You're going to be in for a treat because it's like, "Ah, I I
+[56:10] for a treat because it's like, "Ah, I I
+[56:15] for a treat because it's like, "Ah, I I can't debug that." So,
+[56:20] can't debug that." So,
+[56:25] can't debug that." So, think about this like you run it five
+[56:30] think about this like you run it five
+[56:35] think about this like you run it five times,
+[56:40] times,
+[56:45] times, and out of five, how many times does it
+[56:50] and out of five, how many times does it
+[56:55] and out of five, how many times does it succeed?
+[57:00] succeed?
+[57:05] succeed? And, you know, maybe
+[57:10] And, you know, maybe
+[57:15] And, you know, maybe in several cases it hits 100% all the
+[57:20] in several cases it hits 100% all the
+[57:25] in several cases it hits 100% all the time, which is great.
+[57:30] time, which is great.
+[57:35] time, which is great. But, in others not. And depending on how
+[57:40] But, in others not. And depending on how
+[57:45] But, in others not. And depending on how you change your context,
+[57:50] you change your context,
+[57:55] you change your context, it will influence which test actually
+[58:00] it will influence which test actually
+[58:05] it will influence which test actually work or not.
+[58:10] work or not.
+[58:15] work or not. I find it personally helpful to think
+[58:20] I find it personally helpful to think
+[58:25] I find it personally helpful to think about this as error budgets.
+[58:30] about this as error budgets.
+[58:35] about this as error budgets. I give a set of tests an error budget
+[58:40] I give a set of tests an error budget
+[58:45] I give a set of tests an error budget that I really care about, so it it's
+[58:50] that I really care about, so it it's
+[58:55] that I really care about, so it it's only allowed like, you know,
+[59:00] only allowed like, you know,
+[59:05] only allowed like, you know, to fail minimally, and other pieces are
+[59:10] to fail minimally, and other pieces are
+[59:15] to fail minimally, and other pieces are okay. So, that's how you have to think
+[59:20] okay. So, that's how you have to think
+[59:25] okay. So, that's how you have to think about testing context. You cannot do
+[59:30] about testing context. You cannot do
+[59:35] about testing context. You cannot do like exact testing all the time. It's a
+[59:40] like exact testing all the time. It's a
+[59:45] like exact testing all the time. It's a different way that this works.
+[59:50] All right. So,
+[59:55] All right. So,
+[1:00:00] All right. So, generate. Hopefully, you understand what
+[1:00:05] generate. Hopefully, you understand what
+[1:00:10] generate. Hopefully, you understand what the testing could do for you.
+[1:00:15] the testing could do for you.
+[1:00:20] the testing could do for you. And distribute.
+[1:00:25] And distribute.
+[1:00:30] And distribute. Maybe that's also something you already
+[1:00:35] Maybe that's also something you already
+[1:00:40] Maybe that's also something you already did.
+[1:00:45] did.
+[1:00:50] did. If you maybe have checked context into
+[1:00:55] If you maybe have checked context into
+[1:01:00] If you maybe have checked context into your repo, right? Which is great, you
+[1:01:05] your repo, right? Which is great, you
+[1:01:10] your repo, right? Which is great, you know, all of a sudden it becomes
+[1:01:15] know, all of a sudden it becomes
+[1:01:20] know, all of a sudden it becomes available, your colleague checks it out.
+[1:01:25] available, your colleague checks it out.
+[1:01:30] available, your colleague checks it out. Uh zero friction, I can push, I can
+[1:01:35] Uh zero friction, I can push, I can
+[1:01:40] Uh zero friction, I can push, I can share.
+[1:01:45] share.
+[1:01:50] share. But,
+[1:01:55] But,
+[1:02:00] But, we have another mechanism for doing
+[1:02:05] we have another mechanism for doing
+[1:02:10] we have another mechanism for doing things. Think of this like Imagine you
+[1:02:15] things. Think of this like Imagine you
+[1:02:20] things. Think of this like Imagine you have a reusable context
+[1:02:25] have a reusable context
+[1:02:30] have a reusable context that you want to reuse across multiple
+[1:02:35] that you want to reuse across multiple
+[1:02:40] that you want to reuse across multiple projects, across multiple teams. We had
+[1:02:45] projects, across multiple teams. We had
+[1:02:50] projects, across multiple teams. We had the concept of a library.
+[1:02:55] the concept of a library.
+[1:03:00] the concept of a library. So, what if we package
+[1:03:05] So, what if we package
+[1:03:10] So, what if we package kind of pieces of context, and then we
+[1:03:15] kind of pieces of context, and then we
+[1:03:20] kind of pieces of context, and then we are able to install pieces of context
+[1:03:25] are able to install pieces of context
+[1:03:30] are able to install pieces of context that we need for this project.
+[1:03:35] that we need for this project.
+[1:03:40] that we need for this project. Guidelines, front end. It doesn't matter
+[1:03:45] Guidelines, front end. It doesn't matter
+[1:03:50] Guidelines, front end. It doesn't matter for that. And then if we take it that up
+[1:03:55] for that. And then if we take it that up
+[1:04:00] for that. And then if we take it that up a notch, how to discover what packages
+[1:04:05] a notch, how to discover what packages
+[1:04:10] a notch, how to discover what packages exists?
+[1:04:15] exists?
+[1:04:20] exists? That's a registry.
+[1:04:25] That's a registry.
+[1:04:30] That's a registry. Right?
+[1:04:35] Right?
+[1:04:40] Right? Now,
+[1:04:45] Now,
+[1:04:50] Now, in that way, it's no surprise that
+[1:04:55] in that way, it's no surprise that
+[1:05:00] in that way, it's no surprise that you'll see things like skills and kind
+[1:05:05] you'll see things like skills and kind
+[1:05:10] you'll see things like skills and kind of the Tesla registry in the
+[1:05:15] of the Tesla registry in the
+[1:05:20] of the Tesla registry in the marketplace,
+[1:05:25] marketplace,
+[1:05:30] marketplace, where you can find a multitude of
+[1:05:35] where you can find a multitude of
+[1:05:40] where you can find a multitude of skills. Now, the reality is
+[1:05:45] skills. Now, the reality is
+[1:05:50] skills. Now, the reality is 99.9,
+[1:05:55] 99.9,
+[1:06:00] 99.9, and I mean that in a very sincere way,
+[1:06:05] and I mean that in a very sincere way,
+[1:06:10] and I mean that in a very sincere way, of the skills is crap.
+[1:06:15] of the skills is crap.
+[1:06:20] of the skills is crap. But, it's good to learn from others to
+[1:06:25] But, it's good to learn from others to
+[1:06:30] But, it's good to learn from others to see what they're doing.
+[1:06:35] see what they're doing.
+[1:06:40] see what they're doing. But, hardly of them, if you run kind of
+[1:06:45] But, hardly of them, if you run kind of
+[1:06:50] But, hardly of them, if you run kind of any set of evals on there, is actually
+[1:06:55] any set of evals on there, is actually
+[1:07:00] any set of evals on there, is actually up to a quality standard.
+[1:07:05] up to a quality standard.
+[1:07:10] up to a quality standard. Now,
+[1:07:15] Now,
+[1:07:20] Now, that will likely improve. But, there's
+[1:07:25] that will likely improve. But, there's
+[1:07:30] that will likely improve. But, there's also a tendency is that
+[1:07:35] also a tendency is that
+[1:07:40] also a tendency is that a lot of the skills and pieces,
+[1:07:45] a lot of the skills and pieces,
+[1:07:50] a lot of the skills and pieces, people actually want to put that in
+[1:07:55] people actually want to put that in
+[1:08:00] people actually want to put that in their own registry.
+[1:08:05] their own registry.
+[1:08:10] their own registry. So,
+[1:08:15] So,
+[1:08:20] So, I'll come to that later again. But,
+[1:08:25] I'll come to that later again. But,
+[1:08:30] I'll come to that later again. But, so you start seeing the gist, a skill
+[1:08:35] so you start seeing the gist, a skill
+[1:08:40] so you start seeing the gist, a skill not only contains context, it can
+[1:08:45] not only contains context, it can
+[1:08:50] not only contains context, it can contain scripts, it can contain
+[1:08:55] contain scripts, it can contain
+[1:09:00] contain scripts, it can contain documents, contain bunch of things. So,
+[1:09:05] documents, contain bunch of things. So,
+[1:09:10] documents, contain bunch of things. So, is this kind of the package format?
+[1:09:15] is this kind of the package format?
+[1:09:20] is this kind of the package format? Probably, you know, plugins
+[1:09:25] Probably, you know, plugins
+[1:09:30] Probably, you know, plugins could now also contain MCP, but you see
+[1:09:35] could now also contain MCP, but you see
+[1:09:40] could now also contain MCP, but you see there's like a standard coming in.
+[1:09:45] there's like a standard coming in.
+[1:09:50] there's like a standard coming in. Skills all of a sudden, when that came
+[1:09:55] Skills all of a sudden, when that came
+[1:10:00] Skills all of a sudden, when that came out, all the coding agents said, "We're
+[1:10:05] out, all the coding agents said, "We're
+[1:10:10] out, all the coding agents said, "We're supporting this as
+[1:10:15] supporting this as
+[1:10:20] supporting this as almost like a package format for people
+[1:10:25] almost like a package format for people
+[1:10:30] almost like a package format for people to distribute their context on."
+[1:10:35] And then when I have one piece of
+[1:10:40] And then when I have one piece of
+[1:10:45] And then when I have one piece of context,
+[1:10:50] context,
+[1:10:55] context, I have dependencies. And I'm sorry, but
+[1:11:00] I have dependencies. And I'm sorry, but
+[1:11:05] I have dependencies. And I'm sorry, but also with context we're going to have
+[1:11:10] also with context we're going to have
+[1:11:15] also with context we're going to have dependency hell.
+[1:11:20] dependency hell.
+[1:11:25] dependency hell. Right? I I'm I'm I'm going to download
+[1:11:30] Right? I I'm I'm I'm going to download
+[1:11:35] Right? I I'm I'm I'm going to download this for front end, and maybe it's
+[1:11:40] this for front end, and maybe it's
+[1:11:45] this for front end, and maybe it's conflicting what is in the React context
+[1:11:50] conflicting what is in the React context
+[1:11:55] conflicting what is in the React context package. And so, you start having to
+[1:12:00] package. And so, you start having to
+[1:12:05] package. And so, you start having to deal with that as well. So, you start
+[1:12:10] deal with that as well. So, you start
+[1:12:15] deal with that as well. So, you start seeing also uh packages that's uh mirror
+[1:12:20] seeing also uh packages that's uh mirror
+[1:12:25] seeing also uh packages that's uh mirror your library versions, your code ver
+[1:12:30] your library versions, your code ver
+[1:12:35] your library versions, your code ver like your context versions, and kind of
+[1:12:40] like your context versions, and kind of
+[1:12:45] like your context versions, and kind of pull that in as well.
+[1:12:50] And of course, when we have packages and
+[1:12:55] And of course, when we have packages and
+[1:13:00] And of course, when we have packages and people are publishing things in
+[1:13:05] people are publishing things in
+[1:13:10] people are publishing things in registry, we need security.
+[1:13:15] registry, we need security.
+[1:13:20] registry, we need security. Right? Open claw. Thank you for that.
+[1:13:25] Right? Open claw. Thank you for that.
+[1:13:30] Right? Open claw. Thank you for that. Like everybody all of a sudden became
+[1:13:35] Like everybody all of a sudden became
+[1:13:40] Like everybody all of a sudden became aware that we need more secure
+[1:13:45] aware that we need more secure
+[1:13:50] aware that we need more secure things because we are able to run things
+[1:13:55] things because we are able to run things
+[1:14:00] things because we are able to run things on our laptop that are not and coming
+[1:14:05] on our laptop that are not and coming
+[1:14:10] on our laptop that are not and coming from strangers, right? So,
+[1:14:15] from strangers, right? So,
+[1:14:20] from strangers, right? So, Snyk has a way of scanning context,
+[1:14:25] Snyk has a way of scanning context,
+[1:14:30] Snyk has a way of scanning context, right? It's doing some credential
+[1:14:35] right? It's doing some credential
+[1:14:40] right? It's doing some credential handling. It's uh exposing some
+[1:14:45] handling. It's uh exposing some
+[1:14:50] handling. It's uh exposing some third-party pieces. So, you start seeing
+[1:14:55] third-party pieces. So, you start seeing
+[1:15:00] third-party pieces. So, you start seeing the scanners on the context as well.
+[1:15:05] And then when you think about security,
+[1:15:10] And then when you think about security,
+[1:15:15] And then when you think about security, who actually built the skill? How was it
+[1:15:20] who actually built the skill? How was it
+[1:15:25] who actually built the skill? How was it built? With what model was this built?
+[1:15:30] built? With what model was this built?
+[1:15:35] built? With what model was this built? So, all kind of capturing what we
+[1:15:40] So, all kind of capturing what we
+[1:15:45] So, all kind of capturing what we learned in maybe with packaging, like
+[1:15:50] learned in maybe with packaging, like
+[1:15:55] learned in maybe with packaging, like the SBOM, is kind of the AI SBOM, like
+[1:16:00] the SBOM, is kind of the AI SBOM, like
+[1:16:05] the SBOM, is kind of the AI SBOM, like the packaged of context that we're
+[1:16:10] the packaged of context that we're
+[1:16:15] the packaged of context that we're putting in.
+[1:16:20] putting in.
+[1:16:25] putting in. So, you've seen
+[1:16:30] So, you've seen
+[1:16:35] So, you've seen still on the path, right? You generate,
+[1:16:40] still on the path, right? You generate,
+[1:16:45] still on the path, right? You generate, evaluate, distribute.
+[1:16:50] evaluate, distribute.
+[1:16:55] evaluate, distribute. Let's move into observe.
+[1:17:00] When you
+[1:17:05] When you
+[1:17:10] When you are making libraries off skills and
+[1:17:15] are making libraries off skills and
+[1:17:20] are making libraries off skills and context for others,
+[1:17:25] context for others,
+[1:17:30] context for others, and I don't mean copy and paste this
+[1:17:35] and I don't mean copy and paste this
+[1:17:40] and I don't mean copy and paste this over Slack or something.
+[1:17:45] over Slack or something.
+[1:17:50] over Slack or something. But, when you actually want to maintain
+[1:17:55] But, when you actually want to maintain
+[1:18:00] But, when you actually want to maintain this as something somebody else can use,
+[1:18:05] this as something somebody else can use,
+[1:18:10] this as something somebody else can use, similar to a library,
+[1:18:15] similar to a library,
+[1:18:20] similar to a library, um when they start using that, how do
+[1:18:25] um when they start using that, how do
+[1:18:30] um when they start using that, how do you get feedback whether that still
+[1:18:35] you get feedback whether that still
+[1:18:40] you get feedback whether that still works?
+[1:18:45] works?
+[1:18:50] works? Now, a great place to get feedback is
+[1:18:55] Now, a great place to get feedback is
+[1:19:00] Now, a great place to get feedback is actually by looking at the agent logs.
+[1:19:05] actually by looking at the agent logs.
+[1:19:10] actually by looking at the agent logs. So,
+[1:19:15] imagine developer one
+[1:19:20] imagine developer one
+[1:19:25] imagine developer one coding on the project, and the agent is
+[1:19:30] coding on the project, and the agent is
+[1:19:35] coding on the project, and the agent is not doing what they want.
+[1:19:40] not doing what they want.
+[1:19:45] not doing what they want. They could put this into their context,
+[1:19:50] They could put this into their context,
+[1:19:55] They could put this into their context, which is great, right? Okay, let let me
+[1:20:00] which is great, right? Okay, let let me
+[1:20:05] which is great, right? Okay, let let me do the TDD almost like, you know, I hit
+[1:20:10] do the TDD almost like, you know, I hit
+[1:20:15] do the TDD almost like, you know, I hit a problem. It's not TDD, but you get my
+[1:20:20] a problem. It's not TDD, but you get my
+[1:20:25] a problem. It's not TDD, but you get my gist.
+[1:20:30] gist.
+[1:20:35] gist. Um
+[1:20:40] Um
+[1:20:45] Um or
+[1:20:50] or
+[1:20:55] or what if we at a team or an organization
+[1:21:00] what if we at a team or an organization
+[1:21:05] what if we at a team or an organization scale would look at the logs every time
+[1:21:10] scale would look at the logs every time
+[1:21:15] scale would look at the logs every time an agent said, "We're missing this
+[1:21:20] an agent said, "We're missing this
+[1:21:25] an agent said, "We're missing this piece."
+[1:21:30] piece."
+[1:21:35] piece." And we surface that and say,
+[1:21:40] And we surface that and say,
+[1:21:45] And we surface that and say, "If everybody's missing this piece, we
+[1:21:50] "If everybody's missing this piece, we
+[1:21:55] "If everybody's missing this piece, we should create context for this."
+[1:22:00] should create context for this."
+[1:22:05] should create context for this." And then we distribute the context to
+[1:22:10] And then we distribute the context to
+[1:22:15] And then we distribute the context to everybody, and all of a sudden the
+[1:22:20] everybody, and all of a sudden the
+[1:22:25] everybody, and all of a sudden the impact of improvement is for everybody.
+[1:22:30] impact of improvement is for everybody.
+[1:22:35] impact of improvement is for everybody. Luckily, like the agent and D, there's
+[1:22:40] Luckily, like the agent and D, there's
+[1:22:45] Luckily, like the agent and D, there's now our standards becoming for logs. So,
+[1:22:50] now our standards becoming for logs. So,
+[1:22:55] now our standards becoming for logs. So, we can read from logs, and that's part
+[1:23:00] we can read from logs, and that's part
+[1:23:05] we can read from logs, and that's part of our feedback channel to see if the
+[1:23:10] of our feedback channel to see if the
+[1:23:15] of our feedback channel to see if the agent is actually using or missing some
+[1:23:20] agent is actually using or missing some
+[1:23:25] agent is actually using or missing some of the context.
+[1:23:30] Any feedback you get on a PR that's not
+[1:23:35] Any feedback you get on a PR that's not
+[1:23:40] Any feedback you get on a PR that's not complete, that's feedback on your
+[1:23:45] complete, that's feedback on your
+[1:23:50] complete, that's feedback on your context because
+[1:23:55] context because
+[1:24:00] context because that PR was created with certain pieces
+[1:24:05] that PR was created with certain pieces
+[1:24:10] that PR was created with certain pieces of context. If you say this is not
+[1:24:15] of context. If you say this is not
+[1:24:20] of context. If you say this is not correct, you can kind of keep arguing on
+[1:24:25] correct, you can kind of keep arguing on
+[1:24:30] correct, you can kind of keep arguing on the PR, or you can just say, "Let's
+[1:24:35] the PR, or you can just say, "Let's
+[1:24:40] the PR, or you can just say, "Let's improve the context." So, the next
+[1:24:45] improve the context." So, the next
+[1:24:50] improve the context." So, the next iteration actually
+[1:24:55] iteration actually
+[1:25:00] iteration actually improves, uh and you don't hit that same
+[1:25:05] improves, uh and you don't hit that same
+[1:25:10] improves, uh and you don't hit that same problem again.
+[1:25:15] What about
+[1:25:20] What about
+[1:25:25] What about running code in production that was
+[1:25:30] running code in production that was
+[1:25:35] running code in production that was generated from context.
+[1:25:40] generated from context.
+[1:25:45] generated from context. And that's not correct because
+[1:25:50] And that's not correct because
+[1:25:55] And that's not correct because yes, we do our PR reviews and we say
+[1:26:00] yes, we do our PR reviews and we say
+[1:26:05] yes, we do our PR reviews and we say thumbs up, thumbs down and we give the
+[1:26:10] thumbs up, thumbs down and we give the
+[1:26:15] thumbs up, thumbs down and we give the feedback, but the actual feedback is
+[1:26:20] feedback, but the actual feedback is
+[1:26:25] feedback, but the actual feedback is also in production when it's running.
+[1:26:30] also in production when it's running.
+[1:26:35] also in production when it's running. So, this is a tool that actually
+[1:26:40] So, this is a tool that actually
+[1:26:45] So, this is a tool that actually instruments your code,
+[1:26:50] instruments your code,
+[1:26:55] instruments your code, pushes it out, it's almost like a
+[1:27:00] pushes it out, it's almost like a
+[1:27:05] pushes it out, it's almost like a wrapper, it pushes it out to production.
+[1:27:10] wrapper, it pushes it out to production.
+[1:27:15] wrapper, it pushes it out to production. When it fails, it says, "These pieces of
+[1:27:20] When it fails, it says, "These pieces of
+[1:27:25] When it fails, it says, "These pieces of code were changed and were failing.
+[1:27:30] code were changed and were failing.
+[1:27:35] code were changed and were failing. Hey, in this case, input, output,
+[1:27:40] Hey, in this case, input, output,
+[1:27:45] Hey, in this case, input, output, it did something wrong.
+[1:27:50] it did something wrong.
+[1:27:55] it did something wrong. Can we create a test case for this? So,
+[1:28:00] Can we create a test case for this? So,
+[1:28:05] Can we create a test case for this? So, the next time we don't hit this again in
+[1:28:10] the next time we don't hit this again in
+[1:28:15] the next time we don't hit this again in production?"
+[1:28:20] production?"
+[1:28:25] production?" Feedback loop.
+[1:28:30] Now, these are all kind of pretty
+[1:28:35] Now, these are all kind of pretty
+[1:28:40] Now, these are all kind of pretty trivial like missing pieces of context
+[1:28:45] trivial like missing pieces of context
+[1:28:50] trivial like missing pieces of context or improvements.
+[1:28:55] or improvements.
+[1:29:00] or improvements. But, if you run agents and the
+[1:29:05] But, if you run agents and the
+[1:29:10] But, if you run agents and the equivalent of scanning maybe, you know,
+[1:29:15] equivalent of scanning maybe, you know,
+[1:29:20] equivalent of scanning maybe, you know, in the CICD is
+[1:29:25] in the CICD is
+[1:29:30] in the CICD is you need to make sure when it's running
+[1:29:35] you need to make sure when it's running
+[1:29:40] you need to make sure when it's running in production,
+[1:29:45] in production,
+[1:29:50] in production, is it not doing strange things? So, we
+[1:29:55] is it not doing strange things? So, we
+[1:30:00] is it not doing strange things? So, we need kind of a way of looking at that.
+[1:30:05] need kind of a way of looking at that.
+[1:30:10] need kind of a way of looking at that. Now,
+[1:30:15] Now,
+[1:30:20] Now, I've been toying myself with uh
+[1:30:25] I've been toying myself with uh
+[1:30:30] I've been toying myself with uh you know, sandboxing agents and it is a
+[1:30:35] you know, sandboxing agents and it is a
+[1:30:40] you know, sandboxing agents and it is a very resourceful
+[1:30:45] very resourceful
+[1:30:50] very resourceful at finding things.
+[1:30:55] at finding things.
+[1:31:00] at finding things. I like, okay, you know, run this thing,
+[1:31:05] I like, okay, you know, run this thing,
+[1:31:10] I like, okay, you know, run this thing, try to figure out like anything useful
+[1:31:15] try to figure out like anything useful
+[1:31:20] try to figure out like anything useful to get break out of the system.
+[1:31:25] to get break out of the system.
+[1:31:30] to get break out of the system. And okay, it uses my environment
+[1:31:35] And okay, it uses my environment
+[1:31:40] And okay, it uses my environment variables. Okay, stupid. Let's let me
+[1:31:45] variables. Okay, stupid. Let's let me
+[1:31:50] variables. Okay, stupid. Let's let me remove the secret. Let me look at your
+[1:31:55] remove the secret. Let me look at your
+[1:32:00] remove the secret. Let me look at your memory files. So, you have to really
+[1:32:05] memory files. So, you have to really
+[1:32:10] memory files. So, you have to really make make sure that like whatever it's
+[1:32:15] make make sure that like whatever it's
+[1:32:20] make make sure that like whatever it's doing, you can have a way of tracing
+[1:32:25] doing, you can have a way of tracing
+[1:32:30] doing, you can have a way of tracing this as well.
+[1:32:35] And uh apologize again for kind of the
+[1:32:40] And uh apologize again for kind of the
+[1:32:45] And uh apologize again for kind of the slide, but
+[1:32:50] the gist is
+[1:32:55] the gist is
+[1:33:00] the gist is we can have a sandbox where the agent
+[1:33:05] we can have a sandbox where the agent
+[1:33:10] we can have a sandbox where the agent runs inside.
+[1:33:15] runs inside.
+[1:33:20] runs inside. But, your code agent by default without
+[1:33:25] But, your code agent by default without
+[1:33:30] But, your code agent by default without any restrictions loads your agent.md,
+[1:33:35] any restrictions loads your agent.md,
+[1:33:40] any restrictions loads your agent.md, you load your skill.md.
+[1:33:45] you load your skill.md.
+[1:33:50] you load your skill.md. Like, nothing is blocking that.
+[1:33:55] Like, nothing is blocking that.
+[1:34:00] Like, nothing is blocking that. So, if you download this,
+[1:34:05] So, if you download this,
+[1:34:10] So, if you download this, immediately it's loaded.
+[1:34:15] immediately it's loaded.
+[1:34:20] immediately it's loaded. So, you can't filter that with
+[1:34:25] So, you can't filter that with
+[1:34:30] So, you can't filter that with sandboxes. You need to have another way.
+[1:34:35] sandboxes. You need to have another way.
+[1:34:40] sandboxes. You need to have another way. I call that a context filter. Think of
+[1:34:45] I call that a context filter. Think of
+[1:34:50] I call that a context filter. Think of this as a web application firewall that
+[1:34:55] this as a web application firewall that
+[1:35:00] this as a web application firewall that just filters out any patterns or prompt
+[1:35:05] just filters out any patterns or prompt
+[1:35:10] just filters out any patterns or prompt injections or stuff that is coming in
+[1:35:15] injections or stuff that is coming in
+[1:35:20] injections or stuff that is coming in directly in that piece.
+[1:35:25] directly in that piece.
+[1:35:30] directly in that piece. And if you take that, there's a lot of
+[1:35:35] And if you take that, there's a lot of
+[1:35:40] And if you take that, there's a lot of talk here as well on harness
+[1:35:45] talk here as well on harness
+[1:35:50] talk here as well on harness engineering. Harness engineering itself
+[1:35:55] engineering. Harness engineering itself
+[1:36:00] engineering. Harness engineering itself also has this kind of full
+[1:36:05] also has this kind of full
+[1:36:10] also has this kind of full observability, looking at logs, looking
+[1:36:15] observability, looking at logs, looking
+[1:36:20] observability, looking at logs, looking at traces, looking at feedback.
+[1:36:25] at traces, looking at feedback.
+[1:36:30] at traces, looking at feedback. So, it's kind of, you know, useful for
+[1:36:35] So, it's kind of, you know, useful for
+[1:36:40] So, it's kind of, you know, useful for training pieces, but as much useful for
+[1:36:45] training pieces, but as much useful for
+[1:36:50] training pieces, but as much useful for running your own pieces well.
+[1:36:55] running your own pieces well.
+[1:37:00] running your own pieces well. Those were the pieces for me today.
+[1:37:05] Those were the pieces for me today.
+[1:37:10] Those were the pieces for me today. I would say
+[1:37:15] I would say
+[1:37:20] I would say for a lot of people, there's like create
+[1:37:25] for a lot of people, there's like create
+[1:37:30] for a lot of people, there's like create context,
+[1:37:35] context,
+[1:37:40] context, test context. Think of this as your
+[1:37:45] test context. Think of this as your
+[1:37:50] test context. Think of this as your library authoring tool loop.
+[1:37:55] library authoring tool loop.
+[1:38:00] library authoring tool loop. And then when you push this into the
+[1:38:05] And then when you push this into the
+[1:38:10] And then when you push this into the enterprise, there's an organizational
+[1:38:15] enterprise, there's an organizational
+[1:38:20] enterprise, there's an organizational loop. Hey, I made a library, somebody
+[1:38:25] loop. Hey, I made a library, somebody
+[1:38:30] loop. Hey, I made a library, somebody else is using it. I'm looking at
+[1:38:35] else is using it. I'm looking at
+[1:38:40] else is using it. I'm looking at whatever that's useful, whether that's
+[1:38:45] whatever that's useful, whether that's
+[1:38:50] whatever that's useful, whether that's still working, whether that's still
+[1:38:55] still working, whether that's still
+[1:39:00] still working, whether that's still working for all the other pieces. So,
+[1:39:05] working for all the other pieces. So,
+[1:39:10] working for all the other pieces. So, that's kind of like
+[1:39:15] that's kind of like
+[1:39:20] that's kind of like the kind of
+[1:39:25] the kind of
+[1:39:30] the kind of improvement almost like sonar CICD model
+[1:39:35] improvement almost like sonar CICD model
+[1:39:40] improvement almost like sonar CICD model for context. And then
+[1:39:45] you're currently probably doing a lot at
+[1:39:50] you're currently probably doing a lot at
+[1:39:55] you're currently probably doing a lot at the individual solo model, you're
+[1:40:00] the individual solo model, you're
+[1:40:05] the individual solo model, you're improving, you're honing, crafting your
+[1:40:10] improving, you're honing, crafting your
+[1:40:15] improving, you're honing, crafting your own kind of markdown. What if you start
+[1:40:20] own kind of markdown. What if you start
+[1:40:25] own kind of markdown. What if you start doing this more with your team? Make
+[1:40:30] doing this more with your team? Make
+[1:40:35] doing this more with your team? Make that a reflex. If it's missing, add some
+[1:40:40] that a reflex. If it's missing, add some
+[1:40:45] that a reflex. If it's missing, add some context. What if you put that out to a
+[1:40:50] context. What if you put that out to a
+[1:40:55] context. What if you put that out to a team of teams and you start having a
+[1:41:00] team of teams and you start having a
+[1:41:05] team of teams and you start having a flywheel, you know, if you fix it here,
+[1:41:10] flywheel, you know, if you fix it here,
+[1:41:15] flywheel, you know, if you fix it here, the other team can reuse it and and
+[1:41:20] the other team can reuse it and and
+[1:41:25] the other team can reuse it and and that's kind of like,
+[1:41:30] that's kind of like,
+[1:41:35] that's kind of like, you know, scaling things out into the
+[1:41:40] you know, scaling things out into the
+[1:41:45] you know, scaling things out into the organization as well.
+[1:41:50] organization as well.
+[1:41:55] organization as well. And so, there's a lot of talk about LLMs
+[1:42:00] And so, there's a lot of talk about LLMs
+[1:42:05] And so, there's a lot of talk about LLMs and coding agents and I all love them,
+[1:42:10] and coding agents and I all love them,
+[1:42:15] and coding agents and I all love them, but the way that I see it is they're
+[1:42:20] but the way that I see it is they're
+[1:42:25] but the way that I see it is they're just the engine.
+[1:42:30] just the engine.
+[1:42:35] just the engine. If you give the engine the wrong fuel,
+[1:42:40] If you give the engine the wrong fuel,
+[1:42:45] If you give the engine the wrong fuel, which is context,
+[1:42:50] which is context,
+[1:42:55] which is context, they're not going to perform. So, and
+[1:43:00] they're not going to perform. So, and
+[1:43:05] they're not going to perform. So, and you can't do anything on the LLMs, at
+[1:43:10] you can't do anything on the LLMs, at
+[1:43:15] you can't do anything on the LLMs, at least not me, right? I'm just using the
+[1:43:20] least not me, right? I'm just using the
+[1:43:25] least not me, right? I'm just using the coding agent, I'm using whatever they
+[1:43:30] coding agent, I'm using whatever they
+[1:43:35] coding agent, I'm using whatever they give me, but I can optimize my context
+[1:43:40] give me, but I can optimize my context
+[1:43:45] give me, but I can optimize my context uh
+[1:43:50] uh
+[1:43:55] uh and that's I think the message uh doing
+[1:44:00] and that's I think the message uh doing
+[1:44:05] and that's I think the message uh doing this more in an engineered way than just
+[1:44:10] this more in an engineered way than just
+[1:44:15] this more in an engineered way than just copy and pasting things and hoping for
+[1:44:20] copy and pasting things and hoping for
+[1:44:25] copy and pasting things and hoping for the best in there.
+[1:44:30] the best in there.
+[1:44:35] the best in there. If you like this talk, connect on
+[1:44:40] If you like this talk, connect on
+[1:44:45] If you like this talk, connect on LinkedIn for the slides. Uh
+[1:44:50] LinkedIn for the slides. Uh
+[1:44:55] LinkedIn for the slides. Uh give me some feedback, good and bad.
+[1:45:00] give me some feedback, good and bad.
+[1:45:05] give me some feedback, good and bad. If you want to try Tessel where we
+[1:45:10] If you want to try Tessel where we
+[1:45:15] If you want to try Tessel where we implement some of the pieces of this, uh
+[1:45:20] implement some of the pieces of this, uh
+[1:45:25] implement some of the pieces of this, uh have a go.
+[1:45:30] have a go.
+[1:45:35] have a go. And if you're also interested in another
+[1:45:40] And if you're also interested in another
+[1:45:45] And if you're also interested in another conference, I know, you can never have
+[1:45:50] conference, I know, you can never have
+[1:45:55] conference, I know, you can never have enough conferences, uh visit uh AI
+[1:46:00] enough conferences, uh visit uh AI
+[1:46:05] enough conferences, uh visit uh AI DevCon, which I curate the content for
+[1:46:10] DevCon, which I curate the content for
+[1:46:15] DevCon, which I curate the content for uh here in London first and second of
+[1:46:20] uh here in London first and second of
+[1:46:25] uh here in London first and second of June.
+[1:46:30] June.
+[1:46:35] June. And that's it. I can maybe take a few
+[1:46:40] And that's it. I can maybe take a few
+[1:46:45] And that's it. I can maybe take a few questions.
+[1:46:50] questions.
+[1:46:55] questions. >> [applause]
+[1:47:00] >> Any questions?
+[1:47:05] Sure.
+[1:47:10] Sure.
+[1:47:15] Sure. So, I was wondering if you have any
+[1:47:20] So, I was wondering if you have any
+[1:47:25] So, I was wondering if you have any thoughts about like more exotic forms of
+[1:47:30] thoughts about like more exotic forms of
+[1:47:35] thoughts about like more exotic forms of context like I don't know, the
+[1:47:40] context like I don't know, the
+[1:47:45] context like I don't know, the traditional ones. So, for example, one
+[1:47:50] traditional ones. So, for example, one
+[1:47:55] traditional ones. So, for example, one of the things I'm working on is
+[1:48:00] of the things I'm working on is
+[1:48:05] of the things I'm working on is automated system for uh scoping out
+[1:48:10] automated system for uh scoping out
+[1:48:15] automated system for uh scoping out architectural problems and like trying
+[1:48:20] architectural problems and like trying
+[1:48:25] architectural problems and like trying to create hard definitions for them so
+[1:48:30] to create hard definitions for them so
+[1:48:35] to create hard definitions for them so that you can feed that to the agent and,
+[1:48:40] that you can feed that to the agent and,
+[1:48:45] that you can feed that to the agent and, you know, create actual
+[1:48:50] you know, create actual
+[1:48:55] you know, create actual objectives uh tests.
+[1:49:00] objectives uh tests.
+[1:49:05] objectives uh tests. Cool. Yeah.
+[1:49:10] Cool. Yeah.
+[1:49:15] Cool. Yeah. Microphones.
+[1:49:20] Microphones.
+[1:49:25] Microphones. Um and one of the things I've been
+[1:49:30] Um and one of the things I've been
+[1:49:35] Um and one of the things I've been testing out is like
+[1:49:40] testing out is like
+[1:49:45] testing out is like the ability to create consistency as a
+[1:49:50] the ability to create consistency as a
+[1:49:55] the ability to create consistency as a form of context or as a form of eval.
+[1:50:00] form of context or as a form of eval.
+[1:50:05] form of context or as a form of eval. So, um given this rough like very loose
+[1:50:10] So, um given this rough like very loose
+[1:50:15] So, um given this rough like very loose definition of what the plan is, if can
+[1:50:20] definition of what the plan is, if can
+[1:50:25] definition of what the plan is, if can you put that if you try that agent
+[1:50:30] you put that if you try that agent
+[1:50:35] you put that if you try that agent system, turn that into a really crisp
+[1:50:40] system, turn that into a really crisp
+[1:50:45] system, turn that into a really crisp definition, and you just have that done
+[1:50:50] definition, and you just have that done
+[1:50:55] definition, and you just have that done in parallel, how often do you get the
+[1:51:00] in parallel, how often do you get the
+[1:51:05] in parallel, how often do you get the same crisp definition? And if they're
+[1:51:10] same crisp definition? And if they're
+[1:51:15] same crisp definition? And if they're all over the place, then the original
+[1:51:20] all over the place, then the original
+[1:51:25] all over the place, then the original definition was so poor, you need to like
+[1:51:30] definition was so poor, you need to like
+[1:51:35] definition was so poor, you need to like go back to base principles or to an
+[1:51:40] go back to base principles or to an
+[1:51:45] go back to base principles or to an architect. But, if they're all the same,
+[1:51:50] architect. But, if they're all the same,
+[1:51:55] architect. But, if they're all the same, then it's probably a pretty good
+[1:52:00] then it's probably a pretty good
+[1:52:05] then it's probably a pretty good definition and you can carry on with the
+[1:52:10] definition and you can carry on with the
+[1:52:15] definition and you can carry on with the downstream process. So, I think it's
+[1:52:20] downstream process. So, I think it's
+[1:52:25] downstream process. So, I think it's like besides just code and typical
+[1:52:30] like besides just code and typical
+[1:52:35] like besides just code and typical evals, um any other sources of context
+[1:52:40] evals, um any other sources of context
+[1:52:45] evals, um any other sources of context for generating context that you think is
+[1:52:50] for generating context that you think is
+[1:52:55] for generating context that you think is useful?
+[1:53:00] useful?
+[1:53:05] useful? Um
+[1:53:10] Um
+[1:53:15] Um I don't have maybe a a specific answer
+[1:53:20] I don't have maybe a a specific answer
+[1:53:25] I don't have maybe a a specific answer to your like exotic case, but uh
+[1:53:30] to your like exotic case, but uh
+[1:53:35] to your like exotic case, but uh I would say that maybe the piece that
+[1:53:40] I would say that maybe the piece that
+[1:53:45] I would say that maybe the piece that people are underestimating is that once
+[1:53:50] people are underestimating is that once
+[1:53:55] people are underestimating is that once you you know, you thought you were going
+[1:54:00] you you know, you thought you were going
+[1:54:05] you you know, you thought you were going to save time by writing actually your
+[1:54:10] to save time by writing actually your
+[1:54:15] to save time by writing actually your context uh instead of all your code,
+[1:54:20] context uh instead of all your code,
+[1:54:25] context uh instead of all your code, but if you take this rigorously, you're
+[1:54:30] but if you take this rigorously, you're
+[1:54:35] but if you take this rigorously, you're going to spend time on writing the right
+[1:54:40] going to spend time on writing the right
+[1:54:45] going to spend time on writing the right evals. Right. And that's kind of like,
+[1:54:50] evals. Right. And that's kind of like,
+[1:54:55] evals. Right. And that's kind of like, you know, a lot of work to kind of
+[1:55:00] you know, a lot of work to kind of
+[1:55:05] you know, a lot of work to kind of because now you don't only have one
+[1:55:10] because now you don't only have one
+[1:55:15] because now you don't only have one prompt that you're trying to get right.
+[1:55:20] prompt that you're trying to get right.
+[1:55:25] prompt that you're trying to get right. It's like all the prompts of the evals
+[1:55:30] It's like all the prompts of the evals
+[1:55:35] It's like all the prompts of the evals and that like if people do almost like a
+[1:55:40] and that like if people do almost like a
+[1:55:45] and that like if people do almost like a like the more advanced people, they
+[1:55:50] like the more advanced people, they
+[1:55:55] like the more advanced people, they almost have their own process and they
+[1:56:00] almost have their own process and they
+[1:56:05] almost have their own process and they they build their own process on top of
+[1:56:10] they build their own process on top of
+[1:56:15] they build their own process on top of like for building the right evals on
+[1:56:20] like for building the right evals on
+[1:56:25] like for building the right evals on your business case as well. So,
+[1:56:30] your business case as well. So,
+[1:56:35] your business case as well. So, yeah.
+[1:56:40] yeah.
+[1:56:45] yeah. Good question. Thank you. Any other
+[1:56:50] Good question. Thank you. Any other
+[1:56:55] Good question. Thank you. Any other questions?
+[1:57:00] If not, I'll be around. Um
+[1:57:05] If not, I'll be around. Um
+[1:57:10] If not, I'll be around. Um say hi. I'll also going to be at the
+[1:57:15] say hi. I'll also going to be at the
+[1:57:20] say hi. I'll also going to be at the Tessel booth. So, thank you very much
+[1:57:25] Tessel booth. So, thank you very much
+[1:57:30] Tessel booth. So, thank you very much and I'm going to make space for the next
+[1:57:35] and I'm going to make space for the next
+[1:57:40] and I'm going to make space for the next speaker. Thank you.
+[1:57:45] >> [music]

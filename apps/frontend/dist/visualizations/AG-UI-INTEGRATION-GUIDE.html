@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AG-UI Integration Guide — The New Fuse Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #06080f;
+        --surface: #0f1319;
+        --border: #1c2333;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+        --accent: #3b82f6;
+      }
+      body {
+        font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+        padding: 0;
+      }
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(6, 8, 15, 0.85);
+        backdrop-filter: blur(16px) saturate(1.8);
+        -webkit-backdrop-filter: blur(16px) saturate(1.8);
+        border-bottom: 1px solid var(--border);
+        padding: 0 40px;
+      }
+      .nav-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+      }
+      .nav-brand {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: var(--text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .back-link {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .back-link:hover {
+        color: var(--text);
+      }
+      .md-viewer {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 40px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      .md-viewer h1 { font-size: 28px; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
+      .md-viewer h2 { font-size: 22px; margin: 32px 0 16px; color: var(--accent); font-weight: 700; letter-spacing: -0.3px; }
+      .md-viewer h3 { font-size: 18px; margin: 24px 0 12px; font-weight: 600; }
+      .md-viewer p { margin-bottom: 16px; color: #cbd5e1; }
+      .md-viewer a { color: var(--accent); text-decoration: none; }
+      .md-viewer a:hover { text-decoration: underline; }
+      .md-viewer ul, .md-viewer ol { margin: 12px 0 20px 24px; color: #cbd5e1; }
+      .md-viewer li { margin: 6px 0; }
+      .md-viewer code {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13.5px;
+        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+      }
+      .md-viewer pre {
+        background: #0a0f18;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+      .md-viewer pre code {
+        background: none;
+        padding: 0;
+        color: #7dd3fc;
+      }
+      .md-viewer blockquote {
+        margin: 20px 0;
+        padding: 12px 20px;
+        border-left: 4px solid var(--accent);
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 0 8px 8px 0;
+        color: #94a3b8;
+      }
+      .md-viewer table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      .md-viewer th, .md-viewer td {
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        clear: left;
+        font-size: 14px;
+      }
+      .md-viewer th {
+        background: rgba(255, 255, 255, 0.04);
+        font-weight: 600;
+        text-align: left;
+      }
+      @media (max-width: 768px) {
+        .md-viewer {
+          margin: 0;
+          padding: 24px;
+          border-radius: 0;
+          border-left: none;
+          border-right: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="nav-brand">
+          The New Fuse Docs
+        </div>
+        <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+      </div>
+    </nav>
+    <div class="md-viewer">
+      <h1>AG-UI Integration Guide</h1>
+<h2>Quick Start: Add Visualization Generation to Your Agent</h2>
+<h3>5-Minute Setup</h3>
+<p><strong>Step 1:</strong> Test the AG-UI tool standalone</p>
+<pre><code class="language-bash">cd /path/to/self-contained-visualizations
+chmod +x tools/ag-ui-tool.js
+node tools/ag-ui-tool.js
+</code></pre>
+<p>This will generate a test visualization and show you the output format.</p>
+<p><strong>Step 2:</strong> Use with Microsoft Agent Framework (Python)</p>
+<pre><code class="language-python">from tools.ag_ui_tool import VisualizationTool
+
+# Create tool instance
+viz_tool = VisualizationTool()
+
+# Generate visualization
+result = await viz_tool.execute({
+    &quot;data&quot;: your_hierarchical_data,
+    &quot;title&quot;: &quot;My Analysis&quot;,
+    &quot;aiInsights&quot;: &quot;AI-generated insights here&quot;
+})
+
+print(f&quot;Generated: {result[&#39;filePath&#39;]}&quot;)
+</code></pre>
+<p><strong>Step 3:</strong> Add to your agent&#39;s toolset</p>
+<pre><code class="language-python">from microsoft.agent_framework import Agent
+
+agent = Agent(
+    name=&quot;DataAnalyzer&quot;,
+    tools=[
+        VisualizationTool(),  # Add our tool
+        # ... your other tools
+    ]
+)
+</code></pre>
+<p>Now your agent can generate visualizations!</p>
+<hr>
+<h2>Integration Patterns</h2>
+<h3>Pattern 1: Agent-Curated Reports</h3>
+<p><strong>Use Case:</strong> Agent analyzes data → creates visualization with insights</p>
+<pre><code class="language-python">async def create_analysis_report(data):
+    # 1. Agent analyzes
+    insights = await agent.analyze(data)
+
+    # 2. Agent generates visualization
+    result = await viz_tool.execute({
+        &quot;data&quot;: data,
+        &quot;title&quot;: &quot;Analysis Report&quot;,
+        &quot;aiInsights&quot;: insights.to_html(),
+        &quot;metrics&quot;: insights.suggested_metrics
+    })
+
+    # 3. Return shareable artifact
+    return result[&quot;filePath&quot;]
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✅ AI-powered analysis</li>
+<li>✅ Permanent artifact</li>
+<li>✅ Shareable via email/Slack</li>
+<li>✅ No ongoing dependencies</li>
+</ul>
+<h3>Pattern 2: Session Snapshots</h3>
+<p><strong>Use Case:</strong> Live AG-UI session → user requests permanent snapshot</p>
+<pre><code class="language-python"># During live AG-UI session
+@agent.tool
+async def save_snapshot(session_state):
+    &quot;&quot;&quot;Save current exploration as HTML file&quot;&quot;&quot;
+
+    result = await viz_tool.execute({
+        &quot;data&quot;: session_state.current_view,
+        &quot;title&quot;: f&quot;Snapshot - {datetime.now()}&quot;,
+        &quot;aiInsights&quot;: session_state.conversation_summary
+    })
+
+    return f&quot;Saved snapshot: {result[&#39;filePath&#39;]}&quot;
+</code></pre>
+<p><strong>User flow:</strong></p>
+<pre><code>User: &quot;Show me Q4 sales by region&quot;
+Agent: [Interactive exploration]
+User: &quot;Save this for the team meeting&quot;
+Agent: &quot;✅ Saved snapshot: q4-sales-2025-12-21.html&quot;
+</code></pre>
+<h3>Pattern 3: CI/CD Integration</h3>
+<p><strong>Use Case:</strong> Automated reporting in build pipelines</p>
+<pre><code class="language-yaml"># GitHub Actions
+- name: Generate Bundle Report
+  run: |
+    python scripts/analyze_bundle.py \
+      --output reports/bundle-${{ github.sha }}.html
+
+# The Python script uses our AG-UI tool
+# to generate the visualization
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✅ Automated generation</li>
+<li>✅ Historical tracking (commit to repo)</li>
+<li>✅ Easy comparison over time</li>
+<li>✅ No dashboard to maintain</li>
+</ul>
+<hr>
+<h2>Examples by Framework</h2>
+<h3>Microsoft Agent Framework (.NET)</h3>
+<pre><code class="language-csharp">using Microsoft.Agents.AI;
+using Microsoft.Agents.AI.Hosting.AGUI;
+
+public class VisualizationTool : ITool
+{
+    public string Name =&gt; &quot;generate_visualization&quot;;
+
+    public async Task&lt;ToolResult&gt; InvokeAsync(
+        ToolInvocationContext context,
+        CancellationToken cancellationToken)
+    {
+        var data = context.Parameters[&quot;data&quot;];
+        var title = context.Parameters[&quot;title&quot;];
+
+        // Call our Node.js tool
+        var result = await ExecuteNodeTool(data, title);
+
+        return new ToolResult
+        {
+            Success = result.Success,
+            Output = result.FilePath
+        };
+    }
+}
+</code></pre>
+<h3>LangGraph (Python)</h3>
+<pre><code class="language-python">from langgraph.prebuilt import ToolNode
+from langchain_core.tools import tool
+
+@tool
+async def generate_visualization(
+    data: dict,
+    title: str,
+    insights: str = None
+) -&gt; str:
+    &quot;&quot;&quot;Generate self-contained HTML visualization&quot;&quot;&quot;
+
+    viz_tool = VisualizationTool()
+    result = await viz_tool.execute({
+        &quot;data&quot;: data,
+        &quot;title&quot;: title,
+        &quot;aiInsights&quot;: insights
+    })
+
+    return result[&quot;filePath&quot;]
+
+# Add to graph
+from langgraph.graph import StateGraph
+
+graph = StateGraph()
+graph.add_node(&quot;tools&quot;, ToolNode([generate_visualization]))
+</code></pre>
+<h3>CrewAI (Python)</h3>
+<pre><code class="language-python">from crewai import Agent, Task, Tool
+
+visualization_tool = Tool(
+    name=&quot;Generate Visualization&quot;,
+    description=&quot;Create interactive HTML visualizations&quot;,
+    func=lambda data: viz_tool.execute(data)
+)
+
+analyst = Agent(
+    role=&quot;Data Analyst&quot;,
+    goal=&quot;Analyze data and create reports&quot;,
+    tools=[visualization_tool]
+)
+
+task = Task(
+    description=&quot;Analyze bundle sizes and create visualization&quot;,
+    agent=analyst
+)
+</code></pre>
+<hr>
+<h2>Advanced Usage</h2>
+<h3>Custom AI Insights Template</h3>
+<pre><code class="language-python">def format_insights(analysis_results):
+    &quot;&quot;&quot;Format AI analysis as HTML for visualization&quot;&quot;&quot;
+
+    return f&quot;&quot;&quot;
+    &lt;div class=&quot;ai-insights&quot;&gt;
+        &lt;h3&gt;🤖 AI Analysis&lt;/h3&gt;
+
+        &lt;div class=&quot;metric-cards&quot;&gt;
+            &lt;div class=&quot;card&quot;&gt;
+                &lt;strong&gt;Total Size&lt;/strong&gt;
+                &lt;span&gt;{analysis_results.total_size}&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;card&quot;&gt;
+                &lt;strong&gt;Largest Item&lt;/strong&gt;
+                &lt;span&gt;{analysis_results.largest_item}&lt;/span&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;h4&gt;Key Findings&lt;/h4&gt;
+        &lt;ul&gt;
+        {&#39;&#39;.join(f&#39;&lt;li&gt;{finding}&lt;/li&gt;&#39; for finding in analysis_results.findings)}
+        &lt;/ul&gt;
+
+        &lt;h4&gt;Recommendations&lt;/h4&gt;
+        &lt;ol&gt;
+        {&#39;&#39;.join(f&#39;&lt;li&gt;{rec}&lt;/li&gt;&#39; for rec in analysis_results.recommendations)}
+        &lt;/ol&gt;
+
+        &lt;div class=&quot;confidence&quot;&gt;
+            Confidence: {analysis_results.confidence}%
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &quot;&quot;&quot;
+</code></pre>
+<h3>Multi-Report Generation</h3>
+<pre><code class="language-python">async def generate_multi_view_report(data):
+    &quot;&quot;&quot;Generate multiple visualizations from same data&quot;&quot;&quot;
+
+    views = [
+        {
+            &quot;title&quot;: &quot;Size Analysis&quot;,
+            &quot;metric&quot;: &quot;size&quot;,
+            &quot;color&quot;: &quot;#f59e0b&quot;
+        },
+        {
+            &quot;title&quot;: &quot;Count Analysis&quot;,
+            &quot;metric&quot;: &quot;count&quot;,
+            &quot;color&quot;: &quot;#10b981&quot;
+        },
+        {
+            &quot;title&quot;: &quot;Performance Analysis&quot;,
+            &quot;metric&quot;: &quot;performance&quot;,
+            &quot;color&quot;: &quot;#3b82f6&quot;
+        }
+    ]
+
+    results = []
+    for view in views:
+        result = await viz_tool.execute({
+            &quot;data&quot;: data,
+            &quot;title&quot;: view[&quot;title&quot;],
+            &quot;defaultMetric&quot;: view[&quot;metric&quot;],
+            &quot;primaryColor&quot;: view[&quot;color&quot;],
+            &quot;outputPath&quot;: f&quot;output/{view[&#39;title&#39;].lower().replace(&#39; &#39;, &#39;-&#39;)}.html&quot;
+        })
+        results.append(result)
+
+    return results
+</code></pre>
+<h3>Session Recording</h3>
+<pre><code class="language-python">class SessionRecorder:
+    &quot;&quot;&quot;Record AG-UI session and generate artifacts&quot;&quot;&quot;
+
+    def __init__(self):
+        self.events = []
+        self.snapshots = []
+
+    async def record_event(self, event):
+        &quot;&quot;&quot;Record session event&quot;&quot;&quot;
+        self.events.append(event)
+
+    async def create_snapshot(self, name):
+        &quot;&quot;&quot;Create visualization snapshot&quot;&quot;&quot;
+
+        current_data = self._build_data_from_events()
+
+        result = await viz_tool.execute({
+            &quot;data&quot;: current_data,
+            &quot;title&quot;: f&quot;Session Snapshot: {name}&quot;,
+            &quot;aiInsights&quot;: self._summarize_conversation()
+        })
+
+        self.snapshots.append(result)
+        return result
+
+    async def export_session(self):
+        &quot;&quot;&quot;Export entire session as HTML&quot;&quot;&quot;
+
+        return {
+            &quot;events&quot;: self.events,
+            &quot;snapshots&quot;: self.snapshots,
+            &quot;summary&quot;: self._generate_summary()
+        }
+</code></pre>
+<hr>
+<h2>Data Format Requirements</h2>
+<h3>Required Structure</h3>
+<pre><code class="language-javascript">{
+  &quot;name&quot;: &quot;root&quot;,           // Required
+  &quot;children&quot;: [             // Optional (leaf nodes don&#39;t need this)
+    {
+      &quot;name&quot;: &quot;Category&quot;,   // Required
+      &quot;size&quot;: 100,          // Optional - any numeric properties
+      &quot;count&quot;: 5,           // become available as metrics
+      &quot;custom&quot;: 42,
+      &quot;children&quot;: [...]     // Nested structure
+    }
+  ]
+}
+</code></pre>
+<h3>Converting from Common Formats</h3>
+<p><strong>From flat list to hierarchy:</strong></p>
+<pre><code class="language-python">def build_hierarchy(items, group_by):
+    &quot;&quot;&quot;Convert flat list to hierarchical structure&quot;&quot;&quot;
+
+    hierarchy = {&quot;name&quot;: &quot;root&quot;, &quot;children&quot;: []}
+
+    for item in items:
+        # Group items by category
+        category = item[group_by]
+
+        # Find or create category node
+        cat_node = next(
+            (c for c in hierarchy[&quot;children&quot;] if c[&quot;name&quot;] == category),
+            None
+        )
+
+        if not cat_node:
+            cat_node = {&quot;name&quot;: category, &quot;children&quot;: []}
+            hierarchy[&quot;children&quot;].append(cat_node)
+
+        # Add item
+        cat_node[&quot;children&quot;].append({
+            &quot;name&quot;: item[&quot;name&quot;],
+            &quot;size&quot;: item[&quot;size&quot;],
+            &quot;count&quot;: item.get(&quot;count&quot;, 1)
+        })
+
+    return hierarchy
+</code></pre>
+<p><strong>From nested dict to AG-UI format:</strong></p>
+<pre><code class="language-python">def dict_to_hierarchy(data, name=&quot;root&quot;):
+    &quot;&quot;&quot;Convert nested dict to hierarchical structure&quot;&quot;&quot;
+
+    if isinstance(data, dict):
+        children = []
+        metrics = {}
+
+        for key, value in data.items():
+            if isinstance(value, (dict, list)):
+                children.append(dict_to_hierarchy(value, key))
+            elif isinstance(value, (int, float)):
+                metrics[key] = value
+
+        result = {&quot;name&quot;: name, **metrics}
+        if children:
+            result[&quot;children&quot;] = children
+
+        return result
+    elif isinstance(data, list):
+        return {
+            &quot;name&quot;: name,
+            &quot;children&quot;: [dict_to_hierarchy(item, f&quot;Item {i}&quot;) for i, item in enumerate(data)]
+        }
+    else:
+        return {&quot;name&quot;: name, &quot;value&quot;: data}
+</code></pre>
+<hr>
+<h2>Deployment Patterns</h2>
+<h3>Pattern 1: Serverless Function</h3>
+<pre><code class="language-python"># AWS Lambda / Azure Functions
+async def lambda_handler(event, context):
+    &quot;&quot;&quot;Generate visualization on demand&quot;&quot;&quot;
+
+    data = json.loads(event[&quot;body&quot;])
+
+    viz_tool = VisualizationTool()
+    result = await viz_tool.execute(data)
+
+    # Upload to S3
+    s3_url = upload_to_s3(result[&quot;filePath&quot;])
+
+    return {
+        &quot;statusCode&quot;: 200,
+        &quot;body&quot;: json.dumps({
+            &quot;url&quot;: s3_url,
+            &quot;size&quot;: result[&quot;fileSize&quot;]
+        })
+    }
+</code></pre>
+<h3>Pattern 2: Scheduled Reports</h3>
+<pre><code class="language-python"># Cron job / scheduled task
+async def daily_report():
+    &quot;&quot;&quot;Generate daily analytics report&quot;&quot;&quot;
+
+    # Fetch data
+    data = await fetch_daily_analytics()
+
+    # Agent analyzes
+    insights = await agent.analyze(data)
+
+    # Generate visualization
+    result = await viz_tool.execute({
+        &quot;data&quot;: data,
+        &quot;title&quot;: f&quot;Daily Report - {date.today()}&quot;,
+        &quot;aiInsights&quot;: insights
+    })
+
+    # Send to stakeholders
+    send_email(
+        to=[&quot;team@company.com&quot;],
+        subject=&quot;Daily Analytics Report&quot;,
+        attachments=[result[&quot;filePath&quot;]]
+    )
+</code></pre>
+<h3>Pattern 3: On-Demand API</h3>
+<pre><code class="language-python">from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class VisualizationRequest(BaseModel):
+    data: dict
+    title: str
+    insights: str = None
+
+@app.post(&quot;/generate&quot;)
+async def generate_viz(request: VisualizationRequest):
+    &quot;&quot;&quot;API endpoint for visualization generation&quot;&quot;&quot;
+
+    viz_tool = VisualizationTool()
+    result = await viz_tool.execute(request.dict())
+
+    return {
+        &quot;success&quot;: result[&quot;success&quot;],
+        &quot;file_url&quot;: result[&quot;url&quot;],
+        &quot;file_size&quot;: result[&quot;fileSize&quot;]
+    }
+</code></pre>
+<hr>
+<h2>Testing</h2>
+<h3>Unit Test Example</h3>
+<pre><code class="language-python">import pytest
+
+@pytest.mark.asyncio
+async def test_visualization_generation():
+    &quot;&quot;&quot;Test basic visualization generation&quot;&quot;&quot;
+
+    viz_tool = VisualizationTool()
+
+    result = await viz_tool.execute({
+        &quot;data&quot;: {
+            &quot;name&quot;: &quot;test&quot;,
+            &quot;children&quot;: [
+                {&quot;name&quot;: &quot;item1&quot;, &quot;size&quot;: 100},
+                {&quot;name&quot;: &quot;item2&quot;, &quot;size&quot;: 200}
+            ]
+        },
+        &quot;title&quot;: &quot;Test Viz&quot;
+    })
+
+    assert result[&quot;success&quot;] == True
+    assert &quot;filePath&quot; in result
+    assert result[&quot;fileSize&quot;] &gt; 0
+
+
+@pytest.mark.asyncio
+async def test_with_insights():
+    &quot;&quot;&quot;Test visualization with AI insights&quot;&quot;&quot;
+
+    viz_tool = VisualizationTool()
+
+    result = await viz_tool.execute({
+        &quot;data&quot;: test_data,
+        &quot;aiInsights&quot;: &quot;&lt;p&gt;Test insights&lt;/p&gt;&quot;
+    })
+
+    # Verify insights are embedded
+    with open(result[&quot;filePath&quot;]) as f:
+        html = f.read()
+        assert &quot;Test insights&quot; in html
+</code></pre>
+<hr>
+<h2>Troubleshooting</h2>
+<h3>Common Issues</h3>
+<p><strong>1. &quot;Data must have a root &#39;name&#39; property&quot;</strong></p>
+<pre><code class="language-python"># ❌ Wrong
+data = {&quot;children&quot;: [...]}
+
+# ✅ Correct
+data = {&quot;name&quot;: &quot;root&quot;, &quot;children&quot;: [...]}
+</code></pre>
+<p><strong>2. &quot;Module not found: VisualizationGenerator&quot;</strong></p>
+<pre><code class="language-bash"># Ensure you&#39;re in the correct directory
+cd /path/to/self-contained-visualizations
+
+# Or set PYTHONPATH
+export PYTHONPATH=&quot;${PYTHONPATH}:/path/to/self-contained-visualizations&quot;
+</code></pre>
+<p><strong>3. Generated file won&#39;t open</strong></p>
+<pre><code class="language-python"># Check file permissions
+chmod 644 output/viz.html
+
+# Use absolute path
+import os
+abs_path = os.path.abspath(result[&quot;filePath&quot;])
+</code></pre>
+<hr>
+<h2>Best Practices</h2>
+<h3>1. Data Preparation</h3>
+<pre><code class="language-python"># Clean data before visualization
+def prepare_data(raw_data):
+    &quot;&quot;&quot;Prepare data for visualization&quot;&quot;&quot;
+
+    # Remove None values
+    # Ensure numeric types
+    # Validate hierarchy
+    # Limit depth if needed
+
+    return cleaned_data
+</code></pre>
+<h3>2. Insight Generation</h3>
+<pre><code class="language-python"># Structure insights consistently
+def generate_insights(analysis):
+    &quot;&quot;&quot;Generate structured insights&quot;&quot;&quot;
+
+    return {
+        &quot;summary&quot;: &quot;...&quot;,
+        &quot;key_metrics&quot;: [...],
+        &quot;findings&quot;: [...],
+        &quot;recommendations&quot;: [...],
+        &quot;confidence&quot;: 0.95
+    }
+</code></pre>
+<h3>3. File Management</h3>
+<pre><code class="language-python"># Organize output files
+def organize_output(result, category):
+    &quot;&quot;&quot;Move files to appropriate directories&quot;&quot;&quot;
+
+    target_dir = f&quot;output/{category}/{date.today()}&quot;
+    os.makedirs(target_dir, exist_ok=True)
+
+    shutil.move(result[&quot;filePath&quot;], target_dir)
+</code></pre>
+<hr>
+<h2>Resources</h2>
+<h3>Documentation</h3>
+<ul>
+<li><strong>AG-UI Protocol:</strong> <a href="https://docs.ag-ui.com/">https://docs.ag-ui.com/</a></li>
+<li><strong>Microsoft Agent Framework:</strong> <a href="https://learn.microsoft.com/en-us/agent-framework/">https://learn.microsoft.com/en-us/agent-framework/</a></li>
+<li><strong>Our Toolkit:</strong> <code>/self-contained-visualizations/README.md</code></li>
+</ul>
+<h3>Examples</h3>
+<ul>
+<li><strong>Python Examples:</strong> <code>/examples/ag-ui-examples/</code></li>
+<li><strong>Configuration Examples:</strong> <code>/examples/config.json</code></li>
+<li><strong>Data Examples:</strong> <code>/examples/sample-data.json</code></li>
+</ul>
+<h3>Support</h3>
+<ul>
+<li>Check existing examples in <code>/examples/</code></li>
+<li>Review troubleshooting section above</li>
+<li>Test with <code>node tools/ag-ui-tool.js</code></li>
+</ul>
+<hr>
+<p><strong>Last Updated:</strong> December 21, 2025
+<strong>Version:</strong> 1.0.0</p>
+
+    </div>
+  </body>
+</html>

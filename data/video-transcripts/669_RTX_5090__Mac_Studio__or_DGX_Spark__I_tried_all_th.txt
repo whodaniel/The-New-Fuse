@@ -1,0 +1,2035 @@
+[0:00] The strangest thing about AI right now
+[0:01] The strangest thing about AI right now
+[0:01] The strangest thing about AI right now is that it's making the computer on your
+[0:03] is that it's making the computer on your
+[0:03] is that it's making the computer on your desk important again. For the last 15
+[0:06] desk important again. For the last 15
+[0:06] desk important again. For the last 15 years, the story of personal computing
+[0:08] years, the story of personal computing
+[0:08] years, the story of personal computing was basically the story of the computer
+[0:09] was basically the story of the computer
+[0:09] was basically the story of the computer disappearing. Your files moved into
+[0:11] disappearing. Your files moved into
+[0:11] disappearing. Your files moved into someone else's cloud, your apps became
+[0:13] someone else's cloud, your apps became
+[0:13] someone else's cloud, your apps became browser tabs, your storage became a sink
+[0:15] browser tabs, your storage became a sink
+[0:15] browser tabs, your storage became a sink of some sort, your OS became a launcher
+[0:18] of some sort, your OS became a launcher
+[0:18] of some sort, your OS became a launcher for other people's infrastructure. And
+[0:20] for other people's infrastructure. And
+[0:20] for other people's infrastructure. And for a lot of software, that seemed fine.
+[0:22] for a lot of software, that seemed fine.
+[0:22] for a lot of software, that seemed fine. It was convenient. It was maybe the
+[0:24] It was convenient. It was maybe the
+[0:24] It was convenient. It was maybe the right trade at the time. But agents are
+[0:26] right trade at the time. But agents are
+[0:26] right trade at the time. But agents are changing the direction of travel for
+[0:28] changing the direction of travel for
+[0:28] changing the direction of travel for compute because a useful agent doesn't
+[0:30] compute because a useful agent doesn't
+[0:30] compute because a useful agent doesn't just answer a question. It wants to
+[0:32] just answer a question. It wants to
+[0:32] just answer a question. It wants to touch the work. It wants to read the
+[0:33] touch the work. It wants to read the
+[0:33] touch the work. It wants to read the file and inspect the folder and run the
+[0:35] file and inspect the folder and run the
+[0:35] file and inspect the folder and run the test and edit the spreadsheet and search
+[0:37] test and edit the spreadsheet and search
+[0:37] test and edit the spreadsheet and search your notes and open the browser and
+[0:39] your notes and open the browser and
+[0:39] your notes and open the browser and remember the decision you made and try
+[0:40] remember the decision you made and try
+[0:40] remember the decision you made and try again when the first attempt fails. So,
+[0:42] again when the first attempt fails. So,
+[0:42] again when the first attempt fails. So, the more useful the agent becomes, the
+[0:44] the more useful the agent becomes, the
+[0:44] the more useful the agent becomes, the more it starts reaching back toward the
+[0:46] more it starts reaching back toward the
+[0:46] more it starts reaching back toward the oldest primitives of computing, files
+[0:48] oldest primitives of computing, files
+[0:48] oldest primitives of computing, files and processes and permissions and memory
+[0:51] and processes and permissions and memory
+[0:51] and processes and permissions and memory and local state and execution. That's
+[0:53] and local state and execution. That's
+[0:53] and local state and execution. That's why the personal AI computer matters.
+[0:56] why the personal AI computer matters.
+[0:56] why the personal AI computer matters. Now, a quick caveat up front because I
+[0:57] Now, a quick caveat up front because I
+[0:57] Now, a quick caveat up front because I talk a lot about frontier models on this
+[0:59] talk a lot about frontier models on this
+[0:59] talk a lot about frontier models on this channel and I'm going to keep doing
+[1:01] channel and I'm going to keep doing
+[1:01] channel and I'm going to keep doing that. The best cloud models are
+[1:02] that. The best cloud models are
+[1:02] that. The best cloud models are incredibly useful and one of the most
+[1:04] incredibly useful and one of the most
+[1:04] incredibly useful and one of the most important trends is that they're moving
+[1:06] important trends is that they're moving
+[1:06] important trends is that they're moving closer to our personal computers, not
+[1:07] closer to our personal computers, not
+[1:07] closer to our personal computers, not farther away. So, Codex, Cloud Code, and
+[1:10] farther away. So, Codex, Cloud Code, and
+[1:10] farther away. So, Codex, Cloud Code, and the whole class of coding agents matter
+[1:12] the whole class of coding agents matter
+[1:12] the whole class of coding agents matter precisely because a cloud model can now
+[1:14] precisely because a cloud model can now
+[1:14] precisely because a cloud model can now interact with your repo, your terminal,
+[1:16] interact with your repo, your terminal,
+[1:16] interact with your repo, your terminal, your files, and your tools on the
+[1:18] your files, and your tools on the
+[1:18] your files, and your tools on the machine right in front of you. So, the
+[1:19] machine right in front of you. So, the
+[1:19] machine right in front of you. So, the argument here is not cloud is bad, local
+[1:22] argument here is not cloud is bad, local
+[1:22] argument here is not cloud is bad, local is good. The argument is that as AI
+[1:24] is good. The argument is that as AI
+[1:24] is good. The argument is that as AI reaches deeper into the personal
+[1:25] reaches deeper into the personal
+[1:25] reaches deeper into the personal computer, the ownership question for you
+[1:27] computer, the ownership question for you
+[1:28] computer, the ownership question for you gets sharper. If models are going to
+[1:29] gets sharper. If models are going to
+[1:29] gets sharper. If models are going to touch your files and remember your work
+[1:31] touch your files and remember your work
+[1:31] touch your files and remember your work and call your tools and sit inside your
+[1:33] and call your tools and sit inside your
+[1:33] and call your tools and sit inside your workflows, there is still room, maybe
+[1:35] workflows, there is still room, maybe
+[1:35] workflows, there is still room, maybe more room for a stack that is all yours.
+[1:37] more room for a stack that is all yours.
+[1:37] more room for a stack that is all yours. And that stack matters because some of
+[1:39] And that stack matters because some of
+[1:39] And that stack matters because some of the most valuable AI work is not the
+[1:41] the most valuable AI work is not the
+[1:41] the most valuable AI work is not the most difficult work in the abstract.
+[1:44] most difficult work in the abstract.
+[1:44] most difficult work in the abstract. It's not the work that takes a cloud
+[1:45] It's not the work that takes a cloud
+[1:45] It's not the work that takes a cloud model at the very edge of the frontier.
+[1:47] model at the very edge of the frontier.
+[1:48] model at the very edge of the frontier. It's the work that is closest to your
+[1:49] It's the work that is closest to your
+[1:49] It's the work that is closest to your own context, your notes, your meetings,
+[1:52] own context, your notes, your meetings,
+[1:52] own context, your notes, your meetings, your drafts, your unfinished projects,
+[1:53] your drafts, your unfinished projects,
+[1:53] your drafts, your unfinished projects, your weird folder system. And the
+[1:55] your weird folder system. And the
+[1:55] your weird folder system. And the question for you becomes which parts of
+[1:58] question for you becomes which parts of
+[1:58] question for you becomes which parts of that should you keep renting and which
+[2:01] that should you keep renting and which
+[2:01] that should you keep renting and which parts should you own, and how do you
+[2:03] parts should you own, and how do you
+[2:03] parts should you own, and how do you start to intentionally think about that
+[2:05] start to intentionally think about that
+[2:05] start to intentionally think about that as models keep getting better and that
+[2:08] as models keep getting better and that
+[2:08] as models keep getting better and that workflow divide starts to change?
+[2:10] workflow divide starts to change?
+[2:10] workflow divide starts to change? Because even a few months ago,
+[2:12] Because even a few months ago,
+[2:12] Because even a few months ago, open-source models could not do a lot of
+[2:16] open-source models could not do a lot of
+[2:16] open-source models could not do a lot of what I just described at all. And now,
+[2:18] what I just described at all. And now,
+[2:18] what I just described at all. And now, they still aren't as good as the
+[2:19] they still aren't as good as the
+[2:19] they still aren't as good as the closed-source frontier models and you
+[2:21] closed-source frontier models and you
+[2:21] closed-source frontier models and you still can't give them as much messy work
+[2:23] still can't give them as much messy work
+[2:23] still can't give them as much messy work as say ChatGPT 5.5 by any stretch, but
+[2:26] as say ChatGPT 5.5 by any stretch, but
+[2:26] as say ChatGPT 5.5 by any stretch, but they're getting a lot better and it's
+[2:27] they're getting a lot better and it's
+[2:27] they're getting a lot better and it's worth thinking about at least for some
+[2:29] worth thinking about at least for some
+[2:29] worth thinking about at least for some of your workflows, especially if you
+[2:31] of your workflows, especially if you
+[2:31] of your workflows, especially if you value privacy or have highly
+[2:32] value privacy or have highly
+[2:33] value privacy or have highly confidential information on your
+[2:34] confidential information on your
+[2:34] confidential information on your computer. So, by the end of this video,
+[2:36] computer. So, by the end of this video,
+[2:36] computer. So, by the end of this video, I want you to have a mental model for
+[2:37] I want you to have a mental model for
+[2:37] I want you to have a mental model for the whole personal AI stack, not just
+[2:40] the whole personal AI stack, not just
+[2:40] the whole personal AI stack, not just which GPU should I buy, not just which
+[2:42] which GPU should I buy, not just which
+[2:42] which GPU should I buy, not just which model is best this week, but the actual
+[2:44] model is best this week, but the actual
+[2:44] model is best this week, but the actual stack, the machine, the runtime, the
+[2:46] stack, the machine, the runtime, the
+[2:46] stack, the machine, the runtime, the models, the memory, the apps, and the
+[2:48] models, the memory, the apps, and the
+[2:48] models, the memory, the apps, and the workflows that make local AI worth
+[2:50] workflows that make local AI worth
+[2:50] workflows that make local AI worth owning in the first place. Because the
+[2:52] owning in the first place. Because the
+[2:52] owning in the first place. Because the biggest mistake you can make is buying a
+[2:54] biggest mistake you can make is buying a
+[2:54] biggest mistake you can make is buying a really fancy computer whose only job is
+[2:56] really fancy computer whose only job is
+[2:56] really fancy computer whose only job is to run benchmark prompts or to do your
+[2:58] to run benchmark prompts or to do your
+[2:58] to run benchmark prompts or to do your emails, which is what so many people do
+[3:00] emails, which is what so many people do
+[3:00] emails, which is what so many people do with their Mac minis and open claw. The
+[3:02] with their Mac minis and open claw. The
+[3:02] with their Mac minis and open claw. The best version of a personal computer is a
+[3:04] best version of a personal computer is a
+[3:04] best version of a personal computer is a lot more compelling than that. It's
+[3:07] lot more compelling than that. It's
+[3:07] lot more compelling than that. It's building a durable place where AI can
+[3:09] building a durable place where AI can
+[3:09] building a durable place where AI can attach to the rest of your computing
+[3:10] attach to the rest of your computing
+[3:10] attach to the rest of your computing life and you still have privacy. There's
+[3:12] life and you still have privacy. There's
+[3:12] life and you still have privacy. There's a historical echo here that I think is
+[3:14] a historical echo here that I think is
+[3:14] a historical echo here that I think is easy to miss. Before the personal
+[3:16] easy to miss. Before the personal
+[3:16] easy to miss. Before the personal computer, the dominant model was
+[3:18] computer, the dominant model was
+[3:18] computer, the dominant model was actually time-sharing. You rented
+[3:19] actually time-sharing. You rented
+[3:19] actually time-sharing. You rented compute on someone else's mainframe. You
+[3:22] compute on someone else's mainframe. You
+[3:22] compute on someone else's mainframe. You waited in queues, you worked inside
+[3:24] waited in queues, you worked inside
+[3:24] waited in queues, you worked inside rules set by an operator you would never
+[3:26] rules set by an operator you would never
+[3:26] rules set by an operator you would never meet. The first personal computers did
+[3:28] meet. The first personal computers did
+[3:28] meet. The first personal computers did not beat that mainframe on raw power.
+[3:31] not beat that mainframe on raw power.
+[3:31] not beat that mainframe on raw power. They won because they collapsed the
+[3:33] They won because they collapsed the
+[3:33] They won because they collapsed the distance between the person and the
+[3:34] distance between the person and the
+[3:34] distance between the person and the machine. AI is creating a similar
+[3:36] machine. AI is creating a similar
+[3:37] machine. AI is creating a similar opening. Frontier models are still
+[3:38] opening. Frontier models are still
+[3:38] opening. Frontier models are still better at the hardest tasks and they're
+[3:40] better at the hardest tasks and they're
+[3:40] better at the hardest tasks and they're going to stay better for a while, but
+[3:42] going to stay better for a while, but
+[3:42] going to stay better for a while, but most personal work is not a moonshot
+[3:44] most personal work is not a moonshot
+[3:44] most personal work is not a moonshot benchmark. Most personal work is messy
+[3:47] benchmark. Most personal work is messy
+[3:47] benchmark. Most personal work is messy and it's repeated. It's not too huge.
+[3:49] and it's repeated. It's not too huge.
+[3:49] and it's repeated. It's not too huge. It's private and it's context-heavy.
+[3:51] It's private and it's context-heavy.
+[3:51] It's private and it's context-heavy. It's like, what did we decide here in
+[3:53] It's like, what did we decide here in
+[3:53] It's like, what did we decide here in the meeting? Please find this draft.
+[3:56] the meeting? Please find this draft.
+[3:56] the meeting? Please find this draft. Look in this repo and explain why the
+[3:57] Look in this repo and explain why the
+[3:57] Look in this repo and explain why the test is failing or can you make a
+[4:00] test is failing or can you make a
+[4:00] test is failing or can you make a follow-up memo or help me do a
+[4:02] follow-up memo or help me do a
+[4:02] follow-up memo or help me do a journaling program? All of that work
+[4:04] journaling program? All of that work
+[4:04] journaling program? All of that work benefits from the model being in your
+[4:06] benefits from the model being in your
+[4:06] benefits from the model being in your files, your tools, your memory, and the
+[4:08] files, your tools, your memory, and the
+[4:08] files, your tools, your memory, and the places where you're already doing
+[4:10] places where you're already doing
+[4:10] places where you're already doing personal computing. When all of that
+[4:11] personal computing. When all of that
+[4:11] personal computing. When all of that gets separated out into the cloud, it
+[4:13] gets separated out into the cloud, it
+[4:13] gets separated out into the cloud, it gets harder for the AI to touch all of
+[4:15] gets harder for the AI to touch all of
+[4:15] gets harder for the AI to touch all of the files and folders you want that you
+[4:17] the files and folders you want that you
+[4:17] the files and folders you want that you need taken care of on a single computing
+[4:21] need taken care of on a single computing
+[4:21] need taken care of on a single computing space. And frankly, that's why a lot of
+[4:24] space. And frankly, that's why a lot of
+[4:24] space. And frankly, that's why a lot of enterprise workflows involve a lot of
+[4:26] enterprise workflows involve a lot of
+[4:26] enterprise workflows involve a lot of harnesses that tie a cloud model into a
+[4:30] harnesses that tie a cloud model into a
+[4:30] harnesses that tie a cloud model into a local memory file system attached to
+[4:32] local memory file system attached to
+[4:32] local memory file system attached to Azure or attached to AWS. They're
+[4:34] Azure or attached to AWS. They're
+[4:34] Azure or attached to AWS. They're essentially doing the grown-up
+[4:36] essentially doing the grown-up
+[4:36] essentially doing the grown-up enterprise version of exactly what I'm
+[4:37] enterprise version of exactly what I'm
+[4:38] enterprise version of exactly what I'm describing here for a company. It's the
+[4:40] describing here for a company. It's the
+[4:40] describing here for a company. It's the same principles. You want to get the
+[4:42] same principles. You want to get the
+[4:42] same principles. You want to get the model close to the work it needs to do.
+[4:44] model close to the work it needs to do.
+[4:44] model close to the work it needs to do. And if you want to go local, the open
+[4:46] And if you want to go local, the open
+[4:46] And if you want to go local, the open weight ecosystem is moving fast enough
+[4:48] weight ecosystem is moving fast enough
+[4:48] weight ecosystem is moving fast enough now that this is no longer a theoretical
+[4:50] now that this is no longer a theoretical
+[4:50] now that this is no longer a theoretical conversation. Meta's practical open
+[4:52] conversation. Meta's practical open
+[4:52] conversation. Meta's practical open weight line is no longer just about the
+[4:54] weight line is no longer just about the
+[4:54] weight line is no longer just about the old Llama 3 story. Llama 4 Scout and
+[4:56] old Llama 3 story. Llama 4 Scout and
+[4:56] old Llama 3 story. Llama 4 Scout and Llama 4 Maverick have moved that Llama
+[4:59] Llama 4 Maverick have moved that Llama
+[4:59] Llama 4 Maverick have moved that Llama lineage into mixture of experts models
+[5:01] lineage into mixture of experts models
+[5:01] lineage into mixture of experts models where the important question is no
+[5:02] where the important question is no
+[5:02] where the important question is no longer how big is the model, but how
+[5:04] longer how big is the model, but how
+[5:04] longer how big is the model, but how much of the model fires for each token.
+[5:06] much of the model fires for each token.
+[5:06] much of the model fires for each token. Open AI has GPT-OSS-20B
+[5:09] Open AI has GPT-OSS-20B
+[5:09] Open AI has GPT-OSS-20B and GPT-OSS-120B,
+[5:11] and GPT-OSS-120B,
+[5:11] and GPT-OSS-120B, which are open weight reasoning models
+[5:13] which are open weight reasoning models
+[5:13] which are open weight reasoning models under Apache 2.0. They're not ChatGPT.
+[5:16] under Apache 2.0. They're not ChatGPT.
+[5:16] under Apache 2.0. They're not ChatGPT. They're not models you call through the
+[5:17] They're not models you call through the
+[5:17] They're not models you call through the normal OpenAI API. They're weights you
+[5:19] normal OpenAI API. They're weights you
+[5:20] normal OpenAI API. They're weights you run on infrastructure you control. Qwen
+[5:22] run on infrastructure you control. Qwen
+[5:22] run on infrastructure you control. Qwen has become one of the most important
+[5:23] has become one of the most important
+[5:23] has become one of the most important local model families for agents, for
+[5:25] local model families for agents, for
+[5:25] local model families for agents, for coding, for multilingual work, and for
+[5:27] coding, for multilingual work, and for
+[5:27] coding, for multilingual work, and for tool use. Google's Gemma 4 pushed
+[5:29] tool use. Google's Gemma 4 pushed
+[5:29] tool use. Google's Gemma 4 pushed serious capability down into smaller
+[5:31] serious capability down into smaller
+[5:31] serious capability down into smaller local models under a more permissive
+[5:33] local models under a more permissive
+[5:33] local models under a more permissive license. It's designed for open claw.
+[5:35] license. It's designed for open claw.
+[5:35] license. It's designed for open claw. Mistral's newer open models fill in both
+[5:37] Mistral's newer open models fill in both
+[5:37] Mistral's newer open models fill in both large frontier cell deployments and
+[5:39] large frontier cell deployments and
+[5:39] large frontier cell deployments and efficient local ones. Now, in April 24,
+[5:41] efficient local ones. Now, in April 24,
+[5:41] efficient local ones. Now, in April 24, DeepSeek previewed V4 with Pro and Flash
+[5:44] DeepSeek previewed V4 with Pro and Flash
+[5:44] DeepSeek previewed V4 with Pro and Flash variants, which is a good reminder that
+[5:45] variants, which is a good reminder that
+[5:45] variants, which is a good reminder that any model list you make today, it starts
+[5:47] any model list you make today, it starts
+[5:47] any model list you make today, it starts aging right away, right? That's the
+[5:49] aging right away, right? That's the
+[5:49] aging right away, right? That's the point. The model list is not the durable
+[5:51] point. The model list is not the durable
+[5:51] point. The model list is not the durable thing. The durable thing is the stack.
+[5:53] thing. The durable thing is the stack.
+[5:53] thing. The durable thing is the stack. If you build this right, you're not
+[5:54] If you build this right, you're not
+[5:54] If you build this right, you're not buying a single model appliance, you're
+[5:56] buying a single model appliance, you're
+[5:56] buying a single model appliance, you're building a local substrate that you can
+[5:58] building a local substrate that you can
+[5:58] building a local substrate that you can evolve over time. New models can drop
+[6:01] evolve over time. New models can drop
+[6:01] evolve over time. New models can drop in. New runtimes can replace old ones.
+[6:03] in. New runtimes can replace old ones.
+[6:03] in. New runtimes can replace old ones. New memory stores can be added. New
+[6:04] New memory stores can be added. New
+[6:04] New memory stores can be added. New agents can call the same tools. New
+[6:06] agents can call the same tools. New
+[6:06] agents can call the same tools. New interfaces can show up without taking
+[6:08] interfaces can show up without taking
+[6:08] interfaces can show up without taking your knowledge base with them. The
+[6:09] your knowledge base with them. The
+[6:09] your knowledge base with them. The personal AI computer should not be a
+[6:11] personal AI computer should not be a
+[6:11] personal AI computer should not be a sealed box that does just one trick. It
+[6:13] sealed box that does just one trick. It
+[6:13] sealed box that does just one trick. It should be a place where the rest of AI
+[6:15] should be a place where the rest of AI
+[6:15] should be a place where the rest of AI can connect to the rest of computing.
+[6:17] can connect to the rest of computing.
+[6:17] can connect to the rest of computing. So, start with the least glamorous part,
+[6:19] So, start with the least glamorous part,
+[6:19] So, start with the least glamorous part, the hardware. This is where people get
+[6:20] the hardware. This is where people get
+[6:20] the hardware. This is where people get trapped because they want one universal
+[6:22] trapped because they want one universal
+[6:22] trapped because they want one universal answer. Mac or Nvidia, the CUDA tower or
+[6:25] answer. Mac or Nvidia, the CUDA tower or
+[6:25] answer. Mac or Nvidia, the CUDA tower or the DGX Spark, buy now or wait. There
+[6:27] the DGX Spark, buy now or wait. There
+[6:27] the DGX Spark, buy now or wait. There isn't only one answer because local AI
+[6:29] isn't only one answer because local AI
+[6:29] isn't only one answer because local AI is constrained by memory capacity,
+[6:31] is constrained by memory capacity,
+[6:31] is constrained by memory capacity, bandwidth, accelerator support, software
+[6:34] bandwidth, accelerator support, software
+[6:34] bandwidth, accelerator support, software maturity, cooling, power, noise, and
+[6:35] maturity, cooling, power, noise, and
+[6:36] maturity, cooling, power, noise, and that annoying one, what you do every
+[6:37] that annoying one, what you do every
+[6:37] that annoying one, what you do every day. So, the better question is not what
+[6:39] day. So, the better question is not what
+[6:39] day. So, the better question is not what is the best AI computer, period. The
+[6:41] is the best AI computer, period. The
+[6:41] is the best AI computer, period. The better question is what local workload
+[6:43] better question is what local workload
+[6:43] better question is what local workload are you trying to own? If you're
+[6:44] are you trying to own? If you're
+[6:44] are you trying to own? If you're learning the stack, if you're running
+[6:46] learning the stack, if you're running
+[6:46] learning the stack, if you're running private document search and doing local
+[6:48] private document search and doing local
+[6:48] private document search and doing local writing and local coding assistance and
+[6:49] writing and local coding assistance and
+[6:49] writing and local coding assistance and maybe transcribing audio, the boring
+[6:51] maybe transcribing audio, the boring
+[6:51] maybe transcribing audio, the boring answer is that a recent Mac with enough
+[6:53] answer is that a recent Mac with enough
+[6:53] answer is that a recent Mac with enough unified memory is enough. A Mac mini
+[6:55] unified memory is enough. A Mac mini
+[6:55] unified memory is enough. A Mac mini with M4 Pro and 64 gigs is a great entry
+[6:58] with M4 Pro and 64 gigs is a great entry
+[6:58] with M4 Pro and 64 gigs is a great entry point. A Mac Studio becomes interesting
+[7:00] point. A Mac Studio becomes interesting
+[7:00] point. A Mac Studio becomes interesting when you want 128 gigs or 256 or even
+[7:03] when you want 128 gigs or 256 or even
+[7:03] when you want 128 gigs or 256 or even more, 512 gigs of unified memory. The
+[7:06] more, 512 gigs of unified memory. The
+[7:06] more, 512 gigs of unified memory. The Mac advantage is not raw tensor
+[7:08] Mac advantage is not raw tensor
+[7:08] Mac advantage is not raw tensor throughput here. The advantage is
+[7:09] throughput here. The advantage is
+[7:10] throughput here. The advantage is unified memory and low noise and power
+[7:12] unified memory and low noise and power
+[7:12] unified memory and low noise and power efficiency and the fact that the machine
+[7:13] efficiency and the fact that the machine
+[7:13] efficiency and the fact that the machine feels like a computer instead of a
+[7:15] feels like a computer instead of a
+[7:15] feels like a computer instead of a project. Now, this is the CUDA path. An
+[7:17] project. Now, this is the CUDA path. An
+[7:17] project. Now, this is the CUDA path. An RTX 5090 gives you 32 gigs of GDDR7, say
+[7:21] RTX 5090 gives you 32 gigs of GDDR7, say
+[7:21] RTX 5090 gives you 32 gigs of GDDR7, say that five times fast, and excellent
+[7:23] that five times fast, and excellent
+[7:23] that five times fast, and excellent throughput. Two of them gives you 64
+[7:25] throughput. Two of them gives you 64
+[7:25] throughput. Two of them gives you 64 gigs across cards, but that's not one
+[7:28] gigs across cards, but that's not one
+[7:28] gigs across cards, but that's not one clean 64 gig pool of memory, right? The
+[7:30] clean 64 gig pool of memory, right? The
+[7:30] clean 64 gig pool of memory, right? The payoff is speed and ecosystem support.
+[7:32] payoff is speed and ecosystem support.
+[7:32] payoff is speed and ecosystem support. And so, you're dealing with a cost of
+[7:34] And so, you're dealing with a cost of
+[7:34] And so, you're dealing with a cost of drivers, of heat, of power, sharding
+[7:36] drivers, of heat, of power, sharding
+[7:36] drivers, of heat, of power, sharding maybe, maintenance. So, you have to
+[7:38] maybe, maintenance. So, you have to
+[7:38] maybe, maintenance. So, you have to think that through, right? And then
+[7:40] think that through, right? And then
+[7:40] think that through, right? And then there's the Nvidia DGX Spark, which is
+[7:41] there's the Nvidia DGX Spark, which is
+[7:41] there's the Nvidia DGX Spark, which is the appliance version of the Nvidia
+[7:43] the appliance version of the Nvidia
+[7:43] the appliance version of the Nvidia path. You get a Grace Blackwell chip on
+[7:45] path. You get a Grace Blackwell chip on
+[7:45] path. You get a Grace Blackwell chip on the desk, you get 128 gigs of coherent
+[7:48] the desk, you get 128 gigs of coherent
+[7:48] the desk, you get 128 gigs of coherent unified memory, you get Nvidia's
+[7:50] unified memory, you get Nvidia's
+[7:50] unified memory, you get Nvidia's software stack and a product story
+[7:51] software stack and a product story
+[7:51] software stack and a product story around local inference and fine-tuning
+[7:53] around local inference and fine-tuning
+[7:53] around local inference and fine-tuning instead of just a parts list. That
+[7:55] instead of just a parts list. That
+[7:55] instead of just a parts list. That doesn't mean it beats every custom rig.
+[7:57] doesn't mean it beats every custom rig.
+[7:57] doesn't mean it beats every custom rig. It means it packages the Nvidia stack in
+[7:59] It means it packages the Nvidia stack in
+[7:59] It means it packages the Nvidia stack in a way that may be worth paying for if
+[8:01] a way that may be worth paying for if
+[8:01] a way that may be worth paying for if you want a CUDA-native local AI without
+[8:03] you want a CUDA-native local AI without
+[8:03] you want a CUDA-native local AI without building the tower yourself. AMD's Strix
+[8:05] building the tower yourself. AMD's Strix
+[8:05] building the tower yourself. AMD's Strix Halo systems are kind of the value
+[8:07] Halo systems are kind of the value
+[8:07] Halo systems are kind of the value wildcard here, right? The hardware story
+[8:09] wildcard here, right? The hardware story
+[8:09] wildcard here, right? The hardware story is attractive, the software story is
+[8:10] is attractive, the software story is
+[8:10] is attractive, the software story is still less mature than CUDA and less
+[8:13] still less mature than CUDA and less
+[8:13] still less mature than CUDA and less frictionless than Apple silicon. Which
+[8:14] frictionless than Apple silicon. Which
+[8:15] frictionless than Apple silicon. Which brings us back to the real buying rule.
+[8:17] brings us back to the real buying rule.
+[8:17] brings us back to the real buying rule. Don't buy for the biggest model you read
+[8:19] Don't buy for the biggest model you read
+[8:19] Don't buy for the biggest model you read about. Buy the thing you're going to run
+[8:20] about. Buy the thing you're going to run
+[8:20] about. Buy the thing you're going to run daily. If the work is private writing or
+[8:23] daily. If the work is private writing or
+[8:23] daily. If the work is private writing or notes or documents or meetings, you want
+[8:25] notes or documents or meetings, you want
+[8:25] notes or documents or meetings, you want to buy memory and simplicity. If the
+[8:26] to buy memory and simplicity. If the
+[8:26] to buy memory and simplicity. If the work is coding agents and throughput,
+[8:28] work is coding agents and throughput,
+[8:28] work is coding agents and throughput, buy CUDA and just accept the
+[8:30] buy CUDA and just accept the
+[8:30] buy CUDA and just accept the maintenance. If the work is long context
+[8:32] maintenance. If the work is long context
+[8:32] maintenance. If the work is long context personal memory, buy storage, buy
+[8:34] personal memory, buy storage, buy
+[8:34] personal memory, buy storage, buy unified memory, buy a real database,
+[8:36] unified memory, buy a real database,
+[8:36] unified memory, buy a real database, right? If you're just experimenting,
+[8:38] right? If you're just experimenting,
+[8:38] right? If you're just experimenting, start with what you own. The box needs a
+[8:40] start with what you own. The box needs a
+[8:40] start with what you own. The box needs a job before it arrives, so do that work.
+[8:43] job before it arrives, so do that work.
+[8:43] job before it arrives, so do that work. Once the machine exists, the next
+[8:45] Once the machine exists, the next
+[8:45] Once the machine exists, the next question is whether the software makes
+[8:47] question is whether the software makes
+[8:47] question is whether the software makes it feel like a tool or just a tax on
+[8:49] it feel like a tool or just a tax on
+[8:49] it feel like a tool or just a tax on your time. And this is where runtime
+[8:51] your time. And this is where runtime
+[8:51] your time. And this is where runtime really matters, the software that loads
+[8:53] really matters, the software that loads
+[8:53] really matters, the software that loads the weights, that serves the inference,
+[8:54] the weights, that serves the inference,
+[8:54] the weights, that serves the inference, that handles quantization, that exposes
+[8:56] that handles quantization, that exposes
+[8:56] that handles quantization, that exposes APIs, that manages batching, and that
+[8:58] APIs, that manages batching, and that
+[8:58] APIs, that manages batching, and that decides whether your expensive hardware
+[9:00] decides whether your expensive hardware
+[9:00] decides whether your expensive hardware is actually being used well. Most people
+[9:02] is actually being used well. Most people
+[9:03] is actually being used well. Most people underestimate this layer because it
+[9:04] underestimate this layer because it
+[9:04] underestimate this layer because it isn't as exciting as the model name. But
+[9:06] isn't as exciting as the model name. But
+[9:06] isn't as exciting as the model name. But runtime is the difference between local
+[9:08] runtime is the difference between local
+[9:08] runtime is the difference between local AI feeling like a normal part of your
+[9:10] AI feeling like a normal part of your
+[9:10] AI feeling like a normal part of your computer and local AI feeling like a
+[9:12] computer and local AI feeling like a
+[9:12] computer and local AI feeling like a weekend that you just have never had a
+[9:14] weekend that you just have never had a
+[9:14] weekend that you just have never had a chance to recover from. The foundation
+[9:16] chance to recover from. The foundation
+[9:16] chance to recover from. The foundation underneath a lot of this is a tool
+[9:18] underneath a lot of this is a tool
+[9:18] underneath a lot of this is a tool called llama.cpp. Even if you never call
+[9:20] called llama.cpp. Even if you never call
+[9:20] called llama.cpp. Even if you never call it directly, you benefit from it all the
+[9:22] it directly, you benefit from it all the
+[9:22] it directly, you benefit from it all the time if you run your own stack. It
+[9:24] time if you run your own stack. It
+[9:24] time if you run your own stack. It helped make GGUF, the common local model
+[9:27] helped make GGUF, the common local model
+[9:27] helped make GGUF, the common local model format. It runs across your CPU, across
+[9:30] format. It runs across your CPU, across
+[9:30] format. It runs across your CPU, across Apple Metal, across CUDA, across Vulkan,
+[9:32] Apple Metal, across CUDA, across Vulkan,
+[9:32] Apple Metal, across CUDA, across Vulkan, and more. And for most people, the
+[9:34] and more. And for most people, the
+[9:34] and more. And for most people, the runtime on top of that should still be
+[9:35] runtime on top of that should still be
+[9:35] runtime on top of that should still be Ollama. It's not always the fastest or
+[9:37] Ollama. It's not always the fastest or
+[9:37] Ollama. It's not always the fastest or the most configurable, but it gives you
+[9:39] the most configurable, but it gives you
+[9:39] the most configurable, but it gives you a clean command-line interface, a local
+[9:41] a clean command-line interface, a local
+[9:41] a clean command-line interface, a local server, a simple model registry, and an
+[9:43] server, a simple model registry, and an
+[9:43] server, a simple model registry, and an OpenAI-compatible surface that other
+[9:45] OpenAI-compatible surface that other
+[9:45] OpenAI-compatible surface that other tools can talk to. That makes local
+[9:47] tools can talk to. That makes local
+[9:47] tools can talk to. That makes local inference feel normal, especially if
+[9:49] inference feel normal, especially if
+[9:49] inference feel normal, especially if you're used to cloud models. And just a
+[9:50] you're used to cloud models. And just a
+[9:51] you're used to cloud models. And just a quick note on all of the technical terms
+[9:53] quick note on all of the technical terms
+[9:53] quick note on all of the technical terms I'm using, I know that I'm using a bunch
+[9:55] I'm using, I know that I'm using a bunch
+[9:55] I'm using, I know that I'm using a bunch of very specific terms in this video,
+[9:58] of very specific terms in this video,
+[9:58] of very specific terms in this video, don't be scared by them. If you want to
+[10:00] don't be scared by them. If you want to
+[10:00] don't be scared by them. If you want to build your own local stack, you really
+[10:02] build your own local stack, you really
+[10:02] build your own local stack, you really can start with a Mac Mini, and I'm going
+[10:04] can start with a Mac Mini, and I'm going
+[10:04] can start with a Mac Mini, and I'm going to give you a complete teardown across
+[10:06] to give you a complete teardown across
+[10:06] to give you a complete teardown across multiple degrees of complexity at the
+[10:08] multiple degrees of complexity at the
+[10:08] multiple degrees of complexity at the end of this video to help you understand
+[10:11] end of this video to help you understand
+[10:11] end of this video to help you understand which approach you want to take
+[10:12] which approach you want to take
+[10:12] which approach you want to take depending on the workloads you're going
+[10:13] depending on the workloads you're going
+[10:13] depending on the workloads you're going after. So, don't let the technical
+[10:15] after. So, don't let the technical
+[10:15] after. So, don't let the technical terminology scare you. And in fact, you
+[10:17] terminology scare you. And in fact, you
+[10:17] terminology scare you. And in fact, you can load the transcript from this video
+[10:19] can load the transcript from this video
+[10:19] can load the transcript from this video into your AI of choice and have it
+[10:22] into your AI of choice and have it
+[10:22] into your AI of choice and have it explained to you what each of the
+[10:24] explained to you what each of the
+[10:24] explained to you what each of the technical terms I'm mentioning mean. So,
+[10:26] technical terms I'm mentioning mean. So,
+[10:26] technical terms I'm mentioning mean. So, let's keep moving. If you want to go
+[10:27] let's keep moving. If you want to go
+[10:27] let's keep moving. If you want to go with a more sophisticated runtime, LM
+[10:29] with a more sophisticated runtime, LM
+[10:29] with a more sophisticated runtime, LM Studio is a polished workbench for
+[10:31] Studio is a polished workbench for
+[10:31] Studio is a polished workbench for testing models and quantization. If you
+[10:33] testing models and quantization. If you
+[10:33] testing models and quantization. If you want to go with something Apple native,
+[10:34] want to go with something Apple native,
+[10:35] want to go with something Apple native, MLX matters on Apple silicon because
+[10:37] MLX matters on Apple silicon because
+[10:37] MLX matters on Apple silicon because it's a more native performance path. And
+[10:39] it's a more native performance path. And
+[10:39] it's a more native performance path. And if you're serving real workloads on
+[10:40] if you're serving real workloads on
+[10:40] if you're serving real workloads on Nvidia hardware, vLLM is where the
+[10:43] Nvidia hardware, vLLM is where the
+[10:43] Nvidia hardware, vLLM is where the conversation starts to really up-level,
+[10:45] conversation starts to really up-level,
+[10:45] conversation starts to really up-level, right? It handles batching, OpenAI
+[10:47] right? It handles batching, OpenAI
+[10:47] right? It handles batching, OpenAI compatible serving, and enough
+[10:48] compatible serving, and enough
+[10:48] compatible serving, and enough throughput for a team or an internal
+[10:50] throughput for a team or an internal
+[10:50] throughput for a team or an internal product. Beyond that, you can tackle SG
+[10:52] product. Beyond that, you can tackle SG
+[10:52] product. Beyond that, you can tackle SG Lang or TensorRT-LLM or an even Nvidia
+[10:55] Lang or TensorRT-LLM or an even Nvidia
+[10:55] Lang or TensorRT-LLM or an even Nvidia and NeMo. Those are all for serious
+[10:56] and NeMo. Those are all for serious
+[10:56] and NeMo. Those are all for serious deployment tiers. That's where you get
+[10:57] deployment tiers. That's where you get
+[10:57] deployment tiers. That's where you get into latency, structured generation,
+[10:59] into latency, structured generation,
+[10:59] into latency, structured generation, agents, and serving economics that
+[11:01] agents, and serving economics that
+[11:01] agents, and serving economics that enable you to justify the complexity of
+[11:04] enable you to justify the complexity of
+[11:04] enable you to justify the complexity of your build because of how much you're
+[11:06] your build because of how much you're
+[11:06] your build because of how much you're getting done. But, the practical default
+[11:07] getting done. But, the practical default
+[11:07] getting done. But, the practical default is simple. Ollama for daily use, LM
+[11:10] is simple. Ollama for daily use, LM
+[11:10] is simple. Ollama for daily use, LM Studio for evaluation, maybe MLX if
+[11:13] Studio for evaluation, maybe MLX if
+[11:13] Studio for evaluation, maybe MLX if you're tackling the Mac side of things,
+[11:15] you're tackling the Mac side of things,
+[11:15] you're tackling the Mac side of things, vLLM when serving becomes
+[11:16] vLLM when serving becomes
+[11:16] vLLM when serving becomes infrastructure, and that deeper Nvidia
+[11:19] infrastructure, and that deeper Nvidia
+[11:19] infrastructure, and that deeper Nvidia stack when you've committed to CUDA.
+[11:20] stack when you've committed to CUDA.
+[11:20] stack when you've committed to CUDA. Notice what happened here. We haven't
+[11:22] Notice what happened here. We haven't
+[11:22] Notice what happened here. We haven't picked the model yet. That's
+[11:23] picked the model yet. That's
+[11:23] picked the model yet. That's intentional. If the runtime layer is
+[11:25] intentional. If the runtime layer is
+[11:25] intentional. If the runtime layer is healthy, models become very swappable.
+[11:28] healthy, models become very swappable.
+[11:28] healthy, models become very swappable. If the runtime layer is brittle, every
+[11:30] If the runtime layer is brittle, every
+[11:30] If the runtime layer is brittle, every new model becomes a migration effort.
+[11:32] new model becomes a migration effort.
+[11:32] new model becomes a migration effort. It's a lot of pain. Now, the model layer
+[11:35] It's a lot of pain. Now, the model layer
+[11:35] It's a lot of pain. Now, the model layer is where the yelling in the discourse
+[11:37] is where the yelling in the discourse
+[11:37] is where the yelling in the discourse gets loudest and also where it ages out
+[11:38] gets loudest and also where it ages out
+[11:38] gets loudest and also where it ages out the fastest. So, I would not build a
+[11:41] the fastest. So, I would not build a
+[11:41] the fastest. So, I would not build a personal AI computer around a single
+[11:43] personal AI computer around a single
+[11:43] personal AI computer around a single model name. I would build around model
+[11:46] model name. I would build around model
+[11:46] model name. I would build around model classes for particular workloads. So,
+[11:48] classes for particular workloads. So,
+[11:48] classes for particular workloads. So, for example, you probably want a fast
+[11:50] for example, you probably want a fast
+[11:50] for example, you probably want a fast local model for cheap calls, a stronger
+[11:52] local model for cheap calls, a stronger
+[11:52] local model for cheap calls, a stronger local generalist model, a coding model
+[11:55] local generalist model, a coding model
+[11:55] local generalist model, a coding model if that's what you're into, an embedding
+[11:56] if that's what you're into, an embedding
+[11:56] if that's what you're into, an embedding model for memory, a speech model, maybe
+[11:58] model for memory, a speech model, maybe
+[11:58] model for memory, a speech model, maybe a vision model, and of course, a
+[12:00] a vision model, and of course, a
+[12:00] a vision model, and of course, a frontier cloud fallback for the work
+[12:02] frontier cloud fallback for the work
+[12:02] frontier cloud fallback for the work that still deserves it if that's what
+[12:03] that still deserves it if that's what
+[12:03] that still deserves it if that's what you're willing to do. So, the personal
+[12:05] you're willing to do. So, the personal
+[12:05] you're willing to do. So, the personal AI computer that I'm describing here is
+[12:07] AI computer that I'm describing here is
+[12:07] AI computer that I'm describing here is not necessarily anti-cloud, it's just
+[12:10] not necessarily anti-cloud, it's just
+[12:10] not necessarily anti-cloud, it's just anti-dependence.
+[12:11] anti-dependence.
+[12:11] anti-dependence. You don't want to be dependent on the
+[12:12] You don't want to be dependent on the
+[12:12] You don't want to be dependent on the cloud models. And for general work, the
+[12:14] cloud models. And for general work, the
+[12:14] cloud models. And for general work, the local landscape now has real choices.
+[12:17] local landscape now has real choices.
+[12:17] local landscape now has real choices. Llama 4, Scout, and Maverick are
+[12:19] Llama 4, Scout, and Maverick are
+[12:19] Llama 4, Scout, and Maverick are important because they show where the
+[12:20] important because they show where the
+[12:20] important because they show where the open ecosystem is headed. They have
+[12:22] open ecosystem is headed. They have
+[12:22] open ecosystem is headed. They have mixture of experts models. It's a
+[12:24] mixture of experts models. It's a
+[12:24] mixture of experts models. It's a multimodal approach, longer context,
+[12:26] multimodal approach, longer context,
+[12:26] multimodal approach, longer context, more deployment nuance there. GPT-OSS
+[12:29] more deployment nuance there. GPT-OSS
+[12:29] more deployment nuance there. GPT-OSS matters because OpenAI put permissively
+[12:31] matters because OpenAI put permissively
+[12:31] matters because OpenAI put permissively licensed reasoning models out into the
+[12:33] licensed reasoning models out into the
+[12:33] licensed reasoning models out into the self-hosted world. Qwen matters because
+[12:35] self-hosted world. Qwen matters because
+[12:35] self-hosted world. Qwen matters because it's become a default family for lots of
+[12:37] it's become a default family for lots of
+[12:37] it's become a default family for lots of agents, for coding, for multilingual
+[12:39] agents, for coding, for multilingual
+[12:39] agents, for coding, for multilingual work, and for tool use. Gemma matters
+[12:41] work, and for tool use. Gemma matters
+[12:41] work, and for tool use. Gemma matters because Google is pushing very capable
+[12:43] because Google is pushing very capable
+[12:43] because Google is pushing very capable local models down to smaller sizes
+[12:45] local models down to smaller sizes
+[12:45] local models down to smaller sizes designed specifically for open claw type
+[12:47] designed specifically for open claw type
+[12:47] designed specifically for open claw type applications. Mistral matters because it
+[12:49] applications. Mistral matters because it
+[12:49] applications. Mistral matters because it keeps offering serious open weight
+[12:51] keeps offering serious open weight
+[12:51] keeps offering serious open weight alternatives with a strong enterprise
+[12:52] alternatives with a strong enterprise
+[12:53] alternatives with a strong enterprise and deployment story. But, the most
+[12:54] and deployment story. But, the most
+[12:54] and deployment story. But, the most important takeaway here is this. There
+[12:56] important takeaway here is this. There
+[12:56] important takeaway here is this. There is no one right model that wins at all
+[12:59] is no one right model that wins at all
+[12:59] is no one right model that wins at all the use cases. Part of what you're doing
+[13:01] the use cases. Part of what you're doing
+[13:01] the use cases. Part of what you're doing when you set up a strong personal
+[13:03] when you set up a strong personal
+[13:03] when you set up a strong personal computer for AI is you're asking
+[13:05] computer for AI is you're asking
+[13:05] computer for AI is you're asking yourself, "What is the mixture of models
+[13:07] yourself, "What is the mixture of models
+[13:07] yourself, "What is the mixture of models I need?" And that's what I'm looking to
+[13:08] I need?" And that's what I'm looking to
+[13:08] I need?" And that's what I'm looking to give you is the sense of choices and the
+[13:10] give you is the sense of choices and the
+[13:10] give you is the sense of choices and the rationale you'd use to make those
+[13:12] rationale you'd use to make those
+[13:12] rationale you'd use to make those choices. For example, for coding, you
+[13:14] choices. For example, for coding, you
+[13:14] choices. For example, for coding, you don't want one model doing everything.
+[13:16] don't want one model doing everything.
+[13:16] don't want one model doing everything. You want a small autocomplete model, a
+[13:18] You want a small autocomplete model, a
+[13:18] You want a small autocomplete model, a repo-aware editor model, and a deeper
+[13:21] repo-aware editor model, and a deeper
+[13:21] repo-aware editor model, and a deeper reasoning model for architectural
+[13:22] reasoning model for architectural
+[13:22] reasoning model for architectural changes, for debugging, for migrations.
+[13:25] changes, for debugging, for migrations.
+[13:25] changes, for debugging, for migrations. If you're doing docs, you probably want
+[13:27] If you're doing docs, you probably want
+[13:27] If you're doing docs, you probably want to think about an embedding model and
+[13:28] to think about an embedding model and
+[13:28] to think about an embedding model and how you handle embeddings so that you
+[13:30] how you handle embeddings so that you
+[13:30] how you handle embeddings so that you can retrieve semantic memory correctly.
+[13:34] can retrieve semantic memory correctly.
+[13:34] can retrieve semantic memory correctly. Qwen embedding models are good here.
+[13:35] Qwen embedding models are good here.
+[13:35] Qwen embedding models are good here. There's other options that as well.
+[13:37] There's other options that as well.
+[13:37] There's other options that as well. Whatever fits your stack. Embeddings are
+[13:38] Whatever fits your stack. Embeddings are
+[13:39] Whatever fits your stack. Embeddings are very cheap to run. They're easy to
+[13:40] very cheap to run. They're easy to
+[13:40] very cheap to run. They're easy to cache, and they're central to privacy if
+[13:42] cache, and they're central to privacy if
+[13:42] cache, and they're central to privacy if you value a private set of core
+[13:45] you value a private set of core
+[13:45] you value a private set of core documents that don't go to the cloud.
+[13:47] documents that don't go to the cloud.
+[13:47] documents that don't go to the cloud. You know, if your documents end up
+[13:49] You know, if your documents end up
+[13:49] You know, if your documents end up leaving your machine just to become
+[13:50] leaving your machine just to become
+[13:50] leaving your machine just to become vectors, you've missed one of the
+[13:52] vectors, you've missed one of the
+[13:52] vectors, you've missed one of the easiest wins in local AI. If we're
+[13:54] easiest wins in local AI. If we're
+[13:54] easiest wins in local AI. If we're talking about speech, Whisper is still a
+[13:56] talking about speech, Whisper is still a
+[13:56] talking about speech, Whisper is still a reference point. Local transcription is
+[13:58] reference point. Local transcription is
+[13:58] reference point. Local transcription is fast and private, and if you own the
+[13:59] fast and private, and if you own the
+[13:59] fast and private, and if you own the hardware, it's very economical. For
+[14:01] hardware, it's very economical. For
+[14:01] hardware, it's very economical. For vision, local models are finally good
+[14:03] vision, local models are finally good
+[14:03] vision, local models are finally good enough for document screenshots, for
+[14:05] enough for document screenshots, for
+[14:05] enough for document screenshots, for chart extraction, not for all visual
+[14:07] chart extraction, not for all visual
+[14:07] chart extraction, not for all visual reasoning, but for a lot of personal
+[14:09] reasoning, but for a lot of personal
+[14:09] reasoning, but for a lot of personal media search and work, and that belongs
+[14:11] media search and work, and that belongs
+[14:11] media search and work, and that belongs in your stack now. Ultimately, your
+[14:12] in your stack now. Ultimately, your
+[14:12] in your stack now. Ultimately, your model portfolio should feel less like
+[14:14] model portfolio should feel less like
+[14:14] model portfolio should feel less like picking your favorite chatbot and a lot
+[14:16] picking your favorite chatbot and a lot
+[14:17] picking your favorite chatbot and a lot more like building a tool cabinet. A
+[14:18] more like building a tool cabinet. A
+[14:18] more like building a tool cabinet. A small model for fast loops, bigger
+[14:20] small model for fast loops, bigger
+[14:20] small model for fast loops, bigger models for hard local work, a
+[14:22] models for hard local work, a
+[14:22] models for hard local work, a specialized models like I've been
+[14:23] specialized models like I've been
+[14:23] specialized models like I've been describing for various aspects of code
+[14:26] describing for various aspects of code
+[14:26] describing for various aspects of code editing, code production, media, and
+[14:28] editing, code production, media, and
+[14:28] editing, code production, media, and then a cloud model for the frontier
+[14:29] then a cloud model for the frontier
+[14:29] then a cloud model for the frontier cases. The principle should be you own
+[14:31] cases. The principle should be you own
+[14:32] cases. The principle should be you own the runtime, and you only rent the cloud
+[14:34] the runtime, and you only rent the cloud
+[14:34] the runtime, and you only rent the cloud model in exceptional cases. Now, if
+[14:36] model in exceptional cases. Now, if
+[14:36] model in exceptional cases. Now, if you're wondering, "Do I have to do all
+[14:38] you're wondering, "Do I have to do all
+[14:38] you're wondering, "Do I have to do all of this? This feels like a lot of work.
+[14:40] of this? This feels like a lot of work.
+[14:40] of this? This feels like a lot of work. Nate, can I just use a cloud model?" The
+[14:42] Nate, can I just use a cloud model?" The
+[14:42] Nate, can I just use a cloud model?" The answer is absolutely you can. And for
+[14:44] answer is absolutely you can. And for
+[14:44] answer is absolutely you can. And for many people, that's going to be the
+[14:46] many people, that's going to be the
+[14:46] many people, that's going to be the answer. But, I know a lot of folks in my
+[14:47] answer. But, I know a lot of folks in my
+[14:47] answer. But, I know a lot of folks in my audience who value the privacy that
+[14:50] audience who value the privacy that
+[14:50] audience who value the privacy that comes with their own local stack, and I
+[14:51] comes with their own local stack, and I
+[14:51] comes with their own local stack, and I want you to have the tools to be able to
+[14:54] want you to have the tools to be able to
+[14:54] want you to have the tools to be able to build that stack in a way that aligns
+[14:56] build that stack in a way that aligns
+[14:56] build that stack in a way that aligns with your workflows because a lot of the
+[14:58] with your workflows because a lot of the
+[14:58] with your workflows because a lot of the videos that I see are really useful for
+[15:01] videos that I see are really useful for
+[15:01] videos that I see are really useful for building your own personal computer, but
+[15:02] building your own personal computer, but
+[15:02] building your own personal computer, but they're not useful for helping you
+[15:04] they're not useful for helping you
+[15:04] they're not useful for helping you decide what stack you should be on,
+[15:06] decide what stack you should be on,
+[15:06] decide what stack you should be on, which is arguably the more important
+[15:08] which is arguably the more important
+[15:08] which is arguably the more important thing to do. Figure out the workflows
+[15:09] thing to do. Figure out the workflows
+[15:09] thing to do. Figure out the workflows you need to go after, and then build the
+[15:11] you need to go after, and then build the
+[15:12] you need to go after, and then build the stack that fits. And that's really my
+[15:13] stack that fits. And that's really my
+[15:13] stack that fits. And that's really my focus here, and I'm giving you
+[15:14] focus here, and I'm giving you
+[15:14] focus here, and I'm giving you essentially lots of choices that you can
+[15:16] essentially lots of choices that you can
+[15:16] essentially lots of choices that you can dig into. And if you want a full punch
+[15:18] dig into. And if you want a full punch
+[15:18] dig into. And if you want a full punch list, yes, it's absolutely going to be
+[15:20] list, yes, it's absolutely going to be
+[15:20] list, yes, it's absolutely going to be on the Substack. Getting back to our
+[15:21] on the Substack. Getting back to our
+[15:21] on the Substack. Getting back to our stack, the layer that actually turns
+[15:23] stack, the layer that actually turns
+[15:23] stack, the layer that actually turns this from a toy into infrastructure is
+[15:25] this from a toy into infrastructure is
+[15:25] this from a toy into infrastructure is memory. And that's the part that I think
+[15:27] memory. And that's the part that I think
+[15:27] memory. And that's the part that I think people tend to underbuild. The model is
+[15:29] people tend to underbuild. The model is
+[15:29] people tend to underbuild. The model is stateless, but your life isn't
+[15:31] stateless, but your life isn't
+[15:31] stateless, but your life isn't stateless. Your life remember You you
+[15:32] stateless. Your life remember You you
+[15:32] stateless. Your life remember You you remember things. You go through your
+[15:34] remember things. You go through your
+[15:34] remember things. You go through your life with durable memory. Every useful
+[15:36] life with durable memory. Every useful
+[15:36] life with durable memory. Every useful personal AI system also needs durable
+[15:38] personal AI system also needs durable
+[15:38] personal AI system also needs durable memory outside the model. It needs notes
+[15:39] memory outside the model. It needs notes
+[15:39] memory outside the model. It needs notes and documents and transcripts and email
+[15:41] and documents and transcripts and email
+[15:41] and documents and transcripts and email and tasks and calendar events and code
+[15:43] and tasks and calendar events and code
+[15:43] and tasks and calendar events and code decisions and research and preferences
+[15:45] decisions and research and preferences
+[15:45] decisions and research and preferences and a sense of long-running project
+[15:47] and a sense of long-running project
+[15:47] and a sense of long-running project state. And so, your most important
+[15:48] state. And so, your most important
+[15:48] state. And so, your most important architectural decision is that this
+[15:50] architectural decision is that this
+[15:50] architectural decision is that this memory should belong to you, not the
+[15:52] memory should belong to you, not the
+[15:52] memory should belong to you, not the model provider. And that's why I built
+[15:54] model provider. And that's why I built
+[15:54] model provider. And that's why I built Open Brain. Open Brain is an
+[15:56] Open Brain. Open Brain is an
+[15:56] Open Brain. Open Brain is an open-source, GitHub available memory
+[15:59] open-source, GitHub available memory
+[15:59] open-source, GitHub available memory system that allows you to build a
+[16:01] system that allows you to build a
+[16:01] system that allows you to build a SQL-driven database approach to memory
+[16:04] SQL-driven database approach to memory
+[16:04] SQL-driven database approach to memory with an easy MCP server attached, but
+[16:06] with an easy MCP server attached, but
+[16:06] with an easy MCP server attached, but that also recently we've added an
+[16:08] that also recently we've added an
+[16:08] that also recently we've added an embedding management system for. So, you
+[16:11] embedding management system for. So, you
+[16:11] embedding management system for. So, you can do almost an Andrej Karpathy-like
+[16:13] can do almost an Andrej Karpathy-like
+[16:13] can do almost an Andrej Karpathy-like hybrid memory system where you have the
+[16:15] hybrid memory system where you have the
+[16:15] hybrid memory system where you have the Karpathy approach to memory involving
+[16:17] Karpathy approach to memory involving
+[16:17] Karpathy approach to memory involving lots of different interlinked and
+[16:19] lots of different interlinked and
+[16:19] lots of different interlinked and interweaved embeddings that help you
+[16:21] interweaved embeddings that help you
+[16:21] interweaved embeddings that help you make sense of multiple documents at
+[16:22] make sense of multiple documents at
+[16:22] make sense of multiple documents at once, and also a SQL approach that lets
+[16:25] once, and also a SQL approach that lets
+[16:25] once, and also a SQL approach that lets you store and categorize facts in a neat
+[16:28] you store and categorize facts in a neat
+[16:28] you store and categorize facts in a neat way. And so, that's something to think
+[16:29] way. And so, that's something to think
+[16:29] way. And so, that's something to think about. You obviously don't need to use
+[16:30] about. You obviously don't need to use
+[16:30] about. You obviously don't need to use Open Brain to solve for this, but I
+[16:32] Open Brain to solve for this, but I
+[16:32] Open Brain to solve for this, but I built it because I think that memory is
+[16:34] built it because I think that memory is
+[16:34] built it because I think that memory is very high leverage, and it's important
+[16:35] very high leverage, and it's important
+[16:35] very high leverage, and it's important to manage your own memory in the age of
+[16:37] to manage your own memory in the age of
+[16:37] to manage your own memory in the age of AI so you're not beholden to a
+[16:39] AI so you're not beholden to a
+[16:39] AI so you're not beholden to a particular cloud provider. After all, in
+[16:41] particular cloud provider. After all, in
+[16:41] particular cloud provider. After all, in the cloud-first model, the AI service
+[16:43] the cloud-first model, the AI service
+[16:43] the cloud-first model, the AI service really wants to own your memory, and you
+[16:45] really wants to own your memory, and you
+[16:45] really wants to own your memory, and you visit your memory. Whereas in the
+[16:46] visit your memory. Whereas in the
+[16:46] visit your memory. Whereas in the personal compute model that I'm
+[16:48] personal compute model that I'm
+[16:48] personal compute model that I'm describing here, you own the memory, and
+[16:50] describing here, you own the memory, and
+[16:50] describing here, you own the memory, and the models come to you if you choose to
+[16:52] the models come to you if you choose to
+[16:52] the models come to you if you choose to rent them. And that inversion is the
+[16:53] rent them. And that inversion is the
+[16:53] rent them. And that inversion is the heart of the whole thing. The source
+[16:55] heart of the whole thing. The source
+[16:55] heart of the whole thing. The source material for your life, your memory,
+[16:57] material for your life, your memory,
+[16:57] material for your life, your memory, should live somewhere durable. If you
+[16:58] should live somewhere durable. If you
+[16:58] should live somewhere durable. If you don't want to go with Open Brain, you
+[17:00] don't want to go with Open Brain, you
+[17:00] don't want to go with Open Brain, you know what? You can go with Obsidian.
+[17:01] know what? You can go with Obsidian.
+[17:01] know what? You can go with Obsidian. It's a It's a default if you have a lot
+[17:03] It's a It's a default if you have a lot
+[17:03] It's a It's a default if you have a lot of docs. It won't work as well for lots
+[17:05] of docs. It won't work as well for lots
+[17:05] of docs. It won't work as well for lots of quantitative storage and facts. But,
+[17:07] of quantitative storage and facts. But,
+[17:07] of quantitative storage and facts. But, if most of your work is in docs, it will
+[17:09] if most of your work is in docs, it will
+[17:09] if most of your work is in docs, it will store it in markdown in folders you can
+[17:11] store it in markdown in folders you can
+[17:11] store it in markdown in folders you can control, and you can absolutely use
+[17:12] control, and you can absolutely use
+[17:13] control, and you can absolutely use Obsidian. I know a lot of people who do.
+[17:14] Obsidian. I know a lot of people who do.
+[17:14] Obsidian. I know a lot of people who do. Plain markdown plus Git is like the
+[17:16] Plain markdown plus Git is like the
+[17:16] Plain markdown plus Git is like the boring immortal version. For structured
+[17:18] boring immortal version. For structured
+[17:18] boring immortal version. For structured work, you might go with Postgres, which
+[17:19] work, you might go with Postgres, which
+[17:20] work, you might go with Postgres, which might be better than your notes. That's
+[17:21] might be better than your notes. That's
+[17:21] might be better than your notes. That's why I built Open Brain that way. But,
+[17:22] why I built Open Brain that way. But,
+[17:23] why I built Open Brain that way. But, the key property for memory overall is
+[17:24] the key property for memory overall is
+[17:24] the key property for memory overall is very simple. Your knowledge keeps
+[17:26] very simple. Your knowledge keeps
+[17:26] very simple. Your knowledge keeps existing even if the AI app disappears.
+[17:29] existing even if the AI app disappears.
+[17:29] existing even if the AI app disappears. Then, you need retrieval. For many
+[17:30] Then, you need retrieval. For many
+[17:30] Then, you need retrieval. For many serious systems, Postgres with pgvector
+[17:33] serious systems, Postgres with pgvector
+[17:33] serious systems, Postgres with pgvector is the grown-up default because it lets
+[17:34] is the grown-up default because it lets
+[17:34] is the grown-up default because it lets you keep relational data and metadata
+[17:36] you keep relational data and metadata
+[17:36] you keep relational data and metadata and permissions and vector search all in
+[17:38] and permissions and vector search all in
+[17:38] and permissions and vector search all in one place. SQLite with SQLite vec is the
+[17:41] one place. SQLite with SQLite vec is the
+[17:41] one place. SQLite with SQLite vec is the lightweight personal version. It's just
+[17:43] lightweight personal version. It's just
+[17:43] lightweight personal version. It's just a single file. It's easy to back up.
+[17:44] a single file. It's easy to back up.
+[17:44] a single file. It's easy to back up. It's easy to understand. Now, the part
+[17:46] It's easy to understand. Now, the part
+[17:46] It's easy to understand. Now, the part almost everybody gets wrong is on the
+[17:48] almost everybody gets wrong is on the
+[17:48] almost everybody gets wrong is on the pipeline side. Good retrieval is not
+[17:50] pipeline side. Good retrieval is not
+[17:50] pipeline side. Good retrieval is not throw every document into chunks and
+[17:53] throw every document into chunks and
+[17:53] throw every document into chunks and hope. By the way, if you're wondering,
+[17:54] hope. By the way, if you're wondering,
+[17:54] hope. By the way, if you're wondering, "Wow, this sounds complicated," Open
+[17:56] "Wow, this sounds complicated," Open
+[17:56] "Wow, this sounds complicated," Open Brain does take care of a lot of the
+[17:57] Brain does take care of a lot of the
+[17:57] Brain does take care of a lot of the chunking strategy, a lot of the
+[17:59] chunking strategy, a lot of the
+[17:59] chunking strategy, a lot of the retrieval strategy, a lot of the input
+[18:01] retrieval strategy, a lot of the input
+[18:01] retrieval strategy, a lot of the input and classification strategy for you. And
+[18:03] and classification strategy for you. And
+[18:03] and classification strategy for you. And so, that's an option for you if you if
+[18:05] so, that's an option for you if you if
+[18:05] so, that's an option for you if you if you'd like it. But, the point here is
+[18:06] you'd like it. But, the point here is
+[18:06] you'd like it. But, the point here is that different kinds of data need
+[18:08] that different kinds of data need
+[18:08] that different kinds of data need different memory handling, and you have
+[18:10] different memory handling, and you have
+[18:10] different memory handling, and you have to think about that in advance. Like,
+[18:11] to think about that in advance. Like,
+[18:11] to think about that in advance. Like, PDFs need different handling than
+[18:13] PDFs need different handling than
+[18:13] PDFs need different handling than markdown. Meeting transcripts need
+[18:15] markdown. Meeting transcripts need
+[18:15] markdown. Meeting transcripts need speakers. They need timestamps. Code
+[18:17] speakers. They need timestamps. Code
+[18:17] speakers. They need timestamps. Code needs symbol-aware indexing. Notes need
+[18:19] needs symbol-aware indexing. Notes need
+[18:19] needs symbol-aware indexing. Notes need links preserved. You need to know what
+[18:20] links preserved. You need to know what
+[18:20] links preserved. You need to know what changed, what was indexed, and what
+[18:22] changed, what was indexed, and what
+[18:22] changed, what was indexed, and what should be regenerated when a better
+[18:23] should be regenerated when a better
+[18:24] should be regenerated when a better embedding model comes along, which is
+[18:25] embedding model comes along, which is
+[18:25] embedding model comes along, which is why it's so important to have your raw
+[18:27] why it's so important to have your raw
+[18:27] why it's so important to have your raw data and your embeddings in your
+[18:28] data and your embeddings in your
+[18:28] data and your embeddings in your database separately. Because then you
+[18:30] database separately. Because then you
+[18:30] database separately. Because then you can always rebuild it if something goes
+[18:32] can always rebuild it if something goes
+[18:32] can always rebuild it if something goes wrong. Most of the time when something
+[18:33] wrong. Most of the time when something
+[18:33] wrong. Most of the time when something goes wrong with a memory system, it's
+[18:35] goes wrong with a memory system, it's
+[18:35] goes wrong with a memory system, it's not the model itself, it's the pipeline
+[18:38] not the model itself, it's the pipeline
+[18:38] not the model itself, it's the pipeline that's the issue. And you have to think
+[18:39] that's the issue. And you have to think
+[18:39] that's the issue. And you have to think about how the pipeline affected your
+[18:41] about how the pipeline affected your
+[18:41] about how the pipeline affected your chunking strategy, for example, or how
+[18:43] chunking strategy, for example, or how
+[18:43] chunking strategy, for example, or how it affected your ability to handle
+[18:45] it affected your ability to handle
+[18:45] it affected your ability to handle retrieval, etc. And then there's the
+[18:47] retrieval, etc. And then there's the
+[18:47] retrieval, etc. And then there's the access there where MCP becomes
+[18:48] access there where MCP becomes
+[18:48] access there where MCP becomes interesting. Open Brain has MCP. An MCP
+[18:51] interesting. Open Brain has MCP. An MCP
+[18:51] interesting. Open Brain has MCP. An MCP server in front of your database can let
+[18:52] server in front of your database can let
+[18:52] server in front of your database can let Claude or ChatGPT or any custom tool you
+[18:54] Claude or ChatGPT or any custom tool you
+[18:54] Claude or ChatGPT or any custom tool you want query that memory. That is the
+[18:56] want query that memory. That is the
+[18:57] want query that memory. That is the right direction. But, don't assume just
+[18:59] right direction. But, don't assume just
+[18:59] right direction. But, don't assume just because you have an MCP in front of
+[19:00] because you have an MCP in front of
+[19:01] because you have an MCP in front of something, you can treat it like magic.
+[19:02] something, you can treat it like magic.
+[19:02] something, you can treat it like magic. MCP servers are just executable tool
+[19:04] MCP servers are just executable tool
+[19:04] MCP servers are just executable tool surfaces. They still need permissions
+[19:06] surfaces. They still need permissions
+[19:06] surfaces. They still need permissions and logging and secrets management and
+[19:08] and logging and secrets management and
+[19:08] and logging and secrets management and and boundaries to work well. Your
+[19:10] and boundaries to work well. Your
+[19:10] and boundaries to work well. Your personal AI computer should not just be
+[19:12] personal AI computer should not just be
+[19:12] personal AI computer should not just be a pile of local tools that any model can
+[19:14] a pile of local tools that any model can
+[19:14] a pile of local tools that any model can call for anything. It should be an own
+[19:16] call for anything. It should be an own
+[19:16] call for anything. It should be an own system that you set up intentionally.
+[19:18] system that you set up intentionally.
+[19:18] system that you set up intentionally. That's the difference between useful
+[19:20] That's the difference between useful
+[19:20] That's the difference between useful local intelligence and just giving the
+[19:21] local intelligence and just giving the
+[19:21] local intelligence and just giving the model the keys to the vehicle and hoping
+[19:23] model the keys to the vehicle and hoping
+[19:23] model the keys to the vehicle and hoping it all goes well. The next failure mode
+[19:25] it all goes well. The next failure mode
+[19:25] it all goes well. The next failure mode is interface. A great runtime with no
+[19:27] is interface. A great runtime with no
+[19:27] is interface. A great runtime with no comfortable surface is just a setup that
+[19:29] comfortable surface is just a setup that
+[19:29] comfortable surface is just a setup that you're going to stop using after a week
+[19:31] you're going to stop using after a week
+[19:31] you're going to stop using after a week cuz you're not in it. And that's why
+[19:32] cuz you're not in it. And that's why
+[19:32] cuz you're not in it. And that's why local AI can't just live in the
+[19:34] local AI can't just live in the
+[19:34] local AI can't just live in the terminal. The model has to live where
+[19:36] terminal. The model has to live where
+[19:36] terminal. The model has to live where your work lives. You can use something
+[19:38] your work lives. You can use something
+[19:38] your work lives. You can use something like Open Web UI for chat. Anything LLM
+[19:41] like Open Web UI for chat. Anything LLM
+[19:41] like Open Web UI for chat. Anything LLM is worth considering when you really,
+[19:42] is worth considering when you really,
+[19:42] is worth considering when you really, really want to focus on retrieval
+[19:44] really want to focus on retrieval
+[19:44] really want to focus on retrieval heavily. LM Studio is good for direct
+[19:46] heavily. LM Studio is good for direct
+[19:46] heavily. LM Studio is good for direct model work. You just want to pick the
+[19:49] model work. You just want to pick the
+[19:49] model work. You just want to pick the tools for the interface that feel like
+[19:51] tools for the interface that feel like
+[19:51] tools for the interface that feel like they align with your current workflow.
+[19:53] they align with your current workflow.
+[19:53] they align with your current workflow. That's the principle. For for editors,
+[19:55] That's the principle. For for editors,
+[19:55] That's the principle. For for editors, continue is one of the obvious bridges
+[19:56] continue is one of the obvious bridges
+[19:56] continue is one of the obvious bridges because it can point at OpenAI
+[19:58] because it can point at OpenAI
+[19:58] because it can point at OpenAI compatible endpoints. Aider remains very
+[20:00] compatible endpoints. Aider remains very
+[20:00] compatible endpoints. Aider remains very good for terminal-based code editing,
+[20:02] good for terminal-based code editing,
+[20:02] good for terminal-based code editing, and there's a whole class of coding
+[20:03] and there's a whole class of coding
+[20:03] and there's a whole class of coding agents that are converging on a very
+[20:05] agents that are converging on a very
+[20:05] agents that are converging on a very similar pattern that you'll want to work
+[20:06] similar pattern that you'll want to work
+[20:06] similar pattern that you'll want to work with, right? Model plus tools plus repo
+[20:09] with, right? Model plus tools plus repo
+[20:09] with, right? Model plus tools plus repo plus context in a in a planning loop.
+[20:10] plus context in a in a planning loop.
+[20:10] plus context in a in a planning loop. And that's really how it works, whether
+[20:12] And that's really how it works, whether
+[20:12] And that's really how it works, whether you're using a cloud model or a local
+[20:14] you're using a cloud model or a local
+[20:14] you're using a cloud model or a local model, if you're into coding. Now, for
+[20:15] model, if you're into coding. Now, for
+[20:15] model, if you're into coding. Now, for launchers and command surfaces, the
+[20:17] launchers and command surfaces, the
+[20:17] launchers and command surfaces, the things that get the models going, the
+[20:19] things that get the models going, the
+[20:19] things that get the models going, the boring tools matter more than you might
+[20:20] boring tools matter more than you might
+[20:20] boring tools matter more than you might think. Stuff like Raycast and Alfred and
+[20:23] think. Stuff like Raycast and Alfred and
+[20:23] think. Stuff like Raycast and Alfred and shortcuts and shell commands, small menu
+[20:25] shortcuts and shell commands, small menu
+[20:25] shortcuts and shell commands, small menu bar apps, an LLM command line interface.
+[20:28] bar apps, an LLM command line interface.
+[20:28] bar apps, an LLM command line interface. A personal AI computer basically
+[20:29] A personal AI computer basically
+[20:29] A personal AI computer basically shouldn't require you to open a chatbot
+[20:31] shouldn't require you to open a chatbot
+[20:31] shouldn't require you to open a chatbot just to talk to the LLM. You should be
+[20:33] just to talk to the LLM. You should be
+[20:33] just to talk to the LLM. You should be able to call it from your editor, from
+[20:34] able to call it from your editor, from
+[20:34] able to call it from your editor, from your notes, from your browser, from your
+[20:36] your notes, from your browser, from your
+[20:36] your notes, from your browser, from your finder. You get it, right? Anywhere
+[20:38] finder. You get it, right? Anywhere
+[20:38] finder. You get it, right? Anywhere you're in the computer, you should just
+[20:39] you're in the computer, you should just
+[20:39] you're in the computer, you should just be able to speak or to type, and you
+[20:41] be able to speak or to type, and you
+[20:41] be able to speak or to type, and you should be able to get the LLM. Voice is
+[20:42] should be able to get the LLM. Voice is
+[20:42] should be able to get the LLM. Voice is underrated here because hosted voice
+[20:44] underrated here because hosted voice
+[20:44] underrated here because hosted voice assistants trained everyone to expect
+[20:47] assistants trained everyone to expect
+[20:47] assistants trained everyone to expect disappointment over the last few years.
+[20:48] disappointment over the last few years.
+[20:48] disappointment over the last few years. But, local voice can be different now.
+[20:50] But, local voice can be different now.
+[20:50] But, local voice can be different now. Whisper handles transcription, a local
+[20:52] Whisper handles transcription, a local
+[20:52] Whisper handles transcription, a local or hybrid model handles intent and clean
+[20:54] or hybrid model handles intent and clean
+[20:54] or hybrid model handles intent and clean up and summarization and routing. And
+[20:55] up and summarization and routing. And
+[20:55] up and summarization and routing. And the interface principle then is not just
+[20:57] the interface principle then is not just
+[20:57] the interface principle then is not just install a bunch of AI apps, it's just
+[20:59] install a bunch of AI apps, it's just
+[20:59] install a bunch of AI apps, it's just speak what you're looking for, and it
+[21:01] speak what you're looking for, and it
+[21:01] speak what you're looking for, and it sticks what you're asking into a single
+[21:03] sticks what you're asking into a single
+[21:03] sticks what you're asking into a single stack underneath. The principle is many
+[21:05] stack underneath. The principle is many
+[21:05] stack underneath. The principle is many surfaces, one stack underneath. So, your
+[21:08] surfaces, one stack underneath. So, your
+[21:08] surfaces, one stack underneath. So, your editor, your note app, your browser,
+[21:09] editor, your note app, your browser,
+[21:09] editor, your note app, your browser, your launcher, your terminal, and your
+[21:11] your launcher, your terminal, and your
+[21:11] your launcher, your terminal, and your voice recorder, they those don't have
+[21:13] voice recorder, they those don't have
+[21:13] voice recorder, they those don't have separate memory layers, right? They
+[21:14] separate memory layers, right? They
+[21:14] separate memory layers, right? They should call into the same local runtime
+[21:17] should call into the same local runtime
+[21:17] should call into the same local runtime in the same memory layer, and they'll
+[21:19] in the same memory layer, and they'll
+[21:19] in the same memory layer, and they'll actually work well. This is the part
+[21:21] actually work well. This is the part
+[21:21] actually work well. This is the part that a lot of products aren't going to
+[21:22] that a lot of products aren't going to
+[21:22] that a lot of products aren't going to give you because their business model
+[21:23] give you because their business model
+[21:23] give you because their business model depends on owning the memory underneath
+[21:25] depends on owning the memory underneath
+[21:25] depends on owning the memory underneath the input channel. And so, you
+[21:27] the input channel. And so, you
+[21:27] the input channel. And so, you accumulate that memory inside a
+[21:29] accumulate that memory inside a
+[21:29] accumulate that memory inside a particular cloud model for meeting
+[21:31] particular cloud model for meeting
+[21:31] particular cloud model for meeting transcripts, right? And then you can't
+[21:32] transcripts, right? And then you can't
+[21:32] transcripts, right? And then you can't get it out again. The last layer that
+[21:34] get it out again. The last layer that
+[21:34] get it out again. The last layer that you should think about is where you want
+[21:37] you should think about is where you want
+[21:37] you should think about is where you want to put your workflows. And this is where
+[21:39] to put your workflows. And this is where
+[21:39] to put your workflows. And this is where you stop asking, "Can I run the model
+[21:41] you stop asking, "Can I run the model
+[21:41] you stop asking, "Can I run the model locally?" and you start asking, "What is
+[21:44] locally?" and you start asking, "What is
+[21:44] locally?" and you start asking, "What is the workflow I now control beyond the
+[21:46] the workflow I now control beyond the
+[21:46] the workflow I now control beyond the model itself?" If you're thinking about
+[21:48] model itself?" If you're thinking about
+[21:48] model itself?" If you're thinking about managing workflows, personal RAG or a
+[21:51] managing workflows, personal RAG or a
+[21:51] managing workflows, personal RAG or a personal memory system like I described
+[21:52] personal memory system like I described
+[21:52] personal memory system like I described earlier with Open Brain, that is still a
+[21:54] earlier with Open Brain, that is still a
+[21:54] earlier with Open Brain, that is still a clean first win. You can index your
+[21:56] clean first win. You can index your
+[21:56] clean first win. You can index your notes and your drafts and your PDFs, you
+[21:58] notes and your drafts and your PDFs, you
+[21:58] notes and your drafts and your PDFs, you can create a database. The value there
+[22:00] can create a database. The value there
+[22:00] can create a database. The value there is not generic search, it's that you
+[22:02] is not generic search, it's that you
+[22:02] is not generic search, it's that you actually develop a long-term
+[22:04] actually develop a long-term
+[22:04] actually develop a long-term institutional memory of your work over
+[22:06] institutional memory of your work over
+[22:06] institutional memory of your work over time. A frontier model might have read
+[22:08] time. A frontier model might have read
+[22:08] time. A frontier model might have read the public internet. It's not read the
+[22:09] the public internet. It's not read the
+[22:10] the public internet. It's not read the past few years of your meeting notes,
+[22:11] past few years of your meeting notes,
+[22:11] past few years of your meeting notes, and it shouldn't need to. Private coding
+[22:13] and it shouldn't need to. Private coding
+[22:13] and it shouldn't need to. Private coding is another obvious loop, right? A local
+[22:15] is another obvious loop, right? A local
+[22:15] is another obvious loop, right? A local coding assistant with repo access can do
+[22:17] coding assistant with repo access can do
+[22:17] coding assistant with repo access can do a lot more than auto complete these
+[22:19] a lot more than auto complete these
+[22:19] a lot more than auto complete these days, right? do refactoring, it can do
+[22:21] days, right? do refactoring, it can do
+[22:21] days, right? do refactoring, it can do test generation, it can do drafting. It
+[22:23] test generation, it can do drafting. It
+[22:23] test generation, it can do drafting. It may not be up to what frontier models
+[22:24] may not be up to what frontier models
+[22:24] may not be up to what frontier models can do on the code side, but it can do a
+[22:26] can do on the code side, but it can do a
+[22:26] can do on the code side, but it can do a lot. And you can keep frontier models
+[22:28] lot. And you can keep frontier models
+[22:28] lot. And you can keep frontier models for the hardest tasks. Again, I keep
+[22:30] for the hardest tasks. Again, I keep
+[22:30] for the hardest tasks. Again, I keep emphasizing this is not about a hard
+[22:31] emphasizing this is not about a hard
+[22:31] emphasizing this is not about a hard rule, it's just about choosing where you
+[22:33] rule, it's just about choosing where you
+[22:33] rule, it's just about choosing where you want to fight your battles. And local
+[22:34] want to fight your battles. And local
+[22:34] want to fight your battles. And local models now are good enough for a lot of
+[22:36] models now are good enough for a lot of
+[22:36] models now are good enough for a lot of the agentic loop to work by default on
+[22:38] the agentic loop to work by default on
+[22:38] the agentic loop to work by default on many of the simpler software problems
+[22:40] many of the simpler software problems
+[22:40] many of the simpler software problems out there. Meeting capture is another
+[22:42] out there. Meeting capture is another
+[22:42] out there. Meeting capture is another one. You have local Whisper plus a local
+[22:44] one. You have local Whisper plus a local
+[22:44] one. You have local Whisper plus a local summarizer, it means you can record and
+[22:46] summarizer, it means you can record and
+[22:46] summarizer, it means you can record and transcribe and summarize and extract
+[22:48] transcribe and summarize and extract
+[22:48] transcribe and summarize and extract decisions and create tasks and store
+[22:50] decisions and create tasks and store
+[22:50] decisions and create tasks and store that result in your memory layer. No
+[22:51] that result in your memory layer. No
+[22:51] that result in your memory layer. No audio ever leaves the machine, no per
+[22:53] audio ever leaves the machine, no per
+[22:53] audio ever leaves the machine, no per hour transcription bill. You can run
+[22:55] hour transcription bill. You can run
+[22:55] hour transcription bill. You can run that on every call for a year, and
+[22:57] that on every call for a year, and
+[22:57] that on every call for a year, and you're going to start to see things over
+[22:58] you're going to start to see things over
+[22:58] you're going to start to see things over time, right? Your decisions become
+[23:00] time, right? Your decisions become
+[23:00] time, right? Your decisions become searchable, your commitment that you
+[23:01] searchable, your commitment that you
+[23:01] searchable, your commitment that you make becomes something you can retrieve
+[23:03] make becomes something you can retrieve
+[23:03] make becomes something you can retrieve and look at, your recurring
+[23:04] and look at, your recurring
+[23:04] and look at, your recurring conversations become part of effectively
+[23:06] conversations become part of effectively
+[23:06] conversations become part of effectively a private institutional memory that you
+[23:08] a private institutional memory that you
+[23:08] a private institutional memory that you own. Long-running agents also start to
+[23:10] own. Long-running agents also start to
+[23:10] own. Long-running agents also start to make more economic sense when inference
+[23:12] make more economic sense when inference
+[23:12] make more economic sense when inference is local because cloud APIs they they're
+[23:14] is local because cloud APIs they they're
+[23:14] is local because cloud APIs they they're expensive, right? You might
+[23:15] expensive, right? You might
+[23:15] expensive, right? You might psychologically not want to run as many
+[23:17] psychologically not want to run as many
+[23:18] psychologically not want to run as many tokens because you don't want to pay for
+[23:19] tokens because you don't want to pay for
+[23:19] tokens because you don't want to pay for it. But, if you're just limited by the
+[23:21] it. But, if you're just limited by the
+[23:21] it. But, if you're just limited by the cost of electricity, you're going to be
+[23:22] cost of electricity, you're going to be
+[23:22] cost of electricity, you're going to be more inclined to set up really
+[23:24] more inclined to set up really
+[23:24] more inclined to set up really long-running agentic loops, which is
+[23:25] long-running agentic loops, which is
+[23:25] long-running agentic loops, which is exactly what we see with the open claw
+[23:27] exactly what we see with the open claw
+[23:27] exactly what we see with the open claw phenomenon where people set up local
+[23:29] phenomenon where people set up local
+[23:29] phenomenon where people set up local computers and they just have their
+[23:30] computers and they just have their
+[23:30] computers and they just have their agents always on. Research and synthesis
+[23:32] agents always on. Research and synthesis
+[23:32] agents always on. Research and synthesis are probably going to stay at least
+[23:34] are probably going to stay at least
+[23:34] are probably going to stay at least partially hybrid for a long time because
+[23:36] partially hybrid for a long time because
+[23:36] partially hybrid for a long time because local models can retrieve and organize
+[23:38] local models can retrieve and organize
+[23:38] local models can retrieve and organize and summarize and prep context, but
+[23:40] and summarize and prep context, but
+[23:40] and summarize and prep context, but frontier models are needed for hard
+[23:41] frontier models are needed for hard
+[23:41] frontier models are needed for hard synthesis type problem types, hard
+[23:43] synthesis type problem types, hard
+[23:43] synthesis type problem types, hard research in the same way that they're
+[23:45] research in the same way that they're
+[23:45] research in the same way that they're needed for very difficult coding
+[23:47] needed for very difficult coding
+[23:47] needed for very difficult coding problems. So, at this point, I think the
+[23:49] problems. So, at this point, I think the
+[23:49] problems. So, at this point, I think the buying decision becomes a lot clearer if
+[23:51] buying decision becomes a lot clearer if
+[23:51] buying decision becomes a lot clearer if you're going back to the stack you need.
+[23:53] you're going back to the stack you need.
+[23:53] you're going back to the stack you need. Imagine three people. One is a
+[23:55] Imagine three people. One is a
+[23:55] Imagine three people. One is a local-first knowledge worker. They
+[23:56] local-first knowledge worker. They
+[23:56] local-first knowledge worker. They write, they research, they code a little
+[23:58] write, they research, they code a little
+[23:58] write, they research, they code a little bit, they handle sensitive documents,
+[24:00] bit, they handle sensitive documents,
+[24:00] bit, they handle sensitive documents, and and maybe you want private AI
+[24:01] and and maybe you want private AI
+[24:01] and and maybe you want private AI without turning the home office into a
+[24:03] without turning the home office into a
+[24:03] without turning the home office into a complicated server room. That person
+[24:05] complicated server room. That person
+[24:05] complicated server room. That person should probably start with a Mac mini M4
+[24:07] should probably start with a Mac mini M4
+[24:07] should probably start with a Mac mini M4 Pro with 64 gigs or maybe a Mac Studio
+[24:09] Pro with 64 gigs or maybe a Mac Studio
+[24:10] Pro with 64 gigs or maybe a Mac Studio M4 Max with 128 gigs if the budget
+[24:12] M4 Max with 128 gigs if the budget
+[24:12] M4 Max with 128 gigs if the budget allows. They'll use Ollama, LM Studio,
+[24:14] allows. They'll use Ollama, LM Studio,
+[24:14] allows. They'll use Ollama, LM Studio, maybe MLX, probably local embeddings or
+[24:17] maybe MLX, probably local embeddings or
+[24:17] maybe MLX, probably local embeddings or local memory system of some sort,
+[24:19] local memory system of some sort,
+[24:19] local memory system of some sort, Whisper, Open Web UI, Continue, and a
+[24:21] Whisper, Open Web UI, Continue, and a
+[24:21] Whisper, Open Web UI, Continue, and a very simple retrieval stack that maybe
+[24:23] very simple retrieval stack that maybe
+[24:23] very simple retrieval stack that maybe has an SQLite and Obsidian mixed in or
+[24:25] has an SQLite and Obsidian mixed in or
+[24:25] has an SQLite and Obsidian mixed in or something that has the markdown and
+[24:26] something that has the markdown and
+[24:26] something that has the markdown and something that has the database on the
+[24:28] something that has the database on the
+[24:28] something that has the database on the Open Brain side. It's not too
+[24:29] Open Brain side. It's not too
+[24:29] Open Brain side. It's not too complicated. I know that sounds like a
+[24:31] complicated. I know that sounds like a
+[24:31] complicated. I know that sounds like a lot of names, but you really can load
+[24:33] lot of names, but you really can load
+[24:33] lot of names, but you really can load this into an LLM, and it will literally
+[24:35] this into an LLM, and it will literally
+[24:35] this into an LLM, and it will literally give you a punch list of what you need
+[24:37] give you a punch list of what you need
+[24:37] give you a punch list of what you need to get it in what order you need to set
+[24:38] to get it in what order you need to set
+[24:38] to get it in what order you need to set it up. And I have a whole write-up on
+[24:40] it up. And I have a whole write-up on
+[24:40] it up. And I have a whole write-up on Substack, too. And that person can still
+[24:41] Substack, too. And that person can still
+[24:41] Substack, too. And that person can still keep one frontier subscription or API
+[24:43] keep one frontier subscription or API
+[24:43] keep one frontier subscription or API account for the hard work. And it gives
+[24:45] account for the hard work. And it gives
+[24:45] account for the hard work. And it gives you a sane default if that's you, right?
+[24:47] you a sane default if that's you, right?
+[24:47] you a sane default if that's you, right? You get privacy, you get speed, you get
+[24:49] You get privacy, you get speed, you get
+[24:49] You get privacy, you get speed, you get ownership, you get enough capability for
+[24:50] ownership, you get enough capability for
+[24:51] ownership, you get enough capability for daily use without pretending the cloud
+[24:52] daily use without pretending the cloud
+[24:52] daily use without pretending the cloud is irrelevant. Another person, you maybe
+[24:54] is irrelevant. Another person, you maybe
+[24:54] is irrelevant. Another person, you maybe you're a all local maximalist, right?
+[24:56] you're a all local maximalist, right?
+[24:56] you're a all local maximalist, right? You're not hearing this desire for
+[24:58] You're not hearing this desire for
+[24:58] You're not hearing this desire for cloud, you're like, "No, no, no, I've
+[24:59] cloud, you're like, "No, no, no, I've
+[24:59] cloud, you're like, "No, no, no, I've got to have privacy." So, you want
+[25:00] got to have privacy." So, you want
+[25:00] got to have privacy." So, you want privacy, you want compliance, you want
+[25:02] privacy, you want compliance, you want
+[25:02] privacy, you want compliance, you want sovereignty, you want to run your core
+[25:04] sovereignty, you want to run your core
+[25:04] sovereignty, you want to run your core work without a dependency. At that
+[25:05] work without a dependency. At that
+[25:05] work without a dependency. At that point, you're looking at a high memory
+[25:07] point, you're looking at a high memory
+[25:07] point, you're looking at a high memory Mac Studio or a DGX Spark or a similar
+[25:09] Mac Studio or a DGX Spark or a similar
+[25:09] Mac Studio or a DGX Spark or a similar serious workstation. You have to have
+[25:11] serious workstation. You have to have
+[25:11] serious workstation. You have to have something that gives you full control,
+[25:13] something that gives you full control,
+[25:13] something that gives you full control, right? You might even look at a mini
+[25:14] right? You might even look at a mini
+[25:14] right? You might even look at a mini Nvidia stack. The memory layer would be
+[25:16] Nvidia stack. The memory layer would be
+[25:16] Nvidia stack. The memory layer would be something like Postgres with PG Vector.
+[25:18] something like Postgres with PG Vector.
+[25:18] something like Postgres with PG Vector. Tools would probably sit behind MCP with
+[25:20] Tools would probably sit behind MCP with
+[25:20] Tools would probably sit behind MCP with permissions and audit logs. And I've got
+[25:22] permissions and audit logs. And I've got
+[25:22] permissions and audit logs. And I've got to be honest, this is not the cheapest
+[25:24] to be honest, this is not the cheapest
+[25:24] to be honest, this is not the cheapest build, right? But, it's the cleanest
+[25:25] build, right? But, it's the cleanest
+[25:25] build, right? But, it's the cleanest expression of the local thesis, right?
+[25:27] expression of the local thesis, right?
+[25:27] expression of the local thesis, right? Local modes, local memory, local tools,
+[25:29] Local modes, local memory, local tools,
+[25:29] Local modes, local memory, local tools, local workflows. And then, you can just
+[25:31] local workflows. And then, you can just
+[25:31] local workflows. And then, you can just go to town, right? Last but not least,
+[25:33] go to town, right? Last but not least,
+[25:33] go to town, right? Last but not least, there's the local-first builder. A
+[25:35] there's the local-first builder. A
+[25:35] there's the local-first builder. A developer or a small team building
+[25:37] developer or a small team building
+[25:37] developer or a small team building software, running agents, testing
+[25:39] software, running agents, testing
+[25:39] software, running agents, testing products, or just trying to reduce cloud
+[25:41] products, or just trying to reduce cloud
+[25:41] products, or just trying to reduce cloud inference spend. That person probably
+[25:43] inference spend. That person probably
+[25:43] inference spend. That person probably cares more about CUDA throughput, about
+[25:45] cares more about CUDA throughput, about
+[25:45] cares more about CUDA throughput, about serving, about evals, and about
+[25:46] serving, about evals, and about
+[25:46] serving, about evals, and about repeatability. So, they might get dual
+[25:48] repeatability. So, they might get dual
+[25:48] repeatability. So, they might get dual RTX 5090s, workstation GPUs, DGX Spark,
+[25:51] RTX 5090s, workstation GPUs, DGX Spark,
+[25:51] RTX 5090s, workstation GPUs, DGX Spark, or maybe a mixed local-cloud GPU setup.
+[25:54] or maybe a mixed local-cloud GPU setup.
+[25:54] or maybe a mixed local-cloud GPU setup. The LLM for serving, Ollama for
+[25:56] The LLM for serving, Ollama for
+[25:56] The LLM for serving, Ollama for prototyping, TensorRT LLM or NeMo when
+[25:58] prototyping, TensorRT LLM or NeMo when
+[25:58] prototyping, TensorRT LLM or NeMo when deployment efficiency matters. The
+[26:00] deployment efficiency matters. The
+[26:00] deployment efficiency matters. The principles are simple here. Local models
+[26:02] principles are simple here. Local models
+[26:02] principles are simple here. Local models absorb development, they take care of
+[26:04] absorb development, they take care of
+[26:04] absorb development, they take care of private data, they provide opportunity
+[26:06] private data, they provide opportunity
+[26:06] private data, they provide opportunity to handle batch jobs and high volume
+[26:07] to handle batch jobs and high volume
+[26:07] to handle batch jobs and high volume inner loops, and those economics start
+[26:09] inner loops, and those economics start
+[26:09] inner loops, and those economics start to add up because you're handling it
+[26:11] to add up because you're handling it
+[26:11] to add up because you're handling it locally. Local inference does not have
+[26:12] locally. Local inference does not have
+[26:12] locally. Local inference does not have to replace every single hosted call to
+[26:14] to replace every single hosted call to
+[26:14] to replace every single hosted call to add value. It only needs to absorb
+[26:16] add value. It only needs to absorb
+[26:16] add value. It only needs to absorb enough of the repetitive, private, high
+[26:18] enough of the repetitive, private, high
+[26:18] enough of the repetitive, private, high volume work that you feel like you get
+[26:20] volume work that you feel like you get
+[26:20] volume work that you feel like you get your money's back on that purchase. And
+[26:21] your money's back on that purchase. And
+[26:21] your money's back on that purchase. And that's the key distinction. Ultimately,
+[26:23] that's the key distinction. Ultimately,
+[26:23] that's the key distinction. Ultimately, the personal AI computer is not a purity
+[26:25] the personal AI computer is not a purity
+[26:25] the personal AI computer is not a purity test, it's just a routing system. Some
+[26:27] test, it's just a routing system. Some
+[26:27] test, it's just a routing system. Some work stays local because it's private
+[26:29] work stays local because it's private
+[26:29] work stays local because it's private and it's cheap and it's repetitive or
+[26:30] and it's cheap and it's repetitive or
+[26:31] and it's cheap and it's repetitive or context-heavy. Some work is going to go
+[26:32] context-heavy. Some work is going to go
+[26:32] context-heavy. Some work is going to go to the cloud because it's rare and it's
+[26:34] to the cloud because it's rare and it's
+[26:34] to the cloud because it's rare and it's hard and it's high value or maybe it
+[26:36] hard and it's high value or maybe it
+[26:36] hard and it's high value or maybe it needs the frontier. The power comes from
+[26:37] needs the frontier. The power comes from
+[26:38] needs the frontier. The power comes from you deciding instead of just defaulting
+[26:39] you deciding instead of just defaulting
+[26:39] you deciding instead of just defaulting to what the cloud providers want. The
+[26:41] to what the cloud providers want. The
+[26:41] to what the cloud providers want. The long-term reason to build this stack is
+[26:43] long-term reason to build this stack is
+[26:43] long-term reason to build this stack is not cost savings, although the cost
+[26:45] not cost savings, although the cost
+[26:45] not cost savings, although the cost savings can be real. The deeper reason
+[26:47] savings can be real. The deeper reason
+[26:47] savings can be real. The deeper reason is compounding your knowledge over time,
+[26:49] is compounding your knowledge over time,
+[26:49] is compounding your knowledge over time, and that's why I talked about memory so
+[26:50] and that's why I talked about memory so
+[26:50] and that's why I talked about memory so much. Every project, note, meeting,
+[26:52] much. Every project, note, meeting,
+[26:53] much. Every project, note, meeting, decision, correction, preference, and
+[26:54] decision, correction, preference, and
+[26:54] decision, correction, preference, and workflow can become part of a memory
+[26:56] workflow can become part of a memory
+[26:56] workflow can become part of a memory system you own. Over time, the personal
+[26:58] system you own. Over time, the personal
+[26:58] system you own. Over time, the personal AI computer becomes less like a chatbot
+[27:00] AI computer becomes less like a chatbot
+[27:00] AI computer becomes less like a chatbot and more like an operating layer over
+[27:02] and more like an operating layer over
+[27:02] and more like an operating layer over your work. The model might change out
+[27:03] your work. The model might change out
+[27:03] your work. The model might change out every few months, the memory can get
+[27:05] every few months, the memory can get
+[27:05] every few months, the memory can get better every year, and that's why
+[27:06] better every year, and that's why
+[27:06] better every year, and that's why extensibility matters a lot, but
+[27:08] extensibility matters a lot, but
+[27:08] extensibility matters a lot, but fundamentally, the source data that
+[27:10] fundamentally, the source data that
+[27:10] fundamentally, the source data that you're storing on this system, the
+[27:12] you're storing on this system, the
+[27:12] you're storing on this system, the markdown notes, the PDFs, the
+[27:13] markdown notes, the PDFs, the
+[27:13] markdown notes, the PDFs, the transcript, the code repositories, the
+[27:15] transcript, the code repositories, the
+[27:15] transcript, the code repositories, the media files, they stay, they're a source
+[27:17] media files, they stay, they're a source
+[27:17] media files, they stay, they're a source of truth, and you can just continue to
+[27:19] of truth, and you can just continue to
+[27:19] of truth, and you can just continue to expand and improve your data set that
+[27:21] expand and improve your data set that
+[27:21] expand and improve your data set that you build off of that over time, whether
+[27:22] you build off of that over time, whether
+[27:22] you build off of that over time, whether you're building with embeddings or
+[27:23] you're building with embeddings or
+[27:24] you're building with embeddings or whether you're building a SQL database.
+[27:25] whether you're building a SQL database.
+[27:25] whether you're building a SQL database. However you decide to solve that
+[27:27] However you decide to solve that
+[27:27] However you decide to solve that problem, and I've got other videos on
+[27:29] problem, and I've got other videos on
+[27:29] problem, and I've got other videos on that, you can absolutely
+[27:31] that, you can absolutely
+[27:31] that, you can absolutely build a memory system that evolves over
+[27:34] build a memory system that evolves over
+[27:34] build a memory system that evolves over time and that gets better over time,
+[27:36] time and that gets better over time,
+[27:36] time and that gets better over time, that preserves your institutional
+[27:38] that preserves your institutional
+[27:38] that preserves your institutional memory, that preserves the workflows
+[27:40] memory, that preserves the workflows
+[27:40] memory, that preserves the workflows that you have. And the mission is simple
+[27:42] that you have. And the mission is simple
+[27:42] that you have. And the mission is simple here, right? Your goal would if you care
+[27:44] here, right? Your goal would if you care
+[27:44] here, right? Your goal would if you care about this is to not let a proprietary
+[27:47] about this is to not let a proprietary
+[27:47] about this is to not let a proprietary AI app capture you and become the only
+[27:49] AI app capture you and become the only
+[27:49] AI app capture you and become the only place your knowledge exists. I talk a
+[27:51] place your knowledge exists. I talk a
+[27:51] place your knowledge exists. I talk a lot about the idea that there are
+[27:52] lot about the idea that there are
+[27:52] lot about the idea that there are multiple good models out there. Well, we
+[27:54] multiple good models out there. Well, we
+[27:54] multiple good models out there. Well, we need an underlying compute layer that
+[27:56] need an underlying compute layer that
+[27:56] need an underlying compute layer that enables us to take advantage of that.
+[27:58] enables us to take advantage of that.
+[27:58] enables us to take advantage of that. So, build open interfaces, right? OpenAI
+[28:00] So, build open interfaces, right? OpenAI
+[28:00] So, build open interfaces, right? OpenAI compatible local endpoints let many apps
+[28:02] compatible local endpoints let many apps
+[28:02] compatible local endpoints let many apps talk to your models, you're not locked
+[28:04] talk to your models, you're not locked
+[28:04] talk to your models, you're not locked into local only, you can talk to cloud
+[28:06] into local only, you can talk to cloud
+[28:06] into local only, you can talk to cloud if you want. Model context protocol lets
+[28:08] if you want. Model context protocol lets
+[28:08] if you want. Model context protocol lets multiple clients talk to your tools and
+[28:10] multiple clients talk to your tools and
+[28:10] multiple clients talk to your tools and your memory. Postgres or SQLite keep
+[28:12] your memory. Postgres or SQLite keep
+[28:12] your memory. Postgres or SQLite keep retrieval from becoming trapped inside
+[28:14] retrieval from becoming trapped inside
+[28:14] retrieval from becoming trapped inside one product, it's a lot of the basis for
+[28:15] one product, it's a lot of the basis for
+[28:15] one product, it's a lot of the basis for Open Brain. Plain files and Git keep the
+[28:17] Open Brain. Plain files and Git keep the
+[28:17] Open Brain. Plain files and Git keep the whole thing very inspectable. Treat your
+[28:19] whole thing very inspectable. Treat your
+[28:19] whole thing very inspectable. Treat your tools as you use them on this system
+[28:21] tools as you use them on this system
+[28:21] tools as you use them on this system like permissions instead of just
+[28:23] like permissions instead of just
+[28:23] like permissions instead of just conveniences. That's a that's an
+[28:24] conveniences. That's a that's an
+[28:24] conveniences. That's a that's an important principle as you're thinking
+[28:25] important principle as you're thinking
+[28:25] important principle as you're thinking about the design. The more useful an
+[28:27] about the design. The more useful an
+[28:27] about the design. The more useful an agent becomes, the more you have to
+[28:29] agent becomes, the more you have to
+[28:30] agent becomes, the more you have to think about this because agents with
+[28:31] think about this because agents with
+[28:31] think about this because agents with access to shell permissions, access to
+[28:34] access to shell permissions, access to
+[28:34] access to shell permissions, access to payments, agents with access to serious
+[28:36] payments, agents with access to serious
+[28:36] payments, agents with access to serious parts of your computing stack are agents
+[28:38] parts of your computing stack are agents
+[28:38] parts of your computing stack are agents that need serious permissions to operate
+[28:40] that need serious permissions to operate
+[28:40] that need serious permissions to operate responsibly. So, you need to think ahead
+[28:43] responsibly. So, you need to think ahead
+[28:43] responsibly. So, you need to think ahead and ask yourself, "If I'm operating
+[28:44] and ask yourself, "If I'm operating
+[28:45] and ask yourself, "If I'm operating multiple agents on this machine, what is
+[28:46] multiple agents on this machine, what is
+[28:47] multiple agents on this machine, what is a responsible access pattern here?" A
+[28:48] a responsible access pattern here?" A
+[28:48] a responsible access pattern here?" A writing agent does not need shell
+[28:50] writing agent does not need shell
+[28:50] writing agent does not need shell access. A coding agent doesn't need my
+[28:52] access. A coding agent doesn't need my
+[28:52] access. A coding agent doesn't need my bank statements. A meeting summarizer
+[28:54] bank statements. A meeting summarizer
+[28:54] bank statements. A meeting summarizer doesn't need permission to delete files.
+[28:56] doesn't need permission to delete files.
+[28:56] doesn't need permission to delete files. Think about how you control the attack
+[28:59] Think about how you control the attack
+[28:59] Think about how you control the attack surface of your agents if you're going
+[29:01] surface of your agents if you're going
+[29:01] surface of your agents if you're going to do this, right? Otherwise, you'll
+[29:02] to do this, right? Otherwise, you'll
+[29:02] to do this, right? Otherwise, you'll have extensibility without boundaries,
+[29:04] have extensibility without boundaries,
+[29:04] have extensibility without boundaries, and you'll just be in trouble. You want
+[29:06] and you'll just be in trouble. You want
+[29:06] and you'll just be in trouble. You want to be in a position where you are
+[29:07] to be in a position where you are
+[29:07] to be in a position where you are managing the scope your agents have so
+[29:10] managing the scope your agents have so
+[29:10] managing the scope your agents have so that they are not irresponsibly
+[29:12] that they are not irresponsibly
+[29:12] that they are not irresponsibly permitted to do anything on the machine.
+[29:14] permitted to do anything on the machine.
+[29:14] permitted to do anything on the machine. Now, I've been emphasizing memory as the
+[29:16] Now, I've been emphasizing memory as the
+[29:16] Now, I've been emphasizing memory as the heart of this system, to give you a few
+[29:17] heart of this system, to give you a few
+[29:17] heart of this system, to give you a few tips there. Memory needs to be
+[29:19] tips there. Memory needs to be
+[29:19] tips there. Memory needs to be cumulative, but also auditable. The
+[29:21] cumulative, but also auditable. The
+[29:21] cumulative, but also auditable. The system should be able to learn from your
+[29:22] system should be able to learn from your
+[29:22] system should be able to learn from your work, and you should also be able to
+[29:24] work, and you should also be able to
+[29:24] work, and you should also be able to inspect what it stored, delete what's
+[29:26] inspect what it stored, delete what's
+[29:26] inspect what it stored, delete what's wrong, trace where a fact came from, and
+[29:28] wrong, trace where a fact came from, and
+[29:28] wrong, trace where a fact came from, and rebuild indexes when better embeddings
+[29:30] rebuild indexes when better embeddings
+[29:30] rebuild indexes when better embeddings arrive. Assume in general that you're
+[29:32] arrive. Assume in general that you're
+[29:32] arrive. Assume in general that you're going to persist a hybrid experience
+[29:33] going to persist a hybrid experience
+[29:33] going to persist a hybrid experience where you call the cloud and call these
+[29:35] where you call the cloud and call these
+[29:35] where you call the cloud and call these larger models sometimes. They'll
+[29:36] larger models sometimes. They'll
+[29:36] larger models sometimes. They'll continue to get better. In most cases,
+[29:38] continue to get better. In most cases,
+[29:38] continue to get better. In most cases, you're going to want that unless you are
+[29:40] you're going to want that unless you are
+[29:40] you're going to want that unless you are a very hardcore local compute-only
+[29:42] a very hardcore local compute-only
+[29:42] a very hardcore local compute-only person, in which case I've got a stack
+[29:44] person, in which case I've got a stack
+[29:44] person, in which case I've got a stack for you, and I I talked about it. But,
+[29:46] for you, and I I talked about it. But,
+[29:46] for you, and I I talked about it. But, for most of us, the point of a personal
+[29:47] for most of us, the point of a personal
+[29:47] for most of us, the point of a personal AI computer is not to reject every cloud
+[29:50] AI computer is not to reject every cloud
+[29:50] AI computer is not to reject every cloud model forever. The point is actually to
+[29:52] model forever. The point is actually to
+[29:52] model forever. The point is actually to positively own the substrate that cloud
+[29:54] positively own the substrate that cloud
+[29:54] positively own the substrate that cloud models or any other model can plug into
+[29:56] models or any other model can plug into
+[29:56] models or any other model can plug into it well. Cuz a frontier model can still
+[29:58] it well. Cuz a frontier model can still
+[29:58] it well. Cuz a frontier model can still be called for rare and hard and
+[29:59] be called for rare and hard and
+[29:59] be called for rare and hard and high-value work whenever you want. But
+[30:01] high-value work whenever you want. But
+[30:01] high-value work whenever you want. But this kind of setup allows cloud AI to be
+[30:03] this kind of setup allows cloud AI to be
+[30:03] this kind of setup allows cloud AI to be a visitor to the system, not dominant
+[30:06] a visitor to the system, not dominant
+[30:06] a visitor to the system, not dominant across the system as a whole. And by the
+[30:07] across the system as a whole. And by the
+[30:07] across the system as a whole. And by the way, if you're like, "No, no, no, I just
+[30:09] way, if you're like, "No, no, no, I just
+[30:09] way, if you're like, "No, no, no, I just want to use cloud models, Nate." That's
+[30:10] want to use cloud models, Nate." That's
+[30:10] want to use cloud models, Nate." That's fantastic. I talk about cloud models all
+[30:12] fantastic. I talk about cloud models all
+[30:12] fantastic. I talk about cloud models all the time. There's lots of future videos
+[30:15] the time. There's lots of future videos
+[30:15] the time. There's lots of future videos and past videos that are all about
+[30:17] and past videos that are all about
+[30:17] and past videos that are all about setting up cloud models and cloud agents
+[30:19] setting up cloud models and cloud agents
+[30:19] setting up cloud models and cloud agents on your system. And I'll keep making
+[30:20] on your system. And I'll keep making
+[30:20] on your system. And I'll keep making those cuz so many people need that
+[30:22] those cuz so many people need that
+[30:22] those cuz so many people need that fluency as well. Now, once you have your
+[30:23] fluency as well. Now, once you have your
+[30:23] fluency as well. Now, once you have your personal stack, the rest of the
+[30:25] personal stack, the rest of the
+[30:25] personal stack, the rest of the computing world starts to look a little
+[30:26] computing world starts to look a little
+[30:26] computing world starts to look a little different. You're through the mirror.
+[30:28] different. You're through the mirror.
+[30:28] different. You're through the mirror. You ask yourself, "Why does this app
+[30:29] You ask yourself, "Why does this app
+[30:29] You ask yourself, "Why does this app need to upload my draft to its server?
+[30:31] need to upload my draft to its server?
+[30:31] need to upload my draft to its server? Why does this agent want a token for my
+[30:33] Why does this agent want a token for my
+[30:33] Why does this agent want a token for my entire account? Why does this assistant
+[30:35] entire account? Why does this assistant
+[30:35] entire account? Why does this assistant lose its memory the moment I close the
+[30:37] lose its memory the moment I close the
+[30:37] lose its memory the moment I close the tab? Or why am I paying per interaction
+[30:39] tab? Or why am I paying per interaction
+[30:39] tab? Or why am I paying per interaction for a model that can handle this routine
+[30:41] for a model that can handle this routine
+[30:41] for a model that can handle this routine job on the box already sitting on my
+[30:43] job on the box already sitting on my
+[30:43] job on the box already sitting on my desk?" And those questions, they tend to
+[30:46] desk?" And those questions, they tend to
+[30:46] desk?" And those questions, they tend to only be visible once you actually go
+[30:48] only be visible once you actually go
+[30:48] only be visible once you actually go through that looking glass, you build a
+[30:49] through that looking glass, you build a
+[30:49] through that looking glass, you build a personal stack, and you have an
+[30:51] personal stack, and you have an
+[30:51] personal stack, and you have an alternative. That's what makes the
+[30:52] alternative. That's what makes the
+[30:52] alternative. That's what makes the questions that I described just now feel
+[30:54] questions that I described just now feel
+[30:54] questions that I described just now feel tangible and real. And this is where I
+[30:56] tangible and real. And this is where I
+[30:56] tangible and real. And this is where I think people get the local AI argument a
+[30:58] think people get the local AI argument a
+[30:58] think people get the local AI argument a little bit wrong. I hear a lot about
+[30:59] little bit wrong. I hear a lot about
+[31:00] little bit wrong. I hear a lot about beating the cloud. It's not about
+[31:01] beating the cloud. It's not about
+[31:01] beating the cloud. It's not about beating the cloud. The cloud frontier is
+[31:03] beating the cloud. The cloud frontier is
+[31:03] beating the cloud. The cloud frontier is going to keep mattering. It may matter
+[31:04] going to keep mattering. It may matter
+[31:05] going to keep mattering. It may matter more, not less, as the hardest models
+[31:06] more, not less, as the hardest models
+[31:06] more, not less, as the hardest models become more expensive to train and
+[31:08] become more expensive to train and
+[31:08] become more expensive to train and serve. But that actually strengthens the
+[31:09] serve. But that actually strengthens the
+[31:09] serve. But that actually strengthens the case for owning the rest of the stack.
+[31:11] case for owning the rest of the stack.
+[31:11] case for owning the rest of the stack. It lets you use the frontier model as
+[31:13] It lets you use the frontier model as
+[31:13] It lets you use the frontier model as the specialist. You don't make it your
+[31:15] the specialist. You don't make it your
+[31:15] the specialist. You don't make it your memory, your file system, your workflow
+[31:17] memory, your file system, your workflow
+[31:17] memory, your file system, your workflow engine, your operating layer. You hire
+[31:18] engine, your operating layer. You hire
+[31:18] engine, your operating layer. You hire it for the job it's best at, and you
+[31:20] it for the job it's best at, and you
+[31:20] it for the job it's best at, and you stop renting it the rest of your life.
+[31:22] stop renting it the rest of your life.
+[31:22] stop renting it the rest of your life. Your personal AI computer is then not
+[31:24] Your personal AI computer is then not
+[31:24] Your personal AI computer is then not really a nostalgia play. It's not a
+[31:26] really a nostalgia play. It's not a
+[31:26] really a nostalgia play. It's not a hobbyist retreat from the internet. It's
+[31:27] hobbyist retreat from the internet. It's
+[31:27] hobbyist retreat from the internet. It's a bet that intelligence becomes more
+[31:29] a bet that intelligence becomes more
+[31:29] a bet that intelligence becomes more useful when it's closer to work, when
+[31:31] useful when it's closer to work, when
+[31:31] useful when it's closer to work, when it's closer to the files, closer to the
+[31:33] it's closer to the files, closer to the
+[31:33] it's closer to the files, closer to the tools, closer to your memory, closer to
+[31:35] tools, closer to your memory, closer to
+[31:35] tools, closer to your memory, closer to the person, you, that's asking it to
+[31:37] the person, you, that's asking it to
+[31:37] the person, you, that's asking it to act. The machine on your desk has a job
+[31:41] act. The machine on your desk has a job
+[31:41] act. The machine on your desk has a job to do. That's the whole point of this
+[31:42] to do. That's the whole point of this
+[31:42] to do. That's the whole point of this video. It doesn't have to be the
+[31:44] video. It doesn't have to be the
+[31:44] video. It doesn't have to be the smartest computer in the world. It can
+[31:45] smartest computer in the world. It can
+[31:45] smartest computer in the world. It can just be your computer. It can just be
+[31:48] just be your computer. It can just be
+[31:48] just be your computer. It can just be your AI. And that's why I made this
+[31:50] your AI. And that's why I made this
+[31:50] your AI. And that's why I made this video. I want you to feel empowered to
+[31:52] video. I want you to feel empowered to
+[31:52] video. I want you to feel empowered to make an intelligent choice and say,
+[31:54] make an intelligent choice and say,
+[31:54] make an intelligent choice and say, "Actually, I do want that world of the
+[31:56] "Actually, I do want that world of the
+[31:56] "Actually, I do want that world of the prosumer. I do want an all-local world.
+[31:58] prosumer. I do want an all-local world.
+[31:58] prosumer. I do want an all-local world. I want a local-first developer model and
+[32:00] I want a local-first developer model and
+[32:00] I want a local-first developer model and developer machine stack." If that's you,
+[32:02] developer machine stack." If that's you,
+[32:02] developer machine stack." If that's you, you can head on over to the Substack.
+[32:03] you can head on over to the Substack.
+[32:03] you can head on over to the Substack. I've got a full punch list and build
+[32:05] I've got a full punch list and build
+[32:05] I've got a full punch list and build recommendations. I've also got a nice
+[32:07] recommendations. I've also got a nice
+[32:07] recommendations. I've also got a nice reminder and guide to Open Brains so you
+[32:09] reminder and guide to Open Brains so you
+[32:10] reminder and guide to Open Brains so you can dig into the memory side because
+[32:11] can dig into the memory side because
+[32:11] can dig into the memory side because there are lots of people that are just
+[32:12] there are lots of people that are just
+[32:12] there are lots of people that are just using Open Brain for the memory piece,
+[32:14] using Open Brain for the memory piece,
+[32:14] using Open Brain for the memory piece, and they're not going after the full
+[32:15] and they're not going after the full
+[32:15] and they're not going after the full hardware stack, and that's another way
+[32:17] hardware stack, and that's another way
+[32:17] hardware stack, and that's another way to put your toes in the water on owning
+[32:18] to put your toes in the water on owning
+[32:18] to put your toes in the water on owning part of your compute stack. Whatever
+[32:20] part of your compute stack. Whatever
+[32:20] part of your compute stack. Whatever your choice is, I just want you to feel
+[32:22] your choice is, I just want you to feel
+[32:22] your choice is, I just want you to feel comfortable and feel like you own your
+[32:23] comfortable and feel like you own your
+[32:23] comfortable and feel like you own your destiny, and like the AI agents and the
+[32:26] destiny, and like the AI agents and the
+[32:26] destiny, and like the AI agents and the LLMs out there that are cloud-provided
+[32:27] LLMs out there that are cloud-provided
+[32:27] LLMs out there that are cloud-provided don't get to run the long-term
+[32:30] don't get to run the long-term
+[32:30] don't get to run the long-term parameters of intelligence in your life.
+[32:32] parameters of intelligence in your life.
+[32:32] parameters of intelligence in your life. It's up to you, and it should be up to
+[32:33] It's up to you, and it should be up to
+[32:33] It's up to you, and it should be up to you.
+[32:34] you.
+[32:34] you. I'll see you next time.

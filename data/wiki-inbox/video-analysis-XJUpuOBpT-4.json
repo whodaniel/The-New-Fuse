@@ -1,0 +1,16 @@
+{
+  "id": "video-analysis-XJUpuOBpT-4",
+  "title": "The insane engineering of Deepseek V4",
+  "category": "video-analysis",
+  "content": "**JSON Object Generation: Deepseek V4 Analysis**  Alright, let's break this down. My goal is to extract the core technical insights from this Deepseek V4 video transcript and accompanying visuals, then package it all into a clean JSON structure.  First, the big picture. I see Deepseek is tackling the computational and memory bottlenecks inherent in long context windows for LLMs. The problem is the infamous quadratic complexity (O(n^2)) of the attention mechanism, especially as context length pus",
+  "visual_intelligence": [],
+  "backlinks": [],
+  "metadata": {
+    "agentId": "transcript-processor-v4",
+    "timestamp": "2026-05-10T06:09:16.532Z",
+    "videoId": "XJUpuOBpT-4",
+    "url": "https://www.youtube.com/watch?v=XJUpuOBpT-4",
+    "qualityScore": 10,
+    "idNumber": "ID#:Ca"
+  }
+}

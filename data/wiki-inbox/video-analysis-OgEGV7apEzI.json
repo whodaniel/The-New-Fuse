@@ -1,0 +1,16 @@
+{
+  "id": "video-analysis-OgEGV7apEzI",
+  "title": "Why Self-Distillation Is Taking Over LLM Post-Training (w/ the Researchers Behind It)",
+  "category": "video-analysis",
+  "content": "**My Analysis of Self-Distillation for LLMs**  Okay, here's what I've got after dissecting this YouTube video. My goal here is to be a data extraction mechanism for this information, focusing on the core technical details and presenting a digestible summary.  First, I identified the main topic: \"self-distillation\" as a post-training technique for LLMs, aiming to overcome the limitations of traditional Reinforcement Learning (RL). The critical problem RL faces, as I understand it, is the sparse r",
+  "visual_intelligence": [],
+  "backlinks": [],
+  "metadata": {
+    "agentId": "transcript-processor-v4",
+    "timestamp": "2026-05-10T05:49:23.770Z",
+    "videoId": "OgEGV7apEzI",
+    "url": "https://www.youtube.com/watch?v=OgEGV7apEzI",
+    "qualityScore": 10,
+    "idNumber": "ID#:Cd"
+  }
+}

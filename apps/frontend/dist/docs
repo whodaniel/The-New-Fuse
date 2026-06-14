@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The New Fuse Documentation</title>
+  <meta name="description" content="Install, operate, and extend The New Fuse locally or through the hosted SaaS.">
+  <link rel="canonical" href="https://thenewfuse.com/docs">
+  <style>
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #0f172a; background: #f8fafc; }
+    main { max-width: 860px; margin: 0 auto; padding: 64px 20px; }
+    h1 { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; margin: 0 0 16px; }
+    p, li { color: #334155; font-size: 1.05rem; line-height: 1.7; }
+    a { color: #0f766e; font-weight: 700; }
+    section { border-top: 1px solid #dbe4ee; margin-top: 32px; padding-top: 24px; }
+    code { background: #e2e8f0; border-radius: 4px; padding: 2px 5px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>The New Fuse Docs</h1>
+    <p>Use the hosted SaaS at <a href="https://app.thenewfuse.com">app.thenewfuse.com</a>, or install the open runtime locally from the repository.</p>
+    <section>
+      <h2>Local Install</h2>
+      <ol>
+        <li>Clone the repository and install with <code>pnpm install</code>.</li>
+        <li>Copy <code>.env.production.example</code> or set the matching local environment values.</li>
+        <li>Run <code>pnpm run release:gate:strict</code> and <code>bash scripts/smoke-api-demock.sh</code>.</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Hosted SaaS</h2>
+      <ul>
+        <li><a href="https://app.thenewfuse.com/login">Sign in to the app</a></li>
+        <li><a href="https://app.thenewfuse.com/onboarding">Open onboarding</a></li>
+        <li><a href="https://app.thenewfuse.com/api/health">Check API health</a></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

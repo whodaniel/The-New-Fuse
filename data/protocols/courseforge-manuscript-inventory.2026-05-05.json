@@ -1,0 +1,1077 @@
+{
+  "spec": "tnf/courseforge-manuscript-inventory/1.0",
+  "generated_at": "2026-05-05T23:58:00Z",
+  "repo_url": "https://github.com/whodaniel/courseforge",
+  "local_mirror": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.fuse/external/courseforge",
+  "branches": [
+    {
+      "lane_id": "book-google-gemini",
+      "title": "Google AI Ecosystem CookBook (Workbook Edition)",
+      "branch": "main",
+      "head_commit": "c45efeba91ca25c57fca1a888f3aea5e5d6e7aae",
+      "file_count": 53,
+      "chapter_count": 40,
+      "appendix_count": 4,
+      "key_files": [
+        "README.md",
+        "00-Front-Cover.md",
+        "00-Table-of-Contents.md"
+      ],
+      "chapter_files": [
+        "Chapter-01-The-Model-Zoo.md",
+        "Chapter-02-Gemini-3.1-Pro.md",
+        "Chapter-03-Imagen-4-and-Nano-Banana.md",
+        "Chapter-04-Veo-3.1.md",
+        "Chapter-05-Lyria-3-and-Gemini-Audio.md",
+        "Chapter-06-Gemma-4.md",
+        "Chapter-07-Google-AI-Studio.md",
+        "Chapter-08-Google-Antigravity.md",
+        "Chapter-09-Gemini-CLI.md",
+        "Chapter-10-Gemini-Code-Assist.md",
+        "Chapter-11-Agent-Platform-Overview.md",
+        "Chapter-12-ADK.md",
+        "Chapter-13-Agent-Studio.md",
+        "Chapter-14-Agent-Garden.md",
+        "Chapter-15-Agent-Runtime.md",
+        "Chapter-16-Memory-Bank.md",
+        "Chapter-17-Agent-Sandbox.md",
+        "Chapter-18-Model-Garden.md",
+        "Chapter-19-BigQuery-AI.md",
+        "Chapter-20-Agent-Search.md",
+        "Chapter-21-Vector-Search-and-Embeddings.md",
+        "Chapter-22-Document-AI.md",
+        "Chapter-23-Agent-Identity-and-Registry.md",
+        "Chapter-24-Agent-Gateway.md",
+        "Chapter-25-Model-Armor.md",
+        "Chapter-26-Agent-Simulation.md",
+        "Chapter-27-Agent-Evaluation-and-Observability.md",
+        "Chapter-28-Agent-Optimizer.md",
+        "Chapter-29-Agent-Anomaly-and-Threat-Detection.md",
+        "Chapter-30-Gemini-Enterprise-for-CX.md",
+        "Chapter-31-CX-Agent-Studio.md",
+        "Chapter-32-Agent-Marketplace.md",
+        "Chapter-33-Cloud-Run.md",
+        "Chapter-34-GKE.md",
+        "Chapter-35-AI-Infrastructure.md",
+        "Chapter-36-Recipe-Idea-to-Prototype.md",
+        "Chapter-37-Recipe-Prototype-to-Production.md",
+        "Chapter-38-Recipe-Launching-CX-Product.md",
+        "Chapter-39-Recipe-Multi-Agent-Workflow.md",
+        "Chapter-40-Cost-Optimization-and-Tier-Selection.md"
+      ],
+      "appendix_files": [
+        "Appendix-A-Model-Comparison-Matrix.md",
+        "Appendix-B-Pricing-Summary.md",
+        "Appendix-C-MCP-Server-Integration.md",
+        "Appendix-D-Glossary.md"
+      ],
+      "files": [
+        {
+          "type": "blob",
+          "blob_sha": "a7e6ec15db308177b93efb3d0eff5dae0d3e118a",
+          "path": ".gitignore"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "463207e4e1e16f7a373da85a16fff418f068953c",
+          "path": "00-Front-Cover.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "277372acac9cfd3cb61eb59b9af49f8e6dc8b5ec",
+          "path": "00-Table-of-Contents.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "4ab037d6d11410f19b26c2c32fa790beb0bfb39c",
+          "path": "Appendix-A-Model-Comparison-Matrix.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "547289cc7e64170c894e5baa23c3dde111194e6d",
+          "path": "Appendix-B-Pricing-Summary.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "f308e7637bc20dcace3a4698d274e45b693dcdb7",
+          "path": "Appendix-C-MCP-Server-Integration.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "5e4813ff2426c315fb0aefb42f64c3bbe6a210f7",
+          "path": "Appendix-D-Glossary.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "3feb95a21b9d3da92ff281695ea963c2734e68c0",
+          "path": "Chapter-01-The-Model-Zoo.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "72eec1c32e0d4aab53ac373916ba38d70631adc3",
+          "path": "Chapter-02-Gemini-3.1-Pro.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "b194aed20cfb1ba87ae57e1b421ed6707cd56ec3",
+          "path": "Chapter-03-Imagen-4-and-Nano-Banana.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "bf910a4ed9cc2dacf174da0cb1aeb8fafb6dc421",
+          "path": "Chapter-04-Veo-3.1.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "004d5c46d9fb84a6abcb4f942538258217b199ca",
+          "path": "Chapter-05-Lyria-3-and-Gemini-Audio.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "35287df9c6fe2a23ee23b25fb49ab6b63d7e91e7",
+          "path": "Chapter-06-Gemma-4.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "2a3f88dccb3aecebe4e004373ef7cc4ab04db03d",
+          "path": "Chapter-07-Google-AI-Studio.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "68bc832f7d8e3399051916b408e3174dd6335147",
+          "path": "Chapter-08-Google-Antigravity.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "5efb78f970add0fcbf7124eb01fc0535ad0ddc98",
+          "path": "Chapter-09-Gemini-CLI.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "3e0e559f3dded0eb6a1086cd05d88fff1e84dbe9",
+          "path": "Chapter-10-Gemini-Code-Assist.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "97dac3260aab10341c59b48eecdba5ddbe91413a",
+          "path": "Chapter-11-Agent-Platform-Overview.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "d0c41bd581becf222834d737eeafc0d00c33d2a3",
+          "path": "Chapter-12-ADK.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "6b9f3b9a6aaafc069fb0d71e492e80fc4f2b4288",
+          "path": "Chapter-13-Agent-Studio.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "44312a42b55f30bca0c44e6f82f5e6c56c63f49a",
+          "path": "Chapter-14-Agent-Garden.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "8d15d72b6b338757a1acadc170b5482f62358555",
+          "path": "Chapter-15-Agent-Runtime.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "edadf69bde1302779ca647dafb2a2935aeb0afd7",
+          "path": "Chapter-16-Memory-Bank.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "24881aceefa403103ec120f33bc07ca159b2caef",
+          "path": "Chapter-17-Agent-Sandbox.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "b3b959181a0aed24025dfdbf663a1fc5ff781e4a",
+          "path": "Chapter-18-Model-Garden.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "fb769e1c8c963cab2ef0aadbc2ddbedb1b554903",
+          "path": "Chapter-19-BigQuery-AI.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "d08b8681341fe109f776cfacf4de8a854635b902",
+          "path": "Chapter-20-Agent-Search.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "17b27ea4e35c048d5d2ddd856598a074cc0d23a3",
+          "path": "Chapter-21-Vector-Search-and-Embeddings.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "f4d5956a699442514fcc13559f0486521cce44ee",
+          "path": "Chapter-22-Document-AI.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "0190181a66df62dadeddff385a786d4d8e5d59c3",
+          "path": "Chapter-23-Agent-Identity-and-Registry.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "5c6cd5ef8fc6f380f4720adfa27b0622aa845847",
+          "path": "Chapter-24-Agent-Gateway.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "9c7930252b8cf586cd3cd1e19d19cc79e778989e",
+          "path": "Chapter-25-Model-Armor.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "240ec34585cc4f3643cbf34c0427d723ce3baad6",
+          "path": "Chapter-26-Agent-Simulation.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "385d60db91829c9f61686b145671f1fb01e92ea2",
+          "path": "Chapter-27-Agent-Evaluation-and-Observability.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "dced4d20caf1b60f0438d40d16ab7850fee7c460",
+          "path": "Chapter-28-Agent-Optimizer.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "2bf2be82ca58d1481daa3b4a0dfe93500baeb0f6",
+          "path": "Chapter-29-Agent-Anomaly-and-Threat-Detection.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "e024d652c165f1dd1fc5171d644bfe981fc53fc4",
+          "path": "Chapter-30-Gemini-Enterprise-for-CX.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "a4d89a2370fb86833f846f33f20109db4df6ff86",
+          "path": "Chapter-31-CX-Agent-Studio.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7d2dd5a386faed3b35327e30bb1fe1ec7301e39a",
+          "path": "Chapter-32-Agent-Marketplace.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "11879159001ec3b2751da9998be3ac61d3fc7d5f",
+          "path": "Chapter-33-Cloud-Run.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "cb808c76d99906137794fbf5f00406a1f4a78a41",
+          "path": "Chapter-34-GKE.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "df29aae074e3e65a8b006f5a833020924396e6e8",
+          "path": "Chapter-35-AI-Infrastructure.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "20d74075d072e1e690a09938daac1adb711e460a",
+          "path": "Chapter-36-Recipe-Idea-to-Prototype.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "75a879bd0c19496aa661f4ce8b9f0e58f23d339e",
+          "path": "Chapter-37-Recipe-Prototype-to-Production.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "dc6d0c84e9694c0100704d2f2e8674c117e93eef",
+          "path": "Chapter-38-Recipe-Launching-CX-Product.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "a41a5196a5fc8db6dccf804cc870a695e4f2aba6",
+          "path": "Chapter-39-Recipe-Multi-Agent-Workflow.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "5d4c2c2c74dd7bb52c0bbdd211e30dd7aba72c60",
+          "path": "Chapter-40-Cost-Optimization-and-Tier-Selection.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7fef7550ec44ec4fbf029a3071b568470ef603f9",
+          "path": "README.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "1df3039a4b1a92e99d7bf0dfaa1e3de1ff4f6d1a",
+          "path": "docs/AGENT-ARCHITECTURE.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "a352c0be433334d9d4e3a660e465c2ecdd137ac2",
+          "path": "docs/API-SPEC.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "cbff1d2397fa150167d2378096168b8a30b9e212",
+          "path": "docs/BLUEPRINT-Discovering-Your-Voice.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "a4e7671118981f8e850c0b1f07cd63081a8a437d",
+          "path": "docs/COURSE-TAXONOMY.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7c37e8b5165ad6be98ac0290b6852bd31fc12d67",
+          "path": "docs/FRAMEWORK.md"
+        }
+      ]
+    },
+    {
+      "lane_id": "book-anthropic-claude",
+      "title": "Anthropic AI Ecosystem CookBook (Workbook Edition)",
+      "branch": "anthropic-cookbook",
+      "head_commit": "dc1eae2401ffec487b63925a750445e10d5efe71",
+      "file_count": 49,
+      "chapter_count": 40,
+      "appendix_count": 5,
+      "key_files": [
+        "README.md",
+        "00-Front-Cover.md",
+        "00-Table-of-Contents.md"
+      ],
+      "chapter_files": [
+        "Chapter-01-The-Model-Lineup.md",
+        "Chapter-02-Claude-Opus-4-7.md",
+        "Chapter-03-Claude-Sonnet-4-6.md",
+        "Chapter-04-Claude-Haiku-4-5.md",
+        "Chapter-05-Claude-Mythos-Preview.md",
+        "Chapter-06-Adaptive-and-Extended-Thinking.md",
+        "Chapter-07-Claude-ai.md",
+        "Chapter-08-Claude-Code.md",
+        "Chapter-09-Claude-Cowork.md",
+        "Chapter-10-Desktop-Extensions-and-Integrations.md",
+        "Chapter-11-Claude-Platform-Overview.md",
+        "Chapter-12-Tool-Use.md",
+        "Chapter-13-MCP-Connector.md",
+        "Chapter-14-Skills.md",
+        "Chapter-15-Plugins.md",
+        "Chapter-16-Managed-Agents.md",
+        "Chapter-17-Prompt-Caching.md",
+        "Chapter-18-Batch-Processing.md",
+        "Chapter-19-Connectors-Directory.md",
+        "Chapter-20-Web-Search-and-Fetch.md",
+        "Chapter-21-Code-Execution.md",
+        "Chapter-22-Files-API-and-Citations.md",
+        "Chapter-23-Constitutional-AI.md",
+        "Chapter-24-Trust-Center.md",
+        "Chapter-25-Regional-Compliance.md",
+        "Chapter-26-Prompt-Injection-Defense.md",
+        "Chapter-27-Evaluation-and-Testing.md",
+        "Chapter-28-Service-Tiers.md",
+        "Chapter-29-Usage-Monitoring-and-Spend-Controls.md",
+        "Chapter-30-Claude-for-Customer-Support.md",
+        "Chapter-31-Building-Customer-Facing-Agents.md",
+        "Chapter-32-Marketplace.md",
+        "Chapter-33-Amazon-Bedrock.md",
+        "Chapter-34-Google-Cloud-Vertex-AI.md",
+        "Chapter-35-Microsoft-Foundry.md",
+        "Chapter-36-Recipe-Idea-to-Prototype.md",
+        "Chapter-37-Recipe-Prototype-to-Production.md",
+        "Chapter-38-Recipe-Launching-CX-Product.md",
+        "Chapter-39-Recipe-Multi-Tool-Agent-Workflow.md",
+        "Chapter-40-Cost-Optimization-and-Plan-Selection.md"
+      ],
+      "appendix_files": [
+        "Appendix-A-Model-Comparison-Matrix.md",
+        "Appendix-B-Pricing-Summary.md",
+        "Appendix-C-Connectors-and-MCP-Integration-Guide.md",
+        "Appendix-D-Glossary.md",
+        "Appendix-E-Master-Project-Planner.md"
+      ],
+      "files": [
+        {
+          "type": "blob",
+          "blob_sha": "a410e93d6631b297344e50a17fb04f529b98e944",
+          "path": ".gitignore"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "d41b5360fe11b7b9722a7d8a785f50b1b2f533c0",
+          "path": "00-Front-Cover.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "818491f6eff9b21aad9e32259f6e18758e9807be",
+          "path": "00-Table-of-Contents.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "c2aaf9595356d0bf5c6535b42c1912390365880f",
+          "path": "Appendix-A-Model-Comparison-Matrix.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "d447cc090c1072b4ba6da26726f250229daa880f",
+          "path": "Appendix-B-Pricing-Summary.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "0ba59cf0cd57813ec5dd0f45d3a5630e9325a6e3",
+          "path": "Appendix-C-Connectors-and-MCP-Integration-Guide.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "c08711c55af5beb7b703086e16fc31169fa3b720",
+          "path": "Appendix-D-Glossary.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "1562ec2ff64504ee85c26d82320b19ca9fd559d2",
+          "path": "Appendix-E-Master-Project-Planner.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "9a8a633e2637eadd07b2ded2954e91e93de20c72",
+          "path": "Chapter-01-The-Model-Lineup.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "b8de10e0240a09548436b40145d92c7449152972",
+          "path": "Chapter-02-Claude-Opus-4-7.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "5820a20932ec78c0fc032668cb939251256e11f7",
+          "path": "Chapter-03-Claude-Sonnet-4-6.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "60f596452de6375ab5faa96b6027eedabc0de796",
+          "path": "Chapter-04-Claude-Haiku-4-5.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "2cab90634ca1e80f75f585318b14c507527b4187",
+          "path": "Chapter-05-Claude-Mythos-Preview.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "99f8ec9724d0a17e726cd041aa0acaeb6549da80",
+          "path": "Chapter-06-Adaptive-and-Extended-Thinking.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "b2c74241b69cee71663c8c4627e2dab726f4f216",
+          "path": "Chapter-07-Claude-ai.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "a689d4e49da6a02d5115226b6238af0046f93a81",
+          "path": "Chapter-08-Claude-Code.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "88ded6b3320a4691740cce6c3fb5e4d3b52400c0",
+          "path": "Chapter-09-Claude-Cowork.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "e4d483f5f90f868287b4e4dc107c1ac48ba06646",
+          "path": "Chapter-10-Desktop-Extensions-and-Integrations.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "34f0905e3c3fb0b080c05ee179b36bb4a13a1b9f",
+          "path": "Chapter-11-Claude-Platform-Overview.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "c8e6e2dd965b45c0adeeb4990c5723291f438dc4",
+          "path": "Chapter-12-Tool-Use.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "05d401341c7a706c545885b820fe15fea703c5b0",
+          "path": "Chapter-13-MCP-Connector.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "6ead56bc953361adf942f275956aa085341bcf99",
+          "path": "Chapter-14-Skills.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "e242ce5a5c8129e4906bf9a51ef2169bd0c996cd",
+          "path": "Chapter-15-Plugins.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "528f6fa948f53f074866c0e38dccfaf5a2657514",
+          "path": "Chapter-16-Managed-Agents.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "98c1403198f13ad6f4f81aee4993bcdd4231ccbb",
+          "path": "Chapter-17-Prompt-Caching.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "f198fe611e5afeb8210eae34ece1b6998035cab9",
+          "path": "Chapter-18-Batch-Processing.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "fdc3ea9559c455d0d7fb3d763d338f50b40c80d5",
+          "path": "Chapter-19-Connectors-Directory.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7a4abda91452a5d29f5d3ccbd4201bb9e9f34fa1",
+          "path": "Chapter-20-Web-Search-and-Fetch.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7c5dee0aafd356ce3696d45661bb9265b7d95fe2",
+          "path": "Chapter-21-Code-Execution.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "fa4e456f160b43bafb58410ce2e4a402c0347833",
+          "path": "Chapter-22-Files-API-and-Citations.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "02d5fb90db101d950b496e4fe068d227015cf3da",
+          "path": "Chapter-23-Constitutional-AI.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "a27ee9aacf7f434de51564082a5b2b880da3c634",
+          "path": "Chapter-24-Trust-Center.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "22a3d2d72c632359e73446e3a25d788896aea351",
+          "path": "Chapter-25-Regional-Compliance.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "327b191bf44b36089189ca8231d137c6b2fa8508",
+          "path": "Chapter-26-Prompt-Injection-Defense.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "1dcf3139e7063b0c1e85afcedac3689c0b194251",
+          "path": "Chapter-27-Evaluation-and-Testing.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "f0880dea3242e98c9729a766d9e0e96df75aedba",
+          "path": "Chapter-28-Service-Tiers.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "185157c0bbe5a3d3acdb52b2982e145cc13231ba",
+          "path": "Chapter-29-Usage-Monitoring-and-Spend-Controls.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "ef5424920f975e5a7cb14679d43f196d745810dd",
+          "path": "Chapter-30-Claude-for-Customer-Support.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "c45d0539fc4cbb24baf34241ebc4c71e677321b7",
+          "path": "Chapter-31-Building-Customer-Facing-Agents.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "10c3c4a385bddd18656eb66955df750067eceaf8",
+          "path": "Chapter-32-Marketplace.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "0770c7611c860a400ad46bbf80b81cb8f82fe977",
+          "path": "Chapter-33-Amazon-Bedrock.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "a432d770ecc6c258098be7b152949963a8c14c24",
+          "path": "Chapter-34-Google-Cloud-Vertex-AI.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "4a9b86827fa34cc39a7bf3797e682d560f80189d",
+          "path": "Chapter-35-Microsoft-Foundry.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "107ef80b9e3aa48e3333def28738c0fe5e85c480",
+          "path": "Chapter-36-Recipe-Idea-to-Prototype.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "1d1c2a56ccb41f3f0c8c100148e6c007f01da662",
+          "path": "Chapter-37-Recipe-Prototype-to-Production.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "62afb732a767c3491efb2210aca951454f6f085e",
+          "path": "Chapter-38-Recipe-Launching-CX-Product.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "5e3196b5bc00b9dbab9d914f9701e254dd7d45dc",
+          "path": "Chapter-39-Recipe-Multi-Tool-Agent-Workflow.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "bdd226240386c5f86233e987be3594fd39e6c0a3",
+          "path": "Chapter-40-Cost-Optimization-and-Plan-Selection.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "3400bc06b4f6b46619249bbcd74017a1c0624888",
+          "path": "README.md"
+        }
+      ]
+    },
+    {
+      "lane_id": "book-open-source-llm-providers",
+      "title": "Open Source AI Ecosystem CookBook (Workbook Edition)",
+      "branch": "opensource-cookbook",
+      "head_commit": "6c6ec395923265686192c8338894a2652e6efbfb",
+      "file_count": 47,
+      "chapter_count": 38,
+      "appendix_count": 5,
+      "key_files": [
+        "README.md",
+        "00-Front-Cover.md",
+        "00-Table-of-Contents.md"
+      ],
+      "chapter_files": [
+        "Chapter-01-Open-Model-Landscape.md",
+        "Chapter-02-DeepSeek-V4-R1.md",
+        "Chapter-03-Llama-4.md",
+        "Chapter-04-Qwen-3.5-3.6.md",
+        "Chapter-05-Gemma-4.md",
+        "Chapter-06-Long-Tail-Mistral-Phi-Granite-GLM.md",
+        "Chapter-07-vLLM-Production-Inference.md",
+        "Chapter-08-Ollama-and-llama-cpp.md",
+        "Chapter-09-Cloud-Inference-APIs.md",
+        "Chapter-10-Quantization-Optimization.md",
+        "Chapter-11-LangChain-LangGraph.md",
+        "Chapter-12-LlamaIndex-RAG.md",
+        "Chapter-13-CrewAI-AutoGen.md",
+        "Chapter-14-MCP-Model-Context-Protocol.md",
+        "Chapter-15-OpenAI-Agents-SDK-Anthropic-MCP.md",
+        "Chapter-16-DSPy-Prompt-Programming.md",
+        "Chapter-17-Vector-Databases.md",
+        "Chapter-18-Embedding-Models.md",
+        "Chapter-19-RAG-Architecture.md",
+        "Chapter-20-Fine-Tuning-LoRA.md",
+        "Chapter-21-Open-Source-Safety.md",
+        "Chapter-22-Evaluation.md",
+        "Chapter-23-Open-Source-Licensing.md",
+        "Chapter-24-Data-Governance-Privacy.md",
+        "Chapter-25-Responsible-AI.md",
+        "Chapter-26-Observability.md",
+        "Chapter-27-HuggingFace-Hub.md",
+        "Chapter-28-Product-Packaging.md",
+        "Chapter-29-Pricing-Monetization.md",
+        "Chapter-30-Developer-Experience.md",
+        "Chapter-31-Go-to-Market-Strategy.md",
+        "Chapter-32-Competitive-Landscape.md",
+        "Chapter-33-Recipe-Idea-to-Prototype.md",
+        "Chapter-34-Recipe-Prototype-to-Production-RAG.md",
+        "Chapter-35-Recipe-Fine-Tuned-Model-Product.md",
+        "Chapter-36-Recipe-Multi-Agent-System.md",
+        "Chapter-37-Recipe-Migrating-Closed-to-Open.md",
+        "Chapter-38-Cost-Optimization.md"
+      ],
+      "appendix_files": [
+        "Appendix-A-Model-Comparison-Matrix.md",
+        "Appendix-B-Licensing-Quick-Reference.md",
+        "Appendix-C-Cloud-Pricing-Comparison.md",
+        "Appendix-D-Glossary.md",
+        "Appendix-E-Master-Project-Planner.md"
+      ],
+      "files": [
+        {
+          "type": "blob",
+          "blob_sha": "a410e93d6631b297344e50a17fb04f529b98e944",
+          "path": ".gitignore"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "9a4675feea2c984dd6fc37d288bca7a71b15e573",
+          "path": "00-Front-Cover.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "bfecf971a5fd415b8e93a5d0890f050e84e9accb",
+          "path": "00-Table-of-Contents.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "45b6ef46e87e5f670c2503d2609dddf6e0e50c28",
+          "path": "Appendix-A-Model-Comparison-Matrix.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "410116518d189600b1abf6cacad8b17ea6a9202d",
+          "path": "Appendix-B-Licensing-Quick-Reference.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "41801d7db39a4d4631e3299fb1add9e3d90b83e5",
+          "path": "Appendix-C-Cloud-Pricing-Comparison.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "70c2f0fdd2c9844b2ea4739b76d4c86db475c67f",
+          "path": "Appendix-D-Glossary.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "d9db5ba3cb52626724a9f1db37c0d3b81eb9f8a1",
+          "path": "Appendix-E-Master-Project-Planner.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "3926dd9470d11f403a37788659f7a6f7e63a5580",
+          "path": "Chapter-01-Open-Model-Landscape.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "afa03851ee592c0ab73b728aeab829c5d7445bf2",
+          "path": "Chapter-02-DeepSeek-V4-R1.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "45cb89fae02de160f058aa41fa3a94671f3df886",
+          "path": "Chapter-03-Llama-4.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "bad9bcb7703eec2fd6c6f069a05654088007ae63",
+          "path": "Chapter-04-Qwen-3.5-3.6.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "41cca01f7a474ec49c47bf66cc92cd82fc648d91",
+          "path": "Chapter-05-Gemma-4.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "94aa3556eb326610d9da7cd576e3fa13238db223",
+          "path": "Chapter-06-Long-Tail-Mistral-Phi-Granite-GLM.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "b925081d9524e26c662462281134c8f21c6640c9",
+          "path": "Chapter-07-vLLM-Production-Inference.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "ea081367b79a38259c38284e12eea7350bce755f",
+          "path": "Chapter-08-Ollama-and-llama-cpp.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "aa632b9c93d848af85e1c0cc8a6f293b82c6e9d5",
+          "path": "Chapter-09-Cloud-Inference-APIs.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "62bcc6bbc1df54743e121f7537c5018150902f42",
+          "path": "Chapter-10-Quantization-Optimization.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "684cd0a5c9f761decdc8caac075d56f80e00c034",
+          "path": "Chapter-11-LangChain-LangGraph.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "b7c587c505ed4fd39ee5d40b603909016b96ca7c",
+          "path": "Chapter-12-LlamaIndex-RAG.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "09dde24a353d592366b026974fe39bc233b23efe",
+          "path": "Chapter-13-CrewAI-AutoGen.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "372f103a7663f6cf9d15cbfc2c41f2770e127528",
+          "path": "Chapter-14-MCP-Model-Context-Protocol.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "4147b4f422f8db38ffa7e514a9888f052b9e1bf7",
+          "path": "Chapter-15-OpenAI-Agents-SDK-Anthropic-MCP.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "588f449ad48fbb93e94a417c52522d1cb5baf043",
+          "path": "Chapter-16-DSPy-Prompt-Programming.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "77f7895f330150dc739b46bd5432f3faeb05b492",
+          "path": "Chapter-17-Vector-Databases.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "e5bfb397af5c12e48a167ef83b17dbdedf912fde",
+          "path": "Chapter-18-Embedding-Models.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "60347d7d2da21f7fbb6004e91909ba5081e5ff62",
+          "path": "Chapter-19-RAG-Architecture.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "3ac6f4f6d86d6f32ffe839a2bd335314717f16cd",
+          "path": "Chapter-20-Fine-Tuning-LoRA.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "a410f7ba640f39ca6ec305b717ba76d8a6c49076",
+          "path": "Chapter-21-Open-Source-Safety.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "0d8befa867bf29eba9a640545193b3ffb26d0f1e",
+          "path": "Chapter-22-Evaluation.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "4f0026245048cb1ce9b6714b43f4686be1d00e06",
+          "path": "Chapter-23-Open-Source-Licensing.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "d1853f99d64025a67ddd39c22115d0cea609369c",
+          "path": "Chapter-24-Data-Governance-Privacy.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "922abf4261d74a40e28cbc8e930ee02888162ff0",
+          "path": "Chapter-25-Responsible-AI.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "2ed39803ea619daface03466c8e993634f1ab954",
+          "path": "Chapter-26-Observability.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "30517a2625a367f7dbca497edcb73806df334339",
+          "path": "Chapter-27-HuggingFace-Hub.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7108862c956b3192fe1d9ae14e0058bff5fe39dc",
+          "path": "Chapter-28-Product-Packaging.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "05c39e74d7e9f2b3d01a74be14da937824d98a0c",
+          "path": "Chapter-29-Pricing-Monetization.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7e1abf24d2450f959b41f71b81d525a67686f1dc",
+          "path": "Chapter-30-Developer-Experience.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "1e2b54b2c85c48fa94ee916f746669ed1273199f",
+          "path": "Chapter-31-Go-to-Market-Strategy.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "83b9d420941eed1ed169d5eb979ca27d9104eb88",
+          "path": "Chapter-32-Competitive-Landscape.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "a6f7fceb69febcab28ea8df3f9e146699d8ba0ee",
+          "path": "Chapter-33-Recipe-Idea-to-Prototype.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "f572f5cd1896080a9e37eba0258153e96566904c",
+          "path": "Chapter-34-Recipe-Prototype-to-Production-RAG.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "87872be0b6f02550d010a6bc5de4e2ef1b473062",
+          "path": "Chapter-35-Recipe-Fine-Tuned-Model-Product.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "aa91447e75e280a5ce3b16174363f7699408018c",
+          "path": "Chapter-36-Recipe-Multi-Agent-System.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "4f0a382e7f0eac11214509ddfe8efdec0bd1add6",
+          "path": "Chapter-37-Recipe-Migrating-Closed-to-Open.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "547aba2d4db06bd7637a2244930c4765d5c879e5",
+          "path": "Chapter-38-Cost-Optimization.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "f63af1da4dddf715c8d7721bc6ee2c95b07a7b85",
+          "path": "README.md"
+        }
+      ]
+    },
+    {
+      "lane_id": "timeline-the-new-fuse-novel",
+      "title": "THE NEW FUSE — An Epic of Silicon and Sovereignty",
+      "branch": "the-new-fuse-novel",
+      "head_commit": "561e44d6103e5035b891c2f96a54ee514fa6e40a",
+      "file_count": 21,
+      "chapter_count": 0,
+      "appendix_count": 6,
+      "key_files": [
+        "README.md",
+        "00-Front-Cover.md",
+        "00-Table-of-Contents.md",
+        "book-one-daniel-whos-media-empire/SCAFFOLD.md",
+        "book-one-daniel-whos-media-empire/ASSET-CATALOG.md"
+      ],
+      "chapter_files": [],
+      "appendix_files": [
+        "Appendix-A-Character-Bible.md",
+        "Appendix-B-Story-Arcs.md",
+        "Appendix-C-Timeline.md",
+        "Appendix-D-Novel-Authoring-Primitive.md",
+        "Appendix-E-Meta-Process.md",
+        "Appendix-F-Glossary.md"
+      ],
+      "files": [
+        {
+          "type": "blob",
+          "blob_sha": "a410e93d6631b297344e50a17fb04f529b98e944",
+          "path": ".gitignore"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "ac3f2e52344c0b940d746f46650adafb304ac582",
+          "path": "00-Front-Cover.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7bc13602ec5500cfc34b15956a8f3285f33ecc5f",
+          "path": "00-Table-of-Contents.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "83ad78e0c986225d55deb6c886e9a771958c9acf",
+          "path": "Appendix-A-Character-Bible.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "0013ff383bbcb614407fcac5e77fb2e4b9589228",
+          "path": "Appendix-B-Story-Arcs.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "f62847110c4b1a7a7df0d07afbac6d1aff35286e",
+          "path": "Appendix-C-Timeline.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7661004d2de31523e3901f3c2237ad0bd0cf0075",
+          "path": "Appendix-D-Novel-Authoring-Primitive.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "c006700f3baa33fb3cf8a31251a43898d069cb54",
+          "path": "Appendix-E-Meta-Process.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "7272688b9d845af7ff6d2db9e7ce10a2e48c6ab4",
+          "path": "Appendix-F-Glossary.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "9b88803973bf2b04cac487db94f16056ed8efbd2",
+          "path": "README.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "48c4424eab9dc9911843a3f18e627a5e653d3cda",
+          "path": "agent/STORY-ARCHITECT.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "0c055c90eacd204d397bfab651fd62a383bbf80c",
+          "path": "backstory-discovery/DISCOVERY-LOG-Session-1.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "32b3266709ba03121399bb8440c9ce7bb9f70089",
+          "path": "backstory-discovery/PROCESS.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "e1f888f99dd710e28d22203c49e4c57a729f3fbb",
+          "path": "book-one-daniel-whos-media-empire/ASSET-CATALOG.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "12ab8f4035a7883a1dacd4bb002be88c08045375",
+          "path": "book-one-daniel-whos-media-empire/SCAFFOLD.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "b97dbfed75d3995dca334d1a378c098a528a826c",
+          "path": "story-forge/ARCHITECTURE.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "bde94f54dd0e00d103934b945ba8ffc59e17939e",
+          "path": "story-forge/CUSTOMER-JOURNEY.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "2a4be5ee187364e0784dd3450e4484cb420b4b80",
+          "path": "working-materials/BRAINSTORM-SESSION-TEMPLATE.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "5ae41ba220bdee5a7acdfe901d8d8c7566e2008c",
+          "path": "working-materials/NOTATION-REFERENCE.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "71454879350ee19ba62970fec70850692ef1e44a",
+          "path": "working-materials/NOTE-CARD-TEMPLATE.md"
+        },
+        {
+          "type": "blob",
+          "blob_sha": "43954ff131cb74c610ca7af75e75266a2412c38b",
+          "path": "working-materials/SCALENUT-INTEGRATION.md"
+        }
+      ]
+    }
+  ]
+}

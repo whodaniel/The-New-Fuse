@@ -1,0 +1,49 @@
+{
+  "sourceType": "email-wave2-sync-rollup-pass8",
+  "generatedAt": "2026-05-07T19:53:12.011Z",
+  "sourceQueue": "data/private/protocols/email-fact-candidate-queue-wave2.2026-05-07.json",
+  "sourceAdjudications": [
+    "data/protocols/email-wave2-adjudication-pass7.2026-05-07.json",
+    "data/protocols/email-wave2-adjudication-pass8.2026-05-07.json"
+  ],
+  "sourceImportQueues": [
+    "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+    "data/protocols/email-wave2-import-queue-pass8b.2026-05-07.json"
+  ],
+  "sourceBackupManifest": "data/private/protocols/supabase-email-archaeology-backup-manifest.2026-05-07-wave2-pass8.json",
+  "reviewedCount": 100,
+  "pendingCount": 400,
+  "decisionCounts": {
+    "import_to_timeline": 84,
+    "keep_excluded_already_covered": 12,
+    "keep_excluded": 4
+  },
+  "dedupedImportCounts": {
+    "pass7": {
+      "initial": 41,
+      "deduped": 22,
+      "skipped": 19
+    },
+    "pass8": {
+      "initial": 43,
+      "deduped": 27,
+      "skipped": 16
+    },
+    "cumulative": {
+      "initial": 84,
+      "deduped": 49,
+      "skipped": 35
+    }
+  },
+  "supabaseSnapshot": {
+    "ownerPrincipalId": "daniel",
+    "emailArchaeologyEvents": 488,
+    "dateRange": {
+      "min": "1999-02-16",
+      "max": "2026-05-05"
+    },
+    "insertedPass7": 22,
+    "insertedPass8": 27,
+    "insertedWave2Cumulative": 49
+  }
+}

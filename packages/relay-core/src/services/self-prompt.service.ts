@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
-import { createTNFEnvelope } from '../protocol/tnf-envelope.js';
+import { type TnfAuditTrace } from '../contracts/audit.js';
 import { type TnfAgentEnvelopeIdentity } from '../contracts/envelope.js';
-import { attachAuditTrace, type TnfAuditTrace } from '../contracts/audit.js';
+import { createTNFEnvelope } from '../protocol/tnf-envelope.js';
 import { RedisClientManager } from './redis-client-manager.service.js';
 
 interface SelfPromptConfig {
@@ -14,11 +14,18 @@ interface SelfPromptConfig {
   };
 }
 
-type LogFunction = (level: string, category: string, message: string, data?: Record<string, any>) => void;
+type LogFunction = (
+  level: string,
+  category: string,
+  message: string,
+  data?: Record<string, any>
+) => void;
 
 type GetOrchestratorIdentityFunction = () => TnfAgentEnvelopeIdentity;
 type GetAgentIdentityFunction = (sourceOrAgentId: string) => TnfAgentEnvelopeIdentity;
-type GetOrchestratorAuditFunction = (overrides?: Partial<TnfAuditTrace>) => Partial<TnfAuditTrace> & Pick<TnfAuditTrace, 'source' | 'actor'>;
+type GetOrchestratorAuditFunction = (
+  overrides?: Partial<TnfAuditTrace>
+) => Partial<TnfAuditTrace> & Pick<TnfAuditTrace, 'source' | 'actor'>;
 
 export class SelfPromptService {
   private config: SelfPromptConfig;
@@ -37,14 +44,14 @@ export class SelfPromptService {
     getOrchestratorEnvelopeIdentity: GetOrchestratorIdentityFunction,
     getAgentEnvelopeIdentity: GetAgentIdentityFunction,
     getOrchestratorAudit: GetOrchestratorAuditFunction,
-    sessionId: string,
+    sessionId: string
   ) {
     this.config = config;
     this.log = log;
     this.redisClient = redisClient;
     this.selfPromptCooldowns = new Map();
     this.getOrchestratorEnvelopeIdentity = getOrchestratorEnvelopeIdentity;
-    this.getAgentEnvelopeIdentity = getAgentIdentityFunction;
+    this.getAgentEnvelopeIdentity = getAgentEnvelopeIdentity;
     this.getOrchestratorAudit = getOrchestratorAudit;
     this.sessionId = sessionId;
   }
@@ -73,7 +80,10 @@ export class SelfPromptService {
     targetProcessId?: string;
     metadata?: Record<string, unknown>;
   }): Promise<void> {
-    if (!this.config.SELF_PROMPT_ENABLED || (!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient)) {
+    if (
+      !this.config.SELF_PROMPT_ENABLED ||
+      (!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient)
+    ) {
       return;
     }
 
@@ -158,7 +168,10 @@ export class SelfPromptService {
     );
 
     try {
-      await this.redisClient.publish(this.config.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
+      await this.redisClient.publish(
+        this.config.REDIS_KEYS.INGRESS,
+        JSON.stringify(broadcastEnvelope)
+      );
       await this.redisClient.lpush(
         this.config.REDIS_KEYS.SELF_PROMPTS,
         JSON.stringify({

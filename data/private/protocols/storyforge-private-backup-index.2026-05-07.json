@@ -1,0 +1,78 @@
+{
+  "sourceType": "storyforge-private-backup-index",
+  "generatedAt": "2026-05-07T20:36:22.658Z",
+  "ownerPrincipalId": "daniel",
+  "purpose": "Restore-ready index for narrative archaeology and Story Forge drafting artifacts",
+  "artifacts": [
+    {
+      "path": "data/private/supabase-backups/email-archaeology-events-owner-daniel-2026-05-07-wave2-pass11.json",
+      "bytes": 2629516,
+      "sha256": "17fa41a1c4afd9ad65f0a79bd0cc686794a10d7418c2fcf84acf6e94f5c45825",
+      "modifiedAt": "2026-05-07T20:18:31.119Z",
+      "class": "private"
+    },
+    {
+      "path": "data/private/protocols/supabase-email-archaeology-backup-manifest.2026-05-07-wave2-pass11.json",
+      "bytes": 907,
+      "sha256": "f27374849aeb2e21a89d0e57c24b8ae314ae40fa4185d38a9e2fcadbcff5fb1c",
+      "modifiedAt": "2026-05-07T20:18:31.159Z",
+      "class": "private"
+    },
+    {
+      "path": "data/protocols/email-canonical-milestones.2026-05-07.json",
+      "bytes": 199411,
+      "sha256": "908e9b72d53d4d9de6b531719ae1f625c9acaf32e065e8eaa3ae237c310bdff6",
+      "modifiedAt": "2026-05-07T20:25:57.285Z",
+      "class": "private-protocol"
+    },
+    {
+      "path": "data/protocols/email-gap-map-and-discovery-questions.2026-05-07.json",
+      "bytes": 17721,
+      "sha256": "8aa72f3e9f058428ba5ba0ba477dc4a5ecd14b54f76eecf3107fa581734f7f08",
+      "modifiedAt": "2026-05-07T20:26:40.479Z",
+      "class": "private-protocol"
+    },
+    {
+      "path": "data/protocols/storyforge-narrative-draft.2026-05-07.json",
+      "bytes": 69511,
+      "sha256": "000149163dc5326d93a358f5f4a3faff9ccc9a4275b2387df432773465e59b39",
+      "modifiedAt": "2026-05-07T20:31:46.979Z",
+      "class": "private-protocol"
+    },
+    {
+      "path": "data/protocols/privacy-audit-report.2026-05-07.json",
+      "bytes": 70572,
+      "sha256": "f400055abe01723e9aea38285244dfbe7fbfec24de5e44e207ce7e6becfe7ec4",
+      "modifiedAt": "2026-05-07T20:36:00.195Z",
+      "class": "private-protocol"
+    },
+    {
+      "path": "data/private/protocols/privacy-hardening-sql.2026-05-07.sql",
+      "bytes": 520,
+      "sha256": "1319f932bf3d2f00e3a0a9363a8bb0e3c5cb6fb59102a51c1124221779fc6079",
+      "modifiedAt": "2026-05-07T20:35:43.509Z",
+      "class": "private"
+    },
+    {
+      "path": "data/private/protocols/storyforge-backup-protocol.2026-05-07.md",
+      "bytes": 1750,
+      "sha256": "119eae9f5a55528b3990c2d20bf3c4548b33cdb10b5e93e2f07b4badb88c4487",
+      "modifiedAt": "2026-05-07T20:33:09.369Z",
+      "class": "private"
+    },
+    {
+      "path": "data/protocols/email-archaeology-combined-rollup.2026-05-07.json",
+      "bytes": 2220,
+      "sha256": "f3681bc27ff4db696d72cfd20920781a39a709eb52a322e10c76559420b68c6c",
+      "modifiedAt": "2026-05-07T20:19:41.233Z",
+      "class": "private-protocol"
+    },
+    {
+      "path": "data/unified-task-ledger.json",
+      "bytes": 4705254,
+      "sha256": "17925122c8eb30ebe3232244e233539ccafa4400a9dbf082bd75961a1a2614e1",
+      "modifiedAt": "2026-05-07T20:20:47.828Z",
+      "class": "private-tracked-risk"
+    }
+  ]
+}

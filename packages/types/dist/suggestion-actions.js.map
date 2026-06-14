@@ -1,0 +1,1 @@
+{"version":3,"file":"suggestion-actions.js","sourceRoot":"","sources":["../src/suggestion-actions.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,MAAM,OAAO,CAAC;AAQtC,MAAM,CAAC,MAAM,wBAAwB,GAAG,aAAa,CAA+B;IAClF,gBAAgB,EAAE,KAAK,IAAI,EAAE,GAAE,CAAC;IAChC,iBAAiB,EAAE,KAAK,IAAI,EAAE,GAAE,CAAC;IACjC,gBAAgB,EAAE,KAAK,IAAI,EAAE,GAAE,CAAC;CACjC,CAAC,CAAC"}

@@ -1,0 +1,145 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentResponseDto = exports.UpdateAgentDto = exports.CreateAgentDto = exports.AgentCapability = exports.AgentStatus = exports.AgentType = void 0;
+const class_validator_1 = require("class-validator");
+// @ts-ignore
+const swagger_1 = require("@nestjs/swagger");
+const types_1 = require("@the-new-fuse/types");
+Object.defineProperty(exports, "AgentType", { enumerable: true, get: function () { return types_1.AgentType; } });
+Object.defineProperty(exports, "AgentStatus", { enumerable: true, get: function () { return types_1.AgentStatus; } });
+Object.defineProperty(exports, "AgentCapability", { enumerable: true, get: function () { return types_1.AgentCapability; } });
+class CreateAgentDto {
+    constructor() {
+        this.name = '';
+        this.type = types_1.AgentType.BASIC;
+    }
+}
+exports.CreateAgentDto = CreateAgentDto;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateAgentDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ enum: types_1.AgentType }),
+    (0, class_validator_1.IsEnum)(types_1.AgentType),
+    __metadata("design:type", typeof (_a = typeof types_1.AgentType !== "undefined" && types_1.AgentType) === "function" ? _a : Object)
+], CreateAgentDto.prototype, "type", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateAgentDto.prototype, "capabilities", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsObject)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], CreateAgentDto.prototype, "config", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateAgentDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsObject)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], CreateAgentDto.prototype, "metadata", void 0);
+class UpdateAgentDto {
+}
+exports.UpdateAgentDto = UpdateAgentDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateAgentDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false, enum: types_1.AgentType }),
+    (0, class_validator_1.IsEnum)(types_1.AgentType),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", typeof (_b = typeof types_1.AgentType !== "undefined" && types_1.AgentType) === "function" ? _b : Object)
+], UpdateAgentDto.prototype, "type", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], UpdateAgentDto.prototype, "capabilities", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsObject)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], UpdateAgentDto.prototype, "config", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateAgentDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false, enum: types_1.AgentStatus }),
+    (0, class_validator_1.IsEnum)(types_1.AgentStatus),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", typeof (_c = typeof types_1.AgentStatus !== "undefined" && types_1.AgentStatus) === "function" ? _c : Object)
+], UpdateAgentDto.prototype, "status", void 0);
+class AgentResponseDto {
+    constructor() {
+        this.id = '';
+        this.name = '';
+        this.type = types_1.AgentType.BASIC;
+        this.status = types_1.AgentStatus.IDLE;
+        this.capabilities = [];
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+}
+exports.AgentResponseDto = AgentResponseDto;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], AgentResponseDto.prototype, "id", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], AgentResponseDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ enum: types_1.AgentType }),
+    __metadata("design:type", typeof (_d = typeof types_1.AgentType !== "undefined" && types_1.AgentType) === "function" ? _d : Object)
+], AgentResponseDto.prototype, "type", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ enum: types_1.AgentStatus }),
+    __metadata("design:type", typeof (_e = typeof types_1.AgentStatus !== "undefined" && types_1.AgentStatus) === "function" ? _e : Object)
+], AgentResponseDto.prototype, "status", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: [String] }),
+    __metadata("design:type", Array)
+], AgentResponseDto.prototype, "capabilities", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", String)
+], AgentResponseDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Date)
+], AgentResponseDto.prototype, "createdAt", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Date)
+], AgentResponseDto.prototype, "updatedAt", void 0);
+//# sourceMappingURL=agent.dto.js.map

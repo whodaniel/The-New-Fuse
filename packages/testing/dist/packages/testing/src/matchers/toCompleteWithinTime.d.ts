@@ -1,0 +1,2 @@
+export declare const toCompleteWithinTime: (this: import("expect").MatcherState, received: Promise<unknown>, ...args: any[]) => Promise<import("./utils").CustomMatcherResult>;
+//# sourceMappingURL=toCompleteWithinTime.d.ts.map

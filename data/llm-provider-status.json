@@ -1,0 +1,177 @@
+{
+  "lastChecked": "2026-06-11T18:00:28.045Z",
+  "bestAvailable": {
+    "id": "gemini",
+    "name": "Google Gemini",
+    "tier": "free",
+    "type": "cloud",
+    "envKey": "GEMINI_API_KEY",
+    "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+    "defaultModel": "gemini-pro",
+    "active": true
+  },
+  "allocations": {
+    "orchestrator": {
+      "id": "gemini",
+      "name": "Google Gemini",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "GEMINI_API_KEY",
+      "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      "defaultModel": "gemini-pro",
+      "active": true
+    },
+    "worker": {
+      "id": "groq",
+      "name": "Groq",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "GROQ_API_KEY",
+      "testUrl": "https://api.groq.com/openai/v1/chat/completions",
+      "defaultModel": "llama3-8b-8192",
+      "active": true
+    },
+    "reviewer": {
+      "id": "openrouter",
+      "name": "OpenRouter (Free Tier)",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
+      "active": true
+    },
+    "subagent": {
+      "id": "gemini",
+      "name": "Google Gemini",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "GEMINI_API_KEY",
+      "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      "defaultModel": "gemini-pro",
+      "active": true
+    }
+  },
+  "fallbackChain": [
+    {
+      "id": "gemini",
+      "name": "Google Gemini",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "GEMINI_API_KEY",
+      "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      "defaultModel": "gemini-pro",
+      "active": true
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "GROQ_API_KEY",
+      "testUrl": "https://api.groq.com/openai/v1/chat/completions",
+      "defaultModel": "llama3-8b-8192",
+      "active": true
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter (Free Tier)",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
+      "active": true
+    }
+  ],
+  "all": [
+    {
+      "id": "ollama",
+      "name": "Local Ollama",
+      "tier": "free",
+      "type": "local",
+      "testUrl": "http://localhost:11434/api/tags",
+      "active": false
+    },
+    {
+      "id": "gemini",
+      "name": "Google Gemini",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "GEMINI_API_KEY",
+      "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      "defaultModel": "gemini-pro",
+      "active": true
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "GROQ_API_KEY",
+      "testUrl": "https://api.groq.com/openai/v1/chat/completions",
+      "defaultModel": "llama3-8b-8192",
+      "active": true
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter (Free Tier)",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
+      "active": true
+    },
+    {
+      "id": "sambanova",
+      "name": "SambaNova",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "SAMBANOVA_API_KEY",
+      "testUrl": "https://api.sambanova.ai/v1/chat/completions",
+      "defaultModel": "Meta-Llama-3.1-8B-Instruct",
+      "active": false
+    },
+    {
+      "id": "moonshot",
+      "name": "Moonshot",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "MOONSHOT_API_KEY",
+      "testUrl": "https://api.moonshot.cn/v1/chat/completions",
+      "defaultModel": "moonshot-v1-8k",
+      "active": false
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "DEEPSEEK_API_KEY",
+      "testUrl": "https://api.deepseek.com/v1/chat/completions",
+      "defaultModel": "deepseek-chat",
+      "active": false
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "tier": "premium",
+      "type": "cloud",
+      "envKey": "OPENAI_API_KEY",
+      "testUrl": "https://api.openai.com/v1/models",
+      "defaultModel": "gpt-4o-mini",
+      "active": false
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic Claude",
+      "tier": "premium",
+      "type": "cloud",
+      "envKey": "ANTHROPIC_API_KEY",
+      "testUrl": "https://api.anthropic.com/v1/messages",
+      "defaultModel": "claude-3-haiku-20240307",
+      "active": false
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "sourceType": "email-wave2-import-dedupe-audit",
+  "generatedAt": "2026-05-07T19:47:02.424Z",
+  "sourceAdjudication": "data/protocols/email-wave2-adjudication-pass7.2026-05-07.json",
+  "initialImportCount": 41,
+  "dedupedImportCount": 22,
+  "skippedCount": 19,
+  "skipped": [
+    {
+      "factId": "email-fact-wave2-2003-05-30-msgid-ab-2d761fd3-2c08f7b2-aol-com",
+      "reason": "empty_subject_core"
+    },
+    {
+      "factId": "email-fact-wave2-2003-07-08-msgid-001101c3459c-3754b9a0-0201a8c0-pentium4",
+      "reason": "empty_subject_core"
+    },
+    {
+      "factId": "email-fact-wave2-2003-07-08-msgid-004401c3455a-dcf569f0-0201a8c0-pentium4",
+      "reason": "empty_subject_core"
+    },
+    {
+      "factId": "email-fact-wave2-2003-12-01-msgid-20031201192151-27490-qmail-web20610-mail-y",
+      "reason": "empty_subject_core"
+    },
+    {
+      "factId": "email-fact-wave2-2003-12-16-msgid-20031216222716-86663-qmail-web20604-mail-y",
+      "reason": "empty_subject_core"
+    },
+    {
+      "factId": "email-fact-wave2-2003-12-20-msgid-20031220053554-13739-qmail-web20603-mail-y",
+      "reason": "empty_subject_core"
+    },
+    {
+      "factId": "email-fact-wave2-2004-03-19-msgid-000001c40dc4-eff9e7a0-24a6a8c0-manish",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "manish83@hathway.com|installation help download link",
+      "previousFactId": "email-fact-wave2-2004-03-19-msgid-000001c40d7c-4f09bac0-24a6a8c0-manish"
+    },
+    {
+      "factId": "email-fact-wave2-2004-03-28-msgid-40675b8d-8060901-talldude-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "bigguy@talldude.com|support",
+      "previousFactId": "email-fact-wave2-2004-03-14-msgid-4054c787-3060902-talldude-com"
+    },
+    {
+      "factId": "email-fact-wave2-2004-04-07-msgid-4073631d-6000000-talldude-com",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "bigguy@talldude.com|support",
+      "previousFactId": "email-fact-wave2-2004-03-14-msgid-4054c787-3060902-talldude-com"
+    },
+    {
+      "factId": "email-fact-wave2-2004-04-20-msgid-006801c426fa-ca470cf0-7801a8c0-domain-swif",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "bphillips@swiftcd.com|cds for customerid whodanie",
+      "previousFactId": "email-fact-wave2-2004-04-16-msgid-002101c423df-707c4cd0-7801a8c0-domain-swif"
+    },
+    {
+      "factId": "email-fact-wave2-2004-04-20-msgid-016101c426dc-6d213550-7801a8c0-domain-swif",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "bphillips@swiftcd.com|cds for customerid whodanie",
+      "previousFactId": "email-fact-wave2-2004-04-16-msgid-002101c423df-707c4cd0-7801a8c0-domain-swif"
+    },
+    {
+      "factId": "email-fact-wave2-2004-04-21-msgid-002d01c4279a-0a6eb1d0-7801a8c0-domain-swif",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "bphillips@swiftcd.com|cds for customerid whodanie",
+      "previousFactId": "email-fact-wave2-2004-04-16-msgid-002101c423df-707c4cd0-7801a8c0-domain-swif"
+    },
+    {
+      "factId": "email-fact-wave2-2004-04-21-msgid-015201c427c4-51160f50-7801a8c0-domain-swif",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "bphillips@swiftcd.com|cds for customerid whodanie",
+      "previousFactId": "email-fact-wave2-2004-04-16-msgid-002101c423df-707c4cd0-7801a8c0-domain-swif"
+    },
+    {
+      "factId": "email-fact-wave2-2004-07-15-msgid-000001c46a8c-589c23d0-8312a918-drum1",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jschrier@rochester.rr.com|emailing p1010001 p1010003 p1010005",
+      "previousFactId": "email-fact-wave2-2004-07-14-msgid-000401c469d3-29ecd7a0-8312a918-drum1"
+    },
+    {
+      "factId": "email-fact-wave2-2004-07-16-msgid-000d01c46b3b-bc9f1040-8312a918-drum1",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jschrier@rochester.rr.com|emailing p1010001 p1010003 p1010005",
+      "previousFactId": "email-fact-wave2-2004-07-14-msgid-000401c469d3-29ecd7a0-8312a918-drum1"
+    },
+    {
+      "factId": "email-fact-wave2-2004-08-31-msgid-000601c48fb2-9794d280-9e7b4242-drum1",
+      "reason": "empty_subject_core"
+    },
+    {
+      "factId": "email-fact-wave2-2004-09-21-msgid-001801c49feb-bffbfcf0-9e7b4242-drum1",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jschrier@rochester.rr.com|me",
+      "previousFactId": "email-fact-wave2-2004-09-21-msgid-000201c49ff8-6713e780-9e7b4242-drum1"
+    },
+    {
+      "factId": "email-fact-wave2-2004-10-06-msgid-000001c4abca-0e6b40f0-9e7b4242-drum1",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jschrier@rochester.rr.com|me",
+      "previousFactId": "email-fact-wave2-2004-09-21-msgid-000201c49ff8-6713e780-9e7b4242-drum1"
+    },
+    {
+      "factId": "email-fact-wave2-2004-10-18-msgid-20041018220929-94895-qmail-web52802-mail-y",
+      "reason": "thread_duplicate_within_45_days",
+      "key": "jackoval6@yahoo.com|stipulatory creations in soft tyranny anihlate our intrinsic logic",
+      "previousFactId": "email-fact-wave2-2004-10-18-msgid-20041018215106-58457-qmail-web52809-mail-y"
+    }
+  ]
+}

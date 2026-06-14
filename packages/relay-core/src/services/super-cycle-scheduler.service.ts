@@ -1,12 +1,9 @@
+import { execFile } from 'child_process';
+import { existsSync, promises as fs } from 'fs';
+import path from 'path';
+import { promisify } from 'util';
 import { RedisClientManager } from './redis-client-manager.service';
 import { SelfPromptService } from './self-prompt.service';
-import { type TnfAgentIdentityRecord } from '../contracts/identity.js';
-import { type TnfAuditTrace, attachAuditTrace } from '../contracts/audit.js';
-import { existsSync } from 'fs';
-import { promises as fs } from 'fs';
-import { promisify } from 'util';
-import path from 'path';
-import { execFile } from 'child_process';
 
 const execFileAsync = promisify(execFile);
 
@@ -89,7 +86,7 @@ type GetEnvelopeIdentity = () => {
 type EmitActivityEvent = (
   eventType: string,
   content: string,
-  metadata: Record<string, unknown>,
+  metadata: Record<string, unknown>
 ) => Promise<void>;
 
 // ============================================================================
@@ -115,7 +112,7 @@ export class SuperCycleSchedulerService {
     redisClient: RedisClientManager,
     selfPromptService: SelfPromptService,
     emitActivityEvent: EmitActivityEvent,
-    getOrchestratorEnvelopeIdentity: GetEnvelopeIdentity,
+    getOrchestratorEnvelopeIdentity: GetEnvelopeIdentity
   ) {
     this.config = config;
     this.log = log;
@@ -139,7 +136,7 @@ export class SuperCycleSchedulerService {
     this.log(
       'info',
       'CHRONO',
-      `Starting chronological scheduler poller (every ${this.config.CHRONOLOGICAL_POLL_INTERVAL_MS}ms)`,
+      `Starting chronological scheduler poller (every ${this.config.CHRONOLOGICAL_POLL_INTERVAL_MS}ms)`
     );
 
     const run = () => {
@@ -147,14 +144,14 @@ export class SuperCycleSchedulerService {
         this.log(
           'warn',
           'CHRONO',
-          `Chronological scheduler poll failed: ${error.message || String(error)}`,
+          `Chronological scheduler poll failed: ${error.message || String(error)}`
         );
       });
     };
 
     this.chronologicalPollingInterval = setInterval(
       run,
-      this.config.CHRONOLOGICAL_POLL_INTERVAL_MS,
+      this.config.CHRONOLOGICAL_POLL_INTERVAL_MS
     );
     run();
   }
@@ -201,13 +198,13 @@ export class SuperCycleSchedulerService {
       this.repoRoot,
       'data',
       'protocols',
-      'cron-jobs.control-plane-state.json',
+      'cron-jobs.control-plane-state.json'
     );
     const catalogPath = path.join(
       this.repoRoot,
       'data',
       'protocols',
-      'chronological-process-catalog.json',
+      'chronological-process-catalog.json'
     );
 
     const registryRaw = await fs
@@ -252,7 +249,7 @@ export class SuperCycleSchedulerService {
 
   private shouldRunChronologicalProcess(
     snapshot: ChronologicalProcessSnapshot,
-    now: Date,
+    now: Date
   ): boolean {
     if (!snapshot.enabled || !snapshot.runNow) return false;
 
@@ -263,7 +260,7 @@ export class SuperCycleSchedulerService {
     if (snapshot.runtime?.status === 'running' && lastRunAtMs) {
       const lockWindowMs = Math.max(
         Number(snapshot.runNow.timeoutMs || 30000) * 2,
-        this.config.CHRONOLOGICAL_POLL_INTERVAL_MS * 2,
+        this.config.CHRONOLOGICAL_POLL_INTERVAL_MS * 2
       );
       if (Date.now() - lastRunAtMs < lockWindowMs) {
         return false;
@@ -277,19 +274,17 @@ export class SuperCycleSchedulerService {
     const lastRunSlot = this.getScheduleSlot(
       new Date(lastRunAtMs),
       normalizedCadence,
-      snapshot.timezone,
+      snapshot.timezone
     );
     return currentSlot.key !== lastRunSlot.key;
   }
 
-  private async executeChronologicalProcess(
-    snapshot: ChronologicalProcessSnapshot,
-  ): Promise<void> {
+  private async executeChronologicalProcess(snapshot: ChronologicalProcessSnapshot): Promise<void> {
     const runnerPath = path.join(
       this.repoRoot,
       'scripts',
       'protocols',
-      'run-chronological-process.cjs',
+      'run-chronological-process.cjs'
     );
     const startedAt = new Date().toISOString();
     let status = 'healthy';
@@ -304,7 +299,7 @@ export class SuperCycleSchedulerService {
           timeout: Number(snapshot.runNow?.timeoutMs || 30000) + 5000,
           maxBuffer: 1024 * 1024 * 2,
           env: process.env,
-        },
+        }
       );
       const parsed = this.parseJsonOutput(result.stdout);
       if (parsed?.run?.status) {
@@ -318,7 +313,7 @@ export class SuperCycleSchedulerService {
           processId: snapshot.processId,
           title: snapshot.title,
           status,
-        },
+        }
       );
     } catch (error: any) {
       status = 'error';
@@ -326,7 +321,7 @@ export class SuperCycleSchedulerService {
       this.log(
         'warn',
         'CHRONO',
-        `Chronological execution failed for ${snapshot.processId}: ${lastResult}`,
+        `Chronological execution failed for ${snapshot.processId}: ${lastResult}`
       );
       await this.emitActivityEvent(
         'chronological_process_error',
@@ -335,7 +330,7 @@ export class SuperCycleSchedulerService {
           processId: snapshot.processId,
           title: snapshot.title,
           error: lastResult,
-        },
+        }
       );
     }
 
@@ -408,7 +403,7 @@ export class SuperCycleSchedulerService {
       0,
       7,
       this.weekdayNameMap(),
-      true,
+      true
     );
 
     const dayIsWildcard = dayExpr.trim() === '*';
@@ -550,7 +545,7 @@ export class SuperCycleSchedulerService {
     min: number,
     max: number,
     names?: Record<string, number>,
-    normalizeSevenToZero = false,
+    normalizeSevenToZero = false
   ): boolean {
     const raw = String(expression || '')
       .trim()
@@ -572,7 +567,7 @@ export class SuperCycleSchedulerService {
     min: number,
     max: number,
     names?: Record<string, number>,
-    normalizeSevenToZero = false,
+    normalizeSevenToZero = false
   ): boolean {
     if (!segment) return false;
 
@@ -601,7 +596,7 @@ export class SuperCycleSchedulerService {
   private parseCronToken(
     token: string,
     names?: Record<string, number>,
-    normalizeSevenToZero = false,
+    normalizeSevenToZero = false
   ): number | null {
     const cleaned = String(token || '')
       .trim()
@@ -653,7 +648,7 @@ export class SuperCycleSchedulerService {
             nextExpectedAt: process.nextExpectedAt
               ? new Date(process.nextExpectedAt).toISOString()
               : null,
-          },
+          }
         );
 
         const processChannel = process.metadata?.channel || 'General';
@@ -688,7 +683,7 @@ export class SuperCycleSchedulerService {
     if (!this.redisClient.rawRedisClient && !this.redisClient.rawUpstashClient) return;
 
     const processes = Array.from(this.scheduledProcesses.values()).sort((a, b) =>
-      a.processId.localeCompare(b.processId),
+      a.processId.localeCompare(b.processId)
     );
 
     const statePayload = JSON.stringify({
@@ -726,7 +721,7 @@ export class SuperCycleSchedulerService {
       this.resolveNextExpectedAt(
         payload,
         lastRunAt || lastHeartbeat,
-        interval.intendedIntervalMs,
+        interval.intendedIntervalMs
       ) || existing?.nextExpectedAt;
     const next: ScheduledProcess = {
       processId,
@@ -766,7 +761,7 @@ export class SuperCycleSchedulerService {
         intervalExact: Boolean(next.intervalExact),
         lastRunAt: next.lastRunAt ? new Date(next.lastRunAt).toISOString() : null,
         nextExpectedAt: next.nextExpectedAt ? new Date(next.nextExpectedAt).toISOString() : null,
-      },
+      }
     );
   }
 
@@ -792,7 +787,7 @@ export class SuperCycleSchedulerService {
       this.resolveNextExpectedAt(
         payload,
         lastRunAt || heartbeatTimestamp,
-        interval.intendedIntervalMs || existing.intendedIntervalMs,
+        interval.intendedIntervalMs || existing.intendedIntervalMs
       ) || existing.nextExpectedAt;
 
     existing.lastHeartbeat = heartbeatTimestamp;
@@ -843,7 +838,7 @@ export class SuperCycleSchedulerService {
             ? new Date(existing.nextExpectedAt).toISOString()
             : null,
           finalStatus: existing?.status || payload.status || 'unknown',
-        },
+        }
       );
     }
   }
@@ -877,7 +872,7 @@ export class SuperCycleSchedulerService {
         source.expectedIntervalMs ||
         source.intervalMs ||
         source.heartbeatIntervalMs ||
-        0,
+        0
     );
     if (Number.isFinite(valueMs) && valueMs > 0) return valueMs;
 
@@ -886,7 +881,7 @@ export class SuperCycleSchedulerService {
         source.intervalSeconds ||
         source.heartbeatIntervalSeconds ||
         source.cadenceSeconds ||
-        0,
+        0
     );
     if (Number.isFinite(valueSeconds) && valueSeconds > 0) return valueSeconds * 1000;
     return undefined;
@@ -895,7 +890,7 @@ export class SuperCycleSchedulerService {
   private resolveScheduledProcessInterval(
     payload: Record<string, any>,
     metadata: Record<string, any>,
-    existing: ScheduledProcess | undefined,
+    existing: ScheduledProcess | undefined
   ) {
     const producerInterval = this.readCadenceMs(payload);
     if (producerInterval) {
@@ -933,7 +928,7 @@ export class SuperCycleSchedulerService {
   private resolveNextExpectedAt(
     payload: Record<string, any>,
     anchorMs: number | undefined,
-    intervalMs: number | undefined,
+    intervalMs: number | undefined
   ): number | undefined {
     const explicit = this.parseTimestampMs(payload.nextExpectedAt);
     if (explicit) return explicit;

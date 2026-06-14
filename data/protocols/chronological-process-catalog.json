@@ -1,0 +1,174 @@
+{
+  "spec": "tnf/chronological-process-catalog/1.0",
+  "updated_at": "2026-05-28T08:00:00.000Z",
+  "entries": {
+    "tnf-master-clock-super-cycle": {
+      "id": "tnf-master-clock-super-cycle",
+      "description": "Master clock: federation gate check, health pulse, state sync",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-master-clock-super-cycle"],
+        "timeoutMs": 30000
+      },
+      "cron": "*/15 * * * *"
+    },
+    "tnf-marketplace-curation-cycle": {
+      "id": "tnf-marketplace-curation-cycle",
+      "description": "Marketplace curation agent: stocks catalog with AI Agent stack assets across all verticals",
+      "runNow": {
+        "command": "bash",
+        "args": ["scripts/orchestrator/marketplace-curation-agent.sh"],
+        "timeoutMs": 120000
+      },
+      "cron": "*/30 * * * *"
+    },
+    "tnf-swarm-stress-test": {
+      "id": "tnf-swarm-stress-test",
+      "description": "Continuous stress test: thenewfuse.com endpoint validation, performance checks",
+      "runNow": {
+        "command": "bash",
+        "args": ["scripts/orchestrator/swarm-stress-test.sh"],
+        "timeoutMs": 180000
+      },
+      "cron": "*/10 * * * *"
+    },
+    "tnf-self-improvement-scorecard": {
+      "id": "tnf-self-improvement-scorecard",
+      "description": "Scorecard: system health, code quality, intelligence pipeline audit",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-self-improvement-scorecard"],
+        "timeoutMs": 60000
+      },
+      "cron": "0 */6 * * *",
+      "cadence": "0 */6 * * *"
+    },
+    "tnf-llm-arena-intel-collector": {
+      "id": "tnf-llm-arena-intel-collector",
+      "description": "Collect LLM intelligence from arena rankings and provider status",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-llm-arena-intel-collector"],
+        "timeoutMs": 60000
+      },
+      "cron": "0 */4 * * *",
+      "cadence": "0 */4 * * *"
+    },
+    "tnf-llm-ranking-optimizer": {
+      "id": "tnf-llm-ranking-optimizer",
+      "description": "Optimize LLM rankings based on intel collection data",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-llm-ranking-optimizer"],
+        "timeoutMs": 60000
+      },
+      "cron": "30 */4 * * *"
+    },
+    "tnf-twip-macro-board-refresh": {
+      "id": "tnf-twip-macro-board-refresh",
+      "description": "Refresh TWIP terminal macro board state",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-twip-macro-board-refresh"],
+        "timeoutMs": 30000
+      },
+      "cron": "*/10 * * * *"
+    },
+    "tnf-openclaw-runtime-sync": {
+      "id": "tnf-openclaw-runtime-sync",
+      "description": "Sync OpenClaw runtime state across instances",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-openclaw-runtime-sync"],
+        "timeoutMs": 30000
+      },
+      "cron": "*/15 * * * *"
+    },
+    "tnf-terminal-awareness-reminder": {
+      "id": "tnf-terminal-awareness-reminder",
+      "description": "Verify terminal frontload state is active",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-terminal-awareness-reminder"],
+        "timeoutMs": 30000
+      },
+      "cron": "*/30 * * * *",
+      "cadence": "*/30 * * * *"
+    },
+    "tnf-auto-git-push": {
+      "id": "tnf-auto-git-push",
+      "description": "Auto commit and push changes to GitHub every hour",
+      "runNow": {
+        "command": "bash",
+        "args": ["scripts/orchestrator/auto-git-push.sh"],
+        "timeoutMs": 120000
+      },
+      "cron": "0 * * * *"
+    },
+    "tnf-director-resonance-cycle": {
+      "id": "tnf-director-resonance-cycle",
+      "description": "Director resonance: delegate idle agents via relay envelopes",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-director-resonance-cycle"],
+        "timeoutMs": 60000
+      },
+      "cron": "*/5 * * * *"
+    },
+    "tenant-continuous-qa-loop": {
+      "id": "tenant-continuous-qa-loop",
+      "description": "Tenant continuous QA loop dispatch for recurring validation and remediation tasks",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-continuous-qa-loop", "--allow-local-fallback"],
+        "timeoutMs": 30000
+      },
+      "cron": "0 */6 * * *",
+      "cadence": "0 */6 * * *"
+    },
+    "tenant-knowledge-scout-sprint": {
+      "id": "tenant-knowledge-scout-sprint",
+      "description": "Tenant knowledge scout sprint dispatch for research, retrieval, and synthesis work",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-knowledge-scout-sprint", "--allow-local-fallback"],
+        "timeoutMs": 30000
+      },
+      "cron": "0 */4 * * *",
+      "cadence": "0 */4 * * *"
+    },
+    "tenant-orchestrator-pulse": {
+      "id": "tenant-orchestrator-pulse",
+      "description": "Tenant orchestrator pulse dispatch for brokered planning and work routing",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-orchestrator-pulse", "--allow-local-fallback"],
+        "timeoutMs": 30000
+      },
+      "cron": "*/30 * * * *",
+      "cadence": "*/30 * * * *"
+    },
+    "tenant-loop-watchdog": {
+      "id": "tenant-loop-watchdog",
+      "description": "Tenant loop watchdog dispatch for stall detection and recovery review",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-loop-watchdog", "--allow-local-fallback"],
+        "timeoutMs": 30000
+      },
+      "cron": "*/15 * * * *",
+      "cadence": "*/15 * * * *"
+    },
+    "tenant-self-improvement-loop": {
+      "id": "tenant-self-improvement-loop",
+      "description": "Tenant self-improvement loop dispatch for recurring framework improvement work",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-self-improvement-loop", "--allow-local-fallback"],
+        "timeoutMs": 30000
+      },
+      "cron": "0 */2 * * *",
+      "cadence": "0 */2 * * *"
+    }
+  }
+}

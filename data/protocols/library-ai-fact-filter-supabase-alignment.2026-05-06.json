@@ -1,0 +1,66 @@
+{
+  "protocol": "library-ai-fact-filter-supabase-alignment",
+  "recorded_at_utc": "2026-05-06T04:10:42Z",
+  "scope": {
+    "application": "virtual-library-blueprints",
+    "domain": "library.thenewfuse.com",
+    "project_ref": "wslydgtgindrywldatbv"
+  },
+  "deployment": {
+    "cloud_build_id": "88dee83d-b941-49be-b2e3-df89174dd4d7",
+    "cloud_run_service": "virtual-library",
+    "cloud_run_revision": "virtual-library-00022-7mn",
+    "asset_bundle": "index-C98BbuJE.js",
+    "ai_relay_url": "https://virtual-library-ai-relay-241337102384.us-central1.run.app"
+  },
+  "code_changes": {
+    "ui_fact_filter": "apps/virtual-library-blueprints/src/components/ui/AIGuidePanel.tsx",
+    "timeline_persistence": "apps/virtual-library-blueprints/src/lib/persistence.ts",
+    "supabase_client_headers": "apps/virtual-library-blueprints/src/lib/supabase.ts",
+    "db_migration": "apps/virtual-library-blueprints/supabase/migrations/20260506040500_story_session_rls_recursion_fix.sql"
+  },
+  "database_fixes": {
+    "story_sessions_rls_recursion": "resolved",
+    "owner_claim_fallback": "current_owner_principal_id() now reads x-owner-principal-id header when JWT claim is absent",
+    "agent_access_helpers": [
+      "agent_has_story_session_read_access(uuid)",
+      "agent_has_story_session_write_access(uuid)"
+    ]
+  },
+  "verification": [
+    {
+      "id": "rest-story-sessions-no-header",
+      "result": "pass",
+      "http_status": 200,
+      "note": "No 42P17 recursion error; empty dataset without owner header."
+    },
+    {
+      "id": "rest-story-sessions-with-owner-header",
+      "result": "pass",
+      "http_status": 200,
+      "note": "Owner-scoped request succeeds with x-owner-principal-id header."
+    },
+    {
+      "id": "rest-insert-story-session-with-owner-header",
+      "result": "pass",
+      "http_status": 201,
+      "note": "Insert succeeded under anon key + owner header; cleanup executed."
+    },
+    {
+      "id": "rest-insert-timeline-event-with-owner-header",
+      "result": "pass",
+      "http_status": 201,
+      "note": "timeline_events insert succeeded via session-scoped write policy; cleanup executed."
+    },
+    {
+      "id": "supabase-js-client-owner-header-roundtrip",
+      "result": "pass",
+      "note": "createClient(global.headers.x-owner-principal-id) could insert session + timeline event and delete test session."
+    },
+    {
+      "id": "bundle-content-check",
+      "result": "pass",
+      "note": "Live bundle contains timeline fact filter prompt, AI relay endpoint, and owner-header key."
+    }
+  ]
+}

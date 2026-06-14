@@ -1,0 +1,59 @@
+{
+  "sourceType": "email-postpass-quality-action-queue",
+  "generatedAt": "2026-05-07T20:24:54.857Z",
+  "recommendedForManualAudit": [
+    {
+      "reviewId": "flag-0001",
+      "severity": "medium",
+      "reasons": [
+        "low_signal",
+        "low_specificity_transactional"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-716750-63407-qm-web121419-mail-ne1-yahoo-c",
+      "timestamp": "2011-04-24T01:58:32.000Z",
+      "title": "re: Traders Insider",
+      "track": "daniel_whos_media_empire",
+      "project": "Daniel Who's Media Empire",
+      "confidence": "moderate",
+      "signal": 11,
+      "from": "Adam Mirelez <amirelez1982@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/3/2/Messages/235026.emlx"
+    },
+    {
+      "reviewId": "flag-0019",
+      "severity": "medium",
+      "reasons": [
+        "low_specificity_transactional"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-27cae51a-770f-4665-a432-58f4f9b91a5b-yahoo",
+      "timestamp": "2017-06-19T19:50:28.000Z",
+      "title": "Re: Contact Form",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "hard",
+      "signal": 22,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Archive.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/3/2/Messages/239177.emlx"
+    },
+    {
+      "reviewId": "flag-0027",
+      "severity": "medium",
+      "reasons": [
+        "low_specificity_transactional"
+      ],
+      "storyKey": "email-fact:event:email-evt-msgid-354455146-15629898-1579370357093-mail-yaho",
+      "timestamp": "2020-01-18T17:59:17.000Z",
+      "title": "Re: Contact form - Affiliate Program",
+      "track": "daniel_personal_life_story",
+      "project": "Daniel Adam Goldberg Life Story",
+      "confidence": "hard",
+      "signal": 22,
+      "from": "Daniel Goldberg <whodaniel@yahoo.com>",
+      "threadSize": 1,
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Archive.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/4/2/Messages/241150.emlx"
+    }
+  ],
+  "autoKeepLowRisk": 38
+}

@@ -1,0 +1,1179 @@
+[0:00] If you have been running Hermes agent
+[0:01] If you have been running Hermes agent
+[0:01] If you have been running Hermes agent for any amount of time, you have
+[0:03] for any amount of time, you have
+[0:03] for any amount of time, you have probably hit this exact moment. You want
+[0:05] probably hit this exact moment. You want
+[0:05] probably hit this exact moment. You want a proper web interface instead of
+[0:06] a proper web interface instead of
+[0:06] a proper web interface instead of staring at a terminal all day. You open
+[0:08] staring at a terminal all day. You open
+[0:08] staring at a terminal all day. You open the docs and suddenly there are two
+[0:10] the docs and suddenly there are two
+[0:10] the docs and suddenly there are two completely different options sitting in
+[0:11] completely different options sitting in
+[0:12] completely different options sitting in front of you. Open Web UI, which is one
+[0:13] front of you. Open Web UI, which is one
+[0:14] front of you. Open Web UI, which is one of the most popular self-hosted AI
+[0:15] of the most popular self-hosted AI
+[0:16] of the most popular self-hosted AI interfaces on the internet right now
+[0:17] interfaces on the internet right now
+[0:17] interfaces on the internet right now with over 126,000 stars on GitHub. And
+[0:20] with over 126,000 stars on GitHub. And
+[0:20] with over 126,000 stars on GitHub. And then Hermes Web UI, a communitybuilt
+[0:22] then Hermes Web UI, a communitybuilt
+[0:22] then Hermes Web UI, a communitybuilt interface that was specifically made for
+[0:23] interface that was specifically made for
+[0:23] interface that was specifically made for Hermes agent and has been growing fast
+[0:25] Hermes agent and has been growing fast
+[0:25] Hermes agent and has been growing fast with over 4,000 stars of its own.
+[0:27] with over 4,000 stars of its own.
+[0:27] with over 4,000 stars of its own. [music] and nobody clearly explains what
+[0:29] [music] and nobody clearly explains what
+[0:29] [music] and nobody clearly explains what the actual difference is between the two
+[0:31] the actual difference is between the two
+[0:31] the actual difference is between the two or more importantly which one you should
+[0:33] or more importantly which one you should
+[0:33] or more importantly which one you should be running. That is exactly what this
+[0:35] be running. That is exactly what this
+[0:35] be running. That is exactly what this video is about. Not a setup guide, not a
+[0:37] video is about. Not a setup guide, not a
+[0:37] video is about. Not a setup guide, not a tutorial, a real breakdown of what each
+[0:39] tutorial, a real breakdown of what each
+[0:39] tutorial, a real breakdown of what each tool actually is, how they connect to
+[0:42] tool actually is, how they connect to
+[0:42] tool actually is, how they connect to Hermes agent in completely different
+[0:43] Hermes agent in completely different
+[0:43] Hermes agent in completely different ways under the hood, what you gain and
+[0:45] ways under the hood, what you gain and
+[0:45] ways under the hood, what you gain and lose with each one, and which setup
+[0:47] lose with each one, and which setup
+[0:47] lose with each one, and which setup makes the most sense depending on how
+[0:49] makes the most sense depending on how
+[0:49] makes the most sense depending on how you're actually using your agent. By the
+[0:50] you're actually using your agent. By the
+[0:50] you're actually using your agent. By the time this video is done, you'll have a
+[0:52] time this video is done, you'll have a
+[0:52] time this video is done, you'll have a clear answer and a mental model that
+[0:54] clear answer and a mental model that
+[0:54] clear answer and a mental model that makes both tools easier to work with
+[0:55] makes both tools easier to work with
+[0:56] makes both tools easier to work with going forward. Before getting into it,
+[0:57] going forward. Before getting into it,
+[0:58] going forward. Before getting into it, if you find this kind of breakdown
+[0:59] if you find this kind of breakdown
+[0:59] if you find this kind of breakdown useful, hitting the like button
+[1:01] useful, hitting the like button
+[1:01] useful, hitting the like button genuinely helps this content reach more
+[1:03] genuinely helps this content reach more
+[1:03] genuinely helps this content reach more people who are trying to figure out the
+[1:04] people who are trying to figure out the
+[1:04] people who are trying to figure out the exact same things. If you're new here,
+[1:06] exact same things. If you're new here,
+[1:06] exact same things. If you're new here, the channel covers AI agents, open-
+[1:08] the channel covers AI agents, open-
+[1:08] the channel covers AI agents, open- source tools, and the infrastructure
+[1:10] source tools, and the infrastructure
+[1:10] source tools, and the infrastructure around them in a way that actually
+[1:11] around them in a way that actually
+[1:11] around them in a way that actually respects your time and intelligence. So,
+[1:13] respects your time and intelligence. So,
+[1:13] respects your time and intelligence. So, subscribing and turning on notifications
+[1:15] subscribing and turning on notifications
+[1:15] subscribing and turning on notifications means you will not miss the next one.
+[1:17] means you will not miss the next one.
+[1:17] means you will not miss the next one. Now, let's get into it. Before comparing
+[1:19] Now, let's get into it. Before comparing
+[1:19] Now, let's get into it. Before comparing the two interfaces, it is worth spending
+[1:21] the two interfaces, it is worth spending
+[1:21] the two interfaces, it is worth spending a moment on what Hermes Agent actually
+[1:22] a moment on what Hermes Agent actually
+[1:22] a moment on what Hermes Agent actually is because the choice between these two
+[1:24] is because the choice between these two
+[1:24] is because the choice between these two web UIs only makes complete sense once
+[1:27] web UIs only makes complete sense once
+[1:27] web UIs only makes complete sense once you understand what is running
+[1:28] you understand what is running
+[1:28] you understand what is running underneath both of them. Hermes agent is
+[1:30] underneath both of them. Hermes agent is
+[1:30] underneath both of them. Hermes agent is an open-source autonomous AI agent built
+[1:32] an open-source autonomous AI agent built
+[1:32] an open-source autonomous AI agent built by news research. Is not a chat wrapper,
+[1:35] by news research. Is not a chat wrapper,
+[1:35] by news research. Is not a chat wrapper, is not a front end for a language model.
+[1:37] is not a front end for a language model.
+[1:37] is not a front end for a language model. It is a persistent process that lives on
+[1:39] It is a persistent process that lives on
+[1:39] It is a persistent process that lives on your server, runs continuously in the
+[1:41] your server, runs continuously in the
+[1:41] your server, runs continuously in the background, and has real tools built
+[1:43] background, and has real tools built
+[1:43] background, and has real tools built into it from day one. Those tools
+[1:45] into it from day one. Those tools
+[1:45] into it from day one. Those tools include terminal access, file
+[1:46] include terminal access, file
+[1:46] include terminal access, file operations, web search, and a memory
+[1:49] operations, web search, and a memory
+[1:49] operations, web search, and a memory system that accumulates knowledge across
+[1:51] system that accumulates knowledge across
+[1:51] system that accumulates knowledge across every single session automatically. That
+[1:53] every single session automatically. That
+[1:53] every single session automatically. That last part matters more than it sounds.
+[1:55] last part matters more than it sounds.
+[1:55] last part matters more than it sounds. Every time Hermes solves a problem in a
+[1:57] Every time Hermes solves a problem in a
+[1:57] Every time Hermes solves a problem in a new way, it saves that procedure as a
+[1:59] new way, it saves that procedure as a
+[1:59] new way, it saves that procedure as a reusable skill and applies it the next
+[2:01] reusable skill and applies it the next
+[2:01] reusable skill and applies it the next time a similar situation comes up
+[2:02] time a similar situation comes up
+[2:02] time a similar situation comes up without you having to configure anything
+[2:04] without you having to configure anything
+[2:04] without you having to configure anything or maintain a plug-in library yourself.
+[2:06] or maintain a plug-in library yourself.
+[2:06] or maintain a plug-in library yourself. It also has a built-in cronuler, which
+[2:08] It also has a built-in cronuler, which
+[2:08] It also has a built-in cronuler, which means you can set tasks that fire
+[2:10] means you can set tasks that fire
+[2:10] means you can set tasks that fire automatically while you are completely
+[2:11] automatically while you are completely
+[2:12] automatically while you are completely offline. You can reach Hermes from the
+[2:13] offline. You can reach Hermes from the
+[2:13] offline. You can reach Hermes from the command line from messaging apps like
+[2:15] command line from messaging apps like
+[2:15] command line from messaging apps like Telegram, Discord, Slack, and WhatsApp
+[2:18] Telegram, Discord, Slack, and WhatsApp
+[2:18] Telegram, Discord, Slack, and WhatsApp all through a single gateway process and
+[2:20] all through a single gateway process and
+[2:20] all through a single gateway process and you can reach it through a web interface
+[2:21] you can reach it through a web interface
+[2:21] you can reach it through a web interface which is exactly where this comparison
+[2:23] which is exactly where this comparison
+[2:23] which is exactly where this comparison starts. The reason it matters to
+[2:24] starts. The reason it matters to
+[2:24] starts. The reason it matters to understand all of this before talking
+[2:26] understand all of this before talking
+[2:26] understand all of this before talking about the web UIs is that the two
+[2:28] about the web UIs is that the two
+[2:28] about the web UIs is that the two interfaces we are comparing today have
+[2:30] interfaces we are comparing today have
+[2:30] interfaces we are comparing today have fundamentally different relationships
+[2:31] fundamentally different relationships
+[2:31] fundamentally different relationships with Hermes agent. One of them connects
+[2:33] with Hermes agent. One of them connects
+[2:33] with Hermes agent. One of them connects to it from the outside through a
+[2:34] to it from the outside through a
+[2:34] to it from the outside through a standard API. The other one connects to
+[2:36] standard API. The other one connects to
+[2:36] standard API. The other one connects to it from the inside by directly importing
+[2:38] it from the inside by directly importing
+[2:38] it from the inside by directly importing the agents own code. That distinction is
+[2:40] the agents own code. That distinction is
+[2:40] the agents own code. That distinction is the entire explanation for why they feel
+[2:43] the entire explanation for why they feel
+[2:43] the entire explanation for why they feel so different in practice. And that is
+[2:45] so different in practice. And that is
+[2:45] so different in practice. And that is what the next section is going to break
+[2:46] what the next section is going to break
+[2:46] what the next section is going to break down. Starting with open web UI. At its
+[2:48] down. Starting with open web UI. At its
+[2:48] down. Starting with open web UI. At its core, open web UI is a general purpose
+[2:51] core, open web UI is a general purpose
+[2:51] core, open web UI is a general purpose self-hosted chat interface that was
+[2:52] self-hosted chat interface that was
+[2:52] self-hosted chat interface that was built to sit in front of any backend
+[2:54] built to sit in front of any backend
+[2:54] built to sit in front of any backend that speaks the OpenAI API format that
+[2:57] that speaks the OpenAI API format that
+[2:57] that speaks the OpenAI API format that includes local models running through
+[2:58] includes local models running through
+[2:58] includes local models running through Alma cloud APIs like GPT for and Claude
+[3:02] Alma cloud APIs like GPT for and Claude
+[3:02] Alma cloud APIs like GPT for and Claude and yes, Hermes agent. The project has
+[3:04] and yes, Hermes agent. The project has
+[3:04] and yes, Hermes agent. The project has over 126,000 stars on GitHub, which
+[3:07] over 126,000 stars on GitHub, which
+[3:07] over 126,000 stars on GitHub, which makes it one of the most widely used
+[3:08] makes it one of the most widely used
+[3:08] makes it one of the most widely used self-hosted AI tools in existence right
+[3:11] self-hosted AI tools in existence right
+[3:11] self-hosted AI tools in existence right now. And that popularity comes from
+[3:12] now. And that popularity comes from
+[3:12] now. And that popularity comes from feature set that goes well beyond just
+[3:15] feature set that goes well beyond just
+[3:15] feature set that goes well beyond just chat. It has a full multi-user system
+[3:17] chat. It has a full multi-user system
+[3:17] chat. It has a full multi-user system with role-based access control, meaning
+[3:19] with role-based access control, meaning
+[3:19] with role-based access control, meaning you can have an admin account, standard
+[3:21] you can have an admin account, standard
+[3:21] you can have an admin account, standard user accounts, and a pending role for
+[3:22] user accounts, and a pending role for
+[3:22] user accounts, and a pending role for new signups, each with granular
+[3:24] new signups, each with granular
+[3:24] new signups, each with granular permissions you control. It has a native
+[3:26] permissions you control. It has a native
+[3:26] permissions you control. It has a native retrieval augmented generation engine
+[3:28] retrieval augmented generation engine
+[3:28] retrieval augmented generation engine that supports nine different vector
+[3:30] that supports nine different vector
+[3:30] that supports nine different vector databases so you can upload documents
+[3:31] databases so you can upload documents
+[3:31] databases so you can upload documents and have your models actually read from
+[3:33] and have your models actually read from
+[3:33] and have your models actually read from them. It has image generation support,
+[3:35] them. It has image generation support,
+[3:35] them. It has image generation support, voice input and output, MCP server
+[3:38] voice input and output, MCP server
+[3:38] voice input and output, MCP server integration, and enterprisegrade
+[3:39] integration, and enterprisegrade
+[3:39] integration, and enterprisegrade authentication options including SSO,
+[3:42] authentication options including SSO,
+[3:42] authentication options including SSO, LDAP, and SEM provisioning for teams
+[3:44] LDAP, and SEM provisioning for teams
+[3:44] LDAP, and SEM provisioning for teams using identity providers like Octa or
+[3:46] using identity providers like Octa or
+[3:46] using identity providers like Octa or Azure Active Directory. Open web UI is
+[3:49] Azure Active Directory. Open web UI is
+[3:49] Azure Active Directory. Open web UI is in the most honest terms a fully
+[3:51] in the most honest terms a fully
+[3:51] in the most honest terms a fully featured AI platform that happens to be
+[3:53] featured AI platform that happens to be
+[3:53] featured AI platform that happens to be able to connect to Hermes agent as one
+[3:54] able to connect to Hermes agent as one
+[3:54] able to connect to Hermes agent as one of its many possible backends. Hermes
+[3:57] of its many possible backends. Hermes
+[3:57] of its many possible backends. Hermes web UI is something built with an
+[3:58] web UI is something built with an
+[3:58] web UI is something built with an entirely different intention. It is a
+[4:00] entirely different intention. It is a
+[4:00] entirely different intention. It is a community project started specifically
+[4:02] community project started specifically
+[4:02] community project started specifically for Hermes agent users who wanted a
+[4:04] for Hermes agent users who wanted a
+[4:04] for Hermes agent users who wanted a proper browser interface without giving
+[4:06] proper browser interface without giving
+[4:06] proper browser interface without giving up anything that the command line
+[4:07] up anything that the command line
+[4:07] up anything that the command line version offers. The project is currently
+[4:09] version offers. The project is currently
+[4:09] version offers. The project is currently maintained by 41 contributors, ships
+[4:12] maintained by 41 contributors, ships
+[4:12] maintained by 41 contributors, ships multiple releases every single week and
+[4:14] multiple releases every single week and
+[4:14] multiple releases every single week and has over 1,900 automated tests running
+[4:16] has over 1,900 automated tests running
+[4:16] has over 1,900 automated tests running against it. The text stack is
+[4:18] against it. The text stack is
+[4:18] against it. The text stack is deliberately minimal. [music] It is
+[4:19] deliberately minimal. [music] It is
+[4:19] deliberately minimal. [music] It is Python and vanilla JavaScript with no
+[4:21] Python and vanilla JavaScript with no
+[4:22] Python and vanilla JavaScript with no build step, no framework, and no
+[4:24] build step, no framework, and no
+[4:24] build step, no framework, and no bundler, which keeps it fast,
+[4:25] bundler, which keeps it fast,
+[4:25] bundler, which keeps it fast, lightweight, and easy to run anywhere
+[4:27] lightweight, and easy to run anywhere
+[4:27] lightweight, and easy to run anywhere Hermes agent already lives. The layout
+[4:29] Hermes agent already lives. The layout
+[4:30] Hermes agent already lives. The layout is three panels. On the left, you have a
+[4:32] is three panels. On the left, you have a
+[4:32] is three panels. On the left, you have a sidebar with your session history and
+[4:34] sidebar with your session history and
+[4:34] sidebar with your session history and navigation. In the center, you have the
+[4:35] navigation. In the center, you have the
+[4:35] navigation. In the center, you have the chat interface, and on the right, you
+[4:37] chat interface, and on the right, you
+[4:37] chat interface, and on the right, you have a live workspace file browser that
+[4:39] have a live workspace file browser that
+[4:39] have a live workspace file browser that lets you see and interact with the files
+[4:40] lets you see and interact with the files
+[4:40] lets you see and interact with the files your agent is working with in real time.
+[4:43] your agent is working with in real time.
+[4:43] your agent is working with in real time. model selection, profile switching, and
+[4:45] model selection, profile switching, and
+[4:45] model selection, profile switching, and workspace controls all live in the
+[4:47] workspace controls all live in the
+[4:47] workspace controls all live in the composer footer at the bottom of the
+[4:48] composer footer at the bottom of the
+[4:48] composer footer at the bottom of the screen, so they're always within reach
+[4:50] screen, so they're always within reach
+[4:50] screen, so they're always within reach while you are mid-con conversation.
+[4:51] while you are mid-con conversation.
+[4:51] while you are mid-con conversation. There's also a circular context ring in
+[4:54] There's also a circular context ring in
+[4:54] There's also a circular context ring in that footer that shows your token usage
+[4:55] that footer that shows your token usage
+[4:55] that footer that shows your token usage at a glance without having to dig into
+[4:57] at a glance without having to dig into
+[4:57] at a glance without having to dig into any settings. Everything else, including
+[4:59] any settings. Everything else, including
+[4:59] any settings. Everything else, including conversation tools, preferences, and
+[5:01] conversation tools, preferences, and
+[5:01] conversation tools, preferences, and system controls, lives inside the Hermes
+[5:04] system controls, lives inside the Hermes
+[5:04] system controls, lives inside the Hermes control center, which is a modal
+[5:05] control center, which is a modal
+[5:05] control center, which is a modal launcher pinned to the bottom of the
+[5:07] launcher pinned to the bottom of the
+[5:07] launcher pinned to the bottom of the sidebar. The stated goal of this project
+[5:09] sidebar. The stated goal of this project
+[5:09] sidebar. The stated goal of this project from the very beginning has been
+[5:10] from the very beginning has been
+[5:10] from the very beginning has been complete parody with the Hermes CLI
+[5:12] complete parody with the Hermes CLI
+[5:12] complete parody with the Hermes CLI experience. If you can do it from the
+[5:14] experience. If you can do it from the
+[5:14] experience. If you can do it from the terminal, you can do it from this
+[5:15] terminal, you can do it from this
+[5:15] terminal, you can do it from this interface. Those are the two tools on
+[5:17] interface. Those are the two tools on
+[5:17] interface. Those are the two tools on the surface. But the reason they behave
+[5:19] the surface. But the reason they behave
+[5:19] the surface. But the reason they behave so differently in practice has nothing
+[5:21] so differently in practice has nothing
+[5:21] so differently in practice has nothing to do with features or design. It has
+[5:24] to do with features or design. It has
+[5:24] to do with features or design. It has everything to do with how each one
+[5:26] everything to do with how each one
+[5:26] everything to do with how each one actually connects to Hermes agent
+[5:28] actually connects to Hermes agent
+[5:28] actually connects to Hermes agent underneath. And that is what the next
+[5:30] underneath. And that is what the next
+[5:30] underneath. And that is what the next section is about. This is the part of
+[5:31] section is about. This is the part of
+[5:31] section is about. This is the part of the video that most comparisons skip
+[5:33] the video that most comparisons skip
+[5:33] the video that most comparisons skip entirely. And it is the part that
+[5:35] entirely. And it is the part that
+[5:35] entirely. And it is the part that actually explains everything. The two
+[5:37] actually explains everything. The two
+[5:37] actually explains everything. The two tools do not just look different. They
+[5:39] tools do not just look different. They
+[5:39] tools do not just look different. They connect to Hermes agent in fundamentally
+[5:41] connect to Hermes agent in fundamentally
+[5:42] connect to Hermes agent in fundamentally different ways. And once you understand
+[5:43] different ways. And once you understand
+[5:43] different ways. And once you understand that, every other difference between
+[5:45] that, every other difference between
+[5:45] that, every other difference between them stops feeling arbitrary and starts
+[5:47] them stops feeling arbitrary and starts
+[5:47] them stops feeling arbitrary and starts making complete sense. When you connect
+[5:49] making complete sense. When you connect
+[5:49] making complete sense. When you connect Open Web UI to Hermes agent, what you
+[5:51] Open Web UI to Hermes agent, what you
+[5:51] Open Web UI to Hermes agent, what you are doing is pointing Open Web UI at a
+[5:54] are doing is pointing Open Web UI at a
+[5:54] are doing is pointing Open Web UI at a local HTTP server that Hermes runs on
+[5:56] local HTTP server that Hermes runs on
+[5:56] local HTTP server that Hermes runs on port 8642. Hermes exposes an OpenAI
+[5:59] port 8642. Hermes exposes an OpenAI
+[5:59] port 8642. Hermes exposes an OpenAI compatible API on that port, which means
+[6:01] compatible API on that port, which means
+[6:02] compatible API on that port, which means Open Web UI can talk to it the exact
+[6:04] Open Web UI can talk to it the exact
+[6:04] Open Web UI can talk to it the exact same way it talks to a cloud model or a
+[6:05] same way it talks to a cloud model or a
+[6:05] same way it talks to a cloud model or a local element instance. You drop in the
+[6:07] local element instance. You drop in the
+[6:07] local element instance. You drop in the URL, you add a matching API key, and
+[6:10] URL, you add a matching API key, and
+[6:10] URL, you add a matching API key, and Hermes shows up in the model dropown
+[6:12] Hermes shows up in the model dropown
+[6:12] Hermes shows up in the model dropown listed as Hermes agent right next to
+[6:14] listed as Hermes agent right next to
+[6:14] listed as Hermes agent right next to every other backend you have configured.
+[6:15] every other backend you have configured.
+[6:15] every other backend you have configured. From open web UI's perspective, that
+[6:17] From open web UI's perspective, that
+[6:17] From open web UI's perspective, that entry in the dropdown is a model. It
+[6:19] entry in the dropdown is a model. It
+[6:19] entry in the dropdown is a model. It sends a standard request. It gets a
+[6:21] sends a standard request. It gets a
+[6:21] sends a standard request. It gets a response back and it displays that
+[6:23] response back and it displays that
+[6:23] response back and it displays that response in the chat. What open web UI
+[6:25] response in the chat. What open web UI
+[6:25] response in the chat. What open web UI does not know and structurally cannot
+[6:27] does not know and structurally cannot
+[6:27] does not know and structurally cannot know is what happened between the
+[6:29] know is what happened between the
+[6:29] know is what happened between the request and the response on the Hermes
+[6:31] request and the response on the Hermes
+[6:31] request and the response on the Hermes side. When your agent runs five tool
+[6:33] side. When your agent runs five tool
+[6:33] side. When your agent runs five tool calls before answering you, reading
+[6:34] calls before answering you, reading
+[6:34] calls before answering you, reading files, executing terminal commands,
+[6:37] files, executing terminal commands,
+[6:37] files, executing terminal commands, searching the web, none of that activity
+[6:39] searching the web, none of that activity
+[6:39] searching the web, none of that activity surfaces in open web UI. The response
+[6:41] surfaces in open web UI. The response
+[6:41] surfaces in open web UI. The response appears all at once when Hermes is
+[6:43] appears all at once when Hermes is
+[6:43] appears all at once when Hermes is finished. There are also no shared
+[6:44] finished. There are also no shared
+[6:44] finished. There are also no shared concepts between the two systems. Open
+[6:46] concepts between the two systems. Open
+[6:46] concepts between the two systems. Open web UI has no awareness of Hermes
+[6:48] web UI has no awareness of Hermes
+[6:48] web UI has no awareness of Hermes workspaces, Hermes memory files, Hermes
+[6:51] workspaces, Hermes memory files, Hermes
+[6:51] workspaces, Hermes memory files, Hermes skills or the cronululer. It manages
+[6:53] skills or the cronululer. It manages
+[6:54] skills or the cronululer. It manages conversation history entirely on its own
+[6:56] conversation history entirely on its own
+[6:56] conversation history entirely on its own side, sending the full message history
+[6:58] side, sending the full message history
+[6:58] side, sending the full message history with every new request rather than
+[7:00] with every new request rather than
+[7:00] with every new request rather than relying on anything Hermes knows about
+[7:02] relying on anything Hermes knows about
+[7:02] relying on anything Hermes knows about your previous sessions. The connection
+[7:04] your previous sessions. The connection
+[7:04] your previous sessions. The connection is clean. It works reliably, but it is
+[7:06] is clean. It works reliably, but it is
+[7:06] is clean. It works reliably, but it is loose by design. Two independent systems
+[7:09] loose by design. Two independent systems
+[7:09] loose by design. Two independent systems communicating through a shared protocol.
+[7:11] communicating through a shared protocol.
+[7:11] communicating through a shared protocol. Hermes web UI works in a completely
+[7:13] Hermes web UI works in a completely
+[7:13] Hermes web UI works in a completely different way. It does not connect to
+[7:14] different way. It does not connect to
+[7:14] different way. It does not connect to Hermes agent over HTTP. It connects to
+[7:17] Hermes agent over HTTP. It connects to
+[7:17] Hermes agent over HTTP. It connects to it by directly importing the Hermes
+[7:19] it by directly importing the Hermes
+[7:19] it by directly importing the Hermes agent Python modules into its own
+[7:21] agent Python modules into its own
+[7:21] agent Python modules into its own runtime. It is not sending messages to
+[7:23] runtime. It is not sending messages to
+[7:23] runtime. It is not sending messages to Hermes through an API layer. It is
+[7:25] Hermes through an API layer. It is
+[7:25] Hermes through an API layer. It is running as part of the same process
+[7:26] running as part of the same process
+[7:26] running as part of the same process environment that Hermes itself runs in.
+[7:29] environment that Hermes itself runs in.
+[7:29] environment that Hermes itself runs in. This is the reason Hermes web UI can do
+[7:31] This is the reason Hermes web UI can do
+[7:31] This is the reason Hermes web UI can do things that open web UI structurally
+[7:33] things that open web UI structurally
+[7:33] things that open web UI structurally cannot offer. Because it has direct
+[7:35] cannot offer. Because it has direct
+[7:35] cannot offer. Because it has direct access to the agent internals, it can
+[7:37] access to the agent internals, it can
+[7:37] access to the agent internals, it can show you a live file browser of your
+[7:38] show you a live file browser of your
+[7:38] show you a live file browser of your agent's workspace. It can let you read
+[7:40] agent's workspace. It can let you read
+[7:40] agent's workspace. It can let you read and write memory files directly from the
+[7:42] and write memory files directly from the
+[7:42] and write memory files directly from the browser. It can surface your Telegram,
+[7:45] browser. It can surface your Telegram,
+[7:45] browser. It can surface your Telegram, Discord, and Slack gateway sessions in
+[7:47] Discord, and Slack gateway sessions in
+[7:47] Discord, and Slack gateway sessions in the same sidebar as your web UI sessions
+[7:49] the same sidebar as your web UI sessions
+[7:49] the same sidebar as your web UI sessions in real time through live polling
+[7:51] in real time through live polling
+[7:51] in real time through live polling without requiring any changes to the
+[7:53] without requiring any changes to the
+[7:53] without requiring any changes to the agent itself. It can show terminal
+[7:55] agent itself. It can show terminal
+[7:55] agent itself. It can show terminal approval prompts the moment a tool is
+[7:56] approval prompts the moment a tool is
+[7:56] approval prompts the moment a tool is invoked rather than after the fact. It
+[7:58] invoked rather than after the fact. It
+[7:58] invoked rather than after the fact. It can let you create, edit, and delete
+[8:00] can let you create, edit, and delete
+[8:00] can let you create, edit, and delete skills and cron jobs from inside the
+[8:02] skills and cron jobs from inside the
+[8:02] skills and cron jobs from inside the interface. All of those capabilities
+[8:04] interface. All of those capabilities
+[8:04] interface. All of those capabilities exist because the boundary between the
+[8:06] exist because the boundary between the
+[8:06] exist because the boundary between the web UI and the agent is not an API call.
+[8:09] web UI and the agent is not an API call.
+[8:09] web UI and the agent is not an API call. It is a direct import. A straightforward
+[8:11] It is a direct import. A straightforward
+[8:11] It is a direct import. A straightforward way that you think about the difference
+[8:12] way that you think about the difference
+[8:12] way that you think about the difference is this. Open web UI is a polished
+[8:15] is this. Open web UI is a polished
+[8:15] is this. Open web UI is a polished reception desk that takes your message,
+[8:16] reception desk that takes your message,
+[8:16] reception desk that takes your message, forwards it to Hermes, and hands a reply
+[8:18] forwards it to Hermes, and hands a reply
+[8:18] forwards it to Hermes, and hands a reply back to you. Hermes web UI is a control
+[8:21] back to you. Hermes web UI is a control
+[8:21] back to you. Hermes web UI is a control room that was built specifically for the
+[8:23] room that was built specifically for the
+[8:23] room that was built specifically for the system it is connected to. Both get your
+[8:25] system it is connected to. Both get your
+[8:25] system it is connected to. Both get your messages to the agent. But only one of
+[8:27] messages to the agent. But only one of
+[8:27] messages to the agent. But only one of them lets you see what the agent is
+[8:28] them lets you see what the agent is
+[8:28] them lets you see what the agent is actually doing, touch the files it is
+[8:30] actually doing, touch the files it is
+[8:30] actually doing, touch the files it is working with, and manage every part of
+[8:32] working with, and manage every part of
+[8:32] working with, and manage every part of how it operates, all from the same
+[8:33] how it operates, all from the same
+[8:34] how it operates, all from the same browser window. That distinction is what
+[8:36] browser window. That distinction is what
+[8:36] browser window. That distinction is what the feature comparison in the next
+[8:37] the feature comparison in the next
+[8:37] the feature comparison in the next section is built on. Starting with
+[8:39] section is built on. Starting with
+[8:39] section is built on. Starting with multi-user support and access control
+[8:41] multi-user support and access control
+[8:41] multi-user support and access control because this is where the gap between
+[8:43] because this is where the gap between
+[8:43] because this is where the gap between the two tools is the most obvious. Open
+[8:45] the two tools is the most obvious. Open
+[8:45] the two tools is the most obvious. Open web UI has a complete user management
+[8:47] web UI has a complete user management
+[8:47] web UI has a complete user management system built into it. There are three
+[8:49] system built into it. There are three
+[8:49] system built into it. There are three role tiers admin, standard user and
+[8:52] role tiers admin, standard user and
+[8:52] role tiers admin, standard user and pending which is the holding state for
+[8:53] pending which is the holding state for
+[8:53] pending which is the holding state for new signups waiting on approval.
+[8:55] new signups waiting on approval.
+[8:55] new signups waiting on approval. Permissions are granular and additive
+[8:57] Permissions are granular and additive
+[8:58] Permissions are granular and additive meaning you can create groups assign
+[8:59] meaning you can create groups assign
+[8:59] meaning you can create groups assign specific capabilities to those groups
+[9:01] specific capabilities to those groups
+[9:01] specific capabilities to those groups and users effective permissions are the
+[9:03] and users effective permissions are the
+[9:03] and users effective permissions are the combination of everything granted across
+[9:05] combination of everything granted across
+[9:05] combination of everything granted across all their group memberships. On top of
+[9:07] all their group memberships. On top of
+[9:07] all their group memberships. On top of that, open web UI supports single sign
+[9:09] that, open web UI supports single sign
+[9:09] that, open web UI supports single sign on, LDAP and active directory
+[9:11] on, LDAP and active directory
+[9:11] on, LDAP and active directory integration and SCM 2.0 provisioning
+[9:14] integration and SCM 2.0 provisioning
+[9:14] integration and SCM 2.0 provisioning which allows identity providers like
+[9:16] which allows identity providers like
+[9:16] which allows identity providers like Octa, Azure Active Directory and Google
+[9:18] Octa, Azure Active Directory and Google
+[9:18] Octa, Azure Active Directory and Google Workspace to automate the entire user
+[9:20] Workspace to automate the entire user
+[9:20] Workspace to automate the entire user life cycle, including onboarding and
+[9:22] life cycle, including onboarding and
+[9:22] life cycle, including onboarding and offboarding without any manual
+[9:24] offboarding without any manual
+[9:24] offboarding without any manual intervention inside the web UI itself.
+[9:26] intervention inside the web UI itself.
+[9:26] intervention inside the web UI itself. Hermes web UI by contrast is a single
+[9:29] Hermes web UI by contrast is a single
+[9:29] Hermes web UI by contrast is a single user interface. Access is controlled by
+[9:31] user interface. Access is controlled by
+[9:31] user interface. Access is controlled by one password that you set through an
+[9:33] one password that you set through an
+[9:33] one password that you set through an environment variable or the settings
+[9:34] environment variable or the settings
+[9:34] environment variable or the settings panel. That is the entire access model.
+[9:37] panel. That is the entire access model.
+[9:37] panel. That is the entire access model. If you're running Hermes for yourself on
+[9:38] If you're running Hermes for yourself on
+[9:38] If you're running Hermes for yourself on a personal VPS, that is completely fine.
+[9:41] a personal VPS, that is completely fine.
+[9:41] a personal VPS, that is completely fine. If you're running it for a team and need
+[9:43] If you're running it for a team and need
+[9:43] If you're running it for a team and need proper account separation with different
+[9:44] proper account separation with different
+[9:44] proper account separation with different permission levels, open web UI is the
+[9:46] permission levels, open web UI is the
+[9:46] permission levels, open web UI is the only realistic option of the two. On
+[9:48] only realistic option of the two. On
+[9:48] only realistic option of the two. On mobile, the picture flips completely.
+[9:51] mobile, the picture flips completely.
+[9:51] mobile, the picture flips completely. Hermes web UI was designed with mobile
+[9:53] Hermes web UI was designed with mobile
+[9:53] Hermes web UI was designed with mobile as a genuine priority from the
+[9:54] as a genuine priority from the
+[9:54] as a genuine priority from the beginning, not as an afterthought. The
+[9:56] beginning, not as an afterthought. The
+[9:56] beginning, not as an afterthought. The layout is fully responsive. The sidebar
+[9:59] layout is fully responsive. The sidebar
+[9:59] layout is fully responsive. The sidebar collapses into a hamburger menu on
+[10:01] collapses into a hamburger menu on
+[10:01] collapses into a hamburger menu on narrow screens. All the controls are
+[10:03] narrow screens. All the controls are
+[10:03] narrow screens. All the controls are touchfriendly and the community has been
+[10:05] touchfriendly and the community has been
+[10:05] touchfriendly and the community has been using it as a daily driver agent
+[10:06] using it as a daily driver agent
+[10:06] using it as a daily driver agent interface for phones for months.
+[10:08] interface for phones for months.
+[10:08] interface for phones for months. Multiple contributors to the project
+[10:10] Multiple contributors to the project
+[10:10] Multiple contributors to the project have specifically called out that the
+[10:11] have specifically called out that the
+[10:11] have specifically called out that the mobile experience is the reason they
+[10:13] mobile experience is the reason they
+[10:13] mobile experience is the reason they stayed with Hermes web UI after trying
+[10:15] stayed with Hermes web UI after trying
+[10:15] stayed with Hermes web UI after trying other options. Open web UI is functional
+[10:17] other options. Open web UI is functional
+[10:17] other options. Open web UI is functional on mobile but it was designed desktop
+[10:20] on mobile but it was designed desktop
+[10:20] on mobile but it was designed desktop first and that comes through in how it
+[10:21] first and that comes through in how it
+[10:21] first and that comes through in how it feels on a phone screen. If reaching
+[10:23] feels on a phone screen. If reaching
+[10:23] feels on a phone screen. If reaching your agent from your phone is part of
+[10:24] your agent from your phone is part of
+[10:24] your agent from your phone is part of how you actually work dayto-day, Hermes
+[10:27] how you actually work dayto-day, Hermes
+[10:27] how you actually work dayto-day, Hermes web UI has a meaningful edge here. When
+[10:29] web UI has a meaningful edge here. When
+[10:29] web UI has a meaningful edge here. When it comes to Hermes native features,
+[10:31] it comes to Hermes native features,
+[10:31] it comes to Hermes native features, nothing comes close to Hermes web UI,
+[10:33] nothing comes close to Hermes web UI,
+[10:33] nothing comes close to Hermes web UI, and the architectural reason for that
+[10:34] and the architectural reason for that
+[10:34] and the architectural reason for that was already covered in the previous
+[10:35] was already covered in the previous
+[10:36] was already covered in the previous section. The workspace file browser on
+[10:37] section. The workspace file browser on
+[10:37] section. The workspace file browser on the right panel lets you see the files
+[10:39] the right panel lets you see the files
+[10:39] the right panel lets you see the files your agent is actively working with
+[10:41] your agent is actively working with
+[10:41] your agent is actively working with without opening a separate SSH session.
+[10:43] without opening a separate SSH session.
+[10:43] without opening a separate SSH session. The memory editor lets you read and
+[10:44] The memory editor lets you read and
+[10:44] The memory editor lets you read and write to your agents memory files
+[10:46] write to your agents memory files
+[10:46] write to your agents memory files directly from the browser. The skill
+[10:48] directly from the browser. The skill
+[10:48] directly from the browser. The skill manager lets you create, edit, and
+[10:50] manager lets you create, edit, and
+[10:50] manager lets you create, edit, and delete skills from inside the interface.
+[10:52] delete skills from inside the interface.
+[10:52] delete skills from inside the interface. Cron jobs can be managed without
+[10:54] Cron jobs can be managed without
+[10:54] Cron jobs can be managed without touching the terminal. And one of the
+[10:55] touching the terminal. And one of the
+[10:55] touching the terminal. And one of the more impressive recent additions is
+[10:57] more impressive recent additions is
+[10:57] more impressive recent additions is real-time gateway session sync, which
+[10:59] real-time gateway session sync, which
+[10:59] real-time gateway session sync, which pulls your Telegram, Discord, and Slack
+[11:01] pulls your Telegram, Discord, and Slack
+[11:01] pulls your Telegram, Discord, and Slack sessions into the same sidebar as your
+[11:03] sessions into the same sidebar as your
+[11:03] sessions into the same sidebar as your web UI sessions through live polling, so
+[11:05] web UI sessions through live polling, so
+[11:05] web UI sessions through live polling, so you can see and continue conversations
+[11:07] you can see and continue conversations
+[11:07] you can see and continue conversations from any platform your agent is
+[11:08] from any platform your agent is
+[11:08] from any platform your agent is connected to, all from one browser
+[11:10] connected to, all from one browser
+[11:10] connected to, all from one browser window. There's also a circular context
+[11:13] window. There's also a circular context
+[11:13] window. There's also a circular context ring in the composer footer that shows
+[11:14] ring in the composer footer that shows
+[11:14] ring in the composer footer that shows your token usage a glance and terminal
+[11:17] your token usage a glance and terminal
+[11:17] your token usage a glance and terminal approval prompts that surface the moment
+[11:18] approval prompts that surface the moment
+[11:18] approval prompts that surface the moment a tool is invoked, so you can actually
+[11:20] a tool is invoked, so you can actually
+[11:20] a tool is invoked, so you can actually see what your agent is about to do
+[11:21] see what your agent is about to do
+[11:21] see what your agent is about to do before it does it. Open web UI offers
+[11:24] before it does it. Open web UI offers
+[11:24] before it does it. Open web UI offers none of these features, not because of
+[11:26] none of these features, not because of
+[11:26] none of these features, not because of any shortcoming in the project, but
+[11:27] any shortcoming in the project, but
+[11:27] any shortcoming in the project, but because it has no visibility into Hermes
+[11:29] because it has no visibility into Hermes
+[11:29] because it has no visibility into Hermes internals. It sees a model. These
+[11:31] internals. It sees a model. These
+[11:31] internals. It sees a model. These features require seeing an agent.
+[11:33] features require seeing an agent.
+[11:33] features require seeing an agent. Flipping back to open web UI, the
+[11:35] Flipping back to open web UI, the
+[11:35] Flipping back to open web UI, the breadth of its general ecosystem is
+[11:37] breadth of its general ecosystem is
+[11:37] breadth of its general ecosystem is genuinely impressive and worth being
+[11:39] genuinely impressive and worth being
+[11:39] genuinely impressive and worth being specific about. The RA engine supports
+[11:41] specific about. The RA engine supports
+[11:41] specific about. The RA engine supports nine vector databases including
+[11:43] nine vector databases including
+[11:43] nine vector databases including Chromodb, Grant, Milvvis, Elastic
+[11:46] Chromodb, Grant, Milvvis, Elastic
+[11:46] Chromodb, Grant, Milvvis, Elastic Search, and Pine Cone, and multiple
+[11:48] Search, and Pine Cone, and multiple
+[11:48] Search, and Pine Cone, and multiple content extraction engines for pulling
+[11:49] content extraction engines for pulling
+[11:49] content extraction engines for pulling text out of documents. Web search can be
+[11:51] text out of documents. Web search can be
+[11:52] text out of documents. Web search can be routed through more than 15 providers.
+[11:54] routed through more than 15 providers.
+[11:54] routed through more than 15 providers. Image generation connects to Comfy UI or
+[11:56] Image generation connects to Comfy UI or
+[11:56] Image generation connects to Comfy UI or automatic 11-11 backends. Voice input
+[11:59] automatic 11-11 backends. Voice input
+[11:59] automatic 11-11 backends. Voice input and output work out of the box. MCP
+[12:02] and output work out of the box. MCP
+[12:02] and output work out of the box. MCP server support means you can connect
+[12:03] server support means you can connect
+[12:03] server support means you can connect local tool servers and have your models
+[12:05] local tool servers and have your models
+[12:05] local tool servers and have your models use them as tools during conversation.
+[12:07] use them as tools during conversation.
+[12:07] use them as tools during conversation. And the pipeline system lets the
+[12:09] And the pipeline system lets the
+[12:09] And the pipeline system lets the community extend open web UI with custom
+[12:12] community extend open web UI with custom
+[12:12] community extend open web UI with custom logic in ways that go well beyond what a
+[12:14] logic in ways that go well beyond what a
+[12:14] logic in ways that go well beyond what a single agent interface could offer. If
+[12:16] single agent interface could offer. If
+[12:16] single agent interface could offer. If your workflow involves more than just
+[12:17] your workflow involves more than just
+[12:18] your workflow involves more than just Hermes, if you want to run local models
+[12:19] Hermes, if you want to run local models
+[12:19] Hermes, if you want to run local models alongside your agent, build a shared
+[12:21] alongside your agent, build a shared
+[12:21] alongside your agent, build a shared knowledge base from documents or
+[12:23] knowledge base from documents or
+[12:23] knowledge base from documents or generate images inside the same
+[12:25] generate images inside the same
+[12:25] generate images inside the same interface, open web UI is the tool that
+[12:27] interface, open web UI is the tool that
+[12:27] interface, open web UI is the tool that covers all of that. On setup complexity,
+[12:29] covers all of that. On setup complexity,
+[12:29] covers all of that. On setup complexity, both tools are genuinely
+[12:31] both tools are genuinely
+[12:31] both tools are genuinely straightforward, but Hermes web UI has
+[12:33] straightforward, but Hermes web UI has
+[12:33] straightforward, but Hermes web UI has essentially zero friction for someone
+[12:35] essentially zero friction for someone
+[12:35] essentially zero friction for someone who already has Hermes agent running.
+[12:37] who already has Hermes agent running.
+[12:37] who already has Hermes agent running. One Docker command, one shared volume
+[12:39] One Docker command, one shared volume
+[12:39] One Docker command, one shared volume mount pointing at your existing Hermes
+[12:40] mount pointing at your existing Hermes
+[12:40] mount pointing at your existing Hermes home directory, and the interface is
+[12:42] home directory, and the interface is
+[12:42] home directory, and the interface is live. Hermes Web UI also has a built-in
+[12:45] live. Hermes Web UI also has a built-in
+[12:45] live. Hermes Web UI also has a built-in update checker that runs in the
+[12:46] update checker that runs in the
+[12:46] update checker that runs in the background on boot, detects when either
+[12:48] background on boot, detects when either
+[12:48] background on boot, detects when either the web UI or the agent itself is behind
+[12:50] the web UI or the agent itself is behind
+[12:50] the web UI or the agent itself is behind the latest version, and surfaces a
+[12:52] the latest version, and surfaces a
+[12:52] the latest version, and surfaces a banner with a one-click update option.
+[12:54] banner with a one-click update option.
+[12:54] banner with a one-click update option. Connecting Open Web UI to Hermes
+[12:56] Connecting Open Web UI to Hermes
+[12:56] Connecting Open Web UI to Hermes requires a few more deliberate steps.
+[12:58] requires a few more deliberate steps.
+[12:58] requires a few more deliberate steps. You need to make sure the API URL
+[13:00] You need to make sure the API URL
+[13:00] You need to make sure the API URL includes the correct path suffix. The
+[13:02] includes the correct path suffix. The
+[13:02] includes the correct path suffix. The API key in Open Web UI matches the key
+[13:05] API key in Open Web UI matches the key
+[13:05] API key in Open Web UI matches the key set in the Hermes environment file
+[13:06] set in the Hermes environment file
+[13:06] set in the Hermes environment file exactly. And on Linux, specifically, the
+[13:08] exactly. And on Linux, specifically, the
+[13:08] exactly. And on Linux, specifically, the Docker networking configuration needs an
+[13:10] Docker networking configuration needs an
+[13:10] Docker networking configuration needs an extra host mapping to allow the open web
+[13:12] extra host mapping to allow the open web
+[13:12] extra host mapping to allow the open web UI container to reach the Hermes gateway
+[13:14] UI container to reach the Hermes gateway
+[13:14] UI container to reach the Hermes gateway running on the host machine. None of
+[13:16] running on the host machine. None of
+[13:16] running on the host machine. None of that is complicated, but it introduces
+[13:18] that is complicated, but it introduces
+[13:18] that is complicated, but it introduces just enough surface area for something
+[13:20] just enough surface area for something
+[13:20] just enough surface area for something to be slightly wrong in a way that is
+[13:22] to be slightly wrong in a way that is
+[13:22] to be slightly wrong in a way that is not immediately obvious, which is why
+[13:24] not immediately obvious, which is why
+[13:24] not immediately obvious, which is why the most common Hermes and open web UI
+[13:26] the most common Hermes and open web UI
+[13:26] the most common Hermes and open web UI question in community forums is almost
+[13:28] question in community forums is almost
+[13:28] question in community forums is almost always a variation of the same
+[13:29] always a variation of the same
+[13:29] always a variation of the same networking issue. Both projects are
+[13:31] networking issue. Both projects are
+[13:31] networking issue. Both projects are actively maintained and moving fast.
+[13:33] actively maintained and moving fast.
+[13:33] actively maintained and moving fast. Hermes web UI is currently at version
+[13:35] Hermes web UI is currently at version
+[13:35] Hermes web UI is currently at version 0.50. 50.204
+[13:38] 0.50. 50.204
+[13:38] 0.50. 50.204 with over 1,900 tests and multiple
+[13:40] with over 1,900 tests and multiple
+[13:40] with over 1,900 tests and multiple releases shipping every week. Open Web
+[13:42] releases shipping every week. Open Web
+[13:42] releases shipping every week. Open Web UI is one of the fastest growing
+[13:44] UI is one of the fastest growing
+[13:44] UI is one of the fastest growing repositories on GitHub with a large
+[13:46] repositories on GitHub with a large
+[13:46] repositories on GitHub with a large contributor base and a roadmap that
+[13:48] contributor base and a roadmap that
+[13:48] contributor base and a roadmap that continues pushing toward deeper agent
+[13:50] continues pushing toward deeper agent
+[13:50] continues pushing toward deeper agent capabilities, more sophisticated memory,
+[13:52] capabilities, more sophisticated memory,
+[13:52] capabilities, more sophisticated memory, and tighter MCP integration. Neither of
+[13:54] and tighter MCP integration. Neither of
+[13:54] and tighter MCP integration. Neither of these is a stale project you need to
+[13:56] these is a stale project you need to
+[13:56] these is a stale project you need to worry about being abandoned. The
+[13:58] worry about being abandoned. The
+[13:58] worry about being abandoned. The development momentum on both sides is
+[14:00] development momentum on both sides is
+[14:00] development momentum on both sides is real. Now that both tools are fully
+[14:02] real. Now that both tools are fully
+[14:02] real. Now that both tools are fully broken down, the actual decision becomes
+[14:04] broken down, the actual decision becomes
+[14:04] broken down, the actual decision becomes straightforward once you are honest
+[14:06] straightforward once you are honest
+[14:06] straightforward once you are honest about how you're using Hermes agent and
+[14:07] about how you're using Hermes agent and
+[14:07] about how you're using Hermes agent and what you need from interface. Open web
+[14:09] what you need from interface. Open web
+[14:09] what you need from interface. Open web UI is the right choice if you are
+[14:11] UI is the right choice if you are
+[14:11] UI is the right choice if you are running Hermes agent for more than one
+[14:13] running Hermes agent for more than one
+[14:13] running Hermes agent for more than one person. The moment you need separate
+[14:14] person. The moment you need separate
+[14:14] person. The moment you need separate accounts, different permission levels or
+[14:16] accounts, different permission levels or
+[14:16] accounts, different permission levels or any kind of access control between
+[14:18] any kind of access control between
+[14:18] any kind of access control between users, Hermes web UI does not have an
+[14:20] users, Hermes web UI does not have an
+[14:20] users, Hermes web UI does not have an answer for that and open web UI does. It
+[14:23] answer for that and open web UI does. It
+[14:23] answer for that and open web UI does. It is also the right choice if you're
+[14:24] is also the right choice if you're
+[14:24] is also the right choice if you're already running open web UI for other
+[14:26] already running open web UI for other
+[14:26] already running open web UI for other purposes, whether that is local models
+[14:28] purposes, whether that is local models
+[14:28] purposes, whether that is local models through Alma or cloud API access and you
+[14:30] through Alma or cloud API access and you
+[14:30] through Alma or cloud API access and you simply want to add Hermes agent as one
+[14:32] simply want to add Hermes agent as one
+[14:32] simply want to add Hermes agent as one more backend inside an interface you
+[14:34] more backend inside an interface you
+[14:34] more backend inside an interface you already know and have configured. In
+[14:36] already know and have configured. In
+[14:36] already know and have configured. In that scenario, the connection takes a
+[14:37] that scenario, the connection takes a
+[14:38] that scenario, the connection takes a few minutes and you gain Hermes
+[14:39] few minutes and you gain Hermes
+[14:39] few minutes and you gain Hermes capabilities without having to introduce
+[14:41] capabilities without having to introduce
+[14:41] capabilities without having to introduce an entirely separate tool into your
+[14:43] an entirely separate tool into your
+[14:43] an entirely separate tool into your stack. Open web UI also makes sense if
+[14:45] stack. Open web UI also makes sense if
+[14:45] stack. Open web UI also makes sense if your workflow extends beyond what Hermes
+[14:47] your workflow extends beyond what Hermes
+[14:47] your workflow extends beyond what Hermes agent does on its own. If you want to
+[14:49] agent does on its own. If you want to
+[14:49] agent does on its own. If you want to build a shared knowledge base from
+[14:50] build a shared knowledge base from
+[14:50] build a shared knowledge base from uploaded documents, run retrieval
+[14:52] uploaded documents, run retrieval
+[14:52] uploaded documents, run retrieval augmented generation against your own
+[14:54] augmented generation against your own
+[14:54] augmented generation against your own files, generate images, or use MCP tool
+[14:56] files, generate images, or use MCP tool
+[14:56] files, generate images, or use MCP tool servers in combination with your agent,
+[14:58] servers in combination with your agent,
+[14:58] servers in combination with your agent, Open Web UI is the platform that can
+[15:00] Open Web UI is the platform that can
+[15:00] Open Web UI is the platform that can hold all of that together in one place.
+[15:02] hold all of that together in one place.
+[15:02] hold all of that together in one place. It is a broader tool solving a broader
+[15:04] It is a broader tool solving a broader
+[15:04] It is a broader tool solving a broader set of problems and for the right use
+[15:06] set of problems and for the right use
+[15:06] set of problems and for the right use case that breadth is exactly what you
+[15:08] case that breadth is exactly what you
+[15:08] case that breadth is exactly what you need. Hermes web UI is the right choice
+[15:10] need. Hermes web UI is the right choice
+[15:10] need. Hermes web UI is the right choice if you're running Hermes agent as a solo
+[15:12] if you're running Hermes agent as a solo
+[15:12] if you're running Hermes agent as a solo user or for a small personal setup on a
+[15:14] user or for a small personal setup on a
+[15:14] user or for a small personal setup on a VPS, which is honestly the most common
+[15:16] VPS, which is honestly the most common
+[15:16] VPS, which is honestly the most common Hermes use case in the community right
+[15:17] Hermes use case in the community right
+[15:18] Hermes use case in the community right now. if that describes you. Hermes web
+[15:20] now. if that describes you. Hermes web
+[15:20] now. if that describes you. Hermes web UI gives you the full Hermes experience
+[15:22] UI gives you the full Hermes experience
+[15:22] UI gives you the full Hermes experience from a browser without sacrificing
+[15:24] from a browser without sacrificing
+[15:24] from a browser without sacrificing anything the terminal version offers.
+[15:25] anything the terminal version offers.
+[15:25] anything the terminal version offers. Every feature the CLI exposes is
+[15:28] Every feature the CLI exposes is
+[15:28] Every feature the CLI exposes is accessible from the interface and
+[15:29] accessible from the interface and
+[15:29] accessible from the interface and several things that are genuinely
+[15:30] several things that are genuinely
+[15:30] several things that are genuinely difficult to manage from the terminal
+[15:32] difficult to manage from the terminal
+[15:32] difficult to manage from the terminal like reading and editing memory files,
+[15:34] like reading and editing memory files,
+[15:34] like reading and editing memory files, browsing workspace files, managing
+[15:36] browsing workspace files, managing
+[15:36] browsing workspace files, managing skills and cron jobs and monitoring
+[15:38] skills and cron jobs and monitoring
+[15:38] skills and cron jobs and monitoring token usage in real time become
+[15:40] token usage in real time become
+[15:40] token usage in real time become significantly easier. It is also the
+[15:42] significantly easier. It is also the
+[15:42] significantly easier. It is also the right choice if you use your agent from
+[15:44] right choice if you use your agent from
+[15:44] right choice if you use your agent from your phone with any regularity. The
+[15:46] your phone with any regularity. The
+[15:46] your phone with any regularity. The mobile experience in Hermes web UI is
+[15:48] mobile experience in Hermes web UI is
+[15:48] mobile experience in Hermes web UI is not a scaledown version of the desktop
+[15:50] not a scaledown version of the desktop
+[15:50] not a scaledown version of the desktop interface. It was designed for mobile
+[15:52] interface. It was designed for mobile
+[15:52] interface. It was designed for mobile from the start and the difference is
+[15:53] from the start and the difference is
+[15:53] from the start and the difference is noticeable the moment you try to use
+[15:55] noticeable the moment you try to use
+[15:55] noticeable the moment you try to use both options on a narrow screen. And if
+[15:57] both options on a narrow screen. And if
+[15:57] both options on a narrow screen. And if tight integration with the agent is the
+[15:59] tight integration with the agent is the
+[15:59] tight integration with the agent is the priority if you want to see what your
+[16:00] priority if you want to see what your
+[16:00] priority if you want to see what your agent is doing rather than just seeing
+[16:02] agent is doing rather than just seeing
+[16:02] agent is doing rather than just seeing what it says, Hermes web UI is the only
+[16:05] what it says, Hermes web UI is the only
+[16:05] what it says, Hermes web UI is the only one of the two that can show you that.
+[16:06] one of the two that can show you that.
+[16:06] one of the two that can show you that. There is one more thing worth saying
+[16:08] There is one more thing worth saying
+[16:08] There is one more thing worth saying here that most comparisons leave out
+[16:10] here that most comparisons leave out
+[16:10] here that most comparisons leave out entirely and it is the most practically
+[16:12] entirely and it is the most practically
+[16:12] entirely and it is the most practically useful piece of information in this
+[16:13] useful piece of information in this
+[16:13] useful piece of information in this entire video. These two tools are not
+[16:15] entire video. These two tools are not
+[16:15] entire video. These two tools are not mutually exclusive because both of them
+[16:18] mutually exclusive because both of them
+[16:18] mutually exclusive because both of them connect to Hermes agent independently.
+[16:20] connect to Hermes agent independently.
+[16:20] connect to Hermes agent independently. You can run both at the same time
+[16:21] You can run both at the same time
+[16:21] You can run both at the same time without any conflict. Hermes Web UI can
+[16:24] without any conflict. Hermes Web UI can
+[16:24] without any conflict. Hermes Web UI can be your daily driver on one port, giving
+[16:26] be your daily driver on one port, giving
+[16:26] be your daily driver on one port, giving you full agent control, workspace
+[16:28] you full agent control, workspace
+[16:28] you full agent control, workspace visibility, and a mobile friendly
+[16:30] visibility, and a mobile friendly
+[16:30] visibility, and a mobile friendly interface for everyday use. Open Web UI
+[16:33] interface for everyday use. Open Web UI
+[16:33] interface for everyday use. Open Web UI can sit on a separate port for the
+[16:34] can sit on a separate port for the
+[16:34] can sit on a separate port for the moments when you need its broader
+[16:35] moments when you need its broader
+[16:35] moments when you need its broader platform features or when you want to
+[16:37] platform features or when you want to
+[16:37] platform features or when you want to give someone else access to your agent
+[16:39] give someone else access to your agent
+[16:39] give someone else access to your agent without handing them the same level of
+[16:40] without handing them the same level of
+[16:40] without handing them the same level of access you have. Both of them point at
+[16:42] access you have. Both of them point at
+[16:42] access you have. Both of them point at the same Hermes instance, the same
+[16:44] the same Hermes instance, the same
+[16:44] the same Hermes instance, the same persistent memory, the same skills, the
+[16:47] persistent memory, the same skills, the
+[16:47] persistent memory, the same skills, the same scheduler. Running one does not
+[16:49] same scheduler. Running one does not
+[16:49] same scheduler. Running one does not prevent you from running the other. And
+[16:50] prevent you from running the other. And
+[16:50] prevent you from running the other. And for a lot of setups, the most sensible
+[16:52] for a lot of setups, the most sensible
+[16:52] for a lot of setups, the most sensible answer is simply both. Coming back to
+[16:54] answer is simply both. Coming back to
+[16:54] answer is simply both. Coming back to the title of this video, the truth about
+[16:56] the title of this video, the truth about
+[16:56] the title of this video, the truth about both tools is that they are solving
+[16:58] both tools is that they are solving
+[16:58] both tools is that they are solving different problems and were never really
+[17:00] different problems and were never really
+[17:00] different problems and were never really competing with each other in the first
+[17:01] competing with each other in the first
+[17:01] competing with each other in the first place. Open Web UI is a powerful general
+[17:04] place. Open Web UI is a powerful general
+[17:04] place. Open Web UI is a powerful general purpose platform that can front Hermes
+[17:05] purpose platform that can front Hermes
+[17:05] purpose platform that can front Hermes agent as one of its many backends and it
+[17:08] agent as one of its many backends and it
+[17:08] agent as one of its many backends and it does that well. But from its
+[17:09] does that well. But from its
+[17:09] does that well. But from its perspective, Hermes is a model. It sends
+[17:12] perspective, Hermes is a model. It sends
+[17:12] perspective, Hermes is a model. It sends requests. It receives responses. And
+[17:15] requests. It receives responses. And
+[17:15] requests. It receives responses. And everything that makes Hermes agent
+[17:16] everything that makes Hermes agent
+[17:16] everything that makes Hermes agent genuinely different from a language
+[17:18] genuinely different from a language
+[17:18] genuinely different from a language model. The persistent memory, the skill
+[17:20] model. The persistent memory, the skill
+[17:20] model. The persistent memory, the skill system, theuler, the workspace, the tool
+[17:22] system, theuler, the workspace, the tool
+[17:22] system, theuler, the workspace, the tool execution happening in real time. None
+[17:24] execution happening in real time. None
+[17:24] execution happening in real time. None of that is visible from the open web UI
+[17:26] of that is visible from the open web UI
+[17:26] of that is visible from the open web UI side of the connection. Hermes web UI
+[17:28] side of the connection. Hermes web UI
+[17:28] side of the connection. Hermes web UI was built with the opposite intention.
+[17:30] was built with the opposite intention.
+[17:30] was built with the opposite intention. It exists specifically to expose Hermes
+[17:32] It exists specifically to expose Hermes
+[17:32] It exists specifically to expose Hermes agent for what it actually is rather
+[17:34] agent for what it actually is rather
+[17:34] agent for what it actually is rather than flattening it into something that
+[17:35] than flattening it into something that
+[17:35] than flattening it into something that fits a generic chat interface model. the
+[17:38] fits a generic chat interface model. the
+[17:38] fits a generic chat interface model. the control room versus the reception desk.
+[17:40] control room versus the reception desk.
+[17:40] control room versus the reception desk. Both get your messages to the agent.
+[17:42] Both get your messages to the agent.
+[17:42] Both get your messages to the agent. Only one of them lets you see the full
+[17:43] Only one of them lets you see the full
+[17:43] Only one of them lets you see the full picture of what the agent is doing and
+[17:45] picture of what the agent is doing and
+[17:45] picture of what the agent is doing and gives you the tools to manage every part
+[17:47] gives you the tools to manage every part
+[17:47] gives you the tools to manage every part of it from the same window. The right
+[17:48] of it from the same window. The right
+[17:48] of it from the same window. The right choice for your setup comes down to
+[17:50] choice for your setup comes down to
+[17:50] choice for your setup comes down to three honest questions. Are you running
+[17:52] three honest questions. Are you running
+[17:52] three honest questions. Are you running this for more than one person? Are you
+[17:54] this for more than one person? Are you
+[17:54] this for more than one person? Are you already using open web UI for other
+[17:56] already using open web UI for other
+[17:56] already using open web UI for other things? And do you need platform
+[17:57] things? And do you need platform
+[17:57] things? And do you need platform features beyond what Hermes itself
+[17:59] features beyond what Hermes itself
+[17:59] features beyond what Hermes itself provides? If the answer to any of those
+[18:01] provides? If the answer to any of those
+[18:01] provides? If the answer to any of those is yes, open web UI is likely the better
+[18:03] is yes, open web UI is likely the better
+[18:03] is yes, open web UI is likely the better fit as your primary interface. If you're
+[18:05] fit as your primary interface. If you're
+[18:05] fit as your primary interface. If you're a solo user who wants the full Hermes
+[18:08] a solo user who wants the full Hermes
+[18:08] a solo user who wants the full Hermes experience from a browser, wants to
+[18:09] experience from a browser, wants to
+[18:09] experience from a browser, wants to manage their agent from a phone and
+[18:11] manage their agent from a phone and
+[18:11] manage their agent from a phone and wants the tightest possible connection
+[18:12] wants the tightest possible connection
+[18:12] wants the tightest possible connection between the interface and the agent,
+[18:14] between the interface and the agent,
+[18:14] between the interface and the agent, Hermes web UI is the one built for
+[18:16] Hermes web UI is the one built for
+[18:16] Hermes web UI is the one built for exactly that. And if you want the best
+[18:18] exactly that. And if you want the best
+[18:18] exactly that. And if you want the best of both without making a permanent
+[18:19] of both without making a permanent
+[18:19] of both without making a permanent choice, run them side by side. The
+[18:21] choice, run them side by side. The
+[18:21] choice, run them side by side. The architecture supports it and the
+[18:23] architecture supports it and the
+[18:23] architecture supports it and the trade-offs disappear entirely. If you're
+[18:25] trade-offs disappear entirely. If you're
+[18:25] trade-offs disappear entirely. If you're planning to run either of these setups
+[18:27] planning to run either of these setups
+[18:27] planning to run either of these setups on a VPS, you will want a server that is
+[18:29] on a VPS, you will want a server that is
+[18:29] on a VPS, you will want a server that is reliable, affordable, and does not
+[18:31] reliable, affordable, and does not
+[18:31] reliable, affordable, and does not require a complicated configuration
+[18:33] require a complicated configuration
+[18:33] require a complicated configuration process to get Hermes Agent and Docker
+[18:35] process to get Hermes Agent and Docker
+[18:35] process to get Hermes Agent and Docker running on it. Hostinger has been a
+[18:36] running on it. Hostinger has been a
+[18:36] running on it. Hostinger has been a consistent recommendation on this
+[18:38] consistent recommendation on this
+[18:38] consistent recommendation on this channel for that exact use case. The
+[18:40] channel for that exact use case. The
+[18:40] channel for that exact use case. The link is in the description if you want
+[18:41] link is in the description if you want
+[18:41] link is in the description if you want to check it out. That covers everything.
+[18:43] to check it out. That covers everything.
+[18:43] to check it out. That covers everything. If this breakdown helped you make sense
+[18:45] If this breakdown helped you make sense
+[18:45] If this breakdown helped you make sense of the two options, the like button is a
+[18:47] of the two options, the like button is a
+[18:47] of the two options, the like button is a straightforward way to say so, and it
+[18:49] straightforward way to say so, and it
+[18:49] straightforward way to say so, and it genuinely helps the channel grow. If
+[18:51] genuinely helps the channel grow. If
+[18:51] genuinely helps the channel grow. If there's a specific part of the Hermes
+[18:52] there's a specific part of the Hermes
+[18:52] there's a specific part of the Hermes agent ecosystem you want covered next,
+[18:55] agent ecosystem you want covered next,
+[18:55] agent ecosystem you want covered next, drop in the comments. The next video is
+[18:57] drop in the comments. The next video is
+[18:57] drop in the comments. The next video is already in production, so subscribing,
+[18:59] already in production, so subscribing,
+[18:59] already in production, so subscribing, make sure you catch it when it lands.
+[19:00] make sure you catch it when it lands.
+[19:00] make sure you catch it when it lands. Thank you so much for watching and I
+[19:02] Thank you so much for watching and I
+[19:02] Thank you so much for watching and I will see you in the next

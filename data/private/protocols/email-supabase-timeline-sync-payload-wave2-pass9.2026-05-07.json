@@ -1,0 +1,3165 @@
+{
+  "sourceType": "email-archaeology-supabase-sync-payload",
+  "generatedAt": "2026-05-07T19:54:54.997Z",
+  "sourceLedger": "data/unified-task-ledger.json",
+  "ownerPrincipalId": "daniel",
+  "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+  "sourceFilter": "email-archaeology-import",
+  "factCount": 83,
+  "facts": [
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20030513172506-47425-qmail-web14303-mail-y",
+      "eventDate": "2003-05-13",
+      "era": 2,
+      "title": "Re: install?",
+      "description": "On 2003-05-13, an email from \"Agriya Infoway Pvt. Ltd.\" <info@agriya.com> with subject \"Re: install?\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20030513172506-47425-qmail-web14303-mail-y",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.397Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20040123135622-80163-qmail-web14711-mail-y",
+      "eventDate": "2004-01-23",
+      "era": 2,
+      "title": "whatever floats the purple essence we disregard",
+      "description": "On 2004-01-23, an email from doug whisker <jackoval6@yahoo.com> with subject \"whatever floats the purple essence we disregard\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20040123135622-80163-qmail-web14711-mail-y",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.397Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-1ca-18b3c7c0-2d4b5b58-aol-com",
+      "eventDate": "2004-01-30",
+      "era": 2,
+      "title": "Re: Question from eBay Member",
+      "description": "On 2004-01-30, an email from BenjeBendele@aol.com with subject \"Re: Question from eBay Member\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-1ca-18b3c7c0-2d4b5b58-aol-com",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.398Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20040312211551-84374-qmail-web14309-mail-y",
+      "eventDate": "2004-03-12",
+      "era": 2,
+      "title": "Re: SmarterScripts.com Installation Purchase (71D053975X506184V)",
+      "description": "On 2004-03-12, an email from \"Agriya Infoway Pvt. Ltd.\" <info@agriya.com> with subject \"Re: SmarterScripts.com Installation Purchase (71D053975X506184V)\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20040312211551-84374-qmail-web14309-mail-y",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.398Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20040313013127-29396-qmail-web14306-mail-y",
+      "eventDate": "2004-03-13",
+      "era": 2,
+      "title": "Re: From Agriya.net ContactUs",
+      "description": "On 2004-03-13, an email from \"Agriya Infoway Pvt. Ltd.\" <info@agriya.com> with subject \"Re: From Agriya.net ContactUs\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20040313013127-29396-qmail-web14306-mail-y",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.398Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-4054c787-3060902-talldude-com",
+      "eventDate": "2004-03-14",
+      "era": 2,
+      "title": "Re: Support",
+      "description": "On 2004-03-14, an email from Brian Johnson <bigguy@talldude.com> with subject \"Re: Support\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-4054c787-3060902-talldude-com",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.398Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-000001c40d7c-4f09bac0-24a6a8c0-manish",
+      "eventDate": "2004-03-19",
+      "era": 2,
+      "title": "RE: Installation help Download Link",
+      "description": "On 2004-03-19, an email from Manish Singh <manish83@hathway.com> with subject \"RE: Installation help Download Link\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-000001c40d7c-4f09bac0-24a6a8c0-manish",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.398Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-nebbkmabolffgfhhphalieemhbab-webmaster-cli",
+      "eventDate": "2004-03-22",
+      "era": 2,
+      "title": "RE: Refund Please",
+      "description": "On 2004-03-22, an email from \"Ellery\" <webmaster@ClickBankGuard.com> with subject \"RE: Refund Please\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-nebbkmabolffgfhhphalieemhbab-webmaster-cli",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.398Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-219e01c412c4-ad72d310-2127c93f-rob",
+      "eventDate": "2004-03-25",
+      "era": 2,
+      "title": "Re: AShop Installation",
+      "description": "On 2004-03-25, an email from \"Rob Harris\" <robharris@ashopsoftware.com> with subject \"Re: AShop Installation\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-219e01c412c4-ad72d310-2127c93f-rob",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.398Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-008301c414e2-e7a5be60-08e37c43-rob",
+      "eventDate": "2004-03-28",
+      "era": 2,
+      "title": "Re: Powered By Links",
+      "description": "On 2004-03-28, an email from \"Rob Harris\" <robharris@ashopsoftware.com> with subject \"Re: Powered By Links\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-008301c414e2-e7a5be60-08e37c43-rob",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-002101c423df-707c4cd0-7801a8c0-domain-swif",
+      "eventDate": "2004-04-16",
+      "era": 2,
+      "title": "Re: CDs for CustomerId WHODANIE",
+      "description": "On 2004-04-16, an email from \"Bret Phillips\" <bphillips@swiftcd.com> with subject \"Re: CDs for CustomerId WHODANIE\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-002101c423df-707c4cd0-7801a8c0-domain-swif",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-003701c42e45-151ba190-9ee17c43-rob",
+      "eventDate": "2004-04-29",
+      "era": 2,
+      "title": "Re: Admin Login Check",
+      "description": "On 2004-04-29, an email from \"Rob Harris\" <robharris@ashopsoftware.com> with subject \"Re: Admin Login Check\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-003701c42e45-151ba190-9ee17c43-rob",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20040504154819-42007-qmail-web40411-mail-y",
+      "eventDate": "2004-05-04",
+      "era": 2,
+      "title": "Re: Who?",
+      "description": "On 2004-05-04, an email from andres montejo <andresmontejo@yahoo.com> with subject \"Re: Who?\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20040504154819-42007-qmail-web40411-mail-y",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-000401c469d3-29ecd7a0-8312a918-drum1",
+      "eventDate": "2004-07-14",
+      "era": 2,
+      "title": "RE: Emailing: P1010001, P1010003, P1010005",
+      "description": "On 2004-07-14, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Emailing: P1010001, P1010003, P1010005\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-000401c469d3-29ecd7a0-8312a918-drum1",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-000c01c470ae-1c978910-8312a918-drum1",
+      "eventDate": "2004-07-23",
+      "era": 2,
+      "title": "RE: Good Morning..",
+      "description": "On 2004-07-23, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Good Morning..\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-000c01c470ae-1c978910-8312a918-drum1",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-000201c4808b-3dcfe220-9e7b4242-drum1",
+      "eventDate": "2004-08-12",
+      "era": 2,
+      "title": "RE: Hey..",
+      "description": "On 2004-08-12, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Hey..\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-000201c4808b-3dcfe220-9e7b4242-drum1",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-000001c49ddc-53981be0-9e7b4242-drum1",
+      "eventDate": "2004-09-19",
+      "era": 2,
+      "title": "RE: Emailing: 14982746306_0_ALB",
+      "description": "On 2004-09-19, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Emailing: 14982746306_0_ALB\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-000001c49ddc-53981be0-9e7b4242-drum1",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-000201c49ff8-6713e780-9e7b4242-drum1",
+      "eventDate": "2004-09-21",
+      "era": 2,
+      "title": "RE: Me",
+      "description": "On 2004-09-21, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Me\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-000201c49ff8-6713e780-9e7b4242-drum1",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20041018215106-58457-qmail-web52809-mail-y",
+      "eventDate": "2004-10-18",
+      "era": 2,
+      "title": "stipulatory creations in soft tyranny anihlate our intrinsic logic",
+      "description": "On 2004-10-18, an email from doug whisker <jackoval6@yahoo.com> with subject \"stipulatory creations in soft tyranny anihlate our intrinsic logic\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20041018215106-58457-qmail-web52809-mail-y",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-000301c4d7e7-85300330-e011a918-drum1",
+      "eventDate": "2004-12-01",
+      "era": 2,
+      "title": "RE: So..",
+      "description": "On 2004-12-01, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: So..\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-000301c4d7e7-85300330-e011a918-drum1",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-fallback-7747b54581f82ab1dd5f09fb08d6a34fd5e1b8f",
+      "eventDate": "2006-01-09",
+      "era": 2,
+      "title": "RE: Daniel Goldberg's info",
+      "description": "On 2006-01-09, an email from \"David McGovern\" <david.mcgovern@freightsavers.com> with subject \"RE: Daniel Goldberg's info\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-fallback-7747b54581f82ab1dd5f09fb08d6a34fd5e1b8f",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:20"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:20"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20060513134857-71665-qmail-web32207-mail-m",
+      "eventDate": "2006-05-13",
+      "era": 2,
+      "title": "Re: Karaoke machine",
+      "description": "On 2006-05-13, an email from Penny Dunn <pennyqtpi@yahoo.com> with subject \"Re: Karaoke machine\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20060513134857-71665-qmail-web32207-mail-m",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:47:09.399Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-000001c67925-a129a650-926fa8c0-tpy91",
+      "eventDate": "2006-05-16",
+      "era": 2,
+      "title": "Re: the crred",
+      "description": "On 2006-05-16, an email from \"Philomela Terrio\" <terriophi@gzinc.com> with subject \"Re: the crred\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-000001c67925-a129a650-926fa8c0-tpy91",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.133Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-e1ftyoe-00033x-ld-mars-milescape-com",
+      "eventDate": "2006-06-22",
+      "era": 2,
+      "title": "Re: StormPay.com",
+      "description": "On 2006-06-22, an email from \"Daniel Goldberg\" <musicgear@startree.tv> with subject \"Re: StormPay.com\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-e1ftyoe-00033x-ld-mars-milescape-com",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-953854a20607021122i54ab455fo5211962ef9b42c",
+      "eventDate": "2006-07-02",
+      "era": 2,
+      "title": "Re: support",
+      "description": "On 2006-07-02, an email from bigguy <jamroom@gmail.com> with subject \"Re: support\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-953854a20607021122i54ab455fo5211962ef9b42c",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-17d9d213efb7a14d9fda4573d6798db66df464-mei",
+      "eventDate": "2006-07-18",
+      "era": 2,
+      "title": "RE: employment status?",
+      "description": "On 2006-07-18, an email from \"McGrath, Lori\" <Lori.McGrath@adeccona.com> with subject \"RE: employment status?\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-17d9d213efb7a14d9fda4573d6798db66df464-mei",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-002a01c6ad82-c3f69a30-0700000a-roseleigh",
+      "eventDate": "2006-07-22",
+      "era": 2,
+      "title": "Re: information about drums",
+      "description": "On 2006-07-22, an email from \"info\" <info@roseleigh.com> with subject \"Re: information about drums\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-002a01c6ad82-c3f69a30-0700000a-roseleigh",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:15"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:15"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20060730191406-50942-qmail-web35902-mail-m",
+      "eventDate": "2006-07-30",
+      "era": 2,
+      "title": "Re: oh by the way",
+      "description": "On 2006-07-30, an email from adam iff <adamiff@yahoo.com> with subject \"Re: oh by the way\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20060730191406-50942-qmail-web35902-mail-m",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20060801200648-5470-qmail-web53013-mail-ya",
+      "eventDate": "2006-08-01",
+      "era": 2,
+      "title": "Re: drum prices please",
+      "description": "On 2006-08-01, an email from Da JembeQueen! <jembequeen@yahoo.com> with subject \"Re: drum prices please\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20060801200648-5470-qmail-web53013-mail-ya",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20060804021205-0323036420c-relay01-roc-ny",
+      "eventDate": "2006-08-04",
+      "era": 2,
+      "title": "RE: Feedback or enquiry from World Wide Drums",
+      "description": "On 2006-08-04, an email from \"World Wide Drums\" <sales@wwdrums.com> with subject \"RE: Feedback or enquiry from World Wide Drums\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20060804021205-0323036420c-relay01-roc-ny",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-000001c6e9cc-21c1b160-9784a8c0-hixzgqw",
+      "eventDate": "2006-10-07",
+      "era": 2,
+      "title": "Re: Hi",
+      "description": "On 2006-10-07, an email from \"Jepson Burnes\" <laur@foxjet.com> with subject \"Re: Hi\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-000001c6e9cc-21c1b160-9784a8c0-hixzgqw",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20061017095023-3451-qmail-web60620-mail-ya",
+      "eventDate": "2006-10-17",
+      "era": 2,
+      "title": "Re: iPod Video",
+      "description": "On 2006-10-17, an email from Nikki nelson <nikky4yall@yahoo.com> with subject \"Re: iPod Video\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20061017095023-3451-qmail-web60620-mail-ya",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20061021150822-33916-qmail-web58612-mail-r",
+      "eventDate": "2006-10-21",
+      "era": 2,
+      "title": "Re: I want to buy this item",
+      "description": "On 2006-10-21, an email from Mrs Jessica Williams <jessica_willams001@yahoo.com> with subject \"Re: I want to buy this item\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20061021150822-33916-qmail-web58612-mail-r",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:11"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20061025111459-72192-qmail-web58601-mail-r",
+      "eventDate": "2006-10-25",
+      "era": 2,
+      "title": "PAYMENT MADE.",
+      "description": "On 2006-10-25, an email from Mrs Jessica Williams <jessica_willams001@yahoo.com> with subject \"PAYMENT MADE.\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20061025111459-72192-qmail-web58601-mail-r",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:13"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:13"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-008101c6f853-bdfbaf00-9a29c0a8-tillie",
+      "eventDate": "2006-10-25",
+      "era": 2,
+      "title": "Re: bledsoe",
+      "description": "On 2006-10-25, an email from danit ewell <shaniferne@biddefordsacochamber.org> with subject \"Re: bledsoe\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-008101c6f853-bdfbaf00-9a29c0a8-tillie",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-535-99d0027-32712077-aol-com",
+      "eventDate": "2006-10-25",
+      "era": 2,
+      "title": "Re: From Amateur Match",
+      "description": "On 2006-10-25, an email from Misshunnybunny15@aol.com with subject \"Re: From Amateur Match\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-535-99d0027-32712077-aol-com",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20061029173749-15020-qmail-web58404-mail-r",
+      "eventDate": "2006-10-29",
+      "era": 2,
+      "title": "hi dear",
+      "description": "On 2006-10-29, an email from \"gbeggeone@yahoo.com jeffrey\" <gbeggeone@yahoo.com> with subject \"hi dear\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20061029173749-15020-qmail-web58404-mail-r",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-ef85f3eadc967f43a27538560eaf187b02f8e9-usa",
+      "eventDate": "2006-11-02",
+      "era": 2,
+      "title": "RE: Needing a band?",
+      "description": "On 2006-11-02, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"RE: Needing a band?\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-ef85f3eadc967f43a27538560eaf187b02f8e9-usa",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-ef85f3eadc967f43a27538560eaf187b02f8ea-usa",
+      "eventDate": "2006-11-02",
+      "era": 2,
+      "title": "Crossfyre demo #2",
+      "description": "On 2006-11-02, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"Crossfyre demo #2\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-ef85f3eadc967f43a27538560eaf187b02f8ea-usa",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-ef85f3eadc967f43a27538560eaf187b02f8eb-usa",
+      "eventDate": "2006-11-02",
+      "era": 2,
+      "title": "Crossfyre demo #3",
+      "description": "On 2006-11-02, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"Crossfyre demo #3\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-ef85f3eadc967f43a27538560eaf187b02f8eb-usa",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.134Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20061109041020-52285-qmail-web35910-mail-m",
+      "eventDate": "2006-11-09",
+      "era": 2,
+      "title": "Re: oh by the way",
+      "description": "On 2006-11-09, an email from adam iff <adamiff@yahoo.com> with subject \"Re: oh by the way\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20061109041020-52285-qmail-web35910-mail-m",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.135Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20061109213825-65363-qmail-web35908-mail-m",
+      "eventDate": "2006-11-09",
+      "era": 2,
+      "title": "Re: okay....",
+      "description": "On 2006-11-09, an email from adam iff <adamiff@yahoo.com> with subject \"Re: okay....\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20061109213825-65363-qmail-web35908-mail-m",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:15"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.135Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:transactional",
+          "signal_score:15"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20061111001457-43456-qmail-web35903-mail-m",
+      "eventDate": "2006-11-11",
+      "era": 2,
+      "title": "Re: good news....",
+      "description": "On 2006-11-11, an email from adam iff <adamiff@yahoo.com> with subject \"Re: good news....\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20061111001457-43456-qmail-web35903-mail-m",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:20"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.135Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:20"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-92283985-20061112164559-burummail-net",
+      "eventDate": "2006-11-12",
+      "era": 2,
+      "title": "Re: Hello!",
+      "description": "On 2006-11-12, an email from Katya <ekkaterrinnka@burummail.net> with subject \"Re: Hello!\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-92283985-20061112164559-burummail-net",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.135Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20061112174713-4648-qmail-web33810-mail-mu",
+      "eventDate": "2006-11-12",
+      "era": 2,
+      "title": "Re: Hook Up?",
+      "description": "On 2006-11-12, an email from Claire Gsell <firedancer981@yahoo.com> with subject \"Re: Hook Up?\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20061112174713-4648-qmail-web33810-mail-mu",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.135Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-227391-23448-qm-web30610-mail-mud-yahoo-co",
+      "eventDate": "2006-12-13",
+      "era": 2,
+      "title": "RE:James",
+      "description": "On 2006-12-13, an email from Jennifer SunLove <journeysunpatchworx@yahoo.com> with subject \"RE:James\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-227391-23448-qm-web30610-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.135Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-20061219182033-ain70194-m4500-01-uchicago",
+      "eventDate": "2006-12-20",
+      "era": 2,
+      "title": "Re: Band",
+      "description": "On 2006-12-20, an email from Burak Kadercan <kadercan@uchicago.edu> with subject \"Re: Band\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-20061219182033-ain70194-m4500-01-uchicago",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.135Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-133616683-20061231162355-yahoo-com",
+      "eventDate": "2006-12-31",
+      "era": 2,
+      "title": "More about myself and Happy New Year",
+      "description": "On 2006-12-31, an email from Alina Gabdulbarowa <deep934love@yahoo.com> with subject \"More about myself and Happy New Year\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-133616683-20061231162355-yahoo-com",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.135Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-1843625981-20070101165938-yahoo-com",
+      "eventDate": "2007-01-01",
+      "era": 3,
+      "title": "One more about me",
+      "description": "On 2007-01-01, an email from Alina Gabdulbarowa <deep934love@yahoo.com> with subject \"One more about me\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-1843625981-20070101165938-yahoo-com",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:51:07.135Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-ef85f3eadc967f43a27538560eaf187b04e53baf-u",
+      "eventDate": "2007-02-01",
+      "era": 3,
+      "title": "RE: Needing a band?",
+      "description": "On 2007-02-01, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"RE: Needing a band?\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-ef85f3eadc967f43a27538560eaf187b04e53baf-u",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-fallback-0cb57b6f6cbbafb90ff7d8163d5a3d633550b2a",
+      "eventDate": "2007-05-08",
+      "era": 3,
+      "title": "RE: 1 week!",
+      "description": "On 2007-05-08, an email from Avi Brown <avistrange@yahoo.com> with subject \"RE: 1 week!\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-fallback-0cb57b6f6cbbafb90ff7d8163d5a3d633550b2a",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-651425-20168-qm-web35908-mail-mud-yahoo-co",
+      "eventDate": "2007-05-12",
+      "era": 3,
+      "title": "Re: Daniel's Resume + Bio",
+      "description": "On 2007-05-12, an email from adam iff <adamiff@yahoo.com> with subject \"Re: Daniel's Resume + Bio\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-651425-20168-qm-web35908-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:20"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:20"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-03ca01c7a106-f46c4340-630aa8c0-localhost",
+      "eventDate": "2007-05-28",
+      "era": 3,
+      "title": "Re: Hello",
+      "description": "On 2007-05-28, an email from \"Valeria\" <smeyne75@yahoo.com> with subject \"Re: Hello\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-03ca01c7a106-f46c4340-630aa8c0-localhost",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-6d4401c7add8-6a3d9370-120ba8c0-razvrat",
+      "eventDate": "2007-06-13",
+      "era": 3,
+      "title": "Hello",
+      "description": "On 2007-06-13, an email from \"Anna\" <savely21@yahoo.com> with subject \"Hello\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-6d4401c7add8-6a3d9370-120ba8c0-razvrat",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-0b5d01c7af2e-e46d1920-120ba8c0-razvrat",
+      "eventDate": "2007-06-15",
+      "era": 3,
+      "title": "Trip",
+      "description": "On 2007-06-15, an email from \"Anna\" <savely21@yahoo.com> with subject \"Trip\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-0b5d01c7af2e-e46d1920-120ba8c0-razvrat",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-0d0701c7b0b8-ac327f10-120ba8c0-razvrat",
+      "eventDate": "2007-06-17",
+      "era": 3,
+      "title": "Hello from Moscow",
+      "description": "On 2007-06-17, an email from \"Anna\" <savely21@yahoo.com> with subject \"Hello from Moscow\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-0d0701c7b0b8-ac327f10-120ba8c0-razvrat",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-878310-99685-qm-web35912-mail-mud-yahoo-co",
+      "eventDate": "2007-06-19",
+      "era": 3,
+      "title": "Re: hey bro.....",
+      "description": "On 2007-06-19, an email from adam iff <adamiff@yahoo.com> with subject \"Re: hey bro.....\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-878310-99685-qm-web35912-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-57b501c7b409-2949b470-120ba8c0-razvrat",
+      "eventDate": "2007-06-21",
+      "era": 3,
+      "title": "I am real",
+      "description": "On 2007-06-21, an email from \"Anna\" <savely21@yahoo.com> with subject \"I am real\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-57b501c7b409-2949b470-120ba8c0-razvrat",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-366113-78734-qm-web58307-mail-re3-yahoo-co",
+      "eventDate": "2007-06-28",
+      "era": 3,
+      "title": "RE: It",
+      "description": "On 2007-06-28, an email from Hailey S <icy_hailey_woman@yahoo.com> with subject \"RE: It\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-366113-78734-qm-web58307-mail-re3-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.674Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-862301-48548-qm-web30603-mail-mud-yahoo-co",
+      "eventDate": "2007-09-28",
+      "era": 3,
+      "title": "Re: James..",
+      "description": "On 2007-09-28, an email from Jennifer SunLove <journeysunpatchworx@yahoo.com> with subject \"Re: James..\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-862301-48548-qm-web30603-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-418924-34697-qm-web30606-mail-mud-yahoo-co",
+      "eventDate": "2007-10-25",
+      "era": 3,
+      "title": "Re: Halloween",
+      "description": "On 2007-10-25, an email from Jennifer SunLove <journeysunpatchworx@yahoo.com> with subject \"Re: Halloween\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-418924-34697-qm-web30606-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-05c001c81f3a-2a3e2860-6600a8c0-yourc36dd1b",
+      "eventDate": "2007-11-04",
+      "era": 3,
+      "title": "Re: 2373 Ridge Road West Rochester NY 14626 Eve ~ 6pm to close",
+      "description": "On 2007-11-04, an email from \"Lisa C. @ J.M. Ridgway Co., Inc.\" <LisaC@JMRidgway.com> with subject \"Re: 2373 Ridge Road West Rochester NY 14626 Eve ~ 6pm to close\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-05c001c81f3a-2a3e2860-6600a8c0-yourc36dd1b",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-fallback-4c2a80f1a860d3db05401984d511a7a5e684b6a",
+      "eventDate": "2007-11-08",
+      "era": 3,
+      "title": "RE: DHL",
+      "description": "On 2007-11-08, an email from \"David McGovern\" <david.mcgovern@freightsavers.com> with subject \"RE: DHL\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-fallback-4c2a80f1a860d3db05401984d511a7a5e684b6a",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-3cf576e0712041105he07e3b7l5ed67c148b715f0e",
+      "eventDate": "2007-12-04",
+      "era": 3,
+      "title": "Re: GET PAID TO FIGHT POVERTY",
+      "description": "On 2007-12-04, an email from \"Pastor Ralph Rodriguez\" <helptheneedy.charity@gmail.com> with subject \"Re: GET PAID TO FIGHT POVERTY\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-3cf576e0712041105he07e3b7l5ed67c148b715f0e",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.601Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-c518e4180712072132y7c05f3aet-mail-gmail-co",
+      "eventDate": "2007-12-08",
+      "era": 3,
+      "title": "Re: Hellos Laurella",
+      "description": "On 2007-12-08, an email from \"Roslyn Greene\" <hyvubota33353@gmail.com> with subject \"Re: Hellos Laurella\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-c518e4180712072132y7c05f3aet-mail-gmail-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-262465-54926-qm-web30613-mail-mud-yahoo-co",
+      "eventDate": "2007-12-28",
+      "era": 3,
+      "title": "RE: James",
+      "description": "On 2007-12-28, an email from Jennifer SunLove <journeysunpatchworx@yahoo.com> with subject \"RE: James\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-262465-54926-qm-web30613-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-805f2e4e0712291132j246e1158w-mail-gmail-co",
+      "eventDate": "2007-12-29",
+      "era": 3,
+      "title": "Re: Hi Jocelyn",
+      "description": "On 2007-12-29, an email from \"Queen Palacios\" <likowopi69860@gmail.com> with subject \"Re: Hi Jocelyn\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-805f2e4e0712291132j246e1158w-mail-gmail-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-e14473840803031959n29e6b135k4c7d3bcf56662b",
+      "eventDate": "2008-03-04",
+      "era": 3,
+      "title": "Re: Music",
+      "description": "On 2008-03-04, an email from \"Main St. Music Studio\" <mainst.music.studio@gmail.com> with subject \"Re: Music\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-e14473840803031959n29e6b135k4c7d3bcf56662b",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-97eeac840803040857o5f27e713u-mail-gmail-co",
+      "eventDate": "2008-03-04",
+      "era": 3,
+      "title": "Re: Hi Penelope",
+      "description": "On 2008-03-04, an email from \"Donna Shaw\" <likimyxo45662@gmail.com> with subject \"Re: Hi Penelope\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-97eeac840803040857o5f27e713u-mail-gmail-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-8ca5b205319cdb6-1438-1817-mblk-d39-sysops",
+      "eventDate": "2008-03-23",
+      "era": 3,
+      "title": "Fwd: FW: Family",
+      "description": "On 2008-03-23, an email from gldnbug@aol.com with subject \"Fwd: FW: Family\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-8ca5b205319cdb6-1438-1817-mblk-d39-sysops",
+        "confidence:moderate",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:low_interaction_misc",
+        "signal_score:12"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:low_interaction_misc",
+          "signal_score:12"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-40115-whodaniel-yahoo-com",
+      "eventDate": "2008-03-28",
+      "era": 3,
+      "title": "RE: Question",
+      "description": "On 2008-03-28, an email from Jennifer Eustace <jeustace@queensboro.com> with subject \"RE: Question\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-40115-whodaniel-yahoo-com",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-200804041514-m34fekkt030849-www1-yesup-net",
+      "eventDate": "2008-04-04",
+      "era": 3,
+      "title": "New Publisher Account at YesAdvertising.com",
+      "description": "On 2008-04-04, an email from publisher@yesadvertising.com with subject \"New Publisher Account at YesAdvertising.com\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_whos_media_empire",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-200804041514-m34fekkt030849-www1-yesup-net",
+        "confidence:moderate",
+        "project:daniel-who-s-media-empire",
+        "timeline_category:email-archaeology",
+        "track:daniel-whos-media-empire",
+        "domain:creative",
+        "classification:transactional",
+        "signal_score:10"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:creative",
+          "classification:transactional",
+          "signal_score:10"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-200804052015-m35kf8xt016707-chunghwa-ibgho",
+      "eventDate": "2008-04-05",
+      "era": 3,
+      "title": "PopupAd.net Publisher Account Confirmation",
+      "description": "On 2008-04-05, an email from popupad-admin@popupad.net with subject \"PopupAd.net Publisher Account Confirmation\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_whos_media_empire",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-200804052015-m35kf8xt016707-chunghwa-ibgho",
+        "confidence:moderate",
+        "project:daniel-who-s-media-empire",
+        "timeline_category:email-archaeology",
+        "track:daniel-whos-media-empire",
+        "domain:creative",
+        "classification:transactional",
+        "signal_score:10"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:creative",
+          "classification:transactional",
+          "signal_score:10"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-200804061216-m36cgjvn031514-chunghwa-ibgho",
+      "eventDate": "2008-04-06",
+      "era": 3,
+      "title": "PopupAd.net Account Setup Complete",
+      "description": "On 2008-04-06, an email from popupad-admin@popupad.net with subject \"PopupAd.net Account Setup Complete\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_whos_media_empire",
+      "confidence": "moderate",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-200804061216-m36cgjvn031514-chunghwa-ibgho",
+        "confidence:moderate",
+        "project:daniel-who-s-media-empire",
+        "timeline_category:email-archaeology",
+        "track:daniel-whos-media-empire",
+        "domain:creative",
+        "classification:transactional",
+        "signal_score:10"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "medium",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:creative",
+          "classification:transactional",
+          "signal_score:10"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-113694-www12trqf69a00000bee-secondbrain-co",
+      "eventDate": "2008-04-30",
+      "era": 3,
+      "title": "You have successfully registered an account on Second Brain.",
+      "description": "On 2008-04-30, an email from \"Second Brain\" <accounts@secondbrain.com> with subject \"You have successfully registered an account on Second Brain.\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_whos_media_empire",
+      "confidence": "soft",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-113694-www12trqf69a00000bee-secondbrain-co",
+        "confidence:soft",
+        "project:daniel-who-s-media-empire",
+        "timeline_category:email-archaeology",
+        "track:daniel-whos-media-empire",
+        "domain:creative",
+        "classification:transactional",
+        "signal_score:9"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "low",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:creative",
+          "classification:transactional",
+          "signal_score:9"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-187140-10803-qm-web35908-mail-mud-yahoo-co",
+      "eventDate": "2008-05-05",
+      "era": 3,
+      "title": "Re: soooo....uuupp",
+      "description": "On 2008-05-05, an email from adam iff <adamiff@yahoo.com> with subject \"Re: soooo....uuupp\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-187140-10803-qm-web35908-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-987367-21036-qm-web35904-mail-mud-yahoo-co",
+      "eventDate": "2008-06-10",
+      "era": 3,
+      "title": "damn phone died...",
+      "description": "On 2008-06-10, an email from adam iff <adamiff@yahoo.com> with subject \"damn phone died...\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-987367-21036-qm-web35904-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:16"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-803558812-20080610234310-linkforever-net",
+      "eventDate": "2008-06-10",
+      "era": 3,
+      "title": "Re: Contact Us: PhpLD Mods Inquiry",
+      "description": "On 2008-06-10, an email from LinkForever <admin@linkforever.net> with subject \"Re: Contact Us: PhpLD Mods Inquiry\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-803558812-20080610234310-linkforever-net",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-250253-53027-qm-web53812-mail-re2-yahoo-co",
+      "eventDate": "2008-06-19",
+      "era": 3,
+      "title": "Re: Neel(EazeIndia) Re: Script Integration",
+      "description": "On 2008-06-19, an email from \"raj .\" <emazeservice@yahoo.com> with subject \"Re: Neel(EazeIndia) Re: Script Integration\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-250253-53027-qm-web53812-mail-re2-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-981132-95452-qm-web58203-mail-re3-yahoo-co",
+      "eventDate": "2008-06-24",
+      "era": 3,
+      "title": "Re: phpLD",
+      "description": "On 2008-06-24, an email from Billy Duran <rjsystems@yahoo.com> with subject \"Re: phpLD\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-981132-95452-qm-web58203-mail-re3-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-162541-81412-qm-web35904-mail-mud-yahoo-co",
+      "eventDate": "2008-07-26",
+      "era": 3,
+      "title": "Re: still tryin....",
+      "description": "On 2008-07-26, an email from adam iff <adamiff@yahoo.com> with subject \"Re: still tryin....\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-162541-81412-qm-web35904-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-456639-93056-qm-web34202-mail-mud-yahoo-co",
+      "eventDate": "2008-08-14",
+      "era": 3,
+      "title": "Re: SCOOTER",
+      "description": "On 2008-08-14, an email from Lyubomyr Grynyshyn <grynyshyn@yahoo.com> with subject \"Re: SCOOTER\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-456639-93056-qm-web34202-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    },
+    {
+      "storyKey": "email-fact:event:email-evt-msgid-270510-51552-qm-web35904-mail-mud-yahoo-co",
+      "eventDate": "2008-08-14",
+      "era": 3,
+      "title": "Re: dude",
+      "description": "On 2008-08-14, an email from adam iff <adamiff@yahoo.com> with subject \"Re: dude\" was captured as a potential narrative marker pending review.",
+      "sourceType": "inferred",
+      "timelineTrack": "daniel_personal_life_story",
+      "confidence": "hard",
+      "tags": [
+        "ai-filtered",
+        "email-archaeology-import",
+        "source_type_raw:email-archaeology-import",
+        "story_key:email-fact:event:email-evt-msgid-270510-51552-qm-web35904-mail-mud-yahoo-co",
+        "confidence:hard",
+        "project:daniel-adam-goldberg-life-story",
+        "timeline_category:email-archaeology",
+        "track:daniel-personal-life-story",
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "importMetadata": {
+        "importVersion": 1,
+        "importedAt": "2026-05-07T19:54:47.675Z",
+        "origin": "queue",
+        "queueConfidence": "high",
+        "verificationStatus": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+        "capturedAt": "2026-05-07T19:45:18.602Z",
+        "enteredBy": "codex-email-wave2-curation",
+        "relevanceTags": [
+          "domain:personal",
+          "classification:personal_interaction",
+          "signal_score:18"
+        ]
+      }
+    }
+  ]
+}

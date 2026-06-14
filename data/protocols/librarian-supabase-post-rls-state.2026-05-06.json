@@ -1,0 +1,114 @@
+{
+  "spec": "tnf/librarian-supabase-post-rls-state/1.1",
+  "generated_at_utc": "2026-05-06T02:57:30Z",
+  "source": "mcp__supabase__.execute_sql",
+  "connection_context": {
+    "checked_at_utc": "2026-05-06T02:56:47Z",
+    "current_database": "postgres",
+    "current_schema": "public"
+  },
+  "migration_state": {
+    "schema_migrations": [
+      "001 virtual_library_schema",
+      "002 story_privacy_wall",
+      "20260504014949 librarian_archive_v1_20260504",
+      "20260504015905 librarian_archive_fk_indexes_v1_20260504",
+      "20260506021624 librarian_rls_stage_v1_20260506"
+    ],
+    "applied_out_of_band_migration": "20260506021624_librarian_rls_stage_v1_20260506.sql",
+    "migration_history_reconciliation": {
+      "status": "completed",
+      "reconciled_at_utc": "2026-05-06T02:56:00Z",
+      "method": "idempotent metadata insert into supabase_migrations.schema_migrations",
+      "inserted_version": "20260506021624",
+      "inserted_name": "librarian_rls_stage_v1_20260506",
+      "created_by": "whodaniel@yahoo.com",
+      "statement_marker": "OUT_OF_BAND_APPLY metadata marker"
+    }
+  },
+  "librarian_archive_state": {
+    "checked_at_utc": "2026-05-06T02:56:47Z",
+    "row_counts": {
+      "librarian.artifact": 1820,
+      "librarian.artifact_text": 1787,
+      "librarian.text_chunk": 657,
+      "librarian.timeline_event": 1650,
+      "librarian_ingest.ingestion_run": 4,
+      "librarian_ingest.ingestion_artifact_result": 1953
+    },
+    "rls": {
+      "enabled_table_count": 9,
+      "disabled_table_count": 0,
+      "policy_count": 9
+    },
+    "owner_backfill": {
+      "timeline_event_owner_nulls": 0,
+      "ingestion_run_owner_nulls": 0
+    },
+    "role_grants": {
+      "usage": {
+        "anon": {
+          "librarian": false,
+          "librarian_ingest": false
+        },
+        "authenticated": {
+          "librarian": true,
+          "librarian_ingest": true
+        },
+        "service_role": {
+          "librarian": true,
+          "librarian_ingest": true
+        }
+      },
+      "select_tables": {
+        "anon": 0,
+        "authenticated": 9,
+        "service_role": 9
+      }
+    },
+    "policy_behavior_checks": {
+      "authenticated_no_claim_visible_artifacts": 0,
+      "authenticated_with_owner_claim_visible_artifacts": 1820,
+      "service_role_visible_artifacts": 1820
+    },
+    "policies": [
+      "librarian.owner_manage_source",
+      "librarian.owner_manage_artifact",
+      "librarian.owner_manage_artifact_blob",
+      "librarian.owner_manage_artifact_text",
+      "librarian.owner_manage_text_chunk",
+      "librarian.owner_manage_timeline_event",
+      "librarian.owner_manage_timeline_event_artifact",
+      "librarian_ingest.owner_manage_ingestion_run",
+      "librarian_ingest.owner_manage_ingestion_artifact_result"
+    ]
+  },
+  "security_advisory_snapshot": {
+    "public_rls_enabled_no_policy_table_count": 72,
+    "security_definer_executable_by_anon_or_authenticated": [
+      "public.rls_auto_enable()"
+    ],
+    "function_search_path_mutable_count": 121,
+    "unindexed_foreign_keys_count": 58,
+    "table_action_groups_with_multiple_permissive_policies": 1,
+    "impacted_tables_with_multiple_permissive_policies": [
+      "story_sessions"
+    ]
+  },
+  "supabase_changelog_watch": {
+    "source": "https://supabase.com/changelog.md",
+    "checked_on_utc": "2026-05-06T02:46:00Z",
+    "latest_breaking_change": {
+      "published": "2026-05-01",
+      "title": "OAuth token endpoint will return HTTP 200 instead of 201",
+      "link": "https://supabase.com/changelog/45468-breaking-change-oauth-token-endpoint-will-return-http-200-instead-of-201"
+    },
+    "api_exposure_watch": {
+      "published": "2026-04-28",
+      "title": "Tables not exposed to Data and GraphQL API automatically",
+      "link": "https://supabase.com/changelog/45329-breaking-change-tables-not-exposed-to-data-and-graphql-api-automatically",
+      "new_project_default_date": "2026-05-30",
+      "existing_project_enforcement_date": "2026-10-30"
+    }
+  }
+}

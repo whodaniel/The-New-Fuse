@@ -1,0 +1,5 @@
+
+> @the-new-fuse/extension-core@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/extension-core
+> echo "No tests for this package" && exit 0 --passWithNoTests
+
+ ELIFECYCLE  Test failed. See above for more details.

@@ -1,0 +1,92 @@
+{
+  "sourceType": "email-manual-import-queue-pass2",
+  "generatedAt": "2026-05-07T19:18:46.186Z",
+  "sourceDecisionArtifact": "data/protocols/email-manual-adjudication-pass2.2026-05-07.json",
+  "factCount": 3,
+  "facts": [
+    {
+      "factId": "email-fact-2002-12-27-jobpro-central-trial-password-details",
+      "date": "2002-12-27",
+      "domain": "Business & Projects",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "JobPro Central trial password details",
+      "statement": "On 2002-12-27, an email from David O Donnell <david@softouch.ie> with subject \"JobPro Central trial password details\" was captured as a timeline marker across business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.341Z",
+      "relevanceTags": [
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_ba31cbec_6a48_david_softouch_ie_",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292354.emlx",
+        "from": "David O Donnell <david@softouch.ie>",
+        "subject": "JobPro Central trial password details",
+        "dateIso": "2002-12-27T09:20:43.000Z",
+        "score": 9
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2003-06-01-hit-jammer",
+      "date": "2003-06-01",
+      "domain": "Business & Projects",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "hit jammer",
+      "statement": "On 2003-06-01, an email from Mishies.com <acct_tmp2@mishies.com> with subject \"hit jammer\" was captured as a timeline marker across business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.341Z",
+      "relevanceTags": [
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_200305312026796_sm01524_schiffbauer_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271910.emlx",
+        "from": "Mishies.com <acct_tmp2@mishies.com>",
+        "subject": "hit jammer",
+        "dateIso": "2003-06-01T00:37:55.000Z",
+        "score": 15
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-2003-06-08-enter-your-member-number",
+      "date": "2003-06-08",
+      "domain": "Business & Projects",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Enter your Member Number",
+      "statement": "On 2003-06-08, an email from service@paypal.com with subject \"Enter your Member Number\" was captured as a timeline marker across business domains.",
+      "confidence": "low",
+      "enteredBy": "codex-email-curation",
+      "capturedAt": "2026-05-06T18:57:43.341Z",
+      "relevanceTags": [
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:business-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid_1055100810_5258_paypal_com_",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272929.emlx",
+        "from": "service@paypal.com",
+        "subject": "Enter your Member Number",
+        "dateIso": "2003-06-08T19:33:30.000Z",
+        "score": 14
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Verify relationship context and narrative significance before final timeline insertion."
+      }
+    }
+  ]
+}

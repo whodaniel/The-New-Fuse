@@ -1,0 +1,5 @@
+
+> @the-new-fuse/mcp-skills-server@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/mcp-skills-server
+> jest --passWithNoTests --passWithNoTests
+
+No tests found, exiting with code 0

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "tnf-staffops-llm-quota-state/v1",
+  "visibility": "staffops-only",
+  "generatedAt": "2026-06-01T09:10:10.528Z",
+  "agents": {
+    "tnf-local-subdirector": {
+      "quotaRemainingPercent": null,
+      "quotaSource": "no-owner-session",
+      "ownerAgentId": null,
+      "currentProviderId": null,
+      "lastCheckedAt": "2026-06-01T09:10:10.528Z",
+      "thresholdPercent": 10,
+      "handoffState": "no-signal"
+    },
+    "tnf-local-terminal-ttys008": {
+      "quotaRemainingPercent": null,
+      "quotaSource": "no-quota-signal",
+      "ownerAgentId": "tnf-local-terminal-ttys008",
+      "currentProviderId": null,
+      "lastCheckedAt": "2026-06-01T07:29:39.984Z",
+      "thresholdPercent": 10,
+      "handoffState": "no-signal"
+    }
+  },
+  "generatedBy": "tnf-local-subdirector"
+}

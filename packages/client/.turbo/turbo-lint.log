@@ -1,0 +1,6 @@
+
+> @the-new-fuse/client@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/client
+> eslint . --ext .ts,.tsx,.js,.jsx
+
+ ELIFECYCLE  Command failed.
+ WARN   Local package.json exists, but node_modules missing, did you mean to install?

@@ -1,0 +1,1 @@
+{"version":3,"file":"bridge.d.ts","sourceRoot":"","sources":["../../src/services/bridge.ts"],"names":[],"mappings":"AASA,qBAAa,WAAW;IACtB,OAAO,CAAC,eAAe,CAAkB;IACzC,OAAO,CAAC,cAAc,CAAkB;gBAE5B,SAAS,GAAE,MAAiC;IAQlD,KAAK,IAAI,OAAO,CAAC,IAAI,CAAC;CAY7B"}

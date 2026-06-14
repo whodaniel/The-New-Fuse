@@ -1,0 +1,6 @@
+
+> @the-new-fuse/features@0.1.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/features
+> tsc --build
+
+ui/wizard/index.ts(68,8): error TS2882: Cannot find module or type declarations for side-effect import of './wizard.css'.
+ ELIFECYCLE  Command failed with exit code 1.

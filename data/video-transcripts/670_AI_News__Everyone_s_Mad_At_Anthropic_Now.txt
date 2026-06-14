@@ -1,0 +1,1553 @@
+[0:07] As with every week, a ton of stuff
+[0:09] As with every week, a ton of stuff
+[0:09] As with every week, a ton of stuff happened in the world of AI. And here's
+[0:11] happened in the world of AI. And here's
+[0:11] happened in the world of AI. And here's what you probably missed. On Friday of
+[0:12] what you probably missed. On Friday of
+[0:12] what you probably missed. On Friday of last week, we got the long- aaited brand
+[0:15] last week, we got the long- aaited brand
+[0:15] last week, we got the long- aaited brand new model out of DeepSeek, Deepseek V4.
+[0:18] new model out of DeepSeek, Deepseek V4.
+[0:18] new model out of DeepSeek, Deepseek V4. Deepseek V4 is nearly state-of-the-art.
+[0:20] Deepseek V4 is nearly state-of-the-art.
+[0:20] Deepseek V4 is nearly state-of-the-art. It's open-sourced, and it's got a 1
+[0:23] It's open-sourced, and it's got a 1
+[0:23] It's open-sourced, and it's got a 1 million token context length. Now,
+[0:25] million token context length. Now,
+[0:25] million token context length. Now, here's the thing about this model. It's
+[0:27] here's the thing about this model. It's
+[0:27] here's the thing about this model. It's not quite as good as the
+[0:29] not quite as good as the
+[0:29] not quite as good as the state-of-the-art models, right? These
+[0:30] state-of-the-art models, right? These
+[0:30] state-of-the-art models, right? These are well kind of the last generation of
+[0:32] are well kind of the last generation of
+[0:32] are well kind of the last generation of state-of-the-art models. Here we now
+[0:34] state-of-the-art models. Here we now
+[0:34] state-of-the-art models. Here we now have Opus 4.7 and GPT 5.5. So, it's kind
+[0:37] have Opus 4.7 and GPT 5.5. So, it's kind
+[0:37] have Opus 4.7 and GPT 5.5. So, it's kind of comparing it to the last generation
+[0:39] of comparing it to the last generation
+[0:39] of comparing it to the last generation of models, but we can see it's really
+[0:41] of models, but we can see it's really
+[0:41] of models, but we can see it's really dang close in almost every single
+[0:44] dang close in almost every single
+[0:44] dang close in almost every single benchmark. It's right up there with the
+[0:45] benchmark. It's right up there with the
+[0:45] benchmark. It's right up there with the state-of-the-art models in math, right
+[0:47] state-of-the-art models in math, right
+[0:47] state-of-the-art models in math, right up there with state-of-the-art questions
+[0:49] up there with state-of-the-art questions
+[0:49] up there with state-of-the-art questions and answers. And if you look through all
+[0:51] and answers. And if you look through all
+[0:51] and answers. And if you look through all of the benchmarks, it's just really,
+[0:52] of the benchmarks, it's just really,
+[0:52] of the benchmarks, it's just really, really close to these state-of-the-art
+[0:54] really close to these state-of-the-art
+[0:54] really close to these state-of-the-art models here. Now, this is important
+[0:56] models here. Now, this is important
+[0:56] models here. Now, this is important again because this is open-source
+[0:58] again because this is open-source
+[0:58] again because this is open-source openweight models. Now, they're still a
+[1:00] openweight models. Now, they're still a
+[1:00] openweight models. Now, they're still a little bit too big to run on consumer
+[1:02] little bit too big to run on consumer
+[1:02] little bit too big to run on consumer GPUs, so you're still likely going to
+[1:04] GPUs, so you're still likely going to
+[1:04] GPUs, so you're still likely going to use them on DeepSeek's cloud or some
+[1:07] use them on DeepSeek's cloud or some
+[1:07] use them on DeepSeek's cloud or some other cloud service. However, the
+[1:09] other cloud service. However, the
+[1:09] other cloud service. However, the biggest differentiator and the reason
+[1:11] biggest differentiator and the reason
+[1:11] biggest differentiator and the reason all of the big model companies sort of
+[1:13] all of the big model companies sort of
+[1:13] all of the big model companies sort of freak out about this stuff and when
+[1:15] freak out about this stuff and when
+[1:15] freak out about this stuff and when models like this come out, it sort of
+[1:17] models like this come out, it sort of
+[1:17] models like this come out, it sort of has a little bit of a shock on the stock
+[1:18] has a little bit of a shock on the stock
+[1:18] has a little bit of a shock on the stock market is because of this pricing down
+[1:21] market is because of this pricing down
+[1:21] market is because of this pricing down here. This is basically almost as good
+[1:24] here. This is basically almost as good
+[1:24] here. This is basically almost as good as the best models out there. It's got
+[1:26] as the best models out there. It's got
+[1:26] as the best models out there. It's got the 1 million token context window, so
+[1:29] the 1 million token context window, so
+[1:29] the 1 million token context window, so you can put in a ton of text and receive
+[1:31] you can put in a ton of text and receive
+[1:31] you can put in a ton of text and receive a ton of text back from it. And it cost
+[1:33] a ton of text back from it. And it cost
+[1:34] a ton of text back from it. And it cost a $1.74 per million tokens input and
+[1:38] a $1.74 per million tokens input and
+[1:38] a $1.74 per million tokens input and 3.48 per million tokens output. If we
+[1:40] 3.48 per million tokens output. If we
+[1:40] 3.48 per million tokens output. If we compare that to GPT 5.5, GPT 5.5 is $5
+[1:45] compare that to GPT 5.5, GPT 5.5 is $5
+[1:45] compare that to GPT 5.5, GPT 5.5 is $5 per 1 million tokens input and $30 per 1
+[1:48] per 1 million tokens input and $30 per 1
+[1:48] per 1 million tokens input and $30 per 1 million token output. And even GPT 5.4,
+[1:51] million token output. And even GPT 5.4,
+[1:51] million token output. And even GPT 5.4, 4. It still looks pretty cheap compared
+[1:53] 4. It still looks pretty cheap compared
+[1:53] 4. It still looks pretty cheap compared to that. 250 per 1 million token input,
+[1:56] to that. 250 per 1 million token input,
+[1:56] to that. 250 per 1 million token input, 15 per 1 million token output. And this
+[1:58] 15 per 1 million token output. And this
+[1:58] 15 per 1 million token output. And this model is roughly as good as GPT 5.4. If
+[2:01] model is roughly as good as GPT 5.4. If
+[2:01] model is roughly as good as GPT 5.4. If we compare it to Claude Opus 4.7, $5 per
+[2:04] we compare it to Claude Opus 4.7, $5 per
+[2:04] we compare it to Claude Opus 4.7, $5 per million token input, $25 per million
+[2:07] million token input, $25 per million
+[2:07] million token input, $25 per million token output. And if we look at Gemini
+[2:09] token output. And if we look at Gemini
+[2:09] token output. And if we look at Gemini 3.1, that one's $2 per million token
+[2:11] 3.1, that one's $2 per million token
+[2:11] 3.1, that one's $2 per million token input, and $12 per million token output.
+[2:15] input, and $12 per million token output.
+[2:15] input, and $12 per million token output. But then it gets even higher when you
+[2:16] But then it gets even higher when you
+[2:16] But then it gets even higher when you increase the amount of tokens. With that
+[2:18] increase the amount of tokens. With that
+[2:18] increase the amount of tokens. With that in mind, looking at their pricing,
+[2:20] in mind, looking at their pricing,
+[2:20] in mind, looking at their pricing, companies are able to get nearly the
+[2:23] companies are able to get nearly the
+[2:23] companies are able to get nearly the same capability at a significant
+[2:25] same capability at a significant
+[2:25] same capability at a significant discount. And because these models are
+[2:27] discount. And because these models are
+[2:27] discount. And because these models are open, they could theoretically put them
+[2:29] open, they could theoretically put them
+[2:29] open, they could theoretically put them on their own supercomputers in their
+[2:31] on their own supercomputers in their
+[2:31] on their own supercomputers in their offices and run them locally and have
+[2:33] offices and run them locally and have
+[2:34] offices and run them locally and have all of the security and safety and
+[2:36] all of the security and safety and
+[2:36] all of the security and safety and privacy benefits of having these local
+[2:38] privacy benefits of having these local
+[2:38] privacy benefits of having these local models. So, these open models are
+[2:40] models. So, these open models are
+[2:40] models. So, these open models are catching up and they're also being
+[2:41] catching up and they're also being
+[2:42] catching up and they're also being trained for a lot cheaper than the
+[2:43] trained for a lot cheaper than the
+[2:44] trained for a lot cheaper than the models here in the US are being trained
+[2:45] models here in the US are being trained
+[2:46] models here in the US are being trained for because due to export restrictions
+[2:48] for because due to export restrictions
+[2:48] for because due to export restrictions over to China, they're not able to get
+[2:51] over to China, they're not able to get
+[2:51] over to China, they're not able to get as powerful of GPUs to train these
+[2:53] as powerful of GPUs to train these
+[2:53] as powerful of GPUs to train these models on. So, they're finding more
+[2:55] models on. So, they're finding more
+[2:55] models on. So, they're finding more efficient, more coste effective ways to
+[2:57] efficient, more coste effective ways to
+[2:57] efficient, more coste effective ways to train these models that are nearly as
+[2:59] train these models that are nearly as
+[2:59] train these models that are nearly as good as the models here in the US.
+[3:01] good as the models here in the US.
+[3:01] good as the models here in the US. They're making them open weight and then
+[3:02] They're making them open weight and then
+[3:02] They're making them open weight and then they're drastically undercutting the
+[3:05] they're drastically undercutting the
+[3:05] they're drastically undercutting the price of using these closed models. So
+[3:08] price of using these closed models. So
+[3:08] price of using these closed models. So every time Deepseek puts another one of
+[3:09] every time Deepseek puts another one of
+[3:09] every time Deepseek puts another one of these models out into the world, it kind
+[3:11] these models out into the world, it kind
+[3:11] these models out into the world, it kind of freaks out a lot of the Frontier Labs
+[3:13] of freaks out a lot of the Frontier Labs
+[3:14] of freaks out a lot of the Frontier Labs that are based here in the US, as well
+[3:16] that are based here in the US, as well
+[3:16] that are based here in the US, as well as typically has a little bit of an
+[3:17] as typically has a little bit of an
+[3:17] as typically has a little bit of an impact on the stock market as people
+[3:19] impact on the stock market as people
+[3:19] impact on the stock market as people realize that a lot of the spending
+[3:21] realize that a lot of the spending
+[3:21] realize that a lot of the spending that's going into AI here in the US
+[3:23] that's going into AI here in the US
+[3:24] that's going into AI here in the US maybe doesn't need to happen as
+[3:26] maybe doesn't need to happen as
+[3:26] maybe doesn't need to happen as excessively as it is because companies
+[3:29] excessively as it is because companies
+[3:29] excessively as it is because companies in China are figuring out how to get
+[3:31] in China are figuring out how to get
+[3:31] in China are figuring out how to get similar results for a lot less
+[3:33] similar results for a lot less
+[3:33] similar results for a lot less expensive. But as these open models get
+[3:35] expensive. But as these open models get
+[3:35] expensive. But as these open models get better and better, bigger like
+[3:36] better and better, bigger like
+[3:36] better and better, bigger like enterprise companies that are spending
+[3:38] enterprise companies that are spending
+[3:38] enterprise companies that are spending insane amounts of money on their token
+[3:40] insane amounts of money on their token
+[3:40] insane amounts of money on their token costs to use these models, well, you
+[3:43] costs to use these models, well, you
+[3:43] costs to use these models, well, you might start to see more and more of them
+[3:44] might start to see more and more of them
+[3:44] might start to see more and more of them pivot to the open models for the
+[3:46] pivot to the open models for the
+[3:46] pivot to the open models for the security and privacy reasons as well as
+[3:49] security and privacy reasons as well as
+[3:49] security and privacy reasons as well as for the just insane cost-saving reasons.
+[3:51] for the just insane cost-saving reasons.
+[3:51] for the just insane cost-saving reasons. And while we're on the topic of open
+[3:53] And while we're on the topic of open
+[3:53] And while we're on the topic of open models, Nvidia released another open
+[3:55] models, Nvidia released another open
+[3:55] models, Nvidia released another open model this week as well called Neotron 3
+[3:59] model this week as well called Neotron 3
+[3:59] model this week as well called Neotron 3 Nano Omni model. Now, this model's Omni
+[4:02] Nano Omni model. Now, this model's Omni
+[4:02] Nano Omni model. Now, this model's Omni because it has vision, audio, and
+[4:04] because it has vision, audio, and
+[4:04] because it has vision, audio, and language, and it's designed to work
+[4:06] language, and it's designed to work
+[4:06] language, and it's designed to work really well with AI agents, which makes
+[4:09] really well with AI agents, which makes
+[4:09] really well with AI agents, which makes sense because Jensen's constantly
+[4:11] sense because Jensen's constantly
+[4:11] sense because Jensen's constantly talking about OpenClaw and how huge of a
+[4:13] talking about OpenClaw and how huge of a
+[4:13] talking about OpenClaw and how huge of a deal OpenClaw is to the world. So,
+[4:16] deal OpenClaw is to the world. So,
+[4:16] deal OpenClaw is to the world. So, Nvidia's building models that are much
+[4:18] Nvidia's building models that are much
+[4:18] Nvidia's building models that are much more efficient for that kind of use
+[4:20] more efficient for that kind of use
+[4:20] more efficient for that kind of use case. But unlike the models that most
+[4:22] case. But unlike the models that most
+[4:22] case. But unlike the models that most people are using for their agents, which
+[4:25] people are using for their agents, which
+[4:25] people are using for their agents, which are anthropic and open AAI and Google
+[4:27] are anthropic and open AAI and Google
+[4:27] are anthropic and open AAI and Google models, this new Neotron 3 Nano Omni is
+[4:30] models, this new Neotron 3 Nano Omni is
+[4:30] models, this new Neotron 3 Nano Omni is an open model. So again, this is a model
+[4:33] an open model. So again, this is a model
+[4:33] an open model. So again, this is a model that can be run locally. If you are
+[4:34] that can be run locally. If you are
+[4:34] that can be run locally. If you are running it locally, the cost to run it
+[4:36] running it locally, the cost to run it
+[4:36] running it locally, the cost to run it is essentially just the cost of the
+[4:38] is essentially just the cost of the
+[4:38] is essentially just the cost of the electricity for whatever computer you're
+[4:41] electricity for whatever computer you're
+[4:41] electricity for whatever computer you're running it on. And it's capable of
+[4:42] running it on. And it's capable of
+[4:42] running it on. And it's capable of handling text, images, audio, video,
+[4:44] handling text, images, audio, video,
+[4:44] handling text, images, audio, video, documents, charts, and graphical
+[4:46] documents, charts, and graphical
+[4:46] documents, charts, and graphical interfaces as input. It's even capable
+[4:48] interfaces as input. It's even capable
+[4:48] interfaces as input. It's even capable of being run on a little DJX spark box.
+[4:51] of being run on a little DJX spark box.
+[4:51] of being run on a little DJX spark box. A few years ago when we were talking
+[4:53] A few years ago when we were talking
+[4:53] A few years ago when we were talking about all these latest models coming out
+[4:54] about all these latest models coming out
+[4:54] about all these latest models coming out from Enthropic and Google and OpenAI,
+[4:57] from Enthropic and Google and OpenAI,
+[4:57] from Enthropic and Google and OpenAI, the general consensus was these
+[4:58] the general consensus was these
+[4:58] the general consensus was these open-source models, these openweight
+[5:00] open-source models, these openweight
+[5:00] open-source models, these openweight models are pretty much never going to
+[5:02] models are pretty much never going to
+[5:02] models are pretty much never going to catch up. But I feel like we're getting
+[5:04] catch up. But I feel like we're getting
+[5:04] catch up. But I feel like we're getting to a point where they're getting really
+[5:05] to a point where they're getting really
+[5:05] to a point where they're getting really really dang close. And well, the
+[5:07] really dang close. And well, the
+[5:08] really dang close. And well, the Frontier models are so good now that
+[5:10] Frontier models are so good now that
+[5:10] Frontier models are so good now that most people's use cases don't even need
+[5:13] most people's use cases don't even need
+[5:13] most people's use cases don't even need the state-of-the-art anymore for most of
+[5:15] the state-of-the-art anymore for most of
+[5:15] the state-of-the-art anymore for most of what they're doing. If you're using it
+[5:16] what they're doing. If you're using it
+[5:16] what they're doing. If you're using it for like document summarization or you
+[5:19] for like document summarization or you
+[5:19] for like document summarization or you know finding correlations and patterns
+[5:20] know finding correlations and patterns
+[5:20] know finding correlations and patterns within data or helping you explain
+[5:23] within data or helping you explain
+[5:23] within data or helping you explain certain things or you know little AI
+[5:26] certain things or you know little AI
+[5:26] certain things or you know little AI agents for customer support, the best
+[5:28] agents for customer support, the best
+[5:28] agents for customer support, the best state-of-the-art models are almost
+[5:30] state-of-the-art models are almost
+[5:30] state-of-the-art models are almost overkill now for that. And the cheaper
+[5:33] overkill now for that. And the cheaper
+[5:33] overkill now for that. And the cheaper and open models are actually fairly good
+[5:35] and open models are actually fairly good
+[5:36] and open models are actually fairly good at that, but a lot less expensive to
+[5:37] at that, but a lot less expensive to
+[5:37] at that, but a lot less expensive to use. And if privacy and security are
+[5:39] use. And if privacy and security are
+[5:40] use. And if privacy and security are more of a concern for your company or
+[5:42] more of a concern for your company or
+[5:42] more of a concern for your company or what you do with your business, well,
+[5:43] what you do with your business, well,
+[5:44] what you do with your business, well, you can actually get devices and run
+[5:45] you can actually get devices and run
+[5:45] you can actually get devices and run these locally now. Pretty crazy to see
+[5:48] these locally now. Pretty crazy to see
+[5:48] these locally now. Pretty crazy to see how much and how quickly openw weight
+[5:50] how much and how quickly openw weight
+[5:50] how much and how quickly openw weight models have caught up with
+[5:51] models have caught up with
+[5:51] models have caught up with state-of-the-art to the point now where
+[5:53] state-of-the-art to the point now where
+[5:53] state-of-the-art to the point now where they're pretty usable for most people's
+[5:55] they're pretty usable for most people's
+[5:55] they're pretty usable for most people's use cases. But let's keep this
+[5:57] use cases. But let's keep this
+[5:57] use cases. But let's keep this discussion on open going even further.
+[5:59] discussion on open going even further.
+[5:59] discussion on open going even further. This company, Poolside AI, here just
+[6:01] This company, Poolside AI, here just
+[6:02] This company, Poolside AI, here just released Laguna XS2 and Lagona M1. These
+[6:06] released Laguna XS2 and Lagona M1. These
+[6:06] released Laguna XS2 and Lagona M1. These are two new foundation models and the
+[6:08] are two new foundation models and the
+[6:08] are two new foundation models and the Laguna XS2 is an openweight 33 billion
+[6:11] Laguna XS2 is an openweight 33 billion
+[6:12] Laguna XS2 is an openweight 33 billion total parameter model. Both models are
+[6:14] total parameter model. Both models are
+[6:14] total parameter model. Both models are currently free to use. So their M1 model
+[6:16] currently free to use. So their M1 model
+[6:16] currently free to use. So their M1 model is 225 billion parameters and it looks
+[6:19] is 225 billion parameters and it looks
+[6:19] is 225 billion parameters and it looks like it's designed to compete with some
+[6:20] like it's designed to compete with some
+[6:20] like it's designed to compete with some of these larger models here, but not
+[6:23] of these larger models here, but not
+[6:23] of these larger models here, but not necessarily the most state-of-the-art
+[6:24] necessarily the most state-of-the-art
+[6:24] necessarily the most state-of-the-art models. Their XS2, the one that they are
+[6:27] models. Their XS2, the one that they are
+[6:27] models. Their XS2, the one that they are releasing as open weights, appears to be
+[6:29] releasing as open weights, appears to be
+[6:29] releasing as open weights, appears to be designed to compete with like Gemma 4,
+[6:31] designed to compete with like Gemma 4,
+[6:31] designed to compete with like Gemma 4, Devstrol Small 2, Claude Haiku, models
+[6:34] Devstrol Small 2, Claude Haiku, models
+[6:34] Devstrol Small 2, Claude Haiku, models like that and seems to fall in line with
+[6:37] like that and seems to fall in line with
+[6:37] like that and seems to fall in line with the rest being pretty in the middle of
+[6:39] the rest being pretty in the middle of
+[6:39] the rest being pretty in the middle of all of them. The company Mistl released
+[6:41] all of them. The company Mistl released
+[6:41] all of them. The company Mistl released a new model this week for remote agents
+[6:43] a new model this week for remote agents
+[6:44] a new model this week for remote agents in Vibe and it's powered by their Misall
+[6:46] in Vibe and it's powered by their Misall
+[6:46] in Vibe and it's powered by their Misall Medium 3.5 model. Now, this one's
+[6:48] Medium 3.5 model. Now, this one's
+[6:48] Medium 3.5 model. Now, this one's clearly designed to work inside of agent
+[6:50] clearly designed to work inside of agent
+[6:50] clearly designed to work inside of agent harnesses like Open Claw and Hermes and
+[6:52] harnesses like Open Claw and Hermes and
+[6:52] harnesses like Open Claw and Hermes and things like that. And it merges
+[6:53] things like that. And it merges
+[6:53] things like that. And it merges instruction following, reasoning, and
+[6:55] instruction following, reasoning, and
+[6:55] instruction following, reasoning, and coding into a single 128B dense model.
+[6:58] coding into a single 128B dense model.
+[6:58] coding into a single 128B dense model. And it's also released as open weights.
+[7:01] And it's also released as open weights.
+[7:01] And it's also released as open weights. Now, if you want to dive into the
+[7:02] Now, if you want to dive into the
+[7:02] Now, if you want to dive into the benchmarks and go a little deeper on
+[7:03] benchmarks and go a little deeper on
+[7:04] benchmarks and go a little deeper on what all of these models are really good
+[7:05] what all of these models are really good
+[7:05] what all of these models are really good at, I will link up every single one of
+[7:07] at, I will link up every single one of
+[7:07] at, I will link up every single one of them in the description so you could
+[7:09] them in the description so you could
+[7:09] them in the description so you could find out which model is right for you.
+[7:10] find out which model is right for you.
+[7:10] find out which model is right for you. I've just been really really impressed
+[7:12] I've just been really really impressed
+[7:12] I've just been really really impressed with all of these open models coming out
+[7:14] with all of these open models coming out
+[7:14] with all of these open models coming out lately that are like just that close to
+[7:17] lately that are like just that close to
+[7:17] lately that are like just that close to being as good as the state-of-the-art
+[7:19] being as good as the state-of-the-art
+[7:19] being as good as the state-of-the-art models. Alibaba also released a new
+[7:21] models. Alibaba also released a new
+[7:21] models. Alibaba also released a new model this week for images called Quinn
+[7:24] model this week for images called Quinn
+[7:24] model this week for images called Quinn Image 2.0 Pro. Now, on the Arena
+[7:27] Image 2.0 Pro. Now, on the Arena
+[7:27] Image 2.0 Pro. Now, on the Arena leaderboard here, it's ranked ninth. So,
+[7:29] leaderboard here, it's ranked ninth. So,
+[7:29] leaderboard here, it's ranked ninth. So, I'm not going to get too deep into this
+[7:30] I'm not going to get too deep into this
+[7:30] I'm not going to get too deep into this one just because I mean we've got plenty
+[7:32] one just because I mean we've got plenty
+[7:32] one just because I mean we've got plenty of image models that do quite a bit
+[7:34] of image models that do quite a bit
+[7:34] of image models that do quite a bit better than this one. But if I skim
+[7:36] better than this one. But if I skim
+[7:36] better than this one. But if I skim their thread here on X, we can see the
+[7:38] their thread here on X, we can see the
+[7:38] their thread here on X, we can see the types of images that it generates here.
+[7:40] types of images that it generates here.
+[7:40] types of images that it generates here. All of these were generated with this
+[7:42] All of these were generated with this
+[7:42] All of these were generated with this model. And it can do text and it can do
+[7:45] model. And it can do text and it can do
+[7:45] model. And it can do text and it can do memes apparently. And here's another
+[7:47] memes apparently. And here's another
+[7:47] memes apparently. And here's another model that actually came out last week,
+[7:49] model that actually came out last week,
+[7:49] model that actually came out last week, but I missed it in last week's video, so
+[7:50] but I missed it in last week's video, so
+[7:50] but I missed it in last week's video, so I wanted to make sure I touched on it in
+[7:52] I wanted to make sure I touched on it in
+[7:52] I wanted to make sure I touched on it in this week's video. And that's the new
+[7:53] this week's video. And that's the new
+[7:53] this week's video. And that's the new Gro Voice ThinkFast 1.0 model from XAI.
+[7:57] Gro Voice ThinkFast 1.0 model from XAI.
+[7:57] Gro Voice ThinkFast 1.0 model from XAI. This is a new voice model that's
+[7:59] This is a new voice model that's
+[7:59] This is a new voice model that's designed to be really, really fast, have
+[8:01] designed to be really, really fast, have
+[8:01] designed to be really, really fast, have low latency, so when you ask it a
+[8:03] low latency, so when you ask it a
+[8:03] low latency, so when you ask it a question, there's not a ton of delay
+[8:04] question, there's not a ton of delay
+[8:04] question, there's not a ton of delay from the time you ask the question to
+[8:06] from the time you ask the question to
+[8:06] from the time you ask the question to when it responds. It just gets back to
+[8:08] when it responds. It just gets back to
+[8:08] when it responds. It just gets back to you really, really quickly. Stuff like
+[8:09] you really, really quickly. Stuff like
+[8:09] you really, really quickly. Stuff like this is kind of designed to be for like
+[8:11] this is kind of designed to be for like
+[8:11] this is kind of designed to be for like customer support. You can have your
+[8:12] customer support. You can have your
+[8:12] customer support. You can have your phone agents be AI and they'll actually
+[8:15] phone agents be AI and they'll actually
+[8:15] phone agents be AI and they'll actually respond a lot quicker than sort of
+[8:17] respond a lot quicker than sort of
+[8:17] respond a lot quicker than sort of having a delay between you asking it
+[8:19] having a delay between you asking it
+[8:19] having a delay between you asking it that question and it actually giving you
+[8:21] that question and it actually giving you
+[8:21] that question and it actually giving you that response. Yeah, I'm seeing a $65
+[8:24] that response. Yeah, I'm seeing a $65
+[8:24] that response. Yeah, I'm seeing a $65 charge for activation, but I haven't
+[8:26] charge for activation, but I haven't
+[8:26] charge for activation, but I haven't received my kit yet.
+[8:28] received my kit yet.
+[8:28] received my kit yet. >> Thanks for letting me know, John. Let's
+[8:30] >> Thanks for letting me know, John. Let's
+[8:30] >> Thanks for letting me know, John. Let's get this sorted. First, I'll send a
+[8:32] get this sorted. First, I'll send a
+[8:32] get this sorted. First, I'll send a six-digit code to your email address for
+[8:34] six-digit code to your email address for
+[8:34] six-digit code to your email address for verification.
+[8:35] verification.
+[8:36] verification. >> Okay, I see it in my inbox. The code is
+[8:38] >> Okay, I see it in my inbox. The code is
+[8:38] >> Okay, I see it in my inbox. The code is G4XM21.
+[8:41] G4XM21.
+[8:41] G4XM21. >> Got it. Let me verify that code for you.
+[8:44] >> Got it. Let me verify that code for you.
+[8:44] >> Got it. Let me verify that code for you. All set. One sec while I pull up your
+[8:46] All set. One sec while I pull up your
+[8:46] All set. One sec while I pull up your account's information.
+[8:48] account's information.
+[8:48] account's information. Okay. I'm seeing a charge for $6510
+[8:52] Okay. I'm seeing a charge for $6510
+[8:52] Okay. I'm seeing a charge for $6510 for activation of the kit you ordered on
+[8:54] for activation of the kit you ordered on
+[8:54] for activation of the kit you ordered on April 20th. It looks like the kit is
+[8:56] April 20th. It looks like the kit is
+[8:56] April 20th. It looks like the kit is still in transit and expected to arrive
+[8:58] still in transit and expected to arrive
+[8:58] still in transit and expected to arrive on the 24th. Is that the one?
+[9:01] on the 24th. Is that the one?
+[9:01] on the 24th. Is that the one? >> Yep, that's it.
+[9:02] >> Yep, that's it.
+[9:02] >> Yep, that's it. >> Great. Let's get this sorted.
+[9:04] >> Great. Let's get this sorted.
+[9:04] >> Great. Let's get this sorted. >> You get the idea. It's pretty dang
+[9:06] >> You get the idea. It's pretty dang
+[9:06] >> You get the idea. It's pretty dang quick. That was all in real time. So,
+[9:08] quick. That was all in real time. So,
+[9:08] quick. That was all in real time. So, you can hear that this was a real
+[9:10] you can hear that this was a real
+[9:10] you can hear that this was a real person. And as he responded, the AI
+[9:12] person. And as he responded, the AI
+[9:12] person. And as he responded, the AI responded at a very natural sort of
+[9:15] responded at a very natural sort of
+[9:15] responded at a very natural sort of pace. It's also now what powers
+[9:17] pace. It's also now what powers
+[9:17] pace. It's also now what powers Starlink's phone sales and customer
+[9:19] Starlink's phone sales and customer
+[9:19] Starlink's phone sales and customer support experience. I haven't used this
+[9:21] support experience. I haven't used this
+[9:21] support experience. I haven't used this animation in a while, but we've had a
+[9:23] animation in a while, but we've had a
+[9:23] animation in a while, but we've had a ton of drama in the AI world this week.
+[9:25] ton of drama in the AI world this week.
+[9:26] ton of drama in the AI world this week. So, let's break some of that down.
+[9:32] Starting with the soap opera everybody's
+[9:34] Starting with the soap opera everybody's
+[9:34] Starting with the soap opera everybody's kind of paying attention to right now,
+[9:35] kind of paying attention to right now,
+[9:36] kind of paying attention to right now, and that is the legal battle between
+[9:38] and that is the legal battle between
+[9:38] and that is the legal battle between Elon Musk and Sam Alman. So Elon sued
+[9:42] Elon Musk and Sam Alman. So Elon sued
+[9:42] Elon Musk and Sam Alman. So Elon sued OpenAI, accusing them of abandoning its
+[9:44] OpenAI, accusing them of abandoning its
+[9:44] OpenAI, accusing them of abandoning its founding mission of developing AI to
+[9:46] founding mission of developing AI to
+[9:46] founding mission of developing AI to benefit humanity and shifting focus to
+[9:48] benefit humanity and shifting focus to
+[9:48] benefit humanity and shifting focus to boosting profits instead. That trial
+[9:51] boosting profits instead. That trial
+[9:51] boosting profits instead. That trial finally started this week. Musk, who is
+[9:53] finally started this week. Musk, who is
+[9:53] finally started this week. Musk, who is an original co-founder of OpenAI, claims
+[9:55] an original co-founder of OpenAI, claims
+[9:55] an original co-founder of OpenAI, claims that Altman and Greg Brockman tricked
+[9:57] that Altman and Greg Brockman tricked
+[9:57] that Altman and Greg Brockman tricked him into giving the company money only
+[9:59] him into giving the company money only
+[9:59] him into giving the company money only to turn their backs on their original
+[10:00] to turn their backs on their original
+[10:00] to turn their backs on their original goal. OpenAI is claiming that this is
+[10:02] goal. OpenAI is claiming that this is
+[10:02] goal. OpenAI is claiming that this is just a bid to boost Elon's own SpaceX,
+[10:05] just a bid to boost Elon's own SpaceX,
+[10:05] just a bid to boost Elon's own SpaceX, XAI, and X companies that have launched
+[10:07] XAI, and X companies that have launched
+[10:08] XAI, and X companies that have launched Grock, which is a competitor to Chad
+[10:09] Grock, which is a competitor to Chad
+[10:09] Grock, which is a competitor to Chad GPT. Musk wants Sam Alman and Greg
+[10:12] GPT. Musk wants Sam Alman and Greg
+[10:12] GPT. Musk wants Sam Alman and Greg Brockman removed from the company and to
+[10:14] Brockman removed from the company and to
+[10:14] Brockman removed from the company and to stop operating as a public benefit
+[10:16] stop operating as a public benefit
+[10:16] stop operating as a public benefit corporation. I've been following along
+[10:17] corporation. I've been following along
+[10:17] corporation. I've been following along to what's going on with this trial over
+[10:19] to what's going on with this trial over
+[10:19] to what's going on with this trial over on this Verge Realtime Update page,
+[10:22] on this Verge Realtime Update page,
+[10:22] on this Verge Realtime Update page, which you know will be linked up. Every
+[10:24] which you know will be linked up. Every
+[10:24] which you know will be linked up. Every like 15 minutes or so, they're posting
+[10:26] like 15 minutes or so, they're posting
+[10:26] like 15 minutes or so, they're posting an update of what's been going on in the
+[10:28] an update of what's been going on in the
+[10:28] an update of what's been going on in the courtroom. And from what I've gathered
+[10:29] courtroom. And from what I've gathered
+[10:29] courtroom. And from what I've gathered so far, Musk has not been looking too
+[10:32] so far, Musk has not been looking too
+[10:32] so far, Musk has not been looking too great. They put him on the stand and
+[10:34] great. They put him on the stand and
+[10:34] great. They put him on the stand and during his testimony, he sort of refused
+[10:36] during his testimony, he sort of refused
+[10:36] during his testimony, he sort of refused to answer yes or no questions. He sort
+[10:38] to answer yes or no questions. He sort
+[10:38] to answer yes or no questions. He sort of argued with the attorneys and from my
+[10:41] of argued with the attorneys and from my
+[10:41] of argued with the attorneys and from my understanding has not really made
+[10:43] understanding has not really made
+[10:43] understanding has not really made himself look too good. There's obviously
+[10:45] himself look too good. There's obviously
+[10:45] himself look too good. There's obviously a lot of detail, so I'm not going to get
+[10:47] a lot of detail, so I'm not going to get
+[10:47] a lot of detail, so I'm not going to get into all of them. This particular writer
+[10:49] into all of them. This particular writer
+[10:49] into all of them. This particular writer for The Verge says, "After about 5 hours
+[10:51] for The Verge says, "After about 5 hours
+[10:51] for The Verge says, "After about 5 hours into Elon Musk's testimony, I typed the
+[10:53] into Elon Musk's testimony, I typed the
+[10:53] into Elon Musk's testimony, I typed the following sentence. I have never been
+[10:55] following sentence. I have never been
+[10:55] following sentence. I have never been more sympathetic to Sam Holman in my
+[10:57] more sympathetic to Sam Holman in my
+[10:57] more sympathetic to Sam Holman in my life. For hours, Musk refused to answer
+[10:59] life. For hours, Musk refused to answer
+[10:59] life. For hours, Musk refused to answer yes or no questions with yes or no.
+[11:01] yes or no questions with yes or no.
+[11:01] yes or no questions with yes or no. Occasionally forgot things he'd
+[11:02] Occasionally forgot things he'd
+[11:02] Occasionally forgot things he'd testified to in the morning, and scolded
+[11:04] testified to in the morning, and scolded
+[11:04] testified to in the morning, and scolded defense lawyer William Savit. I watched
+[11:06] defense lawyer William Savit. I watched
+[11:06] defense lawyer William Savit. I watched a few jury members glance at each other.
+[11:08] a few jury members glance at each other.
+[11:08] a few jury members glance at each other. During one testy exchange, one woman was
+[11:10] During one testy exchange, one woman was
+[11:10] During one testy exchange, one woman was rubbing her head. So, yeah, most of the
+[11:12] rubbing her head. So, yeah, most of the
+[11:12] rubbing her head. So, yeah, most of the trial has been them examining Elon Musk.
+[11:15] trial has been them examining Elon Musk.
+[11:16] trial has been them examining Elon Musk. From what I can gather, it doesn't sound
+[11:18] From what I can gather, it doesn't sound
+[11:18] From what I can gather, it doesn't sound like he made the best impression, but
+[11:20] like he made the best impression, but
+[11:20] like he made the best impression, but there's still quite a bit more to come
+[11:22] there's still quite a bit more to come
+[11:22] there's still quite a bit more to come from this jury. And if there's anything
+[11:24] from this jury. And if there's anything
+[11:24] from this jury. And if there's anything interesting, I'll probably bring it up
+[11:25] interesting, I'll probably bring it up
+[11:25] interesting, I'll probably bring it up in some future videos. In some anthropic
+[11:28] in some future videos. In some anthropic
+[11:28] in some future videos. In some anthropic drama, a lot of people are getting
+[11:30] drama, a lot of people are getting
+[11:30] drama, a lot of people are getting really, really frustrated by Anthropic's
+[11:32] really, really frustrated by Anthropic's
+[11:32] really, really frustrated by Anthropic's latest business practices. And that's
+[11:34] latest business practices. And that's
+[11:34] latest business practices. And that's the practice of them charging people
+[11:37] the practice of them charging people
+[11:37] the practice of them charging people more whenever they expect that they're
+[11:40] more whenever they expect that they're
+[11:40] more whenever they expect that they're using a harness that Enthropic doesn't
+[11:43] using a harness that Enthropic doesn't
+[11:43] using a harness that Enthropic doesn't want them to use. So, for example,
+[11:44] want them to use. So, for example,
+[11:44] want them to use. So, for example, Hermes or OpenClaw. Here's a tweet from
+[11:47] Hermes or OpenClaw. Here's a tweet from
+[11:47] Hermes or OpenClaw. Here's a tweet from Theo Brown. Fun fact, if you have a
+[11:49] Theo Brown. Fun fact, if you have a
+[11:49] Theo Brown. Fun fact, if you have a recent commit that mentions OpenClaw in
+[11:50] recent commit that mentions OpenClaw in
+[11:50] recent commit that mentions OpenClaw in a JSON blob, Claude Code will either
+[11:53] a JSON blob, Claude Code will either
+[11:53] a JSON blob, Claude Code will either refuse your request or bill you extra
+[11:55] refuse your request or bill you extra
+[11:55] refuse your request or bill you extra money. This is an empty repo. I'm just
+[11:57] money. This is an empty repo. I'm just
+[11:57] money. This is an empty repo. I'm just calling Claude Code directly. Here's
+[11:59] calling Claude Code directly. Here's
+[11:59] calling Claude Code directly. Here's another case as shared from Patel here.
+[12:02] another case as shared from Patel here.
+[12:02] another case as shared from Patel here. Some guy was on Claude Max 20X, the $200
+[12:05] Some guy was on Claude Max 20X, the $200
+[12:05] Some guy was on Claude Max 20X, the $200 a month plan. Yesterday, Claude Code hit
+[12:07] a month plan. Yesterday, Claude Code hit
+[12:07] a month plan. Yesterday, Claude Code hit him with a you're out of extra usage out
+[12:09] him with a you're out of extra usage out
+[12:09] him with a you're out of extra usage out of nowhere. His dashboard showed 13%
+[12:11] of nowhere. His dashboard showed 13%
+[12:12] of nowhere. His dashboard showed 13% weekly usage, 0% current session, 86% of
+[12:15] weekly usage, 0% current session, 86% of
+[12:15] weekly usage, 0% current session, 86% of his plan was sitting there untouched.
+[12:17] his plan was sitting there untouched.
+[12:17] his plan was sitting there untouched. But he got $200.98
+[12:19] But he got $200.98
+[12:19] But he got $200.98 in extra usage, which should have been
+[12:21] in extra usage, which should have been
+[12:21] in extra usage, which should have been covered by his subscription plan. He
+[12:23] covered by his subscription plan. He
+[12:23] covered by his subscription plan. He started binary searching repos and
+[12:25] started binary searching repos and
+[12:25] started binary searching repos and commits mainly on his own until he found
+[12:26] commits mainly on his own until he found
+[12:26] commits mainly on his own until he found the trigger, the string Hermes.md in a
+[12:29] the trigger, the string Hermes.md in a
+[12:29] the trigger, the string Hermes.md in a recent get commit message. He then
+[12:31] recent get commit message. He then
+[12:31] recent get commit message. He then reported it. Enthropic support
+[12:32] reported it. Enthropic support
+[12:32] reported it. Enthropic support acknowledged the bug three times, called
+[12:34] acknowledged the bug three times, called
+[12:34] acknowledged the bug three times, called it an authentication routing issue,
+[12:36] it an authentication routing issue,
+[12:36] it an authentication routing issue, thanked him for finding it, and then
+[12:37] thanked him for finding it, and then
+[12:37] thanked him for finding it, and then refused to refund the money. Here's the
+[12:40] refused to refund the money. Here's the
+[12:40] refused to refund the money. Here's the original message that he was referring
+[12:41] original message that he was referring
+[12:41] original message that he was referring to over on Reddit. You can see in the
+[12:43] to over on Reddit. You can see in the
+[12:43] to over on Reddit. You can see in the code here, you've got adermes.md.
+[12:46] code here, you've got adermes.md.
+[12:46] code here, you've got adermes.md. When he reported to Claude, here was the
+[12:48] When he reported to Claude, here was the
+[12:48] When he reported to Claude, here was the actual response. I sincerely apologize
+[12:50] actual response. I sincerely apologize
+[12:50] actual response. I sincerely apologize for the disruption you experienced with
+[12:52] for the disruption you experienced with
+[12:52] for the disruption you experienced with the billing routing issue. We take
+[12:54] the billing routing issue. We take
+[12:54] the billing routing issue. We take service reliability very seriously.
+[12:55] service reliability very seriously.
+[12:56] service reliability very seriously. However, I need to let you know that we
+[12:57] However, I need to let you know that we
+[12:57] However, I need to let you know that we are unable to issue compensation for
+[12:59] are unable to issue compensation for
+[12:59] are unable to issue compensation for degraded service or technical errors
+[13:01] degraded service or technical errors
+[13:01] degraded service or technical errors that result in incorrect billing
+[13:03] that result in incorrect billing
+[13:03] that result in incorrect billing routing. So, yeah, essentially you can
+[13:05] routing. So, yeah, essentially you can
+[13:05] routing. So, yeah, essentially you can have a subscription plan with Enthropic.
+[13:07] have a subscription plan with Enthropic.
+[13:07] have a subscription plan with Enthropic. you know, pay $100 or $200 a month for
+[13:09] you know, pay $100 or $200 a month for
+[13:09] you know, pay $100 or $200 a month for one of the Claude Max plans, use it for
+[13:11] one of the Claude Max plans, use it for
+[13:11] one of the Claude Max plans, use it for coding, and if your code happens to
+[13:13] coding, and if your code happens to
+[13:13] coding, and if your code happens to mention OpenClaw or Hermes or one of
+[13:16] mention OpenClaw or Hermes or one of
+[13:16] mention OpenClaw or Hermes or one of these harnesses that isn't Claude Code
+[13:18] these harnesses that isn't Claude Code
+[13:18] these harnesses that isn't Claude Code or Claude Co-work, they're going to
+[13:20] or Claude Co-work, they're going to
+[13:20] or Claude Co-work, they're going to assume you're trying to use one of these
+[13:21] assume you're trying to use one of these
+[13:22] assume you're trying to use one of these other harnesses and either not let you
+[13:24] other harnesses and either not let you
+[13:24] other harnesses and either not let you use their product anymore or charge you
+[13:27] use their product anymore or charge you
+[13:27] use their product anymore or charge you extra. Like, that's kind of screwed up.
+[13:30] extra. Like, that's kind of screwed up.
+[13:30] extra. Like, that's kind of screwed up. Now, there is a slightly happy ending
+[13:32] Now, there is a slightly happy ending
+[13:32] Now, there is a slightly happy ending here. We can see Tariq here from
+[13:34] here. We can see Tariq here from
+[13:34] here. We can see Tariq here from Anthropic says, "Sorry, this was a bug
+[13:36] Anthropic says, "Sorry, this was a bug
+[13:36] Anthropic says, "Sorry, this was a bug with the thirdparty harness detection
+[13:38] with the thirdparty harness detection
+[13:38] with the thirdparty harness detection and how we pull get status into the
+[13:40] and how we pull get status into the
+[13:40] and how we pull get status into the system prompt. We're reaching out to
+[13:41] system prompt. We're reaching out to
+[13:41] system prompt. We're reaching out to affected users and giving them a refund
+[13:43] affected users and giving them a refund
+[13:44] affected users and giving them a refund plus another month's worth of credit."
+[13:45] plus another month's worth of credit."
+[13:45] plus another month's worth of credit." So, Enthropic did decide to actually
+[13:48] So, Enthropic did decide to actually
+[13:48] So, Enthropic did decide to actually refund its users after this sort of
+[13:50] refund its users after this sort of
+[13:50] refund its users after this sort of became a big deal. But I do wonder if
+[13:52] became a big deal. But I do wonder if
+[13:52] became a big deal. But I do wonder if Anthropic would have had this response
+[13:54] Anthropic would have had this response
+[13:54] Anthropic would have had this response had this post from On Patel here not
+[13:57] had this post from On Patel here not
+[13:57] had this post from On Patel here not gotten 1.4 4 million views and this post
+[14:00] gotten 1.4 4 million views and this post
+[14:00] gotten 1.4 4 million views and this post from Theo here getting 1 million views.
+[14:02] from Theo here getting 1 million views.
+[14:02] from Theo here getting 1 million views. They probably realize pretty quickly
+[14:04] They probably realize pretty quickly
+[14:04] They probably realize pretty quickly this isn't a good look. We're looking at
+[14:06] this isn't a good look. We're looking at
+[14:06] this isn't a good look. We're looking at people's code to try to analyze what
+[14:08] people's code to try to analyze what
+[14:08] people's code to try to analyze what they're using our tools for and then
+[14:10] they're using our tools for and then
+[14:10] they're using our tools for and then blocking them when we don't like some of
+[14:12] blocking them when we don't like some of
+[14:12] blocking them when we don't like some of the words that we find inside of the
+[14:14] the words that we find inside of the
+[14:14] the words that we find inside of the code. But there's some replies here that
+[14:16] code. But there's some replies here that
+[14:16] code. But there's some replies here that I kind of have to agree with. It's a
+[14:18] I kind of have to agree with. It's a
+[14:18] I kind of have to agree with. It's a good thing Enthropic tells us how
+[14:19] good thing Enthropic tells us how
+[14:19] good thing Enthropic tells us how ethical they are. Or we might worry
+[14:21] ethical they are. Or we might worry
+[14:21] ethical they are. Or we might worry about their morality, right? They're the
+[14:23] about their morality, right? They're the
+[14:23] about their morality, right? They're the ethical AI, the one that has all the red
+[14:25] ethical AI, the one that has all the red
+[14:26] ethical AI, the one that has all the red lines for the military and whatnot. Yet,
+[14:27] lines for the military and whatnot. Yet,
+[14:28] lines for the military and whatnot. Yet, they have practices where if they don't
+[14:30] they have practices where if they don't
+[14:30] they have practices where if they don't like that you have the word Hermes or
+[14:33] like that you have the word Hermes or
+[14:33] like that you have the word Hermes or OpenClaw in your code, they're going to
+[14:34] OpenClaw in your code, they're going to
+[14:34] OpenClaw in your code, they're going to go and then charge you extra for that or
+[14:37] go and then charge you extra for that or
+[14:37] go and then charge you extra for that or just refuse to like let you use their
+[14:39] just refuse to like let you use their
+[14:39] just refuse to like let you use their app. Or Theo's own response here on M's
+[14:42] app. Or Theo's own response here on M's
+[14:42] app. Or Theo's own response here on M's post, there's a certain class of bugs
+[14:43] post, there's a certain class of bugs
+[14:43] post, there's a certain class of bugs that suggests the thing you're trying to
+[14:45] that suggests the thing you're trying to
+[14:45] that suggests the thing you're trying to do is a bad idea. Worth reflecting on
+[14:47] do is a bad idea. Worth reflecting on
+[14:47] do is a bad idea. Worth reflecting on that. The implication is, hey, maybe you
+[14:49] that. The implication is, hey, maybe you
+[14:49] that. The implication is, hey, maybe you shouldn't write it into your code that
+[14:51] shouldn't write it into your code that
+[14:51] shouldn't write it into your code that we should be blocking any time some of
+[14:53] we should be blocking any time some of
+[14:53] we should be blocking any time some of these keywords show up in the code
+[14:55] these keywords show up in the code
+[14:55] these keywords show up in the code itself. The fact that they're actively
+[14:57] itself. The fact that they're actively
+[14:57] itself. The fact that they're actively looking for things like Hermes and
+[15:00] looking for things like Hermes and
+[15:00] looking for things like Hermes and OpenClaw in the code is kind of the
+[15:02] OpenClaw in the code is kind of the
+[15:02] OpenClaw in the code is kind of the thing that people are taking issue with
+[15:04] thing that people are taking issue with
+[15:04] thing that people are taking issue with in the first place. Anyway, I could rant
+[15:07] in the first place. Anyway, I could rant
+[15:07] in the first place. Anyway, I could rant on this for a while, but I won't cuz we
+[15:08] on this for a while, but I won't cuz we
+[15:08] on this for a while, but I won't cuz we even have more drama. There was recently
+[15:10] even have more drama. There was recently
+[15:10] even have more drama. There was recently a ton of drama around Anthropic refusing
+[15:14] a ton of drama around Anthropic refusing
+[15:14] a ton of drama around Anthropic refusing to get rid of their red lines and work
+[15:16] to get rid of their red lines and work
+[15:16] to get rid of their red lines and work with the Pentagon. And then OpenAI
+[15:18] with the Pentagon. And then OpenAI
+[15:18] with the Pentagon. And then OpenAI stepped in and said, "Hey, we'll work
+[15:20] stepped in and said, "Hey, we'll work
+[15:20] stepped in and said, "Hey, we'll work with you." But seemingly drew the same
+[15:22] with you." But seemingly drew the same
+[15:22] with you." But seemingly drew the same red lines. Well, Google just signed a
+[15:24] red lines. Well, Google just signed a
+[15:24] red lines. Well, Google just signed a deal with the Pentagon now for it to be
+[15:26] deal with the Pentagon now for it to be
+[15:26] deal with the Pentagon now for it to be used on classified information, and
+[15:29] used on classified information, and
+[15:29] used on classified information, and their agreement basically says you can
+[15:31] their agreement basically says you can
+[15:31] their agreement basically says you can use it for any lawful government
+[15:32] use it for any lawful government
+[15:32] use it for any lawful government purpose. Now, they do go on to say, "We
+[15:34] purpose. Now, they do go on to say, "We
+[15:34] purpose. Now, they do go on to say, "We remain committed to the private and
+[15:36] remain committed to the private and
+[15:36] remain committed to the private and public sector consensus that AI should
+[15:38] public sector consensus that AI should
+[15:38] public sector consensus that AI should not be used for domestic mass
+[15:40] not be used for domestic mass
+[15:40] not be used for domestic mass surveillance or autonomous weaponry
+[15:42] surveillance or autonomous weaponry
+[15:42] surveillance or autonomous weaponry without appropriate human oversight."
+[15:44] without appropriate human oversight."
+[15:44] without appropriate human oversight." So, they're basically saying, "We don't
+[15:45] So, they're basically saying, "We don't
+[15:45] So, they're basically saying, "We don't think you should use it for that, but
+[15:47] think you should use it for that, but
+[15:47] think you should use it for that, but you can use it for any lawful purposes.
+[15:49] you can use it for any lawful purposes.
+[15:49] you can use it for any lawful purposes. There's no like binding agreement that
+[15:51] There's no like binding agreement that
+[15:51] There's no like binding agreement that says you can't use it for those
+[15:54] says you can't use it for those
+[15:54] says you can't use it for those purposes. We're just saying we don't
+[15:55] purposes. We're just saying we don't
+[15:55] purposes. We're just saying we don't think you should. And this is likely to
+[15:57] think you should. And this is likely to
+[15:57] think you should. And this is likely to get them some backlash both internally
+[15:59] get them some backlash both internally
+[16:00] get them some backlash both internally at Google and externally because prior
+[16:02] at Google and externally because prior
+[16:02] at Google and externally because prior to this information coming out that this
+[16:04] to this information coming out that this
+[16:04] to this information coming out that this deal was happening, a bunch of Google
+[16:06] deal was happening, a bunch of Google
+[16:06] deal was happening, a bunch of Google employees asked Sundar to say no to
+[16:08] employees asked Sundar to say no to
+[16:08] employees asked Sundar to say no to classified military AI use. Over 600
+[16:11] classified military AI use. Over 600
+[16:11] classified military AI use. Over 600 Google employees signed a letter to the
+[16:13] Google employees signed a letter to the
+[16:13] Google employees signed a letter to the CEO demanding that Google block the
+[16:15] CEO demanding that Google block the
+[16:15] CEO demanding that Google block the Pentagon from using its AI models for
+[16:16] Pentagon from using its AI models for
+[16:16] Pentagon from using its AI models for classified purposes. This is especially
+[16:19] classified purposes. This is especially
+[16:19] classified purposes. This is especially interesting because back when Google
+[16:21] interesting because back when Google
+[16:21] interesting because back when Google bought DeepMind back in 2014, there was
+[16:24] bought DeepMind back in 2014, there was
+[16:24] bought DeepMind back in 2014, there was actually an agreement between Google and
+[16:26] actually an agreement between Google and
+[16:26] actually an agreement between Google and DeepMind that they wouldn't use it for
+[16:27] DeepMind that they wouldn't use it for
+[16:27] DeepMind that they wouldn't use it for these purposes. When Google acquired
+[16:29] these purposes. When Google acquired
+[16:29] these purposes. When Google acquired DeepMind in 2014, DeepMind's founders
+[16:31] DeepMind in 2014, DeepMind's founders
+[16:31] DeepMind in 2014, DeepMind's founders secured a promise from Google that
+[16:33] secured a promise from Google that
+[16:33] secured a promise from Google that DeepMind's AI would not be used for
+[16:35] DeepMind's AI would not be used for
+[16:35] DeepMind's AI would not be used for military or surveillance purposes.
+[16:37] military or surveillance purposes.
+[16:37] military or surveillance purposes. DeepMind leadership only agreed to the
+[16:39] DeepMind leadership only agreed to the
+[16:39] DeepMind leadership only agreed to the acquisition after extracting a
+[16:41] acquisition after extracting a
+[16:41] acquisition after extracting a commitment that their AI technology
+[16:42] commitment that their AI technology
+[16:42] commitment that their AI technology would never be used for military
+[16:44] would never be used for military
+[16:44] would never be used for military applications or surveillance uses. This
+[16:46] applications or surveillance uses. This
+[16:46] applications or surveillance uses. This understanding was framed as a core
+[16:48] understanding was framed as a core
+[16:48] understanding was framed as a core condition of the deal and part of
+[16:50] condition of the deal and part of
+[16:50] condition of the deal and part of DeepMind's mission around ethical and
+[16:52] DeepMind's mission around ethical and
+[16:52] DeepMind's mission around ethical and responsible AI. So the fact that they
+[16:54] responsible AI. So the fact that they
+[16:54] responsible AI. So the fact that they even signed this agreement at all feels
+[16:56] even signed this agreement at all feels
+[16:56] even signed this agreement at all feels very counter to the agreement they made
+[16:58] very counter to the agreement they made
+[16:58] very counter to the agreement they made with DeepMind in the beginning. Now to
+[17:00] with DeepMind in the beginning. Now to
+[17:00] with DeepMind in the beginning. Now to be fair to Google, I do think they're in
+[17:02] be fair to Google, I do think they're in
+[17:02] be fair to Google, I do think they're in a kind of no-win situation. All of their
+[17:05] a kind of no-win situation. All of their
+[17:05] a kind of no-win situation. All of their options are sort of bad. They either say
+[17:07] options are sort of bad. They either say
+[17:07] options are sort of bad. They either say no to a deal with the Pentagon and
+[17:09] no to a deal with the Pentagon and
+[17:09] no to a deal with the Pentagon and refuse to let their technology be used
+[17:11] refuse to let their technology be used
+[17:11] refuse to let their technology be used for whatever the Pentagon wants to use
+[17:13] for whatever the Pentagon wants to use
+[17:13] for whatever the Pentagon wants to use it for, but then they risk being sort of
+[17:16] it for, but then they risk being sort of
+[17:16] it for, but then they risk being sort of ousted by the Pentagon like Anthropic
+[17:18] ousted by the Pentagon like Anthropic
+[17:18] ousted by the Pentagon like Anthropic was, where Anthropic was basically
+[17:21] was, where Anthropic was basically
+[17:21] was, where Anthropic was basically deemed a supply chain risk. These AI
+[17:23] deemed a supply chain risk. These AI
+[17:23] deemed a supply chain risk. These AI companies are also needing legislation
+[17:26] companies are also needing legislation
+[17:26] companies are also needing legislation to sort of go in their favor to continue
+[17:28] to sort of go in their favor to continue
+[17:28] to sort of go in their favor to continue pursuing AI advancement. So they don't
+[17:30] pursuing AI advancement. So they don't
+[17:30] pursuing AI advancement. So they don't want to make too much waves with the
+[17:33] want to make too much waves with the
+[17:33] want to make too much waves with the government that's going to sort of
+[17:35] government that's going to sort of
+[17:35] government that's going to sort of create the laws around all of this
+[17:37] create the laws around all of this
+[17:37] create the laws around all of this stuff. So that puts them in a bad
+[17:38] stuff. So that puts them in a bad
+[17:38] stuff. So that puts them in a bad situation if they decline to work with
+[17:40] situation if they decline to work with
+[17:40] situation if they decline to work with the government. But then on the other
+[17:42] the government. But then on the other
+[17:42] the government. But then on the other hand, if they agree to work with the
+[17:44] hand, if they agree to work with the
+[17:44] hand, if they agree to work with the government on this stuff, it looks bad
+[17:46] government on this stuff, it looks bad
+[17:46] government on this stuff, it looks bad because well, their original agreement
+[17:47] because well, their original agreement
+[17:47] because well, their original agreement with DeepMind said they'd never do that.
+[17:49] with DeepMind said they'd never do that.
+[17:49] with DeepMind said they'd never do that. You've got 600 plus employees over at
+[17:52] You've got 600 plus employees over at
+[17:52] You've got 600 plus employees over at Google basically begging Google not to
+[17:55] Google basically begging Google not to
+[17:55] Google basically begging Google not to do this. And then you have the optics of
+[17:57] do this. And then you have the optics of
+[17:57] do this. And then you have the optics of what went down with Anthropic and
+[17:59] what went down with Anthropic and
+[17:59] what went down with Anthropic and OpenAI. It looked really, really good
+[18:01] OpenAI. It looked really, really good
+[18:01] OpenAI. It looked really, really good that OpenAI was kind of this hero that
+[18:03] that OpenAI was kind of this hero that
+[18:03] that OpenAI was kind of this hero that was putting a line in the sand against
+[18:05] was putting a line in the sand against
+[18:05] was putting a line in the sand against the government and a lot of people
+[18:07] the government and a lot of people
+[18:07] the government and a lot of people really appreciated that Enthropic took
+[18:08] really appreciated that Enthropic took
+[18:08] really appreciated that Enthropic took that stand. And then you had OpenAI come
+[18:10] that stand. And then you had OpenAI come
+[18:10] that stand. And then you had OpenAI come in who looked very opportunistic and
+[18:13] in who looked very opportunistic and
+[18:13] in who looked very opportunistic and said you can use our AI for that
+[18:15] said you can use our AI for that
+[18:15] said you can use our AI for that essentially. So Google's options were
+[18:17] essentially. So Google's options were
+[18:17] essentially. So Google's options were bad on both sides and they apparently
+[18:20] bad on both sides and they apparently
+[18:20] bad on both sides and they apparently are going for the option that's like
+[18:22] are going for the option that's like
+[18:22] are going for the option that's like let's make sure we don't get in the bad
+[18:24] let's make sure we don't get in the bad
+[18:24] let's make sure we don't get in the bad graces of the government cuz that hasn't
+[18:26] graces of the government cuz that hasn't
+[18:26] graces of the government cuz that hasn't really worked out too well for Anthropic
+[18:28] really worked out too well for Anthropic
+[18:28] really worked out too well for Anthropic so far. And in the final bit of drama
+[18:30] so far. And in the final bit of drama
+[18:30] so far. And in the final bit of drama from this week, China blocked Meta's $2
+[18:33] from this week, China blocked Meta's $2
+[18:33] from this week, China blocked Meta's $2 billion acquisition of AI firm Manis. So
+[18:36] billion acquisition of AI firm Manis. So
+[18:36] billion acquisition of AI firm Manis. So basically, China is saying we need to
+[18:38] basically, China is saying we need to
+[18:38] basically, China is saying we need to keep our technology here in our country.
+[18:41] keep our technology here in our country.
+[18:41] keep our technology here in our country. And this is going to get really, really
+[18:43] And this is going to get really, really
+[18:43] And this is going to get really, really messy because from what I understand,
+[18:45] messy because from what I understand,
+[18:45] messy because from what I understand, Manis has already sort of like
+[18:46] Manis has already sort of like
+[18:46] Manis has already sort of like integrated itself into Meta. Now, Manis
+[18:49] integrated itself into Meta. Now, Manis
+[18:49] integrated itself into Meta. Now, Manis founders got their start in China, but
+[18:51] founders got their start in China, but
+[18:51] founders got their start in China, but relocated their headquarters and key
+[18:53] relocated their headquarters and key
+[18:53] relocated their headquarters and key staff to Singapore in 2025. Manis was
+[18:55] staff to Singapore in 2025. Manis was
+[18:55] staff to Singapore in 2025. Manis was Singapore Incorporated with founders
+[18:57] Singapore Incorporated with founders
+[18:57] Singapore Incorporated with founders based here, and it still got pulled
+[18:58] based here, and it still got pulled
+[18:58] based here, and it still got pulled back. It's still pretty unclear how Meta
+[19:01] back. It's still pretty unclear how Meta
+[19:01] back. It's still pretty unclear how Meta is going to unwind the deal. Meta's
+[19:02] is going to unwind the deal. Meta's
+[19:02] is going to unwind the deal. Meta's employees have joined Meta. Capital has
+[19:04] employees have joined Meta. Capital has
+[19:04] employees have joined Meta. Capital has been transferred and the startup's
+[19:06] been transferred and the startup's
+[19:06] been transferred and the startup's executives have joined the US firm's
+[19:08] executives have joined the US firm's
+[19:08] executives have joined the US firm's rapidly expanding AI team. Mana's
+[19:10] rapidly expanding AI team. Mana's
+[19:10] rapidly expanding AI team. Mana's staffers have already moved into Meta
+[19:11] staffers have already moved into Meta
+[19:12] staffers have already moved into Meta offices in Singapore while investors
+[19:14] offices in Singapore while investors
+[19:14] offices in Singapore while investors have already received their proceeds.
+[19:16] have already received their proceeds.
+[19:16] have already received their proceeds. So, this is all sort of still
+[19:17] So, this is all sort of still
+[19:17] So, this is all sort of still developing. I don't know how this is
+[19:18] developing. I don't know how this is
+[19:18] developing. I don't know how this is going to play out, but China's basically
+[19:20] going to play out, but China's basically
+[19:20] going to play out, but China's basically demanding that this all gets unwound.
+[19:23] demanding that this all gets unwound.
+[19:23] demanding that this all gets unwound. And I don't know how that's even
+[19:24] And I don't know how that's even
+[19:24] And I don't know how that's even logistically possible at this point. All
+[19:26] logistically possible at this point. All
+[19:26] logistically possible at this point. All right, I have a handful more little
+[19:28] right, I have a handful more little
+[19:28] right, I have a handful more little things I want to share that came out in
+[19:29] things I want to share that came out in
+[19:29] things I want to share that came out in the past week, but I'm going to break
+[19:31] the past week, but I'm going to break
+[19:31] the past week, but I'm going to break them all down quickly. So let's jump
+[19:32] them all down quickly. So let's jump
+[19:32] them all down quickly. So let's jump into a rapid fire.
+[19:40] This week, Microsoft and OpenAI once
+[19:43] This week, Microsoft and OpenAI once
+[19:43] This week, Microsoft and OpenAI once again restructured their partnership.
+[19:45] again restructured their partnership.
+[19:45] again restructured their partnership. There used to be a term in the
+[19:47] There used to be a term in the
+[19:47] There used to be a term in the partnership where once OpenAI reached
+[19:50] partnership where once OpenAI reached
+[19:50] partnership where once OpenAI reached AGI, then the deal would sort of be gone
+[19:53] AGI, then the deal would sort of be gone
+[19:53] AGI, then the deal would sort of be gone and Microsoft would no longer be
+[19:54] and Microsoft would no longer be
+[19:54] and Microsoft would no longer be entitled to profits from OpenAI. But
+[19:57] entitled to profits from OpenAI. But
+[19:57] entitled to profits from OpenAI. But that clause has been removed. So there's
+[19:58] that clause has been removed. So there's
+[19:58] that clause has been removed. So there's no sort of strings attached around AGI
+[20:01] no sort of strings attached around AGI
+[20:01] no sort of strings attached around AGI anymore. Instead, there's just an end
+[20:03] anymore. Instead, there's just an end
+[20:03] anymore. Instead, there's just an end date. Microsoft will continue to have a
+[20:04] date. Microsoft will continue to have a
+[20:04] date. Microsoft will continue to have a license to OpenAI IP for models and
+[20:06] license to OpenAI IP for models and
+[20:06] license to OpenAI IP for models and products through 2032. However,
+[20:09] products through 2032. However,
+[20:09] products through 2032. However, Microsoft's license will now be
+[20:11] Microsoft's license will now be
+[20:11] Microsoft's license will now be non-exclusive. That's kind of the main
+[20:13] non-exclusive. That's kind of the main
+[20:13] non-exclusive. That's kind of the main thing of this whole new deal. Microsoft
+[20:15] thing of this whole new deal. Microsoft
+[20:15] thing of this whole new deal. Microsoft will also no longer pay a revenue share
+[20:17] will also no longer pay a revenue share
+[20:17] will also no longer pay a revenue share to OpenAI. So, the money is not kind of
+[20:19] to OpenAI. So, the money is not kind of
+[20:19] to OpenAI. So, the money is not kind of flowing both ways as much anymore. But
+[20:22] flowing both ways as much anymore. But
+[20:22] flowing both ways as much anymore. But this non-exclusive thing is kind of the
+[20:24] this non-exclusive thing is kind of the
+[20:24] this non-exclusive thing is kind of the big deal. Now, OpenAI doesn't have to be
+[20:26] big deal. Now, OpenAI doesn't have to be
+[20:26] big deal. Now, OpenAI doesn't have to be exclusively on Microsoft Azure servers.
+[20:29] exclusively on Microsoft Azure servers.
+[20:29] exclusively on Microsoft Azure servers. And in fact, this news came out on April
+[20:31] And in fact, this news came out on April
+[20:31] And in fact, this news came out on April 27th. And the very next day, April 28th,
+[20:34] 27th. And the very next day, April 28th,
+[20:34] 27th. And the very next day, April 28th, OpenAI models, codecs, and managed
+[20:36] OpenAI models, codecs, and managed
+[20:36] OpenAI models, codecs, and managed agents come to AWS. So, as soon as that
+[20:39] agents come to AWS. So, as soon as that
+[20:39] agents come to AWS. So, as soon as that sort of unwrapping happened, OpenAI went
+[20:41] sort of unwrapping happened, OpenAI went
+[20:42] sort of unwrapping happened, OpenAI went and made a deal with Amazon to allow
+[20:44] and made a deal with Amazon to allow
+[20:44] and made a deal with Amazon to allow OpenAI models on AWS. Don't be surprised
+[20:47] OpenAI models on AWS. Don't be surprised
+[20:47] OpenAI models on AWS. Don't be surprised if you see OpenAI models popping up in
+[20:49] if you see OpenAI models popping up in
+[20:49] if you see OpenAI models popping up in more and more places. I mean, who knows?
+[20:51] more and more places. I mean, who knows?
+[20:51] more and more places. I mean, who knows? Maybe pretty soon you'll be able to use
+[20:53] Maybe pretty soon you'll be able to use
+[20:53] Maybe pretty soon you'll be able to use OpenAI models directly from within
+[20:54] OpenAI models directly from within
+[20:54] OpenAI models directly from within Google as well. Speaking of Google, they
+[20:56] Google as well. Speaking of Google, they
+[20:56] Google as well. Speaking of Google, they rolled out a new feature inside of
+[20:58] rolled out a new feature inside of
+[20:58] rolled out a new feature inside of Gemini this week. You can now easily
+[20:59] Gemini this week. You can now easily
+[20:59] Gemini this week. You can now easily generate files in Gemini with just a
+[21:02] generate files in Gemini with just a
+[21:02] generate files in Gemini with just a prompt. Gemini can now create PDFs,
+[21:04] prompt. Gemini can now create PDFs,
+[21:04] prompt. Gemini can now create PDFs, Microsoft Word, and Excel, Google Docs,
+[21:06] Microsoft Word, and Excel, Google Docs,
+[21:06] Microsoft Word, and Excel, Google Docs, Sheets, Slides, and more directly in
+[21:08] Sheets, Slides, and more directly in
+[21:08] Sheets, Slides, and more directly in your chat. Meaning you can quickly move
+[21:09] your chat. Meaning you can quickly move
+[21:09] your chat. Meaning you can quickly move from a brainstorm to a complete file
+[21:11] from a brainstorm to a complete file
+[21:11] from a brainstorm to a complete file without ever leaving the Gemini app. So
+[21:13] without ever leaving the Gemini app. So
+[21:13] without ever leaving the Gemini app. So the new file types it supports PDF,
+[21:15] the new file types it supports PDF,
+[21:15] the new file types it supports PDF, DOCX, XLSX, CSV, LaTeX, plain text, rich
+[21:19] DOCX, XLSX, CSV, LaTeX, plain text, rich
+[21:19] DOCX, XLSX, CSV, LaTeX, plain text, rich text format, and markdown. So now you
+[21:21] text format, and markdown. So now you
+[21:21] text format, and markdown. So now you can basically upload an image of
+[21:22] can basically upload an image of
+[21:22] can basically upload an image of something and say take the data from
+[21:24] something and say take the data from
+[21:24] something and say take the data from this and convert it to an Excel
+[21:26] this and convert it to an Excel
+[21:26] this and convert it to an Excel spreadsheet or turn this into a PDF for
+[21:28] spreadsheet or turn this into a PDF for
+[21:28] spreadsheet or turn this into a PDF for me or convert this to markdown for me
+[21:30] me or convert this to markdown for me
+[21:30] me or convert this to markdown for me and it'll just quickly do that. A new
+[21:31] and it'll just quickly do that. A new
+[21:32] and it'll just quickly do that. A new feature rolled out in Google Translate
+[21:34] feature rolled out in Google Translate
+[21:34] feature rolled out in Google Translate that actually now helps you pronounce
+[21:35] that actually now helps you pronounce
+[21:35] that actually now helps you pronounce the words. One of the toughest things
+[21:37] the words. One of the toughest things
+[21:37] the words. One of the toughest things about speaking a new language is getting
+[21:38] about speaking a new language is getting
+[21:38] about speaking a new language is getting the nuances of pronunciation just right.
+[21:40] the nuances of pronunciation just right.
+[21:40] the nuances of pronunciation just right. Now you can get instant feedback with
+[21:42] Now you can get instant feedback with
+[21:42] Now you can get instant feedback with pronunciation practice which uses AI to
+[21:44] pronunciation practice which uses AI to
+[21:44] pronunciation practice which uses AI to analyze your speech and help you
+[21:46] analyze your speech and help you
+[21:46] analyze your speech and help you improve. Right now it's launching in the
+[21:47] improve. Right now it's launching in the
+[21:47] improve. Right now it's launching in the US and India in English, Spanish and
+[21:50] US and India in English, Spanish and
+[21:50] US and India in English, Spanish and Hindi with more to come.
+[22:04] So, that'll be helpful if you're trying
+[22:05] So, that'll be helpful if you're trying
+[22:05] So, that'll be helpful if you're trying to learn a new language using Google
+[22:07] to learn a new language using Google
+[22:07] to learn a new language using Google Translate. Staying on Google for one
+[22:08] Translate. Staying on Google for one
+[22:08] Translate. Staying on Google for one more sec here, Google Photos launches an
+[22:10] more sec here, Google Photos launches an
+[22:10] more sec here, Google Photos launches an AI tryon feature for clothes you already
+[22:13] AI tryon feature for clothes you already
+[22:13] AI tryon feature for clothes you already have. So, this new feature actually
+[22:14] have. So, this new feature actually
+[22:14] have. So, this new feature actually looks at all of the images in your
+[22:15] looks at all of the images in your
+[22:15] looks at all of the images in your Google Photos of you to see what clothes
+[22:18] Google Photos of you to see what clothes
+[22:18] Google Photos of you to see what clothes it seen you wear and then helps you
+[22:21] it seen you wear and then helps you
+[22:21] it seen you wear and then helps you generate new outfits based on clothes
+[22:23] generate new outfits based on clothes
+[22:23] generate new outfits based on clothes that it knows you own because it saw
+[22:25] that it knows you own because it saw
+[22:26] that it knows you own because it saw them in your Google Pho. The feature is
+[22:28] them in your Google Pho. The feature is
+[22:28] them in your Google Pho. The feature is rolling out to Android devices later in
+[22:30] rolling out to Android devices later in
+[22:30] rolling out to Android devices later in the summer and then is going to expand
+[22:32] the summer and then is going to expand
+[22:32] the summer and then is going to expand to iOS. Google IO is coming up in a
+[22:34] to iOS. Google IO is coming up in a
+[22:34] to iOS. Google IO is coming up in a couple weeks, so I'm assuming we'll
+[22:36] couple weeks, so I'm assuming we'll
+[22:36] couple weeks, so I'm assuming we'll probably see this feature talked about a
+[22:37] probably see this feature talked about a
+[22:38] probably see this feature talked about a little bit more there. This week, 11
+[22:39] little bit more there. This week, 11
+[22:39] little bit more there. This week, 11 Labs launched 11 music, which is a new
+[22:42] Labs launched 11 music, which is a new
+[22:42] Labs launched 11 music, which is a new platform to discover, remix, create, and
+[22:44] platform to discover, remix, create, and
+[22:44] platform to discover, remix, create, and earn from music built on the 11 Labs
+[22:46] earn from music built on the 11 Labs
+[22:46] earn from music built on the 11 Labs music model. So, you can explore songs
+[22:48] music model. So, you can explore songs
+[22:48] music model. So, you can explore songs that other people have created on here.
+[22:50] that other people have created on here.
+[22:50] that other people have created on here. Listen to the songs
+[22:52] Listen to the songs
+[22:52] Listen to the songs [music]
+[22:54] [music]
+[22:54] [music] >> and if you like what the song is, you
+[22:56] >> and if you like what the song is, you
+[22:56] >> and if you like what the song is, you can remix it and give it a prompt to
+[22:58] can remix it and give it a prompt to
+[22:58] can remix it and give it a prompt to change it more upbeat, slower, darker,
+[23:00] change it more upbeat, slower, darker,
+[23:00] change it more upbeat, slower, darker, lighter, or just, you know, describe how
+[23:02] lighter, or just, you know, describe how
+[23:02] lighter, or just, you know, describe how you want it changed and it will change
+[23:04] you want it changed and it will change
+[23:04] you want it changed and it will change the songs that are on here. And while
+[23:06] the songs that are on here. And while
+[23:06] the songs that are on here. And while we're on that topic, there's a new
+[23:08] we're on that topic, there's a new
+[23:08] we're on that topic, there's a new verified by Spotify badge that lets you
+[23:10] verified by Spotify badge that lets you
+[23:10] verified by Spotify badge that lets you know the artist isn't AI. Some artists
+[23:12] know the artist isn't AI. Some artists
+[23:12] know the artist isn't AI. Some artists will now have a verified by Spotify
+[23:14] will now have a verified by Spotify
+[23:14] will now have a verified by Spotify badge and a green check mark on their
+[23:16] badge and a green check mark on their
+[23:16] badge and a green check mark on their profile indicating that the company has
+[23:18] profile indicating that the company has
+[23:18] profile indicating that the company has confirmed a real person is behind the
+[23:19] confirmed a real person is behind the
+[23:20] confirmed a real person is behind the music and the profile. AI personas or
+[23:22] music and the profile. AI personas or
+[23:22] music and the profile. AI personas or profiles that primarily upload AI
+[23:24] profiles that primarily upload AI
+[23:24] profiles that primarily upload AI generated music are not eligible for the
+[23:25] generated music are not eligible for the
+[23:26] generated music are not eligible for the verification program. It did leave the
+[23:28] verification program. It did leave the
+[23:28] verification program. It did leave the door open to the possibility in the
+[23:29] door open to the possibility in the
+[23:29] door open to the possibility in the future though saying the concept of
+[23:31] future though saying the concept of
+[23:31] future though saying the concept of artist authenticity is complex and
+[23:34] artist authenticity is complex and
+[23:34] artist authenticity is complex and quickly evolving. So whatever that
+[23:36] quickly evolving. So whatever that
+[23:36] quickly evolving. So whatever that means. But for now if you see this green
+[23:38] means. But for now if you see this green
+[23:38] means. But for now if you see this green check mark you know it's not AI. But
+[23:40] check mark you know it's not AI. But
+[23:40] check mark you know it's not AI. But that doesn't mean everybody who's not AI
+[23:42] that doesn't mean everybody who's not AI
+[23:42] that doesn't mean everybody who's not AI will have a green check mark. So it's
+[23:44] will have a green check mark. So it's
+[23:44] will have a green check mark. So it's still going to be kind of confusing.
+[23:46] still going to be kind of confusing.
+[23:46] still going to be kind of confusing. Honestly, if you do any sort of
+[23:48] Honestly, if you do any sort of
+[23:48] Honestly, if you do any sort of marketing, X is launching a new
+[23:50] marketing, X is launching a new
+[23:50] marketing, X is launching a new advertising platform. I've tried using
+[23:52] advertising platform. I've tried using
+[23:52] advertising platform. I've tried using X's old advertising platform and it's
+[23:54] X's old advertising platform and it's
+[23:54] X's old advertising platform and it's not great and I never really got great
+[23:57] not great and I never really got great
+[23:57] not great and I never really got great results from it. I don't really think
+[23:58] results from it. I don't really think
+[23:58] results from it. I don't really think people are clicking on ads as much as
+[24:00] people are clicking on ads as much as
+[24:00] people are clicking on ads as much as they used to on X. But the new ads
+[24:02] they used to on X. But the new ads
+[24:02] they used to on X. But the new ads manager will have an intuitive AI
+[24:04] manager will have an intuitive AI
+[24:04] manager will have an intuitive AI powered platform to make campaign
+[24:05] powered platform to make campaign
+[24:05] powered platform to make campaign creation effortless and precise, giving
+[24:07] creation effortless and precise, giving
+[24:07] creation effortless and precise, giving advertisers full control and speed and
+[24:09] advertisers full control and speed and
+[24:09] advertisers full control and speed and superior AI powered performance for
+[24:11] superior AI powered performance for
+[24:11] superior AI powered performance for stronger results, faster optimization,
+[24:13] stronger results, faster optimization,
+[24:13] stronger results, faster optimization, precise targeting, and AI powered
+[24:14] precise targeting, and AI powered
+[24:14] precise targeting, and AI powered relevancy. The new systems understand
+[24:16] relevancy. The new systems understand
+[24:16] relevancy. The new systems understand user behavior at a much deeper level,
+[24:18] user behavior at a much deeper level,
+[24:18] user behavior at a much deeper level, enabling more precise, relevant, and
+[24:19] enabling more precise, relevant, and
+[24:19] enabling more precise, relevant, and dynamic ad delivery that aligns with
+[24:21] dynamic ad delivery that aligns with
+[24:21] dynamic ad delivery that aligns with what's happening on X in real time. The
+[24:24] what's happening on X in real time. The
+[24:24] what's happening on X in real time. The shift toward AIdriven, contextual, and
+[24:25] shift toward AIdriven, contextual, and
+[24:25] shift toward AIdriven, contextual, and semantic advertising will bring
+[24:27] semantic advertising will bring
+[24:27] semantic advertising will bring meaningful lifts in relevance,
+[24:28] meaningful lifts in relevance,
+[24:28] meaningful lifts in relevance, engagement, and ROI. I'm constantly
+[24:30] engagement, and ROI. I'm constantly
+[24:30] engagement, and ROI. I'm constantly looking for new ways to grow my Future
+[24:32] looking for new ways to grow my Future
+[24:32] looking for new ways to grow my Future Tools newsletter. I've tried advertising
+[24:34] Tools newsletter. I've tried advertising
+[24:34] Tools newsletter. I've tried advertising like this in the past. It didn't really
+[24:36] like this in the past. It didn't really
+[24:36] like this in the past. It didn't really work very well, but I'll probably give
+[24:37] work very well, but I'll probably give
+[24:37] work very well, but I'll probably give this new ad platform a try and see if it
+[24:40] this new ad platform a try and see if it
+[24:40] this new ad platform a try and see if it helps grow the newsletter at all, and
+[24:42] helps grow the newsletter at all, and
+[24:42] helps grow the newsletter at all, and I'll report back once I do. And in the
+[24:44] I'll report back once I do. And in the
+[24:44] I'll report back once I do. And in the last bit of news I want to share this
+[24:46] last bit of news I want to share this
+[24:46] last bit of news I want to share this week, a Mayo Clinic developed artificial
+[24:48] week, a Mayo Clinic developed artificial
+[24:48] week, a Mayo Clinic developed artificial intelligence model can help specialists
+[24:50] intelligence model can help specialists
+[24:50] intelligence model can help specialists detect pancreatic cancer on routine
+[24:52] detect pancreatic cancer on routine
+[24:52] detect pancreatic cancer on routine abdominal CT scans up to 3 years before
+[24:55] abdominal CT scans up to 3 years before
+[24:55] abdominal CT scans up to 3 years before a clinical diagnosis. It identifies
+[24:58] a clinical diagnosis. It identifies
+[24:58] a clinical diagnosis. It identifies subtle signs of disease before tumors
+[25:00] subtle signs of disease before tumors
+[25:00] subtle signs of disease before tumors are visible when curative treatment may
+[25:02] are visible when curative treatment may
+[25:02] are visible when curative treatment may still be possible. Now, pancreatic
+[25:04] still be possible. Now, pancreatic
+[25:04] still be possible. Now, pancreatic cancer is one of the most deadly forms
+[25:06] cancer is one of the most deadly forms
+[25:06] cancer is one of the most deadly forms of cancer and if people are able to spot
+[25:08] of cancer and if people are able to spot
+[25:08] of cancer and if people are able to spot it 3 years ahead of time, that's pretty
+[25:11] it 3 years ahead of time, that's pretty
+[25:11] it 3 years ahead of time, that's pretty impressive. From my understanding, they
+[25:13] impressive. From my understanding, they
+[25:13] impressive. From my understanding, they went and sort of back tested this model.
+[25:15] went and sort of back tested this model.
+[25:15] went and sort of back tested this model. They plugged in a bunch of scans from
+[25:18] They plugged in a bunch of scans from
+[25:18] They plugged in a bunch of scans from people who had pancreatic cancer and
+[25:20] people who had pancreatic cancer and
+[25:20] people who had pancreatic cancer and they plugged in scans from before they
+[25:23] they plugged in scans from before they
+[25:23] they plugged in scans from before they were able to tell they had pancreatic
+[25:24] were able to tell they had pancreatic
+[25:24] were able to tell they had pancreatic cancer. And the model was effective at
+[25:27] cancer. And the model was effective at
+[25:27] cancer. And the model was effective at spotting these old scans to tell them
+[25:29] spotting these old scans to tell them
+[25:29] spotting these old scans to tell them that these people would eventually get
+[25:31] that these people would eventually get
+[25:31] that these people would eventually get pancreatic cancer. I love sharing
+[25:33] pancreatic cancer. I love sharing
+[25:33] pancreatic cancer. I love sharing stories like this when I come across
+[25:34] stories like this when I come across
+[25:34] stories like this when I come across them because well, this is what we all
+[25:36] them because well, this is what we all
+[25:36] them because well, this is what we all want AI for, right? We want AI to cure
+[25:39] want AI for, right? We want AI to cure
+[25:39] want AI for, right? We want AI to cure diseases, help us detect cancers way
+[25:41] diseases, help us detect cancers way
+[25:41] diseases, help us detect cancers way earlier. These are the real promises of
+[25:44] earlier. These are the real promises of
+[25:44] earlier. These are the real promises of what this AI is going to do for us.
+[25:46] what this AI is going to do for us.
+[25:46] what this AI is going to do for us. Whenever anybody talks negatively about
+[25:48] Whenever anybody talks negatively about
+[25:48] Whenever anybody talks negatively about AI or says we should just stop pursuing
+[25:50] AI or says we should just stop pursuing
+[25:50] AI or says we should just stop pursuing AI altogether, well, the counterargument
+[25:52] AI altogether, well, the counterargument
+[25:52] AI altogether, well, the counterargument is always, well, it's going to help us
+[25:54] is always, well, it's going to help us
+[25:54] is always, well, it's going to help us cure diseases and solve climate change
+[25:56] cure diseases and solve climate change
+[25:56] cure diseases and solve climate change and find alternatives to fossil fuels
+[25:58] and find alternatives to fossil fuels
+[25:58] and find alternatives to fossil fuels and all of that kind of stuff. Stuff
+[26:00] and all of that kind of stuff. Stuff
+[26:00] and all of that kind of stuff. Stuff that will actually sort of benefit
+[26:02] that will actually sort of benefit
+[26:02] that will actually sort of benefit humanity. Yet most of the time what we
+[26:04] humanity. Yet most of the time what we
+[26:04] humanity. Yet most of the time what we get is like, "Hey, making Excel
+[26:06] get is like, "Hey, making Excel
+[26:06] get is like, "Hey, making Excel spreadsheets is a little bit easier
+[26:08] spreadsheets is a little bit easier
+[26:08] spreadsheets is a little bit easier now." Or, "Look, you could try on
+[26:10] now." Or, "Look, you could try on
+[26:10] now." Or, "Look, you could try on different clothes that you have in your
+[26:12] different clothes that you have in your
+[26:12] different clothes that you have in your Google Photos, or you can make this
+[26:14] Google Photos, or you can make this
+[26:14] Google Photos, or you can make this animation of Mickey Mouse punching
+[26:17] animation of Mickey Mouse punching
+[26:17] animation of Mickey Mouse punching Taylor Swift in the eye or whatever. We
+[26:20] Taylor Swift in the eye or whatever. We
+[26:20] Taylor Swift in the eye or whatever. We need more stories like this to come out,
+[26:21] need more stories like this to come out,
+[26:21] need more stories like this to come out, like actually detecting cancers earlier
+[26:24] like actually detecting cancers earlier
+[26:24] like actually detecting cancers earlier and curing cancers and solving real
+[26:27] and curing cancers and solving real
+[26:27] and curing cancers and solving real actual problems. I love this kind of
+[26:29] actual problems. I love this kind of
+[26:29] actual problems. I love this kind of stuff. I'm hoping to see more and more
+[26:30] stuff. I'm hoping to see more and more
+[26:30] stuff. I'm hoping to see more and more of it. But that's what I got for you
+[26:32] of it. But that's what I got for you
+[26:32] of it. But that's what I got for you today. Again, not a ton of like really
+[26:34] today. Again, not a ton of like really
+[26:34] today. Again, not a ton of like really really huge news. A lot of sort of
+[26:36] really huge news. A lot of sort of
+[26:36] really huge news. A lot of sort of little things, but my goal with this
+[26:38] little things, but my goal with this
+[26:38] little things, but my goal with this channel is to help you feel super looped
+[26:40] channel is to help you feel super looped
+[26:40] channel is to help you feel super looped in with what's going on with the AI
+[26:42] in with what's going on with the AI
+[26:42] in with what's going on with the AI news. Every week there's probably 300
+[26:44] news. Every week there's probably 300
+[26:44] news. Every week there's probably 300 plus announcements that come out. I
+[26:46] plus announcements that come out. I
+[26:46] plus announcements that come out. I drink from the fire hose. I consume all
+[26:48] drink from the fire hose. I consume all
+[26:48] drink from the fire hose. I consume all the announcements. I try to learn what
+[26:50] the announcements. I try to learn what
+[26:50] the announcements. I try to learn what they mean and the implications of them
+[26:52] they mean and the implications of them
+[26:52] they mean and the implications of them and then try to filter through the hype
+[26:54] and then try to filter through the hype
+[26:54] and then try to filter through the hype and all the noise and tell you what I
+[26:56] and all the noise and tell you what I
+[26:56] and all the noise and tell you what I think most people will want to know or
+[26:58] think most people will want to know or
+[26:58] think most people will want to know or hear about, the stuff that's actually
+[26:59] hear about, the stuff that's actually
+[27:00] hear about, the stuff that's actually moving the needle somewhere. My goal is
+[27:02] moving the needle somewhere. My goal is
+[27:02] moving the needle somewhere. My goal is to minimize overwhelm for people and
+[27:04] to minimize overwhelm for people and
+[27:04] to minimize overwhelm for people and just bring to you what I think is
+[27:07] just bring to you what I think is
+[27:07] just bring to you what I think is actually meaningful or useful.
+[27:09] actually meaningful or useful.
+[27:09] actually meaningful or useful. Hopefully, I did that in today's video.
+[27:11] Hopefully, I did that in today's video.
+[27:11] Hopefully, I did that in today's video. I do record these on Thursdays, publish
+[27:13] I do record these on Thursdays, publish
+[27:13] I do record these on Thursdays, publish them on Fridays. So, if there was
+[27:14] them on Fridays. So, if there was
+[27:14] them on Fridays. So, if there was anything that came out on Friday that I
+[27:16] anything that came out on Friday that I
+[27:16] anything that came out on Friday that I missed, it will likely be in next week's
+[27:18] missed, it will likely be in next week's
+[27:18] missed, it will likely be in next week's video. If stuff like this interests you
+[27:19] video. If stuff like this interests you
+[27:19] video. If stuff like this interests you and you want to make sure more of it
+[27:21] and you want to make sure more of it
+[27:21] and you want to make sure more of it shows up in your YouTube feed, make sure
+[27:23] shows up in your YouTube feed, make sure
+[27:23] shows up in your YouTube feed, make sure you like this video, subscribe to this
+[27:24] you like this video, subscribe to this
+[27:24] you like this video, subscribe to this channel. It really, really does help me
+[27:25] channel. It really, really does help me
+[27:25] channel. It really, really does help me out. Thank you so much for tuning in,
+[27:27] out. Thank you so much for tuning in,
+[27:27] out. Thank you so much for tuning in, nerding out with me today. Hopefully the
+[27:29] nerding out with me today. Hopefully the
+[27:29] nerding out with me today. Hopefully the week doesn't feel as overwhelming and
+[27:31] week doesn't feel as overwhelming and
+[27:31] week doesn't feel as overwhelming and you feel more looped in on what's
+[27:33] you feel more looped in on what's
+[27:33] you feel more looped in on what's actually happening in the world of AI
+[27:34] actually happening in the world of AI
+[27:34] actually happening in the world of AI this week. Thanks again. Hopefully I'll
+[27:36] this week. Thanks again. Hopefully I'll
+[27:36] this week. Thanks again. Hopefully I'll see you in the next one. Bye-bye.
+[27:41] Do you mind calling the canons a try?
+[27:47] You're going to give you day sure.
+[27:57] All right, we are live. Welcome back to
+[28:00] All right, we are live. Welcome back to
+[28:00] All right, we are live. Welcome back to the stream everyone.

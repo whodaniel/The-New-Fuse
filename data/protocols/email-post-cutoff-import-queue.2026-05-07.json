@@ -1,0 +1,37 @@
+{
+  "sourceType": "email-post-cutoff-import-queue",
+  "generatedAt": "2026-05-07T19:16:19.813Z",
+  "sourceDecision": "data/protocols/email-post-cutoff-adjudication.2026-05-07.json",
+  "factCount": 1,
+  "facts": [
+    {
+      "factId": "email-fact-postcutoff-2026-05-05-south-wedge-properties-llc-unpaid-charges-reminder",
+      "date": "2026-05-05",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "South Wedge Properties, LLC - Unpaid Charges Reminder",
+      "statement": "On 2026-05-05, South Wedge Properties sent an unpaid charges reminder to Daniel Goldberg, indicating an active financial/account operations event.",
+      "confidence": "medium",
+      "enteredBy": "codex-email-post-cutoff-adjudication",
+      "capturedAt": "2026-05-07T19:16:19.811Z",
+      "relevanceTags": [
+        "domain:personal",
+        "domain:business",
+        "classification:transactional",
+        "strand:personal-financial-operations"
+      ],
+      "evidence": {
+        "eventId": "email_evt_postcutoff_74165f2d7f2b748171172e43",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300552.emlx",
+        "from": "South Wedge Properties, LLC <donotreply@appfolio.com>",
+        "subject": "South Wedge Properties, LLC - Unpaid Charges Reminder",
+        "dateIso": "2026-05-05T12:40:08.000Z",
+        "score": 17
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Auto-promoted from post-cutoff optional review due to direct unpaid financial charge signal."
+      }
+    }
+  ]
+}

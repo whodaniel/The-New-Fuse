@@ -1,0 +1,27 @@
+{
+  "sourceType": "email-manual-sync-rollup-pass2",
+  "generatedAt": "2026-05-07T19:19:54.722Z",
+  "sessionId": "fcae5be6-333a-4999-86ce-933fe4590fb2",
+  "ownerPrincipalId": "daniel",
+  "sourceArtifacts": {
+    "adjudication": "data/protocols/email-manual-adjudication-pass2.2026-05-07.json",
+    "importQueue": "data/protocols/email-manual-import-queue-pass2.2026-05-07.json"
+  },
+  "reviewedCount": 10,
+  "promotedCount": 3,
+  "keptExcludedCount": 7,
+  "supabaseInsertion": {
+    "method": "direct_psql_sql_insert_with_story_key_dedupe",
+    "insertedCount": 3,
+    "finalEmailArchaeologyCountInSession": 439,
+    "emailDateRangeInSession": {
+      "earliest": "1999-02-16",
+      "latest": "2026-05-05"
+    }
+  },
+  "promotedFactIds": [
+    "email-fact-2002-12-27-jobpro-central-trial-password-details",
+    "email-fact-2003-06-01-hit-jammer",
+    "email-fact-2003-06-08-enter-your-member-number"
+  ]
+}

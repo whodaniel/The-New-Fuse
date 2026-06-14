@@ -1,0 +1,8 @@
+
+> @the-new-fuse/testing@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/testing
+> npm run clean && tsc
+
+
+> @the-new-fuse/testing@1.0.0 clean
+> rm -rf dist coverage test-results playwright-report tsconfig.tsbuildinfo
+

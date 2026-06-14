@@ -1,0 +1,1 @@
+{"version":3,"file":"useA2AConversations.d.ts","sourceRoot":"","sources":["../../src/hooks/useA2AConversations.ts"],"names":[],"mappings":"AAAA,OAAO,EAAkB,YAAY,EAAE,MAAM,wBAAwB,CAAC;AAItE,MAAM,WAAW,qBAAsB,SAAQ,YAAY;IACzD,gBAAgB,EAAE,MAAM,CAAC;CAC1B;AAED,wBAAgB,mBAAmB;;uCAKR,MAAM;wCAYN,MAAM;EAgBhC"}

@@ -1,0 +1,5 @@
+
+> eslint-config-custom@0.1.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/eslint-config-custom
+> echo "No build step required for eslint-config-custom" && exit 0
+
+No build step required for eslint-config-custom

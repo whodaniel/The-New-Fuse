@@ -1,0 +1,6 @@
+{
+  "allowed_chats": [7030202773],
+  "auto_reply": true,
+  "bot_username": "tnf_kilo_bot",
+  "description": "TNF Telegram integration - receives messages and logs to TNF"
+}

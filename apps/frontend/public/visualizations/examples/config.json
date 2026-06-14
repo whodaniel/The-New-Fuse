@@ -1,0 +1,187 @@
+{
+  "title": "Project Dependencies Visualization",
+  "headerTitle": "📦 Project Dependencies",
+  "headerSubtitle": "Interactive bundle size analysis",
+  "backgroundColor": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+  "primaryColor": "#667eea",
+  "primaryColorDark": "#5a67d8",
+  "metrics": {
+    "size": "Bundle Size",
+    "gzipSize": "Gzipped Size",
+    "count": "Module Count"
+  },
+  "defaultMetric": "size",
+  "formatters": {
+    "size": "formatBytes",
+    "gzipSize": "formatBytes",
+    "count": "formatNumber"
+  },
+  "padding": 2,
+  "topPadding": 20,
+  "colorScheme": "schemeSet3",
+  "dataSource": "Project build output",
+  "data": {
+    "name": "root",
+    "children": [
+      {
+        "name": "node_modules",
+        "children": [
+          {
+            "name": "react",
+            "children": [
+              {
+                "name": "react-dom",
+                "size": 121543,
+                "gzipSize": 39234,
+                "count": 12
+              },
+              {
+                "name": "react",
+                "size": 85234,
+                "gzipSize": 27891,
+                "count": 8
+              },
+              {
+                "name": "react-router-dom",
+                "size": 45678,
+                "gzipSize": 14532,
+                "count": 6
+              }
+            ]
+          },
+          {
+            "name": "ui-libraries",
+            "children": [
+              {
+                "name": "framer-motion",
+                "size": 156789,
+                "gzipSize": 48234,
+                "count": 24
+              },
+              {
+                "name": "@mui/material",
+                "size": 203456,
+                "gzipSize": 65432,
+                "count": 45
+              },
+              {
+                "name": "styled-components",
+                "size": 67890,
+                "gzipSize": 21345,
+                "count": 10
+              }
+            ]
+          },
+          {
+            "name": "utilities",
+            "children": [
+              {
+                "name": "lodash",
+                "size": 72345,
+                "gzipSize": 25678,
+                "count": 32
+              },
+              {
+                "name": "date-fns",
+                "size": 34567,
+                "gzipSize": 12345,
+                "count": 15
+              },
+              {
+                "name": "axios",
+                "size": 28901,
+                "gzipSize": 9876,
+                "count": 7
+              }
+            ]
+          },
+          {
+            "name": "d3",
+            "children": [
+              {
+                "name": "d3-selection",
+                "size": 45678,
+                "gzipSize": 15234,
+                "count": 8
+              },
+              {
+                "name": "d3-scale",
+                "size": 34567,
+                "gzipSize": 11234,
+                "count": 6
+              },
+              {
+                "name": "d3-hierarchy",
+                "size": 23456,
+                "gzipSize": 8234,
+                "count": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "src",
+        "children": [
+          {
+            "name": "components",
+            "children": [
+              {
+                "name": "Header.tsx",
+                "size": 3456,
+                "gzipSize": 1234,
+                "count": 1
+              },
+              {
+                "name": "Sidebar.tsx",
+                "size": 5678,
+                "gzipSize": 1890,
+                "count": 1
+              },
+              {
+                "name": "Dashboard.tsx",
+                "size": 12345,
+                "gzipSize": 4567,
+                "count": 1
+              }
+            ]
+          },
+          {
+            "name": "utils",
+            "children": [
+              {
+                "name": "api.ts",
+                "size": 2345,
+                "gzipSize": 890,
+                "count": 1
+              },
+              {
+                "name": "helpers.ts",
+                "size": 4567,
+                "gzipSize": 1567,
+                "count": 1
+              }
+            ]
+          },
+          {
+            "name": "pages",
+            "children": [
+              {
+                "name": "Home.tsx",
+                "size": 8901,
+                "gzipSize": 3234,
+                "count": 1
+              },
+              {
+                "name": "About.tsx",
+                "size": 6789,
+                "gzipSize": 2456,
+                "count": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

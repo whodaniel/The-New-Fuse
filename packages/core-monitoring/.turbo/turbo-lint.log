@@ -1,0 +1,5 @@
+
+> @the-new-fuse/core-monitoring@1.0.1 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/core-monitoring
+> eslint src/**/*.ts
+
+ ELIFECYCLE  Command failed.

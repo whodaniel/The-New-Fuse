@@ -1,0 +1,5 @@
+
+> @the-new-fuse/api@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api
+> eslint src
+
+ ELIFECYCLE  Command failed.

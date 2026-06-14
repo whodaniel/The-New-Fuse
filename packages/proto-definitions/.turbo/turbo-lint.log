@@ -1,0 +1,5 @@
+
+> @the-new-fuse/proto-definitions@0.1.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/proto-definitions
+> ESLINT_USE_FLAT_CONFIG=false eslint src/**/*.ts
+
+ ELIFECYCLE  Command failed.

@@ -1,0 +1,443 @@
+{
+  "sourceType": "email-manual-review-batch-pass5",
+  "generatedAt": "2026-05-07T19:34:40.245Z",
+  "pendingFactsCount": 393,
+  "batchSize": 25,
+  "batch": [
+    {
+      "index": 1,
+      "factId": "email-fact-2004-03-15-re-support",
+      "date": "2004-03-15",
+      "title": "Re: Support",
+      "subject": "Re: Support",
+      "from": "Brian Johnson <bigguy@talldude.com>",
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/8/0/3/Messages/308691.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Cross-Domain",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:creative",
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:creative-business-operations"
+      ]
+    },
+    {
+      "index": 2,
+      "factId": "email-fact-2004-03-18-re-installation-help-download-link",
+      "date": "2004-03-18",
+      "title": "RE: Installation help Download Link",
+      "subject": "RE: Installation help Download Link",
+      "from": "Manish Singh <manish83@hathway.com>",
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280361.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Business & Projects",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:business",
+        "classification:transactional",
+        "strand:business-operations"
+      ]
+    },
+    {
+      "index": 3,
+      "factId": "email-fact-2004-03-23-re-support",
+      "date": "2004-03-23",
+      "title": "Re: Support",
+      "subject": "Re: Support",
+      "from": "Ravi Jayagopal <Ravi@WebmasterInABox.net>",
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280376.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Cross-Domain",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:creative",
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:creative-business-operations"
+      ]
+    },
+    {
+      "index": 4,
+      "factId": "email-fact-2004-03-26-re-ashop-installation",
+      "date": "2004-03-26",
+      "title": "Re: AShop Installation",
+      "subject": "Re: AShop Installation",
+      "from": "\"Rob Harris\" <robharris@ashopsoftware.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272906.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Business & Projects",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:business-operations"
+      ]
+    },
+    {
+      "index": 5,
+      "factId": "email-fact-2004-04-09-re-indi-visible-media-inc-swiftcd",
+      "date": "2004-04-09",
+      "title": "re: Indi-Visible Media Inc. & SwiftCD",
+      "subject": "re: Indi-Visible Media Inc. & SwiftCD",
+      "from": "Jason Foodman <jfoodman@swiftcd.com>",
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280397.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Business & Projects",
+      "confidence": "high",
+      "relevanceTags": [
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:business-operations"
+      ]
+    },
+    {
+      "index": 6,
+      "factId": "email-fact-2004-04-10-re-install",
+      "date": "2004-04-10",
+      "title": "Re: Install?",
+      "subject": "Re: Install?",
+      "from": "\"Agriya Infoway Pvt. Ltd.\" <info@agriya.com>",
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280395.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Business & Projects",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:business-operations"
+      ]
+    },
+    {
+      "index": 7,
+      "factId": "email-fact-2004-04-12-cds-for-customerid-whodanie",
+      "date": "2004-04-12",
+      "title": "CDs for CustomerId WHODANIE",
+      "subject": "CDs for CustomerId WHODANIE",
+      "from": "\"Steve Miller\" <smiller@swiftcd.com>",
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280403.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Cross-Domain",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:creative",
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:creative-business-operations"
+      ]
+    },
+    {
+      "index": 8,
+      "factId": "email-fact-2004-04-12-re-re-indi-visible-media-inc-swiftcd",
+      "date": "2004-04-12",
+      "title": "Re: Re: Indi-Visible Media Inc. & SwiftCD]",
+      "subject": "Re: Re: Indi-Visible Media Inc. & SwiftCD]",
+      "from": "\"Vinnie Jensen\" <vjensen@swiftcd.com>",
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280392.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Cross-Domain",
+      "confidence": "high",
+      "relevanceTags": [
+        "domain:creative",
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:creative-business-operations"
+      ]
+    },
+    {
+      "index": 9,
+      "factId": "email-fact-2004-04-19-re-cds-for-customerid-whodanie",
+      "date": "2004-04-19",
+      "title": "Re: CDs for CustomerId WHODANIE",
+      "subject": "Re: CDs for CustomerId WHODANIE",
+      "from": "\"Bret Phillips\" <bphillips@swiftcd.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270386.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Cross-Domain",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:creative",
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:creative-business-operations"
+      ]
+    },
+    {
+      "index": 10,
+      "factId": "email-fact-2004-08-06-re-music",
+      "date": "2004-08-06",
+      "title": "RE: music",
+      "subject": "RE: music",
+      "from": "\"Smith, Jay \\(ROC-JA\\)\" <Jay.Smith@jayadvertising.com>",
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280415.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Cross-Domain",
+      "confidence": "high",
+      "relevanceTags": [
+        "domain:creative",
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:creative-business-operations"
+      ]
+    },
+    {
+      "index": 11,
+      "factId": "email-fact-2004-08-11-re-hello",
+      "date": "2004-08-11",
+      "title": "RE: Hello",
+      "subject": "RE: Hello",
+      "from": "\"journeystitches\" <jschrier@rochester.rr.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276372.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Personal Life",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "strand:personal-family-life"
+      ]
+    },
+    {
+      "index": 12,
+      "factId": "email-fact-2004-10-05-re-response-for-spark-1-6-s-n-91602331",
+      "date": "2004-10-05",
+      "title": "RE: Response for SPARK (1.6), S/N 91602331",
+      "subject": "RE: Response for SPARK (1.6), S/N 91602331",
+      "from": "\"Kim Steinborn\" <KimS@tcworks.de>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273354.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Business & Projects",
+      "confidence": "high",
+      "relevanceTags": [
+        "domain:business",
+        "classification:personal_interaction",
+        "strand:business-operations"
+      ]
+    },
+    {
+      "index": 13,
+      "factId": "email-fact-2004-10-10-re-me",
+      "date": "2004-10-10",
+      "title": "RE: Me",
+      "subject": "RE: Me",
+      "from": "\"journeystitches\" <jschrier@rochester.rr.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276393.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Cross-Domain",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:personal",
+        "domain:business",
+        "classification:transactional",
+        "strand:personal-family-life"
+      ]
+    },
+    {
+      "index": 14,
+      "factId": "email-fact-2005-02-01-well-i-wonder",
+      "date": "2005-02-01",
+      "title": "well .......i wonder",
+      "subject": "well .......i wonder",
+      "from": "doug whisker <jackoval6@yahoo.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/personal.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/3/2/Messages/232042.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Cross-Domain",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:personal",
+        "domain:business",
+        "classification:system_notification",
+        "strand:personal-family-life"
+      ]
+    },
+    {
+      "index": 15,
+      "factId": "email-fact-2005-10-10-re",
+      "date": "2005-10-10",
+      "title": "Re:",
+      "subject": "Re:",
+      "from": "\"kbassociates@frontiernet.net\" <kbassociates@frontiernet.net>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272470.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Creativity",
+      "confidence": "low",
+      "relevanceTags": [
+        "domain:creative",
+        "classification:personal_interaction",
+        "strand:creative-practice"
+      ]
+    },
+    {
+      "index": 16,
+      "factId": "email-fact-2005-10-10-re-application-docs-for-mac",
+      "date": "2005-10-10",
+      "title": "Re: Application Docs for Mac",
+      "subject": "Re: Application Docs for Mac",
+      "from": "\"kbassociates@frontiernet.net\" <kbassociates@frontiernet.net>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272988.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Creativity",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:creative",
+        "classification:personal_interaction",
+        "strand:creative-practice"
+      ]
+    },
+    {
+      "index": 17,
+      "factId": "email-fact-2005-10-12-re-daniel-goldberg",
+      "date": "2005-10-12",
+      "title": "RE: Daniel Goldberg",
+      "subject": "RE: Daniel Goldberg",
+      "from": "\"Christine Carpenter\" <ccarpenter@postcentral.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/6/2/Messages/269970.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Personal Life",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "strand:general-correspondence"
+      ]
+    },
+    {
+      "index": 18,
+      "factId": "email-fact-2005-10-13-re-d-goldberg-fwd-apple-computer-eastview-creative-seminar",
+      "date": "2005-10-13",
+      "title": "Re: D.Goldberg Fwd: Apple Computer - Eastview Creative Seminar",
+      "subject": "Re: D.Goldberg Fwd: Apple Computer - Eastview Creative Seminar",
+      "from": "\"kbassociates@frontiernet.net\" <kbassociates@frontiernet.net>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271470.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Creativity",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:creative",
+        "classification:personal_interaction",
+        "strand:creative-practice"
+      ]
+    },
+    {
+      "index": 19,
+      "factId": "email-fact-2005-10-25-help-with-your-bodog-account",
+      "date": "2005-10-25",
+      "title": "Help with your Bodog account",
+      "subject": "Help with your Bodog account",
+      "from": "\"Scott Delbeck\" <scott@bodog.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270461.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Business & Projects",
+      "confidence": "low",
+      "relevanceTags": [
+        "domain:business",
+        "classification:low_interaction_misc",
+        "strand:business-operations"
+      ]
+    },
+    {
+      "index": 20,
+      "factId": "email-fact-2005-10-26-re-fwd-apple-computer",
+      "date": "2005-10-26",
+      "title": "Re: Fwd: Apple Computer",
+      "subject": "Re: Fwd: Apple Computer",
+      "from": "\"kbassociates@frontiernet.net\" <kbassociates@frontiernet.net>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270470.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Personal Life",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "strand:general-correspondence"
+      ]
+    },
+    {
+      "index": 21,
+      "factId": "email-fact-2005-10-28-read-graphic-designer",
+      "date": "2005-10-28",
+      "title": "Read: Graphic Designer",
+      "subject": "Read: Graphic Designer",
+      "from": "\"Patti Price\" <pprice@nescoresource.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270960.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Personal Life",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "strand:general-correspondence"
+      ]
+    },
+    {
+      "index": 22,
+      "factId": "email-fact-2005-11-06-re-bouncing-baby-bennies-benny-balls-and-benny-over-so-i-ca",
+      "date": "2005-11-06",
+      "title": "Re: Bouncing baby bennies, benny balls, and benny over so I can SEE the music.",
+      "subject": "Re: Bouncing baby bennies, benny balls, and benny over so I can SEE the music.",
+      "from": "Benny Strange <benny_strange@yahoo.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272990.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Cross-Domain",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:personal",
+        "domain:creative",
+        "classification:personal_interaction",
+        "strand:personal-family-life"
+      ]
+    },
+    {
+      "index": 23,
+      "factId": "email-fact-2005-11-15-re-i-need-an-update",
+      "date": "2005-11-15",
+      "title": "Re: I need an update",
+      "subject": "Re: I need an update",
+      "from": "\"kbassociates@frontiernet.net\" <kbassociates@frontiernet.net>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272991.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Personal Life",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "strand:personal-family-life"
+      ]
+    },
+    {
+      "index": 24,
+      "factId": "email-fact-2005-11-30-re-graphic-designer",
+      "date": "2005-11-30",
+      "title": "Re: Graphic Designer",
+      "subject": "Re: Graphic Designer",
+      "from": "Bob Martin <bob1@rtmadvertising.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272992.emlx",
+      "project": "Daniel Who's Media Empire",
+      "domain": "Cross-Domain",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:creative",
+        "domain:personal",
+        "classification:personal_interaction",
+        "strand:education-training"
+      ]
+    },
+    {
+      "index": 25,
+      "factId": "email-fact-2005-12-06-ummmmm-ok",
+      "date": "2005-12-06",
+      "title": "ummmmm.........ok.......",
+      "subject": "ummmmm.........ok.......",
+      "from": "adam iff <adamiff@yahoo.com>",
+      "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273473.emlx",
+      "project": "Daniel Adam Goldberg Life Story",
+      "domain": "Personal Life",
+      "confidence": "medium",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "strand:personal-family-life"
+      ]
+    }
+  ]
+}

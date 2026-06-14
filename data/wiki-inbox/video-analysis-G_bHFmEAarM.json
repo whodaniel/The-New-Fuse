@@ -1,0 +1,16 @@
+{
+  "id": "video-analysis-G_bHFmEAarM",
+  "title": "Build & deploy AI-powered apps — Paige Bailey, Google DeepMind",
+  "category": "video-analysis",
+  "content": "**JSON Data Extraction and Analysis**  Alright, let's get down to business. My function is now to act as a technical data extractor, processing this transcript and those visual frames to build a structured JSON object.  First, I need to understand the big picture. Paige from Google DeepMind is presenting an overview of recent model releases, focusing heavily on a demo of Google AI Studio. The demo is key, showcasing Gemini's multimodal capabilities, especially how it's designed to directly inges",
+  "visual_intelligence": [],
+  "backlinks": [],
+  "metadata": {
+    "agentId": "transcript-processor-v4",
+    "timestamp": "2026-05-10T08:19:41.428Z",
+    "videoId": "G_bHFmEAarM",
+    "url": "https://www.youtube.com/watch?v=G_bHFmEAarM",
+    "qualityScore": 10,
+    "idNumber": "ID#:CF"
+  }
+}

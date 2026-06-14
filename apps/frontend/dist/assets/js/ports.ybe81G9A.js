@@ -1,0 +1,1 @@
+const r=/\/api(?:\/v\d+)?$/i,i=t=>{const e=String(t).trim().replace(/\/+$/,"");return e?r.test(e)?e.replace(/\/api\/v\d+$/i,"/api"):`${e}/api`:""},n=()=>i("https://api.thenewfuse.com"),s=()=>"wss://relay.thenewfuse.com";export{s as a,n as g};

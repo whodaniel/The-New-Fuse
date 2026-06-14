@@ -2,7 +2,6 @@
 
 import type { Cluster, Redis } from 'ioredis';
 // Assuming @the-new-fuse/infrastructure is available or its utilities are moved here
-import * as infra from '@the-new-fuse/infrastructure'; // Will need to ensure this path is correct or moved
 
 // Assume a logger is passed or imported
 function log(level: string, category: string, message: string, data: any = {}) {
@@ -48,7 +47,7 @@ export class RedisClientManager {
     config: typeof CONFIG,
     logger: (level: string, category: string, message: string, data?: any) => void,
     onIngressMessage: (envelope: any) => void,
-    onRelayAgentRegisterRequest: (envelope: any) => Promise<void>,
+    onRelayAgentRegisterRequest: (envelope: any) => Promise<void>
   ) {
     this.config = config;
     this.logger = logger;
@@ -74,7 +73,9 @@ export class RedisClientManager {
       this.upstash = infrastructure.createUpstashRestClient();
 
       if (this.redis) {
-        this.redis.on('error', (err: any) => this.logger('error', 'REDIS', `Client error: ${err.message}`));
+        this.redis.on('error', (err: any) =>
+          this.logger('error', 'REDIS', `Client error: ${err.message}`)
+        );
         await infrastructure.connectStandaloneRedisClient(this.redis).catch((err: any) => {
           this.logger('warn', 'REDIS', `Failed to connect primary client (TCP): ${err.message}`);
         });
@@ -100,7 +101,11 @@ export class RedisClientManager {
               this.onIngressMessage(envelope);
             } else if (channel === 'tnf:relay:agent_register_requests') {
               void this.onRelayAgentRegisterRequest(envelope).catch((e) => {
-                this.logger('error', 'REDIS', `Error handling relay agent register request: ${e.message}`);
+                this.logger(
+                  'error',
+                  'REDIS',
+                  `Error handling relay agent register request: ${e.message}`
+                );
               });
             }
           } catch (e) {
@@ -193,7 +198,11 @@ export class RedisClientManager {
       // Upstash client might not have direct ltrim, but typical Redis REST APIs would.
       // Assuming it exists or will be proxied.
       // This would require a more specific Upstash client implementation if not directly available.
-      this.logger('warn', 'REDIS', `ltrim not natively supported/implemented for Upstash client directly. Key: ${key}`);
+      this.logger(
+        'warn',
+        'REDIS',
+        `ltrim not natively supported/implemented for Upstash client directly. Key: ${key}`
+      );
       return; // Or throw error
     } else if (this.redis) {
       return this.redis.ltrim(key, start, stop);

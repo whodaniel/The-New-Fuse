@@ -1,0 +1,1255 @@
+{
+  "sourceType": "email-wave2-import-queue-pass8",
+  "generatedAt": "2026-05-07T19:50:37.452Z",
+  "sourceAdjudication": "data/protocols/email-wave2-adjudication-pass8.2026-05-07.json",
+  "minConfidence": "low",
+  "facts": [
+    {
+      "factId": "email-fact-wave2-2006-05-16-msgid-000001c67925-a129a650-926fa8c0-tpy91",
+      "date": "2006-05-16",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: the crred",
+      "statement": "On 2006-05-16, an email from \"Philomela Terrio\" <terriophi@gzinc.com> with subject \"Re: the crred\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-000001c67925-a129a650-926fa8c0-tpy91",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/6/2/Messages/269935.emlx",
+        "from": "\"Philomela Terrio\" <terriophi@gzinc.com>",
+        "subject": "Re: the crred",
+        "dateIso": "2006-05-16T20:16:35.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<000001c67925$a129a650$926fa8c0@tpy91>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-06-13-msgid-1eb1e8327cb5e244ac226dfc663d1f411084ec6e-n",
+      "date": "2006-06-13",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "RE:",
+      "statement": "On 2006-06-13, an email from \"YTH Comments (NBC Universal)\" <ythcomments@nbcuni.com> with subject \"RE:\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-1eb1e8327cb5e244ac226dfc663d1f411084ec6e-n",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/6/2/Messages/269947.emlx",
+        "from": "\"YTH Comments (NBC Universal)\" <ythcomments@nbcuni.com>",
+        "subject": "RE:",
+        "dateIso": "2006-06-13T18:22:58.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<1eb1e8327cb5e244ac226dfc663d1f411084ec6e@nyp177anbcge>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-06-22-msgid-e1ftyoe-00033x-ld-mars-milescape-com",
+      "date": "2006-06-22",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: StormPay.com",
+      "statement": "On 2006-06-22, an email from \"Daniel Goldberg\" <musicgear@startree.tv> with subject \"Re: StormPay.com\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-e1ftyoe-00033x-ld-mars-milescape-com",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/9/2/Messages/290728.emlx",
+        "from": "\"Daniel Goldberg\" <musicgear@startree.tv>",
+        "subject": "Re: StormPay.com",
+        "dateIso": "2006-06-22T23:15:36.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<e1ftyoe-00033x-ld@mars.milescape.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-07-02-msgid-953854a20607021122i54ab455fo5211962ef9b42c",
+      "date": "2006-07-02",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: support",
+      "statement": "On 2006-07-02, an email from bigguy <jamroom@gmail.com> with subject \"Re: support\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-953854a20607021122i54ab455fo5211962ef9b42c",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272457.emlx",
+        "from": "bigguy <jamroom@gmail.com>",
+        "subject": "Re: support",
+        "dateIso": "2006-07-02T18:22:03.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<953854a20607021122i54ab455fo5211962ef9b42c22@mail.gmail.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-07-18-msgid-17d9d213efb7a14d9fda4573d6798db66df464-mei",
+      "date": "2006-07-18",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "RE: employment status?",
+      "statement": "On 2006-07-18, an email from \"McGrath, Lori\" <Lori.McGrath@adeccona.com> with subject \"RE: employment status?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-17d9d213efb7a14d9fda4573d6798db66df464-mei",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272974.emlx",
+        "from": "\"McGrath, Lori\" <Lori.McGrath@adeccona.com>",
+        "subject": "RE: employment status?",
+        "dateIso": "2006-07-18T15:37:31.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<17d9d213efb7a14d9fda4573d6798db66df464@meintus00005.wwit.adecco.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-07-19-msgid-17d9d213efb7a14d9fda4573d6798db6010d612f-m",
+      "date": "2006-07-19",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "RE: employment status?",
+      "statement": "On 2006-07-19, an email from \"McGrath, Lori\" <Lori.McGrath@adeccona.com> with subject \"RE: employment status?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-17d9d213efb7a14d9fda4573d6798db6010d612f-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272975.emlx",
+        "from": "\"McGrath, Lori\" <Lori.McGrath@adeccona.com>",
+        "subject": "RE: employment status?",
+        "dateIso": "2006-07-19T18:41:00.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<17d9d213efb7a14d9fda4573d6798db6010d612f@meintus00005.wwit.adecco.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-07-22-msgid-002a01c6ad82-c3f69a30-0700000a-roseleigh",
+      "date": "2006-07-22",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: information about drums",
+      "statement": "On 2006-07-22, an email from \"info\" <info@roseleigh.com> with subject \"Re: information about drums\" was captured as a potential narrative marker pending review.",
+      "confidence": "medium",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:15"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-002a01c6ad82-c3f69a30-0700000a-roseleigh",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271462.emlx",
+        "from": "\"info\" <info@roseleigh.com>",
+        "subject": "Re: information about drums",
+        "dateIso": "2006-07-22T11:34:15.000Z",
+        "score": 15,
+        "dedupeKey": "msgid:<002a01c6ad82$c3f69a30$0700000a@roseleigh>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-07-30-msgid-20060730191406-50942-qmail-web35902-mail-m",
+      "date": "2006-07-30",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: oh by the way",
+      "statement": "On 2006-07-30, an email from adam iff <adamiff@yahoo.com> with subject \"Re: oh by the way\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20060730191406-50942-qmail-web35902-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273495.emlx",
+        "from": "adam iff <adamiff@yahoo.com>",
+        "subject": "Re: oh by the way",
+        "dateIso": "2006-07-30T19:14:06.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<20060730191406.50942.qmail@web35902.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-07-30-msgid-20060730192353-29681-qmail-web35910-mail-m",
+      "date": "2006-07-30",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: oh by the way",
+      "statement": "On 2006-07-30, an email from adam iff <adamiff@yahoo.com> with subject \"Re: oh by the way\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:20"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20060730192353-29681-qmail-web35910-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273498.emlx",
+        "from": "adam iff <adamiff@yahoo.com>",
+        "subject": "Re: oh by the way",
+        "dateIso": "2006-07-30T19:23:53.000Z",
+        "score": 20,
+        "dedupeKey": "msgid:<20060730192353.29681.qmail@web35910.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-07-30-msgid-20060730195047-19535-qmail-web35913-mail-m",
+      "date": "2006-07-30",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: oh by the way",
+      "statement": "On 2006-07-30, an email from adam iff <adamiff@yahoo.com> with subject \"Re: oh by the way\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20060730195047-19535-qmail-web35913-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273501.emlx",
+        "from": "adam iff <adamiff@yahoo.com>",
+        "subject": "Re: oh by the way",
+        "dateIso": "2006-07-30T19:50:47.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<20060730195047.19535.qmail@web35913.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-08-01-msgid-20060801200648-5470-qmail-web53013-mail-ya",
+      "date": "2006-08-01",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: drum prices please",
+      "statement": "On 2006-08-01, an email from Da JembeQueen! <jembequeen@yahoo.com> with subject \"Re: drum prices please\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20060801200648-5470-qmail-web53013-mail-ya",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/2014-15.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276294.emlx",
+        "from": "Da JembeQueen! <jembequeen@yahoo.com>",
+        "subject": "Re: drum prices please",
+        "dateIso": "2006-08-01T20:06:48.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<20060801200648.5470.qmail@web53013.mail.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-08-04-msgid-20060804021205-0323036420c-relay01-roc-ny-",
+      "date": "2006-08-04",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "RE: Feedback or enquiry from World Wide Drums",
+      "statement": "On 2006-08-04, an email from \"World Wide Drums\" <sales@wwdrums.com> with subject \"RE: Feedback or enquiry from World Wide Drums\" was captured as a potential narrative marker pending review.",
+      "confidence": "medium",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20060804021205-0323036420c-relay01-roc-ny-",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271437.emlx",
+        "from": "\"World Wide Drums\" <sales@wwdrums.com>",
+        "subject": "RE: Feedback or enquiry from World Wide Drums",
+        "dateIso": "2006-08-04T02:12:03.000Z",
+        "score": 11,
+        "dedupeKey": "msgid:<20060804021205.0323036420c@relay01.roc.ny.frontiernet.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-08-11-msgid-20060811201832-10327-qmail-web35915-mail-m",
+      "date": "2006-08-11",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: oh by the way",
+      "statement": "On 2006-08-11, an email from adam iff <adamiff@yahoo.com> with subject \"Re: oh by the way\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20060811201832-10327-qmail-web35915-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273479.emlx",
+        "from": "adam iff <adamiff@yahoo.com>",
+        "subject": "Re: oh by the way",
+        "dateIso": "2006-08-11T20:18:32.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<20060811201832.10327.qmail@web35915.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-07-msgid-000001c6e9cc-21c1b160-9784a8c0-hixzgqw",
+      "date": "2006-10-07",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: Hi",
+      "statement": "On 2006-10-07, an email from \"Jepson Burnes\" <laur@foxjet.com> with subject \"Re: Hi\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-000001c6e9cc-21c1b160-9784a8c0-hixzgqw",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271921.emlx",
+        "from": "\"Jepson Burnes\" <laur@foxjet.com>",
+        "subject": "Re: Hi",
+        "dateIso": "2006-10-07T04:50:37.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<000001c6e9cc$21c1b160$9784a8c0@hixzgqw>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-17-msgid-20061017095023-3451-qmail-web60620-mail-ya",
+      "date": "2006-10-17",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: iPod Video",
+      "statement": "On 2006-10-17, an email from Nikki nelson <nikky4yall@yahoo.com> with subject \"Re: iPod Video\" was captured as a potential narrative marker pending review.",
+      "confidence": "medium",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061017095023-3451-qmail-web60620-mail-ya",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272945.emlx",
+        "from": "Nikki nelson <nikky4yall@yahoo.com>",
+        "subject": "Re: iPod Video",
+        "dateIso": "2006-10-17T09:50:23.000Z",
+        "score": 11,
+        "dedupeKey": "msgid:<20061017095023.3451.qmail@web60620.mail.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-21-msgid-20061021023244-63541-qmail-web62402-mail-r",
+      "date": "2006-10-21",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: iPod Video",
+      "statement": "On 2006-10-21, an email from Nikki nelson <nikky4yall@yahoo.com> with subject \"Re: iPod Video\" was captured as a potential narrative marker pending review.",
+      "confidence": "medium",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061021023244-63541-qmail-web62402-mail-r",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272944.emlx",
+        "from": "Nikki nelson <nikky4yall@yahoo.com>",
+        "subject": "Re: iPod Video",
+        "dateIso": "2006-10-21T02:32:44.000Z",
+        "score": 11,
+        "dedupeKey": "msgid:<20061021023244.63541.qmail@web62402.mail.re1.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-21-msgid-20061021150822-33916-qmail-web58612-mail-r",
+      "date": "2006-10-21",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: I want to buy this item",
+      "statement": "On 2006-10-21, an email from Mrs Jessica Williams <jessica_willams001@yahoo.com> with subject \"Re: I want to buy this item\" was captured as a potential narrative marker pending review.",
+      "confidence": "medium",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:11"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061021150822-33916-qmail-web58612-mail-r",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270429.emlx",
+        "from": "Mrs Jessica Williams <jessica_willams001@yahoo.com>",
+        "subject": "Re: I want to buy this item",
+        "dateIso": "2006-10-21T15:08:22.000Z",
+        "score": 11,
+        "dedupeKey": "msgid:<20061021150822.33916.qmail@web58612.mail.re3.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-25-msgid-20061025111459-72192-qmail-web58601-mail-r",
+      "date": "2006-10-25",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "PAYMENT MADE.",
+      "statement": "On 2006-10-25, an email from Mrs Jessica Williams <jessica_willams001@yahoo.com> with subject \"PAYMENT MADE.\" was captured as a potential narrative marker pending review.",
+      "confidence": "medium",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:13"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061025111459-72192-qmail-web58601-mail-r",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270430.emlx",
+        "from": "Mrs Jessica Williams <jessica_willams001@yahoo.com>",
+        "subject": "PAYMENT MADE.",
+        "dateIso": "2006-10-25T11:14:59.000Z",
+        "score": 13,
+        "dedupeKey": "msgid:<20061025111459.72192.qmail@web58601.mail.re3.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-25-msgid-008101c6f853-bdfbaf00-9a29c0a8-tillie",
+      "date": "2006-10-25",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: bledsoe",
+      "statement": "On 2006-10-25, an email from danit ewell <shaniferne@biddefordsacochamber.org> with subject \"Re: bledsoe\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-008101c6f853-bdfbaf00-9a29c0a8-tillie",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272433.emlx",
+        "from": "danit ewell <shaniferne@biddefordsacochamber.org>",
+        "subject": "Re: bledsoe",
+        "dateIso": "2006-10-25T16:36:38.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<008101c6f853.bdfbaf00.9a29c0a8@tillie>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-25-msgid-d04-4a6d3-327118f7-aol-com",
+      "date": "2006-10-25",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: From Amateur Match",
+      "statement": "On 2006-10-25, an email from Misshunnybunny15@aol.com with subject \"Re: From Amateur Match\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-d04-4a6d3-327118f7-aol-com",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/6/2/Messages/269926.emlx",
+        "from": "Misshunnybunny15@aol.com",
+        "subject": "Re: From Amateur Match",
+        "dateIso": "2006-10-25T19:45:59.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<d04.4a6d3.327118f7@aol.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-25-msgid-535-99d0027-32712077-aol-com",
+      "date": "2006-10-25",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: From Amateur Match",
+      "statement": "On 2006-10-25, an email from Misshunnybunny15@aol.com with subject \"Re: From Amateur Match\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-535-99d0027-32712077-aol-com",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271433.emlx",
+        "from": "Misshunnybunny15@aol.com",
+        "subject": "Re: From Amateur Match",
+        "dateIso": "2006-10-25T20:17:59.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<535.99d0027.32712077@aol.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-27-msgid-20061027132406-47012-qmail-web30703-mail-m",
+      "date": "2006-10-27",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re:",
+      "statement": "On 2006-10-27, an email from Elizabeth Macklen <pianawhiz86@yahoo.com> with subject \"Re:\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:20"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061027132406-47012-qmail-web30703-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271926.emlx",
+        "from": "Elizabeth Macklen <pianawhiz86@yahoo.com>",
+        "subject": "Re:",
+        "dateIso": "2006-10-27T13:24:05.000Z",
+        "score": 20,
+        "dedupeKey": "msgid:<20061027132406.47012.qmail@web30703.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-10-29-msgid-20061029173749-15020-qmail-web58404-mail-r",
+      "date": "2006-10-29",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "hi dear",
+      "statement": "On 2006-10-29, an email from \"gbeggeone@yahoo.com jeffrey\" <gbeggeone@yahoo.com> with subject \"hi dear\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061029173749-15020-qmail-web58404-mail-r",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292386.emlx",
+        "from": "\"gbeggeone@yahoo.com jeffrey\" <gbeggeone@yahoo.com>",
+        "subject": "hi dear",
+        "dateIso": "2006-10-29T17:37:49.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<20061029173749.15020.qmail@web58404.mail.re3.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-02-msgid-20061102105653-95977-qmail-web58402-mail-r",
+      "date": "2006-11-02",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "hi dear",
+      "statement": "On 2006-11-02, an email from \"gbeggeone@yahoo.com jeffrey\" <gbeggeone@yahoo.com> with subject \"hi dear\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061102105653-95977-qmail-web58402-mail-r",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270416.emlx",
+        "from": "\"gbeggeone@yahoo.com jeffrey\" <gbeggeone@yahoo.com>",
+        "subject": "hi dear",
+        "dateIso": "2006-11-02T10:56:53.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<20061102105653.95977.qmail@web58402.mail.re3.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-02-msgid-ef85f3eadc967f43a27538560eaf187b02f8e9-usa",
+      "date": "2006-11-02",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "RE: Needing a band?",
+      "statement": "On 2006-11-02, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"RE: Needing a band?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-ef85f3eadc967f43a27538560eaf187b02f8e9-usa",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270916.emlx",
+        "from": "\"Wilcox, Mike\" <Mike.Wilcox@xerox.com>",
+        "subject": "RE: Needing a band?",
+        "dateIso": "2006-11-02T19:44:27.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<ef85f3eadc967f43a27538560eaf187b02f8e9@usa0300ms02.na.xerox.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-02-msgid-ef85f3eadc967f43a27538560eaf187b02f8ea-usa",
+      "date": "2006-11-02",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Crossfyre demo #2",
+      "statement": "On 2006-11-02, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"Crossfyre demo #2\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-ef85f3eadc967f43a27538560eaf187b02f8ea-usa",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/6/2/Messages/269914.emlx",
+        "from": "\"Wilcox, Mike\" <Mike.Wilcox@xerox.com>",
+        "subject": "Crossfyre demo #2",
+        "dateIso": "2006-11-02T19:45:17.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<ef85f3eadc967f43a27538560eaf187b02f8ea@usa0300ms02.na.xerox.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-02-msgid-ef85f3eadc967f43a27538560eaf187b02f8eb-usa",
+      "date": "2006-11-02",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Crossfyre demo #3",
+      "statement": "On 2006-11-02, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"Crossfyre demo #3\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-ef85f3eadc967f43a27538560eaf187b02f8eb-usa",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271418.emlx",
+        "from": "\"Wilcox, Mike\" <Mike.Wilcox@xerox.com>",
+        "subject": "Crossfyre demo #3",
+        "dateIso": "2006-11-02T19:45:53.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<ef85f3eadc967f43a27538560eaf187b02f8eb@usa0300ms02.na.xerox.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-02-msgid-ef85f3eadc967f43a27538560eaf187b046612a2-u",
+      "date": "2006-11-02",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "RE: Needing a band?",
+      "statement": "On 2006-11-02, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"RE: Needing a band?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-ef85f3eadc967f43a27538560eaf187b046612a2-u",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271420.emlx",
+        "from": "\"Wilcox, Mike\" <Mike.Wilcox@xerox.com>",
+        "subject": "RE: Needing a band?",
+        "dateIso": "2006-11-02T20:03:24.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<ef85f3eadc967f43a27538560eaf187b046612a2@usa0300ms02.na.xerox.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-08-msgid-ef85f3eadc967f43a27538560eaf187b046f3e63-u",
+      "date": "2006-11-08",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "RE: Needing a band?",
+      "statement": "On 2006-11-08, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"RE: Needing a band?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-ef85f3eadc967f43a27538560eaf187b046f3e63-u",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272417.emlx",
+        "from": "\"Wilcox, Mike\" <Mike.Wilcox@xerox.com>",
+        "subject": "RE: Needing a band?",
+        "dateIso": "2006-11-08T18:48:02.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<ef85f3eadc967f43a27538560eaf187b046f3e63@usa0300ms02.na.xerox.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-09-msgid-20061109041020-52285-qmail-web35910-mail-m",
+      "date": "2006-11-09",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: oh by the way",
+      "statement": "On 2006-11-09, an email from adam iff <adamiff@yahoo.com> with subject \"Re: oh by the way\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061109041020-52285-qmail-web35910-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273472.emlx",
+        "from": "adam iff <adamiff@yahoo.com>",
+        "subject": "Re: oh by the way",
+        "dateIso": "2006-11-09T04:10:20.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<20061109041020.52285.qmail@web35910.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-09-msgid-ef85f3eadc967f43a27538560eaf187b046f41be-u",
+      "date": "2006-11-09",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "RE: Needing a band?",
+      "statement": "On 2006-11-09, an email from \"Wilcox, Mike\" <Mike.Wilcox@xerox.com> with subject \"RE: Needing a band?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-ef85f3eadc967f43a27538560eaf187b046f41be-u",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272436.emlx",
+        "from": "\"Wilcox, Mike\" <Mike.Wilcox@xerox.com>",
+        "subject": "RE: Needing a band?",
+        "dateIso": "2006-11-09T12:24:19.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<ef85f3eadc967f43a27538560eaf187b046f41be@usa0300ms02.na.xerox.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-09-msgid-20061109213825-65363-qmail-web35908-mail-m",
+      "date": "2006-11-09",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: okay....",
+      "statement": "On 2006-11-09, an email from adam iff <adamiff@yahoo.com> with subject \"Re: okay....\" was captured as a potential narrative marker pending review.",
+      "confidence": "medium",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:transactional",
+        "signal_score:15"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061109213825-65363-qmail-web35908-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273504.emlx",
+        "from": "adam iff <adamiff@yahoo.com>",
+        "subject": "Re: okay....",
+        "dateIso": "2006-11-09T21:38:25.000Z",
+        "score": 15,
+        "dedupeKey": "msgid:<20061109213825.65363.qmail@web35908.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-11-msgid-20061111001457-43456-qmail-web35903-mail-m",
+      "date": "2006-11-11",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: good news....",
+      "statement": "On 2006-11-11, an email from adam iff <adamiff@yahoo.com> with subject \"Re: good news....\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:20"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061111001457-43456-qmail-web35903-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273476.emlx",
+        "from": "adam iff <adamiff@yahoo.com>",
+        "subject": "Re: good news....",
+        "dateIso": "2006-11-11T00:14:57.000Z",
+        "score": 20,
+        "dedupeKey": "msgid:<20061111001457.43456.qmail@web35903.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-12-msgid-92283985-20061112164559-burummail-net",
+      "date": "2006-11-12",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: Hello!",
+      "statement": "On 2006-11-12, an email from Katya <ekkaterrinnka@burummail.net> with subject \"Re: Hello!\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-92283985-20061112164559-burummail-net",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271916.emlx",
+        "from": "Katya <ekkaterrinnka@burummail.net>",
+        "subject": "Re: Hello!",
+        "dateIso": "2006-11-12T13:45:59.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<92283985.20061112164559@burummail.net>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-12-msgid-20061112174713-4648-qmail-web33810-mail-mu",
+      "date": "2006-11-12",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: Hook Up?",
+      "statement": "On 2006-11-12, an email from Claire Gsell <firedancer981@yahoo.com> with subject \"Re: Hook Up?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061112174713-4648-qmail-web33810-mail-mu",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271423.emlx",
+        "from": "Claire Gsell <firedancer981@yahoo.com>",
+        "subject": "Re: Hook Up?",
+        "dateIso": "2006-11-12T17:47:13.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<20061112174713.4648.qmail@web33810.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-12-msgid-20061112174837-69109-qmail-web33807-mail-m",
+      "date": "2006-11-12",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: Hook Up?",
+      "statement": "On 2006-11-12, an email from Claire Gsell <firedancer981@yahoo.com> with subject \"Re: Hook Up?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061112174837-69109-qmail-web33807-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272420.emlx",
+        "from": "Claire Gsell <firedancer981@yahoo.com>",
+        "subject": "Re: Hook Up?",
+        "dateIso": "2006-11-12T17:48:37.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<20061112174837.69109.qmail@web33807.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-12-msgid-20061112175213-11610-qmail-web33808-mail-m",
+      "date": "2006-11-12",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: ?",
+      "statement": "On 2006-11-12, an email from Claire Gsell <firedancer981@yahoo.com> with subject \"Re: ?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061112175213-11610-qmail-web33808-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/6/2/Messages/269917.emlx",
+        "from": "Claire Gsell <firedancer981@yahoo.com>",
+        "subject": "Re: ?",
+        "dateIso": "2006-11-12T17:52:13.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<20061112175213.11610.qmail@web33808.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-11-12-msgid-20061112175624-12599-qmail-web33808-mail-m",
+      "date": "2006-11-12",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: ?",
+      "statement": "On 2006-11-12, an email from Claire Gsell <firedancer981@yahoo.com> with subject \"Re: ?\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061112175624-12599-qmail-web33808-mail-m",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272937.emlx",
+        "from": "Claire Gsell <firedancer981@yahoo.com>",
+        "subject": "Re: ?",
+        "dateIso": "2006-11-12T17:56:24.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<20061112175624.12599.qmail@web33808.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-12-13-msgid-227391-23448-qm-web30610-mail-mud-yahoo-co",
+      "date": "2006-12-13",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "RE:James",
+      "statement": "On 2006-12-13, an email from Jennifer SunLove <journeysunpatchworx@yahoo.com> with subject \"RE:James\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-227391-23448-qm-web30610-mail-mud-yahoo-co",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272422.emlx",
+        "from": "Jennifer SunLove <journeysunpatchworx@yahoo.com>",
+        "subject": "RE:James",
+        "dateIso": "2006-12-13T15:30:24.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<227391.23448.qm@web30610.mail.mud.yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-12-20-msgid-20061219182033-ain70194-m4500-01-uchicago-",
+      "date": "2006-12-20",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: Band",
+      "statement": "On 2006-12-20, an email from Burak Kadercan <kadercan@uchicago.edu> with subject \"Re: Band\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061219182033-ain70194-m4500-01-uchicago-",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/2/2/Messages/229482.emlx",
+        "from": "Burak Kadercan <kadercan@uchicago.edu>",
+        "subject": "Re: Band",
+        "dateIso": "2006-12-20T00:20:33.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<20061219182033.ain70194@m4500-01.uchicago.edu>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-12-23-msgid-20061223142621-ais25942-m4500-01-uchicago-",
+      "date": "2006-12-23",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "Re: Band",
+      "statement": "On 2006-12-23, an email from Burak Kadercan <kadercan@uchicago.edu> with subject \"Re: Band\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-20061223142621-ais25942-m4500-01-uchicago-",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/9/2/2/Messages/229481.emlx",
+        "from": "Burak Kadercan <kadercan@uchicago.edu>",
+        "subject": "Re: Band",
+        "dateIso": "2006-12-23T20:26:21.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<20061223142621.ais25942@m4500-01.uchicago.edu>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2006-12-31-msgid-133616683-20061231162355-yahoo-com",
+      "date": "2006-12-31",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "More about myself and Happy New Year",
+      "statement": "On 2006-12-31, an email from Alina Gabdulbarowa <deep934love@yahoo.com> with subject \"More about myself and Happy New Year\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:18"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-133616683-20061231162355-yahoo-com",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272797.emlx",
+        "from": "Alina Gabdulbarowa <deep934love@yahoo.com>",
+        "subject": "More about myself and Happy New Year",
+        "dateIso": "2006-12-31T11:23:55.000Z",
+        "score": 18,
+        "dedupeKey": "msgid:<133616683.20061231162355@yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    },
+    {
+      "factId": "email-fact-wave2-2007-01-01-msgid-1843625981-20070101165938-yahoo-com",
+      "date": "2007-01-01",
+      "domain": "Personal Life",
+      "project": "Daniel Adam Goldberg Life Story",
+      "title": "One more about me",
+      "statement": "On 2007-01-01, an email from Alina Gabdulbarowa <deep934love@yahoo.com> with subject \"One more about me\" was captured as a potential narrative marker pending review.",
+      "confidence": "high",
+      "enteredBy": "codex-email-wave2-curation",
+      "capturedAt": "2026-05-07T19:45:18.601Z",
+      "relevanceTags": [
+        "domain:personal",
+        "classification:personal_interaction",
+        "signal_score:16"
+      ],
+      "evidence": {
+        "eventId": "email_evt_msgid-1843625981-20070101165938-yahoo-com",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272277.emlx",
+        "from": "Alina Gabdulbarowa <deep934love@yahoo.com>",
+        "subject": "One more about me",
+        "dateIso": "2007-01-01T11:59:38.000Z",
+        "score": 16,
+        "dedupeKey": "msgid:<1843625981.20070101165938@yahoo.com>"
+      },
+      "review": {
+        "status": "pending_human_review",
+        "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion."
+      }
+    }
+  ]
+}

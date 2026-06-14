@@ -1,0 +1,33 @@
+{
+  "sourceType": "email-manual-review-progress",
+  "generatedAt": "2026-05-07T19:39:14.693Z",
+  "queueRowCount": 438,
+  "queueUniqueFactIdCount": 436,
+  "duplicateFactIds": [
+    {
+      "factId": "email-fact-2015-11-17-re-ic-agreement",
+      "count": 2
+    },
+    {
+      "factId": "email-fact-2024-03-08-master-prompt-list-working",
+      "count": 2
+    }
+  ],
+  "reviewedUniqueFactCount": 436,
+  "pendingUniqueFactCount": 0,
+  "reviewedPasses": [
+    "data/protocols/email-manual-adjudication.2026-05-07.json",
+    "data/protocols/email-manual-adjudication-pass2.2026-05-07.json",
+    "data/protocols/email-manual-adjudication-pass4.2026-05-07.json",
+    "data/protocols/email-manual-adjudication-pass5.2026-05-07.json",
+    "data/protocols/email-manual-adjudication-pass6-bulk.2026-05-07.json"
+  ],
+  "decisionSummary": {
+    "import_to_timeline": 13,
+    "keep_excluded_already_covered": 416,
+    "keep_excluded": 7,
+    "other": 0
+  },
+  "pendingFactIds": [],
+  "status": "complete"
+}

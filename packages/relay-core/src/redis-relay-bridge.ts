@@ -266,6 +266,16 @@ export class RedisRelayBridge extends EventEmitter {
   }
 
   /**
+   * Publish a raw message to a specific Redis channel
+   */
+  async publish(channel: string, message: string): Promise<number> {
+    if (!this.connected) {
+      throw new Error('Not connected to Redis');
+    }
+    return (this.redisClient as any).publish(channel, message);
+  }
+
+  /**
    * Publish message to ingress (for direct use)
    */
   async publishToIngress(envelope: TNFEnvelope): Promise<void> {

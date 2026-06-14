@@ -1,0 +1,36 @@
+
+> @the-new-fuse/web-scraping@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping
+> eslint src/**/*.ts
+
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/core/WebScrapingService.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): packages/web-scraping/src/core/WebScrapingService.ts
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/electron/ElectronWebScrapingBridge.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): packages/web-scraping/src/electron/ElectronWebScrapingBridge.ts
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/mcp/WebScrapingMCPTools.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): packages/web-scraping/src/mcp/WebScrapingMCPTools.ts
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/proxy/ProxyService.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): packages/web-scraping/src/proxy/ProxyService.ts
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/streaming/WebScrapingSSEController.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): packages/web-scraping/src/streaming/WebScrapingSSEController.ts
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/types/index.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): packages/web-scraping/src/types/index.ts
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/websocket/WebScrapingWebSocketGateway.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): packages/web-scraping/src/websocket/WebScrapingWebSocketGateway.ts
+
+✖ 7 problems (7 errors, 0 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.

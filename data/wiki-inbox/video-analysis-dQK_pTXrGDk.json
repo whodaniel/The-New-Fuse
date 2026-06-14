@@ -1,0 +1,29 @@
+{
+  "id": "video-analysis-dQK_pTXrGDk",
+  "title": "Salesforce Killed The Browser. Every Agent Runs Your CRM Now.",
+  "category": "video-analysis",
+  "content": "The video proposes a five-question filter to evaluate the overwhelming number of new AI agent launches, arguing that the focus should shift from model quality to infrastructure. The filter prioritizes agents that integrate with existing tools, act as open platforms, access critical data, foster ecosystems, and allow for agent composition. This framework is then used to analyze OpenAI's Workspace Agents as a platform for shared, repeatable workflows and Salesforce's Headless 360 as a foundational infrastructure layer that exposes CRM data to any agent via APIs and CLIs.",
+  "visual_intelligence": [],
+  "backlinks": [
+    "AI Agents",
+    "Agent Swarms",
+    "Agent Infrastructure",
+    "Composability",
+    "Managed Agents",
+    "Coding Agents",
+    "Model Quality vs. Infrastructure",
+    "OpenAI Workspace Agents: Shared, cloud-hosted, schedulable agents powered by a code interpreter. Integrate with tools and can be used in ChatGPT or Slack.",
+    "Salesforce Headless 360: Exposes Salesforce platform capabilities via APIs, MCP (Model-View-Controller-Presenter) tools, and CLI commands.",
+    "Salesforce Ecosystem: Building 60+ new MCP tools, 30+ preconfigured coding skills, an \"Agent Exchange\" marketplace, and a builder fund.",
+    "MCP (Model-View-Controller-Presenter): Mentioned as a tool type for Salesforce Headless 360, indicating a specific architectural pattern for building agent-compatible tools.",
+    "Mentioned Products/Companies: OpenAI, Anthropic, Salesforce, Perplexity, Moonshot (Kimmy K 2.6), Microsoft (Copilot), Claude, ChatGPT, Cursor, Codeex"
+  ],
+  "metadata": {
+    "agentId": "transcript-processor-v4",
+    "timestamp": "2026-05-10T07:18:42.769Z",
+    "videoId": "dQK_pTXrGDk",
+    "url": "https://www.youtube.com/watch?v=dQK_pTXrGDk",
+    "qualityScore": 100,
+    "idNumber": "ID#:CP"
+  }
+}

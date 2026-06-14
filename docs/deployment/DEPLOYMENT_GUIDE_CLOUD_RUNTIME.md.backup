@@ -1,0 +1,307 @@
+# The New Fuse - Cloudflare Deployment Guide
+
+This guide will help you deploy The New Fuse AI Agent Orchestration Platform to Cloudflare using Docker.
+
+## Prerequisites
+
+- Cloudflare account (sign up at https://cloudflare.app)
+- Cloudflare CLI installed: `npm install -g @cloudflare/cli`
+- Docker Desktop running locally (for testing)
+- Git repository connected to Cloudflare
+
+## Architecture Overview
+
+The New Fuse consists of these core services:
+
+1. **Frontend** (Port 3000) - React/Vite UI
+2. **API Gateway** (Port 3002) - Request routing and orchestration
+3. **API Service** (Port 3001) - Main backend API
+4. **Backend Service** (Port 3004) - Additional backend services
+5. **PostgreSQL Database** - Managed by Cloudflare
+6. **Redis Cache** - Managed by Cloudflare
+
+## Quick Start: Deploy to Cloudflare
+
+### Step 1: Install Cloudflare CLI
+
+```bash
+npm install -g @cloudflare/cli
+cloudflare login
+```
+
+### Step 2: Create a New Cloudflare Project
+
+```bash
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cloudflare init
+```
+
+### Step 3: Add Database Services
+
+In Cloudflare Dashboard:
+1. Click "New" → "Database" → "PostgreSQL"
+2. Click "New" → "Database" → "Redis"
+
+Note the connection strings provided by Cloudflare.
+
+### Step 4: Deploy Each Service
+
+Cloudflare will automatically detect your `cloudflare.toml` files and deploy each service.
+
+#### Deploy Frontend
+```bash
+cloudflare up --service frontend
+```
+
+#### Deploy API Gateway
+```bash
+cloudflare up --service api-gateway
+```
+
+#### Deploy API Service
+```bash
+cloudflare up --service api
+```
+
+#### Deploy Backend Service
+```bash
+cloudflare up --service backend
+```
+
+### Step 5: Configure Environment Variables
+
+For each service, set these environment variables in Cloudflare Dashboard:
+
+#### Frontend Service
+```
+NODE_ENV=production
+PORT=3000
+VITE_API_URL=<your-api-gateway-url>
+```
+
+#### API Gateway Service
+```
+NODE_ENV=production
+PORT=3002
+API_URL=<your-api-service-url>
+```
+
+#### API Service
+```
+NODE_ENV=production
+PORT=3001
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+REDIS_URL=${{Redis.REDIS_URL}}
+JWT_SECRET=<generate-a-secure-secret>
+```
+
+#### Backend Service
+```
+NODE_ENV=production
+PORT=3004
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+REDIS_URL=${{Redis.REDIS_URL}}
+```
+
+## Alternative: Manual Service Creation
+
+If automatic detection doesn't work, create services manually:
+
+### 1. Create Frontend Service
+```bash
+cloudflare service create frontend
+cloudflare link <project-id>
+cd apps/frontend
+cloudflare up
+```
+
+### 2. Create API Gateway Service
+```bash
+cloudflare service create api-gateway
+cloudflare link <project-id>
+cd apps/api-gateway
+cloudflare up
+```
+
+### 3. Create API Service
+```bash
+cloudflare service create api
+cloudflare link <project-id>
+cd apps/api
+cloudflare up
+```
+
+### 4. Create Backend Service
+```bash
+cloudflare service create backend
+cloudflare link <project-id>
+cd apps/backend
+cloudflare up
+```
+
+## Testing Locally with Docker
+
+Before deploying to Cloudflare, test your Docker setup locally:
+
+### Build and Test Individual Services
+
+```bash
+# Test Frontend
+docker build -f apps/frontend/Dockerfile -t tnf-frontend .
+docker run -p 3000:3000 tnf-frontend
+
+# Test API Gateway
+docker build -f apps/api-gateway/Dockerfile -t tnf-api-gateway .
+docker run -p 3002:3002 tnf-api-gateway
+
+# Test API Service
+docker build -f apps/api/Dockerfile -t tnf-api .
+docker run -p 3001:3001 -e DATABASE_URL=<db-url> tnf-api
+
+# Test Backend Service
+docker build -f apps/backend/Dockerfile -t tnf-backend .
+docker run -p 3004:3004 -e DATABASE_URL=<db-url> tnf-backend
+```
+
+### Test Full Stack with Docker Compose
+
+```bash
+# Start all services
+docker-compose -f docker-compose.prod.yml up --build
+
+# Check service health
+docker-compose -f docker-compose.prod.yml ps
+
+# View logs
+docker-compose -f docker-compose.prod.yml logs -f
+
+# Stop all services
+docker-compose -f docker-compose.prod.yml down
+```
+
+## Troubleshooting
+
+### Build Failures
+
+**Problem**: Docker build fails during dependency installation
+
+**Solution**:
+```bash
+# Clear Docker cache
+docker builder prune -a
+
+# Rebuild with no cache
+docker build --no-cache -f apps/<service>/Dockerfile -t <service> .
+```
+
+**Problem**: Workspace dependencies not found
+
+**Solution**: Ensure all `package.json` files are copied in the Dockerfile deps stage.
+
+### Deployment Failures
+
+**Problem**: Cloudflare deployment times out
+
+**Solution**: Increase health check timeout in `cloudflare.toml`:
+```toml
+[deploy]
+healthcheckTimeout = 600  # Increase to 10 minutes
+```
+
+**Problem**: Service crashes on startup
+
+**Solution**: Check Cloudflare logs:
+```bash
+cloudflare logs --service <service-name>
+```
+
+### Database Connection Issues
+
+**Problem**: Cannot connect to PostgreSQL
+
+**Solution**:
+1. Verify `DATABASE_URL` environment variable is set correctly
+2. Use Cloudflare's template variables: `${{Postgres.DATABASE_URL}}`
+3. Ensure database service is healthy before app starts
+
+## Environment Variables Reference
+
+### Required Variables
+
+All services need:
+- `NODE_ENV=production`
+- `PORT=<service-port>`
+
+Services with database access need:
+- `DATABASE_URL` - PostgreSQL connection string
+- `REDIS_URL` - Redis connection string
+
+Frontend needs:
+- `VITE_API_URL` - URL of API Gateway service
+
+### Optional Variables
+
+- `JWT_SECRET` - For authentication (generate with: `openssl rand -base64 32`)
+- `LOG_LEVEL` - Logging verbosity (`debug`, `info`, `warn`, `error`)
+- `MAX_REQUEST_SIZE` - Maximum request body size (default: `10mb`)
+
+## Monitoring and Logs
+
+### View Service Logs
+```bash
+cloudflare logs --service frontend
+cloudflare logs --service api-gateway
+cloudflare logs --service api
+cloudflare logs --service backend
+```
+
+### Monitor Service Health
+Cloudflare Dashboard → Service → Metrics
+
+### Database Monitoring
+Cloudflare Dashboard → PostgreSQL → Metrics
+
+## Cost Optimization
+
+### Development Setup
+- Use shared PostgreSQL instance
+- Use shared Redis instance
+- Scale down to 1 replica per service
+
+### Production Setup
+- Dedicated PostgreSQL instance (Hobby plan minimum)
+- Dedicated Redis instance
+- Auto-scaling enabled (2-4 replicas per service)
+- Enable health checks and auto-restart
+
+## Rollback Strategy
+
+If deployment fails:
+
+```bash
+# Rollback to previous deployment
+cloudflare rollback --service <service-name>
+
+# Or deploy a specific version
+cloudflare deploy --service <service-name> --commit <git-sha>
+```
+
+## Next Steps
+
+1. Set up custom domain in Cloudflare Dashboard
+2. Enable HTTPS (automatic with Cloudflare)
+3. Configure CI/CD with GitHub Actions
+4. Set up monitoring with Cloudflare's built-in metrics
+5. Configure alerts for service failures
+
+## Support
+
+- Cloudflare Docs: https://docs.thenewfuse.com
+- Cloudflare Discord: https://discord.gg/cloudflare
+- Project Issues: https://github.com/anthropics/claude-code/issues
+
+## Additional Resources
+
+- `docker-compose.prod.yml` - Local testing configuration
+- Individual `Dockerfile` in each `apps/` directory
+- `cloudflare.toml` in each service directory

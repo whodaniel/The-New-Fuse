@@ -1,0 +1,1 @@
+{"version":3,"file":"SuggestionActionsContext.d.ts","sourceRoot":"","sources":["../../src/contexts/SuggestionActionsContext.ts"],"names":[],"mappings":"AAEA,MAAM,WAAW,4BAA4B;IAC3C,gBAAgB,EAAE,CAAC,UAAU,EAAE,GAAG,KAAK,OAAO,CAAC,IAAI,CAAC,CAAC;CACtD;AAED,eAAO,MAAM,wBAAwB,uDAA2D,CAAC"}

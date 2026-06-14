@@ -1,0 +1,1537 @@
+{
+  "records": [],
+  "timelineEvents": [
+    {
+      "id": "evt_mos2rn9y_tmaox2",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2025-01-17T00:00:00.000Z",
+      "payload": {
+        "title": "The-New-Fuse initial repo appears",
+        "description": "Core TNF/Fuse architecture evolution from initial repo to split runtime/control-plane and next-gen state.",
+        "point": 0,
+        "category": "Business & Projects",
+        "segment": "tnf_platform_evolution",
+        "timelineTrack": "tnf_platform_evolution",
+        "timelineCategory": "github-history",
+        "project": "The New Fuse Platform",
+        "evidenceRefs": [
+          "github:repo_created",
+          "https://github.com/whodaniel/The-New-Fuse"
+        ],
+        "sources": [
+          "github:repo_created",
+          "https://github.com/whodaniel/The-New-Fuse"
+        ],
+        "storyKey": "github-history:tnf_platform_evolution:2025-01-17:the-new-fuse-initial-repo-appears",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "tnf-core",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rna1_e3ws9s",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2025-04-11T00:00:00.000Z",
+      "payload": {
+        "title": "Fuse core repo begins",
+        "description": "Core TNF/Fuse architecture evolution from initial repo to split runtime/control-plane and next-gen state.",
+        "point": 14,
+        "category": "Business & Projects",
+        "segment": "tnf_platform_evolution",
+        "timelineTrack": "tnf_platform_evolution",
+        "timelineCategory": "github-history",
+        "project": "The New Fuse Platform",
+        "evidenceRefs": [
+          "github:repo_created",
+          "https://github.com/whodaniel/fuse"
+        ],
+        "sources": [
+          "github:repo_created",
+          "https://github.com/whodaniel/fuse"
+        ],
+        "storyKey": "github-history:tnf_platform_evolution:2025-04-11:fuse-core-repo-begins",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "tnf-core",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rna2_bgaw96",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2025-08-31T00:00:00.000Z",
+      "payload": {
+        "title": "First PR in Fuse stream",
+        "description": "Core TNF/Fuse architecture evolution from initial repo to split runtime/control-plane and next-gen state.",
+        "point": 29,
+        "category": "Business & Projects",
+        "segment": "tnf_platform_evolution",
+        "timelineTrack": "tnf_platform_evolution",
+        "timelineCategory": "github-history",
+        "project": "The New Fuse Platform",
+        "evidenceRefs": [
+          "https://github.com/whodaniel/fuse/pull/1",
+          "github:pull_request",
+          "github:title:Feature/safe changes extraction"
+        ],
+        "sources": [
+          "https://github.com/whodaniel/fuse/pull/1",
+          "github:pull_request",
+          "github:title:Feature/safe changes extraction"
+        ],
+        "storyKey": "github-history:tnf_platform_evolution:2025-08-31:first-pr-in-fuse-stream",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "tnf-core",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rna2_pyay0c",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2026-03-20T00:00:00.000Z",
+      "payload": {
+        "title": "Fuse mirror/split pattern starts",
+        "description": "Core TNF/Fuse architecture evolution from initial repo to split runtime/control-plane and next-gen state.",
+        "point": 43,
+        "category": "Business & Projects",
+        "segment": "tnf_platform_evolution",
+        "timelineTrack": "tnf_platform_evolution",
+        "timelineCategory": "github-history",
+        "project": "The New Fuse Platform",
+        "evidenceRefs": [
+          "github:repo_created",
+          "https://github.com/whodaniel/fuse-mirror"
+        ],
+        "sources": [
+          "github:repo_created",
+          "https://github.com/whodaniel/fuse-mirror"
+        ],
+        "storyKey": "github-history:tnf_platform_evolution:2026-03-20:fuse-mirror-split-pattern-starts",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "architecture-split",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rna3_st0pvc",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2026-03-20T00:00:00.000Z",
+      "payload": {
+        "title": "Open runtime extracted from monorepo",
+        "description": "Core TNF/Fuse architecture evolution from initial repo to split runtime/control-plane and next-gen state.",
+        "point": 57,
+        "category": "Business & Projects",
+        "segment": "tnf_platform_evolution",
+        "timelineTrack": "tnf_platform_evolution",
+        "timelineCategory": "github-history",
+        "project": "The New Fuse Platform",
+        "evidenceRefs": [
+          "github:repo_created",
+          "https://github.com/whodaniel/fuse-open-runtime"
+        ],
+        "sources": [
+          "github:repo_created",
+          "https://github.com/whodaniel/fuse-open-runtime"
+        ],
+        "storyKey": "github-history:tnf_platform_evolution:2026-03-20:open-runtime-extracted-from-monorepo",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "architecture-split",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rna9_s2x2tu",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2026-03-20T00:00:00.000Z",
+      "payload": {
+        "title": "Control plane extraction branch appears",
+        "description": "Core TNF/Fuse architecture evolution from initial repo to split runtime/control-plane and next-gen state.",
+        "point": 71,
+        "category": "Business & Projects",
+        "segment": "tnf_platform_evolution",
+        "timelineTrack": "tnf_platform_evolution",
+        "timelineCategory": "github-history",
+        "project": "The New Fuse Platform",
+        "evidenceRefs": [
+          "github:repo_created",
+          "https://github.com/whodaniel/fuse-control-plane"
+        ],
+        "sources": [
+          "github:repo_created",
+          "https://github.com/whodaniel/fuse-control-plane"
+        ],
+        "storyKey": "github-history:tnf_platform_evolution:2026-03-20:control-plane-extraction-branch-appears",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "architecture-split",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rnaa_5ymscz",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2026-04-25T00:00:00.000Z",
+      "payload": {
+        "title": "Next-gen TNF architecture repo starts",
+        "description": "Core TNF/Fuse architecture evolution from initial repo to split runtime/control-plane and next-gen state.",
+        "point": 86,
+        "category": "Business & Projects",
+        "segment": "tnf_platform_evolution",
+        "timelineTrack": "tnf_platform_evolution",
+        "timelineCategory": "github-history",
+        "project": "The New Fuse Platform",
+        "evidenceRefs": [
+          "github:repo_created",
+          "https://github.com/whodaniel/the-new-fuse-next-gen"
+        ],
+        "sources": [
+          "github:repo_created",
+          "https://github.com/whodaniel/the-new-fuse-next-gen"
+        ],
+        "storyKey": "github-history:tnf_platform_evolution:2026-04-25:next-gen-tnf-architecture-repo-starts",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "tnf-next-gen",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rnab_hzb3wi",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2026-05-03T00:00:00.000Z",
+      "payload": {
+        "title": "Latest Fuse PR in current snapshot",
+        "description": "Core TNF/Fuse architecture evolution from initial repo to split runtime/control-plane and next-gen state.",
+        "point": 100,
+        "category": "Business & Projects",
+        "segment": "tnf_platform_evolution",
+        "timelineTrack": "tnf_platform_evolution",
+        "timelineCategory": "github-history",
+        "project": "The New Fuse Platform",
+        "evidenceRefs": [
+          "https://github.com/whodaniel/fuse/pull/1126",
+          "github:pull_request",
+          "github:title:⚡ Bolt: [performance improvement] Remove inline ConnectionStatus in A2AMultiAgentChat"
+        ],
+        "sources": [
+          "https://github.com/whodaniel/fuse/pull/1126",
+          "github:pull_request",
+          "github:title:⚡ Bolt: [performance improvement] Remove inline ConnectionStatus in A2AMultiAgentChat"
+        ],
+        "storyKey": "github-history:tnf_platform_evolution:2026-05-03:latest-fuse-pr-in-current-snapshot",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "tnf-core",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rnac_nbxgjb",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2021-07-21T00:00:00.000Z",
+      "payload": {
+        "title": "GitHub identity established",
+        "description": "Knowledge OS and library blueprint systems that map to long-form narrative and publishing infrastructure.",
+        "point": 0,
+        "category": "Legacy",
+        "segment": "knowledge_and_library_systems",
+        "timelineTrack": "knowledge_and_library_systems",
+        "timelineCategory": "github-history",
+        "project": "Daniel Who's Media Empire",
+        "evidenceRefs": [
+          "github:account"
+        ],
+        "sources": [
+          "github:account"
+        ],
+        "storyKey": "github-history:knowledge_and_library_systems:2021-07-21:github-identity-established",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "meta",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rnad_yjz7zu",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2022-02-06T00:00:00.000Z",
+      "payload": {
+        "title": "First repository: whodaniel/StarTree",
+        "description": "Knowledge OS and library blueprint systems that map to long-form narrative and publishing infrastructure.",
+        "point": 50,
+        "category": "Legacy",
+        "segment": "knowledge_and_library_systems",
+        "timelineTrack": "knowledge_and_library_systems",
+        "timelineCategory": "github-history",
+        "project": "Daniel Who's Media Empire",
+        "evidenceRefs": [
+          "github:repo_created",
+          "https://github.com/whodaniel/StarTree"
+        ],
+        "sources": [
+          "github:repo_created",
+          "https://github.com/whodaniel/StarTree"
+        ],
+        "storyKey": "github-history:knowledge_and_library_systems:2022-02-06:first-repository-whodaniel-startree",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "foundation",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rnaf_6n1obj",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2026-04-29T00:00:00.000Z",
+      "payload": {
+        "title": "Virtual Library blueprints launched",
+        "description": "Knowledge OS and library blueprint systems that map to long-form narrative and publishing infrastructure.",
+        "point": 100,
+        "category": "Legacy",
+        "segment": "knowledge_and_library_systems",
+        "timelineTrack": "knowledge_and_library_systems",
+        "timelineCategory": "github-history",
+        "project": "Daniel Who's Media Empire",
+        "evidenceRefs": [
+          "github:repo_created",
+          "https://github.com/whodaniel/virtual-library-blueprints"
+        ],
+        "sources": [
+          "github:repo_created",
+          "https://github.com/whodaniel/virtual-library-blueprints"
+        ],
+        "storyKey": "github-history:knowledge_and_library_systems:2026-04-29:virtual-library-blueprints-launched",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "knowledge-systems",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_mos2rnag_b58ptn",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "github-sync-agent",
+      "timestamp": "2026-04-18T00:00:00.000Z",
+      "payload": {
+        "title": "EXTREAMIX media system launched",
+        "description": "Media intelligence and interaction systems that feed creative production pipelines.",
+        "point": 0,
+        "category": "Creativity",
+        "segment": "media_and_interactive_systems",
+        "timelineTrack": "media_and_interactive_systems",
+        "timelineCategory": "github-history",
+        "project": "The New Fuse (Novel)",
+        "evidenceRefs": [
+          "github:repo_created",
+          "https://github.com/whodaniel/EXTREAMIX"
+        ],
+        "sources": [
+          "github:repo_created",
+          "https://github.com/whodaniel/EXTREAMIX"
+        ],
+        "storyKey": "github-history:media_and_interactive_systems:2026-04-18:extreamix-media-system-launched",
+        "source": "github-history-import",
+        "confidence": "hard",
+        "isPrivate": true,
+        "githubTrack": "media-systems",
+        "githubGeneratedAt": "2026-05-05T02:23:19.000Z",
+        "accessScope": "owner_and_agents"
+      }
+    },
+    {
+      "id": "evt_movwdsyc_t8i0ep",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2003-05-13T17:25:06.000Z",
+      "payload": {
+        "title": "Re: install?",
+        "description": "On 2003-05-13, an email from \"Agriya Infoway Pvt. Ltd.\" <info@agriya.com> with subject \"Re: install?\" was captured as a potential narrative marker pending review.",
+        "point": 0,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-20030513172506-47425-qmail-web14303-mail-y",
+          "email:mailbox:8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292344.emlx",
+          "email:fact:email-fact-wave2-2003-05-13-msgid-20030513172506-47425-qmail-web14303-mail-y"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292344.emlx",
+          "\"Agriya Infoway Pvt. Ltd.\" <info@agriya.com>",
+          "Re: install?"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-20030513172506-47425-qmail-web14303-mail-y",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2003-05-13-msgid-20030513172506-47425-qmail-web14303-mail-y",
+        "confidence": "moderate",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.397Z",
+          "origin": "queue",
+          "queueConfidence": "medium",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:transactional",
+            "signal_score:11"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyd_brttl2",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-01-23T13:56:22.000Z",
+      "payload": {
+        "title": "whatever floats the purple essence we disregard",
+        "description": "On 2004-01-23, an email from doug whisker <jackoval6@yahoo.com> with subject \"whatever floats the purple essence we disregard\" was captured as a potential narrative marker pending review.",
+        "point": 5,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-20040123135622-80163-qmail-web14711-mail-y",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/personal.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/3/2/Messages/232025.emlx",
+          "email:fact:email-fact-wave2-2004-01-23-msgid-20040123135622-80163-qmail-web14711-mail-y"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/personal.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/3/2/Messages/232025.emlx",
+          "doug whisker <jackoval6@yahoo.com>",
+          "whatever floats the purple essence we disregard"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-20040123135622-80163-qmail-web14711-mail-y",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-01-23-msgid-20040123135622-80163-qmail-web14711-mail-y",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.397Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:16"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsye_8pe0ez",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-01-30T07:01:44.000Z",
+      "payload": {
+        "title": "Re: Question from eBay Member",
+        "description": "On 2004-01-30, an email from BenjeBendele@aol.com with subject \"Re: Question from eBay Member\" was captured as a potential narrative marker pending review.",
+        "point": 10,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-1ca-18b3c7c0-2d4b5b58-aol-com",
+          "email:mailbox:8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280337.emlx",
+          "email:fact:email-fact-wave2-2004-01-30-msgid-1ca-18b3c7c0-2d4b5b58-aol-com"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280337.emlx",
+          "BenjeBendele@aol.com",
+          "Re: Question from eBay Member"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-1ca-18b3c7c0-2d4b5b58-aol-com",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-01-30-msgid-1ca-18b3c7c0-2d4b5b58-aol-com",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.398Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:16"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsye_c85p1a",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-03-12T21:15:51.000Z",
+      "payload": {
+        "title": "Re: SmarterScripts.com Installation Purchase (71D053975X506184V)",
+        "description": "On 2004-03-12, an email from \"Agriya Infoway Pvt. Ltd.\" <info@agriya.com> with subject \"Re: SmarterScripts.com Installation Purchase (71D053975X506184V)\" was captured as a potential narrative marker pending review.",
+        "point": 14,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-20040312211551-84374-qmail-web14309-mail-y",
+          "email:mailbox:8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/9/2/Messages/291131.emlx",
+          "email:fact:email-fact-wave2-2004-03-12-msgid-20040312211551-84374-qmail-web14309-mail-y"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/9/2/Messages/291131.emlx",
+          "\"Agriya Infoway Pvt. Ltd.\" <info@agriya.com>",
+          "Re: SmarterScripts.com Installation Purchase (71D053975X506184V)"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-20040312211551-84374-qmail-web14309-mail-y",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-03-12-msgid-20040312211551-84374-qmail-web14309-mail-y",
+        "confidence": "moderate",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.398Z",
+          "origin": "queue",
+          "queueConfidence": "medium",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:transactional",
+            "signal_score:11"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsye_nivrgz",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-03-13T01:31:27.000Z",
+      "payload": {
+        "title": "Re: From Agriya.net ContactUs",
+        "description": "On 2004-03-13, an email from \"Agriya Infoway Pvt. Ltd.\" <info@agriya.com> with subject \"Re: From Agriya.net ContactUs\" was captured as a potential narrative marker pending review.",
+        "point": 19,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-20040313013127-29396-qmail-web14306-mail-y",
+          "email:mailbox:8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280365.emlx",
+          "email:fact:email-fact-wave2-2004-03-13-msgid-20040313013127-29396-qmail-web14306-mail-y"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280365.emlx",
+          "\"Agriya Infoway Pvt. Ltd.\" <info@agriya.com>",
+          "Re: From Agriya.net ContactUs"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-20040313013127-29396-qmail-web14306-mail-y",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-03-13-msgid-20040313013127-29396-qmail-web14306-mail-y",
+        "confidence": "moderate",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.398Z",
+          "origin": "queue",
+          "queueConfidence": "medium",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:transactional",
+            "signal_score:11"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsye_sj4df3",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-03-14T20:58:47.000Z",
+      "payload": {
+        "title": "Re: Support",
+        "description": "On 2004-03-14, an email from Brian Johnson <bigguy@talldude.com> with subject \"Re: Support\" was captured as a potential narrative marker pending review.",
+        "point": 24,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-4054c787-3060902-talldude-com",
+          "email:mailbox:8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/8/0/3/Messages/308685.emlx",
+          "email:fact:email-fact-wave2-2004-03-14-msgid-4054c787-3060902-talldude-com"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/8/0/3/Messages/308685.emlx",
+          "Brian Johnson <bigguy@talldude.com>",
+          "Re: Support"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-4054c787-3060902-talldude-com",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-03-14-msgid-4054c787-3060902-talldude-com",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.398Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsye_y54mry",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-03-19T06:35:02.000Z",
+      "payload": {
+        "title": "RE: Installation help Download Link",
+        "description": "On 2004-03-19, an email from Manish Singh <manish83@hathway.com> with subject \"RE: Installation help Download Link\" was captured as a potential narrative marker pending review.",
+        "point": 29,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-000001c40d7c-4f09bac0-24a6a8c0-manish",
+          "email:mailbox:8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280367.emlx",
+          "email:fact:email-fact-wave2-2004-03-19-msgid-000001c40d7c-4f09bac0-24a6a8c0-manish"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280367.emlx",
+          "Manish Singh <manish83@hathway.com>",
+          "RE: Installation help Download Link"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-000001c40d7c-4f09bac0-24a6a8c0-manish",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-03-19-msgid-000001c40d7c-4f09bac0-24a6a8c0-manish",
+        "confidence": "moderate",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.398Z",
+          "origin": "queue",
+          "queueConfidence": "medium",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:transactional",
+            "signal_score:11"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsye_hlf5jk",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-03-22T19:57:14.000Z",
+      "payload": {
+        "title": "RE: Refund Please",
+        "description": "On 2004-03-22, an email from \"Ellery\" <webmaster@ClickBankGuard.com> with subject \"RE: Refund Please\" was captured as a potential narrative marker pending review.",
+        "point": 33,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-nebbkmabolffgfhhphalieemhbab-webmaster-cli",
+          "email:mailbox:8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280375.emlx",
+          "email:fact:email-fact-wave2-2004-03-22-msgid-nebbkmabolffgfhhphalieemhbab-webmaster-cli"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280375.emlx",
+          "\"Ellery\" <webmaster@ClickBankGuard.com>",
+          "RE: Refund Please"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-nebbkmabolffgfhhphalieemhbab-webmaster-cli",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-03-22-msgid-nebbkmabolffgfhhphalieemhbab-webmaster-cli",
+        "confidence": "moderate",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.398Z",
+          "origin": "queue",
+          "queueConfidence": "medium",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:transactional",
+            "signal_score:11"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsye_8cr8d5",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-03-25T23:55:39.000Z",
+      "payload": {
+        "title": "Re: AShop Installation",
+        "description": "On 2004-03-25, an email from \"Rob Harris\" <robharris@ashopsoftware.com> with subject \"Re: AShop Installation\" was captured as a potential narrative marker pending review.",
+        "point": 38,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-219e01c412c4-ad72d310-2127c93f-rob",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271573.emlx",
+          "email:fact:email-fact-wave2-2004-03-25-msgid-219e01c412c4-ad72d310-2127c93f-rob"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271573.emlx",
+          "\"Rob Harris\" <robharris@ashopsoftware.com>",
+          "Re: AShop Installation"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-219e01c412c4-ad72d310-2127c93f-rob",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-03-25-msgid-219e01c412c4-ad72d310-2127c93f-rob",
+        "confidence": "moderate",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.398Z",
+          "origin": "queue",
+          "queueConfidence": "medium",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:transactional",
+            "signal_score:11"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsye_e6l2kb",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-03-28T16:37:04.000Z",
+      "payload": {
+        "title": "Re: Powered By Links",
+        "description": "On 2004-03-28, an email from \"Rob Harris\" <robharris@ashopsoftware.com> with subject \"Re: Powered By Links\" was captured as a potential narrative marker pending review.",
+        "point": 43,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-008301c414e2-e7a5be60-08e37c43-rob",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272907.emlx",
+          "email:fact:email-fact-wave2-2004-03-28-msgid-008301c414e2-e7a5be60-08e37c43-rob"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272907.emlx",
+          "\"Rob Harris\" <robharris@ashopsoftware.com>",
+          "Re: Powered By Links"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-008301c414e2-e7a5be60-08e37c43-rob",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-03-28-msgid-008301c414e2-e7a5be60-08e37c43-rob",
+        "confidence": "moderate",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "medium",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:transactional",
+            "signal_score:11"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_sf072m",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-04-16T18:20:04.000Z",
+      "payload": {
+        "title": "Re: CDs for CustomerId WHODANIE",
+        "description": "On 2004-04-16, an email from \"Bret Phillips\" <bphillips@swiftcd.com> with subject \"Re: CDs for CustomerId WHODANIE\" was captured as a potential narrative marker pending review.",
+        "point": 48,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-002101c423df-707c4cd0-7801a8c0-domain-swif",
+          "email:mailbox:8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280405.emlx",
+          "email:fact:email-fact-wave2-2004-04-16-msgid-002101c423df-707c4cd0-7801a8c0-domain-swif"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/8/2/Messages/280405.emlx",
+          "\"Bret Phillips\" <bphillips@swiftcd.com>",
+          "Re: CDs for CustomerId WHODANIE"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-002101c423df-707c4cd0-7801a8c0-domain-swif",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-04-16-msgid-002101c423df-707c4cd0-7801a8c0-domain-swif",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_v24jop",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-04-29T23:52:20.000Z",
+      "payload": {
+        "title": "Re: Admin Login Check",
+        "description": "On 2004-04-29, an email from \"Rob Harris\" <robharris@ashopsoftware.com> with subject \"Re: Admin Login Check\" was captured as a potential narrative marker pending review.",
+        "point": 52,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-003701c42e45-151ba190-9ee17c43-rob",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/STARTREE-09.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/8/5/2/Messages/258908.emlx",
+          "email:fact:email-fact-wave2-2004-04-29-msgid-003701c42e45-151ba190-9ee17c43-rob"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/STARTREE-09.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/8/5/2/Messages/258908.emlx",
+          "\"Rob Harris\" <robharris@ashopsoftware.com>",
+          "Re: Admin Login Check"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-003701c42e45-151ba190-9ee17c43-rob",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-04-29-msgid-003701c42e45-151ba190-9ee17c43-rob",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_yoarul",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-05-04T15:48:19.000Z",
+      "payload": {
+        "title": "Re: Who?",
+        "description": "On 2004-05-04, an email from andres montejo <andresmontejo@yahoo.com> with subject \"Re: Who?\" was captured as a potential narrative marker pending review.",
+        "point": 57,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-20040504154819-42007-qmail-web40411-mail-y",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271891.emlx",
+          "email:fact:email-fact-wave2-2004-05-04-msgid-20040504154819-42007-qmail-web40411-mail-y"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271891.emlx",
+          "andres montejo <andresmontejo@yahoo.com>",
+          "Re: Who?"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-20040504154819-42007-qmail-web40411-mail-y",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-05-04-msgid-20040504154819-42007-qmail-web40411-mail-y",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_runusz",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-07-14T18:48:33.000Z",
+      "payload": {
+        "title": "RE: Emailing: P1010001, P1010003, P1010005",
+        "description": "On 2004-07-14, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Emailing: P1010001, P1010003, P1010005\" was captured as a potential narrative marker pending review.",
+        "point": 62,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-000401c469d3-29ecd7a0-8312a918-drum1",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276380.emlx",
+          "email:fact:email-fact-wave2-2004-07-14-msgid-000401c469d3-29ecd7a0-8312a918-drum1"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276380.emlx",
+          "\"journeystitches\" <jschrier@rochester.rr.com>",
+          "RE: Emailing: P1010001, P1010003, P1010005"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-000401c469d3-29ecd7a0-8312a918-drum1",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-07-14-msgid-000401c469d3-29ecd7a0-8312a918-drum1",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_099h6f",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-07-23T12:10:57.000Z",
+      "payload": {
+        "title": "RE: Good Morning..",
+        "description": "On 2004-07-23, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Good Morning..\" was captured as a potential narrative marker pending review.",
+        "point": 67,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-000c01c470ae-1c978910-8312a918-drum1",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276386.emlx",
+          "email:fact:email-fact-wave2-2004-07-23-msgid-000c01c470ae-1c978910-8312a918-drum1"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276386.emlx",
+          "\"journeystitches\" <jschrier@rochester.rr.com>",
+          "RE: Good Morning.."
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-000c01c470ae-1c978910-8312a918-drum1",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-07-23-msgid-000c01c470ae-1c978910-8312a918-drum1",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_8x6ih1",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-08-12T16:41:38.000Z",
+      "payload": {
+        "title": "RE: Hey..",
+        "description": "On 2004-08-12, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Hey..\" was captured as a potential narrative marker pending review.",
+        "point": 71,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-000201c4808b-3dcfe220-9e7b4242-drum1",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276370.emlx",
+          "email:fact:email-fact-wave2-2004-08-12-msgid-000201c4808b-3dcfe220-9e7b4242-drum1"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276370.emlx",
+          "\"journeystitches\" <jschrier@rochester.rr.com>",
+          "RE: Hey.."
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-000201c4808b-3dcfe220-9e7b4242-drum1",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-08-12-msgid-000201c4808b-3dcfe220-9e7b4242-drum1",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_9kl4sd",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-09-19T00:05:08.000Z",
+      "payload": {
+        "title": "RE: Emailing: 14982746306_0_ALB",
+        "description": "On 2004-09-19, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Emailing: 14982746306_0_ALB\" was captured as a potential narrative marker pending review.",
+        "point": 76,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-000001c49ddc-53981be0-9e7b4242-drum1",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276385.emlx",
+          "email:fact:email-fact-wave2-2004-09-19-msgid-000001c49ddc-53981be0-9e7b4242-drum1"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276385.emlx",
+          "\"journeystitches\" <jschrier@rochester.rr.com>",
+          "RE: Emailing: 14982746306_0_ALB"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-000001c49ddc-53981be0-9e7b4242-drum1",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-09-19-msgid-000001c49ddc-53981be0-9e7b4242-drum1",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_x3q1hk",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-09-21T16:31:09.000Z",
+      "payload": {
+        "title": "RE: Me",
+        "description": "On 2004-09-21, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: Me\" was captured as a potential narrative marker pending review.",
+        "point": 81,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-000201c49ff8-6713e780-9e7b4242-drum1",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276379.emlx",
+          "email:fact:email-fact-wave2-2004-09-21-msgid-000201c49ff8-6713e780-9e7b4242-drum1"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276379.emlx",
+          "\"journeystitches\" <jschrier@rochester.rr.com>",
+          "RE: Me"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-000201c49ff8-6713e780-9e7b4242-drum1",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-09-21-msgid-000201c49ff8-6713e780-9e7b4242-drum1",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_w8uhp8",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-10-18T21:51:06.000Z",
+      "payload": {
+        "title": "stipulatory creations in soft tyranny anihlate our intrinsic logic",
+        "description": "On 2004-10-18, an email from doug whisker <jackoval6@yahoo.com> with subject \"stipulatory creations in soft tyranny anihlate our intrinsic logic\" was captured as a potential narrative marker pending review.",
+        "point": 86,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-20041018215106-58457-qmail-web52809-mail-y",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/personal.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/3/2/Messages/232046.emlx",
+          "email:fact:email-fact-wave2-2004-10-18-msgid-20041018215106-58457-qmail-web52809-mail-y"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/personal.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/3/2/Messages/232046.emlx",
+          "doug whisker <jackoval6@yahoo.com>",
+          "stipulatory creations in soft tyranny anihlate our intrinsic logic"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-20041018215106-58457-qmail-web52809-mail-y",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-10-18-msgid-20041018215106-58457-qmail-web52809-mail-y",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:16"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_h6b83e",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2004-12-01T20:51:24.000Z",
+      "payload": {
+        "title": "RE: So..",
+        "description": "On 2004-12-01, an email from \"journeystitches\" <jschrier@rochester.rr.com> with subject \"RE: So..\" was captured as a potential narrative marker pending review.",
+        "point": 90,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-000301c4d7e7-85300330-e011a918-drum1",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276391.emlx",
+          "email:fact:email-fact-wave2-2004-12-01-msgid-000301c4d7e7-85300330-e011a918-drum1"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/4CourtJames.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/7/2/Messages/276391.emlx",
+          "\"journeystitches\" <jschrier@rochester.rr.com>",
+          "RE: So.."
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-000301c4d7e7-85300330-e011a918-drum1",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2004-12-01-msgid-000301c4d7e7-85300330-e011a918-drum1",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_5nnf83",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2006-01-09T16:59:35.000Z",
+      "payload": {
+        "title": "RE: Daniel Goldberg's info",
+        "description": "On 2006-01-09, an email from \"David McGovern\" <david.mcgovern@freightsavers.com> with subject \"RE: Daniel Goldberg's info\" was captured as a potential narrative marker pending review.",
+        "point": 95,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_fallback-7747b54581f82ab1dd5f09fb08d6a34fd5e1b8f",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/3/2/Messages/236325.emlx",
+          "email:fact:email-fact-wave2-2006-01-09-fallback-7747b54581f82ab1dd5f09fb08d6a34fd5e1b8f"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/3/2/Messages/236325.emlx",
+          "\"David McGovern\" <david.mcgovern@freightsavers.com>",
+          "RE: Daniel Goldberg's info"
+        ],
+        "storyKey": "email-fact:event:email-evt-fallback-7747b54581f82ab1dd5f09fb08d6a34fd5e1b8f",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2006-01-09-fallback-7747b54581f82ab1dd5f09fb08d6a34fd5e1b8f",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:20"
+          ]
+        }
+      }
+    },
+    {
+      "id": "evt_movwdsyf_lxuf3l",
+      "userId": "77058ebd-ef28-42dd-864b-d90970a4dc4e",
+      "eventType": "historical_event",
+      "actor": "email-archaeology-import",
+      "timestamp": "2006-05-13T13:48:57.000Z",
+      "payload": {
+        "title": "Re: Karaoke machine",
+        "description": "On 2006-05-13, an email from Penny Dunn <pennyqtpi@yahoo.com> with subject \"Re: Karaoke machine\" was captured as a potential narrative marker pending review.",
+        "point": 100,
+        "category": "Personal",
+        "segment": "daniel_personal_life_story",
+        "timelineTrack": "daniel_personal_life_story",
+        "timelineCategory": "email-archaeology",
+        "project": "Daniel Adam Goldberg Life Story",
+        "evidenceRefs": [
+          "email:event:email_evt_msgid-20060513134857-71665-qmail-web32207-mail-m",
+          "email:mailbox:E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272464.emlx",
+          "email:fact:email-fact-wave2-2006-05-13-msgid-20060513134857-71665-qmail-web32207-mail-m"
+        ],
+        "sources": [
+          "data/protocols/email-wave2-import-queue-pass7b.2026-05-07.json",
+          "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272464.emlx",
+          "Penny Dunn <pennyqtpi@yahoo.com>",
+          "Re: Karaoke machine"
+        ],
+        "storyKey": "email-fact:event:email-evt-msgid-20060513134857-71665-qmail-web32207-mail-m",
+        "source": "email-archaeology-import",
+        "sourceFactId": "email-fact-wave2-2006-05-13-msgid-20060513134857-71665-qmail-web32207-mail-m",
+        "confidence": "hard",
+        "isPrivate": true,
+        "accessScope": "owner_and_agents",
+        "narrativeNodeRefs": [],
+        "narrativeConnections": [],
+        "narrativeConnectionRefs": [],
+        "importMetadata": {
+          "importVersion": 1,
+          "importedAt": "2026-05-07T19:47:09.399Z",
+          "origin": "queue",
+          "queueConfidence": "high",
+          "verificationStatus": "pending_human_review",
+          "reviewNotes": "Wave-2 candidate from full corpus; verify narrative significance before timeline insertion.",
+          "capturedAt": "2026-05-07T19:45:18.601Z",
+          "enteredBy": "codex-email-wave2-curation",
+          "relevanceTags": [
+            "domain:personal",
+            "classification:personal_interaction",
+            "signal_score:18"
+          ]
+        }
+      }
+    }
+  ],
+  "goals": [],
+  "plans": []
+}

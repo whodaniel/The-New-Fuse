@@ -1,0 +1,4 @@
+
+> @the-new-fuse/client@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/client
+> tsc -b && mkdir -p build && echo '<!DOCTYPE html><html><head><title>The New Fuse</title></head><body><h1>The New Fuse Client</h1></body></html>' > build/index.html
+

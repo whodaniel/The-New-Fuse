@@ -1,0 +1,4 @@
+
+> @the-new-fuse/utils@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/utils
+> tsc --project tsconfig.build.json
+

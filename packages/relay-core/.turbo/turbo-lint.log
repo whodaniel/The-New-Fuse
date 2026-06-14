@@ -1,0 +1,5 @@
+
+> @the-new-fuse/relay-core@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core
+> eslint . --ext .ts,.tsx,.js,.jsx
+
+ ELIFECYCLE  Command failed.

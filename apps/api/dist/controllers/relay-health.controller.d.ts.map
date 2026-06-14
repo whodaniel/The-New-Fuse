@@ -1,0 +1,1 @@
+{"version":3,"file":"relay-health.controller.d.ts","sourceRoot":"","sources":["../../src/controllers/relay-health.controller.ts"],"names":[],"mappings":"AAEA,qBACa,qBAAqB;IAChC,OAAO,CAAC,aAAa,CAAc;IACnC,OAAO,CAAC,YAAY,CAAK;IACzB,OAAO,CAAC,eAAe,CAA6B;IAGpD,SAAS;;;;;;;;;;;;IAgBT,SAAS;;;;;;;;IAWT,eAAe,CAAC,OAAO,EAAE,MAAM;CAKhC"}

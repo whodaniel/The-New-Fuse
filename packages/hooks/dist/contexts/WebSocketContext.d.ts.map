@@ -1,0 +1,1 @@
+{"version":3,"file":"WebSocketContext.d.ts","sourceRoot":"","sources":["../../src/contexts/WebSocketContext.ts"],"names":[],"mappings":"AAEA,MAAM,WAAW,oBAAoB;IACnC,MAAM,EAAE,SAAS,GAAG,IAAI,CAAC;IACzB,WAAW,EAAE,OAAO,CAAC;CACtB;AAED,eAAO,MAAM,gBAAgB,+CAAmD,CAAC"}

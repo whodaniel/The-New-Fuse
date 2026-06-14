@@ -1,0 +1,313 @@
+{
+  "sourceType": "email-archaeology-ledger-excluded-review",
+  "generatedAt": "2026-05-06T19:33:16.504Z",
+  "sourceArtifact": "data/protocols/email-fact-candidate-queue.2026-05-06.json",
+  "excluded": {
+    "lowConfidenceCount": 24,
+    "suspiciousSubjectCount": 6,
+    "lowConfidenceFacts": [
+      {
+        "factId": "email-fact-1999-02-16-amazon-com-associates-program-your-application-approved",
+        "date": "1999-02-16",
+        "title": "Amazon.com Associates program - your application approved",
+        "confidence": "low",
+        "project": "Daniel Who's Media Empire",
+        "domain": "Cross-Domain",
+        "from": "associates@amazon.com",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292313.emlx"
+      },
+      {
+        "factId": "email-fact-1999-07-21-your-advertising-referral-rep-account-has-been-activated",
+        "date": "1999-07-21",
+        "title": "Your Advertising Referral Rep Account Has Been Activated!",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Cross-Domain",
+        "from": "EarthAds@aol.com",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292729.emlx"
+      },
+      {
+        "factId": "email-fact-1999-08-31-no-subject",
+        "date": "1999-08-31",
+        "title": "(no-subject)",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "\"Larisa Washburn\" <lwashburn@students.wisc.edu>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292398.emlx"
+      },
+      {
+        "factId": "email-fact-1999-11-16-welcome-aboard",
+        "date": "1999-11-16",
+        "title": "Welcome Aboard",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "imr@outsource2000.com",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292718.emlx"
+      },
+      {
+        "factId": "email-fact-2002-11-08-welcome-to-addesigner-com",
+        "date": "2002-11-08",
+        "title": "Welcome to AdDesigner.com!",
+        "confidence": "low",
+        "project": "Daniel Who's Media Empire",
+        "domain": "Cross-Domain",
+        "from": "membership@AdDesigner.com",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292565.emlx"
+      },
+      {
+        "factId": "email-fact-2002-11-11-get-hooked-on-janglefish",
+        "date": "2002-11-11",
+        "title": "Get Hooked on Janglefish",
+        "confidence": "low",
+        "project": "Daniel Who's Media Empire",
+        "domain": "Creativity",
+        "from": "\"Rob Hawthorne\" <robfoundit@yahoo.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/My Affiliate Acounts.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/6/2/Messages/266584.emlx"
+      },
+      {
+        "factId": "email-fact-2002-11-11-commission-junction-account-information",
+        "date": "2002-11-11",
+        "title": "Commission Junction account information",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "Commission Junction <no-response@cj.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/My Affiliate Acounts.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/6/2/Messages/266581.emlx"
+      },
+      {
+        "factId": "email-fact-2002-11-18-daniel-your-bannersgomlm-account",
+        "date": "2002-11-18",
+        "title": "Daniel Your BannersGoMLM Account",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "BgMLM@BannersGoMLM.com",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292099.emlx"
+      },
+      {
+        "factId": "email-fact-2002-12-16-password",
+        "date": "2002-12-16",
+        "title": "Password",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "webmaster@rev9dlc.com",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292095.emlx"
+      },
+      {
+        "factId": "email-fact-2002-12-27-jobpro-central-trial-password-details",
+        "date": "2002-12-27",
+        "title": "JobPro Central trial password details",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "David O Donnell <david@softouch.ie>",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292354.emlx"
+      },
+      {
+        "factId": "email-fact-2003-04-12-your-pmachine-pro-receipt-vaf1734144221",
+        "date": "2003-04-12",
+        "title": "Your pMachine Pro Receipt: VAF1734144221",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "orders@pmachine.com",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/whodaniel@yahoo.com.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/9/2/Messages/292417.emlx"
+      },
+      {
+        "factId": "email-fact-2003-05-09-receipt-for-your-payment",
+        "date": "2003-05-09",
+        "title": "Receipt for your Payment",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "service@paypal.com",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270404.emlx"
+      },
+      {
+        "factId": "email-fact-2003-05-31-re-indie-bible-dist",
+        "date": "2003-05-31",
+        "title": "Re: \"Indie Bible Dist.\"",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "\"The Indie Bible\" <indiebible@rogers.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271411.emlx"
+      },
+      {
+        "factId": "email-fact-2003-06-01-hit-jammer",
+        "date": "2003-06-01",
+        "title": "hit jammer",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "Mishies.com <acct_tmp2@mishies.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271910.emlx"
+      },
+      {
+        "factId": "email-fact-2003-06-04-re-supatools-contact-form",
+        "date": "2003-06-04",
+        "title": "Re: Supatools Contact Form",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "<info@supatools.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270911.emlx"
+      },
+      {
+        "factId": "email-fact-2003-06-05-messageid-4257574-new-message-for-install-cgi-and-php-scrip",
+        "date": "2003-06-05",
+        "title": "[MessageID: 4257574] New Message for 'Install CGI and PHP scripts' RFP",
+        "confidence": "low",
+        "project": "Daniel Who's Media Empire",
+        "domain": "Cross-Domain",
+        "from": "pmb@elanceonline.com",
+        "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/startree.tv.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/1/Messages/16213.emlx"
+      },
+      {
+        "factId": "email-fact-2003-06-08-enter-your-member-number",
+        "date": "2003-06-08",
+        "title": "Enter your Member Number",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "service@paypal.com",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272929.emlx"
+      },
+      {
+        "factId": "email-fact-2005-05-05-random-subversion-and-the-just-soness",
+        "date": "2005-05-05",
+        "title": "random subversion and the just soness",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Personal Life",
+        "from": "doug whisker <jackoval6@yahoo.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/1/7/2/Messages/271469.emlx"
+      },
+      {
+        "factId": "email-fact-2005-09-08-hey-there-my-brother",
+        "date": "2005-09-08",
+        "title": "hey there my brother.....",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Personal Life",
+        "from": "doug whisker <jackoval6@yahoo.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272469.emlx"
+      },
+      {
+        "factId": "email-fact-2005-09-27-hey-man",
+        "date": "2005-09-27",
+        "title": "hey man.....",
+        "confidence": "low",
+        "project": "Daniel Who's Media Empire",
+        "domain": "Cross-Domain",
+        "from": "adam iff <adamiff@yahoo.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Adam Iff.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/3/7/2/Messages/273494.emlx"
+      },
+      {
+        "factId": "email-fact-2005-10-10-re",
+        "date": "2005-10-10",
+        "title": "Re:",
+        "confidence": "low",
+        "project": "Daniel Who's Media Empire",
+        "domain": "Creativity",
+        "from": "\"kbassociates@frontiernet.net\" <kbassociates@frontiernet.net>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272470.emlx"
+      },
+      {
+        "factId": "email-fact-2005-10-13-trying-to-reach-you",
+        "date": "2005-10-13",
+        "title": "Trying to Reach you",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Cross-Domain",
+        "from": "\"Richard Basili\" <RBasili@GoryebMather.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272987.emlx"
+      },
+      {
+        "factId": "email-fact-2005-10-25-help-with-your-bodog-account",
+        "date": "2005-10-25",
+        "title": "Help with your Bodog account",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "\"Scott Delbeck\" <scott@bodog.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270461.emlx"
+      },
+      {
+        "factId": "email-fact-2005-11-07-this-is-good-for-a-laugh",
+        "date": "2005-11-07",
+        "title": "This is good for a laugh",
+        "confidence": "low",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "\"Scott Delbeck\" <scott@bodog.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270973.emlx"
+      }
+    ],
+    "suspiciousSubjectFacts": [
+      {
+        "factId": "email-fact-2007-06-18-about-trip",
+        "date": "2007-06-18",
+        "title": "About trip",
+        "confidence": "medium",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Business & Projects",
+        "from": "\"Anna\" <savely21@yahoo.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/7/2/Messages/270705.emlx"
+      },
+      {
+        "factId": "email-fact-2009-02-18-re-probable-spam-phpld-mods",
+        "date": "2009-02-18",
+        "title": "Re: [?? Probable Spam] phpld mods",
+        "confidence": "high",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Personal Life",
+        "from": "\"Rob C\" <contact@activeweblinks.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272347.emlx"
+      },
+      {
+        "factId": "email-fact-2010-05-03-re-hello-sir-urgent",
+        "date": "2010-05-03",
+        "title": "Re: hello sir (urgent)",
+        "confidence": "medium",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Cross-Domain",
+        "from": "Raheel Zaki <raheelzaki01@yahoo.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/3/2/Messages/235751.emlx"
+      },
+      {
+        "factId": "email-fact-2012-01-06-re-greetings-and-thank-you-for-your-response-to-my-mail",
+        "date": "2012-01-06",
+        "title": "Re: Greetings and thank you for your response to my mail",
+        "confidence": "high",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Cross-Domain",
+        "from": "Ruth Simon <ruth_25@rogers.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/3/2/Messages/236413.emlx"
+      },
+      {
+        "factId": "email-fact-2012-09-12-re-hello-again",
+        "date": "2012-09-12",
+        "title": "Re: Hello.again",
+        "confidence": "high",
+        "project": "Daniel Adam Goldberg Life Story",
+        "domain": "Cross-Domain",
+        "from": "jennifer Cronin-arceneaux <ongerie@gmail.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/AlreadyReadEmail.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/7/2/Messages/272493.emlx"
+      },
+      {
+        "factId": "email-fact-2015-11-14-urgent-software-update",
+        "date": "2015-11-14",
+        "title": "Urgent Software Update",
+        "confidence": "medium",
+        "project": "Daniel Who's Media Empire",
+        "domain": "Cross-Domain",
+        "from": "\"Shawn Casey\" <info@shawncaseyfacts.com>",
+        "mailboxPath": "E88F18A2-14F8-482B-BA97-1944B16A2F40/Spamx#2.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/6/2/Messages/262719.emlx"
+      }
+    ]
+  }
+}

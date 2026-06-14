@@ -1,0 +1,365 @@
+{
+  "sourceType": "email-post-cutoff-review",
+  "generatedAt": "2026-05-07T19:09:48.003Z",
+  "cutoff": "2026-05-04T23:59:59.999Z",
+  "source": "reports/personal-archaeology/email-discovery-full-2026-05-06-v2/email-discovery-classified.jsonl",
+  "totalCandidates": 25,
+  "decisionCounts": {
+    "keep_excluded_marketing_noise": 18,
+    "optional_review_financial_signal": 2,
+    "optional_review_interaction_signal": 4,
+    "optional_review_account_security": 1
+  },
+  "items": [
+    {
+      "dateIso": "2026-05-05T00:38:52.000Z",
+      "subject": "The Dem establishment is putting their thumb on the scale",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 6,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300527.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T01:46:57.000Z",
+      "subject": "Daniel, we have an important update for you:",
+      "classification": "transactional",
+      "interactionScore": -1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300528.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T01:58:35.000Z",
+      "subject": "50% chance to flip the Senate",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 6,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300529.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T02:14:27.000Z",
+      "subject": "Tell us how we did",
+      "classification": "transactional",
+      "interactionScore": -1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300530.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T05:24:19.000Z",
+      "subject": "Replay + the prompt I used to build the course",
+      "classification": "transactional",
+      "interactionScore": -3,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300537.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T05:24:22.000Z",
+      "subject": "Replay + the prompt I used to build the course",
+      "classification": "transactional",
+      "interactionScore": -3,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300536.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T08:01:43.000Z",
+      "subject": "Communi V3 - What you need to know... (Full Software Preview)",
+      "classification": "transactional",
+      "interactionScore": -1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300539.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T12:40:08.000Z",
+      "subject": "South Wedge Properties, LLC - Unpaid Charges Reminder",
+      "classification": "transactional",
+      "interactionScore": -3,
+      "relevance": {
+        "personalTimelineScore": 2,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300552.emlx",
+      "decision": "optional_review_financial_signal",
+      "reason": "Contains a financial/accounting signal that may be relevant to business/personal operations timeline."
+    },
+    {
+      "dateIso": "2026-05-05T13:37:00.000Z",
+      "subject": "Do this before Bitcoin breaks $85,000",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 4,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300561.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T13:38:56.000Z",
+      "subject": "USPS Survey",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 4,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300562.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T13:58:48.000Z",
+      "subject": "Drive Into This Mystery Shop - $150 Auto Loan Bundles Available",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 4,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300485.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T14:13:21.000Z",
+      "subject": "we’re jumping into action",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 4,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300568.emlx",
+      "decision": "optional_review_interaction_signal",
+      "reason": "Higher interaction score without obvious spam/news keywords; review manually before exclusion."
+    },
+    {
+      "dateIso": "2026-05-05T15:03:05.000Z",
+      "subject": "Trump Wants to Review AI Before You See It",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 4,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300575.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T15:04:44.000Z",
+      "subject": "The ATF just announced…",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 6,
+        "mediaEmpireScore": 0,
+        "tnfScore": 5
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300576.emlx",
+      "decision": "optional_review_interaction_signal",
+      "reason": "Higher interaction score without obvious spam/news keywords; review manually before exclusion."
+    },
+    {
+      "dateIso": "2026-05-05T15:05:15.000Z",
+      "subject": "I want to connect",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 4,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300577.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T15:16:26.000Z",
+      "subject": "10K made embarrassingly simple (free NEW hermes build)",
+      "classification": "transactional",
+      "interactionScore": 1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300480.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T16:01:54.000Z",
+      "subject": "🏆 15 spots. 7 days. $3,000 each. Who's actually serious?",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 4,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300481.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T16:10:44.000Z",
+      "subject": "Receipts from the desert",
+      "classification": "transactional",
+      "interactionScore": -1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300482.emlx",
+      "decision": "optional_review_financial_signal",
+      "reason": "Contains a financial/accounting signal that may be relevant to business/personal operations timeline."
+    },
+    {
+      "dateIso": "2026-05-05T16:36:08.000Z",
+      "subject": "Absolutely plummeted",
+      "classification": "transactional",
+      "interactionScore": 1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300487.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T18:08:31.000Z",
+      "subject": "🫵 the dumbest thing I do every month - I'm not proud of it",
+      "classification": "transactional",
+      "interactionScore": -1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/0/0/3/Messages/300499.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T19:28:12.000Z",
+      "subject": "Password Reset",
+      "classification": "transactional",
+      "interactionScore": 1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/2/0/3/Messages/302536.emlx",
+      "decision": "optional_review_account_security",
+      "reason": "Contains account-security/authentication signal; possible operational relevance."
+    },
+    {
+      "dateIso": "2026-05-05T19:33:51.000Z",
+      "subject": "Endorsements and Events for May!",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 4,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/6/0/3/Messages/306500.emlx",
+      "decision": "optional_review_interaction_signal",
+      "reason": "Higher interaction score without obvious spam/news keywords; review manually before exclusion."
+    },
+    {
+      "dateIso": "2026-05-05T21:40:42.000Z",
+      "subject": "Palantir and Blackstone hate Graham Platner",
+      "classification": "low_interaction_misc",
+      "interactionScore": 2,
+      "relevance": {
+        "personalTimelineScore": 4,
+        "mediaEmpireScore": 6,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/1/3/Messages/315911.emlx",
+      "decision": "optional_review_interaction_signal",
+      "reason": "Higher interaction score without obvious spam/news keywords; review manually before exclusion."
+    },
+    {
+      "dateIso": "2026-05-05T22:34:49.000Z",
+      "subject": "Gemini Predicted - Bitcoin Rallies, Knicks Rise",
+      "classification": "transactional",
+      "interactionScore": 1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/1/3/Messages/315923.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    },
+    {
+      "dateIso": "2026-05-05T23:03:46.000Z",
+      "subject": "Building a LAN speaker, Tailwind hot takes, AI at the wrong scale, and more!",
+      "classification": "transactional",
+      "interactionScore": -1,
+      "relevance": {
+        "personalTimelineScore": 0,
+        "mediaEmpireScore": 0,
+        "tnfScore": 0
+      },
+      "mailboxPath": "8199FFEC-77BB-40F5-AD21-AEB76EA65D2D/INBOX.mbox/0FA3C7CB-F1A8-4870-A951-5DE763EC0629/Data/5/1/3/Messages/315928.emlx",
+      "decision": "keep_excluded_marketing_noise",
+      "reason": "Appears to be broad marketing/newsletter-style content with low personal narrative specificity."
+    }
+  ]
+}

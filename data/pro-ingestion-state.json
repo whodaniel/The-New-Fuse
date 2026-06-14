@@ -1,0 +1,26 @@
+{
+  "queue": [
+    {
+      "index": 682,
+      "url": "https://www.youtube.com/watch?v=bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "videoId": "bSG9wUYaHWU",
+      "status": "pending"
+    },
+    {
+      "index": 682,
+      "url": "https://www.youtube.com/watch?v=bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "videoId": "bSG9wUYaHWU",
+      "status": "pending"
+    },
+    {
+      "index": 682,
+      "url": "https://www.youtube.com/watch?v=bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "videoId": "bSG9wUYaHWU",
+      "status": "pending"
+    }
+  ],
+  "currentIndex": 0
+}

@@ -1,0 +1,184 @@
+{
+  "generatedAt": "2026-04-07T13:44:10.104Z",
+  "source": "scripts/visualizations/publish-graph-artifacts.cjs",
+  "datasets": [
+    {
+      "id": "agent-relationship-graph",
+      "title": "Agent Relationship Graph",
+      "sourceRoot": "tools/agent-relationship-graph",
+      "publicRoot": "/visualizations/graphs/agent-relationship-graph",
+      "copied": {
+        "files": 47,
+        "directories": 3
+      },
+      "graph": {
+        "file": "/visualizations/graphs/agent-relationship-graph/agent-relationship-graph.json",
+        "nodes": 120,
+        "edges": 437
+      },
+      "subgraphs": [
+        {
+          "domain": "brand",
+          "nodes": 20,
+          "edges": 51,
+          "files": {
+            "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.json",
+            "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.html",
+            "markdown": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.md",
+            "cypherNoApoc": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "content",
+          "nodes": 18,
+          "edges": 27,
+          "files": {
+            "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.json",
+            "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.html",
+            "markdown": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.md",
+            "cypherNoApoc": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "funnel",
+          "nodes": 25,
+          "edges": 41,
+          "files": {
+            "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.json",
+            "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.html",
+            "markdown": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.md",
+            "cypherNoApoc": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "ops",
+          "nodes": 13,
+          "edges": 23,
+          "files": {
+            "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.json",
+            "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.html",
+            "markdown": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.md",
+            "cypherNoApoc": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "podcast",
+          "nodes": 20,
+          "edges": 48,
+          "files": {
+            "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.json",
+            "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.html",
+            "markdown": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.md",
+            "cypherNoApoc": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "seo",
+          "nodes": 11,
+          "edges": 32,
+          "files": {
+            "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.json",
+            "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.html",
+            "markdown": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.md",
+            "cypherNoApoc": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "social",
+          "nodes": 18,
+          "edges": 31,
+          "files": {
+            "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.json",
+            "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.html",
+            "markdown": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.md",
+            "cypherNoApoc": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.noapoc.cypher"
+          }
+        }
+      ],
+      "neo4j": {
+        "files": {
+          "nodesCsv": "/visualizations/graphs/agent-relationship-graph/neo4j-package/nodes.csv",
+          "edgesCsv": "/visualizations/graphs/agent-relationship-graph/neo4j-package/edges.csv",
+          "domainMembershipCsv": "/visualizations/graphs/agent-relationship-graph/neo4j-package/domain_membership.csv",
+          "loadNoApocCypher": "/visualizations/graphs/agent-relationship-graph/neo4j-package/load.noapoc.cypher",
+          "loadApocCypher": "/visualizations/graphs/agent-relationship-graph/neo4j-package/load.apoc.cypher",
+          "readme": "/visualizations/graphs/agent-relationship-graph/neo4j-package/README.md"
+        },
+        "rows": {
+          "nodes": 120,
+          "edges": 437,
+          "domainMembership": 125
+        }
+      },
+      "reports": {
+        "centralityJson": "/visualizations/graphs/agent-relationship-graph/reports/agent-relationship-centrality-report.json",
+        "centralityMarkdown": "/visualizations/graphs/agent-relationship-graph/reports/agent-relationship-centrality-report.md",
+        "hubsMarkdown": "/visualizations/graphs/agent-relationship-graph/reports/agent-relationship-subgraph-hubs.md"
+      },
+      "temporal": {
+        "latestSnapshot": "/visualizations/graphs/agent-relationship-graph/snapshots/latest-snapshot.json",
+        "latestDeltaJson": "/visualizations/graphs/agent-relationship-graph/snapshots/latest-delta.json",
+        "latestDeltaMarkdown": "/visualizations/graphs/agent-relationship-graph/snapshots/latest-delta.md",
+        "latestAlertJson": "/visualizations/graphs/agent-relationship-graph/snapshots/latest-alert.json",
+        "latestAlertMarkdown": "/visualizations/graphs/agent-relationship-graph/snapshots/latest-alert.md"
+      },
+      "missingRequirements": []
+    },
+    {
+      "id": "framework-master-graph",
+      "title": "Framework Master Graph",
+      "sourceRoot": "tools/framework-master-graph",
+      "publicRoot": "/visualizations/graphs/framework-master-graph",
+      "copied": {
+        "files": 10,
+        "directories": 1
+      },
+      "graph": {
+        "file": "/visualizations/graphs/framework-master-graph/master-framework-graph.json",
+        "nodes": 469,
+        "edges": 1266
+      },
+      "subgraphs": [],
+      "neo4j": {
+        "files": {
+          "nodesCsv": "/visualizations/graphs/framework-master-graph/neo4j-package/nodes.csv",
+          "edgesCsv": "/visualizations/graphs/framework-master-graph/neo4j-package/edges.csv",
+          "loadNoApocCypher": "/visualizations/graphs/framework-master-graph/neo4j-package/load.noapoc.cypher",
+          "loadApocCypher": "/visualizations/graphs/framework-master-graph/neo4j-package/load.apoc.cypher",
+          "readme": "/visualizations/graphs/framework-master-graph/neo4j-package/README.md"
+        },
+        "rows": {
+          "nodes": 469,
+          "edges": 1266
+        }
+      },
+      "reports": {},
+      "temporal": {},
+      "missingRequirements": []
+    }
+  ],
+  "discoveredGraphRoots": [
+    {
+      "id": "agent-relationship-graph",
+      "sourceRoot": "tools/agent-relationship-graph",
+      "hasNeo4jPackage": true,
+      "hasGraphJson": true,
+      "published": true
+    },
+    {
+      "id": "framework-master-graph",
+      "sourceRoot": "tools/framework-master-graph",
+      "hasNeo4jPackage": true,
+      "hasGraphJson": true,
+      "published": true
+    }
+  ],
+  "missingImplementations": [],
+  "totals": {
+    "datasets": 2,
+    "graphNodes": 589,
+    "graphEdges": 1703,
+    "subgraphs": 7,
+    "missingImplementations": 0
+  }
+}

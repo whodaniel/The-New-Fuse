@@ -55,7 +55,7 @@ import type { RedisRelayBridge } from './redis-relay-bridge.js';
 import type { StallDetector } from './services/stall-detector.js';
 
 // Configuration
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const PORT = parseInt(process.env.RELAY_PORT || '3007', 10);
 const RELAY_HOST = (process.env.RELAY_HOST || '0.0.0.0').trim() || '0.0.0.0';
 const HEARTBEAT_INTERVAL = 30000;
 const AGENT_TIMEOUT = 60000;
@@ -204,6 +204,7 @@ function shouldRetryListenOnLoopback(
 // Relay Server Class
 export class TNFRelayServer extends EventEmitter {
   private server: http.Server;
+  private sessionId: string;
   private wss: WebSocketServer;
   private agents: Map<string, Agent> = new Map();
   private sockets: Map<string, WebSocket> = new Map();
@@ -240,6 +241,7 @@ export class TNFRelayServer extends EventEmitter {
   constructor(port: number = PORT) {
     super();
     this.port = port;
+    this.sessionId = `RELAY-${Date.now()}`;
     // Auth is optional for local development
     try {
       this.authService = createAuthService();
@@ -832,7 +834,7 @@ export class TNFRelayServer extends EventEmitter {
               replyTo: `tnf:master:agent_registry_updates:${requestedAgentId}`, // Master clock replies here
             })
           );
-          fmt.log(`[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`);
+          console.log(`[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`);
         } else {
           // Fallback if bridge is not connected (local mode)
           console.warn(

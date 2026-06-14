@@ -1,0 +1,8 @@
+
+> @the-new-fuse/api-server@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api
+> pnpm clean && tsc --skipLibCheck
+
+
+> @the-new-fuse/api-server@1.0.0 clean /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api
+> rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo
+

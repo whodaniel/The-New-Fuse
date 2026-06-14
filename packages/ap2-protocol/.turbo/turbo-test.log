@@ -1,0 +1,5 @@
+
+> @the-new-fuse/ap2-protocol@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/ap2-protocol
+> echo "No tests for this package" --passWithNoTests
+
+No tests for this package --passWithNoTests

@@ -1,0 +1,673 @@
+{
+  "spec": "tnf/librarian-resume-manifest/0.1",
+  "generated_at": "2026-05-06T02:57:30Z",
+  "owner": "DANIEL_GOLDBERG",
+  "repo_root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "canonical_resume_doc": "docs/library/LIBRARIAN_RESUME_MAP.md",
+  "registry_doc": "docs/library/REGISTRY.md",
+  "resume_checkpoint": {
+    "branch": "main",
+    "latest_commits": [
+      {
+        "sha": "2fdf2ebb01d2f1a0dd87f4822d7c6f016805dbe8",
+        "short": "2fdf2ebb0",
+        "timestamp": "2026-05-05T12:07:57-04:00",
+        "message": "chore: remove legacy external contributor references and reinforce auth protocols"
+      },
+      {
+        "sha": "c9fe117842b9b50cdb706961c6fcb520c5ff4962",
+        "short": "c9fe11784",
+        "timestamp": "2026-05-05T11:53:35-04:00",
+        "message": "feat: complete codebase map super cycle with deep agent/protocol integration and turn zero pipeline"
+      },
+      {
+        "sha": "49be08ed53f6b64a83e9ceaa0e27a9dee9a33e95",
+        "short": "49be08ed5",
+        "timestamp": "2026-05-05T11:10:43-04:00",
+        "message": "fix: whitelist codebase-map in cloudflare edge function"
+      }
+    ],
+    "twip_context_excerpt_path": "data/protocols/twip-inventory.snapshot.json"
+  },
+  "lanes": {
+    "historical_parallel_timelines": {
+      "status": "DISCOVERED",
+      "canonical_sources": [
+        "data/unified-task-ledger.json",
+        "/Users/danielgoldberg/github-history/whodaniel-github-history-narrative.json",
+        "/Users/danielgoldberg/github-history/whodaniel-github-history-plot.md"
+      ],
+      "pipelines": [
+        "scripts/timeline/generate-github-history-narrative.mjs",
+        "scripts/timeline/import-github-history-to-timeline.mjs",
+        "docs/integrations/github-timeline-sync.md"
+      ],
+      "active_ledger_snapshot": {
+        "events_total": 454,
+        "date_range": {
+          "start": "2016-01-25",
+          "end": "2026-05-05"
+        },
+        "by_project": {
+          "Daniel Who's Media Empire": 6,
+          "The New Fuse Platform": 286,
+          "The New Fuse (Novel)": 4,
+          "Daniel Personal Life Story": 158
+        },
+        "by_track": {
+          "knowledge_and_library_systems": 9,
+          "cross_repo_experiments": 191,
+          "tnf_platform_evolution": 36,
+          "media_and_interactive_systems": 5,
+          "contribution_velocity_and_operational_scale": 55,
+          "Personal": 143,
+          "Business & Projects": 15
+        },
+        "by_timeline_category": {
+          "github-history": 98,
+          "development-journey": 198,
+          "personal-archaeology": 158
+        },
+        "narrative_connections_total": 40
+      },
+      "import_status": {
+        "development_journey_import_script": "scripts/timeline/import-development-journey-events-to-ledger.mjs",
+        "imported_events": 198,
+        "deduped_existing_events": 49
+      },
+      "backfill_candidates": [
+        {
+          "path": ".kilo/worktrees/season-saffron/reports/development-journey-local/tnf-development-journey-timeline-events.json",
+          "events": 247,
+          "date_range": {
+            "start": "2016-01-25",
+            "end": "2026-03-19"
+          }
+        },
+        {
+          "path": ".kilo/worktrees/season-saffron/reports/development-journey/tnf-development-journey-timeline-events.json",
+          "events": 104,
+          "date_range": {
+            "start": "2024-12-29",
+            "end": "2026-03-19"
+          }
+        },
+        {
+          "path": "../private-repos/the-new-fuse-docs-private-sync/reports/development-journey-local/tnf-development-journey-timeline-events.json",
+          "events": 247,
+          "date_range": {
+            "start": "2016-01-25",
+            "end": "2026-03-19"
+          }
+        }
+      ]
+    },
+    "personal_life_story": {
+      "status": "DISCOVERED",
+      "canonical_sources": [
+        "docs/incidents/APPLE_NOTES_IMPORT_2026-05-04.md",
+        "reports/personal-archaeology",
+        "scripts/timeline/personal-archaeology-orchestrator.mjs"
+      ],
+      "extraction_pipeline": [
+        "scripts/timeline/process-personal-archaeology-range.mjs",
+        "scripts/timeline/import-timeline-draft-to-ledger.mjs"
+      ],
+      "verified_metrics": {
+        "apple_notes_processed": 1622,
+        "findings_templates_present": true,
+        "findings_placeholder_state": "partial",
+        "imported_timeline_segments": 158,
+        "completed_batches": 158,
+        "latest_processed_end_seq": 1622,
+        "latest_skipped_notes": 0,
+        "cumulative_skipped_notes_estimate": 0,
+        "latest_redacted_notes": 0,
+        "cumulative_redacted_notes_estimate": 43,
+        "total_notes_visible_latest": 1622,
+        "imported_draft_files": 158,
+        "superseded_draft_files": 2,
+        "imported_skip_markers_total": 0,
+        "imported_redacted_markers_total": 43
+      },
+      "recent_outputs": [
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1-25.md",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start26-30.md",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start31-55.md",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start56-60.md",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start61-80.md",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start81-100.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1-25.json",
+        "reports/personal-archaeology/findings/timeline-events-draft-start26-30.json",
+        "reports/personal-archaeology/findings/timeline-events-draft-start31-55.json",
+        "reports/personal-archaeology/findings/timeline-events-draft-start56-60.json",
+        "reports/personal-archaeology/findings/timeline-events-draft-start61-80.json",
+        "reports/personal-archaeology/findings/timeline-events-draft-start81-100.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start101-120.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start101-120.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start121-130.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start121-130.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start131-140.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start131-140.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start141-150.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start141-150.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start151-160.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start151-160.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start161-170.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start161-170.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start171-180.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start171-180.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start181-190.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start181-190.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start191-200.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start191-200.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start201-210.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start201-210.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start211-220.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start211-220.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start221-230.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start221-230.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start231-240.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start231-240.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start241-250.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start241-250.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start251-260.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start251-260.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start261-270.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start261-270.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start271-280.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start271-280.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start281-290.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start281-290.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start291-300.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start291-300.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start301-310.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start301-310.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start311-320.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start311-320.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start321-330.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start321-330.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start331-340.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start331-340.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start341-350.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start341-350.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start351-360.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start351-360.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start361-370.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start361-370.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start371-380.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start371-380.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start381-390.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start381-390.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start391-400.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start391-400.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start401-410.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start401-410.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start411-420.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start411-420.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start421-430.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start421-430.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start431-440.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start431-440.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start441-450.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start441-450.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start451-460.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start451-460.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start461-470.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start461-470.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start471-480.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start471-480.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start481-490.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start481-490.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start491-500.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start491-500.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start501-510.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start501-510.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start511-520.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start511-520.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start521-530.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start521-530.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start531-540.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start531-540.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start541-550.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start541-550.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start551-560.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start551-560.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start561-570.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start561-570.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start571-580.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start571-580.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start581-590.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start581-590.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start591-600.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start591-600.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start601-610.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start601-610.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start611-620.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start611-620.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start621-630.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start621-630.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start631-640.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start631-640.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start641-650.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start641-650.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start651-660.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start651-660.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start661-670.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start661-670.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start671-680.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start671-680.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start681-690.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start681-690.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start691-700.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start691-700.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start701-710.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start701-710.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start711-720.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start711-720.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start721-730.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start721-730.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start731-740.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start731-740.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start741-750.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start741-750.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start751-760.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start751-760.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start761-770.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start761-770.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start771-780.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start771-780.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start781-790.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start781-790.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start791-800.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start791-800.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start801-810.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start801-810.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start811-820.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start811-820.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start821-830.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start821-830.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start831-840.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start831-840.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start841-850.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start841-850.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start851-860.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start851-860.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start861-870.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start861-870.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start871-880.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start871-880.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start881-890.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start881-890.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start891-900.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start891-900.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start901-910.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start901-910.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start911-920.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start911-920.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start921-930.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start921-930.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start931-940.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start931-940.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start941-950.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start941-950.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start951-960.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start951-960.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start961-970.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start961-970.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start971-980.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start971-980.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start981-990.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start981-990.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start991-1000.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start991-1000.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1001-1010.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1001-1010.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1011-1020.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1011-1020.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1021-1030.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1021-1030.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1031-1040.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1031-1040.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1041-1050.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1041-1050.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1051-1060.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1051-1060.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1061-1070.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1061-1070.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1071-1080.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1071-1080.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1081-1090.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1081-1090.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1091-1100.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1091-1100.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1101-1110.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1101-1110.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1111-1120.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1111-1120.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1121-1130.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1121-1130.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1131-1140.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1131-1140.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1141-1150.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1141-1150.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1151-1160.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1151-1160.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1161-1170.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1161-1170.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1171-1180.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1171-1180.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1181-1190.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1181-1190.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1191-1200.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1191-1200.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1201-1210.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1201-1210.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1211-1220.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1211-1220.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1221-1230.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1221-1230.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1231-1240.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1231-1240.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1241-1250.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1241-1250.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1251-1260.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1251-1260.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1261-1270.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1261-1270.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1271-1280.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1271-1280.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1281-1290.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1281-1290.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1291-1300.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1291-1300.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1301-1310.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1301-1310.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1311-1320.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1311-1320.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1321-1330.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1321-1330.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1331-1340.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1331-1340.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1341-1350.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1341-1350.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1351-1360.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1351-1360.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1361-1370.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1361-1370.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1371-1380.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1371-1380.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1381-1390.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1381-1390.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1391-1400.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1391-1400.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1401-1410.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1401-1410.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1411-1420.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1411-1420.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1421-1430.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1421-1430.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1431-1440.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1431-1440.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1441-1450.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1441-1450.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1451-1460.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1451-1460.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1461-1470.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1461-1470.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1471-1480.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1471-1480.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1481-1490.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1481-1490.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1491-1500.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1491-1500.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1501-1510.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1501-1510.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1511-1520.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1511-1520.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1521-1530.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1521-1530.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1531-1540.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1531-1540.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1541-1550.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1541-1550.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1551-1560.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1551-1560.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1561-1570.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1561-1570.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1571-1580.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1571-1580.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1581-1590.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1581-1590.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1591-1600.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1591-1600.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1601-1610.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1601-1610.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1611-1620.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1611-1620.json",
+        "reports/personal-archaeology/findings/personal-archaeology-findings-start1621-1622.md",
+        "reports/personal-archaeology/findings/timeline-events-draft-start1621-1622.json"
+      ],
+      "resume_hint": {
+        "recommended_next_start_seq": 1623,
+        "recommended_batch_size": 10,
+        "exhausted_at_total_notes": 1622,
+        "note": "No remaining notes at current total; resume only if total increases."
+      }
+    },
+    "tnf_network_mapping": {
+      "status": "DISCOVERED",
+      "canonical_sources": [
+        "docs/archive/agent-network/AGENT_NETWORK_SCOPE.md",
+        "apps/frontend/public/visualizations/graphs/agent-relationship-graph/agent-relationship-graph.json",
+        "TNF_EXHAUSTIVE_AST_MAP.md",
+        "TNF_MASTER_DNA_v4.md"
+      ],
+      "verified_metrics": {
+        "registry_unique_agents": 178,
+        "registry_variants": 290,
+        "typed_graph_nodes": 120,
+        "typed_graph_edges": 401,
+        "typed_graph_coverage_percent": 67.42
+      }
+    },
+    "personal_business_assets": {
+      "status": "DISCOVERED",
+      "canonical_sources": [
+        "supabase/tables/empire_graph.sql",
+        "/Users/danielgoldberg/Projects/virtual-library-blueprints/src/components/ui/EmpireMap.tsx",
+        "docs/protocols/TNF_VIRTUAL_LIBRARY_CONSOLIDATION_PROTOCOL.md",
+        "docs/protocols/storage/tnf-virtual-library-surface-map.json"
+      ],
+      "virtual_library_codebases": {
+        "canonical": "/Users/danielgoldberg/Projects/virtual-library-blueprints",
+        "mirror": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints"
+      }
+    },
+    "book_manuscripts": {
+      "status": "MIGRATED",
+      "canonical_sources": [
+        "https://github.com/whodaniel/courseforge",
+        "docs/library/COURSEFORGE_MANUSCRIPT_MAP_2026-05-05.md"
+      ],
+      "local_mirror": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.fuse/external/courseforge",
+      "branch_heads": {
+        "google_ai_ecosystem_cookbook": {
+          "branch": "main",
+          "sha": "c45efeba91ca25c57fca1a888f3aea5e5d6e7aae",
+          "chapters": 40
+        },
+        "anthropic_ai_ecosystem_cookbook": {
+          "branch": "anthropic-cookbook",
+          "sha": "dc1eae2401ffec487b63925a750445e10d5efe71",
+          "chapters": 40
+        },
+        "open_source_ai_ecosystem_cookbook": {
+          "branch": "opensource-cookbook",
+          "sha": "6c6ec395923265686192c8338894a2652e6efbfb",
+          "chapters": 38
+        },
+        "the_new_fuse_novel_scaffold": {
+          "branch": "the-new-fuse-novel",
+          "sha": "561e44d6103e5035b891c2f96a54ee514fa6e40a"
+        }
+      },
+      "registry_work_ids": [
+        "book-google-gemini",
+        "book-anthropic-claude",
+        "book-open-source-llm-providers",
+        "timeline-the-new-fuse-novel"
+      ],
+      "inventory": "data/protocols/courseforge-manuscript-inventory.2026-05-05.json",
+      "coverage_report": "data/protocols/courseforge-librarian-coverage.2026-05-06.json",
+      "librarian_ingest": {
+        "source_label": "courseforge-manuscript-branches",
+        "source_id": "0a232d41-5683-44ba-95e4-dfbae235284f",
+        "ingestion_run_id": "18988939-b9ae-49f1-9108-973dad9881d1",
+        "started_at_utc": "2026-05-06T00:44:40.734Z",
+        "ended_at_utc": "2026-05-06T00:50:21.098Z",
+        "result_status_counts": {
+          "created": 166
+        },
+        "non_markdown_skipped": 4,
+        "non_markdown_skip_detail": [
+          "main:.gitignore",
+          "anthropic-cookbook:.gitignore",
+          "opensource-cookbook:.gitignore",
+          "the-new-fuse-novel:.gitignore"
+        ],
+        "text_chunking": {
+          "chunk_builder_script": "scripts/library/build-librarian-text-chunks.mjs",
+          "ingestion_run_id": "f31ab9b6-2504-469d-8a9b-5aac14492f3c",
+          "started_at_utc": "2026-05-06T01:02:49.800Z",
+          "ended_at_utc": "2026-05-06T01:07:01.590Z",
+          "text_records": 166,
+          "chunks_created": 657,
+          "result_status_counts": {
+            "created": 166
+          }
+        }
+      }
+    }
+  },
+  "supabase_alignment": {
+    "live_migrations": [
+      "001 virtual_library_schema",
+      "002 story_privacy_wall",
+      "20260504014949 librarian_archive_v1_20260504",
+      "20260504015905 librarian_archive_fk_indexes_v1_20260504",
+      "20260506021624 librarian_rls_stage_v1_20260506"
+    ],
+    "virtual_library_local_migrations": [
+      "001_virtual_library_schema.sql",
+      "002_story_privacy_wall.sql",
+      "20260504014949_librarian_archive_v1_20260504.sql",
+      "20260504015905_librarian_archive_fk_indexes_v1_20260504.sql",
+      "20260506021624_librarian_rls_stage_v1_20260506.sql"
+    ],
+    "migration_backfill": {
+      "status": "completed",
+      "completed_at": "2026-05-05",
+      "canonical_path": "/Users/danielgoldberg/Projects/virtual-library-blueprints/supabase/migrations",
+      "mirror_path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints/supabase/migrations",
+      "added_files": [
+        "20260504014949_librarian_archive_v1_20260504.sql",
+        "20260504015905_librarian_archive_fk_indexes_v1_20260504.sql"
+      ]
+    },
+    "schema_name_alignment": {
+      "updated_table_name": "story_session_agent_access",
+      "replaced_stale_name": "story_session_agent_grants"
+    },
+    "live_schema_advisory": {
+      "schema": "librarian",
+      "severity": "resolved",
+      "issue": "RLS is enabled across librarian and librarian_ingest tables with owner-scoped policies active.",
+      "action_policy": "Maintain owner-claim policy behavior and monitor residual public-schema advisories."
+    },
+    "librarian_archive_rows": {
+      "checked_at": "2026-05-06T02:56:47Z",
+      "counts": {
+        "librarian.artifact": 1820,
+        "librarian.artifact_text": 1787,
+        "librarian.text_chunk": 657,
+        "librarian.timeline_event": 1650,
+        "librarian_ingest.ingestion_run": 4,
+        "librarian_ingest.ingestion_artifact_result": 1953
+      }
+    },
+    "rls_blueprint": {
+      "status": "applied_out_of_band",
+      "drafted_at": "2026-05-05",
+      "validated_at": "2026-05-06T02:13:44Z",
+      "dossier_path": "docs/protocols/reports/LIBRARIAN_RLS_BLUEPRINT_2026-05-05.md",
+      "draft_sql_path": "docs/protocols/reports/sql/librarian_rls_blueprint_2026-05-05.sql",
+      "validation_script": "scripts/library/validate-librarian-rls-blueprint.sh",
+      "staged_migration_file_mirror": "apps/virtual-library-blueprints/supabase/migrations/20260506021624_librarian_rls_stage_v1_20260506.sql",
+      "staged_migration_file_canonical": "/Users/danielgoldberg/Projects/virtual-library-blueprints/supabase/migrations/20260506021624_librarian_rls_stage_v1_20260506.sql",
+      "applied_to_live": true,
+      "applied_at": "2026-05-06T02:43:54Z",
+      "apply_method": "direct SQL apply (out-of-band from schema_migrations)",
+      "migration_history_reconciled": true,
+      "migration_history_reconciled_at": "2026-05-06T02:56:00Z"
+    },
+    "live_security_snapshot": {
+      "checked_at": "2026-05-06T02:56:47Z",
+      "rls_disabled_table_count": 0,
+      "rls_disabled_tables": [],
+      "public_rls_enabled_no_policy_table_count": 72,
+      "security_definer_functions_executable_by_anon_or_authenticated": [
+        "public.rls_auto_enable()"
+      ],
+      "function_search_path_mutable_count": 121,
+      "unindexed_foreign_keys_count": 58,
+      "table_action_groups_with_multiple_permissive_policies": 1,
+      "impacted_tables_with_multiple_permissive_policies": [
+        "story_sessions"
+      ],
+      "rls_enabled_table_count": 9,
+      "librarian_policy_count": 9,
+      "owner_backfill_nulls": {
+        "librarian.timeline_event": 0,
+        "librarian_ingest.ingestion_run": 0
+      },
+      "role_behavior_checks": {
+        "authenticated_no_claim_visible_artifacts": 0,
+        "authenticated_with_owner_claim_visible_artifacts": 1820,
+        "service_role_visible_artifacts": 1820
+      }
+    },
+    "applied_out_of_band_migrations": [
+      "20260506021624_librarian_rls_stage_v1_20260506.sql"
+    ],
+    "migration_history_reconciliation": {
+      "required": false,
+      "status": "completed",
+      "reconciled_at_utc": "2026-05-06T02:56:00Z",
+      "note": "Version 20260506021624 now exists in supabase_migrations.schema_migrations as a metadata reconciliation marker.",
+      "target_migration": "20260506021624_librarian_rls_stage_v1_20260506.sql"
+    }
+  },
+  "domain_state": {
+    "thenewfuse_com_reference_hits": 5843,
+    "library_thenewfuse_com_reference_hits": 0,
+    "virtual_library_worker_config": "/Users/danielgoldberg/Projects/virtual-library-blueprints/cloudflare-virtual-library/wrangler.toml",
+    "workers_dev_enabled": true,
+    "explicit_library_route_in_config": false,
+    "route_policy_decision": "workers_dev_only",
+    "route_state_report": "data/protocols/library-route-state.2026-05-06.json",
+    "route_state_validator_script": "scripts/library/verify-library-route-state.mjs"
+  },
+  "open_gaps": [
+    "Personal archaeology extraction is complete for current Apple Notes total (1..1622). Resume only if note count increases.",
+    "Maintain quality-gated extraction (`--replace-existing-if-better`) for any future note-count growth beyond 1622."
+  ],
+  "checkpoint_artifacts": {
+    "master_index": "data/protocols/librarian-master-index.json",
+    "integrity_checkpoint": "docs/library/LIBRARIAN_INTEGRITY_CHECKPOINT_2026-05-05.md",
+    "manuscript_map": "docs/library/COURSEFORGE_MANUSCRIPT_MAP_2026-05-05.md",
+    "manuscript_inventory": "data/protocols/courseforge-manuscript-inventory.2026-05-05.json",
+    "route_state_report": "data/protocols/library-route-state.2026-05-06.json",
+    "supabase_post_rls_state": "data/protocols/librarian-supabase-post-rls-state.2026-05-06.json"
+  }
+}

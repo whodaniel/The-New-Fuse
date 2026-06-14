@@ -1,0 +1,1 @@
+{"version":3,"file":"agent-grants.dto.d.ts","sourceRoot":"","sources":["../../src/dto/agent-grants.dto.ts"],"names":[],"mappings":"AAaA,qBAAa,mBAAmB;IAI9B,OAAO,EAAG,MAAM,CAAC;IAKjB,QAAQ,EAAG,MAAM,CAAC;IAMlB,aAAa,CAAC,EAAE,MAAM,EAAE,CAAC;IAMzB,oBAAoB,CAAC,EAAE,MAAM,CAAC;IAM9B,gBAAgB,CAAC,EAAE,MAAM,CAAC;IAM1B,kBAAkB,CAAC,EAAE,MAAM,CAAC;IAG5B,SAAS,EAAG,MAAM,CAAC;CACpB"}

@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TNF Terminal Macro Board</title>
+    <meta
+      name="description"
+      content="Rolling TWIP macro view of active terminals, executable mix, and safety telemetry for TNF orchestration."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #070c10;
+        --panel: #101820;
+        --panel-soft: #151f29;
+        --line: #223446;
+        --text: #e8f0f7;
+        --muted: #9ab0c5;
+        --accent: #4dd0e1;
+        --warn: #ffca6b;
+        --danger: #ff8b8b;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        background:
+          radial-gradient(1200px 600px at 10% -20%, #173350 0%, transparent 60%),
+          radial-gradient(900px 600px at 100% -10%, #283f1f 0%, transparent 62%),
+          var(--bg);
+        color: var(--text);
+        font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+      }
+
+      .shell {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px 18px 38px;
+      }
+
+      .top {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .title {
+        font-size: clamp(22px, 3vw, 34px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .sub {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .btn {
+        border: 1px solid var(--line);
+        background: rgba(16, 24, 32, 0.85);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 8px 12px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .btn:hover {
+        border-color: var(--accent);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .card {
+        background: rgba(16, 24, 32, 0.9);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+      }
+
+      .label {
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .value {
+        margin-top: 8px;
+        font-size: 30px;
+        font-weight: 700;
+      }
+
+      .value.small {
+        font-size: 17px;
+        line-height: 1.3;
+        word-break: break-word;
+      }
+
+      .panel {
+        margin-top: 14px;
+        background: rgba(16, 24, 32, 0.94);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .panel h2 {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 11px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .rows {
+        list-style: none;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1.1fr 1.2fr 0.8fr 1.6fr 0.8fr;
+        gap: 10px;
+        padding: 9px 12px;
+        border-top: 1px solid rgba(34, 52, 70, 0.5);
+        font-size: 12px;
+      }
+
+      .row:first-child {
+        border-top: 0;
+      }
+
+      .mono {
+        font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+      }
+
+      .flag {
+        font-size: 11px;
+        border-radius: 999px;
+        padding: 2px 7px;
+        display: inline-block;
+      }
+
+      .flag.ok {
+        border: 1px solid #2b8f57;
+        color: #8fe6b2;
+      }
+
+      .flag.warn {
+        border: 1px solid #a47127;
+        color: var(--warn);
+      }
+
+      .flag.danger {
+        border: 1px solid #8f3232;
+        color: var(--danger);
+      }
+
+      .status {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .error {
+        margin-top: 14px;
+        border: 1px solid #8f3232;
+        background: rgba(90, 25, 25, 0.35);
+        border-radius: 10px;
+        padding: 10px;
+        color: #ffc5c5;
+        font-size: 13px;
+      }
+
+      @media (max-width: 840px) {
+        .row {
+          grid-template-columns: 1fr;
+          gap: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="top">
+        <div>
+          <h1 class="title">TWIP Terminal Macro Board</h1>
+          <p class="sub">Static fallback for TNF terminal visualization and orchestration telemetry.</p>
+        </div>
+        <div class="actions">
+          <a class="btn" href="/visualizations">Visualizations Hub</a>
+          <a class="btn" href="/visualizations/terminals/data/twip-terminal-macro-board-latest.md">Latest Report</a>
+          <button class="btn" id="refresh" type="button">Refresh</button>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <div class="label">Generated</div>
+          <div class="value small mono" id="generated">-</div>
+        </article>
+        <article class="card">
+          <div class="label">Tenant</div>
+          <div class="value small mono" id="tenant">-</div>
+        </article>
+        <article class="card">
+          <div class="label">Total</div>
+          <div class="value" id="total">0</div>
+        </article>
+        <article class="card">
+          <div class="label">Active</div>
+          <div class="value" id="active">0</div>
+        </article>
+        <article class="card">
+          <div class="label">Idle</div>
+          <div class="value" id="idle">0</div>
+        </article>
+        <article class="card">
+          <div class="label">Top Runtime Mix</div>
+          <div class="value small mono" id="mix">none</div>
+        </article>
+      </section>
+
+      <section class="grid" style="margin-top: 10px">
+        <article class="card">
+          <div class="label">Approval Bypass</div>
+          <div class="value" id="bypass">0</div>
+        </article>
+        <article class="card">
+          <div class="label">Remote MCP</div>
+          <div class="value" id="remote">0</div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <h2>Active Sessions</h2>
+        <ul class="rows" id="sessions"></ul>
+      </section>
+
+      <p class="status" id="status">Loading...</p>
+      <div class="error" id="error" hidden></div>
+    </main>
+
+    <script>
+      const ids = {
+        generated: document.getElementById('generated'),
+        tenant: document.getElementById('tenant'),
+        total: document.getElementById('total'),
+        active: document.getElementById('active'),
+        idle: document.getElementById('idle'),
+        mix: document.getElementById('mix'),
+        bypass: document.getElementById('bypass'),
+        remote: document.getElementById('remote'),
+        sessions: document.getElementById('sessions'),
+        status: document.getElementById('status'),
+        error: document.getElementById('error'),
+      };
+
+      function fmtNumber(value) {
+        const n = Number(value || 0);
+        return Number.isFinite(n) ? String(n) : '0';
+      }
+
+      function fmtMix(items) {
+        if (!Array.isArray(items) || items.length === 0) return 'none';
+        return items
+          .slice(0, 6)
+          .map((item) => `${item.name}(${item.count})`)
+          .join(', ');
+      }
+
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function flag(label, kind) {
+        return `<span class="flag ${kind}">${label}</span>`;
+      }
+
+      function rowHtml(session) {
+        const executables = Array.isArray(session.workExecutables)
+          ? session.workExecutables.map(escapeHtml).join(', ')
+          : 'none';
+        const contextPreview = session.contextPreview
+          ? `<span class="mono">${escapeHtml(session.contextPreview)}</span>`
+          : '<span class="mono">n/a</span>';
+        const safety = [
+          session.bypassApproval ? flag('approval bypass', 'danger') : flag('approval ok', 'ok'),
+          session.usesRemoteMcp ? flag('remote mcp', 'warn') : flag('local mcp', 'ok'),
+        ].join(' ');
+
+        return `<li class="row">\n  <div><strong>TTY:</strong> <span class="mono">${escapeHtml(session.tty || 'unknown')}</span></div>\n  <div><strong>Work:</strong> <span class="mono">${executables || 'none'}</span></div>\n  <div><strong>Pane:</strong> <span class="mono">${escapeHtml(session.paneId || 'n/a')}</span></div>\n  <div><strong>Context:</strong> ${contextPreview}</div>\n  <div>${safety}</div>\n</li>`;
+      }
+
+      function setError(message) {
+        ids.error.hidden = false;
+        ids.error.textContent = message;
+      }
+
+      function clearError() {
+        ids.error.hidden = true;
+        ids.error.textContent = '';
+      }
+
+      async function loadBoard() {
+        clearError();
+        ids.status.textContent = 'Loading macro board snapshot...';
+
+        try {
+          const response = await fetch(
+            '/visualizations/terminals/data/twip-terminal-macro-board.state.json',
+            {
+              cache: 'no-store',
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`state fetch failed (${response.status})`);
+          }
+
+          const payload = await response.json();
+          const summary = payload.summary || {};
+          const safety = summary.safetySignals || {};
+          const activeSessions = Array.isArray(summary.activeSessions) ? summary.activeSessions : [];
+
+          ids.generated.textContent = payload.generatedAt || 'n/a';
+          ids.tenant.textContent = payload.args?.tenantId || 'n/a';
+          ids.total.textContent = fmtNumber(summary.totalTerminals);
+          ids.active.textContent = fmtNumber(summary.activeTerminals);
+          ids.idle.textContent = fmtNumber(summary.idleTerminals);
+          ids.mix.textContent = fmtMix(summary.topWorkExecutables);
+          ids.bypass.textContent = fmtNumber(safety.approvalsBypassTerminals);
+          ids.remote.textContent = fmtNumber(safety.remoteMcpTerminals);
+
+          if (activeSessions.length === 0) {
+            ids.sessions.innerHTML = '<li class="row"><div>No active sessions detected.</div></li>';
+          } else {
+            ids.sessions.innerHTML = activeSessions.slice(0, 80).map(rowHtml).join('');
+          }
+
+          const withContext = activeSessions.filter((session) => session.hasContext).length;
+          ids.status.textContent = `Loaded ${activeSessions.length} active sessions (${withContext} with context).`;
+        } catch (error) {
+          ids.status.textContent = 'Macro board unavailable.';
+          setError(
+            `Unable to load state snapshot. Run: node scripts/protocols/twip-macro-board.cjs --tenant tnf-local --limit 1000 --include-commands --include-content --history` +
+              `\n\nDetails: ${error.message}`
+          );
+        }
+      }
+
+      document.getElementById('refresh').addEventListener('click', loadBoard);
+      loadBoard();
+    </script>
+  </body>
+</html>

@@ -1,6 +1,9 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as dotenv from 'dotenv';
+// Load environment variables specific to the API service from apps/api/.env BEFORE importing AppModule
+dotenv.config();
+
 import * as express from 'express';
 import 'reflect-metadata';
 import { AppModule } from './app.module';
@@ -18,9 +21,6 @@ import { validateGcpEnvironment } from './config/gcp.config';
 import { setupSwagger } from './config/swagger.config';
 import { routeFallbackMiddleware } from './middleware/route-fallback.middleware';
 import { securityMiddleware } from './middleware/security.middleware';
-
-// Load environment variables specific to the API service from apps/api/.env
-dotenv.config();
 
 const logger = new Logger('Bootstrap');
 

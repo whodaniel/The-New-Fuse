@@ -1,1 +1,5 @@
-{"agent_id": "agent-2d794ee9", "registered_at": "2026-06-12T19:48:32.808101", "last_heartbeat": 1781308112.810197}
+{
+  "agent_id": "agent-2d794ee9",
+  "registered_at": "2026-06-12T19:48:32.808101",
+  "last_heartbeat": 1781308112.810197
+}

@@ -1,0 +1,76 @@
+{
+  "spec": "tnf/chronological-dispatch-profiles/0.1",
+  "updated_at": "2026-05-28T08:00:00.000Z",
+  "entries": {
+    "tenant-continuous-qa-loop": {
+      "title": "Tenant Continuous QA Loop",
+      "priority": "high",
+      "targetQueue": "tnf:master:tasks:planning",
+      "kind": "agent-turn",
+      "instruction": "Run the tenant continuous QA loop: validate build/test health, identify regressions, and queue focused remediation tasks with evidence.",
+      "itinerary": {
+        "lane": "quality",
+        "horizon": "short_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["master-clock", "qa-swarm"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-knowledge-scout-sprint": {
+      "title": "Tenant Knowledge Scout Sprint",
+      "priority": "medium",
+      "targetQueue": "tnf:master:tasks:planning",
+      "kind": "agent-turn",
+      "instruction": "Run a knowledge scout sprint: collect relevant framework, provider, and operations intelligence, then summarize actionable updates for routing and implementation.",
+      "itinerary": {
+        "lane": "research",
+        "horizon": "medium_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["master-clock", "knowledge-scout"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-orchestrator-pulse": {
+      "title": "Tenant Orchestrator Pulse",
+      "priority": "high",
+      "targetQueue": "tnf:master:tasks:planning",
+      "kind": "agent-turn",
+      "instruction": "Run the tenant orchestrator pulse: review active state, route pending work, refresh priorities, and surface blockers requiring Local Director attention.",
+      "itinerary": {
+        "lane": "orchestration",
+        "horizon": "short_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["master-clock", "director-loop"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-loop-watchdog": {
+      "title": "Tenant Loop Watchdog",
+      "priority": "critical",
+      "targetQueue": "tnf:master:tasks:realtime",
+      "kind": "agent-turn",
+      "instruction": "Run the tenant loop watchdog: detect stalled loops, stale locks, missing heartbeats, and failed recurring jobs; queue recovery work without destructive actions.",
+      "itinerary": {
+        "lane": "reliability",
+        "horizon": "immediate",
+        "coordinationMode": "brokered",
+        "signalSources": ["master-clock", "director-loop", "terminal-heartbeat"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-self-improvement-loop": {
+      "title": "Tenant Self-Improvement Loop",
+      "priority": "high",
+      "targetQueue": "tnf:master:tasks:planning",
+      "kind": "agent-turn",
+      "instruction": "Run the tenant self-improvement loop: inspect recent failures and stale proposals, select bounded improvements, and produce implementation-ready tasks.",
+      "itinerary": {
+        "lane": "self_improvement",
+        "horizon": "medium_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["master-clock", "scorecard", "improver"],
+        "clockSource": "master-clock"
+      }
+    }
+  }
+}

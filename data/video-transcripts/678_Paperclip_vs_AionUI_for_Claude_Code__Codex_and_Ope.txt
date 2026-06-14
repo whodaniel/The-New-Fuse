@@ -1,0 +1,2307 @@
+[0:00] You have Claude code running in one
+[0:02] You have Claude code running in one
+[0:02] You have Claude code running in one terminal. Open Claw is doing its thing
+[0:03] terminal. Open Claw is doing its thing
+[0:04] terminal. Open Claw is doing its thing in another window. Hermes agent is mid
+[0:06] in another window. Hermes agent is mid
+[0:06] in another window. Hermes agent is mid task somewhere in the background. Codeex
+[0:08] task somewhere in the background. Codeex
+[0:08] task somewhere in the background. Codeex is open in a tab you forgot about 20
+[0:10] is open in a tab you forgot about 20
+[0:10] is open in a tab you forgot about 20 minutes ago. And somewhere in all of
+[0:12] minutes ago. And somewhere in all of
+[0:12] minutes ago. And somewhere in all of that, you have no idea which one
+[0:14] that, you have no idea which one
+[0:14] that, you have no idea which one finished what, which one is burning
+[0:16] finished what, which one is burning
+[0:16] finished what, which one is burning through tokens right now, or what state
+[0:17] through tokens right now, or what state
+[0:17] through tokens right now, or what state any of them will be in when you reboot
+[0:19] any of them will be in when you reboot
+[0:19] any of them will be in when you reboot your machine. If that sounds familiar,
+[0:21] your machine. If that sounds familiar,
+[0:21] your machine. If that sounds familiar, you're not doing it wrong. You're just
+[0:22] you're not doing it wrong. You're just
+[0:22] you're not doing it wrong. You're just missing a layer that most people in this
+[0:24] missing a layer that most people in this
+[0:24] missing a layer that most people in this space still have not figured out yet. In
+[0:26] space still have not figured out yet. In
+[0:26] space still have not figured out yet. In 2026, two open- source tools went viral
+[0:29] 2026, two open- source tools went viral
+[0:29] 2026, two open- source tools went viral for what looked like the same reason.
+[0:30] for what looked like the same reason.
+[0:30] for what looked like the same reason. Both support Claude Code, Codeex, Open
+[0:33] Both support Claude Code, Codeex, Open
+[0:33] Both support Claude Code, Codeex, Open Code, Open Claw, and Hermes Agent. Both
+[0:35] Code, Open Claw, and Hermes Agent. Both
+[0:35] Code, Open Claw, and Hermes Agent. Both are free. Both are self-hosted. Both
+[0:37] are free. Both are self-hosted. Both
+[0:37] are free. Both are self-hosted. Both blew up on GitHub within weeks of
+[0:39] blew up on GitHub within weeks of
+[0:39] blew up on GitHub within weeks of launching. Papercliped 46,000 stars in
+[0:42] launching. Papercliped 46,000 stars in
+[0:42] launching. Papercliped 46,000 stars in under a month. Ion UI hit 23,000 stars
+[0:45] under a month. Ion UI hit 23,000 stars
+[0:45] under a month. Ion UI hit 23,000 stars not long after. The community treated
+[0:47] not long after. The community treated
+[0:47] not long after. The community treated them like competitors, put them side by
+[0:49] them like competitors, put them side by
+[0:49] them like competitors, put them side by side, and started debating which one
+[0:51] side, and started debating which one
+[0:52] side, and started debating which one wins. The problem is that is the wrong
+[0:54] wins. The problem is that is the wrong
+[0:54] wins. The problem is that is the wrong question entirely. Paperclip and ionui
+[0:57] question entirely. Paperclip and ionui
+[0:57] question entirely. Paperclip and ionui are not competing for the same slot in
+[0:59] are not competing for the same slot in
+[0:59] are not competing for the same slot in your stack. They're solving two
+[1:00] your stack. They're solving two
+[1:00] your stack. They're solving two completely different problems that
+[1:02] completely different problems that
+[1:02] completely different problems that happen to involve the same set of AI
+[1:04] happen to involve the same set of AI
+[1:04] happen to involve the same set of AI agents. Once you understand what each
+[1:06] agents. Once you understand what each
+[1:06] agents. Once you understand what each tool is actually doing, the debate
+[1:08] tool is actually doing, the debate
+[1:08] tool is actually doing, the debate disappears. And you're either reaching
+[1:10] disappears. And you're either reaching
+[1:10] disappears. And you're either reaching for one, the other, or depending on how
+[1:13] for one, the other, or depending on how
+[1:13] for one, the other, or depending on how serious you are about this, both. That
+[1:15] serious you are about this, both. That
+[1:15] serious you are about this, both. That is what this video is going to break
+[1:16] is what this video is going to break
+[1:16] is what this video is going to break down. No tutorials, no setup
+[1:18] down. No tutorials, no setup
+[1:18] down. No tutorials, no setup walkthroughs. This is a full breakdown
+[1:20] walkthroughs. This is a full breakdown
+[1:20] walkthroughs. This is a full breakdown of what each tool is, how it thinks
+[1:23] of what each tool is, how it thinks
+[1:23] of what each tool is, how it thinks about AI agents, where it fits in your
+[1:25] about AI agents, where it fits in your
+[1:25] about AI agents, where it fits in your workflow, and how it handles every agent
+[1:27] workflow, and how it handles every agent
+[1:27] workflow, and how it handles every agent you're probably already using. The
+[1:28] you're probably already using. The
+[1:28] you're probably already using. The multi- aent problem in 2026 has two
+[1:31] multi- aent problem in 2026 has two
+[1:31] multi- aent problem in 2026 has two distinct sides. On one side, you have
+[1:33] distinct sides. On one side, you have
+[1:33] distinct sides. On one side, you have what you could call the interface
+[1:34] what you could call the interface
+[1:34] what you could call the interface problem. You are already using three or
+[1:36] problem. You are already using three or
+[1:36] problem. You are already using three or four different CLI agents, and every
+[1:38] four different CLI agents, and every
+[1:38] four different CLI agents, and every single one of them lives in its own
+[1:40] single one of them lives in its own
+[1:40] single one of them lives in its own terminal, its own config file, its own
+[1:41] terminal, its own config file, its own
+[1:41] terminal, its own config file, its own context. There is no shared view, no
+[1:44] context. There is no shared view, no
+[1:44] context. There is no shared view, no unified session management and every
+[1:46] unified session management and every
+[1:46] unified session management and every time you switch between agents, you are
+[1:47] time you switch between agents, you are
+[1:48] time you switch between agents, you are rebuilding context from scratch. That is
+[1:50] rebuilding context from scratch. That is
+[1:50] rebuilding context from scratch. That is a personal productivity problem. On the
+[1:51] a personal productivity problem. On the
+[1:52] a personal productivity problem. On the other side, you have the coordination
+[1:53] other side, you have the coordination
+[1:53] other side, you have the coordination problem. You are running agents
+[1:55] problem. You are running agents
+[1:55] problem. You are running agents autonomously, maybe around the clock,
+[1:57] autonomously, maybe around the clock,
+[1:57] autonomously, maybe around the clock, and the agents themselves have no
+[1:59] and the agents themselves have no
+[1:59] and the agents themselves have no organizational structure holding them
+[2:00] organizational structure holding them
+[2:00] organizational structure holding them together. No budget limits, no audit
+[2:03] together. No budget limits, no audit
+[2:03] together. No budget limits, no audit trail, no way to know if two agents are
+[2:05] trail, no way to know if two agents are
+[2:05] trail, no way to know if two agents are duplicating the same work or if one of
+[2:07] duplicating the same work or if one of
+[2:07] duplicating the same work or if one of them just burned through your entire
+[2:08] them just burned through your entire
+[2:08] them just burned through your entire monthly API budget on a recursive loop
+[2:10] monthly API budget on a recursive loop
+[2:10] monthly API budget on a recursive loop at 3 in the morning. That is an
+[2:12] at 3 in the morning. That is an
+[2:12] at 3 in the morning. That is an infrastructure problem. Paperclip was
+[2:14] infrastructure problem. Paperclip was
+[2:14] infrastructure problem. Paperclip was built for the second problem. Ion UI was
+[2:16] built for the second problem. Ion UI was
+[2:16] built for the second problem. Ion UI was built for the first and both of them do
+[2:18] built for the first and both of them do
+[2:18] built for the first and both of them do it well. That framing is what makes this
+[2:20] it well. That framing is what makes this
+[2:20] it well. That framing is what makes this comparison actually useful because once
+[2:22] comparison actually useful because once
+[2:22] comparison actually useful because once you know which problem you're solving,
+[2:23] you know which problem you're solving,
+[2:23] you know which problem you're solving, the right answer becomes obvious fast.
+[2:25] the right answer becomes obvious fast.
+[2:25] the right answer becomes obvious fast. If this kind of breakdown is what you
+[2:27] If this kind of breakdown is what you
+[2:27] If this kind of breakdown is what you are here for, hit subscribe. This
+[2:29] are here for, hit subscribe. This
+[2:29] are here for, hit subscribe. This channel covers AI developer tools, open-
+[2:31] channel covers AI developer tools, open-
+[2:31] channel covers AI developer tools, open- source agents, and the infrastructure
+[2:33] source agents, and the infrastructure
+[2:33] source agents, and the infrastructure being built around them. And there's a
+[2:35] being built around them. And there's a
+[2:35] being built around them. And there's a lot more coming. If you know someone
+[2:36] lot more coming. If you know someone
+[2:36] lot more coming. If you know someone running multiple AI agents and drowning
+[2:39] running multiple AI agents and drowning
+[2:39] running multiple AI agents and drowning in terminal windows, share this video
+[2:40] in terminal windows, share this video
+[2:40] in terminal windows, share this video with them. It might save them a few
+[2:42] with them. It might save them a few
+[2:42] with them. It might save them a few hours of frustration. And if you want to
+[2:44] hours of frustration. And if you want to
+[2:44] hours of frustration. And if you want to support the channel, a like goes a long
+[2:45] support the channel, a like goes a long
+[2:46] support the channel, a like goes a long way. It takes 2 seconds and it helps
+[2:48] way. It takes 2 seconds and it helps
+[2:48] way. It takes 2 seconds and it helps this video reach more people who
+[2:50] this video reach more people who
+[2:50] this video reach more people who actually need to see it. Now, let us get
+[2:51] actually need to see it. Now, let us get
+[2:51] actually need to see it. Now, let us get into what each of these tools actually
+[2:53] into what each of these tools actually
+[2:53] into what each of these tools actually is. Paperclip was created by a developer
+[2:55] is. Paperclip was created by a developer
+[2:55] is. Paperclip was created by a developer who goes by the name Datada. The origin
+[2:57] who goes by the name Datada. The origin
+[2:57] who goes by the name Datada. The origin story is one of those cases where the
+[2:59] story is one of those cases where the
+[2:59] story is one of those cases where the tool makes complete sense the moment you
+[3:01] tool makes complete sense the moment you
+[3:01] tool makes complete sense the moment you hear why it was built. Data was running
+[3:03] hear why it was built. Data was running
+[3:03] hear why it was built. Data was running an automated hedge fund, coordinating a
+[3:05] an automated hedge fund, coordinating a
+[3:06] an automated hedge fund, coordinating a growing number of AI agents to handle
+[3:08] growing number of AI agents to handle
+[3:08] growing number of AI agents to handle different parts of the operation. At
+[3:09] different parts of the operation. At
+[3:09] different parts of the operation. At some point, he had more than 20 cloud
+[3:11] some point, he had more than 20 cloud
+[3:11] some point, he had more than 20 cloud code sessions open simultaneously with
+[3:13] code sessions open simultaneously with
+[3:13] code sessions open simultaneously with no shared context between any of them,
+[3:15] no shared context between any of them,
+[3:15] no shared context between any of them, no way to track costs across the board,
+[3:17] no way to track costs across the board,
+[3:17] no way to track costs across the board, and no way to recover any of that state
+[3:19] and no way to recover any of that state
+[3:19] and no way to recover any of that state after a reboot. Every session was
+[3:21] after a reboot. Every session was
+[3:21] after a reboot. Every session was isolated. Every restart meant starting
+[3:23] isolated. Every restart meant starting
+[3:23] isolated. Every restart meant starting over, and the whole thing fell apart the
+[3:25] over, and the whole thing fell apart the
+[3:25] over, and the whole thing fell apart the moment he stepped away from his machine.
+[3:27] moment he stepped away from his machine.
+[3:27] moment he stepped away from his machine. Paperclip was his answer to that
+[3:29] Paperclip was his answer to that
+[3:29] Paperclip was his answer to that problem. It launched on March 4th, 2026
+[3:32] problem. It launched on March 4th, 2026
+[3:32] problem. It launched on March 4th, 2026 and crossed 30,000 GitHub stars within 3
+[3:34] and crossed 30,000 GitHub stars within 3
+[3:34] and crossed 30,000 GitHub stars within 3 weeks. The core idea behind Paperclip is
+[3:37] weeks. The core idea behind Paperclip is
+[3:37] weeks. The core idea behind Paperclip is not what most people expect when they
+[3:39] not what most people expect when they
+[3:39] not what most people expect when they first hear the name. This is not a chat
+[3:41] first hear the name. This is not a chat
+[3:41] first hear the name. This is not a chat interface, is not an agent framework you
+[3:43] interface, is not an agent framework you
+[3:43] interface, is not an agent framework you code against, is not a workflow builder
+[3:45] code against, is not a workflow builder
+[3:45] code against, is not a workflow builder with drag and drop nodes. Paperclip is
+[3:47] with drag and drop nodes. Paperclip is
+[3:47] with drag and drop nodes. Paperclip is an organizational layer. It models a
+[3:49] an organizational layer. It models a
+[3:49] an organizational layer. It models a company complete with an org chart
+[3:51] company complete with an org chart
+[3:51] company complete with an org chart reporting hierarchies, goal structures,
+[3:53] reporting hierarchies, goal structures,
+[3:54] reporting hierarchies, goal structures, budget controls, and governance. Your
+[3:56] budget controls, and governance. Your
+[3:56] budget controls, and governance. Your job is not to prompt agents. Your job is
+[3:58] job is not to prompt agents. Your job is
+[3:58] job is not to prompt agents. Your job is to run the company they work for. The
+[4:00] to run the company they work for. The
+[4:00] to run the company they work for. The mental model that have built this around
+[4:02] mental model that have built this around
+[4:02] mental model that have built this around is worth sitting with for a moment. When
+[4:04] is worth sitting with for a moment. When
+[4:04] is worth sitting with for a moment. When you open paperclipip, you are not
+[4:05] you open paperclipip, you are not
+[4:05] you open paperclipip, you are not opening a tool. You are becoming the
+[4:07] opening a tool. You are becoming the
+[4:07] opening a tool. You are becoming the board of directors. You create a
+[4:09] board of directors. You create a
+[4:09] board of directors. You create a company, you set a mission, you hire a
+[4:11] company, you set a mission, you hire a
+[4:11] company, you set a mission, you hire a CEO agent, and the CEO drafts a strategy
+[4:14] CEO agent, and the CEO drafts a strategy
+[4:14] CEO agent, and the CEO drafts a strategy and proposes a hiring plan. You review
+[4:16] and proposes a hiring plan. You review
+[4:16] and proposes a hiring plan. You review it, approve the hires, set the budgets,
+[4:18] it, approve the hires, set the budgets,
+[4:18] it, approve the hires, set the budgets, and then the agents go to work. You're
+[4:20] and then the agents go to work. You're
+[4:20] and then the agents go to work. You're not babysitting a chatbot. You are
+[4:22] not babysitting a chatbot. You are
+[4:22] not babysitting a chatbot. You are governing an organization. One of the
+[4:23] governing an organization. One of the
+[4:23] governing an organization. One of the most useful concepts Paperclip
+[4:25] most useful concepts Paperclip
+[4:25] most useful concepts Paperclip introduces is something called the
+[4:26] introduces is something called the
+[4:26] introduces is something called the Momento Man problem. The reference is to
+[4:29] Momento Man problem. The reference is to
+[4:29] Momento Man problem. The reference is to the film Momento where the main
+[4:30] the film Momento where the main
+[4:30] the film Momento where the main character is highly capable but wakes up
+[4:32] character is highly capable but wakes up
+[4:32] character is highly capable but wakes up with no memory of who he is or what he
+[4:34] with no memory of who he is or what he
+[4:34] with no memory of who he is or what he was doing. That is exactly what happens
+[4:36] was doing. That is exactly what happens
+[4:36] was doing. That is exactly what happens to an AI agent at the start of every new
+[4:38] to an AI agent at the start of every new
+[4:38] to an AI agent at the start of every new session. The model is capable, the tools
+[4:41] session. The model is capable, the tools
+[4:41] session. The model is capable, the tools are powerful, but the moment a new
+[4:42] are powerful, but the moment a new
+[4:42] are powerful, but the moment a new session starts, all of that context is
+[4:44] session starts, all of that context is
+[4:44] session starts, all of that context is gone. The agent wakes up with no idea
+[4:46] gone. The agent wakes up with no idea
+[4:46] gone. The agent wakes up with no idea what it was working on, what decisions
+[4:48] what it was working on, what decisions
+[4:48] what it was working on, what decisions were already made, or what it is
+[4:50] were already made, or what it is
+[4:50] were already made, or what it is supposed to do next. Paperclip solves
+[4:52] supposed to do next. Paperclip solves
+[4:52] supposed to do next. Paperclip solves this with a heartbeat system. Agents do
+[4:54] this with a heartbeat system. Agents do
+[4:54] this with a heartbeat system. Agents do not run continuously. They wake up on a
+[4:56] not run continuously. They wake up on a
+[4:56] not run continuously. They wake up on a scheduled cadence, run through a
+[4:57] scheduled cadence, run through a
+[4:57] scheduled cadence, run through a structured checklist, read their
+[4:59] structured checklist, read their
+[4:59] structured checklist, read their identity and current assignments, check
+[5:01] identity and current assignments, check
+[5:01] identity and current assignments, check their task queue, execute their work,
+[5:03] their task queue, execute their work,
+[5:03] their task queue, execute their work, store their output, and report back up
+[5:05] store their output, and report back up
+[5:05] store their output, and report back up the chain. Then they go dormant again
+[5:06] the chain. Then they go dormant again
+[5:06] the chain. Then they go dormant again until the next heartbeat. Each heartbeat
+[5:08] until the next heartbeat. Each heartbeat
+[5:08] until the next heartbeat. Each heartbeat picks up exactly where the last one left
+[5:10] picks up exactly where the last one left
+[5:10] picks up exactly where the last one left off with full task context restored. The
+[5:13] off with full task context restored. The
+[5:13] off with full task context restored. The agent always knows what it is doing and
+[5:15] agent always knows what it is doing and
+[5:15] agent always knows what it is doing and why it is doing it because that context
+[5:17] why it is doing it because that context
+[5:17] why it is doing it because that context is baked into the system, not dependent
+[5:19] is baked into the system, not dependent
+[5:19] is baked into the system, not dependent on the agents own memory. The financial
+[5:21] on the agents own memory. The financial
+[5:21] on the agents own memory. The financial controls and paperclip are one of its
+[5:23] controls and paperclip are one of its
+[5:23] controls and paperclip are one of its most practically important features.
+[5:24] most practically important features.
+[5:24] most practically important features. Every agent gets a monthly budget. When
+[5:26] Every agent gets a monthly budget. When
+[5:26] Every agent gets a monthly budget. When an agent hits 100% of its budget, it
+[5:29] an agent hits 100% of its budget, it
+[5:29] an agent hits 100% of its budget, it stops automatically. There's a soft
+[5:31] stops automatically. There's a soft
+[5:31] stops automatically. There's a soft warning at 80%. And at any point, you
+[5:34] warning at 80%. And at any point, you
+[5:34] warning at 80%. And at any point, you can override the limit as the board.
+[5:35] can override the limit as the board.
+[5:35] can override the limit as the board. Token costs are tracked per agent, per
+[5:37] Token costs are tracked per agent, per
+[5:37] Token costs are tracked per agent, per task, and per project. So you always
+[5:40] task, and per project. So you always
+[5:40] task, and per project. So you always know exactly which agents are expensive,
+[5:42] know exactly which agents are expensive,
+[5:42] know exactly which agents are expensive, and which workflows are burning the most
+[5:43] and which workflows are burning the most
+[5:43] and which workflows are burning the most resources. The nightmare scenario of an
+[5:46] resources. The nightmare scenario of an
+[5:46] resources. The nightmare scenario of an agent spinning in a recursive loop and
+[5:48] agent spinning in a recursive loop and
+[5:48] agent spinning in a recursive loop and generating tens of thousands of API
+[5:50] generating tens of thousands of API
+[5:50] generating tens of thousands of API calls overnight is not possible when
+[5:52] calls overnight is not possible when
+[5:52] calls overnight is not possible when hard budget caps are enforced at the
+[5:54] hard budget caps are enforced at the
+[5:54] hard budget caps are enforced at the system level. Every action in paperclip
+[5:56] system level. Every action in paperclip
+[5:56] system level. Every action in paperclip is logged in an immutable audit trail.
+[5:59] is logged in an immutable audit trail.
+[5:59] is logged in an immutable audit trail. every tool call, every API request,
+[6:01] every tool call, every API request,
+[6:02] every tool call, every API request, every decision point, every cost event,
+[6:04] every decision point, every cost event,
+[6:04] every decision point, every cost event, every approval. The log is appended
+[6:06] every approval. The log is appended
+[6:06] every approval. The log is appended only, which means nothing can be edited
+[6:07] only, which means nothing can be edited
+[6:07] only, which means nothing can be edited or deleted. You can go back at any point
+[6:09] or deleted. You can go back at any point
+[6:09] or deleted. You can go back at any point and see exactly what happened, in what
+[6:11] and see exactly what happened, in what
+[6:11] and see exactly what happened, in what order, and at what cost. For anyone
+[6:13] order, and at what cost. For anyone
+[6:13] order, and at what cost. For anyone running agents on business critical
+[6:15] running agents on business critical
+[6:15] running agents on business critical workflows, that kind of accountability
+[6:17] workflows, that kind of accountability
+[6:17] workflows, that kind of accountability is not optional. Paperclip is also built
+[6:19] is not optional. Paperclip is also built
+[6:20] is not optional. Paperclip is also built to run multiple companies inside a
+[6:22] to run multiple companies inside a
+[6:22] to run multiple companies inside a single deployment. If you're managing
+[6:24] single deployment. If you're managing
+[6:24] single deployment. If you're managing more than one project or business, each
+[6:26] more than one project or business, each
+[6:26] more than one project or business, each company gets complete data isolation.
+[6:28] company gets complete data isolation.
+[6:28] company gets complete data isolation. One control plane, one installation, but
+[6:31] One control plane, one installation, but
+[6:31] One control plane, one installation, but each company is entirely separate from
+[6:33] each company is entirely separate from
+[6:33] each company is entirely separate from the others. The plug-in system is
+[6:34] the others. The plug-in system is
+[6:34] the others. The plug-in system is another layer worth understanding.
+[6:36] another layer worth understanding.
+[6:36] another layer worth understanding. Plugins in paperclipip run as out of
+[6:38] Plugins in paperclipip run as out of
+[6:38] Plugins in paperclipip run as out of process workers, which means they can be
+[6:40] process workers, which means they can be
+[6:40] process workers, which means they can be installed, upgraded, or removed without
+[6:42] installed, upgraded, or removed without
+[6:42] installed, upgraded, or removed without restarting the server. A plug-in can
+[6:44] restarting the server. A plug-in can
+[6:44] restarting the server. A plug-in can expose new tools to agents, contribute
+[6:46] expose new tools to agents, contribute
+[6:46] expose new tools to agents, contribute UI elements to the dashboard, schedule
+[6:48] UI elements to the dashboard, schedule
+[6:48] UI elements to the dashboard, schedule its own jobs, and interact with the host
+[6:50] its own jobs, and interact with the host
+[6:50] its own jobs, and interact with the host through a formal SDK. The architecture
+[6:52] through a formal SDK. The architecture
+[6:52] through a formal SDK. The architecture is designed so that you can extend
+[6:54] is designed so that you can extend
+[6:54] is designed so that you can extend paperclip significantly without ever
+[6:56] paperclip significantly without ever
+[6:56] paperclip significantly without ever forking the core codebase. There's also
+[6:58] forking the core codebase. There's also
+[6:58] forking the core codebase. There's also something called clipart on the road map
+[7:00] something called clipart on the road map
+[7:00] something called clipart on the road map which will be a marketplace of pre-built
+[7:02] which will be a marketplace of pre-built
+[7:02] which will be a marketplace of pre-built company templates. Full org structures,
+[7:04] company templates. Full org structures,
+[7:04] company templates. Full org structures, agent configurations, and skills that
+[7:06] agent configurations, and skills that
+[7:06] agent configurations, and skills that you can import into your paperclipip
+[7:08] you can import into your paperclipip
+[7:08] you can import into your paperclipip instance in a single click. Content
+[7:10] instance in a single click. Content
+[7:10] instance in a single click. Content agencies, development shops, research
+[7:12] agencies, development shops, research
+[7:12] agencies, development shops, research operations, all packaged up and ready to
+[7:14] operations, all packaged up and ready to
+[7:14] operations, all packaged up and ready to run. One thing paperclipip is very clear
+[7:16] run. One thing paperclipip is very clear
+[7:16] run. One thing paperclipip is very clear about is who it is not for. If you have
+[7:18] about is who it is not for. If you have
+[7:18] about is who it is not for. If you have one agent, you probably do not need
+[7:20] one agent, you probably do not need
+[7:20] one agent, you probably do not need paperclipip. If you have 20, you almost
+[7:22] paperclipip. If you have 20, you almost
+[7:22] paperclipip. If you have 20, you almost certainly do. Ion UI comes from a
+[7:24] certainly do. Ion UI comes from a
+[7:24] certainly do. Ion UI comes from a completely different starting point.
+[7:26] completely different starting point.
+[7:26] completely different starting point. Where Paperclip was born out of the
+[7:27] Where Paperclip was born out of the
+[7:27] Where Paperclip was born out of the chaos of running an autonomous business
+[7:29] chaos of running an autonomous business
+[7:29] chaos of running an autonomous business with too many agents and no structure to
+[7:31] with too many agents and no structure to
+[7:31] with too many agents and no structure to hold them together. Ion UI was built for
+[7:34] hold them together. Ion UI was built for
+[7:34] hold them together. Ion UI was built for a more immediate and personal
+[7:35] a more immediate and personal
+[7:35] a more immediate and personal frustration. You have Claude Code
+[7:37] frustration. You have Claude Code
+[7:37] frustration. You have Claude Code installed. You have Codeex installed.
+[7:39] installed. You have Codeex installed.
+[7:39] installed. You have Codeex installed. Maybe you have Open Claw running or
+[7:40] Maybe you have Open Claw running or
+[7:40] Maybe you have Open Claw running or Hermes agent or Quinn code. Each one is
+[7:43] Hermes agent or Quinn code. Each one is
+[7:43] Hermes agent or Quinn code. Each one is powerful on its own, but every single
+[7:44] powerful on its own, but every single
+[7:44] powerful on its own, but every single one of them lives in a separate terminal
+[7:46] one of them lives in a separate terminal
+[7:46] one of them lives in a separate terminal window with its own config, its own
+[7:48] window with its own config, its own
+[7:48] window with its own config, its own context, and its own session history
+[7:50] context, and its own session history
+[7:50] context, and its own session history that disappears the moment you close it.
+[7:52] that disappears the moment you close it.
+[7:52] that disappears the moment you close it. There is no unified view, no shared
+[7:54] There is no unified view, no shared
+[7:54] There is no unified view, no shared management layer, and no way to use all
+[7:56] management layer, and no way to use all
+[7:56] management layer, and no way to use all of them together from a single place.
+[7:58] of them together from a single place.
+[7:58] of them together from a single place. Ion UI is the answer to that problem. It
+[8:00] Ion UI is the answer to that problem. It
+[8:00] Ion UI is the answer to that problem. It is a free open-source desktop
+[8:02] is a free open-source desktop
+[8:02] is a free open-source desktop application built with Electron and
+[8:04] application built with Electron and
+[8:04] application built with Electron and React, available on Mac OS, Windows, and
+[8:07] React, available on Mac OS, Windows, and
+[8:07] React, available on Mac OS, Windows, and Linux. The project launched earlier in
+[8:09] Linux. The project launched earlier in
+[8:09] Linux. The project launched earlier in 2026 and gained over 2,700 GitHub stars
+[8:13] 2026 and gained over 2,700 GitHub stars
+[8:13] 2026 and gained over 2,700 GitHub stars in a single day when it started
+[8:14] in a single day when it started
+[8:14] in a single day when it started trending. It currently sits at over
+[8:16] trending. It currently sits at over
+[8:16] trending. It currently sits at over 23,000 stars with more than 4,400
+[8:19] 23,000 stars with more than 4,400
+[8:19] 23,000 stars with more than 4,400 commits and it is moving fast. The core
+[8:22] commits and it is moving fast. The core
+[8:22] commits and it is moving fast. The core pitch is simple. You install ION UI and
+[8:25] pitch is simple. You install ION UI and
+[8:25] pitch is simple. You install ION UI and it becomes the one place where all of
+[8:26] it becomes the one place where all of
+[8:26] it becomes the one place where all of your AI agents live. It does not replace
+[8:29] your AI agents live. It does not replace
+[8:29] your AI agents live. It does not replace any of the agents you are already using.
+[8:31] any of the agents you are already using.
+[8:31] any of the agents you are already using. It wraps around them. The moment you
+[8:32] It wraps around them. The moment you
+[8:32] It wraps around them. The moment you open Ion UI, it scans your machine and
+[8:35] open Ion UI, it scans your machine and
+[8:35] open Ion UI, it scans your machine and automatically detects whichever CLI
+[8:37] automatically detects whichever CLI
+[8:37] automatically detects whichever CLI tools are already installed. Cloud
+[8:38] tools are already installed. Cloud
+[8:38] tools are already installed. Cloud codeex, open code, open claw, Hermes
+[8:41] codeex, open code, open claw, Hermes
+[8:41] codeex, open code, open claw, Hermes agent, coin code, goose AI, augment
+[8:44] agent, coin code, goose AI, augment
+[8:44] agent, coin code, goose AI, augment code, Kimmy CLI, factory droid, GitHub
+[8:47] code, Kimmy CLI, factory droid, GitHub
+[8:47] code, Kimmy CLI, factory droid, GitHub copilot cursor agent, and more than a
+[8:48] copilot cursor agent, and more than a
+[8:48] copilot cursor agent, and more than a dozen others. No extra configuration
+[8:51] dozen others. No extra configuration
+[8:51] dozen others. No extra configuration required. If the CLI is on your machine,
+[8:53] required. If the CLI is on your machine,
+[8:53] required. If the CLI is on your machine, it shows up in ION UI. What you get from
+[8:55] it shows up in ION UI. What you get from
+[8:55] it shows up in ION UI. What you get from that point is a unified workspace where
+[8:57] that point is a unified workspace where
+[8:57] that point is a unified workspace where every agent runs in its own session
+[8:59] every agent runs in its own session
+[8:59] every agent runs in its own session panel with independent context,
+[9:01] panel with independent context,
+[9:01] panel with independent context, independent conversation history, and
+[9:03] independent conversation history, and
+[9:03] independent conversation history, and full parallel execution. You can have
+[9:05] full parallel execution. You can have
+[9:05] full parallel execution. You can have claude code working on one part of your
+[9:06] claude code working on one part of your
+[9:06] claude code working on one part of your codebase in one panel while Codeex
+[9:08] codebase in one panel while Codeex
+[9:08] codebase in one panel while Codeex handles something entirely different in
+[9:10] handles something entirely different in
+[9:10] handles something entirely different in another with no context leaking between
+[9:12] another with no context leaking between
+[9:12] another with no context leaking between them and no terminal juggling.
+[9:14] them and no terminal juggling.
+[9:14] them and no terminal juggling. Everything is visible from a single
+[9:15] Everything is visible from a single
+[9:16] Everything is visible from a single interface. One of the most practically
+[9:17] interface. One of the most practically
+[9:17] interface. One of the most practically useful things ION UI does is unified MCP
+[9:21] useful things ION UI does is unified MCP
+[9:21] useful things ION UI does is unified MCP management. MCP stands for model context
+[9:23] management. MCP stands for model context
+[9:23] management. MCP stands for model context protocol. And if you've been using
+[9:25] protocol. And if you've been using
+[9:25] protocol. And if you've been using multiple agents, you already know the
+[9:27] multiple agents, you already know the
+[9:27] multiple agents, you already know the pain of maintaining a separate config
+[9:28] pain of maintaining a separate config
+[9:28] pain of maintaining a separate config file for each one. Ion UI lets you
+[9:30] file for each one. Ion UI lets you
+[9:30] file for each one. Ion UI lets you configure your MCP tools once and that
+[9:33] configure your MCP tools once and that
+[9:33] configure your MCP tools once and that configuration automatically syncs to
+[9:35] configuration automatically syncs to
+[9:35] configuration automatically syncs to every agent you have connected. Change
+[9:37] every agent you have connected. Change
+[9:37] every agent you have connected. Change something in one place and it propagates
+[9:39] something in one place and it propagates
+[9:39] something in one place and it propagates everywhere for anyone managing more than
+[9:41] everywhere for anyone managing more than
+[9:41] everywhere for anyone managing more than two or three agents. This alone saves a
+[9:43] two or three agents. This alone saves a
+[9:43] two or three agents. This alone saves a meaningful amount of setup friction
+[9:45] meaningful amount of setup friction
+[9:45] meaningful amount of setup friction every single time you make a change. ION
+[9:47] every single time you make a change. ION
+[9:47] every single time you make a change. ION UI also ships with a built-in agent of
+[9:49] UI also ships with a built-in agent of
+[9:49] UI also ships with a built-in agent of its own, which means the tool works from
+[9:51] its own, which means the tool works from
+[9:51] its own, which means the tool works from the moment you install it, even if you
+[9:52] the moment you install it, even if you
+[9:52] the moment you install it, even if you have no CLI agents installed at all.
+[9:55] have no CLI agents installed at all.
+[9:55] have no CLI agents installed at all. Sign in with Google or paste an API key,
+[9:57] Sign in with Google or paste an API key,
+[9:57] Sign in with Google or paste an API key, and you have a full agent with file
+[9:59] and you have a full agent with file
+[9:59] and you have a full agent with file access, web search, image generation,
+[10:01] access, web search, image generation,
+[10:01] access, web search, image generation, and MCP tool support ready to go. It
+[10:03] and MCP tool support ready to go. It
+[10:04] and MCP tool support ready to go. It supports more than 20 AI platforms,
+[10:05] supports more than 20 AI platforms,
+[10:05] supports more than 20 AI platforms, including anthropic, open AAI, Deep
+[10:08] including anthropic, open AAI, Deep
+[10:08] including anthropic, open AAI, Deep Seek, XAI, Open Router, and a range of
+[10:11] Seek, XAI, Open Router, and a range of
+[10:11] Seek, XAI, Open Router, and a range of Chinese platforms like Dash Scope,
+[10:12] Chinese platforms like Dash Scope,
+[10:12] Chinese platforms like Dash Scope, Moonshot, and BU Chenfan. Local models
+[10:15] Moonshot, and BU Chenfan. Local models
+[10:15] Moonshot, and BU Chenfan. Local models through Alma and LM Studio are also
+[10:18] through Alma and LM Studio are also
+[10:18] through Alma and LM Studio are also supported, which means the entire
+[10:19] supported, which means the entire
+[10:19] supported, which means the entire workflow can run completely offline if
+[10:21] workflow can run completely offline if
+[10:21] workflow can run completely offline if that is what your setup requires. The
+[10:23] that is what your setup requires. The
+[10:23] that is what your setup requires. The team mode is where ion UI starts to look
+[10:25] team mode is where ion UI starts to look
+[10:26] team mode is where ion UI starts to look like something closer to orchestration.
+[10:27] like something closer to orchestration.
+[10:27] like something closer to orchestration. You designate one agent as the leader,
+[10:30] You designate one agent as the leader,
+[10:30] You designate one agent as the leader, give it your instructions, and it breaks
+[10:31] give it your instructions, and it breaks
+[10:31] give it your instructions, and it breaks the task into subtasks and delegates to
+[10:33] the task into subtasks and delegates to
+[10:33] the task into subtasks and delegates to teammate agents running in parallel. The
+[10:35] teammate agents running in parallel. The
+[10:35] teammate agents running in parallel. The teammates execute independently, share
+[10:37] teammates execute independently, share
+[10:38] teammates execute independently, share results through an async mailbox, and
+[10:39] results through an async mailbox, and
+[10:39] results through an async mailbox, and write their outputs to a shared
+[10:41] write their outputs to a shared
+[10:41] write their outputs to a shared taskboard. The leader tracks progress,
+[10:43] taskboard. The leader tracks progress,
+[10:43] taskboard. The leader tracks progress, aggregates results, and reports back to
+[10:45] aggregates results, and reports back to
+[10:45] aggregates results, and reports back to you. It is lighter than what Paperclip
+[10:47] you. It is lighter than what Paperclip
+[10:47] you. It is lighter than what Paperclip does organizationally, but for immediate
+[10:49] does organizationally, but for immediate
+[10:49] does organizationally, but for immediate multi- aent task execution, it gets the
+[10:51] multi- aent task execution, it gets the
+[10:51] multi- aent task execution, it gets the job done without requiring you to build
+[10:53] job done without requiring you to build
+[10:53] job done without requiring you to build out an entire company structure first.
+[10:55] out an entire company structure first.
+[10:55] out an entire company structure first. Scheduled tasks are another feature that
+[10:57] Scheduled tasks are another feature that
+[10:57] Scheduled tasks are another feature that separates ionui from a basic agent
+[10:59] separates ionui from a basic agent
+[10:59] separates ionui from a basic agent launcher. You describe what you want in
+[11:01] launcher. You describe what you want in
+[11:01] launcher. You describe what you want in plain language, something like every
+[11:02] plain language, something like every
+[11:02] plain language, something like every morning at 9 summarize yesterday's git
+[11:04] morning at 9 summarize yesterday's git
+[11:04] morning at 9 summarize yesterday's git commit log, and ionui converts that into
+[11:07] commit log, and ionui converts that into
+[11:07] commit log, and ionui converts that into a chron expression and runs it
+[11:08] a chron expression and runs it
+[11:08] a chron expression and runs it automatically. Each scheduled task stays
+[11:11] automatically. Each scheduled task stays
+[11:11] automatically. Each scheduled task stays bound to its conversation, which means
+[11:12] bound to its conversation, which means
+[11:12] bound to its conversation, which means context is preserved across runs.
+[11:14] context is preserved across runs.
+[11:14] context is preserved across runs. Results come back into the conversation
+[11:16] Results come back into the conversation
+[11:16] Results come back into the conversation window and can also be pushed to
+[11:18] window and can also be pushed to
+[11:18] window and can also be pushed to Telegram, Lark, Ding Talk, or WeChat, so
+[11:21] Telegram, Lark, Ding Talk, or WeChat, so
+[11:21] Telegram, Lark, Ding Talk, or WeChat, so you can send instructions from your
+[11:22] you can send instructions from your
+[11:22] you can send instructions from your phone and receive results in whatever
+[11:23] phone and receive results in whatever
+[11:24] phone and receive results in whatever chat app you already use. The remote
+[11:25] chat app you already use. The remote
+[11:25] chat app you already use. The remote access layer deserves its own mention.
+[11:27] access layer deserves its own mention.
+[11:27] access layer deserves its own mention. Ion UI can serve a web UI from your
+[11:29] Ion UI can serve a web UI from your
+[11:30] Ion UI can serve a web UI from your local machine that is accessible via QR
+[11:32] local machine that is accessible via QR
+[11:32] local machine that is accessible via QR code or password login from any device
+[11:34] code or password login from any device
+[11:34] code or password login from any device on your network or across the internet
+[11:36] on your network or across the internet
+[11:36] on your network or across the internet with the right tunnel setup. You do not
+[11:37] with the right tunnel setup. You do not
+[11:38] with the right tunnel setup. You do not have to be at your desk for your agents
+[11:39] have to be at your desk for your agents
+[11:39] have to be at your desk for your agents to be working. You can kick off a task
+[11:41] to be working. You can kick off a task
+[11:41] to be working. You can kick off a task from your phone at midnight and check
+[11:42] from your phone at midnight and check
+[11:42] from your phone at midnight and check back on results in the morning without
+[11:44] back on results in the morning without
+[11:44] back on results in the morning without ever opening your laptop. Everything in
+[11:46] ever opening your laptop. Everything in
+[11:46] ever opening your laptop. Everything in ION UI is stored locally in SQLite.
+[11:49] ION UI is stored locally in SQLite.
+[11:49] ION UI is stored locally in SQLite. Nothing is uploaded to external servers.
+[11:51] Nothing is uploaded to external servers.
+[11:51] Nothing is uploaded to external servers. No conversation history, no file
+[11:53] No conversation history, no file
+[11:53] No conversation history, no file contents, no agent output. Your data
+[11:55] contents, no agent output. Your data
+[11:55] contents, no agent output. Your data stays on your machine. For developers
+[11:57] stays on your machine. For developers
+[11:57] stays on your machine. For developers working with sensitive code bases or
+[11:59] working with sensitive code bases or
+[11:59] working with sensitive code bases or proprietary workflows, that local first
+[12:01] proprietary workflows, that local first
+[12:01] proprietary workflows, that local first architecture is not a nice to have is
+[12:03] architecture is not a nice to have is
+[12:03] architecture is not a nice to have is the whole point. Ion UI also includes a
+[12:06] the whole point. Ion UI also includes a
+[12:06] the whole point. Ion UI also includes a built-in file preview system that
+[12:07] built-in file preview system that
+[12:07] built-in file preview system that handles more than 10 formats including
+[12:09] handles more than 10 formats including
+[12:09] handles more than 10 formats including PDF, Word, Excel, PowerPoint, code
+[12:12] PDF, Word, Excel, PowerPoint, code
+[12:12] PDF, Word, Excel, PowerPoint, code files, markdown, images, HTML, and diff
+[12:15] files, markdown, images, HTML, and diff
+[12:15] files, markdown, images, HTML, and diff views. When an agent generates a file,
+[12:18] views. When an agent generates a file,
+[12:18] views. When an agent generates a file, you can review it immediately without
+[12:19] you can review it immediately without
+[12:19] you can review it immediately without leaving the application. Gitbase version
+[12:21] leaving the application. Gitbase version
+[12:22] leaving the application. Gitbase version history is tracked automatically and
+[12:24] history is tracked automatically and
+[12:24] history is tracked automatically and one-click roll back is available for any
+[12:26] one-click roll back is available for any
+[12:26] one-click roll back is available for any file that is changed. There are also
+[12:28] file that is changed. There are also
+[12:28] file that is changed. There are also more than 20 pre-built professional
+[12:29] more than 20 pre-built professional
+[12:29] more than 20 pre-built professional assistants that ship with the tool
+[12:31] assistants that ship with the tool
+[12:31] assistants that ship with the tool covering things like presentation
+[12:32] covering things like presentation
+[12:32] covering things like presentation generation, spreadsheet creation, word
+[12:34] generation, spreadsheet creation, word
+[12:34] generation, spreadsheet creation, word document writing, pitch deck building,
+[12:36] document writing, pitch deck building,
+[12:36] document writing, pitch deck building, dashboard creation, and academic paperw
+[12:38] dashboard creation, and academic paperw
+[12:38] dashboard creation, and academic paperw writing. The office related outputs are
+[12:40] writing. The office related outputs are
+[12:40] writing. The office related outputs are actual editable files, real PPTX, real
+[12:43] actual editable files, real PPTX, real
+[12:43] actual editable files, real PPTX, real DOCX, real XLSX, not PDF exports or
+[12:47] DOCX, real XLSX, not PDF exports or
+[12:47] DOCX, real XLSX, not PDF exports or screenshots. The presentation output
+[12:49] screenshots. The presentation output
+[12:49] screenshots. The presentation output even supports PowerPoint morph
+[12:51] even supports PowerPoint morph
+[12:51] even supports PowerPoint morph transition animations, which is a level
+[12:53] transition animations, which is a level
+[12:53] transition animations, which is a level of detail that almost no other tool in
+[12:55] of detail that almost no other tool in
+[12:55] of detail that almost no other tool in this space bothers with. The community
+[12:57] this space bothers with. The community
+[12:57] this space bothers with. The community behind IONUI is active across Discord
+[13:00] behind IONUI is active across Discord
+[13:00] behind IONUI is active across Discord and WeChat, and the project has
+[13:01] and WeChat, and the project has
+[13:01] and WeChat, and the project has contributors from across the globe with
+[13:03] contributors from across the globe with
+[13:03] contributors from across the globe with over 4,400 commits. The release cadence
+[13:06] over 4,400 commits. The release cadence
+[13:06] over 4,400 commits. The release cadence is fast, and the team is clearly
+[13:08] is fast, and the team is clearly
+[13:08] is fast, and the team is clearly listening to feedback. It is not a
+[13:10] listening to feedback. It is not a
+[13:10] listening to feedback. It is not a finished product. It is a rapidly
+[13:11] finished product. It is a rapidly
+[13:11] finished product. It is a rapidly evolving one. The best way to understand
+[13:13] evolving one. The best way to understand
+[13:13] evolving one. The best way to understand the difference between these two tools
+[13:15] the difference between these two tools
+[13:15] the difference between these two tools is not to ask which one is better. It is
+[13:17] is not to ask which one is better. It is
+[13:17] is not to ask which one is better. It is to ask what each one is actually doing
+[13:19] to ask what each one is actually doing
+[13:19] to ask what each one is actually doing when an AI agent runs inside it because
+[13:21] when an AI agent runs inside it because
+[13:21] when an AI agent runs inside it because the answer to that question explains
+[13:23] the answer to that question explains
+[13:23] the answer to that question explains everything. Start with the architecture.
+[13:25] everything. Start with the architecture.
+[13:25] everything. Start with the architecture. Paperclip is a server. It runs node.js
+[13:28] Paperclip is a server. It runs node.js
+[13:28] Paperclip is a server. It runs node.js with a PostgresQL database and you
+[13:30] with a PostgresQL database and you
+[13:30] with a PostgresQL database and you access it through a browser. It is
+[13:32] access it through a browser. It is
+[13:32] access it through a browser. It is designed to be deployed somewhere
+[13:33] designed to be deployed somewhere
+[13:33] designed to be deployed somewhere permanent, a VPS, a cloud server, or
+[13:36] permanent, a VPS, a cloud server, or
+[13:36] permanent, a VPS, a cloud server, or even a local machine running
+[13:37] even a local machine running
+[13:37] even a local machine running continuously so that your agents can
+[13:39] continuously so that your agents can
+[13:39] continuously so that your agents can operate around the clock without
+[13:40] operate around the clock without
+[13:40] operate around the clock without depending on your laptop being open. Ion
+[13:42] depending on your laptop being open. Ion
+[13:42] depending on your laptop being open. Ion UI is a desktop application. It runs on
+[13:45] UI is a desktop application. It runs on
+[13:45] UI is a desktop application. It runs on your machine. It opens like any other
+[13:46] your machine. It opens like any other
+[13:46] your machine. It opens like any other app and your agents run locally inside
+[13:49] app and your agents run locally inside
+[13:49] app and your agents run locally inside it. That difference in architecture
+[13:51] it. That difference in architecture
+[13:51] it. That difference in architecture shapes everything else about how the two
+[13:53] shapes everything else about how the two
+[13:53] shapes everything else about how the two tools behave. The way each tool thinks
+[13:55] tools behave. The way each tool thinks
+[13:55] tools behave. The way each tool thinks about agents is where the philosophical
+[13:57] about agents is where the philosophical
+[13:57] about agents is where the philosophical gap becomes clearest. In paperclip, an
+[13:59] gap becomes clearest. In paperclip, an
+[13:59] gap becomes clearest. In paperclip, an agent is an employee. It has a name, a
+[14:02] agent is an employee. It has a name, a
+[14:02] agent is an employee. It has a name, a title, a job description, a reporting
+[14:04] title, a job description, a reporting
+[14:04] title, a job description, a reporting line, and a monthly budget. It does not
+[14:06] line, and a monthly budget. It does not
+[14:06] line, and a monthly budget. It does not start working until it is hired, and it
+[14:08] start working until it is hired, and it
+[14:08] start working until it is hired, and it cannot hire anyone else without board
+[14:10] cannot hire anyone else without board
+[14:10] cannot hire anyone else without board approval. The agent exists within an
+[14:12] approval. The agent exists within an
+[14:12] approval. The agent exists within an organizational structure that gives
+[14:14] organizational structure that gives
+[14:14] organizational structure that gives every task a clear owner and traces
+[14:16] every task a clear owner and traces
+[14:16] every task a clear owner and traces every decision back to the company
+[14:18] every decision back to the company
+[14:18] every decision back to the company mission. In Ion UI, an agent is a
+[14:20] mission. In Ion UI, an agent is a
+[14:20] mission. In Ion UI, an agent is a colleague. It sits alongside you in a
+[14:22] colleague. It sits alongside you in a
+[14:22] colleague. It sits alongside you in a session panel. It works on what you give
+[14:24] session panel. It works on what you give
+[14:24] session panel. It works on what you give it and you're always directly in the
+[14:25] it and you're always directly in the
+[14:26] it and you're always directly in the loop. The relationship is horizontal
+[14:28] loop. The relationship is horizontal
+[14:28] loop. The relationship is horizontal rather than hierarchical. Multi-agent
+[14:30] rather than hierarchical. Multi-agent
+[14:30] rather than hierarchical. Multi-agent coordination reflects that same gap. In
+[14:32] coordination reflects that same gap. In
+[14:32] coordination reflects that same gap. In paperclip, coordination happens through
+[14:34] paperclip, coordination happens through
+[14:34] paperclip, coordination happens through the or chart. A CEO agent receives a
+[14:37] the or chart. A CEO agent receives a
+[14:37] the or chart. A CEO agent receives a goal, drafts a strategy, proposes hires,
+[14:39] goal, drafts a strategy, proposes hires,
+[14:39] goal, drafts a strategy, proposes hires, and delegates tasks down the reporting
+[14:41] and delegates tasks down the reporting
+[14:41] and delegates tasks down the reporting chain. Each agent wakes on its
+[14:43] chain. Each agent wakes on its
+[14:43] chain. Each agent wakes on its heartbeat, checks what it has been
+[14:44] heartbeat, checks what it has been
+[14:44] heartbeat, checks what it has been assigned, executes its work, and reports
+[14:46] assigned, executes its work, and reports
+[14:46] assigned, executes its work, and reports back up. The delegation is automatic and
+[14:49] back up. The delegation is automatic and
+[14:49] back up. The delegation is automatic and structural. You set the direction at the
+[14:51] structural. You set the direction at the
+[14:51] structural. You set the direction at the top and the organization moves. In
+[14:53] top and the organization moves. In
+[14:53] top and the organization moves. In ionui, coordination happens through team
+[14:55] ionui, coordination happens through team
+[14:55] ionui, coordination happens through team mode. You designate a leader agent. Give
+[14:58] mode. You designate a leader agent. Give
+[14:58] mode. You designate a leader agent. Give it your instructions and it breaks the
+[14:59] it your instructions and it breaks the
+[15:00] it your instructions and it breaks the work into subtasks and dispatches them
+[15:01] work into subtasks and dispatches them
+[15:01] work into subtasks and dispatches them to teammate agents running in parallel.
+[15:04] to teammate agents running in parallel.
+[15:04] to teammate agents running in parallel. It is more immediate, more hands-on and
+[15:06] It is more immediate, more hands-on and
+[15:06] It is more immediate, more hands-on and requires less setup, but does not carry
+[15:08] requires less setup, but does not carry
+[15:08] requires less setup, but does not carry the same depth of organizational
+[15:10] the same depth of organizational
+[15:10] the same depth of organizational continuity. Memory and session
+[15:12] continuity. Memory and session
+[15:12] continuity. Memory and session persistence work differently in each
+[15:14] persistence work differently in each
+[15:14] persistence work differently in each tool for the same underlying reason.
+[15:16] tool for the same underlying reason.
+[15:16] tool for the same underlying reason. Paperclip solves the stateless agent
+[15:18] Paperclip solves the stateless agent
+[15:18] Paperclip solves the stateless agent problem at the system level. The
+[15:20] problem at the system level. The
+[15:20] problem at the system level. The heartbeat checklist restores context at
+[15:21] heartbeat checklist restores context at
+[15:22] heartbeat checklist restores context at the start of every run. Goal ancestry
+[15:24] the start of every run. Goal ancestry
+[15:24] the start of every run. Goal ancestry flows down from the company mission
+[15:25] flows down from the company mission
+[15:25] flows down from the company mission through every task and session state is
+[15:27] through every task and session state is
+[15:27] through every task and session state is rebuilt automatically so the agent never
+[15:30] rebuilt automatically so the agent never
+[15:30] rebuilt automatically so the agent never loses the thread of what it was working
+[15:31] loses the thread of what it was working
+[15:31] loses the thread of what it was working on. Ion UI handles persistence locally
+[15:34] on. Ion UI handles persistence locally
+[15:34] on. Ion UI handles persistence locally through SQLite conversation history.
+[15:36] through SQLite conversation history.
+[15:36] through SQLite conversation history. Context stays alive within a session and
+[15:38] Context stays alive within a session and
+[15:38] Context stays alive within a session and is preserved across restarts. But the
+[15:40] is preserved across restarts. But the
+[15:40] is preserved across restarts. But the model for how that context is managed is
+[15:42] model for how that context is managed is
+[15:42] model for how that context is managed is driven by the conversation itself rather
+[15:44] driven by the conversation itself rather
+[15:44] driven by the conversation itself rather than a structured organizational layer
+[15:46] than a structured organizational layer
+[15:46] than a structured organizational layer feeding context in from above. The
+[15:48] feeding context in from above. The
+[15:48] feeding context in from above. The budget and cost control picture is
+[15:50] budget and cost control picture is
+[15:50] budget and cost control picture is stark. Paperclip has hard perent monthly
+[15:53] stark. Paperclip has hard perent monthly
+[15:53] stark. Paperclip has hard perent monthly budget caps enforced at the system
+[15:55] budget caps enforced at the system
+[15:55] budget caps enforced at the system level. Agents pause automatically at
+[15:57] level. Agents pause automatically at
+[15:57] level. Agents pause automatically at 100% utilization. You get a soft warning
+[16:00] 100% utilization. You get a soft warning
+[16:00] 100% utilization. You get a soft warning at 80%. Every token spent is attributed
+[16:03] at 80%. Every token spent is attributed
+[16:03] at 80%. Every token spent is attributed to a specific agent, task, and project,
+[16:05] to a specific agent, task, and project,
+[16:05] to a specific agent, task, and project, and you can see exactly where your money
+[16:07] and you can see exactly where your money
+[16:07] and you can see exactly where your money is going at any level of granularity.
+[16:09] is going at any level of granularity.
+[16:09] is going at any level of granularity. Ion UI has no built-in budget
+[16:11] Ion UI has no built-in budget
+[16:11] Ion UI has no built-in budget enforcement. You are managing costs at
+[16:13] enforcement. You are managing costs at
+[16:13] enforcement. You are managing costs at the API provider level, which means cost
+[16:15] the API provider level, which means cost
+[16:15] the API provider level, which means cost visibility depends on whatever dashboard
+[16:17] visibility depends on whatever dashboard
+[16:17] visibility depends on whatever dashboard your model provider gives you. If cost
+[16:19] your model provider gives you. If cost
+[16:19] your model provider gives you. If cost control is a non-negotiable requirement
+[16:20] control is a non-negotiable requirement
+[16:20] control is a non-negotiable requirement for your workflow, that is a meaningful
+[16:22] for your workflow, that is a meaningful
+[16:22] for your workflow, that is a meaningful difference. Governance and auditability
+[16:25] difference. Governance and auditability
+[16:25] difference. Governance and auditability follow a similar pattern. Paperclip logs
+[16:27] follow a similar pattern. Paperclip logs
+[16:27] follow a similar pattern. Paperclip logs everything in an immutable appendon
+[16:29] everything in an immutable appendon
+[16:30] everything in an immutable appendon audit trail. Every tool call, every API
+[16:33] audit trail. Every tool call, every API
+[16:33] audit trail. Every tool call, every API request, every approval, every
+[16:35] request, every approval, every
+[16:35] request, every approval, every heartbeat, every cost event is recorded
+[16:37] heartbeat, every cost event is recorded
+[16:37] heartbeat, every cost event is recorded and cannot be edited or deleted.
+[16:39] and cannot be edited or deleted.
+[16:39] and cannot be edited or deleted. Approval gates require human sign off
+[16:41] Approval gates require human sign off
+[16:41] Approval gates require human sign off before agents can take certain actions
+[16:43] before agents can take certain actions
+[16:43] before agents can take certain actions and configuration changes are versioned
+[16:44] and configuration changes are versioned
+[16:44] and configuration changes are versioned with roll back available. Ion UI gives
+[16:47] with roll back available. Ion UI gives
+[16:47] with roll back available. Ion UI gives you git based file version history and
+[16:49] you git based file version history and
+[16:49] you git based file version history and the ability to roll back changes to
+[16:50] the ability to roll back changes to
+[16:50] the ability to roll back changes to files your agents have touched, but
+[16:52] files your agents have touched, but
+[16:52] files your agents have touched, but there is no formal governance layer
+[16:53] there is no formal governance layer
+[16:53] there is no formal governance layer sitting above the agents and controlling
+[16:55] sitting above the agents and controlling
+[16:55] sitting above the agents and controlling what they can do. Privacy is a genuine
+[16:57] what they can do. Privacy is a genuine
+[16:58] what they can do. Privacy is a genuine strength of both tools, though they
+[16:59] strength of both tools, though they
+[16:59] strength of both tools, though they implement it differently. Paperclip is
+[17:01] implement it differently. Paperclip is
+[17:01] implement it differently. Paperclip is self-hosted on your own infrastructure.
+[17:03] self-hosted on your own infrastructure.
+[17:03] self-hosted on your own infrastructure. Your data can never leaves your server
+[17:05] Your data can never leaves your server
+[17:05] Your data can never leaves your server and you connect your own API keys
+[17:07] and you connect your own API keys
+[17:07] and you connect your own API keys directly with no intermediary markup on
+[17:10] directly with no intermediary markup on
+[17:10] directly with no intermediary markup on model costs. ION UI is local first by
+[17:13] model costs. ION UI is local first by
+[17:13] model costs. ION UI is local first by design with all conversation data stored
+[17:14] design with all conversation data stored
+[17:14] design with all conversation data stored in SQLite on your machine and nothing
+[17:16] in SQLite on your machine and nothing
+[17:16] in SQLite on your machine and nothing uploaded to external servers. Both give
+[17:19] uploaded to external servers. Both give
+[17:19] uploaded to external servers. Both give you full control over where your data
+[17:20] you full control over where your data
+[17:20] you full control over where your data lives just in different deployment
+[17:22] lives just in different deployment
+[17:22] lives just in different deployment models. Setup complexity is probably the
+[17:25] models. Setup complexity is probably the
+[17:25] models. Setup complexity is probably the most practical difference for someone
+[17:27] most practical difference for someone
+[17:27] most practical difference for someone deciding where to start. Paperclip
+[17:29] deciding where to start. Paperclip
+[17:29] deciding where to start. Paperclip requires you to provision a server,
+[17:30] requires you to provision a server,
+[17:30] requires you to provision a server, configure a database, set up the
+[17:32] configure a database, set up the
+[17:32] configure a database, set up the application, create a company structure,
+[17:34] application, create a company structure,
+[17:34] application, create a company structure, configure agent adapters, and define
+[17:36] configure agent adapters, and define
+[17:36] configure agent adapters, and define your or chart before anything useful
+[17:38] your or chart before anything useful
+[17:38] your or chart before anything useful happens. It is not difficult for someone
+[17:40] happens. It is not difficult for someone
+[17:40] happens. It is not difficult for someone comfortable with a command line and
+[17:41] comfortable with a command line and
+[17:41] comfortable with a command line and hostinger actually has paperclipip in
+[17:43] hostinger actually has paperclipip in
+[17:43] hostinger actually has paperclipip in their one-click application catalog
+[17:45] their one-click application catalog
+[17:45] their one-click application catalog which removes a lot of that friction but
+[17:46] which removes a lot of that friction but
+[17:46] which removes a lot of that friction but the conceptual overhead is real. Ion UI
+[17:49] the conceptual overhead is real. Ion UI
+[17:49] the conceptual overhead is real. Ion UI installs like any desktop app. Open it,
+[17:52] installs like any desktop app. Open it,
+[17:52] installs like any desktop app. Open it, sign in, or paste an API key and your
+[17:54] sign in, or paste an API key and your
+[17:54] sign in, or paste an API key and your existing CLI agents are already detected
+[17:56] existing CLI agents are already detected
+[17:56] existing CLI agents are already detected and ready to use. The time from
+[17:58] and ready to use. The time from
+[17:58] and ready to use. The time from installation to running agents is
+[17:59] installation to running agents is
+[18:00] installation to running agents is measured in minutes, not hours.
+[18:01] measured in minutes, not hours.
+[18:02] measured in minutes, not hours. Extensibility tells a story about where
+[18:04] Extensibility tells a story about where
+[18:04] Extensibility tells a story about where each project is headed long term.
+[18:06] each project is headed long term.
+[18:06] each project is headed long term. Paperclip has a formal plug-in SDK with
+[18:08] Paperclip has a formal plug-in SDK with
+[18:08] Paperclip has a formal plug-in SDK with versioned APIs, out of process worker
+[18:11] versioned APIs, out of process worker
+[18:11] versioned APIs, out of process worker architecture, and hot install and
+[18:12] architecture, and hot install and
+[18:12] architecture, and hot install and uninstall without server restarts. A
+[18:15] uninstall without server restarts. A
+[18:15] uninstall without server restarts. A plug-in can expose new tools to agents,
+[18:17] plug-in can expose new tools to agents,
+[18:17] plug-in can expose new tools to agents, schedule its own jobs, and contribute UI
+[18:19] schedule its own jobs, and contribute UI
+[18:19] schedule its own jobs, and contribute UI elements to the dashboard. ION UI has a
+[18:21] elements to the dashboard. ION UI has a
+[18:21] elements to the dashboard. ION UI has a custom assistant and skill system where
+[18:23] custom assistant and skill system where
+[18:23] custom assistant and skill system where you can define your own agents with
+[18:25] you can define your own agents with
+[18:25] you can define your own agents with specific rules and capabilities, and a
+[18:27] specific rules and capabilities, and a
+[18:27] specific rules and capabilities, and a community skills marketplace is growing
+[18:29] community skills marketplace is growing
+[18:29] community skills marketplace is growing around it. Both are extensible, but
+[18:31] around it. Both are extensible, but
+[18:31] around it. Both are extensible, but paperclip plug-in architecture is more
+[18:33] paperclip plug-in architecture is more
+[18:33] paperclip plug-in architecture is more formally structured for third party
+[18:34] formally structured for third party
+[18:34] formally structured for third party development at scale. This is where
+[18:36] development at scale. This is where
+[18:36] development at scale. This is where things get concrete. The agents your
+[18:38] things get concrete. The agents your
+[18:38] things get concrete. The agents your audience is already using every day
+[18:40] audience is already using every day
+[18:40] audience is already using every day behave differently depending on which
+[18:42] behave differently depending on which
+[18:42] behave differently depending on which layer they are running inside. And
+[18:44] layer they are running inside. And
+[18:44] layer they are running inside. And understanding those differences is what
+[18:45] understanding those differences is what
+[18:45] understanding those differences is what makes the choice between these two tools
+[18:47] makes the choice between these two tools
+[18:47] makes the choice between these two tools practical rather than theoretical.
+[18:49] practical rather than theoretical.
+[18:49] practical rather than theoretical. Starting with Claude Code, which is
+[18:50] Starting with Claude Code, which is
+[18:50] Starting with Claude Code, which is probably the most common starting point
+[18:52] probably the most common starting point
+[18:52] probably the most common starting point for anyone in this space. Inside
+[18:54] for anyone in this space. Inside
+[18:54] for anyone in this space. Inside Paperclip, Claude Code operates as a
+[18:56] Paperclip, Claude Code operates as a
+[18:56] Paperclip, Claude Code operates as a managed employee with a defined role, a
+[18:58] managed employee with a defined role, a
+[18:58] managed employee with a defined role, a budget cap, and a task Q it works
+[19:00] budget cap, and a task Q it works
+[19:00] budget cap, and a task Q it works through heartbeat schedule. You assign
+[19:01] through heartbeat schedule. You assign
+[19:01] through heartbeat schedule. You assign it to a project, give it a job
+[19:03] it to a project, give it a job
+[19:03] it to a project, give it a job description, and it wakes up on its
+[19:04] description, and it wakes up on its
+[19:04] description, and it wakes up on its scheduled cadence, checks what has been
+[19:06] scheduled cadence, checks what has been
+[19:06] scheduled cadence, checks what has been assigned, executes, and reports back.
+[19:08] assigned, executes, and reports back.
+[19:08] assigned, executes, and reports back. The session persists across heartbeats,
+[19:10] The session persists across heartbeats,
+[19:10] The session persists across heartbeats, which means cloud code does not restart
+[19:12] which means cloud code does not restart
+[19:12] which means cloud code does not restart from zero every time it runs. It picks
+[19:14] from zero every time it runs. It picks
+[19:14] from zero every time it runs. It picks up the thread it was on, continues the
+[19:16] up the thread it was on, continues the
+[19:16] up the thread it was on, continues the work, and logs everything it does to the
+[19:18] work, and logs everything it does to the
+[19:18] work, and logs everything it does to the audit trail. You're not watching it
+[19:19] audit trail. You're not watching it
+[19:19] audit trail. You're not watching it work, you are reviewing what it did.
+[19:21] work, you are reviewing what it did.
+[19:21] work, you are reviewing what it did. Inside Ion UI, the experience is the
+[19:23] Inside Ion UI, the experience is the
+[19:23] Inside Ion UI, the experience is the opposite of hands-off. Claude Code runs
+[19:26] opposite of hands-off. Claude Code runs
+[19:26] opposite of hands-off. Claude Code runs in a dedicated session panel with a full
+[19:28] in a dedicated session panel with a full
+[19:28] in a dedicated session panel with a full GUI wrapper around it. You can see
+[19:30] GUI wrapper around it. You can see
+[19:30] GUI wrapper around it. You can see output in real time, run it in parallel
+[19:32] output in real time, run it in parallel
+[19:32] output in real time, run it in parallel with other agents in adjacent panels,
+[19:34] with other agents in adjacent panels,
+[19:34] with other agents in adjacent panels, and switch between sessions without
+[19:35] and switch between sessions without
+[19:36] and switch between sessions without losing context in any of them. The MCP
+[19:38] losing context in any of them. The MCP
+[19:38] losing context in any of them. The MCP configuration you set up once in ion UI
+[19:40] configuration you set up once in ion UI
+[19:40] configuration you set up once in ion UI applies to the claude code session
+[19:42] applies to the claude code session
+[19:42] applies to the claude code session automatically. So there is no separate
+[19:44] automatically. So there is no separate
+[19:44] automatically. So there is no separate config file to maintain. Open claw is
+[19:46] config file to maintain. Open claw is
+[19:46] config file to maintain. Open claw is one of the clearest examples of how the
+[19:48] one of the clearest examples of how the
+[19:48] one of the clearest examples of how the two tools complement each other rather
+[19:50] two tools complement each other rather
+[19:50] two tools complement each other rather than compete. The community already
+[19:52] than compete. The community already
+[19:52] than compete. The community already summed it up perfectly in a single line
+[19:54] summed it up perfectly in a single line
+[19:54] summed it up perfectly in a single line that went around shortly after Paperclip
+[19:56] that went around shortly after Paperclip
+[19:56] that went around shortly after Paperclip watched. Open Claw is an employee.
+[19:57] watched. Open Claw is an employee.
+[19:58] watched. Open Claw is an employee. Paperclip is the company. Open Claw is
+[20:00] Paperclip is the company. Open Claw is
+[20:00] Paperclip is the company. Open Claw is built to be a continuous autonomous
+[20:02] built to be a continuous autonomous
+[20:02] built to be a continuous autonomous agent. And Paperclip is built to be the
+[20:04] agent. And Paperclip is built to be the
+[20:04] agent. And Paperclip is built to be the organizational layer that gives that
+[20:05] organizational layer that gives that
+[20:05] organizational layer that gives that autonomy structure. Inside Paperclip,
+[20:08] autonomy structure. Inside Paperclip,
+[20:08] autonomy structure. Inside Paperclip, OpenClaw hooks in as a continuous agent
+[20:10] OpenClaw hooks in as a continuous agent
+[20:10] OpenClaw hooks in as a continuous agent that wakes on triggers rather than just
+[20:12] that wakes on triggers rather than just
+[20:12] that wakes on triggers rather than just scheduled heartbeats. Task assignment at
+[20:15] scheduled heartbeats. Task assignment at
+[20:15] scheduled heartbeats. Task assignment at mentions and event-based wakes all get
+[20:17] mentions and event-based wakes all get
+[20:17] mentions and event-based wakes all get it moving without you having to initiate
+[20:19] it moving without you having to initiate
+[20:19] it moving without you having to initiate anything manually. Inside ion UI, Open
+[20:22] anything manually. Inside ion UI, Open
+[20:22] anything manually. Inside ion UI, Open CL runs as a peer session alongside your
+[20:24] CL runs as a peer session alongside your
+[20:24] CL runs as a peer session alongside your other agents. You can use it directly,
+[20:26] other agents. You can use it directly,
+[20:26] other agents. You can use it directly, delegate to it through team mode as a
+[20:28] delegate to it through team mode as a
+[20:28] delegate to it through team mode as a teammate, or run it in parallel with
+[20:30] teammate, or run it in parallel with
+[20:30] teammate, or run it in parallel with claude code while you work on something
+[20:31] claude code while you work on something
+[20:31] claude code while you work on something else entirely. Hermes agent has one of
+[20:33] else entirely. Hermes agent has one of
+[20:33] else entirely. Hermes agent has one of the tightest integrations in the entire
+[20:35] the tightest integrations in the entire
+[20:35] the tightest integrations in the entire ecosystem right now, specifically on the
+[20:38] ecosystem right now, specifically on the
+[20:38] ecosystem right now, specifically on the paperclip side. News Research ships an
+[20:40] paperclip side. News Research ships an
+[20:40] paperclip side. News Research ships an official paperclip adapter for Hermes
+[20:42] official paperclip adapter for Hermes
+[20:42] official paperclip adapter for Hermes that handles everything the integration
+[20:44] that handles everything the integration
+[20:44] that handles everything the integration needs. The adapter spawns Hermes in
+[20:46] needs. The adapter spawns Hermes in
+[20:46] needs. The adapter spawns Hermes in single query mode, captures its stout
+[20:48] single query mode, captures its stout
+[20:48] single query mode, captures its stout and stare output, parses token usage and
+[20:51] and stare output, parses token usage and
+[20:51] and stare output, parses token usage and session identifiers, converts Hermes's
+[20:53] session identifiers, converts Hermes's
+[20:53] session identifiers, converts Hermes's ASKI banners and table borders into
+[20:55] ASKI banners and table borders into
+[20:55] ASKI banners and table borders into clean markdown that renders properly in
+[20:57] clean markdown that renders properly in
+[20:57] clean markdown that renders properly in the paperclip UI and maintains session
+[20:59] the paperclip UI and maintains session
+[20:59] the paperclip UI and maintains session persistence across heartbeats using
+[21:00] persistence across heartbeats using
+[21:00] persistence across heartbeats using Hermes's native resume flag. That means
+[21:02] Hermes's native resume flag. That means
+[21:02] Hermes's native resume flag. That means every time Hermes wakes up inside
+[21:04] every time Hermes wakes up inside
+[21:04] every time Hermes wakes up inside paperclip, it is picking up its
+[21:06] paperclip, it is picking up its
+[21:06] paperclip, it is picking up its conversation context, its memories, and
+[21:08] conversation context, its memories, and
+[21:08] conversation context, its memories, and its tool state from exactly where it
+[21:10] its tool state from exactly where it
+[21:10] its tool state from exactly where it left off. The adapter also scans both
+[21:12] left off. The adapter also scans both
+[21:12] left off. The adapter also scans both paperclip manage skills and Hermes's
+[21:14] paperclip manage skills and Hermes's
+[21:14] paperclip manage skills and Hermes's native skills directory and merges them
+[21:16] native skills directory and merges them
+[21:16] native skills directory and merges them into a unified view so you can see
+[21:18] into a unified view so you can see
+[21:18] into a unified view so you can see everything in one place. Inside ION UI,
+[21:21] everything in one place. Inside ION UI,
+[21:21] everything in one place. Inside ION UI, Hermes agent is in the auto detection
+[21:23] Hermes agent is in the auto detection
+[21:23] Hermes agent is in the auto detection list and runs as a standard session. The
+[21:25] list and runs as a standard session. The
+[21:25] list and runs as a standard session. The experience is clean and direct though
+[21:28] experience is clean and direct though
+[21:28] experience is clean and direct though without the deep session bridge that the
+[21:29] without the deep session bridge that the
+[21:29] without the deep session bridge that the official adapter provides on the
+[21:30] official adapter provides on the
+[21:30] official adapter provides on the paperclip side. Codex is supported
+[21:32] paperclip side. Codex is supported
+[21:32] paperclip side. Codex is supported natively by both tools. Inside
+[21:35] natively by both tools. Inside
+[21:35] natively by both tools. Inside paperclipip, it slots into the org chart
+[21:37] paperclipip, it slots into the org chart
+[21:37] paperclipip, it slots into the org chart as a coding agent with the same
+[21:38] as a coding agent with the same
+[21:38] as a coding agent with the same heartbeat system, budget controls, and
+[21:40] heartbeat system, budget controls, and
+[21:40] heartbeat system, budget controls, and audit logging that every other agent
+[21:42] audit logging that every other agent
+[21:42] audit logging that every other agent gets. Paperclip even has a specific
+[21:44] gets. Paperclip even has a specific
+[21:44] gets. Paperclip even has a specific codeex adapter configuration that
+[21:46] codeex adapter configuration that
+[21:46] codeex adapter configuration that handles the managed home directory and
+[21:48] handles the managed home directory and
+[21:48] handles the managed home directory and agent instructions recovery across
+[21:50] agent instructions recovery across
+[21:50] agent instructions recovery across sessions. Inside ion UI, codeex is
+[21:53] sessions. Inside ion UI, codeex is
+[21:53] sessions. Inside ion UI, codeex is autodetected and runs in a session panel
+[21:55] autodetected and runs in a session panel
+[21:55] autodetected and runs in a session panel with the same parallel execution and
+[21:57] with the same parallel execution and
+[21:57] with the same parallel execution and shared MCP configuration as your other
+[21:59] shared MCP configuration as your other
+[21:59] shared MCP configuration as your other agents. If you're running codecs and
+[22:01] agents. If you're running codecs and
+[22:01] agents. If you're running codecs and clawed code simultaneously on different
+[22:03] clawed code simultaneously on different
+[22:03] clawed code simultaneously on different tasks, ion UI is arguably the cleaner
+[22:05] tasks, ion UI is arguably the cleaner
+[22:05] tasks, ion UI is arguably the cleaner experience because you have both visible
+[22:07] experience because you have both visible
+[22:07] experience because you have both visible in the same interface without switching
+[22:09] in the same interface without switching
+[22:09] in the same interface without switching contexts. Open code lands in a similar
+[22:12] contexts. Open code lands in a similar
+[22:12] contexts. Open code lands in a similar position. Both tools support it and both
+[22:14] position. Both tools support it and both
+[22:14] position. Both tools support it and both have made specific accommodations for
+[22:16] have made specific accommodations for
+[22:16] have made specific accommodations for it. On the paperclip side, there is a
+[22:18] it. On the paperclip side, there is a
+[22:18] it. On the paperclip side, there is a local execution path designed
+[22:19] local execution path designed
+[22:19] local execution path designed specifically for open code with its own
+[22:21] specifically for open code with its own
+[22:22] specifically for open code with its own adapter configuration. On the ion UI
+[22:24] adapter configuration. On the ion UI
+[22:24] adapter configuration. On the ion UI side, it is autodetected and runs as a
+[22:26] side, it is autodetected and runs as a
+[22:26] side, it is autodetected and runs as a standard session. If you're using Open
+[22:28] standard session. If you're using Open
+[22:28] standard session. If you're using Open Code as part of a broader multi- aent
+[22:30] Code as part of a broader multi- aent
+[22:30] Code as part of a broader multi- aent setup rather than as a standalone tool,
+[22:33] setup rather than as a standalone tool,
+[22:33] setup rather than as a standalone tool, Paperclip gives you the organizational
+[22:34] Paperclip gives you the organizational
+[22:34] Paperclip gives you the organizational continuity while ionui gives you the
+[22:36] continuity while ionui gives you the
+[22:36] continuity while ionui gives you the unified interface to manage it alongside
+[22:39] unified interface to manage it alongside
+[22:39] unified interface to manage it alongside everything else. The broader pattern
+[22:41] everything else. The broader pattern
+[22:41] everything else. The broader pattern across all of these agents is
+[22:43] across all of these agents is
+[22:43] across all of these agents is consistent. Paperclip turns them into
+[22:45] consistent. Paperclip turns them into
+[22:45] consistent. Paperclip turns them into employees with roles, budgets,
+[22:47] employees with roles, budgets,
+[22:47] employees with roles, budgets, schedules, and accountability. Ion UI
+[22:50] schedules, and accountability. Ion UI
+[22:50] schedules, and accountability. Ion UI turns them into co-workers sitting in
+[22:52] turns them into co-workers sitting in
+[22:52] turns them into co-workers sitting in adjacent panels on your desktop. Neither
+[22:54] adjacent panels on your desktop. Neither
+[22:54] adjacent panels on your desktop. Neither approach is universally better. They
+[22:56] approach is universally better. They
+[22:56] approach is universally better. They reflect two different answers to the
+[22:58] reflect two different answers to the
+[22:58] reflect two different answers to the same underlying question of how you want
+[23:00] same underlying question of how you want
+[23:00] same underlying question of how you want to relate to the agents you are running.
+[23:02] to relate to the agents you are running.
+[23:02] to relate to the agents you are running. There's also a practical note worth
+[23:03] There's also a practical note worth
+[23:03] There's also a practical note worth making about the MCP ecosystem
+[23:05] making about the MCP ecosystem
+[23:05] making about the MCP ecosystem specifically. Both tools have invested
+[23:07] specifically. Both tools have invested
+[23:07] specifically. Both tools have invested seriously in MCP support, but they have
+[23:10] seriously in MCP support, but they have
+[23:10] seriously in MCP support, but they have approached it differently. Ion UI made
+[23:12] approached it differently. Ion UI made
+[23:12] approached it differently. Ion UI made unified MCP management one of its
+[23:14] unified MCP management one of its
+[23:14] unified MCP management one of its headline features because the pain of
+[23:16] headline features because the pain of
+[23:16] headline features because the pain of maintaining separate config files for a
+[23:18] maintaining separate config files for a
+[23:18] maintaining separate config files for a dozen different agents is real and
+[23:20] dozen different agents is real and
+[23:20] dozen different agents is real and immediate for anyone in that situation.
+[23:22] immediate for anyone in that situation.
+[23:22] immediate for anyone in that situation. Configure it once and every agent you
+[23:24] Configure it once and every agent you
+[23:24] Configure it once and every agent you have connected inherits the
+[23:26] have connected inherits the
+[23:26] have connected inherits the configuration automatically. Paperclip
+[23:28] configuration automatically. Paperclip
+[23:28] configuration automatically. Paperclip MCP support operates at the agent level
+[23:30] MCP support operates at the agent level
+[23:30] MCP support operates at the agent level through adapters with a plug-in system
+[23:32] through adapters with a plug-in system
+[23:32] through adapters with a plug-in system capable of exposing additional tools to
+[23:34] capable of exposing additional tools to
+[23:34] capable of exposing additional tools to the entire instance. The right model
+[23:36] the entire instance. The right model
+[23:36] the entire instance. The right model depends on your setup. If you're
+[23:38] depends on your setup. If you're
+[23:38] depends on your setup. If you're managing a large number of agents across
+[23:39] managing a large number of agents across
+[23:40] managing a large number of agents across a structured organization, paperclip's
+[23:42] a structured organization, paperclip's
+[23:42] a structured organization, paperclip's approach scales better. If you're
+[23:43] approach scales better. If you're
+[23:43] approach scales better. If you're running several agents on your local
+[23:45] running several agents on your local
+[23:45] running several agents on your local machine and want the configuration
+[23:46] machine and want the configuration
+[23:46] machine and want the configuration overhead to disappear, ionui's unified
+[23:49] overhead to disappear, ionui's unified
+[23:49] overhead to disappear, ionui's unified sync is the faster path. Every tool in
+[23:51] sync is the faster path. Every tool in
+[23:51] sync is the faster path. Every tool in this space gets reviewed against the
+[23:53] this space gets reviewed against the
+[23:53] this space gets reviewed against the wrong criteria at some point. Someone
+[23:55] wrong criteria at some point. Someone
+[23:55] wrong criteria at some point. Someone runs it expecting it to do something it
+[23:57] runs it expecting it to do something it
+[23:57] runs it expecting it to do something it was never designed to do, concludes it
+[23:59] was never designed to do, concludes it
+[23:59] was never designed to do, concludes it falls short, and moves on without ever
+[24:01] falls short, and moves on without ever
+[24:01] falls short, and moves on without ever understanding what it was actually built
+[24:02] understanding what it was actually built
+[24:02] understanding what it was actually built for. Both Paperclip and Ion UI have had
+[24:05] for. Both Paperclip and Ion UI have had
+[24:05] for. Both Paperclip and Ion UI have had this happen to them. And it usually
+[24:07] this happen to them. And it usually
+[24:07] this happen to them. And it usually comes down to a mismatch between what
+[24:08] comes down to a mismatch between what
+[24:08] comes down to a mismatch between what someone needed and what they reached
+[24:10] someone needed and what they reached
+[24:10] someone needed and what they reached for. So instead of a feature checklist,
+[24:12] for. So instead of a feature checklist,
+[24:12] for. So instead of a feature checklist, the most useful question is a simpler
+[24:14] the most useful question is a simpler
+[24:14] the most useful question is a simpler one. What does your situation actually
+[24:15] one. What does your situation actually
+[24:15] one. What does your situation actually look like right now? And which of these
+[24:17] look like right now? And which of these
+[24:17] look like right now? And which of these tools was designed for that situation?
+[24:19] tools was designed for that situation?
+[24:19] tools was designed for that situation? Paperclip is built for people who have
+[24:21] Paperclip is built for people who have
+[24:21] Paperclip is built for people who have crossed a threshold. That threshold is
+[24:23] crossed a threshold. That threshold is
+[24:23] crossed a threshold. That threshold is the point where managing individual
+[24:25] the point where managing individual
+[24:25] the point where managing individual agents has become the bottleneck, not
+[24:27] agents has become the bottleneck, not
+[24:27] agents has become the bottleneck, not the agents themselves. If you're running
+[24:29] the agents themselves. If you're running
+[24:29] the agents themselves. If you're running more than a handful of agents and the
+[24:31] more than a handful of agents and the
+[24:31] more than a handful of agents and the challenge is no longer getting any one
+[24:33] challenge is no longer getting any one
+[24:33] challenge is no longer getting any one agent to do useful work, but rather
+[24:34] agent to do useful work, but rather
+[24:34] agent to do useful work, but rather getting all of them to do useful work
+[24:36] getting all of them to do useful work
+[24:36] getting all of them to do useful work together without duplicating effort,
+[24:38] together without duplicating effort,
+[24:38] together without duplicating effort, going over budget, or losing context
+[24:40] going over budget, or losing context
+[24:40] going over budget, or losing context when you step away, Paperclip was
+[24:41] when you step away, Paperclip was
+[24:41] when you step away, Paperclip was designed for that exact moment. Is also
+[24:43] designed for that exact moment. Is also
+[24:43] designed for that exact moment. Is also built for anyone who needs
+[24:45] built for anyone who needs
+[24:45] built for anyone who needs accountability built into the system
+[24:47] accountability built into the system
+[24:47] accountability built into the system from the start. If you're running agents
+[24:48] from the start. If you're running agents
+[24:48] from the start. If you're running agents on behalf of clients, managing multiple
+[24:51] on behalf of clients, managing multiple
+[24:51] on behalf of clients, managing multiple projects simultaneously, or operating in
+[24:53] projects simultaneously, or operating in
+[24:53] projects simultaneously, or operating in any context where you need to be able to
+[24:54] any context where you need to be able to
+[24:54] any context where you need to be able to show what your agents did and why, an
+[24:56] show what your agents did and why, an
+[24:56] show what your agents did and why, an immutable audit trail and formal
+[24:58] immutable audit trail and formal
+[24:58] immutable audit trail and formal approval gates are not optional
+[25:00] approval gates are not optional
+[25:00] approval gates are not optional features. They are the foundation.
+[25:01] features. They are the foundation.
+[25:01] features. They are the foundation. Paperclip also fits naturally if you
+[25:03] Paperclip also fits naturally if you
+[25:03] Paperclip also fits naturally if you want your agents to keep working when
+[25:05] want your agents to keep working when
+[25:05] want your agents to keep working when you are not at your computer. The
+[25:07] you are not at your computer. The
+[25:07] you are not at your computer. The heartbeat system and server-based
+[25:08] heartbeat system and server-based
+[25:08] heartbeat system and server-based architecture mean your agent
+[25:09] architecture mean your agent
+[25:09] architecture mean your agent organization is running whether your
+[25:11] organization is running whether your
+[25:11] organization is running whether your laptop is open or not. You assign tasks,
+[25:14] laptop is open or not. You assign tasks,
+[25:14] laptop is open or not. You assign tasks, set budgets, define the org structure,
+[25:16] set budgets, define the org structure,
+[25:16] set budgets, define the org structure, and then walk away. You come back to
+[25:18] and then walk away. You come back to
+[25:18] and then walk away. You come back to completed work, log decisions, and a
+[25:21] completed work, log decisions, and a
+[25:21] completed work, log decisions, and a clear record of what every agent spent.
+[25:23] clear record of what every agent spent.
+[25:23] clear record of what every agent spent. That is a fundamentally different
+[25:24] That is a fundamentally different
+[25:24] That is a fundamentally different relationship with AI automation than
+[25:26] relationship with AI automation than
+[25:26] relationship with AI automation than most tools in this space offer. The
+[25:28] most tools in this space offer. The
+[25:28] most tools in this space offer. The honest caveat for paperclip is that it
+[25:30] honest caveat for paperclip is that it
+[25:30] honest caveat for paperclip is that it rewards investment. The setup requires
+[25:32] rewards investment. The setup requires
+[25:32] rewards investment. The setup requires thought, defining an org chart, writing
+[25:35] thought, defining an org chart, writing
+[25:35] thought, defining an org chart, writing meaningful job descriptions for your
+[25:36] meaningful job descriptions for your
+[25:36] meaningful job descriptions for your agents, structuring goals so that the
+[25:38] agents, structuring goals so that the
+[25:38] agents, structuring goals so that the mission actually propagates down to
+[25:40] mission actually propagates down to
+[25:40] mission actually propagates down to individual tasks. These are not
+[25:42] individual tasks. These are not
+[25:42] individual tasks. These are not technical challenges, but they are
+[25:43] technical challenges, but they are
+[25:43] technical challenges, but they are design challenges. People who get the
+[25:44] design challenges. People who get the
+[25:44] design challenges. People who get the most out of paperclipip tend to be
+[25:46] most out of paperclipip tend to be
+[25:46] most out of paperclipip tend to be operators and founders who have already
+[25:48] operators and founders who have already
+[25:48] operators and founders who have already thought carefully about how work should
+[25:49] thought carefully about how work should
+[25:50] thought carefully about how work should flow and who are comfortable translating
+[25:51] flow and who are comfortable translating
+[25:52] flow and who are comfortable translating that thinking into an organizational
+[25:53] that thinking into an organizational
+[25:53] that thinking into an organizational structure rather than a prompt. Ion UI
+[25:55] structure rather than a prompt. Ion UI
+[25:56] structure rather than a prompt. Ion UI is built for a different person at a
+[25:57] is built for a different person at a
+[25:57] is built for a different person at a different moment. If you're already
+[25:59] different moment. If you're already
+[25:59] different moment. If you're already using one or more CLI agents, and the
+[26:01] using one or more CLI agents, and the
+[26:01] using one or more CLI agents, and the friction you feel every day is the
+[26:03] friction you feel every day is the
+[26:03] friction you feel every day is the friction of managing them across
+[26:04] friction of managing them across
+[26:04] friction of managing them across separate terminals, dealing with
+[26:05] separate terminals, dealing with
+[26:06] separate terminals, dealing with separate MCP configs, and losing track
+[26:08] separate MCP configs, and losing track
+[26:08] separate MCP configs, and losing track of what each one is doing, ionui
+[26:10] of what each one is doing, ionui
+[26:10] of what each one is doing, ionui addresses all of that immediately. It is
+[26:12] addresses all of that immediately. It is
+[26:12] addresses all of that immediately. It is the tool for the developer who wants
+[26:13] the tool for the developer who wants
+[26:14] the tool for the developer who wants more from their existing agents without
+[26:15] more from their existing agents without
+[26:15] more from their existing agents without having to rebuild their entire workflow
+[26:17] having to rebuild their entire workflow
+[26:17] having to rebuild their entire workflow from scratch. The value shows up on day
+[26:19] from scratch. The value shows up on day
+[26:19] from scratch. The value shows up on day one, not after a week of configuration.
+[26:21] one, not after a week of configuration.
+[26:22] one, not after a week of configuration. It is also the right tool if privacy and
+[26:24] It is also the right tool if privacy and
+[26:24] It is also the right tool if privacy and local data control are non-negotiable
+[26:26] local data control are non-negotiable
+[26:26] local data control are non-negotiable from start. Everything runs on your
+[26:28] from start. Everything runs on your
+[26:28] from start. Everything runs on your machine. Nothing is uploaded. For anyone
+[26:30] machine. Nothing is uploaded. For anyone
+[26:30] machine. Nothing is uploaded. For anyone working with proprietary code bases,
+[26:32] working with proprietary code bases,
+[26:32] working with proprietary code bases, client code, or sensitive data, that
+[26:35] client code, or sensitive data, that
+[26:35] client code, or sensitive data, that architecture matters in a way that no
+[26:36] architecture matters in a way that no
+[26:36] architecture matters in a way that no amount of cloud security asurances can
+[26:38] amount of cloud security asurances can
+[26:38] amount of cloud security asurances can replace. Ion UI makes particular sense
+[26:40] replace. Ion UI makes particular sense
+[26:40] replace. Ion UI makes particular sense if your work involves heavy file output.
+[26:42] if your work involves heavy file output.
+[26:42] if your work involves heavy file output. The built-in office generation, the real
+[26:44] The built-in office generation, the real
+[26:44] The built-in office generation, the real PPTX, DOCX, and XLSX files rather than
+[26:48] PPTX, DOCX, and XLSX files rather than
+[26:48] PPTX, DOCX, and XLSX files rather than PDF exports. The morph transition
+[26:50] PDF exports. The morph transition
+[26:50] PDF exports. The morph transition support and presentations. These are
+[26:51] support and presentations. These are
+[26:52] support and presentations. These are features that reflect a broader vision
+[26:53] features that reflect a broader vision
+[26:53] features that reflect a broader vision of agents as genuine co-workers rather
+[26:55] of agents as genuine co-workers rather
+[26:55] of agents as genuine co-workers rather than just code assistants. If your
+[26:57] than just code assistants. If your
+[26:57] than just code assistants. If your agents are generating documents and
+[26:59] agents are generating documents and
+[26:59] agents are generating documents and reports as part of their regular output,
+[27:01] reports as part of their regular output,
+[27:01] reports as part of their regular output, having a built-in preview and version
+[27:02] having a built-in preview and version
+[27:02] having a built-in preview and version history layer built around that output
+[27:04] history layer built around that output
+[27:04] history layer built around that output removes a significant amount of context
+[27:07] removes a significant amount of context
+[27:07] removes a significant amount of context switching from your day. The scheduled
+[27:08] switching from your day. The scheduled
+[27:08] switching from your day. The scheduled task feature is also worth naming for a
+[27:11] task feature is also worth naming for a
+[27:11] task feature is also worth naming for a specific kind of user. If you have
+[27:12] specific kind of user. If you have
+[27:12] specific kind of user. If you have recurring workflows, daily summaries,
+[27:15] recurring workflows, daily summaries,
+[27:15] recurring workflows, daily summaries, regular file organization, weekly
+[27:17] regular file organization, weekly
+[27:17] regular file organization, weekly reports, get log digests, and you want
+[27:19] reports, get log digests, and you want
+[27:19] reports, get log digests, and you want those running automatically without
+[27:20] those running automatically without
+[27:20] those running automatically without building a separate automation pipeline
+[27:22] building a separate automation pipeline
+[27:22] building a separate automation pipeline to handle them. Ionui's natural language
+[27:24] to handle them. Ionui's natural language
+[27:24] to handle them. Ionui's natural language scheduling is a clean solution. You
+[27:26] scheduling is a clean solution. You
+[27:26] scheduling is a clean solution. You describe the task the way you would
+[27:27] describe the task the way you would
+[27:27] describe the task the way you would describe it to a person and it runs on a
+[27:29] describe it to a person and it runs on a
+[27:29] describe it to a person and it runs on a cron schedule bound to its own
+[27:30] cron schedule bound to its own
+[27:30] cron schedule bound to its own conversation context. Where ion UI is
+[27:33] conversation context. Where ion UI is
+[27:33] conversation context. Where ion UI is not the right answer is when
+[27:34] not the right answer is when
+[27:34] not the right answer is when organizational scale and governance
+[27:36] organizational scale and governance
+[27:36] organizational scale and governance become a primary concern. It does not
+[27:38] become a primary concern. It does not
+[27:38] become a primary concern. It does not enforce budgets. It does not give your
+[27:39] enforce budgets. It does not give your
+[27:40] enforce budgets. It does not give your agents reporting lines and approval
+[27:41] agents reporting lines and approval
+[27:41] agents reporting lines and approval gates. It does not maintain a company
+[27:43] gates. It does not maintain a company
+[27:43] gates. It does not maintain a company level audit trail if those are
+[27:45] level audit trail if those are
+[27:45] level audit trail if those are requirements. Ion UI gives you a
+[27:47] requirements. Ion UI gives you a
+[27:47] requirements. Ion UI gives you a powerful interface but not the
+[27:49] powerful interface but not the
+[27:49] powerful interface but not the infrastructure you actually need
+[27:50] infrastructure you actually need
+[27:50] infrastructure you actually need underneath it. The overlap in audience
+[27:52] underneath it. The overlap in audience
+[27:52] underneath it. The overlap in audience is real but narrow. There are developers
+[27:54] is real but narrow. There are developers
+[27:54] is real but narrow. There are developers who genuinely need both. Who want Ion UI
+[27:57] who genuinely need both. Who want Ion UI
+[27:57] who genuinely need both. Who want Ion UI as their local workstation for hands-on
+[27:59] as their local workstation for hands-on
+[27:59] as their local workstation for hands-on agent work and Paperclip running on a
+[28:01] agent work and Paperclip running on a
+[28:01] agent work and Paperclip running on a server handling the autonomous longer
+[28:03] server handling the autonomous longer
+[28:03] server handling the autonomous longer horizon operations in parallel. For that
+[28:05] horizon operations in parallel. For that
+[28:05] horizon operations in parallel. For that person, the two tools are not competing
+[28:07] person, the two tools are not competing
+[28:07] person, the two tools are not competing for the same slot. They're filling
+[28:09] for the same slot. They're filling
+[28:09] for the same slot. They're filling different layers of the same stack. But
+[28:11] different layers of the same stack. But
+[28:11] different layers of the same stack. But most people watching this are not there
+[28:12] most people watching this are not there
+[28:12] most people watching this are not there yet. And for most people, the choice
+[28:14] yet. And for most people, the choice
+[28:14] yet. And for most people, the choice comes down to which problem they're
+[28:16] comes down to which problem they're
+[28:16] comes down to which problem they're actually trying to solve right now. The
+[28:17] actually trying to solve right now. The
+[28:17] actually trying to solve right now. The interface problem or the coordination
+[28:19] interface problem or the coordination
+[28:19] interface problem or the coordination problem. One agent session or 20. a
+[28:22] problem. One agent session or 20. a
+[28:22] problem. One agent session or 20. a desktop tool or a company OS. The
+[28:24] desktop tool or a company OS. The
+[28:24] desktop tool or a company OS. The community figured this out fast. Shortly
+[28:26] community figured this out fast. Shortly
+[28:26] community figured this out fast. Shortly after Paperclip launched and the
+[28:28] after Paperclip launched and the
+[28:28] after Paperclip launched and the comparison started flooding in, someone
+[28:29] comparison started flooding in, someone
+[28:29] comparison started flooding in, someone put in a single sentence that cut
+[28:31] put in a single sentence that cut
+[28:31] put in a single sentence that cut through all of it. Open Claw is an
+[28:33] through all of it. Open Claw is an
+[28:33] through all of it. Open Claw is an employee. Paperclip is the company. That
+[28:35] employee. Paperclip is the company. That
+[28:35] employee. Paperclip is the company. That line spread because it is exactly right
+[28:37] line spread because it is exactly right
+[28:37] line spread because it is exactly right and the same logic extends to the
+[28:39] and the same logic extends to the
+[28:39] and the same logic extends to the comparison you're watching right now.
+[28:40] comparison you're watching right now.
+[28:40] comparison you're watching right now. Ion UI is your workstation. Paperclip is
+[28:43] Ion UI is your workstation. Paperclip is
+[28:43] Ion UI is your workstation. Paperclip is your or chart. Those are not the same
+[28:45] your or chart. Those are not the same
+[28:45] your or chart. Those are not the same thing. And putting them in a
+[28:46] thing. And putting them in a
+[28:46] thing. And putting them in a head-to-head comparison is like asking
+[28:48] head-to-head comparison is like asking
+[28:48] head-to-head comparison is like asking whether you need a desk or a company.
+[28:50] whether you need a desk or a company.
+[28:50] whether you need a desk or a company. The desk and the company operate at
+[28:52] The desk and the company operate at
+[28:52] The desk and the company operate at completely different levels of
+[28:53] completely different levels of
+[28:53] completely different levels of abstraction. You can have one without
+[28:55] abstraction. You can have one without
+[28:55] abstraction. You can have one without the other. You can have both, but
+[28:57] the other. You can have both, but
+[28:57] the other. You can have both, but they're not filling the same slot. Think
+[28:58] they're not filling the same slot. Think
+[28:58] they're not filling the same slot. Think about how a real company works.
+[29:00] about how a real company works.
+[29:00] about how a real company works. Individual employees have workstations
+[29:02] Individual employees have workstations
+[29:02] Individual employees have workstations where they do their actual work. The
+[29:04] where they do their actual work. The
+[29:04] where they do their actual work. The company has infrastructure around those
+[29:06] company has infrastructure around those
+[29:06] company has infrastructure around those employees reporting structures, budgets,
+[29:08] employees reporting structures, budgets,
+[29:08] employees reporting structures, budgets, project management, accountability
+[29:10] project management, accountability
+[29:10] project management, accountability systems, and governance. Nobody looks at
+[29:12] systems, and governance. Nobody looks at
+[29:12] systems, and governance. Nobody looks at a workstation and a company or chart and
+[29:14] a workstation and a company or chart and
+[29:14] a workstation and a company or chart and asks which one wins. They are two
+[29:16] asks which one wins. They are two
+[29:16] asks which one wins. They are two different layers of the same operation.
+[29:18] different layers of the same operation.
+[29:18] different layers of the same operation. Paperclip is the org layer. Ion UI is
+[29:21] Paperclip is the org layer. Ion UI is
+[29:21] Paperclip is the org layer. Ion UI is the workstation layer. The fact that
+[29:23] the workstation layer. The fact that
+[29:23] the workstation layer. The fact that both of them interact with Claude Code,
+[29:25] both of them interact with Claude Code,
+[29:25] both of them interact with Claude Code, Codeex, Open Claw, and Hermes agent does
+[29:28] Codeex, Open Claw, and Hermes agent does
+[29:28] Codeex, Open Claw, and Hermes agent does not make them competitors any more than
+[29:29] not make them competitors any more than
+[29:29] not make them competitors any more than your desk and your managers or charter
+[29:31] your desk and your managers or charter
+[29:31] your desk and your managers or charter competitors. This framing also clarifies
+[29:33] competitors. This framing also clarifies
+[29:33] competitors. This framing also clarifies something that trips people up when they
+[29:35] something that trips people up when they
+[29:35] something that trips people up when they first look at both tools. Paperclip does
+[29:37] first look at both tools. Paperclip does
+[29:37] first look at both tools. Paperclip does not have a desktop GUI in the sense that
+[29:39] not have a desktop GUI in the sense that
+[29:39] not have a desktop GUI in the sense that ionui does and ionui does not have an or
+[29:42] ionui does and ionui does not have an or
+[29:42] ionui does and ionui does not have an or chart, a heartbeat system, or a
+[29:44] chart, a heartbeat system, or a
+[29:44] chart, a heartbeat system, or a governance layer in the sense that
+[29:45] governance layer in the sense that
+[29:45] governance layer in the sense that paperclip does. Those are not missing
+[29:47] paperclip does. Those are not missing
+[29:47] paperclip does. Those are not missing features. They're design choices that
+[29:49] features. They're design choices that
+[29:49] features. They're design choices that reflect what each tool is actually
+[29:51] reflect what each tool is actually
+[29:51] reflect what each tool is actually trying to be. Paperclip is not trying to
+[29:53] trying to be. Paperclip is not trying to
+[29:54] trying to be. Paperclip is not trying to be a desktop agent interface. Ion UI is
+[29:56] be a desktop agent interface. Ion UI is
+[29:56] be a desktop agent interface. Ion UI is not trying to be an autonomous company
+[29:58] not trying to be an autonomous company
+[29:58] not trying to be an autonomous company OS. They arrived at their current shapes
+[30:00] OS. They arrived at their current shapes
+[30:00] OS. They arrived at their current shapes because they were solving different
+[30:01] because they were solving different
+[30:02] because they were solving different problems from day one. There's also a
+[30:03] problems from day one. There's also a
+[30:03] problems from day one. There's also a real scenario where you end up using
+[30:05] real scenario where you end up using
+[30:05] real scenario where you end up using both and it is not as exotic as it might
+[30:07] both and it is not as exotic as it might
+[30:07] both and it is not as exotic as it might sound. Imagine you are running
+[30:09] sound. Imagine you are running
+[30:09] sound. Imagine you are running paperclipip on a VPS managing a multi-
+[30:11] paperclipip on a VPS managing a multi-
+[30:11] paperclipip on a VPS managing a multi- aent operation that handles research,
+[30:13] aent operation that handles research,
+[30:13] aent operation that handles research, content drafting, and code review across
+[30:15] content drafting, and code review across
+[30:15] content drafting, and code review across an automated pipeline that runs
+[30:17] an automated pipeline that runs
+[30:17] an automated pipeline that runs continuously in the background governed
+[30:19] continuously in the background governed
+[30:19] continuously in the background governed by budgets and heartbeats, logging
+[30:21] by budgets and heartbeats, logging
+[30:21] by budgets and heartbeats, logging everything to an audit trail. Meanwhile,
+[30:24] everything to an audit trail. Meanwhile,
+[30:24] everything to an audit trail. Meanwhile, on your local machine, you have ionui
+[30:26] on your local machine, you have ionui
+[30:26] on your local machine, you have ionui open. You are doing hands-on development
+[30:28] open. You are doing hands-on development
+[30:28] open. You are doing hands-on development work, running cloud code and codecs in
+[30:30] work, running cloud code and codecs in
+[30:30] work, running cloud code and codecs in parallel panels, previewing file
+[30:32] parallel panels, previewing file
+[30:32] parallel panels, previewing file outputs, and sending instructions from
+[30:34] outputs, and sending instructions from
+[30:34] outputs, and sending instructions from your phone when you step away from your
+[30:35] your phone when you step away from your
+[30:35] your phone when you step away from your desk. Paperclip is handling the
+[30:37] desk. Paperclip is handling the
+[30:37] desk. Paperclip is handling the autonomous long horizon work. Ion UI is
+[30:40] autonomous long horizon work. Ion UI is
+[30:40] autonomous long horizon work. Ion UI is handling the immediate hands-on work.
+[30:42] handling the immediate hands-on work.
+[30:42] handling the immediate hands-on work. Neither one is doing the other's job.
+[30:44] Neither one is doing the other's job.
+[30:44] Neither one is doing the other's job. They're operating at different
+[30:46] They're operating at different
+[30:46] They're operating at different altitudes. The agent ecosystem in 2026
+[30:49] altitudes. The agent ecosystem in 2026
+[30:49] altitudes. The agent ecosystem in 2026 has split into distinct layers. And that
+[30:51] has split into distinct layers. And that
+[30:51] has split into distinct layers. And that split is not accidental. It reflects how
+[30:53] split is not accidental. It reflects how
+[30:54] split is not accidental. It reflects how the space has matured. In the early days
+[30:55] the space has matured. In the early days
+[30:56] the space has matured. In the early days of this wave, the conversation was
+[30:57] of this wave, the conversation was
+[30:57] of this wave, the conversation was almost entirely about individual agents.
+[31:00] almost entirely about individual agents.
+[31:00] almost entirely about individual agents. Can an agent write code? Can it do
+[31:02] Can an agent write code? Can it do
+[31:02] Can an agent write code? Can it do research? Can it plan a campaign? The
+[31:04] research? Can it plan a campaign? The
+[31:04] research? Can it plan a campaign? The answer to all of those turned out to be
+[31:05] answer to all of those turned out to be
+[31:05] answer to all of those turned out to be yes and the conversation moved on. The
+[31:07] yes and the conversation moved on. The
+[31:07] yes and the conversation moved on. The next question was about interfaces. Can
+[31:09] next question was about interfaces. Can
+[31:09] next question was about interfaces. Can we give these agents a better UI than a
+[31:11] we give these agents a better UI than a
+[31:11] we give these agents a better UI than a terminal window? Ion UI is a direct
+[31:13] terminal window? Ion UI is a direct
+[31:13] terminal window? Ion UI is a direct answer to that question. The question
+[31:15] answer to that question. The question
+[31:15] answer to that question. The question after that was about coordination. Can
+[31:17] after that was about coordination. Can
+[31:17] after that was about coordination. Can we give these agents organizational
+[31:19] we give these agents organizational
+[31:19] we give these agents organizational structure so they work together reliably
+[31:21] structure so they work together reliably
+[31:21] structure so they work together reliably instead of chaotically? Paperclip is a
+[31:23] instead of chaotically? Paperclip is a
+[31:23] instead of chaotically? Paperclip is a direct answer to that question. These
+[31:25] direct answer to that question. These
+[31:25] direct answer to that question. These are sequential layers of the same
+[31:26] are sequential layers of the same
+[31:26] are sequential layers of the same infrastructure being built around AI
+[31:28] infrastructure being built around AI
+[31:28] infrastructure being built around AI agents. And both paperclipip and ionui
+[31:31] agents. And both paperclipip and ionui
+[31:31] agents. And both paperclipip and ionui are legitimate wellexecuted responses to
+[31:33] are legitimate wellexecuted responses to
+[31:33] are legitimate wellexecuted responses to the problems at their respective layers.
+[31:35] the problems at their respective layers.
+[31:35] the problems at their respective layers. The reason both went viral in the same
+[31:37] The reason both went viral in the same
+[31:37] The reason both went viral in the same quarter is not because they are fighting
+[31:39] quarter is not because they are fighting
+[31:39] quarter is not because they are fighting for the same audience. It is because
+[31:40] for the same audience. It is because
+[31:40] for the same audience. It is because that audience is large enough and hungry
+[31:43] that audience is large enough and hungry
+[31:43] that audience is large enough and hungry enough for solutions at both layers that
+[31:44] enough for solutions at both layers that
+[31:44] enough for solutions at both layers that both tools found massive traction almost
+[31:47] both tools found massive traction almost
+[31:47] both tools found massive traction almost immediately. The most sophisticated
+[31:49] immediately. The most sophisticated
+[31:49] immediately. The most sophisticated people in this space are not asking
+[31:50] people in this space are not asking
+[31:50] people in this space are not asking which tool wins. They're asking which
+[31:52] which tool wins. They're asking which
+[31:52] which tool wins. They're asking which layer of their stack they need to fill
+[31:54] layer of their stack they need to fill
+[31:54] layer of their stack they need to fill next. What happened in early 2026 with
+[31:56] next. What happened in early 2026 with
+[31:56] next. What happened in early 2026 with both of these tools is not a
+[31:58] both of these tools is not a
+[31:58] both of these tools is not a coincidence, and it is worth stepping
+[31:59] coincidence, and it is worth stepping
+[31:59] coincidence, and it is worth stepping back to understand what it actually
+[32:01] back to understand what it actually
+[32:01] back to understand what it actually signals about where the space is going.
+[32:03] signals about where the space is going.
+[32:03] signals about where the space is going. Papercliped 30,000 GitHub stars in 3
+[32:06] Papercliped 30,000 GitHub stars in 3
+[32:06] Papercliped 30,000 GitHub stars in 3 weeks. Ionui hit its first viral moment
+[32:08] weeks. Ionui hit its first viral moment
+[32:08] weeks. Ionui hit its first viral moment in January and has not slowed down
+[32:10] in January and has not slowed down
+[32:10] in January and has not slowed down since. Both launched within months of
+[32:12] since. Both launched within months of
+[32:12] since. Both launched within months of each other. Both hit GitHub, trending
+[32:15] each other. Both hit GitHub, trending
+[32:15] each other. Both hit GitHub, trending almost immediately. Both are open-
+[32:16] almost immediately. Both are open-
+[32:16] almost immediately. Both are open- source, self-hosted, and built by small
+[32:19] source, self-hosted, and built by small
+[32:19] source, self-hosted, and built by small teams moving extremely fast. That
+[32:21] teams moving extremely fast. That
+[32:21] teams moving extremely fast. That pattern does not happen by accident. It
+[32:23] pattern does not happen by accident. It
+[32:23] pattern does not happen by accident. It happens when a market is ready for
+[32:25] happens when a market is ready for
+[32:25] happens when a market is ready for something and the first tools to
+[32:26] something and the first tools to
+[32:26] something and the first tools to articulate it clearly get pulled forward
+[32:28] articulate it clearly get pulled forward
+[32:28] articulate it clearly get pulled forward by demand rather than pushed by
+[32:29] by demand rather than pushed by
+[32:30] by demand rather than pushed by marketing. The shift that both tools are
+[32:31] marketing. The shift that both tools are
+[32:31] marketing. The shift that both tools are responding to is the same shift just at
+[32:34] responding to is the same shift just at
+[32:34] responding to is the same shift just at different layers. The question is no
+[32:36] different layers. The question is no
+[32:36] different layers. The question is no longer whether AI agents could do useful
+[32:38] longer whether AI agents could do useful
+[32:38] longer whether AI agents could do useful work. That debate is over. The question
+[32:41] work. That debate is over. The question
+[32:41] work. That debate is over. The question is now how you organize, manage and live
+[32:43] is now how you organize, manage and live
+[32:43] is now how you organize, manage and live with AI agents at scale. And the answer
+[32:45] with AI agents at scale. And the answer
+[32:45] with AI agents at scale. And the answer to that question is turning out to be
+[32:47] to that question is turning out to be
+[32:47] to that question is turning out to be surprisingly close to how humans have
+[32:50] surprisingly close to how humans have
+[32:50] surprisingly close to how humans have organized complex work for a very long
+[32:52] organized complex work for a very long
+[32:52] organized complex work for a very long time through companies, departments,
+[32:54] time through companies, departments,
+[32:54] time through companies, departments, reporting lines and governance on one
+[32:55] reporting lines and governance on one
+[32:55] reporting lines and governance on one side through workstations, interfaces,
+[32:58] side through workstations, interfaces,
+[32:58] side through workstations, interfaces, and direct collaboration tools on the
+[33:00] and direct collaboration tools on the
+[33:00] and direct collaboration tools on the other. The infrastructure being built
+[33:01] other. The infrastructure being built
+[33:01] other. The infrastructure being built around AI agents in 2026 is starting to
+[33:04] around AI agents in 2026 is starting to
+[33:04] around AI agents in 2026 is starting to look like the infrastructure built
+[33:06] look like the infrastructure built
+[33:06] look like the infrastructure built around human workers over the past
+[33:07] around human workers over the past
+[33:07] around human workers over the past century. And that is not a metaphor. It
+[33:10] century. And that is not a metaphor. It
+[33:10] century. And that is not a metaphor. It is an architectural reality playing out
+[33:12] is an architectural reality playing out
+[33:12] is an architectural reality playing out in real time across open- source
+[33:14] in real time across open- source
+[33:14] in real time across open- source repositories. The agent ecosystem itself
+[33:17] repositories. The agent ecosystem itself
+[33:17] repositories. The agent ecosystem itself is compounding in a way that makes both
+[33:19] is compounding in a way that makes both
+[33:19] is compounding in a way that makes both of these tools more valuable as time
+[33:21] of these tools more valuable as time
+[33:21] of these tools more valuable as time goes on. The awesome agent orchestrators
+[33:23] goes on. The awesome agent orchestrators
+[33:23] goes on. The awesome agent orchestrators list on GitHub already has more than 30
+[33:25] list on GitHub already has more than 30
+[33:25] list on GitHub already has more than 30 entries covering everything from
+[33:27] entries covering everything from
+[33:27] entries covering everything from terminal session managers to
+[33:28] terminal session managers to
+[33:28] terminal session managers to cryptographic agent identity systems to
+[33:30] cryptographic agent identity systems to
+[33:30] cryptographic agent identity systems to get native coordination protocols. Every
+[33:33] get native coordination protocols. Every
+[33:33] get native coordination protocols. Every new agent that gets released, whether it
+[33:35] new agent that gets released, whether it
+[33:35] new agent that gets released, whether it is another cloud code competitor or a
+[33:36] is another cloud code competitor or a
+[33:36] is another cloud code competitor or a specialized research agent or a vertical
+[33:38] specialized research agent or a vertical
+[33:38] specialized research agent or a vertical tool built for a specific workflow, adds
+[33:40] tool built for a specific workflow, adds
+[33:40] tool built for a specific workflow, adds to the surface area that tools like
+[33:42] to the surface area that tools like
+[33:42] to the surface area that tools like paperclip and ionui are designed to
+[33:44] paperclip and ionui are designed to
+[33:44] paperclip and ionui are designed to manage. The more agents there are, the
+[33:46] manage. The more agents there are, the
+[33:46] manage. The more agents there are, the more the interface problem and the
+[33:48] more the interface problem and the
+[33:48] more the interface problem and the coordination problem both intensify and
+[33:50] coordination problem both intensify and
+[33:50] coordination problem both intensify and the more essential the solutions become.
+[33:52] the more essential the solutions become.
+[33:52] the more essential the solutions become. The roadmap items for both tools point
+[33:54] The roadmap items for both tools point
+[33:54] The roadmap items for both tools point in directions worth watching. Clipart
+[33:56] in directions worth watching. Clipart
+[33:56] in directions worth watching. Clipart for paperclip is coming and a
+[33:58] for paperclip is coming and a
+[33:58] for paperclip is coming and a marketplace of pre-built company
+[33:59] marketplace of pre-built company
+[33:59] marketplace of pre-built company templates that you can import with a
+[34:00] templates that you can import with a
+[34:00] templates that you can import with a single click is a significant expansion
+[34:02] single click is a significant expansion
+[34:02] single click is a significant expansion of who can use the tool without deep
+[34:04] of who can use the tool without deep
+[34:04] of who can use the tool without deep technical setup. If you can download a
+[34:06] technical setup. If you can download a
+[34:06] technical setup. If you can download a content agency or a development shop as
+[34:08] content agency or a development shop as
+[34:08] content agency or a development shop as a preconfigured company and have it
+[34:10] a preconfigured company and have it
+[34:10] a preconfigured company and have it running in minutes, the barrier to entry
+[34:12] running in minutes, the barrier to entry
+[34:12] running in minutes, the barrier to entry drops dramatically and the audience for
+[34:14] drops dramatically and the audience for
+[34:14] drops dramatically and the audience for paperclip expands well beyond developers
+[34:16] paperclip expands well beyond developers
+[34:16] paperclip expands well beyond developers into operators and founders who have
+[34:17] into operators and founders who have
+[34:17] into operators and founders who have never touched a command line. Ion UI is
+[34:20] never touched a command line. Ion UI is
+[34:20] never touched a command line. Ion UI is iterating on team mode, expanding its
+[34:22] iterating on team mode, expanding its
+[34:22] iterating on team mode, expanding its agent support list and building out its
+[34:24] agent support list and building out its
+[34:24] agent support list and building out its community skills marketplace. The
+[34:26] community skills marketplace. The
+[34:26] community skills marketplace. The trajectory is toward a more complete
+[34:28] trajectory is toward a more complete
+[34:28] trajectory is toward a more complete co-work environment where the gap
+[34:29] co-work environment where the gap
+[34:29] co-work environment where the gap between what an agent can do and what a
+[34:31] between what an agent can do and what a
+[34:31] between what an agent can do and what a human assistant could do continues to
+[34:33] human assistant could do continues to
+[34:33] human assistant could do continues to narrow. The broader competitive
+[34:34] narrow. The broader competitive
+[34:34] narrow. The broader competitive landscape is also shifting in ways that
+[34:37] landscape is also shifting in ways that
+[34:37] landscape is also shifting in ways that make both of these tools more relevant,
+[34:39] make both of these tools more relevant,
+[34:39] make both of these tools more relevant, not less. Microsoft, Anthropic, and
+[34:42] not less. Microsoft, Anthropic, and
+[34:42] not less. Microsoft, Anthropic, and Google are all building orchestration
+[34:44] Google are all building orchestration
+[34:44] Google are all building orchestration and interface layers of their own. The
+[34:45] and interface layers of their own. The
+[34:45] and interface layers of their own. The open source response to that is exactly
+[34:47] open source response to that is exactly
+[34:47] open source response to that is exactly what paperclipip and ionui represent.
+[34:50] what paperclipip and ionui represent.
+[34:50] what paperclipip and ionui represent. Self-hosted, transparent, bring your own
+[34:52] Self-hosted, transparent, bring your own
+[34:52] Self-hosted, transparent, bring your own agents, bring your own models, no vendor
+[34:55] agents, bring your own models, no vendor
+[34:55] agents, bring your own models, no vendor lockin, no intermediary markup on API
+[34:57] lockin, no intermediary markup on API
+[34:57] lockin, no intermediary markup on API costs for the segment of developers and
+[34:59] costs for the segment of developers and
+[34:59] costs for the segment of developers and operators who care deeply about data
+[35:01] operators who care deeply about data
+[35:02] operators who care deeply about data sovereignty and infrastructure control.
+[35:03] sovereignty and infrastructure control.
+[35:03] sovereignty and infrastructure control. The open- source path is not a
+[35:05] The open- source path is not a
+[35:05] The open- source path is not a compromise. It is the preference. The
+[35:07] compromise. It is the preference. The
+[35:07] compromise. It is the preference. The most important thing to understand about
+[35:09] most important thing to understand about
+[35:09] most important thing to understand about where this is all heading is that the
+[35:10] where this is all heading is that the
+[35:10] where this is all heading is that the tools themselves are early. What
+[35:12] tools themselves are early. What
+[35:12] tools themselves are early. What paperclip and ionui look like today is a
+[35:15] paperclip and ionui look like today is a
+[35:15] paperclip and ionui look like today is a fraction of what they will look like 12
+[35:16] fraction of what they will look like 12
+[35:16] fraction of what they will look like 12 months from now. The code bases are
+[35:18] months from now. The code bases are
+[35:18] months from now. The code bases are moving fast. The communities are active
+[35:20] moving fast. The communities are active
+[35:20] moving fast. The communities are active and the problems they are solving are
+[35:22] and the problems they are solving are
+[35:22] and the problems they are solving are not going away. They're getting bigger.
+[35:24] not going away. They're getting bigger.
+[35:24] not going away. They're getting bigger. Every organization that deploys more AI
+[35:26] Every organization that deploys more AI
+[35:26] Every organization that deploys more AI agents creates more demand for the kind
+[35:28] agents creates more demand for the kind
+[35:28] agents creates more demand for the kind of coordination, governance, and unified
+[35:31] of coordination, governance, and unified
+[35:31] of coordination, governance, and unified management that both of these tools are
+[35:32] management that both of these tools are
+[35:32] management that both of these tools are building toward. After everything this
+[35:34] building toward. After everything this
+[35:34] building toward. After everything this video has covered, the verdict is not
+[35:36] video has covered, the verdict is not
+[35:36] video has covered, the verdict is not which tool is better. It is which
+[35:38] which tool is better. It is which
+[35:38] which tool is better. It is which problem you're actually holding right
+[35:40] problem you're actually holding right
+[35:40] problem you're actually holding right now. If the thing slowing you down is
+[35:41] now. If the thing slowing you down is
+[35:41] now. If the thing slowing you down is that your agents are scattered across
+[35:43] that your agents are scattered across
+[35:43] that your agents are scattered across terminals, your MCP configs are out of
+[35:45] terminals, your MCP configs are out of
+[35:45] terminals, your MCP configs are out of sync and you want one clean place to use
+[35:47] sync and you want one clean place to use
+[35:47] sync and you want one clean place to use claw code, codeex, open code, open claw
+[35:50] claw code, codeex, open code, open claw
+[35:50] claw code, codeex, open code, open claw and hermes agent side by side without
+[35:51] and hermes agent side by side without
+[35:51] and hermes agent side by side without juggling windows. ION UI is your answer.
+[35:55] juggling windows. ION UI is your answer.
+[35:55] juggling windows. ION UI is your answer. Install it, open it, and your existing
+[35:57] Install it, open it, and your existing
+[35:57] Install it, open it, and your existing agents are already there. The learning
+[35:58] agents are already there. The learning
+[35:58] agents are already there. The learning curve is minimal. The privacy story is
+[36:01] curve is minimal. The privacy story is
+[36:01] curve is minimal. The privacy story is as strong as it gets. And the team mode
+[36:03] as strong as it gets. And the team mode
+[36:03] as strong as it gets. And the team mode gives you a lightweight path in a
+[36:05] gives you a lightweight path in a
+[36:05] gives you a lightweight path in a multi-agent work without requiring you
+[36:06] multi-agent work without requiring you
+[36:06] multi-agent work without requiring you to architect an entire organization
+[36:08] to architect an entire organization
+[36:08] to architect an entire organization first. It is the fastest path from where
+[36:10] first. It is the fastest path from where
+[36:10] first. It is the fastest path from where most developers are right now to
+[36:12] most developers are right now to
+[36:12] most developers are right now to something meaningfully better. If the
+[36:14] something meaningfully better. If the
+[36:14] something meaningfully better. If the thing slowing you down is coordination,
+[36:16] thing slowing you down is coordination,
+[36:16] thing slowing you down is coordination, accountability, and scale. If you are
+[36:18] accountability, and scale. If you are
+[36:18] accountability, and scale. If you are running agents autonomously, if cost
+[36:20] running agents autonomously, if cost
+[36:20] running agents autonomously, if cost overruns are a real concern, if you need
+[36:21] overruns are a real concern, if you need
+[36:22] overruns are a real concern, if you need to know exactly what every agent did and
+[36:23] to know exactly what every agent did and
+[36:23] to know exactly what every agent did and be able to prove it, if you want agents
+[36:25] be able to prove it, if you want agents
+[36:25] be able to prove it, if you want agents working through the night on a heartbeat
+[36:26] working through the night on a heartbeat
+[36:26] working through the night on a heartbeat schedule while you sleep, Paperclip is
+[36:28] schedule while you sleep, Paperclip is
+[36:28] schedule while you sleep, Paperclip is your answer. The setup investment is
+[36:30] your answer. The setup investment is
+[36:30] your answer. The setup investment is real, but the payoff is a level of
+[36:32] real, but the payoff is a level of
+[36:32] real, but the payoff is a level of operational control over AI agents that
+[36:35] operational control over AI agents that
+[36:35] operational control over AI agents that nothing else in the open-source space
+[36:37] nothing else in the open-source space
+[36:37] nothing else in the open-source space currently matches. The or chart model,
+[36:39] currently matches. The or chart model,
+[36:39] currently matches. The or chart model, the heartbeat system, the immutable
+[36:41] the heartbeat system, the immutable
+[36:41] the heartbeat system, the immutable audit log, the per agent budget caps.
+[36:43] audit log, the per agent budget caps.
+[36:43] audit log, the per agent budget caps. These are not surface level features.
+[36:45] These are not surface level features.
+[36:45] These are not surface level features. They are a coherent answer to a genuine
+[36:47] They are a coherent answer to a genuine
+[36:47] They are a coherent answer to a genuine infrastructure problem that gets more
+[36:49] infrastructure problem that gets more
+[36:49] infrastructure problem that gets more serious as your agent count grows. The
+[36:51] serious as your agent count grows. The
+[36:51] serious as your agent count grows. The numbers behind both tools are worth
+[36:53] numbers behind both tools are worth
+[36:53] numbers behind both tools are worth grounding this in. Paperclip sits at
+[36:55] grounding this in. Paperclip sits at
+[36:55] grounding this in. Paperclip sits at over 46,000 GitHub stars as of late
+[36:58] over 46,000 GitHub stars as of late
+[36:58] over 46,000 GitHub stars as of late March 2026 with a weekly release cadence
+[37:01] March 2026 with a weekly release cadence
+[37:01] March 2026 with a weekly release cadence and a plug-in ecosystem that is just
+[37:02] and a plug-in ecosystem that is just
+[37:02] and a plug-in ecosystem that is just getting started. ClipMart is on the road
+[37:04] getting started. ClipMart is on the road
+[37:04] getting started. ClipMart is on the road map and will make the tool accessible to
+[37:06] map and will make the tool accessible to
+[37:06] map and will make the tool accessible to a much wider audience when it lands. Ion
+[37:08] a much wider audience when it lands. Ion
+[37:08] a much wider audience when it lands. Ion UI sits at over 23,000 GitHub stars with
+[37:11] UI sits at over 23,000 GitHub stars with
+[37:11] UI sits at over 23,000 GitHub stars with more than 4,400 commits and a community
+[37:14] more than 4,400 commits and a community
+[37:14] more than 4,400 commits and a community spanning Discord, Wechathat, and a
+[37:16] spanning Discord, Wechathat, and a
+[37:16] spanning Discord, Wechathat, and a growing list of international
+[37:17] growing list of international
+[37:17] growing list of international contributors. Both tools are MIT and
+[37:20] contributors. Both tools are MIT and
+[37:20] contributors. Both tools are MIT and Apache licensed respectively. Both are
+[37:22] Apache licensed respectively. Both are
+[37:22] Apache licensed respectively. Both are fully self-hosted and neither one is
+[37:24] fully self-hosted and neither one is
+[37:24] fully self-hosted and neither one is going anywhere. The framing that will
+[37:26] going anywhere. The framing that will
+[37:26] going anywhere. The framing that will stick with you long after this video is
+[37:28] stick with you long after this video is
+[37:28] stick with you long after this video is the simplest one. Ion UI is your
+[37:30] the simplest one. Ion UI is your
+[37:30] the simplest one. Ion UI is your workstation. Paperclip is your or chart.
+[37:32] workstation. Paperclip is your or chart.
+[37:32] workstation. Paperclip is your or chart. One solves the interface problem, the
+[37:34] One solves the interface problem, the
+[37:34] One solves the interface problem, the other solves the coordination problem.
+[37:36] other solves the coordination problem.
+[37:36] other solves the coordination problem. Most people need one right now. Some
+[37:38] Most people need one right now. Some
+[37:38] Most people need one right now. Some people genuinely need both. And the
+[37:39] people genuinely need both. And the
+[37:39] people genuinely need both. And the developers who understand the difference
+[37:41] developers who understand the difference
+[37:41] developers who understand the difference between those two layers are the ones
+[37:43] between those two layers are the ones
+[37:43] between those two layers are the ones who will build the most effective AI
+[37:45] who will build the most effective AI
+[37:45] who will build the most effective AI agent workflows going forward. The space
+[37:47] agent workflows going forward. The space
+[37:47] agent workflows going forward. The space is moving fast. Both of these tools will
+[37:49] is moving fast. Both of these tools will
+[37:49] is moving fast. Both of these tools will look different in 6 months. New agents
+[37:51] look different in 6 months. New agents
+[37:51] look different in 6 months. New agents will ship, new integrations will land,
+[37:54] will ship, new integrations will land,
+[37:54] will ship, new integrations will land, and the problems at both layers will
+[37:55] and the problems at both layers will
+[37:55] and the problems at both layers will keep growing alongside the agent
+[37:57] keep growing alongside the agent
+[37:57] keep growing alongside the agent ecosystem itself. The best thing you can
+[37:59] ecosystem itself. The best thing you can
+[37:59] ecosystem itself. The best thing you can do right now is understand the
+[38:00] do right now is understand the
+[38:00] do right now is understand the architecture clearly enough to make
+[38:02] architecture clearly enough to make
+[38:02] architecture clearly enough to make intentional choices about what you are
+[38:04] intentional choices about what you are
+[38:04] intentional choices about what you are building rather than reaching for
+[38:05] building rather than reaching for
+[38:05] building rather than reaching for whatever is trending without knowing
+[38:07] whatever is trending without knowing
+[38:07] whatever is trending without knowing why. If this video helped you see that
+[38:09] why. If this video helped you see that
+[38:09] why. If this video helped you see that distinction clearly, that is the goal.
+[38:11] distinction clearly, that is the goal.
+[38:11] distinction clearly, that is the goal. Hit like if it landed. Share it with
+[38:12] Hit like if it landed. Share it with
+[38:12] Hit like if it landed. Share it with someone who is drowning in agent
+[38:14] someone who is drowning in agent
+[38:14] someone who is drowning in agent terminal windows and subscribe if you
+[38:16] terminal windows and subscribe if you
+[38:16] terminal windows and subscribe if you want to stay current on where all of
+[38:17] want to stay current on where all of
+[38:17] want to stay current on where all of this is going. There's a lot more to
+[38:19] this is going. There's a lot more to
+[38:19] this is going. There's a lot more to cover in this space and this channel is
+[38:21] cover in this space and this channel is
+[38:21] cover in this space and this channel is not slowing down. Thank you so much for
+[38:23] not slowing down. Thank you so much for
+[38:23] not slowing down. Thank you so much for watching and I'll see you in the next

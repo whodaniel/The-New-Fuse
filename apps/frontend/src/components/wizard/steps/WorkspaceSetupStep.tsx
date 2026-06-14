@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useWizard } from '../WizardProvider';
+import { Radio, Label } from '../../components/ui';
 
 export const WorkspaceSetupStep: React.FC = () => {
   const { state, updateSessionData } = useWizard();
@@ -242,25 +243,21 @@ export const WorkspaceSetupStep: React.FC = () => {
               </label>
               <div className="space-y-3">
                 {['api_key', 'oauth', 'jwt', 'none'].map((type) => (
-                  <label key={type} className="flex items-center">
-                    <input
-                      type="radio"
-                      name="authType"
-                      value={type}
-                      checked={formData.authType === type}
-                      onChange={(e) => handleRadioChange('authType', e.target.value)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">
-                      {type === 'api_key'
-                        ? 'API Key'
-                        : type === 'oauth'
-                          ? 'OAuth 2.0'
-                          : type === 'jwt'
-                            ? 'JWT'
-                            : 'No Authentication'}
-                    </span>
-                  </label>
+                  <Radio
+                    key={type}
+                    value={type}
+                    checked={formData.authType === type}
+                    onCheckedChange={(value) => handleRadioChange('authType', value)}
+                    className="mr-2"
+                  >
+                    {type === 'api_key'
+                      ? 'API Key'
+                      : type === 'oauth'
+                        ? 'OAuth 2.0'
+                        : type === 'jwt'
+                          ? 'JWT'
+                          : 'No Authentication'}
+                  </Radio>
                 ))}
               </div>
             </div>
@@ -349,17 +346,15 @@ export const WorkspaceSetupStep: React.FC = () => {
                   { value: 'team', label: 'Team (You and invited members)' },
                   { value: 'public', label: 'Public (Anyone in your organization)' },
                 ].map((option) => (
-                  <label key={option.value} className="flex items-center">
-                    <input
-                      type="radio"
-                      name="visibility"
-                      value={option.value}
-                      checked={formData.visibility === option.value}
-                      onChange={(e) => handleRadioChange('visibility', e.target.value)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">{option.label}</span>
-                  </label>
+                  <Radio
+                    key={option.value}
+                    value={option.value}
+                    checked={formData.visibility === option.value}
+                    onCheckedChange={(value) => handleRadioChange('visibility', value)}
+                    className="mr-2"
+                  >
+                    {option.label}
+                  </Radio>
                 ))}
               </div>
             </div>

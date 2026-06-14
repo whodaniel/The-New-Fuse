@@ -329,7 +329,7 @@
     "health-check:full": "pnpm run validate:clean-scripts && pnpm run type-check && pnpm run test && pnpm run validate:build",
     "git:sync-check": "bash scripts/git-sync-check.sh",
     "git:status": "git status && echo '' && bash scripts/git-sync-check.sh",
-    "git:push-check": "bash -c 'UNPUSHED=$(git log @{u}.. --oneline 2>/dev/null | wc -l | tr -d \" \"); if [ \"$UNPUSHED\" -gt 0 ]; then echo \"\u26a0\ufe0f  WARNING: $UNPUSHED unpushed commits\"; git log @{u}.. --oneline; exit 1; else echo \"\u2705 All commits pushed\"; fi'",
+    "git:push-check": "bash -c 'UNPUSHED=$(git log @{u}.. --oneline 2>/dev/null | wc -l | tr -d \" \"); if [ \"$UNPUSHED\" -gt 0 ]; then echo \"⚠️  WARNING: $UNPUSHED unpushed commits\"; git log @{u}.. --oneline; exit 1; else echo \"✅ All commits pushed\"; fi'",
     "cloud_runtime:zeroclaw:check": "bash scripts/cloud_runtime/check-zeroclaw-instances.sh",
     "cloud_runtime:zeroclaw:webhook-relay": "node scripts/cloud_runtime/relay-webhook-to-zeroclaw.mjs",
     "cloud_runtime:zeroclaw:discord:setup": "bash scripts/cloud_runtime/setup-zeroclaw-discord.sh",

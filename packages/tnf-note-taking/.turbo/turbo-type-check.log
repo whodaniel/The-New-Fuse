@@ -1,0 +1,4 @@
+
+> @the-new-fuse/tnf-note-taking@1.0.0 type-check /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-note-taking
+> tsc --noEmit
+
