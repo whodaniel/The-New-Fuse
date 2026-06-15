@@ -8,28 +8,75 @@ import { createHmac } from 'crypto';
  * Implements "ID# Encoding" and cryptographic attribution for the
  * Software 3.0 Agent Federation.
  */
+
+// -----------------------------------------------------------------------------
+// Canonical Federated Base58 alphabet and encoder (Phase 9 / FOLLOWUP-2).
+//
+// These are exported at module level so callers outside the NestJS DI
+// container (the registry-bridge, the seeder, transcript processors) can
+// re-use the exact same encoding. If you change FEDERATED_BASE58_ALPHABET,
+// update every sibling mirror (e.g. TranscriptProcessorV2 FEDERATED_BASE58_ALPHABET,
+// seed-agent-registry FEDERATED_BASE58_ALPHABET) in lock-step.
+// -----------------------------------------------------------------------------
+export const FEDERATED_BASE58_ALPHABET =
+  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+export function encodeFederatedBase58(num: number): string {
+  if (!Number.isFinite(num) || num <= 0) return FEDERATED_BASE58_ALPHABET[0];
+  let remaining = Math.trunc(num);
+  let encoded = '';
+  while (remaining > 0) {
+    encoded = FEDERATED_BASE58_ALPHABET[remaining % 58] + encoded;
+    remaining = Math.floor(remaining / 58);
+  }
+  return encoded;
+}
+
 @Injectable()
 export class FederatedIdentityService {
   private readonly logger = new Logger(FederatedIdentityService.name);
-  private readonly ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'; // Base58
 
   constructor(private readonly redisService: UnifiedRedisService) {}
 
   /**
    * Encodes a sequential ID into a compact, secure ID# string.
    * Format: ID#:<encoded_id>
+   *
+   * If `agentId` already has an `id_number` registered (e.g. from the
+   * seeder or a prior assignment), returns that value unchanged instead
+   * of allocating a new sequence. This makes the round-trip to
+   * agents.id_number idempotent across process restarts.
    */
-  async generateIdNumber(agentId: string): Promise<string> {
+  async generateIdNumber(agentId: string, knownIdNumber?: string | null): Promise<string> {
+    if (knownIdNumber && /^ID#:[1-9A-HJ-NP-Za-km-z]+$/.test(knownIdNumber)) {
+      return knownIdNumber;
+    }
     const key = `tnf:identity:seq:${agentId}`;
     // Using increment to get a sequential number per agent
     const seq = await this.redisService.incr(key);
 
     // Encode using Base58 for compactness and visual distinction
-    const encoded = this.encodeBase58(seq);
+    const encoded = encodeFederatedBase58(seq);
     const idNumber = `ID#:${encoded}`;
 
     this.logger.debug(`Generated identity for ${agentId}: ${idNumber} (seq: ${seq})`);
     return idNumber;
+  }
+
+  /**
+   * Returns the next-sequence integer for an agent WITHOUT bumping the counter.
+   * Used for observability/diff, not for actual allocation. Returns null if
+   * agent has never been sequenced.
+   */
+  async peekSequence(agentId: string): Promise<number | null> {
+    try {
+      const v = await this.redisService.get(`tnf:identity:seq:${agentId}`);
+      if (v == null) return null;
+      const n = typeof v === 'number' ? v : typeof v === 'string' ? parseInt(v, 10) : NaN;
+      return Number.isFinite(n) ? n : null;
+    } catch {
+      return null;
+    }
   }
 
   /**
@@ -51,19 +98,5 @@ export class FederatedIdentityService {
       this.logger.warn(`Attribution failure for ${agentId} (${idNumber})`);
     }
     return isValid;
-  }
-
-  /**
-   * Base58 Encoding (Bitcoin style)
-   */
-  private encodeBase58(num: number): string {
-    let encoded = '';
-    let temp = num;
-    while (num > 0) {
-      const remainder = num % 58;
-      encoded = this.ALPHABET[remainder] + encoded;
-      num = Math.floor(num / 58);
-    }
-    return encoded || this.ALPHABET[0];
   }
 }

@@ -1,5 +1,5 @@
 {
-  "root": "7ffc3339ad751a771a2eb83cecc9212592d5a85d5eb1b5f5ea0123ce1033d2fc",
+  "root": "6fc8586eb6742f0e99383055a915399ffe3ad752bbe45f31e361df8743368221",
   "libraries": {
     "Library:Intelligence": {
       "hash": "574a2f1e5f043032b7f2398a84909e13e78f917ff64180affc74331ce0632d56",
@@ -3261,10 +3261,10 @@
       }
     },
     "Library:Protocols": {
-      "hash": "5439be26a0e2a4828328be57b4c7ddf9077266a91955d4f603833d7da1ff1c75",
+      "hash": "1e67ff686b79fadd9e3157414a45d32cd8445e6715655557c756c54864996327",
       "files": {
         "AGENT_STATUS_LEDGER.md": {
-          "hash": "b0463f011b2a11e8b7d4f8b03340378c92f27edc40085d2a126a9f8a258e38b0"
+          "hash": "9fced670de47eee9eccbd8a6218ca7536ffcbdf2299fdc9ce6f0089ea76e1a03"
         },
         "AGENT_TARGETED_HANDOFF_V1.md": {
           "hash": "2159d2ac8c40c68a46221c0446ffe14303a217f720e810e69e9b5d4b73f77709"
@@ -3276,7 +3276,10 @@
           "hash": "66e19f5b7b92034158325bb28ed5ff2113e27f3df22151a76a81e18e122b021d"
         },
         "CORE_SYSTEM_PROMPT_ARCHITECTURE.md": {
-          "hash": "26f37f6261d041aeacd3d04453c224c4e9abdbd81fbc52d2b68aed974291f4b7"
+          "hash": "f4501e21172e4a89179e1d2b1f696c030c026b4d89f9b3cda26724d9f0675432"
+        },
+        "DIRECTIVE_CONVERSION_LEDGER.md": {
+          "hash": "aec9684a25c5375a5a1b3eb30e594e1598d7a9dae84f797c3503dc816bdfcb35"
         },
         "EXECUTABLE_INTELLIGENCE_FRAMEWORK.md": {
           "hash": "7b05f7440a01cdc38961b37c0728f00844b9a22652e2b867c33bd84ba70df8ca"
@@ -3285,7 +3288,7 @@
           "hash": "67152444251d6cb81111222197821808ff2b7f58cc84918e3c67c91412d4d169"
         },
         "LIVING_STATE.md": {
-          "hash": "488f78746f3a215062bb5fa21a70543bdde2720f5d6fd84b4943ec93f4f78283"
+          "hash": "a0da30cd4e9c518040b7222b9d2cae2117e1dd93e412445291d6c9904092d442"
         },
         "MCP-COMPLETE-GUIDE.md": {
           "hash": "5e0afcf1d4c02dbe5f526d8355386182d6dce490fe7ba4500265fcdbeb309a79"
@@ -3342,7 +3345,7 @@
           "hash": "4bc15bae94cee9fa6dec01e2e372448055568d029e90378faa8d2dfc68366003"
         },
         "TURN_ZERO_MANDATE.md": {
-          "hash": "4dfe109218a7ca0c1feaaa3bff671f13fe59e3dfb04fa3661abef4ee895f7642"
+          "hash": "914b2ef47b8e39127d8b5c1e46667efe5e68fe1bc48f1aa83f423b990b588162"
         },
         "UTP_SPEC_v1.0.md": {
           "hash": "f79090439dfcb9574a49781aa9b35bea4808b2875453cd16677d09c84103a08e"

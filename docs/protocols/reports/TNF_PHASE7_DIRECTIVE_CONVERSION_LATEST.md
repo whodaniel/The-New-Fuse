@@ -1,6 +1,6 @@
 # TNF Phase 7 Directive Conversion
 
-- Generated: `2026-06-12T03:17:10.901505Z`
+- Generated: `2026-06-15T21:28:19.619787Z`
 - Source Queue:
   `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-action-queue.json`
 - Total Directives: `689`

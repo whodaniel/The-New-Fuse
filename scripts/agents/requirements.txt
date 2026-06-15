@@ -1,0 +1,19 @@
+# TNF Runtime Python Requirements
+#
+# This is the canonical dependency list for the TNF persistent agent runtime.
+# Install into a TNF-owned virtualenv (default: ~/.tnf/venv):
+#
+#   python3 -m venv ~/.tnf/venv
+#   ~/.tnf/venv/bin/pip install -r requirements.txt
+#
+# Or let `tnf alive` / `tnf agents live start` provision it automatically.
+#
+# Keep this file minimal — only what the TNF daemon/bridge/heartbeat scripts
+# actually need. Do NOT add Hermes-specific deps here. TNF must run
+# standalone.
+
+# Required: Redis client for tnf:synaptic_bus, tnf:master:tasks:realtime, etc.
+redis>=5.0.0
+
+# Optional: nicer CLI output
+rich>=13.0.0; python_version >= "3.8"

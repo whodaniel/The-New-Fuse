@@ -28,6 +28,15 @@ export const users = pgTable('users', {
     verificationToken: varchar('verification_token', { length: 255 }),
     verificationExpires: timestamp('verification_expires'),
     walletAddress: varchar('wallet_address', { length: 255 }).unique(),
+    // Phase 5 (audit 2026-06-14): denormalized links + per-agent qualities for
+    // hot-path queries. Source of truth remains the `agents` table joined on
+    // agents.userId; activeAgentIds is updated/refreshed on heartbeat and used
+    // for "what is this user running right now" without a join.
+    activeAgentIds: jsonb('active_agent_ids').$type().default([]).notNull(),
+    agentQualities: jsonb('agent_qualities')
+        .$type()
+        .default({})
+        .notNull(),
 });
 export const inviteCodeStatusEnum = pgEnum('InviteCodeStatus', ['ACTIVE', 'DISABLED']);
 export const registrationInviteCodes = pgTable('registration_invite_codes', {

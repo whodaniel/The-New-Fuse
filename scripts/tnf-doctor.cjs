@@ -375,7 +375,30 @@ async function main() {
   const allowLocal = process.env.TNF_ALLOW_LOCAL_DB === "1";
   const cloudRequired = process.env.TNF_REQUIRE_CLOUD_DB !== "0";
   if (!dbUrl) {
-    if (cloudRequired) {
+    if (cloudRequired && !parsed.options.skipLiveChecks) {
+      // B1: cross-check cloud API health before hard-failing on missing
+      // DATABASE_URL. A healthy cloud API lets us relax to WARN because
+      // authoritative platform state lives in the cloud regardless of
+      // local DB presence.
+      const cloudApiBase = detectCloudflareApiBaseUrl();
+      let cloudOk = false;
+      if (cloudApiBase) {
+        const primary = await checkHttp(`${cloudApiBase}/api/health`, 2500);
+        if (primary.ok) {
+          cloudOk = true;
+        } else {
+          const root = await checkHttp(`${cloudApiBase}/health`, 2500);
+          cloudOk = root.ok;
+        }
+      }
+      if (cloudOk) {
+        console.log(`- INFO DATABASE_URL not set; cloud API verified at ${cloudApiBase}`);
+        console.log("- WARN local DB unavailable but cloud-routed execution healthy (relaxed)");
+      } else {
+        hardFail = true;
+        console.log("- FAIL DATABASE_URL is not set AND cloud API unreachable");
+      }
+    } else if (cloudRequired) {
       hardFail = true;
       console.log("- FAIL DATABASE_URL is not set");
     } else {

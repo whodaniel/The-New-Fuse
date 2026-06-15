@@ -108,11 +108,82 @@ if [[ "${PORT_PREFLIGHT_ENABLED}" == "true" ]]; then
   fi
 fi
 
-if [[ "${REDIS_URL}" == *"localhost"* ]] || [[ "${REDIS_URL}" == *"127.0.0.1"* ]]; then
-  echo "[factory-boot] redis target=local (${REDIS_URL})"
-else
-  echo "[factory-boot] redis target=remote"
+if ! command -v redis-cli >/dev/null 2>&1; then
+  echo "[factory-boot] ERROR: redis-cli not found"
+  exit 1
 fi
+
+redis_url_is_local() {
+  local url="$1"
+  [[ "${url}" == *"localhost"* || "${url}" == *"127.0.0.1"* || "${url}" == *"::1"* ]]
+}
+
+redis_ping() {
+  local url="$1"
+  redis-cli -u "${url}" ping >/dev/null 2>&1
+}
+
+start_local_redis_once() {
+  if [[ "${START_LOCAL_REDIS_ON_FALLBACK}" != "true" ]]; then
+    return 1
+  fi
+  if ! command -v redis-server >/dev/null 2>&1; then
+    return 1
+  fi
+  if redis_ping "${LOCAL_REDIS_URL}"; then
+    return 0
+  fi
+  echo "[factory-boot] local Redis target set; starting redis-server --daemonize yes (port 6379)"
+  redis-server --daemonize yes --port 6379 --bind 127.0.0.1 >/dev/null 2>&1 || true
+  for _ in 1 2 3 4 5; do
+    sleep 1
+    if redis_ping "${LOCAL_REDIS_URL}"; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+if redis_ping "${REDIS_URL}"; then
+  if redis_url_is_local "${REDIS_URL}"; then
+    echo "[factory-boot] redis target=local (${REDIS_URL})"
+  else
+    echo "[factory-boot] redis target=remote"
+  fi
+else
+  echo "[factory-boot] WARNING: Redis not reachable at ${REDIS_URL}"
+  is_remote_target="true"
+  if redis_url_is_local "${REDIS_URL}"; then
+    is_remote_target="false"
+  fi
+
+  if [[ "${is_remote_target}" == "false" ]]; then
+    if start_local_redis_once; then
+      REDIS_URL="${LOCAL_REDIS_URL}"
+      echo "[factory-boot] local Redis now reachable (${REDIS_URL})"
+    elif [[ "${REDIS_FAIL_OPEN}" != "true" ]]; then
+      echo "[factory-boot] ERROR: Redis unreachable and fail-open disabled"
+      exit 1
+    fi
+  fi
+
+  if ! redis_ping "${REDIS_URL}"; then
+    if [[ "${REDIS_FAIL_OPEN}" == "true" ]]; then
+      echo "[factory-boot] attempting local Redis fallback: ${LOCAL_REDIS_URL}"
+      if start_local_redis_once; then
+        REDIS_URL="${LOCAL_REDIS_URL}"
+        echo "[factory-boot] fallback active; redis target=local (${REDIS_URL})"
+      else
+        echo "[factory-boot] ERROR: local Redis fallback failed (${LOCAL_REDIS_URL})"
+        exit 1
+      fi
+    else
+      echo "[factory-boot] ERROR: Redis unreachable and fail-open disabled"
+      exit 1
+    fi
+  fi
+fi
+printf "%s\n" "${REDIS_URL}" > "${RUNTIME_STATE_DIR}/redis-url.txt"
 
 if [[ "${AUTO_DETECT_CLOUD_RUNTIME_API}" == "true" ]] && [[ "${LEDGER_API_BASE}" == "http://localhost:3001" ]]; then
   if command -v cloud_runtime >/dev/null 2>&1; then
@@ -126,41 +197,6 @@ fi
 
 echo "[factory-boot] ledger_api_base=${LEDGER_API_BASE}"
 printf "%s\n" "${LEDGER_API_BASE}" > "${LIVE_API_CACHE_FILE}"
-
-if ! command -v redis-cli >/dev/null 2>&1; then
-  echo "[factory-boot] ERROR: redis-cli not found"
-  exit 1
-fi
-
-if ! redis-cli -u "${REDIS_URL}" ping >/dev/null 2>&1; then
-  echo "[factory-boot] WARNING: Redis not reachable at ${REDIS_URL}"
-  is_remote_target="true"
-  if [[ "${REDIS_URL}" == *"localhost"* ]] || [[ "${REDIS_URL}" == *"127.0.0.1"* ]]; then
-    is_remote_target="false"
-  fi
-
-  if [[ "${REDIS_FAIL_OPEN}" == "true" ]] && [[ "${is_remote_target}" == "true" ]]; then
-    echo "[factory-boot] attempting local Redis fallback: ${LOCAL_REDIS_URL}"
-    if ! redis-cli -u "${LOCAL_REDIS_URL}" ping >/dev/null 2>&1; then
-      if [[ "${START_LOCAL_REDIS_ON_FALLBACK}" == "true" ]] && command -v redis-server >/dev/null 2>&1; then
-        echo "[factory-boot] local Redis not responding; starting redis-server --daemonize yes"
-        redis-server --daemonize yes >/dev/null 2>&1 || true
-        sleep 1
-      fi
-    fi
-
-    if redis-cli -u "${LOCAL_REDIS_URL}" ping >/dev/null 2>&1; then
-      REDIS_URL="${LOCAL_REDIS_URL}"
-      echo "[factory-boot] fallback active; redis target=local (${REDIS_URL})"
-    else
-      echo "[factory-boot] ERROR: local Redis fallback failed (${LOCAL_REDIS_URL})"
-      exit 1
-    fi
-  else
-    echo "[factory-boot] ERROR: Redis unreachable and fail-open disabled"
-    exit 1
-  fi
-fi
 
 if curl -fsS --max-time 2 "${LEDGER_API_BASE%/}/api/health" >/dev/null 2>&1; then
   echo "[factory-boot] ledger api healthy at ${LEDGER_API_BASE%/}/api/health"

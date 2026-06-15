@@ -1,0 +1,107 @@
+{
+  "spec": "tnf/federated-id-audit/0.1",
+  "audit_id": "audit-2026-06-14-federated-id-reconciliation",
+  "created_at": "2026-06-14T00:00:00Z",
+  "operator_session": "agent:local-subdirector:session:2026-06-12T03:17:10.901505Z",
+  "scope": "reconcile-the-three-federated-id-namespaces-after-phase-8-vocabulary-alignment",
+  "verdict": "PARTIALLY REPAIRED. Three namespaces now first-class columns on agents (migration 0010). One inline-duplicate encoder eliminated. One bridge bug (AGENT://TNFCORE/) fixed. Three open follow-ups remaining.",
+  "namespaces_in_scope": {
+    "canonicalEntityId": {
+      "format": "TNF:[scope:]CATEGORY:PROVIDER:NAME:INSTANCE",
+      "validator": "normalizeCanonicalEntityId",
+      "builder": "buildCanonicalEntityId",
+      "source_of_truth": "packages/relay-core/src/contracts/identity.ts",
+      "category_enum": "packages/protocol-contracts/src/identity.ts TnfIdentityCategorySchema",
+      "phase_9_outcome": "DB column added (canonical_entity_id). Bridge now uses builder."
+    },
+    "idNumber": {
+      "format": "ID#:<Base58>",
+      "encoder_alphabet": "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz",
+      "source_of_truth": "packages/a2a-core/src/federated-identity.service.ts FederatedIdentityService",
+      "phase_9_outcome": "DB column added (id_number) with unique partial index. Seeder assigns deterministic values. TranscriptProcessorV2/V3/V4 now use shared helper from V2."
+    },
+    "mcid": {
+      "format": "tnf/mcid/0.1 envelope (UUID correlation_id, causation_id, trace_id, scope.tenant_id)",
+      "schema": "docs/protocols/schemas/tnf-master-cumulative-id.schema.json",
+      "phase_9_outcome": "Listed in agents.federation->>'mcid'. NOT YET POPULATED by master-clock at registration time (only by relay envelope on message dispatch)."
+    }
+  },
+  "open_follow_ups": [
+    {
+      "id": "FOLLOWUP-1",
+      "title": "vector_id (ID#:hashbytes) shares prefix with idNumber",
+      "details": "scripts/autonomy/generate_merkle_tree.py emits ID#:${base58.b58encode(hash[:8])} for KNOWLEDGE_TREE.json leaf vectors. These are intelligence-vector IDs, not federated reputation sequences. Three options: leave shared prefix, switch vector_id to VEC#, switch idNumber to FED#. Recommendation: leave for now; semantic distinction is preserved by content/auditability.",
+      "severity": "low",
+      "breaking_change_risk": "high"
+    },
+    {
+      "id": "FOLLOWUP-2",
+      "title": "FederatedIdentityService increments do not flow back to agents.id_number",
+      "details": "Live tnf register calls do not currently SELECT-then-UPDATE the agents row to record the assigned id_number. Bridge emits operationalHandle but not id_number. Production IDs are computed in-memory and stored in Redis only.",
+      "severity": "medium",
+      "remediation": "Add a follow-up hook in agent-registry-bridge.assignAgentId to ROUND trip id_number after first sequence allocation, gated on whether FederatedIdentityService is wired in the current process. Not blocking federation; blocking observability."
+    },
+    {
+      "id": "FOLLOWUP-3",
+      "title": "mcid bundle is not populated by master-clock on registration",
+      "details": "agents.federation->>'mcid' is nullable. The mcid is generated per-envelope at message-dispatch time. Agents that register but never dispatch never get one.",
+      "severity": "low",
+      "remediation": "Have master-clock emit a registration envelope that includes mcid { correlation_id, causation_id: null, trace_id } on each agent registration. Store on agents.federation->>'mcid'."
+    }
+  ],
+  "phase_9_fixes_applied": [
+    {
+      "fix": "INC-BRIDGE",
+      "where": "packages/relay-core/src/agent-registry-bridge.ts:62",
+      "before": "canonicalEntityId: `AGENT://TNFCORE/${AGENT_ID}`",
+      "after": "canonicalEntityId: buildCanonicalEntityId({ category: 'AGENT', provider: 'TNFCORE', name: AGENT_ID, instance: 1 })",
+      "root_cause": "string-template emit that did not match normalizeCanonicalEntityId's segment[0]==='TNF' check"
+    },
+    {
+      "fix": "INC-INLINE",
+      "where": "packages/gemini-browser-skill/src/TranscriptProcessorV2.ts:1307",
+      "before": "inline alphabet + loop",
+      "after": "generateFederatedIdNumber(video.index) helper (exported, also imported by V3 and V4)",
+      "root_cause": "had a commented-out canonical import; re-implemented locally instead"
+    },
+    {
+      "fix": "INC-MIRROR",
+      "where": "packages/database/scripts/seed-agent-registry.ts:73-83",
+      "before": "no canonicalEntityId, no idNumber, no federation populated",
+      "after": "deterministic Base58 idNumber + builder-driven canonicalEntityId + scoped federation jsonb",
+      "root_cause": "Phase 4 seeder wasn't aware of the federated identity field group"
+    }
+  ],
+  "verification_grepassed": [
+    "scripts/protocols/validate-turn-zero-authority.cjs (OK)",
+    "scripts/protocols/validate-local-runtime-boundary.cjs (OK)",
+    "pnpm --filter @the-new-fuse/database type-check (OK)",
+    "pnpm --filter @the-new-fuse/database drizzle:check (OK)",
+    "pnpm --filter @the-new-fuse/relay-core type-check (OK)",
+    "pnpm --filter @the-new-fuse/gemini-browser-skill tsc --noEmit (OK)",
+    "pnpm --filter @the-new-fuse/tnf-cli tsc --noEmit (OK)",
+    "./tnf traits list (PASS — 14 platforms + 4 discovered groups)",
+    "./tnf agents classify (PASS — 291 classified idempotently)"
+  ],
+  "files_changed": [
+    "packages/database/drizzle/0010_add_federated_ids.sql (NEW)",
+    "packages/database/src/drizzle/schema/agents.ts (canonicalEntityId + idNumber + federation)",
+    "packages/database/scripts/seed-agent-registry.ts (assign canonicalEntityId, idNumber, federation)",
+    "packages/relay-core/src/agent-registry-bridge.ts (use buildCanonicalEntityId)",
+    "packages/gemini-browser-skill/src/TranscriptProcessorV2.ts (export generateFederatedIdNumber)",
+    "packages/gemini-browser-skill/src/TranscriptProcessorV3.ts (re-use V2 helper)",
+    "packages/gemini-browser-skill/src/TranscriptProcessorV4.ts (re-use V2 helper)",
+    ".agent/ROLE_DEFINITIONS.md (Federated ID Encoding section)",
+    "docs/protocols/reports/FEDERATED_ID_ENCODING_AUDIT_2026-06-14.md (this audit)",
+    "docs/protocols/reports/FEDERATED_ID_ENCODING_AUDIT_2026-06-14.json (this audit)",
+    "docs/protocols/LIVING_STATE.md (step 39)",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json (phase_changes appended)"
+  ],
+  "do_not_break": [
+    "AGENT_REGISTER envelope payload shape (additive fields only)",
+    "Merkle root verification (additional optional fields do not affect hash)",
+    "Phase 7 directive conversion ledger",
+    "Phase 8 vocabulary alignment (no conflicts introduced)"
+  ],
+  "next_move_recommended": "Follow-up: wire FederatedIdentityService -> agents.id_number round trip (FOLLOWUP-2) and mcid on registration (FOLLOWUP-3) so the registry is the canonical home of all three namespaces, not just canonicalEntityId."
+}

@@ -1,34 +1,34 @@
 {
-  "lastChecked": "2026-06-11T18:00:28.045Z",
+  "lastChecked": "2026-06-15T23:15:41.459Z",
   "bestAvailable": {
-    "id": "gemini",
-    "name": "Google Gemini",
+    "id": "openrouter",
+    "name": "OpenRouter (Free Tier)",
     "tier": "free",
     "type": "cloud",
-    "envKey": "GEMINI_API_KEY",
-    "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
-    "defaultModel": "gemini-pro",
+    "envKey": "OPENROUTER_API_KEY",
+    "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+    "defaultModel": "openrouter/auto",
     "active": true
   },
   "allocations": {
     "orchestrator": {
-      "id": "gemini",
-      "name": "Google Gemini",
+      "id": "openrouter",
+      "name": "OpenRouter (Free Tier)",
       "tier": "free",
       "type": "cloud",
-      "envKey": "GEMINI_API_KEY",
-      "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
-      "defaultModel": "gemini-pro",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
       "active": true
     },
     "worker": {
-      "id": "groq",
-      "name": "Groq",
+      "id": "openrouter",
+      "name": "OpenRouter (Free Tier)",
       "tier": "free",
       "type": "cloud",
-      "envKey": "GROQ_API_KEY",
-      "testUrl": "https://api.groq.com/openai/v1/chat/completions",
-      "defaultModel": "llama3-8b-8192",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
       "active": true
     },
     "reviewer": {
@@ -42,37 +42,17 @@
       "active": true
     },
     "subagent": {
-      "id": "gemini",
-      "name": "Google Gemini",
+      "id": "openrouter",
+      "name": "OpenRouter (Free Tier)",
       "tier": "free",
       "type": "cloud",
-      "envKey": "GEMINI_API_KEY",
-      "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
-      "defaultModel": "gemini-pro",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
       "active": true
     }
   },
   "fallbackChain": [
-    {
-      "id": "gemini",
-      "name": "Google Gemini",
-      "tier": "free",
-      "type": "cloud",
-      "envKey": "GEMINI_API_KEY",
-      "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
-      "defaultModel": "gemini-pro",
-      "active": true
-    },
-    {
-      "id": "groq",
-      "name": "Groq",
-      "tier": "free",
-      "type": "cloud",
-      "envKey": "GROQ_API_KEY",
-      "testUrl": "https://api.groq.com/openai/v1/chat/completions",
-      "defaultModel": "llama3-8b-8192",
-      "active": true
-    },
     {
       "id": "openrouter",
       "name": "OpenRouter (Free Tier)",
@@ -101,7 +81,7 @@
       "envKey": "GEMINI_API_KEY",
       "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
       "defaultModel": "gemini-pro",
-      "active": true
+      "active": false
     },
     {
       "id": "groq",
@@ -111,7 +91,7 @@
       "envKey": "GROQ_API_KEY",
       "testUrl": "https://api.groq.com/openai/v1/chat/completions",
       "defaultModel": "llama3-8b-8192",
-      "active": true
+      "active": false
     },
     {
       "id": "openrouter",

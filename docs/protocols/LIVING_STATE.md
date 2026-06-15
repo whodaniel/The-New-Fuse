@@ -4,7 +4,7 @@
 
 **Current Directive:** Phase 7: Directive Conversion Loop. **Project ID:**
 `FORGE-003` **Session Key:**
-`agent:local-subdirector:session:2026-06-12T03:17:10.901505Z`
+`agent:local-subdirector:session:2026-06-15T21:28:19.619787Z`
 
 ---
 
@@ -75,6 +75,69 @@
     backCompatMiddleware.
 36. [✅] Execute Consensus round for refactoring: verified decomposition of
     monolithic MasterClock into 7 specialized services.
+37. [✅] Agent Classification Audit (2026-06-14): Phase 1–7 executed end-to-end.
+    Role + fulfillment + qualities split added to agents table
+    (`packages/database/drizzle/0006_add_agent_role_fulfillment.sql`), seed
+    migration `0007` plus seeder
+    `packages/database/scripts/seed-agent-registry.ts`, user-side
+    `activeAgentIds` cache (`0008_add_user_active_agents.sql`), in-memory
+    registry preserves full info payload, broker dispatch is now
+    fulfillment-aware (vendor/model/tools hints in task itinerary become a
+    tie-breaker after role+capability filters), and `./tnf agents classify`
+    ingests 291 persona `.md` files idempotently into
+    `.tnf/agent-registry-snapshot.json`. Audit doc:
+    `docs/protocols/reports/AGENT_CLASSIFICATION_AUDIT_2026-06-14.md`. Turn Zero
+    / local-runtime / onboard gates all PASS.
+38. [✅] Consistency Alignment (Phase 8): aligned Phase 1–7 vocabulary with
+    runtime canonical terms surfaced by `tnf traits list` and DACC-v1
+    ROLE*DEFINITIONS. Five-axis identity model (dacc_role, worker_action,
+    fulfillment, traits, platform) codified. Migration `0009` adds DaccRole
+    enum + traits rename, broker now reads `daccRole` first, in-memory registry
+    keeps `role`/`qualities` as deprecated aliases, `PLATFORM_TAXONOMY` is the
+    single merged source-of-truth (kit of AGENT_PLATFORM_TRAITS + bank-targets;
+    now 14 values), `tnf traits list` derives discovered*\* groups from
+    `.tnf/agent-registry-snapshot.json`, AGENT_STATUS_LEDGER gains STANDING-BY
+    rows for the six seeded agents, `.agent/ROLE_DEFINITIONS.md` carries the
+    metadata policy + vocabulary table. Audit:
+    `docs/protocols/reports/AGENT_DEFINITION_CONSISTENCY_REVIEW_2026-06-14.md`.
+    All Turn Zero / drizzle:check / type-check gates PASS.
+39. [✅] Federated ID Encoding (Phase 9): reconciled three federated ID
+    namespaces (canonicalEntityId / idNumber / mcid) as first-class columns on
+    agents via migration `0010`. Fixed `agent-registry-bridge` to emit
+    conformant `canonicalEntityId` via `buildCanonicalEntityId()` (was
+    `AGENT://TNFCORE/...` which failed `normalizeCanonicalEntityId()`). Replaced
+    inline-duplicated Base58 encoders in `TranscriptProcessorV2/V3/V4` with
+    shared `generateFederatedIdNumber()` helper aliased to the canonical
+    `FederatedIdentityService.alphabet`. Seeder now assigns deterministic
+    `id_number` and bundles them in `agents.federation`. Audit:
+    `docs/protocols/reports/FEDERATED_ID_ENCODING_AUDIT_2026-06-14.md`. All Turn
+    Zero / drizzle:check / type-check gates PASS.
+40. [✅] Federated ID follow-ups 1–3 (Phase 9 close-out): FOLLOWUP-1:
+    FederatedIdentityService alphabet + encoder promoted to module-level exports
+    (`FEDERATED_BASE58_ALPHABET` / `encodeFederatedBase58`) so callers outside
+    the NestJS DI container can re-use them. The `ID#:` prefix collision with
+    vector_id is annotated in both producers (`FederatedIdentityService` and
+    `generate_merkle_tree.py`); the federation bundle now carries a `kind`
+    discriminator and a `vector_id_prefix` field. Wire format kept stable (no
+    rename) — 645 vector_ids preserved. FOLLOWUP-2: `agent-registry-bridge`
+    round-trips `idNumber` (using a deterministic FNV-1a-bridged allocation
+    biased to 5–14k so it is distinct from seeder values 1k–9k and production
+    sequential 1+).
+    `FederatedIdentityService.generateIdNumber(agentId, knownIdNumber)` accepts
+    an existing id_number to short-circuit allocation and avoid duplicate
+    sequences on re-registration. In-memory registry carries `idNumber` and
+    `mcid` as first-class fields. `getStats()` reports `withIdNumber` and
+    `withMcid` coverage. FOLLOWUP-3: `mcid` envelope (`tnf/mcid/0.1`) is emitted
+    at agent registration. The bridge builds it with
+    `id = correlation_id = sessionId` (no upstream event yet) and
+    `causation_id = null`. Persists through `agents.federation->>'mcid'`. All
+    Turn Zero / drizzle:check / type-check (database, relay-core, a2a-core,
+    tnf-cli, gemini-browser-skill) gates PASS.
+41. [✅] TNF Persistence Hardening: local Redis is now started and persisted by
+    `factory-boot.sh`, Redis health is included in `factory-supervisor.sh`, and
+    `tnf-start-ai.cjs` provisions MCP configs with local-tolerant doctor checks
+    so OpenClaw boot survives missing local DATABASE_URL without losing client
+    wiring.
 
 ---
 
@@ -94,13 +157,10 @@
 
 ## 🕒 Last Update
 
-2026-06-12T21:40:48Z - Antigravity executed Consensus round for master-clock.ts
-decomposition, verifying successful build and type-checking of decomposed
-services. 2026-06-12T20:41:32Z - Antigravity executed Consensus round for
-refactoring, verifying successful build and type-checking after removing
-deprecated back-compat middleware. 2026-06-12T02:40:41Z - Antigravity completed
-TNF decoupling, CLI de-stubbing, frontend entry type-safety enforcement,
-Playwright E2E fix, and Phase 7 pipeline promotion.
+2026-06-15T21:28:19Z - Kilo hardened TNF persistence: factory-boot starts and
+records local Redis, factory-supervisor watches Redis health, tnf-start-ai
+provisions MCP configs with local-tolerant doctor checks, and Phase 7 batch 001
+regenerated with zero ready/claimed directives.
 
 ## 🛡️ Contract Migration Status
 

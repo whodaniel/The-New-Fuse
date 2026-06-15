@@ -1,9 +1,9 @@
 /**
  * Dynamic LLM Provider Detector
- * 
+ *
  * Inspects environment for API keys, verifies connectivity,
  * and selects the best available provider with working models.
- * 
+ *
  * Protocol: Inspect → Verify → Select
  */
 
@@ -29,14 +29,14 @@ export interface DetectionResult {
  * Based on cost, speed, and capability
  */
 const PROVIDER_PRIORITY: Record<string, number> = {
-  'nvidia': 10,
-  'groq': 9,
-  'sambanova': 8,
-  'cerebras': 7,
-  'deepseek': 6,
-  'openrouter': 5,
-  'gemini': 4,
-  'openai': 3,
+  nvidia: 10,
+  groq: 9,
+  sambanova: 8,
+  cerebras: 7,
+  deepseek: 6,
+  openrouter: 5,
+  gemini: 4,
+  openai: 3,
 };
 
 /**
@@ -44,37 +44,18 @@ const PROVIDER_PRIORITY: Record<string, number> = {
  */
 const VERIFIED_MODELS: Record<string, string[]> = {
   nvidia: [
+    'minimaxai/minimax-m3',
     'nvidia/nemotron-3-ultra-550b-a55b',
     'nvidia/z-ai/glm-5',
     'nvidia/meta/llama-3.3-70b-instruct',
   ],
-  groq: [
-    'llama-3.3-70b-versatile',
-    'llama-3.1-8b-instant',
-  ],
-  sambanova: [
-    'Meta-Llama-3.1-405B-Instruct',
-    'DeepSeek-R1-Distill-Llama-70B',
-  ],
-  cerebras: [
-    'llama-3.3-70b',
-  ],
-  deepseek: [
-    'deepseek-chat',
-    'deepseek-reasoner',
-  ],
-  openrouter: [
-    'meta-llama/llama-3.3-70b-instruct',
-    'google/gemma-2-9b-it:free',
-  ],
-  gemini: [
-    'gemini-2.5-flash',
-    'gemini-2.5-pro',
-  ],
-  openai: [
-    'gpt-4o-mini',
-    'gpt-4o',
-  ],
+  groq: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'],
+  sambanova: ['Meta-Llama-3.1-405B-Instruct', 'DeepSeek-R1-Distill-Llama-70B'],
+  cerebras: ['llama-3.3-70b'],
+  deepseek: ['deepseek-chat', 'deepseek-reasoner'],
+  openrouter: ['meta-llama/llama-3.3-70b-instruct', 'google/gemma-2-9b-it:free'],
+  gemini: ['gemini-2.5-flash', 'gemini-2.5-pro'],
+  openai: ['gpt-4o-mini', 'gpt-4o'],
 };
 
 /**
@@ -92,7 +73,11 @@ export async function detectProviders(): Promise<DetectionResult> {
     { name: 'cerebras', envKey: 'CEREBRAS_API_KEY', baseUrl: 'https://api.cerebras.ai/v1' },
     { name: 'deepseek', envKey: 'DEEPSEEK_API_KEY', baseUrl: 'https://api.deepseek.com/v1' },
     { name: 'openrouter', envKey: 'OPENROUTER_API_KEY', baseUrl: 'https://openrouter.ai/api/v1' },
-    { name: 'gemini', envKey: 'GEMINI_API_KEY', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai' },
+    {
+      name: 'gemini',
+      envKey: 'GEMINI_API_KEY',
+      baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+    },
     { name: 'openai', envKey: 'OPENAI_API_KEY', baseUrl: 'https://api.openai.com/v1' },
   ];
 
@@ -119,7 +104,7 @@ export async function detectProviders(): Promise<DetectionResult> {
 
         const response = await fetch(`${provider.baseUrl}/models`, {
           headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            Authorization: `Bearer ${apiKey}`,
           },
           signal: controller.signal,
         }).catch(() => null);
@@ -146,7 +131,7 @@ export async function detectProviders(): Promise<DetectionResult> {
 
   // SELECT: Choose best available provider
   const available = providers
-    .filter(p => p.hasKey && (p.reachable || p.name === 'nvidia')) // NVIDIA always usable if key present
+    .filter((p) => p.hasKey && (p.reachable || p.name === 'nvidia')) // NVIDIA always usable if key present
     .sort((a, b) => b.priority - a.priority);
 
   const selected = available.length > 0 ? available[0] : null;
@@ -179,7 +164,7 @@ export function getBestModel(providerName: string): string {
  */
 export function reportDetection(result: DetectionResult): void {
   console.log('=== LLM Provider Detection ===\n');
-  
+
   if (result.selected) {
     console.log(`✅ Selected: ${result.selected.name}`);
     console.log(`   Model: ${result.selected.selectedModel}`);

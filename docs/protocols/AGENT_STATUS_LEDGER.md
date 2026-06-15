@@ -16,27 +16,44 @@ overlap.
 | **Forge Agent**          | Ready for new implementation task                 | `FORGE-003` | 2026-04-30T01:15Z | ✅ Standing By |
 | **Antigravity**          | Orchestrating continuous full-auto evolution loop | `FORGE-004` | 2026-06-11T18:31Z | 🔄 Running     |
 
+| **kilo-cli** | Kilo Code CLI coding agent (multi-vendor). Seeder: tnf agents
+classify + seed-agent-registry | `INFRA-002` | 2026-06-15T05:43:38Z | ✅
+Standing By | | **opencode-cli** | opencode CLI coding agent (TUI, sessioned).
+Seeder: tnf agents classify + seed-agent-registry | `INFRA-002` |
+2026-06-15T05:43:38Z | ✅ Standing By | | **pi-coding-agent** | Pi coding agent
+(@earendil-works/pi-coding-agent). Seeder: tnf agents classify +
+seed-agent-registry | `INFRA-002` | 2026-06-15T05:43:38Z | ✅ Standing By | |
+**claude-code** | Anthropic claude-code CLI coding agent (ACP-compatible).
+Seeder: tnf agents classify + seed-agent-registry | `INFRA-002` |
+2026-06-15T05:43:38Z | ✅ Standing By | | **tnf-hermes** | TNF entry point into
+Hermes Agent (orchestration harness). Seeder: tnf agents classify +
+seed-agent-registry | `INFRA-002` | 2026-06-15T05:43:38Z | ✅ Standing By | |
+**jules** | Google Jules CLI coding agent (fixed persona, opaque observe).
+Seeder: tnf agents classify + seed-agent-registry | `INFRA-002` |
+2026-06-15T05:43:38Z | ✅ Standing By |
+
 ---
 
 ## 📝 Task History & Discarded Directives
 
-| Date       | Agent        | Action                                                                                                                                                                       | Outcome          |
-| :--------- | :----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------- |
-| 2026-06-12 | Antigravity  | Resolved production auth failure, synced Drizzle schema to Supabase, and fixed API backend errors                                                                            | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Bootstrapped infinite continuous full-auto evolution loop via tnf CLI                                                                                                        | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Fixed Playwright E2E version conflict and decoupled TNF CLI services from legacy .hermes to ~/.tnf including daemon paths and TS method alignments.                          | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Removed @ts-nocheck from main.tsx and App.tsx in Frontend, resolving 0 type errors via strict verification.                                                                  | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Triaged Phase 7 pipeline and promoted 14 actionable directives to ready state.                                                                                               | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Audited and bulk blocked 665 irrelevant V2 YouTube-extracted AI5 directives in Phase 7 loop                                                                                  | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Auto-dispatched 600 eligible AI5 directives to Swarm (bypassed strict relevance gate for V2)                                                                                 | ✅ COMPLETED     |
-| 2026-06-09 | Orchestrator | Published SESSION_HANDOFF_LATEST (7be3faa3-c136-498c-89a7-89b78ef7e4b7)                                                                                                      | ✅ HANDOFF_READY |
-| 2026-06-09 | Antigravity  | Frontend UI Consolidation: Merged fragmented dashboards and chat interfaces into Unified Communication Canvas and Command Center (Hermes-derived) without functionality loss | ✅ COMPLETED     |
-| 2026-06-09 | Antigravity  | Phase 6 Initiation: Integrated Rust Envelope validator into Relay bridge, stress-tested protocol contracts (>9500 env/s), generated AI5 KPI report                           | ✅ COMPLETED     |
-| 2026-06-03 | Codex        | TNF boot resilience repair: health-aware port preflight, wrapper liveness checks, bounded WhatsApp verifier, and portable Turn Zero prompt verification                      | ✅ COMPLETED     |
-| 2026-06-03 | Antigravity  | Skill Management Context Optimization (Active/Inactive Vaults implementation for Codex and TNF)                                                                              | ✅ COMPLETED     |
-| 2026-05-23 | Orchestrator | AI5 Ingestion Pipeline Optimization (V2 Extractor & Batch Reprocessing)                                                                                                      | ✅ COMPLETED     |
-| 2026-05-19 | Orchestrator | Published SESSION_HANDOFF_LATEST and updated Living State                                                                                                                    | ✅ COMPLETED     |
-| 2026-05-17 | Orchestrator | Published SESSION_HANDOFF_LATEST (0e3baf56-6336-4c3f-bd2e-b560f0c0a8a3)                                                                                                      | ✅ HANDOFF_READY |
+| Date       | Agent        | Action                                                                                                                                                                                        | Outcome          |
+| :--------- | :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------- |
+| 2026-06-15 | Kilo         | Hardened TNF persistence: factory-boot now starts and records local Redis, factory-supervisor watches Redis health, and tnf-start-ai provisions MCP configs with local-tolerant doctor checks | ✅ COMPLETED     |
+| 2026-06-12 | Antigravity  | Resolved production auth failure, synced Drizzle schema to Supabase, and fixed API backend errors                                                                                             | ✅ COMPLETED     |
+| 2026-06-11 | Antigravity  | Bootstrapped infinite continuous full-auto evolution loop via tnf CLI                                                                                                                         | ✅ COMPLETED     |
+| 2026-06-11 | Antigravity  | Fixed Playwright E2E version conflict and decoupled TNF CLI services from legacy .hermes to ~/.tnf including daemon paths and TS method alignments.                                           | ✅ COMPLETED     |
+| 2026-06-11 | Antigravity  | Removed @ts-nocheck from main.tsx and App.tsx in Frontend, resolving 0 type errors via strict verification.                                                                                   | ✅ COMPLETED     |
+| 2026-06-11 | Antigravity  | Triaged Phase 7 pipeline and promoted 14 actionable directives to ready state.                                                                                                                | ✅ COMPLETED     |
+| 2026-06-11 | Antigravity  | Audited and bulk blocked 665 irrelevant V2 YouTube-extracted AI5 directives in Phase 7 loop                                                                                                   | ✅ COMPLETED     |
+| 2026-06-11 | Antigravity  | Auto-dispatched 600 eligible AI5 directives to Swarm (bypassed strict relevance gate for V2)                                                                                                  | ✅ COMPLETED     |
+| 2026-06-09 | Orchestrator | Published SESSION_HANDOFF_LATEST (7be3faa3-c136-498c-89a7-89b78ef7e4b7)                                                                                                                       | ✅ HANDOFF_READY |
+| 2026-06-09 | Antigravity  | Frontend UI Consolidation: Merged fragmented dashboards and chat interfaces into Unified Communication Canvas and Command Center (Hermes-derived) without functionality loss                  | ✅ COMPLETED     |
+| 2026-06-09 | Antigravity  | Phase 6 Initiation: Integrated Rust Envelope validator into Relay bridge, stress-tested protocol contracts (>9500 env/s), generated AI5 KPI report                                            | ✅ COMPLETED     |
+| 2026-06-03 | Codex        | TNF boot resilience repair: health-aware port preflight, wrapper liveness checks, bounded WhatsApp verifier, and portable Turn Zero prompt verification                                       | ✅ COMPLETED     |
+| 2026-06-03 | Antigravity  | Skill Management Context Optimization (Active/Inactive Vaults implementation for Codex and TNF)                                                                                               | ✅ COMPLETED     |
+| 2026-05-23 | Orchestrator | AI5 Ingestion Pipeline Optimization (V2 Extractor & Batch Reprocessing)                                                                                                                       | ✅ COMPLETED     |
+| 2026-05-19 | Orchestrator | Published SESSION_HANDOFF_LATEST and updated Living State                                                                                                                                     | ✅ COMPLETED     |
+| 2026-05-17 | Orchestrator | Published SESSION_HANDOFF_LATEST (0e3baf56-6336-4c3f-bd2e-b560f0c0a8a3)                                                                                                                       | ✅ HANDOFF_READY |
 
 | 2026-05-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (5cf28663-200c-4acb-a72b-79120d3aa610) | ✅ HANDOFF_READY | | 2026-05-17 |

@@ -4,6 +4,31 @@ import os
 import re
 import base58
 
+# -----------------------------------------------------------------------------
+# Phase 9 FOLLOWUP-1 (audit 2026-06-14): prefix collision policy.
+#
+# The `ID#:` prefix is currently shared between:
+#   - Federated reputation IDs (`idNumber`, sequential int -> Base58, see
+#     packages/a2a-core/src/federated-identity.service.ts).
+#   - Intelligence vector IDs (`vector_id`, hash bytes -> Base58, see below).
+# Operators reading logs must distinguish these. We DO NOT rename the wire
+# format at this time because:
+#   (a) KNOWLEDGE_TREE.json contains 645 existing vector_ids with the
+#       `ID#:` prefix; a rename requires a tree rebuild + downstream
+#       synchronization (wiki-inbox/*.json, vector_id consumers).
+#   (b) ai-assets search backends and existing consumers key off the prefix
+#       in locate/join style.
+#
+# The reconciliation path, on the next knowledge-tree rebuild, is to switch
+# the vector_id prefix to `VEC#:` while keeping `ID#:` for federated IDs.
+# Future-prefix variable below documents the convention.
+# Tracked as a deliberate decision; see
+# docs/protocols/reports/FEDERATED_ID_ENCODING_AUDIT_2026-06-14.md (FOLLOWUP-1).
+# -----------------------------------------------------------------------------
+VECTOR_ID_LEGACY_PREFIX = 'ID#:'  # current wire format (kept for backward compat)
+FEDERATED_ID_PREFIX = 'ID#:'       # canonical FederatedIdentityService output
+VECTOR_ID_TARGET_PREFIX = 'VEC#:'  # planned migration target on tree rebuild
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..", "..")))
 WORKSPACE_ROOT = os.path.abspath(os.getenv("TNF_WORKSPACE_DIR", os.path.join(PROJECT_ROOT, "..")))
@@ -18,11 +43,12 @@ def get_hash(text):
 
 def generate_id(index):
     # Protocol: ID#:<Base58 encoded sequence>
-    # We'll hash the index with a project salt for uniqueness
+    # We'll hash the index with a project salt for uniqueness.
+    # Prefix follows VECTOR_ID_LEGACY_PREFIX (Phase 9 FOLLOWUP-1).
     salt = "tnf-intelligence-salt-2026"
     raw_hash = hashlib.sha256(f"{salt}-{index}".encode()).digest()
-    # Use first 8 bytes for a reasonably short but unique sequence
-    return f"ID#:{base58.b58encode(raw_hash[:8]).decode()}"
+    encoded = base58.b58encode(raw_hash[:8]).decode()
+    return f"{VECTOR_ID_LEGACY_PREFIX}{encoded}"
 
 def build_intelligence_branch():
     if not os.path.exists(KB_PATH):

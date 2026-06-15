@@ -21,18 +21,18 @@ export declare class DrizzleConfigurationRepository {
     updateConfig(key: string, value: string, updatedBy?: string): Promise<{
         description: string | null;
         updatedAt: Date;
-        key: string;
-        value: string;
         category: string;
+        value: string;
+        key: string;
         sensitive: boolean;
         updatedBy: string | null;
     }>;
     createConfig(data: typeof systemConfigurations.$inferInsert): Promise<{
         description: string | null;
         updatedAt: Date;
-        key: string;
-        value: string;
         category: string;
+        value: string;
+        key: string;
         sensitive: boolean;
         updatedBy: string | null;
     }>;

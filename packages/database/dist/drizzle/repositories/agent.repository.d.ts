@@ -98,8 +98,8 @@ export declare class DrizzleAgentRepository {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        metadata: unknown;
         agentId: string;
+        metadata: unknown;
         encryptedAuthToken: string;
         registrationData: unknown;
         verificationStatus: string;
@@ -182,11 +182,11 @@ export declare class DrizzleAgentRepository {
         eventData?: any;
     }): Promise<{
         id: string;
+        timestamp: Date;
         registrationId: string;
         eventType: string;
         message: string;
         eventData: unknown;
-        timestamp: Date;
     }>;
     /**
      * Create directory entry
@@ -207,11 +207,11 @@ export declare class DrizzleAgentRepository {
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
-        tags: string[];
-        isPublic: boolean;
         agentId: string;
         displayName: string;
         category: string;
+        tags: string[];
+        isPublic: boolean;
         isVerified: boolean;
         featured: boolean;
         rating: number;
@@ -226,17 +226,17 @@ export declare class DrizzleAgentRepository {
         agent: {
             id: string;
             name: string;
-            description: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
+            type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | "SCHEDULER" | "GATEWAY" | "CLI_CODER" | "CLI_DEBUGGER" | "CLI_DEVOPS" | "CLI_DATABASE" | "CLI_GIT" | "CLI_SHELL" | "CLI_KILO" | "CLI_OPENCODE" | "CLI_PI" | "API_CLAUDE_CODE" | "IDE_VSCODE" | "IDE_CURSOR" | "IDE_WINDSURF" | "IDE_JETBRAINS" | "IDE_NEOVIM" | "IDE_EMACS" | "BROWSER_GEMINI" | "BROWSER_CLAUDE" | "BROWSER_CHATGPT" | "BROWSER_COPILOT" | "BROWSER_PERPLEXITY" | "BROWSER_PHIND" | "GITHUB_JULES" | "GITHUB_COPILOT" | "GITHUB_ACTIONS" | "GITHUB_CODESPACES" | "CODE_GENERATOR" | "CODE_REVIEWER" | "CODE_REFACTORER" | "CODE_DOCUMENTER" | "CODE_TESTER" | "CODE_ARCHITECT" | "CODE_OPTIMIZER" | "CODE_SECURITY" | "CODE_MIGRATOR" | "CODE_TRANSLATOR" | "DATA_ANALYST" | "DATA_ENGINEER" | "DATA_SCIENTIST" | "DATA_VISUALIZER" | "DATA_CLEANER" | "DATA_VALIDATOR" | "INFRA_DEVOPS" | "INFRA_CLOUD" | "INFRA_KUBERNETES" | "INFRA_DOCKER" | "INFRA_TERRAFORM" | "INFRA_MONITORING" | "DOC_WRITER" | "DOC_API" | "DOC_README" | "DOC_CHANGELOG" | "DOC_TUTORIAL" | "TEST_UNIT" | "TEST_INTEGRATION" | "TEST_E2E" | "TEST_PERFORMANCE" | "TEST_SECURITY" | "TEST_ACCESSIBILITY" | "AI_TRAINER" | "AI_EVALUATOR" | "AI_PROMPT_ENGINEER" | "AI_RAG" | "AI_EMBEDDINGS" | "AI_FINE_TUNER" | "COMM_TRANSLATOR" | "COMM_SUMMARIZER" | "COMM_WRITER" | "COMM_EMAIL" | "COMM_SLACK" | "COMM_DISCORD" | "RESEARCH_WEB" | "RESEARCH_ACADEMIC" | "RESEARCH_MARKET" | "RESEARCH_COMPETITOR" | "DOMAIN_LEGAL" | "DOMAIN_FINANCE" | "DOMAIN_HEALTHCARE" | "DOMAIN_EDUCATION" | "DOMAIN_ECOMMERCE" | "DOMAIN_GAMING" | "TNF_CORE" | "TNF_ONBOARDING" | "TNF_COORDINATOR" | "TNF_HANDOFF" | "TNF_HEARTBEAT" | "TNF_CLEANUP";
             status: "ACTIVE" | "INACTIVE" | "IDLE" | "BUSY" | "ERROR" | "OFFLINE" | "INITIALIZING" | "READY" | "TERMINATED";
-            userId: string;
-            type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | "SCHEDULER" | "GATEWAY" | "CLI_CODER" | "CLI_DEBUGGER" | "CLI_DEVOPS" | "CLI_DATABASE" | "CLI_GIT" | "CLI_SHELL" | "IDE_VSCODE" | "IDE_CURSOR" | "IDE_WINDSURF" | "IDE_JETBRAINS" | "IDE_NEOVIM" | "IDE_EMACS" | "BROWSER_GEMINI" | "BROWSER_CLAUDE" | "BROWSER_CHATGPT" | "BROWSER_COPILOT" | "BROWSER_PERPLEXITY" | "BROWSER_PHIND" | "GITHUB_JULES" | "GITHUB_COPILOT" | "GITHUB_ACTIONS" | "GITHUB_CODESPACES" | "CODE_GENERATOR" | "CODE_REVIEWER" | "CODE_REFACTORER" | "CODE_DOCUMENTER" | "CODE_TESTER" | "CODE_ARCHITECT" | "CODE_OPTIMIZER" | "CODE_SECURITY" | "CODE_MIGRATOR" | "CODE_TRANSLATOR" | "DATA_ANALYST" | "DATA_ENGINEER" | "DATA_SCIENTIST" | "DATA_VISUALIZER" | "DATA_CLEANER" | "DATA_VALIDATOR" | "INFRA_DEVOPS" | "INFRA_CLOUD" | "INFRA_KUBERNETES" | "INFRA_DOCKER" | "INFRA_TERRAFORM" | "INFRA_MONITORING" | "DOC_WRITER" | "DOC_API" | "DOC_README" | "DOC_CHANGELOG" | "DOC_TUTORIAL" | "TEST_UNIT" | "TEST_INTEGRATION" | "TEST_E2E" | "TEST_PERFORMANCE" | "TEST_SECURITY" | "TEST_ACCESSIBILITY" | "AI_TRAINER" | "AI_EVALUATOR" | "AI_PROMPT_ENGINEER" | "AI_RAG" | "AI_EMBEDDINGS" | "AI_FINE_TUNER" | "COMM_TRANSLATOR" | "COMM_SUMMARIZER" | "COMM_WRITER" | "COMM_EMAIL" | "COMM_SLACK" | "COMM_DISCORD" | "RESEARCH_WEB" | "RESEARCH_ACADEMIC" | "RESEARCH_MARKET" | "RESEARCH_COMPETITOR" | "DOMAIN_LEGAL" | "DOMAIN_FINANCE" | "DOMAIN_HEALTHCARE" | "DOMAIN_EDUCATION" | "DOMAIN_ECOMMERCE" | "DOMAIN_GAMING" | "TNF_CORE" | "TNF_ONBOARDING" | "TNF_COORDINATOR" | "TNF_HANDOFF" | "TNF_HEARTBEAT" | "TNF_CLEANUP";
+            description: string | null;
             systemPrompt: string | null;
             config: unknown;
             capabilities: string[];
             provider: string;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            userId: string;
             profile: {
                 about?: string;
                 personality?: string;
@@ -247,6 +247,38 @@ export declare class DrizzleAgentRepository {
                 version?: string;
                 lastUpdated?: string;
             } | null;
+            workerAction: "conversational" | "assistant" | "analysis" | "code_generation" | "code_review" | "code_refactor" | "code_test" | "code_debug" | "code_architect" | "code_optimizer" | "code_security" | "code_migration" | "code_documentation" | "orchestrator" | "broker" | "router" | "monitor" | "validator" | "scheduler" | "gateway" | "director" | "coordinator" | "handoff" | "cleanup" | "workflow" | "task" | "cli_coder" | "cli_debugger" | "cli_devops" | "cli_database" | "cli_git" | "cli_shell" | "cli_research" | "cli_qa" | "research_web" | "research_academic" | "research_market" | "data_analyst" | "data_engineer" | "data_scientist" | "infra_devops" | "infra_cloud" | "infra_kubernetes" | "infra_docker" | "infra_terraform" | "infra_monitoring" | "comm_translator" | "comm_summarizer" | "comm_writer" | "comm_email" | "comm_slack" | "comm_discord" | "tnf_core" | "tnf_onboarding" | "tnf_heartbeat" | "basic" | "unknown" | null;
+            daccRole: "orchestrator" | "broker" | "director" | "worker" | "participant";
+            canonicalEntityId: string | null;
+            idNumber: string | null;
+            federation: {
+                kind?: "agent" | "vector" | "session" | "unknown";
+                canonicalEntityId: string | null;
+                idNumber: string | null;
+                mcid: string | null;
+                scopes: string[];
+                vector_id_prefix?: "ID#" | "VEC#";
+            };
+            fulfillment: {
+                vendor?: string;
+                model?: string;
+                transport?: "stdio" | "http" | "websocket" | "browser-extension" | "ide" | "cli" | "unknown";
+                protocol_version?: string;
+                prompt_doc_uri?: string;
+                tools?: string[];
+                endpoint?: string;
+                raw?: Record<string, unknown>;
+            };
+            traits: {
+                observability?: "native" | "mirrored" | "opaque";
+                subAgent_capable?: boolean;
+                orchestrates_agents?: boolean;
+                persona_source?: "self" | "tnf" | "platform" | "fixed";
+                autonomy_level?: "supervised" | "semiautonomous" | "autonomous";
+                description?: string;
+                raw?: Record<string, unknown>;
+            };
+            fulfillmentUpdatedAt: Date | null;
         } | null;
         capabilities: {
             id: string;

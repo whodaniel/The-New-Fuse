@@ -1,3 +1,5 @@
+export declare const agentRoleEnum: import("drizzle-orm/pg-core").PgEnum<["conversational", "assistant", "analysis", "code_generation", "code_review", "code_refactor", "code_test", "code_debug", "code_architect", "code_optimizer", "code_security", "code_migration", "code_documentation", "orchestrator", "broker", "router", "monitor", "validator", "scheduler", "gateway", "director", "coordinator", "handoff", "cleanup", "workflow", "task", "cli_coder", "cli_debugger", "cli_devops", "cli_database", "cli_git", "cli_shell", "cli_research", "cli_qa", "research_web", "research_academic", "research_market", "data_analyst", "data_engineer", "data_scientist", "infra_devops", "infra_cloud", "infra_kubernetes", "infra_docker", "infra_terraform", "infra_monitoring", "comm_translator", "comm_summarizer", "comm_writer", "comm_email", "comm_slack", "comm_discord", "tnf_core", "tnf_onboarding", "tnf_heartbeat", "basic", "unknown"]>;
+export declare const daccRoleEnum: import("drizzle-orm/pg-core").PgEnum<["director", "orchestrator", "broker", "worker", "participant"]>;
 export declare const agents: import("drizzle-orm/pg-core").PgTableWithColumns<{
     name: "agents";
     schema: undefined;
@@ -43,14 +45,14 @@ export declare const agents: import("drizzle-orm/pg-core").PgTableWithColumns<{
             tableName: "agents";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | "SCHEDULER" | "GATEWAY" | "CLI_CODER" | "CLI_DEBUGGER" | "CLI_DEVOPS" | "CLI_DATABASE" | "CLI_GIT" | "CLI_SHELL" | "IDE_VSCODE" | "IDE_CURSOR" | "IDE_WINDSURF" | "IDE_JETBRAINS" | "IDE_NEOVIM" | "IDE_EMACS" | "BROWSER_GEMINI" | "BROWSER_CLAUDE" | "BROWSER_CHATGPT" | "BROWSER_COPILOT" | "BROWSER_PERPLEXITY" | "BROWSER_PHIND" | "GITHUB_JULES" | "GITHUB_COPILOT" | "GITHUB_ACTIONS" | "GITHUB_CODESPACES" | "CODE_GENERATOR" | "CODE_REVIEWER" | "CODE_REFACTORER" | "CODE_DOCUMENTER" | "CODE_TESTER" | "CODE_ARCHITECT" | "CODE_OPTIMIZER" | "CODE_SECURITY" | "CODE_MIGRATOR" | "CODE_TRANSLATOR" | "DATA_ANALYST" | "DATA_ENGINEER" | "DATA_SCIENTIST" | "DATA_VISUALIZER" | "DATA_CLEANER" | "DATA_VALIDATOR" | "INFRA_DEVOPS" | "INFRA_CLOUD" | "INFRA_KUBERNETES" | "INFRA_DOCKER" | "INFRA_TERRAFORM" | "INFRA_MONITORING" | "DOC_WRITER" | "DOC_API" | "DOC_README" | "DOC_CHANGELOG" | "DOC_TUTORIAL" | "TEST_UNIT" | "TEST_INTEGRATION" | "TEST_E2E" | "TEST_PERFORMANCE" | "TEST_SECURITY" | "TEST_ACCESSIBILITY" | "AI_TRAINER" | "AI_EVALUATOR" | "AI_PROMPT_ENGINEER" | "AI_RAG" | "AI_EMBEDDINGS" | "AI_FINE_TUNER" | "COMM_TRANSLATOR" | "COMM_SUMMARIZER" | "COMM_WRITER" | "COMM_EMAIL" | "COMM_SLACK" | "COMM_DISCORD" | "RESEARCH_WEB" | "RESEARCH_ACADEMIC" | "RESEARCH_MARKET" | "RESEARCH_COMPETITOR" | "DOMAIN_LEGAL" | "DOMAIN_FINANCE" | "DOMAIN_HEALTHCARE" | "DOMAIN_EDUCATION" | "DOMAIN_ECOMMERCE" | "DOMAIN_GAMING" | "TNF_CORE" | "TNF_ONBOARDING" | "TNF_COORDINATOR" | "TNF_HANDOFF" | "TNF_HEARTBEAT" | "TNF_CLEANUP";
+            data: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | "SCHEDULER" | "GATEWAY" | "CLI_CODER" | "CLI_DEBUGGER" | "CLI_DEVOPS" | "CLI_DATABASE" | "CLI_GIT" | "CLI_SHELL" | "CLI_KILO" | "CLI_OPENCODE" | "CLI_PI" | "API_CLAUDE_CODE" | "IDE_VSCODE" | "IDE_CURSOR" | "IDE_WINDSURF" | "IDE_JETBRAINS" | "IDE_NEOVIM" | "IDE_EMACS" | "BROWSER_GEMINI" | "BROWSER_CLAUDE" | "BROWSER_CHATGPT" | "BROWSER_COPILOT" | "BROWSER_PERPLEXITY" | "BROWSER_PHIND" | "GITHUB_JULES" | "GITHUB_COPILOT" | "GITHUB_ACTIONS" | "GITHUB_CODESPACES" | "CODE_GENERATOR" | "CODE_REVIEWER" | "CODE_REFACTORER" | "CODE_DOCUMENTER" | "CODE_TESTER" | "CODE_ARCHITECT" | "CODE_OPTIMIZER" | "CODE_SECURITY" | "CODE_MIGRATOR" | "CODE_TRANSLATOR" | "DATA_ANALYST" | "DATA_ENGINEER" | "DATA_SCIENTIST" | "DATA_VISUALIZER" | "DATA_CLEANER" | "DATA_VALIDATOR" | "INFRA_DEVOPS" | "INFRA_CLOUD" | "INFRA_KUBERNETES" | "INFRA_DOCKER" | "INFRA_TERRAFORM" | "INFRA_MONITORING" | "DOC_WRITER" | "DOC_API" | "DOC_README" | "DOC_CHANGELOG" | "DOC_TUTORIAL" | "TEST_UNIT" | "TEST_INTEGRATION" | "TEST_E2E" | "TEST_PERFORMANCE" | "TEST_SECURITY" | "TEST_ACCESSIBILITY" | "AI_TRAINER" | "AI_EVALUATOR" | "AI_PROMPT_ENGINEER" | "AI_RAG" | "AI_EMBEDDINGS" | "AI_FINE_TUNER" | "COMM_TRANSLATOR" | "COMM_SUMMARIZER" | "COMM_WRITER" | "COMM_EMAIL" | "COMM_SLACK" | "COMM_DISCORD" | "RESEARCH_WEB" | "RESEARCH_ACADEMIC" | "RESEARCH_MARKET" | "RESEARCH_COMPETITOR" | "DOMAIN_LEGAL" | "DOMAIN_FINANCE" | "DOMAIN_HEALTHCARE" | "DOMAIN_EDUCATION" | "DOMAIN_ECOMMERCE" | "DOMAIN_GAMING" | "TNF_CORE" | "TNF_ONBOARDING" | "TNF_COORDINATOR" | "TNF_HANDOFF" | "TNF_HEARTBEAT" | "TNF_CLEANUP";
             driverParam: string;
             notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
-            enumValues: ["BASIC", "CHAT", "WORKFLOW", "TASK", "ASSISTANT", "ANALYSIS", "CONVERSATIONAL", "IDE_EXTENSION", "API", "ORCHESTRATOR", "BROKER", "MONITOR", "VALIDATOR", "ROUTER", "SCHEDULER", "GATEWAY", "CLI_CODER", "CLI_DEBUGGER", "CLI_DEVOPS", "CLI_DATABASE", "CLI_GIT", "CLI_SHELL", "IDE_VSCODE", "IDE_CURSOR", "IDE_WINDSURF", "IDE_JETBRAINS", "IDE_NEOVIM", "IDE_EMACS", "BROWSER_GEMINI", "BROWSER_CLAUDE", "BROWSER_CHATGPT", "BROWSER_COPILOT", "BROWSER_PERPLEXITY", "BROWSER_PHIND", "GITHUB_JULES", "GITHUB_COPILOT", "GITHUB_ACTIONS", "GITHUB_CODESPACES", "CODE_GENERATOR", "CODE_REVIEWER", "CODE_REFACTORER", "CODE_DOCUMENTER", "CODE_TESTER", "CODE_ARCHITECT", "CODE_OPTIMIZER", "CODE_SECURITY", "CODE_MIGRATOR", "CODE_TRANSLATOR", "DATA_ANALYST", "DATA_ENGINEER", "DATA_SCIENTIST", "DATA_VISUALIZER", "DATA_CLEANER", "DATA_VALIDATOR", "INFRA_DEVOPS", "INFRA_CLOUD", "INFRA_KUBERNETES", "INFRA_DOCKER", "INFRA_TERRAFORM", "INFRA_MONITORING", "DOC_WRITER", "DOC_API", "DOC_README", "DOC_CHANGELOG", "DOC_TUTORIAL", "TEST_UNIT", "TEST_INTEGRATION", "TEST_E2E", "TEST_PERFORMANCE", "TEST_SECURITY", "TEST_ACCESSIBILITY", "AI_TRAINER", "AI_EVALUATOR", "AI_PROMPT_ENGINEER", "AI_RAG", "AI_EMBEDDINGS", "AI_FINE_TUNER", "COMM_TRANSLATOR", "COMM_SUMMARIZER", "COMM_WRITER", "COMM_EMAIL", "COMM_SLACK", "COMM_DISCORD", "RESEARCH_WEB", "RESEARCH_ACADEMIC", "RESEARCH_MARKET", "RESEARCH_COMPETITOR", "DOMAIN_LEGAL", "DOMAIN_FINANCE", "DOMAIN_HEALTHCARE", "DOMAIN_EDUCATION", "DOMAIN_ECOMMERCE", "DOMAIN_GAMING", "TNF_CORE", "TNF_ONBOARDING", "TNF_COORDINATOR", "TNF_HANDOFF", "TNF_HEARTBEAT", "TNF_CLEANUP"];
+            enumValues: ["BASIC", "CHAT", "WORKFLOW", "TASK", "ASSISTANT", "ANALYSIS", "CONVERSATIONAL", "IDE_EXTENSION", "API", "ORCHESTRATOR", "BROKER", "MONITOR", "VALIDATOR", "ROUTER", "SCHEDULER", "GATEWAY", "CLI_CODER", "CLI_DEBUGGER", "CLI_DEVOPS", "CLI_DATABASE", "CLI_GIT", "CLI_SHELL", "CLI_KILO", "CLI_OPENCODE", "CLI_PI", "API_CLAUDE_CODE", "IDE_VSCODE", "IDE_CURSOR", "IDE_WINDSURF", "IDE_JETBRAINS", "IDE_NEOVIM", "IDE_EMACS", "BROWSER_GEMINI", "BROWSER_CLAUDE", "BROWSER_CHATGPT", "BROWSER_COPILOT", "BROWSER_PERPLEXITY", "BROWSER_PHIND", "GITHUB_JULES", "GITHUB_COPILOT", "GITHUB_ACTIONS", "GITHUB_CODESPACES", "CODE_GENERATOR", "CODE_REVIEWER", "CODE_REFACTORER", "CODE_DOCUMENTER", "CODE_TESTER", "CODE_ARCHITECT", "CODE_OPTIMIZER", "CODE_SECURITY", "CODE_MIGRATOR", "CODE_TRANSLATOR", "DATA_ANALYST", "DATA_ENGINEER", "DATA_SCIENTIST", "DATA_VISUALIZER", "DATA_CLEANER", "DATA_VALIDATOR", "INFRA_DEVOPS", "INFRA_CLOUD", "INFRA_KUBERNETES", "INFRA_DOCKER", "INFRA_TERRAFORM", "INFRA_MONITORING", "DOC_WRITER", "DOC_API", "DOC_README", "DOC_CHANGELOG", "DOC_TUTORIAL", "TEST_UNIT", "TEST_INTEGRATION", "TEST_E2E", "TEST_PERFORMANCE", "TEST_SECURITY", "TEST_ACCESSIBILITY", "AI_TRAINER", "AI_EVALUATOR", "AI_PROMPT_ENGINEER", "AI_RAG", "AI_EMBEDDINGS", "AI_FINE_TUNER", "COMM_TRANSLATOR", "COMM_SUMMARIZER", "COMM_WRITER", "COMM_EMAIL", "COMM_SLACK", "COMM_DISCORD", "RESEARCH_WEB", "RESEARCH_ACADEMIC", "RESEARCH_MARKET", "RESEARCH_COMPETITOR", "DOMAIN_LEGAL", "DOMAIN_FINANCE", "DOMAIN_HEALTHCARE", "DOMAIN_EDUCATION", "DOMAIN_ECOMMERCE", "DOMAIN_GAMING", "TNF_CORE", "TNF_ONBOARDING", "TNF_COORDINATOR", "TNF_HANDOFF", "TNF_HEARTBEAT", "TNF_CLEANUP"];
             baseColumn: never;
             identity: undefined;
             generated: undefined;
@@ -215,6 +217,200 @@ export declare const agents: import("drizzle-orm/pg-core").PgTableWithColumns<{
                 lastUpdated?: string;
             };
         }>;
+        workerAction: import("drizzle-orm/pg-core").PgColumn<{
+            name: "role";
+            tableName: "agents";
+            dataType: "string";
+            columnType: "PgEnumColumn";
+            data: "conversational" | "assistant" | "analysis" | "code_generation" | "code_review" | "code_refactor" | "code_test" | "code_debug" | "code_architect" | "code_optimizer" | "code_security" | "code_migration" | "code_documentation" | "orchestrator" | "broker" | "router" | "monitor" | "validator" | "scheduler" | "gateway" | "director" | "coordinator" | "handoff" | "cleanup" | "workflow" | "task" | "cli_coder" | "cli_debugger" | "cli_devops" | "cli_database" | "cli_git" | "cli_shell" | "cli_research" | "cli_qa" | "research_web" | "research_academic" | "research_market" | "data_analyst" | "data_engineer" | "data_scientist" | "infra_devops" | "infra_cloud" | "infra_kubernetes" | "infra_docker" | "infra_terraform" | "infra_monitoring" | "comm_translator" | "comm_summarizer" | "comm_writer" | "comm_email" | "comm_slack" | "comm_discord" | "tnf_core" | "tnf_onboarding" | "tnf_heartbeat" | "basic" | "unknown";
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: ["conversational", "assistant", "analysis", "code_generation", "code_review", "code_refactor", "code_test", "code_debug", "code_architect", "code_optimizer", "code_security", "code_migration", "code_documentation", "orchestrator", "broker", "router", "monitor", "validator", "scheduler", "gateway", "director", "coordinator", "handoff", "cleanup", "workflow", "task", "cli_coder", "cli_debugger", "cli_devops", "cli_database", "cli_git", "cli_shell", "cli_research", "cli_qa", "research_web", "research_academic", "research_market", "data_analyst", "data_engineer", "data_scientist", "infra_devops", "infra_cloud", "infra_kubernetes", "infra_docker", "infra_terraform", "infra_monitoring", "comm_translator", "comm_summarizer", "comm_writer", "comm_email", "comm_slack", "comm_discord", "tnf_core", "tnf_onboarding", "tnf_heartbeat", "basic", "unknown"];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        daccRole: import("drizzle-orm/pg-core").PgColumn<{
+            name: "dacc_role";
+            tableName: "agents";
+            dataType: "string";
+            columnType: "PgEnumColumn";
+            data: "orchestrator" | "broker" | "director" | "worker" | "participant";
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: ["director", "orchestrator", "broker", "worker", "participant"];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        canonicalEntityId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "canonical_entity_id";
+            tableName: "agents";
+            dataType: "string";
+            columnType: "PgVarchar";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: 255;
+        }>;
+        idNumber: import("drizzle-orm/pg-core").PgColumn<{
+            name: "id_number";
+            tableName: "agents";
+            dataType: "string";
+            columnType: "PgVarchar";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: 64;
+        }>;
+        federation: import("drizzle-orm/pg-core").PgColumn<{
+            name: "federation";
+            tableName: "agents";
+            dataType: "json";
+            columnType: "PgJsonb";
+            data: {
+                kind?: "agent" | "vector" | "session" | "unknown";
+                canonicalEntityId: string | null;
+                idNumber: string | null;
+                mcid: string | null;
+                scopes: string[];
+                vector_id_prefix?: "ID#" | "VEC#";
+            };
+            driverParam: unknown;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            $type: {
+                kind?: "agent" | "vector" | "session" | "unknown";
+                canonicalEntityId: string | null;
+                idNumber: string | null;
+                mcid: string | null;
+                scopes: string[];
+                vector_id_prefix?: "ID#" | "VEC#";
+            };
+        }>;
+        fulfillment: import("drizzle-orm/pg-core").PgColumn<{
+            name: "fulfillment";
+            tableName: "agents";
+            dataType: "json";
+            columnType: "PgJsonb";
+            data: {
+                vendor?: string;
+                model?: string;
+                transport?: "stdio" | "http" | "websocket" | "browser-extension" | "ide" | "cli" | "unknown";
+                protocol_version?: string;
+                prompt_doc_uri?: string;
+                tools?: string[];
+                endpoint?: string;
+                raw?: Record<string, unknown>;
+            };
+            driverParam: unknown;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            $type: {
+                vendor?: string;
+                model?: string;
+                transport?: "stdio" | "http" | "websocket" | "browser-extension" | "ide" | "cli" | "unknown";
+                protocol_version?: string;
+                prompt_doc_uri?: string;
+                tools?: string[];
+                endpoint?: string;
+                raw?: Record<string, unknown>;
+            };
+        }>;
+        traits: import("drizzle-orm/pg-core").PgColumn<{
+            name: "traits";
+            tableName: "agents";
+            dataType: "json";
+            columnType: "PgJsonb";
+            data: {
+                observability?: "native" | "mirrored" | "opaque";
+                subAgent_capable?: boolean;
+                orchestrates_agents?: boolean;
+                persona_source?: "self" | "tnf" | "platform" | "fixed";
+                autonomy_level?: "supervised" | "semiautonomous" | "autonomous";
+                description?: string;
+                raw?: Record<string, unknown>;
+            };
+            driverParam: unknown;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            $type: {
+                observability?: "native" | "mirrored" | "opaque";
+                subAgent_capable?: boolean;
+                orchestrates_agents?: boolean;
+                persona_source?: "self" | "tnf" | "platform" | "fixed";
+                autonomy_level?: "supervised" | "semiautonomous" | "autonomous";
+                description?: string;
+                raw?: Record<string, unknown>;
+            };
+        }>;
+        fulfillmentUpdatedAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "fulfillment_updated_at";
+            tableName: "agents";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         createdAt: import("drizzle-orm/pg-core").PgColumn<{
             name: "created_at";
             tableName: "agents";

@@ -12,7 +12,8 @@ and Antigravity was treated as failed even when the wrapper was already running.
 - `scripts/start-agent-network.sh`
   - Validates the WebSocket bridge via `http://127.0.0.1:3005/health`.
   - Treats already-running Antigravity and agent wrappers as success.
-  - Waits for wrapper processes after Terminal launch instead of using fixed sleeps.
+  - Waits for wrapper processes after Terminal launch instead of using fixed
+    sleeps.
   - Reports wrapper status through shared liveness helpers.
 
 - `scripts/tnf-ports.cjs`
@@ -45,7 +46,50 @@ and Antigravity was treated as failed even when the wrapper was already running.
     `./docs/protocols/TURN_ZERO_MANDATE.md`, avoiding literal `$TNF_ROOT`
     leakage into model prompts.
 
-## Verification
+## Follow-up: Local Persistence Hardening - 2026-06-15
+
+Kilo added a persistence repair for the local runtime path after boot still
+failed when Redis was absent before the agent swarm step.
+
+- `scripts/orchestrator/factory-boot.sh`
+  - Starts local Redis on port `6379` before platform gateway startup when the
+    resolved Redis URL targets localhost.
+  - Persists the resolved Redis URL to `.agent/runtime-state/redis-url.txt`.
+  - Keeps local Redis fallback active through `FACTORY_BOOT_START_LOCAL_REDIS`.
+
+- `scripts/orchestrator/factory-supervisor.sh`
+  - Includes Redis in the supervisor health surface.
+  - Reads the persisted Redis URL from `.agent/runtime-state/redis-url.txt`.
+
+- `scripts/tnf-start-ai.cjs`
+  - Uses local-tolerant doctor checks by default for MCP provisioning.
+  - Adds `--require-doctor` / `TNF_START_AI_REQUIRE_DOCTOR=1` for strict CI or
+    cloud-rooted runs.
+
+- `packages/tnf-cli/src/cli.ts`
+  - Passes `--require-doctor` from strict boot gates so strict mode can still
+    enforce cloud doctor policy.
+
+Verification for this follow-up:
+
+```text
+bash -n scripts/orchestrator/factory-boot.sh
+bash -n scripts/orchestrator/factory-supervisor.sh
+node --check scripts/tnf-start-ai.cjs
+pnpm --filter @the-new-fuse/tnf-cli exec tsc --noEmit --pretty false
+bash scripts/orchestrator/factory-boot.sh
+redis-cli -u redis://localhost:6379 ping
+SUPERVISOR_ONCE=true bash scripts/orchestrator/factory-supervisor.sh
+node scripts/tnf-start-ai.cjs openclaw --no-launch
+```
+
+Final persistence result:
+
+```text
+PONG
+redis://localhost:6379
+Doctor result: PASS
+```
 
 - `node --check scripts/tnf-ports.cjs`
 - `node --check scripts/protocols/whatsapp-bridge-health-check.cjs`

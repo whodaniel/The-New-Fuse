@@ -1303,15 +1303,12 @@ class TranscriptProcessorV2 {
     const entryId = `video-analysis-${video.videoId}`;
     const safeTitle = video.title.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
 
-    // SOFTWARE 3.0: Generate Federated ID# (Base58 encoded sequence)
-    const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-    let num = video.index;
-    let idCode = '';
-    while (num > 0) {
-      idCode = alphabet[num % 58] + idCode;
-      num = Math.floor(num / 58);
-    }
-    const idNumber = `ID#:${idCode || alphabet[0]}`;
+    // SOFTWARE 3.0: Generate Federated ID# via the shared helper.
+    // The canonical encoder lives in
+    // packages/a2a-core/src/federated-identity.service.ts (FederatedIdentityService);
+    // this local mirror keeps the alphabet in sync so transcript stovepipes
+    // can run without pulling in @the-new-fuse/a2a-core's NestJS DI runtime.
+    const idNumber = generateFederatedIdNumber(video.index);
 
     // 1. Create a CompoundingLogEntry structure
     const compoundingEntry = {
@@ -1636,3 +1633,27 @@ async function main() {
 }
 
 main().catch(console.error);
+
+// -----------------------------------------------------------------------------
+// Shared Federated ID# helper (Phase 9, audit 2026-06-14).
+//
+// Canonical encoder: packages/a2a-core/src/federated-identity.service.ts
+//   (FederatedIdentityService). This copy is kept verbatim so transcript
+//   stovepipes can produce `ID#:<Base58>` values without pulling in
+//   @the-new-fuse/a2a-core's NestJS DI runtime. If the alphabet ever changes,
+//   update BOTH copies.
+// -----------------------------------------------------------------------------
+
+export const FEDERATED_BASE58_ALPHABET =
+  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+export function generateFederatedIdNumber(seq: number): string {
+  if (!Number.isFinite(seq) || seq <= 0) return `ID#:${FEDERATED_BASE58_ALPHABET[0]}`;
+  let remaining = Math.trunc(seq);
+  let encoded = '';
+  while (remaining > 0) {
+    encoded = FEDERATED_BASE58_ALPHABET[remaining % 58] + encoded;
+    remaining = Math.floor(remaining / 58);
+  }
+  return `ID#:${encoded}`;
+}

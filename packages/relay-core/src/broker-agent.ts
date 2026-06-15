@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-import { readFile } from 'node:fs/promises';
-import * as path from 'node:path';
 import {
   connectStandaloneRedisClient,
   createStandaloneRedisClient,
   createUpstashRestClient,
 } from '@the-new-fuse/infrastructure';
 import type { Cluster, Redis } from 'ioredis';
+import { readFile } from 'node:fs/promises';
+import * as path from 'node:path';
 import { createTNFEnvelope } from './protocol/tnf-envelope.js';
 
 type QueueTask = {
@@ -39,11 +39,67 @@ type PolicyResult = {
 type RegistryAgent = {
   id?: string;
   agentId?: string;
+  /**
+   * Phase 8 (audit 2026-06-14, consistency review): DACC-v1 hierarchy
+   * position. Canonical runtime classification.
+   *   'director' | 'orchestrator' | 'broker' | 'worker' | 'participant'
+   * See `.agent/ROLE_DEFINITIONS.md` and `AGENT_ROLE_TRAITS` in
+   * `packages/tnf-cli/src/cli.ts:2958`.
+   *
+   * Note: 'orchestrator' here means the master-clock baton holder, NOT a
+   * worker that coordinates things (that is `workerAction === 'orchestrator'`).
+   */
+  daccRole?: 'director' | 'orchestrator' | 'broker' | 'worker' | 'participant';
+  /**
+   * Phase 8: action primitive. What kind of work this agent does. Replaces
+   * the overloaded meaning of `role` from Phase 1.
+   */
+  workerAction?: string;
+  /**
+   * Phase 8: canonical traits (formerly `qualities`). Matches the term
+   * surfaced by `tnf traits list`.
+   */
+  traits?: {
+    observability?: 'native' | 'mirrored' | 'opaque';
+    subAgent_capable?: boolean;
+    orchestrates_agents?: boolean;
+    persona_source?: 'self' | 'tnf' | 'platform' | 'fixed';
+    autonomy_level?: 'supervised' | 'semiautonomous' | 'autonomous';
+    description?: string;
+    raw?: Record<string, unknown>;
+  };
+  // Phase 3 (audit 2026-06-14): fulfillment + traits surface for broker
+  // dispatch decisions. Brokers dispatch by role/capability first, then
+  // refine by fulfillment when itinerary supplies model/tool/intent hints.
+  // All fields are optional and additive; legacy agents without them remain
+  // eligible for dispatch.
+  // @deprecated use `daccRole`/`workerAction`/`traits` instead.
   role?: string;
   status?: string;
   capabilities?: string[];
   lastSeen?: string;
   isOnline?: boolean;
+  fulfillment?: {
+    vendor?: string;
+    model?: string;
+    transport?: string;
+    protocol_version?: string;
+    prompt_doc_uri?: string;
+    tools?: string[];
+    endpoint?: string;
+    raw?: Record<string, unknown>;
+  };
+  // @deprecated use `traits` instead.
+  qualities?: {
+    observability?: 'native' | 'mirrored' | 'opaque';
+    subAgent_capable?: boolean;
+    orchestrates_agents?: boolean;
+    persona_source?: 'self' | 'tnf' | 'platform' | 'fixed';
+    autonomy_level?: 'supervised' | 'semiautonomous' | 'autonomous';
+    description?: string;
+    raw?: Record<string, unknown>;
+  };
+  infoRecord?: Record<string, unknown>;
   [key: string]: unknown;
 };
 
@@ -876,14 +932,23 @@ class BrokerAgent {
   }
 
   private isWorkerAgent(agent: RegistryAgent): boolean {
-    const role = String(agent.role || '').toLowerCase();
+    // Phase 8: prefer `daccRole` (canonical DACC-v1 position) over the
+    // legacy `role` field. Agents whose daccRole is director/orchestrator/broker
+    // are infrastructure-level, NOT eligible as worker dispatch targets.
+    // Fall back to inspecting both daccRole and the legacy `role` so existing
+    // emitters continue to classify correctly.
+    const daccRole = String(agent.daccRole || '').toLowerCase();
+    const legacyRole = String(agent.role || '').toLowerCase();
     const status = String(agent.status || '').toLowerCase();
     if (agent.isOnline === false) return false;
     if (!['active', 'idle', 'ready', 'online'].includes(status)) return false;
     const lastSeenMs = Date.parse(String(agent.lastSeen || ''));
     if (!Number.isFinite(lastSeenMs)) return false;
     if (Date.now() - lastSeenMs > CONFIG.AGENT_STALE_MS) return false;
-    return !['broker', 'orchestrator', 'director'].includes(role);
+    if (['director', 'orchestrator', 'broker'].includes(daccRole)) return false;
+    // Legacy role field: same exclusion.
+    if (['broker', 'orchestrator', 'director'].includes(legacyRole)) return false;
+    return true;
   }
 
   private getAgentId(agent: RegistryAgent): string {
@@ -910,6 +975,71 @@ class BrokerAgent {
   private getCapabilityList(agent: RegistryAgent): string[] {
     if (!Array.isArray(agent.capabilities)) return [];
     return agent.capabilities.map((cap) => String(cap).toLowerCase());
+  }
+
+  // Phase 3 (audit 2026-06-14): fulfillment-awareness for broker dispatch.
+  // If the task itinerary declares modelHint / vendorHint / toolHints, prefer
+  // candidates whose fulfillment matches. This is purely a tie-breaker after
+  // role+capability filters; absence of fulfillment on the candidate is NOT a
+  // disqualifier (so legacy agents stay eligible).
+  private fulfillmentMatchScore(
+    agent: RegistryAgent,
+    hints: {
+      vendorHint?: string;
+      modelHint?: string;
+      toolHints?: string[];
+    }
+  ): number {
+    if (
+      !hints.vendorHint &&
+      !hints.modelHint &&
+      (!hints.toolHints || hints.toolHints.length === 0)
+    ) {
+      return 0;
+    }
+    const f = agent.fulfillment;
+    if (!f) return 0;
+    let score = 0;
+    if (
+      hints.vendorHint &&
+      f.vendor &&
+      String(f.vendor).toLowerCase() === hints.vendorHint.toLowerCase()
+    ) {
+      score += 5;
+    }
+    if (
+      hints.modelHint &&
+      f.model &&
+      String(f.model).toLowerCase().includes(hints.modelHint.toLowerCase())
+    ) {
+      score += 3;
+    }
+    if (Array.isArray(hints.toolHints) && Array.isArray(f.tools)) {
+      const wanted = new Set(hints.toolHints.map((t) => String(t).toLowerCase()));
+      const have = new Set(f.tools.map((t) => String(t).toLowerCase()));
+      let overlap = 0;
+      wanted.forEach((w) => {
+        if (have.has(w)) overlap += 1;
+      });
+      score += overlap;
+    }
+    return score;
+  }
+
+  private extractFulfillmentHints(task: QueueTask): {
+    vendorHint?: string;
+    modelHint?: string;
+    toolHints?: string[];
+  } {
+    const itin = (task.itinerary || {}) as Record<string, unknown>;
+    const fulfillmentHints = (itin.fulfillmentHints || {}) as Record<string, unknown>;
+    const result: { vendorHint?: string; modelHint?: string; toolHints?: string[] } = {};
+    if (typeof fulfillmentHints.vendor === 'string') result.vendorHint = fulfillmentHints.vendor;
+    if (typeof fulfillmentHints.model === 'string') result.modelHint = fulfillmentHints.model;
+    if (Array.isArray(fulfillmentHints.tools)) {
+      result.toolHints = fulfillmentHints.tools.filter((t) => typeof t === 'string') as string[];
+    }
+    return result;
   }
 
   private async selectTargetAgent(task: QueueTask): Promise<string | null> {
@@ -952,6 +1082,25 @@ class BrokerAgent {
         requiredCapabilities.every((cap) => this.getCapabilityList(agent).includes(cap))
       );
       if (capable) return this.getAgentId(capable);
+    }
+
+    // Phase 3 (audit 2026-06-14): fulfillment-aware tie-breaker. Tasks whose
+    // itinerary declares fulfillmentHints (vendor/model/tools) get a candidate
+    // whose matching fulfillment preferred. Legacy candidates without
+    // fulfillment metadata remain eligible.
+    const hints = this.extractFulfillmentHints(task);
+    if (hints.vendorHint || hints.modelHint || (hints.toolHints && hints.toolHints.length > 0)) {
+      const scored = [...agents]
+        .map((agent) => ({ agent, score: this.fulfillmentMatchScore(agent, hints) }))
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          const ta = Date.parse(String(a.agent.lastSeen || 0)) || 0;
+          const tb = Date.parse(String(b.agent.lastSeen || 0)) || 0;
+          return ta - tb;
+        });
+      if (scored.length > 0 && scored[0].score > 0) {
+        return this.getAgentId(scored[0].agent);
+      }
     }
 
     const sorted = [...agents].sort((a, b) => {

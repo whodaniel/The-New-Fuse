@@ -6,6 +6,7 @@ import {
   boolean,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   real,
   text,
@@ -15,6 +16,114 @@ import {
 } from 'drizzle-orm/pg-core';
 import { agentStatusEnum, agentTypeEnum } from './enums.js';
 import { users } from './users.js';
+
+// =============================================================================
+// AGENT ROLE ENUM (Phase 1, audit 2026-06-14) and DACC ROLE ENUM (Phase 8)
+// =============================================================================
+//
+// Phasing of agent identity axes:
+//
+//   1. `worker_action` (AgentRole enum, formerly just `role`): the kind of
+//      work this agent does. Action-typed primitives (code_generation, cli_coder,
+//      orchestrator, ...). NOT a DACC hierarchy position.
+//   2. `dacc_role` (DaccRole enum, Phase 8): DACC-v1 hierarchy position
+//      (director, orchestrator (master-clock baton), broker, worker, participant).
+//      This is the canonical runtime classification surfaced by `tnf traits list`
+//      and AGENT_ROLE_TRAITS in packages/tnf-cli/src/cli.ts.
+//   3. `fulfillment` (jsonb): runtime stack — vendor, model, transport,
+//      protocol_version, prompt_doc_uri, tools, endpoint, raw.
+//   4. `traits` (jsonb, formerly `qualities`): orthogonal agent features like
+//      observability_level, autonomy_level, subAgent_capable. The term 'traits'
+//      matches the canonical vocabulary used in `tnf traits list`.
+//   5. `platform` (string, legacy field): coarse agent-platform label chosen
+//      from PLATFORM_TAXONOMY.
+//
+// See docs/protocols/reports/AGENT_DEFINITION_CONSISTENCY_REVIEW_2026-06-14.md.
+// =============================================================================
+export const agentRoleEnum = pgEnum('AgentRole', [
+  // conversation primitives
+  'conversational',
+  'assistant',
+  'analysis',
+  // code primitives
+  'code_generation',
+  'code_review',
+  'code_refactor',
+  'code_test',
+  'code_debug',
+  'code_architect',
+  'code_optimizer',
+  'code_security',
+  'code_migration',
+  'code_documentation',
+  // orchestration primitives
+  'orchestrator',
+  'broker',
+  'router',
+  'monitor',
+  'validator',
+  'scheduler',
+  'gateway',
+  'director',
+  'coordinator',
+  'handoff',
+  'cleanup',
+  // execution primitives
+  'workflow',
+  'task',
+  'cli_coder',
+  'cli_debugger',
+  'cli_devops',
+  'cli_database',
+  'cli_git',
+  'cli_shell',
+  'cli_research',
+  'cli_qa',
+  // research / knowledge
+  'research_web',
+  'research_academic',
+  'research_market',
+  // data primitives
+  'data_analyst',
+  'data_engineer',
+  'data_scientist',
+  // infrastructure primitives
+  'infra_devops',
+  'infra_cloud',
+  'infra_kubernetes',
+  'infra_docker',
+  'infra_terraform',
+  'infra_monitoring',
+  // communication primitives
+  'comm_translator',
+  'comm_summarizer',
+  'comm_writer',
+  'comm_email',
+  'comm_slack',
+  'comm_discord',
+  // TNF framework
+  'tnf_core',
+  'tnf_onboarding',
+  'tnf_heartbeat',
+  // generic / fallback
+  'basic',
+  'unknown',
+]);
+
+// =============================================================================
+// DACC ROLE ENUM (Phase 8)
+// DACC-v1 hierarchy position. Matches AGENT_ROLE_TRAITS canonical values in
+// packages/tnf-cli/src/cli.ts:2958 (orchestrator, broker, worker, participant)
+// plus 'director' from the DACC-v1 ROLE_DEFINITIONS.md hierarchy.
+// This is the canonical runtime classification surfaced by `tnf traits list`.
+// =============================================================================
+export const daccRoleEnum = pgEnum('DaccRole', [
+  'director', // DACC-v1: human or designated super-agent
+  'orchestrator', // DACC-v1: master-clock, baton holder. Surfaces as 'orchestrator' in AGENT_ROLE_TRAITS.
+  'broker', // DACC-v1 + AGENT_ROLE_TRAITS: per-channel coordinator
+  'worker', // DACC-v1: agent worker. Surfaces as 'worker' in AGENT_ROLE_TRAITS.
+  'participant', // AGENT_ROLE_TRAITS: a node that participates but does not yet hold a role on the bus
+]);
 
 // =============================================================================
 // AGENT
@@ -34,16 +143,89 @@ export const agents = pgTable('agents', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   // Agent self-describing profile (about me, personality, capabilities description)
-  profile: jsonb('profile').$type<{
-    about?: string;
-    personality?: string;
-    avatar?: string;
-    emoji?: string;
-    tags?: string[];
-    creator?: string;
-    version?: string;
-    lastUpdated?: string;
-  }>().default({}),
+  profile: jsonb('profile')
+    .$type<{
+      about?: string;
+      personality?: string;
+      avatar?: string;
+      emoji?: string;
+      tags?: string[];
+      creator?: string;
+      version?: string;
+      lastUpdated?: string;
+    }>()
+    .default({}),
+  // Phase 1 (audit 2026-06-14) + Phase 8 alignment:
+  //   - `worker_action` (Drizzle field name of the AgentRole column): the
+  //     kind of work this agent does. Action-typed primitives only. Column
+  //     name in DB is still `role` for backward compatibility.
+  //   - `dacc_role` (Phase 8): DACC-v1 hierarchy position. Replaces the
+  //     overloaded meaning of `role` = orchestrator-on-the-bus. Defaults to
+  //     'worker' for backward compatibility (existing rows classify as
+  //     workers and can be promoted to orchestrator/broker manually).
+  //   - `fulfillment` (jsonb): runtime stack — vendor/model/transport/etc.
+  //   - `traits` (jsonb, Phase 8 rename of `qualities`): orthogonal features.
+  // Phase 9 (federated ID audit 2026-06-14): three federated ID namespaces
+  // are now first-class columns. See `.agent/ROLE_DEFINITIONS.md` (Phase 9
+  // section) and `docs/protocols/reports/FEDERATED_ID_ENCODING_AUDIT_2026-06-14.md`.
+  //   - `canonicalEntityId`: TNF-namespaced hierarchical ID
+  //     (`TNF:[scope:]CATEGORY:PROVIDER:NAME:INSTANCE`). Built by
+  //     `buildCanonicalEntityId()` in `packages/relay-core/src/contracts/identity.ts`.
+  //   - `idNumber`: federated reputation sequence in `ID#:<Base58>` format,
+  //     assigned by `FederatedIdentityService` in `packages/a2a-core/src/federated-identity.service.ts`.
+  //   - `federation` (jsonb): umbrella column carrying all three federated
+  //     namespaces (canonicalEntityId, idNumber, mcid correlation_id, scopes).
+  workerAction: agentRoleEnum('role'),
+  daccRole: daccRoleEnum('dacc_role').default('worker').notNull(),
+  canonicalEntityId: varchar('canonical_entity_id', { length: 255 }),
+  idNumber: varchar('id_number', { length: 64 }),
+  federation: jsonb('federation')
+    .$type<{
+      kind?: 'agent' | 'vector' | 'session' | 'unknown';
+      canonicalEntityId: string | null;
+      idNumber: string | null;
+      mcid: string | null;
+      scopes: string[];
+      // Phase 9 FOLLOWUP-1: documents the cross-namespace `ID#:` caveat for
+      // consumers that read the federation bundle. When `kind === 'vector'`,
+      // the `idNumber` field is interpreted as `vector_id`, hash-derived.
+      vector_id_prefix?: 'ID#' | 'VEC#';
+    }>()
+    .default({
+      kind: 'unknown',
+      canonicalEntityId: null,
+      idNumber: null,
+      mcid: null,
+      scopes: [],
+      vector_id_prefix: 'ID#',
+    })
+    .notNull(),
+  fulfillment: jsonb('fulfillment')
+    .$type<{
+      vendor?: string;
+      model?: string;
+      transport?: 'stdio' | 'http' | 'websocket' | 'browser-extension' | 'ide' | 'cli' | 'unknown';
+      protocol_version?: string;
+      prompt_doc_uri?: string;
+      tools?: string[];
+      endpoint?: string;
+      raw?: Record<string, unknown>;
+    }>()
+    .default({})
+    .notNull(),
+  traits: jsonb('traits')
+    .$type<{
+      observability?: 'native' | 'mirrored' | 'opaque';
+      subAgent_capable?: boolean;
+      orchestrates_agents?: boolean;
+      persona_source?: 'self' | 'tnf' | 'platform' | 'fixed';
+      autonomy_level?: 'supervised' | 'semiautonomous' | 'autonomous';
+      description?: string;
+      raw?: Record<string, unknown>;
+    }>()
+    .default({})
+    .notNull(),
+  fulfillmentUpdatedAt: timestamp('fulfillment_updated_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   deletedAt: timestamp('deleted_at'),

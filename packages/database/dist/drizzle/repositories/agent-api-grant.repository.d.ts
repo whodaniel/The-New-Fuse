@@ -47,12 +47,12 @@ export declare class DrizzleAgentApiGrantRepository {
     }>;
     create(data: NewAgentApiGrant): Promise<{
         id: string;
+        provider: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
         agentId: string;
         expiresAt: Date;
-        provider: string;
         allowedModels: string[];
         maxRequestsPerMinute: number;
         dailyTokenBudget: number;
@@ -107,10 +107,10 @@ export declare class DrizzleAgentApiGrantRepository {
     }>;
     logUsage(data: NewAgentApiGrantUsage): Promise<{
         id: string;
+        provider: string;
         createdAt: Date;
         userId: string;
         agentId: string;
-        provider: string;
         statusCode: number;
         error: string | null;
         grantId: string;

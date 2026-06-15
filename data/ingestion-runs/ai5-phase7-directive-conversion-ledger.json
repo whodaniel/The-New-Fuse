@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T03:17:10.901505Z",
+  "generatedAt": "2026-06-15T21:28:19.619787Z",
   "phase": "phase7-directive-conversion",
   "actionQueuePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-action-queue.json",
   "dispatchLogPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-dispatch-log.json",
@@ -77,12 +77,6 @@
       },
       "evidence": [
         {
-          "type": "phase7-batch-claim",
-          "batchId": "ai5-phase7-batch-001",
-          "at": "2026-06-12T00:23:17Z",
-          "by": "local-subdirector"
-        },
-        {
           "type": "phase7-verification",
           "state": "landed",
           "at": "2026-06-12T00:30:46Z",
@@ -90,8 +84,6 @@
         }
       ],
       "updatedAt": "2026-06-11T18:19:58.894892Z",
-      "claimedBy": "local-subdirector",
-      "claimedAt": "2026-06-12T00:23:17Z",
       "verification": {
         "state": "landed",
         "updatedAt": "2026-06-12T00:30:46Z",
@@ -150,12 +142,6 @@
       },
       "evidence": [
         {
-          "type": "phase7-batch-claim",
-          "batchId": "ai5-phase7-batch-001",
-          "at": "2026-06-12T00:23:17Z",
-          "by": "local-subdirector"
-        },
-        {
           "type": "phase7-verification",
           "state": "landed",
           "at": "2026-06-12T00:30:46Z",
@@ -163,8 +149,6 @@
         }
       ],
       "updatedAt": "2026-06-11T18:19:58.769793Z",
-      "claimedBy": "local-subdirector",
-      "claimedAt": "2026-06-12T00:23:17Z",
       "verification": {
         "state": "landed",
         "updatedAt": "2026-06-12T00:30:46Z",
@@ -1422,12 +1406,6 @@
       },
       "evidence": [
         {
-          "type": "phase7-batch-claim",
-          "batchId": "ai5-phase7-batch-001",
-          "at": "2026-06-12T00:23:17Z",
-          "by": "local-subdirector"
-        },
-        {
           "type": "phase7-verification",
           "state": "landed",
           "at": "2026-06-12T00:30:46Z",
@@ -1435,8 +1413,6 @@
         }
       ],
       "updatedAt": "2026-06-11T18:19:59.031564Z",
-      "claimedBy": "local-subdirector",
-      "claimedAt": "2026-06-12T00:23:17Z",
       "verification": {
         "state": "landed",
         "updatedAt": "2026-06-12T00:30:46Z",
@@ -1499,12 +1475,6 @@
       },
       "evidence": [
         {
-          "type": "phase7-batch-claim",
-          "batchId": "ai5-phase7-batch-001",
-          "at": "2026-06-12T00:23:17Z",
-          "by": "local-subdirector"
-        },
-        {
           "type": "phase7-verification",
           "state": "landed",
           "at": "2026-06-12T00:30:46Z",
@@ -1512,8 +1482,6 @@
         }
       ],
       "updatedAt": "2026-06-11T18:19:59.135998Z",
-      "claimedBy": "local-subdirector",
-      "claimedAt": "2026-06-12T00:23:17Z",
       "verification": {
         "state": "landed",
         "updatedAt": "2026-06-12T00:30:46Z",
@@ -3069,12 +3037,6 @@
           "at": "2026-05-19T20:16:12.563869Z"
         },
         {
-          "type": "phase7-batch-claim",
-          "batchId": "ai5-phase7-batch-001",
-          "at": "2026-06-12T00:23:17Z",
-          "by": "local-subdirector"
-        },
-        {
           "type": "phase7-verification",
           "state": "blocked",
           "at": "2026-06-12T00:30:46Z",
@@ -3082,8 +3044,6 @@
         }
       ],
       "updatedAt": "2026-06-11T18:19:59.131501Z",
-      "claimedBy": "local-subdirector",
-      "claimedAt": "2026-06-12T00:23:17Z",
       "verification": {
         "state": "blocked",
         "updatedAt": "2026-06-12T00:30:46Z",
@@ -17226,12 +17186,6 @@
       },
       "evidence": [
         {
-          "type": "phase7-batch-claim",
-          "batchId": "ai5-phase7-batch-001",
-          "at": "2026-06-12T00:23:17Z",
-          "by": "local-subdirector"
-        },
-        {
           "type": "phase7-verification",
           "state": "landed",
           "at": "2026-06-12T00:30:46Z",
@@ -17239,8 +17193,6 @@
         }
       ],
       "updatedAt": "2026-06-11T18:19:59.237119Z",
-      "claimedBy": "local-subdirector",
-      "claimedAt": "2026-06-12T00:23:17Z",
       "verification": {
         "state": "landed",
         "updatedAt": "2026-06-12T00:30:46Z",
@@ -41652,12 +41604,6 @@
           "dispatchId": "ai5-dispatch-1781202047-588"
         },
         {
-          "type": "phase7-batch-claim",
-          "batchId": "ai5-phase7-batch-001",
-          "at": "2026-06-12T00:23:17Z",
-          "by": "local-subdirector"
-        },
-        {
           "type": "phase7-verification",
           "state": "landed",
           "at": "2026-06-12T00:30:46Z",
@@ -41665,8 +41611,6 @@
         }
       ],
       "updatedAt": "2026-06-11T18:20:47.293306Z",
-      "claimedBy": "local-subdirector",
-      "claimedAt": "2026-06-12T00:23:17Z",
       "verification": {
         "state": "landed",
         "updatedAt": "2026-06-12T00:30:46Z",
@@ -48683,12 +48627,6 @@
       },
       "evidence": [
         {
-          "type": "phase7-batch-claim",
-          "batchId": "ai5-phase7-batch-001",
-          "at": "2026-06-12T00:23:17Z",
-          "by": "local-subdirector"
-        },
-        {
           "type": "phase7-verification",
           "state": "landed",
           "at": "2026-06-12T00:30:46Z",
@@ -48696,8 +48634,6 @@
         }
       ],
       "updatedAt": "2026-06-11T18:19:59.005993Z",
-      "claimedBy": "local-subdirector",
-      "claimedAt": "2026-06-12T00:23:17Z",
       "verification": {
         "state": "landed",
         "updatedAt": "2026-06-12T00:30:46Z",

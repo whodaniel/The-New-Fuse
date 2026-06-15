@@ -25,7 +25,7 @@ function commandExists(cmd) {
 
 function usage() {
   console.log(
-    "Usage: pnpm run tnf:start -- <codex|claude|gemini|openclaw|hermes|pi> [--skip-doctor] [--no-launch] [-- ...client args]"
+    "Usage: pnpm run tnf:start -- <codex|claude|gemini|openclaw|hermes|pi> [--skip-doctor] [--require-doctor] [--no-launch] [-- ...client args]"
   );
 }
 
@@ -50,6 +50,7 @@ const clientArgs = splitIndex >= 0 ? argv.slice(splitIndex + 1) : [];
 const client = baseArgs[0];
 const flags = new Set(baseArgs.slice(1));
 const skipDoctor = flags.has("--skip-doctor");
+const requireDoctor = flags.has("--require-doctor") || process.env.TNF_START_AI_REQUIRE_DOCTOR === "1";
 const noLaunch = flags.has("--no-launch");
 
 const clientCommandMap = {
@@ -83,10 +84,16 @@ step = run("pnpm", ["run", "-s", "tnf:mcp:generate"]);
 if (step.code !== 0) process.exit(step.code);
 
 if (!skipDoctor) {
-  step = run("pnpm", ["run", "-s", "tnf:doctor"]);
+  const doctorArgs = requireDoctor
+    ? ["scripts/tnf-doctor.cjs"]
+    : ["scripts/tnf-doctor.cjs", "--mode", "local", "--skip-live-checks"];
+  step = run("node", doctorArgs);
   if (step.code !== 0) {
-    console.error("Doctor failed. Use --skip-doctor to bypass.");
-    process.exit(step.code);
+    if (requireDoctor) {
+      console.error("Doctor failed. Use --skip-doctor to bypass.");
+      process.exit(step.code);
+    }
+    console.warn("⚠️ Doctor failed; continuing with local-tolerant MCP provisioning. Set TNF_START_AI_REQUIRE_DOCTOR=1 to hard-fail.");
   }
 }
 

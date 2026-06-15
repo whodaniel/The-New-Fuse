@@ -13,6 +13,7 @@ LOG_DIR="${ROOT_DIR}/.agent/runtime-logs"
 STATE_DIR="${ROOT_DIR}/.agent/runtime-state/supervisor"
 SUPERVISOR_LOG="${LOG_DIR}/factory-supervisor.log"
 PID_FILE="${STATE_DIR}/supervisor.pid"
+REDIS_URL="${REDIS_URL:-$(cat "${ROOT_DIR}/.agent/runtime-state/redis-url.txt" 2>/dev/null || printf '%s' 'redis://localhost:6379')}"
 
 CHECK_INTERVAL_SEC="${CHECK_INTERVAL_SEC:-15}"
 BASE_BACKOFF_SEC="${BASE_BACKOFF_SEC:-5}"
@@ -100,6 +101,10 @@ file_mtime_epoch() {
   fi
 }
 
+redis_ping() {
+  command -v redis-cli >/dev/null 2>&1 && redis-cli -u "${REDIS_URL}" ping >/dev/null 2>&1
+}
+
 is_log_fresh() {
   local log_file="$1"
   if [[ ! -f "${log_file}" ]]; then
@@ -129,6 +134,9 @@ process_running() {
 service_healthy() {
   local service="$1"
   case "${service}" in
+    redis)
+      redis_ping
+      ;;
     relay)
       curl -fsS --max-time 2 http://localhost:3000/health >/dev/null 2>&1
       ;;
@@ -194,7 +202,7 @@ service_healthy() {
 
 collect_unhealthy() {
   local unhealthy=""
-  local services="relay master-clock broker-agent director-agent project-planner impetus-loop"
+  local services="redis relay master-clock broker-agent director-agent project-planner impetus-loop"
   if [[ "${REQUIRE_WORKFLOW_ROUTER}" == "true" ]]; then
     services="${services} workflow-router"
   fi

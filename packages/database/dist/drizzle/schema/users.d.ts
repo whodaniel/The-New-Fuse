@@ -322,6 +322,54 @@ export declare const users: import("drizzle-orm/pg-core").PgTableWithColumns<{
         }, {}, {
             length: 255;
         }>;
+        activeAgentIds: import("drizzle-orm/pg-core").PgColumn<{
+            name: "active_agent_ids";
+            tableName: "users";
+            dataType: "json";
+            columnType: "PgJsonb";
+            data: string[];
+            driverParam: unknown;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            $type: string[];
+        }>;
+        agentQualities: import("drizzle-orm/pg-core").PgColumn<{
+            name: "agent_qualities";
+            tableName: "users";
+            dataType: "json";
+            columnType: "PgJsonb";
+            data: {
+                defaultModel?: string;
+                defaultVendor?: string;
+                tierFallback?: string[];
+                raw?: Record<string, unknown>;
+            };
+            driverParam: unknown;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            $type: {
+                defaultModel?: string;
+                defaultVendor?: string;
+                tierFallback?: string[];
+                raw?: Record<string, unknown>;
+            };
+        }>;
     };
     dialect: "pg";
 }>;

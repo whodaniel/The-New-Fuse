@@ -11,6 +11,7 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
+import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
 import { Orchestrator } from './orchestration.js';
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
@@ -2954,16 +2955,44 @@ function printHookTestSummary(payload: Record<string, unknown>): void {
 }
 
 const cliEntryPath = fileURLToPath(import.meta.url);
-const AGENT_ROLE_TRAITS = ['orchestrator', 'broker', 'worker', 'participant'];
-const AGENT_PLATFORM_TRAITS = [
+
+// =============================================================================
+// PLATFORM_TAXONOMY (Phase 8, audit 2026-06-14 consistency review)
+// Single source of truth for agent-platform values. Derived from the union
+// of:
+//   - AGENT_PLATFORM_TRAITS (cli.ts legacy): the runtime defaults used by
+//     `tnf register <platform>` and `tnf traits list agent_platforms`.
+//   - Bank targets in scripts/agents/reconcile-agent-banks.cjs:293-306
+//     (codex|claude|gemini|opencode|kilo|augment|tnf|hermes|project).
+// Updated whenever a new agent platform is onboarded. Consumed by:
+//   - `tnf register <platform>` default argument
+//   - `tnf traits list agent_platforms`
+//   - `tnf agents bank reconcile --targets` (validation only)
+//   - `tainf agents classify` (heuristic for fulfillment.vendor)
+// =============================================================================
+export const PLATFORM_TAXONOMY: string[] = [
+  // AGENT_PLATFORM_TRAITS (canonical runtime)
   'antigravity',
-  'gemini',
+  'browser',
   'claude',
+  'gemini',
   'jules',
   'pi',
   'vscode',
-  'browser',
+  // Bank-target-only (added in Phase 8 to align with reconcile-agent-banks.cjs)
+  'augment',
+  'codex',
+  'hermes',
+  'kilo',
+  'opencode',
+  'project',
+  'tnf',
 ];
+// DACC-v1 hierarchy values surfaced by `tnf traits list agent_roles`. These
+// two arrays are the contract for `tnf traits list`. Adding a new role or
+// platform here is the canonical way to extend the runtime taxonomy.
+const AGENT_ROLE_TRAITS = ['director', 'orchestrator', 'broker', 'worker', 'participant'];
+const AGENT_PLATFORM_TRAITS = PLATFORM_TAXONOMY;
 const SUPER_ADMIN_COMMAND_TRAITS = [
   'tnf relay start',
   'tnf jules loop',
@@ -3229,12 +3258,65 @@ function buildTypeIndex(): { cliNamespaces: string[]; scriptNamespaces: Record<s
 }
 
 function buildTraitGroups(): TraitGroup[] {
+  // Phase 8: derive the discovered_* groups from the agent-registry snapshot
+  // when present. The hard-coded groups (agent_roles, agent_platforms) remain
+  // the canonical contract because `tnf register` validates against them.
+  // The discovered groups surface what is actually in use in this repo's
+  // persona .md files, so operators can see drift between the canonical
+  // taxonomy and reality at a glance.
+  let discoveredWorkerActions: string[] = [];
+  let discoveredPlatforms: string[] = [];
+  let discoveredVendors: string[] = [];
+  let discoveredDaccRoles: string[] = [];
+  for (const candidate of [
+    path.join(process.cwd(), '.tnf', 'agent-registry-snapshot.json'),
+    path.join(process.env.HOME || '', '.tnf', 'agent-registry-snapshot.json'),
+  ]) {
+    try {
+      if (!fs.existsSync(candidate)) continue;
+      const parsed = JSON.parse(fs.readFileSync(candidate, 'utf-8'));
+      const agents = Array.isArray(parsed?.agents) ? parsed.agents : [];
+      const actions = new Set<string>();
+      const platforms = new Set<string>();
+      const vendors = new Set<string>();
+      const dacc = new Set<string>();
+      for (const a of agents) {
+        const wa = a?.workerAction ?? a?.role;
+        if (typeof wa === 'string' && wa.trim()) actions.add(wa);
+        const pl = a?.fulfillment?.vendor ?? a?.platform;
+        if (typeof pl === 'string' && pl.trim()) platforms.add(pl);
+        const vendor = a?.fulfillment?.vendor;
+        if (typeof vendor === 'string' && vendor.trim()) vendors.add(vendor);
+        const dr = a?.traits?.daccRole ?? a?.qualities?.daccRole;
+        if (typeof dr === 'string' && dr.trim()) dacc.add(dr);
+      }
+      discoveredWorkerActions = Array.from(actions).sort();
+      discoveredPlatforms = Array.from(platforms).sort();
+      discoveredVendors = Array.from(vendors).sort();
+      discoveredDaccRoles = Array.from(dacc).sort();
+      break;
+    } catch {
+      // ignore parse errors; keep derived lists empty
+    }
+  }
   return [
     { name: 'agent_roles', values: AGENT_ROLE_TRAITS },
     { name: 'agent_platforms', values: AGENT_PLATFORM_TRAITS },
     { name: 'super_admin_protected', values: SUPER_ADMIN_COMMAND_TRAITS },
     { name: 'redis_required', values: REDIS_COMMAND_TRAITS },
     { name: 'provider_routed', values: PROVIDER_ROUTED_COMMAND_TRAITS },
+    ...(discoveredWorkerActions.length > 0
+      ? [{ name: 'discovered_worker_actions', values: discoveredWorkerActions }]
+      : []),
+    ...(discoveredPlatforms.length > 0
+      ? [{ name: 'discovered_platforms', values: discoveredPlatforms }]
+      : []),
+    ...(discoveredVendors.length > 0
+      ? [{ name: 'discovered_vendors', values: discoveredVendors }]
+      : []),
+    ...(discoveredDaccRoles.length > 0
+      ? [{ name: 'discovered_dacc_roles', values: discoveredDaccRoles }]
+      : []),
   ];
 }
 
@@ -4467,6 +4549,7 @@ program
             critical: false,
             action: async () => {
               const args = ['scripts/tnf-start-ai.cjs', 'openclaw'];
+              if (options.strictGates) args.push('--require-doctor');
               if (options.nonInteractive || !findExecutableOnPath('openclaw')) {
                 args.push('--no-launch');
                 if (!findExecutableOnPath('openclaw')) {
@@ -4592,21 +4675,44 @@ program
   .argument('[name]', 'Agent name', process.env.AGENT_NAME || 'unnamed-agent')
   .argument(
     '[role]',
-    'Agent role (orchestrator, broker, worker, participant)',
-    process.env.AGENT_ROLE || 'participant'
+    `Agent role (${AGENT_ROLE_TRAITS.join(', ')})`,
+    process.env.AGENT_ROLE || 'worker'
   )
   .argument(
     '[platform]',
-    'Agent platform (antigravity, gemini, claude, jules, pi, vscode, browser)',
+    `Agent platform (${PLATFORM_TAXONOMY.join(', ')})`,
     process.env.AGENT_PLATFORM || 'vscode'
   )
   .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
+  .option('--dacc-role <role>', `DACC-v1 hierarchy position (${AGENT_ROLE_TRAITS.join(', ')})`)
+  .option(
+    '--worker-action <action>',
+    'Worker action primitive (e.g. code_generation, cli_coder, orchestrator)'
+  )
+  .option('--dacc-role-from-config', 'Read dacc_role from ~/.tnf/agent.yaml', false)
   .action(async (name, role, platform, options) => {
     const client = new RedisAgentClient();
     try {
-      await client.initialize();
+      // Phase 8: validate role and platform are in canonical taxonomy.
+      if (!AGENT_ROLE_TRAITS.includes(role)) {
+        console.error(
+          chalk.yellow(
+            `⚠ role '${role}' is not in the canonical DACC-v1 role traits ` +
+              `(${AGENT_ROLE_TRAITS.join(', ')}). Proceeding for backward ` +
+              `compatibility, but consider registering with a canonical role.`
+          )
+        );
+      }
+      if (!PLATFORM_TAXONOMY.includes(platform)) {
+        console.error(
+          chalk.yellow(
+            `⚠ platform '${platform}' is not in PLATFORM_TAXONOMY ` +
+              `(${PLATFORM_TAXONOMY.join(', ')}). Proceeding for backward ` +
+              `compatibility.`
+          )
+        );
+      }
       const agentInfo = await client.register(name, role, platform);
-
       console.log(chalk.green(`\n🤖 Registered as: ${chalk.bold(name)} (${role}) on ${platform}`));
       console.log(`   ID: ${chalk.dim(agentInfo.id)}`);
       console.log(`   Capabilities: ${chalk.dim(agentInfo.capabilities.join(', '))}`);
@@ -7518,13 +7624,15 @@ fullAuto
 
 const zeroTurnCommand = program
   .command('zero-turn')
-  .description('TNF zero-turn autonomous boot — native self-contained operation without external dependencies');
+  .description(
+    'TNF zero-turn autonomous boot — native self-contained operation without external dependencies'
+  );
 
 zeroTurnCommand
   .command('boot')
   .description('Boot TNF for indefinite autonomous operation with zero manual turns')
   .option('--profile <name>', 'Profile/instance name', 'default')
-  .option('--model <model>', 'LLM model to use', 'nvidia/z-ai/glm-5')
+  .option('--model <model>', 'LLM model to use', 'minimaxai/minimax-m3')
   .option('--no-daemon', 'Run in foreground mode (for debugging)')
   .option('--plan', 'Print boot plan without executing')
   .option(
@@ -7532,15 +7640,13 @@ zeroTurnCommand
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
   )
   .action(
-    async (
-      options: {
-        profile?: string;
-        model?: string;
-        daemon?: boolean;
-        plan?: boolean;
-        superAdminToken?: string;
-      }
-    ) => {
+    async (options: {
+      profile?: string;
+      model?: string;
+      daemon?: boolean;
+      plan?: boolean;
+      superAdminToken?: string;
+    }) => {
       try {
         requireSuperAdmin(options, 'zero-turn boot');
 
@@ -7571,7 +7677,12 @@ zeroTurnCommand
             label: 'Setting working model',
             critical: true,
             action: async () => {
-              await runCommand('hermes', ['config', 'set', 'model', options.model || 'nvidia/z-ai/glm-5']);
+              await runCommand('hermes', [
+                'config',
+                'set',
+                'model',
+                options.model || 'minimaxai/minimax-m3',
+              ]);
             },
           },
           {
@@ -7579,27 +7690,39 @@ zeroTurnCommand
             critical: true,
             action: async () => {
               const daemonArgs = options.daemon !== false ? ['live'] : ['live', '--foreground'];
-              await runCommand('python3', [path.join(os.homedir(), '.hermes/scripts/tnf-agent-daemon.py'), ...daemonArgs], {
-                isBackground: options.daemon !== false,
-              });
+              await runCommand(
+                'python3',
+                [path.join(os.homedir(), '.hermes/scripts/tnf-agent-daemon.py'), ...daemonArgs],
+                {
+                  isBackground: options.daemon !== false,
+                }
+              );
             },
           },
           {
             label: 'Starting TNF director loop',
             critical: false,
             action: async () => {
-              await runCommand('node', [path.join(os.homedir(), '.tnf/bin/tnf-director-loop.cjs')], {
-                isBackground: true,
-              });
+              await runCommand(
+                'node',
+                [path.join(os.homedir(), '.tnf/bin/tnf-director-loop.cjs')],
+                {
+                  isBackground: true,
+                }
+              );
             },
           },
           {
             label: 'Starting terminal heartbeat pulse',
             critical: false,
             action: async () => {
-              await runCommand('node', [path.join(os.homedir(), '.tnf/bin/terminal-heartbeat-pulse.cjs')], {
-                isBackground: true,
-              });
+              await runCommand(
+                'node',
+                [path.join(os.homedir(), '.tnf/bin/terminal-heartbeat-pulse.cjs')],
+                {
+                  isBackground: true,
+                }
+              );
             },
           },
           {
@@ -7608,7 +7731,9 @@ zeroTurnCommand
             action: async () => {
               const { execSync } = await import('child_process');
               try {
-                const output = execSync('redis-cli HGETALL tnf:agent-registry', { encoding: 'utf8' });
+                const output = execSync('redis-cli HGETALL tnf:agent-registry', {
+                  encoding: 'utf8',
+                });
                 if (output.trim()) {
                   console.log(chalk.dim('   Agents registered on TNF bus'));
                 } else {
@@ -7634,12 +7759,24 @@ zeroTurnCommand
                   console.log(chalk.dim('   Heartbeat self-wake cron active'));
                 } else {
                   console.log(chalk.yellow('   Heartbeat cron not found, installing...'));
+                  // Use the canonical TNF repo path. The symlink at
+                  // ~/.hermes/scripts/tnf-heartbeat-selfwake.py points here too,
+                  // but TNF should source scripts from its own tree.
+                  const tnfScript = path.join(
+                    repoRoot,
+                    'scripts',
+                    'agents',
+                    'tnf-heartbeat-selfwake.py'
+                  );
                   await runCommand('hermes', [
                     'cronjob',
                     'action=create',
-                    '--schedule', '*/5 * * * *',
-                    '--script', path.join(os.homedir(), '.hermes/scripts/tnf-heartbeat-selfwake.py'),
-                    '--name', 'TNF Heartbeat Self-Wake',
+                    '--schedule',
+                    '*/5 * * * *',
+                    '--script',
+                    tnfScript,
+                    '--name',
+                    'TNF Heartbeat Self-Wake',
                     '--no-agent',
                   ]);
                 }
@@ -7713,7 +7850,10 @@ zeroTurnCommand
       const { execSync } = await import('child_process');
 
       try {
-        const daemonOutput = execSync('pgrep -af tnf-agent-daemon', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+        const daemonOutput = execSync('pgrep -af tnf-agent-daemon', {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'ignore'],
+        });
         status.daemon = daemonOutput.trim().length > 0;
         if (status.daemon) {
           console.log(chalk.green('✅ TNF Agent Daemon: running'));
@@ -7725,7 +7865,10 @@ zeroTurnCommand
       }
 
       try {
-        const directorOutput = execSync('pgrep -af tnf-director-loop', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+        const directorOutput = execSync('pgrep -af tnf-director-loop', {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'ignore'],
+        });
         status.director = directorOutput.trim().length > 0;
         if (status.director) {
           console.log(chalk.green('✅ TNF Director Loop: running'));
@@ -7737,7 +7880,10 @@ zeroTurnCommand
       }
 
       try {
-        const heartbeatOutput = execSync('pgrep -af terminal-heartbeat-pulse', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+        const heartbeatOutput = execSync('pgrep -af terminal-heartbeat-pulse', {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'ignore'],
+        });
         status.heartbeat = heartbeatOutput.trim().length > 0;
         if (status.heartbeat) {
           console.log(chalk.green('✅ Terminal Heartbeat: running'));
@@ -7749,7 +7895,10 @@ zeroTurnCommand
       }
 
       try {
-        const registryOutput = execSync('redis-cli HGETALL tnf:agent-registry', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+        const registryOutput = execSync('redis-cli HGETALL tnf:agent-registry', {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'ignore'],
+        });
         const lines = registryOutput.trim().split('\n');
         for (let i = 0; i < lines.length; i += 2) {
           const agentId = lines[i];
@@ -7772,7 +7921,11 @@ zeroTurnCommand
         if (status.agents.length > 0) {
           console.log(chalk.green(`\n✅ ${status.agents.length} agent(s) registered on TNF bus:`));
           for (const agent of status.agents) {
-            console.log(chalk.dim(`   - ${agent.id} (${agent.name || 'unknown'}) - ${agent.role || 'unknown'}`));
+            console.log(
+              chalk.dim(
+                `   - ${agent.id} (${agent.name || 'unknown'}) - ${agent.role || 'unknown'}`
+              )
+            );
           }
         } else {
           console.log(chalk.yellow('\n⚠️  No agents registered on TNF bus'));
@@ -9703,7 +9856,7 @@ const agentsLive = agents
 agentsLive
   .command('start')
   .description('Start the persistent agent daemon in live mode')
-  .option('--model <model>', 'Override LLM model')
+  .option('--model <model>', 'Override LLM model (default: minimaxai/minimax-m3)')
   .option('--interval <seconds>', 'Autonomous think interval in seconds', '120')
   .option('--agent-id <id>', 'Override agent ID')
   .option('--agent-name <name>', 'Override agent display name')
@@ -9715,15 +9868,28 @@ agentsLive
       agentName?: string;
     }) => {
       try {
-        const pythonBin =
-          process.env.TNF_PYTHON || path.join(os.homedir(), '.tnf', 'venv', 'bin', 'python3');
+        // Resolve python interpreter — strictly within the TNF runtime tree.
+        //   1. $TNF_PYTHON override (explicit user choice; never a Hermes path).
+        //   2. $TNF_HOME/venv/bin/python3 (canonical TNF venv).
+        //   3. System `python3` — last resort (user must have deps system-wide).
+        const tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+        if (process.env.TNF_PYTHON && process.env.TNF_PYTHON.includes('/.hermes/')) {
+          throw new Error('Refusing to use a Hermes-venv python as $TNF_PYTHON.');
+        }
+        const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
+        const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
         const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
         const args = [script, 'live'];
         if (options.model) args.push('--model', options.model);
         if (options.interval) args.push('--interval', options.interval);
         if (options.agentId) args.push('--agent-id', options.agentId);
         if (options.agentName) args.push('--agent-name', options.agentName);
-        await runCommand(pythonBin, args);
+        console.log(chalk.dim(`[tnf agents live] python: ${pythonBin}`));
+        console.log(chalk.dim(`[tnf agents live] script: ${script}`));
+        await runCommand(pythonBin, args, { isBackground: true });
+        console.log(chalk.green('✅ TNF agent daemon detached as background process'));
+        console.log(chalk.dim('   Verify: tnf agents live status'));
+        console.log(chalk.dim('   Stop:    pkill -f tnf-agent-daemon.py'));
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
         process.exit(1);
@@ -9737,12 +9903,16 @@ agentsLive
   .option('--agent-id <id>', 'Override agent ID')
   .action(async (options: { agentId?: string }) => {
     try {
-      const pythonBin =
-        process.env.TNF_PYTHON || path.join(os.homedir(), '.tnf', 'venv', 'bin', 'python3');
+      const tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+      const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
+      const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
       const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
       const args = [script, 'watch'];
       if (options.agentId) args.push('--agent-id', options.agentId);
-      await runCommand(pythonBin, args);
+      console.log(chalk.dim(`[tnf agents watch] python: ${pythonBin}`));
+      await runCommand(pythonBin, args, { isBackground: true });
+      console.log(chalk.green('✅ TNF bus-listener daemon detached'));
+      console.log(chalk.dim('   Verify: pgrep -af tnf-agent-daemon'));
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -9754,8 +9924,9 @@ agentsLive
   .description('Single heartbeat + registration check then exit')
   .action(async () => {
     try {
-      const pythonBin =
-        process.env.TNF_PYTHON || path.join(os.homedir(), '.tnf', 'venv', 'bin', 'python3');
+      const tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+      const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
+      const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
       const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
       await runCommand(pythonBin, [script, 'once']);
     } catch (err: any) {
@@ -9769,8 +9940,9 @@ agentsLive
   .description('Show daemon process and bus health')
   .action(async () => {
     try {
-      const pythonBin =
-        process.env.TNF_PYTHON || path.join(os.homedir(), '.tnf', 'venv', 'bin', 'python3');
+      const tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+      const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
+      const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
       const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
       await runCommand(pythonBin, [script, 'status']);
     } catch (err: any) {
@@ -9790,7 +9962,7 @@ agentsBank
   )
   .option(
     '--targets <list>',
-    'Comma-separated targets: codex,claude,gemini,opencode,kilo,augment,tnf,hermes,project,all',
+    `Comma-separated targets (${PLATFORM_TAXONOMY.join(', ')}, all)`,
     'all'
   )
   .option('--dry-run', 'Preview changes without writing files')
@@ -9864,6 +10036,430 @@ program
       process.exit(1);
     } finally {
       await client.cleanup();
+    }
+  });
+
+// ============================================================================
+// tnf alive — Unified Persistent Stack Activation
+//
+// Brings up the complete autonomously-running TNF stack in one command:
+//   1. Persistent agent daemon (LLM + Redis bus + heartbeat + autonomous think)
+//   2. A2A bridge (interoperability with any other runtime that speaks the bus,
+//      wired explicitly via tnf bridge). Optional based on --bridge flag.
+//   3. Self-wake heartbeat cron (script-only, no LLM cost).
+//   4. Health status snapshot to tnf:alive:status.
+// All sources are TNF-owned. No Hermes dependencies.
+// ============================================================================
+
+const aliveCommand = program
+  .command('alive')
+  .description(
+    'Activate TNF persistent stack (daemon + heartbeat sentinel) so it stays running autonomously'
+  );
+
+aliveCommand
+  .command('up')
+  .description('Bring up the persistent TNF agent daemon + heartbeat cron')
+  .option('--model <model>', 'LLM model override (default: minimaxai/minimax-m3)')
+  .option('--interval <seconds>', 'Autonomous think interval in seconds', '120')
+  .option(
+    '--no-bridge',
+    'Skip bridge (deprecated alias; bridge is wired separately via `tnf bridge`)'
+  )
+  .option('--install-cron', 'Ensure heartbeat self-wake cron is installed (idempotent)')
+  .option('--dry-run', 'Print what would run without starting anything')
+  .action(
+    async (options: {
+      model?: string;
+      interval?: string;
+      bridge?: boolean;
+      installCron?: boolean;
+      dryRun?: boolean;
+    }) => {
+      try {
+        console.log(chalk.bold.cyan('\n=== tnf alive up — Persistent Stack Activation ===\n'));
+
+        const tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+        const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
+        const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
+        const repoAgentsDir = path.join(repoRoot, 'scripts', 'agents');
+        const daemonScript = path.join(repoAgentsDir, 'tnf-agent-daemon.py');
+
+        // Step 0: Verify venv / python is usable
+        if (!fs.existsSync(daemonScript)) {
+          throw new Error(`TNF daemon script not found at ${daemonScript}`);
+        }
+        console.log(chalk.dim(`[1/4] python:  ${pythonBin}`));
+        console.log(chalk.dim(`      script: ${daemonScript}`));
+
+        // Step 1: Stack alive on bus
+        if (options.dryRun) {
+          console.log(chalk.yellow('[dry-run] would start: tnf-agent-daemon live'));
+          console.log(chalk.yellow('[dry-run] would install: tnf-heartbeat-selfwake cron'));
+          return;
+        }
+
+        // Step 2: Provision venv if needed (one-time, idempotent)
+        if (!fs.existsSync(tnfVenv) && pythonBin === 'python3') {
+          console.log(chalk.yellow('[2/4] Provisioning ~/.tnf/venv (one-time)...'));
+          await runCommand('python3', ['-m', 'venv', path.join(tnfHome, 'venv')]);
+          await runCommand(path.join(tnfHome, 'venv', 'bin', 'pip'), [
+            'install',
+            '-q',
+            '-r',
+            path.join(repoAgentsDir, 'requirements.txt'),
+          ]);
+        } else {
+          console.log(
+            chalk.dim(
+              '[2/4] venv: ' + (fs.existsSync(tnfVenv) ? tnfVenv : 'system python3 (no venv)')
+            )
+          );
+        }
+
+        // Step 3: Start agent daemon (detached, live mode)
+        console.log(chalk.dim('[3/4] Starting tnf-agent-daemon (live mode)...'));
+        const daemonArgs = [daemonScript, 'live'];
+        if (options.model) daemonArgs.push('--model', options.model);
+        if (options.interval) daemonArgs.push('--interval', options.interval);
+        await runCommand(pythonBin, daemonArgs, { isBackground: true });
+        console.log(chalk.green('      ✅ daemon detached'));
+
+        // Step 4: Heartbeat cron
+        if (options.installCron) {
+          console.log(chalk.dim('[4/4] Installing heartbeat self-wake cron (every 5 min)...'));
+          const heartbeatScript = path.join(repoAgentsDir, 'tnf-heartbeat-selfwake.py');
+          await runCommand('hermes', [
+            'cronjob',
+            'action=create',
+            '--schedule',
+            '*/5 * * * *',
+            '--script',
+            heartbeatScript,
+            '--name',
+            'TNF Heartbeat Self-Wake',
+            '--no-agent',
+          ]);
+        } else {
+          console.log(chalk.dim('[4/4] Skipping cron install (use --install-cron to enable)'));
+        }
+
+        // Heartbeat status
+        console.log(chalk.dim('\n--- Health Snapshot ---\n'));
+        const { execSync } = await import('child_process');
+        try {
+          const psOut = execSync('ps -eo pid,etime,command', {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'ignore'],
+          });
+          const matches = psOut
+            .split('\n')
+            .filter((l) => /tnf-agent-daemon\.py\b/.test(l) && !l.includes('grep'));
+          if (matches.length) {
+            console.log(chalk.green('✅ tnf-agent-daemon process:'));
+            for (const m of matches.slice(0, 3)) console.log(chalk.dim('   ' + m.trim()));
+          } else {
+            console.log(
+              chalk.red(
+                '❌ tnf-agent-daemon NOT running (yet — it may still be starting or failed; check log)'
+              )
+            );
+          }
+        } catch {
+          console.log(chalk.red('❌ process query failed'));
+        }
+
+        // Persist status to Redis for cross-process visibility
+        try {
+          const busUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+          const r = await import('ioredis').then((m) => (m.default ? new m.default(busUrl) : null));
+          if (r) {
+            await r.hset('tnf:alive:status', {
+              started_at: new Date().toISOString(),
+              model: options.model || process.env.TNF_LLM_MODEL || 'minimaxai/minimax-m3',
+              python: pythonBin,
+              pid: String(process.pid),
+            });
+            await r.quit();
+            console.log(chalk.green('✅ Status posted to tnf:alive:status (Redis)'));
+          }
+        } catch (err) {
+          console.log(
+            chalk.dim(
+              '   (Redis status post skipped: ' +
+                (err instanceof Error ? err.message : String(err)) +
+                ')'
+            )
+          );
+        }
+
+        console.log(chalk.bold.green('\n✅ TNF alive — running autonomously.\n'));
+        console.log(chalk.dim('   Verify:  tnf alive status'));
+        console.log(chalk.dim('   Stop:    tnf alive down'));
+        console.log(chalk.dim('   Logs:    tail -f ~/.tnf/logs/daemon.log\n'));
+      } catch (err: any) {
+        console.error(chalk.red(`\n❌ tnf alive up failed: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+aliveCommand
+  .command('status')
+  .description('Show whether the persistent TNF stack is alive')
+  .option('--json', 'Output JSON status')
+  .action(async (options: { json?: boolean } = {}) => {
+    const { execSync } = await import('child_process');
+    const result: any = {
+      timestamp: new Date().toISOString(),
+      daemon: { running: false, pids: [] as string[] },
+      bridge: { running: false, pids: [] as string[] },
+      heartbeat_cron: { installed: false, jobId: '' },
+      redis_status: {},
+    };
+
+    // Probe processes with precise regex match on full command line.
+    let procDump = '';
+    try {
+      procDump = execSync('ps -eo pid,etime,command', {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+      });
+    } catch {}
+    const procLines = procDump.split('\n').slice(1); // drop header
+    const realProcs = procLines.filter((l) => l.trim() && !l.includes('grep '));
+    const daemonProcs = realProcs.filter((l) => /tnf-agent-daemon\.py\b/.test(l));
+    if (daemonProcs.length > 0) {
+      result.daemon.running = true;
+      result.daemon.pids = daemonProcs.map((l) => l.trim().slice(0, 120));
+    }
+    const bridgeProcs = realProcs.filter((l) => /hermes-tnf-a2a-bridge\.py\b/.test(l));
+    if (bridgeProcs.length > 0) {
+      result.bridge.running = true;
+      result.bridge.pids = bridgeProcs.map((l) => l.trim().slice(0, 120));
+    }
+
+    try {
+      const out = execSync('hermes cronjob action=list 2>&1', {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+      });
+      if (out.toLowerCase().includes('tnf heartbeat')) {
+        result.heartbeat_cron.installed = true;
+      }
+    } catch {}
+    try {
+      const out = execSync('redis-cli HGETALL tnf:alive:status 2>&1', {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+      }).trim();
+      if (out) {
+        const lines = out.split('\n');
+        for (let i = 0; i < lines.length - 1; i += 2) {
+          result.redis_status[lines[i]] = lines[i + 1];
+        }
+      }
+    } catch {}
+
+    if (options.json) {
+      console.log(JSON.stringify(result, null, 2));
+      return;
+    }
+    console.log(chalk.bold('\n=== tnf alive status ===\n'));
+    console.log(
+      result.daemon.running
+        ? chalk.green(`✅ TNF Agent Daemon: running (${result.daemon.pids.length} pid(s))`)
+        : chalk.red('❌ TNF Agent Daemon: not running')
+    );
+    if (result.daemon.pids.length) {
+      for (const p of result.daemon.pids.slice(0, 3)) console.log(chalk.dim('   ' + p));
+    }
+    console.log(
+      result.bridge.running
+        ? chalk.green(`✅ A2A Bridge: running`)
+        : chalk.dim('⚪ A2A Bridge: not running (start with `tnf bridge start`)')
+    );
+    console.log(
+      result.heartbeat_cron.installed
+        ? chalk.green('✅ Heartbeat self-wake cron: installed')
+        : chalk.dim('⚪ Heartbeat cron: not installed (run `tnf alive up --install-cron`)')
+    );
+    if (Object.keys(result.redis_status).length > 0) {
+      console.log(chalk.dim('\nRedis status:'));
+      for (const [k, v] of Object.entries(result.redis_status)) {
+        console.log(chalk.dim(`   ${k}: ${String(v).slice(0, 60)}`));
+      }
+    }
+    console.log('');
+  });
+
+aliveCommand
+  .command('down')
+  .description('Stop all TNF persistent stack components')
+  .action(async () => {
+    console.log(chalk.yellow('\nStopping TNF persistent stack...\n'));
+    const { execSync } = await import('child_process');
+    const targets = [
+      { name: 'TNF Agent Daemon', pattern: 'tnf-agent-daemon.py' },
+      { name: 'A2A Bridge', pattern: 'hermes-tnf-a2a-bridge.py' },
+    ];
+    for (const t of targets) {
+      try {
+        const out = execSync(`pgrep -f ${t.pattern}`, {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'ignore'],
+        }).trim();
+        if (out) {
+          execSync(`pkill -f ${t.pattern}`, { encoding: 'utf8', stdio: 'pipe' });
+          console.log(chalk.green(`✅ Stopped ${t.name} (${out.split('\n').length} pid(s))`));
+        } else {
+          console.log(chalk.dim(`⚪ ${t.name}: not running`));
+        }
+      } catch {
+        console.log(chalk.dim(`⚪ ${t.name}: not running`));
+      }
+    }
+    console.log(chalk.green('\n✅ TNF persistent stack stopped.\n'));
+    console.log(
+      chalk.dim('   Note: heartbeat cron (if installed) still fires every 5 min to auto-restart.')
+    );
+    console.log(chalk.dim('   To remove cron: hermes cronjob action=remove --id <jobId>\n'));
+  });
+
+// ============================================================================
+// tnf bridge — A2A bus bridge controller
+// ============================================================================
+
+const bridgeCommand = program
+  .command('bridge')
+  .description(
+    'Control the TNF A2A bridge (inter-runtime bus translator) — start/stop/status/test'
+  );
+
+bridgeCommand
+  .command('start')
+  .description('Start the A2A bridge in foreground (detached)')
+  .option('--foreground', 'Run synchronously, not detached')
+  .action(async (options: { foreground?: boolean } = {}) => {
+    const tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+    const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
+    const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
+    const script = path.join(repoRoot, 'scripts', 'agents', 'hermes-tnf-a2a-bridge.py');
+    if (!fs.existsSync(script)) {
+      console.error(chalk.red(`Bridge script not found: ${script}`));
+      process.exit(1);
+    }
+    if (!options.foreground) {
+      await runCommand(pythonBin, [script, '--foreground'], { isBackground: true });
+      console.log(chalk.green('✅ Bridge detached'));
+      console.log(chalk.dim('   Verify: tnf bridge status'));
+    } else {
+      await runCommand(pythonBin, [script, '--foreground'], { isBackground: false });
+    }
+  });
+
+bridgeCommand
+  .command('status')
+  .description('Show bridge process and bus health')
+  .action(async () => {
+    const tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+    const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
+    const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
+    const script = path.join(repoRoot, 'scripts', 'agents', 'hermes-tnf-a2a-bridge.py');
+    await runCommand(pythonBin, [script, '--status'], { isBackground: false });
+  });
+
+bridgeCommand
+  .command('stop')
+  .description('Stop the running bridge')
+  .action(async () => {
+    const { execSync } = await import('child_process');
+    try {
+      execSync('pkill -f hermes-tnf-a2a-bridge.py', { stdio: 'pipe' });
+      console.log(chalk.green('✅ Bridge stopped'));
+    } catch {
+      console.log(chalk.dim('⚪ Bridge not running'));
+    }
+  });
+
+bridgeCommand
+  .command('test')
+  .description('Run bridge integration self-test')
+  .action(async () => {
+    const tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+    const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
+    const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
+    const script = path.join(repoRoot, 'scripts', 'agents', 'hermes-tnf-a2a-bridge.py');
+    await runCommand(pythonBin, [script, '--test'], { isBackground: false });
+  });
+
+// ============================================================================
+// tnf heartbeat — Watchdog / self-wake controller
+// ============================================================================
+
+const heartbeatCommand = program
+  .command('heartbeat')
+  .description('Control the TNF self-wake heartbeat (watchdog over the persistent stack)');
+
+heartbeatCommand
+  .command('run')
+  .description('Run the heartbeat check once (foreground)')
+  .option('--cron', 'Output cron-friendly JSON (used by installed cron job)')
+  .action(async (options: { cron?: boolean } = {}) => {
+    const tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+    const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
+    const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
+    const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-heartbeat-selfwake.py');
+    if (!fs.existsSync(script)) {
+      console.error(chalk.red(`Heartbeat script not found: ${script}`));
+      process.exit(1);
+    }
+    await runCommand(pythonBin, [script], { isBackground: false });
+  });
+
+heartbeatCommand
+  .command('install')
+  .description('Install heartbeat self-wake cron (runs every 5 minutes)')
+  .action(async () => {
+    const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-heartbeat-selfwake.py');
+    if (!fs.existsSync(script)) {
+      console.error(chalk.red(`Heartbeat script not found: ${script}`));
+      process.exit(1);
+    }
+    await runCommand('hermes', [
+      'cronjob',
+      'action=create',
+      '--schedule',
+      '*/5 * * * *',
+      '--script',
+      script,
+      '--name',
+      'TNF Heartbeat Self-Wake',
+      '--no-agent',
+    ]);
+    console.log(chalk.green('✅ Heartbeat self-wake cron installed (every 5 min)'));
+  });
+
+heartbeatCommand
+  .command('remove')
+  .description('Remove heartbeat self-wake cron by name')
+  .action(async () => {
+    const { execSync } = await import('child_process');
+    try {
+      const out = execSync('hermes cronjob action=list 2>&1', { encoding: 'utf8', stdio: 'pipe' });
+      const match = out.match(
+        /(?:id|job)[":= ]+"?([a-f0-9-]{20,})"?\s+[\s\S]*?TNF Heartbeat Self-Wake/i
+      );
+      if (!match) {
+        console.log(chalk.dim('⚪ Heartbeat cron not found by name.'));
+        return;
+      }
+      const jobId = match[1];
+      await runCommand('hermes', ['cronjob', 'action=remove', '--id', jobId]);
+      console.log(chalk.green(`✅ Heartbeat cron ${jobId} removed`));
+    } catch (err: any) {
+      console.error(chalk.red(`Failed: ${err.message}`));
+      process.exit(1);
     }
   });
 
@@ -13085,6 +13681,7 @@ cronCommand
   });
 
 registerAssimilateCommand(program, repoRoot);
+registerAgentsClassifyCommand(program, repoRoot);
 
 const webhookCommand = program.command('webhook').description('Webhook management');
 webhookCommand
@@ -13270,7 +13867,10 @@ async function startInteractiveAgent(): Promise<void> {
   const heartbeatInterval = setInterval(async () => {
     try {
       // Simple heartbeat via terminal pulse script
-      const pulseScript = path.join(process.env.HOME || '/tmp', '.tnf/bin/terminal-heartbeat-pulse.cjs');
+      const pulseScript = path.join(
+        process.env.HOME || '/tmp',
+        '.tnf/bin/terminal-heartbeat-pulse.cjs'
+      );
       if (fs.existsSync(pulseScript)) {
         await runCommand('node', [pulseScript]);
       }

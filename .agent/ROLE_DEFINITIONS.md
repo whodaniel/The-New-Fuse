@@ -279,18 +279,99 @@ System messages are prefixed with `[SYSTEM]` or role identifier:
 
 ---
 
-## 📊 Monitoring
+## 🧭 Agent Definition Vocabulary (Phase 8, audit 2026-06-14)
 
-The Orchestrator exposes the following metrics:
+Per the agent-classification consistency review
+(`docs/protocols/reports/AGENT_DEFINITION_CONSISTENCY_REVIEW_2026-06-14.md`),
+TNF canonicalizes agent identity along **five orthogonal axes**:
 
-- `heartbeatsSent` - Total heartbeats sent
-- `stallsDetected` - Stalls detected
-- `recoveryAttempts` - Recovery attempts made
-- `messagesProcessed` - Messages processed
-- `agentsOnboarded` - Agents onboarded
-- `activeAgents` - Currently active agents
-- `offlineAgents` - Offline agents
-- `channelActivity` - Per-channel message counts
+| Axis              | Vocabulary surface                                                                          | Source of truth                                                              |
+| ----------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `dacc_role`       | `director \| orchestrator \| broker \| worker \| participant`                                | DACC-v1 (this document); `AGENT_ROLE_TRAITS` in `packages/tnf-cli/src/cli.ts:2958` |
+| `worker_action`   | `code_generation \| code_review \| cli_coder \| orchestrator \| ...` + `unknown`             | `AgentRole` enum (`packages/database/src/drizzle/schema/enums.ts:25-141`)    |
+| `fulfillment`     | `{ vendor, model, transport, protocol_version, prompt_doc_uri, tools, endpoint, raw }`      | Agent registry bridge payload                                                |
+| `traits`          | `{ observability, subAgent_capable, orchestrates_agents, persona_source, autonomy_level, ... }` | `tnf traits list`; `_buildTraitGroups`                                       |
+| `platform`        | Free-form string chosen from `PLATFORM_TAXONOMY`                                            | `PLATFORM_TAXONOMY` in `packages/tnf-cli/src/cli.ts:2966`                    |
+
+### Metadata policy (Phase 8)
+
+`metadata` is a frequently-used but **unstructured jsonb field**. It already
+appears on the `agents`, `agents_metadata`, `agent_tracking`,
+`agent_sessions`, `agents_profile`, and `users` tables. To prevent the table
+from becoming a junk drawer:
+
+1. **Top-level columns beat `metadata`** when the field is read by hot-path
+   queries (broker dispatch, registry lists). Example: `agents.dacc_role` is
+   top-level because broker dispatch filters on it; `agents.last_seen` is
+   top-level because the registry lists order by it.
+2. **`agents.metadata` (jsonb)** is reserved for **vendor-specific bag
+   fields** that no canonical axis covers. These fields MUST round-trip
+   through `infoRecord` (in-memory) and `infoRecord.raw` (DB) without loss.
+3. **Adding a top-level column** requires (a) a numbered migration,
+   (b) an update to this table's "vocabulary surface" row, and
+   (c) a corresponding type in the relevant Drizzle schema.
+4. **`agents.traits`** (renamed from Phase 1 `agents.qualities`) is the
+   canonical field for agent-feature taxonomies. New feature flags go in
+   `traits`, not in `metadata`.
+
+### Cross-references
+
+- Audit report: `docs/protocols/reports/AGENT_CLASSIFICATION_AUDIT_2026-06-14.md`
+- Consistency review: `docs/protocols/reports/AGENT_DEFINITION_CONSISTENCY_REVIEW_2026-06-14.md`
+- DB migration aligning vocabulary: `packages/database/drizzle/0009_align_agent_definition_vocabulary.sql`
+- Runtime trait command: `./tnf traits list [--json]`
+
+---
+
+## 🌐 Federated ID Encoding (Phase 9, audit 2026-06-14)
+
+TNF carries **three distinct federated ID namespaces**, each with a different
+purpose. All three are first-class columns on the `agents` table (migration
+`0010`) and live in the `agents.federation` jsonb as a bundle:
+
+| Namespace            | Column              | Format                                         | Source of truth                                                                                  | Used for                                                            |
+| -------------------- | ------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `canonicalEntityId`  | `canonical_entity_id` | `TNF:[scope:]CATEGORY:PROVIDER:NAME:INSTANCE`  | `buildCanonicalEntityId()` in `packages/relay-core/src/contracts/identity.ts:38`                | Hierarchical identity, agent registry, master-clock, broker dispatch |
+| `idNumber`           | `id_number`         | `ID#:<Base58>` (sequential int → Base58)        | `FederatedIdentityService` in `packages/a2a-core/src/federated-identity.service.ts:22`           | Crypto-attribution of AI Wiki entries, compounding memory, transcripts |
+| `mcid`               | `federation->>'mcid'` | UUID (correlation_id, causation_id, trace_id)  | `docs/protocols/schemas/tnf-master-cumulative-id.schema.json` (`tnf/mcid/0.1`)                   | Cross-protocol lineage envelope (TWIP, handoff, relay, workflow)     |
+
+### Encoding rules
+
+- **`canonicalEntityId`** — built from parts `{category, provider, name, instance}`.
+  `category` MUST be one of the `TnfIdentityCategory` enum values
+  (`AGENT | SESSION | CHANNEL | WORKFLOW | TASK | SCHEDULE | HARNESS | MCP | LLM | USER | SYSTEM`).
+  Validation: `normalizeCanonicalEntityId()` rejects anything not matching
+  `TNF:[scope:]CATEGORY:PROVIDER:NAME:INSTANCE`.
+- **`idNumber`** — assigned sequentially via Redis `INCR` per agent ID
+  (`tnf:identity:seq:<agentId>`), encoded as Bitcoin-style Base58
+  (`123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz`).
+  Verification is HMAC-SHA256 over `${agentId}|${idNumber}|${sha256(content)}`.
+- **`mcid`** — UUID v4 assigned by the relay envelope (`trace_id`); `mcid` itself
+  is the cumulative event id with `correlation_id` and `causation_id` pointers.
+
+### Relationship to other identifiers in the repo
+
+- `MASTER_LIBRARY_ID` / `KNOWLEDGE_TREE.json` `vector_id` (`ID#:Base58x`) is the
+  **intelligence-indexer namespace** — generated by `scripts/autonomy/generate_merkle_tree.py`
+  from hash bytes. Do not confuse with `idNumber` (sequential int) — they share
+  the `ID#:` prefix but encode different data.
+- `ID#:PROT-HANDOFF-V1-2026` etc. are **literal protocol-version handoff IDs**,
+  not federated identifiers.
+- `AGENT-XX` is the DACC-v1 runtime-handle format (`[AGENT-01] message [...]`),
+  not a federated ID — but `agents.operationalHandle` is the canonical
+  storage for it.
+
+### Cross-references
+
+- Audit: `docs/protocols/reports/FEDERATED_ID_ENCODING_AUDIT_2026-06-14.md`
+- DB migration: `packages/database/drizzle/0010_add_federated_ids.sql`
+- Protocol contract: `packages/protocol-contracts/src/identity.ts`
+  (`TnfIdentityCategorySchema`)
+- Canonical encoder: `packages/a2a-core/src/federated-identity.service.ts`
+- Bridge: `packages/relay-core/src/agent-registry-bridge.ts` (must use
+  `buildCanonicalEntityId()` to emit conformant `canonicalEntityId`)
+- Transcript processor mirror: `packages/gemini-browser-skill/src/TranscriptProcessorV2.ts`
+  (`generateFederatedIdNumber()` helper for V2/V3/V4)
 
 ---
 

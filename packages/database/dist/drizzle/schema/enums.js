@@ -44,6 +44,10 @@ export const agentTypeEnum = pgEnum('AgentType', [
     'CLI_DATABASE',
     'CLI_GIT',
     'CLI_SHELL',
+    'CLI_KILO', // Phase 4 (audit 2026-06-14): native kilo CLI identity
+    'CLI_OPENCODE', // Phase 4: opencode CLI identity
+    'CLI_PI', // Phase 4: pi-coding-agent CLI identity
+    'API_CLAUDE_CODE', // Phase 4: Anthropic claude-code agent
     // IDE Extension Agents
     'IDE_VSCODE',
     'IDE_CURSOR',

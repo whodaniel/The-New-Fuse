@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T03:17:10.901505Z",
+  "generatedAt": "2026-06-15T21:28:19.619787Z",
   "phase": "phase7-directive-conversion",
   "actionQueuePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-action-queue.json",
   "ledgerPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-directive-conversion-ledger.json",
@@ -40,7 +40,7 @@
   },
   "batch": {
     "batchId": "ai5-phase7-batch-001",
-    "state": "planned",
+    "state": "claimed",
     "size": 0,
     "owner": "local-subdirector"
   }

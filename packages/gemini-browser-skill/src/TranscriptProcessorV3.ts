@@ -16,6 +16,8 @@ import * as process from 'node:process';
 
 import { chromium, type BrowserContext, type Page } from 'playwright';
 
+import { generateFederatedIdNumber } from './TranscriptProcessorV2.js';
+
 interface VideoEntry {
   index: number;
   url: string;
@@ -579,14 +581,10 @@ class TranscriptProcessorV3 {
   private appendToKnowledgeBase(video: VideoEntry): void {
     const entryId = `video-analysis-${video.videoId}`;
     const safeTitle = video.title.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
-    const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-    let num = video.index;
-    let idCode = '';
-    while (num > 0) {
-      idCode = alphabet[num % 58] + idCode;
-      num = Math.floor(num / 58);
-    }
-    const idNumber = `ID#:${idCode || alphabet[0]}`;
+    // Phase 9: shared Federated ID# helper. Canonical encoder still lives in
+    // packages/a2a-core/src/federated-identity.service.ts; re-imported here
+    // from the V2 sibling, which keeps the alphabet in sync.
+    const idNumber = generateFederatedIdNumber(video.index);
 
     const compoundingEntry = {
       id: entryId,

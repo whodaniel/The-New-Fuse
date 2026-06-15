@@ -5,6 +5,57 @@
  */
 import { randomUUID } from 'crypto';
 import { WebSocket } from 'ws';
+import { buildCanonicalEntityId } from './contracts/identity.js';
+
+// Phase 9 FOLLOWUP-2: stable locally-deterministic Federated ID# allocator.
+// In production this is replaced by FederatedIdentityService (Redis-INCR +
+// base58 encode); here we use FNV-1a(agentId) so bridge-started agents
+// (launchpad, master-clock) get a stable ID# across process restarts that
+// won't collide with the canonical service when the service is later wired in.
+// Same alphabet as FederatedIdentityService.
+const FEDERATED_BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+function encodeBase58(num: number): string {
+  if (!Number.isFinite(num) || num <= 0) return FEDERATED_BASE58_ALPHABET[0];
+  let remaining = Math.trunc(num);
+  let encoded = '';
+  while (remaining > 0) {
+    encoded = FEDERATED_BASE58_ALPHABET[remaining % 58] + encoded;
+    remaining = Math.floor(remaining / 58);
+  }
+  return encoded;
+}
+
+function deterministicBridgeIdNumber(agentId: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < agentId.length; i += 1) {
+    h ^= agentId.charCodeAt(i);
+    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+  }
+  // Bias 5000-14999 so deterministic bridge IDs are visually distinct
+  // from production sequential (1-N) and from seeder (1000-9999).
+  return `ID#:${encodeBase58(5000 + (h % 10000))}`;
+}
+
+// Phase 9 FOLLOWUP-3: build a fresh mcid envelope at registration time.
+// Schema reference: docs/protocols/schemas/tnf-master-cumulative-id.schema.json
+// (spec: tnf/mcid/0.1). The cumulative event id is the bridge session UUID;
+// correlation_id is its own UUID (the session-instance correlation key);
+// causation_id is null on registration (no upstream event).
+function buildRegistrationMcid(sessionId: string): string {
+  return JSON.stringify({
+    spec: 'tnf/mcid/0.1',
+    id: sessionId,
+    scope: { tenant_id: 'tnf-default' },
+    lineage: {
+      trace_id: null,
+      correlation_id: sessionId,
+      causation_id: null,
+    },
+    emittedAt: new Date().toISOString(),
+    source: 'agent-registry-bridge',
+  });
+}
 
 const RELAY_URL =
   process.env.RELAY_URL ||
@@ -59,7 +110,26 @@ class AgentRegistryBridge {
         payload: {
           agent: {
             id: this.sessionId,
-            canonicalEntityId: `AGENT://TNFCORE/${AGENT_ID}`,
+            // Phase 9 (audit 2026-06-14): canonicalEntityId MUST be in the
+            // TNF-namespaced format `TNF:[scope:]CATEGORY:PROVIDER:NAME:INSTANCE`
+            // and pass `normalizeCanonicalEntityId()`. Previous value was
+            // `AGENT://TNFCORE/${AGENT_ID}` which would be rejected by any
+            // consumer validating via `isCanonicalEntityId()`. Built from parts.
+            canonicalEntityId: buildCanonicalEntityId({
+              category: 'AGENT',
+              provider: 'TNFCORE',
+              name: AGENT_ID,
+              instance: 1,
+            }),
+            // Phase 9 FOLLOWUP-2: Federated ID# included in the registration
+            // payload. In production this is allocated by FederatedIdentityService;
+            // here we use a deterministic hash so it survives restarts and
+            // does not collide with seeder-generated values.
+            idNumber: deterministicBridgeIdNumber(AGENT_ID),
+            // Phase 9 FOLLOWUP-3: emit mcid envelope at registration. mcid is
+            // the cumulative event id; correlation_id links registration events
+            // originating from the same bridge session.
+            mcid: buildRegistrationMcid(this.sessionId),
             operationalHandle: AGENT_ID,
             name: AGENT_ID,
             platform: 'tnf-core',
