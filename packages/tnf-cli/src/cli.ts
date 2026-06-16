@@ -148,8 +148,28 @@ async function runTnfCliEntrypoint(args: string[]): Promise<void> {
   await runCommand(process.execPath, [_filename, ...args], { cwd: repoRoot, env });
 }
 
-async function runTurnZeroOnboardSurface(): Promise<void> {
-  await runCommand('node', ['scripts/tnf-onboard.cjs', '--runtime-timeout-ms', '1000']);
+async function runTurnZeroOnboardSurface(options: { repair?: boolean } = {}): Promise<void> {
+  const args = ['scripts/tnf-onboard.cjs', '--runtime-timeout-ms', '1000'];
+  if (options.repair) args.push('--repair');
+  await runCommand('node', args);
+}
+
+async function ensureTurnZeroForAgentEntrypoint(): Promise<void> {
+  if (isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD)) {
+    console.warn(
+      chalk.yellow(
+        '[TNF Harness] Skipping Turn Zero onboarding because TNF_SKIP_TURN_ZERO_ONBOARD is set.'
+      )
+    );
+    return;
+  }
+
+  console.log(chalk.bold.cyan('\n[TNF Harness] Turn Zero onboarding before interactive agent\n'));
+  await runTurnZeroOnboardSurface();
+}
+
+function isTruthyEnv(value: string | undefined): boolean {
+  return typeof value === 'string' && ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
 }
 
 function normalizeToken(value: string | undefined): string | undefined {
@@ -1033,6 +1053,12 @@ async function runFileScript(file: FileScriptEntry, args: string[]): Promise<voi
     return;
   }
   throw new Error(`Unsupported script type for ${file.relPath}`);
+}
+
+async function runFastHarnessProtocolGate(label: string): Promise<void> {
+  console.log(chalk.dim(`[TNF Harness] Protocol gate before ${label}`));
+  new ProtocolInterceptor(repoRoot).runPreFlightChecks();
+  await runCommand('node', ['scripts/protocols/validate-turn-zero-authority.cjs', '--mode=ci']);
 }
 
 function resolveControlPlaneProvider(
@@ -4517,12 +4543,10 @@ program
             label: 'Initializing handoff matrix',
             critical: false,
             action: async () => {
-              // RelayHealthCheck often handles initial handoff state
-              if (fs.existsSync(path.join(repoRoot, 'scripts/RelayHealthCheck.cjs'))) {
-                await runCommand('node', ['scripts/RelayHealthCheck.cjs']);
-              } else {
-                console.log(chalk.dim('   Handoff matrix already synchronized'));
-              }
+              await runCommand('node', [
+                'scripts/protocols/enforce-session-handoff.cjs',
+                '--mode=ci',
+              ]);
             },
           },
           {
@@ -4807,12 +4831,14 @@ program
   .option('--require-cloud-db', 'Require cloud DATABASE_URL for this run')
   .option('--no-require-cloud-db', 'Allow non-cloud DATABASE_URL for this run')
   .option('--database-url <url>', 'Override DATABASE_URL for this run')
+  .option('--skip-protocol', 'Skip the TNF protocol validation panel')
   .action(
     async (options: {
       mode?: string;
       allowLocalDb?: boolean;
       requireCloudDb?: boolean;
       databaseUrl?: string;
+      skipProtocol?: boolean;
     }) => {
       try {
         const args = ['scripts/tnf-doctor.cjs'];
@@ -4823,6 +4849,11 @@ program
         }
         if (options.databaseUrl) args.push('--database-url', options.databaseUrl);
         await runCommand('node', args);
+        if (!options.skipProtocol) {
+          console.log(chalk.bold.cyan('\n[TNF Doctor] Protocol validation panel\n'));
+          await runFastHarnessProtocolGate('tnf doctor');
+          await runCommand('node', ['scripts/validate-protocol-schemas.cjs']);
+        }
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
         process.exit(1);
@@ -4881,6 +4912,311 @@ program
     }
   });
 
+const handoff = program
+  .command('handoff')
+  .description('Session handoff utilities for TNF continuity');
+
+handoff
+  .command('show')
+  .description('Show the canonical TNF session handoff')
+  .option('--json', 'Print raw SESSION_HANDOFF_LATEST.json')
+  .action((options: { json?: boolean }) => {
+    try {
+      const handoffJsonPath = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json';
+      const handoffMdPath = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md';
+      const handoffJson = readJsonFileIfPresent(handoffJsonPath);
+      if (options.json) {
+        if (!handoffJson) {
+          throw new Error(`Missing or invalid ${handoffJsonPath}`);
+        }
+        console.log(JSON.stringify(handoffJson, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nTNF Session Handoff\n'));
+      if (handoffJson) {
+        console.log(`  id:          ${handoffJson.handoff_id || 'unknown'}`);
+        console.log(`  created_at:  ${handoffJson.created_at || 'unknown'}`);
+        console.log(`  owner:       ${handoffJson.owner || 'unknown'}`);
+        console.log(`  priority:    ${handoffJson?.continuation?.priority || 'unknown'}`);
+        const nextActions = Array.isArray(handoffJson.next_actions) ? handoffJson.next_actions : [];
+        console.log(`  next_actions:${nextActions.length}`);
+        nextActions.slice(0, 5).forEach((action: any, index: number) => {
+          const label =
+            typeof action === 'string'
+              ? action
+              : action?.summary || action?.description || JSON.stringify(action);
+          console.log(`    ${index + 1}. ${label}`);
+        });
+      } else {
+        console.log(chalk.yellow(`  Missing or invalid ${handoffJsonPath}`));
+      }
+
+      const mdPreview = readTextFileIfPresent(handoffMdPath, 900);
+      if (mdPreview) {
+        console.log(chalk.dim('\nMarkdown preview:\n'));
+        console.log(mdPreview);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+handoff
+  .command('validate')
+  .description('Validate session handoff freshness, schema, and changed-path coverage')
+  .option('--mode <mode>', 'Validation mode passed to enforce-session-handoff.cjs', 'ci')
+  .action(async (options: { mode?: string }) => {
+    try {
+      await runCommand('node', [
+        'scripts/protocols/enforce-session-handoff.cjs',
+        `--mode=${options.mode || 'ci'}`,
+      ]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+handoff
+  .command('emit')
+  .description('Emit SESSION_HANDOFF_LATEST.json and markdown mirror')
+  .option('--owner <owner>', 'Handoff owner')
+  .option('--targets <targets>', 'Comma-separated target agents')
+  .option('--priority <priority>', 'Continuation priority')
+  .option('--project-ids <ids>', 'Comma-separated project ids')
+  .option('--scope <scope>', 'Handoff scope')
+  .option('--summary <items>', 'Summary items separated by ||')
+  .option('--next-actions <items>', 'Next actions separated by ||')
+  .option('--resume-checklist <items>', 'Resume checklist items separated by ||')
+  .option('--auto-verify', 'Run verification while emitting handoff')
+  .action(
+    async (options: {
+      owner?: string;
+      targets?: string;
+      priority?: string;
+      projectIds?: string;
+      scope?: string;
+      summary?: string;
+      nextActions?: string;
+      resumeChecklist?: string;
+      autoVerify?: boolean;
+    }) => {
+      try {
+        const args = ['scripts/protocols/emit-session-handoff.cjs'];
+        if (options.owner) args.push('--owner', options.owner);
+        if (options.targets) args.push('--targets', options.targets);
+        if (options.priority) args.push('--priority', options.priority);
+        if (options.projectIds) args.push('--project-ids', options.projectIds);
+        if (options.scope) args.push('--scope', options.scope);
+        if (options.summary) args.push('--summary', options.summary);
+        if (options.nextActions) args.push('--next-actions', options.nextActions);
+        if (options.resumeChecklist) args.push('--resume-checklist', options.resumeChecklist);
+        if (options.autoVerify) args.push('--auto-verify');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+handoff
+  .command('refresh')
+  .description('Emit a verified handoff and then validate it')
+  .option('--mode <mode>', 'Validation mode passed to enforce-session-handoff.cjs', 'ci')
+  .action(async (options: { mode?: string }) => {
+    try {
+      await runCommand('node', ['scripts/protocols/emit-session-handoff.cjs', '--auto-verify']);
+      await runCommand('node', [
+        'scripts/protocols/enforce-session-handoff.cjs',
+        `--mode=${options.mode || 'ci'}`,
+      ]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const protocol = program
+  .command('protocol')
+  .description('Validate TNF framework protocols and harness boundaries');
+
+protocol
+  .command('validate')
+  .description('Run the canonical TNF protocol validation suite')
+  .option('--mode <mode>', 'Session handoff validation mode', 'ci')
+  .option('--skip-local-runtime', 'Skip local runtime boundary validation')
+  .action(async (options: { mode?: string; skipLocalRuntime?: boolean }) => {
+    try {
+      await runCommand('node', ['scripts/protocols/validate-turn-zero-authority.cjs', '--mode=ci']);
+      await runCommand('node', [
+        'scripts/protocols/validate-handoff-source-drift.cjs',
+        '--mode=ci',
+      ]);
+      await runCommand('node', ['scripts/validate-protocol-schemas.cjs']);
+      await runCommand('node', [
+        'scripts/protocols/enforce-session-handoff.cjs',
+        `--mode=${options.mode || 'ci'}`,
+      ]);
+      if (!options.skipLocalRuntime) {
+        await runCommand('node', ['scripts/protocols/validate-local-runtime-boundary.cjs']);
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+protocol
+  .command('turn-zero')
+  .description('Validate Turn Zero authority and run the onboarding surface')
+  .option('--repair', 'Run onboarding repair before validation')
+  .action(async (options: { repair?: boolean }) => {
+    try {
+      await runTurnZeroOnboardSurface({ repair: options.repair });
+      await runCommand('node', ['scripts/protocols/validate-turn-zero-authority.cjs', '--mode=ci']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+protocol
+  .command('schemas')
+  .description('Validate protocol schema fixtures')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/validate-protocol-schemas.cjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+protocol
+  .command('local-runtime')
+  .description('Validate local runtime boundary rules')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/protocols/validate-local-runtime-boundary.cjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const state = program
+  .command('state')
+  .description('Inspect canonical TNF living state, ledger, handoff, and runtime snapshot');
+
+state
+  .command('show')
+  .description('Show the current TNF harness state packet')
+  .option('--full', 'Print full text instead of excerpts')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { full?: boolean; json?: boolean }) => {
+    try {
+      const maxChars = options.full ? 200_000 : 1600;
+      const payload = {
+        turnZeroMandatePresent: fs.existsSync(
+          path.join(repoRoot, 'docs/protocols/TURN_ZERO_MANDATE.md')
+        ),
+        livingState: readTextFileIfPresent('docs/protocols/LIVING_STATE.md', maxChars),
+        ledger: readTextFileIfPresent('docs/protocols/AGENT_STATUS_LEDGER.md', maxChars),
+        handoff: readJsonFileIfPresent('docs/protocols/reports/SESSION_HANDOFF_LATEST.json'),
+        runtimeState: readJsonFileIfPresent('.agent/runtime-state.json'),
+        mcpServers: getMcpServerNames(readJsonFileIfPresent('.agent/runtime-state.json')),
+      };
+      if (options.json) {
+        console.log(JSON.stringify(payload, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nTNF Harness State\n'));
+      console.log(
+        `Turn Zero mandate: ${payload.turnZeroMandatePresent ? chalk.green('present') : chalk.red('missing')}`
+      );
+      console.log(
+        `MCP servers: ${payload.mcpServers.length ? payload.mcpServers.join(', ') : 'unavailable'}`
+      );
+      console.log(chalk.bold('\nLiving State\n'));
+      console.log(payload.livingState || chalk.yellow('Unavailable.'));
+      console.log(chalk.bold('\nHandoff\n'));
+      console.log(
+        payload.handoff
+          ? JSON.stringify(payload.handoff, null, 2).slice(0, maxChars)
+          : chalk.yellow('Unavailable.')
+      );
+      console.log(chalk.bold('\nLedger\n'));
+      console.log(payload.ledger || chalk.yellow('Unavailable.'));
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const harness = program.command('harness').description('TNF terminal harness lifecycle commands');
+
+harness
+  .command('boot')
+  .description('Boot relay monitor, terminal heartbeat, and director harness processes')
+  .action(async () => {
+    try {
+      await runCommand('bash', ['scripts/runtime/harness-boot.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const registry = program
+  .command('registry')
+  .description('Agent registry source-of-truth and live bus utilities');
+
+registry
+  .command('check')
+  .description('Validate the repo agent registry snapshot')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/agent-registry/check-agent-registry.mjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+registry
+  .command('build')
+  .description('Rebuild the repo agent registry snapshot')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/agent-registry/build-agent-registry.mjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+registry
+  .command('reconcile')
+  .description('Reconcile TNF and Claude agent-bank files')
+  .option('--targets <targets>', 'Targets passed to reconcile-agent-banks.cjs', 'all')
+  .action(async (options: { targets?: string }) => {
+    try {
+      await runCommand('node', [
+        'scripts/agents/reconcile-agent-banks.cjs',
+        '--targets',
+        options.targets || 'all',
+      ]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 const metaskills = program.command('metaskills').description('Meta-skills audit utilities');
 metaskills
   .command('audit')
@@ -4905,6 +5241,47 @@ mcp
   .action(async () => {
     try {
       await runCommand('node', ['scripts/tnf-generate-mcp-clients.cjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+mcp
+  .command('sync')
+  .description('Sync MCP config between the repo source of truth and the user-local CLI config')
+  .option('--from <source>', 'Sync source (repo)', 'repo')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { from?: string; json?: boolean }) => {
+    try {
+      if ((options.from || 'repo') !== 'repo') {
+        throw new Error(
+          "Only '--from repo' is currently supported to protect the canonical source of truth."
+        );
+      }
+      const mcpManager = new MCPManagerService();
+      const result = mcpManager.syncFromRepo(repoRoot);
+      if (options.json) {
+        console.log(JSON.stringify(result, null, 2));
+        return;
+      }
+      console.log(
+        chalk.green(
+          `✅ Synced ${result.imported} MCP server(s) from ${path.relative(repoRoot, result.configPath)} to the user-local TNF MCP config`
+        )
+      );
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+mcp
+  .command('health')
+  .description('Run the TNF MCP health check against configured MCP servers')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/mcp-health-check.cjs']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -6654,17 +7031,27 @@ program
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
   )
-  .action(async (script: string, args: string[], options: { superAdminToken?: string }) => {
-    try {
-      requireSuperAdmin(options, 'run');
-      const cmdArgs = ['run', script];
-      if (args.length > 0) cmdArgs.push('--', ...args);
-      await runCommand('pnpm', cmdArgs);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
+  .option('--skip-protocol-gate', 'Skip fast TNF protocol gate before execution')
+  .action(
+    async (
+      script: string,
+      args: string[],
+      options: { superAdminToken?: string; skipProtocolGate?: boolean }
+    ) => {
+      try {
+        requireSuperAdmin(options, 'run');
+        if (!options.skipProtocolGate) {
+          await runFastHarnessProtocolGate(`tnf run ${script}`);
+        }
+        const cmdArgs = ['run', script];
+        if (args.length > 0) cmdArgs.push('--', ...args);
+        await runCommand('pnpm', cmdArgs);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
     }
-  });
+  );
 
 const scriptsCommand = program
   .command('scripts')
@@ -6715,8 +7102,12 @@ scriptsCommand
     'Root script name OR runnable file path (scripts/**, tools/**, or repo root)'
   )
   .argument('[args...]', 'Arguments to forward')
-  .action(async (target: string, args: string[]) => {
+  .option('--skip-protocol-gate', 'Skip fast TNF protocol gate before execution')
+  .action(async (target: string, args: string[], options: { skipProtocolGate?: boolean }) => {
     try {
+      if (!options.skipProtocolGate) {
+        await runFastHarnessProtocolGate(`tnf scripts run ${target}`);
+      }
       const rootScripts = loadRootScripts();
       const rootMatch = rootScripts.find((s) => s.name === target);
       if (rootMatch) {
@@ -7681,7 +8072,7 @@ zeroTurnCommand
                 'config',
                 'set',
                 'model',
-                options.model || 'minimaxai/minimax-m3',
+                options.model || 'nvidia/z-ai/glm-5',
               ]);
             },
           },
@@ -7774,7 +8165,7 @@ zeroTurnCommand
                     '--schedule',
                     '*/5 * * * *',
                     '--script',
-                    tnfScript,
+                    path.join(os.homedir(), '.hermes/scripts/tnf-heartbeat-selfwake.py'),
                     '--name',
                     'TNF Heartbeat Self-Wake',
                     '--no-agent',
@@ -13765,6 +14156,12 @@ function loadTnfInteractiveContextPack(): string {
   const livingState = readTextFileIfPresent('docs/protocols/LIVING_STATE.md', 1200);
   const ledger = readTextFileIfPresent('docs/protocols/AGENT_STATUS_LEDGER.md', 900);
   const runtimeState = readJsonFileIfPresent('.agent/runtime-state.json');
+  const repoMemory = readTextFileIfPresent('MEMORY.md', 900);
+  const homeMemory = readAbsoluteTextFileIfPresent(
+    path.join(os.homedir(), '.tnf', 'MEMORY.md'),
+    900
+  );
+  const mcpServerNames = getMcpServerNames(runtimeState);
   const handoffSummary = handoff
     ? [
         `- Handoff source: ${path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json')}`,
@@ -13776,7 +14173,7 @@ function loadTnfInteractiveContextPack(): string {
     : '- Handoff source: missing after absolute repo-root check';
 
   const runtimeSummary = runtimeState
-    ? `- Runtime state: ${countRuntimeField(runtimeState.agents, runtimeState.agentCount)} agents, ${countRuntimeField(runtimeState.models, runtimeState.modelCount)} models, ${countRuntimeField(runtimeState.mcps || runtimeState.mcpServers, runtimeState.mcpCount)} MCPs`
+    ? `- Runtime state: ${countRuntimeField(runtimeState.agents, runtimeState.agentCount ?? runtimeState.counts?.agents)} agents, ${countRuntimeField(runtimeState.llmModels || runtimeState.models, runtimeState.modelCount ?? runtimeState.counts?.llmModels)} models, ${countRuntimeField(runtimeState.mcpServers || runtimeState.mcps, runtimeState.mcpCount ?? runtimeState.counts?.mcpServers)} MCPs`
     : '- Runtime state: unavailable or not JSON';
 
   return [
@@ -13802,6 +14199,7 @@ function loadTnfInteractiveContextPack(): string {
     '## Runtime Snapshot',
     '',
     runtimeSummary,
+    `- MCP server names: ${mcpServerNames.length ? mcpServerNames.join(', ') : 'unavailable'}`,
     '',
     '## Living State Excerpt',
     '',
@@ -13810,7 +14208,22 @@ function loadTnfInteractiveContextPack(): string {
     '## Ledger Excerpt',
     '',
     ledger || 'Unavailable.',
+    '',
+    '## Memory Excerpts',
+    '',
+    repoMemory ? `### Repo MEMORY.md\n${repoMemory}` : '### Repo MEMORY.md\nUnavailable.',
+    '',
+    homeMemory ? `### ~/.tnf/MEMORY.md\n${homeMemory}` : '### ~/.tnf/MEMORY.md\nUnavailable.',
   ].join('\n');
+}
+
+function readAbsoluteTextFileIfPresent(absolutePath: string, maxChars = 1600): string | null {
+  try {
+    if (!fs.existsSync(absolutePath)) return null;
+    return fs.readFileSync(absolutePath, 'utf8').slice(0, maxChars).trim();
+  } catch {
+    return null;
+  }
 }
 
 function countRuntimeField(value: any, fallback: any): string {
@@ -13819,6 +14232,28 @@ function countRuntimeField(value: any, fallback: any): string {
   if (typeof value === 'number' || typeof value === 'string') return String(value);
   if (typeof fallback === 'number' || typeof fallback === 'string') return String(fallback);
   return 'unknown';
+}
+
+function getMcpServerNames(runtimeState: any): string[] {
+  const fromRuntime = runtimeState?.mcpServers || runtimeState?.mcps;
+  if (Array.isArray(fromRuntime)) {
+    return fromRuntime
+      .map((entry) => String(entry?.name || entry))
+      .filter(Boolean)
+      .slice(0, 20);
+  }
+  if (fromRuntime && typeof fromRuntime === 'object') {
+    return Object.keys(fromRuntime).slice(0, 20);
+  }
+
+  try {
+    return MCPManagerService.loadRepoServers(repoRoot)
+      .map((server) => server.name)
+      .filter(Boolean)
+      .slice(0, 20);
+  } catch {
+    return [];
+  }
 }
 
 async function startInteractiveAgent(): Promise<void> {
@@ -14043,6 +14478,7 @@ async function main(): Promise<void> {
   interceptor.runPreFlightChecks();
 
   if (argv.length <= 2) {
+    await ensureTurnZeroForAgentEntrypoint();
     await startInteractiveAgent();
     return;
   }

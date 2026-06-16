@@ -122,6 +122,30 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
     cliCommand: ['doctor'],
   },
   {
+    name: 'state',
+    summary: 'Show canonical TNF living state, ledger, handoff, and runtime snapshot.',
+    usage: '/state',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['state', 'show'],
+  },
+  {
+    name: 'handoff',
+    summary: 'Show the canonical TNF session handoff.',
+    usage: '/handoff',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['handoff', 'show'],
+  },
+  {
+    name: 'protocol',
+    summary: 'Run TNF protocol schema validation.',
+    usage: '/protocol',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['protocol', 'schemas'],
+  },
+  {
     name: 'agents',
     summary: 'List configured TNF agent paths.',
     usage: '/agents',
@@ -258,10 +282,7 @@ export function getAllSlashCommands(projectRoot: string): SlashCommandDefinition
   return [...getStandardSlashCommands(), ...getProjectSlashCommands(projectRoot)];
 }
 
-export function findSlashCommand(
-  name: string,
-  projectRoot: string
-): SlashCommandDefinition | null {
+export function findSlashCommand(name: string, projectRoot: string): SlashCommandDefinition | null {
   const normalized = normalizeSlashName(name);
   return (
     getAllSlashCommands(projectRoot).find(
@@ -282,7 +303,9 @@ export function renderSlashCommandList(projectRoot: string): string {
     if (groupCommands.length === 0) continue;
     lines.push(`${titleCase(group)}:`);
     for (const command of groupCommands.sort((a, b) => a.name.localeCompare(b.name))) {
-      const aliases = command.aliases?.length ? ` (${command.aliases.map((a) => `/${a}`).join(', ')})` : '';
+      const aliases = command.aliases?.length
+        ? ` (${command.aliases.map((a) => `/${a}`).join(', ')})`
+        : '';
       lines.push(`  /${command.name}${aliases}`);
       lines.push(`    ${command.summary}`);
     }
@@ -312,10 +335,7 @@ export function renderSlashCommandDetail(command: SlashCommandDefinition): strin
   return lines.join('\n');
 }
 
-export function formatPromptSlashCommand(
-  command: SlashCommandDefinition,
-  args: string[]
-): string {
+export function formatPromptSlashCommand(command: SlashCommandDefinition, args: string[]): string {
   const suffix = args.join(' ').trim();
   if (command.source === 'project') {
     return suffix
@@ -323,7 +343,9 @@ export function formatPromptSlashCommand(
       : (command.content || '').trim();
   }
 
-  return suffix ? `${command.prompt || command.summary}\n\n${suffix}` : command.prompt || command.summary;
+  return suffix
+    ? `${command.prompt || command.summary}\n\n${suffix}`
+    : command.prompt || command.summary;
 }
 
 function projectCommandToSlashCommand(command: ProjectCommandDef): SlashCommandDefinition {

@@ -11,9 +11,12 @@ export function registerAssimilateCommand(program: Command, repoRoot: string): v
   assimilate
     .command('run <provider> [args...]')
     .description('Run a command through an external provider while enforcing TNF protocols.')
-    .action(async (provider: string, args: string[]) => {
+    .option('--skip-protocol-gate', 'Skip fast TNF protocol gate before provider execution')
+    .action(async (provider: string, args: string[], options: { skipProtocolGate?: boolean }) => {
       try {
-        await service.runAssimilatedCommand(provider, args);
+        await service.runAssimilatedCommand(provider, args, {
+          skipProtocolGate: options.skipProtocolGate,
+        });
       } catch (error: any) {
         console.error(`[Assimilation Engine] Error: ${error.message}`);
         process.exit(1);
