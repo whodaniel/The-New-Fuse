@@ -45,8 +45,15 @@ pnpm run tnf -- menu --compact --theme mono --no-splash
 
 ## Root behavior
 
-Running `tnf` with no arguments prints the TNF-native command menu with splash
-and command-surface discovery.
+Running `tnf` with no arguments is a harness-compliant agent entrypoint:
+
+1. Run the Turn Zero onboarding surface.
+2. Inject living state, handoff, runtime snapshot, MCP inventory, and memory
+   excerpts into the interactive agent context.
+3. Start the TNF interactive agent from the canonical workspace root.
+
+Set `TNF_SKIP_TURN_ZERO_ONBOARD=1` only for CI or tests that must bypass the
+interactive Turn Zero surface.
 
 OpenCode compatibility remains available explicitly:
 
@@ -155,6 +162,16 @@ tnf boot --plan
 tnf boot
 tnf onboard
 tnf doctor
+tnf state show
+tnf state show --json
+tnf handoff show
+tnf handoff emit --auto-verify
+tnf handoff validate
+tnf protocol validate
+tnf protocol turn-zero
+tnf harness boot
+tnf registry check
+tnf registry reconcile
 tnf hooks test --file ./chain.json --event ./event.json --record
 tnf hooks logs --chain typescript-validation-chain
 tnf hooks explain --run <run_id>
@@ -166,11 +183,35 @@ tnf full-auto start --interval-minutes 30
 tnf full-auto status
 tnf full-auto provision --targets all
 tnf mcp generate
+tnf mcp sync --from repo
+tnf mcp health
 tnf openclaw status
 tnf claw channels login
 tnf scripts list
 tnf scripts run <target> [args...]
+tnf scripts run <target> --skip-protocol-gate [args...]
 ```
+
+`tnf run` and `tnf scripts run` execute a fast harness protocol gate before
+running repo scripts. Use `--skip-protocol-gate` only for CI/bootstrap paths
+that already validated Turn Zero authority.
+
+### Assimilation paths
+
+```bash
+tnf assimilate run <provider> [args...]
+tnf assimilate run <provider> --skip-protocol-gate [args...]
+tnf assimilate link <provider>
+```
+
+Assimilated providers run from the TNF repo root with `TNF_PROTOCOL_ACK`,
+`TNF_HARNESS_ROOT`, and `TNF_TURN_ZERO_CANONICAL` in the child environment.
+
+`tnf state show` reports both committed repo handoff
+`docs/protocols/reports/SESSION_HANDOFF_LATEST.json` and local operator handoff
+`~/.tnf/handoff-current.json` when present. If those packets differ, the command
+surfaces `handoffDivergence` so agents do not silently execute stale repo state
+after a newer terminal status packet was generated on another machine.
 
 ### Existing direct commands (still supported)
 

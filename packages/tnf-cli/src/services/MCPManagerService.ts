@@ -1,8 +1,8 @@
 import { spawn, spawnSync } from 'child_process';
 import { createHash } from 'crypto';
 import * as fs from 'fs';
-import * as path from 'path';
 import * as os from 'os';
+import * as path from 'path';
 
 export interface MCPServerConfig {
   name: string;
@@ -65,6 +65,58 @@ export class MCPManagerService {
     this.loadCredentials();
   }
 
+  static getRepoConfigPath(repoRoot: string): string {
+    return path.join(repoRoot, 'data', 'mcp_config.json');
+  }
+
+  static getRepoConfigCandidates(repoRoot: string): string[] {
+    return [
+      MCPManagerService.getRepoConfigPath(repoRoot),
+      path.join(repoRoot, 'tools', 'config-files', 'mcp_config.json'),
+      path.join(repoRoot, 'tools', 'config-files', 'enhanced_mcp_config.json'),
+    ];
+  }
+
+  static resolveRepoConfigPath(repoRoot: string): string {
+    const configPath = MCPManagerService.getRepoConfigCandidates(repoRoot).find((candidate) =>
+      fs.existsSync(candidate)
+    );
+    if (!configPath) {
+      throw new Error(
+        `Repo MCP config is missing. Run 'tnf onboard --repair' to create data/mcp_config.json.`
+      );
+    }
+    return configPath;
+  }
+
+  static loadRepoServers(repoRoot: string): MCPServerConfig[] {
+    const configPath = MCPManagerService.resolveRepoConfigPath(repoRoot);
+    const raw = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const serversObj = raw.mcpServers || raw.servers || {};
+    return Object.entries(serversObj).map(([name, serverConfig]) =>
+      MCPManagerService.normalizeServerConfig(name, serverConfig)
+    );
+  }
+
+  static normalizeServerConfig(name: string, serverConfig: any): MCPServerConfig {
+    const commandValue = Array.isArray(serverConfig.command)
+      ? serverConfig.command[0]
+      : serverConfig.command;
+    return {
+      name,
+      type: serverConfig.type || undefined,
+      command: commandValue,
+      args: Array.isArray(serverConfig.command) ? serverConfig.command.slice(1) : serverConfig.args,
+      env: serverConfig.environment || serverConfig.env,
+      environment: serverConfig.environment,
+      cwd: serverConfig.cwd,
+      transport: serverConfig.transport,
+      url: serverConfig.url,
+      enabled: serverConfig.enabled !== false && serverConfig.disabled !== true,
+      oauth: serverConfig.oauth,
+    };
+  }
+
   private loadConfig(): void {
     const configPath = path.join(this.configDir, 'mcp.json');
     if (fs.existsSync(configPath)) {
@@ -72,24 +124,7 @@ export class MCPManagerService {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         const serversObj = config.servers || config.mcpServers || {};
         for (const [name, serverConfig] of Object.entries(serversObj) as [string, any][]) {
-          const normalized: MCPServerConfig = {
-            name,
-            type: serverConfig.type || undefined,
-            command: Array.isArray(serverConfig.command)
-              ? serverConfig.command[0]
-              : serverConfig.command,
-            args: Array.isArray(serverConfig.command)
-              ? serverConfig.command.slice(1)
-              : serverConfig.args,
-            env: serverConfig.environment || serverConfig.env,
-            environment: serverConfig.environment,
-            cwd: serverConfig.cwd,
-            transport: serverConfig.transport,
-            url: serverConfig.url,
-            enabled: serverConfig.enabled !== false,
-            oauth: serverConfig.oauth,
-          };
-          this.servers.set(name, normalized);
+          this.servers.set(name, MCPManagerService.normalizeServerConfig(name, serverConfig));
         }
       } catch {
         // Config doesn't exist or is invalid
@@ -153,6 +188,18 @@ export class MCPManagerService {
     }
     const data = JSON.stringify({ servers: serversObj }, null, 2);
     fs.writeFileSync(configPath, data);
+  }
+
+  syncFromRepo(repoRoot: string): { imported: number; configPath: string } {
+    const repoServers = MCPManagerService.loadRepoServers(repoRoot);
+    for (const server of repoServers) {
+      this.servers.set(server.name, server);
+    }
+    this.saveConfig();
+    return {
+      imported: repoServers.length,
+      configPath: MCPManagerService.resolveRepoConfigPath(repoRoot),
+    };
   }
 
   removeServer(name: string): boolean {
@@ -221,11 +268,13 @@ export class MCPManagerService {
         configured: true,
         running,
         pid: proc?.pid,
-        oauth: config.oauth ? {
-          enabled: config.oauth.enabled,
-          authenticated: !!cred && (!cred.expiresAt || cred.expiresAt > Date.now()),
-          expiry: cred?.expiresAt ? new Date(cred.expiresAt).toISOString() : undefined,
-        } : undefined,
+        oauth: config.oauth
+          ? {
+              enabled: config.oauth.enabled,
+              authenticated: !!cred && (!cred.expiresAt || cred.expiresAt > Date.now()),
+              expiry: cred?.expiresAt ? new Date(cred.expiresAt).toISOString() : undefined,
+            }
+          : undefined,
       });
     }
     return statuses;
@@ -238,13 +287,17 @@ export class MCPManagerService {
     }
 
     if (config.enabled === false) {
-      throw new Error(`MCP server '${name}' is disabled. Enable it in config or set enabled: true.`);
+      throw new Error(
+        `MCP server '${name}' is disabled. Enable it in config or set enabled: true.`
+      );
     }
 
     if (config.oauth?.enabled) {
       const cred = this.credentials.get(name);
       if (!cred || (cred.expiresAt && cred.expiresAt <= Date.now())) {
-        throw new Error(`MCP server '${name}' requires authentication. Run 'tnf mcp auth ${name}' first.`);
+        throw new Error(
+          `MCP server '${name}' requires authentication. Run 'tnf mcp auth ${name}' first.`
+        );
       }
     }
 
@@ -332,7 +385,7 @@ export class MCPManagerService {
     diagnostics: string[];
   }> {
     const config = this.servers.get(name);
-    const status = this.listServers().find(s => s.name === name);
+    const status = this.listServers().find((s) => s.name === name);
     const credential = this.credentials.get(name);
     const diagnostics: string[] = [];
 

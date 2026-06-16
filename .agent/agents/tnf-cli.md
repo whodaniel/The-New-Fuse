@@ -43,40 +43,53 @@ embody the values of The New Fuse:
 
 ---
 
-## 📜 Core Operational Directives (Antigravity Traits)
+## 📜 Core Operational Directives (TNF Harness Traits)
 
-### 1. Fresh Context Is Reliability (Ralph Wiggum Technique)
+### 1. Turn Zero Is Mandatory
 
-- **Every Iteration**: Re-read the plan, re-read the specs, re-read the code.
-- **Never Assume**: If something is unclear, `grep` for it or ask the user.
-- **Disk Is State**: Treat the filesystem as your primary persistent memory.
+- **Canonical authority**: `docs/protocols/TURN_ZERO_MANDATE.md` wins over all
+  mirrors and legacy notes.
+- **First action**: Run or emulate `tnf onboard` before planning or acting.
+- **State order**: Read `docs/protocols/LIVING_STATE.md`,
+  `docs/protocols/AGENT_STATUS_LEDGER.md`, and
+  `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` before loading deferred
+  resource maps.
+- **Confirmation**: Confirm the active directive and execution domain before
+  implementation unless the operator explicitly delegated autonomous execution.
 
-### 2. Rigorous Planning (Manus + BMAD)
+### 2. Inspect -> Act -> Verify
 
-- **Phase 0**: Research and Brainstorm.
-- **Phase 1**: Create `task_plan.md`, `findings.md`, `progress.md`.
-- **Phase 2**: Execute with precision.
-- **Phase 3**: Validate with Quality Gates (Lint, Test, Build).
+- **Inspect**: Read files, command output, logs, schemas, and runtime state
+  before taking action.
+- **Act**: Use native `tnf` commands first; use OpenClaw only through
+  `tnf openclaw ...` / `tnf claw ...` unless debugging the adapter.
+- **Verify**: Run the narrowest meaningful checks, then record handoff if the
+  work changes persistent state.
 
-### 3. The 3-Strike Protocol (Fail-Safe)
+### 3. Durable Process Improvement
 
-- **Attempt 1**: Targeted fix.
-- **Attempt 2**: Alternative approach.
-- **Attempt 3**: Broader rethink.
-- **After 3 Fails**: Escalate to the user or delegate to Jules.
+- Convert discovered best practices into TNF code, docs, skills, prompts, tests,
+  or runbooks before treating the improvement as complete.
+- Run `ASSIMILATE_CHECK` when assessing external capabilities, and attribute
+  substantive claims under the Attribution Cornerstone.
+- Do not create or update legacy planning files (`task_plan.md`, `findings.md`,
+  `progress.md`, `.agent/handoff_notes.txt`) unless the operator explicitly
+  requests legacy workflow compatibility.
 
-### 4. Premium Aesthetics (UI/UX Pro Max)
+### 4. Rigorous Execution
 
-- When building UI, default to **Premium, Dynamic, and Accessible**.
-- Use the `ui-ux-pro-max` skill for curated color palettes and modern
-  typography.
-- Never use placeholders; use `generate_image` for realistic assets.
+- Use structured APIs and source files over screenshots or assumptions.
+- Keep all commands rooted in the TNF repository harness.
+- Use `tnf protocol validate`, `tnf handoff validate`, `tnf state show`, and
+  `tnf doctor` as the primary verification surfaces.
 
-### 5. Systematic Documentation
+### 5. Communication and Handoff
 
-- Always update `.agent/handoff_notes.txt` before ending a session.
-- Document architectural decisions in `.agent/memories.md`.
-- Create/update KIs when significant patterns are established.
+- Report status with real evidence from files, logs, and commands.
+- Emit or refresh canonical handoff through `tnf handoff emit --auto-verify` or
+  `tnf handoff refresh` for substantive session work.
+- Keep `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` and
+  `docs/protocols/reports/SESSION_HANDOFF_LATEST.md` as the continuity source.
 
 ---
 
@@ -106,11 +119,15 @@ When operating as a CLI agent:
 
 When invoked, you MUST:
 
-1. Load `.agent/SYSTEM_PROMPT.md`.
-2. Load `.agent/context/resource-map.md`.
-3. Check for `task_plan.md` and `.agent/handoff_notes.txt`.
-4. Report your initialized status to the user.
+1. Run `tnf onboard` or read the exact files listed in
+   `docs/protocols/TURN_ZERO_MANDATE.md`.
+2. Run `tnf state show` to inspect living state, ledger, handoff, runtime
+   snapshot, and MCP inventory.
+3. Validate harness integrity with `tnf protocol validate` when entering
+   Corporate Dev work or changing framework protocols.
+4. Report initialized status with active directive, handoff id, next actions,
+   execution domain, and verification path.
 
 ---
 
-_The New Fuse - Antigravity CLI Agent v1.0.0_
+_The New Fuse - TNF Harness CLI Agent v1.1.0_

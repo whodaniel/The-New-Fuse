@@ -1,79 +1,45 @@
 import chalk from 'chalk';
+import { spawn, spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { spawn } from 'child_process';
-
-type AssimilationRoutes = {
-  providers: Record<
-    string,
-    {
-      linkedAt: string;
-      binary?: string;
-      harnessSkill?: string;
-      mcpConfig?: string;
-      onboardScript?: string;
-    }
-  >;
-};
 
 export class AssimilationService {
-  private routesPath: string;
-
-  constructor(private repoRoot: string) {
-    this.routesPath = path.join(repoRoot, '.agent', 'assimilation-routes.json');
-  }
-
-  private readRoutes(): AssimilationRoutes {
-    if (!fs.existsSync(this.routesPath)) {
-      return { providers: {} };
-    }
-    try {
-      const parsed = JSON.parse(fs.readFileSync(this.routesPath, 'utf8')) as AssimilationRoutes;
-      return parsed?.providers ? parsed : { providers: {} };
-    } catch {
-      return { providers: {} };
-    }
-  }
-
-  private writeRoutes(routes: AssimilationRoutes): void {
-    fs.mkdirSync(path.dirname(this.routesPath), { recursive: true });
-    fs.writeFileSync(this.routesPath, `${JSON.stringify(routes, null, 2)}\n`, 'utf8');
-  }
-
-  private buildPassthroughEnv(provider: string): Record<string, string> {
-    const env: Record<string, string> = {};
-    const routes = this.readRoutes();
-    const route = routes.providers[provider];
-    const mcpRelative = route?.mcpConfig ?? `data/mcp.clients/${provider}.mcp.json`;
-    const mcpConfigPath = path.join(this.repoRoot, mcpRelative);
-    if (fs.existsSync(mcpConfigPath)) {
-      env.TNF_MCP_CONFIG_PATH = mcpConfigPath;
-      env.MCP_CONFIG_PATH = mcpConfigPath;
-    }
-    return env;
-  }
+  constructor(private repoRoot: string) {}
 
   /**
    * Run a command through an external agent CLI, forcing it to
    * conform to TNF protocols natively.
+   *
+   * @param provider The external agent CLI (e.g. 'opencode', 'openclaw')
+   * @param args The arguments to pass
    */
-  public async runAssimilatedCommand(provider: string, args: string[]): Promise<void> {
+  public async runAssimilatedCommand(
+    provider: string,
+    args: string[],
+    options: { skipProtocolGate?: boolean } = {}
+  ): Promise<void> {
     console.log(
       chalk.cyan(`[Assimilation Engine] Routing command through external provider: ${provider}`)
     );
 
-    const routes = this.readRoutes();
-    const route = routes.providers[provider];
-    const binary = route?.binary || provider;
+    this.assertProviderAvailable(provider);
+    if (!options.skipProtocolGate) {
+      this.runProtocolGate(provider);
+    }
 
     return new Promise((resolve, reject) => {
-      const child = spawn(binary, args, {
+      const child = spawn(provider, args, {
         stdio: 'inherit',
         cwd: this.repoRoot,
-        env: { ...process.env, ...this.buildPassthroughEnv(provider) },
+        env: {
+          ...process.env,
+          TNF_HARNESS_ROOT: this.repoRoot,
+          TNF_PROTOCOL_ACK: 'TNF_PROTOCOL_ACK',
+          TNF_TURN_ZERO_CANONICAL: path.join(this.repoRoot, 'docs/protocols/TURN_ZERO_MANDATE.md'),
+        },
       });
 
-      child.on('error', (err: NodeJS.ErrnoException) => {
+      child.on('error', (err: any) => {
         if (err.code === 'ENOENT') {
           reject(new Error(`Provider '${provider}' not found. Is it installed?`));
         } else {
@@ -84,6 +50,8 @@ export class AssimilationService {
       child.on('close', (code) => {
         if (code === 0) {
           console.log(chalk.green(`[Assimilation Engine] ${provider} execution complete.`));
+          // TODO: In a more advanced iteration, intercept the output stream
+          // and auto-write it to AGENT_STATUS_LEDGER.md here.
           resolve();
         } else {
           reject(new Error(`Provider '${provider}' exited with code ${code}`));
@@ -92,48 +60,53 @@ export class AssimilationService {
     });
   }
 
+  private assertProviderAvailable(provider: string): void {
+    const result = spawnSync('command', ['-v', provider], {
+      shell: true,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    if (result.status !== 0) {
+      throw new Error(
+        `Provider '${provider}' not found on PATH. Link or install it before routing.`
+      );
+    }
+  }
+
+  private runProtocolGate(provider: string): void {
+    const mandatePath = path.join(this.repoRoot, 'docs/protocols/TURN_ZERO_MANDATE.md');
+    const livingStatePath = path.join(this.repoRoot, 'docs/protocols/LIVING_STATE.md');
+    const handoffPath = path.join(
+      this.repoRoot,
+      'docs/protocols/reports/SESSION_HANDOFF_LATEST.json'
+    );
+    for (const requiredPath of [mandatePath, livingStatePath, handoffPath]) {
+      if (!fs.existsSync(requiredPath)) {
+        throw new Error(
+          `TNF protocol artifact missing before assimilating ${provider}: ${requiredPath}`
+        );
+      }
+    }
+
+    const result = spawnSync(
+      process.execPath,
+      ['scripts/protocols/validate-turn-zero-authority.cjs', '--mode=ci'],
+      {
+        cwd: this.repoRoot,
+        stdio: 'inherit',
+        env: process.env,
+      }
+    );
+    if (result.status !== 0) {
+      throw new Error(`Turn Zero authority validation failed before assimilating ${provider}`);
+    }
+  }
+
   /**
    * Register a new external CLI mapping into the assimilation routing table.
    */
-  public async linkProvider(provider: string): Promise<void> {
-    const normalized = provider.trim().toLowerCase();
-    if (!normalized) {
-      throw new Error('Provider name is required.');
-    }
-
-    if (normalized === 'cursor') {
-      await this.runOnboardScript('scripts/cursor/tnf-cursor-harness-onboard.cjs');
-      console.log(chalk.green(`[Assimilation Engine] Linked external provider: ${normalized}`));
-      return;
-    }
-
-    const routes = this.readRoutes();
-    routes.providers[normalized] = {
-      linkedAt: new Date().toISOString(),
-      binary: normalized,
-      mcpConfig: `data/mcp.clients/${normalized}.mcp.json`,
-    };
-    this.writeRoutes(routes);
-    console.log(chalk.green(`[Assimilation Engine] Linked external provider: ${normalized}`));
-  }
-
-  private async runOnboardScript(scriptRelativePath: string): Promise<void> {
-    const scriptPath = path.join(this.repoRoot, scriptRelativePath);
-    if (!fs.existsSync(scriptPath)) {
-      throw new Error(`Missing onboard script: ${scriptRelativePath}`);
-    }
-
-    return new Promise((resolve, reject) => {
-      const child = spawn('node', [scriptPath], {
-        stdio: 'inherit',
-        cwd: this.repoRoot,
-      });
-
-      child.on('error', reject);
-      child.on('close', (code) => {
-        if (code === 0) resolve();
-        else reject(new Error(`Onboard script exited with code ${code}`));
-      });
-    });
+  public linkProvider(provider: string): void {
+    console.log(chalk.green(`[Assimilation Engine] Linked external provider: ${provider}`));
+    // In future: write this to .agent/assimilation-routes.json
   }
 }

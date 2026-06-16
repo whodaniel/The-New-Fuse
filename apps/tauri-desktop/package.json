@@ -29,8 +29,10 @@
     "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "perf:monitor": "node scripts/performance-monitor.js",
     "bundle:report": "pnpm build && echo 'Bundle analysis report generated at dist/bundle-analysis.html'",
-    "tauri:dev": "pnpm tauri dev",
-    "tauri:build": "pnpm tauri build"
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "tauri:build:dmg": "node ../../scripts/packaging/build-tauri-dmg.cjs"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
