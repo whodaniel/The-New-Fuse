@@ -5127,17 +5127,28 @@ state
         livingState: readTextFileIfPresent('docs/protocols/LIVING_STATE.md', maxChars),
         ledger: readTextFileIfPresent('docs/protocols/AGENT_STATUS_LEDGER.md', maxChars),
         handoff: readJsonFileIfPresent('docs/protocols/reports/SESSION_HANDOFF_LATEST.json'),
+        homeHandoff: readAbsoluteJsonFileIfPresent(getHomeHandoffPath()),
         runtimeState: readJsonFileIfPresent('.agent/runtime-state.json'),
         mcpServers: getMcpServerNames(readJsonFileIfPresent('.agent/runtime-state.json')),
       };
+      const handoffDivergence = getHandoffDivergence(payload.handoff, payload.homeHandoff);
       if (options.json) {
-        console.log(JSON.stringify(payload, null, 2));
+        console.log(JSON.stringify({ ...payload, handoffDivergence }, null, 2));
         return;
       }
       console.log(chalk.bold('\nTNF Harness State\n'));
       console.log(
         `Turn Zero mandate: ${payload.turnZeroMandatePresent ? chalk.green('present') : chalk.red('missing')}`
       );
+      console.log(
+        `Repo handoff: ${payload.handoff?.handoff_id || chalk.yellow('unavailable')} (${payload.handoff?.created_at || 'unknown'})`
+      );
+      console.log(
+        `Home handoff: ${payload.homeHandoff?.handoff_id || payload.homeHandoff?.session || chalk.yellow('unavailable')} (${payload.homeHandoff?.created_at || payload.homeHandoff?.generatedAt || 'unknown'})`
+      );
+      if (handoffDivergence) {
+        console.log(chalk.yellow(`Handoff divergence: ${handoffDivergence}`));
+      }
       console.log(
         `MCP servers: ${payload.mcpServers.length ? payload.mcpServers.join(', ') : 'unavailable'}`
       );
@@ -14151,8 +14162,63 @@ function readJsonFileIfPresent(relativePath: string): any | null {
   }
 }
 
+function readAbsoluteJsonFileIfPresent(absolutePath: string): any | null {
+  const text = readAbsoluteTextFileIfPresent(absolutePath, 12000);
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+function getHomeHandoffPath(): string {
+  return path.join(os.homedir(), '.tnf', 'handoff-current.json');
+}
+
+function getHandoffDivergence(repoHandoff: any, homeHandoff: any): string | null {
+  if (!repoHandoff || !homeHandoff) return null;
+  const repoCreated = Date.parse(repoHandoff.created_at || repoHandoff.generatedAt || '');
+  const homeCreated = Date.parse(homeHandoff.created_at || homeHandoff.generatedAt || '');
+  if (
+    repoHandoff.handoff_id &&
+    homeHandoff.handoff_id &&
+    repoHandoff.handoff_id !== homeHandoff.handoff_id
+  ) {
+    return homeCreated > repoCreated
+      ? 'local-home-newer-than-repo'
+      : 'repo-and-home-handoff-id-differ';
+  }
+  if (Number.isFinite(repoCreated) && Number.isFinite(homeCreated) && homeCreated > repoCreated) {
+    return 'local-home-newer-than-repo';
+  }
+  return null;
+}
+
+function summarizeHandoffPacket(handoff: any, source: string): string {
+  if (!handoff) return `- ${source}: unavailable`;
+  const nextActions = Array.isArray(handoff.next_actions)
+    ? handoff.next_actions.length
+    : Array.isArray(handoff.immediate_tasks)
+      ? handoff.immediate_tasks.length
+      : 0;
+  const batch = handoff.batch || handoff.phase7?.batch || handoff.current_batch;
+  const batchSummary = batch
+    ? `\n- ${source} batch: ${batch.batchId || batch.id || 'unknown'} state=${batch.state || 'unknown'} size=${batch.size ?? batch.records?.length ?? 'unknown'}`
+    : '';
+  return (
+    [
+      `- ${source}: ${handoff.handoff_id || handoff.session || handoff.session_id || 'unknown'}`,
+      `- ${source} created_at: ${handoff.created_at || handoff.generatedAt || handoff.updated || 'unknown'}`,
+      `- ${source} priority: ${handoff?.continuation?.priority || handoff.priority || 'unknown'}`,
+      `- ${source} next actions: ${nextActions}`,
+    ].join('\n') + batchSummary
+  );
+}
+
 function loadTnfInteractiveContextPack(): string {
   const handoff = readJsonFileIfPresent('docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
+  const homeHandoff = readAbsoluteJsonFileIfPresent(getHomeHandoffPath());
   const livingState = readTextFileIfPresent('docs/protocols/LIVING_STATE.md', 1200);
   const ledger = readTextFileIfPresent('docs/protocols/AGENT_STATUS_LEDGER.md', 900);
   const runtimeState = readJsonFileIfPresent('.agent/runtime-state.json');
@@ -14162,15 +14228,14 @@ function loadTnfInteractiveContextPack(): string {
     900
   );
   const mcpServerNames = getMcpServerNames(runtimeState);
-  const handoffSummary = handoff
-    ? [
-        `- Handoff source: ${path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json')}`,
-        `- Handoff id: ${handoff.handoff_id || 'unknown'}`,
-        `- Handoff created_at: ${handoff.created_at || 'unknown'}`,
-        `- Handoff priority: ${handoff?.continuation?.priority || 'unknown'}`,
-        `- Next actions: ${Array.isArray(handoff.next_actions) ? handoff.next_actions.length : 0}`,
-      ].join('\n')
-    : '- Handoff source: missing after absolute repo-root check';
+  const handoffDivergence = getHandoffDivergence(handoff, homeHandoff);
+  const handoffSummary = [
+    summarizeHandoffPacket(handoff, 'repo handoff'),
+    summarizeHandoffPacket(homeHandoff, 'home handoff'),
+    handoffDivergence
+      ? `- Handoff divergence: ${handoffDivergence}`
+      : '- Handoff divergence: none detected',
+  ].join('\n');
 
   const runtimeSummary = runtimeState
     ? `- Runtime state: ${countRuntimeField(runtimeState.agents, runtimeState.agentCount ?? runtimeState.counts?.agents)} agents, ${countRuntimeField(runtimeState.llmModels || runtimeState.models, runtimeState.modelCount ?? runtimeState.counts?.llmModels)} models, ${countRuntimeField(runtimeState.mcpServers || runtimeState.mcps, runtimeState.mcpCount ?? runtimeState.counts?.mcpServers)} MCPs`

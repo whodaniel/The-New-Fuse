@@ -163,6 +163,7 @@ tnf boot
 tnf onboard
 tnf doctor
 tnf state show
+tnf state show --json
 tnf handoff show
 tnf handoff emit --auto-verify
 tnf handoff validate
@@ -205,6 +206,12 @@ tnf assimilate link <provider>
 
 Assimilated providers run from the TNF repo root with `TNF_PROTOCOL_ACK`,
 `TNF_HARNESS_ROOT`, and `TNF_TURN_ZERO_CANONICAL` in the child environment.
+
+`tnf state show` reports both committed repo handoff
+`docs/protocols/reports/SESSION_HANDOFF_LATEST.json` and local operator handoff
+`~/.tnf/handoff-current.json` when present. If those packets differ, the command
+surfaces `handoffDivergence` so agents do not silently execute stale repo state
+after a newer terminal status packet was generated on another machine.
 
 ### Existing direct commands (still supported)
 
