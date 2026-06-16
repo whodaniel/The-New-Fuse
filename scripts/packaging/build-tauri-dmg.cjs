@@ -46,6 +46,27 @@ function hasCommand(command) {
   return result.status === 0 ? result.stdout.trim() : '';
 }
 
+function commandVersion(command) {
+  const result = spawnSync(command, ['--version'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    stdio: 'pipe',
+  });
+  if (result.status !== 0) return null;
+  const match = result.stdout.match(/(\d+)\.(\d+)\.(\d+)/);
+  return match ? match[0] : null;
+}
+
+function compareVersion(actual, minimum) {
+  const actualParts = actual.split('.').map(Number);
+  const minimumParts = minimum.split('.').map(Number);
+  for (let index = 0; index < minimumParts.length; index += 1) {
+    if ((actualParts[index] || 0) > minimumParts[index]) return 1;
+    if ((actualParts[index] || 0) < minimumParts[index]) return -1;
+  }
+  return 0;
+}
+
 function collectDmgs() {
   if (!fs.existsSync(DMG_DIR)) return [];
   return fs
@@ -79,6 +100,18 @@ function preflight(options) {
     throw new Error(
       `DMG packaging requires macOS because Tauri uses Apple's app bundle and hdiutil tooling. Current platform: ${process.platform}/${os.arch()}.`
     );
+  }
+
+  if (!(options.checkOnly && options.allowNonMacosCheck)) {
+    const minimumRust = '1.88.0';
+    for (const command of ['rustc', 'cargo']) {
+      const version = commandVersion(command);
+      if (!version || compareVersion(version, minimumRust) < 0) {
+        throw new Error(
+          `${command} ${minimumRust}+ is required for the locked Tauri dependency graph. Found: ${version || 'unknown'}. Run: rustup update stable`
+        );
+      }
+    }
   }
 }
 

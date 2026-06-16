@@ -8,6 +8,7 @@ macOS because the bundle step uses Apple's app bundle tooling and `hdiutil`.
 From the repository root:
 
 ```bash
+rustup update stable
 pnpm install --no-frozen-lockfile
 pnpm run tnf:tauri:dmg
 ```
@@ -23,6 +24,9 @@ You can run a preflight without packaging:
 ```bash
 pnpm run tnf:tauri:dmg -- --check
 ```
+
+The packaging script requires Rust/Cargo `1.88.0+` for the locked Tauri
+dependency graph.
 
 ## Build from GitHub Actions
 

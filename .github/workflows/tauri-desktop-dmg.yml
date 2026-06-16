@@ -2,10 +2,21 @@ name: Tauri Desktop DMG
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "apps/tauri-desktop/**"
+      - "scripts/packaging/build-tauri-dmg.cjs"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/tauri-desktop-dmg.yml"
   push:
     branches:
       - main
       - develop
+      - "cursor/**"
     paths:
       - "apps/tauri-desktop/**"
       - "scripts/packaging/build-tauri-dmg.cjs"
