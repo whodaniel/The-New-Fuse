@@ -46,6 +46,41 @@ interface ExecutionResult {
 
 const ACTION_CATEGORIES: ActionCategory[] = [
   {
+    name: 'Operator Forefront',
+    icon: '🚀',
+    description: 'One-click operator surface: local UI, browser control, harness',
+    actions: [
+      {
+        id: 'forefront-boot',
+        label: 'Launch Forefront Stack',
+        icon: '⚡',
+        description: 'Boot harness, relay, local UI, and open browser control',
+        command: 'node scripts/local-ui/tnf-forefront-boot.cjs',
+      },
+      {
+        id: 'local-ui',
+        label: 'Start Local UI',
+        icon: '🖥️',
+        description: 'Web operator shell on http://localhost:1420',
+        command: 'pnpm run tnf:local-ui',
+      },
+      {
+        id: 'cursor-harness',
+        label: 'Onboard Cursor Harness',
+        icon: '🎯',
+        description: 'Wire Cursor CLI into TNF harness protocol + MCP routing',
+        command: 'node scripts/cursor/tnf-cursor-harness-onboard.cjs',
+      },
+      {
+        id: 'relay-start',
+        label: 'Start Browser Relay',
+        icon: '🔌',
+        description: 'Start relay-core for Chrome extension browser control',
+        command: 'pnpm run relay:start',
+      },
+    ],
+  },
+  {
     name: 'AI Agents',
     icon: '🤖',
     description: 'Manage AI agents and multi-agent conversations',

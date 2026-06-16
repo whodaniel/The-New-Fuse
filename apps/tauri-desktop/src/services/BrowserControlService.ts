@@ -60,7 +60,7 @@ interface PendingRequest {
 
 class BrowserControlServiceClass extends EventEmitter<BrowserControlEvent> {
   private ws: WebSocket | null = null;
-  private relayUrl: string = 'ws://localhost:3000';
+  private relayUrl: string = 'ws://127.0.0.1:3000/ws';
   private connected: boolean = false;
 
   setRelayUrl(url: string) {

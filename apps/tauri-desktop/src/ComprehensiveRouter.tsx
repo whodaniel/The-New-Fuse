@@ -25,13 +25,13 @@ const ComprehensiveRouter: React.FC = () => {
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '/dashboard', section: 'main' },
+    { id: 'browser', label: 'Browser Control', icon: '🌐', route: '/browser', section: 'main', badge: 'FOREFRONT' },
     { id: 'agents', label: 'Agent Hub', icon: '🤖', route: '/agents', section: 'main' },
     { id: 'terminal', label: 'Swarm Terminal', icon: '📟', route: '/terminal', section: 'main' },
     { id: 'oagi', label: 'OAGI Hub', icon: '🖥️', route: '/oagi', section: 'main' },
     { id: 'antigravity', label: 'Antigravity', icon: '🔮', route: '/antigravity', section: 'main' },
     { id: 'chat', label: 'Chat', icon: '💬', route: '/chat', section: 'main' },
     { id: 'workflows', label: 'Workflows', icon: '⚡', route: '/workflows', section: 'main' },
-    { id: 'browser', label: 'Web Browser', icon: '🌐', route: '/browser', section: 'main' },
     { id: 'analytics', label: 'Analytics', icon: '📊', route: '/analytics', section: 'main' },
     { id: 'mcp', label: 'MCP Store', icon: '🔧', route: '/mcp', section: 'tools' },
     { id: 'settings', label: 'Settings', icon: '⚙️', route: '/settings', section: 'system' },
@@ -126,7 +126,14 @@ const ComprehensiveRouter: React.FC = () => {
               title={sidebarCollapsed ? item.label : undefined}
             >
               <span className="nav-icon">{item.icon}</span>
-              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
+              {!sidebarCollapsed && (
+                <span className="nav-label">
+                  {item.label}
+                  {'badge' in item && item.badge ? (
+                    <span className="nav-badge">{item.badge}</span>
+                  ) : null}
+                </span>
+              )}
             </button>
           ))}
 
@@ -140,7 +147,14 @@ const ComprehensiveRouter: React.FC = () => {
               title={sidebarCollapsed ? item.label : undefined}
             >
               <span className="nav-icon">{item.icon}</span>
-              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
+              {!sidebarCollapsed && (
+                <span className="nav-label">
+                  {item.label}
+                  {'badge' in item && item.badge ? (
+                    <span className="nav-badge">{item.badge}</span>
+                  ) : null}
+                </span>
+              )}
             </button>
           ))}
 
@@ -155,7 +169,14 @@ const ComprehensiveRouter: React.FC = () => {
               title={sidebarCollapsed ? item.label : undefined}
             >
               <span className="nav-icon">{item.icon}</span>
-              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
+              {!sidebarCollapsed && (
+                <span className="nav-label">
+                  {item.label}
+                  {'badge' in item && item.badge ? (
+                    <span className="nav-badge">{item.badge}</span>
+                  ) : null}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -378,7 +399,20 @@ const ComprehensiveRouter: React.FC = () => {
         }
 
         .nav-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
           font-weight: 500;
+        }
+
+        .nav-badge {
+          font-size: 9px;
+          letter-spacing: 0.08em;
+          padding: 2px 6px;
+          border-radius: 999px;
+          background: rgba(99, 102, 241, 0.18);
+          color: #c4b5fd;
+          border: 1px solid rgba(99, 102, 241, 0.35);
         }
 
         .sidebar-footer {

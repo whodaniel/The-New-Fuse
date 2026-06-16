@@ -213,6 +213,11 @@ function main() {
       commandDirs: [path.join(home, '.opencode', 'commands')],
       skillDirs: [path.join(home, '.opencode', 'skills')],
     },
+    cursor: {
+      roots: [path.join(home, '.cursor')],
+      commandDirs: [path.join(home, '.cursor', 'commands')],
+      skillDirs: [path.join(home, '.cursor', 'skills-cursor')],
+    },
     kilo: {
       roots: [path.join(home, '.kilo')],
       commandDirs: [path.join(home, '.kilo', 'commands')],

@@ -1,6 +1,6 @@
 {
   "spec": "tnf/cron-jobs-control-plane-state/0.1",
-  "updated_at": "2026-06-11T20:00:29.686Z",
+  "updated_at": "2026-06-16T05:00:48.420Z",
   "overrides": {},
   "runtime": {
     "tnf-openclaw-runtime-sync": {
@@ -13,19 +13,19 @@
     },
     "tenant-orchestrator-pulse": {
       "status": "healthy",
-      "lastRunAt": "2026-06-11T20:00:17.840Z",
+      "lastRunAt": "2026-06-16T05:00:39.275Z",
       "lastError": null,
-      "lastDurationMs": 4564,
+      "lastDurationMs": 8750,
       "lastExitCode": 0,
-      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781208016927-nvga44\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781586038791-8e2fxq\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
     },
     "tnf-terminal-awareness-reminder": {
       "status": "healthy",
-      "lastRunAt": "2026-06-11T20:00:07.392Z",
+      "lastRunAt": "2026-06-16T05:00:29.905Z",
       "lastError": null,
-      "lastDurationMs": 259,
+      "lastDurationMs": 1234,
       "lastExitCode": 0,
-      "lastOutputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 30702, \"ppid\": 14799, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      "lastOutputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 1341, \"ppid\": 943, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-16T0..."
     },
     "tnf-twip-macro-board-refresh": {
       "status": "healthy",
@@ -45,51 +45,51 @@
     },
     "tenant-loop-watchdog": {
       "status": "healthy",
-      "lastRunAt": "2026-06-11T20:00:23.530Z",
-      "lastDurationMs": 4882,
+      "lastRunAt": "2026-06-16T05:00:48.420Z",
+      "lastDurationMs": 8575,
       "lastExitCode": 0,
       "lastError": null,
-      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781208022598-nggh07\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781586047625-uhbp7e\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
     },
     "tenant-knowledge-scout-sprint": {
       "status": "healthy",
-      "lastRunAt": "2026-06-11T20:00:12.751Z",
+      "lastRunAt": "2026-06-16T04:00:28.621Z",
       "lastError": null,
-      "lastDurationMs": 4921,
+      "lastDurationMs": 10534,
       "lastExitCode": 0,
-      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-knowledge-scout-sprint\", \"dispatchId\": \"tenant-knowledge-scout-sprint-1781208011819-yfyasj\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-knowledge-scout-sprint\", \"dispatchId\": \"tenant-knowledge-scout-sprint-1781582428132-flvgth\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
     },
     "tnf-llm-arena-intel-collector": {
       "status": "healthy",
-      "lastRunAt": "2026-06-11T20:00:06.505Z",
+      "lastRunAt": "2026-06-16T04:00:16.460Z",
       "lastError": null,
-      "lastDurationMs": 958,
+      "lastDurationMs": 518,
       "lastExitCode": 0,
-      "lastOutputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-llm-arena-intel-collector\", \"lock\": { \"pid\": 30699, \"ppid\": 14799, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-llm-arena-intel-collector\", \"startedAt\": \"2026-06-11T20..."
+      "lastOutputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-llm-arena-intel-collector\", \"lock\": { \"pid\": 50939, \"ppid\": 10712, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-llm-arena-intel-collector\", \"startedAt\": \"2026-06-16T04..."
     },
     "tenant-self-improvement-loop": {
       "status": "healthy",
-      "lastRunAt": "2026-06-11T20:00:29.686Z",
+      "lastRunAt": "2026-06-16T04:00:53.014Z",
       "lastError": null,
-      "lastDurationMs": 5563,
+      "lastDurationMs": 8132,
       "lastExitCode": 0,
-      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-self-improvement-loop\", \"dispatchId\": \"tenant-self-improvement-loop-1781208028776-3udam8\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-self-improvement-loop\", \"dispatchId\": \"tenant-self-improvement-loop-1781582452526-f2fxl3\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
     },
     "tnf-self-improvement-scorecard": {
       "status": "healthy",
-      "lastRunAt": "2026-06-11T18:00:34.850Z",
+      "lastRunAt": "2026-06-16T00:00:23.665Z",
       "lastError": null,
-      "lastDurationMs": 496,
+      "lastDurationMs": 67,
       "lastExitCode": 0,
-      "lastOutputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-self-improvement-scorecard\", \"lock\": { \"pid\": 11421, \"ppid\": 11402, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-self-improvement-scorecard\", \"startedAt\": \"2026-06-11T..."
+      "lastOutputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-self-improvement-scorecard\", \"lock\": { \"pid\": 55796, \"ppid\": 35643, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-self-improvement-scorecard\", \"startedAt\": \"2026-06-16T..."
     },
     "tenant-continuous-qa-loop": {
       "status": "healthy",
-      "lastRunAt": "2026-06-11T18:00:37.677Z",
+      "lastRunAt": "2026-06-16T00:00:25.389Z",
       "lastError": null,
-      "lastDurationMs": 2220,
+      "lastDurationMs": 1194,
       "lastExitCode": 0,
-      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-continuous-qa-loop\", \"dispatchId\": \"tenant-continuous-qa-loop-1781200837059-ag5893\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      "lastOutputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-continuous-qa-loop\", \"dispatchId\": \"tenant-continuous-qa-loop-1781568025309-9df9yj\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
     }
   },
   "history": {
@@ -204,6 +204,138 @@
       }
     ],
     "tnf-terminal-awareness-reminder": [
+      {
+        "runId": "run_1781586029906_hjclcee9",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T05:00:28.666Z",
+        "finishedAt": "2026-06-16T05:00:29.905Z",
+        "durationMs": 1234,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 1341, \"ppid\": 943, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-16T0..."
+      },
+      {
+        "runId": "run_1781584217709_otyy304l",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:30:15.492Z",
+        "finishedAt": "2026-06-16T04:30:17.708Z",
+        "durationMs": 2208,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 77535, \"ppid\": 10712, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
+      {
+        "runId": "run_1781582417566_oaqb7m50",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:00:16.906Z",
+        "finishedAt": "2026-06-16T04:00:17.566Z",
+        "durationMs": 658,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 50942, \"ppid\": 10712, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
+      {
+        "runId": "run_1781580612257_da6fklfs",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T03:30:12.174Z",
+        "finishedAt": "2026-06-16T03:30:12.256Z",
+        "durationMs": 81,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 85516, \"ppid\": 10712, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
+      {
+        "runId": "run_1781578813335_0ggiciai",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T03:00:12.367Z",
+        "finishedAt": "2026-06-16T03:00:13.334Z",
+        "durationMs": 963,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 14116, \"ppid\": 10712, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
+      {
+        "runId": "run_1781577024347_rh9g08fv",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T02:30:24.281Z",
+        "finishedAt": "2026-06-16T02:30:24.346Z",
+        "durationMs": 64,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 74066, \"ppid\": 35643, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
+      {
+        "runId": "run_1781575224304_ht8n9hmd",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T02:00:24.240Z",
+        "finishedAt": "2026-06-16T02:00:24.304Z",
+        "durationMs": 61,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 80595, \"ppid\": 35643, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
+      {
+        "runId": "run_1781573424072_qx9p5wxa",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T01:30:24.003Z",
+        "finishedAt": "2026-06-16T01:30:24.072Z",
+        "durationMs": 66,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 50809, \"ppid\": 35643, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
+      {
+        "runId": "run_1781571624520_bpbwgvuz",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T01:00:24.386Z",
+        "finishedAt": "2026-06-16T01:00:24.520Z",
+        "durationMs": 126,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 23458, \"ppid\": 35643, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
+      {
+        "runId": "run_1781569823930_dfhpiun6",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:30:23.854Z",
+        "finishedAt": "2026-06-16T00:30:23.929Z",
+        "durationMs": 71,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 84834, \"ppid\": 35643, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
+      {
+        "runId": "run_1781568024079_bht6fleu",
+        "processId": "tnf-terminal-awareness-reminder",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:00:23.974Z",
+        "finishedAt": "2026-06-16T00:00:24.079Z",
+        "durationMs": 103,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-terminal-awareness-reminder\", \"lock\": { \"pid\": 55801, \"ppid\": 35643, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-terminal-awareness-reminder\", \"startedAt\": \"2026-06-1..."
+      },
       {
         "runId": "run_1781208007392_82mw40wd",
         "processId": "tnf-terminal-awareness-reminder",
@@ -583,6 +715,258 @@
     ],
     "tenant-loop-watchdog": [
       {
+        "runId": "run_1781586048421_2upgvwjq",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T05:00:39.464Z",
+        "finishedAt": "2026-06-16T05:00:48.420Z",
+        "durationMs": 8575,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781586047625-uhbp7e\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781585120654_av22i24f",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:45:13.364Z",
+        "finishedAt": "2026-06-16T04:45:20.654Z",
+        "durationMs": 7284,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781585120045-7yijal\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781584235589_frhcmf2m",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:30:27.585Z",
+        "finishedAt": "2026-06-16T04:30:35.589Z",
+        "durationMs": 7997,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781584234947-g1bpuu\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781583327333_nee90vdk",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:15:14.247Z",
+        "finishedAt": "2026-06-16T04:15:27.332Z",
+        "durationMs": 13079,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781583326346-dm342f\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781582447023_iofj1dd0",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:00:39.580Z",
+        "finishedAt": "2026-06-16T04:00:47.023Z",
+        "durationMs": 7285,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781582446518-zkg7ak\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781581514732_ypjb0mqg",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T03:45:12.186Z",
+        "finishedAt": "2026-06-16T03:45:14.731Z",
+        "durationMs": 2541,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781581514458-xwglyq\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781580614034_fvdir3jn",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T03:30:13.476Z",
+        "finishedAt": "2026-06-16T03:30:14.034Z",
+        "durationMs": 557,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781580613971-wxu3dr\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781579713090_blvqz4je",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T03:15:12.049Z",
+        "finishedAt": "2026-06-16T03:15:13.089Z",
+        "durationMs": 1038,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781579712996-4n4bah\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781578822582_b7vd4x1q",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T03:00:17.213Z",
+        "finishedAt": "2026-06-16T03:00:22.581Z",
+        "durationMs": 5365,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781578822106-fjj4j0\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781577025612_4ud21tyz",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T02:30:25.036Z",
+        "finishedAt": "2026-06-16T02:30:25.612Z",
+        "durationMs": 575,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781577025552-edn47i\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781576125268_lm3ng05n",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T02:15:24.167Z",
+        "finishedAt": "2026-06-16T02:15:25.267Z",
+        "durationMs": 1097,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781576125205-87h4m1\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781575226110_h93i5m3m",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T02:00:25.522Z",
+        "finishedAt": "2026-06-16T02:00:26.110Z",
+        "durationMs": 585,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781575226044-37okqx\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781574324662_jblxuyy3",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T01:45:24.096Z",
+        "finishedAt": "2026-06-16T01:45:24.662Z",
+        "durationMs": 565,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781574324603-zkof9s\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781573426014_w0993214",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T01:30:25.342Z",
+        "finishedAt": "2026-06-16T01:30:26.014Z",
+        "durationMs": 670,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781573425929-zh0or7\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781572524966_vf2hgfit",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T01:15:23.884Z",
+        "finishedAt": "2026-06-16T01:15:24.966Z",
+        "durationMs": 1078,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781572524894-80d10q\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781571633722_6y9zos66",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T01:00:29.711Z",
+        "finishedAt": "2026-06-16T01:00:33.722Z",
+        "durationMs": 4001,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781571633384-zsqjsf\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781570724787_tglmmu2l",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:45:23.951Z",
+        "finishedAt": "2026-06-16T00:45:24.786Z",
+        "durationMs": 832,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781570724711-r7kc7l\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781569825819_yb76luyp",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:30:25.237Z",
+        "finishedAt": "2026-06-16T00:30:25.819Z",
+        "durationMs": 581,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781569825754-3cc7s3\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781568930914_8mke7vdr",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:15:25.019Z",
+        "finishedAt": "2026-06-16T00:15:30.914Z",
+        "durationMs": 5659,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781568930653-0ycywc\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781568030368_hw5fqa8z",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:00:27.581Z",
+        "finishedAt": "2026-06-16T00:00:30.367Z",
+        "durationMs": 2785,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781568030112-eb46jr\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
+        "runId": "run_1781567128564_gqsk3ljk",
+        "processId": "tenant-loop-watchdog",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-15T23:45:23.837Z",
+        "finishedAt": "2026-06-15T23:45:28.563Z",
+        "durationMs": 4722,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781567128332-sibcbu\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
+      },
+      {
         "runId": "run_1781208023531_utthhk3r",
         "processId": "tenant-loop-watchdog",
         "actorId": "tnf-master-clock",
@@ -629,177 +1013,141 @@
         "exitCode": 0,
         "error": null,
         "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781205308245-nvtwdj\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
-      },
-      {
-        "runId": "run_1781204418842_cra5nggg",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-11T19:00:13.275Z",
-        "finishedAt": "2026-06-11T19:00:18.842Z",
-        "durationMs": 5566,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781204417903-9zjl23\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
-      },
-      {
-        "runId": "run_1781203515466_0vdo7jbg",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-11T18:45:05.980Z",
-        "finishedAt": "2026-06-11T18:45:15.465Z",
-        "durationMs": 9483,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781203513838-26ibq7\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
-      },
-      {
-        "runId": "run_1781202608341_pucuiqdp",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-11T18:30:06.928Z",
-        "finishedAt": "2026-06-11T18:30:08.340Z",
-        "durationMs": 1410,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781202607737-a2jlkj\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
-      },
-      {
-        "runId": "run_1781201707883_qihw224t",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-11T18:15:04.723Z",
-        "finishedAt": "2026-06-11T18:15:07.882Z",
-        "durationMs": 3154,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781201707066-efybkl\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
-      },
-      {
-        "runId": "run_1781200841502_f3xf1zoq",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-11T18:00:39.456Z",
-        "finishedAt": "2026-06-11T18:00:41.502Z",
-        "durationMs": 2044,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781200840927-tx2e1p\", \"targetQueue\": \"tnf:master:tasks:realtime\" }"
-      },
-      {
-        "runId": "run_1781014310795_quhl6jb2",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-dont-die-supervisor",
-        "startedAt": "2026-06-09T14:11:45.091Z",
-        "finishedAt": "2026-06-09T14:11:50.795Z",
-        "durationMs": 5702,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": false, \"fallback\": \"local-artifact\", \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1781014310760-iikc4a\", \"targetQueue\": \"tnf:master:tasks:realtime\", \"artifactPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/chronological-dispatch/pending/tenant-loop-watchdog-1781014310760-iikc4a.json\" }"
-      },
-      {
-        "runId": "run_1780864282168_idvqytbs",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-07T20:31:06.403Z",
-        "finishedAt": "2026-06-07T20:31:22.167Z",
-        "durationMs": 11957,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": false, \"fallback\": \"local-artifact\", \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1780864281913-38bvvl\", \"targetQueue\": \"tnf:master:tasks:realtime\", \"artifactPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/chronological-dispatch/pending/tenant-loop-watchdog-1780864281913-38bvvl.json\" }"
-      },
-      {
-        "runId": "run_1780863303338_dhl2g22g",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-07T20:15:00.715Z",
-        "finishedAt": "2026-06-07T20:15:03.337Z",
-        "durationMs": 2621,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": false, \"fallback\": \"local-artifact\", \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1780863303319-rwq3ef\", \"targetQueue\": \"tnf:master:tasks:realtime\", \"artifactPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/chronological-dispatch/pending/tenant-loop-watchdog-1780863303319-rwq3ef.json\" }"
-      },
-      {
-        "runId": "run_1780862408749_4z13yanu",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-07T20:00:01.511Z",
-        "finishedAt": "2026-06-07T20:00:08.749Z",
-        "durationMs": 7237,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": false, \"fallback\": \"local-artifact\", \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1780862408718-zp663q\", \"targetQueue\": \"tnf:master:tasks:realtime\", \"artifactPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/chronological-dispatch/pending/tenant-loop-watchdog-1780862408718-zp663q.json\" }"
-      },
-      {
-        "runId": "run_1780861510210_8nfgkuoy",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-07T19:45:00.208Z",
-        "finishedAt": "2026-06-07T19:45:10.209Z",
-        "durationMs": 10000,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": false, \"fallback\": \"local-artifact\", \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1780861510149-wf3vus\", \"targetQueue\": \"tnf:master:tasks:realtime\", \"artifactPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/chronological-dispatch/pending/tenant-loop-watchdog-1780861510149-wf3vus.json\" }"
-      },
-      {
-        "runId": "run_1780859703513_t3jbyaeq",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-07T19:15:00.850Z",
-        "finishedAt": "2026-06-07T19:15:03.513Z",
-        "durationMs": 2658,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": false, \"fallback\": \"local-artifact\", \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1780859703495-tpk9bp\", \"targetQueue\": \"tnf:master:tasks:realtime\", \"artifactPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/chronological-dispatch/pending/tenant-loop-watchdog-1780859703495-tpk9bp.json\" }"
-      },
-      {
-        "runId": "run_1780858814022_ezhzx05p",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-07T19:00:02.472Z",
-        "finishedAt": "2026-06-07T19:00:14.021Z",
-        "durationMs": 11540,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": false, \"fallback\": \"local-artifact\", \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1780858813982-7ra57i\", \"targetQueue\": \"tnf:master:tasks:realtime\", \"artifactPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/chronological-dispatch/pending/tenant-loop-watchdog-1780858813982-7ra57i.json\" }"
-      },
-      {
-        "runId": "run_1780857903635_4qlei8ho",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-07T18:45:00.748Z",
-        "finishedAt": "2026-06-07T18:45:03.635Z",
-        "durationMs": 2884,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": false, \"fallback\": \"local-artifact\", \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1780857903620-9v65yq\", \"targetQueue\": \"tnf:master:tasks:realtime\", \"artifactPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/chronological-dispatch/pending/tenant-loop-watchdog-1780857903620-9v65yq.json\" }"
-      },
-      {
-        "runId": "run_1780857005423_lir8oedo",
-        "processId": "tenant-loop-watchdog",
-        "actorId": "tnf-master-clock",
-        "startedAt": "2026-06-07T18:30:00.938Z",
-        "finishedAt": "2026-06-07T18:30:05.423Z",
-        "durationMs": 4483,
-        "status": "healthy",
-        "exitCode": 0,
-        "error": null,
-        "outputPreview": "{ \"ok\": true, \"dispatched\": false, \"fallback\": \"local-artifact\", \"processId\": \"tenant-loop-watchdog\", \"dispatchId\": \"tenant-loop-watchdog-1780857005386-iqemb8\", \"targetQueue\": \"tnf:master:tasks:realtime\", \"artifactPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/chronological-dispatch/pending/tenant-loop-watchdog-1780857005386-iqemb8.json\" }"
       }
     ],
     "tenant-orchestrator-pulse": [
+      {
+        "runId": "run_1781586039276_e4ps82xd",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T05:00:30.520Z",
+        "finishedAt": "2026-06-16T05:00:39.275Z",
+        "durationMs": 8750,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781586038791-8e2fxq\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781584227330_aytrowbl",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:30:18.630Z",
+        "finishedAt": "2026-06-16T04:30:27.330Z",
+        "durationMs": 8693,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781584226856-40dk06\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781582438565_iyxeav90",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:00:29.796Z",
+        "finishedAt": "2026-06-16T04:00:38.564Z",
+        "durationMs": 8755,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781582438465-tbffvq\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781580613407_dfgup42z",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T03:30:12.332Z",
+        "finishedAt": "2026-06-16T03:30:13.407Z",
+        "durationMs": 1074,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781580613345-3gyumf\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781578816943_vv26fuwx",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T03:00:13.434Z",
+        "finishedAt": "2026-06-16T03:00:16.941Z",
+        "durationMs": 3506,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781578816461-4jowe4\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781577024963_hjqyzj04",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T02:30:24.423Z",
+        "finishedAt": "2026-06-16T02:30:24.963Z",
+        "durationMs": 539,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781577024902-eswdjw\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781575225447_ksxfju4a",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T02:00:24.384Z",
+        "finishedAt": "2026-06-16T02:00:25.446Z",
+        "durationMs": 1059,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781575225377-o0bxb2\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781573425267_d6mjsmr7",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T01:30:24.150Z",
+        "finishedAt": "2026-06-16T01:30:25.267Z",
+        "durationMs": 1116,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781573425203-n9f5kx\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781571629519_vxed9ef2",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T01:00:24.668Z",
+        "finishedAt": "2026-06-16T01:00:29.518Z",
+        "durationMs": 4847,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781571629216-itp5a8\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781569825126_xv7afk24",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:30:24.008Z",
+        "finishedAt": "2026-06-16T00:30:25.126Z",
+        "durationMs": 1116,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781569825062-fuvajl\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781568027469_et5ndjb7",
+        "processId": "tenant-orchestrator-pulse",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:00:26.290Z",
+        "finishedAt": "2026-06-16T00:00:27.469Z",
+        "durationMs": 1179,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-orchestrator-pulse\", \"dispatchId\": \"tenant-orchestrator-pulse-1781568027193-ws1t7c\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
       {
         "runId": "run_1781208017841_msh6p7ty",
         "processId": "tenant-orchestrator-pulse",
@@ -923,6 +1271,30 @@
     ],
     "tnf-llm-arena-intel-collector": [
       {
+        "runId": "run_1781582416460_51ql1zuv",
+        "processId": "tnf-llm-arena-intel-collector",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:00:15.936Z",
+        "finishedAt": "2026-06-16T04:00:16.460Z",
+        "durationMs": 518,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-llm-arena-intel-collector\", \"lock\": { \"pid\": 50939, \"ppid\": 10712, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-llm-arena-intel-collector\", \"startedAt\": \"2026-06-16T04..."
+      },
+      {
+        "runId": "run_1781568023850_3hzwzqq2",
+        "processId": "tnf-llm-arena-intel-collector",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:00:23.783Z",
+        "finishedAt": "2026-06-16T00:00:23.849Z",
+        "durationMs": 65,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-llm-arena-intel-collector\", \"lock\": { \"pid\": 55798, \"ppid\": 35643, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-llm-arena-intel-collector\", \"startedAt\": \"2026-06-16T00..."
+      },
+      {
         "runId": "run_1781208006506_rouissvk",
         "processId": "tnf-llm-arena-intel-collector",
         "actorId": "tnf-master-clock",
@@ -960,6 +1332,42 @@
       }
     ],
     "tenant-self-improvement-loop": [
+      {
+        "runId": "run_1781582453014_cpsi11qj",
+        "processId": "tenant-self-improvement-loop",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:00:44.878Z",
+        "finishedAt": "2026-06-16T04:00:53.014Z",
+        "durationMs": 8132,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-self-improvement-loop\", \"dispatchId\": \"tenant-self-improvement-loop-1781582452526-f2fxl3\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781575226825_otkalo9o",
+        "processId": "tenant-self-improvement-loop",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T02:00:26.193Z",
+        "finishedAt": "2026-06-16T02:00:26.825Z",
+        "durationMs": 626,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-self-improvement-loop\", \"dispatchId\": \"tenant-self-improvement-loop-1781575226760-4nh8be\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781568031559_hm3twq5i",
+        "processId": "tenant-self-improvement-loop",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:00:30.460Z",
+        "finishedAt": "2026-06-16T00:00:31.558Z",
+        "durationMs": 1097,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-self-improvement-loop\", \"dispatchId\": \"tenant-self-improvement-loop-1781568031498-ubikf9\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
       {
         "runId": "run_1781208029687_ic6pcpnr",
         "processId": "tenant-self-improvement-loop",
@@ -1011,6 +1419,30 @@
     ],
     "tenant-knowledge-scout-sprint": [
       {
+        "runId": "run_1781582428622_ugeu3jqy",
+        "processId": "tenant-knowledge-scout-sprint",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T04:00:18.085Z",
+        "finishedAt": "2026-06-16T04:00:28.621Z",
+        "durationMs": 10534,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-knowledge-scout-sprint\", \"dispatchId\": \"tenant-knowledge-scout-sprint-1781582428132-flvgth\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
+        "runId": "run_1781568026182_0u2kr0t6",
+        "processId": "tenant-knowledge-scout-sprint",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:00:25.550Z",
+        "finishedAt": "2026-06-16T00:00:26.182Z",
+        "durationMs": 631,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-knowledge-scout-sprint\", \"dispatchId\": \"tenant-knowledge-scout-sprint-1781568026121-ctlrj2\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
+      {
         "runId": "run_1781208012752_wv988g9p",
         "processId": "tenant-knowledge-scout-sprint",
         "actorId": "tnf-master-clock",
@@ -1049,6 +1481,18 @@
     ],
     "tnf-self-improvement-scorecard": [
       {
+        "runId": "run_1781568023665_oh4wgh1a",
+        "processId": "tnf-self-improvement-scorecard",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:00:23.597Z",
+        "finishedAt": "2026-06-16T00:00:23.665Z",
+        "durationMs": 67,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"skipped\": \"already-running\", \"reason\": \"already-running\", \"processId\": \"tnf-self-improvement-scorecard\", \"lock\": { \"pid\": 55796, \"ppid\": 35643, \"command\": \"/Users/danielgoldberg/.hermes/node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/run-chronological-process.cjs --process-id\", \"lockName\": \"run-chrono-tnf-self-improvement-scorecard\", \"startedAt\": \"2026-06-16T..."
+      },
+      {
         "runId": "run_1781200834851_top08obe",
         "processId": "tnf-self-improvement-scorecard",
         "actorId": "tnf-master-clock",
@@ -1062,6 +1506,18 @@
       }
     ],
     "tenant-continuous-qa-loop": [
+      {
+        "runId": "run_1781568025389_zptpilpw",
+        "processId": "tenant-continuous-qa-loop",
+        "actorId": "tnf-master-clock",
+        "startedAt": "2026-06-16T00:00:24.194Z",
+        "finishedAt": "2026-06-16T00:00:25.389Z",
+        "durationMs": 1194,
+        "status": "healthy",
+        "exitCode": 0,
+        "error": null,
+        "outputPreview": "{ \"ok\": true, \"dispatched\": true, \"processId\": \"tenant-continuous-qa-loop\", \"dispatchId\": \"tenant-continuous-qa-loop-1781568025309-9df9yj\", \"targetQueue\": \"tnf:master:tasks:planning\" }"
+      },
       {
         "runId": "run_1781200837677_fvab9wlh",
         "processId": "tenant-continuous-qa-loop",

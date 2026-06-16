@@ -365,6 +365,7 @@ async function main() {
     "data/mcp.clients/codex.mcp.json",
     "data/mcp.clients/claude.mcp.json",
     "data/mcp.clients/gemini.mcp.json",
+    "data/mcp.clients/cursor.mcp.json",
   ];
   for (const p of generated) {
     console.log(`- ${exists(p) ? "OK" : "MISSING"} ${p}`);

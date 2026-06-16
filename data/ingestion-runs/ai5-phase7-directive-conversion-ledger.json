@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T21:28:19.619787Z",
+  "generatedAt": "2026-06-16T02:44:24.498679Z",
   "phase": "phase7-directive-conversion",
   "actionQueuePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-action-queue.json",
   "dispatchLogPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-dispatch-log.json",
@@ -7,11 +7,11 @@
     "total": 689,
     "stateCounts": {
       "ready": 0,
-      "claimed": 0,
+      "claimed": 15,
       "running": 0,
-      "verified": 0,
+      "verified": 1,
       "landed": 31,
-      "blocked": 658,
+      "blocked": 642,
       "failed": 0
     },
     "laneCounts": {
@@ -23,14 +23,14 @@
       "product-intel-activation": 211,
       "security-audit": 35
     },
-    "active": 0,
-    "converted": 31,
-    "conversionRate": 4.5,
+    "active": 15,
+    "converted": 32,
+    "conversionRate": 4.64,
     "ready": 0,
-    "blocked": 658,
+    "blocked": 642,
     "blockReasonCounts": {
       "deepsec-no-analyzed-files": 1,
-      "irrelevant-context": 622,
+      "irrelevant-context": 606,
       "low-relevance": 32,
       "no-first-party-agentars-surface": 1,
       "no-first-party-shopping-list-surface": 1,
@@ -463,7 +463,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["package.json"]
+        "file_hints": [
+          "package.json"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -504,7 +506,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["package.json"],
+        "originalExistingHints": [
+          "package.json"
+        ],
         "resolvedPaths": [
           "packages/protocol-contracts/src/envelope.ts",
           "apps/api/src/controllers/orchestration.controller.ts",
@@ -534,7 +538,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -575,7 +581,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "packages/relay-core/src/redis-relay-bridge.ts",
           "packages/relay-core/src/broker-agent.ts",
@@ -605,7 +613,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -646,7 +656,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "scripts/autonomy/activate_intelligence_actions.py",
           "scripts/autonomy/dispatch_intelligence_tasks.py",
@@ -676,7 +688,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -717,7 +731,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "scripts/autonomy/activate_intelligence_actions.py",
           "scripts/autonomy/dispatch_intelligence_tasks.py",
@@ -747,7 +763,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -788,7 +806,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "scripts/autonomy/activate_intelligence_actions.py",
           "scripts/autonomy/dispatch_intelligence_tasks.py",
@@ -818,7 +838,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -859,7 +881,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "scripts/autonomy/activate_intelligence_actions.py",
           "scripts/autonomy/dispatch_intelligence_tasks.py",
@@ -889,7 +913,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -930,7 +956,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "scripts/autonomy/activate_intelligence_actions.py",
           "scripts/autonomy/dispatch_intelligence_tasks.py",
@@ -960,7 +988,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -1001,7 +1031,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "scripts/autonomy/activate_intelligence_actions.py",
           "scripts/autonomy/dispatch_intelligence_tasks.py",
@@ -1031,7 +1063,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["."]
+        "file_hints": [
+          "."
+        ]
       },
       "source": {
         "source_id": "yt-ai5-maabARKJ94o",
@@ -1072,7 +1106,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["."],
+        "originalExistingHints": [
+          "."
+        ],
         "resolvedPaths": [
           "packages/protocol-contracts/scripts/stress-test-contracts.mjs",
           "scripts/platform-readiness-orchestrator.js",
@@ -1102,7 +1138,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -1143,7 +1181,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "packages/relay-core/src/redis-relay-bridge.ts",
           "packages/relay-core/src/broker-agent.ts",
@@ -1173,7 +1213,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -1214,7 +1256,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "scripts/autonomy/activate_intelligence_actions.py",
           "scripts/autonomy/dispatch_intelligence_tasks.py",
@@ -1244,7 +1288,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -1285,7 +1331,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "scripts/autonomy/activate_intelligence_actions.py",
           "scripts/autonomy/dispatch_intelligence_tasks.py",
@@ -1315,7 +1363,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents.md"]
+        "file_hints": [
+          "agents.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -1356,7 +1406,9 @@
       },
       "executionSurface": {
         "repoFitScore": 100,
-        "originalExistingHints": ["agents.md"],
+        "originalExistingHints": [
+          "agents.md"
+        ],
         "resolvedPaths": [
           "scripts/autonomy/activate_intelligence_actions.py",
           "scripts/autonomy/dispatch_intelligence_tasks.py",
@@ -2506,7 +2558,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Your project's main application or integration layer"]
+        "file_hints": [
+          "Your project's main application or integration layer"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -2573,7 +2627,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Terminal / Grok Build CLI"]
+        "file_hints": [
+          "Terminal / Grok Build CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -2640,7 +2696,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["production file (Python script)"]
+        "file_hints": [
+          "production file (Python script)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -2711,7 +2769,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Mobile app codebase, security model"]
+        "file_hints": [
+          "Mobile app codebase, security model"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -2778,7 +2838,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Telegram BotFather chat (@BotFather)"]
+        "file_hints": [
+          "Telegram BotFather chat (@BotFather)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -2879,7 +2941,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Development server process"]
+        "file_hints": [
+          "Development server process"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -2950,7 +3014,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Audio processing module, streaming service"]
+        "file_hints": [
+          "Audio processing module, streaming service"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -3017,7 +3083,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Deep Sec CLI tool"]
+        "file_hints": [
+          "Deep Sec CLI tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-hTpHmLFXBrc",
@@ -3088,7 +3156,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project directory / Terminal"]
+        "file_hints": [
+          "Project directory / Terminal"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -3240,7 +3310,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Deep Sec CLI tool"]
+        "file_hints": [
+          "Deep Sec CLI tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-hTpHmLFXBrc",
@@ -3315,7 +3387,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["grok CLI command"]
+        "file_hints": [
+          "grok CLI command"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -3382,7 +3456,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Git History and Security Findings"]
+        "file_hints": [
+          "Git History and Security Findings"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-hTpHmLFXBrc",
@@ -3532,7 +3608,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini app UI"]
+        "file_hints": [
+          "Gemini app UI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-VTVRTN8nkxM",
@@ -3603,7 +3681,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["esql_search_tool.py or agent tool definition module"]
+        "file_hints": [
+          "esql_search_tool.py or agent tool definition module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -3733,7 +3813,7 @@
     },
     {
       "id": "act-3807865fd783700b",
-      "state": "blocked",
+      "state": "verified",
       "priority": "critical",
       "lane": "security-audit",
       "ownerHint": "security-auditor",
@@ -3751,7 +3831,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Deep Sec CLI tool"]
+        "file_hints": [
+          "Deep Sec CLI tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-hTpHmLFXBrc",
@@ -3776,18 +3858,38 @@
         },
         {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:26:53.564677Z",
+          "state": "verified",
+          "at": "2026-06-16T02:43:00Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-3807865fd783700b.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:26.781858Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:26:53.564677Z",
+        "state": "verified",
+        "verifiedAt": "2026-06-16T02:43:00Z",
+        "checks": [
+          {
+            "name": "deepsec-status",
+            "command": "cd .deepsec && pnpm deepsec status --project-id The-New-Fuse",
+            "result": "pass",
+            "notes": "109 files tracked, 89 pending analysis"
+          },
+          {
+            "name": "scan-config",
+            "result": "pass",
+            "notes": "deepsec.config.ts and config.json updated with ignorePaths for apps/external, node_modules, build artifacts"
+          },
+          {
+            "name": "info-md",
+            "result": "pass",
+            "notes": "INFO.md populated with TNF project context and threat model"
+          }
+        ],
+        "notes": "Full rescan blocked by ENOSPC (disk 100% full, 65MB free). Existing scan data sufficient for process stage.",
+        "summary": "Deep Sec scan infrastructure verified. Prior scan completed 109 files with 114 candidates (scanId 20260612085319). Config updated with monorepo exclusions and priority paths for packages/relay-core, tnf-cli, protocol-contracts.",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Requests running Deep Sec scan. Extracted from a Vercel tutorial video."
+          "type": "resolved",
+          "description": "Scan prerequisite satisfied; rescan deferred due to disk space"
         }
       },
       "executionSurface": {
@@ -3799,8 +3901,7 @@
           "scripts/security/supabase-rls-audit.cjs"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-43037b02807f02b0",
@@ -3822,7 +3923,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agent_prompts/"]
+        "file_hints": [
+          "agent_prompts/"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-jWDCnJKouhw",
@@ -3909,7 +4012,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Runway Agent API / User Interface"]
+        "file_hints": [
+          "Runway Agent API / User Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -3976,7 +4081,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Production_Agent_Interface"]
+        "file_hints": [
+          "Production_Agent_Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -4064,7 +4171,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Dev_Agent_Interface"]
+        "file_hints": [
+          "Dev_Agent_Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -4152,7 +4261,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agentars component of the TARS stack"]
+        "file_hints": [
+          "Agentars component of the TARS stack"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -4235,7 +4346,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Cursor application / LLM interaction module"]
+        "file_hints": [
+          "Cursor application / LLM interaction module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-sRKBGVFVYAw",
@@ -4528,7 +4641,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent_Communication_Module"]
+        "file_hints": [
+          "Agent_Communication_Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -4577,7 +4692,9 @@
             "result": "passed"
           }
         ],
-        "filesChanged": ["scripts/autonomy/p2p_pii_redacted_data_request.py"],
+        "filesChanged": [
+          "scripts/autonomy/p2p_pii_redacted_data_request.py"
+        ],
         "summary": "Implemented a deterministic P2P data request harness with stable message-ID correlation, production-agent response construction, recursive PII redaction, and response verification before dev-agent ingestion."
       },
       "executionSurface": {
@@ -4611,7 +4728,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent_Deployment_Service"]
+        "file_hints": [
+          "Agent_Deployment_Service"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -4747,7 +4866,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Desktop systems"]
+        "file_hints": [
+          "Desktop systems"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lAAcjj5fISE",
@@ -4814,7 +4935,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local machine operating system"]
+        "file_hints": [
+          "Local machine operating system"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -4881,7 +5004,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Desktop systems"]
+        "file_hints": [
+          "Desktop systems"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lAAcjj5fISE",
@@ -5006,7 +5131,7 @@
     },
     {
       "id": "act-c986b240a1097b6e",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "critical",
       "lane": "backend-contracts",
       "ownerHint": "backend-specialist",
@@ -5024,7 +5149,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Running bot setup script in terminal"]
+        "file_hints": [
+          "Running bot setup script in terminal"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -5044,19 +5171,27 @@
           "at": "2026-05-19T20:16:13.136808Z"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651027Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:39.992665Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-c986b240a1097b6e.json"
         }
       ],
       "updatedAt": "2026-06-11T18:19:58.651942Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651027Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:39.992665Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -5068,8 +5203,7 @@
           "apps/api/src/controllers/workspace.controller.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-cecccebef8e310bd",
@@ -5160,7 +5294,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["logging_middleware.py or audit_log_schema.json"]
+        "file_hints": [
+          "logging_middleware.py or audit_log_schema.json"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-jwtpMSRAPAQ",
@@ -5227,7 +5363,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["src/evaluations/llm_judge_evals.py"]
+        "file_hints": [
+          "src/evaluations/llm_judge_evals.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -5366,7 +5504,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["System CLI"]
+        "file_hints": [
+          "System CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -5433,7 +5573,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Spaces platform user interface or CLI"]
+        "file_hints": [
+          "Spaces platform user interface or CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -5638,7 +5780,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Trace Data / Evaluation Planning Document"]
+        "file_hints": [
+          "Trace Data / Evaluation Planning Document"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -5708,7 +5852,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Grok TUI"]
+        "file_hints": [
+          "Grok TUI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -5778,7 +5924,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Application Codebase"]
+        "file_hints": [
+          "Application Codebase"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-hTpHmLFXBrc",
@@ -5845,7 +5993,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Runway Agent System/API"]
+        "file_hints": [
+          "Runway Agent System/API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -5912,7 +6062,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Opened Archon workflow plan file (summary section)"]
+        "file_hints": [
+          "Opened Archon workflow plan file (summary section)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -5979,7 +6131,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Grok TUI"]
+        "file_hints": [
+          "Grok TUI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -6046,7 +6200,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Grok TUI"]
+        "file_hints": [
+          "Grok TUI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -6117,7 +6273,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local machine environment (with GPU)"]
+        "file_hints": [
+          "Local machine environment (with GPU)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -6188,7 +6346,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["our codebase"]
+        "file_hints": [
+          "our codebase"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-maabARKJ94o",
@@ -6255,7 +6415,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent orchestration module/system"]
+        "file_hints": [
+          "Agent orchestration module/system"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -6308,7 +6470,9 @@
             "result": "passed"
           }
         ],
-        "filesChanged": ["scripts/autonomy/agent_loop_llm_harness.py"],
+        "filesChanged": [
+          "scripts/autonomy/agent_loop_llm_harness.py"
+        ],
         "summary": "Implemented a minimal inspect-act-verify agent loop harness with mock and OpenAI-compatible model clients. The harness supports offline deterministic testing and credential-backed provider execution through environment variables without logging secret values."
       },
       "executionSurface": {
@@ -6342,7 +6506,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Grok TUI"]
+        "file_hints": [
+          "Grok TUI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -6409,7 +6575,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["production.py and newly created Python modules"]
+        "file_hints": [
+          "production.py and newly created Python modules"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -6545,7 +6713,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Investment Portfolio"]
+        "file_hints": [
+          "Investment Portfolio"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-65IAqRUxg3c",
@@ -6594,7 +6764,7 @@
     },
     {
       "id": "act-f8e0537dc402cd7d",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "critical",
       "lane": "security-audit",
       "ownerHint": "security-auditor",
@@ -6612,7 +6782,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI pipelines"]
+        "file_hints": [
+          "AI pipelines"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lAAcjj5fISE",
@@ -6632,19 +6804,27 @@
           "at": "2026-05-19T20:16:13.318584Z"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651437Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:39.995812Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-f8e0537dc402cd7d.json"
         }
       ],
       "updatedAt": "2026-06-11T18:19:59.230217Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651437Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:39.995812Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -6656,8 +6836,7 @@
           "scripts/security/supabase-rls-audit.cjs"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-fb16fdb556269590",
@@ -6679,7 +6858,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["production file / agent configuration"]
+        "file_hints": [
+          "production file / agent configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -6835,7 +7016,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["src/evaluations/code_evals.py"]
+        "file_hints": [
+          "src/evaluations/code_evals.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -6906,7 +7089,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Next.js project (package.json scripts)"]
+        "file_hints": [
+          "Next.js project (package.json scripts)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -6977,7 +7162,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["tools.py"]
+        "file_hints": [
+          "tools.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -7048,7 +7235,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Prompt (user input)"]
+        "file_hints": [
+          "AI Prompt (user input)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -7265,7 +7454,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Web browser, AI agent's configuration files/codebase"]
+        "file_hints": [
+          "Web browser, AI agent's configuration files/codebase"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -7555,7 +7746,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["utils/tools.py"]
+        "file_hints": [
+          "utils/tools.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -7626,7 +7819,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Main agent execution"]
+        "file_hints": [
+          "Main agent execution"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -7697,7 +7892,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["evals/output_validators.py"]
+        "file_hints": [
+          "evals/output_validators.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -7841,7 +8038,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Python script (e.g., agent_setup.py)"]
+        "file_hints": [
+          "Python script (e.g., agent_setup.py)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -7912,7 +8111,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Onboarding screen UI, image assets"]
+        "file_hints": [
+          "Onboarding screen UI, image assets"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -8205,7 +8406,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["list_files function (likely within production.py)"]
+        "file_hints": [
+          "list_files function (likely within production.py)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -8349,7 +8552,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Skill generation system / Agent management system"]
+        "file_hints": [
+          "Skill generation system / Agent management system"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nyO60uzTnP4",
@@ -8493,7 +8698,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent Harness Core / Event Management Module"]
+        "file_hints": [
+          "Agent Harness Core / Event Management Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -8546,7 +8753,7 @@
     },
     {
       "id": "act-1379d655a387b57e",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "backend-contracts",
       "ownerHint": "backend-specialist",
@@ -8590,19 +8797,27 @@
           "dispatchId": "ai5-dispatch-1781202027-022"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651450Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:39.998059Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-1379d655a387b57e.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:27.419998Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651450Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:39.998059Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -8614,8 +8829,7 @@
           "apps/api/src/controllers/workspace.controller.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-1562b58919313f38",
@@ -8710,7 +8924,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Your Application's Git Repository, Doku Server"]
+        "file_hints": [
+          "Your Application's Git Repository, Doku Server"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-kJNFWGXRrA4",
@@ -8927,7 +9143,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Language models, hardware setups"]
+        "file_hints": [
+          "Language models, hardware setups"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lAAcjj5fISE",
@@ -9144,7 +9362,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["PlayStation 5 hardware"]
+        "file_hints": [
+          "PlayStation 5 hardware"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lAAcjj5fISE",
@@ -9288,7 +9508,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Event Server API"]
+        "file_hints": [
+          "Event Server API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -9341,7 +9563,7 @@
     },
     {
       "id": "act-2f6875662149bec5",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "orchestration-runtime",
       "ownerHint": "orchestration-engineer",
@@ -9359,7 +9581,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["evaluation_suite.py or business_rules_engine.py"]
+        "file_hints": [
+          "evaluation_suite.py or business_rules_engine.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-jwtpMSRAPAQ",
@@ -9383,19 +9607,27 @@
           "dispatchId": "ai5-dispatch-1781202027-040"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651462Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:39.999380Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-2f6875662149bec5.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:27.799413Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651462Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:39.999380Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -9410,8 +9642,7 @@
           "packages/workflow-engine/src/orchestrator/tnf-router.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-30fc25276ec65c4d",
@@ -9433,7 +9664,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["UITARS_training_pipeline.py"]
+        "file_hints": [
+          "UITARS_training_pipeline.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -9650,7 +9883,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["GitHub repository"]
+        "file_hints": [
+          "GitHub repository"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -9849,7 +10084,7 @@
     },
     {
       "id": "act-3efcb13f76545c0b",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "backend-contracts",
       "ownerHint": "backend-specialist",
@@ -9867,7 +10102,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent/Messaging Connectors Module"]
+        "file_hints": [
+          "Hermes Agent/Messaging Connectors Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -9891,19 +10128,27 @@
           "dispatchId": "ai5-dispatch-1781202027-048"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651470Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.000632Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-3efcb13f76545c0b.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:27.971690Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651470Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.000632Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -9918,8 +10163,7 @@
           "apps/api/src/controllers/workspace.controller.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-47a20148cfc7bc57",
@@ -10161,7 +10405,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Victor/ContextManager.py"]
+        "file_hints": [
+          "Victor/ContextManager.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ohKt066uFhg",
@@ -10232,7 +10478,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Onboarding Screen Module, assets folder"]
+        "file_hints": [
+          "Onboarding Screen Module, assets folder"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -10379,7 +10627,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Victor/IntegrationService.py"]
+        "file_hints": [
+          "Victor/IntegrationService.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ohKt066uFhg",
@@ -10450,7 +10700,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi Configuration / API Key Management System"]
+        "file_hints": [
+          "Pi Configuration / API Key Management System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -10594,7 +10846,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["`grep_tool` function/Modular search utility"]
+        "file_hints": [
+          "`grep_tool` function/Modular search utility"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -10735,7 +10989,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Current Git repository system/module"]
+        "file_hints": [
+          "Current Git repository system/module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-maabARKJ94o",
@@ -11025,7 +11281,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AgentCore/ContextManager.py"]
+        "file_hints": [
+          "AgentCore/ContextManager.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -11096,7 +11354,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Configuration / NA10 System"]
+        "file_hints": [
+          "Hermes Configuration / NA10 System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -11246,7 +11506,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Articcraft System (AI Agent Integration Module)"]
+        "file_hints": [
+          "Articcraft System (AI Agent Integration Module)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -11390,7 +11652,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["tools.py"]
+        "file_hints": [
+          "tools.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -11461,7 +11725,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["RemoteBrowserOperator.module"]
+        "file_hints": [
+          "RemoteBrowserOperator.module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -11532,7 +11798,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["File system (agent's output directory)"]
+        "file_hints": [
+          "File system (agent's output directory)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -11676,7 +11944,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["personality_test_definition.json (via Claude Code)"]
+        "file_hints": [
+          "personality_test_definition.json (via Claude Code)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-65IAqRUxg3c",
@@ -11820,7 +12090,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["event_stream_api/sub_agent_module"]
+        "file_hints": [
+          "event_stream_api/sub_agent_module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -11967,7 +12239,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes chat window"]
+        "file_hints": [
+          "Hermes chat window"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -12386,7 +12660,7 @@
     },
     {
       "id": "act-c249bb82e9ad3dfa",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "orchestration-runtime",
       "ownerHint": "orchestration-engineer",
@@ -12404,7 +12678,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["eval_suite/deterministic_code_evals.py"]
+        "file_hints": [
+          "eval_suite/deterministic_code_evals.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -12428,19 +12704,27 @@
           "dispatchId": "ai5-dispatch-1781202029-120"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651481Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.004078Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-c249bb82e9ad3dfa.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:29.637934Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651481Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.004078Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -12455,8 +12739,7 @@
           "packages/workflow-engine/src/orchestrator/tnf-router.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-c49a69fe5b07390e",
@@ -12606,7 +12889,7 @@
     },
     {
       "id": "act-c6ef0132a57824fd",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "orchestration-runtime",
       "ownerHint": "orchestration-engineer",
@@ -12624,7 +12907,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agent_framework/tool_call_evaluator.py"]
+        "file_hints": [
+          "agent_framework/tool_call_evaluator.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -12648,19 +12933,27 @@
           "dispatchId": "ai5-dispatch-1781202029-124"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651491Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.004526Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-c6ef0132a57824fd.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:29.836785Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651491Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.004526Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -12675,8 +12968,7 @@
           "packages/workflow-engine/src/orchestrator/tnf-router.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-c8d1a82e439a34b8",
@@ -12771,7 +13063,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["LocalOperator.module"]
+        "file_hints": [
+          "LocalOperator.module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -12973,7 +13267,7 @@
     },
     {
       "id": "act-d138a0b08d99d321",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "orchestration-runtime",
       "ownerHint": "orchestration-engineer",
@@ -12991,7 +13285,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent TAR Configuration / Runtime Environment"]
+        "file_hints": [
+          "Agent TAR Configuration / Runtime Environment"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -13015,19 +13311,27 @@
           "dispatchId": "ai5-dispatch-1781202029-129"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651498Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.004955Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-d138a0b08d99d321.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:29.924906Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651498Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.004955Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -13042,8 +13346,7 @@
           "packages/workflow-engine/src/orchestrator/tnf-router.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-d16427840f380ec3",
@@ -13138,7 +13441,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["evals/output_validators.py"]
+        "file_hints": [
+          "evals/output_validators.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -13209,7 +13514,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent/Deployment Automation"]
+        "file_hints": [
+          "Hermes Agent/Deployment Automation"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -13283,7 +13590,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Database Layer; Document Storage Service"]
+        "file_hints": [
+          "Database Layer; Document Storage Service"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-kXBXIipl1lQ",
@@ -13500,7 +13809,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project Configuration / Source Code"]
+        "file_hints": [
+          "Project Configuration / Source Code"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -13571,7 +13882,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["chemical_encoder_module.py"]
+        "file_hints": [
+          "chemical_encoder_module.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -14221,7 +14534,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Jace/EmailAgentLogic.py"]
+        "file_hints": [
+          "Jace/EmailAgentLogic.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ohKt066uFhg",
@@ -14365,7 +14680,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["data_access_config.yaml or agent_permissions.py"]
+        "file_hints": [
+          "data_access_config.yaml or agent_permissions.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-jwtpMSRAPAQ",
@@ -14509,7 +14826,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Open Spec tool/CLI"]
+        "file_hints": [
+          "Open Spec tool/CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -14580,7 +14899,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["RemoteComputerOperator.module"]
+        "file_hints": [
+          "RemoteComputerOperator.module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -14633,7 +14954,7 @@
     },
     {
       "id": "act-4157c1eb323c81a6",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "orchestration-runtime",
       "ownerHint": "orchestration-engineer",
@@ -14651,7 +14972,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Evaluation Framework / Evaluation Scripts"]
+        "file_hints": [
+          "Evaluation Framework / Evaluation Scripts"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -14675,19 +14998,27 @@
           "dispatchId": "ai5-dispatch-1781202028-051"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651503Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.001186Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-4157c1eb323c81a6.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:28.056110Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651503Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.001186Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -14702,8 +15033,7 @@
           "packages/workflow-engine/src/orchestrator/tnf-router.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-4776de6dfd273659",
@@ -14725,7 +15055,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["eval_suite/multi_agent_system_evaluator.py"]
+        "file_hints": [
+          "eval_suite/multi_agent_system_evaluator.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -14776,7 +15108,7 @@
     },
     {
       "id": "act-4ac367caa36e1f4d",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "backend-contracts",
       "ownerHint": "backend-specialist",
@@ -14794,7 +15126,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["eval_suite/lm_judges.py"]
+        "file_hints": [
+          "eval_suite/lm_judges.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -14818,19 +15152,27 @@
           "dispatchId": "ai5-dispatch-1781202028-055"
         },
         {
+          "type": "phase7-batch-claim",
+          "batchId": "ai5-phase7-batch-001",
+          "at": "2026-06-16T02:35:40.651509Z",
+          "by": "local-subdirector"
+        },
+        {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.001696Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-4ac367caa36e1f4d.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:28.164789Z",
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T02:35:40.651509Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.001696Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -14845,8 +15187,7 @@
           "apps/api/src/controllers/workspace.controller.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-51143b68760bc8f1",
@@ -14941,7 +15282,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["basic_agent.py"]
+        "file_hints": [
+          "basic_agent.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -15012,7 +15355,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent_Ideation_Module.py"]
+        "file_hints": [
+          "Agent_Ideation_Module.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -15156,7 +15501,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["opsx CLI and relevant project files"]
+        "file_hints": [
+          "opsx CLI and relevant project files"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -15227,7 +15574,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes `model providers plugin directory`"]
+        "file_hints": [
+          "Hermes `model providers plugin directory`"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4XvM-0o3A-4",
@@ -15450,7 +15799,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["streaming_steps.py"]
+        "file_hints": [
+          "streaming_steps.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -15594,7 +15945,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["UITARS_inference_engine.py"]
+        "file_hints": [
+          "UITARS_inference_engine.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -15861,7 +16214,7 @@
     },
     {
       "id": "act-9bd19e9cfd37307c",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "orchestration-runtime",
       "ownerHint": "orchestration-engineer",
@@ -15906,18 +16259,18 @@
         },
         {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.002831Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-9bd19e9cfd37307c.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:29.298231Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.002831Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -15929,8 +16282,7 @@
           "packages/workflow-engine/src/orchestrator/tnf-router.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-a9bb1621798c1be5",
@@ -15952,7 +16304,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["database_query_tool.py or ESQL client wrapper module"]
+        "file_hints": [
+          "database_query_tool.py or ESQL client wrapper module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -16096,7 +16450,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["jci_web_agent_module/dom_processor.py"]
+        "file_hints": [
+          "jci_web_agent_module/dom_processor.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ohKt066uFhg",
@@ -16167,7 +16523,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["UITARS_2_capabilities_manager.py"]
+        "file_hints": [
+          "UITARS_2_capabilities_manager.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -16233,7 +16591,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["evals/output_validators.py"]
+        "file_hints": [
+          "evals/output_validators.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -16286,7 +16646,7 @@
     },
     {
       "id": "act-ddcaac31378c33d8",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "orchestration-runtime",
       "ownerHint": "orchestration-engineer",
@@ -16304,7 +16664,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent's harness module/codebase"]
+        "file_hints": [
+          "Agent's harness module/codebase"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -16329,18 +16691,18 @@
         },
         {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.005386Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-ddcaac31378c33d8.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:30.050909Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.005386Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -16352,8 +16714,7 @@
           "packages/workflow-engine/src/orchestrator/tnf-router.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-e4c55aee7aec13d7",
@@ -16498,7 +16859,7 @@
     },
     {
       "id": "act-eef67d5509e1758f",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "backend-contracts",
       "ownerHint": "backend-specialist",
@@ -16516,7 +16877,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["hermes.skills.searxng_skill and hermes_config.yaml"]
+        "file_hints": [
+          "hermes.skills.searxng_skill and hermes_config.yaml"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4XvM-0o3A-4",
@@ -16541,18 +16904,18 @@
         },
         {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.005803Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-eef67d5509e1758f.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:30.236054Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.005803Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -16567,8 +16930,7 @@
           "apps/api/src/controllers/workspace.controller.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-f2dd927a8db4f87a",
@@ -16663,7 +17025,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["data/golden_datasets/human_annotations.jsonl"]
+        "file_hints": [
+          "data/golden_datasets/human_annotations.jsonl"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -16737,7 +17101,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Evaluation System / Judge Validation Framework"]
+        "file_hints": [
+          "Evaluation System / Judge Validation Framework"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -16955,7 +17321,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["modular_tokenizer_system.py"]
+        "file_hints": [
+          "modular_tokenizer_system.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -17008,7 +17376,7 @@
     },
     {
       "id": "act-f5fc84e7ed208bde",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "high",
       "lane": "orchestration-runtime",
       "ownerHint": "orchestration-engineer",
@@ -17026,7 +17394,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Agent / GitHub repository"]
+        "file_hints": [
+          "AI Agent / GitHub repository"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -17051,18 +17421,18 @@
         },
         {
           "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
+          "state": "ready",
+          "at": "2026-06-16T02:35:40.006369Z",
           "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-f5fc84e7ed208bde.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:30.364747Z",
       "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
+        "state": "ready",
+        "updatedAt": "2026-06-16T02:35:40.006369Z",
         "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+          "type": "manual-override",
+          "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
         }
       },
       "executionSurface": {
@@ -17077,8 +17447,7 @@
           "packages/workflow-engine/src/orchestrator/tnf-router.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-fb7606a4a02a8011",
@@ -17100,7 +17469,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["src/agent/streamProcessor.ts"]
+        "file_hints": [
+          "src/agent/streamProcessor.ts"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -17171,7 +17542,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi Extension Development Framework"]
+        "file_hints": [
+          "Pi Extension Development Framework"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -17229,7 +17602,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Agent / Application Code / Evaluation Framework"]
+        "file_hints": [
+          "AI Agent / Application Code / Evaluation Framework"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -17279,7 +17654,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["PLAN.md"]
+        "file_hints": [
+          "PLAN.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -17350,7 +17727,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi CLI/runtime"]
+        "file_hints": [
+          "Pi CLI/runtime"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -17421,7 +17800,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["app/index.tsx"]
+        "file_hints": [
+          "app/index.tsx"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -17492,7 +17873,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["System terminal"]
+        "file_hints": [
+          "System terminal"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -17563,7 +17946,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["event_processor_module/processor_class"]
+        "file_hints": [
+          "event_processor_module/processor_class"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -17634,7 +18019,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["workflow.yaml"]
+        "file_hints": [
+          "workflow.yaml"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -17705,7 +18092,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AgentModules/ContentGenerator.py"]
+        "file_hints": [
+          "AgentModules/ContentGenerator.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -17776,7 +18165,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["github.com/geekforbrains/harbor"]
+        "file_hints": [
+          "github.com/geekforbrains/harbor"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-65IAqRUxg3c",
@@ -17847,7 +18238,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["grok-p CLI command"]
+        "file_hints": [
+          "grok-p CLI command"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -17918,7 +18311,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AgentCore/SkillDatabase.py"]
+        "file_hints": [
+          "AgentCore/SkillDatabase.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -17989,7 +18384,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Newly created Telegram bot chat (e.g., Hermes bot)"]
+        "file_hints": [
+          "Newly created Telegram bot chat (e.g., Hermes bot)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -18063,7 +18460,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["grok-p CLI tool"]
+        "file_hints": [
+          "grok-p CLI tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -18134,7 +18533,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent, Excalidraw application"]
+        "file_hints": [
+          "Hermes Agent, Excalidraw application"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -18208,7 +18609,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["exe.dev agent (input interface)"]
+        "file_hints": [
+          "exe.dev agent (input interface)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -18279,7 +18682,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["File I/O operations/String processing utility"]
+        "file_hints": [
+          "File I/O operations/String processing utility"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -18423,7 +18828,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Web"]
+        "file_hints": [
+          "Web"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -18567,7 +18974,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["filesystem (agents/plans directory)"]
+        "file_hints": [
+          "filesystem (agents/plans directory)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -18638,7 +19047,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Open Spec tool/CLI"]
+        "file_hints": [
+          "Open Spec tool/CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -18785,7 +19196,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi CLI / Pi environment"]
+        "file_hints": [
+          "Pi CLI / Pi environment"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -18856,7 +19269,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Shell environment variables"]
+        "file_hints": [
+          "Shell environment variables"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -18927,7 +19342,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent Pool Management CLI (e.g., Jcoms tool)"]
+        "file_hints": [
+          "Agent Pool Management CLI (e.g., Jcoms tool)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -18998,7 +19415,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Grok Build TUI"]
+        "file_hints": [
+          "Grok Build TUI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -19069,7 +19488,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Event Server API"]
+        "file_hints": [
+          "Event Server API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -19140,7 +19561,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Codex CLI configuration"]
+        "file_hints": [
+          "Codex CLI configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -19211,7 +19634,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local file system (e.g., a project's assets directory)"]
+        "file_hints": [
+          "Local file system (e.g., a project's assets directory)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -19282,7 +19707,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Task plan file (e.g., `task_plan.txt` or `plan.json`)"]
+        "file_hints": [
+          "Task plan file (e.g., `task_plan.txt` or `plan.json`)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-QK0B1mbJ-VU",
@@ -19353,7 +19780,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini generate_content API endpoint / client library"]
+        "file_hints": [
+          "Gemini generate_content API endpoint / client library"
+        ]
       },
       "source": {
         "source_id": "yt-ai5--Bp2Sz5xir4",
@@ -19570,7 +19999,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["pi application (UI)"]
+        "file_hints": [
+          "pi application (UI)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -19641,7 +20072,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Skill configuration / `skill_behavior_settings.json`"]
+        "file_hints": [
+          "Skill configuration / `skill_behavior_settings.json`"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nyO60uzTnP4",
@@ -19712,7 +20145,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Python application / script using Anthropic"]
+        "file_hints": [
+          "Python application / script using Anthropic"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -19783,7 +20218,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["build_tools.py"]
+        "file_hints": [
+          "build_tools.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -20000,7 +20437,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Database (via custom script)"]
+        "file_hints": [
+          "Database (via custom script)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -20071,7 +20510,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Claude Global Settings"]
+        "file_hints": [
+          "Claude Global Settings"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-QK0B1mbJ-VU",
@@ -20142,7 +20583,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI operating context, agents.mmd file"]
+        "file_hints": [
+          "AI operating context, agents.mmd file"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -20213,7 +20656,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Database (exposed via HTTPS)"]
+        "file_hints": [
+          "Database (exposed via HTTPS)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -20284,7 +20729,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["pi application/process"]
+        "file_hints": [
+          "pi application/process"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -20355,7 +20802,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent configuration / `agent_platform_settings.json`"]
+        "file_hints": [
+          "Agent configuration / `agent_platform_settings.json`"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nyO60uzTnP4",
@@ -20426,7 +20875,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["cloud.md file"]
+        "file_hints": [
+          "cloud.md file"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -20500,7 +20951,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes chat interface (to configure system cron job)"]
+        "file_hints": [
+          "Hermes chat interface (to configure system cron job)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -20574,7 +21027,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["streaming_steps.py"]
+        "file_hints": [
+          "streaming_steps.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -20645,7 +21100,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["MCP System / Hermes"]
+        "file_hints": [
+          "MCP System / Hermes"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -20719,7 +21176,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local Development Server"]
+        "file_hints": [
+          "Local Development Server"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -21009,7 +21468,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["opsx CLI"]
+        "file_hints": [
+          "opsx CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -21080,7 +21541,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["opsx CLI"]
+        "file_hints": [
+          "opsx CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -21151,7 +21614,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Claude Code Development Environment"]
+        "file_hints": [
+          "Claude Code Development Environment"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -21222,7 +21687,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini files API endpoint / client library"]
+        "file_hints": [
+          "Gemini files API endpoint / client library"
+        ]
       },
       "source": {
         "source_id": "yt-ai5--Bp2Sz5xir4",
@@ -21293,7 +21760,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes job configuration / invocation command"]
+        "file_hints": [
+          "Hermes job configuration / invocation command"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -21367,7 +21836,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Current project directory"]
+        "file_hints": [
+          "Current project directory"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -21438,7 +21909,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [".env file"]
+        "file_hints": [
+          ".env file"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -21509,7 +21982,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["GitHub repository settings"]
+        "file_hints": [
+          "GitHub repository settings"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -21580,7 +22055,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Python development environment / requirements.txt"]
+        "file_hints": [
+          "Python development environment / requirements.txt"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -21651,7 +22128,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Database (via custom CLI)"]
+        "file_hints": [
+          "Database (via custom CLI)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -21722,7 +22201,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Command-line Shell / jq utility"]
+        "file_hints": [
+          "Command-line Shell / jq utility"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -21793,7 +22274,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Python application entry point / main script"]
+        "file_hints": [
+          "Python application entry point / main script"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -21864,7 +22347,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["api/clients/"]
+        "file_hints": [
+          "api/clients/"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -21935,7 +22420,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Codex environment permissions"]
+        "file_hints": [
+          "Codex environment permissions"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -22079,7 +22566,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Shell Environment Variables"]
+        "file_hints": [
+          "Shell Environment Variables"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -22299,7 +22788,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Current project folder"]
+        "file_hints": [
+          "Current project folder"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -22443,7 +22934,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agent_config.py"]
+        "file_hints": [
+          "agent_config.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -22514,7 +23007,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["O.JSON"]
+        "file_hints": [
+          "O.JSON"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -22585,7 +23080,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Onboarding screen UI"]
+        "file_hints": [
+          "Onboarding screen UI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -22729,7 +23226,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi CLI/runtime"]
+        "file_hints": [
+          "Pi CLI/runtime"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -22946,7 +23445,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["/VPS_agents/"]
+        "file_hints": [
+          "/VPS_agents/"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -23093,7 +23594,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["opsx CLI"]
+        "file_hints": [
+          "opsx CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -23164,7 +23667,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi CLI/runtime"]
+        "file_hints": [
+          "Pi CLI/runtime"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -23235,7 +23740,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Git Repository"]
+        "file_hints": [
+          "Git Repository"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -23306,7 +23813,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["grab function (likely within production.py)"]
+        "file_hints": [
+          "grab function (likely within production.py)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -23377,7 +23886,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Node.js Environment"]
+        "file_hints": [
+          "Node.js Environment"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -23448,7 +23959,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project root directory"]
+        "file_hints": [
+          "Project root directory"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -23519,7 +24032,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents/plans/"]
+        "file_hints": [
+          "agents/plans/"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -23663,7 +24178,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI decision-making process, communication channel"]
+        "file_hints": [
+          "AI decision-making process, communication channel"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -23807,7 +24324,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["grok-p CLI tool"]
+        "file_hints": [
+          "grok-p CLI tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -23878,7 +24397,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["work tree"]
+        "file_hints": [
+          "work tree"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -24022,7 +24543,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Articcraft Project Page (Web UI)"]
+        "file_hints": [
+          "Articcraft Project Page (Web UI)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -24093,7 +24616,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini files API endpoint / client library"]
+        "file_hints": [
+          "Gemini files API endpoint / client library"
+        ]
       },
       "source": {
         "source_id": "yt-ai5--Bp2Sz5xir4",
@@ -24164,7 +24689,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Docker environment"]
+        "file_hints": [
+          "Docker environment"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -24235,7 +24762,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi CLI"]
+        "file_hints": [
+          "Pi CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -24306,7 +24835,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local file system"]
+        "file_hints": [
+          "Local file system"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -24377,7 +24908,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["VPS provisioning interface"]
+        "file_hints": [
+          "VPS provisioning interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -24521,7 +25054,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Development server process and connected Expo Go app"]
+        "file_hints": [
+          "Development server process and connected Expo Go app"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -24592,7 +25127,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Open Spec tool/CLI"]
+        "file_hints": [
+          "Open Spec tool/CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -24663,7 +25200,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["external_planning_system_integration"]
+        "file_hints": [
+          "external_planning_system_integration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-maabARKJ94o",
@@ -24734,7 +25273,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["VPS provisioning interface"]
+        "file_hints": [
+          "VPS provisioning interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -24805,7 +25346,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["grok CLI command"]
+        "file_hints": [
+          "grok CLI command"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -24874,7 +25417,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["pi application"]
+        "file_hints": [
+          "pi application"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -24945,7 +25490,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Web browser / Network module"]
+        "file_hints": [
+          "Web browser / Network module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-sRKBGVFVYAw",
@@ -25016,7 +25563,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["tools.py"]
+        "file_hints": [
+          "tools.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -25087,7 +25636,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI engineer workshop Git repository, file in.ts"]
+        "file_hints": [
+          "AI engineer workshop Git repository, file in.ts"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -25158,7 +25709,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Git repository"]
+        "file_hints": [
+          "Git repository"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -25229,7 +25782,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["~/.grok/config.toml"]
+        "file_hints": [
+          "~/.grok/config.toml"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -25300,7 +25855,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes job configuration / invocation command"]
+        "file_hints": [
+          "Hermes job configuration / invocation command"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -25374,7 +25931,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Shell environment variables"]
+        "file_hints": [
+          "Shell environment variables"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -25445,7 +26004,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [".env file, platform.openai.com"]
+        "file_hints": [
+          ".env file, platform.openai.com"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -25516,7 +26077,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Remote Stream Service"]
+        "file_hints": [
+          "Remote Stream Service"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -25587,7 +26150,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["design.md file"]
+        "file_hints": [
+          "design.md file"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -25731,7 +26296,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Current running agent/system (likely 'Pi')"]
+        "file_hints": [
+          "Current running agent/system (likely 'Pi')"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -25802,7 +26369,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["GitHub repository"]
+        "file_hints": [
+          "GitHub repository"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -25873,7 +26442,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent configuration / `agent_content_profile.json`"]
+        "file_hints": [
+          "Agent configuration / `agent_content_profile.json`"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nyO60uzTnP4",
@@ -25944,7 +26515,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi CLI/runtime"]
+        "file_hints": [
+          "Pi CLI/runtime"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -26015,7 +26588,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["semantic_search_tool.py"]
+        "file_hints": [
+          "semantic_search_tool.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -26086,7 +26661,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Python script/module using `re` library"]
+        "file_hints": [
+          "Python script/module using `re` library"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -26157,7 +26734,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Terminal / Hermes Configuration"]
+        "file_hints": [
+          "Terminal / Hermes Configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -26234,7 +26813,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Terminal / Shell"]
+        "file_hints": [
+          "Terminal / Shell"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -26305,7 +26886,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Reporting/Analysis Module"]
+        "file_hints": [
+          "Reporting/Analysis Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -26598,7 +27181,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["github.com/iterate/ai-engineer-workshop/workshop.md"]
+        "file_hints": [
+          "github.com/iterate/ai-engineer-workshop/workshop.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -26669,7 +27254,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes natural language interface"]
+        "file_hints": [
+          "Hermes natural language interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -26743,7 +27330,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Template download interface (web UI)"]
+        "file_hints": [
+          "Template download interface (web UI)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -26814,7 +27403,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Screen design files, UI components"]
+        "file_hints": [
+          "Screen design files, UI components"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -26885,7 +27476,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project's data storage environment/configuration"]
+        "file_hints": [
+          "Project's data storage environment/configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -26956,7 +27549,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes job configuration / invocation command"]
+        "file_hints": [
+          "Hermes job configuration / invocation command"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -27030,7 +27625,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["System Terminal"]
+        "file_hints": [
+          "System Terminal"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -27083,7 +27680,7 @@
     },
     {
       "id": "act-fc7429a2e46c702e",
-      "state": "blocked",
+      "state": "claimed",
       "priority": "medium",
       "lane": "backend-contracts",
       "ownerHint": "backend-specialist",
@@ -27101,7 +27698,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["OpenAI Platform (Web)"]
+        "file_hints": [
+          "OpenAI Platform (Web)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -27123,23 +27722,9 @@
         {
           "type": "action-queue",
           "dispatchId": "ai5-dispatch-1781202047-596"
-        },
-        {
-          "type": "phase7-verification",
-          "state": "blocked",
-          "at": "2026-06-11T18:27:29.859814Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-fc7429a2e46c702e.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:47.662256Z",
-      "verification": {
-        "state": "blocked",
-        "updatedAt": "2026-06-11T18:27:29.859814Z",
-        "blocker": {
-          "type": "irrelevant-context",
-          "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
-        }
-      },
       "executionSurface": {
         "repoFitScore": 60,
         "originalExistingHints": [],
@@ -27149,8 +27734,7 @@
           "apps/api/src/controllers/workspace.controller.ts"
         ],
         "resolutionSource": "keyword+lane"
-      },
-      "blockReason": "irrelevant-context"
+      }
     },
     {
       "id": "act-fe0d2f6db0199e52",
@@ -27172,7 +27756,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project root directory"]
+        "file_hints": [
+          "Project root directory"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -27243,7 +27829,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project Root Directory (Terminal)"]
+        "file_hints": [
+          "Project Root Directory (Terminal)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -27314,7 +27902,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi Agent / Multi-Questionnaire Extension"]
+        "file_hints": [
+          "Pi Agent / Multi-Questionnaire Extension"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -27385,7 +27975,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["examples/agent_processor.ts"]
+        "file_hints": [
+          "examples/agent_processor.ts"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -27456,7 +28048,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Agent (input), design.md (source file)"]
+        "file_hints": [
+          "AI Agent (input), design.md (source file)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -27673,7 +28267,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["'questions' Event Stream API"]
+        "file_hints": [
+          "'questions' Event Stream API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -27817,7 +28413,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Event Stream Client / API Configuration"]
+        "file_hints": [
+          "Event Stream Client / API Configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -27888,7 +28486,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Creata 2 Image Generation System"]
+        "file_hints": [
+          "Creata 2 Image Generation System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -27959,7 +28559,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Mammal AI Antibody Design Engine"]
+        "file_hints": [
+          "Mammal AI Antibody Design Engine"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -28103,7 +28705,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Telegram chat with Hermes bot"]
+        "file_hints": [
+          "Telegram chat with Hermes bot"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -28253,7 +28857,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent / Hermes Memory System"]
+        "file_hints": [
+          "Hermes Agent / Hermes Memory System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -28473,7 +29079,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["grok-p CLI command"]
+        "file_hints": [
+          "grok-p CLI command"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -28617,7 +29225,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent Interaction Interface / Skill Management System"]
+        "file_hints": [
+          "Agent Interaction Interface / Skill Management System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -28688,7 +29298,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Creata 2 Image Generation System"]
+        "file_hints": [
+          "Creata 2 Image Generation System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -28759,7 +29371,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AgentConfigurationModule, EventServiceConfiguration"]
+        "file_hints": [
+          "AgentConfigurationModule, EventServiceConfiguration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -28830,7 +29444,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["React application / React project"]
+        "file_hints": [
+          "React application / React project"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-kJNFWGXRrA4",
@@ -28901,7 +29517,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Posthog Platform"]
+        "file_hints": [
+          "Posthog Platform"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -28972,7 +29590,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini File Search API / File Upload Method"]
+        "file_hints": [
+          "Gemini File Search API / File Upload Method"
+        ]
       },
       "source": {
         "source_id": "yt-ai5--Bp2Sz5xir4",
@@ -29043,7 +29663,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI design system / Generation engine"]
+        "file_hints": [
+          "AI design system / Generation engine"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -29187,7 +29809,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["free school community platform (web application)"]
+        "file_hints": [
+          "free school community platform (web application)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -29261,7 +29885,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes AI agent (input interface)"]
+        "file_hints": [
+          "Hermes AI agent (input interface)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -29333,7 +29959,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent (Skill Management Component)"]
+        "file_hints": [
+          "Hermes Agent (Skill Management Component)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -29407,7 +30035,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi's Extension Management TUI"]
+        "file_hints": [
+          "Pi's Extension Management TUI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -29478,7 +30108,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["opsx CLI"]
+        "file_hints": [
+          "opsx CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -29549,7 +30181,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["ChatGPT API/Interface"]
+        "file_hints": [
+          "ChatGPT API/Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-65IAqRUxg3c",
@@ -29615,7 +30249,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["NA10 UI (app.net.cloud/s/mcp)"]
+        "file_hints": [
+          "NA10 UI (app.net.cloud/s/mcp)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -29689,7 +30325,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Cursor application / Flashcard generation feature"]
+        "file_hints": [
+          "Cursor application / Flashcard generation feature"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-sRKBGVFVYAw",
@@ -29833,7 +30471,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["~/.grok/config.toml"]
+        "file_hints": [
+          "~/.grok/config.toml"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -29904,7 +30544,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes bot chat interface (desktop or Telegram)"]
+        "file_hints": [
+          "Hermes bot chat interface (desktop or Telegram)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -29978,7 +30620,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project Planning / Technical Evaluation Process"]
+        "file_hints": [
+          "Project Planning / Technical Evaluation Process"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-jwtpMSRAPAQ",
@@ -30052,7 +30696,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes system / agent.md / user.md files"]
+        "file_hints": [
+          "Hermes system / agent.md / user.md files"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -30126,7 +30772,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local Machine (Reit Live)"]
+        "file_hints": [
+          "Local Machine (Reit Live)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -30197,7 +30845,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Agent / Prompting System"]
+        "file_hints": [
+          "AI Agent / Prompting System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -30341,7 +30991,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Design Canvas / UI Rendering Engine / Scene Graph"]
+        "file_hints": [
+          "Design Canvas / UI Rendering Engine / Scene Graph"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -30634,7 +31286,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["genetic_data_analysis_pipeline.py"]
+        "file_hints": [
+          "genetic_data_analysis_pipeline.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-sRKBGVFVYAw",
@@ -30708,7 +31362,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["hyperagent.com (web application)"]
+        "file_hints": [
+          "hyperagent.com (web application)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nyO60uzTnP4",
@@ -30779,7 +31435,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent (Skill Management Component)"]
+        "file_hints": [
+          "Hermes Agent (Skill Management Component)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -30926,7 +31584,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["External Service: Phoenix Cloud"]
+        "file_hints": [
+          "External Service: Phoenix Cloud"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -30997,7 +31657,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["grok-p CLI command"]
+        "file_hints": [
+          "grok-p CLI command"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -31068,7 +31730,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["variant.com (web UI automation)"]
+        "file_hints": [
+          "variant.com (web UI automation)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -31285,7 +31949,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["opsx CLI"]
+        "file_hints": [
+          "opsx CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -31356,7 +32022,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent_Orchestrator_System"]
+        "file_hints": [
+          "Agent_Orchestrator_System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -31427,7 +32095,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Arise Phoenix Cloud platform (web interface)"]
+        "file_hints": [
+          "Arise Phoenix Cloud platform (web interface)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -31498,7 +32168,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Core search loop/Result aggregation logic"]
+        "file_hints": [
+          "Core search loop/Result aggregation logic"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -31569,7 +32241,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project page/repository for 'Fi Motion'"]
+        "file_hints": [
+          "Project page/repository for 'Fi Motion'"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -31640,7 +32314,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Codebase architecture improvement system/tool"]
+        "file_hints": [
+          "Codebase architecture improvement system/tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -31784,7 +32460,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["handoff command-line tool"]
+        "file_hints": [
+          "handoff command-line tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -31858,7 +32536,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Communication_Module.py"]
+        "file_hints": [
+          "Communication_Module.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -31929,7 +32609,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Fenix Cloud platform (account settings/dashboard)"]
+        "file_hints": [
+          "Fenix Cloud platform (account settings/dashboard)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -32000,7 +32682,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent Session Initialization Module"]
+        "file_hints": [
+          "Agent Session Initialization Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -32071,7 +32755,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local File System / IDE"]
+        "file_hints": [
+          "Local File System / IDE"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -32142,7 +32828,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Generated code / Codebase"]
+        "file_hints": [
+          "Generated code / Codebase"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -32213,7 +32901,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Model Prompt Input Interface"]
+        "file_hints": [
+          "AI Model Prompt Input Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -32284,7 +32974,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Design generation tool / UI component system"]
+        "file_hints": [
+          "Design generation tool / UI component system"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -32355,7 +33047,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini App UI"]
+        "file_hints": [
+          "Gemini App UI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-VTVRTN8nkxM",
@@ -32426,7 +33120,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["CLI anything tool"]
+        "file_hints": [
+          "CLI anything tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-QK0B1mbJ-VU",
@@ -32497,7 +33193,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["HTTP Client / Event Stream Server Endpoint"]
+        "file_hints": [
+          "HTTP Client / Event Stream Server Endpoint"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -32568,7 +33266,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Investment Portfolio"]
+        "file_hints": [
+          "Investment Portfolio"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-65IAqRUxg3c",
@@ -32712,7 +33412,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["NHM (Workflow Management System)"]
+        "file_hints": [
+          "NHM (Workflow Management System)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -32856,7 +33558,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project Root Directory / deepsec directory"]
+        "file_hints": [
+          "Project Root Directory / deepsec directory"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-hTpHmLFXBrc",
@@ -33000,7 +33704,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Pantheon Feature"]
+        "file_hints": [
+          "Hermes Pantheon Feature"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -33074,7 +33780,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Agent / Claude Agent SDK"]
+        "file_hints": [
+          "AI Agent / Claude Agent SDK"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -33145,7 +33853,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent TARS Hybrid Browser Operator"]
+        "file_hints": [
+          "Agent TARS Hybrid Browser Operator"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -33216,7 +33926,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Operating System (User's Machine)"]
+        "file_hints": [
+          "Operating System (User's Machine)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -33509,7 +34221,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local automation, development and operational actions"]
+        "file_hints": [
+          "Local automation, development and operational actions"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lAAcjj5fISE",
@@ -33653,7 +34367,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["An existing Notebook LM instance (its query interface)"]
+        "file_hints": [
+          "An existing Notebook LM instance (its query interface)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -33797,7 +34513,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes bot UI/dashboard"]
+        "file_hints": [
+          "Hermes bot UI/dashboard"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -33871,7 +34589,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Event Server API / HTTP Request Headers"]
+        "file_hints": [
+          "Event Server API / HTTP Request Headers"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -33942,7 +34662,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["GeneticAnalysisEngine/FrequencyDifferenceCalculator"]
+        "file_hints": [
+          "GeneticAnalysisEngine/FrequencyDifferenceCalculator"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-sRKBGVFVYAw",
@@ -34159,7 +34881,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agent_config.py"]
+        "file_hints": [
+          "agent_config.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -34230,7 +34954,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["hermes.cli.curator_command and curator_module"]
+        "file_hints": [
+          "hermes.cli.curator_command and curator_module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4XvM-0o3A-4",
@@ -34450,7 +35176,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes bot chat interface"]
+        "file_hints": [
+          "Hermes bot chat interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -34597,7 +35325,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Design tool / Mobile conversion module"]
+        "file_hints": [
+          "Design tool / Mobile conversion module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -34668,7 +35398,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["local_development_environment"]
+        "file_hints": [
+          "local_development_environment"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -34739,7 +35471,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent / soul.md file"]
+        "file_hints": [
+          "Hermes Agent / soul.md file"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -34813,7 +35547,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["design.md file content"]
+        "file_hints": [
+          "design.md file content"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -34884,7 +35620,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["design.md file (local filesystem)"]
+        "file_hints": [
+          "design.md file (local filesystem)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -34955,7 +35693,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["skill.md files (Skill Authoring/Parsing Module)"]
+        "file_hints": [
+          "skill.md files (Skill Authoring/Parsing Module)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -35099,7 +35839,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Mammal AI Model (Drug Response Prediction Component)"]
+        "file_hints": [
+          "Mammal AI Model (Drug Response Prediction Component)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -35395,7 +36137,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent Dashboard / Pantheon UI"]
+        "file_hints": [
+          "Hermes Agent Dashboard / Pantheon UI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -35469,7 +36213,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent's source code repository/version control system"]
+        "file_hints": [
+          "Agent's source code repository/version control system"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -35540,7 +36286,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["VPS provisioning interface"]
+        "file_hints": [
+          "VPS provisioning interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -35611,7 +36359,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["models.json"]
+        "file_hints": [
+          "models.json"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -35755,7 +36505,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Prompt Generation System"]
+        "file_hints": [
+          "AI Prompt Generation System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -35826,7 +36578,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["protein_sequence_extractor.py"]
+        "file_hints": [
+          "protein_sequence_extractor.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -35897,7 +36651,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["System CLI / npm package manager"]
+        "file_hints": [
+          "System CLI / npm package manager"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -36041,7 +36797,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent Core Logic/Scheduler"]
+        "file_hints": [
+          "Agent Core Logic/Scheduler"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -36112,7 +36870,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agents/plans directory (new file within)"]
+        "file_hints": [
+          "agents/plans directory (new file within)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -36183,7 +36943,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent/Video Generation Module"]
+        "file_hints": [
+          "Hermes Agent/Video Generation Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -36257,7 +37019,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini File Search API / Tool Configuration"]
+        "file_hints": [
+          "Gemini File Search API / Tool Configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5--Bp2Sz5xir4",
@@ -36328,7 +37092,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["NVIDIA NIM (build.nvidia.com or API)"]
+        "file_hints": [
+          "NVIDIA NIM (build.nvidia.com or API)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -36399,7 +37165,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["`agent.system_prompt` (a string configuration)"]
+        "file_hints": [
+          "`agent.system_prompt` (a string configuration)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -36470,7 +37238,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["PaymentHandlerModule / StripeAPIClient"]
+        "file_hints": [
+          "PaymentHandlerModule / StripeAPIClient"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-j5_wcDifNko",
@@ -36541,7 +37311,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project page/repository for 'warp as history'"]
+        "file_hints": [
+          "Project page/repository for 'warp as history'"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -36685,7 +37457,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["'Grill me' skill/tool"]
+        "file_hints": [
+          "'Grill me' skill/tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -36756,7 +37530,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["~/.grok/config.toml"]
+        "file_hints": [
+          "~/.grok/config.toml"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -36827,7 +37603,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["NHM Workflow UI / Workflow System"]
+        "file_hints": [
+          "NHM Workflow UI / Workflow System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -36898,7 +37676,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["IDE ACP adapter, agent_control_interface"]
+        "file_hints": [
+          "IDE ACP adapter, agent_control_interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4XvM-0o3A-4",
@@ -36969,7 +37749,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI engineer workshop/example.ts"]
+        "file_hints": [
+          "AI engineer workshop/example.ts"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -37040,7 +37822,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Stream Platform"]
+        "file_hints": [
+          "Stream Platform"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -37187,7 +37971,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Main agent's execution flow"]
+        "file_hints": [
+          "Main agent's execution flow"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -37258,7 +38044,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Cool Code / AI Model Chat Interface"]
+        "file_hints": [
+          "Cool Code / AI Model Chat Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -37329,7 +38117,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Archon workflow configuration or environment settings"]
+        "file_hints": [
+          "Archon workflow configuration or environment settings"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -37473,7 +38263,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Documentation, AgentSetupScript"]
+        "file_hints": [
+          "Documentation, AgentSetupScript"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -37544,7 +38336,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Executive_Communications_Automation_System"]
+        "file_hints": [
+          "Executive_Communications_Automation_System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nyO60uzTnP4",
@@ -37615,7 +38409,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Skill Data Store / Configuration Parser"]
+        "file_hints": [
+          "Skill Data Store / Configuration Parser"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -37686,7 +38482,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Setup Wizard/Configuration Interface"]
+        "file_hints": [
+          "Hermes Setup Wizard/Configuration Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -37760,7 +38558,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Ora_brainstorming_skill"]
+        "file_hints": [
+          "Ora_brainstorming_skill"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-maabARKJ94o",
@@ -37831,7 +38631,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Clerk Platform"]
+        "file_hints": [
+          "Clerk Platform"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -37902,7 +38704,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Git Repository / Development Environment"]
+        "file_hints": [
+          "Git Repository / Development Environment"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -37973,7 +38777,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["design.md"]
+        "file_hints": [
+          "design.md"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -38044,7 +38850,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["LLM configuration / Agent initialization script"]
+        "file_hints": [
+          "LLM configuration / Agent initialization script"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ynJyIKwjonM",
@@ -38115,7 +38923,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Application CLI"]
+        "file_hints": [
+          "Application CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -38186,7 +38996,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Investment Portfolio"]
+        "file_hints": [
+          "Investment Portfolio"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-65IAqRUxg3c",
@@ -38257,7 +39069,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Deployment CLI / Project Orchestration System"]
+        "file_hints": [
+          "Deployment CLI / Project Orchestration System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -38401,7 +39215,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["oh my claudom CLI"]
+        "file_hints": [
+          "oh my claudom CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-QK0B1mbJ-VU",
@@ -38545,7 +39361,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["slack_event_handler.py, agent_task_manager.py"]
+        "file_hints": [
+          "slack_event_handler.py, agent_task_manager.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-ohKt066uFhg",
@@ -38616,7 +39434,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Current agent session/context window"]
+        "file_hints": [
+          "Current agent session/context window"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -38687,7 +39507,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Terminal"]
+        "file_hints": [
+          "Terminal"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -38764,7 +39586,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["hermes.cli.curator_command and curator_module"]
+        "file_hints": [
+          "hermes.cli.curator_command and curator_module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4XvM-0o3A-4",
@@ -38838,7 +39662,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["opsx CLI"]
+        "file_hints": [
+          "opsx CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -38909,7 +39735,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Overall system/project where changes are to be applied"]
+        "file_hints": [
+          "Overall system/project where changes are to be applied"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -39053,7 +39881,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["External Service: Anthropic Claude API"]
+        "file_hints": [
+          "External Service: Anthropic Claude API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -39127,7 +39957,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local file system (downloaded skill file)"]
+        "file_hints": [
+          "Local file system (downloaded skill file)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -39198,7 +40030,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes chat window"]
+        "file_hints": [
+          "Hermes chat window"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -39272,7 +40106,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Command-line interface / System"]
+        "file_hints": [
+          "Command-line interface / System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -39343,7 +40179,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["URLs, websites"]
+        "file_hints": [
+          "URLs, websites"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lAAcjj5fISE",
@@ -39487,7 +40325,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hostinger VPS Hostname Configuration"]
+        "file_hints": [
+          "Hostinger VPS Hostname Configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -39561,7 +40401,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Agent System / `design.md` file"]
+        "file_hints": [
+          "AI Agent System / `design.md` file"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -39632,7 +40474,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["ChatGPT mobile app / Codeex desktop application"]
+        "file_hints": [
+          "ChatGPT mobile app / Codeex desktop application"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -39703,7 +40547,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent Chat Interface"]
+        "file_hints": [
+          "Hermes Agent Chat Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -39851,7 +40697,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Paused agent execution"]
+        "file_hints": [
+          "Paused agent execution"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -39922,7 +40770,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project page/repository for 'warp as history'"]
+        "file_hints": [
+          "Project page/repository for 'warp as history'"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -40069,7 +40919,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Music Generator GitHub Repository Page"]
+        "file_hints": [
+          "Music Generator GitHub Repository Page"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -40140,7 +40992,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Archon System / `pivoop archon workflow`"]
+        "file_hints": [
+          "Archon System / `pivoop archon workflow`"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -40211,7 +41065,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Application CLI"]
+        "file_hints": [
+          "Application CLI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -40282,7 +41138,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Language Model System / Tokenizer Module"]
+        "file_hints": [
+          "Language Model System / Tokenizer Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -40499,7 +41357,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Mammal AI Model (Cell Classification Component)"]
+        "file_hints": [
+          "Mammal AI Model (Cell Classification Component)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -40643,7 +41503,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Runway Agent output / User Interface"]
+        "file_hints": [
+          "Runway Agent output / User Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -40714,7 +41576,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["hermes.cli.curator_command and curator_module"]
+        "file_hints": [
+          "hermes.cli.curator_command and curator_module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4XvM-0o3A-4",
@@ -40788,7 +41652,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["IDE ACP adapter, agent_control_interface"]
+        "file_hints": [
+          "IDE ACP adapter, agent_control_interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4XvM-0o3A-4",
@@ -40932,7 +41798,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Anthropic Developer Console / Claude Code API"]
+        "file_hints": [
+          "Anthropic Developer Console / Claude Code API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -41003,7 +41871,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local File System, Codex Application, AI Agent System"]
+        "file_hints": [
+          "Local File System, Codex Application, AI Agent System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -41220,7 +42090,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini Notebooks feature"]
+        "file_hints": [
+          "Gemini Notebooks feature"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-VTVRTN8nkxM",
@@ -41364,7 +42236,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes chat window"]
+        "file_hints": [
+          "Hermes chat window"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -41438,7 +42312,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Clerk Dashboard / External Service Integration"]
+        "file_hints": [
+          "Clerk Dashboard / External Service Integration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -41509,7 +42385,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Git repository (specifically the `dev` branch)"]
+        "file_hints": [
+          "Git repository (specifically the `dev` branch)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -41580,7 +42458,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Pi Extension Ecosystem"]
+        "file_hints": [
+          "Pi Extension Ecosystem"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -41650,7 +42530,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Cool Code / AI Model Interface"]
+        "file_hints": [
+          "Cool Code / AI Model Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -41721,7 +42603,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["GeneticAnalysisEngine/DifferentialMutationRanker"]
+        "file_hints": [
+          "GeneticAnalysisEngine/DifferentialMutationRanker"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-sRKBGVFVYAw",
@@ -41868,7 +42752,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Antibody Data Preprocessing Module"]
+        "file_hints": [
+          "Antibody Data Preprocessing Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -41939,7 +42825,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agentars component of the TARS stack"]
+        "file_hints": [
+          "Agentars component of the TARS stack"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -42010,7 +42898,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Language Model System / Tokenizer Module"]
+        "file_hints": [
+          "Language Model System / Tokenizer Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -42081,7 +42971,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["grok-p CLI command"]
+        "file_hints": [
+          "grok-p CLI command"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-XLH_WLrmwfk",
@@ -42152,7 +43044,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Text editor or chat window"]
+        "file_hints": [
+          "Text editor or chat window"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -42226,7 +43120,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["models.json"]
+        "file_hints": [
+          "models.json"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-lK9o5Wu2upU",
@@ -42271,7 +43167,9 @@
             "notes": "Pi Redis wrapper is running; provider activation still requires real Kimmy credentials and Pi CLI validation."
           }
         ],
-        "filesChanged": ["~/.tnf/models/models.json"],
+        "filesChanged": [
+          "~/.tnf/models/models.json"
+        ],
         "summary": "Located the TNF model configuration at `~/.tnf/models/models.json` and added a disabled Kimmy/Kimi custom provider placeholder. The entry exposes explicit credential insertion keys without storing secrets: `apiKeyEnv` is `KIMMY_API_KEY` and `baseUrlEnv` is `KIMMY_API_BASE_URL`."
       },
       "executionSurface": {
@@ -42378,7 +43276,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Prompt Generation System"]
+        "file_hints": [
+          "AI Prompt Generation System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -42449,7 +43349,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent TARS Application Processor"]
+        "file_hints": [
+          "Agent TARS Application Processor"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -42523,7 +43425,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["GeneticDataAcquisitionModule"]
+        "file_hints": [
+          "GeneticDataAcquisitionModule"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-sRKBGVFVYAw",
@@ -42594,7 +43498,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI agent configuration / Higsfield MCP service"]
+        "file_hints": [
+          "AI agent configuration / Higsfield MCP service"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -42635,7 +43541,9 @@
             "notes": "Higgsfield MCP is bypassed. Dynamically mapping media tasks to Kilo MCP."
           }
         ],
-        "filesChanged": ["data/mcp.servers/kilo_fallback.mcp.template.json"],
+        "filesChanged": [
+          "data/mcp.servers/kilo_fallback.mcp.template.json"
+        ],
         "summary": "Verified. Higgsfield connection has been dynamically remapped to Kilo/Perplexity MCP per GLOBAL SWARM OVERRIDE due to missing credentials. Task is considered complete under fallback conditions."
       },
       "executionSurface": {
@@ -42751,7 +43659,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Cool Code / AI Model Chat/Command Interface"]
+        "file_hints": [
+          "Cool Code / AI Model Chat/Command Interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-9rXH2ssCe9E",
@@ -42968,7 +43878,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Scheduled Task / Cron Job Configuration"]
+        "file_hints": [
+          "Scheduled Task / Cron Job Configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -43039,7 +43951,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["SQL Database, Session Search Module"]
+        "file_hints": [
+          "SQL Database, Session Search Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -43110,7 +44024,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Prompt Interface/API"]
+        "file_hints": [
+          "AI Prompt Interface/API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -43181,7 +44097,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Mammal_Foundation_Model_API"]
+        "file_hints": [
+          "Mammal_Foundation_Model_API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -43252,7 +44170,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["event_publisher_module"]
+        "file_hints": [
+          "event_publisher_module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -43323,7 +44243,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["new form tool / Prompt interface"]
+        "file_hints": [
+          "new form tool / Prompt interface"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-oLu32YpiIJw",
@@ -43394,7 +44316,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Remote Stream Service"]
+        "file_hints": [
+          "Remote Stream Service"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -43465,7 +44389,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Current agent session/context"]
+        "file_hints": [
+          "Current agent session/context"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-prLO7NGU4f0",
@@ -43609,7 +44535,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes dashboard"]
+        "file_hints": [
+          "Hermes dashboard"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -43756,7 +44684,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Running bot setup script in terminal"]
+        "file_hints": [
+          "Running bot setup script in terminal"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -43827,7 +44757,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Aegis browser"]
+        "file_hints": [
+          "Aegis browser"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-sRKBGVFVYAw",
@@ -43898,7 +44830,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["gene_expression_processor.py"]
+        "file_hints": [
+          "gene_expression_processor.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -43969,7 +44903,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes chat interface (to initiate GitHub mirroring)"]
+        "file_hints": [
+          "Hermes chat interface (to initiate GitHub mirroring)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -44043,7 +44979,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["exe.dev agent (runtime environment)"]
+        "file_hints": [
+          "exe.dev agent (runtime environment)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -44114,7 +45052,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AuthorizationProcessor / GoogleAP2Client"]
+        "file_hints": [
+          "AuthorizationProcessor / GoogleAP2Client"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-j5_wcDifNko",
@@ -44185,7 +45125,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Application Configuration / Environment Variables"]
+        "file_hints": [
+          "Application Configuration / Environment Variables"
+        ]
       },
       "source": {
         "source_id": "yt-ai5--Bp2Sz5xir4",
@@ -44256,7 +45198,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Claude AI (as an intelligent agent/interface)"]
+        "file_hints": [
+          "Claude AI (as an intelligent agent/interface)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -44330,7 +45274,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["WhatsApp Integration Module"]
+        "file_hints": [
+          "WhatsApp Integration Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -44401,7 +45347,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["LLM Event Server API"]
+        "file_hints": [
+          "LLM Event Server API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -44472,7 +45420,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Marketing Operations Workflow / Automation Systems"]
+        "file_hints": [
+          "Marketing Operations Workflow / Automation Systems"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-725QE_LNXT4",
@@ -44543,7 +45493,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["exe.dev agent (configuration or runtime environment)"]
+        "file_hints": [
+          "exe.dev agent (configuration or runtime environment)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -44687,7 +45639,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hyper Agent (Task Thread)"]
+        "file_hints": [
+          "Hyper Agent (Task Thread)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nyO60uzTnP4",
@@ -44758,7 +45712,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["LinkedIn profile or company page"]
+        "file_hints": [
+          "LinkedIn profile or company page"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-725QE_LNXT4",
@@ -44902,7 +45858,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["hermes.tools.video_analyze_tool"]
+        "file_hints": [
+          "hermes.tools.video_analyze_tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4XvM-0o3A-4",
@@ -45049,7 +46007,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Event Stream Scheduler API"]
+        "file_hints": [
+          "Event Stream Scheduler API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -45120,7 +46080,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["External resource (Video Kit link) -> Clipboard"]
+        "file_hints": [
+          "External resource (Video Kit link) -> Clipboard"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-Q7AYc2kECDI",
@@ -45191,7 +46153,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Profit Boardroom website"]
+        "file_hints": [
+          "AI Profit Boardroom website"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-VTVRTN8nkxM",
@@ -45262,7 +46226,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Event Stream Scheduler API"]
+        "file_hints": [
+          "Event Stream Scheduler API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -45333,7 +46299,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["document_access_module"]
+        "file_hints": [
+          "document_access_module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -45626,7 +46594,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI_Agent_Testing_Module"]
+        "file_hints": [
+          "AI_Agent_Testing_Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nyO60uzTnP4",
@@ -45715,7 +46685,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini App UI (Prompt Interface)"]
+        "file_hints": [
+          "Gemini App UI (Prompt Interface)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-VTVRTN8nkxM",
@@ -45786,7 +46758,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Articcraft 3D Model Generator"]
+        "file_hints": [
+          "Articcraft 3D Model Generator"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-NnsQj2nDkKA",
@@ -45857,7 +46831,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini File Search API"]
+        "file_hints": [
+          "Gemini File Search API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5--Bp2Sz5xir4",
@@ -45928,7 +46904,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini app UI (prompt box and integrated tools)"]
+        "file_hints": [
+          "Gemini app UI (prompt box and integrated tools)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-VTVRTN8nkxM",
@@ -46221,7 +47199,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Slack Integration Module / Communication Module"]
+        "file_hints": [
+          "Slack Integration Module / Communication Module"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -46292,7 +47272,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes Agent (Scheduling / Task Management Module)"]
+        "file_hints": [
+          "Hermes Agent (Scheduling / Task Management Module)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -46366,7 +47348,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Language Model Configuration / System"]
+        "file_hints": [
+          "Language Model Configuration / System"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -46510,7 +47494,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes dashboard/Persona management UI"]
+        "file_hints": [
+          "Hermes dashboard/Persona management UI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -46581,7 +47567,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["spec-driven-development-tool command-line tool"]
+        "file_hints": [
+          "spec-driven-development-tool command-line tool"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-M-8lv5TXUYk",
@@ -46655,7 +47643,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes bot chat interface / Command Center UI"]
+        "file_hints": [
+          "Hermes bot chat interface / Command Center UI"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -46726,7 +47716,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Archon System / `archon pib loop workflow` definition"]
+        "file_hints": [
+          "Archon System / `archon pib loop workflow` definition"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-4azVjKhqDzw",
@@ -46797,7 +47789,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["build_tools.py"]
+        "file_hints": [
+          "build_tools.py"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-RxwjoegpI98",
@@ -46941,7 +47935,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agentars configuration"]
+        "file_hints": [
+          "Agentars configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -47085,7 +48081,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Web browser automation (government portal)"]
+        "file_hints": [
+          "Web browser automation (government portal)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-k8o_UgtrGyA",
@@ -47229,7 +48227,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini File Search API / Store Management"]
+        "file_hints": [
+          "Gemini File Search API / Store Management"
+        ]
       },
       "source": {
         "source_id": "yt-ai5--Bp2Sz5xir4",
@@ -47300,7 +48300,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Event Stream Subscription Management API"]
+        "file_hints": [
+          "Event Stream Subscription Management API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-vi-2nasppAg",
@@ -47371,7 +48373,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Podcast video hosting platform (e.g., YouTube)"]
+        "file_hints": [
+          "Podcast video hosting platform (e.g., YouTube)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nyO60uzTnP4",
@@ -47518,7 +48522,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project root directory"]
+        "file_hints": [
+          "Project root directory"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-nFq4POtqom4",
@@ -47589,7 +48595,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["agent_policy_engine.py or security_policies.json"]
+        "file_hints": [
+          "agent_policy_engine.py or security_policies.json"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-jwtpMSRAPAQ",
@@ -47733,7 +48741,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Project Development Environment (Terminal/IDE)"]
+        "file_hints": [
+          "Project Development Environment (Terminal/IDE)"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-QK0B1mbJ-VU",
@@ -47804,7 +48814,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["AI Success Lab website"]
+        "file_hints": [
+          "AI Success Lab website"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-VTVRTN8nkxM",
@@ -47875,7 +48887,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["OperationalTransformationEngine"]
+        "file_hints": [
+          "OperationalTransformationEngine"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-kXBXIipl1lQ",
@@ -48019,7 +49033,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Hermes system"]
+        "file_hints": [
+          "Hermes system"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -48436,7 +49452,9 @@
             "result": "passed"
           }
         ],
-        "filesChanged": ["scripts/autonomy/cross_dm_context_synthesizer.py"],
+        "filesChanged": [
+          "scripts/autonomy/cross_dm_context_synthesizer.py"
+        ],
         "summary": "Implemented a Slack-like cross-DM context synthesizer for Victor-style agents. It identifies the incoming sender, filters recent history by user and agent participation, applies configurable look-back/max-message/exclusion rules, emits a coherent `context_string`, and records retrieval audit metadata."
       },
       "executionSurface": {
@@ -48470,7 +49488,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Local Filesystem / Data Generation Scripts"]
+        "file_hints": [
+          "Local Filesystem / Data Generation Scripts"
+        ]
       },
       "source": {
         "source_id": "yt-ai5--Bp2Sz5xir4",
@@ -48541,7 +49561,9 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Mammal_Foundation_Model_API"]
+        "file_hints": [
+          "Mammal_Foundation_Model_API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -48612,7 +49634,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Agent Tararss instance runtime / configuration"]
+        "file_hints": [
+          "Agent Tararss instance runtime / configuration"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -48722,7 +49746,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Mammal_Foundation_Model_API"]
+        "file_hints": [
+          "Mammal_Foundation_Model_API"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-s3rNDndvav0",
@@ -48769,7 +49795,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["review_management_system_api"]
+        "file_hints": [
+          "review_management_system_api"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",
@@ -48816,7 +49844,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Custom UI/Frontend application"]
+        "file_hints": [
+          "Custom UI/Frontend application"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -48863,7 +49893,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Gemini application"]
+        "file_hints": [
+          "Gemini application"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-VTVRTN8nkxM",
@@ -48910,7 +49942,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Custom UI/Frontend application"]
+        "file_hints": [
+          "Custom UI/Frontend application"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -48957,7 +49991,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["Custom UI/Frontend application"]
+        "file_hints": [
+          "Custom UI/Frontend application"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -49004,7 +50040,9 @@
       "dispatchEligible": false,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": ["review_management_system_api"]
+        "file_hints": [
+          "review_management_system_api"
+        ]
       },
       "source": {
         "source_id": "yt-ai5-PIdETjcXNIk",

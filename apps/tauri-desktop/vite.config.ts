@@ -69,6 +69,18 @@ export default defineConfig(({ mode }) => {
         '@the-new-fuse/utils': path.resolve(__dirname, 'src/stubs/utils-shim.ts'),
         '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
         '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
+        '@the-new-fuse/shared/federation': path.resolve(
+          __dirname,
+          '../../packages/shared/src/federation'
+        ),
+        '@the-new-fuse/shared/federation/FederationNodeClient': path.resolve(
+          __dirname,
+          '../../packages/shared/src/federation/FederationNodeClient.ts'
+        ),
+        '@the-new-fuse/shared/federation/protocol': path.resolve(
+          __dirname,
+          '../../packages/shared/src/federation/protocol.ts'
+        ),
         '@the-new-fuse/feature-suggestions': path.resolve(
           __dirname,
           '../../packages/feature-suggestions/src'

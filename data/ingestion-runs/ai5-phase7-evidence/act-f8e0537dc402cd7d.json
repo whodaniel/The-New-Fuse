@@ -1,9 +1,9 @@
 {
   "id": "act-f8e0537dc402cd7d",
-  "state": "blocked",
-  "updatedAt": "2026-06-11T18:27:29.859814Z",
+  "state": "ready",
+  "updatedAt": "2026-06-16T02:35:39.995812Z",
   "blocker": {
-    "type": "irrelevant-context",
-    "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
+    "type": "manual-override",
+    "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
   }
 }

@@ -207,7 +207,7 @@ def load_existing_claims(batch_path: Path) -> Dict[str, Dict[str, Any]]:
 def apply_swarm_overrides(task: Dict[str, Any], evidence_record: Dict[str, Any] | None) -> None:
     is_higgsfield = False
     if evidence_record:
-        blocker = evidence_record.get("blocker", {})
+        blocker = evidence_record.get("blocker") or {}
         if str(blocker.get("type", "")) == "missing-higgsfield-credentials":
             is_higgsfield = True
     

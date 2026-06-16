@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import BrowserControlService from '../services/BrowserControlService';
+import FederationNodeService from '../services/FederationNodeService';
 import apiService from '../services/api';
 import wsService from '../services/websocket';
 
@@ -22,18 +23,21 @@ interface SettingsState {
   toggleCloudMode: () => void;
 }
 
-const ENV_CONFIG: Record<Exclude<Environment, 'custom'>, { api: string; ws: string }> = {
+const ENV_CONFIG: Record<Exclude<Environment, 'custom'>, { api: string; ws: string; relay: string }> = {
   local: {
     api: 'http://localhost:3001',
     ws: 'ws://localhost:3001/ws',
+    relay: 'ws://127.0.0.1:3000/ws',
   },
   sandbox: {
     api: 'https://api-gateway-241337102384.us-central1.run.app',
-    ws: 'wss://api-gateway-241337102384.us-central1.run.app/ws', // Backend typically handles WS on the same port/domain
+    ws: 'wss://api-gateway-241337102384.us-central1.run.app/ws',
+    relay: 'wss://api-gateway-241337102384.us-central1.run.app/ws',
   },
   production: {
     api: 'https://thenewfuse.com/api',
-    ws: 'wss://thenewfuse.com/ws', // Assumes /ws is the WebSocket endpoint on production
+    ws: 'wss://thenewfuse.com/ws',
+    relay: 'wss://thenewfuse.com/ws',
   },
 };
 
@@ -48,31 +52,32 @@ export const useSettingsStore = create<SettingsState>()(
       setEnvironment: (env) => {
         let apiUrl = '';
         let wsUrl = '';
+        let relayUrl = '';
 
         if (env === 'custom') {
           apiUrl = get().customApiUrl;
-          // Simple derivation for custom URLs, can be improved or made explicit in UI later
           wsUrl = apiUrl.startsWith('https')
             ? apiUrl.replace('https', 'wss').replace('/api', '') + '/ws'
             : apiUrl.replace('http', 'ws').replace('/api', '') + '/ws';
+          relayUrl = wsUrl;
         } else {
           const config = ENV_CONFIG[env as Exclude<Environment, 'custom'>];
           apiUrl = config.api;
           wsUrl = config.ws;
+          relayUrl = config.relay;
         }
 
         set({ environment: env, apiUrl });
 
-        // Update services
         if (apiUrl) {
           apiService.setBaseUrl(apiUrl);
         }
         if (wsUrl) {
           wsService.setUrl(wsUrl);
-          // Assuming Relay shares the same WS URL structure for now,
-          // or we can add a specific 'relay' field to ENV_CONFIG later.
-          // For now, syncing them ensures "Cloud" mode points to Cloud WS.
-          BrowserControlService.setRelayUrl(wsUrl);
+        }
+        if (relayUrl) {
+          BrowserControlService.setRelayUrl(relayUrl);
+          FederationNodeService.setRelayUrl(relayUrl);
         }
       },
 
@@ -101,6 +106,11 @@ export const useSettingsStore = create<SettingsState>()(
       onRehydrateStorage: () => (state) => {
         if (state?.apiUrl) {
           apiService.setBaseUrl(state.apiUrl);
+        }
+        if (state?.environment && state.environment !== 'custom') {
+          const relayUrl = ENV_CONFIG[state.environment].relay;
+          BrowserControlService.setRelayUrl(relayUrl);
+          FederationNodeService.setRelayUrl(relayUrl);
         }
       },
     }

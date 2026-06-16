@@ -2,7 +2,7 @@
 import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import { useAuth } from '@/providers/AuthProvider';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 const isTruthy = (value: string | undefined): boolean => {
   if (!value) return false;
@@ -10,6 +10,38 @@ const isTruthy = (value: string | undefined): boolean => {
 };
 
 const LOGIN_REDIRECT_COUNT_KEY = '__tnf_login_redirect_count__';
+
+// Map OAuth / Supabase / generic error codes to copy that tells the user what happened
+// instead of dumping a machine token into the UI.
+const LOGIN_ERROR_MESSAGES: Record<string, string> = {
+  auth_failed: 'Authentication failed. Please try signing in again.',
+  no_auth_data: 'Sign-in callback arrived without valid credentials. Please try again.',
+  invalid_token: 'The sign-in link is invalid or has been tampered with.',
+  invalid_token_format: 'The sign-in token is malformed. Please request a new link.',
+  access_denied: 'Access denied. The provider declined to share credentials.',
+  server_error: 'The identity provider reported an error. Please try again shortly.',
+};
+
+// Defensive cap on how long a URL-supplied error message can be before we treat it as
+// garbage (or a reflected XSS attempt) and replace it with a generic notice.
+const URL_ERROR_MAX_LEN = 240;
+
+const resolveUrlError = (raw: string | null): string | null => {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  const mapped = LOGIN_ERROR_MESSAGES[trimmed.toLowerCase()];
+  if (mapped) return mapped;
+  // Strip control characters and cap length so an attacker can't inject markup via ?error=
+  const sanitized = trimmed.replace(/[\u0000-\u001f\u007f]/g, '').slice(0, URL_ERROR_MAX_LEN);
+  if (!sanitized) return null;
+  // Treat anything that looks like a raw OAuth error wrapped in HTML / script tags as untrusted.
+  if (/<|\bon\w+=/i.test(sanitized)) {
+    return 'Authentication failed. Please try signing in again.';
+  }
+  // Generic fallback — let the user see the upstream message if it's reasonable text.
+  return `Authentication failed: ${sanitized}`;
+};
 
 const Login: React.FC = () => {
   const {
@@ -23,12 +55,36 @@ const Login: React.FC = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() => {
+    // Read ?error=... on first mount so OAuth callbacks (e.g. ?error=auth_failed)
+    // surface a real message instead of silently dumping a raw code into the URL.
+    if (typeof window === 'undefined') return '';
+    const params = new URLSearchParams(window.location.search);
+    return resolveUrlError(params.get('error')) ?? '';
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [cfTurnstileToken, setCfTurnstileToken] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
   const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
+
+  useEffect(() => {
+    // Re-evaluate the error message if the URL changes while the page is mounted
+    // (e.g. user triggers a second OAuth attempt that fails).
+    const incoming = searchParams.get('error');
+    const resolved = resolveUrlError(incoming);
+    if (resolved) {
+      setError(resolved);
+      // Strip ?error from the URL so a refresh doesn't re-show the same toast.
+      const next = new URLSearchParams(searchParams);
+      next.delete('error');
+      next.delete('error_description');
+      setSearchParams(next, { replace: true });
+    }
+    // We intentionally only depend on searchParams identity to avoid loops with setSearchParams.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   useEffect(() => {
     if (isAuthLoading || !isAuthenticated) return;

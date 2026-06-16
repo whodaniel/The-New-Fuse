@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "PORT=$(node ../../packages/port-management/scripts/find-available-port.cjs tauri-desktop) vite --host 0.0.0.0 --port \"$PORT\"",
+    "dev": "vite --host 0.0.0.0 --port 1420",
+    "dev:dynamic-port": "PORT=$(node ../../packages/port-management/scripts/find-available-port.cjs tauri-desktop) vite --host 0.0.0.0 --port \"$PORT\"",
     "build": "vite build --mode production",
     "build:deps": "pnpm --filter @the-new-fuse/ap2-protocol build && pnpm --filter @the-new-fuse/a2a-core build && pnpm --filter @the-new-fuse/a2a-react build && pnpm --filter @the-new-fuse/feature-suggestions build && pnpm --filter @the-new-fuse/port-management build && pnpm --filter @the-new-fuse/prompt-templating build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/ui-consolidated build",
     "build:watch": "vite build --watch",
@@ -27,7 +28,9 @@
     "clear-ports": "node scripts/clear-ports.js",
     "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "perf:monitor": "node scripts/performance-monitor.js",
-    "bundle:report": "pnpm build && echo 'Bundle analysis report generated at dist/bundle-analysis.html'"
+    "bundle:report": "pnpm build && echo 'Bundle analysis report generated at dist/bundle-analysis.html'",
+    "tauri:dev": "pnpm tauri dev",
+    "tauri:build": "pnpm tauri build"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
@@ -104,6 +107,8 @@
     "three": "^0.181.2",
     "truncate": "^3.0.0",
     "ws": "^8.18.3",
+    "xterm": "^5.3.0",
+    "xterm-addon-fit": "^0.8.0",
     "zod": "^4.2.0",
     "zustand": "^5.0.9"
   },
@@ -113,8 +118,8 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",
-    "@tauri-apps/api": "^2.9.1",
-    "@tauri-apps/cli": "^2.9.6",
+    "@tauri-apps/api": "2.11.0",
+    "@tauri-apps/cli": "2.11.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",

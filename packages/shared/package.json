@@ -16,7 +16,9 @@
     "./validation": "./dist/validation/index.js",
     "./utils": "./dist/utils/index.js",
     "./hooks": "./dist/hooks/index.js",
-    "./browser-control/protocol": "./dist/browser-control/protocol.js"
+    "./browser-control/protocol": "./dist/browser-control/protocol.js",
+    "./federation": "./dist/federation/index.js",
+    "./federation/protocol": "./dist/federation/protocol.js"
   },
   "scripts": {
     "build": "tsc --build",

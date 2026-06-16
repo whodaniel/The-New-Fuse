@@ -23,7 +23,12 @@ export function registerAssimilateCommand(program: Command, repoRoot: string): v
   assimilate
     .command('link <provider>')
     .description('Link a new external agent CLI to the TNF routing table.')
-    .action((provider: string) => {
-      service.linkProvider(provider);
+    .action(async (provider: string) => {
+      try {
+        await service.linkProvider(provider);
+      } catch (error: any) {
+        console.error(`[Assimilation Engine] Error: ${error.message}`);
+        process.exit(1);
+      }
     });
 }

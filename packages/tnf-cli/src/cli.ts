@@ -2963,7 +2963,7 @@ const cliEntryPath = fileURLToPath(import.meta.url);
 //   - AGENT_PLATFORM_TRAITS (cli.ts legacy): the runtime defaults used by
 //     `tnf register <platform>` and `tnf traits list agent_platforms`.
 //   - Bank targets in scripts/agents/reconcile-agent-banks.cjs:293-306
-//     (codex|claude|gemini|opencode|kilo|augment|tnf|hermes|project).
+//     (codex|claude|gemini|opencode|kilo|augment|tnf|hermes|cursor|project).
 // Updated whenever a new agent platform is onboarded. Consumed by:
 //   - `tnf register <platform>` default argument
 //   - `tnf traits list agent_platforms`
@@ -2982,6 +2982,7 @@ export const PLATFORM_TAXONOMY: string[] = [
   // Bank-target-only (added in Phase 8 to align with reconcile-agent-banks.cjs)
   'augment',
   'codex',
+  'cursor',
   'hermes',
   'kilo',
   'opencode',
@@ -3353,6 +3354,17 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
       ],
     },
     {
+      title: 'Forefront Ops',
+      entries: [
+        { path: 'tnf browser-control', description: 'Serve standalone HTML browser control + federation node panel' },
+        { path: 'tnf forefront', description: 'Boot harness + relay + local UI and open browser control' },
+        { path: 'tnf forefront status', description: 'Show latest forefront boot receipt' },
+        { path: 'tnf local-ui', description: 'Boot TNF local UI (web shell) with harness + relay' },
+        { path: 'tnf local-ui --tauri', description: 'Boot native Tauri desktop operator shell' },
+        { path: 'tnf assimilate link cursor', description: 'Onboard Cursor CLI into TNF harness protocol' },
+      ],
+    },
+    {
       title: 'Core Ops',
       entries: [
         { path: 'tnf onboard', description: 'Run TNF frontload onboarding' },
@@ -3413,6 +3425,8 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
       entries: [
         { path: 'tnf openclaw [args...]', description: 'Pass through any OpenClaw CLI command' },
         { path: 'tnf claw [args...]', description: 'Alias for tnf openclaw' },
+        { path: 'tnf cursor [args...]', description: 'Pass through Cursor CLI with TNF harness MCP routing' },
+        { path: 'tnf assimilate link cursor', description: 'Onboard Cursor CLI into TNF harness protocol' },
       ],
     },
     {
@@ -3620,6 +3634,18 @@ function resolvePassthroughCommand(cliName: string): string {
     if (isExecutableFile(venvHermes)) return venvHermes;
   }
 
+  // 4. Cursor-specific install locations
+  if (cliName === 'cursor') {
+    const cursorCandidates = [
+      path.join(os.homedir(), '.local', 'bin', 'cursor'),
+      '/Applications/Cursor.app/Contents/Resources/app/bin/cursor',
+      path.join(os.homedir(), '.cursor', 'bin', 'cursor'),
+    ];
+    for (const candidate of cursorCandidates) {
+      if (isExecutableFile(candidate)) return candidate;
+    }
+  }
+
   // Return the bare name as last resort (will fail with ENOENT if not found)
   return cliName;
 }
@@ -3657,6 +3683,11 @@ function isHermesPassthroughArgv(argv: string[]): boolean {
 function isGeminiPassthroughArgv(argv: string[]): boolean {
   const subcommand = argv[2];
   return subcommand === 'gemini';
+}
+
+function isCursorPassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'cursor';
 }
 
 let cachedTopLevelCommands: Record<string, Set<string>> = {};
@@ -3712,7 +3743,7 @@ function resolveImplicitPassthroughArgs(
 ): { cliName: string; args: string[] } | null {
   const subcommand = argv[2];
   const tnfCommands = getTnfTopLevelCommands();
-  const passthroughTargets = ['openclaw', 'hermes', 'gemini'];
+  const passthroughTargets = ['openclaw', 'hermes', 'gemini', 'cursor'];
 
   if (!subcommand || subcommand === 'help') {
     const helpTarget = argv[3];
@@ -4579,11 +4610,9 @@ program
                 console.log(chalk.dim('   Skipped (--non-interactive)'));
                 return;
               }
-              if (process.platform === 'darwin') {
-                await runCommand('open', ['https://thenewfuse.com/health']);
-              } else {
-                console.log(chalk.yellow('   Manual action: Open https://thenewfuse.com/health'));
-              }
+              console.log(chalk.cyan('   Launch forefront: tnf forefront'));
+              console.log(chalk.cyan('   Launch local UI: tnf local-ui'));
+              console.log(chalk.cyan('   Tauri shell:    tnf local-ui --tauri'));
             },
           },
           {
@@ -4798,6 +4827,139 @@ program
       }
     }
   );
+
+const protocol = program
+  .command('protocol')
+  .description('Validate TNF framework protocols and harness boundaries');
+
+protocol
+  .command('health')
+  .description('Aggregate protocol health report')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    const interceptor = new ProtocolInterceptor(repoRoot);
+    const state = interceptor.getStateSummary();
+
+    if (options.json) {
+      console.log(JSON.stringify(state, null, 2));
+      return;
+    }
+
+    const turnZeroOk = (state.turnZero as Record<string, number>).missing === 0;
+    const livingSynced = (state.livingState as Record<string, boolean>).synchronized;
+    const disclosureReady = (state.disclosure as Record<string, unknown>).ready as { ready: boolean };
+
+    console.log(chalk.bold.cyan('\n[TNF Protocol Health]\n'));
+    console.log(`Turn Zero: ${turnZeroOk ? chalk.green('OK') : chalk.red('MISSING ARTIFACTS')}`);
+    console.log(`Living State: ${livingSynced ? chalk.green('SYNCED') : chalk.yellow('NOT SYNCED')}`);
+    console.log(`Disclosure: ${disclosureReady.ready ? chalk.green('READY') : chalk.yellow('WARNINGS')}`);
+    console.log(`Directives: ${chalk.cyan(`${(state.directives as Record<string, number>).pending} pending`)}`);
+    console.log(
+      `\nOverall: ${turnZeroOk && livingSynced && disclosureReady.ready ? chalk.green('HEALTHY') : chalk.yellow('DEGRADED')}\n`
+    );
+  });
+
+protocol
+  .command('directives')
+  .description('Manage directive conversion ledger')
+  .option('--list', 'List all directives')
+  .option('--pending', 'List only pending directives')
+  .option('--claim <id>', 'Claim a directive by ID')
+  .option('--complete <id>', 'Mark a directive as completed')
+  .option('--summary', 'Show directive summary')
+  .action((options: { list?: boolean; pending?: boolean; claim?: string; complete?: string; summary?: boolean }) => {
+    const interceptor = new ProtocolInterceptor(repoRoot);
+
+    if (options.summary || (!options.list && !options.pending && !options.claim && !options.complete)) {
+      const summary = interceptor.directives.getSummary();
+      console.log(chalk.bold.cyan('\n[Directive Conversion Ledger]\n'));
+      console.log(`  Pending:    ${chalk.yellow(summary.pending)}`);
+      console.log(`  Claimed:    ${chalk.blue(summary.claimed)}`);
+      console.log(`  Completed:  ${chalk.green(summary.completed)}`);
+      console.log(`  Cancelled:  ${chalk.dim(summary.cancelled)}`);
+      console.log('');
+      return;
+    }
+
+    if (options.claim) {
+      const record = interceptor.directives.claim(options.claim, 'cli');
+      if (record) {
+        console.log(chalk.green(`Claimed directive: ${record.id}`));
+      } else {
+        console.log(chalk.yellow(`Directive not found or not claimable: ${options.claim}`));
+      }
+      return;
+    }
+
+    if (options.complete) {
+      const record = interceptor.directives.complete(options.complete);
+      if (record) {
+        console.log(chalk.green(`Completed directive: ${record.id}`));
+      } else {
+        console.log(chalk.yellow(`Directive not found: ${options.complete}`));
+      }
+      return;
+    }
+
+    const records = interceptor.directives.list(options.pending ? 'pending' : undefined);
+    if (records.length === 0) {
+      console.log(chalk.dim('No directives in ledger.'));
+      return;
+    }
+
+    console.log(chalk.bold.cyan('\n[Directives]\n'));
+    for (const r of records) {
+      const statusColor = r.status === 'completed' ? chalk.green : r.status === 'claimed' ? chalk.blue : chalk.yellow;
+      console.log(`  ${chalk.cyan(r.id)} ${statusColor(r.status)} ${r.directive}`);
+    }
+    console.log('');
+  });
+
+protocol
+  .command('sync')
+  .description('Synchronize living state with a status update')
+  .option('--status <text>', 'Status string to append', '[STATUS:SYNCHRONIZED]')
+  .option('--directive <text>', 'Directive to record in living state')
+  .action(async (options: { status?: string; directive?: string }) => {
+    const interceptor = new ProtocolInterceptor(repoRoot);
+    if (options.directive) {
+      await interceptor.livingState.updateDirective(options.directive);
+    }
+    await interceptor.livingState.markSynced();
+    console.log(chalk.green(`[Living State] ${options.status || '[STATUS:SYNCHRONIZED]'}\n`));
+  });
+
+protocol
+  .command('gate')
+  .description('Run all protocol gates: Turn Zero, handoff source drift, session handoff')
+  .option('--mode <mode>', 'Gate mode (ci, pre-push, pre-commit)', 'ci')
+  .action(async (options: { mode?: string }) => {
+    try {
+      const interceptor = new ProtocolInterceptor(repoRoot);
+      const checks = await interceptor.runPreFlightChecks();
+
+      console.log(chalk.bold.cyan('\n[TNF Protocol Gate]\n'));
+      console.log(`Mode: ${chalk.yellow(options.mode || 'ci')}`);
+
+      if (!checks.allPassed) {
+        console.warn(chalk.yellow(`Pre-flight: ${checks.checks.filter((c) => !c.passed).length} issue(s)`));
+        for (const check of checks.checks.filter((c) => !c.passed)) {
+          console.warn(chalk.dim(`  - ${check.name}: ${check.details}`));
+        }
+      } else {
+        console.log(chalk.green('Pre-flight: OK'));
+      }
+
+      await runCommand('node', ['scripts/protocols/validate-turn-zero-authority.cjs', `--mode=${options.mode || 'ci'}`]);
+      await runCommand('node', ['scripts/protocols/validate-handoff-source-drift.cjs', '--mode=ci']);
+      await runCommand('node', ['scripts/protocols/enforce-session-handoff.cjs', `--mode=${options.mode || 'ci'}`]);
+
+      console.log(chalk.green('\n[TNF Protocol Gate] All checks passed.\n'));
+    } catch (err: any) {
+      console.error(chalk.red(`Protocol gate failed: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 program
   .command('doctor')
@@ -5556,6 +5718,14 @@ program
   .command('gemini')
   .description('DEPRECATED: Use `tnf agy` instead. Pass through any Gemini CLI command')
   .argument('[args...]', 'Arguments forwarded to gemini');
+
+program
+  .command('cursor')
+  .description('Pass through any Cursor CLI command with TNF harness MCP routing')
+  .argument('[args...]', 'Arguments forwarded to cursor')
+  .action(async (args: string[]) => {
+    await runPassthrough('cursor', args);
+  });
 
 program
   .command('agy')
@@ -10195,6 +10365,7 @@ aliveCommand
 
         console.log(chalk.bold.green('\n✅ TNF alive — running autonomously.\n'));
         console.log(chalk.dim('   Verify:  tnf alive status'));
+        console.log(chalk.dim('   Forefront: tnf forefront'));
         console.log(chalk.dim('   Stop:    tnf alive down'));
         console.log(chalk.dim('   Logs:    tail -f ~/.tnf/logs/daemon.log\n'));
       } catch (err: any) {
@@ -10826,9 +10997,20 @@ reports
     }
   });
 
+function buildPassthroughEnv(cliName: string): Record<string, string> {
+  const env: Record<string, string> = {};
+  const mcpConfigPath = path.join(repoRoot, 'data/mcp.clients', `${cliName}.mcp.json`);
+  if (fs.existsSync(mcpConfigPath)) {
+    env.TNF_MCP_CONFIG_PATH = mcpConfigPath;
+    env.MCP_CONFIG_PATH = mcpConfigPath;
+  }
+  return env;
+}
+
 async function runPassthrough(cliName: string, args: string[] = []): Promise<void> {
   const forwardedArgs = normalizeForwardedArgs(args);
   const resolvedCmd = resolvePassthroughCommand(cliName);
+  const passthroughEnv = buildPassthroughEnv(cliName);
   const isHermesUpdate = cliName === 'hermes' && forwardedArgs[0] === 'update';
 
   if (isHermesUpdate) {
@@ -10843,7 +11025,7 @@ async function runPassthrough(cliName: string, args: string[] = []): Promise<voi
   }
 
   try {
-    await runCommand(resolvedCmd, forwardedArgs);
+    await runCommand(resolvedCmd, forwardedArgs, { env: passthroughEnv });
   } catch (err: any) {
     if (isHermesUpdate) {
       const retryCleanup = cleanupHermesGitLockFiles();
@@ -10854,7 +11036,7 @@ async function runPassthrough(cliName: string, args: string[] = []): Promise<voi
           )
         );
         try {
-          await runCommand(resolvedCmd, forwardedArgs);
+          await runCommand(resolvedCmd, forwardedArgs, { env: passthroughEnv });
           return;
         } catch (retryErr: any) {
           err = retryErr;
@@ -13199,12 +13381,105 @@ extensionCmd
           console.log(chalk.dim('  then: code --install-extension the-new-fuse-*.vsix'));
         }
       } else if (extensionId === 'tauri') {
+        await runCommand('pnpm', ['run', 'build:deps'], { cwd: fullPath });
         await runCommand('pnpm', ['run', options.watch ? 'dev' : 'build'], { cwd: fullPath });
       } else {
         await runCommand('pnpm', ['run', options.watch ? 'watch' : 'build'], { cwd: fullPath });
       }
 
       console.log(chalk.green(`\n ${ext.name} built successfully\n`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const forefrontCommand = program
+  .command('forefront')
+  .description('Bring TNF to the operator forefront: harness, relay, local UI, browser control');
+
+forefrontCommand
+  .command('status')
+  .description('Show latest forefront boot receipt')
+  .action(() => {
+    const receiptPath = path.join(repoRoot, '.agent/runtime-logs/forefront-boot.latest.json');
+    if (!fs.existsSync(receiptPath)) {
+      console.log(chalk.yellow('No forefront boot receipt found. Run: tnf forefront'));
+      return;
+    }
+    const receipt = JSON.parse(fs.readFileSync(receiptPath, 'utf8'));
+    console.log(chalk.bold.cyan('\n=== TNF Forefront Status ===\n'));
+    console.log(JSON.stringify(receipt, null, 2));
+    console.log('');
+  });
+
+forefrontCommand
+  .option('--tauri', 'Launch native Tauri shell instead of web UI')
+  .option('--skip-relay', 'Do not start relay-core in background')
+  .option('--skip-onboard', 'Skip Turn Zero onboard preflight')
+  .option('--skip-cursor', 'Skip Cursor harness onboard')
+  .option('--no-open', 'Do not open browser automatically')
+  .action(async (options: {
+    tauri?: boolean;
+    skipRelay?: boolean;
+    skipOnboard?: boolean;
+    skipCursor?: boolean;
+    open?: boolean;
+  }) => {
+    try {
+      const args = ['scripts/local-ui/tnf-forefront-boot.cjs'];
+      if (options.tauri) args.push('--tauri');
+      if (options.skipRelay) args.push('--skip-relay');
+      if (options.skipOnboard) args.push('--skip-onboard');
+      if (options.skipCursor) args.push('--skip-cursor');
+      if (options.open === false) args.push('--no-open');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('browser-control')
+  .description('Serve standalone HTML browser control + federation node panel (no Chrome extension required for channels)')
+  .option('--skip-relay', 'Do not start relay-core in background')
+  .option('--no-open', 'Do not open browser automatically')
+  .action(async (options: { skipRelay?: boolean; open?: boolean }) => {
+    try {
+      const args = ['scripts/local-ui/serve-browser-control.cjs'];
+      if (options.skipRelay) args.push('--skip-relay');
+      if (options.open === false) args.push('--no-open');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('local-ui')
+  .description('Boot TNF local UI (web shell or Tauri desktop) with harness + relay')
+  .option('--tauri', 'Launch native Tauri desktop shell')
+  .option('--skip-relay', 'Do not start relay-core in background')
+  .option('--skip-onboard', 'Skip Turn Zero onboard preflight')
+  .option('--build', 'Build production UI bundle instead of starting dev server')
+  .action(async (options: {
+    tauri?: boolean;
+    skipRelay?: boolean;
+    skipOnboard?: boolean;
+    build?: boolean;
+  }) => {
+    try {
+      if (options.build) {
+        await runCommand('pnpm', ['run', 'tnf:local-ui:build']);
+        return;
+      }
+
+      const args = ['scripts/local-ui/tnf-local-ui-boot.cjs', options.tauri ? '--tauri' : '--web'];
+      if (options.skipRelay) args.push('--skip-relay');
+      if (options.skipOnboard) args.push('--skip-onboard');
+      await runCommand('node', args);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -14040,7 +14315,7 @@ async function main(): Promise<void> {
   const argv = normalizeEntrypointArgv(process.argv);
 
   const interceptor = new ProtocolInterceptor(repoRoot);
-  interceptor.runPreFlightChecks();
+  await interceptor.runPreFlightChecks();
 
   if (argv.length <= 2) {
     await startInteractiveAgent();
@@ -14060,6 +14335,10 @@ async function main(): Promise<void> {
   }
   if (isGeminiPassthroughArgv(argv)) {
     await runPassthrough('gemini', argv.slice(3));
+    return;
+  }
+  if (isCursorPassthroughArgv(argv)) {
+    await runPassthrough('cursor', argv.slice(3));
     return;
   }
   const implicitArgs = resolveImplicitPassthroughArgs(argv);

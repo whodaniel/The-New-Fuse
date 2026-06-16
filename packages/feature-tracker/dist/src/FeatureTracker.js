@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeatureTracker = void 0;
 const common_1 = require("@nestjs/common");
-const types_js_1 = require("./types.js");
+const index_js_1 = require("./types/index.js");
 let FeatureTracker = class FeatureTracker {
     constructor() {
         this.features = new Map();
@@ -21,7 +21,7 @@ let FeatureTracker = class FeatureTracker {
             featureId,
             name,
             description,
-            currentStage: types_js_1.FeatureStage.ANALYSIS,
+            currentStage: index_js_1.FeatureStage.ANALYSIS,
             metrics: {
                 linesOfCode: 0,
                 filesModified: [],
@@ -70,7 +70,7 @@ let FeatureTracker = class FeatureTracker {
         return updatedFeature;
     }
     calculateCompletionPercentage(stage) {
-        const stages = Object.values(types_js_1.FeatureStage);
+        const stages = Object.values(index_js_1.FeatureStage);
         const currentIndex = stages.indexOf(stage);
         return Math.round((currentIndex / (stages.length - 1)) * 100);
     }

@@ -3,5 +3,5 @@ export { FeatureProgress as FeatureProgressComponent } from './components/Featur
 export * from './examples/FeatureTrackingExample.js';
 export { FeatureTracker } from './FeatureTracker.js';
 export { useFeatureTracker } from './hooks/useFeatureTracker.js';
-export { FeatureStage, type CodeMetrics, type FeatureProgress, type QualitativeAssessment, } from './types.js';
+export { FeatureStage, type CodeMetrics, type FeatureProgress, type QualitativeAssessment, } from './types/index.js';
 //# sourceMappingURL=index.d.ts.map

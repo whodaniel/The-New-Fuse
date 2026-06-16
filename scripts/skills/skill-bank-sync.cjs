@@ -64,6 +64,7 @@ function detectOriginLabel(skillDir, repoRoot, home) {
   if (p.startsWith(`${hm}/.claude/`)) return { llm: 'claude', scope: 'global' };
   if (p.startsWith(`${hm}/.gemini/`)) return { llm: 'gemini', scope: 'global' };
   if (p.startsWith(`${hm}/.opencode/`)) return { llm: 'opencode', scope: 'global' };
+  if (p.startsWith(`${hm}/.cursor/`)) return { llm: 'cursor', scope: 'global' };
   if (p.startsWith(`${hm}/.kilo/`)) return { llm: 'kilo', scope: 'global' };
   if (p.startsWith(`${hm}/.augment/`)) return { llm: 'augment', scope: 'global' };
   if (p.startsWith(`${hm}/.tnf/`)) return { llm: 'tnf', scope: 'global' };
@@ -151,6 +152,7 @@ function main() {
     path.join(home, '.claude', 'skills'),
     path.join(home, '.gemini', 'skills'),
     path.join(home, '.opencode', 'skills'),
+    path.join(home, '.cursor', 'skills-cursor'),
     path.join(home, '.kilo', 'skills'),
     path.join(home, '.augment', 'skills'),
     path.join(home, '.tnf', 'skills'),
@@ -164,6 +166,7 @@ function main() {
     path.join(home, '.claude', 'skills'),
     path.join(home, '.gemini', 'skills'),
     path.join(home, '.opencode', 'skills'),
+    path.join(home, '.cursor', 'skills-cursor'),
     path.join(home, '.kilo', 'skills'),
     path.join(home, '.augment', 'skills'),
     path.join(home, '.tnf', 'skills'),

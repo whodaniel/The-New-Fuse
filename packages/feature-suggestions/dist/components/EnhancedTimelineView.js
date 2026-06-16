@@ -42,7 +42,6 @@ const d3 = __importStar(require("d3"));
 const date_fns_1 = require("date-fns");
 const react_1 = require("react");
 const TimelineSlider_1 = __importDefault(require("./TimelineSlider"));
-// @ts-ignore
 require("./EnhancedTimelineView.css");
 const colors = {
     suggestion: {

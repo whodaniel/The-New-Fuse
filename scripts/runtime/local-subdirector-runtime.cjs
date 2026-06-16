@@ -24,6 +24,7 @@ const AGENT_COMMAND_HINTS = [
   'aider',
   'claude',
   'codex',
+  'cursor',
   'gemini',
   'goose',
   'hermes',

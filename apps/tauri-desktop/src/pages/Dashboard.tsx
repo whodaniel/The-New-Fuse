@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ForefrontOperatorPanel from '../components/ForefrontOperatorPanel';
 import { NetworkGraph } from '../components/NetworkGraph';
 import { QuickActionsDashboard } from '../components/QuickActionsDashboard';
 import { Terminal } from '../components/Terminal';
@@ -70,6 +71,7 @@ const Dashboard: React.FC = () => {
 
       {/* Tab Content */}
       <div className="console-content">
+        <ForefrontOperatorPanel />
         {activeTab === 'monitor' ? (
           <div className="console-grid">
             {/* Top Row: Network Visualization */}

@@ -294,6 +294,7 @@ function main() {
     codex: [path.join(home, '.codex', 'skills', 'imported-claude-agents')],
     claude: [path.join(home, '.claude', 'skills', 'imported-claude-agents')],
     gemini: [path.join(home, '.gemini', 'skills', 'imported-claude-agents')],
+    cursor: [path.join(home, '.cursor', 'skills-cursor', 'imported-claude-agents')],
     opencode: [path.join(home, '.opencode', 'skills', 'imported-claude-agents')],
     kilo: [path.join(home, '.kilo', 'skills', 'imported-claude-agents')],
     augment: [path.join(home, '.augment', 'skills', 'imported-claude-agents')],

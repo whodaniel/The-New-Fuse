@@ -128,7 +128,9 @@ export const agents = pgTable('agents', {
         .notNull()
         .references(() => users.id, { onDelete: 'cascade' }),
     // Agent self-describing profile (about me, personality, capabilities description)
-    profile: jsonb('profile').$type().default({}),
+    profile: jsonb('profile')
+        .$type()
+        .default({}),
     // Phase 1 (audit 2026-06-14) + Phase 8 alignment:
     //   - `worker_action` (Drizzle field name of the AgentRole column): the
     //     kind of work this agent does. Action-typed primitives only. Column

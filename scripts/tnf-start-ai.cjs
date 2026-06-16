@@ -25,7 +25,7 @@ function commandExists(cmd) {
 
 function usage() {
   console.log(
-    "Usage: pnpm run tnf:start -- <codex|claude|gemini|openclaw|hermes|pi> [--skip-doctor] [--require-doctor] [--no-launch] [-- ...client args]"
+    "Usage: pnpm run tnf:start -- <codex|claude|gemini|cursor|openclaw|hermes|pi> [--skip-doctor] [--require-doctor] [--no-launch] [-- ...client args]"
   );
 }
 
@@ -57,6 +57,7 @@ const clientCommandMap = {
   codex: "codex",
   claude: "claude",
   gemini: "gemini",
+  cursor: "cursor",
   openclaw: "openclaw",
   hermes: "hermes",
   pi: "pi",

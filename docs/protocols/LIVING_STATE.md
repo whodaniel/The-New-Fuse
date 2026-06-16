@@ -2,9 +2,7 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Phase 7: Directive Conversion Loop. **Project ID:**
-`FORGE-003` **Session Key:**
-`agent:local-subdirector:session:2026-06-15T21:28:19.619787Z`
+**Current Directive:** Phase 7: Directive Conversion Loop. **Project ID:** `FORGE-003` **Session Key:** `agent:local-subdirector:session:2026-06-16T02:44:24.498679Z`
 
 ---
 
@@ -138,6 +136,8 @@
     `tnf-start-ai.cjs` provisions MCP configs with local-tolerant doctor checks
     so OpenClaw boot survives missing local DATABASE_URL without losing client
     wiring.
+42. [✅] Orchestration CLI Landing: `DirectiveConversionService`, `protocol health/directives/sync/gate` commands, and slash commands (`/protocol`, `/directives`, `/living`) integrated into `packages/tnf-cli`.
+43. [✅] Phase 7 Batch 001 Claimed: 10 high-priority directives claimed via retriage v2 promotion + conversion loop; Deep Sec scan config hardened with monorepo exclusions.
 
 ---
 
@@ -157,10 +157,7 @@
 
 ## 🕒 Last Update
 
-2026-06-15T21:28:19Z - Kilo hardened TNF persistence: factory-boot starts and
-records local Redis, factory-supervisor watches Redis health, tnf-start-ai
-provisions MCP configs with local-tolerant doctor checks, and Phase 7 batch 001
-regenerated with zero ready/claimed directives.
+2026-06-16T02:43:00Z - Composer landed orchestration CLI services, claimed Phase 7 batch 001 (10 directives), hardened Deep Sec scan config, and fixed retriage v2 to sync action queue + evidence artifacts.
 
 ## 🛡️ Contract Migration Status
 
