@@ -7,11 +7,11 @@ import { useAuth } from '../hooks/useAuth';
 function SmartNavigation() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navRef = useRef<HTMLDivElement>(null);
 
-  // Check if user has admin role
-  const isAdmin = user?.role === 'admin' || user?.role === 'administrator';
+  // Admin-only nav is disabled until role metadata is wired into auth.
+  const isAdmin = false;
   const isPublicPage = [
     '/',
     '/login',

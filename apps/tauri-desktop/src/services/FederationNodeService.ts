@@ -1,13 +1,10 @@
-import {
-  FederationNodeClient,
-} from '@the-new-fuse/shared/federation/FederationNodeClient';
+import { FederationNodeClient, type FederationNodeEvent } from '@the-new-fuse/shared/federation';
 import {
   generateFederationId,
   type FederationChannel,
   type FederationChannelMessage,
 } from '@the-new-fuse/shared/federation/protocol';
 import { EventEmitter } from './EventEmitter';
-import type { FederationNodeEvent } from '@the-new-fuse/shared/federation/FederationNodeClient';
 
 export type FederationNodeServiceEvent = FederationNodeEvent;
 
@@ -42,7 +39,7 @@ class FederationNodeServiceClass extends EventEmitter<FederationNodeServiceEvent
     ];
     for (const event of events) {
       this.client.on(event, (...args: unknown[]) => {
-        this.emit(event, ...args);
+        this.emit(event, args.length <= 1 ? args[0] : args);
       });
     }
   }
@@ -96,12 +93,19 @@ class FederationNodeServiceClass extends EventEmitter<FederationNodeServiceEvent
     this.client.leaveChannel(channelId);
   }
 
-  sendChannelMessage(
-    channelId: string,
-    content: string,
-    metadata?: Record<string, unknown>
-  ): void {
+  sendChannelMessage(channelId: string, content: string, metadata?: Record<string, unknown>): void {
     this.client.sendChannelMessage(channelId, content, metadata);
+  }
+
+  sendA2AMessage(targetAgentId: string, content: string, messageType = 'task'): void {
+    const joined = this.client.getState().joinedChannels;
+    const channelId = joined[0] || 'general';
+    this.client.sendChannelMessage(channelId, content, {
+      a2a: true,
+      messageType,
+      target: targetAgentId,
+      to: targetAgentId,
+    });
   }
 
   pauseChannel(channelId: string): void {

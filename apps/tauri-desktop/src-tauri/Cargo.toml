@@ -1,7 +1,7 @@
 [package]
 name = "tnf-desktop"
 version = "4.0.0"
-description = "The New Fuse - Lightweight Desktop Hub"
+description = "TNF (The New Fuse) Desktop App — local operator hub"
 authors = ["Daniel Goldberg"]
 edition = "2021"
 license = "MIT"

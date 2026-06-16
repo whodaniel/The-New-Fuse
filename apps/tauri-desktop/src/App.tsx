@@ -9,6 +9,8 @@ import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
 import ComprehensiveRouter from './ComprehensiveRouter';
+import { AuthProvider } from './providers/AuthProvider';
+import { OperatorSynergyProvider } from './providers/OperatorSynergyProvider';
 
 const queryClient = new QueryClient();
 
@@ -57,9 +59,13 @@ export function App() {
       <ThemeProvider>
         <LayoutProvider>
           <RouteProvider>
-            <ErrorBoundary>
-              <AppContent />
-            </ErrorBoundary>
+            <AuthProvider>
+              <OperatorSynergyProvider>
+                <ErrorBoundary>
+                  <AppContent />
+                </ErrorBoundary>
+              </OperatorSynergyProvider>
+            </AuthProvider>
           </RouteProvider>
         </LayoutProvider>
       </ThemeProvider>

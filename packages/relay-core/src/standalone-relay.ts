@@ -129,6 +129,25 @@ interface BridgeOperatorContext {
   reason?: string | null;
 }
 
+interface RelayAgentRegistrationRequest {
+  agentId: string;
+  sourceId: string;
+  platform: string;
+  name: string;
+  capabilities: string[];
+  channels: string[];
+  runtimeSessionId: string;
+  metadata?: Record<string, unknown>;
+}
+
+interface PendingAgentRegistration {
+  ws: WebSocket;
+  requestedAt: number;
+  registrationRequest: RelayAgentRegistrationRequest;
+  authenticated: boolean;
+  timeout: NodeJS.Timeout;
+}
+
 function buildRelayAgentIdentity(input: {
   id: string;
   canonicalEntityId?: unknown;
@@ -237,6 +256,9 @@ export class TNFRelayServer extends EventEmitter {
   private readonly activityStreamKey: string;
   private readonly activityChannelPrefix: string;
   private readonly activityMaxLen: number;
+  private registryReplySubscriber: StandaloneRedisClient | null = null;
+  private registryReplySubscriberReady = false;
+  private pendingAgentRegistrations: Map<string, PendingAgentRegistration> = new Map();
 
   constructor(port: number = PORT) {
     super();
@@ -252,7 +274,8 @@ export class TNFRelayServer extends EventEmitter {
     this.subscriptionRegistry = new SubscriptionRegistry();
     this.bridgeAutoApproveLoopback = process.env.BRIDGE_AUTO_APPROVE_LOOPBACK !== 'false';
     this.bridgeAutoApprovePlatforms = parseCsvSet(
-      process.env.BRIDGE_AUTO_APPROVE_PLATFORMS || 'orchestrator,system,relay,master-clock'
+      process.env.BRIDGE_AUTO_APPROVE_PLATFORMS ||
+        'orchestrator,system,relay,master-clock,tauri-desktop,federation-node,cli-html,chrome-extension'
     );
     this.bridgeAutoApproveAgentIds = parseCsvSet(process.env.BRIDGE_AUTO_APPROVE_AGENT_IDS || '');
     this.activityPersistenceEnabled = process.env.ENABLE_ACTIVITY_PERSISTENCE !== 'false';
@@ -341,6 +364,7 @@ export class TNFRelayServer extends EventEmitter {
         '[Relay] Bridge connected - Agent gate:',
         this.bridgeGateEnabled ? 'ENABLED' : 'OPEN'
       );
+      void this.setupRegistryReplyListener();
     });
 
     this.bridge.on('egress', (envelope: TNFEnvelope) => {
@@ -827,6 +851,7 @@ export class TNFRelayServer extends EventEmitter {
 
         // Publish registration request to Redis for Master Clock
         if (this.bridge) {
+          void this.setupRegistryReplyListener();
           this.bridge.publish(
             'tnf:relay:agent_register_requests',
             JSON.stringify({
@@ -835,6 +860,35 @@ export class TNFRelayServer extends EventEmitter {
             })
           );
           console.log(`[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`);
+
+          const registrationTimeoutMs = isLoopbackAddress(remoteAddress) ? 1500 : 8000;
+
+          const pendingTimeout = setTimeout(() => {
+            const pending = this.pendingAgentRegistrations.get(requestedAgentId);
+            if (!pending) return;
+            console.warn(
+              `[Relay] Master-clock registration timeout for ${requestedAgentId}; completing locally`
+            );
+            this.finalizeAgentRegistration(
+              requestedAgentId,
+              pending.ws,
+              pending.registrationRequest,
+              {
+                authenticated: pending.authenticated,
+                source: 'local_timeout_fallback',
+              }
+            );
+            clearTimeout(pending.timeout);
+            this.pendingAgentRegistrations.delete(requestedAgentId);
+          }, registrationTimeoutMs);
+
+          this.pendingAgentRegistrations.set(requestedAgentId, {
+            ws,
+            requestedAt: Date.now(),
+            registrationRequest,
+            authenticated: !!verifiedToken,
+            timeout: pendingTimeout,
+          });
         } else {
           // Fallback if bridge is not connected (local mode)
           console.warn(
@@ -1446,6 +1500,168 @@ export class TNFRelayServer extends EventEmitter {
         })
       );
     }
+  }
+
+  private async setupRegistryReplyListener(): Promise<void> {
+    if (this.registryReplySubscriberReady) return;
+
+    try {
+      this.registryReplySubscriber = createStandaloneRedisClient({ lazyConnect: true });
+      await connectStandaloneRedisClient(this.registryReplySubscriber);
+      const subscriber = this.registryReplySubscriber as Redis;
+      await subscriber.psubscribe('tnf:master:agent_registry_updates:*');
+      subscriber.on('pmessage', (_pattern: string, channel: string, message: string) => {
+        this.handleRegistryReply(channel, message);
+      });
+      this.registryReplySubscriberReady = true;
+      console.log('[Relay] Subscribed to master-clock agent registry reply channels');
+    } catch (err) {
+      console.warn(
+        '[Relay] Failed to subscribe to registry reply channels:',
+        err instanceof Error ? err.message : String(err)
+      );
+    }
+  }
+
+  private handleRegistryReply(channel: string, message: string): void {
+    try {
+      const parsed = JSON.parse(message) as {
+        type?: string;
+        payload?: Record<string, unknown>;
+      };
+      if (parsed.type !== 'REGISTRATION_SUCCESS') return;
+
+      const agentId =
+        (typeof parsed.payload?.agentId === 'string' ? parsed.payload.agentId : null) ||
+        channel.split(':').pop();
+      if (!agentId) return;
+
+      const pending = this.pendingAgentRegistrations.get(agentId);
+      if (!pending) return;
+
+      clearTimeout(pending.timeout);
+      this.pendingAgentRegistrations.delete(agentId);
+      this.finalizeAgentRegistration(agentId, pending.ws, pending.registrationRequest, {
+        authenticated: pending.authenticated,
+        source: 'master_clock',
+        masterPayload: parsed.payload,
+      });
+    } catch (err) {
+      console.warn(
+        '[Relay] Failed to handle registry reply:',
+        err instanceof Error ? err.message : String(err)
+      );
+    }
+  }
+
+  private finalizeAgentRegistration(
+    agentId: string,
+    ws: WebSocket,
+    registrationRequest: RelayAgentRegistrationRequest,
+    options: {
+      authenticated: boolean;
+      source: string;
+      masterPayload?: Record<string, unknown>;
+    }
+  ): void {
+    if (this.agents.has(agentId)) {
+      this.send(ws, {
+        type: 'REGISTRATION_CONFIRMED',
+        payload: {
+          agentId,
+          source: options.source,
+          ...(options.masterPayload || {}),
+        },
+      });
+      return;
+    }
+
+    const identity = buildRelayAgentIdentity({
+      id: agentId,
+      canonicalEntityId: options.masterPayload?.canonicalEntityId,
+      operationalHandle:
+        (typeof options.masterPayload?.operationalHandle === 'string'
+          ? options.masterPayload.operationalHandle
+          : registrationRequest.name) || agentId,
+      runtimeSessionId:
+        (typeof options.masterPayload?.runtimeSessionId === 'string'
+          ? options.masterPayload.runtimeSessionId
+          : registrationRequest.runtimeSessionId) || agentId,
+      aliases: Array.isArray(options.masterPayload?.aliases)
+        ? options.masterPayload?.aliases
+        : [agentId, registrationRequest.name],
+    });
+
+    const agent: Agent = {
+      id: agentId,
+      canonicalEntityId: identity.canonicalEntityId,
+      operationalHandle: identity.operationalHandle,
+      runtimeSessionId: identity.runtimeSessionId,
+      aliases: identity.aliases,
+      name: registrationRequest.name || 'Unknown Agent',
+      platform: registrationRequest.platform || 'unknown',
+      status: resolveRelayAgentStatus('active'),
+      capabilities: registrationRequest.capabilities || [],
+      channels: registrationRequest.channels || [],
+      connectedAt: Date.now(),
+      lastSeen: Date.now(),
+      metadata: attachAuditTrace(
+        {
+          ...(registrationRequest.metadata || {}),
+          authenticated: options.authenticated,
+          registrationSource: options.source,
+        },
+        {
+          source: 'standalone-relay',
+          actor: identity.operationalHandle,
+          sessionId: identity.runtimeSessionId || agentId,
+          canonicalEntityId: identity.canonicalEntityId,
+          operationalHandle: identity.operationalHandle,
+          runtimeSessionId: identity.runtimeSessionId,
+        }
+      ),
+    };
+
+    this.agents.set(agentId, agent);
+    this.sockets.set(agentId, ws);
+    this.agentChannels.set(agentId, new Set(agent.channels));
+    this.ensureBridgeSubscription(agentId);
+    for (const channelId of agent.channels) {
+      this.syncAgentChannelMembership(agentId, channelId);
+    }
+    for (const cap of agent.capabilities) {
+      this.subscriptionRegistry.register(agentId, `capability:${cap}`);
+    }
+
+    fmt.agentRegistered(agent.name, agentId, agent.platform, options.authenticated);
+    this.emit('agent:registered', agent);
+
+    this.send(ws, {
+      type: 'AGENT_LIST',
+      payload: { agents: Array.from(this.agents.values()) },
+    });
+    this.send(ws, {
+      type: 'CHANNEL_LIST',
+      payload: { channels: Array.from(this.channels.values()) },
+    });
+    this.send(ws, {
+      type: 'REGISTRATION_CONFIRMED',
+      payload: {
+        agentId,
+        source: options.source,
+        relayInfo: {
+          id: 'relay-standalone',
+          version: '1.0.0',
+          authenticated: options.authenticated,
+        },
+        ...(options.masterPayload || {}),
+      },
+    });
+
+    this.broadcast({
+      type: 'AGENT_STATUS',
+      payload: { agent },
+    });
   }
 
   private handleBridgeEgress(envelope: TNFEnvelope): void {

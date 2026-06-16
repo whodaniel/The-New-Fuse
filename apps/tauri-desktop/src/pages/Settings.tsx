@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useTheme } from '../providers/ThemeProvider';
 
+import { resolveWebAppBaseUrl } from '../config/webSurfaces';
+import { openExternal } from '../lib/openExternal';
 import { useSettingsStore } from '../stores/settingsStore';
 
 /**
@@ -9,6 +13,7 @@ import { useSettingsStore } from '../stores/settingsStore';
 const Settings: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { environment, setEnvironment, customApiUrl, setCustomApiUrl, apiUrl } = useSettingsStore();
+  const webAppUrl = resolveWebAppBaseUrl(environment);
   const [apiKey, setApiKey] = useState('');
 
   const settingsSections = [
@@ -19,22 +24,28 @@ const Settings: React.FC = () => {
     { id: 'about', title: 'About', icon: 'ℹ️' },
   ];
 
-  return (
-    <div className="page-container">
-      <header className="page-header">
-        <div className="header-info">
-          <h1 className="page-title">Settings</h1>
-          <p className="page-subtitle">Configure your workspace and connection preferences</p>
-        </div>
-      </header>
+  const [activeSection, setActiveSection] = useState('connection');
 
+  const scrollToSection = (id: string) => {
+    setActiveSection(id);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  return (
+    <PageShell title="Settings" subtitle="Configure your workspace and connection preferences">
+      <SynergyStatusBar />
       <div className="settings-layout">
         <nav className="settings-nav">
           {settingsSections.map((section) => (
-            <a key={section.id} href={`#${section.id}`} className="nav-link">
+            <button
+              key={section.id}
+              type="button"
+              className={`nav-link ${activeSection === section.id ? 'active' : ''}`}
+              onClick={() => scrollToSection(section.id)}
+            >
               <span>{section.icon}</span>
               <span>{section.title}</span>
-            </a>
+            </button>
           ))}
         </nav>
 
@@ -86,6 +97,23 @@ const Settings: React.FC = () => {
                   onChange={(e) => setCustomApiUrl(e.target.value)}
                 />
               )}
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Web App (thenewfuse.com parity)</label>
+                <p>Full web surfaces open at this URL from Web Parity Hub</p>
+              </div>
+              <div className="web-app-row">
+                <code className="url-code">{webAppUrl}</code>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => void openExternal(webAppUrl)}
+                >
+                  Open Web App
+                </button>
+              </div>
             </div>
           </section>
 
@@ -190,8 +218,8 @@ const Settings: React.FC = () => {
               <div className="app-info">
                 <span className="app-icon">🔥</span>
                 <div>
-                  <h3>The New Fuse</h3>
-                  <p>Version 1.0.0 (Tauri Desktop)</p>
+                  <h3>TNF (The New Fuse) Desktop App</h3>
+                  <p>Version 4.1.0</p>
                 </div>
               </div>
               <p className="tagline">"World Class or Nothing"</p>
@@ -254,15 +282,21 @@ const Settings: React.FC = () => {
           display: flex;
           align-items: center;
           gap: 10px;
+          width: 100%;
+          text-align: left;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          font: inherit;
           padding: 12px 16px;
           border-radius: 8px;
           color: var(--tnf-text-muted);
-          text-decoration: none;
           transition: all 0.2s;
           margin-bottom: 4px;
         }
 
-        .nav-link:hover {
+        .nav-link:hover,
+        .nav-link.active {
           background: var(--tnf-surface-hover);
           color: var(--tnf-text-primary);
         }
@@ -384,6 +418,13 @@ const Settings: React.FC = () => {
           font-size: 12px;
         }
 
+        .web-app-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
         .toggle {
           position: relative;
           display: inline-block;
@@ -490,7 +531,7 @@ const Settings: React.FC = () => {
           color: var(--tnf-primary-light);
         }
       `}</style>
-    </div>
+    </PageShell>
   );
 };
 

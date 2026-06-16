@@ -3,21 +3,25 @@ export type TnfDesktopEnvironment = 'local' | 'sandbox' | 'production' | 'custom
 export interface EndpointSet {
   api: string;
   ws: string;
+  relay: string;
 }
 
 export const LOCAL_ENDPOINTS: EndpointSet = {
   api: 'http://localhost:3001',
   ws: 'ws://localhost:3001/ws',
+  relay: 'ws://127.0.0.1:3000/ws',
 };
 
 export const SANDBOX_ENDPOINTS: EndpointSet = {
   api: 'https://api-gateway-241337102384.us-central1.run.app',
   ws: 'wss://api-gateway-241337102384.us-central1.run.app/ws',
+  relay: 'wss://api-gateway-241337102384.us-central1.run.app/ws',
 };
 
 export const PRODUCTION_ENDPOINTS: EndpointSet = {
   api: 'https://thenewfuse.com/api',
   ws: 'wss://thenewfuse.com/ws',
+  relay: 'wss://thenewfuse.com/ws',
 };
 
 export const ENV_ENDPOINTS: Record<Exclude<TnfDesktopEnvironment, 'custom'>, EndpointSet> = {
@@ -57,7 +61,9 @@ export function ensureWsPath(url: string, wsPath = '/ws'): string {
 }
 
 export function deriveWsUrlFromApi(apiUrl: string): string {
-  const normalizedApi = String(apiUrl || '').trim().replace(/\/$/, '');
+  const normalizedApi = String(apiUrl || '')
+    .trim()
+    .replace(/\/$/, '');
   if (!normalizedApi) {
     return SANDBOX_ENDPOINTS.ws;
   }
@@ -104,11 +110,16 @@ export function resolveEnvironmentEndpoints(
 ): EndpointSet {
   if (environment === 'custom') {
     const api = String(customApiUrl || '').trim() || SANDBOX_ENDPOINTS.api;
-    return {
-      api,
-      ws: deriveWsUrlFromApi(api),
-    };
+    const ws = deriveWsUrlFromApi(api);
+    return { api, ws, relay: LOCAL_ENDPOINTS.relay };
   }
 
   return ENV_ENDPOINTS[environment];
+}
+
+export function resolveRelayUrlForEnvironment(
+  environment: TnfDesktopEnvironment,
+  customApiUrl = ''
+): string {
+  return resolveEnvironmentEndpoints(environment, customApiUrl).relay;
 }

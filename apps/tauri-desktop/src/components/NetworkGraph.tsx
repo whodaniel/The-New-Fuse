@@ -1,45 +1,17 @@
 import * as d3 from 'd3';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
+import type { TopologyLink, TopologyNode } from '../services/operatorSynergy/types';
 
-interface NetworkNode {
-  id: string;
-  group: 'local' | 'cloud' | 'agent';
-  status: 'online' | 'offline' | 'active' | 'idle';
-  label: string;
+interface NetworkGraphProps {
+  nodes: TopologyNode[];
+  links: TopologyLink[];
 }
 
-interface NetworkLink {
-  source: string;
-  target: string;
-  value: number;
-  active: boolean;
-}
-
-export const NetworkGraph: React.FC = () => {
-  const svgRef = useRef<SVGSVGElement>(null);
+export const NetworkGraph: React.FC<NetworkGraphProps> = ({ nodes, links }) => {
+  const svgRef = React.useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    if (!svgRef.current) return;
-
-    // Mock Data representing the "Trinity" Architecture
-    const nodes: NetworkNode[] = [
-      { id: 'desktop', group: 'local', status: 'online', label: 'Tauri Desktop (Relay)' },
-      { id: 'chrome', group: 'local', status: 'online', label: 'Chrome Extension' },
-      { id: 'cloud', group: 'cloud', status: 'online', label: 'Cloud Sandbox' },
-      { id: 'web', group: 'cloud', status: 'online', label: 'Web Dashboard' },
-      { id: 'redis', group: 'cloud', status: 'active', label: 'Redis Bus' },
-      { id: 'agent-1', group: 'agent', status: 'active', label: 'Claude Agent' },
-      { id: 'agent-2', group: 'agent', status: 'idle', label: 'GPT Worker' },
-    ];
-
-    const links: NetworkLink[] = [
-      { source: 'desktop', target: 'cloud', value: 5, active: true },
-      { source: 'chrome', target: 'desktop', value: 3, active: true },
-      { source: 'web', target: 'cloud', value: 2, active: true },
-      { source: 'cloud', target: 'redis', value: 10, active: true },
-      { source: 'redis', target: 'agent-1', value: 5, active: true },
-      { source: 'redis', target: 'agent-2', value: 5, active: false },
-    ];
+    if (!svgRef.current || nodes.length === 0) return;
 
     // Clear previous render
     d3.select(svgRef.current).selectAll('*').remove();
@@ -88,6 +60,7 @@ export const NetworkGraph: React.FC = () => {
       .attr('r', 20)
       .attr('fill', (d) => {
         if (d.group === 'local') return '#10b981';
+        if (d.group === 'relay') return '#6366f1';
         if (d.group === 'cloud') return '#3b82f6';
         return '#8b5cf6';
       })
@@ -135,7 +108,7 @@ export const NetworkGraph: React.FC = () => {
 
       return d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
     }
-  }, []);
+  }, [nodes, links]);
 
   return (
     <div

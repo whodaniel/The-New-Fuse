@@ -24,13 +24,17 @@ interface RouteProviderProps {
 }
 
 function resolveInitialRoute(initialRoute?: string): string {
-  if (typeof window === 'undefined') return initialRoute || '/dashboard';
-  const hashRoute = window.location.hash.startsWith('#/')
-    ? window.location.hash.slice(1)
-    : '';
-  const params = new URLSearchParams(window.location.search);
-  const queryRoute = params.get('route') || '';
-  return hashRoute || queryRoute || initialRoute || '/dashboard';
+  if (typeof window === 'undefined') {
+    return initialRoute || '/dashboard';
+  }
+  try {
+    const hashRoute = window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : '';
+    const params = new URLSearchParams(window.location.search);
+    const queryRoute = params.get('route') || '';
+    return hashRoute || queryRoute || initialRoute || '/dashboard';
+  } catch {
+    return initialRoute || '/dashboard';
+  }
 }
 
 export const RouteProvider: React.FC<RouteProviderProps> = ({
@@ -46,9 +50,7 @@ export const RouteProvider: React.FC<RouteProviderProps> = ({
     setCurrentRoute(route);
     setParams(newParams);
     setHistory((prev) => [...prev, route]);
-    if (typeof window !== 'undefined') {
-      window.location.hash = route;
-    }
+    // Do not set window.location.hash — throws SecurityError in Tauri WebView
   };
 
   const goBack = () => {

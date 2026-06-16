@@ -1,59 +1,64 @@
 import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useRef, useState } from 'react';
-import { FederatedAgent, relaySwarmService } from '../services/RelaySwarmService';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 
 /**
  * Swarm Terminal - Integrated Hub for Agent Terminals
  * Features Zero-Tolerance Typing Guard and Federated Heartbeats
  */
 const SwarmTerminal: React.FC = () => {
+  const { unifiedAgents, activityLog, state: synergy } = useOperatorSynergy();
   const [terminals, setTerminals] = useState<any[]>([]);
-  const [federatedAgents, setFederatedAgents] = useState<FederatedAgent[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [isFlushing, setIsFlushing] = useState(false);
   const logEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Initial fetch of terminal windows
     refreshTerminals();
-
-    // Subscribe to Federated Swarm
-    relaySwarmService.connect();
-    const unsubscribe = relaySwarmService.subscribe((list) => {
-      setFederatedAgents(list);
-    });
-
     const interval = setInterval(refreshTerminals, 10000);
-    return () => {
-      clearInterval(interval);
-      unsubscribe();
-    };
-  }, []);
+    return () => clearInterval(interval);
+  }, [unifiedAgents.length, synergy.relayRegistered]);
+
+  useEffect(() => {
+    if (activityLog.length > 0) {
+      setLogs((prev) => [...prev.slice(-80), ...activityLog.slice(0, 5)].slice(-100));
+    }
+  }, [activityLog]);
 
   useEffect(() => {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
 
-  const addLog = (msg: string, type: 'info' | 'success' | 'warn' | 'error' = 'info') => {
+  const addLog = (msg: string, _severity: 'info' | 'success' | 'warn' | 'error' = 'info') => {
     const entry = `[${new Date().toLocaleTimeString()}] ${msg}`;
     setLogs((prev) => [...prev.slice(-99), entry]);
   };
 
   const refreshTerminals = async () => {
     try {
-      // Custom command to list terminal sessions with activity detection
-      // Note: This relies on the 'list_directory' or a custom 'get_terminal_status' command
-      // For now we simulate based on common TNF TTYs
-      addLog('Refreshing swarm terminal states...');
-
-      // In a real implementation, we would call a backend command that parses
-      // the same info as scripts/runtime/terminal-heartbeat-pulse.cjs
-      const dummyTerminals = [
-        { tty: 'ttys001', agentId: 'tnf-local-terminal-ttys001', busy: true, lastPulse: 'Now' },
-        { tty: 'ttys007', agentId: 'tnf-local-terminal-ttys007', busy: false, lastPulse: '2s ago' },
-        { tty: 'ttys012', agentId: 'tnf-local-terminal-ttys012', busy: true, lastPulse: '5s ago' },
-      ];
-      setTerminals(dummyTerminals);
+      addLog('Refreshing swarm terminal states from synergy plane...');
+      const federated = unifiedAgents.filter((a) => a.source === 'federation');
+      if (federated.length === 0) {
+        setTerminals([
+          {
+            tty: 'synergy',
+            agentId: 'tnf-operator-node',
+            busy: synergy.relayRegistered,
+            lastPulse: synergy.relayRegistered ? 'Now' : 'Idle',
+          },
+        ]);
+        return;
+      }
+      setTerminals(
+        federated.map((agent, index) => ({
+          tty: `agent-${index + 1}`,
+          agentId: agent.id,
+          busy: agent.status === 'active' || agent.status === 'busy',
+          lastPulse: agent.status,
+        }))
+      );
     } catch (e) {
       addLog(`Failed to refresh terminals: ${e}`, 'error');
     }
@@ -79,78 +84,79 @@ const SwarmTerminal: React.FC = () => {
   };
 
   return (
-    <div className="terminal-hub">
-      <header className="hub-header">
-        <div className="header-main">
-          <h1 className="page-title">Swarm Terminal</h1>
-          <p className="page-subtitle">Federated Control & Active Pulse Monitoring</p>
-        </div>
-        <div className="hub-actions">
-          <button className="refresh-btn" onClick={refreshTerminals}>
-            🔄 Refresh
+    <PageShell
+      title="Swarm Terminal"
+      subtitle={`Federated control · ${terminals.length} terminal(s) · ${synergy.relayRegistered ? 'relay registered' : 'relay offline'}`}
+      actions={
+        <>
+          <button type="button" className="secondary-button" onClick={refreshTerminals}>
+            Refresh
           </button>
           <button
-            className={`flush-btn ${isFlushing ? 'loading' : ''}`}
+            type="button"
+            className="primary-button"
             onClick={() => handleForceFlush()}
             disabled={isFlushing}
           >
-            {isFlushing ? '⚡ Pulsing...' : '🔥 Force Swarm Flush'}
+            {isFlushing ? 'Pulsing…' : 'Force Swarm Flush'}
           </button>
-        </div>
-      </header>
-
-      <div className="hub-content">
-        {/* Terminal Grid */}
-        <div className="terminal-section">
-          <h2 className="section-label">Active TTY Instances</h2>
-          <div className="tty-grid">
-            {terminals.map((term) => {
-              const isFederated = federatedAgents.some((a) => a.id === term.agentId);
-              return (
-                <div key={term.tty} className={`tty-card ${term.busy ? 'busy' : 'idle'}`}>
-                  <div className="tty-header">
-                    <span className="tty-name">📟 {term.tty}</span>
-                    <span className={`federated-badge ${isFederated ? 'active' : ''}`}>
-                      {isFederated ? 'FEDERATED' : 'LOCAL'}
-                    </span>
-                  </div>
-                  <div className="tty-body">
-                    <div className="agent-link">{term.agentId}</div>
-                    <div className="pulse-info">Last Pulse: {term.lastPulse}</div>
-                  </div>
-                  <div className="tty-footer">
-                    <div className="status-indicator">
-                      <span className="dot"></span>
-                      {term.busy ? 'AGENT ACTIVE' : 'AWAITING TASK'}
+        </>
+      }
+    >
+      <SynergyStatusBar />
+      <div className="terminal-hub">
+        <div className="hub-content">
+          {/* Terminal Grid */}
+          <div className="terminal-section">
+            <h2 className="section-label">Active TTY Instances</h2>
+            <div className="tty-grid">
+              {terminals.map((term) => {
+                const isFederated = unifiedAgents.some((a) => a.id === term.agentId);
+                return (
+                  <div key={term.tty} className={`tty-card ${term.busy ? 'busy' : 'idle'}`}>
+                    <div className="tty-header">
+                      <span className="tty-name">📟 {term.tty}</span>
+                      <span className={`federated-badge ${isFederated ? 'active' : ''}`}>
+                        {isFederated ? 'FEDERATED' : 'LOCAL'}
+                      </span>
                     </div>
-                    <button className="mini-action" onClick={() => handleForceFlush(term.tty)}>
-                      Flush
-                    </button>
+                    <div className="tty-body">
+                      <div className="agent-link">{term.agentId}</div>
+                      <div className="pulse-info">Last Pulse: {term.lastPulse}</div>
+                    </div>
+                    <div className="tty-footer">
+                      <div className="status-indicator">
+                        <span className="dot"></span>
+                        {term.busy ? 'AGENT ACTIVE' : 'AWAITING TASK'}
+                      </div>
+                      <button className="mini-action" onClick={() => handleForceFlush(term.tty)}>
+                        Flush
+                      </button>
+                    </div>
                   </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Live Swarm Audit Trail */}
+          <div className="audit-section">
+            <div className="pane-header">
+              <h3>Swarm Audit Trail</h3>
+              <span className="guard-hint">🛡️ Zero-Tolerance Typing Guard: ENABLED</span>
+            </div>
+            <div className="log-window">
+              {logs.map((log, i) => (
+                <div key={i} className={`log-line ${log.includes('Error') ? 'error' : ''}`}>
+                  {log}
                 </div>
-              );
-            })}
+              ))}
+              <div ref={logEndRef} />
+            </div>
           </div>
         </div>
 
-        {/* Live Swarm Audit Trail */}
-        <div className="audit-section">
-          <div className="pane-header">
-            <h3>Swarm Audit Trail</h3>
-            <span className="guard-hint">🛡️ Zero-Tolerance Typing Guard: ENABLED</span>
-          </div>
-          <div className="log-window">
-            {logs.map((log, i) => (
-              <div key={i} className={`log-line ${log.includes('Error') ? 'error' : ''}`}>
-                {log}
-              </div>
-            ))}
-            <div ref={logEndRef} />
-          </div>
-        </div>
-      </div>
-
-      <style>{`
+        <style>{`
         .terminal-hub {
           padding: 24px;
           height: 100%;
@@ -344,7 +350,8 @@ const SwarmTerminal: React.FC = () => {
         .log-line { margin-bottom: 4px; border-left: 2px solid rgba(234, 88, 12, 0.2); padding-left: 12px; }
         .log-line.error { color: #ef4444; border-left-color: #ef4444; }
       `}</style>
-    </div>
+      </div>
+    </PageShell>
   );
 };
 

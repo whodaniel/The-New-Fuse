@@ -65,17 +65,27 @@ export const BrowserControlPanel: React.FC<BrowserControlPanelProps> = ({
     }
   };
 
+  const tabBar = (
+    <div className="panel-tabs">
+      <button
+        className={activeTab === 'browser' ? 'tab active' : 'tab'}
+        onClick={() => setActiveTab('browser')}
+      >
+        Browser
+      </button>
+      <button
+        className={activeTab === 'federation' ? 'tab active' : 'tab'}
+        onClick={() => setActiveTab('federation')}
+      >
+        Federation
+      </button>
+    </div>
+  );
+
   if (activeTab === 'federation') {
     return (
       <aside className="browser-control-panel federation-mode">
-        <div className="panel-tabs">
-          <button className={activeTab === 'browser' ? 'tab active' : 'tab'} onClick={() => setActiveTab('browser')}>
-            Browser
-          </button>
-          <button className={activeTab === 'federation' ? 'tab active' : 'tab'} onClick={() => setActiveTab('federation')}>
-            Federation
-          </button>
-        </div>
+        {tabBar}
         <FederationChannelPanel
           state={federation}
           onConnect={onFederationConnect}
@@ -95,14 +105,7 @@ export const BrowserControlPanel: React.FC<BrowserControlPanelProps> = ({
 
   return (
     <aside className="browser-control-panel">
-      <div className="panel-tabs">
-        <button className={activeTab === 'browser' ? 'tab active' : 'tab'} onClick={() => setActiveTab('browser')}>
-          Browser
-        </button>
-        <button className={activeTab === 'federation' ? 'tab active' : 'tab'} onClick={() => setActiveTab('federation')}>
-          Federation
-        </button>
-      </div>
+      {tabBar}
       <header className="panel-header">
         <h2>Browser Control</h2>
         <p>TNF harness relay + Chrome extension operator surface</p>
@@ -123,8 +126,8 @@ export const BrowserControlPanel: React.FC<BrowserControlPanelProps> = ({
         {state.lastError && <p className="panel-error">{state.lastError}</p>}
         {!state.extensionConnected && state.relayConnected && (
           <p className="panel-hint">
-            Extension offline — federation node still drives relay channels. Switch to the Federation
-            tab for standalone channel control.
+            Extension offline — federation node still drives relay channels. Switch to the
+            Federation tab for standalone channel control.
           </p>
         )}
       </section>
@@ -211,7 +214,11 @@ export const BrowserControlPanel: React.FC<BrowserControlPanelProps> = ({
               Start Session
             </button>
           ) : (
-            <button className="panel-btn danger" disabled={!!busy} onClick={() => void onEndSession()}>
+            <button
+              className="panel-btn danger"
+              disabled={!!busy}
+              onClick={() => void onEndSession()}
+            >
               End Session
             </button>
           )}

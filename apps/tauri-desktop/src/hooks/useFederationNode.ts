@@ -61,12 +61,14 @@ export function useFederationNode(relayUrl?: string) {
       agentName: snapshot.agentName,
       channels: snapshot.channels,
       joinedChannels: snapshot.joinedChannels,
-      agents: snapshot.agents.map((agent) => ({
-        id: agent.id,
-        name: agent.name,
-        platform: String(agent.platform),
-        status: String(agent.status),
-      })),
+      agents: snapshot.agents.map(
+        (agent: { id: string; name: string; platform: string; status: string }) => ({
+          id: agent.id,
+          name: agent.name,
+          platform: String(agent.platform),
+          status: String(agent.status),
+        })
+      ),
       activityLog: snapshot.activityLog,
     }));
   }, []);
@@ -90,7 +92,10 @@ export function useFederationNode(relayUrl?: string) {
 
     const handlers: Array<[string, (...args: unknown[]) => void]> = [
       ['connected', () => syncFromService()],
-      ['disconnected', () => setState((prev) => ({ ...prev, relayConnected: false, registered: false }))],
+      [
+        'disconnected',
+        () => setState((prev) => ({ ...prev, relayConnected: false, registered: false })),
+      ],
       ['registered', () => setState((prev) => ({ ...prev, registered: true }))],
       [
         'registration_error',
@@ -169,7 +174,11 @@ export function useFederationNode(relayUrl?: string) {
       FederationNodeService.on(event as any, handler);
     }
 
-    void connect();
+    if (FederationNodeService.isConnected()) {
+      syncFromService();
+    } else {
+      void connect();
+    }
 
     return () => {
       for (const [event, handler] of handlers) {

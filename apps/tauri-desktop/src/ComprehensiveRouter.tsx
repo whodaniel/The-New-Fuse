@@ -1,6 +1,9 @@
 import React, { Suspense, lazy } from 'react';
+import NavIcon from './components/layout/NavIcon';
 import { useRoute } from './components/route-context';
+import './ComprehensiveRouter.css';
 import { useLayout } from './contexts/LayoutContext';
+import { useOperatorSynergy } from './hooks/useOperatorSynergy';
 
 // Lazy load pages
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -14,6 +17,10 @@ const Settings = lazy(() => import('./pages/Settings'));
 const WebBrowser = lazy(() => import('./pages/WebBrowser'));
 const OAGIHub = lazy(() => import('./pages/OAGIHub'));
 const SwarmTerminal = lazy(() => import('./pages/SwarmTerminal'));
+const A2AControl = lazy(() => import('./pages/A2AControl'));
+const WebParityHub = lazy(() => import('./pages/WebParityHub'));
+const PlatformOverview = lazy(() => import('./pages/PlatformOverview'));
+const KnowledgeHub = lazy(() => import('./pages/KnowledgeHub'));
 
 /**
  * The New Fuse Tauri Desktop - Comprehensive Router
@@ -22,19 +29,30 @@ const SwarmTerminal = lazy(() => import('./pages/SwarmTerminal'));
 const ComprehensiveRouter: React.FC = () => {
   const { currentRoute, navigate } = useRoute();
   const { sidebarCollapsed, sidebarOpen, isMobile, toggleSidebar, setSidebarOpen } = useLayout();
+  const { state: synergy } = useOperatorSynergy();
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '/dashboard', section: 'main' },
-    { id: 'browser', label: 'Browser Control', icon: '🌐', route: '/browser', section: 'main', badge: 'FOREFRONT' },
-    { id: 'agents', label: 'Agent Hub', icon: '🤖', route: '/agents', section: 'main' },
-    { id: 'terminal', label: 'Swarm Terminal', icon: '📟', route: '/terminal', section: 'main' },
-    { id: 'oagi', label: 'OAGI Hub', icon: '🖥️', route: '/oagi', section: 'main' },
-    { id: 'antigravity', label: 'Antigravity', icon: '🔮', route: '/antigravity', section: 'main' },
-    { id: 'chat', label: 'Chat', icon: '💬', route: '/chat', section: 'main' },
-    { id: 'workflows', label: 'Workflows', icon: '⚡', route: '/workflows', section: 'main' },
-    { id: 'analytics', label: 'Analytics', icon: '📊', route: '/analytics', section: 'main' },
-    { id: 'mcp', label: 'MCP Store', icon: '🔧', route: '/mcp', section: 'tools' },
-    { id: 'settings', label: 'Settings', icon: '⚙️', route: '/settings', section: 'system' },
+    { id: 'platform', label: 'Platform', route: '/platform', section: 'main', badge: 'TNF' },
+    { id: 'dashboard', label: 'Dashboard', route: '/dashboard', section: 'main' },
+    {
+      id: 'browser',
+      label: 'Browser Control',
+      route: '/browser',
+      section: 'main',
+      badge: 'FOREFRONT',
+    },
+    { id: 'agents', label: 'Agent Hub', route: '/agents', section: 'main' },
+    { id: 'a2a', label: 'A2A Control', route: '/a2a', section: 'main' },
+    { id: 'knowledge', label: 'Knowledge Hub', route: '/knowledge', section: 'main' },
+    { id: 'terminal', label: 'Swarm Terminal', route: '/terminal', section: 'main' },
+    { id: 'oagi', label: 'OAGI Hub', route: '/oagi', section: 'main' },
+    { id: 'antigravity', label: 'Antigravity', route: '/antigravity', section: 'main' },
+    { id: 'chat', label: 'Chat', route: '/chat', section: 'main' },
+    { id: 'workflows', label: 'Workflows', route: '/workflows', section: 'main' },
+    { id: 'analytics', label: 'Analytics', route: '/analytics', section: 'main' },
+    { id: 'web-hub', label: 'Web Parity', route: '/web-hub', section: 'tools', badge: 'WEB' },
+    { id: 'mcp', label: 'MCP Store', route: '/mcp', section: 'tools' },
+    { id: 'settings', label: 'Settings', route: '/settings', section: 'system' },
   ];
 
   const mainNav = navItems.filter((item) => item.section === 'main');
@@ -63,6 +81,14 @@ const ComprehensiveRouter: React.FC = () => {
         return <Settings />;
       case '/browser':
         return <WebBrowser />;
+      case '/a2a':
+        return <A2AControl />;
+      case '/platform':
+        return <PlatformOverview />;
+      case '/knowledge':
+        return <KnowledgeHub />;
+      case '/web-hub':
+        return <WebParityHub />;
       case '/dashboard':
       default:
         return <Dashboard />;
@@ -77,6 +103,26 @@ const ComprehensiveRouter: React.FC = () => {
     }
   };
 
+  const connectionDotClass = (() => {
+    if (synergy.relayConnected) {
+      return 'online';
+    }
+    if (synergy.relayRegistered) {
+      return 'warn';
+    }
+    return 'offline';
+  })();
+
+  const connectionLabel = (() => {
+    if (synergy.relayRegistered) {
+      return `Federation · ${synergy.unifiedAgents.length} agents`;
+    }
+    if (synergy.relayConnected) {
+      return 'Relay connected';
+    }
+    return 'Offline';
+  })();
+
   return (
     <div className="app-container">
       {/* Mobile Header */}
@@ -87,7 +133,8 @@ const ComprehensiveRouter: React.FC = () => {
           </button>
           <div className="mobile-logo">
             <span className="logo-icon">🔥</span>
-            <span className="logo-text">The New Fuse</span>
+            <span className="logo-text">TNF Desktop</span>
+            <span className="logo-sub">The New Fuse</span>
           </div>
           <div className="mobile-header-spacer"></div>
         </header>
@@ -95,7 +142,12 @@ const ComprehensiveRouter: React.FC = () => {
 
       {/* Mobile Overlay */}
       {isMobile && sidebarOpen && (
-        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>
+        <button
+          type="button"
+          className="sidebar-overlay"
+          aria-label="Close navigation"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
 
       {/* Sidebar */}
@@ -107,7 +159,12 @@ const ComprehensiveRouter: React.FC = () => {
           <div className="sidebar-header">
             <div className="logo">
               <span className="logo-icon">🔥</span>
-              {!sidebarCollapsed && <span className="logo-text">The New Fuse</span>}
+              {!sidebarCollapsed && (
+                <>
+                  <span className="logo-text">TNF Desktop</span>
+                  <span className="logo-sub">The New Fuse</span>
+                </>
+              )}
             </div>
             <button className="collapse-btn" onClick={toggleSidebar}>
               {sidebarCollapsed ? '→' : '←'}
@@ -125,7 +182,9 @@ const ComprehensiveRouter: React.FC = () => {
               onClick={() => handleNavClick(item.route)}
               title={sidebarCollapsed ? item.label : undefined}
             >
-              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-icon">
+                <NavIcon id={item.id} />
+              </span>
               {!sidebarCollapsed && (
                 <span className="nav-label">
                   {item.label}
@@ -146,7 +205,9 @@ const ComprehensiveRouter: React.FC = () => {
               onClick={() => handleNavClick(item.route)}
               title={sidebarCollapsed ? item.label : undefined}
             >
-              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-icon">
+                <NavIcon id={item.id} />
+              </span>
               {!sidebarCollapsed && (
                 <span className="nav-label">
                   {item.label}
@@ -168,7 +229,9 @@ const ComprehensiveRouter: React.FC = () => {
               onClick={() => handleNavClick(item.route)}
               title={sidebarCollapsed ? item.label : undefined}
             >
-              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-icon">
+                <NavIcon id={item.id} />
+              </span>
               {!sidebarCollapsed && (
                 <span className="nav-label">
                   {item.label}
@@ -185,11 +248,11 @@ const ComprehensiveRouter: React.FC = () => {
           {!sidebarCollapsed && (
             <>
               <div className="connection-indicator">
-                <span className="status-dot online"></span>
-                <span>Connected</span>
+                <span className={`status-dot ${connectionDotClass}`}></span>
+                <span>{connectionLabel}</span>
               </div>
               <div className="version-info">
-                <span>v4.0.0</span>
+                <span>v4.1.0</span>
                 <span className="build-type">Tauri</span>
               </div>
             </>
@@ -262,6 +325,9 @@ const ComprehensiveRouter: React.FC = () => {
           background: rgba(0, 0, 0, 0.6);
           backdrop-filter: blur(4px);
           z-index: 90;
+          border: none;
+          padding: 0;
+          cursor: pointer;
         }
 
         /* Sidebar */
@@ -326,6 +392,14 @@ const ComprehensiveRouter: React.FC = () => {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
+        }
+
+        .logo-sub {
+          display: block;
+          font-size: 11px;
+          color: var(--tnf-text-muted, #64748b);
+          font-weight: 500;
+          margin-top: 2px;
         }
 
         .collapse-btn {
@@ -393,9 +467,18 @@ const ComprehensiveRouter: React.FC = () => {
         }
 
         .nav-icon {
-          font-size: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           width: 24px;
-          text-align: center;
+          height: 24px;
+          color: inherit;
+          opacity: 0.85;
+        }
+
+        .nav-item.active .nav-icon {
+          opacity: 1;
+          color: var(--tnf-primary-light, #8b5cf6);
         }
 
         .nav-label {
@@ -438,6 +521,16 @@ const ComprehensiveRouter: React.FC = () => {
         .status-dot.online {
           background: var(--tnf-success, #10b981);
           box-shadow: 0 0 8px var(--tnf-success);
+        }
+
+        .status-dot.warn {
+          background: var(--tnf-warning, #f59e0b);
+          box-shadow: 0 0 8px var(--tnf-warning);
+        }
+
+        .status-dot.offline {
+          background: var(--tnf-error, #ef4444);
+          box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
         }
 
         .version-info {

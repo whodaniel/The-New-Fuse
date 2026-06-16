@@ -95,6 +95,10 @@ class BrowserControlServiceClass extends EventEmitter<BrowserControlEvent> {
       this.relayUrl = relayUrl;
     }
 
+    if (this.connected && this.ws?.readyState === WebSocket.OPEN) {
+      return true;
+    }
+
     console.log(`🔌 Connecting to TNF Relay at ${this.relayUrl}...`);
 
     return new Promise((resolve) => {

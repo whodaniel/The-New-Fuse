@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BrowserControlPanel from '../components/browser/BrowserControlPanel';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useBrowserControl } from '../hooks/useBrowserControl';
 import { useFederationNode } from '../hooks/useFederationNode';
 import { useSettingsStore } from '../stores';
@@ -85,174 +87,202 @@ const WebBrowser: React.FC = () => {
   const extensionMode = browser.state.extensionConnected;
 
   return (
-    <div className="browser-page">
-      <div className="browser-main">
-        <div className="tab-bar">
-          {tabs.map((tab, idx) => (
-            <div
-              key={tab.id}
-              className={`tab ${currentTab === idx ? 'active' : ''}`}
-              onClick={() => selectTab(idx)}
-            >
-              <span className="tab-favicon">🌐</span>
-              <span className="tab-title">{tab.title}</span>
-              <button className="tab-close" onClick={(event) => closeTab(tab.id, event)}>
-                ×
+    <PageShell
+      className="page-fill"
+      title="Browser Control"
+      subtitle="Lux Bridge — Chrome extension relay + operator panel (Forefront)"
+      actions={
+        <span
+          className={`env-badge ${extensionMode ? 'local' : federation.state.registered ? 'cloud' : 'offline'}`}
+        >
+          {extensionMode
+            ? 'Extension connected'
+            : federation.state.registered
+              ? 'Federation'
+              : 'Offline'}
+        </span>
+      }
+    >
+      <SynergyStatusBar />
+      <div className="page-fill-body">
+        <div className="browser-page">
+          <div className="browser-main">
+            <div className="tab-bar">
+              {tabs.map((tab, idx) => (
+                <div
+                  key={tab.id}
+                  className={`tab ${currentTab === idx ? 'active' : ''}`}
+                  onClick={() => selectTab(idx)}
+                >
+                  <span className="tab-favicon">🌐</span>
+                  <span className="tab-title">{tab.title}</span>
+                  <button className="tab-close" onClick={(event) => closeTab(tab.id, event)}>
+                    ×
+                  </button>
+                </div>
+              ))}
+              <button className="add-tab-btn" onClick={addTab}>
+                +
               </button>
             </div>
-          ))}
-          <button className="add-tab-btn" onClick={addTab}>
-            +
-          </button>
-        </div>
 
-        <div className="browser-controls">
-          <div className="nav-btns">
-            <button className="nav-btn" title="Back" onClick={() => void browser.goBack()}>
-              ←
-            </button>
-            <button className="nav-btn" title="Forward" onClick={() => void browser.goForward()}>
-              →
-            </button>
-            <button className="nav-btn" title="Reload" onClick={() => void browser.refresh()}>
-              ↻
-            </button>
-            <button
-              className="nav-btn"
-              title="Home"
-              onClick={() => {
-                setInputUrl('about:blank');
-                applyUrlToTab('about:blank', 'New Tab');
-              }}
-            >
-              🏠
-            </button>
-          </div>
+            <div className="browser-controls">
+              <div className="nav-btns">
+                <button className="nav-btn" title="Back" onClick={() => void browser.goBack()}>
+                  ←
+                </button>
+                <button
+                  className="nav-btn"
+                  title="Forward"
+                  onClick={() => void browser.goForward()}
+                >
+                  →
+                </button>
+                <button className="nav-btn" title="Reload" onClick={() => void browser.refresh()}>
+                  ↻
+                </button>
+                <button
+                  className="nav-btn"
+                  title="Home"
+                  onClick={() => {
+                    setInputUrl('about:blank');
+                    applyUrlToTab('about:blank', 'New Tab');
+                  }}
+                >
+                  🏠
+                </button>
+              </div>
 
-          <form className="address-bar-container" onSubmit={handleNavigate}>
-            <input
-              type="text"
-              className="address-bar"
-              value={inputUrl}
-              onChange={(event) => setInputUrl(event.target.value)}
-              placeholder="Search or enter website address"
-            />
-          </form>
+              <form className="address-bar-container" onSubmit={handleNavigate}>
+                <input
+                  type="text"
+                  className="address-bar"
+                  value={inputUrl}
+                  onChange={(event) => setInputUrl(event.target.value)}
+                  placeholder="Search or enter website address"
+                />
+              </form>
 
-          <div className="browser-actions">
-            <div className={`env-badge ${environment}`} title="Current Connection Environment">
-              <span className="env-dot"></span>
-              {environment.charAt(0).toUpperCase() + environment.slice(1)}
-            </div>
-            <div className={`env-badge ${extensionMode ? 'local' : 'sandbox'}`}>
-              {extensionMode ? 'Extension Live' : 'Preview Mode'}
-            </div>
-            <div className={`env-badge ${federation.state.registered ? 'local' : 'sandbox'}`}>
-              {federation.state.registered ? 'Federation Live' : 'Federation Node'}
-            </div>
-          </div>
-        </div>
-
-        <div className="content-area">
-          {activeUrl === 'about:blank' ? (
-            <div className="new-tab-page">
-              <div className="new-tab-content">
-                <h1>The New Fuse</h1>
-                <p>Local browser control + standalone federation node for TNF harness operations.</p>
-                <form className="search-box" onSubmit={handleNavigate}>
-                  <input
-                    type="text"
-                    value={inputUrl === 'about:blank' ? '' : inputUrl}
-                    onChange={(event) => setInputUrl(event.target.value)}
-                    placeholder="Navigate anywhere..."
-                  />
-                  <button type="submit">Go</button>
-                </form>
-                <div className="shortcuts">
-                  {[
-                    ['GitHub', 'https://github.com'],
-                    ['TNF Docs', 'https://thenewfuse.com'],
-                    ['Relay Health', 'http://127.0.0.1:3000/health'],
-                  ].map(([label, url]) => (
-                    <button
-                      key={url}
-                      className="shortcut-card"
-                      onClick={() => {
-                        setInputUrl(url);
-                        void handleNavigate();
-                      }}
-                    >
-                      <span>{label}</span>
-                    </button>
-                  ))}
+              <div className="browser-actions">
+                <div className={`env-badge ${environment}`} title="Current Connection Environment">
+                  <span className="env-dot"></span>
+                  {environment.charAt(0).toUpperCase() + environment.slice(1)}
+                </div>
+                <div className={`env-badge ${extensionMode ? 'local' : 'sandbox'}`}>
+                  {extensionMode ? 'Extension Live' : 'Preview Mode'}
+                </div>
+                <div className={`env-badge ${federation.state.registered ? 'local' : 'sandbox'}`}>
+                  {federation.state.registered ? 'Federation Live' : 'Federation Node'}
                 </div>
               </div>
             </div>
-          ) : extensionMode ? (
-            <div className="extension-mode">
-              <div className="extension-banner">
-                <strong>Extension-controlled session</strong>
-                <p>{browser.state.currentTitle || activeUrl}</p>
-                <button onClick={() => void browser.openNative(activeUrl)}>Open in system browser</button>
-              </div>
-              {browser.state.lastScreenshot ? (
-                <img
-                  src={browser.state.lastScreenshot}
-                  alt="Live browser preview"
-                  className="live-preview"
-                />
+
+            <div className="content-area">
+              {activeUrl === 'about:blank' ? (
+                <div className="new-tab-page">
+                  <div className="new-tab-content">
+                    <h1>TNF Desktop App</h1>
+                    <p>The New Fuse — local browser control and standalone federation node.</p>
+                    <form className="search-box" onSubmit={handleNavigate}>
+                      <input
+                        type="text"
+                        value={inputUrl === 'about:blank' ? '' : inputUrl}
+                        onChange={(event) => setInputUrl(event.target.value)}
+                        placeholder="Navigate anywhere..."
+                      />
+                      <button type="submit">Go</button>
+                    </form>
+                    <div className="shortcuts">
+                      {[
+                        ['GitHub', 'https://github.com'],
+                        ['TNF Docs', 'https://thenewfuse.com'],
+                        ['Relay Health', 'http://127.0.0.1:3000/health'],
+                      ].map(([label, url]) => (
+                        <button
+                          key={url}
+                          className="shortcut-card"
+                          onClick={() => {
+                            setInputUrl(url);
+                            void handleNavigate();
+                          }}
+                        >
+                          <span>{label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : extensionMode ? (
+                <div className="extension-mode">
+                  <div className="extension-banner">
+                    <strong>Extension-controlled session</strong>
+                    <p>{browser.state.currentTitle || activeUrl}</p>
+                    <button onClick={() => void browser.openNative(activeUrl)}>
+                      Open in system browser
+                    </button>
+                  </div>
+                  {browser.state.lastScreenshot ? (
+                    <img
+                      src={browser.state.lastScreenshot}
+                      alt="Live browser preview"
+                      className="live-preview"
+                    />
+                  ) : (
+                    <div className="live-placeholder">
+                      <p>
+                        Use Screenshot or Analyze in the control panel to inspect the active tab.
+                      </p>
+                    </div>
+                  )}
+                </div>
               ) : (
-                <div className="live-placeholder">
-                  <p>Use Screenshot or Analyze in the control panel to inspect the active tab.</p>
+                <div className="iframe-container">
+                  <iframe
+                    src={activeUrl}
+                    className="content-frame"
+                    title="Browser View"
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+                  />
+                  <div className="browser-notice">
+                    <p>
+                      <strong>Preview mode:</strong> complex sites may block embedded previews.
+                      Connect the TNF Chrome extension for full browser control.
+                    </p>
+                    <button onClick={() => void browser.openNative(activeUrl)}>
+                      Open in Native Window
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
-          ) : (
-            <div className="iframe-container">
-              <iframe
-                src={activeUrl}
-                className="content-frame"
-                title="Browser View"
-                sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
-              />
-              <div className="browser-notice">
-                <p>
-                  <strong>Preview mode:</strong> complex sites may block embedded previews. Connect
-                  the TNF Chrome extension for full browser control.
-                </p>
-                <button onClick={() => void browser.openNative(activeUrl)}>Open in Native Window</button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      <BrowserControlPanel
-        state={browser.state}
-        federation={federation.state}
-        onConnect={browser.connect}
-        onFederationConnect={federation.connect}
-        onFederationRefresh={federation.refresh}
-        onSelectChannel={federation.selectChannel}
-        onCreateChannel={federation.createChannel}
-        onJoinChannel={federation.joinChannel}
-        onLeaveChannel={federation.leaveChannel}
-        onSendChannelMessage={federation.sendMessage}
-        onPauseChannel={federation.pauseChannel}
-        onResumeChannel={federation.resumeChannel}
-        onNavigate={browser.navigate}
-        onBack={browser.goBack}
-        onForward={browser.goForward}
-        onRefresh={browser.refresh}
-        onScreenshot={browser.takeScreenshot}
-        onAnalyze={browser.analyzePage}
-        onStartSession={browser.startSession}
-        onEndSession={browser.endSession}
-        onOpenNative={browser.openNative}
-        onRefreshTabs={browser.refreshTabs}
-      />
+          <BrowserControlPanel
+            state={browser.state}
+            federation={federation.state}
+            onConnect={browser.connect}
+            onFederationConnect={federation.connect}
+            onFederationRefresh={federation.refresh}
+            onSelectChannel={federation.selectChannel}
+            onCreateChannel={federation.createChannel}
+            onJoinChannel={federation.joinChannel}
+            onLeaveChannel={federation.leaveChannel}
+            onSendChannelMessage={federation.sendMessage}
+            onPauseChannel={federation.pauseChannel}
+            onResumeChannel={federation.resumeChannel}
+            onNavigate={browser.navigate}
+            onBack={browser.goBack}
+            onForward={browser.goForward}
+            onRefresh={browser.refresh}
+            onScreenshot={browser.takeScreenshot}
+            onAnalyze={browser.analyzePage}
+            onStartSession={browser.startSession}
+            onEndSession={browser.endSession}
+            onOpenNative={browser.openNative}
+            onRefreshTabs={browser.refreshTabs}
+          />
 
-      <style>{`
+          <style>{`
         .browser-page {
           display: flex;
           height: 100%;
@@ -437,7 +467,9 @@ const WebBrowser: React.FC = () => {
           background: rgba(255,255,255,0.05);
         }
       `}</style>
-    </div>
+        </div>
+      </div>
+    </PageShell>
   );
 };
 

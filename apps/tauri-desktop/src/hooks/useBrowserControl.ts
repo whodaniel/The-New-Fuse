@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import BrowserControlService, {
-  type BrowserControlEvent,
-} from '../services/BrowserControlService';
+import BrowserControlService, { type BrowserControlEvent } from '../services/BrowserControlService';
 import { useSettingsStore } from '../stores/settingsStore';
 
 export interface BrowserControlState {
@@ -169,7 +167,18 @@ export function useBrowserControl() {
       BrowserControlService.on(event, handler);
     }
 
-    void connect();
+    if (BrowserControlService.isConnected()) {
+      setState((prev) => ({
+        ...prev,
+        relayConnected: true,
+        extensionConnected: BrowserControlService.isExtensionConnected(),
+        connecting: false,
+      }));
+      void refreshTabs();
+      void refreshCurrentUrl();
+    } else {
+      void connect();
+    }
 
     return () => {
       for (const [event, handler] of handlers) {
@@ -219,7 +228,7 @@ export function useBrowserControl() {
     appendLog('Capture screenshot');
     const result = await BrowserControlService.takeScreenshot({ fullPage: false });
     if (result?.dataUrl) {
-      setState((prev) => ({ ...prev, lastScreenshot: result.dataUrl }));
+      setState((prev) => ({ ...prev, lastScreenshot: result.dataUrl ?? null }));
     }
     return result;
   }, [appendLog]);
@@ -245,11 +254,14 @@ export function useBrowserControl() {
     setState((prev) => ({ ...prev, sessionActive: false }));
   }, [appendLog]);
 
-  const openNative = useCallback(async (url: string) => {
-    appendLog(`Open native → ${url}`);
-    const { open } = await import('@tauri-apps/plugin-shell');
-    await open(url);
-  }, [appendLog]);
+  const openNative = useCallback(
+    async (url: string) => {
+      appendLog(`Open native → ${url}`);
+      const { open } = await import('@tauri-apps/plugin-shell');
+      await open(url);
+    },
+    [appendLog]
+  );
 
   return {
     state,

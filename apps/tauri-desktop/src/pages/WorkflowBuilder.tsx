@@ -16,6 +16,8 @@ import ReactFlow, {
   useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 
 /**
  * Enhanced Workflow Builder - Tauri Desktop
@@ -383,133 +385,150 @@ const WorkflowBuilderContent: React.FC = () => {
   ];
 
   return (
-    <div className="workflow-builder-container">
-      {/* Header */}
-      <header className="workflow-header">
-        <div className="header-left">
-          <button className="toggle-sidebar-btn" onClick={() => setShowSidebar(!showSidebar)}>
-            {showSidebar ? '◀' : '▶'}
-          </button>
-          <input
-            type="text"
-            value={workflowName}
-            onChange={(e) => setWorkflowName(e.target.value)}
-            className="workflow-name-input"
-          />
-          <div className="status-badge">
-            <span className={`status-dot ${isExecuting ? 'executing' : 'ready'}`}></span>
-            <span>{isExecuting ? 'Executing...' : 'Ready'}</span>
-          </div>
-        </div>
-        <div className="header-right">
-          <select
-            className="template-select"
-            onChange={(e) => e.target.value && loadTemplate(e.target.value)}
+    <PageShell
+      className="page-fill"
+      title="Workflow Builder"
+      subtitle={workflowName}
+      actions={
+        <>
+          <button
+            type="button"
+            className="ghost-button"
+            onClick={() => setShowSidebar(!showSidebar)}
           >
-            <option value="">Load Template...</option>
-            <option value="research">🔍 AI Research</option>
-            <option value="automation">🤖 Browser Automation</option>
+            {showSidebar ? 'Hide library' : 'Show library'}
+          </button>
+          <select
+            className="secondary-button"
+            onChange={(e) => e.target.value && loadTemplate(e.target.value)}
+            defaultValue=""
+          >
+            <option value="">Load template…</option>
+            <option value="research">AI Research</option>
+            <option value="automation">Browser Automation</option>
           </select>
-          <button className="btn btn-secondary" onClick={saveWorkflow}>
-            💾 Save
+          <button type="button" className="secondary-button" onClick={saveWorkflow}>
+            Save
           </button>
-          <button className="btn btn-primary" onClick={executeWorkflow} disabled={isExecuting}>
-            {isExecuting ? '⏳' : '▶️'} Run
+          <button
+            type="button"
+            className="primary-button"
+            onClick={executeWorkflow}
+            disabled={isExecuting}
+          >
+            {isExecuting ? 'Running…' : 'Run'}
           </button>
-        </div>
-      </header>
-
-      <div className="workflow-content">
-        {/* Sidebar */}
-        {showSidebar && (
-          <aside className="workflow-sidebar">
-            <div className="sidebar-section">
-              <h3>📦 Node Library</h3>
-              <p className="sidebar-hint">Drag nodes to the canvas</p>
-              <div className="node-library">
-                {nodeLibrary.map((node) => (
-                  <div
-                    key={node.type}
-                    className="library-node"
-                    draggable
-                    onDragStart={(e) => onDragStart(e, node.type)}
-                    style={{ borderLeftColor: node.color }}
-                  >
-                    <span className="node-icon">{node.icon}</span>
-                    <span className="node-label">{node.label}</span>
-                  </div>
-                ))}
-              </div>
+        </>
+      }
+    >
+      <SynergyStatusBar />
+      <div className="page-fill-body">
+        <div className="workflow-builder-container">
+          <div className="workflow-toolbar">
+            <input
+              type="text"
+              value={workflowName}
+              onChange={(e) => setWorkflowName(e.target.value)}
+              className="workflow-name-input"
+              aria-label="Workflow name"
+            />
+            <div className="status-badge">
+              <span className={`status-dot ${isExecuting ? 'executing' : 'ready'}`}></span>
+              <span>{isExecuting ? 'Executing...' : 'Ready'}</span>
             </div>
+          </div>
 
-            {executionLog.length > 0 && (
-              <div className="sidebar-section">
-                <h3>📋 Execution Log</h3>
-                <div className="execution-log">
-                  {executionLog.map((log, i) => (
-                    <div key={i} className="log-entry">
-                      {log}
-                    </div>
-                  ))}
+          <div className="workflow-content">
+            {/* Sidebar */}
+            {showSidebar && (
+              <aside className="workflow-sidebar">
+                <div className="sidebar-section">
+                  <h3>📦 Node Library</h3>
+                  <p className="sidebar-hint">Drag nodes to the canvas</p>
+                  <div className="node-library">
+                    {nodeLibrary.map((node) => (
+                      <div
+                        key={node.type}
+                        className="library-node"
+                        draggable
+                        onDragStart={(e) => onDragStart(e, node.type)}
+                        style={{ borderLeftColor: node.color }}
+                      >
+                        <span className="node-icon">{node.icon}</span>
+                        <span className="node-label">{node.label}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+
+                {executionLog.length > 0 && (
+                  <div className="sidebar-section">
+                    <h3>📋 Execution Log</h3>
+                    <div className="execution-log">
+                      {executionLog.map((log, i) => (
+                        <div key={i} className="log-entry">
+                          {log}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="sidebar-section">
+                  <h3>ℹ️ Info</h3>
+                  <div className="workflow-stats">
+                    <div className="stat-item">
+                      <span className="stat-value">{nodes.length}</span>
+                      <span className="stat-label">Nodes</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-value">{edges.length}</span>
+                      <span className="stat-label">Connections</span>
+                    </div>
+                  </div>
+                </div>
+              </aside>
             )}
 
-            <div className="sidebar-section">
-              <h3>ℹ️ Info</h3>
-              <div className="workflow-stats">
-                <div className="stat-item">
-                  <span className="stat-value">{nodes.length}</span>
-                  <span className="stat-label">Nodes</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-value">{edges.length}</span>
-                  <span className="stat-label">Connections</span>
-                </div>
-              </div>
+            {/* Canvas */}
+            <div className="workflow-canvas" ref={reactFlowWrapper}>
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+                nodeTypes={nodeTypes}
+                defaultEdgeOptions={defaultEdgeOptions}
+                fitView
+                proOptions={{ hideAttribution: true }}
+              >
+                <Background variant={BackgroundVariant.Dots} color="#334155" gap={24} />
+                <Controls />
+                <MiniMap
+                  nodeColor={(node) => {
+                    if (node.type === 'agent') return '#8b5cf6';
+                    if (node.type === 'mcpTool') return '#10b981';
+                    if (node.type === 'flowControl') return '#f59e0b';
+                    if (node.type === 'output') return '#06b6d4';
+                    return '#10b981';
+                  }}
+                  maskColor="rgba(0, 0, 0, 0.6)"
+                  style={{ background: '#1e293b', borderRadius: '8px' }}
+                />
+                <Panel position="top-right">
+                  <div className="canvas-info">
+                    <span>Nodes: {nodes.length}</span>
+                    <span>Edges: {edges.length}</span>
+                  </div>
+                </Panel>
+              </ReactFlow>
             </div>
-          </aside>
-        )}
+          </div>
 
-        {/* Canvas */}
-        <div className="workflow-canvas" ref={reactFlowWrapper}>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            nodeTypes={nodeTypes}
-            defaultEdgeOptions={defaultEdgeOptions}
-            fitView
-            proOptions={{ hideAttribution: true }}
-          >
-            <Background variant={BackgroundVariant.Dots} color="#334155" gap={24} />
-            <Controls />
-            <MiniMap
-              nodeColor={(node) => {
-                if (node.type === 'agent') return '#8b5cf6';
-                if (node.type === 'mcpTool') return '#10b981';
-                if (node.type === 'flowControl') return '#f59e0b';
-                if (node.type === 'output') return '#06b6d4';
-                return '#10b981';
-              }}
-              maskColor="rgba(0, 0, 0, 0.6)"
-              style={{ background: '#1e293b', borderRadius: '8px' }}
-            />
-            <Panel position="top-right">
-              <div className="canvas-info">
-                <span>Nodes: {nodes.length}</span>
-                <span>Edges: {edges.length}</span>
-              </div>
-            </Panel>
-          </ReactFlow>
-        </div>
-      </div>
-
-      <style>{`
+          <style>{`
         .workflow-builder-container {
           height: 100%;
           display: flex;
@@ -518,16 +537,15 @@ const WorkflowBuilderContent: React.FC = () => {
           color: var(--tnf-text-primary, #f8fafc);
         }
 
-        /* Header */
+        /* Toolbar (name + status below PageShell header) */
+        .workflow-toolbar,
         .workflow-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 12px 20px;
-          background: var(--tnf-surface);
-          border-bottom: 1px solid var(--tnf-border);
-          flex-wrap: wrap;
+          padding: 8px 0 12px;
           gap: 12px;
+          flex-wrap: wrap;
         }
 
         .header-left, .header-right {
@@ -847,7 +865,9 @@ const WorkflowBuilderContent: React.FC = () => {
           background: var(--tnf-surface-hover);
         }
       `}</style>
-    </div>
+        </div>
+      </div>
+    </PageShell>
   );
 };
 

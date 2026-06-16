@@ -1,31 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
+import { openExternal } from '../lib/openExternal';
+import BrowserControlService from '../services/BrowserControlService';
+import FederationNodeService from '../services/FederationNodeService';
 import { useRoute } from './route-context';
-import { useBrowserControl } from '../hooks/useBrowserControl';
-import { useFederationNode } from '../hooks/useFederationNode';
-import { useSettingsStore } from '../stores';
 
-const LOCAL_UI_URL = 'http://localhost:1420/#/browser';
+const LOCAL_UI_URL = 'http://localhost:1420';
 
 export const ForefrontOperatorPanel: React.FC = () => {
   const { navigate } = useRoute();
-  const browser = useBrowserControl();
-  const federation = useFederationNode();
-  const { environment } = useSettingsStore();
-  const [apiHealthy, setApiHealthy] = useState<boolean | null>(null);
+  const { state, refresh } = useOperatorSynergy();
 
-  useEffect(() => {
-    let cancelled = false;
-    fetch('http://127.0.0.1:3000/health')
-      .then((res) => {
-        if (!cancelled) setApiHealthy(res.ok);
-      })
-      .catch(() => {
-        if (!cancelled) setApiHealthy(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const connectRelay = async () => {
+    await Promise.allSettled([
+      FederationNodeService.connect(state.relayUrl),
+      BrowserControlService.connect(state.relayUrl),
+    ]);
+    await refresh();
+  };
 
   return (
     <section className="forefront-panel">
@@ -33,17 +25,22 @@ export const ForefrontOperatorPanel: React.FC = () => {
         <p className="eyebrow">TNF Forefront</p>
         <h2>Operator command surface</h2>
         <p>
-          Local harness, relay-backed browser control, and agent orchestration in one place. Environment:{' '}
-          <strong>{environment}</strong>.
+          Unified relay, federation, browser, and API orchestration. Environment:{' '}
+          <strong>{state.environment}</strong> · {state.unifiedAgents.length} agents in synergy.
         </p>
       </div>
 
       <div className="forefront-status">
-        <StatusChip label="Relay" ok={browser.state.relayConnected} />
-        <StatusChip label="Extension" ok={browser.state.extensionConnected} />
-        <StatusChip label="Federation" ok={federation.state.registered} />
-        <StatusChip label="Relay HTTP" ok={apiHealthy === true} warn={apiHealthy === null} />
-        <StatusChip label="Session" ok={browser.state.sessionActive} />
+        <StatusChip label="Relay" ok={state.relayConnected} />
+        <StatusChip label="Federation" ok={state.relayRegistered} />
+        <StatusChip label="Extension" ok={state.extensionConnected} />
+        <StatusChip label="API" ok={state.apiOnline} />
+        <StatusChip
+          label="Channels"
+          ok={state.channelCount > 0}
+          warn={state.relayConnected && state.channelCount === 0}
+        />
+        <StatusChip label="Session" ok={state.browserSessionActive} />
       </div>
 
       <div className="forefront-actions">
@@ -58,15 +55,18 @@ export const ForefrontOperatorPanel: React.FC = () => {
         </button>
         <button
           className="forefront-btn"
-          onClick={() => void browser.connect()}
-          disabled={browser.state.relayConnected || browser.state.connecting}
+          onClick={() => void connectRelay()}
+          disabled={state.relayConnected}
         >
-          {browser.state.connecting ? 'Connecting…' : 'Connect Relay'}
+          {state.relayConnected ? 'Relay Connected' : 'Connect Relay'}
+        </button>
+        <button className="forefront-btn ghost" onClick={() => void refresh()}>
+          Sync Synergy
         </button>
         <button
           className="forefront-btn ghost"
           onClick={() => {
-            window.open(LOCAL_UI_URL, '_blank', 'noopener,noreferrer');
+            void openExternal(LOCAL_UI_URL);
           }}
         >
           Open Standalone UI

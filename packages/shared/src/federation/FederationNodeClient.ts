@@ -42,7 +42,7 @@ export class FederationNodeClient {
   private platform: FederationNodePlatform = 'federation-node';
   private agentName = 'TNF Federation Node';
   private agentId = generateFederationId('node');
-  private capabilities = [...FEDERATION_NODE_CAPABILITIES];
+  private capabilities: string[] = [...FEDERATION_NODE_CAPABILITIES];
   private autoRegister = true;
   private autoHeartbeatMs = 30000;
 
@@ -125,7 +125,9 @@ export class FederationNodeClient {
   }
 
   async discoverRelayUrl(preferred?: string): Promise<string | null> {
-    const candidates = [preferred, this.relayUrl, ...DEFAULT_RELAY_FALLBACKS].filter(Boolean) as string[];
+    const candidates = [preferred, this.relayUrl, ...DEFAULT_RELAY_FALLBACKS].filter(
+      Boolean
+    ) as string[];
     const unique = [...new Set(candidates)];
     for (const candidate of unique) {
       try {
@@ -144,6 +146,9 @@ export class FederationNodeClient {
   }
 
   async connect(relayUrl?: string): Promise<boolean> {
+    if (this.connected && this.ws?.readyState === WebSocket.OPEN) {
+      return true;
+    }
     if (this.connecting) return false;
     if (relayUrl) this.relayUrl = relayUrl;
 
@@ -338,6 +343,25 @@ export class FederationNodeClient {
     }, delay);
   }
 
+  private ensureDefaultChannel(channels: FederationChannel[]): void {
+    if (!this.registered) return;
+
+    const general =
+      channels.find((channel) => channel.id === 'general' || channel.name === 'general') ||
+      channels[0];
+
+    if (general) {
+      if (!this.joinedChannels.has(general.id)) {
+        this.joinChannel(general.id);
+      }
+      return;
+    }
+
+    if (channels.length === 0) {
+      this.createChannel('general', 'Default operator channel');
+    }
+  }
+
   private handleMessage(message: FederationProtocolMessage): void {
     switch (message.type) {
       case 'WELCOME':
@@ -361,7 +385,8 @@ export class FederationNodeClient {
         break;
 
       case 'AGENT_LIST': {
-        const agents = ((message.payload as { agents?: FederationAgent[] })?.agents || []) as FederationAgent[];
+        const agents = ((message.payload as { agents?: FederationAgent[] })?.agents ||
+          []) as FederationAgent[];
         this.agents = new Map(agents.map((agent) => [agent.id, agent]));
         this.emit('agents_updated', agents);
         break;
@@ -382,10 +407,9 @@ export class FederationNodeClient {
       case 'CHANNEL_LIST': {
         const channels = ((message.payload as { channels?: FederationChannel[] })?.channels ||
           []) as FederationChannel[];
-        if (channels.length > 0) {
-          this.channels = new Map(channels.map((channel) => [channel.id, channel]));
-          this.emit('channels_updated', channels);
-        }
+        this.channels = new Map(channels.map((channel) => [channel.id, channel]));
+        this.emit('channels_updated', channels);
+        this.ensureDefaultChannel(channels);
         break;
       }
 
@@ -409,7 +433,9 @@ export class FederationNodeClient {
         } else {
           this.emit('direct_message', payload);
         }
-        this.log(`Message from ${payload?.from || 'unknown'}: ${String(payload?.content || '').slice(0, 80)}`);
+        this.log(
+          `Message from ${payload?.from || 'unknown'}: ${String(payload?.content || '').slice(0, 80)}`
+        );
         break;
       }
 

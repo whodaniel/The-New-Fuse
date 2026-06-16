@@ -51,7 +51,7 @@ pub struct ServiceStatus {
 
 #[tauri::command]
 fn greet(name: &str) -> String {
-    format!("Welcome to The New Fuse, {}!", name)
+    format!("Welcome to TNF (The New Fuse) Desktop App, {}!", name)
 }
 
 #[tauri::command]
@@ -425,10 +425,10 @@ pub fn run() {
             let window = app.get_webview_window("main").unwrap();
 
             // Set window title
-            window.set_title("The New Fuse").unwrap();
+            window.set_title("TNF (The New Fuse) Desktop App").unwrap();
 
             // Log startup
-            println!("🚀 The New Fuse v{} starting...", env!("CARGO_PKG_VERSION"));
+            println!("🚀 TNF Desktop App v{} starting...", env!("CARGO_PKG_VERSION"));
             println!("📡 MCP Bridge ready for connection");
 
             Ok(())

@@ -1,5 +1,12 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import {
+  ENV_ENDPOINTS,
+  deriveWsUrlFromApi,
+  type EndpointSet,
+  type TnfDesktopEnvironment,
+} from '../config/endpoints';
+import { safeStorage } from '../lib/safeStorage';
 import BrowserControlService from '../services/BrowserControlService';
 import FederationNodeService from '../services/FederationNodeService';
 import apiService from '../services/api';
@@ -9,7 +16,7 @@ import wsService from '../services/websocket';
  * Settings Store - Manage application settings and connection state
  */
 
-export type Environment = 'local' | 'sandbox' | 'production' | 'custom';
+export type Environment = TnfDesktopEnvironment;
 
 interface SettingsState {
   environment: Environment;
@@ -23,23 +30,7 @@ interface SettingsState {
   toggleCloudMode: () => void;
 }
 
-const ENV_CONFIG: Record<Exclude<Environment, 'custom'>, { api: string; ws: string; relay: string }> = {
-  local: {
-    api: 'http://localhost:3001',
-    ws: 'ws://localhost:3001/ws',
-    relay: 'ws://127.0.0.1:3000/ws',
-  },
-  sandbox: {
-    api: 'https://api-gateway-241337102384.us-central1.run.app',
-    ws: 'wss://api-gateway-241337102384.us-central1.run.app/ws',
-    relay: 'wss://api-gateway-241337102384.us-central1.run.app/ws',
-  },
-  production: {
-    api: 'https://thenewfuse.com/api',
-    ws: 'wss://thenewfuse.com/ws',
-    relay: 'wss://thenewfuse.com/ws',
-  },
-};
+const ENV_CONFIG: Record<Exclude<Environment, 'custom'>, EndpointSet> = ENV_ENDPOINTS;
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
@@ -56,10 +47,8 @@ export const useSettingsStore = create<SettingsState>()(
 
         if (env === 'custom') {
           apiUrl = get().customApiUrl;
-          wsUrl = apiUrl.startsWith('https')
-            ? apiUrl.replace('https', 'wss').replace('/api', '') + '/ws'
-            : apiUrl.replace('http', 'ws').replace('/api', '') + '/ws';
-          relayUrl = wsUrl;
+          wsUrl = deriveWsUrlFromApi(apiUrl);
+          relayUrl = ENV_CONFIG.local.relay;
         } else {
           const config = ENV_CONFIG[env as Exclude<Environment, 'custom'>];
           apiUrl = config.api;
@@ -102,6 +91,7 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'tnf-settings-store',
+      storage: createJSONStorage(() => safeStorage),
       // Ensure we re-apply the base URL on load
       onRehydrateStorage: () => (state) => {
         if (state?.apiUrl) {
