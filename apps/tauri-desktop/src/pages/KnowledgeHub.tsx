@@ -229,7 +229,7 @@ const KnowledgeHub: React.FC = () => {
               <div className="empty-state">
                 {synergy.relayConnected
                   ? 'No federated agents registered. Agent registration completes via relay.'
-                  : 'Relay not connected. Start the standalone relay on port 3000.'}
+                  : 'Relay not connected. Start the standalone relay (common ports: 3000, 3007).'}
               </div>
             ) : (
               <div className="channel-table">

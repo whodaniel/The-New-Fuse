@@ -4,6 +4,7 @@
  */
 import type { FederationChannel } from '@the-new-fuse/shared/federation/protocol';
 import { relayHealthUrl } from '@the-new-fuse/shared/federation/protocol';
+import { discoverLocalEndpoints } from '../config/endpointDiscovery';
 import { resolveEnvironmentEndpoints, resolveRelayUrlForEnvironment } from '../config/endpoints';
 import { useAgentStore } from '../stores/agentStore';
 import type { Environment } from '../stores/settingsStore';
@@ -119,8 +120,26 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
   }
 
   async bootstrap(environment: Environment, customApiUrl = ''): Promise<void> {
-    const endpoints = resolveEnvironmentEndpoints(environment, customApiUrl);
-    const relayUrl = resolveRelayUrlForEnvironment(environment, customApiUrl);
+    let endpoints = resolveEnvironmentEndpoints(environment, customApiUrl);
+    let relayUrl = resolveRelayUrlForEnvironment(environment, customApiUrl);
+
+    if (environment === 'local') {
+      const discovered = await discoverLocalEndpoints();
+      if (discovered.relayUrl) {
+        relayUrl = discovered.relayUrl;
+        this.log(`Relay discovered at ${discovered.relayUrl}`);
+      }
+      if (discovered.apiUrl) {
+        endpoints = {
+          ...endpoints,
+          api: discovered.apiUrl,
+          ws: discovered.wsUrl || endpoints.ws,
+        };
+        this.log(`REST API discovered at ${discovered.apiUrl}`);
+      } else if (discovered.relayUrl) {
+        this.log('REST API not found on common ports — agent CRUD requires port 3001.');
+      }
+    }
 
     apiService.setBaseUrl(endpoints.api);
     wsService.setUrl(endpoints.ws);
@@ -178,6 +197,10 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
       if (!res.ok) return null;
       const data = await res.json();
       if (data?.status !== 'ok') return null;
+      // Distinguish federation relay from generic websocket gateways.
+      if (!data.relay && data.agents === undefined && data.channels === undefined) {
+        return null;
+      }
       return {
         status: String(data.status),
         agents: Number(data.agents) || 0,

@@ -113,6 +113,7 @@ export function relayHealthUrl(relayUrl: string): string {
 }
 
 export const DEFAULT_RELAY_URLS = [
+  'ws://127.0.0.1:3007/ws',
   'ws://127.0.0.1:3000/ws',
   'ws://127.0.0.1:3001/ws',
   'ws://127.0.0.1:3010/ws',

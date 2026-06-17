@@ -16,6 +16,18 @@ import type {
 // API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
+function friendlyApiError(error: unknown): string {
+  const msg = error instanceof Error ? error.message : String(error);
+  if (
+    /load failed|failed to fetch|networkerror|network request failed|connection refused|econnrefused/i.test(
+      msg
+    )
+  ) {
+    return 'REST API offline — start the TNF API on port 3001 or check Settings → environment.';
+  }
+  return msg || 'Unknown error';
+}
+
 class ApiService {
   private baseUrl: string = API_BASE_URL;
   private token: string | null = null;
@@ -76,7 +88,7 @@ class ApiService {
       console.error(`API Error [${endpoint}]:`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: friendlyApiError(error),
       };
     }
   }
@@ -298,7 +310,9 @@ class ApiService {
   // Health check
   async healthCheck(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/health`);
+      const response = await fetch(`${this.baseUrl.replace(/\/$/, '')}/api/agents`, {
+        signal: AbortSignal.timeout(2500),
+      });
       return response.ok;
     } catch {
       return false;

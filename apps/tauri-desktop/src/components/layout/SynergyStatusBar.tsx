@@ -70,7 +70,9 @@ export const SynergyStatusBar: React.FC = () => {
           background: rgba(16, 185, 129, 0.08);
         }
         .synergy-chip.off {
-          color: #94a3b8;
+          color: #cbd5e1;
+          border-color: rgba(148, 163, 184, 0.45);
+          background: rgba(148, 163, 184, 0.08);
         }
         .synergy-chip .dot {
           width: 6px;
@@ -81,7 +83,8 @@ export const SynergyStatusBar: React.FC = () => {
         .synergy-meta {
           margin-left: auto;
           font-size: 12px;
-          color: var(--tnf-text-muted);
+          color: var(--tnf-text-secondary, #cbd5e1);
+          font-weight: 500;
         }
       `}</style>
     </div>

@@ -9,6 +9,7 @@ export interface EndpointSet {
 export const LOCAL_ENDPOINTS: EndpointSet = {
   api: 'http://localhost:3001',
   ws: 'ws://localhost:3001/ws',
+  // Default relay port; local bootstrap probes 3007/3010 if 3000 is down.
   relay: 'ws://127.0.0.1:3000/ws',
 };
 

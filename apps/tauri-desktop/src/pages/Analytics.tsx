@@ -501,9 +501,24 @@ const Analytics: React.FC = () => {
         .stat-card.pink { border-left: 4px solid #ec4899; }
 
         .stat-icon { font-size: 24px; display: block; margin-bottom: 12px; }
-        .stat-value { font-size: 24px; font-weight: 700; display: block; }
-        .stat-label { font-size: 13px; color: var(--tnf-text-muted); display: block; margin-top: 4px; }
-        .stat-subtitle { font-size: 11px; color: var(--tnf-text-muted); display: block; margin-top: 8px; }
+        .stat-value {
+          font-size: 24px;
+          font-weight: 700;
+          display: block;
+          color: var(--tnf-text-primary, #f8fafc);
+        }
+        .stat-label {
+          font-size: 13px;
+          color: var(--tnf-text-secondary, #cbd5e1);
+          display: block;
+          margin-top: 4px;
+        }
+        .stat-subtitle {
+          font-size: 11px;
+          color: var(--tnf-text-muted, #94a3b8);
+          display: block;
+          margin-top: 8px;
+        }
 
         /* Chart Card */
         .chart-card {

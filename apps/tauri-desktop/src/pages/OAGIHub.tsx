@@ -18,9 +18,14 @@ const OAGIHub: React.FC = () => {
   useEffect(() => {
     const loadInitData = async () => {
       try {
-        const size = await invoke<{ width: number; height: number }>('get_screen_size');
-        setScreenSize(size);
-        addLog(`System initialized: ${size.width}x${size.height} display detected.`);
+        // Rust returns (width, height) tuple — not { width, height }.
+        const [width, height] = await invoke<[number, number]>('get_screen_size');
+        if (typeof width === 'number' && typeof height === 'number') {
+          setScreenSize({ width, height });
+          addLog(`System initialized: ${width}×${height} display detected.`);
+        } else {
+          addLog('Error: get_screen_size returned unexpected shape.');
+        }
       } catch (e) {
         addLog(`Error: Failed to get screen size. ${e}`);
       }
@@ -29,10 +34,12 @@ const OAGIHub: React.FC = () => {
 
     const interval = setInterval(async () => {
       try {
-        const pos = await invoke<{ x: number; y: number }>('get_mouse_position');
-        setMousePos(pos);
-      } catch (e) {
-        // Silent error for mouse pos
+        const [x, y] = await invoke<[number, number]>('get_mouse_position');
+        if (typeof x === 'number' && typeof y === 'number') {
+          setMousePos({ x, y });
+        }
+      } catch {
+        // Mouse position unavailable — silent between polls.
       }
     }, 500);
 
@@ -48,10 +55,11 @@ const OAGIHub: React.FC = () => {
     addLog('Capturing screen...');
     try {
       const result = await invoke<string>('capture_screen', {
-        fullScreen: true,
+        format: 'jpeg',
         quality: 80,
       });
-      setScreenshot(`data:image/jpeg;base64,${result}`);
+      // Rust already returns a data: URL; avoid double-prefixing.
+      setScreenshot(result.startsWith('data:') ? result : `data:image/jpeg;base64,${result}`);
       addLog('Screen captured successfully.');
     } catch (e) {
       addLog(`Capture failed: ${e}`);
@@ -60,28 +68,66 @@ const OAGIHub: React.FC = () => {
     }
   };
 
-  const COMMAND_MAP: Record<string, string> = {
-    click: 'oagi::execute_click',
-    scroll: 'oagi::execute_scroll',
-    type: 'oagi::execute_type',
-    hotkey: 'oagi::execute_hotkey',
-    drag: 'oagi::execute_drag',
-    wait: 'oagi::wait_duration',
-  };
-
-  const executeAction = async (action: string, params: any) => {
+  const executeAction = async (
+    action: 'click' | 'scroll' | 'type' | 'hotkey' | 'wait',
+    params: Record<string, unknown>
+  ) => {
     addLog(`Executing ${action}...`);
     try {
-      const command = COMMAND_MAP[action];
-      if (!command) {
-        addLog(`${action}: unknown action`);
-        return;
+      switch (action) {
+        case 'click':
+          await invoke('execute_click', {
+            x: params.x ?? 0,
+            y: params.y ?? 0,
+            button: params.button ?? 'left',
+          });
+          break;
+        case 'scroll':
+          await invoke('execute_scroll', {
+            amount: params.amount ?? 0,
+            x: params.x ?? 0,
+            y: params.y ?? 0,
+          });
+          break;
+        case 'type':
+          await invoke('execute_type', {
+            text: params.text ?? '',
+            delay: params.delay ?? 0,
+          });
+          break;
+        case 'hotkey':
+          await invoke('execute_hotkey', {
+            keys: params.keys ?? [],
+            interval: params.interval ?? 0.1,
+          });
+          break;
+        case 'wait':
+          await invoke('wait_duration', { seconds: params.seconds ?? 1 });
+          break;
       }
-      await invoke(command, params);
       addLog(`${action} completed.`);
     } catch (e) {
       addLog(`${action} failed: ${e}`);
     }
+  };
+
+  const runSelfCheck = async () => {
+    addLog('Self-Check: probing screen + mouse...');
+    await handleCapture();
+    try {
+      const [x, y] = await invoke<[number, number]>('get_mouse_position');
+      addLog(`Self-Check: mouse at ${x}, ${y}`);
+    } catch (e) {
+      addLog(`Self-Check: mouse probe failed — ${e}`);
+    }
+  };
+
+  const runBrowserLaunch = async () => {
+    await executeAction('hotkey', { keys: ['cmd', 'space'], interval: 0.1 });
+    await executeAction('wait', { seconds: 0.5 });
+    await executeAction('type', { text: 'Safari', delay: 30 });
+    await executeAction('wait', { seconds: 0.3 });
+    await executeAction('hotkey', { keys: ['return'], interval: 0.1 });
   };
 
   return (
@@ -148,10 +194,12 @@ const OAGIHub: React.FC = () => {
                   <button onClick={() => executeAction('click', { x: 500, y: 300 })}>
                     Move & Left Click
                   </button>
-                  <button onClick={() => executeAction('scroll', { deltaX: 0, deltaY: -500 })}>
+                  <button
+                    onClick={() => void executeAction('scroll', { amount: -500, x: 0, y: 0 })}
+                  >
                     Scroll Up
                   </button>
-                  <button onClick={() => executeAction('scroll', { deltaX: 0, deltaY: 500 })}>
+                  <button onClick={() => void executeAction('scroll', { amount: 500, x: 0, y: 0 })}>
                     Scroll Down
                   </button>
                 </div>
@@ -182,14 +230,22 @@ const OAGIHub: React.FC = () => {
                       <span className="script-name">Self-Check</span>
                       <span className="script-desc">Verify system responsiveness</span>
                     </div>
-                    <button className="run-btn">Run</button>
+                    <button type="button" className="run-btn" onClick={() => void runSelfCheck()}>
+                      Run
+                    </button>
                   </div>
                   <div className="script-item">
                     <div className="script-info">
                       <span className="script-name">Browser Launch</span>
                       <span className="script-desc">Open default browser via keys</span>
                     </div>
-                    <button className="run-btn">Run</button>
+                    <button
+                      type="button"
+                      className="run-btn"
+                      onClick={() => void runBrowserLaunch()}
+                    >
+                      Run
+                    </button>
                   </div>
                 </div>
               </div>
