@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { GoogleDriveWizard } from '../components/mcp/GoogleDriveWizard';
+import { resolveWebAppBaseUrl, webSurfaceUrl } from '../config/webSurfaces';
+import { useModalA11y } from '../hooks/useModalA11y';
 import { openExternal } from '../lib/openExternal';
 import { apiService } from '../services/api';
+import { useSettingsStore } from '../stores/settingsStore';
 import type { MCPServer } from '../types';
 
 interface Plugin extends MCPServer {
@@ -16,6 +19,8 @@ interface Plugin extends MCPServer {
  * Browse and install MCP servers and tools
  */
 const MCPMarketplace: React.FC = () => {
+  const { environment } = useSettingsStore();
+  const webMcpUrl = webSurfaceUrl(resolveWebAppBaseUrl(environment), '/mcp-hub');
   const [plugins, setPlugins] = useState<Plugin[]>([]);
   const [loading, setLoading] = useState(false);
   const [apiOffline, setApiOffline] = useState(false);
@@ -24,6 +29,9 @@ const MCPMarketplace: React.FC = () => {
   const [selectedPlugin, setSelectedPlugin] = useState<Plugin | null>(null);
   const [showInstallModal, setShowInstallModal] = useState(false);
   const [showDriveWizard, setShowDriveWizard] = useState(false);
+  const [installError, setInstallError] = useState<string | null>(null);
+  const closeInstallModal = () => setShowInstallModal(false);
+  const installDialogRef = useModalA11y(showInstallModal, closeInstallModal);
 
   const categories = [
     { id: 'all', label: 'All', icon: '📦' },
@@ -94,11 +102,14 @@ const MCPMarketplace: React.FC = () => {
 
     const response = await apiService.installMCPServer(server.id);
     if (response.success) {
+      setInstallError(null);
       setPlugins((prev) =>
         prev.map((s) => (s.id === server.id ? { ...s, installed: true, enabled: true } : s))
       );
     } else {
-      alert(`Install failed: REST API offline. Start the TNF API on port 3001 to enable installs.`);
+      setInstallError(
+        'Install failed — REST API offline. Start the TNF API on port 3001 to enable installs.'
+      );
     }
     setShowInstallModal(false);
     setSelectedPlugin(null);
@@ -131,7 +142,7 @@ const MCPMarketplace: React.FC = () => {
           <button
             type="button"
             className="secondary-button"
-            onClick={() => void openExternal('https://thenewfuse.com/mcp')}
+            onClick={() => void openExternal(webMcpUrl)}
           >
             Web MCP Hub
           </button>
@@ -148,12 +159,19 @@ const MCPMarketplace: React.FC = () => {
         </>
       }
       banner={
-        apiOffline ? (
-          <div className="offline-banner">
-            REST API offline — catalog empty until port 3001 is reachable. Browse the web MCP hub
-            for full catalog.
-          </div>
-        ) : null
+        <>
+          {apiOffline ? (
+            <div className="offline-banner" role="status">
+              REST API offline — catalog empty until port 3001 is reachable. Browse the web MCP hub
+              for full catalog.
+            </div>
+          ) : null}
+          {installError ? (
+            <div className="offline-banner" role="alert">
+              {installError}
+            </div>
+          ) : null}
+        </>
       }
     >
       <SynergyStatusBar />
@@ -285,11 +303,23 @@ const MCPMarketplace: React.FC = () => {
 
       {/* Install Modal */}
       {showInstallModal && selectedPlugin && (
-        <div className="modal-overlay" onClick={() => setShowInstallModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={closeInstallModal} role="presentation">
+          <div
+            ref={installDialogRef}
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="install-plugin-title"
+          >
             <div className="modal-header">
-              <h2>Install {selectedPlugin.name}</h2>
-              <button className="close-btn" onClick={() => setShowInstallModal(false)}>
+              <h2 id="install-plugin-title">Install {selectedPlugin.name}</h2>
+              <button
+                type="button"
+                className="close-btn"
+                onClick={closeInstallModal}
+                aria-label="Close"
+              >
                 ×
               </button>
             </div>
@@ -312,10 +342,14 @@ const MCPMarketplace: React.FC = () => {
               </div>
             </div>
             <div className="modal-footer">
-              <button className="secondary-btn" onClick={() => setShowInstallModal(false)}>
+              <button type="button" className="secondary-btn" onClick={closeInstallModal}>
                 Cancel
               </button>
-              <button className="primary-btn" onClick={() => handleInstall(selectedPlugin)}>
+              <button
+                type="button"
+                className="primary-btn"
+                onClick={() => handleInstall(selectedPlugin)}
+              >
                 Install Server
               </button>
             </div>

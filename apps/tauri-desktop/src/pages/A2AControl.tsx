@@ -71,6 +71,14 @@ const A2AControl: React.FC = () => {
     };
     setMessages((prev) => [...prev, entry]);
 
+    if (!synergy.relayRegistered) {
+      setMessages((prev) =>
+        prev.map((m) => (m.id === entry.id ? { ...m, status: 'failed' as const } : m))
+      );
+      setIsSending(false);
+      return;
+    }
+
     try {
       FederationNodeService.sendA2AMessage(targetAgent, messageContent.trim(), messageType);
       setMessages((prev) =>

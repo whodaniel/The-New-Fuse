@@ -247,6 +247,38 @@ export default defineConfig(({ mode }) => {
               return 'recharts';
             }
 
+            // Supabase auth client
+            if (id.includes('node_modules/@supabase/') || id.includes('node_modules/supabase')) {
+              return 'supabase-vendor';
+            }
+
+            // 3D / WebGL stacks — only loaded by optional pages
+            if (id.includes('node_modules/three/') || id.includes('node_modules/@react-three/')) {
+              return 'three-vendor';
+            }
+
+            // Markdown / syntax highlighting
+            if (
+              id.includes('node_modules/react-markdown') ||
+              id.includes('node_modules/react-syntax-highlighter') ||
+              id.includes('node_modules/highlight.js') ||
+              id.includes('node_modules/marked') ||
+              id.includes('node_modules/rehype-') ||
+              id.includes('node_modules/remark-')
+            ) {
+              return 'markdown-vendor';
+            }
+
+            // Terminal emulator
+            if (id.includes('node_modules/xterm')) {
+              return 'xterm-vendor';
+            }
+
+            // Web3 (unused on most routes)
+            if (id.includes('node_modules/ethers')) {
+              return 'ethers-vendor';
+            }
+
             // Framer Motion - animation library (isolate completely to prevent circular deps)
             // Bundle it as a single chunk with all its dependencies
             if (id.includes('node_modules/framer-motion')) {
@@ -361,6 +393,11 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       port: parseInt(env.VITE_PREVIEW_PORT || '4173'),
       strictPort: false,
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      include: ['src/**/*.{test,spec}.{ts,tsx}'],
     },
   };
 });

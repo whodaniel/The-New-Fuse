@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import ForefrontOperatorPanel from '../components/ForefrontOperatorPanel';
+import ConfirmDialog from '../components/layout/ConfirmDialog';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
-import { NetworkGraph } from '../components/NetworkGraph';
 import { QuickActionsDashboard } from '../components/QuickActionsDashboard';
-import { Terminal } from '../components/Terminal';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import BrowserControlService from '../services/BrowserControlService';
 import FederationNodeService from '../services/FederationNodeService';
+
+const NetworkGraph = lazy(() =>
+  import('../components/NetworkGraph').then((m) => ({ default: m.NetworkGraph }))
+);
+const Terminal = lazy(() => import('../components/Terminal'));
 
 /**
  * Dashboard Page - System Console Edition
@@ -15,17 +19,13 @@ import FederationNodeService from '../services/FederationNodeService';
  */
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'monitor' | 'controls'>('monitor');
+  const [confirmStopOpen, setConfirmStopOpen] = useState(false);
   const { state: synergy } = useOperatorSynergy();
 
   const handleEmergencyStop = () => {
-    const confirm = window.confirm(
-      '⚠️ EMERGENCY STOP: This will disconnect relay, federation, and browser control. Continue?'
-    );
-    if (!confirm) return;
-
     FederationNodeService.disconnect();
     BrowserControlService.disconnect();
-    console.log('Emergency stop: relay and federation disconnected');
+    setConfirmStopOpen(false);
   };
 
   return (
@@ -41,8 +41,9 @@ const Dashboard: React.FC = () => {
           <button
             type="button"
             className="emergency-stop-btn secondary-button"
-            onClick={handleEmergencyStop}
+            onClick={() => setConfirmStopOpen(true)}
             title="Kill Switch"
+            aria-label="Emergency stop — disconnect relay, federation, and browser control"
           >
             STOP
           </button>
@@ -83,9 +84,13 @@ const Dashboard: React.FC = () => {
             <div className="console-card full-width">
               <div className="card-header">
                 <h3>Resources & Topology</h3>
-                <span className="live-indicator">● LIVE</span>
+                <span className="live-indicator">
+                  {synergy.relayConnected ? '● LIVE' : '○ OFFLINE'}
+                </span>
               </div>
-              <NetworkGraph nodes={synergy.topology.nodes} links={synergy.topology.links} />
+              <Suspense fallback={<div className="lazy-panel">Loading topology…</div>}>
+                <NetworkGraph nodes={synergy.topology.nodes} links={synergy.topology.links} />
+              </Suspense>
             </div>
 
             {/* Bottom Left: System Health */}
@@ -129,7 +134,9 @@ const Dashboard: React.FC = () => {
               <div className="card-header">
                 <h3>Bridge Logs</h3>
               </div>
-              <Terminal className="console-terminal" showQuickActions={false} />
+              <Suspense fallback={<div className="lazy-panel">Loading logs…</div>}>
+                <Terminal className="console-terminal" showQuickActions={false} />
+              </Suspense>
             </div>
           </div>
         ) : (
@@ -257,6 +264,12 @@ const Dashboard: React.FC = () => {
           min-height: 0;
         }
 
+        @media (max-width: 768px) {
+          .console-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
         .console-card {
           background: #1e293b;
           border: 1px solid #334155;
@@ -335,12 +348,31 @@ const Dashboard: React.FC = () => {
         min-height: 0;
       }
 
+      .lazy-panel {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 13px;
+        padding: 24px;
+      }
+
       @keyframes pulse {
         0% { opacity: 1; }
         50% { opacity: 0.5; }
         100% { opacity: 1; }
       }
       `}</style>
+      <ConfirmDialog
+        open={confirmStopOpen}
+        title="Emergency stop"
+        message="This will disconnect relay, federation, and browser control. Continue?"
+        confirmLabel="Stop all"
+        tone="danger"
+        onConfirm={handleEmergencyStop}
+        onCancel={() => setConfirmStopOpen(false)}
+      />
     </PageShell>
   );
 };

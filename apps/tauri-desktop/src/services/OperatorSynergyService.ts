@@ -124,6 +124,7 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
 
     apiService.setBaseUrl(endpoints.api);
     wsService.setUrl(endpoints.ws);
+    wsService.connect();
     BrowserControlService.setRelayUrl(relayUrl);
     FederationNodeService.setRelayUrl(relayUrl);
 

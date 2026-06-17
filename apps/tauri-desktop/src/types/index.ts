@@ -107,6 +107,62 @@ export interface ActivityItem {
   timestamp: string;
 }
 
+export interface AnalyticsOverview {
+  totalAgents: number;
+  activeAgents: number;
+  // Null when the metric is not measured (e.g. synergy snapshot cannot derive it).
+  totalInteractions: number | null;
+  successRate: number | null;
+  averageResponseTime: number | null;
+  totalWorkflows: number | null;
+}
+
+export interface AnalyticsPerformancePoint {
+  timestamp: string;
+  requests: number;
+  responses: number;
+  errors: number;
+  avgResponseTime?: number;
+}
+
+export interface AnalyticsAgentMetric {
+  agentId: string;
+  agentName: string;
+  // Null when per-agent metrics are not yet supplied by the REST API.
+  totalTasks: number | null;
+  successRate: number | null;
+  avgResponseTime: number | null;
+  lastActive: string;
+}
+
+export interface AnalyticsProviderMetric {
+  provider: string;
+  // Real count of agents observed on the platform (from synergy roster).
+  agentCount?: number;
+  // Null when usage/cost metrics are not supplied by the REST API.
+  totalRequests: number | null;
+  successRate: number | null;
+  avgLatency: number | null;
+  cost: number | null;
+}
+
+export interface AnalyticsExportPayload {
+  overview: AnalyticsOverview;
+  performance: { timeRange: string; dataPoints: AnalyticsPerformancePoint[] };
+  agentMetrics: AnalyticsAgentMetric[];
+  providerPerformance: Array<{
+    provider: string;
+    totalRequests: number;
+    successRate: number;
+    avgLatency: number;
+    costPerRequest?: number;
+  }>;
+  qualityTrends?: unknown[];
+  costAnalysis?: unknown;
+}
+
+export type AnalyticsDataSource = 'api' | 'synergy';
+
 // Settings Types
 export interface UserSettings {
   theme: 'light' | 'dark' | 'system';

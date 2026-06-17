@@ -5,6 +5,7 @@ import {
   Globe,
   Handshake,
   Home,
+  Layers,
   LayoutGrid,
   MessageSquare,
   Monitor,
@@ -31,7 +32,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   chat: MessageSquare,
   workflows: Workflow,
   analytics: BarChart3,
-  'web-hub': Globe,
+  'web-hub': Layers,
   mcp: Store,
   settings: Settings,
 };

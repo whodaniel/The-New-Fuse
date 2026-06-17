@@ -19,6 +19,37 @@ const MultiAgentChat: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const loadingTimeoutRef = useRef<number | null>(null);
+
+  const clearLoadingTimeout = () => {
+    if (loadingTimeoutRef.current !== null) {
+      window.clearTimeout(loadingTimeoutRef.current);
+      loadingTimeoutRef.current = null;
+    }
+  };
+
+  const stopLoading = () => {
+    clearLoadingTimeout();
+    setIsLoading(false);
+  };
+
+  // Safety net so the typing indicator never spins forever if no reply arrives.
+  const armLoadingTimeout = (ms: number, notice: string) => {
+    clearLoadingTimeout();
+    loadingTimeoutRef.current = window.setTimeout(() => {
+      loadingTimeoutRef.current = null;
+      setIsLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `${Date.now()}-timeout`,
+          role: 'system',
+          content: notice,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+    }, ms);
+  };
 
   useEffect(() => {
     if (selectedAgents.length === 0 && unifiedAgents.length > 0) {
@@ -34,12 +65,13 @@ const MultiAgentChat: React.FC = () => {
     // Listen for incoming messages
     const unsubMessages = wsService.on('chat:message', (data: ChatMessage) => {
       setMessages((prev) => [...prev, data]);
-      setIsLoading(false);
+      stopLoading();
     });
 
     return () => {
       unsubConnection();
       unsubMessages();
+      clearLoadingTimeout();
     };
   }, []);
 
@@ -65,7 +97,7 @@ const MultiAgentChat: React.FC = () => {
       };
 
       setMessages((prev) => [...prev, incoming]);
-      setIsLoading(false);
+      stopLoading();
     };
 
     FederationNodeService.on('channel_message', handler);
@@ -92,7 +124,11 @@ const MultiAgentChat: React.FC = () => {
 
     // Send via API websocket, federation channel, or relay echo
     if (isConnected && synergy.apiOnline) {
-      wsService.sendChatMessage('main', messageText);
+      wsService.sendChatMessage('main', messageText, selectedAgents);
+      armLoadingTimeout(
+        30000,
+        '⚠️ No response from the API within 30s. The request may still be processing — check the agent or REST API on port 3001.'
+      );
     } else if (synergy.relayRegistered) {
       const joined = FederationNodeService.getState().joinedChannels;
       const channelId = joined[0] || 'general';
@@ -105,35 +141,18 @@ const MultiAgentChat: React.FC = () => {
           from: FederationNodeService.getState().agentId,
         })
       );
-      window.setTimeout(() => setIsLoading(false), 8000);
+      armLoadingTimeout(8000, '⚠️ No federated agent replied within 8s.');
     } else {
-      simulateAgentResponses(messageText, selectedAgents);
+      stopLoading();
+      const offlineNotice: ChatMessage = {
+        id: `${Date.now()}-offline`,
+        role: 'system',
+        content:
+          '⚠️ Relay and API are offline — message not sent. Connect relay from Dashboard → Forefront panel or start the REST API on port 3001.',
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, offlineNotice]);
     }
-  };
-
-  const simulateAgentResponses = (userInput: string, agentIds: string[]) => {
-    agentIds.forEach((agentId, index) => {
-      const agent = unifiedAgents.find((a) => a.id === agentId);
-      if (!agent) return;
-
-      setTimeout(
-        () => {
-          const response: ChatMessage = {
-            id: `${Date.now()}-${agentId}`,
-            role: 'agent',
-            content: `[offline echo] ${agent.name} (${agent.platform}): "${userInput.slice(0, 80)}"`,
-            agentId: agent.id,
-            agentName: agent.name,
-            timestamp: new Date().toISOString(),
-          };
-          setMessages((prev) => [...prev, response]);
-          if (index === agentIds.length - 1) {
-            setIsLoading(false);
-          }
-        },
-        1000 + index * 800
-      );
-    });
   };
 
   const toggleAgent = (agentId: string) => {
@@ -163,6 +182,14 @@ const MultiAgentChat: React.FC = () => {
       className="page-fill"
       title="Multi-Agent Chat"
       subtitle={`${activeAgents.length} agents available · ${synergy.relayRegistered ? 'federation' : synergy.apiOnline ? 'API' : 'offline'}`}
+      banner={
+        !synergy.relayRegistered && !(synergy.apiOnline && isConnected) ? (
+          <div className="offline-banner">
+            Chat requires the REST API websocket or a registered federation relay. Messages will not
+            be delivered while offline.
+          </div>
+        ) : null
+      }
     >
       <SynergyStatusBar />
       <div className="page-fill-body">
@@ -209,7 +236,7 @@ const MultiAgentChat: React.FC = () => {
           </aside>
 
           {/* Chat Area */}
-          <main className="chat-main">
+          <div className="chat-main">
             <header className="chat-header">
               <div className="selected-agents">
                 {selectedAgents.map((id) => {
@@ -293,7 +320,7 @@ const MultiAgentChat: React.FC = () => {
                 Send
               </button>
             </div>
-          </main>
+          </div>
 
           <style>{`
         .chat-container {

@@ -8,6 +8,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useModalA11y } from '../hooks/useModalA11y';
 import { AntigravityService, type AntigravityStatus, type PageInfo } from '../services';
 
 // ============================================================================
@@ -27,15 +28,23 @@ interface ConnectionModalProps {
 const ConnectionModal: React.FC<ConnectionModalProps> = ({ isOpen, onClose, onConnect }) => {
   const [serverAddress, setServerAddress] = useState('http://localhost:3000');
   const [csrfToken, setCsrfToken] = useState('');
+  const dialogRef = useModalA11y(isOpen, onClose);
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
+    <div className="modal-overlay" onClick={onClose} role="presentation">
+      <div
+        ref={dialogRef}
+        className="modal-container"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="antigravity-connect-title"
+      >
         <div className="modal-header">
-          <h2>🔮 Connect to Antigravity</h2>
-          <button className="close-btn" onClick={onClose}>
+          <h2 id="antigravity-connect-title">🔮 Connect to Antigravity</h2>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>
@@ -60,10 +69,14 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({ isOpen, onClose, onCo
           </div>
         </div>
         <div className="modal-footer">
-          <button className="btn-secondary" onClick={onClose}>
+          <button type="button" className="btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="btn-primary" onClick={() => onConnect(serverAddress, csrfToken)}>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => onConnect(serverAddress, csrfToken)}
+          >
             Connect
           </button>
         </div>

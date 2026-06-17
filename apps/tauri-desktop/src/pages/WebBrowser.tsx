@@ -40,9 +40,9 @@ const WebBrowser: React.FC = () => {
     });
   };
 
-  const handleNavigate = async (event?: React.FormEvent) => {
+  const navigateToUrl = async (rawUrl: string, event?: React.FormEvent) => {
     event?.preventDefault();
-    let targetUrl = inputUrl.trim();
+    let targetUrl = rawUrl.trim();
     if (!targetUrl) return;
     if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
       targetUrl = `https://${targetUrl}`;
@@ -51,6 +51,10 @@ const WebBrowser: React.FC = () => {
     setInputUrl(targetUrl);
     applyUrlToTab(targetUrl);
     await browser.navigate(targetUrl);
+  };
+
+  const handleNavigate = async (event?: React.FormEvent) => {
+    await navigateToUrl(inputUrl, event);
   };
 
   const addTab = () => {
@@ -202,8 +206,7 @@ const WebBrowser: React.FC = () => {
                           key={url}
                           className="shortcut-card"
                           onClick={() => {
-                            setInputUrl(url);
-                            void handleNavigate();
+                            void navigateToUrl(url);
                           }}
                         >
                           <span>{label}</span>

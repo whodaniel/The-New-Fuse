@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ErrorBoundary from './components/core/ErrorBoundary';
 import PerformanceMonitor, {
+  PerformanceProvider,
   usePerformanceMonitor,
 } from './components/performance/PerformanceMonitor';
 import { RouteProvider } from './components/route-context';
@@ -62,7 +63,9 @@ export function App() {
             <AuthProvider>
               <OperatorSynergyProvider>
                 <ErrorBoundary>
-                  <AppContent />
+                  <PerformanceProvider>
+                    <AppContent />
+                  </PerformanceProvider>
                 </ErrorBoundary>
               </OperatorSynergyProvider>
             </AuthProvider>

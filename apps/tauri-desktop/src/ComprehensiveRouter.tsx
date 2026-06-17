@@ -1,26 +1,15 @@
-import React, { Suspense, lazy } from 'react';
+import React, { lazy, Suspense, useCallback, useState } from 'react';
+import CommandPalette, { useCommandPaletteShortcut } from './components/layout/CommandPalette';
 import NavIcon from './components/layout/NavIcon';
+import SidebarAuth from './components/layout/SidebarAuth';
 import { useRoute } from './components/route-context';
 import './ComprehensiveRouter.css';
+import { ROUTE_COMPONENTS } from './config/routeComponents';
+import { isKnownRoute, NAV_GROUPS, routesForGroup } from './config/routes';
 import { useLayout } from './contexts/LayoutContext';
 import { useOperatorSynergy } from './hooks/useOperatorSynergy';
 
-// Lazy load pages
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const AgentHub = lazy(() => import('./pages/AgentHub'));
-const AntigravityHub = lazy(() => import('./pages/AntigravityHub'));
-const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'));
-const MultiAgentChat = lazy(() => import('./pages/MultiAgentChat'));
-const MCPMarketplace = lazy(() => import('./pages/MCPMarketplace'));
-const Analytics = lazy(() => import('./pages/Analytics'));
-const Settings = lazy(() => import('./pages/Settings'));
-const WebBrowser = lazy(() => import('./pages/WebBrowser'));
-const OAGIHub = lazy(() => import('./pages/OAGIHub'));
-const SwarmTerminal = lazy(() => import('./pages/SwarmTerminal'));
-const A2AControl = lazy(() => import('./pages/A2AControl'));
-const WebParityHub = lazy(() => import('./pages/WebParityHub'));
-const PlatformOverview = lazy(() => import('./pages/PlatformOverview'));
-const KnowledgeHub = lazy(() => import('./pages/KnowledgeHub'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 /**
  * The New Fuse Tauri Desktop - Comprehensive Router
@@ -30,69 +19,16 @@ const ComprehensiveRouter: React.FC = () => {
   const { currentRoute, navigate } = useRoute();
   const { sidebarCollapsed, sidebarOpen, isMobile, toggleSidebar, setSidebarOpen } = useLayout();
   const { state: synergy } = useOperatorSynergy();
-
-  const navItems = [
-    { id: 'platform', label: 'Platform', route: '/platform', section: 'main', badge: 'TNF' },
-    { id: 'dashboard', label: 'Dashboard', route: '/dashboard', section: 'main' },
-    {
-      id: 'browser',
-      label: 'Browser Control',
-      route: '/browser',
-      section: 'main',
-      badge: 'FOREFRONT',
-    },
-    { id: 'agents', label: 'Agent Hub', route: '/agents', section: 'main' },
-    { id: 'a2a', label: 'A2A Control', route: '/a2a', section: 'main' },
-    { id: 'knowledge', label: 'Knowledge Hub', route: '/knowledge', section: 'main' },
-    { id: 'terminal', label: 'Swarm Terminal', route: '/terminal', section: 'main' },
-    { id: 'oagi', label: 'OAGI Hub', route: '/oagi', section: 'main' },
-    { id: 'antigravity', label: 'Antigravity', route: '/antigravity', section: 'main' },
-    { id: 'chat', label: 'Chat', route: '/chat', section: 'main' },
-    { id: 'workflows', label: 'Workflows', route: '/workflows', section: 'main' },
-    { id: 'analytics', label: 'Analytics', route: '/analytics', section: 'main' },
-    { id: 'web-hub', label: 'Web Parity', route: '/web-hub', section: 'tools', badge: 'WEB' },
-    { id: 'mcp', label: 'MCP Store', route: '/mcp', section: 'tools' },
-    { id: 'settings', label: 'Settings', route: '/settings', section: 'system' },
-  ];
-
-  const mainNav = navItems.filter((item) => item.section === 'main');
-  const toolsNav = navItems.filter((item) => item.section === 'tools');
-  const systemNav = navItems.filter((item) => item.section === 'system');
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const togglePalette = useCallback(() => setPaletteOpen((prev) => !prev), []);
+  useCommandPaletteShortcut(togglePalette);
 
   const renderPage = () => {
-    switch (currentRoute) {
-      case '/agents':
-        return <AgentHub />;
-      case '/antigravity':
-        return <AntigravityHub />;
-      case '/oagi':
-        return <OAGIHub />;
-      case '/terminal':
-        return <SwarmTerminal />;
-      case '/chat':
-        return <MultiAgentChat />;
-      case '/workflows':
-        return <WorkflowBuilder />;
-      case '/analytics':
-        return <Analytics />;
-      case '/mcp':
-        return <MCPMarketplace />;
-      case '/settings':
-        return <Settings />;
-      case '/browser':
-        return <WebBrowser />;
-      case '/a2a':
-        return <A2AControl />;
-      case '/platform':
-        return <PlatformOverview />;
-      case '/knowledge':
-        return <KnowledgeHub />;
-      case '/web-hub':
-        return <WebParityHub />;
-      case '/dashboard':
-      default:
-        return <Dashboard />;
+    const PageComponent = ROUTE_COMPONENTS[currentRoute];
+    if (!isKnownRoute(currentRoute) || !PageComponent) {
+      return <NotFound attemptedRoute={currentRoute} />;
     }
+    return <PageComponent />;
   };
 
   const handleNavClick = (route: string) => {
@@ -128,7 +64,12 @@ const ComprehensiveRouter: React.FC = () => {
       {/* Mobile Header */}
       {isMobile && (
         <header className="mobile-header">
-          <button className="hamburger-btn" onClick={toggleSidebar}>
+          <button
+            type="button"
+            className="hamburger-btn"
+            onClick={toggleSidebar}
+            aria-label={sidebarOpen ? 'Close navigation' : 'Open navigation'}
+          >
             {sidebarOpen ? '✕' : '☰'}
           </button>
           <div className="mobile-logo">
@@ -166,85 +107,69 @@ const ComprehensiveRouter: React.FC = () => {
                 </>
               )}
             </div>
-            <button className="collapse-btn" onClick={toggleSidebar}>
+            <button
+              type="button"
+              className="collapse-btn"
+              onClick={toggleSidebar}
+              aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
               {sidebarCollapsed ? '→' : '←'}
             </button>
           </div>
         )}
 
-        <nav className="sidebar-nav">
-          {/* Main Navigation */}
-          {!sidebarCollapsed && <div className="nav-section-label">Main</div>}
-          {mainNav.map((item) => (
-            <button
-              key={item.id}
-              className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
-              onClick={() => handleNavClick(item.route)}
-              title={sidebarCollapsed ? item.label : undefined}
-            >
-              <span className="nav-icon">
-                <NavIcon id={item.id} />
-              </span>
-              {!sidebarCollapsed && (
-                <span className="nav-label">
-                  {item.label}
-                  {'badge' in item && item.badge ? (
-                    <span className="nav-badge">{item.badge}</span>
-                  ) : null}
-                </span>
-              )}
-            </button>
-          ))}
-
-          {/* Tools */}
-          {!sidebarCollapsed && <div className="nav-section-label">Tools</div>}
-          {toolsNav.map((item) => (
-            <button
-              key={item.id}
-              className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
-              onClick={() => handleNavClick(item.route)}
-              title={sidebarCollapsed ? item.label : undefined}
-            >
-              <span className="nav-icon">
-                <NavIcon id={item.id} />
-              </span>
-              {!sidebarCollapsed && (
-                <span className="nav-label">
-                  {item.label}
-                  {'badge' in item && item.badge ? (
-                    <span className="nav-badge">{item.badge}</span>
-                  ) : null}
-                </span>
-              )}
-            </button>
-          ))}
+        <nav className="sidebar-nav" aria-label="Primary">
+          {NAV_GROUPS.filter((group) => group.id !== 'system').map((group) => {
+            const groupRoutes = routesForGroup(group.id);
+            if (groupRoutes.length === 0) return null;
+            return (
+              <React.Fragment key={group.id}>
+                {!sidebarCollapsed ? <div className="nav-section-label">{group.label}</div> : null}
+                {groupRoutes.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`nav-item ${currentRoute === item.path ? 'active' : ''}`}
+                    onClick={() => handleNavClick(item.path)}
+                    title={sidebarCollapsed ? item.label : undefined}
+                    aria-current={currentRoute === item.path ? 'page' : undefined}
+                  >
+                    <span className="nav-icon">
+                      <NavIcon id={item.id} />
+                    </span>
+                    {!sidebarCollapsed ? (
+                      <span className="nav-label">
+                        {item.label}
+                        {item.badge ? <span className="nav-badge">{item.badge}</span> : null}
+                      </span>
+                    ) : null}
+                  </button>
+                ))}
+              </React.Fragment>
+            );
+          })}
 
           <div className="nav-spacer" />
 
-          {/* System */}
-          {systemNav.map((item) => (
+          {routesForGroup('system').map((item) => (
             <button
               key={item.id}
-              className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
-              onClick={() => handleNavClick(item.route)}
+              type="button"
+              className={`nav-item ${currentRoute === item.path ? 'active' : ''}`}
+              onClick={() => handleNavClick(item.path)}
               title={sidebarCollapsed ? item.label : undefined}
+              aria-current={currentRoute === item.path ? 'page' : undefined}
             >
               <span className="nav-icon">
                 <NavIcon id={item.id} />
               </span>
-              {!sidebarCollapsed && (
-                <span className="nav-label">
-                  {item.label}
-                  {'badge' in item && item.badge ? (
-                    <span className="nav-badge">{item.badge}</span>
-                  ) : null}
-                </span>
-              )}
+              {!sidebarCollapsed ? <span className="nav-label">{item.label}</span> : null}
             </button>
           ))}
         </nav>
 
         <div className="sidebar-footer">
+          <SidebarAuth collapsed={sidebarCollapsed} />
           {!sidebarCollapsed && (
             <>
               <div className="connection-indicator">
@@ -264,6 +189,8 @@ const ComprehensiveRouter: React.FC = () => {
       <main className={`main-content ${isMobile ? 'mobile' : ''}`}>
         <Suspense fallback={<LoadingScreen />}>{renderPage()}</Suspense>
       </main>
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
 
       <style>{`
         .app-container {
@@ -503,6 +430,95 @@ const ComprehensiveRouter: React.FC = () => {
           border-top: 1px solid var(--tnf-border);
         }
 
+        .sidebar-auth {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-bottom: 12px;
+        }
+
+        .sidebar-auth-muted {
+          font-size: 11px;
+          color: var(--tnf-text-muted);
+        }
+
+        .sidebar-auth-user {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
+        }
+
+        .sidebar-auth-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          flex-shrink: 0;
+          object-fit: cover;
+        }
+
+        .sidebar-auth-initial {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(99, 102, 241, 0.25);
+          color: #c4b5fd;
+          font-weight: 700;
+          font-size: 13px;
+        }
+
+        .sidebar-auth-meta {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+
+        .sidebar-auth-name {
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--tnf-text-primary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .sidebar-auth-email {
+          font-size: 11px;
+          color: var(--tnf-text-muted);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .sidebar-auth-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          width: 100%;
+          padding: 8px 10px;
+          border-radius: 8px;
+          border: 1px solid var(--tnf-border);
+          background: var(--tnf-surface);
+          color: var(--tnf-text-secondary);
+          font-size: 12px;
+          cursor: pointer;
+        }
+
+        .sidebar-auth-btn:hover {
+          background: var(--tnf-surface-hover);
+        }
+
+        .sidebar-auth-primary {
+          border-color: rgba(99, 102, 241, 0.35);
+          color: #c4b5fd;
+        }
+
+        .sidebar-auth-error {
+          font-size: 11px;
+          color: var(--tnf-error);
+        }
+
         .connection-indicator {
           display: flex;
           align-items: center;
@@ -589,7 +605,7 @@ const ComprehensiveRouter: React.FC = () => {
 
 // Loading Screen Component
 const LoadingScreen: React.FC = () => (
-  <div className="loading-screen">
+  <div className="loading-screen" role="status" aria-live="polite">
     <div className="loading-content">
       <div className="loading-spinner"></div>
       <p>Loading...</p>

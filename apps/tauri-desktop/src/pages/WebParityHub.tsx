@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useRoute } from '../components/route-context';
+import { desktopNativeOnlyRoutes } from '../config/routes';
 import { resolveWebAppBaseUrl, WEB_SURFACES, webSurfaceUrl } from '../config/webSurfaces';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
@@ -23,6 +24,8 @@ const WebParityHub: React.FC = () => {
   const [query, setQuery] = useState('');
 
   const webBase = resolveWebAppBaseUrl(environment);
+
+  const nativeOnly = desktopNativeOnlyRoutes();
 
   const surfaces = useMemo(() => {
     return WEB_SURFACES.filter((surface) => {
@@ -78,6 +81,32 @@ const WebParityHub: React.FC = () => {
           ))}
         </div>
       </div>
+
+      <section className="tnf-section" style={{ marginBottom: 24 }}>
+        <h2 className="tnf-section-title">Desktop-native only</h2>
+        <div className="tnf-card-grid">
+          {nativeOnly.map((route) => (
+            <article key={route.id} className="tnf-card parity-card">
+              <div className="parity-card-head">
+                <span className="parity-icon">🖥️</span>
+                <div>
+                  <h3>{route.label}</h3>
+                  <p>Tauri-native operator surface — not mirrored on thenewfuse.com</p>
+                </div>
+              </div>
+              <div className="parity-actions">
+                <button
+                  type="button"
+                  className="primary-button"
+                  onClick={() => navigate(route.path)}
+                >
+                  Open Native
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <div className="tnf-card-grid">
         {surfaces.map((surface) => (

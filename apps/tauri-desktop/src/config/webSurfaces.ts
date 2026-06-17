@@ -54,6 +54,7 @@ export const WEB_SURFACES: WebSurface[] = [
     description: 'Persistent knowledge graph & PKG',
     category: 'workspace',
     icon: '🧠',
+    nativeRoute: '/knowledge',
   },
   {
     id: 'mcp-hub',
@@ -88,6 +89,24 @@ export const WEB_SURFACES: WebSurface[] = [
     description: 'Real-time AI activity monitor',
     category: 'core',
     icon: '📡',
+  },
+  {
+    id: 'analytics',
+    name: 'Analytics',
+    path: '/analytics',
+    description: 'Synergy metrics and operator analytics',
+    category: 'core',
+    icon: '📊',
+    nativeRoute: '/analytics',
+  },
+  {
+    id: 'platform-overview',
+    name: 'Platform Overview',
+    path: '/platform',
+    description: 'TNF platform capabilities (desktop marketing slice)',
+    category: 'core',
+    icon: '✨',
+    nativeRoute: '/platform',
   },
   {
     id: 'timeline',

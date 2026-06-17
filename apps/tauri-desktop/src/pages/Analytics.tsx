@@ -1,109 +1,61 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useAnalyticsData } from '../hooks/useAnalyticsData';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
-
-/**
- * Analytics Page - Responsive Charts and Metrics
- * Unified from SaaS implementation with Tauri optimizations
- */
-
-// Types for analytics data
-interface AnalyticsOverview {
-  totalAgents: number;
-  activeAgents: number;
-  totalInteractions: number;
-  successRate: number;
-  averageResponseTime: number;
-  totalWorkflows: number;
-}
-
-interface PerformanceDataPoint {
-  timestamp: string;
-  requests: number;
-  responses: number;
-  errors: number;
-}
-
-interface AgentMetric {
-  agentId: string;
-  agentName: string;
-  totalTasks: number;
-  successRate: number;
-  avgResponseTime: number;
-  lastActive: string;
-}
-
-interface ProviderMetric {
-  provider: string;
-  totalRequests: number;
-  successRate: number;
-  avgLatency: number;
-  cost: number;
-}
 
 const Analytics: React.FC = () => {
   const { state: synergy } = useOperatorSynergy();
-  const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('7d');
   const [activeTab, setActiveTab] = useState<'overview' | 'performance' | 'agents' | 'costs'>(
     'overview'
   );
+  const [exporting, setExporting] = useState(false);
 
-  const overview = useMemo<AnalyticsOverview>(
-    () => ({
-      totalAgents: synergy.unifiedAgents.length,
-      activeAgents: synergy.unifiedAgents.filter((a) => a.status === 'active').length,
-      totalInteractions: synergy.relayHealth?.agents || synergy.federatedAgentCount,
-      successRate: synergy.relayRegistered ? 99.1 : synergy.relayConnected ? 92 : 0,
-      averageResponseTime: synergy.relayHealth ? Math.round(synergy.relayHealth.uptime / 10) : 0,
-      totalWorkflows: synergy.channelCount,
-    }),
-    [synergy]
-  );
+  const {
+    loading,
+    dataSource,
+    fetchError,
+    overview,
+    performanceData,
+    performanceAvailable,
+    agentMetrics,
+    agentMetricsAvailable,
+    providerMetrics,
+    providerMetricsAvailable,
+    maxRequests,
+    exportData,
+  } = useAnalyticsData(synergy, timeRange);
 
-  const performanceData = useMemo<PerformanceDataPoint[]>(
-    () =>
-      Array.from({ length: 7 }, (_, i) => ({
-        timestamp: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
-        requests: Math.max(1, synergy.federatedAgentCount * 10 + i * 3),
-        responses: Math.max(1, synergy.federatedAgentCount * 9 + i * 2),
-        errors: synergy.apiOnline ? 0 : 1,
-      })),
-    [synergy]
-  );
+  const activeRate =
+    overview.totalAgents > 0 ? Math.round((overview.activeAgents / overview.totalAgents) * 100) : 0;
 
-  const agentMetrics = useMemo<AgentMetric[]>(
-    () =>
-      synergy.unifiedAgents.slice(0, 6).map((agent) => ({
-        agentId: agent.id,
-        agentName: agent.name,
-        totalTasks: agent.capabilities.length * 4,
-        successRate: agent.status === 'active' ? 98.5 : 85,
-        avgResponseTime: agent.source === 'federation' ? 180 : 320,
-        lastActive: agent.status,
-      })),
-    [synergy.unifiedAgents]
-  );
+  const fmtNum = (value: number | null) => (value == null ? '—' : value.toLocaleString());
+  const fmtPct = (value: number | null) => (value == null ? '—' : `${value}%`);
+  const fmtMs = (value: number | null) => (value == null ? '—' : `${value}ms`);
+  const fmtCost = (value: number | null) => (value == null ? '—' : `$${value.toFixed(2)}`);
+  const totalCost = providerMetrics.reduce<number | null>((sum, p) => {
+    if (p.cost == null) return sum;
+    return (sum ?? 0) + p.cost;
+  }, null);
 
-  const providerMetrics = useMemo<ProviderMetric[]>(() => {
-    const grouped = new Map<string, number>();
-    for (const agent of synergy.unifiedAgents) {
-      grouped.set(agent.platform, (grouped.get(agent.platform) || 0) + 1);
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const result = await exportData();
+      const blob = new Blob([JSON.stringify(result.payload, null, 2)], {
+        type: 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `tnf-analytics-${timeRange}-${result.source}.json`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
     }
-    return Array.from(grouped.entries()).map(([provider, count]) => ({
-      provider,
-      totalRequests: count * 120,
-      successRate: synergy.relayRegistered ? 98 : 90,
-      avgLatency: provider.includes('local') ? 45 : 200,
-      cost: provider.includes('local') ? 0 : count * 12,
-    }));
-  }, [synergy]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 400);
-    return () => clearTimeout(timer);
-  }, [timeRange, synergy.lastSyncAt]);
+  };
 
   if (loading) {
     return (
@@ -117,21 +69,45 @@ const Analytics: React.FC = () => {
   return (
     <PageShell
       title="Analytics"
-      subtitle={`Synergy plane metrics · ${synergy.unifiedAgents.length} agents · ${synergy.channelCount} channels`}
+      subtitle={
+        dataSource === 'api'
+          ? `Live API metrics · ${overview.totalAgents} agents · ${timeRange}`
+          : `Live agent roster · ${synergy.unifiedAgents.length} agents · usage metrics need REST API`
+      }
+      banner={
+        fetchError ? (
+          <div className="offline-banner" role="status">
+            {fetchError}
+          </div>
+        ) : dataSource === 'api' ? (
+          <div className="info-banner" role="status">
+            Overview metrics from REST API (port 3001).
+            {!performanceAvailable && ' Request volume not returned by API.'}
+            {!providerMetricsAvailable && ' Provider usage/cost not returned by API.'}
+            {' Agent rows show the live roster; per-agent metrics not yet provided by the API.'}
+          </div>
+        ) : null
+      }
       actions={
         <>
           <select
             className="time-select secondary-button"
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
+            aria-label="Time range"
           >
             <option value="24h">Last 24 hours</option>
             <option value="7d">Last 7 days</option>
             <option value="30d">Last 30 days</option>
             <option value="90d">Last 90 days</option>
           </select>
-          <button type="button" className="secondary-button">
-            Export
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => void handleExport()}
+            disabled={exporting || loading}
+          >
+            {exporting ? 'Exporting…' : 'Export'}
           </button>
         </>
       }
@@ -170,35 +146,39 @@ const Analytics: React.FC = () => {
               <StatCard
                 icon="💬"
                 label="Total Interactions"
-                value={overview.totalInteractions.toLocaleString()}
-                subtitle={`${overview.averageResponseTime}ms avg response`}
+                value={fmtNum(overview.totalInteractions)}
+                subtitle={
+                  overview.averageResponseTime == null
+                    ? 'Requires REST API'
+                    : `${overview.averageResponseTime}ms avg response`
+                }
                 color="blue"
               />
               <StatCard
                 icon="✅"
                 label="Success Rate"
-                value={`${overview.successRate}%`}
+                value={fmtPct(overview.successRate)}
                 subtitle="Across all agents"
                 color="green"
               />
               <StatCard
                 icon="⚡"
                 label="Workflows"
-                value={overview.totalWorkflows}
+                value={fmtNum(overview.totalWorkflows)}
                 subtitle="Executed successfully"
                 color="orange"
               />
               <StatCard
                 icon="⏱️"
                 label="Avg Response"
-                value={`${overview.averageResponseTime}ms`}
+                value={fmtMs(overview.averageResponseTime)}
                 subtitle="Fleet performance"
                 color="cyan"
               />
               <StatCard
                 icon="📊"
                 label="Active Rate"
-                value={`${Math.round((overview.activeAgents / overview.totalAgents) * 100)}%`}
+                value={`${activeRate}%`}
                 subtitle="Agent utilization"
                 color="pink"
               />
@@ -206,7 +186,18 @@ const Analytics: React.FC = () => {
           )}
 
           {/* Performance Tab */}
-          {activeTab === 'performance' && (
+          {activeTab === 'performance' && !performanceAvailable && (
+            <div className="performance-section">
+              <div className="chart-card">
+                <h3 className="chart-title">Request Volume</h3>
+                <div className="empty-state" role="status">
+                  Time-series request metrics are only available from the REST API (port 3001).
+                  Start the TNF API to populate this chart.
+                </div>
+              </div>
+            </div>
+          )}
+          {activeTab === 'performance' && performanceAvailable && (
             <div className="performance-section">
               <div className="chart-card">
                 <h3 className="chart-title">Request Volume</h3>
@@ -216,17 +207,19 @@ const Analytics: React.FC = () => {
                       <div className="bar-container">
                         <div
                           className="bar requests"
-                          style={{ height: `${(point.requests / 800) * 100}%` }}
+                          style={{ height: `${(point.requests / maxRequests) * 100}%` }}
                           title={`${point.requests} requests`}
                         ></div>
                         <div
                           className="bar responses"
-                          style={{ height: `${(point.responses / 800) * 100}%` }}
+                          style={{ height: `${(point.responses / maxRequests) * 100}%` }}
                           title={`${point.responses} responses`}
                         ></div>
                         <div
                           className="bar errors"
-                          style={{ height: `${(point.errors / 800) * 100 * 5}%` }}
+                          style={{
+                            height: `${Math.min(100, (point.errors / maxRequests) * 100 * 5)}%`,
+                          }}
                           title={`${point.errors} errors`}
                         ></div>
                       </div>
@@ -254,6 +247,12 @@ const Analytics: React.FC = () => {
             <div className="agents-table-section">
               <div className="table-card">
                 <h3 className="table-title">Agent Performance</h3>
+                {!agentMetricsAvailable && (
+                  <div className="empty-state" role="status">
+                    Live agent roster shown. Per-agent task, success and latency metrics require the
+                    REST API (port 3001) and appear as “—” until then.
+                  </div>
+                )}
                 <div className="table-scroll">
                   <table className="data-table">
                     <thead>
@@ -272,19 +271,23 @@ const Analytics: React.FC = () => {
                             <span className="agent-icon">🤖</span>
                             <span>{agent.agentName}</span>
                           </td>
-                          <td>{agent.totalTasks}</td>
+                          <td>{fmtNum(agent.totalTasks)}</td>
                           <td>
-                            <div className="progress-cell">
-                              <div className="progress-bar">
-                                <div
-                                  className="progress-fill"
-                                  style={{ width: `${agent.successRate}%` }}
-                                ></div>
+                            {agent.successRate == null ? (
+                              <span className="progress-value muted">—</span>
+                            ) : (
+                              <div className="progress-cell">
+                                <div className="progress-bar">
+                                  <div
+                                    className="progress-fill"
+                                    style={{ width: `${agent.successRate}%` }}
+                                  ></div>
+                                </div>
+                                <span className="progress-value">{agent.successRate}%</span>
                               </div>
-                              <span className="progress-value">{agent.successRate}%</span>
-                            </div>
+                            )}
                           </td>
-                          <td>{agent.avgResponseTime}ms</td>
+                          <td>{fmtMs(agent.avgResponseTime)}</td>
                           <td className="time-cell">{agent.lastActive}</td>
                         </tr>
                       ))}
@@ -296,13 +299,38 @@ const Analytics: React.FC = () => {
           )}
 
           {/* Costs Tab */}
-          {activeTab === 'costs' && (
+          {activeTab === 'costs' && !providerMetricsAvailable && (
+            <div className="costs-grid single">
+              <div className="cost-summary-card">
+                <h3>Cost Analytics</h3>
+                <div className="empty-state" role="status">
+                  Usage and cost metrics are only available from the REST API (port 3001). The live
+                  synergy roster does not include billing data.
+                </div>
+                {providerMetrics.length > 0 && (
+                  <div className="provider-list" style={{ marginTop: 16 }}>
+                    {providerMetrics.map((provider) => (
+                      <div key={provider.provider} className="provider-row">
+                        <div className="provider-info">
+                          <span className="provider-name">{provider.provider}</span>
+                          <span className="provider-requests">
+                            {provider.agentCount ?? 0} agent
+                            {(provider.agentCount ?? 0) === 1 ? '' : 's'}
+                          </span>
+                        </div>
+                        <div className="provider-cost muted">—</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {activeTab === 'costs' && providerMetricsAvailable && (
             <div className="costs-grid">
               <div className="cost-summary-card">
                 <h3>Total Cost</h3>
-                <div className="total-cost">
-                  ${providerMetrics.reduce((sum, p) => sum + p.cost, 0).toFixed(2)}
-                </div>
+                <div className="total-cost">{fmtCost(totalCost)}</div>
                 <div className="cost-period">Last {timeRange}</div>
               </div>
               <div className="provider-costs-card">
@@ -313,10 +341,10 @@ const Analytics: React.FC = () => {
                       <div className="provider-info">
                         <span className="provider-name">{provider.provider}</span>
                         <span className="provider-requests">
-                          {provider.totalRequests.toLocaleString()} requests
+                          {fmtNum(provider.totalRequests)} requests
                         </span>
                       </div>
-                      <div className="provider-cost">${provider.cost.toFixed(2)}</div>
+                      <div className="provider-cost">{fmtCost(provider.cost)}</div>
                     </div>
                   ))}
                 </div>
@@ -637,6 +665,21 @@ const Analytics: React.FC = () => {
           color: var(--tnf-text-muted);
         }
 
+        /* Empty / unavailable states */
+        .empty-state {
+          padding: 20px;
+          border: 1px dashed var(--tnf-border);
+          border-radius: 12px;
+          color: var(--tnf-text-muted);
+          font-size: 13px;
+          line-height: 1.6;
+          background: rgba(255, 255, 255, 0.02);
+        }
+
+        .muted {
+          color: var(--tnf-text-muted);
+        }
+
         /* Costs */
         .costs-grid {
           display: grid;
@@ -645,7 +688,7 @@ const Analytics: React.FC = () => {
         }
 
         @media (min-width: 768px) {
-          .costs-grid {
+          .costs-grid:not(.single) {
             grid-template-columns: 300px 1fr;
           }
         }

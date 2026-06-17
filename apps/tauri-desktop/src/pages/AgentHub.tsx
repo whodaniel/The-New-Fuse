@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useModalA11y } from '../hooks/useModalA11y';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { useAgentStore } from '../stores/agentStore';
 import type { Agent } from '../types';
@@ -184,7 +185,13 @@ const AgentHub: React.FC = () => {
       ) : (
         <div className="agent-grid">
           {filteredAgents.map((agent) => (
-            <div key={agent.id} className="agent-card" onClick={() => setSelectedAgent(agent)}>
+            <button
+              key={agent.id}
+              type="button"
+              className="agent-card"
+              onClick={() => setSelectedAgent(agent)}
+              aria-label={`Open ${agent.name} details`}
+            >
               <div className="agent-header">
                 <span className="agent-type-icon">{getTypeIcon(agent.type)}</span>
                 <div
@@ -234,7 +241,7 @@ const AgentHub: React.FC = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </button>
           ))}
 
           {/* Add New Agent Card */}
@@ -434,6 +441,10 @@ const AgentHub: React.FC = () => {
           cursor: pointer;
           position: relative;
           overflow: hidden;
+          width: 100%;
+          text-align: left;
+          font: inherit;
+          color: inherit;
         }
 
         .agent-card::before {
@@ -624,12 +635,21 @@ const AgentDetailModal: React.FC<{
   onClose: () => void;
   onDelete: () => void;
 }> = ({ agent, onClose, onDelete }) => {
+  const dialogRef = useModalA11y(true, onClose);
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={onClose} role="presentation">
+      <div
+        ref={dialogRef}
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="agent-detail-title"
+      >
         <div className="modal-header">
-          <h2>{agent.name}</h2>
-          <button className="close-btn" onClick={onClose}>
+          <h2 id="agent-detail-title">{agent.name}</h2>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>
@@ -809,6 +829,7 @@ const CreateAgentModal: React.FC<{
   const [type, setType] = useState<Agent['type']>('custom');
   const [description, setDescription] = useState('');
   const [model, setModel] = useState('');
+  const dialogRef = useModalA11y(true, onClose);
 
   const handleCreate = () => {
     onCreate({
@@ -827,11 +848,18 @@ const CreateAgentModal: React.FC<{
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={onClose} role="presentation">
+      <div
+        ref={dialogRef}
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-agent-title"
+      >
         <div className="modal-header">
-          <h2>Create New Agent</h2>
-          <button className="close-btn" onClick={onClose}>
+          <h2 id="create-agent-title">Create New Agent</h2>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>

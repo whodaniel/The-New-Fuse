@@ -1,9 +1,18 @@
 import React from 'react';
 import { useOperatorSynergy } from '../../hooks/useOperatorSynergy';
+import { useRoute } from '../route-context';
+
+const CHIP_ROUTES: Record<string, string> = {
+  Relay: '/browser',
+  Federation: '/a2a',
+  Extension: '/browser',
+  API: '/settings',
+};
 
 /** Compact synergy plane status — use at top of operator pages */
 export const SynergyStatusBar: React.FC = () => {
   const { state } = useOperatorSynergy();
+  const { navigate } = useRoute();
 
   const chips = [
     { label: 'Relay', ok: state.relayConnected },
@@ -13,12 +22,19 @@ export const SynergyStatusBar: React.FC = () => {
   ];
 
   return (
-    <div className="synergy-status-bar">
+    <div className="synergy-status-bar" role="status" aria-label="Synergy plane status">
       {chips.map((chip) => (
-        <span key={chip.label} className={`synergy-chip ${chip.ok ? 'ok' : 'off'}`}>
-          <span className="dot" />
+        <button
+          key={chip.label}
+          type="button"
+          className={`synergy-chip ${chip.ok ? 'ok' : 'off'}`}
+          onClick={() => navigate(CHIP_ROUTES[chip.label] || '/dashboard')}
+          title={`Open ${chip.label} settings`}
+          aria-label={`${chip.label}: ${chip.ok ? 'online' : 'offline'}`}
+        >
+          <span className="dot" aria-hidden />
           {chip.label}
-        </span>
+        </button>
       ))}
       <span className="synergy-meta">
         {state.unifiedAgents.length} agents · {state.channelCount} channels
@@ -45,6 +61,8 @@ export const SynergyStatusBar: React.FC = () => {
           border-radius: 999px;
           border: 1px solid var(--tnf-border);
           color: var(--tnf-text-muted);
+          background: transparent;
+          cursor: pointer;
         }
         .synergy-chip.ok {
           color: #6ee7b7;

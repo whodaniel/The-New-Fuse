@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -18,6 +18,10 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useAuth } from '../hooks/useAuth';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
+import { safeStorage } from '../lib/safeStorage';
+import { apiService } from '../services/api';
 
 /**
  * Enhanced Workflow Builder - Tauri Desktop
@@ -180,15 +184,74 @@ const initialNodes: Node[] = [
   },
 ];
 
+const WORKFLOW_DRAFT_KEY = 'tnf.workflow.draft';
+const WORKFLOW_API_ID_KEY = 'tnf.workflow.apiId';
+
 const WorkflowBuilderContent: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+  const { state: synergy } = useOperatorSynergy();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [workflowName, setWorkflowName] = useState('Untitled Workflow');
+  const [savedWorkflowId, setSavedWorkflowId] = useState<string | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionLog, setExecutionLog] = useState<string[]>([]);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition } = useReactFlow();
+
+  const canUseWorkflowApi = isAuthenticated && synergy.apiOnline;
+
+  // Reattach the editable-field handler to nodes that arrive without it (drafts
+  // and templates serialize without functions). Without this, restored node
+  // fields would be read-only no-ops because data.onChange is undefined.
+  const attachHandlers = useCallback(
+    (list: Node[]): Node[] =>
+      list.map((node) => {
+        // Decorative start/input nodes have no editable fields.
+        if (node.type === 'input') return node;
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            onChange: (field: string, value: string) => {
+              setNodes((nds) =>
+                nds.map((n) =>
+                  n.id === node.id ? { ...n, data: { ...n.data, [field]: value } } : n
+                )
+              );
+            },
+          },
+        };
+      }),
+    [setNodes]
+  );
+
+  useEffect(() => {
+    setSavedWorkflowId(safeStorage.getItem(WORKFLOW_API_ID_KEY));
+  }, []);
+
+  useEffect(() => {
+    try {
+      const raw = safeStorage.getItem(WORKFLOW_DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as {
+        name?: string;
+        nodes?: Node[];
+        edges?: Edge[];
+        savedAt?: string;
+      };
+      if (draft.name) setWorkflowName(draft.name);
+      if (draft.nodes?.length) setNodes(attachHandlers(draft.nodes));
+      if (draft.edges) setEdges(draft.edges);
+      if (draft.savedAt) {
+        setSaveNotice(`Restored local draft from ${new Date(draft.savedAt).toLocaleString()}.`);
+      }
+    } catch {
+      // ignore corrupt draft
+    }
+  }, [attachHandlers, setEdges, setNodes]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge({ ...params, ...defaultEdgeOptions }, eds)),
@@ -244,24 +307,91 @@ const WorkflowBuilderContent: React.FC = () => {
     event.dataTransfer.effectAllowed = 'move';
   };
 
+  // Push the CURRENT canvas to the workflow API and return the persisted id.
+  // Shared by Save and Run so a run never executes a stale server copy.
+  const syncCanvasToApi = async (): Promise<string | null> => {
+    const response = await apiService.saveWorkflowCanvas({
+      id: savedWorkflowId || undefined,
+      name: workflowName,
+      nodes,
+      edges,
+    });
+    if (response.success && response.data?.id) {
+      setSavedWorkflowId(response.data.id);
+      safeStorage.setItem(WORKFLOW_API_ID_KEY, response.data.id);
+      return response.data.id;
+    }
+    setExecutionLog((prev) => [
+      ...prev,
+      `⚠️ API save failed: ${response.error || 'unknown error'}`,
+    ]);
+    return null;
+  };
+
   const saveWorkflow = async () => {
-    const workflow = { name: workflowName, nodes, edges, createdAt: new Date().toISOString() };
-    console.log('Saving workflow:', workflow);
-    // API call would go here
-    alert('Workflow saved!');
+    const workflow = { name: workflowName, nodes, edges, savedAt: new Date().toISOString() };
+    try {
+      safeStorage.setItem(WORKFLOW_DRAFT_KEY, JSON.stringify(workflow));
+    } catch {
+      setSaveNotice('Could not save draft — storage unavailable in this WebView.');
+      return;
+    }
+
+    if (!canUseWorkflowApi) {
+      setSaveNotice('Draft saved locally — sign in and connect API on :3001 to sync.');
+      setExecutionLog((prev) => [...prev, '💾 Draft saved locally.']);
+      return;
+    }
+
+    const id = await syncCanvasToApi();
+    if (id) {
+      setSaveNotice(`Synced to workflow API (${id.slice(0, 8)}…).`);
+      setExecutionLog((prev) => [...prev, `💾 Saved to API: ${id}`]);
+    } else {
+      setSaveNotice('Local draft saved — API sync failed (see execution log).');
+    }
   };
 
   const executeWorkflow = async () => {
-    setIsExecuting(true);
-    setExecutionLog(['🚀 Starting workflow...']);
-
-    // Simulate execution
-    for (let i = 0; i < nodes.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setExecutionLog((prev) => [...prev, `✅ Executing: ${nodes[i].data.label}`]);
+    if (nodes.length === 0) {
+      setExecutionLog(['⚠️ Add nodes before running.']);
+      return;
     }
 
-    setExecutionLog((prev) => [...prev, '🎉 Workflow complete!']);
+    if (canUseWorkflowApi) {
+      setIsExecuting(true);
+      // Always persist the current canvas first so we execute exactly what's on
+      // screen, not whatever was last saved.
+      setExecutionLog(['▶ Saving current canvas before execution…']);
+      const id = await syncCanvasToApi();
+      if (!id) {
+        setExecutionLog((prev) => [...prev, '❌ Could not save workflow — run aborted.']);
+        setIsExecuting(false);
+        return;
+      }
+      setExecutionLog((prev) => [...prev, `▶ Executing ${id.slice(0, 8)}… (current canvas)`]);
+      const response = await apiService.executeWorkflow(id);
+      if (response.success && response.data) {
+        setExecutionLog((prev) => [
+          ...prev,
+          `✅ Execution ${response.data?.executionId} · status ${response.data?.status || 'started'}`,
+        ]);
+      } else {
+        setExecutionLog((prev) => [...prev, `❌ Execute failed: ${response.error}`]);
+      }
+      setIsExecuting(false);
+      return;
+    }
+
+    setIsExecuting(true);
+    setExecutionLog(['[preview] Simulating workflow — sign in + API required for real execution.']);
+
+    for (let i = 0; i < nodes.length; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setExecutionLog((prev) => [...prev, `[preview] Step ${i + 1}: ${nodes[i].data.label}`]);
+    }
+
+    setExecutionLog((prev) => [...prev, '[preview] Simulation complete.']);
     setIsExecuting(false);
   };
 
@@ -357,21 +487,7 @@ const WorkflowBuilderContent: React.FC = () => {
 
     const template = templates[templateName];
     if (template) {
-      setNodes(
-        template.nodes.map((node) => ({
-          ...node,
-          data: {
-            ...node.data,
-            onChange: (field: string, value: string) => {
-              setNodes((nds) =>
-                nds.map((n) =>
-                  n.id === node.id ? { ...n, data: { ...n.data, [field]: value } } : n
-                )
-              );
-            },
-          },
-        }))
-      );
+      setNodes(attachHandlers(template.nodes));
       setEdges(template.edges);
       setWorkflowName(`${templateName.charAt(0).toUpperCase() + templateName.slice(1)} Workflow`);
     }
@@ -388,7 +504,25 @@ const WorkflowBuilderContent: React.FC = () => {
     <PageShell
       className="page-fill"
       title="Workflow Builder"
-      subtitle={workflowName}
+      subtitle={
+        canUseWorkflowApi
+          ? `${workflowName} · API sync enabled${savedWorkflowId ? ` · ${savedWorkflowId.slice(0, 8)}…` : ''}`
+          : `${workflowName} · local draft + preview mode`
+      }
+      banner={
+        <>
+          <div className="info-banner">
+            {canUseWorkflowApi
+              ? 'Signed in with API online — Save syncs canvas to /workflows; Run executes saved workflow on server.'
+              : 'Save always stores a local draft. Sign in (sidebar) and start REST API on :3001 to sync and run for real.'}
+          </div>
+          {saveNotice && (
+            <div className="info-banner" role="status">
+              {saveNotice}
+            </div>
+          )}
+        </>
+      }
       actions={
         <>
           <button

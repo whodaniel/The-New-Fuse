@@ -89,12 +89,19 @@ export const useAgentStore = create<AgentState>()(
 
       deleteAgent: async (id) => {
         set({ loading: true, error: null });
-        await apiService.deleteAgent(id);
-        set((state) => ({
-          agents: state.agents.filter((a) => a.id !== id),
-          loading: false,
-          selectedAgentId: state.selectedAgentId === id ? null : state.selectedAgentId,
-        }));
+        const response = await apiService.deleteAgent(id);
+        if (response.success) {
+          set((state) => ({
+            agents: state.agents.filter((a) => a.id !== id),
+            loading: false,
+            selectedAgentId: state.selectedAgentId === id ? null : state.selectedAgentId,
+          }));
+        } else {
+          set({
+            loading: false,
+            error: response.error || 'Cannot delete agent while REST API is offline.',
+          });
+        }
       },
 
       startAgent: async (id) => {
@@ -105,6 +112,8 @@ export const useAgentStore = create<AgentState>()(
               a.id === id ? { ...a, status: 'active' as const, lastActive: 'Now' } : a
             ),
           }));
+        } else {
+          set({ error: response.error || 'Failed to start agent.' });
         }
       },
 
@@ -114,6 +123,8 @@ export const useAgentStore = create<AgentState>()(
           set((state) => ({
             agents: state.agents.map((a) => (a.id === id ? { ...a, status: 'idle' as const } : a)),
           }));
+        } else {
+          set({ error: response.error || 'Failed to stop agent.' });
         }
       },
 

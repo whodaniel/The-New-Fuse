@@ -16,6 +16,12 @@
   flex-wrap: wrap;
 }
 
+.page-back-btn {
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
 .page-title {
   margin: 0 0 6px;
   font-family: var(--tnf-font-heading);

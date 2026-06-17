@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { resolveWebAppBaseUrl, webSurfaceUrl } from '../config/webSurfaces';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
 import type { TopologyNode } from '../services/operatorSynergy/types';
+import { useSettingsStore } from '../stores/settingsStore';
 
 interface MemoryIndexEntry {
   agentId: string;
@@ -15,6 +17,8 @@ interface MemoryIndexEntry {
 
 const KnowledgeHub: React.FC = () => {
   const { state: synergy } = useOperatorSynergy();
+  const { environment } = useSettingsStore();
+  const webPkgUrl = webSurfaceUrl(resolveWebAppBaseUrl(environment), '/knowledge-hub');
   const [activeTab, setActiveTab] = useState<'topology' | 'relay-clusters' | 'memory-index'>(
     'topology'
   );
@@ -57,7 +61,7 @@ const KnowledgeHub: React.FC = () => {
           <button
             type="button"
             className="secondary-button"
-            onClick={() => void openExternal('https://thenewfuse.com/knowledge')}
+            onClick={() => void openExternal(webPkgUrl)}
           >
             Web PKG
           </button>

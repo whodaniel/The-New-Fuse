@@ -1,6 +1,7 @@
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { apiService } from '../services/api';
 
 export interface User {
   id: string;
@@ -13,10 +14,26 @@ interface AuthContextValue {
   user: User | null;
   loading: boolean;
   error: string | null;
+  isConfigured: boolean;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
+
+const syncApiToken = async () => {
+  if (!isSupabaseConfigured) {
+    apiService.clearToken();
+    return;
+  }
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    apiService.setToken(session.access_token);
+  } else {
+    apiService.clearToken();
+  }
+};
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -41,6 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (session?.user) {
           setUser(mapUser(session.user));
         }
+        await syncApiToken();
       } catch (err: unknown) {
         console.error('Error initializing auth:', err);
       } finally {
@@ -58,6 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         setUser(null);
       }
+      void syncApiToken();
       setLoading(false);
     });
 
@@ -100,6 +119,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     loading,
     error,
+    isConfigured: isSupabaseConfigured,
     loginWithGoogle,
     logout,
     isAuthenticated: !!user,
