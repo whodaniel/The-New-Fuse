@@ -334,3 +334,6 @@ apps/external/hardware/lightpanda
 # Large data files
 data/transcript*.json
 dump.rdb
+
+# Telegram bot credentials
+.env.tnf-telegram

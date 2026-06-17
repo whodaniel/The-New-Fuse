@@ -13,6 +13,11 @@ import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
+import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
+import { registerTelegramSendCommand } from './commands/telegram/send.js';
+import { registerTelegramStartCommand } from './commands/telegram/start.js';
+import { registerTelegramStatusCommand } from './commands/telegram/status.js';
+import { registerTelegramStopCommand } from './commands/telegram/stop.js';
 import { Orchestrator } from './orchestration.js';
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
 import { CronService } from './services/CronService.js';
@@ -5251,10 +5256,6 @@ handoff
       process.exit(1);
     }
   });
-
-const protocol = program
-  .command('protocol')
-  .description('Validate TNF framework protocols and harness boundaries');
 
 protocol
   .command('validate')
@@ -14417,7 +14418,12 @@ cronCommand
   });
 
 registerAssimilateCommand(program, repoRoot);
+registerTelegramStartCommand(program, repoRoot);
+registerTelegramStopCommand(program, repoRoot);
+registerTelegramStatusCommand(program, repoRoot);
+registerTelegramSendCommand(program, repoRoot);
 registerAgentsClassifyCommand(program, repoRoot);
+registerRefreshContextCommand(program, repoRoot);
 
 const webhookCommand = program.command('webhook').description('Webhook management');
 webhookCommand
