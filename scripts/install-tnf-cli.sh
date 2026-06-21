@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEFAULT_REPO_URL="https://github.com/whodaniel/fuse.git"
+DEFAULT_REPO_URL="https://github.com/whodaniel/fuse-open-runtime.git"
 DEFAULT_REF="main"
 DEFAULT_INSTALL_ROOT="${HOME}/.tnf-cli"
 DEFAULT_BIN_DIR="${HOME}/.local/bin"

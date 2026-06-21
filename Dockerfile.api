@@ -90,7 +90,11 @@ RUN test -f apps/api/dist/main.js && \
     test -f packages/database/dist/index.js && \
     test -f packages/infrastructure/dist/index.js && \
     test -f packages/a2a-core/dist/index.js && \
-    test -f packages/relay-core/dist/index.js
+    test -f packages/relay-core/dist/index.js && \
+    test -f packages/n8n-workflows/dist/index.js && \
+    test -f packages/protocol-contracts/dist/index.js && \
+    test -f packages/core/dist/index.js && \
+    test -f packages/utils/dist/index.js
 
 # Verify the build output exists
 RUN ls -la apps/api/dist/ || echo "Build output check"

@@ -259,9 +259,17 @@ if [ "$SYNC_OPEN" = true ]; then
   echo ""
 
   OPEN_DIR="$WORK_DIR/fuse-open-runtime"
-  git clone "$MONO_ROOT" "$OPEN_DIR" --single-branch --branch main 2>&1 | grep -v "^$"
+  mkdir -p "$OPEN_DIR"
+  echo "  Exporting monorepo HEAD via git archive (skips node_modules, dist, .turbo)..."
+  (cd "$MONO_ROOT" && git archive HEAD) | tar -x -C "$OPEN_DIR"
 
   cd "$OPEN_DIR"
+  git init -b main -q
+  if [ -n "${GITHUB_PAT:-}" ]; then
+    git remote add origin "https://${GITHUB_PAT}@github.com/whodaniel/fuse-open-runtime.git"
+  else
+    git remote add origin https://github.com/whodaniel/fuse-open-runtime.git
+  fi
 
   # Remove proprietary files
   REMOVED=0
@@ -357,14 +365,6 @@ export default OrchestratorModule;
 STUB
 
   echo "  Created 3 contract stubs"
-
-  # Update remote to point to open-runtime
-  git remote remove origin 2>/dev/null || true
-  if [ -n "${GITHUB_PAT:-}" ]; then
-    git remote add origin "https://${GITHUB_PAT}@github.com/whodaniel/fuse-open-runtime.git"
-  else
-    git remote add origin https://github.com/whodaniel/fuse-open-runtime.git
-  fi
 
   git add -A
   git commit -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)

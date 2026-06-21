@@ -589,15 +589,11 @@
             <h3>The Central Nervous System</h3>
             <p>Debug, deploy, and direct your swarm from the <strong>Fuse Connect</strong> Chrome Extension or our native VS Code package.</p>
             <div class="code-preview">
-              <span class="cm">// Initialize swarm with Auto-Scaling & Quality selection</span><br>
-              <span class="kw">import</span> { <span class="fn">swarmService</span> } <span class="kw">from</span> <span class="str">'@the-new-fuse/core'</span>;<br><br>
-              <span class="kw">await</span> swarmService.<span class="fn">initializeAgencySwarm</span>(<span class="str">'my-agency'</span>);<br>
-              <span class="kw">const</span> agent = <span class="kw">await</span> swarmService.<span class="fn">registerAgent</span>(<span class="str">'my-agency'</span>, {<br>
-              &nbsp;&nbsp;name: <span class="str">'Architect'</span>,<br>
-              &nbsp;&nbsp;capabilities: [<span class="str">'planning'</span>, <span class="str">'delegation'</span>],<br>
-              &nbsp;&nbsp;qualityScore: <span class="num">0.95</span><br>
-              });<br><br>
-              <span class="kw">await</span> broker.<span class="fn">sendMessage</span>({ to: <span class="str">'worker-pool'</span>, action: <span class="str">'build'</span> });
+              <span class="cm"># Install + boot the TNF harness (open runtime)</span><br>
+              <span class="fn">curl</span> -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh | <span class="fn">bash</span><br><br>
+              <span class="fn">tnf</span> onboard<br>
+              <span class="fn">tnf</span> state show<br>
+              <span class="fn">curl</span> http://127.0.0.1:3007/handoff-lineage
             </div>
           </div>
           <div class="bento-card b2 fade-in">
@@ -693,7 +689,7 @@
         <a href="/auth/register" class="btn btn-primary btn-lg">
           <span class="btn-icon">🚀</span> Start Building Now
         </a>
-        <a href="https://github.com/whodaniel/fuse" class="btn btn-secondary btn-lg" target="_blank" rel="noopener">
+        <a href="https://github.com/whodaniel/fuse-open-runtime" class="btn btn-secondary btn-lg" target="_blank" rel="noopener">
           <span class="btn-icon">⭐</span> Star on GitHub
         </a>
       </div>
@@ -718,9 +714,9 @@
         </div>
         <div class="footer-col">
           <h4>Developers</h4>
-          <a href="https://github.com/whodaniel/fuse" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/whodaniel/fuse-open-runtime" target="_blank" rel="noopener">GitHub</a>
           <a href="/docs">Documentation</a>
-          <a href="/api/docs">API Reference</a>
+          <a href="/docs">API Reference</a>
           <a href="/agents">Agent Registry</a>
         </div>
         <div class="footer-col">

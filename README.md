@@ -17,8 +17,8 @@ Prerequisites:
 - PostgreSQL 17+ for full API/database flows
 
 ```bash
-git clone https://github.com/whodaniel/fuse.git
-cd fuse
+git clone https://github.com/whodaniel/fuse-open-runtime.git
+cd fuse-open-runtime
 pnpm install
 cp .env.example .env
 touch .tnf.local.env
@@ -74,6 +74,6 @@ plane details in public issues.
 
 ## License
 
-The open runtime license is declared in the downstream public distribution.
-Do not assume the combined monorepo is the final open-source artifact; verify
+The open runtime license is declared in the downstream public distribution. Do
+not assume the combined monorepo is the final open-source artifact; verify
 `docs/REPO_SEPARATION.md` and the downstream repository before public release.

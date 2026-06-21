@@ -75,10 +75,25 @@ async function bootstrap(): Promise<void> {
 
   // Root endpoint for health checks
   app.getHttpAdapter().get(ROOT_PATH, (req: any, res: any) => {
-    res.json({ status: SERVICE_STATUS_HEALTHY, service: SERVICE_NAME_API });
+    res.json({
+      status: SERVICE_STATUS_HEALTHY,
+      service: SERVICE_NAME_API,
+      timestamp: new Date().toISOString(),
+    });
   });
   app.getHttpAdapter().get(HEALTH_CHECK_PATH, (req: any, res: any) => {
-    res.json({ status: SERVICE_STATUS_HEALTHY, service: SERVICE_NAME_API });
+    res.json({
+      status: SERVICE_STATUS_HEALTHY,
+      service: SERVICE_NAME_API,
+      timestamp: new Date().toISOString(),
+    });
+  });
+  app.getHttpAdapter().get('/api/v1/health', (req: any, res: any) => {
+    res.json({
+      status: 'ok',
+      service: SERVICE_NAME_API,
+      timestamp: new Date().toISOString(),
+    });
   });
 
   const port = process.env.PORT || DEFAULT_PORT;

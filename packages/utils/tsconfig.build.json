@@ -23,5 +23,5 @@
     "**/__tests__/*",
     "**/__mocks__/*"
   ],
-  "references": [{ "path": "../types" }]
+  "references": [{ "path": "../types" }, { "path": "../infrastructure" }]
 }
