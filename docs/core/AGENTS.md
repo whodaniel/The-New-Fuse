@@ -16,6 +16,10 @@ tnf onboard
 6. `.agent/context/resource-map.md`
 7. `.agent/context/agent-onboarding.md`
 8. `.agent/workflows/frontload.md`
+9. `docs/core/ENGINEERING_PRINCIPLES.md`
+10. `docs/core/SOUL.md`, `docs/core/USER.md`, `docs/core/IDENTITY.md`,
+    `docs/core/HEARTBEAT.md`
+11. `docs/operations/STALL_DEFENSE.md`
 
 ## Where Resources Live
 

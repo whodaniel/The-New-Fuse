@@ -1,0 +1,21 @@
+name: openclaw-whatsapp-to-tnf-frontload
+from:
+  - skill: openclaw-assistant-setup
+    output: ~/.openclaw/workspace/handoff/LATEST.md
+  - skill: openclaw-assistant-setup
+    output: ~/.openclaw/openclaw.json#agents.list[whatsapp-personal]
+to:
+  - skill: tnf-frontload-protocols
+    input: ~/.tnf/handoff-current.json
+  - skill: tnf-skill-bridging
+    input: ~/.tnf/bridge-reports/openclaw-whatsapp-to-tnf-frontload.md
+validate:
+  - ~/.openclaw/workspace/handoff/LATEST.md exists after handoff persistence
+  - ~/.tnf/update-from-latest.sh runs from handoff persistence without blocking the OpenClaw turn indefinitely
+  - ~/.tnf/handoff-current.json sessionKey matches the latest persisted handoff sessionKey
+  - whatsapp-personal can call semantic_memory_search while write/exec/browser automation tools remain denied
+fail:
+  - Log a warning and keep handoff persistence successful if TNF cache refresh fails
+  - Fall back to manual ~/.tnf/update-from-latest.sh and ~/.tnf/tnf-status verification
+log:
+  - ~/.tnf/bridge-reports/openclaw-whatsapp-to-tnf-frontload.md

@@ -1,0 +1,32 @@
+name: brand-identity-handoff
+from:
+  - skill: brand-identity-agent
+    output: ~/.tnf/handoffs/brand-identity-report.json
+    format: application/json
+    schema: ~/.tnf/bridge-specs/schemas/brand-identity-report.schema.json
+to:
+  - skill: tnf-skill-bridging
+    input: ~/.tnf/handoffs/brand-identity-report.json
+    contract:
+      required_fields:
+        - niche
+        - audience_summary
+        - blog_name_suggestions
+        - brand_voice
+        - visual_style_guide
+      minimum_blog_name_suggestions: 10
+      required_visual_style_fields:
+        - color_palette
+        - typography
+validate:
+  - handoff file exists at ~/.tnf/handoffs/brand-identity-report.json
+  - JSON is valid and matches schema at ~/.tnf/bridge-specs/schemas/brand-identity-report.schema.json
+  - blog_name_suggestions length is >= 10
+  - each suggestion includes name, com_domain, domain_available, and check_timestamp
+  - color_palette contains >= 3 hex colors and typography defines heading and body families
+fail:
+  - if domain lookup fails, set domain_available to null and domain_status to "lookup_failed"
+  - if schema validation fails, regenerate BrandIdentityReport with same BrandIdentityInput
+  - if a second validation fails, escalate and write diagnostics to bridge log
+log:
+  - ~/.tnf/bridge-reports/brand-identity-handoff.md

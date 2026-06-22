@@ -1,0 +1,3 @@
+interface:
+  display_name: "TNF Multi-Agent State Governor"
+  short_description: "Audit and prune stale cross-agent state snapshots"

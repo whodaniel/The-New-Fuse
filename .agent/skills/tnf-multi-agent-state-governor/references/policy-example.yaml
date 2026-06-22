@@ -1,0 +1,81 @@
+report_dir: ~/.tnf/reports/protocols/agent-state-governance
+keep_latest_rules:
+  - name: claude_shell_snapshots
+    path: ~/.claude/shell-snapshots
+    glob: "*"
+    keep: 120
+  - name: gemini_settings_backups
+    path: ~/.gemini
+    glob: settings.json.backup.*
+    keep: 2
+  - name: tnf_inbound_queue
+    path: ~/.tnf/inbound
+    glob: "*.json"
+    keep: 50
+  - name: agent_state_governance_reports
+    path: ~/.tnf/reports/protocols/agent-state-governance
+    glob: "*.json"
+    keep: 30
+older_than_days_rules:
+  - name: tnf_terminal_heartbeat_history
+    path: ~/.tnf/terminal-heartbeat/state/history
+    glob: "*"
+    days: 30
+  - name: tnf_inbound_queue_old
+    path: ~/.tnf/inbound
+    glob: "*.json"
+    days: 7
+  - name: agent_state_governance_reports_old
+    path: ~/.tnf/reports/protocols/agent-state-governance
+    glob: "*.json"
+    days: 30
+  - name: gemini_wrapper_cache
+    path: ~/.tnf/gemini-wrapper-home/Library/Caches
+    glob: "**/*"
+    days: 7
+stale_lock_rules:
+  - name: tnf_stale_locks
+    path: ~/.tnf/locks
+    glob: "*.lock"
+    days: 1
+    check_pid_liveness: true
+federation_log_rules:
+  - name: federation_watchdog_jsonl
+    path: ~/.tnf
+    glob: "federation-watchdog-*.jsonl"
+    max_count: 10
+    max_age_days: 30
+  - name: federation_watchdog_log
+    path: ~/.tnf
+    glob: "federation-watchdog-*.log"
+    max_count: 10
+    max_age_days: 30
+log_rotation_rules:
+  - name: tnf_agent_daemon_log
+    file: ~/.tnf/logs/tnf-agent-daemon.log
+    max_size_mb: 10
+    max_age_days: 7
+  - name: hermes_tnf_bridge_log
+    file: ~/.tnf/logs/hermes-tnf-bridge.log
+    max_size_mb: 5
+    max_age_days: 7
+  - name: terminal_heartbeat_cron_log
+    file: ~/.tnf/terminal-heartbeat/logs/cron.log
+    max_size_mb: 10
+    max_age_days: 7
+gzip_rules:
+  - name: tnf_master_heartbeat_history
+    file: ~/.tnf/master-heartbeat/state/master-heartbeat-history.jsonl
+    days: 21
+  - name: tnf_watchdog_history
+    file: ~/.tnf/perpetual-scaffold/state/watchdog-history.jsonl
+    days: 21
+  - name: tnf_subdirector_history
+    file: ~/.tnf/subdirector-autopilot/state/subdirector-autopilot-history.jsonl
+    days: 21
+  - name: tnf_cloud_health_history
+    file: ~/.tnf/cloud-health/state/history.jsonl
+    days: 21
+  - name: terminal_heartbeat_history_jsonl
+    file: ~/.tnf/terminal-heartbeat/state/terminal-heartbeat-history.jsonl
+    days: 21

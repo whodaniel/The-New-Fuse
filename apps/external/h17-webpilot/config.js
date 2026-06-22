@@ -1,15 +1,15 @@
 module.exports = {
   // Path to any Chromium-based binary (Chrome, Chromium, Brave, Edge, etc.)
-  browser: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  browser: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
 
   // Where to store the browser profile used by this framework
-  profile: "~/h17-webpilot/profile",
+  profile: process.env.WEBPILOT_PROFILE || require('path').join(__dirname, 'profile'),
 
   // Local WebSocket bridge port
   port: 7331,
 
-  // First page to open on launch
-  startUrl: "https://www.google.com",
+  // First page to open on launch (override via WEBPILOT_START_URL)
+  startUrl: process.env.WEBPILOT_START_URL || 'https://hugopalma.work',
 
   // Browser window size
   viewport: { width: 1920, height: 1080 },
@@ -21,7 +21,7 @@ module.exports = {
   connectionTimeout: 120000,
 
   // Logging: silent | error | info | debug
-  logLevel: "info",
+  logLevel: 'info',
 
   framework: {
     handles: {
@@ -29,7 +29,7 @@ module.exports = {
       cleanupIntervalMs: 60 * 1000,
     },
     profileSeed: {
-      name: "Webpilot",
+      name: 'Webpilot',
       pinExtension: true,
     },
     debug: {
@@ -41,7 +41,7 @@ module.exports = {
   human: {
     // Public defaults are intentionally generic. Tune your own profile.
     calibrated: false,
-    profileName: "public-default",
+    profileName: 'public-default',
     cursor: {
       targetInsetRatio: 0.2,
       spreadRatio: 0.16,

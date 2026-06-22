@@ -1,0 +1,22 @@
+{
+  "ts": "2026-06-17T18:58:52.138315Z",
+  "channel": "tnf:bot:status",
+  "event": "telegram_daemon_restored",
+  "actor": "hermes",
+  "session": "dc6022ac-34bb-4614-ad48-86ad8b0c61c1",
+  "payload": {
+    "bot": "@tnf_kilo_bot",
+    "bot_id": 8731499379,
+    "daemon": "bot_daemon_curl.py",
+    "daemon_pid": 5947,
+    "launcher": "/tmp/tg_curl_wrapper.sh",
+    "verified": [
+      "getMe",
+      "sendMessage (BOT->USER, msg_id=1639)",
+      "long-poll alive 30s+"
+    ],
+    "fixed_picoclaw_endpoints": "404 - decommissioned",
+    "missing_tokens": ["@hermes_bot", "@thenewfuse_bot"],
+    "call_to_action": "Reply /ping from device to verify inbound path."
+  }
+}

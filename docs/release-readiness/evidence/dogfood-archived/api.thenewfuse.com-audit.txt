@@ -1,0 +1,52 @@
+=== Security Audit for api.thenewfuse.com ===
+
+1. DNS Resolution:
+ghs.googlehosted.com.
+142.251.211.115
+
+2. Security Headers:
+HTTP/2 200 
+x-powered-by: Express
+vary: Origin
+access-control-allow-credentials: true
+access-control-expose-headers: Content-Length,ETag
+content-type: application/json; charset=utf-8
+etag: W/"e9-2Oyois+aFSxh2Qf2vswStzfNECw"
+x-cloud-trace-context: 7c7774e4cf89396b6b4ebe64648fad99;o=1
+content-length: 233
+date: Tue, 05 May 2026 15:12:23 GMT
+server: Google Frontend
+
+
+3. CORS Audit:
+   Testing with evil origin:
+
+
+   Testing CORS error code:
+   Status with evil origin: 500
+   WARNING: CORS rejection returns 500 (should be 403)
+
+4. Route Availability:
+   /login: 404
+   WARNING: Route /login returns 404
+   /register: 404
+   WARNING: Route /register returns 404
+   /dashboard: 404
+   WARNING: Route /dashboard returns 404
+   /pricing: 404
+   WARNING: Route /pricing returns 404
+   /docs: 404
+   WARNING: Route /docs returns 404
+   /api/health: 200
+
+5. Information Disclosure:
+   Checking for version/internal info:
+{"name":"The New Fuse - Unified API Gateway","version":"1.0.0","status":"operational","timestamp":"2026-05-05T15:12:43.722Z","uptime":171302.927474396,"documentation":"/docs","health":"/health","api":"/v1","environment":"production"}
+
+   Checking for exposed API docs:
+{"statusCode":404,"timestamp":"2026-05-05T15:12:44.759Z","path":"/api-docs","method":"GET","message"
+
+   Checking for API index:
+{"statusCode":404,"timestamp":"2026-05-05T15:12:45.391Z","path":"/api/v1","method":"GET","message":"
+
+/Users/danielgoldberg/.hermes/skills/dogfood/scripts/quick-security-audit.sh: line 196: syntax error: unexpected end of file
