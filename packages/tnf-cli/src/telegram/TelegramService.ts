@@ -1,4 +1,4 @@
-import { createCustomLogger } from '@the-new-fuse/utils';
+import { createCustomLogger } from '@the-new-fuse/utils/logger/index.js';
 import { exec } from 'child_process';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs/promises';
