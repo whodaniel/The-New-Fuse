@@ -82,6 +82,22 @@ on install after freeing ~2.8 GB, then failed at build.
 rm -rf /tmp/tnf-clean-install-test
 export TNF_INSTALL_AUTO_ONBOARD=0
 curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh \
-  | bash -s -- --skip-onboard
+  | bash -s -- --ref v2.0.0-rc.3 --skip-onboard
 ~/.tnf-cli/fuse/packages/tnf-cli/dist/cli.js --version
 ```
+
+---
+
+## Update 2026-06-22 (rc.2 / rc.3)
+
+| Tag           | Open-runtime SHA | Install    | Build | Notes                                                             |
+| ------------- | ---------------- | ---------- | ----- | ----------------------------------------------------------------- |
+| `v2.0.0-rc.2` | `d703e57`        | ✅ ~8m 36s | ❌    | TelegramService: missing `@the-new-fuse/utils/logger`, `telegraf` |
+| `v2.0.0-rc.3` | `5ace4ab`        | ❌ ENOSPC  | —     | Disk ~173–362 MB free; failed during `pnpm install` linking       |
+
+**Fixes in `535c12bc36` / rc.3:** local simple logger, `telegraf`+`dotenv` deps,
+install script builds `@the-new-fuse/tnf-cli...` (workspace deps). Monorepo
+`pnpm --filter @the-new-fuse/tnf-cli build` → **PASS**.
+
+**Blocked:** End-to-end install proof needs **≥5 GB free** (sync + install
+consumed disk on this machine).
