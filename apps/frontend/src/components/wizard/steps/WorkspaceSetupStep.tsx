@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Radio } from '../../ui';
 import { useWizard } from '../WizardProvider';
-import { Radio, Label } from '../../components/ui';
 
 export const WorkspaceSetupStep: React.FC = () => {
   const { state, updateSessionData } = useWizard();
