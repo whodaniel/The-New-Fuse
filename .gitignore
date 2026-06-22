@@ -39,6 +39,8 @@ out/
 .env
 .env.full-auto
 .env.local
+.env.openai
+.env.telegram
 .env.*.local
 .env.development.local
 .env.test.local

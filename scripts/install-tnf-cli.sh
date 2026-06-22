@@ -26,7 +26,7 @@ Usage:
 
 Options:
   --from-local           Install from the current repository directory.
-  --repo-url <url>       Git URL to clone/update (default: https://github.com/whodaniel/fuse.git)
+  --repo-url <url>       Git URL to clone/update (default: https://github.com/whodaniel/fuse-open-runtime.git)
   --ref <git-ref>        Git branch/tag/sha to install (default: main)
   --install-root <dir>   Clone/update root for remote install (default: ~/.tnf-cli)
   --bin-dir <dir>        Target bin directory for wrappers (default: ~/.local/bin)

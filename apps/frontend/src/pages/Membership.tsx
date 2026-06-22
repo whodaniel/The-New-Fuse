@@ -41,16 +41,16 @@ export default function Membership() {
                 <span className="text-cyan-300">Live access to AI-ARCADE & the Protocol</span>
               </h1>
               <p className="max-w-2xl text-base text-slate-300 sm:text-lg">
-                TNF Membership is $30/month. PayPal remains the default subscription rail, with
-                Stripe available as an additional checkout option when enabled. Once you join, the
-                community apps, agent studio, and mission control unlock instantly.
+                Membership billing is paused during public beta. Hosted platform access is free
+                while we validate orchestration, relay reliability, and the open-runtime install
+                path.
               </p>
               <div className="flex flex-wrap gap-3">
                 <span className="rounded-full border border-cyan-500/60 bg-cyan-500/10 px-4 py-1 text-xs font-black uppercase tracking-widest text-cyan-200">
-                  PayPal + Stripe
+                  Beta — Free Access
                 </span>
                 <span className="rounded-full border border-white/15 px-4 py-1 text-xs uppercase tracking-[0.3em] text-slate-300">
-                  $30 / month
+                  Paid tiers coming soon
                 </span>
               </div>
             </div>

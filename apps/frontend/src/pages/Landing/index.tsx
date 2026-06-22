@@ -149,7 +149,9 @@ export default function LandingPage() {
             </p>
             <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-900/30 rounded-full">
               <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
-              <span className="text-sm font-medium text-amber-800 dark:text-amber-200">Early Access</span>
+              <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                Early Access
+              </span>
             </div>
           </div>
 
@@ -170,7 +172,7 @@ export default function LandingPage() {
               },
               {
                 name: 'Pro',
-                price: '$30/mo',
+                price: 'Coming soon',
                 features: [
                   'Up to 25 AI Agents',
                   'Advanced Workflow Automation',
@@ -181,7 +183,7 @@ export default function LandingPage() {
                 ],
                 highlighted: true,
                 cta: '/auth/register',
-                ctaText: 'Upgrade to Professional',
+                ctaText: 'Join Beta Free',
               },
               {
                 name: 'Enterprise',
@@ -348,7 +350,7 @@ export default function LandingPage() {
           </div>
           <div className="border-t border-border pt-8 text-center">
             <p className="text-base text-muted-foreground">
-              © 2025 The New Fuse. All rights reserved.
+              © 2026 The New Fuse. All rights reserved.
             </p>
           </div>
         </div>
