@@ -1,13 +1,13 @@
-import { createCustomLogger } from '@the-new-fuse/utils/logger/index.js';
 import { exec } from 'child_process';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 import { join } from 'path';
-import { Telegraf } from 'telegraf';
+import { Telegraf, type Context } from 'telegraf';
 import { promisify } from 'util';
 import { LLMClient, LLMMessage } from '../utils/llm-client.js';
+import { createSimpleLogger } from '../utils/simple-logger.js';
 
 const execAsync = promisify(exec);
 
@@ -35,7 +35,7 @@ export class TelegramService {
 
   constructor(repoRoot: string) {
     this.repoRoot = repoRoot;
-    this.logger = createCustomLogger('telegram-service');
+    this.logger = createSimpleLogger('telegram-service');
 
     // Load environment variables from .env.tnf-telegram
     const envPath = join(repoRoot, '.env.tnf-telegram');
@@ -320,9 +320,13 @@ export class TelegramService {
     ]);
 
     // Handle text messages
-    this.bot.on('text', async (ctx) => {
-      const messageText = ctx.message.text.trim();
-      const chatId = ctx.chat.id;
+    this.bot.on('text', async (ctx: Context) => {
+      const text = ctx.message && 'text' in ctx.message ? ctx.message.text : undefined;
+      const chatId = ctx.chat?.id;
+      if (!text || chatId === undefined) {
+        return;
+      }
+      const messageText = text.trim();
       const voiceMode = this.getVoiceMode(chatId);
 
       this.logger.info('Received text message:', messageText.substring(0, 50));
@@ -372,7 +376,7 @@ export class TelegramService {
     });
 
     // Handle command-specific handlers
-    this.bot.command('start', (ctx) =>
+    this.bot.command('start', (ctx: Context) =>
       ctx.reply(
         '🤖 TNF Telegram Bot\n\n' +
           'Available commands:\n' +
@@ -390,7 +394,7 @@ export class TelegramService {
       )
     );
 
-    this.bot.command('help', (ctx) =>
+    this.bot.command('help', (ctx: Context) =>
       ctx.reply(
         '📚 TNF Telegram Bot Help\n\n' +
           'This bot allows you to interact with the TNF system via Telegram.\n\n' +
@@ -419,8 +423,13 @@ export class TelegramService {
     );
 
     // Handle /cmd command for executing TNF CLI subcommands
-    this.bot.command('cmd', async (ctx) => {
-      const args = ctx.message.text.substring(5).trim(); // Remove '/cmd '
+    this.bot.command('cmd', async (ctx: Context) => {
+      const text = ctx.message && 'text' in ctx.message ? ctx.message.text : undefined;
+      if (!text) {
+        await ctx.reply('❌ Please provide a subcommand: /cmd <subcommand>');
+        return;
+      }
+      const args = text.substring(5).trim(); // Remove '/cmd '
       if (!args) {
         await ctx.reply('❌ Please provide a subcommand: /cmd <subcommand>');
         return;
@@ -441,9 +450,14 @@ export class TelegramService {
     });
 
     // Handle /voice command for voice mode management
-    this.bot.command('voice', async (ctx) => {
-      const chatId = ctx.chat.id;
-      const args = ctx.message.text.substring(6).trim().toLowerCase();
+    this.bot.command('voice', async (ctx: Context) => {
+      const chatId = ctx.chat?.id;
+      if (chatId === undefined) {
+        await ctx.reply('❌ Could not resolve chat.');
+        return;
+      }
+      const text = ctx.message && 'text' in ctx.message ? ctx.message.text : '';
+      const args = text.substring(6).trim().toLowerCase();
 
       if (!args || args === 'status') {
         const currentMode = this.getVoiceMode(chatId);
@@ -482,15 +496,20 @@ export class TelegramService {
     });
 
     // Handle voice messages
-    this.bot.on('voice', async (ctx) => {
-      const chatId = ctx.chat.id;
+    this.bot.on('voice', async (ctx: Context) => {
+      const chatId = ctx.chat?.id;
+      const voice = ctx.message && 'voice' in ctx.message ? ctx.message.voice : undefined;
+      if (chatId === undefined || !voice) {
+        await ctx.reply('❌ Invalid voice message.');
+        return;
+      }
       const voiceMode = this.getVoiceMode(chatId);
 
       try {
         // Download and transcribe voice message
         await ctx.reply('🎤 Received voice message, transcribing...');
 
-        const filePath = await this.downloadFile(ctx.message.voice.file_id);
+        const filePath = await this.downloadFile(voice.file_id);
         const transcript = await this.transcribeAudio(filePath);
 
         // Cleanup
@@ -525,7 +544,7 @@ export class TelegramService {
     });
 
     // Handle errors
-    this.bot.catch((err) => {
+    this.bot.catch((err: unknown) => {
       this.logger.error('Telegram bot error:', err);
     });
   }

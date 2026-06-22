@@ -113,7 +113,7 @@ if ! pnpm --dir "${REPO_DIR}" install --filter @the-new-fuse/tnf-cli... --frozen
 fi
 
 echo "Building TNF CLI..."
-pnpm --dir "${REPO_DIR}" --filter @the-new-fuse/tnf-cli run build
+pnpm --dir "${REPO_DIR}" --filter @the-new-fuse/tnf-cli... run build
 
 mkdir -p "${BIN_DIR}"
 cat > "${BIN_DIR}/tnf" <<EOF
