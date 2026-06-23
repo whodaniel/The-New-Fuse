@@ -1,20 +1,16 @@
 # Agent Status Ledger
 
-Updated: **2026-06-20T02:30:00Z** — handoff logs refreshed for next agent focus.
+Updated: **2026-06-23T22:00:55.093Z** — handoff
+`30532802-3db1-429c-80f3-245a94a7cd75` (`199370ded064`).
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Relay on `:3007` healthy → verify `curl -sS http://127.0.0.1:3007/health`                                  |
-| **P0**   | `bash scripts/runtime/green-channel-coordinator-service.sh start` → `... status`                           |
-| **P0**   | Reload extension from `apps/chrome-extension/dist-v7` (manual in `chrome://extensions`)                    |
-| **P0**   | `node scripts/gemini-redis-wrapper.cjs` (background)                                                       |
-| **P1**   | Four-agent Green test: all tabs Syncing; `@GLM hello` in panel                                             |
-| **P1**   | Confirm WS metadata + `~/.tnf/green-coordinator/inbound-ai-responses.jsonl`                                |
-| **P2**   | Master Clock sequential idNumber (Redis bridge live)                                                       |
-| **P2**   | Phase 2: intent frames + CER in BROKER-Green                                                               |
-| **P3**   | Next `emit-session-handoff.cjs` must chain `causation_id` from mcid `27ba9127-5afb-41bc-83f9-d365a54c8315` |
+| Priority | Action                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| **P0**   | Deploy API + frontend bc3a48eec9 to production and verify login at app.thenewfuse.com/auth/login. |
+| **P0**   | Assign launch coordinator owner in subdirector role-map.                                          |
+| **P0**   | Address partial-medium routes: /admin/control-panel, /analytics, /user/profile.                   |
+| **P0**   | Migrate webhook hooks and resources.service token reads to authFetch.                             |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -99,3 +95,9 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 | 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (cffffbbe-d465-4593-a419-9905dd389fad) | ✅ HANDOFF_READY |
+
+| 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7c63cbe6-5db1-4be1-95bc-1ee6ce3d108c) | ✅ HANDOFF_READY |
+
+| 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(30532802-3db1-429c-80f3-245a94a7cd75) | ✅ HANDOFF_READY |

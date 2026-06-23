@@ -2,7 +2,9 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Phase 7: Directive Conversion Loop. **Project ID:** `FORGE-003` **Session Key:** `agent:local-subdirector:session:2026-06-16T02:44:24.498679Z`
+**Current Directive:** Deploy API + frontend bc3a48eec9 to production and verify
+login at app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001`
+**Handoff:** `30532802-3db1-429c-80f3-245a94a7cd75` **Head:** `199370ded064`
 
 ---
 
@@ -136,8 +138,12 @@
     `tnf-start-ai.cjs` provisions MCP configs with local-tolerant doctor checks
     so OpenClaw boot survives missing local DATABASE_URL without losing client
     wiring.
-42. [✅] Orchestration CLI Landing: `DirectiveConversionService`, `protocol health/directives/sync/gate` commands, and slash commands (`/protocol`, `/directives`, `/living`) integrated into `packages/tnf-cli`.
-43. [✅] Phase 7 Batch 001 Claimed: 10 high-priority directives claimed via retriage v2 promotion + conversion loop; Deep Sec scan config hardened with monorepo exclusions.
+42. [✅] Orchestration CLI Landing: `DirectiveConversionService`,
+    `protocol health/directives/sync/gate` commands, and slash commands
+    (`/protocol`, `/directives`, `/living`) integrated into `packages/tnf-cli`.
+43. [✅] Phase 7 Batch 001 Claimed: 10 high-priority directives claimed via
+    retriage v2 promotion + conversion loop; Deep Sec scan config hardened with
+    monorepo exclusions.
 
 ---
 
@@ -157,7 +163,9 @@
 
 ## 🕒 Last Update
 
-2026-06-16T02:43:00Z - Composer landed orchestration CLI services, claimed Phase 7 batch 001 (10 directives), hardened Deep Sec scan config, and fixed retriage v2 to sync action queue + evidence artifacts.
+2026-06-16T02:43:00Z - Composer landed orchestration CLI services, claimed Phase
+7 batch 001 (10 directives), hardened Deep Sec scan config, and fixed retriage
+v2 to sync action queue + evidence artifacts.
 
 ## 🛡️ Contract Migration Status
 

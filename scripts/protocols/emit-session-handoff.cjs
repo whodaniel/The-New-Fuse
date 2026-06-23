@@ -10,6 +10,7 @@ const repoRoot = process.cwd();
 const handoffJsonPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
 const handoffMdPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md');
 const ledgerPath = path.join(repoRoot, 'docs/protocols/AGENT_STATUS_LEDGER.md');
+const livingStatePath = path.join(repoRoot, 'docs/protocols/LIVING_STATE.md');
 
 function run(command, options = {}) {
   return execSync(command, {
@@ -250,6 +251,73 @@ function updateLedger(handoffId) {
   fs.writeFileSync(ledgerPath, `${content.trimEnd()}\n\n${row}\n`, 'utf8');
 }
 
+function syncLivingState(handoffPayload) {
+  if (!fs.existsSync(livingStatePath)) {
+    console.warn('[emit-session-handoff] LIVING_STATE.md not found; skipping sync.');
+    return;
+  }
+
+  const projectId = handoffPayload.project_ids?.[0] || 'TNF-SESSION';
+  const leadAction = handoffPayload.next_actions?.[0] || 'Execute SESSION_HANDOFF_LATEST next actions.';
+  const handoffId = handoffPayload.handoff_id;
+  const headShort = String(handoffPayload.head_sha || '').slice(0, 12);
+  const directiveLine =
+    `**Current Directive:** ${leadAction} **Project ID:** \`${projectId}\` **Handoff:** \`${handoffId}\` **Head:** \`${headShort}\``;
+
+  let content = fs.readFileSync(livingStatePath, 'utf8');
+  if (/^\*\*Current Directive:\*\*/m.test(content)) {
+    content = content.replace(/^\*\*Current Directive:\*\*.*$/m, directiveLine);
+  } else {
+    content = `${directiveLine}\n\n${content}`;
+  }
+  fs.writeFileSync(livingStatePath, content, 'utf8');
+}
+
+function syncLedgerP0(handoffPayload) {
+  if (!fs.existsSync(ledgerPath)) {
+    console.warn('[emit-session-handoff] AGENT_STATUS_LEDGER.md not found; skipping P0 sync.');
+    return;
+  }
+
+  const nextActions = handoffPayload.next_actions || [];
+  if (!nextActions.length) return;
+
+  const priorityForIndex = (index) => {
+    if (index < 4) return 'P0';
+    if (index < 6) return 'P1';
+    if (index < 8) return 'P2';
+    return 'P3';
+  };
+
+  const focusRows = nextActions
+    .slice(0, 8)
+    .map((action, index) => `| **${priorityForIndex(index)}**   | ${action.replace(/\|/g, '\\|')} |`)
+    .join('\n');
+
+  const focusTable = `| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+${focusRows}`;
+
+  const updatedLine = `Updated: **${handoffPayload.created_at}** — handoff \`${handoffPayload.handoff_id}\` (\`${String(handoffPayload.head_sha || '').slice(0, 12)}\`).`;
+
+  let content = fs.readFileSync(ledgerPath, 'utf8');
+  content = content.replace(/^Updated: \*\*.*\*\* — handoff.*$/m, updatedLine);
+  if (!content.includes(updatedLine)) {
+    content = content.replace(
+      /^Updated: \*\*.*$/m,
+      updatedLine,
+    );
+  }
+
+  const focusPattern =
+    /(## Next Agent Focus \(read first\)\s*\n\s*\n)\| Priority \| Action[\s\S]*?(?=\n\nFull detail:)/m;
+  if (focusPattern.test(content)) {
+    content = content.replace(focusPattern, `$1${focusTable}`);
+  }
+
+  fs.writeFileSync(ledgerPath, content, 'utf8');
+}
+
 function main() {
   const input = parseArgs(process.argv.slice(2));
   const branch = run('git rev-parse --abbrev-ref HEAD');
@@ -355,6 +423,8 @@ ${nextActions.map((line) => `- ${line}`).join('\n')}
   fs.writeFileSync(handoffJsonPath, `${JSON.stringify(handoffPayload, null, 2)}\n`, 'utf8');
   fs.writeFileSync(handoffMdPath, `${markdown.trimEnd()}\n`, 'utf8');
   updateLedger(handoffId);
+  syncLivingState(handoffPayload);
+  syncLedgerP0(handoffPayload);
 
   try {
     const { syncFromRepo } = require('../lib/sync-handoff-cache.cjs');
@@ -368,6 +438,7 @@ ${nextActions.map((line) => `- ${line}`).join('\n')}
   console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffJsonPath)}`);
   console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffMdPath)}`);
   console.log(`[emit-session-handoff] updated ${path.relative(repoRoot, ledgerPath)}`);
+  console.log(`[emit-session-handoff] synced ${path.relative(repoRoot, livingStatePath)}`);
 }
 
 main();

@@ -298,7 +298,7 @@ class JulesRedisAgent {
     // Handle task messages (primary use case for Jules)
     this.client.onMessage('task', async (msg) => {
       console.log(`\n🎯 Received task from ${msg.from.agentName}:`);
-      console.log(`   ${msg.content.substring(0, 100)}...`);
+      console.log(`   ${String(msg.content || '').substring(0, 100)}...`);
 
       await this.processTask(msg);
     });
@@ -306,7 +306,7 @@ class JulesRedisAgent {
     // Handle direct messages
     this.client.onMessage('message', async (msg) => {
       console.log(`\n📨 Received message from ${msg.from.agentName}:`);
-      console.log(`   ${msg.content.substring(0, 100)}...`);
+      console.log(`   ${String(msg.content || '').substring(0, 100)}...`);
 
       // Check if this is a task-like message
       if (this.isTaskRequest(msg.content)) {
@@ -330,7 +330,7 @@ class JulesRedisAgent {
         return;
       }
       console.log(`\n👑 Received event from ${msg.from.agentName}:`);
-      console.log(`   ${msg.content.substring(0, 200)}...`);
+      console.log(`   ${String(msg.content || '').substring(0, 200)}...`);
 
       let promptText = msg.content;
       if (msg.payload?.eventType === 'wake_ping' && msg.payload?.data?.customPrompt) {
