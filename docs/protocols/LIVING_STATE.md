@@ -2,9 +2,11 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Deploy API + frontend bc3a48eec9 to production and verify
-login at app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001`
-**Handoff:** `30532802-3db1-429c-80f3-245a94a7cd75` **Head:** `199370ded064`
+**Current Directive:** Trigger GCP Cloud Build deploy for API auth 429 fix
+(gcp-deploy.sh / cloudbuild.yaml). **Project ID:** `LAUNCH-001` **Handoff:**
+`ef70c596-2124-40bd-952e-5239f3e042a0` **Head:** `baab5b2825e5` login at
+app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001` **Handoff:**
+`30532802-3db1-429c-80f3-245a94a7cd75` **Head:** `199370ded064`
 
 ---
 
