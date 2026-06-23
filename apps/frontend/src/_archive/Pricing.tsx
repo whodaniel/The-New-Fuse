@@ -37,7 +37,7 @@ const PricingCard = ({
   >
     {popular && (
       <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-        <Badge className="bg-linear-to-r from-primary to-blue-500 text-white border-0 px-4 py-1">
+        <Badge className="bg-gradient-to-r from-primary to-blue-500 text-white border-0 px-4 py-1">
           Most Popular
         </Badge>
       </div>
@@ -83,7 +83,7 @@ const PricingCard = ({
           className={cn(
             'w-full h-12 text-base font-semibold transition-all duration-300',
             popular
-              ? 'bg-linear-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 text-primary-foreground border-0'
+              ? 'bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 text-primary-foreground border-0'
               : 'bg-surface hover:bg-surface/80 text-foreground border-0'
           )}
         >
@@ -112,7 +112,7 @@ export const Pricing = () => {
         {/* Navigation Placeholder (Logo) */}
         <header className="container mx-auto px-6 py-6 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
               <Rocket className="w-4 h-4 text-white" />
             </div>
             <span className="font-heading font-bold text-xl">The New Fuse</span>
@@ -139,7 +139,7 @@ export const Pricing = () => {
             </Badge>
             <h1 className="text-5xl md:text-7xl font-heading font-extrabold mb-6 tracking-tight">
               Ready to Supercharge <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-500">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">
                 Your Workflow?
               </span>
             </h1>

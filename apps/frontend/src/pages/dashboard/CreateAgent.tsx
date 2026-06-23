@@ -1,4 +1,5 @@
 // @ts-nocheck
+import TalkToAIFormAssist from '@/components/forms/TalkToAIFormAssist';
 import {
   Badge,
   GlassCard,
@@ -1632,7 +1633,7 @@ const CreateAgent: React.FC = () => {
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <div>
+            <div className="flex-1">
               <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 flex items-center gap-2">
                 <Bot className="w-8 h-8 text-purple-400" />
                 Create New Agent
@@ -1641,6 +1642,27 @@ const CreateAgent: React.FC = () => {
                 Step {currentStep} of {steps.length}
               </p>
             </div>
+            <TalkToAIFormAssist
+              formTitle="Create New Agent (Dashboard)"
+              fields={[
+                { key: 'name', label: 'Agent name' },
+                { key: 'description', label: 'Description' },
+                { key: 'type', label: 'Agent type' },
+                { key: 'model', label: 'Model' },
+                { key: 'systemPrompt', label: 'System prompt' },
+              ]}
+              onApply={(values) => {
+                setConfig((current) => ({
+                  ...current,
+                  name: String(values.name ?? current.name),
+                  description: String(values.description ?? current.description),
+                  type:
+                    (String(values.type ?? current.type) as AgentConfig['type']) || current.type,
+                  model: String(values.model ?? current.model),
+                  systemPrompt: String(values.systemPrompt ?? current.systemPrompt),
+                }));
+              }}
+            />
           </div>
 
           {/* Progress Steps */}

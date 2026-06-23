@@ -2,6 +2,7 @@ import { GlassCard, StatsCard } from '@/components/ui/premium/GlassCard';
 import { PremiumButton } from '@/components/ui/premium/PremiumButton';
 import GraphVisualizerWrapper from '@/components/wizard/graph/GraphVisualizer';
 import { useAuthorization } from '@/hooks/useAuthorization';
+import { authFetch } from '@/utils/authToken';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import {
   Activity,
@@ -615,22 +616,11 @@ export default function SuperAdminControlPanel() {
     }
   }, [relayHttpBase]);
 
-  const adminAuthHeaders = useCallback(() => {
-    const token = localStorage.getItem('token');
-    const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
-    return headers;
-  }, []);
-
   const loadChronologicalProcesses = useCallback(async () => {
     setChronologicalLoading(true);
     setChronologicalError(null);
     try {
-      const res = await fetch('/api/admin/metrics/chronological-processes', {
-        headers: {
-          ...adminAuthHeaders(),
-        },
-      });
+      const res = await authFetch('/api/admin/metrics/chronological-processes');
       if (!res.ok) {
         throw new Error(`Failed to load chronological control plane (${res.status})`);
       }
@@ -662,7 +652,7 @@ export default function SuperAdminControlPanel() {
     } finally {
       setChronologicalLoading(false);
     }
-  }, [adminAuthHeaders]);
+  }, []);
 
   const updateProcessDraft = useCallback(
     (
@@ -690,12 +680,8 @@ export default function SuperAdminControlPanel() {
       setBusyProcessMap((prev) => ({ ...prev, [process.id]: true }));
       setChronologicalError(null);
       try {
-        const res = await fetch(`/api/admin/metrics/chronological-processes/${process.id}`, {
+        const res = await authFetch(`/api/admin/metrics/chronological-processes/${process.id}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            ...adminAuthHeaders(),
-          },
           body: JSON.stringify({
             enabled: draft.enabled,
             cadence: draft.cadence,
@@ -717,7 +703,7 @@ export default function SuperAdminControlPanel() {
         setBusyProcessMap((prev) => ({ ...prev, [process.id]: false }));
       }
     },
-    [adminAuthHeaders, loadChronologicalProcesses, processDrafts]
+    [loadChronologicalProcesses, processDrafts]
   );
 
   const runChronologicalProcessNow = useCallback(
@@ -725,12 +711,10 @@ export default function SuperAdminControlPanel() {
       setBusyProcessMap((prev) => ({ ...prev, [process.id]: true }));
       setChronologicalError(null);
       try {
-        const res = await fetch(`/api/admin/metrics/chronological-processes/${process.id}/run`, {
-          method: 'POST',
-          headers: {
-            ...adminAuthHeaders(),
-          },
-        });
+        const res = await authFetch(
+          `/api/admin/metrics/chronological-processes/${process.id}/run`,
+          { method: 'POST' }
+        );
         if (!res.ok) {
           const errorText = await res.text();
           throw new Error(errorText || `Run failed (${res.status})`);
@@ -744,39 +728,31 @@ export default function SuperAdminControlPanel() {
         setBusyProcessMap((prev) => ({ ...prev, [process.id]: false }));
       }
     },
-    [adminAuthHeaders, loadChronologicalProcesses]
+    [loadChronologicalProcesses]
   );
 
-  const openProcessHistoryModal = useCallback(
-    async (process: ChronologicalProcess) => {
-      setHistoryModalProcess(process);
-      setHistoryModalLoading(true);
-      setHistoryModalError(null);
-      setHistoryModalData(null);
-      try {
-        const res = await fetch(
-          `/api/admin/metrics/chronological-processes/${process.id}/history?limit=200`,
-          {
-            headers: {
-              ...adminAuthHeaders(),
-            },
-          }
-        );
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(errorText || `History failed (${res.status})`);
-        }
-        const payload = (await res.json()) as ChronologicalProcessHistoryPayload;
-        setHistoryModalData(payload);
-      } catch (err) {
-        console.error(`Failed to load process history ${process.id}`, err);
-        setHistoryModalError(`Unable to load history for ${process.title}.`);
-      } finally {
-        setHistoryModalLoading(false);
+  const openProcessHistoryModal = useCallback(async (process: ChronologicalProcess) => {
+    setHistoryModalProcess(process);
+    setHistoryModalLoading(true);
+    setHistoryModalError(null);
+    setHistoryModalData(null);
+    try {
+      const res = await authFetch(
+        `/api/admin/metrics/chronological-processes/${process.id}/history?limit=200`
+      );
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || `History failed (${res.status})`);
       }
-    },
-    [adminAuthHeaders]
-  );
+      const payload = (await res.json()) as ChronologicalProcessHistoryPayload;
+      setHistoryModalData(payload);
+    } catch (err) {
+      console.error(`Failed to load process history ${process.id}`, err);
+      setHistoryModalError(`Unable to load history for ${process.title}.`);
+    } finally {
+      setHistoryModalLoading(false);
+    }
+  }, []);
 
   const closeProcessHistoryModal = useCallback(() => {
     setHistoryModalProcess(null);
@@ -978,11 +954,7 @@ export default function SuperAdminControlPanel() {
     if (!confirm('EMERGENCY: Are you sure you want to HALT ALL AGENTS across the network?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/autonomous/director/stop', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await authFetch('/api/autonomous/director/stop', { method: 'POST' });
       if (res.ok) {
         alert('HALT command issued successfully.');
       } else {

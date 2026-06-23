@@ -268,6 +268,8 @@ const WorkflowBrowser = lazy(() => import('./pages/Resources/WorkflowBrowser'));
 // Remaining Reconstructed Components
 const TasksCalendar = lazy(() => import('./pages/Tasks/Calendar'));
 const CreateAgent = lazy(() => import('./pages/dashboard/CreateAgent'));
+const BillingPage = lazy(() => import('./pages/Billing'));
+const AdminLayoutConfigurator = lazy(() => import('./pages/Admin/AdminLayoutConfigurator'));
 
 // Archived or redundant components removed to resolve duplicates
 
@@ -582,6 +584,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               />
               <Route
                 path="/dashboard/logs"
+                element={
+                  <RequireMemberAccess>
+                    <Navigate to="/dashboard/audit" replace />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/audit"
                 element={
                   <RequireMemberAccess>
                     <Dashboard />
@@ -1866,7 +1876,9 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 path="/admin/layout"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="Admin Layout" path="/admin/layout" />
+                    <Suspense fallback={<LoadingFallback name="Admin Layout" />}>
+                      <AdminLayoutConfigurator />
+                    </Suspense>
                   </RequirePermission>
                 }
               />
@@ -2006,7 +2018,16 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </Suspense>
                 }
               />
-              <Route path="/billing" element={<LazyPage name="Billing" path="/billing" />} />
+              <Route
+                path="/billing"
+                element={
+                  <RequireAuth>
+                    <Suspense fallback={<LoadingFallback name="Billing" />}>
+                      <BillingPage />
+                    </Suspense>
+                  </RequireAuth>
+                }
+              />
               <Route path="/community" element={<LazyPage name="Community" path="/community" />} />
               <Route path="/contact" element={<LazyPage name="Contact" path="/contact" />} />
               <Route

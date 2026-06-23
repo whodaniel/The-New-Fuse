@@ -1,3 +1,4 @@
+import TalkToAIFormAssist from '@/components/forms/TalkToAIFormAssist';
 import {
   Badge,
   GlassCard,
@@ -14,6 +15,7 @@ import {
 import { useToast } from '@/hooks/useToast';
 import { resourcesService } from '@/services/resources.service';
 import { AgentTemplate } from '@/types/resources';
+import { authFetch } from '@/utils/authToken';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, Bot, Check, Code, Loader2, Save, Shield, Sliders, X, Zap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -174,9 +176,8 @@ const NewAgent: React.FC = () => {
     setSaving(true);
 
     try {
-      const response = await fetch('/api/agents', {
+      const response = await authFetch('/api/agents', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
@@ -275,7 +276,7 @@ const NewAgent: React.FC = () => {
             Back to Agents
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-1">
             <div className="w-14 h-14 rounded-md bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
               <Bot className="w-7 h-7 text-purple-400" />
             </div>
@@ -285,6 +286,35 @@ const NewAgent: React.FC = () => {
               </h1>
               <p className="text-gray-400">Configure and deploy a new AI agent</p>
             </div>
+            <TalkToAIFormAssist
+              formTitle="Create New Agent"
+              fields={[
+                { key: 'name', label: 'Agent name' },
+                { key: 'description', label: 'Description' },
+                { key: 'type', label: 'Type (development, research, support, etc.)' },
+                { key: 'model', label: 'Model ID' },
+                { key: 'temperature', label: 'Temperature (0-1)' },
+                { key: 'maxTokens', label: 'Max tokens' },
+              ]}
+              onApply={(values) => {
+                setFormData((current) => ({
+                  ...current,
+                  name: String(values.name ?? current.name),
+                  description: String(values.description ?? current.description),
+                  type: String(values.type ?? current.type),
+                  model: String(values.model ?? current.model),
+                  temperature:
+                    typeof values.temperature === 'number'
+                      ? values.temperature
+                      : Number(values.temperature ?? current.temperature),
+                  maxTokens:
+                    typeof values.maxTokens === 'number'
+                      ? values.maxTokens
+                      : Number(values.maxTokens ?? current.maxTokens),
+                }));
+              }}
+              className="ml-auto"
+            />
           </div>
         </motion.div>
 

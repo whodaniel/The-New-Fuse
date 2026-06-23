@@ -87,6 +87,7 @@
     "tnf:llm:dashboard": "open data/llm-intel/dashboard.html",
     "tnf:llm:report": "cat data/llm-intel/ranking-report-latest.md",
     "tnf:llm:apply-rankings": "node scripts/llm-intel/llm-apply-rankings.cjs",
+    "tnf:llm:sync-hermes": "node scripts/llm-intel/sync-hermes-llm-from-tnf.cjs",
     "tnf:llm:tui": "node scripts/llm-intel/llm-rankings-tui.cjs",
     "tnf:doctor": "node scripts/tnf-doctor.cjs",
     "tnf:frontload:verify": "bash scripts/verify_frontload_state.sh",
@@ -230,7 +231,7 @@
     "test:low-memory": "BUILD_MEMORY_LIMIT=1024 BUILD_CONCURRENCY=1 turbo run test --concurrency=1",
     "lint": "ESLINT_USE_FLAT_CONFIG=false turbo run lint",
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false turbo run lint:fix",
-    "lint:staged": "lint-staged",
+    "lint:staged": "lint-staged -c .lintstagedrc.js",
     "privacy:guard:staged": "node scripts/security/privacy-guard.cjs --mode=staged",
     "privacy:guard:pre-push": "node scripts/security/privacy-guard.cjs --mode=pre-push",
     "privacy:guard:repo": "node scripts/security/privacy-guard.cjs --mode=repo",
@@ -361,6 +362,11 @@
     "sync:repos:open": "bash scripts/sync-repos.sh --open",
     "sync:repos:control": "bash scripts/sync-repos.sh --control",
     "sync:repos:dry-run": "bash scripts/sync-repos.sh --dry-run",
+    "lineage:audit": "bash scripts/audit-repo-parity.sh all",
+    "lineage:bundle": "bash scripts/create-lineage-bundle.sh",
+    "lineage:check-leakage": "bash scripts/check-proprietary-leakage.sh",
+    "lineage:verify-export": "bash scripts/verify-open-runtime-export.sh",
+    "voice:drift-audit": "bash scripts/audit/voice-drift-audit.sh",
     "contracts:generate": "pnpm --filter @the-new-fuse/protocol-contracts run generate:all",
     "contracts:check": "pnpm --filter @the-new-fuse/protocol-contracts run check",
     "contracts:check:drift": "pnpm --filter @the-new-fuse/protocol-contracts run check:drift"
@@ -465,5 +471,11 @@
     "node": ">=20.20.0",
     "pnpm": "10.22.x"
   },
-  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c"
+  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c",
+  "pnpm": {
+    "overrides": {
+      "@types/three": "0.168.0",
+      "@types/react": "^18.2.61"
+    }
+  }
 }

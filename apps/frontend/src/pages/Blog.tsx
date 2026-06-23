@@ -30,9 +30,9 @@ const BlogPostCard = ({
 
 export const Blog = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
       <main className="grow">
-        <section className="py-20 lg:py-22 bg-linear-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
+        <section className="py-20 lg:py-22 bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
           <div className="container mx-auto px-4">
             <Badge className="mb-6 bg-transparent/10 text-white border-white/20">
               <Newspaper className="w-4 h-4 mr-2" />

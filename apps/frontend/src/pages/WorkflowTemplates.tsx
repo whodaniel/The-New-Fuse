@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { ActionCard, GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import { Filter, Search, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -27,7 +28,7 @@ export default function WorkflowTemplates() {
     const fetchTemplates = async () => {
       setLoadError(null);
       try {
-        const response = await fetch('/api/workflows/templates');
+        const response = await authFetch('/api/workflows/templates');
         if (
           response.ok &&
           (response.headers.get('content-type') || '').includes('application/json')
@@ -71,7 +72,7 @@ export default function WorkflowTemplates() {
 
   const handleUseTemplate = async (templateId: string) => {
     try {
-      const response = await fetch(`/api/workflows/templates/${templateId}/use`, {
+      const response = await authFetch(`/api/workflows/templates/${templateId}/use`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

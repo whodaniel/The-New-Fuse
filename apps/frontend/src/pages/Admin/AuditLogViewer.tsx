@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { authFetch } from '@/utils/authToken';
 import {
   Activity,
   AlertCircle,
@@ -71,12 +72,7 @@ export default function AuditLogViewer() {
         params.append('status', selectedStatus);
       }
 
-      const response = await fetch(`/api/admin/audit-logs?${params.toString()}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const response = await authFetch(`/api/admin/audit-logs?${params.toString()}`);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch audit logs: ${response.statusText}`);

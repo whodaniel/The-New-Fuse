@@ -70,7 +70,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
           <Card
             className={`w-full shadow-none bg-slate-800 text-white ${hasError ? 'border-red-500' : 'border-slate-600'}`}
           >
-            <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between bg-linear-to-r from-slate-800 to-slate-750 border-b border-slate-600 relative">
+            <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between bg-gradient-to-r from-slate-800 to-slate-750 border-b border-slate-600 relative">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <CardTitle className="text-base font-semibold text-white truncate mb-1">

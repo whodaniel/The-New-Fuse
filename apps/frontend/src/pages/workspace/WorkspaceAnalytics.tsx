@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -31,14 +32,6 @@ interface ProjectStatus {
   priority: 'low' | 'medium' | 'high';
 }
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
-
 export default function WorkspaceAnalytics() {
   const [metrics, setMetrics] = useState<WorkspaceMetrics | null>(null);
   const [activityData, setActivityData] = useState<ActivityData[]>([]);
@@ -53,10 +46,10 @@ export default function WorkspaceAnalytics() {
       setLoadError(null);
       try {
         const [workspacesRes, agentsRes, tasksRes, roomsRes] = await Promise.all([
-          fetch('/api/workspaces', { headers: getAuthHeaders(), credentials: 'include' }),
-          fetch('/api/agents', { headers: getAuthHeaders(), credentials: 'include' }),
-          fetch('/api/unified-ledger/tasks', { headers: getAuthHeaders(), credentials: 'include' }),
-          fetch('/api/chat/rooms', { headers: getAuthHeaders(), credentials: 'include' }),
+          authFetch('/api/workspaces'),
+          authFetch('/api/agents'),
+          authFetch('/api/unified-ledger/tasks'),
+          authFetch('/api/chat/rooms'),
         ]);
 
         if (!workspacesRes.ok) {
@@ -68,14 +61,8 @@ export default function WorkspaceAnalytics() {
 
         const [membersRes, projectsRes] = current?.id
           ? await Promise.all([
-              fetch(`/api/workspaces/${current.id}/members`, {
-                headers: getAuthHeaders(),
-                credentials: 'include',
-              }),
-              fetch(`/api/workspaces/${current.id}/projects`, {
-                headers: getAuthHeaders(),
-                credentials: 'include',
-              }),
+              authFetch(`/api/workspaces/${current.id}/members`),
+              authFetch(`/api/workspaces/${current.id}/projects`),
             ])
           : [null, null];
 
@@ -100,9 +87,8 @@ export default function WorkspaceAnalytics() {
         const rooms = roomsRes.ok ? await roomsRes.json() : [];
         const firstRoom = Array.isArray(rooms) && rooms.length > 0 ? rooms[0] : null;
         const messagesRes = firstRoom?.id
-          ? await fetch(
-              `/api/chat/rooms/${encodeURIComponent(firstRoom.id)}/messages?limit=300&offset=0`,
-              { headers: getAuthHeaders(), credentials: 'include' }
+          ? await authFetch(
+              `/api/chat/rooms/${encodeURIComponent(firstRoom.id)}/messages?limit=300&offset=0`
             )
           : null;
         const messagesPayload = messagesRes?.ok ? await messagesRes.json() : { messages: [] };

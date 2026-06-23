@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { authFetch } from '@/utils/authToken';
 import { formatEther } from 'ethers';
 import { Coins, Filter, Plus, RefreshCw, Search, SortAsc, TrendingUp, Users } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -114,55 +115,60 @@ const SearchAndFilters = React.memo<{
   setFilterBy: (filter: 'all' | 'fractionalized' | 'available') => void;
   loadMarketplaceData: () => Promise<void>;
   isLoading: boolean;
-}>(({ searchTerm, setSearchTerm, sortBy, setSortBy, filterBy, setFilterBy, loadMarketplaceData, isLoading }) => (
-  <div className="flex flex-col md:flex-row gap-4 mb-6">
-    <div className="flex-1 relative">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-      <Input
-        placeholder="Search agent NFTs..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="pl-10"
-      />
+}>(
+  ({
+    searchTerm,
+    setSearchTerm,
+    sortBy,
+    setSortBy,
+    filterBy,
+    setFilterBy,
+    loadMarketplaceData,
+    isLoading,
+  }) => (
+    <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex-1 relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+        <Input
+          placeholder="Search agent NFTs..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      <Select value={sortBy} onValueChange={setSortBy}>
+        <SelectTrigger className="w-[180px]">
+          <SortAsc className="w-4 h-4 mr-2" />
+          <SelectValue placeholder="Sort by" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="created">Recently Created</SelectItem>
+          <SelectItem value="name">Name A-Z</SelectItem>
+          <SelectItem value="price">Price High-Low</SelectItem>
+          <SelectItem value="revenue">Revenue High-Low</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select value={filterBy} onValueChange={setFilterBy}>
+        <SelectTrigger className="w-[180px]">
+          <Filter className="w-4 h-4 mr-2" />
+          <SelectValue placeholder="Filter" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All NFTs</SelectItem>
+          <SelectItem value="fractionalized">Fractionalized</SelectItem>
+          <SelectItem value="available">Available for Sale</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Button variant="outline" onClick={loadMarketplaceData} disabled={isLoading}>
+        <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+        Refresh
+      </Button>
     </div>
-
-    <Select
-      value={sortBy}
-      onValueChange={setSortBy}
-    >
-      <SelectTrigger className="w-[180px]">
-        <SortAsc className="w-4 h-4 mr-2" />
-        <SelectValue placeholder="Sort by" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="created">Recently Created</SelectItem>
-        <SelectItem value="name">Name A-Z</SelectItem>
-        <SelectItem value="price">Price High-Low</SelectItem>
-        <SelectItem value="revenue">Revenue High-Low</SelectItem>
-      </SelectContent>
-    </Select>
-
-    <Select
-      value={filterBy}
-      onValueChange={setFilterBy}
-    >
-      <SelectTrigger className="w-[180px]">
-        <Filter className="w-4 h-4 mr-2" />
-        <SelectValue placeholder="Filter" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">All NFTs</SelectItem>
-        <SelectItem value="fractionalized">Fractionalized</SelectItem>
-        <SelectItem value="available">Available for Sale</SelectItem>
-      </SelectContent>
-    </Select>
-
-    <Button variant="outline" onClick={loadMarketplaceData} disabled={isLoading}>
-      <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-      Refresh
-    </Button>
-  </div>
-));
+  )
+);
 SearchAndFilters.displayName = 'SearchAndFilters';
 
 export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
@@ -193,12 +199,12 @@ export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
     setIsLoading(true);
     try {
       // Load all agent NFTs
-      const nftsResponse = await fetch('/api/agents/nft/marketplace');
+      const nftsResponse = await authFetch('/api/agents/nft/marketplace');
       const nftsData = await nftsResponse.json();
       setAgentNFTs(nftsData);
 
       // Load marketplace listings
-      const listingsResponse = await fetch('/api/agents/nft/marketplace/listings');
+      const listingsResponse = await authFetch('/api/agents/nft/marketplace/listings');
       const listingsData = await listingsResponse.json();
       setMarketplaceListings(listingsData);
     } catch (error) {
@@ -212,7 +218,7 @@ export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
     if (!userAddress) return;
 
     try {
-      const response = await fetch(`/api/agents/nft/shares?ownerAddress=${userAddress}`);
+      const response = await authFetch(`/api/agents/nft/shares?ownerAddress=${userAddress}`);
       const sharesData = await response.json();
       setUserShares(sharesData);
     } catch (error) {

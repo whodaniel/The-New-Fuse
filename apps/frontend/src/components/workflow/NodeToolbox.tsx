@@ -149,8 +149,10 @@ export const NodeToolbox: React.FC = () => {
               >
                 <div className={`p-2 rounded-md ${node.color} mr-3`}>{node.icon}</div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm text-white truncate">{node.label}</div>
-                  <div className="text-xs text-gray-400 truncate">{node.description}</div>
+                  <div className="font-medium text-sm text-white">{node.label}</div>
+                  <div className="text-xs text-gray-400 line-clamp-2 leading-snug">
+                    {node.description}
+                  </div>
                 </div>
               </div>
             ))}
@@ -177,8 +179,10 @@ export const NodeToolbox: React.FC = () => {
               >
                 <div className={`p-2 rounded-md ${node.color} mr-3`}>{node.icon}</div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm text-white truncate">{node.label}</div>
-                  <div className="text-xs text-gray-400 truncate">{node.description}</div>
+                  <div className="font-medium text-sm text-white">{node.label}</div>
+                  <div className="text-xs text-gray-400 line-clamp-2 leading-snug">
+                    {node.description}
+                  </div>
                 </div>
               </div>
             ))}
@@ -205,8 +209,10 @@ export const NodeToolbox: React.FC = () => {
               >
                 <div className={`p-2 rounded-md ${node.color} mr-3`}>{node.icon}</div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm text-white truncate">{node.label}</div>
-                  <div className="text-xs text-gray-400 truncate">{node.description}</div>
+                  <div className="font-medium text-sm text-white">{node.label}</div>
+                  <div className="text-xs text-gray-400 line-clamp-2 leading-snug">
+                    {node.description}
+                  </div>
                 </div>
               </div>
             ))}

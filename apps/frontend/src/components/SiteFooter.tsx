@@ -12,7 +12,7 @@ export const SiteFooter = () => {
               to="/"
               className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
             >
-              <div className="w-10 h-10 rounded-md bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                 <Rocket className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">The New Fuse</span>

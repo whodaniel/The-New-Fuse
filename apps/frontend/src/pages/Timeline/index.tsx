@@ -1,3 +1,4 @@
+import TalkToAIFormAssist from '@/components/forms/TalkToAIFormAssist';
 import { Button, Card, Input, Label, Textarea } from '@/components/ui';
 import TimelineView from '@/features/timeline/components/TimelineView';
 import { useTimeline } from '@/features/timeline/hooks/useTimeline';
@@ -183,7 +184,13 @@ function isOptionalGithubImportFailure(message: string): boolean {
 export default function TimelinePage() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const { data: macroData, loading: macroLoading, updateRecord } = useTimeline();
+  const {
+    data: macroData,
+    loading: macroLoading,
+    error: macroError,
+    updateRecord,
+    refresh,
+  } = useTimeline();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -298,7 +305,13 @@ export default function TimelinePage() {
       }
     } catch (error) {
       const message = getApiErrorMessage(error, 'Failed to generate your personal timeline');
-      if (/(missing authenticated user|unauthorized|forbidden|401|403)/i.test(message)) {
+      const statusCode =
+        error instanceof Error && 'status' in error ? Number((error as any).status) : 0;
+      if (
+        statusCode === 401 ||
+        statusCode === 403 ||
+        /(^|[^0-9])401([^0-9]|$)|unauthorized|forbidden/i.test(message)
+      ) {
         toast.error('Your session appears expired. Please sign in again and retry.');
       } else if (!auto) {
         toast.error(message);
@@ -656,6 +669,25 @@ export default function TimelinePage() {
                 <p className="text-sm text-slate-200 font-medium">
                   Synchronizing with Macro Ledger...
                 </p>
+              </div>
+            ) : macroError ? (
+              <div
+                className="h-full w-full flex flex-col items-center justify-center gap-4 bg-slate-950 rounded-lg border border-amber-500/30 px-6 text-center"
+                role="alert"
+              >
+                <p className="text-amber-300 font-semibold">Macro timeline unavailable</p>
+                <p className="text-sm text-slate-300 max-w-md">
+                  We could not load the project horizon graph. Your personal milestones below remain
+                  available.
+                </p>
+                <Button
+                  onClick={() => void refresh()}
+                  variant="outline"
+                  className="border-amber-500/40 text-amber-200"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Retry Macro Sync
+                </Button>
               </div>
             ) : (
               <TimelineView
@@ -1015,6 +1047,32 @@ export default function TimelinePage() {
                 <Plus className="w-5 h-5" />
               </div>
               <h3 className="text-xl font-bold text-white">Record New Milestone</h3>
+              <TalkToAIFormAssist
+                formTitle="Record New Milestone"
+                fields={[
+                  { key: 'title', label: 'Title' },
+                  { key: 'description', label: 'Narrative Description' },
+                  { key: 'category', label: 'Category' },
+                  { key: 'when', label: 'Date & Time (datetime-local format)' },
+                  { key: 'point', label: 'Timeline position percent (0-100)' },
+                  { key: 'sourcesText', label: 'Sources, one per line' },
+                ]}
+                onApply={(values) => {
+                  setCreateForm((current) => ({
+                    ...current,
+                    title: String(values.title ?? current.title),
+                    description: String(values.description ?? current.description),
+                    category: String(values.category ?? current.category),
+                    when: String(values.when ?? current.when),
+                    point:
+                      typeof values.point === 'number'
+                        ? clampPoint(values.point)
+                        : clampPoint(values.point ?? current.point),
+                    sourcesText: String(values.sourcesText ?? current.sourcesText),
+                  }));
+                }}
+                className="ml-auto"
+              />
             </div>
 
             <div className="space-y-4">
@@ -1140,6 +1198,34 @@ export default function TimelinePage() {
                 <Pencil className="w-5 h-5" />
               </div>
               <h3 className="text-xl font-bold text-white">Edit Selection</h3>
+              {editingId ? (
+                <TalkToAIFormAssist
+                  formTitle="Edit Milestone"
+                  fields={[
+                    { key: 'title', label: 'Title' },
+                    { key: 'description', label: 'Description' },
+                    { key: 'category', label: 'Category' },
+                    { key: 'when', label: 'Date & Time (datetime-local format)' },
+                    { key: 'point', label: 'Timeline position percent (0-100)' },
+                    { key: 'sourcesText', label: 'Sources, one per line' },
+                  ]}
+                  onApply={(values) => {
+                    setEditForm((current) => ({
+                      ...current,
+                      title: String(values.title ?? current.title),
+                      description: String(values.description ?? current.description),
+                      category: String(values.category ?? current.category),
+                      when: String(values.when ?? current.when),
+                      point:
+                        typeof values.point === 'number'
+                          ? clampPoint(values.point)
+                          : clampPoint(values.point ?? current.point),
+                      sourcesText: String(values.sourcesText ?? current.sourcesText),
+                    }));
+                  }}
+                  className="ml-auto"
+                />
+              ) : null}
             </div>
 
             {!editingId ? (

@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import { BrowserProvider, formatEther, parseEther } from 'ethers';
 import { Eye, Heart, Search, ShoppingCart, TrendingUp, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -46,12 +47,7 @@ const NFTMarketplace: React.FC = () => {
 
       // Real blockchain integration using Web3.js or ethers.js
       // This would typically connect to your API or directly to blockchain
-      const response = await fetch('/api/agents/nft/marketplace', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await authFetch('/api/agents/nft/marketplace');
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,12 +115,8 @@ const NFTMarketplace: React.FC = () => {
       console.log(`Initiating purchase of ${nft.name} for ${nft.price} ${nft.currency}`);
 
       // Call backend API to initiate purchase
-      const response = await fetch('/api/agents/nft/purchase', {
+      const response = await authFetch('/api/agents/nft/purchase', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-        },
         body: JSON.stringify({
           nftId: nft.id,
           price: parseEther(nft.price.toString()),

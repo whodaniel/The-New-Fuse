@@ -1,4 +1,5 @@
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
+import { getAuthTokenCandidates as resolveAuthTokenCandidates } from '@/utils/authToken';
 
 export type LedgerStatus =
   | 'submitted'
@@ -260,47 +261,8 @@ export function getApiErrorMessage(error: unknown, fallback = 'Request failed'):
   return fallback;
 }
 
-function getStoredAuthToken(): string | null {
-  if (typeof window === 'undefined') {
-    return null;
-  }
-
-  return (
-    localStorage.getItem('auth_token') ||
-    localStorage.getItem('authToken') ||
-    localStorage.getItem('accessToken') ||
-    localStorage.getItem('token') ||
-    localStorage.getItem('AUTH_TOKEN') ||
-    sessionStorage.getItem('auth_token') ||
-    sessionStorage.getItem('authToken') ||
-    sessionStorage.getItem('accessToken') ||
-    sessionStorage.getItem('token') ||
-    sessionStorage.getItem('AUTH_TOKEN')
-  );
-}
-
 async function getAuthTokenCandidates(): Promise<string[]> {
-  const tokens: string[] = [];
-  if (!hasSupabaseConfig || !supabase) {
-    const storedToken = getStoredAuthToken();
-    return storedToken ? [storedToken] : [];
-  }
-
-  try {
-    const { data, error } = await supabase.auth.getSession();
-    if (!error && data?.session?.access_token) {
-      tokens.push(data.session.access_token);
-    }
-  } catch {
-    // Fall through to stored token and unauthenticated request so caller can handle response status.
-  }
-
-  const storedToken = getStoredAuthToken();
-  if (storedToken) {
-    tokens.push(storedToken);
-  }
-
-  return Array.from(new Set(tokens));
+  return resolveAuthTokenCandidates();
 }
 
 async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {

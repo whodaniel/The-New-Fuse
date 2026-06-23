@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import { config } from '../config';
 import type { ApiError, ApiResponse } from '../types/api-response';
 
@@ -344,13 +345,6 @@ export class WorkspaceApiService {
     return { code, message: 'Request failed' };
   }
 
-  private getAuthHeaders(): Record<string, string> {
-    return {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-    };
-  }
-
   private async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
     if (!response.ok) {
       try {
@@ -386,9 +380,8 @@ export class WorkspaceApiService {
 
   async getCurrentWorkspace(): Promise<ApiResponse<Workspace>> {
     try {
-      const response = await fetch(`${this.baseUrl}/current`, {
+      const response = await authFetch(`${this.baseUrl}/current`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       return this.handleResponse<Workspace>(response);
@@ -411,9 +404,8 @@ export class WorkspaceApiService {
 
   async getWorkspaces(): Promise<ApiResponse<{ workspaces: Workspace[]; total: number }>> {
     try {
-      const response = await fetch(`${this.baseUrl}`, {
+      const response = await authFetch(`${this.baseUrl}`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       const raw = await this.handleResponse<any>(response);
@@ -449,9 +441,8 @@ export class WorkspaceApiService {
 
   async getWorkspace(id: string): Promise<ApiResponse<Workspace>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`, {
+      const response = await authFetch(`${this.baseUrl}/${id}`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       return this.handleResponse<Workspace>(response);
@@ -469,9 +460,8 @@ export class WorkspaceApiService {
     description?: string;
   }): Promise<ApiResponse<Workspace>> {
     try {
-      const response = await fetch(`${this.baseUrl}`, {
+      const response = await authFetch(`${this.baseUrl}`, {
         method: 'POST',
-        headers: this.getAuthHeaders(),
         body: JSON.stringify(payload),
         credentials: 'include',
       });
@@ -487,9 +477,8 @@ export class WorkspaceApiService {
 
   async getWorkspaceProjects(workspaceId: string): Promise<ApiResponse<WorkspaceProject[]>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/projects`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/projects`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       return this.handleResponse<WorkspaceProject[]>(response);
@@ -527,9 +516,8 @@ export class WorkspaceApiService {
       if (params?.projectLimit) search.set('projectLimit', String(params.projectLimit));
       const suffix = search.toString() ? `?${search.toString()}` : '';
 
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/assets${suffix}`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/assets${suffix}`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       return this.handleResponse<WorkspaceAssetSummary>(response);
@@ -546,9 +534,8 @@ export class WorkspaceApiService {
     workspaceId: string
   ): Promise<ApiResponse<{ workspaceId: string; members: WorkspaceSubAccessMember[] }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/sub-access`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/sub-access`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       return this.handleResponse<{ workspaceId: string; members: WorkspaceSubAccessMember[] }>(
@@ -568,9 +555,8 @@ export class WorkspaceApiService {
     payload: { email?: string; userId?: string; role?: WorkspaceManageableRole }
   ): Promise<ApiResponse<{ message: string; accessLevel: WorkspaceAccessRole }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/sub-access`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/sub-access`, {
         method: 'POST',
-        headers: this.getAuthHeaders(),
         body: JSON.stringify(payload),
         credentials: 'include',
       });
@@ -590,12 +576,14 @@ export class WorkspaceApiService {
     payload: { role: WorkspaceManageableRole }
   ): Promise<ApiResponse<{ message: string; accessLevel: WorkspaceAccessRole }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/sub-access/${memberUserId}`, {
-        method: 'PATCH',
-        headers: this.getAuthHeaders(),
-        body: JSON.stringify(payload),
-        credentials: 'include',
-      });
+      const response = await authFetch(
+        `${this.baseUrl}/${workspaceId}/sub-access/${memberUserId}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+          credentials: 'include',
+        }
+      );
       return this.handleResponse<{ message: string; accessLevel: WorkspaceAccessRole }>(response);
     } catch (error) {
       return {
@@ -611,11 +599,13 @@ export class WorkspaceApiService {
     memberUserId: string
   ): Promise<ApiResponse<{ message: string; memberId: string }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/sub-access/${memberUserId}`, {
-        method: 'DELETE',
-        headers: this.getAuthHeaders(),
-        credentials: 'include',
-      });
+      const response = await authFetch(
+        `${this.baseUrl}/${workspaceId}/sub-access/${memberUserId}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+        }
+      );
       return this.handleResponse<{ message: string; memberId: string }>(response);
     } catch (error) {
       return {
@@ -630,9 +620,8 @@ export class WorkspaceApiService {
     workspaceId: string
   ): Promise<ApiResponse<{ items: WorkspaceBookmark[]; total: number }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/bookmarks`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/bookmarks`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       const raw = await this.handleResponse<any>(response);
@@ -677,9 +666,8 @@ export class WorkspaceApiService {
     payload: { title: string; url: string; tags?: string[]; note?: string }
   ): Promise<ApiResponse<{ item: WorkspaceBookmark }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/bookmarks`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/bookmarks`, {
         method: 'POST',
-        headers: this.getAuthHeaders(),
         body: JSON.stringify(payload),
         credentials: 'include',
       });
@@ -715,9 +703,8 @@ export class WorkspaceApiService {
     payload: { title?: string; url?: string; tags?: string[]; note?: string }
   ): Promise<ApiResponse<{ item: WorkspaceBookmark }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/bookmarks/${bookmarkId}`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/bookmarks/${bookmarkId}`, {
         method: 'PATCH',
-        headers: this.getAuthHeaders(),
         body: JSON.stringify(payload),
         credentials: 'include',
       });
@@ -752,9 +739,8 @@ export class WorkspaceApiService {
     bookmarkId: string
   ): Promise<ApiResponse<{ message: string; deletedId: string }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/bookmarks/${bookmarkId}`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/bookmarks/${bookmarkId}`, {
         method: 'DELETE',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       const raw = await this.handleResponse<any>(response);
@@ -781,9 +767,8 @@ export class WorkspaceApiService {
     workspaceId: string
   ): Promise<ApiResponse<{ items: WorkspaceDomain[]; total: number }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/domains`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/domains`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       const raw = await this.handleResponse<any>(response);
@@ -828,9 +813,8 @@ export class WorkspaceApiService {
     payload: { domain: string }
   ): Promise<ApiResponse<{ item: WorkspaceDomain }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/domains`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/domains`, {
         method: 'POST',
-        headers: this.getAuthHeaders(),
         body: JSON.stringify(payload),
         credentials: 'include',
       });
@@ -865,9 +849,8 @@ export class WorkspaceApiService {
     domainId: string
   ): Promise<ApiResponse<{ message: string; deletedId: string }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/domains/${domainId}`, {
+      const response = await authFetch(`${this.baseUrl}/${workspaceId}/domains/${domainId}`, {
         method: 'DELETE',
-        headers: this.getAuthHeaders(),
         credentials: 'include',
       });
       const raw = await this.handleResponse<any>(response);
@@ -895,11 +878,13 @@ export class WorkspaceApiService {
     domainId: string
   ): Promise<ApiResponse<{ item: WorkspaceDomain }>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${workspaceId}/domains/${domainId}/verify`, {
-        method: 'POST',
-        headers: this.getAuthHeaders(),
-        credentials: 'include',
-      });
+      const response = await authFetch(
+        `${this.baseUrl}/${workspaceId}/domains/${domainId}/verify`,
+        {
+          method: 'POST',
+          credentials: 'include',
+        }
+      );
       const raw = await this.handleResponse<any>(response);
       if (!raw.success) return raw;
 
@@ -938,9 +923,8 @@ export class WorkspaceApiService {
     for (let index = 0; index < candidates.length; index += 1) {
       const endpoint = candidates[index];
       try {
-        const response = await fetch(endpoint, {
+        const response = await authFetch(endpoint, {
           method: 'POST',
-          headers: this.getAuthHeaders(),
           credentials: 'include',
         });
 
@@ -962,7 +946,10 @@ export class WorkspaceApiService {
 
           return {
             success: false,
-            error: this.toApiError(message, (raw.error as ApiError | undefined)?.code || 'SYNC_FAILED'),
+            error: this.toApiError(
+              message,
+              (raw.error as ApiError | undefined)?.code || 'SYNC_FAILED'
+            ),
             message,
           };
         }

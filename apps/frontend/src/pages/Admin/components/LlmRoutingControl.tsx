@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import { useEffect, useMemo, useState } from 'react';
 
 interface LLMRoutingSelection {
@@ -71,15 +72,9 @@ export function LlmRoutingControl() {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token');
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      };
-
       const [optionsRes, configRes] = await Promise.all([
-        fetch('/api/admin/config/llm-routing/options', { headers }),
-        fetch('/api/admin/config/llm-routing', { headers }),
+        authFetch('/api/admin/config/llm-routing/options'),
+        authFetch('/api/admin/config/llm-routing'),
       ]);
 
       if (!optionsRes.ok || !configRes.ok) {
@@ -101,13 +96,8 @@ export function LlmRoutingControl() {
     setSaving(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/admin/config/llm-routing', {
+      const res = await authFetch('/api/admin/config/llm-routing', {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(config),
       });
 

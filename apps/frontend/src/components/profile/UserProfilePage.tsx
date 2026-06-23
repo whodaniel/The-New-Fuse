@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import { Bell, Camera, Globe, Lock, Mail, Palette, Save, Shield, User, Zap } from 'lucide-react';
 import React, { FormEvent, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -43,9 +44,7 @@ const UserProfilePage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const API_BASE_URL =
-    import.meta.env.VITE_API_URL ||
-    (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3003');
+  const profileUrl = '/api/users/profile';
 
   useEffect(() => {
     if (!user) {
@@ -60,9 +59,7 @@ const UserProfilePage: React.FC = () => {
       setError(null);
       try {
         // Try to fetch from API
-        const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
-          credentials: 'include',
-        });
+        const response = await authFetch(profileUrl);
 
         if (!response.ok) {
           if (response.status === 401 || response.status === 403) {
@@ -71,9 +68,9 @@ const UserProfilePage: React.FC = () => {
             return;
           }
 
-          // If API fails, use Firebase user data as fallback
+          // Hydrate from signed-in session when profile API is unavailable
           if (user) {
-            const fallbackProfile: UserProfile = {
+            const sessionProfile: UserProfile = {
               id: user.id,
               email: user.email || '',
               displayName: user.name || '',
@@ -83,16 +80,16 @@ const UserProfilePage: React.FC = () => {
                 notifications: true,
               },
             };
-            setProfile(fallbackProfile);
-            setDisplayName(fallbackProfile.displayName || '');
-            setBio(fallbackProfile.bio || '');
-            setTheme(fallbackProfile.preferences?.theme || 'system');
-            setNotifications(fallbackProfile.preferences?.notifications || false);
+            setProfile(sessionProfile);
+            setDisplayName(sessionProfile.displayName || '');
+            setBio(sessionProfile.bio || '');
+            setTheme(sessionProfile.preferences?.theme || 'system');
+            setNotifications(sessionProfile.preferences?.notifications || false);
             setInitialProfileState({
-              displayName: fallbackProfile.displayName || '',
-              bio: fallbackProfile.bio || '',
-              theme: fallbackProfile.preferences?.theme || 'system',
-              notifications: fallbackProfile.preferences?.notifications || false,
+              displayName: sessionProfile.displayName || '',
+              bio: sessionProfile.bio || '',
+              theme: sessionProfile.preferences?.theme || 'system',
+              notifications: sessionProfile.preferences?.notifications || false,
             });
             setIsLoading(false);
             return;
@@ -113,9 +110,9 @@ const UserProfilePage: React.FC = () => {
           notifications: data.preferences?.notifications || false,
         });
       } catch (err) {
-        // Use Firebase user as ultimate fallback
+        // Hydrate from signed-in session when profile API errors
         if (user) {
-          const fallbackProfile: UserProfile = {
+          const sessionProfile: UserProfile = {
             id: user.id,
             email: user.email || '',
             displayName: user.name || '',
@@ -125,16 +122,16 @@ const UserProfilePage: React.FC = () => {
               notifications: true,
             },
           };
-          setProfile(fallbackProfile);
-          setDisplayName(fallbackProfile.displayName || '');
-          setBio(fallbackProfile.bio || '');
-          setTheme(fallbackProfile.preferences?.theme || 'system');
-          setNotifications(fallbackProfile.preferences?.notifications || false);
+          setProfile(sessionProfile);
+          setDisplayName(sessionProfile.displayName || '');
+          setBio(sessionProfile.bio || '');
+          setTheme(sessionProfile.preferences?.theme || 'system');
+          setNotifications(sessionProfile.preferences?.notifications || false);
           setInitialProfileState({
-            displayName: fallbackProfile.displayName || '',
-            bio: fallbackProfile.bio || '',
-            theme: fallbackProfile.preferences?.theme || 'system',
-            notifications: fallbackProfile.preferences?.notifications || false,
+            displayName: sessionProfile.displayName || '',
+            bio: sessionProfile.bio || '',
+            theme: sessionProfile.preferences?.theme || 'system',
+            notifications: sessionProfile.preferences?.notifications || false,
           });
         } else {
           setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -146,7 +143,7 @@ const UserProfilePage: React.FC = () => {
     };
 
     fetchProfile();
-  }, [API_BASE_URL, user]);
+  }, [profileUrl, user]);
 
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
@@ -202,17 +199,13 @@ const UserProfilePage: React.FC = () => {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+      const response = await authFetch(profileUrl, {
         method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(updatedProfileData),
       });
 
       if (!response.ok) {
-        // If API fails, save locally for now
+        // Persist locally when profile API is unavailable
         if (profile) {
           const updatedProfile: UserProfile = {
             ...profile,
@@ -224,7 +217,7 @@ const UserProfilePage: React.FC = () => {
             },
           };
           setProfile(updatedProfile);
-          // Save to localStorage as fallback
+          // Save to local storage until API sync resumes
           localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
           setSuccessMessage('Profile updated locally (API unavailable)');
           setInitialProfileState({
@@ -255,7 +248,7 @@ const UserProfilePage: React.FC = () => {
       // Auto-hide success message after 3 seconds
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      // Try localStorage fallback
+      // Persist locally when profile API errors
       if (profile) {
         const updatedProfile: UserProfile = {
           ...profile,
@@ -353,9 +346,7 @@ const UserProfilePage: React.FC = () => {
                 {user?.email || profile?.email}
               </p>
               <div className="mt-3 flex gap-2 justify-center md:justify-start">
-                {/* Dynamically show badges based on real data if available in the future.
-                    For now, hiding misleading 'Verified' / 'Premium' until backend supports subscription/verification flags.
-                */}
+                {/* Verified/Premium badges render when backend subscription flags are available. */}
                 {userRole === 'SUPER_ADMIN' && (
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-500/20 text-purple-200 border border-purple-400/30">
                     System Admin
@@ -656,8 +647,7 @@ const UserProfilePage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    // Toast logic embedded here or handled by parent
-                    alert('Two-Factor Authentication setup is coming soon.');
+                    toast('Two-factor authentication is not enabled in this environment yet.');
                   }}
                   className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-700/50 text-gray-400 border border-gray-600/30 cursor-not-allowed"
                 >

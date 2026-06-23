@@ -2,7 +2,7 @@ import { NodeToolbox, WorkflowCanvas } from '@/components/workflow';
 import WorkflowAIAssistantPanel from '@/components/workflow/WorkflowAIAssistantPanel';
 import useWorkflow from '@/hooks/useWorkflow';
 import { Workflow, workflowService } from '@/services/WorkflowService';
-import axios from 'axios';
+import { fetchFirstJson as fetchFirstJsonAuth } from '@/utils/fetchFirstJson';
 import {
   Activity,
   BookOpen,
@@ -369,17 +369,15 @@ export const SynapticNexus: React.FC = () => {
     async (
       paths: string[]
     ): Promise<{ data: any; source: string; usedAlternate: boolean } | null> => {
-      for (const [index, path] of paths.entries()) {
-        try {
-          const response = await axios.get(path, { validateStatus: () => true });
-          if (response.status >= 200 && response.status < 300) {
-            return { data: response.data, source: path, usedAlternate: index > 0 };
-          }
-        } catch {
-          // try next alias
-        }
-      }
-      return null;
+      const result = await fetchFirstJsonAuth(paths, {
+        validateStatus: (status) => status >= 200 && status < 300,
+      });
+      if (!result) return null;
+      return {
+        data: result.data,
+        source: result.source,
+        usedAlternate: result.usedAlternate,
+      };
     },
     []
   );

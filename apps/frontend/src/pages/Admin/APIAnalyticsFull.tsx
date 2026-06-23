@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { authFetch } from '@/utils/authToken';
 import {
   Activity,
   AlertTriangle,
@@ -72,14 +73,7 @@ export default function APIAnalyticsFull() {
   const loadMetrics = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('auth_token');
-      // Append timeRange to query params if backend supports it
-      const response = await fetch(`/api/admin/api-analytics/stats?range=${timeRange}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await authFetch(`/api/admin/api-analytics/stats?range=${timeRange}`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch analytics');

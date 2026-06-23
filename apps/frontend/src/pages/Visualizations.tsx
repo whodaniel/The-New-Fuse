@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import {
   Activity,
   AlertCircle,
@@ -548,7 +549,7 @@ async function fetchWithTimeout(
   });
 
   try {
-    return (await Promise.race([fetch(input, init), timeoutPromise])) as Response;
+    return (await Promise.race([authFetch(input, init), timeoutPromise])) as Response;
   } finally {
     if (timeoutId) clearTimeout(timeoutId);
   }
@@ -861,7 +862,6 @@ const Visualizations: React.FC = () => {
           surface.href,
           {
             method: 'HEAD',
-            credentials: 'include',
             cache: 'no-store',
           },
           SURFACE_HEALTH_PROBE_TIMEOUT_MS
@@ -897,7 +897,6 @@ const Visualizations: React.FC = () => {
           surface.href,
           {
             method: 'GET',
-            credentials: 'include',
             cache: 'no-store',
             headers: { Accept: 'text/html,*/*' },
           },
@@ -962,9 +961,8 @@ const Visualizations: React.FC = () => {
       if (inFlight) return;
       inFlight = true;
       try {
-        const response = await fetch('/api/system/master-clock', {
+        const response = await authFetch('/api/system/master-clock', {
           headers: { Accept: 'application/json' },
-          credentials: 'include',
         });
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
