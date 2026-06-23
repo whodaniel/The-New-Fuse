@@ -1,10 +1,7 @@
 // @ts-ignore
-import {
-  createStandaloneRedisClient,
-  createUpstashRestClient,
-} from '@the-new-fuse/infrastructure';
-import { Redis as UpstashRedis } from '@upstash/redis';
-import { Redis, Cluster } from 'ioredis';
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import chalk from 'chalk';
+import { Redis } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface AgentInfo {
@@ -95,12 +92,22 @@ export class RedisAgentClient {
       this.upstash = createUpstashRestClient();
 
       if (this.publisher instanceof Redis) {
-        this.publisher.on('error', (error: Error) => this.logRedisClientError('publisher', error));
+        this.publisher.on('error', async (error: Error) => {
+          this.logRedisClientError('publisher', error);
+          if (error?.message?.includes('ECONNREFUSED') || error?.message?.includes('Connection')) {
+            await this.reconnectWithBackoff(this.publisher, 'publisher');
+          }
+        });
         await this.publisher.connect().catch(() => {});
       }
 
       if (this.subscriber instanceof Redis) {
-        this.subscriber.on('error', (error: Error) => this.logRedisClientError('subscriber', error));
+        this.subscriber.on('error', async (error: Error) => {
+          this.logRedisClientError('subscriber', error);
+          if (error?.message?.includes('ECONNREFUSED') || error?.message?.includes('Connection')) {
+            await this.reconnectWithBackoff(this.subscriber, 'subscriber');
+          }
+        });
         await this.subscriber.connect().catch(() => {});
 
         this.subscriber.on('message', (channel: string, message: string) => {
@@ -131,6 +138,37 @@ export class RedisAgentClient {
     console.error(`Redis ${kind} error:`, details);
   }
 
+  private async reconnectWithBackoff(
+    client: any,
+    kind: 'publisher' | 'subscriber',
+    maxRetries = 3
+  ): Promise<boolean> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
+      console.log(
+        chalk.dim(
+          `  Redis ${kind}: reconnecting in ${delay}ms (attempt ${attempt}/${maxRetries})...`
+        )
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      try {
+        if (client instanceof Redis) {
+          await client.connect();
+          await client.ping();
+          console.log(chalk.green(`  ✅ Redis ${kind}: reconnected successfully`));
+          return true;
+        }
+      } catch {
+        // Try again
+      }
+    }
+    console.warn(
+      chalk.yellow(`  ⚠️  Redis ${kind}: reconnection failed after ${maxRetries} attempts`)
+    );
+    return false;
+  }
+
   async register(name: string, role: any, platform: string, capabilities: string[] = []) {
     this.agentInfo = {
       id: `agent_${name}_${Date.now()}`,
@@ -147,7 +185,9 @@ export class RedisAgentClient {
 
     // Store in Redis
     if (this.upstash) {
-      await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: JSON.stringify(this.agentInfo) });
+      await this.upstash.hset('tnf:agent-registry', {
+        [this.agentInfo.id]: JSON.stringify(this.agentInfo),
+      });
     } else if (this.publisher) {
       await this.publisher.hset(
         'tnf:agent-registry',
@@ -194,7 +234,8 @@ export class RedisAgentClient {
    * Submit a bid for an auction
    */
   async submitBid(taskId: string, suitability: number, metadata: any = {}) {
-    if (!this.agentInfo || (!this.publisher && !this.upstash)) throw new Error('Client not initialized');
+    if (!this.agentInfo || (!this.publisher && !this.upstash))
+      throw new Error('Client not initialized');
 
     const bid: AgentMessage = {
       id: uuidv4(),
@@ -267,7 +308,7 @@ export class RedisAgentClient {
     const channel = directAgentId
       ? `${CONFIG.channels.directPrefix}:${this.agentInfo.id}:${directAgentId}`
       : options.channel || CONFIG.channels.conversations;
-    
+
     const payload = JSON.stringify(message);
     if (this.upstash) {
       await this.upstash.publish(channel, payload);
@@ -385,7 +426,9 @@ export class RedisAgentClient {
       content,
       payload,
       conversationId:
-        rawMessage.context?.sessionId || rawMessage.context?.workflowId || rawMessage.conversationId,
+        rawMessage.context?.sessionId ||
+        rawMessage.context?.workflowId ||
+        rawMessage.conversationId,
       replyTo: rawMessage.context?.parentMessageId || rawMessage.replyTo,
       expectsResponse:
         rawMessage.type === 'task' ||
@@ -567,7 +610,7 @@ export class RedisAgentClient {
     if (this.agentInfo && (this.publisher || this.upstash)) {
       this.agentInfo.status = 'offline';
       const agentData = JSON.stringify(this.agentInfo);
-      
+
       if (this.upstash) {
         await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: agentData });
       } else if (this.publisher) {

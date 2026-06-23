@@ -14,12 +14,12 @@ skills:
   - context-frontloader
   - env-manager
   - skill-builder
-  - behavioral-modes
-  - clean-code
-  - ui-ux-pro-max
-  - senior-architect
-  - systematic-debugging
-  - trait-antigravity
+  - tnf-cli-agent-interoperability
+  - tnf-full-auto-network-autopilot
+  - tnf-health-check
+  - webpilot
+  - sspdf
+  - sspdf-theme-generator
 ---
 
 # TNF CLI Agent - The Antigravity Persona
