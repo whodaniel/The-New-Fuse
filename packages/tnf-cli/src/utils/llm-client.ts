@@ -30,6 +30,7 @@ export interface ProviderDescriptor {
   costPerMtokens?: number;
   note?: string;
   provider?: string; // logical provider name for special routing
+  reasoningEffort?: string; // NeuralWatt GLM-5.2: low | medium | high
 }
 
 function parsePositiveIntegerEnv(name: string): number | null {
@@ -76,7 +77,9 @@ export class LLMClient {
   }
 
   /** Static async factory for proper async initialization */
-  static async create(role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent' = 'worker'): Promise<LLMClient> {
+  static async create(
+    role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent' = 'worker'
+  ): Promise<LLMClient> {
     const client = new LLMClient(role);
     await client.resolveProvider();
     return client;
@@ -158,7 +161,7 @@ export class LLMClient {
       this.apiKey = explicitApiKey;
       this.model = explicitModel || 'model-auto';
       this.providerName = this.detectProviderFromUrl(explicitBaseUrl);
-      // We consider explicit config as working even if the model is not alive; 
+      // We consider explicit config as working even if the model is not alive;
       // the caller will handle errors at call time.
       return;
     }
@@ -191,7 +194,11 @@ export class LLMClient {
       if (detection.selected) {
         this.baseUrl = detection.selected.baseUrl;
         this.apiKey = this.getEnv(detection.selected.envKey);
-        this.model = this.getEnv('TNF_LLM_MODEL') || detection.selected.selectedModel || (detection.selected.models ?? [])[0] || 'nvidia/nemotron-3-ultra-550b-a55b';
+        this.model =
+          this.getEnv('TNF_LLM_MODEL') ||
+          detection.selected.selectedModel ||
+          (detection.selected.models ?? [])[0] ||
+          'nvidia/nemotron-3-ultra-550b-a55b';
 
         if (process.env.TNF_DEBUG_PROVIDERS === 'true') {
           reportDetection(detection);
@@ -221,6 +228,7 @@ export class LLMClient {
     if (url.includes('deepseek.com')) return 'deepseek';
     if (url.includes('api.openai.com')) return 'openai';
     if (url.includes('anthropic.com')) return 'anthropic';
+    if (url.includes('neuralwatt.com')) return 'neuralwatt';
     if (url.includes('localhost') || url.includes('127.0.0.1')) return 'local';
     return 'custom';
   }
@@ -236,6 +244,7 @@ export class LLMClient {
       openrouter: 'OPENROUTER_API_KEY',
       deepseek: 'DEEPSEEK_API_KEY',
       openai: 'OPENAI_API_KEY',
+      neuralwatt: 'NEURALWATT_API_KEY',
     };
 
     // Check explicit envKey from descriptor first
@@ -293,6 +302,109 @@ export class LLMClient {
     }
   }
 
+  /**
+   * Streaming chat completion — yields response chunks as they arrive.
+   * Falls back to non-streaming if streaming is not supported.
+   */
+  async *chatStream(
+    messages: LLMMessage[],
+    options: LLMOptions = {}
+  ): AsyncGenerator<string, void, unknown> {
+    if (!this.apiKey || this.apiKey === 'missing-key') {
+      await this.resolveProvider();
+      if (!this.apiKey || this.apiKey === 'missing-key') {
+        throw new Error(
+          'LLM API key not found. Set one of: NVIDIA_API_KEY, GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY, or TNF_LLM_API_KEY'
+        );
+      }
+    }
+
+    // Gemini doesn't support streaming in the same way — fall back to non-streaming
+    if (this.baseUrl.includes('generativelanguage.googleapis.com')) {
+      const full = await this.chatComplete(messages, options);
+      yield full;
+      return;
+    }
+
+    // OpenAI-compatible streaming
+    try {
+      yield* this._streamOpenAICompatible(messages, options);
+    } catch (err) {
+      // Fall back to non-streaming on streaming errors
+      const full = await this.chatComplete(messages, options);
+      yield full;
+    }
+  }
+
+  /** OpenAI-compatible streaming via SSE */
+  private async *_streamOpenAICompatible(
+    messages: LLMMessage[],
+    options: LLMOptions
+  ): AsyncGenerator<string, void, unknown> {
+    const payload: Record<string, unknown> = {
+      model: this.model,
+      messages,
+      temperature: options.temperature ?? 0.7,
+      max_tokens: options.maxTokens ?? 2000,
+      stream: true,
+    };
+    const reasoningEffort = this.neuralwattReasoningEffort();
+    if (reasoningEffort) {
+      payload.reasoning_effort = reasoningEffort;
+    }
+
+    const response = await fetch(`${this.baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+      signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`LLM provider streaming error (${response.status}): ${error}`);
+    }
+
+    if (!response.body) {
+      throw new Error('Streaming response body is null');
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith('data: ')) continue;
+          const data = trimmed.slice(6).trim();
+          if (data === '[DONE]') return;
+
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) yield content;
+          } catch {
+            // Skip malformed JSON lines
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  }
+
   /** Route to the correct API format for the current baseUrl */
   private async _callProvider(messages: LLMMessage[], options: LLMOptions): Promise<string> {
     // Gemini native API (legacy)
@@ -310,8 +422,35 @@ export class LLMClient {
     return this.callOpenAICompatible(messages, options);
   }
 
+  private neuralwattReasoningEffort(): string | undefined {
+    const fromEnv = (this.getEnv('NEURALWATT_REASONING_EFFORT') || '').trim().toLowerCase();
+    if (fromEnv && ['low', 'medium', 'high'].includes(fromEnv)) return fromEnv;
+
+    const active = this.providers.find(
+      (p) => p.model === this.model && p.endpoint === this.baseUrl
+    );
+    const fromProvider = (active?.reasoningEffort || '').trim().toLowerCase();
+    if (fromProvider && ['low', 'medium', 'high'].includes(fromProvider)) return fromProvider;
+
+    if (this.detectProviderFromUrl(this.baseUrl) === 'neuralwatt' && this.model === 'glm-5.2') {
+      return 'high';
+    }
+    return undefined;
+  }
+
   /** OpenAI-compatible chat/completions endpoint (NVIDIA, Groq, OpenRouter, etc.) */
   private async callOpenAICompatible(messages: LLMMessage[], options: LLMOptions): Promise<string> {
+    const payload: Record<string, unknown> = {
+      model: this.model,
+      messages,
+      temperature: options.temperature ?? 0.7,
+      max_tokens: options.maxTokens ?? 1000,
+    };
+    const reasoningEffort = this.neuralwattReasoningEffort();
+    if (reasoningEffort) {
+      payload.reasoning_effort = reasoningEffort;
+    }
+
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -319,12 +458,7 @@ export class LLMClient {
         Authorization: `Bearer ${this.apiKey}`,
       },
       signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
-      body: JSON.stringify({
-        model: this.model,
-        messages,
-        temperature: options.temperature ?? 0.7,
-        max_tokens: options.maxTokens ?? 1000,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
@@ -336,7 +470,7 @@ export class LLMClient {
     const choice = data.choices?.[0]?.message;
     // Some models (e.g. GPT-OSS-120B, reasoning models) put output in
     // reasoning_content when content is null. Fall back gracefully.
-    return choice?.content || choice?.reasoning_content || '';
+    return choice?.content || choice?.reasoning_content || choice?.reasoning || '';
   }
 
   /** Gemini native API (generateContent endpoint) */
