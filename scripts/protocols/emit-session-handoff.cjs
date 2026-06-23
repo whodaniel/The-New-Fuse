@@ -356,6 +356,15 @@ ${nextActions.map((line) => `- ${line}`).join('\n')}
   fs.writeFileSync(handoffMdPath, `${markdown.trimEnd()}\n`, 'utf8');
   updateLedger(handoffId);
 
+  try {
+    const { syncFromRepo } = require('../lib/sync-handoff-cache.cjs');
+    syncFromRepo(repoRoot);
+  } catch (error) {
+    console.warn(
+      `[emit-session-handoff] handoff cache sync skipped: ${error?.message || error}`,
+    );
+  }
+
   console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffJsonPath)}`);
   console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffMdPath)}`);
   console.log(`[emit-session-handoff] updated ${path.relative(repoRoot, ledgerPath)}`);

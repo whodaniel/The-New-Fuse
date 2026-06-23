@@ -1,7 +1,7 @@
 import chalk from 'chalk';
+import { createHash } from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { createHash } from 'crypto';
 
 export type HandoffRecord = {
   handoffId: string;
@@ -19,7 +19,7 @@ export type HandoffRecord = {
   continuation: {
     owner: string;
     targets: string[];
-    priority: 'low' | 'medium' | 'high';
+    priority: 'low' | 'medium' | 'high' | 'critical';
     resumeChecklist: string[];
   };
   nextActions: string[];
@@ -27,6 +27,61 @@ export type HandoffRecord = {
 
 const HANDOFF_JSON_PATH = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json';
 const HANDOFF_MD_PATH = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md';
+
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((entry) => String(entry)).filter(Boolean);
+}
+
+function normalizeHandoff(raw: Record<string, unknown> | null): HandoffRecord | null {
+  if (!raw || typeof raw !== 'object') return null;
+
+  const handoffId = String(raw.handoff_id ?? raw.handoffId ?? '').trim();
+  if (!handoffId) return null;
+
+  const continuationRaw =
+    raw.continuation && typeof raw.continuation === 'object'
+      ? (raw.continuation as Record<string, unknown>)
+      : {};
+  const verificationRaw =
+    raw.verification && typeof raw.verification === 'object'
+      ? (raw.verification as Record<string, string>)
+      : {};
+
+  const sensitivity = String(raw.sensitive_scope ?? raw.sensitivity ?? 'internal');
+  const normalizedSensitivity: HandoffRecord['scope']['sensitivity'] =
+    sensitivity === 'external' ? 'external' : 'internal';
+
+  const priority = String(continuationRaw.priority ?? 'medium');
+  const normalizedPriority: HandoffRecord['continuation']['priority'] =
+    priority === 'low' || priority === 'medium' || priority === 'high' || priority === 'critical'
+      ? priority
+      : 'medium';
+
+  return {
+    handoffId,
+    sessionId: String(raw.session_id ?? raw.sessionId ?? handoffId),
+    createdAt: String(raw.created_at ?? raw.createdAt ?? ''),
+    scope: {
+      repository: String(raw.repository ?? 'The-New-Fuse'),
+      branch: String(raw.branch ?? 'unknown'),
+      headSha: String(raw.head_sha ?? raw.headSha ?? ''),
+      sensitivity: normalizedSensitivity,
+    },
+    workSummary: asStringArray(raw.work_summary ?? raw.workSummary),
+    changedPaths: asStringArray(raw.changed_paths ?? raw.changedPaths),
+    verification: verificationRaw,
+    continuation: {
+      owner: String(continuationRaw.owner ?? 'tnf-orchestrator'),
+      targets: asStringArray(continuationRaw.targets),
+      priority: normalizedPriority,
+      resumeChecklist: asStringArray(
+        continuationRaw.resume_checklist ?? continuationRaw.resumeChecklist
+      ),
+    },
+    nextActions: asStringArray(raw.next_actions ?? raw.nextActions),
+  };
+}
 
 export class SessionHandoffService {
   private repoRoot: string;
@@ -42,7 +97,8 @@ export class SessionHandoffService {
   readLatestJson(): HandoffRecord | null {
     try {
       const content = fs.readFileSync(this.resolve(HANDOFF_JSON_PATH), 'utf8');
-      return JSON.parse(content) as HandoffRecord;
+      const parsed = JSON.parse(content) as Record<string, unknown>;
+      return normalizeHandoff(parsed);
     } catch {
       return null;
     }
@@ -122,3 +178,5 @@ export class SessionHandoffService {
     return lines.join('\n');
   }
 }
+
+export { normalizeHandoff };

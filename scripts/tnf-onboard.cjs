@@ -888,6 +888,18 @@ async function main() {
     console.log('- WARN no handoff source discovered');
   }
 
+  try {
+    const { syncFromRepo } = require('./lib/sync-handoff-cache.cjs');
+    const syncResult = syncFromRepo(ROOT);
+    if (syncResult.ok) {
+      console.log(`- home cache: ${syncResult.cachePath} (${syncResult.handoff_id})`);
+    } else {
+      console.log(`- WARN home cache sync skipped: ${syncResult.reason}`);
+    }
+  } catch (error) {
+    console.log(`- WARN home cache sync failed: ${error?.message || error}`);
+  }
+
   const legacyLatest = inspectLegacyOpenClawLatestPointer();
   if (legacyLatest.status === 'broken') {
     console.log(

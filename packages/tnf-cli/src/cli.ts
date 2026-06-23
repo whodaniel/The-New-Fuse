@@ -253,6 +253,31 @@ function findExecutableOnPath(commandName: string): string | null {
   return null;
 }
 
+function resolveVoiceSystemDir(): string | null {
+  const explicit = process.env.TNF_VOICE_SYSTEM_DIR?.trim();
+  if (explicit) {
+    const voice = path.join(explicit, 'voice');
+    if (isExecutableFile(voice)) return explicit;
+  }
+
+  let cur = process.cwd();
+  for (let depth = 0; depth < 12; depth += 1) {
+    const candidate = path.join(cur, 'scripts', 'system');
+    if (isExecutableFile(path.join(candidate, 'voice'))) return candidate;
+    const parent = path.dirname(cur);
+    if (parent === cur) break;
+    cur = parent;
+  }
+
+  const tnfRoot = process.env.TNF_ROOT?.trim();
+  if (tnfRoot) {
+    const candidate = path.join(tnfRoot, 'scripts', 'system');
+    if (isExecutableFile(path.join(candidate, 'voice'))) return candidate;
+  }
+
+  return null;
+}
+
 function resolveVoiceBridgeCommand(commandName: string): string {
   const overrideEnvKey = `TNF_VOICE_${commandName.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase()}_CMD`;
   const override = process.env[overrideEnvKey];
@@ -270,6 +295,12 @@ function resolveVoiceBridgeCommand(commandName: string): string {
 
   const onPath = findExecutableOnPath(commandName);
   if (onPath) return onPath;
+
+  const systemDir = resolveVoiceSystemDir();
+  if (systemDir) {
+    const systemCmd = path.join(systemDir, commandName);
+    if (isExecutableFile(systemCmd)) return systemCmd;
+  }
 
   const homeBin = process.env.HOME ? path.join(process.env.HOME, 'bin', commandName) : '';
   if (homeBin && isExecutableFile(homeBin)) return homeBin;
@@ -3062,6 +3093,23 @@ const safeStdoutHandler = (error: NodeJS.ErrnoException) => {
 };
 process.stdout.on('error', safeStdoutHandler);
 
+process.on('uncaughtException', (error: Error) => {
+  if (error?.message?.includes('Redis') || error?.message?.includes('ECONNREFUSED')) {
+    console.error(chalk.yellow(`\n  ⚠️  Redis connection error: ${error.message}`));
+    console.error(chalk.dim('  Redis is required for some TNF features. Running without Redis.'));
+    return;
+  }
+  console.error(chalk.red(`\n  Uncaught exception: ${error.message}`));
+  if (process.env.DEBUG) console.error(error.stack);
+});
+
+process.on('unhandledRejection', (reason: any) => {
+  if (reason?.message?.includes('Redis') || reason?.message?.includes('ECONNREFUSED')) {
+    return;
+  }
+  console.error(chalk.yellow(`\n  ⚠️  Unhandled rejection: ${reason?.message || reason}`));
+});
+
 function coerceSplashTheme(value?: string): SplashTheme {
   const normalized = (value || '').trim().toLowerCase();
   if (SPLASH_THEMES.includes(normalized as SplashTheme)) {
@@ -4067,6 +4115,7 @@ type InteractiveSlashContext = {
       costPerMtokens?: number;
     }>;
   };
+  autonomousMode?: boolean;
 };
 
 type SlashCommandOutcome = { handled: false } | { handled: true; exit?: boolean; prompt?: string };
@@ -4453,6 +4502,38 @@ async function handleInteractiveSlashCommand(
       return { handled: true };
     }
     setInteractiveModel(context.client, modelName);
+    return { handled: true };
+  }
+
+  if (command.name === 'exec') {
+    const script = parsed.args.join(' ').trim();
+    if (!script) {
+      console.log(chalk.red('  Usage: /exec <command>'));
+      return { handled: true };
+    }
+    const result = await executeInteractiveBash(script);
+    if (result.ok) {
+      console.log(chalk.green('  ✓ command succeeded'));
+    } else {
+      console.log(chalk.red(`  ✗ command failed (exit ${result.code})`));
+    }
+    return { handled: true };
+  }
+
+  if (command.name === 'autonomous' || command.aliases?.includes('auto')) {
+    const toggle = resolveAutonomousModeToggle(parsed.args);
+    if (toggle === null && parsed.args.length > 0) {
+      console.log(chalk.red('  Usage: /autonomous [on|off]'));
+      return { handled: true };
+    }
+    if (toggle === null) {
+      context.autonomousMode = !context.autonomousMode;
+    } else {
+      context.autonomousMode = toggle;
+    }
+    console.log(
+      `  Autonomous shell execution: ${context.autonomousMode ? chalk.green('ON') : chalk.yellow('OFF')}`
+    );
     return { handled: true };
   }
 
@@ -9650,6 +9731,38 @@ voiceMicCommand
     }
   });
 
+voiceBridgeCommand
+  .command('pause')
+  .description('Pause the beam (mic capture + injection)')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .action(async (options: { profile?: string } = {}) => {
+    try {
+      const forwarded = options.profile
+        ? appendVoiceProfileArg(['--pause'], options.profile)
+        : ['--pause'];
+      await runVoiceBridgeCommand('voice-mic-toggle', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceBridgeCommand
+  .command('resume')
+  .description('Resume the beam after pause')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .action(async (options: { profile?: string } = {}) => {
+    try {
+      const forwarded = options.profile
+        ? appendVoiceProfileArg(['--resume'], options.profile)
+        : ['--resume'];
+      await runVoiceBridgeCommand('voice-mic-toggle', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 const voiceResponseAudioCommand = voiceBridgeCommand
   .command('response-audio')
   .description('AI response audio playback controls');
@@ -14510,6 +14623,20 @@ function getHomeHandoffPath(): string {
   return path.join(os.homedir(), '.tnf', 'handoff-current.json');
 }
 
+function syncHomeHandoffCache(): void {
+  const scriptPath = path.join(repoRoot, 'scripts/lib/sync-handoff-cache.cjs');
+  if (!fs.existsSync(scriptPath)) return;
+  try {
+    spawnSync('node', [scriptPath, '--repo', repoRoot], {
+      cwd: repoRoot,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      encoding: 'utf8',
+    });
+  } catch {
+    // Best-effort — onboard/emit also sync the cache.
+  }
+}
+
 function getHandoffDivergence(repoHandoff: any, homeHandoff: any): string | null {
   if (!repoHandoff || !homeHandoff) return null;
   const repoCreated = Date.parse(repoHandoff.created_at || repoHandoff.generatedAt || '');
@@ -14613,7 +14740,85 @@ function loadTnfInteractiveContextPack(): string {
     repoMemory ? `### Repo MEMORY.md\n${repoMemory}` : '### Repo MEMORY.md\nUnavailable.',
     '',
     homeMemory ? `### ~/.tnf/MEMORY.md\n${homeMemory}` : '### ~/.tnf/MEMORY.md\nUnavailable.',
+    '',
+    '## Interactive Execution Policy',
+    '',
+    '- This TNF interactive lane can execute shell commands in the canonical workspace root.',
+    '- When the operator asks for autonomous execution, emit fenced ```bash blocks and the runtime will run them.',
+    '- Operators can also use `/exec <command>` or toggle `/autonomous on`.',
+    '- Prefer Inspect → Act → Verify: read state, run commands, then verify with curl or status checks.',
+    '- Relay health check: `curl -sS http://127.0.0.1:3007/health` (there is no `/handoff-lineage` HTTP route).',
+    '',
+    '## Repo Layout (use directly — do not blind-search)',
+    '',
+    '- Frontend web app: `apps/frontend/` (entry `apps/frontend/src/main.tsx`, auth `apps/frontend/src/hooks/useAuth.tsx`)',
+    '- API server: `apps/api/` (global guard `apps/api/src/guards/security.guard.ts`)',
+    '- TNF CLI source: `packages/tnf-cli/src/cli.ts`',
+    '- Canonical handoff: `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`',
+    '- Home handoff cache: `~/.tnf/handoff-current.json` (synced from canonical JSON on `tnf onboard`)',
+    '',
+    '## Search Discipline',
+    '',
+    '- Never run more than 2 blind `find`/`ls` commands for the same target.',
+    '- If the operator names a file (for example `Main.tsx`), read it directly under `apps/frontend/src/`.',
+    '- If command output is unavailable, say so and ask the operator — do not repeat searches.',
+    '- Finish one task completely (write + verify) before starting another discovery loop.',
   ].join('\n');
+}
+
+function extractInteractiveBashBlocks(text: string): string[] {
+  const blocks: string[] = [];
+  const pattern = /```(?:bash|sh|shell|zsh)?\s*\n([\s\S]*?)```/gi;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(text)) !== null) {
+    const body = match[1]?.trim();
+    if (body) blocks.push(body);
+  }
+  return blocks;
+}
+
+function wantsAutonomousExecution(input: string): boolean {
+  const lower = input.toLowerCase();
+  return /\b(autonomous|autonomously|do all|execute all|run all|just do it|do your best|go ahead)\b/.test(
+    lower
+  );
+}
+
+function resolveAutonomousModeToggle(args: string[]): boolean | null {
+  const token = args.join(' ').trim().toLowerCase();
+  if (!token) return null;
+  if (['on', 'true', '1', 'yes', 'enable'].includes(token)) return true;
+  if (['off', 'false', '0', 'no', 'disable'].includes(token)) return false;
+  return null;
+}
+
+async function executeInteractiveBash(script: string): Promise<{ ok: boolean; code: number }> {
+  return new Promise((resolve) => {
+    const child = spawn('bash', ['-lc', script], {
+      cwd: repoRoot,
+      env: process.env,
+      stdio: 'inherit',
+    });
+    child.on('error', () => resolve({ ok: false, code: 1 }));
+    child.on('close', (code) => resolve({ ok: code === 0, code: code ?? 1 }));
+  });
+}
+
+async function runInteractiveBashBlocks(blocks: string[], messages: ChatMessage[]): Promise<void> {
+  if (!blocks.length) return;
+  console.log(chalk.yellow(`\n  ⚡ Executing ${blocks.length} shell block(s) in ${repoRoot}`));
+  for (let index = 0; index < blocks.length; index += 1) {
+    console.log(chalk.dim(`  --- block ${index + 1}/${blocks.length} ---`));
+    const result = await executeInteractiveBash(blocks[index]);
+    const line = result.ok
+      ? chalk.green(`  ✓ block ${index + 1} succeeded`)
+      : chalk.red(`  ✗ block ${index + 1} failed (exit ${result.code})`);
+    console.log(line);
+    messages.push({
+      role: 'system',
+      content: `Interactive shell block ${index + 1}/${blocks.length} exit code: ${result.code}`,
+    });
+  }
 }
 
 function readAbsoluteTextFileIfPresent(absolutePath: string, maxChars = 1600): string | null {
@@ -14655,7 +14860,43 @@ function getMcpServerNames(runtimeState: any): string[] {
   }
 }
 
+// ─── Processing Indicator ─────────────────────────────────────────────────
+// Simple ASCII spinner for LLM processing feedback.
+// Uses stderr to avoid contaminating stdout in piped modes.
+const SPINNER_FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+let spinnerHandle: NodeJS.Timeout | null = null;
+let spinnerFrame = 0;
+let spinnerActive = false;
+
+function startProcessingIndicator(label = 'Processing'): void {
+  if (spinnerActive) return;
+  spinnerActive = true;
+  spinnerFrame = 0;
+  // Visible status line on stdout (stderr spinner gets drowned by heartbeat logs).
+  process.stdout.write(`\n${chalk.cyan('⏳')} ${chalk.bold(label)}…\n`);
+  const write = (frame: string) =>
+    process.stderr.write(`\r${chalk.cyan(frame)} ${chalk.dim(label)}... `);
+  spinnerHandle = setInterval(() => {
+    write(SPINNER_FRAMES[spinnerFrame % SPINNER_FRAMES.length]);
+    spinnerFrame++;
+  }, 80);
+  write(SPINNER_FRAMES[0]);
+}
+
+function stopProcessingIndicator(success = true): void {
+  if (!spinnerActive) return;
+  spinnerActive = false;
+  if (spinnerHandle) {
+    clearInterval(spinnerHandle);
+    spinnerHandle = null;
+  }
+  process.stderr.write('\r' + '\x1b[K');
+  const icon = success ? chalk.green('✓ Done') : chalk.red('✗ Failed');
+  process.stdout.write(`${icon}\n`);
+}
+
 async function startInteractiveAgent(): Promise<void> {
+  syncHomeHandoffCache();
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -14695,7 +14936,22 @@ async function startInteractiveAgent(): Promise<void> {
       chalk.cyan(' ║')
   );
   console.log(chalk.cyan('╚══════════════════════════════════════════════╝'));
-  console.log(chalk.dim(' Type /help for commands, /exit to quit, /clear to clear history\n'));
+  console.log(
+    chalk.dim(
+      ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous on for shell execution\n'
+    )
+  );
+
+  let autonomousMode = isTruthyEnv(process.env.TNF_INTERACTIVE_EXEC);
+  const slashContext: InteractiveSlashContext = {
+    messages,
+    systemMessageCount: 1,
+    client,
+    autonomousMode,
+  };
+  if (autonomousMode) {
+    console.log(chalk.dim('  Autonomous shell execution: ON (TNF_INTERACTIVE_EXEC)'));
+  }
 
   // Start heartbeat to keep session alive
   const heartbeatInterval = setInterval(async () => {
@@ -14763,9 +15019,15 @@ async function startInteractiveAgent(): Promise<void> {
     });
 
   while (true) {
+    const modelLabel = `${chalk.dim(client.providerName || 'model')}/${chalk.white(client.model.replace(/^.*\//, ''))}`;
+    const promptWithModel =
+      process.env.TNF_SHOW_MODEL_IN_PROMPT !== '0'
+        ? chalk.green('\n') + chalk.dim('[') + modelLabel + chalk.dim(']') + ' '
+        : chalk.green('\n❯ ');
+
     let input: string;
     try {
-      input = resolveSlashDropdownInput(await ask(chalk.green('\n❯ ')), slashDropdown);
+      input = resolveSlashDropdownInput(await ask(promptWithModel), slashDropdown);
     } catch {
       break;
     }
@@ -14784,24 +15046,51 @@ async function startInteractiveAgent(): Promise<void> {
     if (!trimmed) continue;
 
     let outbound = trimmed;
-    const slashOutcome = await handleInteractiveSlashCommand(trimmed, {
-      messages,
-      systemMessageCount: 1,
-      client,
-    });
+    const slashOutcome = await handleInteractiveSlashCommand(trimmed, slashContext);
     if (slashOutcome.handled) {
       if (slashOutcome.exit) break;
       if (!slashOutcome.prompt) continue;
       outbound = slashOutcome.prompt;
     }
 
+    if (wantsAutonomousExecution(outbound)) {
+      slashContext.autonomousMode = true;
+    }
+
     messages.push({ role: 'user', content: outbound });
 
     try {
-      const response = await client.chatComplete(messages, { temperature: 0.7 });
-      console.log(chalk.cyan('\n  ' + response.replace(/\n/g, '\n  ')));
-      messages.push({ role: 'assistant', content: response });
+      startProcessingIndicator('Thinking');
+      const useStreaming = process.env.TNF_USE_STREAMING === '1';
+
+      if (useStreaming) {
+        // Streaming mode: show response as it arrives
+        process.stdout.write(chalk.cyan('\n  '));
+        let fullResponse = '';
+        for await (const chunk of client.chatStream(messages, { temperature: 0.7 })) {
+          process.stdout.write(chalk.cyan(chunk));
+          fullResponse += chunk;
+        }
+        stopProcessingIndicator(true);
+        console.log(''); // newline after streaming finishes
+        messages.push({ role: 'assistant', content: fullResponse });
+      } else {
+        // Non-streaming mode: wait for complete response
+        const response = await client.chatComplete(messages, { temperature: 0.7 });
+        stopProcessingIndicator(true);
+        console.log(chalk.cyan('\n  ' + response.replace(/\n/g, '\n  ')));
+        messages.push({ role: 'assistant', content: response });
+      }
+
+      if (slashContext.autonomousMode) {
+        const response = messages[messages.length - 1].content;
+        const blocks = extractInteractiveBashBlocks(response);
+        if (blocks.length > 0) {
+          await runInteractiveBashBlocks(blocks, messages);
+        }
+      }
     } catch (err: any) {
+      stopProcessingIndicator(false);
       console.error(chalk.red('\n  Error: ' + err.message));
     }
   }

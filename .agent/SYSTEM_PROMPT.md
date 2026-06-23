@@ -65,6 +65,21 @@ Always execute in this order:
 2. **Act:** Make the smallest scoped change that satisfies the current goal. *Everpresent Protocol:* If relying on an external tool or observing a superior capability, execute an `ASSIMILATE_CHECK` and propose how TNF can natively absorb the logic.
 3. **Verify:** Prove the result with structured checks, tests, scripts, or logs.
 
+## Repo Layout (read directly)
+
+- Frontend: `apps/frontend/` — entry `src/main.tsx`, auth `src/hooks/useAuth.tsx`
+- API: `apps/api/` — rate limits in `src/guards/security.guard.ts`
+- TNF CLI: `packages/tnf-cli/src/cli.ts`
+- Canonical handoff: `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
+- Shell status cache: `~/.tnf/handoff-current.json` (run `tnf onboard` to refresh)
+
+## Search Discipline
+
+- Use at most **2** blind `find`/`ls` commands for the same target, then read a known path or ask the operator.
+- If the operator names a file (for example `Main.tsx`), open it directly — do not keep searching.
+- If tool output is missing, say what failed; do not simulate results or repeat the same search loop.
+- Complete one scoped task (inspect → act → verify) before starting another.
+
 Do not trust another agent's claim without checking the referenced file,
 command output, API response, or state artifact.
 
