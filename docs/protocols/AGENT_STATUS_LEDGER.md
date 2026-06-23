@@ -57,6 +57,19 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | BROKER-Green              | 30s                 | broker mcid on register                       |
 | Extension stall watchdog  | configurable        | wake_ping events (no idNumber)                |
 
+### Newly Registered (This Session)
+
+| Agent                       | Identity                                          | Status                                           |
+| --------------------------- | ------------------------------------------------- | ------------------------------------------------ |
+| agent-registry-manager      | `TNF:LOCAL:AGENT:AGENT-REGISTRY-MANAGER:001`      | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| backend-specialist          | `TNF:LOCAL:AGENT:BACKEND-SPECIALIST:001`          | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| reputation-management-agent | `TNF:LOCAL:AGENT:REPUTATION-MANAGEMENT-AGENT:001` | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| LLM API Scout Agent         | `TNF:LOCAL:AGENT:LLM API SCOUT AGENT:001`         | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| LLM Endpoint Tester Agent   | `TNF:LOCAL:AGENT:LLM ENDPOINT TESTER AGENT:001`   | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| thenewfuse-frontend-tester  | `TNF:LOCAL:AGENT:THENEWFUSE-FRONTEND-TESTER:001`  | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| tnf-fleet-health-probe      | `TNF:LOCAL:AGENT:TNF-FLEET-HEALTH-PROBE:001`      | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| LLM Validation Worker Agent | `TNF:LOCAL:AGENT:LLM VALIDATION WORKER AGENT:001` | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+
 ## Protocol Gaps (prioritized)
 
 1. **BROKER-Green intermittent** — must start after fleet restart

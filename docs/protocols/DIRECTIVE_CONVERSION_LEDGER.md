@@ -97,3 +97,76 @@ with evidence - Deep Sec security workflow
 ---
 
 _Last updated: 2026-06-12T08:30:00Z_
+
+---
+
+## Batch 002: Hermes Cron Interpreter Bug Fix
+
+**Batch ID**: `tnf-phase7-batch-002` **Objective**: Fix the Hermes cron
+scheduler RuntimeError that renders Hermes-native cron unusable. All TNF agents
+must use system cron as a workaround until this is resolved. **Owner**:
+`local-subdirector` **Claimed**: 2026-06-23T22:58:00Z`
+
+### Directive States
+
+| ID          | Title                                                     | State      |
+| ----------- | --------------------------------------------------------- | ---------- |
+| directive-1 | Investigate Hermes cron scheduler RuntimeError root cause | ⚠️ blocked |
+| directive-2 | Implement fix in hermes-agent cron internals              | ⚠️ blocked |
+| directive-3 | Add regression test for cron interpreter restart          | ⚠️ blocked |
+| directive-4 | Verify Hermes cron works end-to-end after fix             | ⚠️ blocked |
+| directive-5 | Remove system cron workaround (restore Hermes-only)       | ⚠️ blocked |
+
+### Known Symptoms
+
+**Error**:
+`RuntimeError: cannot schedule new futures after interpreter shutdown`
+**Location**: `hermes-agent/cron/scheduler.py` (or equivalent Gemini-style cron)
+**Affected jobs**: `be1d08855b63`, `7565931a6dc3`, `a28f0d31a6b3`,
+`6f0bec6dae4e`, `a9407d63ca93` **Observation window**: 2026-06-09 to 2026-06-22
+
+### Workaround in Place (2026-06-23)
+
+System cron now drives all TNF cron agents:
+
+- `*/5 * * * *` → `tnf-frontend-tester-cycle.sh`
+- `*/15 * * * *` → `tnf-fleet-health-probe-cycle.sh`
+- `*/15 * * * *` → `tnf-continuous-improver-watchdog.sh`
+
+This workaround is stable. The directive is to **resolve the root cause** so
+Hermes cron can be the sole scheduler.
+
+### Root Cause Hypothesis
+
+The cron interpreter thread dies after the first job completes (Python asyncio
+event loop not restarted on `concurrent.futures.ThreadPoolExecutor` after
+`shutdown` call). The `last_run_at` / `last_status` fields are never updated
+because the thread exits before writing state.
+
+### Evidence Artifacts
+
+```
+~/.hermes/cron/output/{be1d08855b63,7565931a6dc3,a28f0d31a6b3,6f0bec6dae4e,a9407d63ca93}.jsonl
+```
+
+### KPI Summary
+
+**Phase 7 Conversion Velocity**:
+
+| Metric                | Value             |
+| --------------------- | ----------------- |
+| Directives claimed    | 5                 |
+| Directives verified   | 0 (0%)            |
+| Directives landed     | 0 (0%)            |
+| Workaround active     | Yes — system cron |
+| Root cause identified | Pending           |
+
+**Next Actions**:
+
+1. Read `hermes-agent/cron/scheduler.py` source
+2. Reproduce the RuntimeError in isolation
+3. Fix event loop restart on ThreadPoolExecutor
+4. Add test that verifies cron survives 3 consecutive runs
+5. Switch back to Hermes-native cron after fix verified
+
+_Last updated: 2026-06-23T22:58:00Z_

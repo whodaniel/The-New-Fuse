@@ -68,7 +68,11 @@ At the start of each session:
 3. Read the canonical session handoff:
    - `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` (preferred)
    - `docs/protocols/reports/SESSION_HANDOFF_LATEST.md` (fallback)
-   - `.agent/handoff_notes.txt` (legacy fallback)
+   - `.agent/handoff_notes.txt` (legacy fallback) 3b. **Session freshness
+     check**: If `SESSION_HANDOFF_LATEST.json` `created_at` is more than 24
+     hours older than current time, emit a `session-stale` flag to
+     `tnf:master:tasks:planning` and log the discrepancy. A stale session does
+     not block execution but must be acknowledged in the operator briefing.
 4. Ingest codebase structure:
    - `apps/frontend/src/data/codebase_map.json`
 5. Verify integrity:
@@ -76,7 +80,37 @@ At the start of each session:
      protocol
 6. Synchronize repo:
    - run `git pull --rebase` (or `--autostash` when local edits are present)
-7. Confirm active directive before implementation.
+7. **ASSIMILATE_CHECK**: Scan session handoff work summary, recent git diff, and
+   any failure patterns from `~/.hermes/cron/output/` for:
+   - Systemic issues (bugs, broken tools, missing capabilities) → create
+     directive entry in `DIRECTIVE_CONVERSION_LEDGER.md`
+   - Successful patterns (workable command sequences, confirmed workarounds) →
+     codify in `.agent/skills/` or relevant protocol doc
+   - Failure archaeology (same error appearing multiple times) → create a
+     `known-failure` entry in `AGENT_STATUS_LEDGER.md` Protocol Gaps section
+     Every substantive learning from the session must leave a durable artifact.
+8. Confirm active directive before implementation.
+
+### ASSIMILATE_CHECK Execution Details
+
+The ASSIMILATE_CHECK is not advisory — it is mandatory and must produce output.
+Use this procedure:
+
+1. **Scan failure log**: read `~/.hermes/cron/output/*.jsonl` last lines for
+   `status: error` or `RuntimeError`. Classify each as `new` or `known`. If new
+   and recurring (≥3 occurrences), create a directive.
+2. **Scan handoff work_summary**: every `work_summary` item that describes a
+   system-level change (new agent, new script, config file, deprecation) should
+   be verified as having a corresponding LIVING_STATE entry. If missing, flag as
+   `drift-detected`.
+3. **Scan recent git commits**: look for patterns in commit messages that
+   indicate systemic improvement (e.g., "workaround", "fix", "replaced by") →
+   these may indicate gaps the TNF framework should close natively.
+4. **Scan SESSION_HANDOFF.next_actions**: any item not yet actioned in this
+   session must carry forward to the new handoff.
+5. If any of the above produces a finding, write it to
+   `tnf:master:tasks:planning` via `redis-cli LPUSH` and append a `[ASSIMILATE]`
+   tag to the finding type so downstream consumers know the origin.
 
 ## Enforcement Targets
 
@@ -85,3 +119,6 @@ The following must reference this canonical file:
 - `docs/core/AGENTS.md`
 - `docs/TNF_SESSION_ONBOARDING.md`
 - `scripts/tnf-onboard.cjs`
+- `scripts/turn-end.cjs` (must be called at every session close)
+- `scripts/check-agent-registration.cjs` (must be run when new operational
+  agents are created)

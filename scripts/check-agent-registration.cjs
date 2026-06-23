@@ -1,0 +1,266 @@
+#!/usr/bin/env node
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const TNF_ROOT_DIR = process.env.TNF_ROOT_DIR || process.cwd();
+const AGENTS_DIR = path.join(TNF_ROOT_DIR, '.agent/agents');
+const LEDGER_PATH = path.join(TNF_ROOT_DIR, 'docs/protocols/AGENT_STATUS_LEDGER.md');
+
+function extractFrontmatterName(content) {
+  const match = content.match(/^name:\s*([^\n]+)/m);
+  return match ? match[1].trim() : null;
+}
+
+function isOperationalAgent(filePath, content) {
+  if (content.includes('[native-cron]') || content.includes('[tnf-native]')) return true;
+  if (content.includes('schedule:') && content.match(/schedule:\s*every|schedule:\s*\*\//m)) return true;
+  if (content.includes('supervisor:') && content.match(/supervisor:\s*(true|false)/m)) return true;
+  if (content.includes('Runtime:') || content.includes('runtime:')) return true;
+  const basename = path.basename(filePath, '.md');
+  if (['continuous-improver', 'thenewfuse-frontend-tester', 'tnf-fleet-health-probe', 'staff-review-agent', 'staffing-director-agent', 'agent-registry-manager', 'reputation-management-agent'].includes(basename)) return true;
+  const importedIndicators = ['MUST BE USED to', 'When the user asks for', 'This skill is for', 'imported-claude-agents'];
+  const hasImportedIndicator = importedIndicators.some((ind) => content.includes(ind));
+  if (hasImportedIndicator) return false;
+  return false;
+}
+
+function scanAgentFiles(agentsDir) {
+  const agents = [];
+  if (!fs.existsSync(agentsDir)) return agents;
+
+  const files = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
+  for (const file of files) {
+    const filePath = path.join(agentsDir, file);
+    try {
+      const content = fs.readFileSync(filePath, 'utf8');
+      const name = extractFrontmatterName(content);
+      if (name && isOperationalAgent(filePath, content)) {
+        agents.push({ name, file, path: filePath });
+      }
+    } catch {
+    }
+  }
+  return agents;
+}
+
+function extractRegisteredAgents(ledgerContent) {
+  const registered = new Set();
+
+  const greenMatch = ledgerContent.match(/## Green Federation[\s\S]*?(?=## |\n##|$)/);
+  if (greenMatch) {
+    const greenSection = greenMatch[0];
+    const componentMatches = greenSection.match(/\| [^|]+ \| `([^`]+)` \|/g);
+    if (componentMatches) {
+      for (const match of componentMatches) {
+        const idMatch = match.match(/`([^`]+)`/);
+        if (idMatch && idMatch[1] && !idMatch[1].includes('*') && !idMatch[1].includes('+')) {
+          registered.add(idMatch[1]);
+        }
+      }
+    }
+  }
+
+  const tableRows = ledgerContent.match(/\|[^|\n]+AGENT[^|\n]+\|/gi);
+  if (tableRows) {
+    for (const row of tableRows) {
+      const cells = row.split('|').filter((c) => c.trim());
+      if (cells.length >= 2) {
+        const lastCell = cells[cells.length - 1].trim();
+        const idMatch = lastCell.match(/`([^`]+)`/);
+        if (idMatch && idMatch[1]) {
+          registered.add(idMatch[1]);
+        }
+      }
+    }
+  }
+
+  const agentIds = ledgerContent.match(/`TNF:[^`]+`/g);
+  if (agentIds) {
+    for (const id of agentIds) {
+      registered.add(id);
+    }
+  }
+
+  const nameMatches = ledgerContent.match(/\*\*Agent\*\*:\s*([^\n*]+)/gi);
+  if (nameMatches) {
+    for (const match of nameMatches) {
+      const name = match.replace(/\*\*Agent\*\*:\s*/i, '').trim();
+      if (name && name.length > 2 && name.length < 100) {
+        registered.add(name);
+      }
+    }
+  }
+
+  return registered;
+}
+
+function appendToLedger(newAgents, ledgerPath) {
+  if (!fs.existsSync(ledgerPath)) {
+    console.error('Ledger file not found');
+    return false;
+  }
+
+  let content = fs.readFileSync(ledgerPath, 'utf8');
+
+  const timestamp = new Date().toISOString();
+  const entries = [];
+
+  for (const agent of newAgents) {
+    entries.push(`| ${agent.name} | \`TNF:LOCAL:AGENT:${agent.name.toUpperCase()}:001\` | **NEW** — registered at ${timestamp} |`);
+  }
+
+  if (entries.length === 0) {
+    return true;
+  }
+
+  const lastTableMatch = content.match(/\n## [^[\]]+(\n\|[^\n]+\|\n\|[^\n]+\|\n\|[^\n]+\|)+/g);
+  let insertIndex = content.length;
+
+  if (lastTableMatch) {
+    const lastTable = lastTableMatch[lastTableMatch.length - 1];
+    insertIndex = content.indexOf(lastTable) + lastTable.length;
+  } else {
+    const headerMatch = content.match(/## Session Logs/);
+    if (headerMatch) {
+      insertIndex = headerMatch.index;
+    }
+  }
+
+  const newSection = '\n\n### Newly Registered (This Session)\n\n| Agent | Identity | Status |\n| ----- | -------- | ------ |\n';
+  const rows = entries.map((e) => `| ${e.split(' | ')[1]} | ${e.split(' | ')[2]} | ${e.split(' | ')[3]} |`).join('\n');
+
+  content = content.slice(0, insertIndex) + newSection + entries.join('\n') + content.slice(insertIndex);
+
+  fs.writeFileSync(ledgerPath, content, 'utf8');
+  console.log(`Auto-registered ${newAgents.length} agent(s) to ledger`);
+  return true;
+}
+
+function printUsage() {
+  console.log('Usage: node scripts/check-agent-registration.cjs [options]');
+  console.log('');
+  console.log('Options:');
+  console.log('  -h, --help    Show this help');
+  console.log('  --fix         Auto-register missing agents in the ledger');
+  console.log('  --verbose     Show detailed output');
+}
+
+function parseArgs(argv) {
+  const result = { help: false, fix: false, verbose: false };
+
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === '-h' || arg === '--help') {
+      result.help = true;
+    } else if (arg === '--fix') {
+      result.fix = true;
+    } else if (arg === '--verbose') {
+      result.verbose = true;
+    }
+  }
+
+  return result;
+}
+
+function main() {
+  const args = parseArgs(process.argv.slice(2));
+
+  if (args.help) {
+    printUsage();
+    process.exit(0);
+  }
+
+  console.log('TNF Agent Registration Checker');
+  console.log(`Workspace: ${TNF_ROOT_DIR}`);
+  console.log('');
+
+  if (!fs.existsSync(AGENTS_DIR)) {
+    console.error(`Error: .agent/agents/ directory not found at ${AGENTS_DIR}`);
+    process.exit(1);
+  }
+
+  if (!fs.existsSync(LEDGER_PATH)) {
+    console.error(`Error: AGENT_STATUS_LEDGER.md not found at ${LEDGER_PATH}`);
+    process.exit(1);
+  }
+
+  const agents = scanAgentFiles(AGENTS_DIR);
+  console.log(`Found ${agents.length} agent definition(s) in .agent/agents/`);
+
+  const ledgerContent = fs.readFileSync(LEDGER_PATH, 'utf8');
+  const registeredAgents = extractRegisteredAgents(ledgerContent);
+  console.log(`Found ${registeredAgents.size} registered agent identity/ies in ledger`);
+
+  if (args.verbose) {
+    console.log('');
+    console.log('Registered identities:');
+    for (const id of registeredAgents) {
+      console.log(`  - ${id}`);
+    }
+  }
+
+  const unregistered = [];
+
+  for (const agent of agents) {
+    let isRegistered = false;
+
+    const identity = `TNF:LOCAL:AGENT:${agent.name.toUpperCase()}:001`;
+    if (registeredAgents.has(identity)) {
+      isRegistered = true;
+    }
+
+    const nameVariants = [
+      agent.name,
+      agent.name.toLowerCase(),
+      agent.name.toUpperCase(),
+      `**Agent**: ${agent.name}`,
+      agent.name.replace(/-agent$/, ''),
+    ];
+
+    for (const variant of nameVariants) {
+      if (registeredAgents.has(variant) || ledgerContent.includes(variant)) {
+        isRegistered = true;
+        break;
+      }
+    }
+
+    if (!isRegistered) {
+      unregistered.push(agent);
+    }
+  }
+
+  console.log('');
+  if (unregistered.length === 0) {
+    console.log('All agents are registered.');
+    process.exit(0);
+  } else {
+    console.log(`Unregistered agents (${unregistered.length}):`);
+    for (const agent of unregistered) {
+      console.log(`  - ${agent.name} (${agent.file})`);
+    }
+
+    if (args.fix) {
+      console.log('');
+      const success = appendToLedger(unregistered, LEDGER_PATH);
+      if (success) {
+        console.log('');
+        console.log('Auto-registration complete.');
+        process.exit(0);
+      } else {
+        console.error('');
+        console.error('Auto-registration failed.');
+        process.exit(1);
+      }
+    } else {
+      console.log('');
+      console.log('Run with --fix to auto-register missing agents.');
+      process.exit(1);
+    }
+  }
+}
+
+main().catch((error) => {
+  console.error(`Agent registration check failed: ${error?.message || 'unknown error'}`);
+  process.exit(1);
+});

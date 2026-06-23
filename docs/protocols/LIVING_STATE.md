@@ -13,6 +13,28 @@ app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001` **Handoff:**
 ## ⚡ Active Steps
 
 1. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
+
+- [✅] 2026-06-23T22:51:24.112Z New agent registered:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-23T22:52:26.867Z New agent registered:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-23T22:56:05.654Z New agent(s) created:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-23T22:56:05.654Z Agent definition change: 0 added, 5 removed
+- [✅] 2026-06-23T22:56:05.654Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-06-23T23:23:57.161Z New agent(s) created:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-23T23:23:57.161Z New script(s) created:
+  check-agent-registration.cjs, turn-end.cjs
+- [✅] 2026-06-23T23:23:57.161Z Agent definition change: 0 added, 5 removed
+- [✅] 2026-06-23T23:23:57.161Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-06-23T23:23:57.161Z Turn End protocol implemented: auto-update
+  LIVING_STATE + SESSION_HANDOFF at session close
+- [✅] 2026-06-23T23:23:57.161Z Agent registration gate created: auto-verify all
+  agents registered in AGENT_STATUS_LEDGER
+
 2. [✅] Initialize `LIVING_STATE.md`.
 3. [✅] Integrate Rust-based Envelope validator into active Relay bridge via
    FFI.
