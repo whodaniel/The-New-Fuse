@@ -6,10 +6,10 @@ Updated: **2026-06-20T02:30:00Z** — handoff logs refreshed for next agent focu
 
 | Priority | Action                                                                                                     |
 | -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Restart relay (`packages/relay-core/dist/standalone-relay.js`) → verify `curl :3007/handoff-lineage`       |
-| **P0**   | `bash scripts/runtime/green-channel-coordinator-service.sh start`                                          |
-| **P0**   | Reload extension from `apps/chrome-extension/dist-v7`                                                      |
-| **P0**   | `node scripts/gemini-redis-wrapper.cjs`                                                                    |
+| **P0**   | Relay on `:3007` healthy → verify `curl -sS http://127.0.0.1:3007/health`                                  |
+| **P0**   | `bash scripts/runtime/green-channel-coordinator-service.sh start` → `... status`                           |
+| **P0**   | Reload extension from `apps/chrome-extension/dist-v7` (manual in `chrome://extensions`)                    |
+| **P0**   | `node scripts/gemini-redis-wrapper.cjs` (background)                                                       |
 | **P1**   | Four-agent Green test: all tabs Syncing; `@GLM hello` in panel                                             |
 | **P1**   | Confirm WS metadata + `~/.tnf/green-coordinator/inbound-ai-responses.jsonl`                                |
 | **P2**   | Master Clock sequential idNumber (Redis bridge live)                                                       |
@@ -63,8 +63,8 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 ## Protocol Gaps (prioritized)
 
 1. **BROKER-Green intermittent** — must start after fleet restart
-2. **Extension + relay reload mandatory** — dist-v7 + relay restart for
-   `/handoff-lineage`
+2. **Extension + relay reload mandatory** — dist-v7 + relay restart; verify with
+   `curl -sS http://127.0.0.1:3007/health` (no `/handoff-lineage` route)
 3. **Master Clock sequential idNumber** — requires Redis bridge live for
    REGISTRATION_CONFIRMED
 4. **Phase 2** — intent frames, CER, snapshot versioning (ChatGPT spec)
@@ -96,3 +96,6 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 | 2026-06-21 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (72de22f9-f7d7-4496-b07c-e1dd86770854) | ✅ HANDOFF_READY |
+
+| 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(cffffbbe-d465-4593-a419-9905dd389fad) | ✅ HANDOFF_READY |
