@@ -3450,6 +3450,27 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
           path: 'tnf assimilate link cursor',
           description: 'Onboard Cursor CLI into TNF harness protocol',
         },
+        { path: 'tnf harness inspect', description: 'Inspect harness health and live agent loop' },
+        {
+          path: 'tnf harness cycle',
+          description: 'Run one harness master loop (inspect → act → verify)',
+        },
+        {
+          path: 'tnf harness loop --task "<goal>"',
+          description: 'Run live inspect-act-verify loop with TNF LLM',
+        },
+        {
+          path: 'tnf harness boot',
+          description: 'Boot relay monitor, heartbeat, and director cron',
+        },
+        {
+          path: 'tnf tui --autonomous',
+          description: 'Always-on agent with auto-continue and verify gates',
+        },
+        {
+          path: 'tnf turn-end',
+          description: 'Refresh LIVING_STATE and SESSION_HANDOFF at session close',
+        },
       ],
     },
     {
@@ -5876,6 +5897,18 @@ harness
       console.log(`\nCycle: ${report.passed ? chalk.green('PASS') : chalk.yellow('DEGRADED')}`);
       console.log(chalk.dim(`Logged to docs/operations/tnf-harness-cycle.jsonl\n`));
       if (!report.passed) process.exitCode = 1;
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('turn-end')
+  .description('Run Turn End protocol: update LIVING_STATE and SESSION_HANDOFF artifacts')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/turn-end.cjs']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
