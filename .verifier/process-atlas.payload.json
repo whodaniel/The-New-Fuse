@@ -1,5 +1,5 @@
 {
-  "now": "2026-06-26T12:00:01Z",
+  "now": "2026-06-26T20:00:19Z",
   "generated_by": "tnf-process-atlas-generator",
   "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "cron": [
@@ -81,6 +81,22 @@
     }
   ],
   "live": [
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "4853 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "5173 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "5187 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "5206 node dist/master-clock.js"
+    },
     {
       "role": "Master Clock (relay-core)",
       "cmd": "8979 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
@@ -211,6 +227,22 @@
     },
     {
       "role": "Master Clock (relay-core)",
+      "cmd": "36870 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "37007 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "37089 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "37213 node dist/master-clock.js"
+    },
+    {
+      "role": "Master Clock (relay-core)",
       "cmd": "45405 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
     },
     {
@@ -243,6 +275,38 @@
     },
     {
       "role": "Master Clock (relay-core)",
+      "cmd": "57715 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "57764 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "57860 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "57916 node dist/master-clock.js"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "69382 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "69774 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "69811 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "69920 node dist/master-clock.js"
+    },
+    {
+      "role": "Master Clock (relay-core)",
       "cmd": "82093 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
     },
     {
@@ -256,6 +320,22 @@
     {
       "role": "Master Clock (relay-core)",
       "cmd": "82208 node dist/master-clock.js"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "86108 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "86163 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "86241 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "86277 node dist/master-clock.js"
     },
     {
       "role": "Master Clock (relay-core)",
@@ -288,6 +368,22 @@
     {
       "role": "Master Clock (relay-core)",
       "cmd": "97943 node dist/master-clock.js"
+    },
+    {
+      "role": "Broker Agent (task dispatcher)",
+      "cmd": "95798 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='redis://localhost:6379' LEDGER_API_BASE='https://api.thenewfuse.com' node dist/broker-agent.js"
+    },
+    {
+      "role": "Broker Agent (task dispatcher)",
+      "cmd": "95817 node dist/broker-agent.js"
+    },
+    {
+      "role": "Director Agent (escalation reviewer)",
+      "cmd": "95821 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='redis://localhost:6379' LEDGER_API_BASE='https://api.thenewfuse.com' DIRECTOR_AUTO_POLICY='risk-aware' node dist/director-agent.js"
+    },
+    {
+      "role": "Director Agent (escalation reviewer)",
+      "cmd": "95841 node dist/director-agent.js"
     },
     {
       "role": "Local Redis WebSocket Bridge",
@@ -554,7 +650,7 @@
   ],
   "summaries": {
     "cron_count": 19,
-    "live_count": 55,
+    "live_count": 79,
     "packages_count": 91,
     "apps_count": 29,
     "proto_count": 31,

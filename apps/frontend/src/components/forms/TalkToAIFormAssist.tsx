@@ -1,5 +1,6 @@
 import { PremiumButton } from '@/components/ui';
-import { apiService } from '@/services/api';
+import AISourceSelector from '@/components/ai/AISourceSelector';
+import { aiSourceService } from '@/services/aiSource.service';
 import { MessageSquare, Sparkles, X } from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -55,8 +56,8 @@ export const TalkToAIFormAssist: React.FC<TalkToAIFormAssistProps> = ({
         )
         .join('\n');
 
-      const response = await apiService.post('/orchestration/chat', {
-        message: [
+      const result = await aiSourceService.chat({
+        systemPrompt: [
           `You are an entity extraction assistant for the "${formTitle}" form.`,
           'Extract structured values from the user prompt and respond with JSON only.',
           'Allowed keys:',
@@ -65,21 +66,12 @@ export const TalkToAIFormAssist: React.FC<TalkToAIFormAssistProps> = ({
           '- Return a single JSON object.',
           '- Use empty string for unknown text fields.',
           '- Use sensible defaults for dates (ISO 8601) and numbers.',
-          '',
-          `User prompt: ${prompt.trim()}`,
         ].join('\n'),
-        swarmId: 'default-swarm',
+        message: prompt.trim(),
         context: { surface: 'talk-to-ai-form', formTitle },
       });
 
-      const text =
-        (response as any)?.message ||
-        (response as any)?.response ||
-        (response as any)?.text ||
-        (response as any)?.data?.message ||
-        JSON.stringify(response);
-
-      const parsed = extractJsonObject(String(text));
+      const parsed = extractJsonObject(result.text);
       if (!parsed) {
         toast.error('AI response did not include parseable form data. Try a more specific prompt.');
         return;
@@ -146,6 +138,8 @@ export const TalkToAIFormAssist: React.FC<TalkToAIFormAssistProps> = ({
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            <AISourceSelector compact label="AI Source" className="mb-3" />
 
             <label htmlFor="talk-to-ai-prompt" className="sr-only">
               Natural language prompt

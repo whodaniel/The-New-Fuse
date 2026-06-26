@@ -1,5 +1,7 @@
 import { Bot, Loader2, Plus, Search, Send, Settings, Sparkles, Users, Zap } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
+import AISourceSelector from '@/components/ai/AISourceSelector';
+import { aiSourceService } from '@/services/aiSource.service';
 import { useApi } from '../hooks/useApi';
 import { useToast } from '../hooks/useToast';
 import { GlassCard } from './ui/premium/GlassCard';
@@ -173,15 +175,12 @@ export const MultiAgentChat: React.FC = () => {
     setSendError(null);
 
     try {
-      const response = await api.post('/orchestration/chat', {
-        message: userInput,
-        swarmId: 'default-swarm',
-      });
-
-      const assistant = extractAssistantText(response);
-      if (!assistant) {
-        throw new Error('Orchestration endpoint returned no assistant response content.');
-      }
+      const result = await aiSourceService.chat({ message: userInput });
+      const assistant = {
+        sender: result.source.label,
+        text: result.text,
+        agentId: result.source.id,
+      };
 
       const agentMsg: Message = {
         id: `${Date.now()}-agent`,

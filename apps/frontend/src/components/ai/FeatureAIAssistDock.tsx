@@ -1,9 +1,10 @@
 import { ALL_PAGES_CATALOG } from '@/config/routeCatalog';
+import AISourceSelector from '@/components/ai/AISourceSelector';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useAuth } from '@/providers/AuthProvider';
-import { apiService } from '@/services/api';
 import { agentService } from '@/services/AgentService';
+import { aiSourceService } from '@/services/aiSource.service';
 import { resourcesService } from '@/services/resources.service';
 import { filterByTenancyContext } from '@/utils/tenancy';
 import { Bot, Sparkles, Wand2 } from 'lucide-react';
@@ -158,9 +159,8 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
           setResponse('Agent task started. Check agent logs for detailed output.');
         }
       } else {
-        const payload = await apiService.post('/orchestration/chat', {
+        const result = await aiSourceService.chat({
           message: `You are assisting a user inside "${pageInfo?.name}". ${pageInfo?.description || ''}\n\nUser request: ${prompt}`,
-          swarmId: 'default-swarm',
           context: {
             page: pageInfo?.name,
             path: location.pathname,
@@ -171,8 +171,7 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
             userId: user?.id,
           },
         });
-        const assistantText = extractText(payload);
-        setResponse(assistantText || 'No response returned from the AI orchestrator.');
+        setResponse(result.text);
       }
     } catch (error: any) {
       console.error('AI request failed', error);
@@ -223,6 +222,7 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!selectedAgent ? <AISourceSelector compact label="AI Source" /> : null}
         <div className="space-y-2">
           <Label htmlFor="ai-assist-prompt" className="text-xs text-muted-foreground">
             Ask AI to help with this feature

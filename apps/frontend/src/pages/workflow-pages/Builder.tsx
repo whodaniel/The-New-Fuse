@@ -7,6 +7,7 @@ import {
 } from '@/components/ui';
 import { NodeProperties, NodeToolbox, WorkflowCanvas } from '@/components/workflow';
 import WorkflowAIAssistantPanel from '@/components/workflow/WorkflowAIAssistantPanel';
+import AISourceSelector from '@/components/ai/AISourceSelector';
 import { useWorkflow as useWorkflowContext } from '@/contexts/WorkflowContext';
 import { useWorkflow } from '@/hooks';
 import {
@@ -53,7 +54,7 @@ const WorkflowBuilder: React.FC = () => {
   const [showAiPanel, setShowAiPanel] = useState(false);
   const [showAiDialog, setShowAiDialog] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiPanelSeedPrompt, setAiPanelSeedPrompt] = useState('');
 
   // Update workflow name and description when currentWorkflow changes
   useEffect(() => {
@@ -113,131 +114,12 @@ const WorkflowBuilder: React.FC = () => {
   };
 
   // Handle AI workflow generation from natural language prompt
-  const handleAiGenerate = async () => {
-    if (!aiPrompt.trim() || isGenerating) return;
-
-    setIsGenerating(true);
-    try {
-      const prompt = aiPrompt.toLowerCase();
-
-      // Simple keyword-based node generation for demo
-      const nodesToAdd: Array<{ type: string; label: string; description: string; icon: string }> =
-        [];
-
-      // Detect keywords in the prompt
-      if (prompt.includes('github') || prompt.includes('git')) {
-        nodesToAdd.push({
-          type: 'trigger',
-          label: 'GitHub Trigger',
-          description: 'Triggered by GitHub events',
-          icon: '🔗',
-        });
-      }
-      if (prompt.includes('mcp')) {
-        nodesToAdd.push({
-          type: 'mcpTool',
-          label: 'MCP Tool',
-          description: 'MCP tool integration',
-          icon: '🔧',
-        });
-      }
-      if (prompt.includes('code review') || prompt.includes('review')) {
-        nodesToAdd.push({
-          type: 'agent',
-          label: 'Code Review Agent',
-          description: 'Reviews code for quality',
-          icon: '🔍',
-        });
-      }
-      if (prompt.includes('agent')) {
-        nodesToAdd.push({
-          type: 'agent',
-          label: 'AI Agent',
-          description: 'AI-powered task execution',
-          icon: '🤖',
-        });
-      }
-      if (
-        prompt.includes('notify') ||
-        prompt.includes('notification') ||
-        prompt.includes('slack')
-      ) {
-        nodesToAdd.push({
-          type: 'notification',
-          label: 'Notification',
-          description: 'Send notification',
-          icon: '📬',
-        });
-      }
-      if (prompt.includes('store') || prompt.includes('database') || prompt.includes('crm')) {
-        nodesToAdd.push({
-          type: 'output',
-          label: 'Data Storage',
-          description: 'Store data in database',
-          icon: '💾',
-        });
-      }
-
-      // If no specific nodes detected, add a default agent node
-      if (nodesToAdd.length === 0) {
-        nodesToAdd.push({
-          type: 'agent',
-          label: 'AI Agent',
-          description: 'AI-powered task execution',
-          icon: '🤖',
-        });
-      }
-
-      // Add nodes to the canvas with staggered positions
-      const baseX = 100;
-      const baseY = 150;
-      const nodeSpacing = 250;
-
-      nodesToAdd.forEach((node, index) => {
-        const nodeId = `ai-node-${Date.now()}-${index}`;
-        actions.addNode({
-          id: nodeId,
-          type: node.type,
-          position: { x: baseX + index * nodeSpacing, y: baseY + (index % 2) * 100 },
-          data: {
-            label: node.label,
-            type: node.type,
-            description: node.description,
-            icon: node.icon,
-            status: 'idle',
-          },
-        });
-      });
-
-      // Add edges between consecutive nodes
-      for (let i = 0; i < nodesToAdd.length - 1; i++) {
-        const sourceId = `ai-node-${Date.now()}-${i}`;
-        const targetId = `ai-node-${Date.now()}-${i + 1}`;
-        actions.addEdge({
-          id: `ai-edge-${Date.now()}-${i}`,
-          source: sourceId,
-          target: targetId,
-          data: { label: '' },
-        });
-      }
-
-      // Update workflow name if it contains relevant keywords
-      if (prompt.includes('github') && prompt.includes('code review')) {
-        setWorkflowName('GitHub Code Review Workflow');
-        setWorkflowDescription('Automated code review workflow triggered by GitHub events');
-      }
-
-      // Close dialog and reset
-      setShowAiDialog(false);
-      setAiPrompt('');
-
-      // Show success feedback
-      console.log(`Generated ${nodesToAdd.length} nodes from AI prompt`);
-    } catch (error) {
-      console.error('AI workflow generation failed:', error);
-    } finally {
-      setIsGenerating(false);
-    }
+  const handleAiGenerate = () => {
+    if (!aiPrompt.trim()) return;
+    setAiPanelSeedPrompt(aiPrompt.trim());
+    setShowAiDialog(false);
+    setShowAiPanel(true);
+    setShowRightPanel(true);
   };
 
   return (
@@ -491,6 +373,7 @@ const WorkflowBuilder: React.FC = () => {
 
                     {showAiPanel && (
                       <WorkflowAIAssistantPanel
+                        initialPrompt={aiPanelSeedPrompt}
                         onApplyMeta={(name, description) => {
                           if (name) setWorkflowName(name);
                           if (description) setWorkflowDescription(description);
@@ -527,6 +410,7 @@ const WorkflowBuilder: React.FC = () => {
                 </Button>
               </div>
               <div className="p-4 space-y-4">
+                <AISourceSelector compact label="AI Source" />
                 <div>
                   <Label className="text-xs text-gray-400 mb-1.5 block">
                     Describe the workflow you want to build
@@ -555,20 +439,13 @@ const WorkflowBuilder: React.FC = () => {
                       variant="default"
                       size="sm"
                       onClick={handleAiGenerate}
-                      disabled={!aiPrompt.trim() || isGenerating}
+                      disabled={!aiPrompt.trim()}
                       className="h-8 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 border-0"
                     >
-                      {isGenerating ? (
-                        <>
-                          <span className="animate-spin mr-1.5">⏳</span>
-                          Generating...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="h-3.5 w-3.5 mr-1" />
-                          Generate
-                        </>
-                      )}
+                      <>
+                        <Sparkles className="h-3.5 w-3.5 mr-1" />
+                        Open AI Builder
+                      </>
                     </Button>
                   </div>
                 </div>

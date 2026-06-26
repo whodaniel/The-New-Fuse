@@ -1,65 +1,41 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-06-26T15:43:04.322Z` Handoff
-ID: `2ab4ced3-ee5d-4b5a-99cc-b5b6f56bcf7d`
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-06-26T19:59:48.181Z`  
+Handoff ID: `43bca6ff-0a6f-43d2-95c1-f59b126553c4`
 
 ## Scope
-
 - Repository: `The-New-Fuse`
 - Branch: `tnf-cli-harness-implementation`
-- Head SHA: `32f10b609e126b981fbbe4d10f00dd75ff480dfe`
-- Sensitive Scope: `internal`
+- Head SHA: `8f20641b7bf3fcba9d52cc528eac02f29528451b`
+- Sensitive Scope: `public`
 
 ## Work Summary
-
-- Modified 22 file(s)
+- Soft launch prep: removed dist build artifacts
+- Added FALLBACK_ENV_SOURCES to TNF CLI
+- Added TNF cursor/harness protocol SKILLs
 
 ## Changed Paths
-
-- agent/runtime-logs/qa-swarm-service/heartbeat.json
-- .agent/test-reports/\_rolling-summary.json
-- apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide
-- apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app\_\_agent
-- apps/external/gemini-cli-source
-- apps/frontend/dist/app.html
-- apps/frontend/dist/app.html.br
-- apps/frontend/dist/app.html.gz
-- apps/frontend/dist/bundle-analysis.html
-- apps/frontend/dist/bundle-analysis.html.br
-- apps/frontend/dist/bundle-analysis.html.gz
-- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
-- apps/virtual-library-blueprints
-- data/llm-provider-status.json
-- packages/client/.turbo/turbo-lint.log
-- packages/tnf-cli/dist/cli.js
-- packages/tnf-cli/dist/cli.js.map
 - packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/tsconfig.tsbuildinfo
-- CODE_OF_CONDUCT.md
-- CONTRIBUTING.md
-- docs/operations/tnf-harness-cycle.jsonl
+- packages/tnf-cli/src/slashCommands.ts
+
+## Verification
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
 
 ## Continuation
+- Owner: `kilo`
+- Targets: `story-architect`, `librarian`
+- Priority: `high`
 
-- **Owner:** operator
-- **Priority:** medium
-
-**Targets:**
-
-- orchestrator
-
-**Resume Checklist:**
-
+### Resume Checklist
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Execute listed next actions in order
+- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-
-- Commit remaining uncommitted changes (13 file(s))
-
-## Artifacts
-
-**Commits:**
-
-- 32f10b609e126b981fbbe4d10f00dd75ff480dfe
+- Verify relay.thenewfuse.com DNS CNAME to Cloud Run
+- Create real /about and /blog pages (SPA redirects)
+- Verify sync:repos --dry-run

@@ -1,17 +1,16 @@
 # Agent Status Ledger
 
-Updated: **2026-06-23T22:32:43.588Z** — handoff
+Updated: **2026-06-26T19:52:41.677Z** — handoff `43bca6ff-0a6f-43d2-95c1-f59b126553c4` (`8f20641b7bf3`).
 `ef70c596-2124-40bd-952e-5239f3e042a0` (`baab5b2825e5`).
 `30532802-3db1-429c-80f3-245a94a7cd75` (`199370ded064`).
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                 |
-| -------- | -------------------------------------------------------------------------------------- |
-| **P0**   | Trigger GCP Cloud Build deploy for API auth 429 fix (gcp-deploy.sh / cloudbuild.yaml). |
-| **P0**   | Verify login at app.thenewfuse.com/auth/login after deploy completes.                  |
-| **P0**   | Address partial-medium routes: /admin/control-panel, /analytics, /user/profile.        |
-| **P0**   | Migrate webhook hooks and resources.service token reads to authFetch.                  |
+| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| **P0**   | Verify relay.thenewfuse.com DNS CNAME to Cloud Run |
+| **P0**   | Create real /about and /blog pages (SPA redirects) |
+| **P0**   | Verify sync:repos --dry-run |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -118,3 +117,7 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 | 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (ef70c596-2124-40bd-952e-5239f3e042a0) | ✅ HANDOFF_READY |
+
+| 2026-06-26 | Orchestrator | Published SESSION_HANDOFF_LATEST (3a181f47-0cb6-4278-b6bd-aa53b295116c) | ✅ HANDOFF_READY |
+
+| 2026-06-26 | Orchestrator | Published SESSION_HANDOFF_LATEST (43bca6ff-0a6f-43d2-95c1-f59b126553c4) | ✅ HANDOFF_READY |
