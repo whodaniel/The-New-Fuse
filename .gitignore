@@ -368,3 +368,15 @@ apps/external/
 apps/virtual-library-blueprints/
 data/llm-provider-status.json
 .agent/runtime-logs/**/*.json
+# Build artifacts and caches
+packages/.turbo/
+packages/ap2-protocol/.turbo/
+packages/client/.turbo/
+packages/contracts/.turbo/
+
+# Dogfood test outputs
+dogfood-output/
+
+# TNF harness temp outputs
+tnf_out.txt
+tnf_verify_output.txt

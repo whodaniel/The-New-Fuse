@@ -1,8 +1,0 @@
-
-> @the-new-fuse/contracts@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts
-> hardhat compile 2>/dev/null || tsc --noEmit --skipLibCheck || echo 'contracts: build ok (solidity-only package)'
-
-
-scripts/deploy-tnf.ts(1,10): error TS2305: Module '"hardhat"' has no exported member 'ethers'.
-test/FuseRevenueRouter.test.ts(2,10): error TS2305: Module '"hardhat"' has no exported member 'ethers'.
-contracts: build ok (solidity-only package)
