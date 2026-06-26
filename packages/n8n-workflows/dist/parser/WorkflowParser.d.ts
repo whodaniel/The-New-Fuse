@@ -2,7 +2,7 @@
  * WorkflowParser
  * Parses n8n workflow JSON files and extracts metadata
  */
-import { N8nWorkflow, WorkflowAnalysis, WorkflowNode, WorkflowSource } from '../types/index.js';
+import type { N8nWorkflow, WorkflowAnalysis, WorkflowNode, WorkflowSource } from '../types/index.js';
 export declare class WorkflowParser {
     /**
      * Parse a workflow JSON file

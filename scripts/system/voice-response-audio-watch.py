@@ -19,6 +19,7 @@ import time
 from pathlib import Path
 import glob
 from collections import deque
+from datetime import datetime, timezone
 
 def normalize_profile(raw: str | None) -> str:
     profile = (raw or "main").strip().lower()
@@ -195,6 +196,13 @@ REQUIRE_SAY_TAG = os.environ.get("VOICE_RESPONSE_AUDIO_REQUIRE_TAG", "0").strip(
     "off",
 }
 SAY_TAG_PREFIX = os.environ.get("VOICE_RESPONSE_AUDIO_TAG_PREFIX", "[[SAY]]")
+APPLESCRIPT_TIMEOUT_SECONDS = float(os.environ.get("VOICE_RESPONSE_AUDIO_APPLESCRIPT_TIMEOUT_SECONDS", "3.0"))
+TERMINAL_AUTOMATION_GUARD_FILE = Path(
+    os.environ.get(
+        "VOICE_RESPONSE_AUDIO_TERMINAL_AUTOMATION_GUARD_FILE",
+        "~/.tnf/terminal-heartbeat/state/terminal-heartbeat-applescript-guard.json",
+    )
+).expanduser()
 
 NO_TTY_MARKER = "__VOICE_NO_TTY__"
 ANSI_ESCAPE_RE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
@@ -250,6 +258,22 @@ def is_terminal_like(app_name: str, bundle_id: str) -> bool:
     return "terminal" in app or "iterm" in app or "terminal" in bundle or "iterm" in bundle
 
 
+def active_terminal_automation_hold_until() -> str | None:
+    try:
+        payload = json.loads(TERMINAL_AUTOMATION_GUARD_FILE.read_text(encoding="utf-8"))
+        hold_until = str(payload.get("holdUntil") or "")
+        if not hold_until:
+            return None
+        parsed = datetime.fromisoformat(hold_until.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        if parsed > datetime.now(timezone.utc):
+            return hold_until
+    except Exception:
+        return None
+    return None
+
+
 def read_target_tty(startup_tty: str | None) -> str | None:
     try:
         if TARGET_JSON_FILE.exists():
@@ -286,6 +310,11 @@ def read_target_tty(startup_tty: str | None) -> str | None:
 
 
 def read_terminal_tail(tty: str, tail_chars: int) -> str:
+    hold_until = active_terminal_automation_hold_until()
+    if hold_until:
+        log(f"terminal read skipped; AppleScript hold active until {hold_until}")
+        return ""
+
     quoted_tty = applescript_quote(tty)
     activate_target = "true" if VOICE_RESPONSE_AUDIO_ACTIVATE_TARGET else "false"
     script = f'''
@@ -339,13 +368,18 @@ tell application "Terminal"
 end tell
 '''.strip()
 
-    proc = subprocess.run(
-        ["osascript"],
-        input=script,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
+    try:
+        proc = subprocess.run(
+            ["osascript"],
+            input=script,
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=APPLESCRIPT_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired:
+        log(f"osascript read timed out after {APPLESCRIPT_TIMEOUT_SECONDS:.1f}s")
+        return ""
     if proc.returncode != 0:
         err = (proc.stderr or "").strip()
         if err:
@@ -708,7 +742,7 @@ def redis_listener_thread():
                 platform = data.get("from", {}).get("platform", "")
                 content = data.get("content", "")
                 
-                if platform in ["gemini", "claude", "antigravity"] and content:
+                if platform in ["gemini", "claude", "antigravity", "cursor"] and content:
                     # Append to stream with [A2A] prefix to trigger TTS in stream_watch.py
                     with open(STREAM_FILE, "a", encoding="utf-8") as f:
                         f.write(f"[A2A] {content}\n")

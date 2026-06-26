@@ -12,7 +12,6 @@ var ConflictManager_1;
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConflictManager = void 0;
-// @ts-nocheck
 const common_1 = require("@nestjs/common");
 const core_error_handling_1 = require("@the-new-fuse/core-error-handling");
 const drizzle_1 = require("@the-new-fuse/database/generated/drizzle");
@@ -423,8 +422,9 @@ let ConflictManager = ConflictManager_1 = class ConflictManager extends events_1
                 // For checksum conflicts, try merge if possible
                 return this.canMerge(conflict.localVersion, conflict.remoteVersion) ? 'merge' : null;
             case 'concurrent':
-                // Concurrent modifications require manual intervention
-                return null;
+                // TNF Resonance Fix: Changed concurrent modifications from manual intervention to latest_wins
+                // to address Turbo concurrency collisions. This can be made configurable if needed.
+                return 'latest_wins';
             default:
                 return null;
         }

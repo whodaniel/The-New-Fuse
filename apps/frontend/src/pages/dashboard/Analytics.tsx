@@ -177,7 +177,7 @@ const buildAnalyticsFailure = (
   return error;
 };
 
-const shouldContinueAnalyticsFallback = (statusCode: number) => {
+const shouldRetryAnalyticsPath = (statusCode: number) => {
   if (!statusCode) return true;
   return statusCode === 404 || statusCode === 405 || statusCode >= 500;
 };
@@ -250,7 +250,7 @@ const Analytics = () => {
           });
 
           lastError = error;
-          if (!shouldContinueAnalyticsFallback(statusCode)) {
+          if (!shouldRetryAnalyticsPath(statusCode)) {
             break;
           }
         }
@@ -493,7 +493,7 @@ const Analytics = () => {
             message: error instanceof Error ? error.message : 'Request failed',
           });
           lastError = error;
-          if (!shouldContinueAnalyticsFallback(statusCode)) {
+          if (!shouldRetryAnalyticsPath(statusCode)) {
             break;
           }
         }

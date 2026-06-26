@@ -2,35 +2,13 @@
 > @the-new-fuse/web-scraping@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping
 > eslint src/**/*.ts
 
-
-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/core/WebScrapingService.ts
-  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
-The file was not found in any of the provided project(s): packages/web-scraping/src/core/WebScrapingService.ts
-
-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/electron/ElectronWebScrapingBridge.ts
-  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
-The file was not found in any of the provided project(s): packages/web-scraping/src/electron/ElectronWebScrapingBridge.ts
-
-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/mcp/WebScrapingMCPTools.ts
-  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
-The file was not found in any of the provided project(s): packages/web-scraping/src/mcp/WebScrapingMCPTools.ts
+(node:49119) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/eslint.config.js?mtime=1782199447244 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
 
 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/proxy/ProxyService.ts
-  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
-The file was not found in any of the provided project(s): packages/web-scraping/src/proxy/ProxyService.ts
+  221:23  warning  '_request' is defined but never used  @typescript-eslint/no-unused-vars
 
-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/streaming/WebScrapingSSEController.ts
-  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
-The file was not found in any of the provided project(s): packages/web-scraping/src/streaming/WebScrapingSSEController.ts
+✖ 1 problem (0 errors, 1 warning)
 
-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/types/index.ts
-  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
-The file was not found in any of the provided project(s): packages/web-scraping/src/types/index.ts
-
-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/src/websocket/WebScrapingWebSocketGateway.ts
-  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
-The file was not found in any of the provided project(s): packages/web-scraping/src/websocket/WebScrapingWebSocketGateway.ts
-
-✖ 7 problems (7 errors, 0 warnings)
-
- ELIFECYCLE  Command failed with exit code 1.

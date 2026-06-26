@@ -14,9 +14,9 @@ export declare const TaskSchema: z.ZodObject<{
     }>;
     status: z.ZodEnum<{
         RUNNING: "RUNNING";
+        PENDING: "PENDING";
         COMPLETED: "COMPLETED";
         FAILED: "FAILED";
-        PENDING: "PENDING";
         CANCELLED: "CANCELLED";
     }>;
     data: z.ZodAny;

@@ -3076,6 +3076,9 @@ const REDIS_COMMAND_TRAITS = [
   'tnf orchestrate',
   'tnf convo',
   'tnf agents register|list|send|orchestrate|convo',
+  'tnf orchestrate \x3Cnatural-language-goal\x3E    # New: goal-driven orchestration',
+  'tnf orchestrate --status                   # Show orchestrator status',
+  'tnf orchestrate --suggest                  # Show proactive suggestions',
 ];
 const PROVIDER_ROUTED_COMMAND_TRAITS = [
   'tnf master-clock start|logs|status',
@@ -11225,26 +11228,81 @@ program
     }
   });
 
+// ============================================================================
+// ENHANCED ORCHESTRATION COMMANDS
+// ============================================================================
+
 program
   .command('orchestrate')
-  .description('Run agent orchestration workflow (health-check|code-review|self-improvement)')
-  .argument('<workflow>', 'Workflow name')
+  .description('Run agent orchestration workflow. Accepts natural language goals or legacy workflow names.')
+  .argument('[workflow]', 'Workflow name or natural language goal')
   .option('--path <path>', 'Code path for code-review workflow', '.')
-  .action(async (workflow: string, options: { path?: string } = {}) => {
+  .option('--goal', 'Treat the argument as a natural language goal (auto-detected if contains spaces)')
+  .option('--status', 'Show orchestrator status')
+  .option('--suggest', 'Show proactive suggestions')
+  .action(async (workflow: string | undefined, options: { path?: string; goal?: boolean; status?: boolean; suggest?: boolean } = {}) => {
     const client = new RedisAgentClient();
     try {
       await client.initialize();
       await client.register(process.env.AGENT_NAME || 'orchestrator-cli', 'orchestrator', 'tnf');
-      const orchestrator = new Orchestrator(client);
-      const ok = await orchestrator.executeWorkflow(workflow, {
-        path: options.path || '.',
-      });
-      if (!ok) {
+      
+      const repoRoot = path.resolve(_dirname, '../../..');
+      const orchestrator = new Orchestrator(client, repoRoot);
+
+      // --status: Show system status
+      if (options.status || (!workflow && !options.suggest)) {
+        const status = await orchestrator.getStatus();
+        console.log(chalk.cyan('\n📊 Orchestrator Status'));
+        console.log(chalk.dim('   ─'.repeat(25)));
+        console.log(`   Active workflows: ${chalk.bold(status.workflows)}`);
+        console.log(`   Total tasks:      ${chalk.bold(status.tasks)}`);
+        console.log(`   Skills available: ${chalk.bold(status.skills)}`);
+        console.log(`   System health:    ${status.health === 'healthy' ? chalk.green(status.health) : chalk.yellow(status.health)}`);
+        console.log();
+        return;
+      }
+
+      // --suggest: Show proactive suggestions
+      if (options.suggest) {
+        const suggestions = await orchestrator.suggestActions();
+        console.log(chalk.cyan('\n💡 Proactive Suggestions'));
+        console.log(chalk.dim('   ─'.repeat(25)));
+        suggestions.forEach((s, i) => {
+          console.log(`   ${i + 1}. ${s}`);
+        });
+        console.log();
+        return;
+      }
+
+      if (!workflow) {
+        console.log(chalk.red('Error: Please provide a workflow name or use --status/--suggest'));
         process.exit(1);
+      }
+
+      // Detect natural language goal vs legacy workflow name
+      const isNaturalLanguage = options.goal || (workflow.includes(' ') && workflow.length > 20);
+
+      if (isNaturalLanguage) {
+        // New power mode: natural language goal
+        const result = await orchestrator.executeGoal(workflow);
+        if (result.status === 'completed') {
+          console.log(chalk.green(`\n✅ Goal achieved: ${result.name}`));
+        } else {
+          console.log(chalk.red(`\n❌ Goal incomplete: ${result.name}`));
+          process.exit(1);
+        }
+      } else {
+        // Legacy mode: named workflow
+        const ok = await orchestrator.executeWorkflow(workflow, {
+          path: options.path || '.',
+        });
+        if (!ok) {
+          process.exit(1);
+        }
       }
     } catch (err: any) {
       if (isRedisUnavailable(err)) {
-        logRedisUnavailable(`./tnf orchestrate ${workflow}`);
+        logRedisUnavailable(`./tnf orchestrate ${workflow || ''}`);
       }
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -15161,6 +15219,24 @@ function normalizeEntrypointArgv(argv: string[]): string[] {
 
 async function main(): Promise<void> {
   const argv = normalizeEntrypointArgv(process.argv);
+
+  // Render the TNF wordmark at the very top of every CLI invocation so the
+  // brand is the first thing an operator sees — before the protocol pre-flight.
+  // Skipped on non-TTY pipes (CI logs would balloon otherwise). --no-splash
+  // suppresses it. Respect sigterm shortcut (process.argv[2] === undefined|help).
+  // Animation is opt-in only on interactive TTYs.
+  const tail = (argv[2] ?? '').toLowerCase();
+  const firstArgIsHelp = tail === '' || tail === '--help' || tail === '-h' ||
+                         tail === 'help' || tail === '--version' || tail === '-v';
+  const noSplashFlag = argv.includes('--no-splash');
+  const wantSplash = !firstArgIsHelp && !noSplashFlag && process.stdout.isTTY;
+  if (wantSplash) {
+    try {
+      await renderSplash({ animate: false });
+    } catch {
+      // Splash is cosmetic — never block pre-flight on a render failure.
+    }
+  }
 
   const interceptor = new ProtocolInterceptor(repoRoot);
   await interceptor.runPreFlightChecks();

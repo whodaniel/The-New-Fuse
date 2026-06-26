@@ -199,7 +199,18 @@ export class AuthService {
     }
 
     if (!isMasterAdmin) {
-      if (!user.hashedPassword || !(await compare(loginDto.password, user.hashedPassword))) {
+      let passwordMatches = false;
+      try {
+        passwordMatches = Boolean(
+          user.hashedPassword && (await compare(loginDto.password, user.hashedPassword))
+        );
+      } catch (error) {
+        this.logger.warn(
+          `Password compare failed for ${loginDto.email}: ${(error as Error).message}`
+        );
+        passwordMatches = false;
+      }
+      if (!passwordMatches) {
         throw new UnauthorizedException('Invalid credentials');
       }
     }
@@ -254,12 +265,10 @@ export class AuthService {
   private isMasterSuperAdmin(email: string): boolean {
     const fromMaster = this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS');
     const fromOwner = this.configService.get<string>('HOSTMARIA_OWNER_EMAILS');
-    console.log(`Checking master admin for ${email}. MASTER_SUPER_ADMIN_EMAILS: ${fromMaster}, HOSTMARIA_OWNER_EMAILS: ${fromOwner}`);
-    const masterSuperAdmins = (
-      fromMaster ||
-      fromOwner ||
-      'owner@example.com'
-    )
+    console.log(
+      `Checking master admin for ${email}. MASTER_SUPER_ADMIN_EMAILS: ${fromMaster}, HOSTMARIA_OWNER_EMAILS: ${fromOwner}`
+    );
+    const masterSuperAdmins = (fromMaster || fromOwner || 'owner@example.com')
       .split(',')
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
@@ -373,6 +382,57 @@ export class AuthService {
 
   async getCurrentUser(userId: string): Promise<User | null> {
     return this.db.users.findById(userId);
+  }
+
+  async updateCurrentUserProfile(
+    userId: string,
+    profileData: {
+      displayName?: string;
+      bio?: string;
+      preferences?: { theme?: 'light' | 'dark' | 'system'; notifications?: boolean };
+    }
+  ) {
+    const existing = await this.db.users.findById(userId);
+    if (!existing) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const patch: Partial<User> = {};
+    if (typeof profileData.displayName === 'string') {
+      patch.name = profileData.displayName;
+      patch.username = profileData.displayName;
+    }
+    if (typeof profileData.bio === 'string') {
+      (patch as Record<string, unknown>).bio = profileData.bio;
+    }
+    if (profileData.preferences) {
+      (patch as Record<string, unknown>).preferences = profileData.preferences;
+    }
+
+    const updated = await this.db.users.update(userId, patch);
+    if (!updated) {
+      throw new UnauthorizedException('Unable to update profile');
+    }
+
+    return {
+      id: updated.id,
+      email: updated.email,
+      username: updated.username,
+      name: updated.name,
+      displayName: updated.name || updated.username,
+      bio: (updated as Record<string, unknown>).bio || '',
+      role: updated.role,
+      roles:
+        Array.isArray(updated.roles) && updated.roles.length > 0 ? updated.roles : [updated.role],
+      isActive: updated.isActive,
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt,
+      preferences: (updated as Record<string, unknown>).preferences ||
+        profileData.preferences || {
+          theme: 'system',
+          notifications: true,
+        },
+    };
   }
 
   private async verifyTurnstileIfEnabled(token: string | undefined, ipAddress?: string) {

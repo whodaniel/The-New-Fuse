@@ -4,7 +4,7 @@ import {
   FeatureProgress,
   FeatureStage,
   QualitativeAssessment,
-} from './types/index.js';
+} from './types.js';
 
 @Injectable()
 export class FeatureTracker {

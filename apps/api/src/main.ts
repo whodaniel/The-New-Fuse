@@ -34,8 +34,34 @@ async function bootstrap(): Promise<void> {
     cors: getCorsOptions(),
   });
 
-  // Back-compat middleware for /api/auth/* -> /api/v1/auth/* (if versioning is implicitly active)
-  // app.use(backCompatMiddleware);
+  // Back-compat: clients still call /v1/* or /api/v1/* while routes are registered at /api/*.
+  app.use((req, _res, next) => {
+    const rawUrl = req.url || '';
+    const queryIndex = rawUrl.indexOf('?');
+    const query = queryIndex >= 0 ? rawUrl.slice(queryIndex) : '';
+    let pathname = queryIndex >= 0 ? rawUrl.slice(0, queryIndex) : rawUrl;
+
+    if (pathname.startsWith('/v1/') || pathname === '/v1') {
+      pathname = `/api${pathname}`;
+    }
+    if (pathname.startsWith('/api/v1/')) {
+      // Don't rewrite /api/v1/health — it's a direct route
+      if (pathname === '/api/v1/health') {
+        // keep as-is
+      } else {
+        pathname = pathname.replace('/api/v1/', '/api/');
+      }
+    } else if (pathname === '/api/v1') {
+      pathname = '/api';
+    }
+
+    if (pathname + query !== rawUrl) {
+      const rewritten = `${pathname}${query}`;
+      req.url = rewritten;
+      req.originalUrl = rewritten;
+    }
+    next();
+  });
 
   // Explicitly add body parsers (essential for POST data processing)
   app.use(express.json());

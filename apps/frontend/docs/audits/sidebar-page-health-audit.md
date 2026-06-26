@@ -1,25 +1,17 @@
 # Sidebar Page Health Audit
 
-Generated: 2026-06-23T20:17:05.983Z
+Generated: 2026-06-24T01:29:54.082Z
 
 ## Counts
 
 - total: 54
-- working: 51
-- partial-medium-risk: 3
+- working: 54
+- partial-medium-risk: 0
 - partial-high-risk: 0
 - broken: 0
 
 ## Page Results
 
-- `/admin/control-panel` -> target `/admin/control-panel` ->
-  `pages/Admin/SuperAdminControlPanel.tsx` | status: `partial-medium-risk` |
-  risk: 7 | hits: randomized_behavior:1, raw_fetch:5
-- `/analytics` -> target `/analytics` -> `pages/dashboard/Analytics.tsx` |
-  status: `partial-medium-risk` | risk: 6 | hits: fallback_demo:3
-- `/user/profile` -> target `/user/profile` ->
-  `components/profile/UserProfilePage.tsx` | status: `partial-medium-risk` |
-  risk: 5 | hits: timeout_simulation:5
 - `/marketplace` -> target `/marketplace` ->
   `pages/Marketplace/MarketplacePublicPage.tsx` | status: `working` | risk: 4 |
   hits: fallback_demo:2
@@ -71,6 +63,9 @@ Generated: 2026-06-23T20:17:05.983Z
 - `/admin/configuration` -> target `/admin/configuration` ->
   `pages/Admin/ConfigurationManagement.tsx` | status: `working` | risk: 0 |
   hits: none
+- `/admin/control-panel` -> target `/admin/control-panel` ->
+  `pages/Admin/SuperAdminControlPanel.tsx` | status: `working` | risk: 0 | hits:
+  none
 - `/admin/database` -> target `/admin/database` ->
   `pages/Admin/DatabaseAdminPanel.tsx` | status: `working` | risk: 0 | hits:
   none
@@ -101,6 +96,8 @@ Generated: 2026-06-23T20:17:05.983Z
   `working` | risk: 0 | hits: none
 - `/all-pages` -> target `/all-pages` -> `pages/AllPages.tsx` | status:
   `working` | risk: 0 | hits: none
+- `/analytics` -> target `/analytics` -> `pages/dashboard/Analytics.tsx` |
+  status: `working` | risk: 0 | hits: none
 - `/billing` -> target `/billing` -> `pages/Billing/index.tsx` | status:
   `working` | risk: 0 | hits: none
 - `/build-info` -> target `/build-info` -> `pages/BuildInfo.tsx` | status:
@@ -137,6 +134,9 @@ Generated: 2026-06-23T20:17:05.983Z
   status: `working` | risk: 0 | hits: none
 - `/tasks` -> target `/tasks` -> `pages/Tasks/TasksPage.tsx` | status: `working`
   | risk: 0 | hits: none
+- `/user/profile` -> target `/user/profile` ->
+  `components/profile/UserProfilePage.tsx` | status: `working` | risk: 0 | hits:
+  none
 - `/workspace-settings/llm-selection` -> target
   `/workspace-settings/llm-selection` ->
   `pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.tsx` |

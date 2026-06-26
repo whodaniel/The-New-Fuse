@@ -15,6 +15,7 @@ export declare class BuildOrchestrator extends EventEmitter implements IBuildOrc
     private memoryMonitor;
     private dependencyAnalyzer;
     private concurrencyController;
+    private buildThrottler;
     private typescriptManager;
     private isBuilding;
     private shouldStop;

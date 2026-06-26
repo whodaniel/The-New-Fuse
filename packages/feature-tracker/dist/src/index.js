@@ -23,6 +23,6 @@ var FeatureTracker_js_1 = require("./FeatureTracker.js");
 Object.defineProperty(exports, "FeatureTracker", { enumerable: true, get: function () { return FeatureTracker_js_1.FeatureTracker; } });
 var useFeatureTracker_js_1 = require("./hooks/useFeatureTracker.js");
 Object.defineProperty(exports, "useFeatureTracker", { enumerable: true, get: function () { return useFeatureTracker_js_1.useFeatureTracker; } });
-var index_js_1 = require("./types/index.js");
-Object.defineProperty(exports, "FeatureStage", { enumerable: true, get: function () { return index_js_1.FeatureStage; } });
+var types_js_1 = require("./types.js");
+Object.defineProperty(exports, "FeatureStage", { enumerable: true, get: function () { return types_js_1.FeatureStage; } });
 //# sourceMappingURL=index.js.map

@@ -42,7 +42,8 @@
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./client": {
       "import": "./dist/client/index.js",
@@ -51,6 +52,7 @@
     "./server": {
       "import": "./dist/server/index.js",
       "types": "./dist/server/index.d.ts"
-    }
+    },
+    "./scripts/find-available-port.cjs": "./scripts/find-available-port.cjs"
   }
 }

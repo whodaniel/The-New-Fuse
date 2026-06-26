@@ -2,6 +2,7 @@ import { GlassCard, StatsCard } from '@/components/ui/premium/GlassCard';
 import { PremiumButton } from '@/components/ui/premium/PremiumButton';
 import GraphVisualizerWrapper from '@/components/wizard/graph/GraphVisualizer';
 import { useAuthorization } from '@/hooks/useAuthorization';
+import { relayGetJson, relayGetOptionalJson } from '@/services/relayHttp.client';
 import { authFetch } from '@/utils/authToken';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import {
@@ -182,7 +183,7 @@ const getActivityMetadata = (activity: ActivityEvent): ActivityMetadata =>
   asMetadata(activity.metadata) || {};
 
 const mapRawActivityEvent = (e: Record<string, unknown>): ActivityEvent => ({
-  id: String(e.id || e.streamId || `evt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`),
+  id: String(e.id || e.streamId || `evt-${Date.now()}-${crypto.randomUUID()}`),
   type: String(e.type || e.eventType || 'message'),
   source: String(e.source || 'system'),
   content: String(e.content || ''),
@@ -593,9 +594,11 @@ export default function SuperAdminControlPanel() {
 
   const syncRecentActivity = useCallback(async () => {
     try {
-      const res = await fetch(`${relayHttpBase}/activity/recent?count=80`);
-      if (!res.ok) return;
-      const payload = await res.json();
+      const payload = await relayGetOptionalJson<{ events?: unknown[] }>(
+        relayHttpBase,
+        '/activity/recent?count=80'
+      );
+      if (!payload) return;
       const rows: ActivityEvent[] = (payload?.events || []).map(mapRawActivityEvent);
       if (!rows.length) return;
 
@@ -824,12 +827,12 @@ export default function SuperAdminControlPanel() {
     setLoading(true);
     try {
       const [healthRes, activityRes, agentsRes, channelsRes] = await Promise.all([
-        fetch(`${relayHttpBase}/health`).then((res) => (res.ok ? res.json() : null)),
-        fetch(`${relayHttpBase}/activity/recent?count=50`).then((res) =>
-          res.ok ? res.json() : { events: [] }
-        ),
-        fetch(`${relayHttpBase}/agents`).then((res) => (res.ok ? res.json() : [])),
-        fetch(`${relayHttpBase}/channels`).then((res) => (res.ok ? res.json() : [])),
+        relayGetOptionalJson<Record<string, unknown>>(relayHttpBase, '/health'),
+        relayGetJson<{ events?: unknown[] }>(relayHttpBase, '/activity/recent?count=50', {
+          events: [],
+        }),
+        relayGetJson<unknown[]>(relayHttpBase, '/agents', []),
+        relayGetJson<unknown[]>(relayHttpBase, '/channels', []),
       ]);
 
       if (healthRes) {

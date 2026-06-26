@@ -17,8 +17,8 @@ Prerequisites:
 - PostgreSQL 17+ for full API/database flows
 
 ```bash
-git clone https://github.com/whodaniel/fuse-open-runtime.git
-cd fuse-open-runtime
+git clone https://github.com/whodaniel/the-new-fuse-next-gen.git
+cd the-new-fuse-next-gen
 pnpm install
 cp .env.example .env
 touch .tnf.local.env
@@ -28,6 +28,9 @@ pnpm run dev
 Use `.tnf.local.env` for machine-specific assets such as `TNF_ROOT`,
 `TNF_RELAY_URL`, custom `TNF_PORTS`, and intentional occupied-port allowances.
 See `docs/reference/local-runtime-profile.md`.
+
+For using the **local open-source install** together with a **thenewfuse.com
+account**, see `docs/reference/local-oss-with-hosted-account.md`.
 
 Before booting local services, inspect the active port surface:
 
@@ -45,8 +48,8 @@ pnpm run release:gate:strict
 
 ## Public Release Flow
 
-TNF is developed in this combined monorepo and published into downstream
-distribution repositories:
+TNF is developed in the combined monorepo (`whodaniel/the-new-fuse-next-gen`)
+and published into downstream distribution repositories:
 
 - `whodaniel/fuse-open-runtime`: open-source runtime distribution
 - `whodaniel/fuse-control-plane`: proprietary hosted SaaS control plane

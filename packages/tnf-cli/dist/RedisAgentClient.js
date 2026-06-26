@@ -1,5 +1,6 @@
 // @ts-ignore
-import { createStandaloneRedisClient, createUpstashRestClient, } from '@the-new-fuse/infrastructure';
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import chalk from 'chalk';
 import { Redis } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 export const CONFIG = {
@@ -39,11 +40,21 @@ export class RedisAgentClient {
             this.subscriber = createStandaloneRedisClient({ lazyConnect: true });
             this.upstash = createUpstashRestClient();
             if (this.publisher instanceof Redis) {
-                this.publisher.on('error', (error) => this.logRedisClientError('publisher', error));
+                this.publisher.on('error', async (error) => {
+                    this.logRedisClientError('publisher', error);
+                    if (error?.message?.includes('ECONNREFUSED') || error?.message?.includes('Connection')) {
+                        await this.reconnectWithBackoff(this.publisher, 'publisher');
+                    }
+                });
                 await this.publisher.connect().catch(() => { });
             }
             if (this.subscriber instanceof Redis) {
-                this.subscriber.on('error', (error) => this.logRedisClientError('subscriber', error));
+                this.subscriber.on('error', async (error) => {
+                    this.logRedisClientError('subscriber', error);
+                    if (error?.message?.includes('ECONNREFUSED') || error?.message?.includes('Connection')) {
+                        await this.reconnectWithBackoff(this.subscriber, 'subscriber');
+                    }
+                });
                 await this.subscriber.connect().catch(() => { });
                 this.subscriber.on('message', (channel, message) => {
                     this.handleIncomingMessage(channel, message);
@@ -73,6 +84,26 @@ export class RedisAgentClient {
         const details = error?.message || error?.name || 'unknown';
         console.error(`Redis ${kind} error:`, details);
     }
+    async reconnectWithBackoff(client, kind, maxRetries = 3) {
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
+            console.log(chalk.dim(`  Redis ${kind}: reconnecting in ${delay}ms (attempt ${attempt}/${maxRetries})...`));
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            try {
+                if (client instanceof Redis) {
+                    await client.connect();
+                    await client.ping();
+                    console.log(chalk.green(`  ✅ Redis ${kind}: reconnected successfully`));
+                    return true;
+                }
+            }
+            catch {
+                // Try again
+            }
+        }
+        console.warn(chalk.yellow(`  ⚠️  Redis ${kind}: reconnection failed after ${maxRetries} attempts`));
+        return false;
+    }
     async register(name, role, platform, capabilities = []) {
         this.agentInfo = {
             id: `agent_${name}_${Date.now()}`,
@@ -88,7 +119,9 @@ export class RedisAgentClient {
             throw new Error('Client not initialized');
         // Store in Redis
         if (this.upstash) {
-            await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: JSON.stringify(this.agentInfo) });
+            await this.upstash.hset('tnf:agent-registry', {
+                [this.agentInfo.id]: JSON.stringify(this.agentInfo),
+            });
         }
         else if (this.publisher) {
             await this.publisher.hset('tnf:agent-registry', this.agentInfo.id, JSON.stringify(this.agentInfo));
@@ -291,7 +324,9 @@ export class RedisAgentClient {
             type: rawMessage.type,
             content,
             payload,
-            conversationId: rawMessage.context?.sessionId || rawMessage.context?.workflowId || rawMessage.conversationId,
+            conversationId: rawMessage.context?.sessionId ||
+                rawMessage.context?.workflowId ||
+                rawMessage.conversationId,
             replyTo: rawMessage.context?.parentMessageId || rawMessage.replyTo,
             expectsResponse: rawMessage.type === 'task' ||
                 rawMessage.type === 'query' ||

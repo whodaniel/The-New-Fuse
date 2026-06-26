@@ -5,10 +5,10 @@ export declare class DrizzlePromptTemplateRepository {
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
-        category: string;
         tags: string[];
         isPublic: boolean;
+        userId: string;
+        category: string;
         currentVersionId: string | null;
         analytics: unknown;
     }>;
@@ -72,11 +72,11 @@ export declare class DrizzlePromptTemplateRepository {
         name: string | null;
         createdAt: Date;
         isActive: boolean;
+        content: string;
+        createdBy: string | null;
+        label: string | null;
         versionNumber: number;
         metrics: unknown;
-        content: string;
-        label: string | null;
-        createdBy: string | null;
         templateId: string;
         variables: Record<string, any>;
         blocks: any[];
@@ -128,16 +128,16 @@ export declare class DrizzlePromptTemplateRepository {
     createSnippet(data: any): Promise<{
         id: string;
         name: string;
-        type: string;
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
+        tags: string[];
+        content: string;
+        type: string;
+        createdBy: string | null;
         parameters: unknown;
         category: string;
-        tags: string[];
         usageCount: number;
-        content: string;
-        createdBy: string | null;
         isStarred: boolean;
     }>;
     findSnippetById(id: string): Promise<{

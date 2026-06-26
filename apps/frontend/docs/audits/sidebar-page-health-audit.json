@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-23T20:17:05.983Z",
+  "generatedAt": "2026-06-24T01:29:54.082Z",
   "counts": {
     "total": 54,
-    "working": 51,
-    "partialMedium": 3,
+    "working": 54,
+    "partialMedium": 0,
     "partialHigh": 0,
     "broken": 0
   },
@@ -108,18 +108,9 @@
       "component": "SuperAdminControlPanel",
       "file": "pages/Admin/SuperAdminControlPanel.tsx",
       "surface": "admin",
-      "risk": 7,
-      "status": "partial-medium-risk",
-      "hits": [
-        {
-          "id": "randomized_behavior",
-          "count": 1
-        },
-        {
-          "id": "raw_fetch",
-          "count": 5
-        }
-      ]
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "Database",
@@ -319,14 +310,9 @@
       "component": "Analytics",
       "file": "pages/dashboard/Analytics.tsx",
       "surface": "app",
-      "risk": 6,
-      "status": "partial-medium-risk",
-      "hits": [
-        {
-          "id": "fallback_demo",
-          "count": 3
-        }
-      ]
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "Billing",
@@ -570,14 +556,9 @@
       "component": "UserProfilePage",
       "file": "components/profile/UserProfilePage.tsx",
       "surface": "app",
-      "risk": 5,
-      "status": "partial-medium-risk",
-      "hits": [
-        {
-          "id": "timeout_simulation",
-          "count": 5
-        }
-      ]
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "Workflows",

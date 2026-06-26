@@ -54,4 +54,23 @@ export interface TodoItem extends DraggableItem {
     dueDate?: Date;
 }
 export type { FeatureProgress } from '@the-new-fuse/feature-tracker';
+export declare enum FeatureStage {
+    DISCOVERY = "DISCOVERY",
+    DESIGN = "DESIGN",
+    DEVELOPMENT = "DEVELOPMENT",
+    TESTING = "TESTING",
+    REVIEW = "REVIEW",
+    DEPLOYED = "DEPLOYED"
+}
+export interface Comment {
+    id: string;
+    author: string;
+    text: string;
+    createdAt: Date;
+}
+export interface VotingRecord {
+    userId: string;
+    suggestionId: string;
+    votedAt: Date;
+}
 //# sourceMappingURL=index.d.ts.map

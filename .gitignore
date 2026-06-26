@@ -1,5 +1,7 @@
-# Dependencies
-node_modules/
+# Lineage audit workdirs and cold bundles (local only)
+docs/lineage/.audit-work/
+docs/lineage/bundles/*.bundle
+
 .pnpm-store/
 **/client_secret.json
 .pnp
@@ -339,3 +341,17 @@ dump.rdb
 
 # Telegram bot credentials
 .env.tnf-telegram
+
+# Build artifacts
+node_modules/
+dist/
+build/
+*.br
+*.gz
+*.map
+!packages/*/dist/*.map
+
+# Bundler cache
+.apps/
+.pnp/
+.pnp.js

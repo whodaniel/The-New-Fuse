@@ -12,7 +12,6 @@ var SyncDatabaseService_1;
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SyncDatabaseService = void 0;
-// @ts-nocheck
 const common_1 = require("@nestjs/common");
 const drizzle_1 = require("@the-new-fuse/database/generated/drizzle");
 /**

@@ -1,0 +1,21 @@
+{
+  "terminalAllowlist": [
+    "python3",
+    "pnpm",
+    "npm",
+    "hermes",
+    "tnf",
+    "curl",
+    "bash"
+  ],
+  "autoRun": {
+    "allow_instructions": [
+      "Allow TNF monorepo development commands and LLM provider wiring scripts.",
+      "Allow curl to localhost and api.neuralwatt.com for smoke tests."
+    ],
+    "block_instructions": [
+      "Block committing secrets to git.",
+      "Block destructive rm -rf outside build artifacts."
+    ]
+  }
+}

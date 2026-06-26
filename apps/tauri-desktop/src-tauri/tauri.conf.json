@@ -45,6 +45,7 @@
     "http": {
       "scope": [
         "http://localhost:*",
+        "http://127.0.0.1:*",
         "https://*.workers.dev",
         "https://*.run.app",
         "https://*.thenewfuse.com"

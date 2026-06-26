@@ -108,6 +108,23 @@ export VOICEBRIDGE_STATE_DIR
 export VOICEBRIDGE_LEGACY_STATE_DIR
 export VOICEBRIDGE_PROFILE
 
+voicebridge_system_dir() {
+  local root="${VOICEBRIDGE_PROJECT_ROOT:-$(voicebridge_default_project_root)}"
+  local candidate="$root/scripts/system"
+  if [[ -f "$candidate/voice_server.py" && -f "$candidate/voice" ]]; then
+    printf '%s\n' "$candidate"
+    return 0
+  fi
+  if [[ -f "$HOME/bin/voice_server.py" ]]; then
+    printf '%s\n' "$HOME/bin"
+    return 0
+  fi
+  printf '%s\n' "$candidate"
+}
+
+TNF_VOICE_SYSTEM_DIR="${TNF_VOICE_SYSTEM_DIR:-$(voicebridge_system_dir)}"
+export TNF_VOICE_SYSTEM_DIR
+
 voicebridge_migrate_legacy_state() {
   if [[ ! -d "$VOICEBRIDGE_LEGACY_STATE_DIR" ]]; then
     return 0
@@ -120,6 +137,7 @@ voicebridge_migrate_legacy_state() {
     voice_mic_paused
     voice_response_audio_enabled
     voice_bridge_cloud.env
+    voice_bridge_local.env
   )
   local file src dst
   for file in "${files[@]}"; do
@@ -134,4 +152,33 @@ voicebridge_migrate_legacy_state() {
 voicebridge_init_state() {
   mkdir -p "$VOICEBRIDGE_STATE_DIR"
   voicebridge_migrate_legacy_state
+}
+
+voicebridge_load_env() {
+  local local_file cloud_file
+  if command -v voicebridge_state_file >/dev/null 2>&1; then
+    local_file="$(voicebridge_state_file "voice_bridge_local.env")"
+    cloud_file="$(voicebridge_state_file "voice_bridge_cloud.env")"
+  else
+    local_file="$VOICEBRIDGE_STATE_DIR/voice_bridge_local.env"
+    cloud_file="$VOICEBRIDGE_STATE_DIR/voice_bridge_cloud.env"
+  fi
+
+  if [[ -f "$local_file" ]]; then
+    # shellcheck disable=SC1090
+    source "$local_file"
+  fi
+
+  # Local mode = monorepo state dir. Cloud KWS forwarding remains available unless explicitly disabled.
+  VOICE_BRIDGE_MODE="${VOICE_BRIDGE_MODE:-local}"
+  if [[ "${VOICE_KWS_DISABLE:-0}" == "1" ]]; then
+    unset VOICE_KWS_INGEST_URL VOICE_KWS_FLUSH_URL VOICE_KWS_API_KEY
+    export VOICE_BRIDGE_LOCAL=1
+    return 0
+  fi
+
+  if [[ -f "$cloud_file" ]]; then
+    # shellcheck disable=SC1090
+    source "$cloud_file"
+  fi
 }

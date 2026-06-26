@@ -113,7 +113,7 @@ let AppModule = class AppModule {
         // TODO: Re-enable after fixing middleware implementation
         consumer
             .apply(enhanced_security_middleware_1.EnhancedSecurityMiddleware)
-            .exclude('agents/(.*)', 'a2a/(.*)', 'system/(.*)') // Global prefix adds /api
+            .exclude('agents/(.*)', 'a2a/(.*)', 'system/(.*)', 'auth/(.*)') // Global prefix adds /api
             .forRoutes('*');
     }
 };

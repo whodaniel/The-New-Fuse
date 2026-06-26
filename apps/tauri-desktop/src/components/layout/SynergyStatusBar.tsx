@@ -1,8 +1,10 @@
 import React from 'react';
 import { useOperatorSynergy } from '../../hooks/useOperatorSynergy';
+import { useVoiceBridge } from '../../hooks/useVoiceBridge';
 import { useRoute } from '../route-context';
 
 const CHIP_ROUTES: Record<string, string> = {
+  Voice: '/voice',
   Relay: '/browser',
   Federation: '/a2a',
   Extension: '/browser',
@@ -12,9 +14,21 @@ const CHIP_ROUTES: Record<string, string> = {
 /** Compact synergy plane status — use at top of operator pages */
 export const SynergyStatusBar: React.FC = () => {
   const { state } = useOperatorSynergy();
+  const { snapshot: voice } = useVoiceBridge();
   const { navigate } = useRoute();
 
   const chips = [
+    {
+      label: 'Voice',
+      ok: voice.online && !voice.micPaused,
+      hint: voice.online
+        ? voice.micPaused
+          ? 'Beam paused'
+          : voice.aiSpeaking
+            ? 'Speaking'
+            : 'Live'
+        : 'Offline',
+    },
     { label: 'Relay', ok: state.relayConnected },
     { label: 'Federation', ok: state.relayRegistered },
     { label: 'Extension', ok: state.extensionConnected },
@@ -29,7 +43,11 @@ export const SynergyStatusBar: React.FC = () => {
           type="button"
           className={`synergy-chip ${chip.ok ? 'ok' : 'off'}`}
           onClick={() => navigate(CHIP_ROUTES[chip.label] || '/dashboard')}
-          title={`Open ${chip.label} settings`}
+          title={
+            'hint' in chip && chip.hint
+              ? `${chip.label}: ${chip.hint}`
+              : `Open ${chip.label} settings`
+          }
           aria-label={`${chip.label}: ${chip.ok ? 'online' : 'offline'}`}
         >
           <span className="dot" aria-hidden />

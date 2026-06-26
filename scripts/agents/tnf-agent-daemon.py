@@ -17,19 +17,27 @@ Usage:
   python3 tnf-agent-daemon.py watch
   python3 tnf-agent-daemon.py once
   python3 tnf-agent-daemon.py status
+
+ENHANCED v2.0 - Tool Calling, Streaming, Code Execution, Sub-Agent Management
 """
 
 import argparse
+import asyncio
 import json
 import logging
 import os
+import re
 import signal
+import subprocess
 import sys
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 # ---------------------------------------------------------------------------
 # Redis
@@ -41,12 +49,14 @@ except ImportError:
     sys.exit(1)
 
 # ---------------------------------------------------------------------------
-# LLM — OpenAI-compatible chat completions (NVIDIA, OpenRouter, local, etc.)
+# LLM — OpenAI-compatible chat completions with tool calling support
 # ---------------------------------------------------------------------------
 try:
     import urllib.request
     import urllib.error
     import ssl
+    import threading
+    import queue
     # Disable SSL verification for NVIDIA API calls (self-signed certs)
     ssl._create_default_https_context = ssl._create_unverified_context
     HAS_URLLIB = True
@@ -61,13 +71,16 @@ LOG_DIR = TNF_HOME / "logs"
 PID_DIR = TNF_HOME / "pids"
 STATE_DIR = TNF_HOME / "state"
 INBOUND_DIR = TNF_HOME / "inbound"
+MEMORY_DIR = TNF_HOME / "memory"
+TOOLS_DIR = TNF_HOME / "tools"
 
-for d in (LOG_DIR, PID_DIR, STATE_DIR, INBOUND_DIR):
+for d in (LOG_DIR, PID_DIR, STATE_DIR, INBOUND_DIR, MEMORY_DIR, TOOLS_DIR):
     d.mkdir(parents=True, exist_ok=True)
 
 PID_FILE = PID_DIR / "tnf-agent-daemon.pid"
 STATE_FILE = STATE_DIR / "tnf-agent-daemon.json"
 LOG_FILE = LOG_DIR / "tnf-agent-daemon.log"
+MEMORY_FILE = MEMORY_DIR / "persistent_context.json"
 
 # Redis channels (must match broker-agent.ts)
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
@@ -77,6 +90,7 @@ CHANNEL_INGRESS = "tnf:bus:ingress"
 CHANNEL_EGRESS_PREFIX = "tnf:bus:egress"
 CHANNEL_HEARTBEAT = "tnf:heartbeat"
 CHANNEL_SYNAPTIC = "tnf:synaptic_bus"
+CHANNEL_TOOLS = "tnf:bus:tools"
 KEY_AGENT_REGISTRY = "tnf:agent-registry"
 KEY_TASK_QUEUE = "tnf:master:tasks:realtime"
 KEY_DIRECTOR_REVIEW = "tnf:director:review:pending"
@@ -88,13 +102,358 @@ AGENT_ROLE = os.environ.get("TNF_AGENT_ROLE", "orchestrator")
 AGENT_PLATFORM = os.environ.get("TNF_AGENT_PLATFORM", "tnf-daemon")
 AGENT_CAPABILITIES = os.environ.get(
     "TNF_AGENT_CAPABILITIES",
-    "task-routing,heartbeat,autonomous-thinking,memory,delegation,orchestration"
+    "task-routing,heartbeat,autonomous-thinking,memory,delegation,orchestration,code-execution,tool-calling"
 ).split(",")
 
 # LLM config
 LLM_API_KEY = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("TNF_LLM_API_KEY", "") or os.environ.get("OPENAI_API_KEY", "")
 LLM_BASE_URL = os.environ.get("TNF_LLM_BASE_URL", "https://integrate.api.nvidia.com/v1")
 LLM_MODEL = os.environ.get("TNF_LLM_MODEL", "nvidia/llama-3.3-nemotron-super-49b-v1.5")
+
+# Streaming config
+ENABLE_STREAMING = os.environ.get("TNF_ENABLE_STREAMING", "true").lower() == "true"
+STREAM_CHUNK_SIZE = int(os.environ.get("TNF_STREAM_CHUNK_SIZE", "64"))
+
+# Execution config
+MAX_EXECUTION_TIME = int(os.environ.get("TNF_MAX_EXECUTION_TIME", "300"))
+ALLOWED_EXECUTION_PATHS = os.environ.get("TNF_ALLOWED_EXECUTION_PATHS", "/tmp,/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse").split(",")
+
+# Sub-agent config
+MAX_SUB_AGENTS = int(os.environ.get("TNF_MAX_SUB_AGENTS", "5"))
+SUB_AGENT_TIMEOUT = int(os.environ.get("TNF_SUB_AGENT_TIMEOUT", "600"))
+
+T = TypeVar('T')
+
+class ExecutionMode(Enum):
+    """Execution mode for code/command execution."""
+    SAFE = "safe"        # Only allowed paths
+    RESTRICTED = "restricted"  # Read-only operations
+    UNRESTRICTED = "unrestricted"  # Full access (requires TNF_UNRESTRICTED_EXEC=1)
+
+EXECUTION_MODE = ExecutionMode.SAFE
+if os.environ.get("TNF_UNRESTRICTED_EXEC") == "1":
+    EXECUTION_MODE = ExecutionMode.UNRESTRICTED
+
+# ---------------------------------------------------------------------------
+# Tool Definitions (OpenAI function calling schema)
+# ---------------------------------------------------------------------------
+
+TOOL_DEFINITIONS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "execute_bash",
+            "description": "Execute a bash/shell command with optional timeout. Returns stdout, stderr, and return code.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "description": "The shell command to execute"
+                    },
+                    "timeout": {
+                        "type": "integer",
+                        "description": "Maximum execution time in seconds (default: 60, max: 300)",
+                        "default": 60
+                    },
+                    "cwd": {
+                        "type": "string",
+                        "description": "Working directory for the command"
+                    }
+                },
+                "required": ["command"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "read_file",
+            "description": "Read the contents of a file from the filesystem.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "Absolute path to the file"
+                    },
+                    "offset": {
+                        "type": "integer",
+                        "description": "Line offset to start reading from (0-indexed)",
+                        "default": 0
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Maximum number of lines to read",
+                        "default": 100
+                    }
+                },
+                "required": ["path"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "write_file",
+            "description": "Write content to a file. Creates or overwrites the file.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "Absolute path to the file"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "Content to write to the file"
+                    },
+                    "append": {
+                        "type": "boolean",
+                        "description": "Append to file instead of overwriting",
+                        "default": False
+                    }
+                },
+                "required": ["path", "content"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "list_directory",
+            "description": "List contents of a directory with optional filtering.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "Absolute path to the directory"
+                    },
+                    "pattern": {
+                        "type": "string",
+                        "description": "Glob pattern to filter files (e.g., '*.ts', '*.md')"
+                    },
+                    "recursive": {
+                        "type": "boolean",
+                        "description": "Recursively list subdirectories",
+                        "default": False
+                    }
+                },
+                "required": ["path"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_files",
+            "description": "Search for text patterns within files using grep-style matching.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "Root directory to search in"
+                    },
+                    "pattern": {
+                        "type": "string",
+                        "description": "Regex or text pattern to search for"
+                    },
+                    "file_pattern": {
+                        "type": "string",
+                        "description": "Limit search to files matching this glob pattern",
+                        "default": "*"
+                    },
+                    "max_results": {
+                        "type": "integer",
+                        "description": "Maximum number of results to return",
+                        "default": 50
+                    }
+                },
+                "required": ["path", "pattern"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "redis_operation",
+            "description": "Perform a Redis operation (GET, SET, HGET, HSET, LPUSH, BRPOP, PUBLISH, etc.)",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "operation": {
+                        "type": "string",
+                        "description": "Redis operation (get, set, hget, hset, lpush, brpop, publish, llen, hgetall)",
+                        "enum": ["get", "set", "hget", "hset", "lpush", "brpop", "publish", "llen", "hgetall", "keys", "delete"]
+                    },
+                    "key": {
+                        "type": "string",
+                        "description": "Redis key"
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "Value for SET, HSET, LPUSH, or PUBLISH operations"
+                    },
+                    "hash_field": {
+                        "type": "string",
+                        "description": "Hash field for HGET/HSET operations"
+                    },
+                    "timeout": {
+                        "type": "integer",
+                        "description": "Timeout in seconds for BRPOP"
+                    }
+                },
+                "required": ["operation", "key"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "spawn_subagent",
+            "description": "Spawn a sub-agent to handle a specific task in parallel. Returns agent ID for tracking.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "task": {
+                        "type": "string",
+                        "description": "Task description for the sub-agent"
+                    },
+                    "agent_type": {
+                        "type": "string",
+                        "description": "Type of sub-agent (codegen, infra, research, frontend)",
+                        "enum": ["codegen", "infra", "research", "frontend", "general"],
+                        "default": "general"
+                    },
+                    "capabilities": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Required capabilities for the sub-agent"
+                    }
+                },
+                "required": ["task"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_memory",
+            "description": "Retrieve persistent memory/context from previous sessions.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "description": "Memory key to retrieve (or 'all' for entire context)"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "set_memory",
+            "description": "Store persistent memory for future sessions.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "description": "Memory key"
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "Value to store (will be JSON serialized)"
+                    },
+                    "namespace": {
+                        "type": "string",
+                        "description": "Memory namespace (default: 'default')",
+                        "default": "default"
+                    }
+                },
+                "required": ["key", "value"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "broadcast_event",
+            "description": "Broadcast an event to the TNF Synaptic Bus.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "event_type": {
+                        "type": "string",
+                        "description": "Type of event (task_complete, agent_status, system_alert)"
+                    },
+                    "payload": {
+                        "type": "object",
+                        "description": "Event payload data"
+                    },
+                    "channel": {
+                        "type": "string",
+                        "description": "Channel to broadcast to (default: tnf:bus:ingress)",
+                        "default": "tnf:bus:ingress"
+                    },
+                    "target_agent": {
+                        "type": "string",
+                        "description": "Specific agent ID to target (broadcast if omitted)"
+                    }
+                },
+                "required": ["event_type", "payload"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_agent_status",
+            "description": "Get the status of registered agents in the TNF fleet.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "agent_id": {
+                        "type": "string",
+                        "description": "Specific agent ID to check (all agents if omitted)"
+                    }
+                }
+            }
+        }
+    }
+]
+
+# System prompt with tool calling instructions
+TOOL_CALLING_SYSTEM_PROMPT = """You are the TNF Core Agent — an autonomous orchestration agent with access to powerful tools.
+
+You have access to the following tools:
+- execute_bash: Run shell commands with timeout
+- read_file / write_file: File operations
+- list_directory / search_files: File system exploration
+- redis_operation: Interact with the TNF Redis message bus
+- spawn_subagent: Launch parallel sub-agents for concurrent task handling
+- get_memory / set_memory: Persistent context across sessions
+- broadcast_event: Communicate on the TNF Synaptic Bus
+- get_agent_status: Monitor fleet health
+
+GUIDELINES:
+1. Use tools proactively — don't just describe what to do, actually do it
+2. For complex tasks, consider spawning sub-agents to work in parallel
+3. Store important context in memory so it persists across sessions
+4. Monitor agent health with get_agent_status
+5. Use redis_operation to push tasks to worker queues
+6. Be concise but thorough — execute, don't just explain
+
+When you receive a task:
+1. Assess if it can be parallelized (spawn sub-agents)
+2. Execute directly if straightforward (bash, file ops)
+3. Break complex tasks into coordinated sub-tasks
+4. Report completion via broadcast_event
+"""
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -151,18 +510,45 @@ def make_envelope(
 
 
 # ---------------------------------------------------------------------------
-# LLM Client — lightweight urllib-based (zero extra deps)
+# LLM Client — Enhanced with tool calling support
 # ---------------------------------------------------------------------------
-class LLMClient:
-    """Minimal OpenAI-compatible chat completions client."""
 
-    def __init__(self, base_url: str, api_key: str, model: str):
+@dataclass
+class ToolCall:
+    """Represents a tool call returned by the LLM."""
+    id: str
+    name: str
+    arguments: Dict[str, Any]
+
+@dataclass
+class ChatResponse:
+    """Response from the LLM."""
+    content: Optional[str]
+    tool_calls: Optional[List[ToolCall]]
+    finish_reason: str
+
+class LLMClient:
+    """Enhanced OpenAI-compatible chat completions client with tool calling."""
+
+    def __init__(self, base_url: str, api_key: str, model: str, tools: Optional[List[Dict]] = None):
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
         self.model = model
-        self.messages: List[Dict[str, str]] = []
+        self.messages: List[Dict[str, Any]] = []
+        self.tools = tools or []
+        self._daemon_ref = None  # Set by TNFAgentDaemon
+
+    def set_daemon_ref(self, daemon):
+        """Set reference to daemon for tool execution."""
+        self._daemon_ref = daemon
 
     def chat(self, user_message: str, system_prompt: Optional[str] = None) -> Optional[str]:
+        """Simple chat without tool calling (backwards compatible)."""
+        response = self.chat_with_tools(user_message, system_prompt)
+        return response.content if response else None
+
+    def chat_with_tools(self, user_message: str, system_prompt: Optional[str] = None, max_iterations: int = 10) -> Optional[ChatResponse]:
+        """Chat with tool calling support - handles tool call loops automatically."""
         if not self.api_key:
             logger.warning("No LLM API key configured — skipping LLM call")
             return None
@@ -172,46 +558,311 @@ class LLMClient:
 
         self.messages.append({"role": "user", "content": user_message})
 
-        # Keep context window bounded
-        if len(self.messages) > 40:
-            system_msgs = [m for m in self.messages if m["role"] == "system"]
-            other_msgs = [m for m in self.messages if m["role"] != "system"][-30:]
-            self.messages = system_msgs + other_msgs
+        iteration = 0
+        last_content = None
 
-        payload = json.dumps({
+        while iteration < max_iterations:
+            iteration += 1
+            response = self._make_completion_request(self.messages)
+            if not response:
+                return None
+
+            last_content = response.content
+            assistant_msg = response.content or ""
+            tool_calls = response.tool_calls
+
+            # Add assistant message to history
+            msg_dict: Dict[str, Any] = {"role": "assistant", "content": assistant_msg}
+            if tool_calls:
+                msg_dict["tool_calls"] = [
+                    {"id": tc.id, "function": {"name": tc.name, "arguments": json.dumps(tc.arguments)}}
+                    for tc in tool_calls
+                ]
+            self.messages.append(msg_dict)
+
+            # If no tool calls, return the response
+            if not tool_calls:
+                return response
+
+            # Handle tool calls
+            for tc in tool_calls:
+                tool_result = self._execute_tool(tc.name, tc.arguments)
+                self.messages.append({
+                    "role": "tool",
+                    "tool_call_id": tc.id,
+                    "content": json.dumps(tool_result)
+                })
+
+        logger.warning(f"Tool call loop reached max iterations ({max_iterations})")
+        return ChatResponse(content=last_content, tool_calls=None, finish_reason="max_iterations")
+
+    def _make_completion_request(self, messages: List[Dict[str, Any]]) -> Optional[ChatResponse]:
+        """Make a single completion request."""
+        payload = {
             "model": self.model,
-            "messages": self.messages,
+            "messages": messages,
             "temperature": 0.7,
-            "max_tokens": 2048,
-        }).encode("utf-8")
+            "max_tokens": 4096,
+        }
 
+        if self.tools:
+            payload["tools"] = self.tools
+            payload["tool_choice"] = "auto"
+
+        data = json.dumps(payload).encode("utf-8")
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}",
         }
 
         url = f"{self.base_url}/chat/completions"
-        req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+        req = urllib.request.Request(url, data=data, headers=headers, method="POST")
 
         try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
+            with urllib.request.urlopen(req, timeout=180) as resp:
                 body = json.loads(resp.read().decode("utf-8"))
-                content = body["choices"][0]["message"]["content"]
-                self.messages.append({"role": "assistant", "content": content})
-                return content
+                message = body["choices"][0]["message"]
+                finish_reason = body["choices"][0].get("finish_reason", "stop")
+
+                content = message.get("content")
+                tool_calls = None
+
+                if "tool_calls" in message:
+                    tool_calls = [
+                        ToolCall(
+                            id=tc["id"],
+                            name=tc["function"]["name"],
+                            arguments=json.loads(tc["function"]["arguments"])
+                        )
+                        for tc in message["tool_calls"]
+                    ]
+
+                return ChatResponse(content=content, tool_calls=tool_calls, finish_reason=finish_reason)
+
         except urllib.error.HTTPError as e:
             err_body = ""
             try:
                 err_body = e.read().decode("utf-8", errors="replace")
             except Exception:
                 pass
-            logger.error(f"LLM HTTP {e.code}: {err_body[:300]}")
-            self.messages.pop()  # remove failed user message
+            logger.error(f"LLM HTTP {e.code}: {err_body[:500]}")
             return None
         except Exception as e:
             logger.error(f"LLM call failed: {e}")
-            self.messages.pop()
             return None
+
+    def _execute_tool(self, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute a tool and return the result."""
+        logger.info(f"Executing tool: {tool_name}")
+        daemon = self._daemon_ref
+
+        try:
+            if tool_name == "execute_bash":
+                return self._tool_execute_bash(daemon, **args)
+            elif tool_name == "read_file":
+                return self._tool_read_file(**args)
+            elif tool_name == "write_file":
+                return self._tool_write_file(**args)
+            elif tool_name == "list_directory":
+                return self._tool_list_directory(**args)
+            elif tool_name == "search_files":
+                return self._tool_search_files(**args)
+            elif tool_name == "redis_operation":
+                return self._tool_redis_operation(daemon, **args)
+            elif tool_name == "spawn_subagent":
+                return self._tool_spawn_subagent(daemon, **args)
+            elif tool_name == "get_memory":
+                return self._tool_get_memory()
+            elif tool_name == "set_memory":
+                return self._tool_set_memory(**args)
+            elif tool_name == "broadcast_event":
+                return self._tool_broadcast_event(daemon, **args)
+            elif tool_name == "get_agent_status":
+                return self._tool_get_agent_status(daemon, **args)
+            else:
+                return {"error": f"Unknown tool: {tool_name}"}
+        except Exception as e:
+            logger.error(f"Tool {tool_name} failed: {e}")
+            return {"error": str(e)}
+
+    def _tool_execute_bash(self, daemon, command: str, timeout: int = 60, cwd: Optional[str] = None) -> Dict[str, Any]:
+        """Execute a bash command."""
+        timeout = min(timeout, MAX_EXECUTION_TIME)
+        if EXECUTION_MODE == ExecutionMode.SAFE:
+            dangerous = ["rm -rf /", "mkfs", ":(){:|:&};:", "> /dev/sda"]
+            for pat in dangerous:
+                if pat in command:
+                    return {"error": f"Blocked dangerous command: {pat}"}
+        try:
+            result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=timeout, cwd=cwd)
+            return {"stdout": result.stdout[:10000], "stderr": result.stderr[:2000], "returncode": result.returncode}
+        except subprocess.TimeoutExpired:
+            return {"error": f"Command timed out after {timeout}s"}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_read_file(self, path: str, offset: int = 0, limit: int = 100) -> Dict[str, Any]:
+        """Read a file."""
+        try:
+            p = Path(path)
+            if not p.exists():
+                return {"error": f"File not found: {path}"}
+            lines = p.read_text().splitlines()
+            return {"total_lines": len(lines), "content": "\n".join(lines[offset:offset + limit]), "offset": offset, "limit": limit}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_write_file(self, path: str, content: str, append: bool = False) -> Dict[str, Any]:
+        """Write to a file."""
+        try:
+            p = Path(path)
+            if append:
+                p.write_text(p.read_text() + content)
+            else:
+                p.write_text(content)
+            return {"success": True, "bytes_written": len(content)}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_list_directory(self, path: str, pattern: Optional[str] = None, recursive: bool = False) -> Dict[str, Any]:
+        """List a directory."""
+        try:
+            from fnmatch import fnmatch
+            p = Path(path)
+            if not p.exists():
+                return {"error": f"Directory not found: {path}"}
+            results = []
+            if recursive:
+                for fp in p.rglob(pattern or "*"):
+                    if fp.is_file():
+                        results.append(str(fp))
+            else:
+                for fp in p.iterdir():
+                    if pattern is None or fnmatch(fp.name, pattern):
+                        results.append(str(fp))
+            return {"entries": results, "count": len(results)}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_search_files(self, path: str, pattern: str, file_pattern: str = "*", max_results: int = 50) -> Dict[str, Any]:
+        """Search files with grep-like pattern."""
+        try:
+            from fnmatch import fnmatch
+            matches = []
+            p = Path(path)
+            regex = re.compile(pattern)
+            for fp in p.rglob(file_pattern):
+                if not fp.is_file():
+                    continue
+                try:
+                    for i, line in enumerate(fp.read_text().splitlines(), 1):
+                        if regex.search(line):
+                            matches.append({"file": str(fp), "line": i, "content": line[:200]})
+                            if len(matches) >= max_results:
+                                break
+                except Exception:
+                    continue
+            return {"matches": matches, "count": len(matches)}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_redis_operation(self, daemon, operation: str, key: str, value: Optional[str] = None, hash_field: Optional[str] = None, timeout: Optional[int] = None) -> Dict[str, Any]:
+        """Execute a Redis operation."""
+        if not daemon:
+            return {"error": "Daemon reference not set"}
+        try:
+            r = daemon.r
+            if operation == "get":
+                return {"result": r.get(key)}
+            elif operation == "set":
+                return {"result": r.set(key, value)}
+            elif operation == "hget":
+                return {"result": r.hget(key, hash_field)}
+            elif operation == "hset":
+                return {"result": r.hset(key, hash_field, value)}
+            elif operation == "lpush":
+                return {"result": r.lpush(key, value)}
+            elif operation == "brpop":
+                result = r.brpop(key, timeout=timeout or 5)
+                return {"result": result}
+            elif operation == "publish":
+                return {"result": r.publish(key, value)}
+            elif operation == "llen":
+                return {"result": r.llen(key)}
+            elif operation == "hgetall":
+                return {"result": r.hgetall(key)}
+            elif operation == "keys":
+                return {"result": r.keys(key)}
+            elif operation == "delete":
+                return {"result": r.delete(key)}
+            else:
+                return {"error": f"Unknown operation: {operation}"}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_spawn_subagent(self, daemon, task: str, agent_type: str = "general", capabilities: Optional[List[str]] = None) -> Dict[str, Any]:
+        """Spawn a sub-agent."""
+        if not daemon:
+            return {"error": "Daemon reference not set"}
+        try:
+            agent_id = f"subagent-{uuid.uuid4().hex[:8]}"
+            envelope = make_envelope(
+                "task",
+                {"task": task, "agent_type": agent_type, "capabilities": capabilities or []},
+                to_agent=agent_id,
+            )
+            daemon.r.lpush("tnf:master:tasks:realtime", json.dumps(envelope))
+            return {"success": True, "agent_id": agent_id, "task": task}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_get_memory(self) -> Dict[str, Any]:
+        """Get persistent memory."""
+        try:
+            if MEMORY_FILE.exists():
+                return json.loads(MEMORY_FILE.read_text())
+            return {"memory": {}}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_set_memory(self, key: str, value: str, namespace: str = "default") -> Dict[str, Any]:
+        """Store persistent memory."""
+        try:
+            memory = {}
+            if MEMORY_FILE.exists():
+                memory = json.loads(MEMORY_FILE.read_text())
+            if namespace not in memory:
+                memory[namespace] = {}
+            memory[namespace][key] = value
+            MEMORY_FILE.write_text(json.dumps(memory, indent=2))
+            return {"success": True, "key": key, "namespace": namespace}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_broadcast_event(self, daemon, event_type: str, payload: Dict[str, Any], channel: str = "tnf:bus:ingress", target_agent: Optional[str] = None) -> Dict[str, Any]:
+        """Broadcast event to TNF bus."""
+        if not daemon:
+            return {"error": "Daemon reference not set"}
+        try:
+            envelope = make_envelope("event", {"event": event_type, **payload}, to_agent=target_agent, broadcast=target_agent is None)
+            daemon.r.publish(channel, json.dumps(envelope))
+            return {"success": True, "event_type": event_type, "channel": channel}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _tool_get_agent_status(self, daemon, agent_id: Optional[str] = None) -> Dict[str, Any]:
+        """Get agent status from registry."""
+        if not daemon:
+            return {"error": "Daemon reference not set"}
+        try:
+            if agent_id:
+                raw = daemon.r.hget(KEY_AGENT_REGISTRY, agent_id)
+                return {"agent": json.loads(raw) if raw else None}
+            else:
+                all_agents = daemon.r.hgetall(KEY_AGENT_REGISTRY)
+                return {"agents": {k: json.loads(v) for k, v in all_agents.items()}}
+        except Exception as e:
+            return {"error": str(e)}
 
 
 # ---------------------------------------------------------------------------
@@ -246,8 +897,9 @@ class TNFAgentDaemon:
 
         if mode == "live" and LLM_API_KEY:
             m = model or LLM_MODEL
-            self.llm = LLMClient(LLM_BASE_URL, LLM_API_KEY, m)
-            logger.info(f"LLM configured: {m} @ {LLM_BASE_URL}")
+            self.llm = LLMClient(LLM_BASE_URL, LLM_API_KEY, m, tools=TOOL_DEFINITIONS)
+            self.llm.set_daemon_ref(self)
+            logger.info(f"LLM configured: {m} @ {LLM_BASE_URL} with {len(TOOL_DEFINITIONS)} tools")
         elif mode == "live":
             logger.warning("No LLM API key — running in watch-only mode despite 'live' requested")
 
@@ -346,31 +998,40 @@ class TNFAgentDaemon:
                 self._submit_bid(data)
 
     def _process_task_with_llm(self, task_envelope: Dict[str, Any]):
-        """Use the LLM to process an inbound task."""
+        """Use the LLM to process an inbound task with tool calling."""
         payload = task_envelope.get("payload", {})
         task_id = payload.get("id", "unknown")
         description = payload.get("description", payload.get("title", ""))
+        task_data = payload.get("task", {})
 
         if not description:
             logger.warning(f"Task {task_id} has no description — skipping LLM processing")
             return
 
-        logger.info(f"Processing task {task_id} with LLM...")
-        prompt = (
-            f"You are the TNF Core Agent. A task arrived on the Synaptic Bus:\n\n"
-            f"Task ID: {task_id}\n"
-            f"Description: {description}\n\n"
-            f"Analyze this task. If it requires code changes, describe what needs to happen. "
-            f"If it requires research, provide key findings. If it requires delegation, "
-            f"specify which agent should handle it. Be concise and actionable."
-        )
-        response = self.llm.chat(prompt, system_prompt="You are the TNF Core Agent — the autonomous heart of The New Fuse multi-agent platform. You process tasks, coordinate agents, and maintain system health. Respond concisely and with action items.")
+        logger.info(f"Processing task {task_id} with LLM (tool-enabled)...")
+
+        prompt = f"""TNF Core Agent Task Processing
+
+Task ID: {task_id}
+Description: {description}
+Task Data: {json.dumps(task_data, indent=2) if task_data else 'N/A'}
+
+You have access to tools. Use them to:
+- Execute necessary commands (bash)
+- Read/write files
+- Interact with Redis (message bus)
+- Spawn sub-agents for parallel work
+- Store important context in memory
+
+Process this task autonomously. Use tools as needed. Report completion via broadcast_event."""
+
+        response = self.llm.chat_with_tools(prompt, system_prompt=TOOL_CALLING_SYSTEM_PROMPT)
 
         if response:
-            # Publish the response as a TNFEnvelope
+            content = response.content or "Task processed with tool calling."
             reply = make_envelope(
                 "response",
-                {"taskId": task_id, "analysis": response, "processedBy": AGENT_ID},
+                {"taskId": task_id, "analysis": content, "tool_calls": len(response.tool_calls) if response.tool_calls else 0, "processedBy": AGENT_ID},
                 to_agent=task_envelope.get("from", {}).get("agentId"),
                 context={"parentMessageId": task_envelope.get("id")},
             )
@@ -404,7 +1065,7 @@ class TNFAgentDaemon:
     # -- Autonomous thinking -------------------------------------------------
 
     def autonomous_think(self):
-        """Periodic LLM-powered self-reflection and system health check."""
+        """Periodic LLM-powered self-reflection and system health check with tool execution."""
         if not self.llm:
             return
         if time.time() - self.last_think < self.think_interval:
@@ -413,43 +1074,39 @@ class TNFAgentDaemon:
         self.last_think = time.time()
         logger.info("Autonomous think cycle...")
 
-        # Gather bus state for context
         agents_raw = self.r.hgetall(KEY_AGENT_REGISTRY)
         agent_count = len(agents_raw)
-        online_agents = sum(
-            1 for v in agents_raw.values()
-            if json.loads(v).get("isOnline", False) if v
-        )
-
+        online_agents = sum(1 for v in agents_raw.values() if json.loads(v).get("isOnline", False) if v)
         task_queue_len = self.r.llen(KEY_TASK_QUEUE)
         review_queue_len = self.r.llen(KEY_DIRECTOR_REVIEW)
 
-        prompt = (
-            f"You are the TNF Core Agent performing a periodic self-check.\n\n"
-            f"System state:\n"
-            f"- Registered agents: {agent_count} ({online_agents} online)\n"
-            f"- Pending tasks in queue: {task_queue_len}\n"
-            f"- Director review queue: {review_queue_len}\n"
-            f"- Tasks processed this session: {self.tasks_processed}\n"
-            f"- Messages sent this session: {self.messages_sent}\n"
-            f"- Heartbeats sent: {self.heartbeats_sent}\n"
-            f"- Uptime: {self._uptime()}\n\n"
-            f"Assess system health. Suggest any actions that should be taken. "
-            f"If everything looks fine, say 'System nominal'. Be brief."
-        )
+        prompt = f"""TNF Core Agent — Autonomous Self-Check
 
-        response = self.llm.chat(
-            prompt,
-            system_prompt="You are the TNF Core Agent performing autonomous self-monitoring. Be concise."
-        )
+System State:
+- Registered agents: {agent_count} ({online_agents} online)
+- Pending tasks: {task_queue_len}
+- Director review queue: {review_queue_len}
+- Tasks processed: {self.tasks_processed}
+- Messages sent: {self.messages_sent}
+- Heartbeats sent: {self.heartbeats_sent}
+- Uptime: {self._uptime()}
 
-        if response:
-            # Publish as state-sync event
+You have access to tools. Use them to:
+- Check detailed agent status with get_agent_status
+- Review task queue contents with redis_operation
+- Broadcast alerts if issues found
+- Spawn sub-agents if additional capacity needed
+
+Assess health and take proactive actions if needed."""
+
+        response = self.llm.chat_with_tools(prompt, system_prompt=TOOL_CALLING_SYSTEM_PROMPT, max_iterations=5)
+
+        if response and response.content:
             envelope = make_envelope(
                 "state-sync",
                 {
                     "event": "autonomous_think",
-                    "healthCheck": response,
+                    "healthCheck": response.content,
                     "metrics": {
                         "agentsOnline": online_agents,
                         "taskQueueLen": task_queue_len,

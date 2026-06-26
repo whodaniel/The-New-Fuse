@@ -111,7 +111,7 @@ export declare class AdminRcloneRuntimeController {
             queueId: string;
             preflightId: string;
             actorId: string;
-            status: "completed" | "failed" | "submitted" | "queued" | "processing";
+            status: "queued" | "processing" | "submitted" | "failed" | "completed";
             createdAt: string;
             updatedAt: string;
             expiresAt: string;
@@ -144,7 +144,7 @@ export declare class AdminRcloneRuntimeController {
             queueId: string;
             preflightId: string;
             actorId: string;
-            status: "completed" | "failed" | "submitted" | "queued" | "processing";
+            status: "queued" | "processing" | "submitted" | "failed" | "completed";
             createdAt: string;
             updatedAt: string;
             expiresAt: string;
@@ -177,7 +177,7 @@ export declare class AdminRcloneRuntimeController {
             queueId: string;
             preflightId: string;
             actorId: string;
-            status: "completed" | "failed" | "submitted" | "queued" | "processing";
+            status: "queued" | "processing" | "submitted" | "failed" | "completed";
             createdAt: string;
             updatedAt: string;
             expiresAt: string;
@@ -306,8 +306,8 @@ export declare class AdminRcloneRuntimeController {
         id: string;
         actorId: string;
         ok: boolean;
-        status: "failed" | "success" | "running" | "paused" | "timeout" | "stopping" | "stopped";
-        presetId: "mirror" | "sync" | "backup" | "migrate" | "offload";
+        status: "success" | "paused" | "running" | "failed" | "stopping" | "stopped" | "timeout";
+        presetId: "sync" | "backup" | "mirror" | "migrate" | "offload";
         presetLabel: string;
         source: string;
         destination: string;
@@ -329,8 +329,8 @@ export declare class AdminRcloneRuntimeController {
         id: string;
         actorId: string;
         ok: boolean;
-        status: "failed" | "success" | "running" | "paused" | "timeout" | "stopping" | "stopped";
-        presetId: "mirror" | "sync" | "backup" | "migrate" | "offload";
+        status: "success" | "paused" | "running" | "failed" | "stopping" | "stopped" | "timeout";
+        presetId: "sync" | "backup" | "mirror" | "migrate" | "offload";
         presetLabel: string;
         source: string;
         destination: string;
@@ -352,8 +352,8 @@ export declare class AdminRcloneRuntimeController {
         id: string;
         actorId: string;
         ok: boolean;
-        status: "failed" | "success" | "running" | "paused" | "timeout" | "stopping" | "stopped";
-        presetId: "mirror" | "sync" | "backup" | "migrate" | "offload";
+        status: "success" | "paused" | "running" | "failed" | "stopping" | "stopped" | "timeout";
+        presetId: "sync" | "backup" | "mirror" | "migrate" | "offload";
         presetLabel: string;
         source: string;
         destination: string;
@@ -375,8 +375,8 @@ export declare class AdminRcloneRuntimeController {
         id: string;
         actorId: string;
         ok: boolean;
-        status: "failed" | "success" | "running" | "paused" | "timeout" | "stopping" | "stopped";
-        presetId: "mirror" | "sync" | "backup" | "migrate" | "offload";
+        status: "success" | "paused" | "running" | "failed" | "stopping" | "stopped" | "timeout";
+        presetId: "sync" | "backup" | "mirror" | "migrate" | "offload";
         presetLabel: string;
         source: string;
         destination: string;
@@ -402,8 +402,8 @@ export declare class AdminRcloneRuntimeController {
             id: string;
             actorId: string;
             ok: boolean;
-            status: "failed" | "success" | "running" | "paused" | "timeout" | "stopping" | "stopped";
-            presetId: "mirror" | "sync" | "backup" | "migrate" | "offload";
+            status: "success" | "paused" | "running" | "failed" | "stopping" | "stopped" | "timeout";
+            presetId: "sync" | "backup" | "mirror" | "migrate" | "offload";
             presetLabel: string;
             source: string;
             destination: string;

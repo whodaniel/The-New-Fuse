@@ -22,4 +22,5 @@ export { DrizzleWebhookRepository, drizzleWebhookRepository } from './webhook.re
 export { DrizzleWorkflowRepository, drizzleWorkflowRepository } from './workflow.repository.js';
 export { DrizzleWorkspaceMemberRepository, drizzleWorkspaceMemberRepository, } from './workspace-member.repository.js';
 export { DrizzleWorkspaceRepository, drizzleWorkspaceRepository } from './workspace.repository.js';
+export { DrizzleFeedbackRepository, drizzleFeedbackRepository } from './feedback.repository.js';
 //# sourceMappingURL=index.d.ts.map

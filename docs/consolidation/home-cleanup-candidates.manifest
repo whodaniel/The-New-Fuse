@@ -1,0 +1,51 @@
+# paths|tier|notes
+# Tiers: RUNTIME (never delete) | UNIQUE (backup before any change) | DUPLICATE_CANDIDATE (backup + verify diff) | UNKNOWN (manual review)
+#
+# Primary dev tree — never delete
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse|RUNTIME|Canonical monorepo
+
+# Operator runtime — do not delete without explicit migration plan
+/Users/danielgoldberg/.tnf|RUNTIME|TNF operator scripts and state
+/Users/danielgoldberg/.tnf-master-clock|RUNTIME|Master clock runtime
+/Users/danielgoldberg/.tnf_sharedstate|RUNTIME|Shared state
+/Users/danielgoldberg/h17-webpilot|RUNTIME|Webpilot profile
+/Users/danielgoldberg/bin|RUNTIME|PATH tools (voice symlinks + personal utilities)
+
+# Voice state — active
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.voicebridge|RUNTIME|Active voice bridge state
+
+# Legacy voice state — backup first; may contain old stream logs
+/Users/danielgoldberg/.local/share/The-New-Fuse/.voicebridge|UNIQUE|Legacy fallback; voice_stream_a/b.txt may be historical
+
+# Recreated emergency stub — not in monorepo at same path; backup 1 file then review
+/Users/danielgoldberg/apps|DUPLICATE_CANDIDATE|Only api-gateway/src/next-handler.ts; orphan stub
+
+# Standalone checkouts — may diverge from monorepo; backup entire tree before touch
+/Users/danielgoldberg/Projects/virtual-library-blueprints|DUPLICATE_CANDIDATE|Also at monorepo apps/virtual-library-blueprints; separate .git
+/Users/danielgoldberg/Projects/tnf-qa|UNIQUE|Standalone Playwright QA folder
+
+# Large agent workspaces — operational; backup only if pruning
+/Users/danielgoldberg/.openclaw|RUNTIME|Agent workspace (4GB+)
+/Users/danielgoldberg/.hermes|RUNTIME|Hermes runtime (16GB+)
+/Users/danielgoldberg/.fuse|RUNTIME|Legacy relay helper data
+
+# Home-root strays — backup before any delete
+/Users/danielgoldberg/AGENTS.md|DUPLICATE_CANDIDATE|Older subset; monorepo AGENTS.md is newer/superset
+/Users/danielgoldberg/GEMINI.md|UNIQUE|Home-root doc
+/Users/danielgoldberg/auth.txt|UNIQUE|SENSITIVE — backup encrypted; do not commit to git
+/Users/danielgoldberg/dump.rdb|UNKNOWN|Redis dump — may be needed if redis restored
+/Users/danielgoldberg/data|UNIQUE|Home data folder
+/Users/danielgoldberg/docs|UNIQUE|Home docs folder
+/Users/danielgoldberg/dogfood-output|UNIQUE|Dogfood artifacts
+/Users/danielgoldberg/github-history|UNIQUE|Git history export
+/Users/danielgoldberg/agent-relationship-snapshots|UNIQUE|Agent graph snapshots
+/Users/danielgoldberg/appendonlydir|UNKNOWN|Review before delete
+/Users/danielgoldberg/Dockerfile|UNKNOWN|Stray root Dockerfile
+/Users/danielgoldberg/close_popup.py|UNIQUE|One-off script
+
+# Desktop siblings — separate projects; not TNF duplicates
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/private-repos|UNIQUE|Private repo mirrors
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base|UNIQUE|Knowledge base
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/LPM-Standalone|UNIQUE|Standalone project
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/mcp-servers|UNIQUE|MCP servers
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/non-saas Nov-15-25|UNIQUE|Archive folder

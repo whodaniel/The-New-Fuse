@@ -22,10 +22,9 @@ const io = new Server(server, {
   cors: { origin: '*' },
 });
 
-
-
 io.use(async (socket: any, next) => {
-  const token = socket.handshake.auth.token || socket.handshake.headers['authorization']?.split(' ')[1];
+  const token =
+    socket.handshake.auth.token || socket.handshake.headers['authorization']?.split(' ')[1];
   if (token) {
     socket.data.identity = `user-${token.slice(0, 8)}`;
     next();
@@ -34,8 +33,6 @@ io.use(async (socket: any, next) => {
     next();
   }
 });
-
-
 
 const PORT = 3000;
 app.use(express.json());
@@ -823,92 +820,92 @@ io.use(async (socket, next) => {
 io.on('connection', (socket) => {
   // Spectators can only watch, not join or act
   socket.on('join', (data) => {
-  socket.on('join', (data) => {
-    if (!pokerEngine || !holdemEngine) return;
-    if (socket.data.spectator) {
-      socket.emit('error', { message: 'Membership required to play' });
-      return;
-    }
+    socket.on('join', (data) => {
+      if (!pokerEngine || !holdemEngine) return;
+      if (socket.data.spectator) {
+        socket.emit('error', { message: 'Membership required to play' });
+        return;
+      }
 
-    const identity = socket.data.identity; // from auth middleware
-    let playerId: string;
-    let name: string;
-    let emptySeat: number = -1;
+      const identity = socket.data.identity; // from auth middleware
+      let playerId: string;
+      let name: string;
+      let emptySeat: number = -1;
 
-    // Attempt to reclaim a disconnected seat if the identity matches
-    let seatReclaimed = false;
-    if (identity) {
-      for (const [existingSocketId, info] of socketToPlayer.entries()) {
-        if (info.identity === identity) {
-          const oldTimer = disconnectTimers.get(info.playerId);
-          if (oldTimer) { clearTimeout(oldTimer); disconnectTimers.delete(info.playerId); }
-          
-          // Update mappings to the new socket
-          socketToPlayer.delete(existingSocketId);
-          socketToPlayer.set(socket.id, { playerId: info.playerId, seat: info.seat, identity: identity || '' });
-          playerToSocket.set(info.playerId, socket.id);
+      // Attempt to reclaim a disconnected seat if the identity matches
+      let seatReclaimed = false;
+      if (identity) {
+        for (const [existingSocketId, info] of socketToPlayer.entries()) {
+          if (info.identity === identity) {
+            const oldTimer = disconnectTimers.get(info.playerId);
+            if (oldTimer) {
+              clearTimeout(oldTimer);
+              disconnectTimers.delete(info.playerId);
+            }
 
-          const displayName = socketDisplayNames.get(existingSocketId) || info.playerId;
-          socketDisplayNames.set(socket.id, displayName);
-          socketDisplayNames.delete(existingSocketId);
+            // Update mappings to the new socket
+            socketToPlayer.delete(existingSocketId);
+            socketToPlayer.set(socket.id, {
+              playerId: info.playerId,
+              seat: info.seat,
+              identity: identity || '',
+            });
+            playerToSocket.set(info.playerId, socket.id);
 
-          // Update engine connection state
-          try { holdemEngine.setConnection(pokerEngine, { playerId: info.playerId, connected: true }); } catch { /* ignore */ }
-          
-          // Clear action timeout if this player was the current actor
-          if (actionTimeoutTimer && pokerEngine.hand?.actingSeat === info.seat) {
-            clearTimeout(actionTimeoutTimer); actionTimeoutTimer = null;
+            const displayName = socketDisplayNames.get(existingSocketId) || info.playerId;
+            socketDisplayNames.set(socket.id, displayName);
+            socketDisplayNames.delete(existingSocketId);
+
+            // Update engine connection state
+            try {
+              holdemEngine.setConnection(pokerEngine, { playerId: info.playerId, connected: true });
+            } catch {
+              /* ignore */
+            }
+
+            // Clear action timeout if this player was the current actor
+            if (actionTimeoutTimer && pokerEngine.hand?.actingSeat === info.seat) {
+              clearTimeout(actionTimeoutTimer);
+              actionTimeoutTimer = null;
+            }
+            addLog(`${displayName} reclaimed seat ${info.seat}`);
+            broadcastState();
+            seatReclaimed = true;
+            break; // Reclaimed successfully, exit loop
           }
-          addLog(`${displayName} reclaimed seat ${info.seat}`);
-          broadcastState();
-          seatReclaimed = true;
-          break; // Reclaimed successfully, exit loop
         }
       }
-    }
 
-    if (seatReclaimed) {
-      return; // If a seat was reclaimed, we're done
-    }
-
-    // If no seat was reclaimed, assign new playerId/name and find an empty seat
-    playerId = identity || `player-${socket.id}`;
-    name = identity || `Player ${randomInt(100, 999)}`;
-    for (let i = 0; i < pokerEngine.maxSeats; i++) {
-      if (!pokerEngine.seats[i]) {
-        emptySeat = i;
-        break;
+      if (seatReclaimed) {
+        return; // If a seat was reclaimed, we're done
       }
-    }
 
-    if (emptySeat === -1) {
-      socket.emit('error', { message: 'Table is full' });
-      return;
-    }
-
-    try {
-      holdemEngine.seatPlayer(pokerEngine, {
-        playerId,
-        seat: emptySeat,
-        stack: STARTING_STACK,
-        autoPostBlinds: true,
-        controlMode: 'human',
-      });
-
-      socketToPlayer.set(socket.id, { playerId, seat: emptySeat, identity: identity || '' });
-      playerToSocket.set(playerId, socket.id);
-      socketDisplayNames.set(socket.id, name);
-
-      addLog(`${name} joined seat ${emptySeat}`);
-      broadcastState();
-
-      if (!pokerEngine.hand || pokerEngine.hand.settled) {
-        setTimeout(() => tryStartHand(), 1000);
+      // If no seat was reclaimed, assign new playerId/name and find an empty seat
+      playerId = identity || `player-${socket.id}`;
+      name = identity || `Player ${randomInt(100, 999)}`;
+      for (let i = 0; i < pokerEngine.maxSeats; i++) {
+        if (!pokerEngine.seats[i]) {
+          emptySeat = i;
+          break;
+        }
       }
-    } catch (err: any) {
-      socket.emit('error', { message: err.message });
-    }
-  });
+
+      if (emptySeat === -1) {
+        socket.emit('error', { message: 'Table is full' });
+        return;
+      }
+
+      try {
+        holdemEngine.seatPlayer(pokerEngine, {
+          playerId,
+          seat: emptySeat,
+          stack: STARTING_STACK,
+          autoPostBlinds: true,
+          controlMode: 'human',
+        });
+
+        socketToPlayer.set(socket.id, { playerId, seat: emptySeat, identity: identity || '' });
+        playerToSocket.set(playerId, socket.id);
         socketDisplayNames.set(socket.id, name);
 
         addLog(`${name} joined seat ${emptySeat}`);
@@ -920,533 +917,540 @@ io.on('connection', (socket) => {
       } catch (err: any) {
         socket.emit('error', { message: err.message });
       }
-  });
+    });
 
-  socket.on('action', (data) => {
-    if (!pokerEngine || !holdemEngine) return;
-    if (socket.data.spectator) {
-      socket.emit('error', { message: 'Membership required to act' });
-      return;
-    }
-    const { type, amount } = data;
-    const info = socketToPlayer.get(socket.id);
-    if (!info) return;
-
-    const hand = pokerEngine.hand;
-    if (!hand || hand.settled) return;
-    if (hand.actingSeat !== info.seat) return;
-
-    // Map frontend action types to holdem-engine action types
-    let engineAction: string;
-    let engineAmount = amount || 0;
-    switch (String(type).toUpperCase()) {
-      case 'FOLD':
-        engineAction = 'fold';
-        break;
-      case 'CALL':
-        engineAction = 'call';
-        break;
-      case 'CHECK':
-        engineAction = 'check';
-        break;
-      case 'BET':
-        engineAction = 'bet';
-        break;
-      case 'RAISE':
-        engineAction = 'raise';
-        break;
-      case 'ALLIN':
-        engineAction = 'allin';
-        break;
-      default:
-        return;
-    }
-
-    const idempotencyKey = `action-${hand.handId}-${info.seat}-${hand.street}-${type}-${amount || 0}`;
-    try {
-      holdemEngine.applyAction(pokerEngine, {
-        playerId: info.playerId,
-        action: engineAction,
-        amount: engineAmount,
-        idempotencyKey,
-      });
-
-      const displayName = socketDisplayNames.get(socket.id) || info.playerId;
-      const logMap: Record<string, string> = {
-        fold: `${displayName} folds`,
-        call: `${displayName} calls`,
-        check: `${displayName} checks`,
-        bet: `${displayName} bets $${engineAmount}`,
-        raise: `${displayName} raises to $${engineAmount}`,
-        allin: `${displayName} goes all-in`,
-      };
-      addLog(logMap[engineAction] || `${displayName}: ${engineAction}`);
-
-      broadcastState();
-      checkForSettlement();
-    } catch (err: any) {
-      socket.emit('actionError', { message: err.message });
-    }
-  });
-
-  socket.on('disconnect', () => {
-    if (!pokerEngine || !holdemEngine) return;
-    const info = socketToPlayer.get(socket.id);
-    if (!info) return;
-
-    const { playerId, seat } = info;
-
-    // Grace period: mark disconnected but don't remove from mappings yet
-    // so reconnection can find the player by identity
-    try {
-      holdemEngine.setConnection(pokerEngine, { playerId, connected: false });
-    } catch {}
-    addLog(
-      `${socketDisplayNames.get(socket.id) || playerId} disconnected (grace: ${DISCONNECT_GRACE_MS / 1000}s)`
-    );
-
-    // Store a marker so we know this socket is disconnected but still mapped
-    // The grace timer will clean up if no reconnection occurs
-    const timer = setTimeout(() => {
-      // Verify player is still disconnected before acting.
-      // A reconnect_attempt handler may have already cleared the timer and
-      // restored the player, but Node.js setTimeout callbacks are not atomically
-      // cancelled — if the callback was already queued before clearTimeout ran,
-      // it still fires. Without this check, a reconnected player gets force-folded.
-      const seatRow = pokerEngine.seats[seat];
-      if (seatRow && seatRow.connected !== false) {
-        // Player has reconnected — do nothing
-        disconnectTimers.delete(playerId);
+    socket.on('action', (data) => {
+      if (!pokerEngine || !holdemEngine) return;
+      if (socket.data.spectator) {
+        socket.emit('error', { message: 'Membership required to act' });
         return;
       }
+      const { type, amount } = data;
+      const info = socketToPlayer.get(socket.id);
+      if (!info) return;
 
-      // Grace expired — force-fold the player if in an active hand
+      const hand = pokerEngine.hand;
+      if (!hand || hand.settled) return;
+      if (hand.actingSeat !== info.seat) return;
+
+      // Map frontend action types to holdem-engine action types
+      let engineAction: string;
+      let engineAmount = amount || 0;
+      switch (String(type).toUpperCase()) {
+        case 'FOLD':
+          engineAction = 'fold';
+          break;
+        case 'CALL':
+          engineAction = 'call';
+          break;
+        case 'CHECK':
+          engineAction = 'check';
+          break;
+        case 'BET':
+          engineAction = 'bet';
+          break;
+        case 'RAISE':
+          engineAction = 'raise';
+          break;
+        case 'ALLIN':
+          engineAction = 'allin';
+          break;
+        default:
+          return;
+      }
+
+      const idempotencyKey = `action-${hand.handId}-${info.seat}-${hand.street}-${type}-${amount || 0}`;
       try {
-        holdemEngine.forceFoldDisconnected(pokerEngine, { playerId });
+        holdemEngine.applyAction(pokerEngine, {
+          playerId: info.playerId,
+          action: engineAction,
+          amount: engineAmount,
+          idempotencyKey,
+        });
+
+        const displayName = socketDisplayNames.get(socket.id) || info.playerId;
+        const logMap: Record<string, string> = {
+          fold: `${displayName} folds`,
+          call: `${displayName} calls`,
+          check: `${displayName} checks`,
+          bet: `${displayName} bets $${engineAmount}`,
+          raise: `${displayName} raises to $${engineAmount}`,
+          allin: `${displayName} goes all-in`,
+        };
+        addLog(logMap[engineAction] || `${displayName}: ${engineAction}`);
+
+        broadcastState();
+        checkForSettlement();
+      } catch (err: any) {
+        socket.emit('actionError', { message: err.message });
+      }
+    });
+
+    socket.on('disconnect', () => {
+      if (!pokerEngine || !holdemEngine) return;
+      const info = socketToPlayer.get(socket.id);
+      if (!info) return;
+
+      const { playerId, seat } = info;
+
+      // Grace period: mark disconnected but don't remove from mappings yet
+      // so reconnection can find the player by identity
+      try {
+        holdemEngine.setConnection(pokerEngine, { playerId, connected: false });
       } catch {}
       addLog(
-        `${socketDisplayNames.get(playerToSocket.get(playerId) || '') || playerId} force-folded (grace expired)`
+        `${socketDisplayNames.get(socket.id) || playerId} disconnected (grace: ${DISCONNECT_GRACE_MS / 1000}s)`
       );
 
-      // If the fold triggered settlement (e.g., only one player left), handle it now
-      // BEFORE unseating — otherwise the busted player loses their payout
-      const handAfterFold = pokerEngine.hand;
-      if (handAfterFold?.readyForSettlement) {
-        handleSettlement();
-      }
+      // Store a marker so we know this socket is disconnected but still mapped
+      // The grace timer will clean up if no reconnection occurs
+      const timer = setTimeout(() => {
+        // Verify player is still disconnected before acting.
+        // A reconnect_attempt handler may have already cleared the timer and
+        // restored the player, but Node.js setTimeout callbacks are not atomically
+        // cancelled — if the callback was already queued before clearTimeout ran,
+        // it still fires. Without this check, a reconnected player gets force-folded.
+        const seatRow = pokerEngine.seats[seat];
+        if (seatRow && seatRow.connected !== false) {
+          // Player has reconnected — do nothing
+          disconnectTimers.delete(playerId);
+          return;
+        }
 
-      // Only unseat AFTER the hand is settled (same principle as NC4 mid-hand fix).
-      // Unseating during an active hand corrupts side pot calculations.
-      const handNow = pokerEngine.hand;
-      if (!handNow || handNow.settled) {
+        // Grace expired — force-fold the player if in an active hand
         try {
-          holdemEngine.unseatPlayer(pokerEngine, { playerId });
+          holdemEngine.forceFoldDisconnected(pokerEngine, { playerId });
         } catch {}
         addLog(
-          `${socketDisplayNames.get(playerToSocket.get(playerId) || '') || playerId} removed (grace expired)`
+          `${socketDisplayNames.get(playerToSocket.get(playerId) || '') || playerId} force-folded (grace expired)`
         );
-        const oldSocketId = playerToSocket.get(playerId);
-        if (oldSocketId) {
-          socketToPlayer.delete(oldSocketId);
-          socketDisplayNames.delete(oldSocketId);
+
+        // If the fold triggered settlement (e.g., only one player left), handle it now
+        // BEFORE unseating — otherwise the busted player loses their payout
+        const handAfterFold = pokerEngine.hand;
+        if (handAfterFold?.readyForSettlement) {
+          handleSettlement();
         }
-        playerToSocket.delete(playerId);
-        disconnectTimers.delete(playerId);
-        broadcastState();
-        setTimeout(() => tryStartHand(), 1000);
-      } else {
-        // Hand still active (other players still betting) — keep the disconnected
-        // player seated but folded. Will be unseated when hand ends (in tryStartHand).
-        broadcastState();
-      }
-    }, DISCONNECT_GRACE_MS);
 
-    disconnectTimers.set(playerId, timer);
-    // NOTE: Do NOT delete socketToPlayer/playerToSocket here — keep them for reconnection
-    broadcastState();
-  });
+        // Only unseat AFTER the hand is settled (same principle as NC4 mid-hand fix).
+        // Unseating during an active hand corrupts side pot calculations.
+        const handNow = pokerEngine.hand;
+        if (!handNow || handNow.settled) {
+          try {
+            holdemEngine.unseatPlayer(pokerEngine, { playerId });
+          } catch {}
+          addLog(
+            `${socketDisplayNames.get(playerToSocket.get(playerId) || '') || playerId} removed (grace expired)`
+          );
+          const oldSocketId = playerToSocket.get(playerId);
+          if (oldSocketId) {
+            socketToPlayer.delete(oldSocketId);
+            socketDisplayNames.delete(oldSocketId);
+          }
+          playerToSocket.delete(playerId);
+          disconnectTimers.delete(playerId);
+          broadcastState();
+          setTimeout(() => tryStartHand(), 1000);
+        } else {
+          // Hand still active (other players still betting) — keep the disconnected
+          // player seated but folded. Will be unseated when hand ends (in tryStartHand).
+          broadcastState();
+        }
+      }, DISCONNECT_GRACE_MS);
 
-  // Reconnection handler: if a player reconnects within grace period, restore their seat
-  // Match by identity to avoid claiming the wrong disconnected player's seat.
-  socket.on('reconnect_attempt', () => {
-    if (!pokerEngine || !holdemEngine) return;
-    const identity = socket.data.identity;
-    if (!identity) return;
-
-    // Find the disconnected player whose identity matches this socket's identity.
-    // The previous implementation matched on playerId.startsWith('player-') which
-    // could match ANY disconnected player, causing wrong-seat claims when multiple
-    // players disconnect simultaneously.
-    let reclaimed = false;
-    for (const [existingSocketId, info] of socketToPlayer.entries()) {
-      const { playerId, seat } = info;
-      const existingSocket = io.sockets.sockets.get(existingSocketId);
-      if (existingSocket && existingSocket.connected) continue; // Still connected, skip
-
-      // Check identity match: the existing socket's identity should match the reconnecting one.
-      // Fallback: if the existing socket data is gone, check by displayName mapping.
-      const existingIdentity = existingSocket?.data?.identity;
-      const displayName = socketDisplayNames.get(existingSocketId) || '';
-      const isMatch =
-        existingIdentity === identity || displayName.toLowerCase() === identity.toLowerCase();
-
-      if (!isMatch) continue;
-
-      // Clear the grace timer
-      const timer = disconnectTimers.get(playerId);
-      if (timer) {
-        clearTimeout(timer);
-        disconnectTimers.delete(playerId);
-      }
-
-      // Re-map to new socket
-      socketToPlayer.delete(existingSocketId);
-      socketToPlayer.set(socket.id, { playerId, seat, identity: identity || '' });
-      playerToSocket.set(playerId, socket.id);
-      socketDisplayNames.set(socket.id, displayName || playerId);
-      socketDisplayNames.delete(existingSocketId);
-
-      // Mark reconnected in engine
-      try {
-        holdemEngine.setConnection(pokerEngine, { playerId, connected: true });
-      } catch {}
-
-      // IMPORTANT: Also clear the action timeout timer if the reconnecting
-      // player is the current actor. Without this, the 25s action timeout
-      // (which was scheduled before the disconnect) fires and force-folds
-      // the player even though they just reconnected and should have their
-      // remaining time to act. The scheduleActionTimeout() call in
-      // broadcastState() will reschedule a fresh timer after this.
-      // NF3 fix: Use pokerEngine.hand (live engine state) instead of closure-captured
-      // `hand` which is stale/undefined in this scope. Previously, `hand?.actingSeat`
-      // was always undefined because `hand` is from the action handler's closure —
-      // if no action was processed, it was undefined, meaning the action timeout
-      // timer was NEVER cleared on reconnection, causing auto-fold 25s later.
-      if (actionTimeoutTimer && pokerEngine.hand?.actingSeat === seat) {
-        clearTimeout(actionTimeoutTimer);
-        actionTimeoutTimer = null;
-      }
-
-      addLog(`${socketDisplayNames.get(socket.id)} reconnected`);
+      disconnectTimers.set(playerId, timer);
+      // NOTE: Do NOT delete socketToPlayer/playerToSocket here — keep them for reconnection
       broadcastState();
-      reclaimed = true;
-      return;
-    }
+    });
 
-    if (!reclaimed) {
-      addLog(`Reconnect attempt for ${identity} — no matching disconnected player found`);
-    }
+    // Reconnection handler: if a player reconnects within grace period, restore their seat
+    // Match by identity to avoid claiming the wrong disconnected player's seat.
+    socket.on('reconnect_attempt', () => {
+      if (!pokerEngine || !holdemEngine) return;
+      const identity = socket.data.identity;
+      if (!identity) return;
+
+      // Find the disconnected player whose identity matches this socket's identity.
+      // The previous implementation matched on playerId.startsWith('player-') which
+      // could match ANY disconnected player, causing wrong-seat claims when multiple
+      // players disconnect simultaneously.
+      let reclaimed = false;
+      for (const [existingSocketId, info] of socketToPlayer.entries()) {
+        const { playerId, seat } = info;
+        const existingSocket = io.sockets.sockets.get(existingSocketId);
+        if (existingSocket && existingSocket.connected) continue; // Still connected, skip
+
+        // Check identity match: the existing socket's identity should match the reconnecting one.
+        // Fallback: if the existing socket data is gone, check by displayName mapping.
+        const existingIdentity = existingSocket?.data?.identity;
+        const displayName = socketDisplayNames.get(existingSocketId) || '';
+        const isMatch =
+          existingIdentity === identity || displayName.toLowerCase() === identity.toLowerCase();
+
+        if (!isMatch) continue;
+
+        // Clear the grace timer
+        const timer = disconnectTimers.get(playerId);
+        if (timer) {
+          clearTimeout(timer);
+          disconnectTimers.delete(playerId);
+        }
+
+        // Re-map to new socket
+        socketToPlayer.delete(existingSocketId);
+        socketToPlayer.set(socket.id, { playerId, seat, identity: identity || '' });
+        playerToSocket.set(playerId, socket.id);
+        socketDisplayNames.set(socket.id, displayName || playerId);
+        socketDisplayNames.delete(existingSocketId);
+
+        // Mark reconnected in engine
+        try {
+          holdemEngine.setConnection(pokerEngine, { playerId, connected: true });
+        } catch {}
+
+        // IMPORTANT: Also clear the action timeout timer if the reconnecting
+        // player is the current actor. Without this, the 25s action timeout
+        // (which was scheduled before the disconnect) fires and force-folds
+        // the player even though they just reconnected and should have their
+        // remaining time to act. The scheduleActionTimeout() call in
+        // broadcastState() will reschedule a fresh timer after this.
+        // NF3 fix: Use pokerEngine.hand (live engine state) instead of closure-captured
+        // `hand` which is stale/undefined in this scope. Previously, `hand?.actingSeat`
+        // was always undefined because `hand` is from the action handler's closure —
+        // if no action was processed, it was undefined, meaning the action timeout
+        // timer was NEVER cleared on reconnection, causing auto-fold 25s later.
+        if (actionTimeoutTimer && pokerEngine.hand?.actingSeat === seat) {
+          clearTimeout(actionTimeoutTimer);
+          actionTimeoutTimer = null;
+        }
+
+        addLog(`${socketDisplayNames.get(socket.id)} reconnected`);
+        broadcastState();
+        reclaimed = true;
+        return;
+      }
+
+      if (!reclaimed) {
+        addLog(`Reconnect attempt for ${identity} — no matching disconnected player found`);
+      }
+    });
   });
-});
 
-async function startServer() {
-  // API routes
-  app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok' });
-  });
+  async function startServer() {
+    // API routes
+    app.get('/api/health', (req, res) => {
+      res.json({ status: 'ok' });
+    });
 
-  app.get('/api/community/apps', (req, res) => {
-    const status = String(req.query.status || 'published').toLowerCase();
-    const limitRaw = Number(req.query.limit || 24);
-    const limit = Number.isFinite(limitRaw) ? Math.max(1, Math.min(100, Math.floor(limitRaw))) : 24;
-    const filtered = COMMUNITY_APPS.filter((app) => {
-      if (status === 'all') return true;
-      return app.status === status;
-    })
-      .sort((a, b) => b.votes - a.votes)
-      .slice(0, limit)
-      .map((app) => {
-        const trend = buildTrend(app.id, 7);
-        const last7 = trend.reduce(
-          (acc, d) => {
-            acc.views += d.views;
-            acc.launches += d.launches;
-            acc.votes += d.votes;
-            return acc;
-          },
-          { views: 0, launches: 0, votes: 0 }
-        );
-        return {
-          ...app,
-          badges: buildBadges(app),
-          trend7d: trend,
-          trendSummary7d: last7,
-        };
+    app.get('/api/community/apps', (req, res) => {
+      const status = String(req.query.status || 'published').toLowerCase();
+      const limitRaw = Number(req.query.limit || 24);
+      const limit = Number.isFinite(limitRaw)
+        ? Math.max(1, Math.min(100, Math.floor(limitRaw)))
+        : 24;
+      const filtered = COMMUNITY_APPS.filter((app) => {
+        if (status === 'all') return true;
+        return app.status === status;
+      })
+        .sort((a, b) => b.votes - a.votes)
+        .slice(0, limit)
+        .map((app) => {
+          const trend = buildTrend(app.id, 7);
+          const last7 = trend.reduce(
+            (acc, d) => {
+              acc.views += d.views;
+              acc.launches += d.launches;
+              acc.votes += d.votes;
+              return acc;
+            },
+            { views: 0, launches: 0, votes: 0 }
+          );
+          return {
+            ...app,
+            badges: buildBadges(app),
+            trend7d: trend,
+            trendSummary7d: last7,
+          };
+        });
+      res.json({ ok: true, apps: filtered });
+    });
+
+    app.post('/api/community/apps/submit', (req, res) => {
+      const {
+        name,
+        summary,
+        creator,
+        category,
+        tags,
+        playUrl,
+        sourceUrl,
+        coverImageUrl,
+        cloudflareOption,
+      } = req.body || {};
+
+      if (!name || !summary || !creator) {
+        res.status(400).json({ ok: false, error: 'name, summary, and creator are required' });
+        return;
+      }
+
+      const option: CloudflareBuildOption = CLOUDFLARE_BUILD_OPTIONS.has(cloudflareOption)
+        ? cloudflareOption
+        : 'workers';
+
+      const appEntry: CommunityArcadeApp = {
+        id: `community-${Date.now()}`,
+        name: String(name).trim(),
+        summary: String(summary).trim(),
+        creator: String(creator).trim(),
+        category: String(category || 'misc').trim(),
+        tags: Array.isArray(tags)
+          ? tags
+              .map((tag) => String(tag).trim())
+              .filter(Boolean)
+              .slice(0, 12)
+          : [],
+        status: 'pending',
+        playUrl: playUrl ? String(playUrl).trim() : undefined,
+        sourceUrl: sourceUrl ? String(sourceUrl).trim() : undefined,
+        coverImageUrl: coverImageUrl ? String(coverImageUrl).trim() : undefined,
+        votes: 0,
+        totalViews: 0,
+        totalLaunches: 0,
+        totalSubmissions: 1,
+        cloudflare: { option },
+        createdAt: new Date().toISOString(),
+      };
+
+      COMMUNITY_APPS.unshift(appEntry);
+      pushEvent(appEntry.id, 'submit', appEntry.creator);
+      scheduleCommunityPersist();
+      res.status(201).json({
+        ok: true,
+        app: appEntry,
+        moderation: 'queued',
+        message: 'Submission received and queued for AI-ARCADE review.',
       });
-    res.json({ ok: true, apps: filtered });
-  });
-
-  app.post('/api/community/apps/submit', (req, res) => {
-    const {
-      name,
-      summary,
-      creator,
-      category,
-      tags,
-      playUrl,
-      sourceUrl,
-      coverImageUrl,
-      cloudflareOption,
-    } = req.body || {};
-
-    if (!name || !summary || !creator) {
-      res.status(400).json({ ok: false, error: 'name, summary, and creator are required' });
-      return;
-    }
-
-    const option: CloudflareBuildOption = CLOUDFLARE_BUILD_OPTIONS.has(cloudflareOption)
-      ? cloudflareOption
-      : 'workers';
-
-    const appEntry: CommunityArcadeApp = {
-      id: `community-${Date.now()}`,
-      name: String(name).trim(),
-      summary: String(summary).trim(),
-      creator: String(creator).trim(),
-      category: String(category || 'misc').trim(),
-      tags: Array.isArray(tags)
-        ? tags
-            .map((tag) => String(tag).trim())
-            .filter(Boolean)
-            .slice(0, 12)
-        : [],
-      status: 'pending',
-      playUrl: playUrl ? String(playUrl).trim() : undefined,
-      sourceUrl: sourceUrl ? String(sourceUrl).trim() : undefined,
-      coverImageUrl: coverImageUrl ? String(coverImageUrl).trim() : undefined,
-      votes: 0,
-      totalViews: 0,
-      totalLaunches: 0,
-      totalSubmissions: 1,
-      cloudflare: { option },
-      createdAt: new Date().toISOString(),
-    };
-
-    COMMUNITY_APPS.unshift(appEntry);
-    pushEvent(appEntry.id, 'submit', appEntry.creator);
-    scheduleCommunityPersist();
-    res.status(201).json({
-      ok: true,
-      app: appEntry,
-      moderation: 'queued',
-      message: 'Submission received and queued for AI-ARCADE review.',
     });
-  });
 
-  app.post('/api/community/apps/:appId/vote', (req, res) => {
-    const appId = String(req.params.appId || '');
-    const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
-    if (!app) {
-      res.status(404).json({ ok: false, error: 'app not found' });
-      return;
-    }
-    const userId = normalizeUserId(req, req.body?.userId);
-    const voters = APP_VOTERS.get(appId) || new Set<string>();
-    if (voters.has(userId)) {
-      res.json({ ok: true, appId, votes: app.votes, duplicate: true });
-      return;
-    }
-    voters.add(userId);
-    APP_VOTERS.set(appId, voters);
-    app.votes += 1;
-    pushEvent(appId, 'vote', userId);
-    scheduleCommunityPersist();
-    res.json({ ok: true, appId, votes: app.votes, duplicate: false });
-  });
-
-  app.post('/api/community/apps/:appId/engagement', (req, res) => {
-    const appId = String(req.params.appId || '');
-    const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
-    if (!app) {
-      res.status(404).json({ ok: false, error: 'app not found' });
-      return;
-    }
-    const typeRaw = String(req.body?.type || '').toLowerCase();
-    if (typeRaw !== 'view' && typeRaw !== 'launch') {
-      res.status(400).json({ ok: false, error: 'type must be view or launch' });
-      return;
-    }
-    const userId = normalizeUserId(req, req.body?.userId);
-    if (typeRaw === 'view') app.totalViews += 1;
-    if (typeRaw === 'launch') app.totalLaunches += 1;
-    pushEvent(appId, typeRaw as EngagementType, userId);
-    scheduleCommunityPersist();
-    res.json({
-      ok: true,
-      appId,
-      type: typeRaw,
-      totals: {
-        views: app.totalViews,
-        launches: app.totalLaunches,
-        votes: app.votes,
-      },
+    app.post('/api/community/apps/:appId/vote', (req, res) => {
+      const appId = String(req.params.appId || '');
+      const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
+      if (!app) {
+        res.status(404).json({ ok: false, error: 'app not found' });
+        return;
+      }
+      const userId = normalizeUserId(req, req.body?.userId);
+      const voters = APP_VOTERS.get(appId) || new Set<string>();
+      if (voters.has(userId)) {
+        res.json({ ok: true, appId, votes: app.votes, duplicate: true });
+        return;
+      }
+      voters.add(userId);
+      APP_VOTERS.set(appId, voters);
+      app.votes += 1;
+      pushEvent(appId, 'vote', userId);
+      scheduleCommunityPersist();
+      res.json({ ok: true, appId, votes: app.votes, duplicate: false });
     });
-  });
 
-  app.get('/api/community/apps/:appId/trends', (req, res) => {
-    const appId = String(req.params.appId || '');
-    const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
-    if (!app) {
-      res.status(404).json({ ok: false, error: 'app not found' });
-      return;
-    }
-    const daysRaw = Number(req.query.days || 14);
-    const days = Number.isFinite(daysRaw) ? Math.max(3, Math.min(60, Math.floor(daysRaw))) : 14;
-    const trend = buildTrend(appId, days);
-    const summary = trend.reduce(
-      (acc, d) => {
-        acc.views += d.views;
-        acc.launches += d.launches;
-        acc.votes += d.votes;
-        acc.uniqueUsers += d.uniqueUsers;
-        return acc;
-      },
-      { views: 0, launches: 0, votes: 0, uniqueUsers: 0 }
-    );
-    res.json({ ok: true, appId, days, trend, summary });
-  });
-
-  app.get('/api/community/apps/:appId/achievements', (req, res) => {
-    const appId = String(req.params.appId || '');
-    const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
-    if (!app) {
-      res.status(404).json({ ok: false, error: 'app not found' });
-      return;
-    }
-    res.json({ ok: true, appId, badges: buildBadges(app) });
-  });
-
-  app.get('/api/community/apps/:appId/comments', (req, res) => {
-    const appId = String(req.params.appId || '');
-    const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
-    if (!app) {
-      res.status(404).json({ ok: false, error: 'app not found' });
-      return;
-    }
-    const limitRaw = Number(req.query.limit || 20);
-    const limit = Number.isFinite(limitRaw) ? Math.max(1, Math.min(100, Math.floor(limitRaw))) : 20;
-    const comments = COMMUNITY_COMMENTS.filter((comment) => comment.appId === appId)
-      .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
-      .slice(0, limit);
-    res.json({ ok: true, appId, comments });
-  });
-
-  app.post('/api/community/apps/:appId/comments', (req, res) => {
-    const appId = String(req.params.appId || '');
-    const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
-    if (!app) {
-      res.status(404).json({ ok: false, error: 'app not found' });
-      return;
-    }
-    const text = String(req.body?.text || '').trim();
-    if (!text) {
-      res.status(400).json({ ok: false, error: 'comment text is required' });
-      return;
-    }
-    const userId = normalizeUserId(req, req.body?.userId);
-    const comment: CommunityComment = {
-      id: `cmt-${Date.now()}-${randomInt(0, 2821109907455).toString(36)}`,
-      appId,
-      userId,
-      text: text.slice(0, 500),
-      createdAt: new Date().toISOString(),
-    };
-    COMMUNITY_COMMENTS.unshift(comment);
-    pushEvent(appId, 'comment', userId);
-    scheduleCommunityPersist();
-    res.status(201).json({ ok: true, appId, comment });
-  });
-
-  app.get('/api/community/activities/recent', (req, res) => {
-    const limitRaw = Number(req.query.limit || 30);
-    const limit = Number.isFinite(limitRaw) ? Math.max(1, Math.min(200, Math.floor(limitRaw))) : 30;
-    const type = String(req.query.type || 'all').toLowerCase();
-
-    const actionItems = ENGAGEMENT_EVENTS.map((event) => ({
-      id: `act-${event.appId}-${event.type}-${event.timestamp}`,
-      kind: 'action',
-      appId: event.appId,
-      type: event.type,
-      userId: event.userId,
-      text:
-        event.type === 'vote'
-          ? `${event.userId} upvoted an app`
-          : event.type === 'launch'
-            ? `${event.userId} launched an app`
-            : event.type === 'comment'
-              ? `${event.userId} commented on an app`
-              : event.type === 'submit'
-                ? `${event.userId} submitted a new app`
-                : `${event.userId} viewed an app`,
-      timestamp: event.timestamp,
-    }));
-
-    const commentItems = COMMUNITY_COMMENTS.map((comment) => ({
-      id: `comment-${comment.id}`,
-      kind: 'comment',
-      appId: comment.appId,
-      type: 'comment',
-      userId: comment.userId,
-      text: comment.text,
-      timestamp: comment.createdAt,
-    }));
-
-    let merged = [...actionItems, ...commentItems];
-    if (type === 'actions') merged = actionItems;
-    if (type === 'comments') merged = commentItems;
-
-    const recent = merged
-      .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
-      .slice(0, limit);
-    res.json({ ok: true, type, activities: recent });
-  });
-
-  app.get('/api/community/persistence/status', async (req, res) => {
-    let localStateExists = false;
-    try {
-      await fs.access(COMMUNITY_STATE_PATH);
-      localStateExists = true;
-    } catch {
-      localStateExists = false;
-    }
-    res.json({
-      ok: true,
-      localStateExists,
-      localStatePath: COMMUNITY_STATE_PATH,
-      cloudflareExportDir: CLOUDFLARE_EXPORT_DIR,
-      exports: {
-        d1Sql: path.join(CLOUDFLARE_EXPORT_DIR, 'community-d1-seed.sql'),
-        r2Snapshot: path.join(CLOUDFLARE_EXPORT_DIR, 'community-latest.json'),
-      },
+    app.post('/api/community/apps/:appId/engagement', (req, res) => {
+      const appId = String(req.params.appId || '');
+      const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
+      if (!app) {
+        res.status(404).json({ ok: false, error: 'app not found' });
+        return;
+      }
+      const typeRaw = String(req.body?.type || '').toLowerCase();
+      if (typeRaw !== 'view' && typeRaw !== 'launch') {
+        res.status(400).json({ ok: false, error: 'type must be view or launch' });
+        return;
+      }
+      const userId = normalizeUserId(req, req.body?.userId);
+      if (typeRaw === 'view') app.totalViews += 1;
+      if (typeRaw === 'launch') app.totalLaunches += 1;
+      pushEvent(appId, typeRaw as EngagementType, userId);
+      scheduleCommunityPersist();
+      res.json({
+        ok: true,
+        appId,
+        type: typeRaw,
+        totals: {
+          views: app.totalViews,
+          launches: app.totalLaunches,
+          votes: app.votes,
+        },
+      });
     });
-  });
 
-  await loadCommunityState();
-
-  // Initialize the holdem-engine poker table
-  const engine = await loadHoldemEngine();
-  pokerEngine = engine.createHoldemTable({
-    tableId: 'arcade-main-1',
-    maxSeats: 9,
-    smallBlind: 100,
-    bigBlind: 200,
-    mode: 'cash',
-  });
-  console.log('Holdem-engine poker table initialized');
-
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
+    app.get('/api/community/apps/:appId/trends', (req, res) => {
+      const appId = String(req.params.appId || '');
+      const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
+      if (!app) {
+        res.status(404).json({ ok: false, error: 'app not found' });
+        return;
+      }
+      const daysRaw = Number(req.query.days || 14);
+      const days = Number.isFinite(daysRaw) ? Math.max(3, Math.min(60, Math.floor(daysRaw))) : 14;
+      const trend = buildTrend(appId, days);
+      const summary = trend.reduce(
+        (acc, d) => {
+          acc.views += d.views;
+          acc.launches += d.launches;
+          acc.votes += d.votes;
+          acc.uniqueUsers += d.uniqueUsers;
+          return acc;
+        },
+        { views: 0, launches: 0, votes: 0, uniqueUsers: 0 }
+      );
+      res.json({ ok: true, appId, days, trend, summary });
     });
-    app.use(vite.middlewares);
-  } else {
-    app.use(express.static('dist'));
+
+    app.get('/api/community/apps/:appId/achievements', (req, res) => {
+      const appId = String(req.params.appId || '');
+      const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
+      if (!app) {
+        res.status(404).json({ ok: false, error: 'app not found' });
+        return;
+      }
+      res.json({ ok: true, appId, badges: buildBadges(app) });
+    });
+
+    app.get('/api/community/apps/:appId/comments', (req, res) => {
+      const appId = String(req.params.appId || '');
+      const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
+      if (!app) {
+        res.status(404).json({ ok: false, error: 'app not found' });
+        return;
+      }
+      const limitRaw = Number(req.query.limit || 20);
+      const limit = Number.isFinite(limitRaw)
+        ? Math.max(1, Math.min(100, Math.floor(limitRaw)))
+        : 20;
+      const comments = COMMUNITY_COMMENTS.filter((comment) => comment.appId === appId)
+        .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+        .slice(0, limit);
+      res.json({ ok: true, appId, comments });
+    });
+
+    app.post('/api/community/apps/:appId/comments', (req, res) => {
+      const appId = String(req.params.appId || '');
+      const app = COMMUNITY_APPS.find((entry) => entry.id === appId);
+      if (!app) {
+        res.status(404).json({ ok: false, error: 'app not found' });
+        return;
+      }
+      const text = String(req.body?.text || '').trim();
+      if (!text) {
+        res.status(400).json({ ok: false, error: 'comment text is required' });
+        return;
+      }
+      const userId = normalizeUserId(req, req.body?.userId);
+      const comment: CommunityComment = {
+        id: `cmt-${Date.now()}-${randomInt(0, 2821109907455).toString(36)}`,
+        appId,
+        userId,
+        text: text.slice(0, 500),
+        createdAt: new Date().toISOString(),
+      };
+      COMMUNITY_COMMENTS.unshift(comment);
+      pushEvent(appId, 'comment', userId);
+      scheduleCommunityPersist();
+      res.status(201).json({ ok: true, appId, comment });
+    });
+
+    app.get('/api/community/activities/recent', (req, res) => {
+      const limitRaw = Number(req.query.limit || 30);
+      const limit = Number.isFinite(limitRaw)
+        ? Math.max(1, Math.min(200, Math.floor(limitRaw)))
+        : 30;
+      const type = String(req.query.type || 'all').toLowerCase();
+
+      const actionItems = ENGAGEMENT_EVENTS.map((event) => ({
+        id: `act-${event.appId}-${event.type}-${event.timestamp}`,
+        kind: 'action',
+        appId: event.appId,
+        type: event.type,
+        userId: event.userId,
+        text:
+          event.type === 'vote'
+            ? `${event.userId} upvoted an app`
+            : event.type === 'launch'
+              ? `${event.userId} launched an app`
+              : event.type === 'comment'
+                ? `${event.userId} commented on an app`
+                : event.type === 'submit'
+                  ? `${event.userId} submitted a new app`
+                  : `${event.userId} viewed an app`,
+        timestamp: event.timestamp,
+      }));
+
+      const commentItems = COMMUNITY_COMMENTS.map((comment) => ({
+        id: `comment-${comment.id}`,
+        kind: 'comment',
+        appId: comment.appId,
+        type: 'comment',
+        userId: comment.userId,
+        text: comment.text,
+        timestamp: comment.createdAt,
+      }));
+
+      let merged = [...actionItems, ...commentItems];
+      if (type === 'actions') merged = actionItems;
+      if (type === 'comments') merged = commentItems;
+
+      const recent = merged
+        .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+        .slice(0, limit);
+      res.json({ ok: true, type, activities: recent });
+    });
+
+    app.get('/api/community/persistence/status', async (req, res) => {
+      let localStateExists = false;
+      try {
+        await fs.access(COMMUNITY_STATE_PATH);
+        localStateExists = true;
+      } catch {
+        localStateExists = false;
+      }
+      res.json({
+        ok: true,
+        localStateExists,
+        localStatePath: COMMUNITY_STATE_PATH,
+        cloudflareExportDir: CLOUDFLARE_EXPORT_DIR,
+        exports: {
+          d1Sql: path.join(CLOUDFLARE_EXPORT_DIR, 'community-d1-seed.sql'),
+          r2Snapshot: path.join(CLOUDFLARE_EXPORT_DIR, 'community-latest.json'),
+        },
+      });
+    });
+
+    await loadCommunityState();
+
+    // Initialize the holdem-engine poker table
+    const engine = await loadHoldemEngine();
+    pokerEngine = engine.createHoldemTable({
+      tableId: 'arcade-main-1',
+      maxSeats: 9,
+      smallBlind: 100,
+      bigBlind: 200,
+      mode: 'cash',
+    });
+    console.log('Holdem-engine poker table initialized');
+
+    if (process.env.NODE_ENV !== 'production') {
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+    } else {
+      app.use(express.static('dist'));
+    }
+
+    server.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
   }
 
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-}
-
-startServer();
+  startServer();
+});

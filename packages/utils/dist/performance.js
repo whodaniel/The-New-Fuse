@@ -1,5 +1,4 @@
-exports.PerformanceMonitor = void 0;
-class PerformanceMonitor {
+export class PerformanceMonitor {
     constructor() {
         this.startTime = Date.now();
         this.endTime = 0;
@@ -31,6 +30,4 @@ class PerformanceMonitor {
         this.marks.clear();
     }
 }
-exports.PerformanceMonitor = PerformanceMonitor;
-export {};
 //# sourceMappingURL=performance.js.map

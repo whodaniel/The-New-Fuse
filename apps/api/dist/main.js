@@ -56,8 +56,34 @@ async function bootstrap() {
         // Enable CORS with strict configuration
         cors: (0, cors_config_1.getCorsOptions)(),
     });
-    // Back-compat middleware for /api/auth/* -> /api/v1/auth/* (if versioning is implicitly active)
-    // app.use(backCompatMiddleware);
+    // Back-compat: clients still call /v1/* or /api/v1/* while routes are registered at /api/*.
+    app.use((req, _res, next) => {
+        const rawUrl = req.url || '';
+        const queryIndex = rawUrl.indexOf('?');
+        const query = queryIndex >= 0 ? rawUrl.slice(queryIndex) : '';
+        let pathname = queryIndex >= 0 ? rawUrl.slice(0, queryIndex) : rawUrl;
+        if (pathname.startsWith('/v1/') || pathname === '/v1') {
+            pathname = `/api${pathname}`;
+        }
+        if (pathname.startsWith('/api/v1/')) {
+            // Don't rewrite /api/v1/health — it's a direct route
+            if (pathname === '/api/v1/health') {
+                // keep as-is
+            }
+            else {
+                pathname = pathname.replace('/api/v1/', '/api/');
+            }
+        }
+        else if (pathname === '/api/v1') {
+            pathname = '/api';
+        }
+        if (pathname + query !== rawUrl) {
+            const rewritten = `${pathname}${query}`;
+            req.url = rewritten;
+            req.originalUrl = rewritten;
+        }
+        next();
+    });
     // Explicitly add body parsers (essential for POST data processing)
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -87,10 +113,25 @@ async function bootstrap() {
     app.use(route_fallback_middleware_1.routeFallbackMiddleware);
     // Root endpoint for health checks
     app.getHttpAdapter().get(app_constants_1.ROOT_PATH, (req, res) => {
-        res.json({ status: app_constants_1.SERVICE_STATUS_HEALTHY, service: app_constants_1.SERVICE_NAME_API });
+        res.json({
+            status: app_constants_1.SERVICE_STATUS_HEALTHY,
+            service: app_constants_1.SERVICE_NAME_API,
+            timestamp: new Date().toISOString(),
+        });
     });
     app.getHttpAdapter().get(app_constants_1.HEALTH_CHECK_PATH, (req, res) => {
-        res.json({ status: app_constants_1.SERVICE_STATUS_HEALTHY, service: app_constants_1.SERVICE_NAME_API });
+        res.json({
+            status: app_constants_1.SERVICE_STATUS_HEALTHY,
+            service: app_constants_1.SERVICE_NAME_API,
+            timestamp: new Date().toISOString(),
+        });
+    });
+    app.getHttpAdapter().get('/api/v1/health', (req, res) => {
+        res.json({
+            status: 'ok',
+            service: app_constants_1.SERVICE_NAME_API,
+            timestamp: new Date().toISOString(),
+        });
     });
     const port = process.env.PORT || app_constants_1.DEFAULT_PORT;
     await app.listen(port, app_constants_1.DEFAULT_HOST);

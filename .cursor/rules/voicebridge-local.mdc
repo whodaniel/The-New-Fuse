@@ -1,0 +1,20 @@
+---
+description: Always use local monorepo Voice Bridge state (not ~/.voicebridge or cloud KWS)
+alwaysApply: true
+---
+
+# Local Voice Bridge
+
+Before any voice command (`cursor-speak`, `voice-chronicle`, `voice-target-*`, shell checks):
+
+```bash
+export VOICEBRIDGE_PROJECT_ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+export VOICEBRIDGE_STATE_DIR="$VOICEBRIDGE_PROJECT_ROOT/.voicebridge"
+export VOICE_BRIDGE_MODE="${VOICE_BRIDGE_MODE:-local}"
+export VOICE_BRIDGE_LOCAL=1
+unset VOICE_KWS_INGEST_URL VOICE_KWS_FLUSH_URL VOICE_KWS_API_KEY
+```
+
+Local state: `$VOICEBRIDGE_PROJECT_ROOT/.voicebridge` (chronicle, stream, targets).
+
+Cloud KWS is **opt-in** only: `VOICE_BRIDGE_MODE=cloud` + `voice_bridge_cloud.env`.

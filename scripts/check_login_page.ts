@@ -26,8 +26,8 @@ async function main() {
   });
 
   try {
-    console.log('🚀 Navigating to https://app.thenewfuse.com/login...');
-    await page.goto('https://app.thenewfuse.com/login', {
+    console.log('🚀 Navigating to https://app.thenewfuse.com/auth/login...');
+    await page.goto('https://app.thenewfuse.com/auth/login', {
       waitUntil: 'networkidle',
       timeout: 30000,
     });

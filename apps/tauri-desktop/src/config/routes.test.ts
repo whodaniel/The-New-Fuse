@@ -30,10 +30,10 @@ vi.mock('../lib/safeStorage', () => {
 import { safeStorage } from '../lib/safeStorage';
 
 describe('routes registry', () => {
-  it('registers 15 unique desktop routes', () => {
-    expect(DESKTOP_ROUTES).toHaveLength(15);
+  it('registers 17 unique desktop routes', () => {
+    expect(DESKTOP_ROUTES).toHaveLength(17);
     const paths = DESKTOP_ROUTES.map((route) => route.path);
-    expect(new Set(paths).size).toBe(15);
+    expect(new Set(paths).size).toBe(17);
   });
 
   it('classifies known vs unknown paths', () => {
@@ -48,7 +48,14 @@ describe('routes registry', () => {
 
   it('groups routes for sidebar sections', () => {
     const operate = routesForGroup('operate');
-    expect(operate.map((r) => r.path)).toEqual(['/browser', '/terminal', '/oagi', '/antigravity']);
+    expect(operate.map((r) => r.path)).toEqual([
+      '/browser',
+      '/terminal',
+      '/oagi',
+      '/antigravity',
+      '/voice',
+      '/library',
+    ]);
   });
 
   it('lists desktop-native bridge routes', () => {

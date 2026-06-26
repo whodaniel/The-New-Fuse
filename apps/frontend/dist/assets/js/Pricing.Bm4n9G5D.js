@@ -1,1 +1,0 @@
-import{j as s}from"./react-vendor.ZgPL6Mwk.js";const e=()=>s.jsxs("div",{className:"container mx-auto p-8",children:[s.jsx("h1",{className:"text-4xl font-bold mb-6",children:"Pricing Plans"}),s.jsx("p",{className:"text-lg",children:"Details about our pricing plans will be available here soon."})]});export{e as default};

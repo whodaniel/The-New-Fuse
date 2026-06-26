@@ -14,7 +14,12 @@ const SCRIPTS_AGENTS_DIR = path.join(TNF_ROOT_DIR, 'scripts/agents');
 
 function runGit(cmd, cwd) {
   try {
-    return execSync(cmd, { cwd: cwd || TNF_ROOT_DIR, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
+    return execSync(cmd, {
+      cwd: cwd || TNF_ROOT_DIR,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+      maxBuffer: 64 * 1024 * 1024,
+    });
   } catch (error) {
     return null;
   }
@@ -485,7 +490,7 @@ async function main() {
     process.exit(0);
   }
 
-  const gitTest = runGit('git status', TNF_ROOT_DIR);
+  const gitTest = runGit('git status --short', TNF_ROOT_DIR);
   if (!gitTest) {
     console.error('Error: git is not available or TNF_ROOT_DIR is not a git repository');
     console.error(`TNF_ROOT_DIR: ${TNF_ROOT_DIR}`);

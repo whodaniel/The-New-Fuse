@@ -23,7 +23,7 @@ __decorate([
         enum: ['skill', 'workflow', 'template', 'tool', 'integration', 'all'],
         default: 'all',
     }),
-    __metadata("design:type", Object)
+    __metadata("design:type", String)
 ], ResourceSearchRequestDto.prototype, "type", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({
@@ -39,7 +39,7 @@ __decorate([
         ],
         default: 'all',
     }),
-    __metadata("design:type", Object)
+    __metadata("design:type", String)
 ], ResourceSearchRequestDto.prototype, "category", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({ type: [String], default: [] }),
@@ -51,7 +51,7 @@ __decorate([
 ], ResourceSearchRequestDto.prototype, "featured", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({ enum: ['popular', 'recent', 'rating', 'name'], default: 'popular' }),
-    __metadata("design:type", Object)
+    __metadata("design:type", String)
 ], ResourceSearchRequestDto.prototype, "sortBy", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({ description: 'Enable trait screening for this query', default: true }),

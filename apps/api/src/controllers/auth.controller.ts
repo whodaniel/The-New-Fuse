@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -115,12 +116,33 @@ export class AuthController {
       email: currentUser.email,
       username: currentUser.username,
       name: currentUser.name,
+      displayName: currentUser.name || currentUser.username,
       role: currentUser.role,
       roles: currentUser.roles,
       isActive: currentUser.isActive,
       createdAt: currentUser.createdAt,
       updatedAt: currentUser.updatedAt,
+      preferences: currentUser.preferences || {
+        theme: 'system',
+        notifications: true,
+      },
     };
+  }
+
+  @Patch('me')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiResponse({ status: 200, description: 'User profile updated successfully' })
+  async updateMe(
+    @Req() req: any,
+    @Body()
+    body: {
+      displayName?: string;
+      bio?: string;
+      preferences?: { theme?: 'light' | 'dark' | 'system'; notifications?: boolean };
+    }
+  ) {
+    return this.authService.updateCurrentUserProfile(req.user.id, body);
   }
 
   @Get('session')

@@ -506,6 +506,38 @@ export class TNFRelayServer extends EventEmitter {
         }
         break;
 
+      case '/docs':
+      case '/pricing':
+      case '/features': {
+        // Alpha stub: explicit 200 JSON to confirm the path exists; real content pending Cloud Run build
+        res.writeHead(200);
+        res.end(
+          JSON.stringify({
+            status: 'ok',
+            path: pathname,
+            description: `${pathname.slice(1)} endpoint stub for alpha cohort probe`,
+          })
+        );
+        break;
+      }
+
+      case '/bridges/telegram':
+      case '/bridges/whatsapp': {
+        // Alpha stub for bridge health probes per checklist M05
+        const isTelegram = pathname.includes('telegram');
+        res.writeHead(200);
+        res.end(
+          JSON.stringify({
+            status: isTelegram ? 'disconnected' : 'disconnected',
+            bridge: pathname.slice(1),
+            connected: false,
+            channels: 0,
+            note: 'alpha operational stub — daemon restart required for live status',
+          })
+        );
+        break;
+      }
+
       default:
         res.writeHead(404);
         res.end(JSON.stringify({ error: 'Not found' }));

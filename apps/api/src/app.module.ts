@@ -246,7 +246,7 @@ export class AppModule implements NestModule {
     // TODO: Re-enable after fixing middleware implementation
     consumer
       .apply(EnhancedSecurityMiddleware)
-      .exclude('agents/(.*)', 'a2a/(.*)', 'system/(.*)') // Global prefix adds /api
+      .exclude('agents/(.*)', 'a2a/(.*)', 'system/(.*)', 'auth/(.*)') // Global prefix adds /api
       .forRoutes('*');
   }
 }

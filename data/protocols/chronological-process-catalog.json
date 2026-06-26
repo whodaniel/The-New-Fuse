@@ -1,13 +1,17 @@
 {
   "spec": "tnf/chronological-process-catalog/1.0",
-  "updated_at": "2026-05-28T08:00:00.000Z",
+  "updated_at": "2026-06-25T05:00:00Z",
   "entries": {
     "tnf-master-clock-super-cycle": {
       "id": "tnf-master-clock-super-cycle",
       "description": "Master clock: federation gate check, health pulse, state sync",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-master-clock-super-cycle"],
+        "args": [
+          "scripts/protocols/run-chronological-process.cjs",
+          "--process-id",
+          "tnf-master-clock-super-cycle"
+        ],
         "timeoutMs": 30000
       },
       "cron": "*/15 * * * *"
@@ -17,7 +21,9 @@
       "description": "Marketplace curation agent: stocks catalog with AI Agent stack assets across all verticals",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/orchestrator/marketplace-curation-agent.sh"],
+        "args": [
+          "scripts/orchestrator/marketplace-curation-agent.sh"
+        ],
         "timeoutMs": 120000
       },
       "cron": "*/30 * * * *"
@@ -27,7 +33,9 @@
       "description": "Continuous stress test: thenewfuse.com endpoint validation, performance checks",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/orchestrator/swarm-stress-test.sh"],
+        "args": [
+          "scripts/orchestrator/swarm-stress-test.sh"
+        ],
         "timeoutMs": 180000
       },
       "cron": "*/10 * * * *"
@@ -37,7 +45,11 @@
       "description": "Scorecard: system health, code quality, intelligence pipeline audit",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-self-improvement-scorecard"],
+        "args": [
+          "scripts/protocols/run-chronological-process.cjs",
+          "--process-id",
+          "tnf-self-improvement-scorecard"
+        ],
         "timeoutMs": 60000
       },
       "cron": "0 */6 * * *",
@@ -48,7 +60,11 @@
       "description": "Collect LLM intelligence from arena rankings and provider status",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-llm-arena-intel-collector"],
+        "args": [
+          "scripts/protocols/run-chronological-process.cjs",
+          "--process-id",
+          "tnf-llm-arena-intel-collector"
+        ],
         "timeoutMs": 60000
       },
       "cron": "0 */4 * * *",
@@ -59,7 +75,11 @@
       "description": "Optimize LLM rankings based on intel collection data",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-llm-ranking-optimizer"],
+        "args": [
+          "scripts/protocols/run-chronological-process.cjs",
+          "--process-id",
+          "tnf-llm-ranking-optimizer"
+        ],
         "timeoutMs": 60000
       },
       "cron": "30 */4 * * *"
@@ -69,7 +89,11 @@
       "description": "Refresh TWIP terminal macro board state",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-twip-macro-board-refresh"],
+        "args": [
+          "scripts/protocols/run-chronological-process.cjs",
+          "--process-id",
+          "tnf-twip-macro-board-refresh"
+        ],
         "timeoutMs": 30000
       },
       "cron": "*/10 * * * *"
@@ -79,7 +103,11 @@
       "description": "Sync OpenClaw runtime state across instances",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-openclaw-runtime-sync"],
+        "args": [
+          "scripts/protocols/run-chronological-process.cjs",
+          "--process-id",
+          "tnf-openclaw-runtime-sync"
+        ],
         "timeoutMs": 30000
       },
       "cron": "*/15 * * * *"
@@ -89,7 +117,11 @@
       "description": "Verify terminal frontload state is active",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-terminal-awareness-reminder"],
+        "args": [
+          "scripts/protocols/run-chronological-process.cjs",
+          "--process-id",
+          "tnf-terminal-awareness-reminder"
+        ],
         "timeoutMs": 30000
       },
       "cron": "*/30 * * * *",
@@ -100,7 +132,9 @@
       "description": "Auto commit and push changes to GitHub every hour",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/orchestrator/auto-git-push.sh"],
+        "args": [
+          "scripts/orchestrator/auto-git-push.sh"
+        ],
         "timeoutMs": 120000
       },
       "cron": "0 * * * *"
@@ -110,7 +144,11 @@
       "description": "Director resonance: delegate idle agents via relay envelopes",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/run-chronological-process.cjs", "--process-id", "tnf-director-resonance-cycle"],
+        "args": [
+          "scripts/protocols/run-chronological-process.cjs",
+          "--process-id",
+          "tnf-director-resonance-cycle"
+        ],
         "timeoutMs": 60000
       },
       "cron": "*/5 * * * *"
@@ -120,7 +158,12 @@
       "description": "Tenant continuous QA loop dispatch for recurring validation and remediation tasks",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-continuous-qa-loop", "--allow-local-fallback"],
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-continuous-qa-loop",
+          "--allow-local-fallback"
+        ],
         "timeoutMs": 30000
       },
       "cron": "0 */6 * * *",
@@ -131,7 +174,12 @@
       "description": "Tenant knowledge scout sprint dispatch for research, retrieval, and synthesis work",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-knowledge-scout-sprint", "--allow-local-fallback"],
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-knowledge-scout-sprint",
+          "--allow-local-fallback"
+        ],
         "timeoutMs": 30000
       },
       "cron": "0 */4 * * *",
@@ -142,7 +190,12 @@
       "description": "Tenant orchestrator pulse dispatch for brokered planning and work routing",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-orchestrator-pulse", "--allow-local-fallback"],
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-orchestrator-pulse",
+          "--allow-local-fallback"
+        ],
         "timeoutMs": 30000
       },
       "cron": "*/30 * * * *",
@@ -153,7 +206,12 @@
       "description": "Tenant loop watchdog dispatch for stall detection and recovery review",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-loop-watchdog", "--allow-local-fallback"],
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-loop-watchdog",
+          "--allow-local-fallback"
+        ],
         "timeoutMs": 30000
       },
       "cron": "*/15 * * * *",
@@ -164,11 +222,68 @@
       "description": "Tenant self-improvement loop dispatch for recurring framework improvement work",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/chronological-dispatch.cjs", "--process-id", "tenant-self-improvement-loop", "--allow-local-fallback"],
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-self-improvement-loop",
+          "--allow-local-fallback"
+        ],
         "timeoutMs": 30000
       },
       "cron": "0 */2 * * *",
       "cadence": "0 */2 * * *"
+    },
+    "tnf-subdirector-codegen-worker": {
+      "id": "tnf-subdirector-codegen-worker",
+      "label": "Sub-Director: hermes-codegen-worker cron-bound wrapper",
+      "description": "Refreshes hermes-codegen-worker registry row, heartbeat pulse, drains tnf:direct:sub-director:<id> for one cron window. Native macOS bash wrapper.",
+      "category": "subdirector-fleet",
+      "runtime": "bash",
+      "script_path": "scripts/agents/subdirector-codegen-worker-cycle.sh",
+      "log_path": "~/.tnf/poll-jobs/tnf-subdirector-codegen-worker/cron.log",
+      "agent_id": "agent_hermes-codegen-worker_1782364000001",
+      "runNow": {
+        "command": "bash",
+        "args": [
+          "scripts/agents/subdirector-codegen-worker-cycle.sh"
+        ],
+        "timeoutMs": 290000
+      },
+      "cron": "*/5 * * * *",
+      "registered_at": "2026-06-25T05:00:00Z",
+      "owner": "sub-director@localhost",
+      "tags": [
+        "sub-director",
+        "spawn",
+        "fleet",
+        "cnc"
+      ]
+    },
+    "tnf-subdirector-infra-worker": {
+      "id": "tnf-subdirector-infra-worker",
+      "label": "Sub-Director: hermes-infra-worker cron-bound wrapper",
+      "description": "Refreshes hermes-infra-worker registry row, heartbeat pulse, drains tnf:direct:sub-director:<id> for one cron window. gcp-build-submit intentionally NOT in capabilities \u2014 submission remains sub-director dual-key.",
+      "category": "subdirector-fleet",
+      "runtime": "bash",
+      "script_path": "scripts/agents/subdirector-infra-worker-cycle.sh",
+      "log_path": "~/.tnf/poll-jobs/tnf-subdirector-infra-worker/cron.log",
+      "agent_id": "agent_hermes-infra-worker_1782364000002",
+      "runNow": {
+        "command": "bash",
+        "args": [
+          "scripts/agents/subdirector-infra-worker-cycle.sh"
+        ],
+        "timeoutMs": 880000
+      },
+      "cron": "*/15 * * * *",
+      "registered_at": "2026-06-25T05:00:00Z",
+      "owner": "sub-director@localhost",
+      "tags": [
+        "sub-director",
+        "spawn",
+        "fleet",
+        "infra"
+      ]
     }
   }
 }

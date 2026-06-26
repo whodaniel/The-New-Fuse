@@ -1,4 +1,4 @@
-export declare function isValidPublicUrl(url: string): Promise<{
+export declare function isValidPublicUrl(_url: string): Promise<{
     valid: boolean;
     reason?: string;
 }>;

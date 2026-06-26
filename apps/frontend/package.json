@@ -10,6 +10,7 @@
     "build:watch": "vite build --watch",
     "build:analyze": "vite build && npx vite-bundle-analyzer dist",
     "build:stats": "vite build --mode production && npx vite-bundle-analyzer dist/stats.html",
+    "deploy:pages": "wrangler pages deploy --branch=production",
     "start": "npx --yes serve ./dist -p ${PORT:-3000} -n",
     "start:preview": "vite preview --host 0.0.0.0 --port $PORT",
     "preview": "vite preview --host 0.0.0.0 --port 4173",

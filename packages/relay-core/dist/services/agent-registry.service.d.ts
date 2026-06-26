@@ -17,6 +17,15 @@ export interface Agent {
     messageCount: number;
     violations: number;
     channel: string | null;
+    daccRole: 'director' | 'orchestrator' | 'broker' | 'worker' | 'participant' | null;
+    workerAction: string | null;
+    traits: Record<string, unknown>;
+    fulfillment: Record<string, unknown>;
+    idNumber: string | null;
+    mcid: string | null;
+    role: string | null;
+    qualities: Record<string, unknown>;
+    infoRecord: Record<string, unknown>;
 }
 export declare function createMasterClockAgentIdentity(sourceId: string, info: any, agentId: string, ordinal: number): TnfAgentIdentityRecord;
 export declare function createOrchestratorIdentity(sessionId: string): TnfAgentIdentityRecord;
@@ -37,6 +46,11 @@ export declare class AgentRegistryService {
         active: number;
         stalled: number;
         offline: number;
+        withRole: number;
+        withFulfillment: number;
+        withQualities: number;
+        withIdNumber: number;
+        withMcid: number;
     };
     toJSON(): {
         [k: string]: Agent;

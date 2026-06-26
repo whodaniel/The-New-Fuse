@@ -33,7 +33,13 @@ export async function onRequest(context) {
   const RELAY_SERVER = 'https://relay.thenewfuse.com';
 
   if (path.startsWith('/api/') || path.startsWith('/v1/') || path === '/api' || path === '/v1') {
-    return fetch(new Request(new URL(path + url.search, API_GATEWAY), context.request));
+    let apiPath = path;
+    if (apiPath.startsWith('/api/v1/')) {
+      apiPath = apiPath.replace('/api/v1/', '/api/');
+    } else if (apiPath.startsWith('/v1/') || apiPath === '/v1') {
+      apiPath = `/api${apiPath}`;
+    }
+    return fetch(new Request(new URL(apiPath + url.search, API_GATEWAY), context.request));
   }
 
   if (path.startsWith('/ws/') || path === '/ws') {

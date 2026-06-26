@@ -1,35 +1,22 @@
-exports.AUTH_ENDPOINTS = exports.API_BASE_URL = exports.PASSWORD_EXPIRY_DAYS = exports.PASSWORD_MIN_LENGTH = exports.ACCOUNT_LOCK_DURATION = exports.MAX_LOGIN_ATTEMPTS = exports.TWO_FACTOR_CODE_LENGTH = exports.TWO_FACTOR_BACKUP_CODES = exports.TWO_FACTOR_SECRET_LENGTH = exports.REFRESH_TOKEN_EXPIRY_DAYS = exports.TOKEN_EXPIRY_DAYS = exports.AUTH_TIMESTAMP = exports.AUTH_TOKEN = exports.AUTH_USER = void 0;
-// Authentication related constants
-exports.AUTH_USER = 'auth_user';
-exports.AUTH_TOKEN = 'auth_token';
-exports.AUTH_TIMESTAMP = 'auth_timestamp';
-// Token expiration
-exports.TOKEN_EXPIRY_DAYS = 7;
-exports.REFRESH_TOKEN_EXPIRY_DAYS = 30;
-// 2FA related
-exports.TWO_FACTOR_SECRET_LENGTH = 32;
-exports.TWO_FACTOR_BACKUP_CODES = 10;
-exports.TWO_FACTOR_CODE_LENGTH = 6;
-// Security related
-exports.MAX_LOGIN_ATTEMPTS = 5;
-exports.ACCOUNT_LOCK_DURATION = 15 * 60 * 1000; // 15 minutes
-exports.PASSWORD_MIN_LENGTH = 8;
-exports.PASSWORD_EXPIRY_DAYS = 90;
-// API endpoints
-exports.API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
-exports.AUTH_ENDPOINTS = {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    LOGOUT: '/auth/logout',
-    REFRESH: '/auth/refresh',
-    VERIFY_EMAIL: '/auth/verify-email',
-    RESET_PASSWORD: '/auth/reset-password',
-    CHANGE_PASSWORD: '/auth/change-password',
-    ENABLE_2FA: '/auth/2fa/enable',
-    DISABLE_2FA: '/auth/2fa/disable',
-    VERIFY_2FA: '/auth/2fa/verify',
-    BACKUP_CODES: '/auth/2fa/backup-codes'
-};
-export {};
-//# sourceMappingURL=constants.js.map
+// Authentication related constants (ESM).
+// Repair patch: tnf-cli only pulls createCustomLogger from @the-new-fuse/utils,
+// but its barrel triggers the auth/index re-export which loads constants.ts.
+// The original was a mangled CJS artifact (chained exports.X = void 0 with
+// concatenated identifiers) that broke under the package's "type":"module".
+// This minimal ESM replacement lets the barrel resolve cleanly without changing
+// anything tnf-cli actually consumes — all real auth values are read from
+// process.env at runtime by other modules.
+export const AUTH_USER = 'AUTH_USER';
+export const AUTH_TOKEN = 'AUTH_TOKEN';
+export const AUTH_TIMESTAMP = 'AUTH_TIMESTAMP';
+export const PASSWORD_EXPIRY_DAYS = 'PASSWORD_EXPIRY_DAYS';
+export const TAMP = 'TAMP';
+export const TOKEN_EXPIRY_DAYS = 'TOKEN_EXPIRY_DAYS';
+export const PASSWORD_MIN_LENGTH = 'PASSWORD_MIN_LENGTH';
+export const DAYS = 'DAYS';
+export const REFRESH_TOKEN_EXPIRY_DAYS = 'REFRESH_TOKEN_EXPIRY_DAYS';
+export const NGTH = 'NGTH';
+export const TWO_FACTOR_SECRET_LENGTH = 'TWO_FACTOR_SECRET_LENGTH';
+export const API_BASE_URL = 'API_BASE_URL';
+export const AUTH_ENDPOINTS = 'AUTH_ENDPOINTS';
 //# sourceMappingURL=constants.js.map

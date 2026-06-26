@@ -1,8 +1,8 @@
 import { spawn, spawnSync } from 'child_process';
 import { createHash } from 'crypto';
 import * as fs from 'fs';
-import * as path from 'path';
 import * as os from 'os';
+import * as path from 'path';
 export class MCPManagerService {
     constructor(configDir) {
         this.servers = new Map();
@@ -12,6 +12,47 @@ export class MCPManagerService {
         this.loadConfig();
         this.loadCredentials();
     }
+    static getRepoConfigPath(repoRoot) {
+        return path.join(repoRoot, 'data', 'mcp_config.json');
+    }
+    static getRepoConfigCandidates(repoRoot) {
+        return [
+            MCPManagerService.getRepoConfigPath(repoRoot),
+            path.join(repoRoot, 'tools', 'config-files', 'mcp_config.json'),
+            path.join(repoRoot, 'tools', 'config-files', 'enhanced_mcp_config.json'),
+        ];
+    }
+    static resolveRepoConfigPath(repoRoot) {
+        const configPath = MCPManagerService.getRepoConfigCandidates(repoRoot).find((candidate) => fs.existsSync(candidate));
+        if (!configPath) {
+            throw new Error(`Repo MCP config is missing. Run 'tnf onboard --repair' to create data/mcp_config.json.`);
+        }
+        return configPath;
+    }
+    static loadRepoServers(repoRoot) {
+        const configPath = MCPManagerService.resolveRepoConfigPath(repoRoot);
+        const raw = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        const serversObj = raw.mcpServers || raw.servers || {};
+        return Object.entries(serversObj).map(([name, serverConfig]) => MCPManagerService.normalizeServerConfig(name, serverConfig));
+    }
+    static normalizeServerConfig(name, serverConfig) {
+        const commandValue = Array.isArray(serverConfig.command)
+            ? serverConfig.command[0]
+            : serverConfig.command;
+        return {
+            name,
+            type: serverConfig.type || undefined,
+            command: commandValue,
+            args: Array.isArray(serverConfig.command) ? serverConfig.command.slice(1) : serverConfig.args,
+            env: serverConfig.environment || serverConfig.env,
+            environment: serverConfig.environment,
+            cwd: serverConfig.cwd,
+            transport: serverConfig.transport,
+            url: serverConfig.url,
+            enabled: serverConfig.enabled !== false && serverConfig.disabled !== true,
+            oauth: serverConfig.oauth,
+        };
+    }
     loadConfig() {
         const configPath = path.join(this.configDir, 'mcp.json');
         if (fs.existsSync(configPath)) {
@@ -19,24 +60,7 @@ export class MCPManagerService {
                 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 const serversObj = config.servers || config.mcpServers || {};
                 for (const [name, serverConfig] of Object.entries(serversObj)) {
-                    const normalized = {
-                        name,
-                        type: serverConfig.type || undefined,
-                        command: Array.isArray(serverConfig.command)
-                            ? serverConfig.command[0]
-                            : serverConfig.command,
-                        args: Array.isArray(serverConfig.command)
-                            ? serverConfig.command.slice(1)
-                            : serverConfig.args,
-                        env: serverConfig.environment || serverConfig.env,
-                        environment: serverConfig.environment,
-                        cwd: serverConfig.cwd,
-                        transport: serverConfig.transport,
-                        url: serverConfig.url,
-                        enabled: serverConfig.enabled !== false,
-                        oauth: serverConfig.oauth,
-                    };
-                    this.servers.set(name, normalized);
+                    this.servers.set(name, MCPManagerService.normalizeServerConfig(name, serverConfig));
                 }
             }
             catch {
@@ -108,6 +132,17 @@ export class MCPManagerService {
         const data = JSON.stringify({ servers: serversObj }, null, 2);
         fs.writeFileSync(configPath, data);
     }
+    syncFromRepo(repoRoot) {
+        const repoServers = MCPManagerService.loadRepoServers(repoRoot);
+        for (const server of repoServers) {
+            this.servers.set(server.name, server);
+        }
+        this.saveConfig();
+        return {
+            imported: repoServers.length,
+            configPath: MCPManagerService.resolveRepoConfigPath(repoRoot),
+        };
+    }
     removeServer(name) {
         const existed = this.servers.delete(name);
         if (existed) {
@@ -170,11 +205,13 @@ export class MCPManagerService {
                 configured: true,
                 running,
                 pid: proc?.pid,
-                oauth: config.oauth ? {
-                    enabled: config.oauth.enabled,
-                    authenticated: !!cred && (!cred.expiresAt || cred.expiresAt > Date.now()),
-                    expiry: cred?.expiresAt ? new Date(cred.expiresAt).toISOString() : undefined,
-                } : undefined,
+                oauth: config.oauth
+                    ? {
+                        enabled: config.oauth.enabled,
+                        authenticated: !!cred && (!cred.expiresAt || cred.expiresAt > Date.now()),
+                        expiry: cred?.expiresAt ? new Date(cred.expiresAt).toISOString() : undefined,
+                    }
+                    : undefined,
             });
         }
         return statuses;
@@ -260,7 +297,7 @@ export class MCPManagerService {
     }
     async debugConnection(name) {
         const config = this.servers.get(name);
-        const status = this.listServers().find(s => s.name === name);
+        const status = this.listServers().find((s) => s.name === name);
         const credential = this.credentials.get(name);
         const diagnostics = [];
         if (!config) {

@@ -2,4 +2,7 @@
 > @the-new-fuse/contracts@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts
 > eslint . --ext .ts,.tsx,.js,.jsx
 
- ELIFECYCLE  Command failed.
+(node:6362) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/eslint.config.js?mtime=1782210218748 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

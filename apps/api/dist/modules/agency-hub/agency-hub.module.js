@@ -20,9 +20,11 @@ const analytics_controller_1 = require("./controllers/analytics.controller");
 const email_custodian_controller_1 = require("./controllers/email-custodian.controller");
 const service_request_controller_1 = require("./controllers/service-request.controller");
 const swarm_controller_1 = require("./controllers/swarm.controller");
+const metrics_service_1 = require("../../services/metrics.service");
 // Services - The Three Pillars of TNF Agent
 const a2a_auth_broker_service_1 = require("./services/a2a-auth-broker.service");
 const a2a_message_broker_service_1 = require("./services/a2a-message-broker.service");
+const agency_analytics_service_1 = require("./services/agency-analytics.service");
 const agent_swarm_orchestration_service_1 = require("./services/agent-swarm-orchestration.service");
 const email_custodian_service_1 = require("./services/email-custodian.service");
 let AgencyHubModule = class AgencyHubModule {
@@ -49,6 +51,8 @@ exports.AgencyHubModule = AgencyHubModule = __decorate([
             email_custodian_controller_1.EmailCustodianController,
         ],
         providers: [
+            metrics_service_1.MetricsService,
+            agency_analytics_service_1.AgencyAnalyticsService,
             // Pillar 1: Orchestrator - Task management and swarm coordination
             agent_swarm_orchestration_service_1.AgentSwarmOrchestrationService,
             // Pillar 3: Message Broker - Inter-agent communication

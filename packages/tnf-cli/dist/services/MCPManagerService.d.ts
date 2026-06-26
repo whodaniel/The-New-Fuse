@@ -49,11 +49,20 @@ export declare class MCPManagerService {
     private processes;
     private credentials;
     constructor(configDir?: string);
+    static getRepoConfigPath(repoRoot: string): string;
+    static getRepoConfigCandidates(repoRoot: string): string[];
+    static resolveRepoConfigPath(repoRoot: string): string;
+    static loadRepoServers(repoRoot: string): MCPServerConfig[];
+    static normalizeServerConfig(name: string, serverConfig: any): MCPServerConfig;
     private loadConfig;
     private loadCredentials;
     private saveCredentials;
     addServer(name: string, config: Omit<MCPServerConfig, 'name'>): void;
     private saveConfig;
+    syncFromRepo(repoRoot: string): {
+        imported: number;
+        configPath: string;
+    };
     removeServer(name: string): boolean;
     enableServer(name: string): boolean;
     disableServer(name: string): boolean;

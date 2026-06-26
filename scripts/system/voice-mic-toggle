@@ -1,11 +1,12 @@
 #!/bin/bash
+# Pause or resume the voice beam (mic capture + injection). Default: toggle.
 set -euo pipefail
 
-if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
-  # shellcheck disable=SC1090
-  source "$HOME/bin/voicebridge-paths.sh"
-fi
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=voicebridge-paths.sh
+source "$_SCRIPT_DIR/voicebridge-paths.sh"
 profile="${VOICEBRIDGE_PROFILE:-main}"
+mode="toggle"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -25,8 +26,20 @@ while [[ $# -gt 0 ]]; do
       fi
       shift
       ;;
+    --pause|--off)
+      mode="pause"
+      shift
+      ;;
+    --resume|--on)
+      mode="resume"
+      shift
+      ;;
+    --status)
+      mode="status"
+      shift
+      ;;
     *)
-      echo "Usage: voice-mic-toggle [--profile A|B|...]" >&2
+      echo "Usage: voice-mic-toggle [--profile NAME] [--pause|--resume|--status]" >&2
       exit 1
       ;;
   esac
@@ -47,10 +60,40 @@ else
   MIC_FILE="$VOICEBRIDGE_STATE_DIR/voice_mic_paused"
 fi
 
-if [[ -f "$MIC_FILE" ]]; then
-  rm -f "$MIC_FILE"
-  echo "🎙️ [${VOICEBRIDGE_PROFILE}] Mic capture: ON"
-else
+beam_paused() {
+  [[ -f "$MIC_FILE" ]]
+}
+
+pause_beam() {
   touch "$MIC_FILE"
-  echo "🔇 [${VOICEBRIDGE_PROFILE}] Mic capture: OFF"
-fi
+  echo "⏸️  [${VOICEBRIDGE_PROFILE}] Beam paused (mic + injection idle)"
+}
+
+resume_beam() {
+  rm -f "$MIC_FILE"
+  echo "▶️  [${VOICEBRIDGE_PROFILE}] Beam active"
+}
+
+case "$mode" in
+  pause)
+    pause_beam
+    ;;
+  resume)
+    resume_beam
+    ;;
+  status)
+    if beam_paused; then
+      echo "paused"
+      exit 0
+    fi
+    echo "active"
+    exit 0
+    ;;
+  toggle)
+    if beam_paused; then
+      resume_beam
+    else
+      pause_beam
+    fi
+    ;;
+esac

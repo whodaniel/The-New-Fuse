@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebSocketTestClient = void 0;
 const socket_io_client_1 = require("socket.io-client");
 const common_1 = require("@nestjs/common");
-const strategies_js_1 = require("../strategies.js");
+const index_js_1 = require("../strategies/index.js");
 const compression_js_1 = require("../utils/compression.js");
 class WebSocketTestClient {
     config;
@@ -16,8 +16,8 @@ class WebSocketTestClient {
     constructor(config) {
         this.config = config;
         if (config.reconnection?.enabled) {
-            const strategy = new strategies_js_1.ExponentialBackoffStrategy(config.reconnection.maxAttempts ?? 10, config.reconnection.initialDelay ?? 1000);
-            this.reconnectionManager = new strategies_js_1.ReconnectionManager(strategy);
+            const strategy = new index_js_1.ExponentialBackoffStrategy(config.reconnection.maxAttempts ?? 10, config.reconnection.initialDelay ?? 1000);
+            this.reconnectionManager = new index_js_1.ReconnectionManager(strategy);
         }
         if (config.compression?.enabled) {
             this.compressionMiddleware = new compression_js_1.CompressionMiddleware(config.compression.threshold ?? 1024);

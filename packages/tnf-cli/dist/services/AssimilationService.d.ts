@@ -8,7 +8,11 @@ export declare class AssimilationService {
      * @param provider The external agent CLI (e.g. 'opencode', 'openclaw')
      * @param args The arguments to pass
      */
-    runAssimilatedCommand(provider: string, args: string[]): Promise<void>;
+    runAssimilatedCommand(provider: string, args: string[], options?: {
+        skipProtocolGate?: boolean;
+    }): Promise<void>;
+    private assertProviderAvailable;
+    private runProtocolGate;
     /**
      * Register a new external CLI mapping into the assimilation routing table.
      */

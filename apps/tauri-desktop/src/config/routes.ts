@@ -42,6 +42,22 @@ export const DESKTOP_ROUTES: DesktopRoute[] = [
   { id: 'terminal', path: '/terminal', label: 'Swarm Terminal', group: 'operate' },
   { id: 'oagi', path: '/oagi', label: 'OAGI Hub', group: 'operate' },
   { id: 'antigravity', path: '/antigravity', label: 'Antigravity', group: 'operate' },
+  {
+    id: 'voice',
+    path: '/voice',
+    label: 'Voice Bridge',
+    group: 'operate',
+    badge: 'LIVE',
+    keywords: ['mic', 'tts', 'speaker', 'beam', 'listen'],
+  },
+  {
+    id: 'library',
+    path: '/library',
+    label: 'Virtual Library',
+    group: 'operate',
+    badge: '3D',
+    keywords: ['library', 'story', 'timeline', '3d', 'offline'],
+  },
   { id: 'agents', path: '/agents', label: 'Agent Hub', group: 'agents' },
   { id: 'a2a', path: '/a2a', label: 'A2A Control', group: 'agents' },
   { id: 'chat', path: '/chat', label: 'Multi-Agent Chat', group: 'agents', keywords: ['chat'] },
@@ -103,6 +119,8 @@ export function persistRoute(path: string): void {
 
 export function desktopNativeOnlyRoutes(): DesktopRoute[] {
   return DESKTOP_ROUTES.filter((route) =>
-    ['/browser', '/terminal', '/oagi', '/antigravity', '/web-hub'].includes(route.path)
+    ['/browser', '/terminal', '/oagi', '/antigravity', '/voice', '/library', '/web-hub'].includes(
+      route.path
+    )
   );
 }

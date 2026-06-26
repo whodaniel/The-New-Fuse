@@ -45,6 +45,22 @@ const STANDARD_SLASH_COMMANDS = [
         mode: 'control',
     },
     {
+        name: 'exec',
+        aliases: ['run', 'shell'],
+        summary: 'Execute a shell command in the TNF repo root.',
+        usage: '/exec <command>',
+        source: 'standard',
+        mode: 'control',
+    },
+    {
+        name: 'autonomous',
+        aliases: ['auto'],
+        summary: 'Toggle automatic execution of bash blocks from assistant replies.',
+        usage: '/autonomous [on|off]',
+        source: 'standard',
+        mode: 'control',
+    },
+    {
         name: 'review',
         summary: 'Start a code review pass over the current workspace context.',
         usage: '/review [focus]',
@@ -95,6 +111,30 @@ const TNF_SLASH_COMMANDS = [
         cliCommand: ['doctor'],
     },
     {
+        name: 'state',
+        summary: 'Show canonical TNF living state, ledger, handoff, and runtime snapshot.',
+        usage: '/state',
+        source: 'tnf',
+        mode: 'cli',
+        cliCommand: ['state', 'show'],
+    },
+    {
+        name: 'handoff',
+        summary: 'Show the canonical TNF session handoff.',
+        usage: '/handoff',
+        source: 'tnf',
+        mode: 'cli',
+        cliCommand: ['handoff', 'show'],
+    },
+    {
+        name: 'protocol',
+        summary: 'Run TNF protocol schema validation.',
+        usage: '/protocol',
+        source: 'tnf',
+        mode: 'cli',
+        cliCommand: ['protocol', 'schemas'],
+    },
+    {
         name: 'agents',
         summary: 'List configured TNF agent paths.',
         usage: '/agents',
@@ -134,22 +174,6 @@ const TNF_SLASH_COMMANDS = [
         source: 'tnf',
         mode: 'cli',
         cliCommand: ['mcp', 'list'],
-    },
-    {
-        name: 'models',
-        summary: 'List available model/provider information.',
-        usage: '/models',
-        source: 'tnf',
-        mode: 'cli',
-        cliCommand: ['models'],
-    },
-    {
-        name: 'config',
-        summary: 'Show resolved TNF configuration.',
-        usage: '/config',
-        source: 'tnf',
-        mode: 'cli',
-        cliCommand: ['config', 'show'],
     },
     {
         name: 'skills',
@@ -242,7 +266,9 @@ export function renderSlashCommandList(projectRoot) {
             continue;
         lines.push(`${titleCase(group)}:`);
         for (const command of groupCommands.sort((a, b) => a.name.localeCompare(b.name))) {
-            const aliases = command.aliases?.length ? ` (${command.aliases.map((a) => `/${a}`).join(', ')})` : '';
+            const aliases = command.aliases?.length
+                ? ` (${command.aliases.map((a) => `/${a}`).join(', ')})`
+                : '';
             lines.push(`  /${command.name}${aliases}`);
             lines.push(`    ${command.summary}`);
         }
@@ -276,7 +302,9 @@ export function formatPromptSlashCommand(command, args) {
             ? `${command.content || ''}\n\nArguments:\n${suffix}`.trim()
             : (command.content || '').trim();
     }
-    return suffix ? `${command.prompt || command.summary}\n\n${suffix}` : command.prompt || command.summary;
+    return suffix
+        ? `${command.prompt || command.summary}\n\n${suffix}`
+        : command.prompt || command.summary;
 }
 function projectCommandToSlashCommand(command) {
     const firstHeading = command.content

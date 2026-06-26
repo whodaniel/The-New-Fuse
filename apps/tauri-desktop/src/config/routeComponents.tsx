@@ -21,6 +21,8 @@ const A2AControl = lazy(() => import('../pages/A2AControl'));
 const WebParityHub = lazy(() => import('../pages/WebParityHub'));
 const PlatformOverview = lazy(() => import('../pages/PlatformOverview'));
 const KnowledgeHub = lazy(() => import('../pages/KnowledgeHub'));
+const VoiceHub = lazy(() => import('../pages/VoiceHub'));
+const VirtualLibraryHub = lazy(() => import('../pages/VirtualLibraryHub'));
 
 export const ROUTE_COMPONENTS: Record<string, React.LazyExoticComponent<React.FC>> = {
   '/platform': PlatformOverview,
@@ -29,6 +31,8 @@ export const ROUTE_COMPONENTS: Record<string, React.LazyExoticComponent<React.FC
   '/terminal': SwarmTerminal,
   '/oagi': OAGIHub,
   '/antigravity': AntigravityHub,
+  '/voice': VoiceHub,
+  '/library': VirtualLibraryHub,
   '/agents': AgentHub,
   '/a2a': A2AControl,
   '/chat': MultiAgentChat,

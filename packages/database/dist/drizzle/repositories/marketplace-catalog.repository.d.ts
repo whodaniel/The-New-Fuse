@@ -46,16 +46,16 @@ export declare class DrizzleMarketplaceCatalogRepository {
     insertIfMissing(item: NewMarketplaceCatalogItemRow): Promise<{
         id: string;
         name: string;
-        status: string;
         description: string;
-        capabilities: string[];
         createdAt: Date;
         updatedAt: Date;
+        status: string;
+        tags: string[];
+        createdBy: string | null;
+        capabilities: string[];
         kind: string;
         category: string;
-        tags: string[];
         rating: number;
-        createdBy: string | null;
         slug: string;
         totalRuns: number;
         successRate: number;
@@ -67,16 +67,16 @@ export declare class DrizzleMarketplaceCatalogRepository {
     upsert(item: NewMarketplaceCatalogItemRow): Promise<{
         id: string;
         name: string;
-        status: string;
         description: string;
-        capabilities: string[];
         createdAt: Date;
         updatedAt: Date;
+        status: string;
+        tags: string[];
+        createdBy: string | null;
+        capabilities: string[];
         kind: string;
         category: string;
-        tags: string[];
         rating: number;
-        createdBy: string | null;
         slug: string;
         totalRuns: number;
         successRate: number;

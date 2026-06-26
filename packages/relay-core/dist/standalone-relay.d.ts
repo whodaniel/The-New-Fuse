@@ -78,6 +78,9 @@ export declare class TNFRelayServer extends EventEmitter {
     private readonly activityStreamKey;
     private readonly activityChannelPrefix;
     private readonly activityMaxLen;
+    private registryReplySubscriber;
+    private registryReplySubscriberReady;
+    private pendingAgentRegistrations;
     constructor(port?: number);
     private handleHttpRequest;
     /**
@@ -104,6 +107,9 @@ export declare class TNFRelayServer extends EventEmitter {
     private ensureActivityPersistenceReady;
     private handleAgentDisconnect;
     private send;
+    private setupRegistryReplyListener;
+    private handleRegistryReply;
+    private finalizeAgentRegistration;
     private handleBridgeEgress;
     dispatchTask(task: OrchestrationTask, channelId: string): void;
     private persistTaskDispatch;

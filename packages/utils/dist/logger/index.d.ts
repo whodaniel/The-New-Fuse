@@ -16,6 +16,7 @@ export interface LogConfig {
     level?: LogLevel;
     format?: any;
     transports?: winston.transport[];
+    service?: string;
 }
 export declare class LoggerWrapper {
     private logger;
@@ -29,5 +30,6 @@ export declare class LoggerWrapper {
     silly(message: string, meta?: Record<string, unknown>): void;
 }
 export declare const createCustomizedLogger: (config?: LogConfig) => LoggerWrapper;
+export { LoggerWrapper as Logger };
 export default createCustomizedLogger;
 //# sourceMappingURL=index.d.ts.map

@@ -1,5 +1,5 @@
 
-> @the-new-fuse/ap2-protocol@1.0.1 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/ap2-protocol
+> @the-new-fuse/ap2-protocol@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/ap2-protocol
 > eslint . --ext .ts,.tsx,.js,.jsx
 
 Warning: React version not specified in eslint-plugin-react settings. See https://github.com/jsx-eslint/eslint-plugin-react#configuration .

@@ -48,8 +48,6 @@ steps:
     - '0'
     - '--max-instances'
     - '10'
-    - '--set-env-vars'
-    - 'NODE_ENV=production'
     waitFor: ['push-api-server']
     id: 'deploy-api-server'
 

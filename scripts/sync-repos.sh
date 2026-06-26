@@ -6,7 +6,7 @@ set -euo pipefail
 # =============================================================================
 #
 # PURPOSE:
-#   Syncs the combined monorepo (whodaniel/fuse) to the two downstream repos:
+#   Syncs the combined monorepo (whodaniel/the-new-fuse-next-gen) to the two downstream repos:
 #     1. whodaniel/fuse-open-runtime   (90% open-source)
 #     2. whodaniel/fuse-control-plane  (10% proprietary)
 #
@@ -126,6 +126,8 @@ ALWAYS_EXCLUDE=(
   # Private env files (should never be in any public repo)
   ".env"
   ".env.local"
+  # Deprecated local install snapshot (canonical: scripts/system/)
+  "voice-bridge-package-20260325"
   # Duplicated mirror directory
   "pull-create"
   # Log and generated artifacts
@@ -387,7 +389,8 @@ fi
 # ─────────────────────────────────────────────────────────────────────
 
 echo "━━━ Cleanup ━━━"
-rm -rf "$WORK_DIR"
+chmod -R u+w "$WORK_DIR" 2>/dev/null || true
+rm -rf "$WORK_DIR" 2>/dev/null || true
 echo "  Removed temp directory"
 
 echo ""

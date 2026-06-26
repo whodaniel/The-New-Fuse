@@ -63,6 +63,7 @@ export declare class RedisAgentClient {
     constructor();
     initialize(): Promise<void>;
     private logRedisClientError;
+    private reconnectWithBackoff;
     register(name: string, role: any, platform: string, capabilities?: string[]): Promise<AgentInfo>;
     /**
      * Listen for task auctions

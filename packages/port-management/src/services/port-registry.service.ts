@@ -137,9 +137,6 @@ export class PortRegistryService extends EventEmitter {
     this.redisClient.connect().catch(console.error); // Connect mock client
     this.loadConfigurations();
   }
-    super();
-    this.loadConfigurations();
-  }
 
   /**
    * Register a port for a service
@@ -181,8 +178,6 @@ export class PortRegistryService extends EventEmitter {
         );
       }
       preReservedPort = true; // Mark as pre-reserved
-    } else {
-      // If an explicit port is provided, try to acquire a lock immediately
       const lockAcquired = await this.acquirePortLock(port);
       if (!lockAcquired) {
         throw new Error(
@@ -215,7 +210,6 @@ export class PortRegistryService extends EventEmitter {
     } else {
       // If not pre-reserved, but an explicit port was given and locked, release the lock
       await this.releasePortLock(port!); 
-    }
     }
 
     return registration;

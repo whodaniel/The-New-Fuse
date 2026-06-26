@@ -2,7 +2,7 @@
  * WorkflowFetcher
  * Fetches n8n workflows from GitHub repositories
  */
-import { N8nWorkflow, WorkflowFetchResult, WorkflowSource } from '../types/index.js';
+import type { N8nWorkflow, WorkflowFetchResult, WorkflowSource } from '../types/index.js';
 export interface RepositoryConfig {
     source: WorkflowSource;
     url: string;

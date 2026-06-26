@@ -102,12 +102,15 @@ export class WorkflowParser {
      */
     determineTriggerType(node) {
         const type = node.type.toLowerCase();
-        if (type.includes('webhook'))
+        if (type.includes('webhook')) {
             return 'webhook';
-        if (type.includes('cron') || type.includes('schedule'))
+        }
+        if (type.includes('cron') || type.includes('schedule')) {
             return 'schedule';
-        if (type.includes('manual') || type === 'n8n-nodes-base.start')
+        }
+        if (type.includes('manual') || type === 'n8n-nodes-base.start') {
             return 'manual';
+        }
         return 'trigger';
     }
     /**
@@ -262,18 +265,24 @@ export class WorkflowParser {
      */
     getCategoryFromNodeType(nodeType) {
         const type = nodeType.toLowerCase();
-        if (type.includes('trigger') || type.includes('webhook'))
+        if (type.includes('trigger') || type.includes('webhook')) {
             return 'triggers';
-        if (type.includes('database') || type.includes('sql'))
+        }
+        if (type.includes('database') || type.includes('sql')) {
             return 'database';
-        if (type.includes('http') || type.includes('api'))
+        }
+        if (type.includes('http') || type.includes('api')) {
             return 'api';
-        if (type.includes('file'))
+        }
+        if (type.includes('file')) {
             return 'files';
-        if (type.includes('email') || type.includes('gmail'))
+        }
+        if (type.includes('email') || type.includes('gmail')) {
             return 'email';
-        if (type.includes('slack') || type.includes('discord'))
+        }
+        if (type.includes('slack') || type.includes('discord')) {
             return 'communication';
+        }
         return 'utility';
     }
     /**
@@ -339,10 +348,12 @@ export class WorkflowParser {
      */
     calculateComplexity(nodes) {
         const nodeCount = nodes.length;
-        if (nodeCount <= 3)
+        if (nodeCount <= 3) {
             return 'simple';
-        if (nodeCount <= 10)
+        }
+        if (nodeCount <= 10) {
             return 'medium';
+        }
         return 'complex';
     }
     /**

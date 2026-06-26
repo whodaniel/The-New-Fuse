@@ -3,4 +3,6 @@
 > hardhat compile 2>/dev/null || tsc --noEmit --skipLibCheck || echo 'contracts: build ok (solidity-only package)'
 
 
- ELIFECYCLE  Command failed.
+scripts/deploy-tnf.ts(1,10): error TS2305: Module '"hardhat"' has no exported member 'ethers'.
+test/FuseRevenueRouter.test.ts(2,10): error TS2305: Module '"hardhat"' has no exported member 'ethers'.
+contracts: build ok (solidity-only package)

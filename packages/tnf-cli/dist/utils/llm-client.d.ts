@@ -24,6 +24,7 @@ export interface ProviderDescriptor {
     costPerMtokens?: number;
     note?: string;
     provider?: string;
+    reasoningEffort?: string;
 }
 /**
  * LLMClient — unified multi-provider client for the TNF CLI.
@@ -62,8 +63,16 @@ export declare class LLMClient {
     /** Rough liveness check — true if we have no evidence the provider is dead */
     private isProviderAlive;
     chatComplete(messages: LLMMessage[], options?: LLMOptions): Promise<string>;
+    /**
+     * Streaming chat completion — yields response chunks as they arrive.
+     * Falls back to non-streaming if streaming is not supported.
+     */
+    chatStream(messages: LLMMessage[], options?: LLMOptions): AsyncGenerator<string, void, unknown>;
+    /** OpenAI-compatible streaming via SSE */
+    private _streamOpenAICompatible;
     /** Route to the correct API format for the current baseUrl */
     private _callProvider;
+    private neuralwattReasoningEffort;
     /** OpenAI-compatible chat/completions endpoint (NVIDIA, Groq, OpenRouter, etc.) */
     private callOpenAICompatible;
     /** Gemini native API (generateContent endpoint) */

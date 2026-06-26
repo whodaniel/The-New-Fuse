@@ -1,4 +1,4 @@
 
 > @the-new-fuse/shared@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/shared
-> rm -rf dist && tsc --build
+> tsc --build
 

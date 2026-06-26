@@ -32,14 +32,14 @@ export declare class AccessController {
             enabled: boolean;
             required: boolean;
             satisfied: boolean;
-            source: "env" | "db" | null;
+            source: "db" | "env" | null;
         };
         membership: {
             found: boolean;
             active: boolean;
-            tier: "ENTERPRISE" | "STARTER" | "PRO";
+            tier: "STARTER" | "PRO" | "ENTERPRISE";
             overrideActive: boolean;
-            overrideTier: ("ENTERPRISE" | "STARTER" | "PRO") | null;
+            overrideTier: ("STARTER" | "PRO" | "ENTERPRISE") | null;
         };
         wallet: {
             linked: boolean;
@@ -50,7 +50,7 @@ export declare class AccessController {
             label: string | null;
             description: string | null;
             requiresMembership: boolean;
-            requiredTier: "ENTERPRISE" | "STARTER" | "PRO";
+            requiredTier: "STARTER" | "PRO" | "ENTERPRISE";
             nftRequired: boolean;
             nft: {
                 contractAddress: string | null;
@@ -61,7 +61,7 @@ export declare class AccessController {
             } | null;
             entitlement: {
                 source: string;
-                tierGranted: "ENTERPRISE" | "STARTER" | "PRO";
+                tierGranted: "STARTER" | "PRO" | "ENTERPRISE";
                 expiresAt: string | null;
             } | null;
         };

@@ -109,6 +109,15 @@ export const WEB_SURFACES: WebSurface[] = [
     nativeRoute: '/platform',
   },
   {
+    id: 'virtual-library',
+    name: 'Virtual Library',
+    path: '/',
+    description: '3D spatial knowledge OS with Story Architect and offline storage',
+    category: 'workspace',
+    icon: '📚',
+    nativeRoute: '/library',
+  },
+  {
     id: 'timeline',
     name: 'Timeline',
     path: '/timeline',

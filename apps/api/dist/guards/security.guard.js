@@ -49,13 +49,21 @@ let SecurityGuard = class SecurityGuard {
             requireAuth: this.reflector.get('requireAuth', context.getHandler()) || false,
             roles: this.reflector.get('roles', context.getHandler()) || [],
             permissions: this.reflector.get('permissions', context.getHandler()) || [],
-            rateLimit: this.reflector.get('rateLimit', context.getHandler()) || { requests: 100, window: 60000 },
+            rateLimit: this.reflector.get('rateLimit', context.getHandler()) || {
+                requests: 100,
+                window: 60000,
+            },
             sanitizeInput: this.reflector.get('sanitizeInput', context.getHandler()) || true,
             validateCSRF: this.reflector.get('validateCSRF', context.getHandler()) || false,
             strictMode: this.reflector.get('strictMode', context.getHandler()) || false,
         };
     }
     async checkRateLimit(request, response, options) {
+        const path = this.normalizeRequestPath(request);
+        if (this.isAuthBootstrapPath(path)) {
+            await this.checkAuthBootstrapRateLimit(request, response);
+            return;
+        }
         const clientIP = this.getClientIP(request);
         const userAgent = request.headers['user-agent'] || 'unknown';
         const key = `${clientIP}:${userAgent}`;
@@ -67,6 +75,43 @@ let SecurityGuard = class SecurityGuard {
             request.app.locals.rateLimit = new Map();
         }
         const rateLimitData = request.app.locals.rateLimit;
+        this.pruneRateLimitData(rateLimitData, now, maxEntries);
+        const userData = rateLimitData.get(key) || { count: 0, resetTime: now + windowMs };
+        if (now > userData.resetTime) {
+            userData.count = 0;
+            userData.resetTime = now + windowMs;
+        }
+        userData.count++;
+        rateLimitData.set(key, userData);
+        const remaining = Math.max(0, maxRequests - userData.count);
+        const retryAfterSeconds = Math.max(1, Math.ceil((userData.resetTime - now) / 1000));
+        response.setHeader('X-RateLimit-Limit', String(maxRequests));
+        response.setHeader('X-RateLimit-Remaining', String(remaining));
+        response.setHeader('X-RateLimit-Reset', String(Math.ceil(userData.resetTime / 1000)));
+        if (userData.count > maxRequests) {
+            response.setHeader('Retry-After', String(retryAfterSeconds));
+            throw new common_1.HttpException('Rate limit exceeded. Please try again later.', common_1.HttpStatus.TOO_MANY_REQUESTS);
+        }
+    }
+    normalizeRequestPath(request) {
+        const raw = request.path || request.url || '';
+        const withoutQuery = raw.split('?')[0] || '';
+        return withoutQuery.replace(/\/+$/, '') || '/';
+    }
+    isAuthBootstrapPath(path) {
+        return /^\/api(?:\/v1)?\/auth\/(me|supabase|login|register|refresh|google|invite-policy)(?:\/|$)/i.test(path);
+    }
+    async checkAuthBootstrapRateLimit(request, response) {
+        const clientIP = this.getClientIP(request);
+        const key = `auth-bootstrap:${clientIP}`;
+        const now = Date.now();
+        const maxRequests = this.resolvePositiveInteger(process.env.API_AUTH_RATE_LIMIT_REQUESTS, 60, 10, 10_000);
+        const windowMs = this.resolvePositiveInteger(process.env.API_AUTH_RATE_LIMIT_WINDOW_MS, 60_000, 1_000, 86_400_000);
+        const maxEntries = this.resolvePositiveInteger(process.env.API_RATE_LIMIT_MAX_KEYS, 10_000, 100, 1_000_000);
+        if (!request.app.locals.authBootstrapRateLimit) {
+            request.app.locals.authBootstrapRateLimit = new Map();
+        }
+        const rateLimitData = request.app.locals.authBootstrapRateLimit;
         this.pruneRateLimitData(rateLimitData, now, maxEntries);
         const userData = rateLimitData.get(key) || { count: 0, resetTime: now + windowMs };
         if (now > userData.resetTime) {
@@ -107,7 +152,7 @@ let SecurityGuard = class SecurityGuard {
         if (options.sanitizeInput) {
             // Sanitize query parameters
             if (request.query && typeof request.query === 'object') {
-                Object.keys(request.query).forEach(key => {
+                Object.keys(request.query).forEach((key) => {
                     if (typeof request.query[key] === 'string') {
                         request.query[key] = this.sanitizationService.sanitizeText(request.query[key]);
                     }
@@ -119,7 +164,7 @@ let SecurityGuard = class SecurityGuard {
             }
             // Sanitize params
             if (request.params && typeof request.params === 'object') {
-                Object.keys(request.params).forEach(key => {
+                Object.keys(request.params).forEach((key) => {
                     if (typeof request.params[key] === 'string') {
                         request.params[key] = this.sanitizationService.sanitizeText(request.params[key]);
                     }
@@ -168,6 +213,11 @@ let SecurityGuard = class SecurityGuard {
         response.setHeader('X-Client-IP', this.getClientIP(request));
     }
     prepareForResponse(request, response) {
+        // Auth responses must include JWTs verbatim — response sanitization masks *token* fields.
+        const path = request.path || request.url || '';
+        if (path.includes('/auth/')) {
+            return;
+        }
         // Store the original response methods to intercept and sanitize
         const originalJson = response.json.bind(response);
         const originalSend = response.send.bind(response);
@@ -243,10 +293,10 @@ let SecurityGuard = class SecurityGuard {
         return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method);
     }
     getClientIP(request) {
-        return request.headers['x-forwarded-for']?.split(',')[0] ||
+        return (request.headers['x-forwarded-for']?.split(',')[0] ||
             request.headers['x-real-ip'] ||
             request.connection.remoteAddress ||
-            'unknown';
+            'unknown');
     }
     generateRequestId() {
         return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;

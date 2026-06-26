@@ -5,7 +5,7 @@ LABEL="com.tnf.voice-bridge-server"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
 LAUNCH_DOMAIN="gui/$(id -u)"
 PYTHON_BIN="${TNF_VOICE_BRIDGE_PYTHON_BIN:-$(command -v python3)}"
-SCRIPT_PATH="${TNF_VOICE_BRIDGE_SCRIPT_PATH:-$HOME/bin/voice_server.py}"
+SCRIPT_PATH="${TNF_VOICE_BRIDGE_SCRIPT_PATH:-${TNF_VOICE_SYSTEM_DIR:-$HOME/bin}/voice_server.py}"
 WORK_DIR="${TNF_VOICE_BRIDGE_WORK_DIR:-$HOME}"
 LOG_PATH="${TNF_VOICE_BRIDGE_LOG_PATH:-/tmp/voice_server.log}"
 

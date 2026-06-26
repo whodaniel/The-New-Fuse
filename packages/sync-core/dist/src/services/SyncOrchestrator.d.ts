@@ -2,6 +2,7 @@ import { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { DrizzleService } from '@the-new-fuse/database';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
+import { ConflictManager } from './ConflictManager';
 import { EventEmitter } from 'events';
 import { ConflictResolution, SyncConflictData, SyncMetrics, SyncOperation, SyncResourceType, TenantSyncContext } from '../types';
 export interface AgentState {
@@ -37,12 +38,13 @@ export declare class SyncOrchestrator extends EventEmitter implements OnModuleIn
     private readonly wsService;
     private readonly dbService;
     private readonly promptTemplateService;
+    private readonly conflictManager;
     private readonly logger;
     private readonly config;
     private metrics;
     private activeSyncOperations;
     private tenantContexts;
-    constructor(redisService: UnifiedRedisService, wsService: IWebSocketService, dbService: DrizzleService, promptTemplateService: PromptTemplateServiceImpl);
+    constructor(redisService: UnifiedRedisService, wsService: IWebSocketService, dbService: DrizzleService, promptTemplateService: PromptTemplateServiceImpl, conflictManager: ConflictManager);
     onModuleInit(): Promise<void>;
     onModuleDestroy(): Promise<void>;
     /**

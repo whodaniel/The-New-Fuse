@@ -1,10 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
-  # shellcheck disable=SC1090
-  source "$HOME/bin/voicebridge-paths.sh"
-fi
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=voicebridge-paths.sh
+source "$_SCRIPT_DIR/voicebridge-paths.sh"
 press_enter=1
 quiet=0
 profile="${VOICEBRIDGE_PROFILE:-main}"

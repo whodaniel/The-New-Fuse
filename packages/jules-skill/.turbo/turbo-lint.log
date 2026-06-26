@@ -1,5 +1,5 @@
 
-> @the-new-fuse/jules-skill@0.1.1 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/jules-skill
+> @the-new-fuse/jules-skill@0.1.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/jules-skill
 > eslint src
 
- ELIFECYCLE  Command failed.
+Warning: React version not specified in eslint-plugin-react settings. See https://github.com/jsx-eslint/eslint-plugin-react#configuration .

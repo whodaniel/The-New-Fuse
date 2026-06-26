@@ -5,6 +5,7 @@
  * build orchestration with staged execution and real-time monitoring.
  */
 import { EventEmitter } from 'events';
+import { BuildProcessThrottler } from '../concurrency/BuildProcessThrottler.js';
 import { IBuildOrchestrator, IConcurrencyController, IDependencyGraphAnalyzer, IMemoryMonitor, ISystemResourceDetector, ITypeScriptCompilationManager } from '../interfaces/index.js';
 import { BuildEventCallback, BuildResult, BuildStrategy, SystemResources } from '../types/index.js';
 /**
@@ -15,13 +16,14 @@ export declare class BuildOrchestrator extends EventEmitter implements IBuildOrc
     private memoryMonitor;
     private dependencyAnalyzer;
     private concurrencyController;
+    private buildThrottler;
     private typescriptManager;
     private isBuilding;
     private shouldStop;
     private currentStrategy?;
     private buildStartTime;
     private buildMetrics;
-    constructor(workspaceRoot?: string, systemResourceDetector?: ISystemResourceDetector, memoryMonitor?: IMemoryMonitor, dependencyAnalyzer?: IDependencyGraphAnalyzer, concurrencyController?: IConcurrencyController, typescriptManager?: ITypeScriptCompilationManager);
+    constructor(workspaceRoot?: string, systemResourceDetector?: ISystemResourceDetector, memoryMonitor?: IMemoryMonitor, dependencyAnalyzer?: IDependencyGraphAnalyzer, concurrencyController?: IConcurrencyController, typescriptManager?: ITypeScriptCompilationManager, buildThrottler?: BuildProcessThrottler);
     /**
      * Execute build with specified strategy
      */

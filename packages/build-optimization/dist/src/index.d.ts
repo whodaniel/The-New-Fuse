@@ -19,6 +19,12 @@ export declare const VERSION = "1.0.0";
 export declare const DEFAULT_CONFIG: {
     /** Default memory threshold percentage for large monorepo */
     readonly MEMORY_THRESHOLD: 70;
+    /** Default system-wide memory threshold in MB for BuildProcessThrottler */
+    readonly MEMORY_THRESHOLD_MB: 4096;
+    /** Default estimated memory usage per process in MB */
+    readonly PROCESS_MEMORY_LIMIT_MB: 512;
+    /** Default timeout for individual build tasks in milliseconds (15 minutes) */
+    readonly DEFAULT_BUILD_TIMEOUT: 900000;
     /** Default monitoring interval in milliseconds */
     readonly MONITORING_INTERVAL: 1500;
     /** Default stage size optimized for 50+ packages */

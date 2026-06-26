@@ -3,7 +3,7 @@
 > **Status**: Active — This is the canonical reference for how TNF code is
 > distributed across repositories.
 >
-> **Last Updated**: 2026-03-24
+> **Last Updated**: 2026-06-22
 
 ---
 
@@ -13,14 +13,14 @@
 publication repos.**
 
 ```
-whodaniel/fuse  (COMBINED MONOREPO — you develop here)
+whodaniel/the-new-fuse-next-gen  (COMBINED MONOREPO — you develop here)
     │
     ├──► whodaniel/fuse-open-runtime   (90% open-source, read-only target)
     └──► whodaniel/fuse-control-plane  (10% proprietary, read-only target)
 ```
 
 - **NEVER commit directly to `fuse-open-runtime` or `fuse-control-plane`.**
-- **ALL development happens in `whodaniel/fuse`.**
+- **ALL development happens in `whodaniel/the-new-fuse-next-gen`.**
 - Run `pnpm run sync:repos` to push changes to both downstream repos.
 - The proprietary boundary is defined in `scripts/sync-repos.sh` (the
   `PROPRIETARY_*` arrays).
@@ -50,9 +50,10 @@ We develop in a single monorepo because:
 
 ## Repository Map
 
-### `whodaniel/fuse` — Combined Monorepo (Development)
+### `whodaniel/the-new-fuse-next-gen` — Combined Monorepo (Development)
 
-This is where you work. It contains everything.
+This is where you work. It contains everything. Local clone may use the directory
+name `The-New-Fuse`; remote `the-new-fuse-next-gen` is canonical.
 
 ```
 The-New-Fuse/
@@ -155,9 +156,16 @@ pnpm run sync:repos -- --dry-run
 
 ### When to Sync
 
-- After merging significant PRs to `main`
-- Before releases
+- After merging significant PRs to `main` on `the-new-fuse-next-gen`
+- Before releases (tag first: `git tag vX.Y.Z`)
 - Whenever you want the public/private repos to reflect latest state
+
+Recommended cadence:
+
+1. Merge → `main`
+2. `pnpm run sync:repos:dry-run`
+3. `pnpm run sync:repos` (or rely on `.github/workflows/repo-sync.yml` on push to `main`)
+4. Tag release on monorepo and on `fuse-open-runtime` after sync
 
 ---
 
@@ -214,7 +222,8 @@ on next sync. All changes go through the monorepo.
 **Q: What if I need to add a new proprietary component?** A: Add code to the
 monorepo, add its path to `scripts/sync-repos.sh`, add a stub, run sync.
 
-**Q: Is the monorepo public?** A: Yes, `whodaniel/fuse` is currently public. It
-contains proprietary code because it's the development workspace. The separation
-exists so that `fuse-open-runtime` is a clean public release without proprietary
-internals.
+**Q: Is the monorepo public?** A: `whodaniel/the-new-fuse-next-gen` is the
+canonical private development workspace. Legacy `whodaniel/fuse` remains public
+for historical narrative; see `docs/lineage/REPO_LINEAGE.md` for archive status.
+The separation exists so `fuse-open-runtime` is a clean public release without
+proprietary internals.

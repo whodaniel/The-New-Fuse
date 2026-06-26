@@ -7,9 +7,12 @@ export function registerAssimilateCommand(program, repoRoot) {
     assimilate
         .command('run <provider> [args...]')
         .description('Run a command through an external provider while enforcing TNF protocols.')
-        .action(async (provider, args) => {
+        .option('--skip-protocol-gate', 'Skip fast TNF protocol gate before provider execution')
+        .action(async (provider, args, options) => {
         try {
-            await service.runAssimilatedCommand(provider, args);
+            await service.runAssimilatedCommand(provider, args, {
+                skipProtocolGate: options.skipProtocolGate,
+            });
         }
         catch (error) {
             console.error(`[Assimilation Engine] Error: ${error.message}`);
@@ -19,8 +22,14 @@ export function registerAssimilateCommand(program, repoRoot) {
     assimilate
         .command('link <provider>')
         .description('Link a new external agent CLI to the TNF routing table.')
-        .action((provider) => {
-        service.linkProvider(provider);
+        .action(async (provider) => {
+        try {
+            await service.linkProvider(provider);
+        }
+        catch (error) {
+            console.error(`[Assimilation Engine] Error: ${error.message}`);
+            process.exit(1);
+        }
     });
 }
 //# sourceMappingURL=assimilate.js.map

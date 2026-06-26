@@ -414,8 +414,9 @@ export class WorkflowCategorizer {
     calculateConfidence(score, allScores) {
         const maxScore = Math.max(...allScores);
         const totalScore = allScores.reduce((sum, s) => sum + s, 0);
-        if (totalScore === 0)
+        if (totalScore === 0) {
             return 0;
+        }
         // Normalize between 0 and 1
         const normalizedScore = score / maxScore;
         const distribution = score / totalScore;

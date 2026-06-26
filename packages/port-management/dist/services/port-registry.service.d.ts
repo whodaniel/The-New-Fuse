@@ -59,9 +59,11 @@ export interface RuntimePortPreflightResult {
     allowedOccupiedPorts: number[];
 }
 export declare class PortRegistryService extends EventEmitter {
+    private redisClient;
     private registry;
     private configurations;
     private monitoringInterval;
+    private temporaryReservations;
     constructor();
     /**
      * Register a port for a service
@@ -76,6 +78,7 @@ export declare class PortRegistryService extends EventEmitter {
         healthCheckUrl?: string;
         metadata?: Record<string, any>;
     }): Promise<PortRegistration>;
+    private releaseTemporaryReservation;
     /**
      * Find an available port for a service
      */
@@ -114,11 +117,18 @@ export declare class PortRegistryService extends EventEmitter {
     private findPidsWithSs;
     private getPidCommand;
     /**
-     * Temporarily binds to a port to reserve it.
-     * Returns true if the port was successfully reserved, false otherwise.
+     * Temporarily binds to a port to reserve it. Keeps the server open.
+     * Returns the server instance if the port was successfully reserved, null otherwise.
      */
-    private reservePort;
+    /**
+     * Temporarily binds to a port to reserve it. Keeps the server open.
+     * Assumes a lock for this port has already been acquired if this is called after findAvailablePort.
+     * Returns the server instance if the port was successfully reserved, null otherwise.
+     */
+    private reservePortTemporarily;
     getByService(serviceName: string, environment?: string): PortRegistration[];
+    private acquirePortLock;
+    private releasePortLock;
     destroy(): void;
 }
 //# sourceMappingURL=port-registry.service.d.ts.map

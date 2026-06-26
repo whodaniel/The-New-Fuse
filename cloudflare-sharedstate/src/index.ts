@@ -598,6 +598,23 @@ async function appendReceipt(env: Env, receipt: Receipt) {
   return { key: seqJson?.receiptLog, sequencer: seqJson };
 }
 
+function isLocalEnvironment(value: string | undefined): boolean {
+  const normalized = String(value || '')
+    .trim()
+    .toLowerCase();
+  return ['local', 'localhost', 'devlocal', 'test'].includes(normalized);
+}
+
+function isLocalRuntimeRequest(req: Request, env: Env): boolean {
+  if (isLocalEnvironment(env.ENVIRONMENT)) return true;
+  try {
+    const hostname = new URL(req.url).hostname.toLowerCase();
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+  } catch {
+    return false;
+  }
+}
+
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);

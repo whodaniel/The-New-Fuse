@@ -503,20 +503,16 @@
         </div>
         <div class="hero-metrics">
           <div class="hero-metric">
-            <div class="value">113</div>
-            <div class="label">AI Agents</div>
-          </div>
-          <div class="hero-metric">
-            <div class="value">&lt;100ms</div>
-            <div class="label">Latency</div>
-          </div>
-          <div class="hero-metric">
             <div class="value">MCP + A2A</div>
             <div class="label">Protocols</div>
           </div>
           <div class="hero-metric">
-            <div class="value">∞</div>
-            <div class="label">Scale</div>
+            <div class="value">90%</div>
+            <div class="label">Open Source</div>
+          </div>
+          <div class="hero-metric">
+            <div class="value">3</div>
+            <div class="label">Runtimes</div>
           </div>
         </div>
       </div>
@@ -558,8 +554,8 @@
           </div>
           <div class="feature-card span-2 fade-in" style="--card-accent: var(--accent-pink)">
             <div class="feature-icon" style="background: rgba(236,72,153,0.12)">🧠</div>
-            <h3>Persistent Knowledge Graph (PKG)</h3>
-            <p>Cross-session memory that learns from every interaction. Your agent fleet shares context, recognizes patterns, and compounds evolutionary knowledge over time.</p>
+            <h3>Cross-Session Agent Memory <span style="font-size:11px;background:rgba(236,72,153,0.2);padding:2px 8px;border-radius:999px;font-weight:600;vertical-align:middle;margin-left:8px">COMING SOON</span></h3>
+            <p>Shared context across agent sessions via the Redis Synaptic Bus. Your agent fleet shares state, recognizes patterns, and maintains continuity between sessions.</p>
           </div>
           <div class="feature-card fade-in" style="--card-accent: var(--accent-blue)">
             <div class="feature-icon" style="background: rgba(59,130,246,0.12)">🌐</div>
@@ -568,8 +564,8 @@
           </div>
           <div class="feature-card fade-in">
             <div class="feature-icon" style="background: rgba(245,158,11,0.12)">⚡</div>
-            <h3>Predictive Enhancement</h3>
-            <p>Go beyond assistive tools. The Autonomous Enhancement Engine (AEE) monitors telemetry and proactively proposes systemic performance and code improvements.</p>
+            <h3>Turn Zero Protocol</h3>
+            <p>Every agent session starts with full context. Turn Zero loads system state, memory, and active tasks before the first message — no cold starts, no lost context.</p>
           </div>
         </div>
       </div>
@@ -589,15 +585,11 @@
             <h3>The Central Nervous System</h3>
             <p>Debug, deploy, and direct your swarm from the <strong>Fuse Connect</strong> Chrome Extension or our native VS Code package.</p>
             <div class="code-preview">
-              <span class="cm">// Initialize swarm with Auto-Scaling & Quality selection</span><br>
-              <span class="kw">import</span> { <span class="fn">swarmService</span> } <span class="kw">from</span> <span class="str">'@the-new-fuse/core'</span>;<br><br>
-              <span class="kw">await</span> swarmService.<span class="fn">initializeAgencySwarm</span>(<span class="str">'my-agency'</span>);<br>
-              <span class="kw">const</span> agent = <span class="kw">await</span> swarmService.<span class="fn">registerAgent</span>(<span class="str">'my-agency'</span>, {<br>
-              &nbsp;&nbsp;name: <span class="str">'Architect'</span>,<br>
-              &nbsp;&nbsp;capabilities: [<span class="str">'planning'</span>, <span class="str">'delegation'</span>],<br>
-              &nbsp;&nbsp;qualityScore: <span class="num">0.95</span><br>
-              });<br><br>
-              <span class="kw">await</span> broker.<span class="fn">sendMessage</span>({ to: <span class="str">'worker-pool'</span>, action: <span class="str">'build'</span> });
+              <span class="cm"># Install + boot the TNF harness (open runtime)</span><br>
+              <span class="fn">curl</span> -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh | <span class="fn">bash</span><br><br>
+              <span class="fn">tnf</span> onboard<br>
+              <span class="fn">tnf</span> state show<br>
+              <span class="fn">curl</span> http://127.0.0.1:3007/handoff-lineage
             </div>
           </div>
           <div class="bento-card b2 fade-in">
@@ -629,41 +621,41 @@
       <div class="container">
         <div class="section-header fade-in">
           <div class="section-tag green">💰 Pricing</div>
-          <h2 class="section-title">Simple, Transparent Pricing</h2>
-          <p class="section-desc">Start free. Scale when you're ready.</p>
+          <h2 class="section-title">Free During Beta</h2>
+          <p class="section-desc">The full platform is free while we're in beta. Pro tiers coming soon.</p>
         </div>
 
         <div class="pricing-grid">
-          <!-- Starter -->
+          <!-- Beta -->
           <div class="pricing-card fade-in">
-            <div class="name">Starter</div>
-            <div class="desc">For individuals and side projects</div>
+            <div class="name">Open Source</div>
+            <div class="desc">Self-host the open runtime</div>
             <div class="price">Free</div>
             <div class="period">forever</div>
             <ul class="pricing-features">
-              <li>Up to 5 AI Agents</li>
-              <li>Basic Workflow Automation</li>
-              <li>Community Support</li>
-              <li>1,000 Messages/Month</li>
+              <li>Full open runtime (90% of platform)</li>
+              <li>MCP + A2A protocol support</li>
+              <li>Chrome extension federation</li>
+              <li>Community support on GitHub</li>
             </ul>
-            <a href="/auth/register" class="btn btn-secondary" style="width:100%; justify-content:center;">Get Started</a>
+            <a href="https://github.com/whodaniel/fuse-open-runtime" class="btn btn-secondary" style="width:100%; justify-content:center;" target="_blank" rel="noopener">View on GitHub</a>
           </div>
 
-          <!-- Professional -->
+          <!-- Beta Pro -->
           <div class="pricing-card featured fade-in">
-            <div class="pricing-badge">Most Popular</div>
-            <div class="name">Professional</div>
-            <div class="desc">For teams building production agents</div>
-            <div class="price">$30</div>
-            <div class="period">per month</div>
+            <div class="pricing-badge">Beta Access</div>
+            <div class="name">Hosted Platform</div>
+            <div class="desc">Managed cloud with all features</div>
+            <div class="price">Free</div>
+            <div class="period">during beta</div>
             <ul class="pricing-features">
-              <li>Up to 25 AI Agents</li>
-              <li>Advanced Workflow Automation</li>
-              <li>Priority Support</li>
-              <li>10,000 Messages/Month</li>
-              <li>API Access</li>
+              <li>Everything in Open Source</li>
+              <li>Hosted relay and orchestration</li>
+              <li>Visual workflow builder</li>
+              <li>Agent registry and marketplace</li>
+              <li>Priority support</li>
             </ul>
-            <a href="/auth/register" class="btn btn-primary" style="width:100%; justify-content:center;">Get Started</a>
+            <a href="https://app.thenewfuse.com/auth/register" class="btn btn-primary" style="width:100%; justify-content:center;">Join Beta Free</a>
           </div>
 
           <!-- Enterprise -->
@@ -671,13 +663,13 @@
             <div class="name">Enterprise</div>
             <div class="desc">For organizations at scale</div>
             <div class="price">Custom</div>
-            <div class="period">contact sales</div>
+            <div class="period">contact us</div>
             <ul class="pricing-features">
-              <li>Unlimited AI Agents</li>
-              <li>Enterprise Workflows</li>
-              <li>24/7 Dedicated Support</li>
-              <li>Custom Integrations</li>
-              <li>SLA Guarantees</li>
+              <li>Everything in Hosted Platform</li>
+              <li>Dedicated infrastructure</li>
+              <li>24/7 support with SLA</li>
+              <li>Custom integrations</li>
+              <li>On-premise deployment</li>
             </ul>
             <a href="mailto:sales@thenewfuse.com" class="btn btn-secondary" style="width:100%; justify-content:center;">Contact Sales</a>
           </div>
@@ -693,7 +685,7 @@
         <a href="/auth/register" class="btn btn-primary btn-lg">
           <span class="btn-icon">🚀</span> Start Building Now
         </a>
-        <a href="https://github.com/whodaniel/fuse" class="btn btn-secondary btn-lg" target="_blank" rel="noopener">
+        <a href="https://github.com/whodaniel/fuse-open-runtime" class="btn btn-secondary btn-lg" target="_blank" rel="noopener">
           <span class="btn-icon">⭐</span> Star on GitHub
         </a>
       </div>
@@ -718,9 +710,9 @@
         </div>
         <div class="footer-col">
           <h4>Developers</h4>
-          <a href="https://github.com/whodaniel/fuse" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/whodaniel/fuse-open-runtime" target="_blank" rel="noopener">GitHub</a>
           <a href="/docs">Documentation</a>
-          <a href="/api/docs">API Reference</a>
+          <a href="/docs">API Reference</a>
           <a href="/agents">Agent Registry</a>
         </div>
         <div class="footer-col">
@@ -732,7 +724,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2025 The New Fuse. All rights reserved.</span>
+        <span>© 2026 The New Fuse. All rights reserved.</span>
         <span>Built with ⚡ for the AI era</span>
       </div>
     </footer>
