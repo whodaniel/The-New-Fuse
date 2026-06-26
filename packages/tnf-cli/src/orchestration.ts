@@ -1,9 +1,13 @@
-import { RedisAgentClient, AgentMessage } from './RedisAgentClient.js';
 import chalk from 'chalk';
 import fs from 'fs';
-import path from 'path';
 import { readFile, readdir } from 'fs/promises';
-import { WorkerDispatcher, SelfImprovementTracker, ComprehensiveSkillScanner } from './orchestration-enhancements.js';
+import path from 'path';
+import {
+  ComprehensiveSkillScanner,
+  SelfImprovementTracker,
+  WorkerDispatcher,
+} from './orchestration-enhancements.js';
+import { RedisAgentClient } from './RedisAgentClient.js';
 
 // ============================================================================
 // TNF ENHANCED ORCHESTRATION SYSTEM v2.0
@@ -18,12 +22,12 @@ export interface Task {
   id: string;
   name: string;
   description: string;
-  skillRef?: string;        // e.g. "tnf-full-auto-network-autopilot"
-  workerRef?: string;       // e.g. "hermes-codegen-worker"
+  skillRef?: string; // e.g. "tnf-full-auto-network-autopilot"
+  workerRef?: string; // e.g. "hermes-codegen-worker"
   priority: 'critical' | 'high' | 'medium' | 'low';
   status: 'pending' | 'running' | 'completed' | 'failed' | 'blocked';
-  dependencies: string[];   // task IDs that must complete first
-  capability?: string;       // 'code' or 'infra' for worker routing
+  dependencies: string[]; // task IDs that must complete first
+  capability?: string; // 'code' or 'infra' for worker routing
   artifacts?: string[];
   payload: any;
   result?: any;
@@ -51,8 +55,8 @@ export interface Skill {
   description: string;
   path: string;
   commands: string[];
-  triggers: string[];       // keywords that match this skill
-  confidence: number;       // 0-1, how confident we are this skill applies
+  triggers: string[]; // keywords that match this skill
+  confidence: number; // 0-1, how confident we are this skill applies
 }
 
 export interface Worker {
@@ -79,58 +83,58 @@ export interface SystemState {
 // GoalPlanner: Decomposes natural language goals into task trees
 // ---------------------------------------------------------------------------
 export class GoalPlanner {
-  private goalPatterns: Array<{pattern: RegExp; skill: string; tasks: string[]}> = [];
+  private goalPatterns: Array<{ pattern: RegExp; skill: string; tasks: string[] }> = [];
   private static BUILT_IN_PATTERNS = [
     {
       pattern: /deploy|build|gcp|cloud.?build|docker|kubernetes/i,
       skill: 'tnf-full-auto-network-autopilot',
-      tasks: ['validate-config', 'build-image', 'deploy-to-gcp', 'verify-deployment']
+      tasks: ['validate-config', 'build-image', 'deploy-to-gcp', 'verify-deployment'],
     },
     {
       pattern: /refactor|cleanup|dead.code|duplicate|optimize|simplify/i,
       skill: 'tnf-refactoring-triage',
-      tasks: ['scan-codebase', 'identify-hotspots', 'prioritize-changes', 'execute-safe-refactors']
+      tasks: ['scan-codebase', 'identify-hotspots', 'prioritize-changes', 'execute-safe-refactors'],
     },
     {
       pattern: /test|health.?check|monitor|diagnose|inspect/i,
       skill: 'tnf-health-check',
-      tasks: ['run-health-checks', 'aggregate-results', 'report-anomalies']
+      tasks: ['run-health-checks', 'aggregate-results', 'report-anomalies'],
     },
     {
       pattern: /register|spawn|create.*worker|agent.*register|worker.*setup/i,
       skill: 'tnf-agent-ecosystem-classification',
-      tasks: ['validate-registry', 'create-worker-config', 'install-cron', 'verify-heartbeat']
+      tasks: ['validate-registry', 'create-worker-config', 'install-cron', 'verify-heartbeat'],
     },
     {
       pattern: /install.*skill|skill.*install|enable.*skill|add.*capability/i,
       skill: 'skill-installer',
-      tasks: ['discover-skill', 'validate-compatibility', 'install-skill', 'verify-functionality']
+      tasks: ['discover-skill', 'validate-compatibility', 'install-skill', 'verify-functionality'],
     },
     {
       pattern: /search|lookup|find.*information|research/i,
       skill: 'tavily-search',
-      tasks: ['formulate-query', 'execute-search', 'synthesize-results']
+      tasks: ['formulate-query', 'execute-search', 'synthesize-results'],
     },
     {
       pattern: /error|fail|bug|fix.*broken|troubleshoot/i,
       skill: 'self-improving-agent',
-      tasks: ['capture-error-context', 'log-to-learnings', 'suggest-fix']
+      tasks: ['capture-error-context', 'log-to-learnings', 'suggest-fix'],
     },
     {
       pattern: /browser|chrome|automation|scrape|web.*scrap/i,
       skill: '.agent/skills/agent-browser',
-      tasks: ['launch-browser', 'navigate-target', 'extract-data', 'close-browser']
+      tasks: ['launch-browser', 'navigate-target', 'extract-data', 'close-browser'],
     },
     {
       pattern: /security|threat|audit|vulnerability|pen.?test/i,
       skill: 'security-threat-model',
-      tasks: ['identify-assets', 'model-threats', 'assess-risks', 'plan-mitigations']
+      tasks: ['identify-assets', 'model-threats', 'assess-risks', 'plan-mitigations'],
     },
     {
       pattern: /note|journal|memory|remember|recall/i,
       skill: 'tnf-note-taking',
-      tasks: ['capture-note', 'categorize-note', 'index-note', 'link-related']
-    }
+      tasks: ['capture-note', 'categorize-note', 'index-note', 'link-related'],
+    },
   ];
 
   constructor() {
@@ -139,7 +143,10 @@ export class GoalPlanner {
 
   /** Dynamically add patterns discovered from skills */
   addPatternFromSkill(skill: Skill): void {
-    const words = skill.description.toLowerCase().split(/\s+/).filter(w => w.length > 4);
+    const words = skill.description
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((w) => w.length > 4);
     // Create a pattern from unique significant words
     const uniqueWords = [...new Set(words)].slice(0, 5);
     if (uniqueWords.length >= 2) {
@@ -147,7 +154,7 @@ export class GoalPlanner {
       this.goalPatterns.push({
         pattern: new RegExp(patternStr, 'i'),
         skill: skill.name,
-        tasks: ['analyze-goal', `execute-${skill.name}`, 'verify-completion']
+        tasks: ['analyze-goal', `execute-${skill.name}`, 'verify-completion'],
       });
     }
   }
@@ -164,14 +171,16 @@ export class GoalPlanner {
       tasks: [],
       status: 'planning',
       createdAt: new Date().toISOString(),
-      metadata: { planningStrategy: 'pattern-match' }
+      metadata: { planningStrategy: 'pattern-match' },
     };
 
     // Try pattern matching first
     for (const pattern of this.goalPatterns) {
       if (pattern.pattern.test(goal)) {
         workflow.metadata.planningStrategy = `pattern:${pattern.skill}`;
-        workflow.tasks = pattern.tasks.map((name, idx) => this.createTask(name, pattern.skill, idx));
+        workflow.tasks = pattern.tasks.map((name, idx) =>
+          this.createTask(name, pattern.skill, idx)
+        );
         break;
       }
     }
@@ -187,7 +196,7 @@ export class GoalPlanner {
         dependencies: [],
         payload: { goal, strategy: 'exploratory' },
         attempts: 0,
-        maxAttempts: 3
+        maxAttempts: 3,
       });
       workflow.metadata.planningStrategy = 'exploratory';
     }
@@ -212,7 +221,7 @@ export class GoalPlanner {
       dependencies: [],
       payload: { step: index, skill },
       attempts: 0,
-      maxAttempts: 3
+      maxAttempts: 3,
     };
   }
 }
@@ -253,7 +262,7 @@ export class SkillRegistry {
     try {
       const skillPath = path.join(this.skillsPath, dirName, 'SKILL.md');
       const content = await readFile(skillPath, 'utf-8');
-      
+
       // Parse YAML frontmatter
       const match = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/);
       if (!match) return null;
@@ -264,10 +273,10 @@ export class SkillRegistry {
       // Simple YAML parser for frontmatter
       const name = frontmatter.match(/name:\s*(.+)/)?.[1]?.trim() || dirName;
       const description = frontmatter.match(/description:\s*(.+)/)?.[1]?.trim() || '';
-      
+
       // Extract triggers from description and body keywords
       const triggers = this.extractTriggers(description + ' ' + body);
-      
+
       // Extract command references
       const commands: string[] = [];
       const commandMatches = body.matchAll(/```bash\s*\n([\s\S]*?)\n```/g);
@@ -281,7 +290,7 @@ export class SkillRegistry {
         path: skillPath,
         commands,
         triggers,
-        confidence: 0.8
+        confidence: 0.8,
       };
     } catch {
       return null;
@@ -292,7 +301,18 @@ export class SkillRegistry {
     const triggers = new Set<string>();
     const keywords = text.toLowerCase().match(/\b\w{4,}\b/g) || [];
     for (const kw of keywords) {
-      if (['skill', 'agent', 'deploy', 'build', 'test', 'refactor', 'orchestrate', 'monitor'].includes(kw)) {
+      if (
+        [
+          'skill',
+          'agent',
+          'deploy',
+          'build',
+          'test',
+          'refactor',
+          'orchestrate',
+          'monitor',
+        ].includes(kw)
+      ) {
         triggers.add(kw);
       }
     }
@@ -307,12 +327,12 @@ export class SkillRegistry {
 
     for (const skill of this.skills.values()) {
       let score = 0;
-      
+
       // Match triggers
       for (const trigger of skill.triggers) {
         if (q.includes(trigger)) score += 10;
       }
-      
+
       // Match description words
       const descWords = skill.description.toLowerCase().split(/\s+/);
       for (const word of descWords) {
@@ -358,12 +378,12 @@ export class StateManager {
       activeWorkers: 0,
       skillsAvailable: 0,
       lastSync: new Date().toISOString(),
-      health: 'healthy'
+      health: 'healthy',
     };
 
     try {
       const content = await readFile(this.statePath, 'utf-8');
-      
+
       // Extract current directive
       const directiveMatch = content.match(/\*\*Current Directive:\*\*\s*(.+?)(?:\n|$)/);
       if (directiveMatch) {
@@ -381,7 +401,6 @@ export class StateManager {
       if (content.includes('🔴') || content.includes('CRITICAL')) {
         state.health = 'critical';
       }
-
     } catch {
       // State file may not exist
     }
@@ -421,35 +440,71 @@ export class WorkerPool {
 
   /** Scan Redis for available workers */
   async discoverWorkers(): Promise<Worker[]> {
-    // In a real implementation, this would query Redis HGETALL tnf:agent-registry
-    // For now, we return a mock based on known worker types
-    const knownWorkers = [
-      { id: 'agent_hermes-codegen-worker_1782364000001', name: 'hermes-codegen-worker', capabilities: ['code_generation', 'typescript_strict'] },
-      { id: 'agent_hermes-infra-worker_1782364000002', name: 'hermes-infra-worker', capabilities: ['infra_audit', 'build_config_render'] }
-    ];
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const agents = await client.listAgents();
+      const workers = agents.filter((agent) => agent.role === 'worker');
+      if (workers.length > 0) {
+        return workers.map((agent) => ({
+          id: agent.id,
+          name: agent.name,
+          capabilities: agent.capabilities || [],
+          role: 'worker' as const,
+          platform: agent.platform,
+          status: agent.isOnline ? ('active' as const) : agent.status,
+          lastSeen: agent.lastSeen,
+          queue: `tnf:direct:sub-director:${agent.id}`,
+        }));
+      }
+    } catch {
+      // Fall through to registry snapshot files.
+    }
 
-    return knownWorkers.map(w => ({
-      ...w,
-      role: 'worker',
-      platform: 'claude',
-      status: 'active',
-      lastSeen: new Date().toISOString(),
-      queue: `tnf:direct:sub-director:${w.id}`
-    }));
+    for (const candidate of [
+      path.join(process.cwd(), '.tnf', 'agent-registry-snapshot.json'),
+      path.join(process.env.HOME || '', '.tnf', 'agent-registry-snapshot.json'),
+    ]) {
+      try {
+        if (!fs.existsSync(candidate)) continue;
+        const parsed = JSON.parse(fs.readFileSync(candidate, 'utf8'));
+        const agents = Array.isArray(parsed?.agents) ? parsed.agents : [];
+        const workers = agents.filter(
+          (agent: any) => String(agent?.role || '').toLowerCase() === 'worker'
+        );
+        if (workers.length > 0) {
+          return workers.map((agent: any) => ({
+            id: String(agent.id || agent.name),
+            name: String(agent.name || agent.id),
+            capabilities: Array.isArray(agent.capabilities) ? agent.capabilities : [],
+            role: 'worker' as const,
+            platform: String(agent.platform || agent.fulfillment?.vendor || 'unknown'),
+            status: 'active' as const,
+            lastSeen: new Date().toISOString(),
+            queue: `tnf:direct:sub-director:${String(agent.id || agent.name)}`,
+          }));
+        }
+      } catch {
+        // Try next snapshot source.
+      }
+    }
+
+    return [];
   }
 
   /** Find the best worker for a given task */
   async findWorker(task: Task): Promise<Worker | null> {
     const allWorkers = await this.discoverWorkers();
-    
+
     // Score workers by capability overlap
     let best: Worker | null = null;
     let bestScore = 0;
 
     for (const worker of allWorkers) {
-      const score = worker.capabilities.filter(cap => 
-        task.skillRef?.toLowerCase().includes(cap.toLowerCase()) ||
-        task.name.toLowerCase().includes(cap.toLowerCase())
+      const score = worker.capabilities.filter(
+        (cap) =>
+          task.skillRef?.toLowerCase().includes(cap.toLowerCase()) ||
+          task.name.toLowerCase().includes(cap.toLowerCase())
       ).length;
 
       if (score > bestScore) {
@@ -464,19 +519,22 @@ export class WorkerPool {
   /** Send a task to a worker via Redis */
   async dispatchToWorker(worker: Worker, task: Task): Promise<boolean> {
     try {
-      await this.client.send(JSON.stringify({
-        type: 'task',
-        taskId: task.id,
-        payload: task.payload,
-        skillRef: task.skillRef
-      }), {
-        type: 'command',
-        metadata: {
-          target: worker.id,
-          queue: worker.queue,
-          workflow: 'orchestrated-dispatch'
+      await this.client.send(
+        JSON.stringify({
+          type: 'task',
+          taskId: task.id,
+          payload: task.payload,
+          skillRef: task.skillRef,
+        }),
+        {
+          type: 'command',
+          metadata: {
+            target: worker.id,
+            queue: worker.queue,
+            workflow: 'orchestrated-dispatch',
+          },
         }
-      });
+      );
       return true;
     } catch {
       return false;
@@ -515,7 +573,7 @@ export class EnhancedOrchestrator {
   /** Bootstrap: discover skills, verify state, prepare for operation */
   async initialize(): Promise<void> {
     console.log(chalk.dim('   🔧 Initializing Enhanced Orchestrator v2.0...'));
-    
+
     // Load skills
     const skills = await this.skillRegistry.discover();
     console.log(chalk.dim(`   📚 Discovered ${skills.length} skills from registry`));
@@ -523,7 +581,7 @@ export class EnhancedOrchestrator {
     // Scan all skills for trigger patterns
     const scanned = await this.skillScanner.scanAll();
     console.log(chalk.dim(`   🔍 Scanned ${scanned.length} skills for goal patterns`));
-    
+
     // Register discovered patterns
     for (const pattern of scanned) {
       this.goalPlanner.addPatternFromSkill({
@@ -532,10 +590,10 @@ export class EnhancedOrchestrator {
         path: '',
         commands: [],
         triggers: pattern.triggers,
-        confidence: pattern.confidence
+        confidence: pattern.confidence,
       });
     }
-    
+
     this.skillCacheLoaded = true;
 
     // Verify system state
@@ -552,13 +610,19 @@ export class EnhancedOrchestrator {
    * This is the main entry point for autonomous operation.
    */
   async executeGoal(goal: string): Promise<Workflow> {
-    console.log(chalk.cyan(`
-🎯 Processing goal: ${chalk.bold(goal)}`));
+    console.log(
+      chalk.cyan(`
+🎯 Processing goal: ${chalk.bold(goal)}`)
+    );
 
     // Phase 1: Plan - Decompose goal into tasks
     const workflow = await this.goalPlanner.plan(goal);
     this.activeWorkflows.set(workflow.id, workflow);
-    console.log(chalk.dim(`   📋 Planned ${workflow.tasks.length} tasks (${workflow.metadata.planningStrategy})`));
+    console.log(
+      chalk.dim(
+        `   📋 Planned ${workflow.tasks.length} tasks (${workflow.metadata.planningStrategy})`
+      )
+    );
 
     // Phase 2: Match - Find best skills for each task
     for (const task of workflow.tasks) {
@@ -574,7 +638,7 @@ export class EnhancedOrchestrator {
     // Phase 3: Route - Assign workers to tasks
     for (const task of workflow.tasks) {
       if (task.status !== 'pending' || task.dependencies.length > 0) continue;
-      
+
       const worker = await this.workerPool.findWorker(task);
       if (worker) {
         task.workerRef = worker.id;
@@ -590,7 +654,7 @@ export class EnhancedOrchestrator {
     if (workflow.status === 'completed') {
       await this.stateManager.appendProgress(`Completed: ${workflow.name}`);
       console.log(chalk.green(`   ✅ Workflow completed: ${workflow.name}`));
-      
+
       // Log success to self-improvement
       try {
         await this.selfImprovement.logSuccess(goal, workflow.id, 'Workflow completed successfully');
@@ -599,12 +663,16 @@ export class EnhancedOrchestrator {
       }
     } else {
       console.log(chalk.red(`   ❌,robotWorkflow failed: ${workflow.name}`));
-      
+
       // Log failure to self-improvement
       try {
-        const failedTask = workflow.tasks.find(t => t.status === 'failed');
-        await this.selfImprovement.logFailure(goal, workflow.id, 
-          failedTask ? `Task "${failedTask.name}" failed: ${failedTask.error || 'Unknown error'}` : 'Workflow failed',
+        const failedTask = workflow.tasks.find((t) => t.status === 'failed');
+        await this.selfImprovement.logFailure(
+          goal,
+          workflow.id,
+          failedTask
+            ? `Task "${failedTask.name}" failed: ${failedTask.error || 'Unknown error'}`
+            : 'Workflow failed',
           'Review task logs and retry with adjusted parameters'
         );
       } catch (e) {
@@ -619,12 +687,12 @@ export class EnhancedOrchestrator {
    * Execute a traditional named workflow (backward compatible)
    */
   async executeWorkflow(workflow: Workflow): Promise<boolean> {
-    const pending = workflow.tasks.filter(t => t.status === 'pending');
-    
+    const pending = workflow.tasks.filter((t) => t.status === 'pending');
+
     for (const task of pending) {
       // Check dependencies
-      const blocked = task.dependencies.some(depId => {
-        const depTask = workflow.tasks.find(t => t.id === depId);
+      const blocked = task.dependencies.some((depId) => {
+        const depTask = workflow.tasks.find((t) => t.id === depId);
         return !depTask || depTask.status !== 'completed';
       });
       if (blocked) {
@@ -642,19 +710,26 @@ export class EnhancedOrchestrator {
       } catch (err) {
         task.status = 'failed';
         task.error = err instanceof Error ? err.message : String(err);
-        
+
         // Retry logic
         task.attempts++;
         if (task.attempts < task.maxAttempts) {
-          console.log(chalk.yellow(`   🔄 Retrying task "${task.name}" (attempt ${task.attempts + 1}/${task.maxAttempts})`));
+          console.log(
+            chalk.yellow(
+              `   🔄 Retrying task "${task.name}" (attempt ${task.attempts + 1}/${task.maxAttempts})`
+            )
+          );
           task.status = 'pending';
         }
       }
     }
 
-    workflow.status = workflow.tasks.every(t => t.status === 'completed') ? 'completed' : 
-                      workflow.tasks.some(t => t.status === 'failed') ? 'failed' : 'running';
-    
+    workflow.status = workflow.tasks.every((t) => t.status === 'completed')
+      ? 'completed'
+      : workflow.tasks.some((t) => t.status === 'failed')
+        ? 'failed'
+        : 'running';
+
     return workflow.status === 'completed';
   }
 
@@ -664,7 +739,9 @@ export class EnhancedOrchestrator {
 
     // Try real worker dispatch first (Redis LPUSH to actual worker queue)
     if (task.capability && (task.capability === 'code' || task.capability === 'infra')) {
-      console.log(chalk.dim(`      📡 Pushing to worker queue via Redis (capability: ${task.capability})`));
+      console.log(
+        chalk.dim(`      📡 Pushing to worker queue via Redis (capability: ${task.capability})`)
+      );
       await this.workerDispatcher.dispatchByCapability({
         id: task.id,
         skillRef: task.skillRef || 'unknown',
@@ -672,9 +749,9 @@ export class EnhancedOrchestrator {
         payload: task.payload,
         capability: task.capability,
         createdAt: new Date().toISOString(),
-        priority: task.priority === 'critical' ? 1 : task.priority === 'high' ? 2 : 3
+        priority: task.priority === 'critical' ? 1 : task.priority === 'high' ? 2 : 3,
       });
-       return true;
+      return true;
     }
 
     // Try to use a skill
@@ -692,15 +769,15 @@ export class EnhancedOrchestrator {
     await this.client.broadcast({
       type: 'command',
       content: `Execute task: ${task.name}`,
-      metadata: { taskId: task.id, payload: task.payload }
+      metadata: { taskId: task.id, payload: task.payload },
     });
-    
+
     return true;
   }
 
   private async simulateExecution(task: Task): Promise<void> {
     // Simulate work being done
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   /** Get current system status for monitoring */
@@ -708,9 +785,12 @@ export class EnhancedOrchestrator {
     const state = await this.stateManager.getSystemState();
     return {
       workflows: this.activeWorkflows.size,
-      tasks: Array.from(this.activeWorkflows.values()).reduce((sum, wf) => sum + wf.tasks.length, 0),
+      tasks: Array.from(this.activeWorkflows.values()).reduce(
+        (sum, wf) => sum + wf.tasks.length,
+        0
+      ),
       skills: this.skillRegistry.getAllSkills().length,
-      health: state.health
+      health: state.health,
     };
   }
 
@@ -729,7 +809,9 @@ export class EnhancedOrchestrator {
       suggestions.push('No active directives found. Check LIVING_STATE for stale entries.');
     }
 
-    return suggestions.length > 0 ? suggestions : ['System is healthy. No immediate action needed.'];
+    return suggestions.length > 0
+      ? suggestions
+      : ['System is healthy. No immediate action needed.'];
   }
 }
 
@@ -750,11 +832,11 @@ export class Orchestrator {
     const goalMap: Record<string, string> = {
       'health-check': 'Run system-wide health check and report anomalies',
       'code-review': `Review code at ${params.path || '.'} for quality issues`,
-      'self-improvement': 'Run self-improvement cycle and capture learnings'
+      'self-improvement': 'Run self-improvement cycle and capture learnings',
     };
 
     const goal = goalMap[workflowName] || workflowName;
-    
+
     // If it looks like a natural language goal, use the enhanced orchestrator
     if (goal.length > 20 || goal.includes(' ')) {
       return this.enhanced.executeGoal(goal);
@@ -785,7 +867,10 @@ export class Orchestrator {
       case 'health-check':
         return { status: 'completed', message: 'Health check completed (legacy mode)' };
       case 'code-review':
-        return { status: 'completed', message: `Code review for ${params.path} completed (legacy mode)` };
+        return {
+          status: 'completed',
+          message: `Code review for ${params.path} completed (legacy mode)`,
+        };
       case 'self-improvement':
         return { status: 'completed', message: 'Self-improvement cycle completed (legacy mode)' };
       default:

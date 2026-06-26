@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Minimal inspect-act-verify agent loop with pluggable LLM providers."""
+"""Inspect-act-verify agent loop with live LLM providers only."""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ import argparse
 import json
 import os
 import ssl
-import tempfile
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -20,12 +19,6 @@ StepFn = Callable[[Dict[str, Any]], Dict[str, Any]]
 class ModelClient:
     def complete(self, messages: List[Dict[str, str]]) -> str:
         raise NotImplementedError
-
-
-class MockModelClient(ModelClient):
-    def complete(self, messages: List[Dict[str, str]]) -> str:
-        last = messages[-1]["content"] if messages else ""
-        return f"mock-plan: inspect inputs, act on task, verify result. request={last[:120]}"
 
 
 class OpenAICompatibleClient(ModelClient):
@@ -63,10 +56,24 @@ def ssl_context() -> ssl.SSLContext:
         return ssl.create_default_context()
 
 
+def resolve_default_provider() -> str:
+    explicit = os.environ.get("TNF_AGENT_LOOP_PROVIDER", "").strip().lower()
+    if explicit:
+        return explicit
+    if os.environ.get("OPENROUTER_API_KEY"):
+        return "openrouter"
+    if os.environ.get("NVIDIA_API_KEY"):
+        return "nvidia"
+    if os.environ.get("OPENAI_COMPATIBLE_API_KEY") and os.environ.get("OPENAI_COMPATIBLE_BASE_URL"):
+        return "openai-compatible"
+    raise RuntimeError(
+        "No LLM provider configured. Set TNF_AGENT_LOOP_PROVIDER or provider credentials "
+        "(OPENROUTER_API_KEY, NVIDIA_API_KEY, or OPENAI_COMPATIBLE_*)."
+    )
+
+
 def build_model_client(provider: str) -> ModelClient:
     normalized = provider.lower()
-    if normalized == "mock":
-        return MockModelClient()
     if normalized in {"openai-compatible", "openrouter", "nvidia"}:
         if normalized == "openrouter":
             base_url = os.environ.get("OPENROUTER_API_BASE_URL", "https://openrouter.ai/api/v1")
@@ -150,23 +157,30 @@ def write_json(path: Path, payload: Any) -> None:
 
 
 def run_self_test() -> Dict[str, Any]:
-    result = run_loop("Summarize the agent loop integration contract.", "mock")
-    assert result["verification"]["passed"], result
-    assert "mock-plan" in result["modelOutput"]
-    with tempfile.TemporaryDirectory() as directory:
-        write_json(Path(directory) / "loop.json", result)
-    return {"status": "passed", "verification": result["verification"], "trace": result["trace"]}
+    provider = resolve_default_provider()
+    result = run_loop("Summarize the agent loop integration contract.", provider)
+    if not result["verification"]["passed"]:
+        raise AssertionError(result)
+    if not str(result.get("modelOutput") or "").strip():
+        raise AssertionError("empty model output from live provider")
+    return {
+        "status": "passed",
+        "provider": provider,
+        "verification": result["verification"],
+        "trace": result["trace"],
+    }
 
 
 def main(argv: Sequence[str]) -> int:
-    parser = argparse.ArgumentParser(description="Run a minimal agent loop with an LLM provider")
+    parser = argparse.ArgumentParser(description="Run an inspect-act-verify agent loop with a live LLM provider")
     parser.add_argument("--task", default="Plan the next inspect-act-verify loop.")
-    parser.add_argument("--provider", default=os.environ.get("TNF_AGENT_LOOP_PROVIDER", "mock"))
+    parser.add_argument("--provider", default="")
     parser.add_argument("--output")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args(argv)
 
-    payload = run_self_test() if args.self_test else run_loop(args.task, args.provider)
+    provider = args.provider.strip() or resolve_default_provider()
+    payload = run_self_test() if args.self_test else run_loop(args.task, provider)
     if args.output:
         write_json(Path(args.output), payload)
     else:

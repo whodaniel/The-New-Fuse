@@ -40,7 +40,7 @@ import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
 import { GraphqlModule } from './graphql/graphql.module';
 import { LLMProviderController } from './llm/llm-provider.controller';
-import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
+import { InMemoryLLMRegistry, LLMProviderService, LLM_REGISTRY } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
 import { AccessModule } from './modules/access/access.module';
 import { AdminModule } from './modules/admin/admin.module';
@@ -198,7 +198,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     // LLM Provider Services
     {
       provide: LLM_REGISTRY,
-      useClass: MockLLMRegistry,
+      useClass: InMemoryLLMRegistry,
     },
     LLMProviderService,
     AgentPfpOverridesService,

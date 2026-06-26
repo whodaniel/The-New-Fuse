@@ -1,12 +1,12 @@
 /**
  * Versa Labs AI Security Testing Bridge
- * 
+ *
  * Integrates Versa Labs tooling into TNF AI pipelines for:
  * - Adversarial prompt testing
  * - Model response safety evaluation
  * - Application logic vulnerability scanning
  * - Pre-deployment security weakness identification
- * 
+ *
  * @see https://versalabs.ai/security-testing
  */
 
@@ -16,7 +16,13 @@ export type AuditSeverity = 'low' | 'medium' | 'high' | 'critical';
 
 export interface SecurityAuditResult {
   severity?: AuditSeverity;
-  findings: Array<{ id?: string; category?: string; description: string; severity: AuditSeverity; remediation?: string }>;
+  findings: Array<{
+    id?: string;
+    category?: string;
+    description: string;
+    severity: AuditSeverity;
+    remediation?: string;
+  }>;
   summary?: string;
   passed?: boolean;
   [key: string]: unknown;
@@ -84,54 +90,59 @@ export class VersaLabsAdapter {
     }
 
     const testId = `vl-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    
+
     logger.info('Executing Versa Labs security test', {
       testId,
       workflow: request.workflow,
       targetType: request.target.type,
     });
 
-    // Mock response for initial integration - replace with actual Versa Labs API call
-    const findings: SecurityFinding[] = [];
-    
-    if (request.adversarialScenarios?.length) {
-      for (const scenario of request.adversarialScenarios) {
-        findings.push({
-          id: `finding-${testId}-${findings.length}`,
-          severity: 'medium',
-          category: 'prompt_injection',
-          description: `Adversarial scenario detected: ${scenario}`,
-          remediation: 'Implement input sanitization and prompt boundary validation',
-        });
-      }
-    }
-
-    const response: VersaLabsTestResponse = {
-      testId,
-      workflow: request.workflow,
-      status: findings.length > 0 ? 'warning' : 'passed',
-      findings,
-      executedAt: new Date().toISOString(),
-    };
-
-    logger.info('Versa Labs test completed', {
-      testId,
-      status: response.status,
-      findingCount: findings.length,
+    const response = await fetch(`${this.config.endpoint.replace(/\/+$/, '')}/v1/tests`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.config.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        workflow: request.workflow,
+        target: request.target,
+        adversarialScenarios: request.adversarialScenarios || [],
+      }),
     });
 
-    return response;
+    if (!response.ok) {
+      const detail = (await response.text()).slice(0, 500);
+      throw new Error(`Versa Labs API request failed (${response.status}): ${detail}`);
+    }
+
+    const payload = (await response.json()) as VersaLabsTestResponse;
+    logger.info('Versa Labs test completed', {
+      testId: payload.testId || testId,
+      status: payload.status,
+      findingCount: payload.findings?.length || 0,
+    });
+
+    return {
+      ...payload,
+      testId: payload.testId || testId,
+      executedAt: payload.executedAt || new Date().toISOString(),
+    };
   }
 
-  async executeWorkflow(workflowName: string, targets: Array<{ type: string; payload: string }>): Promise<SecurityAuditResult> {
-    const workflow = this.config.workflows.find(w => w === workflowName);
-    
+  async executeWorkflow(
+    workflowName: string,
+    targets: Array<{ type: string; payload: string }>
+  ): Promise<SecurityAuditResult> {
+    const workflow = this.config.workflows.find((w) => w === workflowName);
+
     if (!workflow) {
-      throw new Error(`Workflow '${workflowName}' not found in configured workflows: ${this.config.workflows.join(', ')}`);
+      throw new Error(
+        `Workflow '${workflowName}' not found in configured workflows: ${this.config.workflows.join(', ')}`
+      );
     }
 
     const results: VersaLabsTestResponse[] = [];
-    
+
     for (const target of targets) {
       const result = await this.executeTest({
         workflow: workflowName,
@@ -143,15 +154,15 @@ export class VersaLabsAdapter {
       results.push(result);
     }
 
-    const allFindings = results.flatMap(r => r.findings);
-    const criticalCount = allFindings.filter(f => f.severity === 'critical').length;
-    const highCount = allFindings.filter(f => f.severity === 'high').length;
+    const allFindings = results.flatMap((r) => r.findings);
+    const criticalCount = allFindings.filter((f) => f.severity === 'critical').length;
+    const highCount = allFindings.filter((f) => f.severity === 'high').length;
 
     return {
       auditId: `audit-${Date.now()}`,
       service: 'versa-labs-adapter',
       status: criticalCount > 0 ? 'failed' : highCount > 0 ? 'warning' : 'passed',
-      findings: allFindings.map(f => ({
+      findings: allFindings.map((f) => ({
         severity: f.severity,
         category: f.category,
         description: f.description,
@@ -161,7 +172,7 @@ export class VersaLabsAdapter {
       metadata: {
         workflow: workflowName,
         testCount: results.length,
-        versaLabsTestIds: results.map(r => r.testId),
+        versaLabsTestIds: results.map((r) => r.testId),
       },
     };
   }
