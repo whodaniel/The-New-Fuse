@@ -137,6 +137,7 @@ export const NodeToolbox: React.FC = () => {
             .map((node: any) => (
               <div
                 key={node.type}
+                title={node.description}
                 className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-none hover:shadow-blue-500/10 transition-all duration-200"
                 draggable
                 onDragStart={(e) =>
@@ -150,7 +151,7 @@ export const NodeToolbox: React.FC = () => {
                 <div className={`p-2 rounded-md ${node.color} mr-3`}>{node.icon}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-sm text-white">{node.label}</div>
-                  <div className="text-xs text-gray-400 line-clamp-2 leading-snug">
+                  <div className="text-xs text-gray-400 line-clamp-3 leading-relaxed">
                     {node.description}
                   </div>
                 </div>
@@ -167,6 +168,7 @@ export const NodeToolbox: React.FC = () => {
             .map((node: any) => (
               <div
                 key={node.type}
+                title={node.description}
                 className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-none hover:shadow-blue-500/10 transition-all duration-200"
                 draggable
                 onDragStart={(e) =>
@@ -180,7 +182,7 @@ export const NodeToolbox: React.FC = () => {
                 <div className={`p-2 rounded-md ${node.color} mr-3`}>{node.icon}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-sm text-white">{node.label}</div>
-                  <div className="text-xs text-gray-400 line-clamp-2 leading-snug">
+                  <div className="text-xs text-gray-400 line-clamp-3 leading-relaxed">
                     {node.description}
                   </div>
                 </div>
@@ -197,6 +199,7 @@ export const NodeToolbox: React.FC = () => {
             .map((node: any) => (
               <div
                 key={node.type}
+                title={node.description}
                 className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-none hover:shadow-blue-500/10 transition-all duration-200"
                 draggable
                 onDragStart={(e) =>
@@ -210,7 +213,7 @@ export const NodeToolbox: React.FC = () => {
                 <div className={`p-2 rounded-md ${node.color} mr-3`}>{node.icon}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-sm text-white">{node.label}</div>
-                  <div className="text-xs text-gray-400 line-clamp-2 leading-snug">
+                  <div className="text-xs text-gray-400 line-clamp-3 leading-relaxed">
                     {node.description}
                   </div>
                 </div>
