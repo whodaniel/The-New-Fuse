@@ -5483,12 +5483,277 @@ state
 
 const harness = program.command('harness').description('TNF terminal harness lifecycle commands');
 
+type HarnessCheckResult = {
+  name: string;
+  passed: boolean;
+  detail: string;
+};
+
+type HarnessMasterCycleReport = {
+  cycleId: string;
+  startedAt: string;
+  completedAt: string;
+  phase: 'inspect' | 'act' | 'verify';
+  inspect: HarnessCheckResult[];
+  act: { focus: string; recommendation: string };
+  verify: HarnessCheckResult[];
+  passed: boolean;
+};
+
+function runCommandCapture(
+  cmd: string,
+  args: string[],
+  options: { cwd?: string } = {}
+): { code: number; stdout: string; stderr: string } {
+  const result = spawnSync(cmd, args, {
+    cwd: options.cwd || repoRoot,
+    encoding: 'utf8',
+    env: process.env,
+  });
+  return {
+    code: result.status ?? 1,
+    stdout: String(result.stdout || ''),
+    stderr: String(result.stderr || ''),
+  };
+}
+
+function appendHarnessCycleLog(report: HarnessMasterCycleReport): void {
+  const logPath = path.join(repoRoot, 'docs/operations/tnf-harness-cycle.jsonl');
+  fs.mkdirSync(path.dirname(logPath), { recursive: true });
+  fs.appendFileSync(logPath, `${JSON.stringify(report)}\n`, 'utf8');
+}
+
+function collectHarnessInspectChecks(): HarnessCheckResult[] {
+  const checks: HarnessCheckResult[] = [];
+  const interceptor = new ProtocolInterceptor(repoRoot);
+  const state = interceptor.getStateSummary();
+  const turnZeroOk = (state.turnZero as Record<string, number>).missing === 0;
+  const livingSynced = (state.livingState as Record<string, boolean>).synchronized;
+  const disclosureReady = (state.disclosure as Record<string, unknown>).ready as {
+    ready: boolean;
+  };
+
+  checks.push({
+    name: 'protocol.turnZero',
+    passed: turnZeroOk,
+    detail: turnZeroOk ? 'Turn Zero artifacts present' : 'Missing Turn Zero artifacts',
+  });
+  checks.push({
+    name: 'protocol.livingState',
+    passed: livingSynced,
+    detail: livingSynced ? 'Living state synchronized' : 'Living state not synchronized',
+  });
+  checks.push({
+    name: 'protocol.disclosure',
+    passed: Boolean(disclosureReady?.ready),
+    detail: disclosureReady?.ready ? 'Procedural disclosure ready' : 'Disclosure warnings present',
+  });
+
+  const registration = runCommandCapture('node', ['scripts/check-agent-registration.cjs']);
+  checks.push({
+    name: 'agents.registration',
+    passed: registration.code === 0,
+    detail:
+      registration.code === 0
+        ? 'All agents registered'
+        : registration.stderr.trim() || 'Registration check failed',
+  });
+
+  const loopSelfTest = runCommandCapture('python3', [
+    'scripts/autonomy/agent_loop_llm_harness.py',
+    '--self-test',
+  ]);
+  let loopPassed = loopSelfTest.code === 0;
+  if (loopPassed) {
+    try {
+      const payload = JSON.parse(loopSelfTest.stdout);
+      loopPassed = Boolean(payload?.verification?.passed);
+    } catch {
+      loopPassed = false;
+    }
+  }
+  checks.push({
+    name: 'harness.agentLoopSelfTest',
+    passed: loopPassed,
+    detail: loopPassed ? 'Inspect-act-verify loop self-test passed' : 'Agent loop self-test failed',
+  });
+
+  const actions = readHandoffNextActions();
+  checks.push({
+    name: 'handoff.nextActions',
+    passed: actions.length > 0,
+    detail: actions.length
+      ? `${actions.length} pending action(s) in handoff`
+      : 'No handoff next_actions found',
+  });
+
+  return checks;
+}
+
+function deriveHarnessActFocus(inspect: HarnessCheckResult[]): {
+  focus: string;
+  recommendation: string;
+} {
+  const failed = inspect.filter((check) => !check.passed);
+  if (failed.length === 0) {
+    const actions = readHandoffNextActions();
+    const next = actions[0] || 'Improve harness reliability and operator ergonomics';
+    return {
+      focus: next,
+      recommendation:
+        'Run one autonomous cycle against the top handoff action, then refresh handoff artifacts with turn-end.',
+    };
+  }
+
+  const priority = failed.find((check) => check.name.startsWith('protocol.')) || failed[0];
+  return {
+    focus: priority.name,
+    recommendation: `Resolve ${priority.name}: ${priority.detail}`,
+  };
+}
+
+function runHarnessMasterCycle(): HarnessMasterCycleReport {
+  const startedAt = new Date().toISOString();
+  const inspect = collectHarnessInspectChecks();
+  const act = deriveHarnessActFocus(inspect);
+
+  const verify = collectHarnessInspectChecks();
+  const passed = verify.every((check) => check.passed);
+  const report: HarnessMasterCycleReport = {
+    cycleId: `harness-${Date.now()}`,
+    startedAt,
+    completedAt: new Date().toISOString(),
+    phase: 'verify',
+    inspect,
+    act,
+    verify,
+    passed,
+  };
+  appendHarnessCycleLog(report);
+  return report;
+}
+
+async function runAutonomousVerifyGates(): Promise<HarnessCheckResult[]> {
+  const checks: HarnessCheckResult[] = [];
+  const registration = runCommandCapture('node', ['scripts/check-agent-registration.cjs']);
+  checks.push({
+    name: 'agents.registration',
+    passed: registration.code === 0,
+    detail: registration.code === 0 ? 'All agents registered' : 'Agent registration check failed',
+  });
+
+  try {
+    const interceptor = new ProtocolInterceptor(repoRoot);
+    const state = interceptor.getStateSummary();
+    const livingSynced = (state.livingState as Record<string, boolean>).synchronized;
+    checks.push({
+      name: 'protocol.livingState',
+      passed: livingSynced,
+      detail: livingSynced ? 'Living state synchronized' : 'Living state drift detected',
+    });
+  } catch (error: any) {
+    checks.push({
+      name: 'protocol.livingState',
+      passed: false,
+      detail: error?.message || 'Protocol health check failed',
+    });
+  }
+
+  return checks;
+}
+
 harness
   .command('boot')
   .description('Boot relay monitor, terminal heartbeat, and director harness processes')
   .action(async () => {
     try {
       await runCommand('bash', ['scripts/runtime/harness-boot.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+harness
+  .command('inspect')
+  .description('Inspect harness health: protocol, agents, and loop self-test')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const checks = collectHarnessInspectChecks();
+      const passed = checks.every((check) => check.passed);
+      if (options.json) {
+        console.log(JSON.stringify({ passed, checks }, null, 2));
+        return;
+      }
+      console.log(chalk.bold.cyan('\n[TNF Harness Inspect]\n'));
+      for (const check of checks) {
+        const icon = check.passed ? chalk.green('✓') : chalk.red('✗');
+        console.log(`${icon} ${check.name}: ${check.detail}`);
+      }
+      console.log(`\nOverall: ${passed ? chalk.green('PASS') : chalk.yellow('DEGRADED')}\n`);
+      if (!passed) process.exitCode = 1;
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+harness
+  .command('loop')
+  .description('Run the inspect-act-verify agent loop harness')
+  .option('--task <text>', 'Task prompt for the loop planner')
+  .option('--provider <name>', 'LLM provider (mock, openrouter, nvidia, openai-compatible)', 'mock')
+  .option('--output <path>', 'Write loop result JSON to path')
+  .option('--self-test', 'Run deterministic offline self-test')
+  .action(
+    async (options: { task?: string; provider?: string; output?: string; selfTest?: boolean }) => {
+      try {
+        const args = ['scripts/autonomy/agent_loop_llm_harness.py'];
+        if (options.selfTest) {
+          args.push('--self-test');
+        } else {
+          args.push('--provider', options.provider || 'mock');
+          args.push('--task', options.task || 'Plan the next TNF harness improvement cycle.');
+          if (options.output) args.push('--output', options.output);
+        }
+        await runCommand('python3', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+harness
+  .command('cycle')
+  .description('Run one full harness master loop: inspect → act focus → verify')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const report = runHarnessMasterCycle();
+      if (options.json) {
+        console.log(JSON.stringify(report, null, 2));
+        if (!report.passed) process.exitCode = 1;
+        return;
+      }
+      console.log(chalk.bold.cyan('\n[TNF Harness Master Cycle]\n'));
+      console.log(chalk.bold('Inspect'));
+      for (const check of report.inspect) {
+        const icon = check.passed ? chalk.green('✓') : chalk.red('✗');
+        console.log(`  ${icon} ${check.name}: ${check.detail}`);
+      }
+      console.log(chalk.bold('\nAct focus'));
+      console.log(`  focus: ${report.act.focus}`);
+      console.log(`  recommendation: ${report.act.recommendation}`);
+      console.log(chalk.bold('\nVerify'));
+      for (const check of report.verify) {
+        const icon = check.passed ? chalk.green('✓') : chalk.red('✗');
+        console.log(`  ${icon} ${check.name}: ${check.detail}`);
+      }
+      console.log(`\nCycle: ${report.passed ? chalk.green('PASS') : chalk.yellow('DEGRADED')}`);
+      console.log(chalk.dim(`Logged to docs/operations/tnf-harness-cycle.jsonl\n`));
+      if (!report.passed) process.exitCode = 1;
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -15317,6 +15582,23 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
         const blocks = capInteractiveBashBlocks(extractInteractiveBashBlocks(response));
         if (blocks.length > 0) {
           await runInteractiveBashBlocks(blocks, messages);
+        }
+        const verifyChecks = await runAutonomousVerifyGates();
+        const verifySummary = verifyChecks
+          .map((check) => `${check.passed ? 'PASS' : 'FAIL'} ${check.name}: ${check.detail}`)
+          .join('\n');
+        messages.push({
+          role: 'system',
+          content: `[Autonomous verify gates]\n${verifySummary}`,
+        });
+        const failedVerify = verifyChecks.filter((check) => !check.passed);
+        if (failedVerify.length > 0) {
+          console.log(chalk.yellow('\n  ⚠ Autonomous verify gate failures:'));
+          for (const check of failedVerify) {
+            console.log(chalk.yellow(`    - ${check.name}: ${check.detail}`));
+          }
+        } else {
+          console.log(chalk.dim('\n  ✓ Autonomous verify gates passed'));
         }
         autonomousState.turnsThisSession += 1;
         const actions = readHandoffNextActions();

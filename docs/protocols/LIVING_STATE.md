@@ -13,17 +13,41 @@ app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001` **Handoff:**
 ## ⚡ Active Steps
 
 1. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
-- [✅] 2026-06-23T23:43:27.174Z New agent(s) created: thenewfuse-frontend-tester, tnf-fleet-health-probe
+
+- [✅] 2026-06-23T23:43:27.174Z New agent(s) created:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
 - [✅] 2026-06-23T23:43:27.174Z Agent definition change: 0 added, 5 removed
-- [✅] 2026-06-23T23:43:27.174Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-06-24T00:59:44.014Z New agent(s) created: thenewfuse-frontend-tester, tnf-fleet-health-probe
-- [✅] 2026-06-24T00:59:44.014Z Agent(s) archived: picoclaw-perplexity, picoclaw-subject, picoclaw-tester-benchmark, picoclaw-tester-viability, picoclaw-tester
-- [✅] 2026-06-24T00:59:44.014Z New script(s) created: live-installed-app-audit.sh, release.sh, update-changelog.sh, tnf-fleet-health-probe-cycle.sh, tnf-frontend-tester-cycle.sh, archive-lineage-repo.sh, audit-repo-parity.sh, voice-drift-audit.sh, check-proprietary-leakage.sh, backup-home-candidates.sh, personal-runtime-cleanup.sh, create-lineage-bundle.sh, federation-agent.cjs, install-voice-bridge-symlinks.sh, federation-protocol.cjs, federation-relay-client.cjs, session-handoff-mcid.cjs, add-neuralwatt-provider.sh, sync-hermes-llm-from-tnf.cjs, enable-hsts.sh, ensure-factory-supervisor.sh, fleet-role-map-reconcile.cjs, swarm-ram-profile.sh, autonomous-dev-production-pipeline.sh, dual-mode-parity-qa.sh, start-local-api-3001.sh, start-local-relay.sh, federation-channel-broker-service.sh, federation-channel-broker.cjs, green-channel-coordinator-service.sh, green-channel-coordinator.cjs, redis-local-bootstrap.sh, tnf-master-heartbeat-loop.cjs, tnf-boot-environment.sh, tnf-environment.sh, tnf-redis-audit.cjs, tnf-self-sufficiency-gate.sh, verify-open-runtime-export.sh
+- [✅] 2026-06-23T23:43:27.174Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-06-24T00:59:44.014Z New agent(s) created:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-24T00:59:44.014Z Agent(s) archived: picoclaw-perplexity,
+  picoclaw-subject, picoclaw-tester-benchmark, picoclaw-tester-viability,
+  picoclaw-tester
+- [✅] 2026-06-24T00:59:44.014Z New script(s) created:
+  live-installed-app-audit.sh, release.sh, update-changelog.sh,
+  tnf-fleet-health-probe-cycle.sh, tnf-frontend-tester-cycle.sh,
+  archive-lineage-repo.sh, audit-repo-parity.sh, voice-drift-audit.sh,
+  check-proprietary-leakage.sh, backup-home-candidates.sh,
+  personal-runtime-cleanup.sh, create-lineage-bundle.sh, federation-agent.cjs,
+  install-voice-bridge-symlinks.sh, federation-protocol.cjs,
+  federation-relay-client.cjs, session-handoff-mcid.cjs,
+  add-neuralwatt-provider.sh, sync-hermes-llm-from-tnf.cjs, enable-hsts.sh,
+  ensure-factory-supervisor.sh, fleet-role-map-reconcile.cjs,
+  swarm-ram-profile.sh, autonomous-dev-production-pipeline.sh,
+  dual-mode-parity-qa.sh, start-local-api-3001.sh, start-local-relay.sh,
+  federation-channel-broker-service.sh, federation-channel-broker.cjs,
+  green-channel-coordinator-service.sh, green-channel-coordinator.cjs,
+  redis-local-bootstrap.sh, tnf-master-heartbeat-loop.cjs,
+  tnf-boot-environment.sh, tnf-environment.sh, tnf-redis-audit.cjs,
+  tnf-self-sufficiency-gate.sh, verify-open-runtime-export.sh
 - [✅] 2026-06-24T00:59:44.014Z Agent definition change: 2 added, 0 removed
-- [✅] 2026-06-24T00:59:44.014Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-06-24T00:59:44.014Z OpenClaw migration: 7 launchd agents replaced by 3 native system-cron entries
-
-
+- [✅] 2026-06-24T00:59:44.014Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-06-24T00:59:44.014Z OpenClaw migration: 7 launchd agents replaced by
+  3 native system-cron entries
+- [✅] 2026-06-26T15:43:04.319Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
 - [✅] 2026-06-23T22:51:24.112Z New agent registered:
   thenewfuse-frontend-tester, tnf-fleet-health-probe
@@ -182,40 +206,85 @@ app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001` **Handoff:**
 
 ---
 
-43. [✅] Local Sub-Director Fleet Spawn (2026-06-25): Authorized two
-   runtime workers (hermes-codegen-worker, hermes-infra-worker) under
-   sessionKey `0aac60f7-7be6-45b0-a06d-8101d5f3f9d6`:
-   - `agent_hermes-codegen-worker_1782364000001` — role=worker, platform=claude,
-     capabilities `code_generation,typescript_strict,monorepo_pnpm,pnpm_filter_invocation,drizzle_migration_apply,zod_schema_generation,subagent_dispatch_handoff`, callableWorker=true. Direct command queue at
-     `tnf:direct:sub-director:agent_hermes-codegen-worker_1782364000001` holds
-     5 task envelopes (cg-001..cg-005) + 1 priming context packet.
-   - `agent_hermes-infra-worker_1782364000002` — role=worker, platform=claude,
-     capabilities `infra_audit,cloud_run_manifest_validate,image_tag_resolve,build_config_render,rollout_health_probe,iam_scope_audit`, callableWorker=true. Direct command queue holds 1 prepare-only envelope (infra-001, GCP auth-429 build packet) + 1 priming context packet. **Deliberately excludes `gcp-build-submit` capability** — submission remains a dual-key sub-director action.
-   Initial TTL broadcast for each agent returned subscriber_count=6 (directors + brokers + super-director). 3 polluted CLI test rows (`agent_--name_*`, `agent_--help_*`) cleaned from registry. Registry total dropped 369 -> 366 then 366+2 = 368 net.
-   Attempts to push to `tnf:master:tasks:realtime` confirmed the master-clock broker arbitrates that queue chronologically; arbitrary entries are drained-but-arbitrated by `packages/relay-core/src/broker-agent.ts` rather than routed to my workers by id. **Operative dispatch is the direct command path above**, not the realtime queue.
-   Verification: `redis-cli HGET tnf:agent-registry agent_hermes-*-<ts>` returns the persisted records; `redis-cli LLEN tnf:direct:sub-director:<id>` returns 6 and 2 respectively; sample envelope decodes with type=task, version=1.0, correct to-agentId, lane, priority, and approval_token.
+43. [✅] Local Sub-Director Fleet Spawn (2026-06-25): Authorized two runtime
+    workers (hermes-codegen-worker, hermes-infra-worker) under sessionKey
+    `0aac60f7-7be6-45b0-a06d-8101d5f3f9d6`:
+
+- `agent_hermes-codegen-worker_1782364000001` — role=worker, platform=claude,
+  capabilities
+  `code_generation,typescript_strict,monorepo_pnpm,pnpm_filter_invocation,drizzle_migration_apply,zod_schema_generation,subagent_dispatch_handoff`,
+  callableWorker=true. Direct command queue at
+  `tnf:direct:sub-director:agent_hermes-codegen-worker_1782364000001` holds 5
+  task envelopes (cg-001..cg-005) + 1 priming context packet.
+- `agent_hermes-infra-worker_1782364000002` — role=worker, platform=claude,
+  capabilities
+  `infra_audit,cloud_run_manifest_validate,image_tag_resolve,build_config_render,rollout_health_probe,iam_scope_audit`,
+  callableWorker=true. Direct command queue holds 1 prepare-only envelope
+  (infra-001, GCP auth-429 build packet) + 1 priming context packet.
+  **Deliberately excludes `gcp-build-submit` capability** — submission remains a
+  dual-key sub-director action. Initial TTL broadcast for each agent returned
+  subscriber*count=6 (directors + brokers + super-director). 3 polluted CLI test
+  rows
+  (`agent*--name*\*`, `agent*--help\__`) cleaned from registry. Registry total dropped 369 -> 366 then 366+2 = 368 net. Attempts to push to `tnf:master:tasks:realtime`confirmed the master-clock broker arbitrates that queue chronologically; arbitrary entries are drained-but-arbitrated by`packages/relay-core/src/broker-agent.ts`rather than routed to my workers by id. **Operative dispatch is the direct command path above**, not the realtime queue. Verification:`redis-cli
+  HGET tnf:agent-registry
+  agent_hermes-_-<ts>`returns the persisted records;`redis-cli LLEN
+  tnf:direct:sub-director:<id>` returns 6 and 2 respectively; sample envelope
+  decodes with type=task, version=1.0, correct to-agentId, lane, priority, and
+  approval_token.
 
 ---
 
-44. [✅] Sub-Director Worker Cron Wiring (2026-06-25 04:59): Bound the
-   two workers from step 43 to system cron:
-   - `tnf-subdirector-codegen-worker` — `*/5 * * * *` runs `scripts/agents/subdirector-codegen-worker-cycle.sh` (refreshes registry HSET row, heartbeat, drains `tnf:direct:sub-director:agent_hermes-codegen-worker_1782364000001` for 250s window, exits).
-   - `tnf-subdirector-infra-worker` — `*/15 * * * *` runs `scripts/agents/subdirector-infra-worker-cycle.sh` (same shape, 850s dwell — gcp-build-submit intentionally absent from capabilities).
-   Both added to `data/protocols/chronological-process-catalog.json` (entries 17-18 of 18) and `data/protocols/cron-jobs.registry.json` (jobs 17-18 of 18). Crontab lines match the established `tnf-chronological:<id>` tag convention. Smoke test confirmed both wrappers exit 0 and successfully drain the 5 code-gen + 1 infra envelopes from prior step. Logs at `~/.tnf/poll-jobs/tnf-subdirector-*-worker/cron.log`.
+44. [✅] Sub-Director Worker Cron Wiring (2026-06-25 04:59): Bound the two
+    workers from step 43 to system cron:
+
+- `tnf-subdirector-codegen-worker` — `*/5 * * * *` runs
+  `scripts/agents/subdirector-codegen-worker-cycle.sh` (refreshes registry HSET
+  row, heartbeat, drains
+  `tnf:direct:sub-director:agent_hermes-codegen-worker_1782364000001` for 250s
+  window, exits).
+- `tnf-subdirector-infra-worker` — `*/15 * * * *` runs
+  `scripts/agents/subdirector-infra-worker-cycle.sh` (same shape, 850s dwell —
+  gcp-build-submit intentionally absent from capabilities). Both added to
+  `data/protocols/chronological-process-catalog.json` (entries 17-18 of 18) and
+  `data/protocols/cron-jobs.registry.json` (jobs 17-18 of 18). Crontab lines
+  match the established `tnf-chronological:<id>` tag convention. Smoke test
+  confirmed both wrappers exit 0 and successfully drain the 5 code-gen + 1 infra
+  envelopes from prior step. Logs at
+  `~/.tnf/poll-jobs/tnf-subdirector-*-worker/cron.log`.
 
 ---
 
-45. [✅] Sub-Director Multi-LLM Orchestration (2026-06-25 05:36):
-   Resolved the user's brief: 'fully invoke true multi-LLM orchestration, local-first, cloud only on opt-in during prelaunch.'
-   - **Resolver**: `~/.tnf/sub-director/model_resolver.py` (Python). Selects `local`/`cloud`/`none` per tier policy.
-     Tier matrix: `local-only` (default prelaunch; refuses to escalate), `local-prefer` (local; cloud fallback), `cloud-ok` (local first, cloud fallback allow), `cloud-primary` (cloud first, local last).
-     Allow-clouds gate: `~/.tnf/sub-director/model-policy.yaml:{allow_cloud:false}` (operator-controlled). Envelope-level override via `{cloud_ok:true}` or `{preferred_tier:...}`.
-     Models: local → qwen2.5-coder-1.5b/3b-instruct (llama.cpp server); cloud via OpenRouter using `OPENROUTER_API_KEY` env (nvidia/meta/llama-3.3-70b, openrouter/deepseek-chat-v3-0324).
-   - **Drainer**: `~/.tnf/sub-director/run_one_envelope.py`. Pulls ONE envelope per cron window via `BRPOPLPUSH`, builds prompt, resolves+invokes, writes run-artifact under `~/.tnf/sub-director/run-artifacts/<envelope_id>.json`. Idempotent (skips already-drained envelope IDs).
-   - **Wrappers**: `scripts/agents/subdirector-{codegen,infra}-worker-cycle.sh` (5min / 15min cadence). Refresh registry row, emit heartbeat, call drainer.
-   - **Bootstrap**: `~/.tnf/sub-director/local-bootstrap.sh [--dry]` (operator-gated). Installs llama.cpp via brew + downloads qwen2.5-coder-1.5b-instruct-q4_k_m.gguf from HF, starts llama-server at 127.0.0.1:8081. Pre-flight aborts if disk <5GB free.
-   - **State proof**: `smoke-cg-001` and `smoke-infra-001` test envelope runs return `outcome=no-backend` artifact + `rc=2` exit. Once local LLM is installed, the next cron tick switches resolver to tier=local and emits real model responses.
-   - **Cost discipline during prelaunch**: default policy keeps cloud LLM vendors disabled. Operators wanting paid inference flip a single flag (`allow_cloud: true`) or attach `cloud_ok:true` to one envelope at a time.
+45. [✅] Sub-Director Multi-LLM Orchestration (2026-06-25 05:36): Resolved the
+    user's brief: 'fully invoke true multi-LLM orchestration, local-first, cloud
+    only on opt-in during prelaunch.'
+
+- **Resolver**: `~/.tnf/sub-director/model_resolver.py` (Python). Selects
+  `local`/`cloud`/`none` per tier policy. Tier matrix: `local-only` (default
+  prelaunch; refuses to escalate), `local-prefer` (local; cloud fallback),
+  `cloud-ok` (local first, cloud fallback allow), `cloud-primary` (cloud first,
+  local last). Allow-clouds gate:
+  `~/.tnf/sub-director/model-policy.yaml:{allow_cloud:false}`
+  (operator-controlled). Envelope-level override via `{cloud_ok:true}` or
+  `{preferred_tier:...}`. Models: local → qwen2.5-coder-1.5b/3b-instruct
+  (llama.cpp server); cloud via OpenRouter using `OPENROUTER_API_KEY` env
+  (nvidia/meta/llama-3.3-70b, openrouter/deepseek-chat-v3-0324).
+- **Drainer**: `~/.tnf/sub-director/run_one_envelope.py`. Pulls ONE envelope per
+  cron window via `BRPOPLPUSH`, builds prompt, resolves+invokes, writes
+  run-artifact under `~/.tnf/sub-director/run-artifacts/<envelope_id>.json`.
+  Idempotent (skips already-drained envelope IDs).
+- **Wrappers**: `scripts/agents/subdirector-{codegen,infra}-worker-cycle.sh`
+  (5min / 15min cadence). Refresh registry row, emit heartbeat, call drainer.
+- **Bootstrap**: `~/.tnf/sub-director/local-bootstrap.sh [--dry]`
+  (operator-gated). Installs llama.cpp via brew + downloads
+  qwen2.5-coder-1.5b-instruct-q4_k_m.gguf from HF, starts llama-server at
+  127.0.0.1:8081. Pre-flight aborts if disk <5GB free.
+- **State proof**: `smoke-cg-001` and `smoke-infra-001` test envelope runs
+  return `outcome=no-backend` artifact + `rc=2` exit. Once local LLM is
+  installed, the next cron tick switches resolver to tier=local and emits real
+  model responses.
+- **Cost discipline during prelaunch**: default policy keeps cloud LLM vendors
+  disabled. Operators wanting paid inference flip a single flag
+  (`allow_cloud: true`) or attach `cloud_ok:true` to one envelope at a time.
 
 ---
 
@@ -265,6 +334,8 @@ v2 to sync action queue + evidence artifacts.
   conversion KPIs. 600 eligible tasks have been successfully pushed to the
   `tnf:master:tasks:realtime` Redis queue for swarm consumption.
 
-- [✅] 2026-06-25T20:49:14.234Z Orchestrator: Completed: Goal: Deploy the API auth fix to GCP
+- [✅] 2026-06-25T20:49:14.234Z Orchestrator: Completed: Goal: Deploy the API
+  auth fix to GCP
 
-- [✅] 2026-06-25T20:49:27.825Z Orchestrator: Completed: Goal: Find and clean up dead code
+- [✅] 2026-06-25T20:49:27.825Z Orchestrator: Completed: Goal: Find and clean up
+  dead code
