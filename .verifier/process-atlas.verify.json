@@ -1,6 +1,6 @@
 {
-  "now": "2026-06-26T00:00:04Z",
-  "ok": true,
+  "now": "2026-06-26T12:00:01Z",
+  "ok": false,
   "summaries": {
     "cron_count": 19,
     "live_count": 55,
@@ -10,5 +10,10 @@
     "agent_scripts_count": 21,
     "relay_core_ts_count": 68
   },
-  "findings": []
+  "findings": [
+    [
+      "MISSING_BROKER",
+      "broker-agent process not running"
+    ]
+  ]
 }

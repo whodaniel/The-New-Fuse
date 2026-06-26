@@ -362,3 +362,7 @@ data/protocols/CHANGE_OWNERSHIP.jsonl
 data/protocols/chronological-process-catalog.json
 data/protocols/cron-jobs.*
 data/telegram/
+
+# External research repos (temporary clones, not part of main repo)
+apps/external/
+apps/virtual-library-blueprints/

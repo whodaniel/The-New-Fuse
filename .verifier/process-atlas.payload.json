@@ -1,5 +1,5 @@
 {
-  "now": "2026-06-26T00:00:04Z",
+  "now": "2026-06-26T12:00:01Z",
   "generated_by": "tnf-process-atlas-generator",
   "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "cron": [
@@ -147,6 +147,22 @@
     },
     {
       "role": "Master Clock (relay-core)",
+      "cmd": "19051 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "19150 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "19219 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "19315 node dist/master-clock.js"
+    },
+    {
+      "role": "Master Clock (relay-core)",
       "cmd": "31301 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
     },
     {
@@ -274,32 +290,16 @@
       "cmd": "97943 node dist/master-clock.js"
     },
     {
-      "role": "Broker Agent (task dispatcher)",
-      "cmd": "99830 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='redis://localhost:6379' LEDGER_API_BASE='https://api.thenewfuse.com' node dist/broker-agent.js"
-    },
-    {
-      "role": "Broker Agent (task dispatcher)",
-      "cmd": "99850 node dist/broker-agent.js"
-    },
-    {
-      "role": "Director Agent (escalation reviewer)",
-      "cmd": "99858 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='redis://localhost:6379' LEDGER_API_BASE='https://api.thenewfuse.com' DIRECTOR_AUTO_POLICY='risk-aware' node dist/director-agent.js"
-    },
-    {
-      "role": "Director Agent (escalation reviewer)",
-      "cmd": "99877 node dist/director-agent.js"
-    },
-    {
       "role": "Local Redis WebSocket Bridge",
       "cmd": "838 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/redis-ws-bridge.cjs"
     },
     {
       "role": "Standalone Relay Server",
-      "cmd": "99794 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && PORT='3000' REDIS_URL='redis://localhost:6379' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='false' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js"
+      "cmd": "18444 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
     },
     {
-      "role": "Standalone Relay Server",
-      "cmd": "99820 node dist/standalone-relay.js"
+      "role": "Relay Core Runtime",
+      "cmd": "18397 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run relay"
     }
   ],
   "packages": [

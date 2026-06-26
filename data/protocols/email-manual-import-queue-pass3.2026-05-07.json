@@ -1,7 +1,0 @@
-{
-  "sourceType": "email-manual-import-queue-pass3",
-  "generatedAt": "2026-05-07T19:26:46.932Z",
-  "sourceAdjudication": "data/protocols/email-exclusion-adjudication-pass3.2026-05-07.json",
-  "minConfidence": "medium",
-  "facts": []
-}
