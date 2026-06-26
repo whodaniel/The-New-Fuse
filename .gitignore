@@ -367,3 +367,4 @@ data/telegram/
 apps/external/
 apps/virtual-library-blueprints/
 data/llm-provider-status.json
+.agent/runtime-logs/**/*.json

@@ -46,6 +46,14 @@ const _filename =
 const repoRoot = path.resolve(_dirname, '../../..');
 const invocationCwd = process.env.TNF_INVOCATION_CWD || process.cwd();
 const LOCAL_ENV_FILES = ['.env', '.env.local', '.tnf.local.env'];
+const FALLBACK_ENV_SOURCES = [
+  'apps/api/.env',
+  'apps/frontend/.env.local',
+  'apps/frontend/.env.production',
+  'apps/ai-arcade/.env',
+  'apps/virtual-library-blueprints/.env',
+  'apps/virtual-library-blueprints/.env.local',
+];
 const SUPER_ADMIN_ENV_KEY = 'TNF_SUPER_ADMIN_TOKEN';
 const SUPER_ADMIN_INPUT_ENV_KEY = 'TNF_SUPER_ADMIN_INPUT_TOKEN';
 const RUNNABLE_SCRIPT_EXTENSIONS = new Set([
@@ -73,10 +81,31 @@ function parseEnvValue(rawValue: string): string {
   return value;
 }
 
+function mapSupabaseEnvAliases(entries: Record<string, string>): Record<string, string> {
+  const mapped = { ...entries };
+  if (!mapped.SUPABASE_URL && mapped.VITE_SUPABASE_URL) {
+    mapped.SUPABASE_URL = mapped.VITE_SUPABASE_URL;
+  }
+  if (!mapped.SUPABASE_ANON_KEY && mapped.VITE_SUPABASE_ANON_KEY) {
+    mapped.SUPABASE_ANON_KEY = mapped.VITE_SUPABASE_ANON_KEY;
+  }
+  if (!mapped.VITE_SUPABASE_URL && mapped.SUPABASE_URL) {
+    mapped.VITE_SUPABASE_URL = mapped.SUPABASE_URL;
+  }
+  if (!mapped.VITE_SUPABASE_ANON_KEY && mapped.SUPABASE_ANON_KEY) {
+    mapped.VITE_SUPABASE_ANON_KEY = mapped.SUPABASE_ANON_KEY;
+  }
+  return mapped;
+}
+
 function loadLocalEnv(rootDir: string): void {
   const exportedKeys = new Set(Object.keys(process.env));
-  for (const envFile of LOCAL_ENV_FILES) {
-    const envPath = path.join(rootDir, envFile);
+  const envPaths = [
+    ...LOCAL_ENV_FILES.map((file) => path.join(rootDir, file)),
+    ...FALLBACK_ENV_SOURCES.map((file) => path.join(rootDir, file)),
+  ];
+
+  for (const envPath of envPaths) {
     if (!fs.existsSync(envPath)) continue;
 
     for (const rawLine of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
@@ -93,6 +122,18 @@ function loadLocalEnv(rootDir: string): void {
 
       process.env[key] = parseEnvValue(normalizedLine.slice(separatorIndex + 1));
     }
+  }
+
+  const aliasEntries = mapSupabaseEnvAliases(
+    Object.fromEntries(
+      ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY']
+        .filter((key) => process.env[key])
+        .map((key) => [key, process.env[key] as string]),
+    ),
+  );
+  for (const [key, value] of Object.entries(aliasEntries)) {
+    if (!value || exportedKeys.has(key) || process.env[key]) continue;
+    process.env[key] = value;
   }
 }
 
