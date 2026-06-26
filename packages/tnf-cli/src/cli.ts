@@ -4104,6 +4104,14 @@ function printBootPlan(name: string, nonInteractive?: boolean): void {
   console.log('');
 }
 
+type AutonomousSessionState = {
+  continuePending: boolean;
+  handoffTaskIndex: number;
+  contextRefreshPending: boolean;
+  turnsThisSession: number;
+  maxTurnsPerSession: number;
+};
+
 type InteractiveSlashContext = {
   messages: ChatMessage[];
   systemMessageCount: number;
@@ -4119,6 +4127,7 @@ type InteractiveSlashContext = {
     }>;
   };
   autonomousMode?: boolean;
+  autonomousState?: AutonomousSessionState;
 };
 
 type SlashCommandOutcome = { handled: false } | { handled: true; exit?: boolean; prompt?: string };
@@ -4537,6 +4546,14 @@ async function handleInteractiveSlashCommand(
     console.log(
       `  Autonomous shell execution: ${context.autonomousMode ? chalk.green('ON') : chalk.yellow('OFF')}`
     );
+    if (context.autonomousMode) {
+      enableAutonomousRuntimeDefaults();
+      if (context.autonomousState) {
+        context.autonomousState.continuePending = true;
+      }
+    } else if (context.autonomousState) {
+      context.autonomousState.continuePending = false;
+    }
     return { handled: true };
   }
 
@@ -4801,10 +4818,11 @@ program
 program
   .command('tui')
   .description('Launch the TNF TUI agent — always-on interactive LLM session')
-  .action(async () => {
+  .option('--autonomous', 'Start with autonomous shell execution and auto-continue enabled')
+  .action(async (options: { autonomous?: boolean }) => {
     try {
       await runTurnZeroOnboardSurface();
-      await startTuiAgent();
+      await startTuiAgent(options);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -11234,82 +11252,94 @@ program
 
 program
   .command('orchestrate')
-  .description('Run agent orchestration workflow. Accepts natural language goals or legacy workflow names.')
+  .description(
+    'Run agent orchestration workflow. Accepts natural language goals or legacy workflow names.'
+  )
   .argument('[workflow]', 'Workflow name or natural language goal')
   .option('--path <path>', 'Code path for code-review workflow', '.')
-  .option('--goal', 'Treat the argument as a natural language goal (auto-detected if contains spaces)')
+  .option(
+    '--goal',
+    'Treat the argument as a natural language goal (auto-detected if contains spaces)'
+  )
   .option('--status', 'Show orchestrator status')
   .option('--suggest', 'Show proactive suggestions')
-  .action(async (workflow: string | undefined, options: { path?: string; goal?: boolean; status?: boolean; suggest?: boolean } = {}) => {
-    const client = new RedisAgentClient();
-    try {
-      await client.initialize();
-      await client.register(process.env.AGENT_NAME || 'orchestrator-cli', 'orchestrator', 'tnf');
-      
-      const repoRoot = path.resolve(_dirname, '../../..');
-      const orchestrator = new Orchestrator(client, repoRoot);
+  .action(
+    async (
+      workflow: string | undefined,
+      options: { path?: string; goal?: boolean; status?: boolean; suggest?: boolean } = {}
+    ) => {
+      const client = new RedisAgentClient();
+      try {
+        await client.initialize();
+        await client.register(process.env.AGENT_NAME || 'orchestrator-cli', 'orchestrator', 'tnf');
 
-      // --status: Show system status
-      if (options.status || (!workflow && !options.suggest)) {
-        const status = await orchestrator.getStatus();
-        console.log(chalk.cyan('\n📊 Orchestrator Status'));
-        console.log(chalk.dim('   ─'.repeat(25)));
-        console.log(`   Active workflows: ${chalk.bold(status.workflows)}`);
-        console.log(`   Total tasks:      ${chalk.bold(status.tasks)}`);
-        console.log(`   Skills available: ${chalk.bold(status.skills)}`);
-        console.log(`   System health:    ${status.health === 'healthy' ? chalk.green(status.health) : chalk.yellow(status.health)}`);
-        console.log();
-        return;
-      }
+        const repoRoot = path.resolve(_dirname, '../../..');
+        const orchestrator = new Orchestrator(client, repoRoot);
 
-      // --suggest: Show proactive suggestions
-      if (options.suggest) {
-        const suggestions = await orchestrator.suggestActions();
-        console.log(chalk.cyan('\n💡 Proactive Suggestions'));
-        console.log(chalk.dim('   ─'.repeat(25)));
-        suggestions.forEach((s, i) => {
-          console.log(`   ${i + 1}. ${s}`);
-        });
-        console.log();
-        return;
-      }
+        // --status: Show system status
+        if (options.status || (!workflow && !options.suggest)) {
+          const status = await orchestrator.getStatus();
+          console.log(chalk.cyan('\n📊 Orchestrator Status'));
+          console.log(chalk.dim('   ─'.repeat(25)));
+          console.log(`   Active workflows: ${chalk.bold(status.workflows)}`);
+          console.log(`   Total tasks:      ${chalk.bold(status.tasks)}`);
+          console.log(`   Skills available: ${chalk.bold(status.skills)}`);
+          console.log(
+            `   System health:    ${status.health === 'healthy' ? chalk.green(status.health) : chalk.yellow(status.health)}`
+          );
+          console.log();
+          return;
+        }
 
-      if (!workflow) {
-        console.log(chalk.red('Error: Please provide a workflow name or use --status/--suggest'));
-        process.exit(1);
-      }
+        // --suggest: Show proactive suggestions
+        if (options.suggest) {
+          const suggestions = await orchestrator.suggestActions();
+          console.log(chalk.cyan('\n💡 Proactive Suggestions'));
+          console.log(chalk.dim('   ─'.repeat(25)));
+          suggestions.forEach((s, i) => {
+            console.log(`   ${i + 1}. ${s}`);
+          });
+          console.log();
+          return;
+        }
 
-      // Detect natural language goal vs legacy workflow name
-      const isNaturalLanguage = options.goal || (workflow.includes(' ') && workflow.length > 20);
+        if (!workflow) {
+          console.log(chalk.red('Error: Please provide a workflow name or use --status/--suggest'));
+          process.exit(1);
+        }
 
-      if (isNaturalLanguage) {
-        // New power mode: natural language goal
-        const result = await orchestrator.executeGoal(workflow);
-        if (result.status === 'completed') {
-          console.log(chalk.green(`\n✅ Goal achieved: ${result.name}`));
+        // Detect natural language goal vs legacy workflow name
+        const isNaturalLanguage = options.goal || (workflow.includes(' ') && workflow.length > 20);
+
+        if (isNaturalLanguage) {
+          // New power mode: natural language goal
+          const result = await orchestrator.executeGoal(workflow);
+          if (result.status === 'completed') {
+            console.log(chalk.green(`\n✅ Goal achieved: ${result.name}`));
+          } else {
+            console.log(chalk.red(`\n❌ Goal incomplete: ${result.name}`));
+            process.exit(1);
+          }
         } else {
-          console.log(chalk.red(`\n❌ Goal incomplete: ${result.name}`));
-          process.exit(1);
+          // Legacy mode: named workflow
+          const ok = await orchestrator.executeWorkflow(workflow, {
+            path: options.path || '.',
+          });
+          if (!ok) {
+            process.exit(1);
+          }
         }
-      } else {
-        // Legacy mode: named workflow
-        const ok = await orchestrator.executeWorkflow(workflow, {
-          path: options.path || '.',
-        });
-        if (!ok) {
-          process.exit(1);
+      } catch (err: any) {
+        if (isRedisUnavailable(err)) {
+          logRedisUnavailable(`./tnf orchestrate ${workflow || ''}`);
         }
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      } finally {
+        await client.cleanup();
       }
-    } catch (err: any) {
-      if (isRedisUnavailable(err)) {
-        logRedisUnavailable(`./tnf orchestrate ${workflow || ''}`);
-      }
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    } finally {
-      await client.cleanup();
     }
-  });
+  );
 
 program
   .command('convo')
@@ -14850,6 +14880,122 @@ function resolveAutonomousModeToggle(args: string[]): boolean | null {
   return null;
 }
 
+const AUTONOMOUS_MAX_SHELL_BLOCKS = parseInt(
+  process.env.TNF_AUTONOMOUS_MAX_SHELL_BLOCKS || '5',
+  10
+);
+const AUTONOMOUS_MAX_TURNS = parseInt(process.env.TNF_AUTONOMOUS_MAX_TURNS || '50', 10);
+
+function enableAutonomousRuntimeDefaults(): void {
+  if (!process.env.TNF_STALL_DEFENSE_TIMEOUT) {
+    process.env.TNF_STALL_DEFENSE_TIMEOUT = '120';
+  }
+  if (!process.env.TNF_STALL_DEFENSE_PROMPT) {
+    process.env.TNF_STALL_DEFENSE_PROMPT =
+      'Continue autonomous execution. Pick the next pending handoff action, execute it, and verify.';
+  }
+}
+
+function readHandoffNextActions(): string[] {
+  try {
+    const handoffPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
+    if (!fs.existsSync(handoffPath)) return [];
+    const handoff = JSON.parse(fs.readFileSync(handoffPath, 'utf8'));
+    if (!Array.isArray(handoff.next_actions)) return [];
+    return handoff.next_actions.map((action: unknown) => String(action)).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function readCompactHandoffSummary(): string {
+  try {
+    const handoffPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
+    if (!fs.existsSync(handoffPath)) return 'Handoff unavailable.';
+    const handoff = JSON.parse(fs.readFileSync(handoffPath, 'utf8'));
+    const parts: string[] = [];
+    if (handoff.handoff_id) parts.push(`handoff_id: ${handoff.handoff_id}`);
+    if (handoff.continuation?.priority) parts.push(`priority: ${handoff.continuation.priority}`);
+    const actions = readHandoffNextActions();
+    if (actions.length) {
+      parts.push('next_actions:');
+      actions.forEach((action, index) => parts.push(`  ${index + 1}. ${action}`));
+    }
+    return parts.join('\n').slice(0, 2000);
+  } catch {
+    return 'Handoff parse failed.';
+  }
+}
+
+function buildAutonomousContinuePrompt(state: AutonomousSessionState): string {
+  const actions = readHandoffNextActions();
+  const summary = readCompactHandoffSummary();
+  const prefix = state.contextRefreshPending
+    ? '[Autonomous context refresh]'
+    : '[Autonomous continue]';
+
+  if (!actions.length) {
+    return [
+      prefix,
+      summary,
+      '',
+      'No handoff next_actions found — follow LIVING_STATE.md active directive.',
+      `Emit at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+      'Do not re-explore files already listed in repo layout. Inspect → Act → Verify.',
+    ].join('\n');
+  }
+
+  if (state.handoffTaskIndex >= actions.length) {
+    return [
+      prefix,
+      summary,
+      '',
+      `All ${actions.length} handoff actions have been attempted this session.`,
+      'Review results, commit or deploy as needed, then summarize blockers.',
+      `Emit at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn if verification is still required.`,
+    ].join('\n');
+  }
+
+  const current = actions[state.handoffTaskIndex];
+  return [
+    prefix,
+    summary,
+    '',
+    `Focus on handoff action ${state.handoffTaskIndex + 1}/${actions.length}: ${current}`,
+    `Emit at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+    'Do not re-explore files already listed in repo layout. Inspect → Act → Verify.',
+  ].join('\n');
+}
+
+function isExploratoryShellBlock(script: string): boolean {
+  const normalized = script.trim().toLowerCase();
+  if (!/^\s*(find|ls|grep|rg|cat|head|tail|wc)\s/.test(normalized)) return false;
+  if (
+    /(cli\.ts|packages\/tnf-cli)/.test(normalized) &&
+    !/(diff|patch|build|test|npm|pnpm|git)\b/.test(normalized)
+  ) {
+    return true;
+  }
+  return (normalized.match(/\bfind\b/g) || []).length >= 2;
+}
+
+function capInteractiveBashBlocks(blocks: string[]): string[] {
+  const filtered = blocks.filter((block) => !isExploratoryShellBlock(block));
+  const skipped = blocks.length - filtered.length;
+  if (skipped > 0) {
+    console.log(chalk.yellow(`  ⚠ Skipped ${skipped} exploratory shell block(s)`));
+  }
+  if (filtered.length > AUTONOMOUS_MAX_SHELL_BLOCKS) {
+    console.log(
+      chalk.yellow(
+        `  ⚠ Capping shell blocks at ${AUTONOMOUS_MAX_SHELL_BLOCKS} (had ${filtered.length})`
+      )
+    );
+    return filtered.slice(0, AUTONOMOUS_MAX_SHELL_BLOCKS);
+  }
+  return filtered;
+}
+
 async function executeInteractiveBash(script: string): Promise<{ ok: boolean; code: number }> {
   return new Promise((resolve) => {
     const child = spawn('bash', ['-lc', script], {
@@ -14953,7 +15099,7 @@ function stopProcessingIndicator(success = true): void {
   process.stdout.write(`${icon}\n`);
 }
 
-async function startInteractiveAgent(): Promise<void> {
+async function startInteractiveAgent(options?: { autonomous?: boolean }): Promise<void> {
   syncHomeHandoffCache();
   const rl = readline.createInterface({
     input: process.stdin,
@@ -15000,15 +15146,27 @@ async function startInteractiveAgent(): Promise<void> {
     )
   );
 
-  let autonomousMode = isTruthyEnv(process.env.TNF_INTERACTIVE_EXEC);
+  let autonomousMode =
+    options?.autonomous ||
+    isTruthyEnv(process.env.TNF_INTERACTIVE_EXEC) ||
+    isTruthyEnv(process.env.TNF_AUTONOMOUS_ON_BOOT);
+  const autonomousState: AutonomousSessionState = {
+    continuePending: autonomousMode,
+    handoffTaskIndex: 0,
+    contextRefreshPending: false,
+    turnsThisSession: 0,
+    maxTurnsPerSession: AUTONOMOUS_MAX_TURNS,
+  };
   const slashContext: InteractiveSlashContext = {
     messages,
     systemMessageCount: 1,
     client,
     autonomousMode,
+    autonomousState,
   };
   if (autonomousMode) {
-    console.log(chalk.dim('  Autonomous shell execution: ON (TNF_INTERACTIVE_EXEC)'));
+    enableAutonomousRuntimeDefaults();
+    console.log(chalk.dim('  Autonomous shell execution: ON (auto-continue enabled)'));
   }
 
   // Start heartbeat to keep session alive
@@ -15027,18 +15185,13 @@ async function startInteractiveAgent(): Promise<void> {
     }
   }, 30000);
 
-  // Self-prompting: inject fresh context every 5 minutes
+  // Self-prompting: queue an autonomous turn every 5 minutes
   const contextRefreshInterval = setInterval(async () => {
+    if (!slashContext.autonomousMode) return;
     try {
-      // Read living state and handoff for fresh context
-      const handoffPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
-      if (fs.existsSync(handoffPath)) {
-        const handoff = JSON.parse(fs.readFileSync(handoffPath, 'utf8'));
-        if (handoff.next_actions?.length > 0) {
-          const autoPrompt = `\n[Auto-Context Refresh] Current pending actions from handoff:\n${JSON.stringify(handoff.next_actions, null, 2)}\n\nContinue autonomous execution toward these goals.`;
-          messages.push({ role: 'system', content: autoPrompt });
-        }
-      }
+      autonomousState.contextRefreshPending = true;
+      autonomousState.continuePending = true;
+      console.log(chalk.dim('\n  ⟳ Handoff context refresh queued for next autonomous turn'));
     } catch {
       // Silent fail - context refresh is best-effort
     }
@@ -15083,36 +15236,55 @@ async function startInteractiveAgent(): Promise<void> {
         ? chalk.green('\n') + chalk.dim('[') + modelLabel + chalk.dim(']') + ' '
         : chalk.green('\n❯ ');
 
-    let input: string;
-    try {
-      input = resolveSlashDropdownInput(await ask(promptWithModel), slashDropdown);
-    } catch {
-      break;
-    }
-    const trimmed = input.trim();
+    let trimmed: string;
+    let fromAutonomousContinue = false;
 
-    if (trimmed === '.exit' || trimmed === '.quit') break;
-    if (trimmed === '.clear') {
-      messages.length = 1;
-      console.log(chalk.dim('  History cleared'));
-      continue;
+    if (slashContext.autonomousMode && autonomousState.continuePending) {
+      autonomousState.continuePending = false;
+      fromAutonomousContinue = true;
+      trimmed = buildAutonomousContinuePrompt(autonomousState);
+      autonomousState.contextRefreshPending = false;
+      console.log(chalk.dim('\n  ⟳ Autonomous continue (no operator input required)'));
+      const turnDelay = parseInt(process.env.TNF_AUTONOMOUS_TURN_DELAY_MS || '500', 10);
+      if (turnDelay > 0) {
+        await new Promise((resolve) => setTimeout(resolve, turnDelay));
+      }
+    } else {
+      let input: string;
+      try {
+        input = resolveSlashDropdownInput(await ask(promptWithModel), slashDropdown);
+      } catch {
+        break;
+      }
+      trimmed = input.trim();
+
+      if (trimmed === '.exit' || trimmed === '.quit') break;
+      if (trimmed === '.clear') {
+        messages.length = 1;
+        console.log(chalk.dim('  History cleared'));
+        continue;
+      }
+      if (trimmed === '.help') {
+        printSlashCommandList();
+        continue;
+      }
+      if (!trimmed) continue;
     }
-    if (trimmed === '.help') {
-      printSlashCommandList();
-      continue;
-    }
-    if (!trimmed) continue;
 
     let outbound = trimmed;
-    const slashOutcome = await handleInteractiveSlashCommand(trimmed, slashContext);
-    if (slashOutcome.handled) {
-      if (slashOutcome.exit) break;
-      if (!slashOutcome.prompt) continue;
-      outbound = slashOutcome.prompt;
+    if (!fromAutonomousContinue) {
+      const slashOutcome = await handleInteractiveSlashCommand(trimmed, slashContext);
+      if (slashOutcome.handled) {
+        if (slashOutcome.exit) break;
+        if (!slashOutcome.prompt) continue;
+        outbound = slashOutcome.prompt;
+      }
     }
 
     if (wantsAutonomousExecution(outbound)) {
       slashContext.autonomousMode = true;
+      enableAutonomousRuntimeDefaults();
+      autonomousState.continuePending = true;
     }
 
     messages.push({ role: 'user', content: outbound });
@@ -15142,14 +15314,32 @@ async function startInteractiveAgent(): Promise<void> {
 
       if (slashContext.autonomousMode) {
         const response = messages[messages.length - 1].content;
-        const blocks = extractInteractiveBashBlocks(response);
+        const blocks = capInteractiveBashBlocks(extractInteractiveBashBlocks(response));
         if (blocks.length > 0) {
           await runInteractiveBashBlocks(blocks, messages);
+        }
+        autonomousState.turnsThisSession += 1;
+        const actions = readHandoffNextActions();
+        if (actions.length > 0 && autonomousState.handoffTaskIndex < actions.length) {
+          autonomousState.handoffTaskIndex += 1;
+        }
+        if (autonomousState.turnsThisSession >= autonomousState.maxTurnsPerSession) {
+          console.log(
+            chalk.yellow(
+              `\n  Autonomous turn cap reached (${autonomousState.maxTurnsPerSession}). Awaiting operator input.`
+            )
+          );
+          autonomousState.continuePending = false;
+        } else {
+          autonomousState.continuePending = true;
         }
       }
     } catch (err: any) {
       stopProcessingIndicator(false);
       console.error(chalk.red('\n  Error: ' + err.message));
+      if (slashContext.autonomousMode) {
+        autonomousState.continuePending = true;
+      }
     }
   }
 
@@ -15161,13 +15351,13 @@ async function startInteractiveAgent(): Promise<void> {
   console.log(chalk.cyan('\n  TNF Agent session ended.\n'));
 }
 
-async function startTuiAgent(): Promise<void> {
+async function startTuiAgent(options?: { autonomous?: boolean }): Promise<void> {
   console.clear();
   await renderSplash({ compact: true, animate: false });
   console.log('');
   console.log(chalk.bold.cyan('  ⚡ TNF TUI Agent — Always-on LLM session'));
   console.log(chalk.dim('  ─────────────────────────────────────────────'));
-  await startInteractiveAgent();
+  await startInteractiveAgent(options);
 }
 
 async function startGatewayService(): Promise<void> {
@@ -15226,8 +15416,13 @@ async function main(): Promise<void> {
   // suppresses it. Respect sigterm shortcut (process.argv[2] === undefined|help).
   // Animation is opt-in only on interactive TTYs.
   const tail = (argv[2] ?? '').toLowerCase();
-  const firstArgIsHelp = tail === '' || tail === '--help' || tail === '-h' ||
-                         tail === 'help' || tail === '--version' || tail === '-v';
+  const firstArgIsHelp =
+    tail === '' ||
+    tail === '--help' ||
+    tail === '-h' ||
+    tail === 'help' ||
+    tail === '--version' ||
+    tail === '-v';
   const noSplashFlag = argv.includes('--no-splash');
   const wantSplash = !firstArgIsHelp && !noSplashFlag && process.stdout.isTTY;
   if (wantSplash) {
