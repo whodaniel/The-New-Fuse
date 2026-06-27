@@ -2,7 +2,7 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Verify relay.thenewfuse.com DNS CNAME to Cloud Run **Project ID:** `TNF-SESSION` **Handoff:** `43bca6ff-0a6f-43d2-95c1-f59b126553c4` **Head:** `8f20641b7bf3`
+**Current Directive:** All P0 items complete (DNS verified, /about+/blog pages committed, sync:repos verified). Awaiting new directives.
 (gcp-deploy.sh / cloudbuild.yaml). **Project ID:** `LAUNCH-001` **Handoff:**
 `ef70c596-2124-40bd-952e-5239f3e042a0` **Head:** `baab5b2825e5` login at
 app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001` **Handoff:**

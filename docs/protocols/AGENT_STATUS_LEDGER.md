@@ -8,9 +8,9 @@ Updated: **2026-06-26T19:52:41.677Z** — handoff `43bca6ff-0a6f-43d2-95c1-f59b1
 
 | Priority | Action                                                                                                     |
 | -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Verify relay.thenewfuse.com DNS CNAME to Cloud Run |
-| **P0**   | Create real /about and /blog pages (SPA redirects) |
-| **P0**   | Verify sync:repos --dry-run |
+| **P0**   | ~~Verify relay.thenewfuse.com DNS CNAME to Cloud Run~~ ✅ DONE |
+| **P0**   | ~~Create real /about and /blog pages (SPA redirects)~~ ✅ DONE |
+| **P0**   | ~~Verify sync:repos --dry-run~~ ✅ DONE |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 

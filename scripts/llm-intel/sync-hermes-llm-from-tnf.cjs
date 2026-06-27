@@ -66,18 +66,21 @@ function backup(file) {
   return dest;
 }
 
+function stripNvidiaPrefix(model) {
+  const value = String(model || '').trim();
+  return value.startsWith('nvidia/') ? value.slice('nvidia/'.length) : value;
+}
+
 function mergeNvidiaModels(mp, llm, catalog) {
   const active = (mp.providers || []).filter((p) => p.active !== false);
   active.sort((a, b) => (a.priority ?? 999) - (b.priority ?? 999));
   const nvidiaActive = active
     .filter((p) => String(p.endpoint || '').startsWith('https://integrate.api.nvidia.com'))
-    .map((p) => p.model);
+    .map((p) => stripNvidiaPrefix(p.model));
 
-  const llmNvidia = (llm.availableProviders?.nvidia?.models || []).map((m) =>
-    m.startsWith('nvidia/') ? m.slice('nvidia/'.length) : m,
-  );
+  const llmNvidia = (llm.availableProviders?.nvidia?.models || []).map((m) => stripNvidiaPrefix(m));
 
-  const catalogIds = (catalog.models || []).map((m) => m.id).filter(Boolean);
+  const catalogIds = (catalog.models || []).map((m) => stripNvidiaPrefix(m.id)).filter(Boolean);
 
   const seen = new Set();
   const merged = [];
@@ -91,9 +94,10 @@ function mergeNvidiaModels(mp, llm, catalog) {
     }
   }
 
-  const hermesModels = merged.map((m) => (m.startsWith('nvidia/') ? m : `nvidia/${m}`));
+  // Hermes nvidia provider expects bare integrate.api model ids (no nvidia/ prefix).
+  const hermesModels = merged;
   const primary = nvidiaActive[0] || 'minimaxai/minimax-m3';
-  const defaultModel = primary.startsWith('nvidia/') ? primary : `nvidia/${primary}`;
+  const defaultModel = stripNvidiaPrefix(primary);
 
   return { hermesModels, defaultModel, nvidiaActive, active };
 }
@@ -122,12 +126,35 @@ function updateEnvModel(defaultModel) {
   const out = lines.map((line) => {
     if (line.startsWith('TNF_LLM_MODEL=')) {
       found = true;
-      return `TNF_LLM_MODEL=${defaultModel}`;
+      return `TNF_LLM_MODEL=${stripNvidiaPrefix(defaultModel)}`;
     }
     return line;
   });
-  if (!found) out.push(`TNF_LLM_MODEL=${defaultModel}`);
+  if (!found) out.push(`TNF_LLM_MODEL=${stripNvidiaPrefix(defaultModel)}`);
   fs.writeFileSync(PATHS.hermesEnv, out.join('\n'));
+}
+
+function repairHermesCronJobModels(defaultModel) {
+  const cronJobsPath = path.join(HERMES, 'cron', 'jobs.json');
+  if (!fs.existsSync(cronJobsPath)) return { repaired: 0 };
+  const payload = readJson(cronJobsPath);
+  if (!payload || !Array.isArray(payload.jobs)) return { repaired: 0 };
+  const target = stripNvidiaPrefix(defaultModel);
+  let repaired = 0;
+  for (const job of payload.jobs) {
+    if (!job?.model) continue;
+    const normalized = stripNvidiaPrefix(job.model);
+    const next =
+      normalized === 'mistralai/mistral-small-4-119b-2603' ? target : normalized;
+    if (job.model !== next) {
+      job.model = next;
+      repaired += 1;
+    }
+  }
+  if (repaired > 0) {
+    fs.writeFileSync(cronJobsPath, `${JSON.stringify(payload, null, 2)}\n`);
+  }
+  return { repaired };
 }
 
 function main() {
@@ -201,12 +228,15 @@ function main() {
   };
   fs.writeFileSync(PATHS.hermesFallback, JSON.stringify(fb, null, 2) + '\n');
 
-  const short = defaultModel.startsWith('nvidia/') ? defaultModel.slice('nvidia/'.length) : defaultModel;
-  fs.writeFileSync(PATHS.hermesOverride, dumpYaml({ model: short, provider: 'nvidia' }));
+  fs.writeFileSync(PATHS.hermesOverride, dumpYaml({ model: defaultModel, provider: 'nvidia' }));
   updateEnvModel(defaultModel);
+  const cronRepair = repairHermesCronJobModels(defaultModel);
 
   console.log(`\nWrote ${PATHS.hermesConfig} (backup ${cfgBak})`);
   console.log(`Wrote ${PATHS.hermesFallback} (backup ${fbBak})`);
+  if (cronRepair.repaired > 0) {
+    console.log(`Repaired ${cronRepair.repaired} Hermes cron job model entr${cronRepair.repaired === 1 ? 'y' : 'ies'}`);
+  }
   console.log('Done.');
 }
 

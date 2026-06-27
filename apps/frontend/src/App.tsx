@@ -1,3 +1,5 @@
+import About from "./pages/About";
+import Blog from "./pages/Blog";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ErrorBoundary from './components/core/ErrorBoundary';
