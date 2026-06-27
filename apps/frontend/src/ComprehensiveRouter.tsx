@@ -165,6 +165,8 @@ const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 // Landing components archived to static HTML - These routes now redirect or are handled by static hosting
 const BrandIdentityPage = lazy(() => import('./pages/BrandIdentity'));
 
+const AboutPage = lazy(() => import('./pages/About'));
+
 const BlogPage = lazy(() => import('./pages/Blog').then((module) => ({ default: module.Blog })));
 const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
 const Pricing = lazy(() => import('./pages/Pricing'));
@@ -1517,7 +1519,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
               {/* Enhanced Landing Routes */}
-              <Route path="/about" element={<Navigate to="/brand" replace />} />
+              <Route path="/about" element={<AboutPage />} />
               {/* Route catalog parity aliases (first-principles no-prune pass) */}
               <Route path="/landing-page" element={<Navigate to="/landing" replace />} />
               <Route path="/simple-landing" element={<Navigate to="/landing" replace />} />
