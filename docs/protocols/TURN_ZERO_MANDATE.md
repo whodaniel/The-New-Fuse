@@ -60,6 +60,7 @@ At the start of each session:
 1. Read state files:
    - `docs/protocols/LIVING_STATE.md`
    - `AGENT_STATUS_LEDGER.md` (if present)
+   - `~/.tnf/swarm-context.md` (swarm terminal state, coordination issues, active directives - updated every heartbeat cycle)
 2. Read frontload policy files:
    - `.agent/SYSTEM_PROMPT.md`
    - `.agent/context/resource-map.md`

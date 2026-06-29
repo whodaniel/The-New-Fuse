@@ -285,6 +285,10 @@ function cycleCommands(cycle) {
     command: `cd ${repo} && scripts/runtime/terminal-heartbeat-cron.sh run-once`,
   });
   commands.push({
+    name: 'swarm-context-bridge',
+    command: `cd ${repo} && node scripts/runtime/tnf-swarm-context-bridge.cjs`,
+  });
+  commands.push({
     name: 'director-cycle',
     command: `cd ${repo} && scripts/runtime/tnf-director-cron.sh run-once`,
   });

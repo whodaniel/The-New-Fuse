@@ -36,7 +36,7 @@ const config = {
     path.join(os.homedir(), '.tnf', 'session-discovery'),
   promptTemplate:
     process.env.TNF_TERMINAL_HEARTBEAT_PROMPT_TEMPLATE ||
-    'TNF heartbeat {{heartbeatId}} for {{agentId}}: report one-line status and continue your current owned task.',
+    'TNF heartbeat {{heartbeatId}} for {{agentId}}: read ~/.tnf/swarm-context.md for swarm state, then continue your current owned task.',
   allowPromptInjection: true, // HARD-CODED TRUE for Perpetual Awakeness
   clearLine: process.env.TNF_TERMINAL_HEARTBEAT_CLEAR_LINE !== 'false',
   verifyQueueHints: process.env.TNF_TERMINAL_HEARTBEAT_VERIFY_QUEUE_HINTS !== 'false',
