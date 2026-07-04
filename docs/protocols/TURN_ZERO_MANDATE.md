@@ -57,10 +57,35 @@ acknowledge the current execution domain:
 
 At the start of each session:
 
+### Interactive Mode (Default for CLI)
+
+When `TNF_SESSION_MODE=interactive` (default for CLI terminals) or unset,
+execute **LIGHTWEIGHT startup**:
+
+1. **Quick State Check** (non-blocking):
+   - Read `~/.tnf/swarm-context.md` if present (don't block if missing)
+   - Note any P0 alerts from `~/.tnf/alerts.json`
+
+2. **Skip These Heavy Steps** (deferred to background/idle):
+   - Full ASSIMILATE_CHECK
+   - Git pull
+   - Merkle root verification
+   - Full codebase_map.json ingestion
+
+3. **Respond to user immediately** - don't let protocol overhead block user
+   engagement
+
+### Full Startup Mode (For Swarm Coordination)
+
+When `TNF_SESSION_MODE=swarm`, execute the full 7-step sequence below.
+
+### Full Startup Sequence (SWARM MODE ONLY)
+
 1. Read state files:
    - `docs/protocols/LIVING_STATE.md`
    - `AGENT_STATUS_LEDGER.md` (if present)
-   - `~/.tnf/swarm-context.md` (swarm terminal state, coordination issues, active directives - updated every heartbeat cycle)
+   - `~/.tnf/swarm-context.md` (swarm terminal state, coordination issues,
+     active directives - updated every heartbeat cycle)
 2. Read frontload policy files:
    - `.agent/SYSTEM_PROMPT.md`
    - `.agent/context/resource-map.md`
