@@ -1,20 +1,19 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`
-Created At: `2026-07-04T16:18:19.112Z`
-Handoff ID: `be71f172-3ff8-4cf4-8c08-5e18a75ed453`
+Created At: `2026-07-04T16:21:50.219Z`
+Handoff ID: `606a375f-a504-45f1-97f7-0476fdbf46b6`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `tnf-cli-harness-implementation`
-- Head SHA: `f59e3c439960dfc1dc8f70faab3bb405dbae46fb`
+- Head SHA: `47cbd243b3f8aa2bfa01cf442f985709037f8562`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Ratified session: ec4164d74f (13 files) then f59e3c4399 (3 protocol files
-- gate OK). Head f59e3c4399.
+- Final ratification: ec4164d7 -> f59e3c4 -> 47cbd24. Session-handoff-gate OK. AGENT_STATUS_LEDGER reconciliation complete.
 
 ## Changed Paths
 
@@ -52,4 +51,4 @@ Handoff ID: `be71f172-3ff8-4cf4-8c08-5e18a75ed453`
 ## Artifacts
 
 **Commits:**
-- f59e3c439960dfc1dc8f70faab3bb405dbae46fb
+- 47cbd243b3f8aa2bfa01cf442f985709037f8562
