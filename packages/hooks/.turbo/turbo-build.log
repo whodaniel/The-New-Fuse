@@ -2,12 +2,3 @@
 > @the-new-fuse/hooks@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/hooks
 > tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'
 
-src/__tests__/useKeyboardShortcuts.test.tsx(2,38): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../hooks/useKeyboardShortcuts.js'?
-src/__tests__/useUndoRedo.test.tsx(2,29): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../hooks/useUndoRedo.js'?
-src/hooks/__tests__/useKanbanBoard.test.tsx(2,32): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../useKanbanBoard.js'?
-src/hooks/__tests__/useKanbanBoard.test.tsx(3,65): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
-src/hooks/useKanbanBoard.tsx(8,8): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
-src/hooks/useKanbanBoard.tsx(9,29): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './useUndoRedo.js'?
-src/index.ts(16,27): error TS2307: Cannot find module './api.js' or its corresponding type declarations.
-src/index.ts(20,8): error TS2307: Cannot find module './api.js' or its corresponding type declarations.
-Build completed with warnings

@@ -5,12 +5,6 @@
  * Simple logger implementation
  */
 export class Logger {
-    static { this.levelPriority = {
-        debug: 0,
-        info: 1,
-        warn: 2,
-        error: 3
-    }; }
     constructor(component, minLevel = 'info') {
         this.component = component;
         this.minLevel = minLevel;
@@ -65,4 +59,10 @@ export class Logger {
         return message;
     }
 }
+Logger.levelPriority = {
+    debug: 0,
+    info: 1,
+    warn: 2,
+    error: 3
+};
 //# sourceMappingURL=Logger.js.map

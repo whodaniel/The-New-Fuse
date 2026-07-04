@@ -16,6 +16,8 @@
  *   Channels:  http://localhost:3000/channels
  */
 
+import { randomUUID } from 'crypto';
+
 import { EventEmitter } from 'events';
 import http from 'http';
 
@@ -2392,11 +2394,30 @@ export class TNFRelayServer extends EventEmitter {
       content: message,
       channel: channelId,
       timestamp: Date.now(),
+      // Methodology §4 Loop 4: relay-system recovery frames MUST carry
+      // canonicalEntityId + idNumber + mcid lineage so quorum decisions and
+      // federation gates do not sever lineage on a stall-recovery hop.
+      // See docs/agent_prompts/methodology/methodology.md
+      canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
+      idNumber: 'ID#:STALL_RECOVERY',
+      federation: {
+        mcid: 'tnf/mcid/0.1',
+        // causation_id is null because a recovery is a fresh node, not a
+        // continuation of any prior frame; correlation_id is the channel.
+        trace_id: randomUUID(),
+        correlation_id: channelId,
+        causation_id: null,
+        gate_decisions: ['TENANT_SCOPE_GATE', 'CHANNEL_MEMBERSHIP_GATE'],
+      },
       metadata: attachAuditTrace(
         {
           ...metadata,
           isSystemMessage: true,
           isRecoveryAttempt: true,
+          // Methodology §5.1/A — class=DIRECTIVE for relay-system recovery
+          intentClass: 'RELAY',
+          canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
+          idNumber: 'ID#:STALL_RECOVERY',
         },
         {
           source: 'standalone-relay',
@@ -2404,6 +2425,7 @@ export class TNFRelayServer extends EventEmitter {
           channelId,
           operationalHandle: 'stall-detector',
           runtimeSessionId: 'stall-detector',
+          canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
         }
       ),
     };

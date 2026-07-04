@@ -53,6 +53,7 @@ exports.TNFRelayServer = void 0;
  *   Agents:    http://localhost:3000/agents
  *   Channels:  http://localhost:3000/channels
  */
+const crypto_1 = require("crypto");
 const events_1 = require("events");
 const http_1 = __importDefault(require("http"));
 const redis_1 = require("redis");
@@ -1882,16 +1883,36 @@ class TNFRelayServer extends events_1.EventEmitter {
             content: message,
             channel: channelId,
             timestamp: Date.now(),
+            // Methodology §4 Loop 4: relay-system recovery frames MUST carry
+            // canonicalEntityId + idNumber + mcid lineage so quorum decisions and
+            // federation gates do not sever lineage on a stall-recovery hop.
+            // See docs/agent_prompts/methodology/methodology.md
+            canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
+            idNumber: 'ID#:STALL_RECOVERY',
+            federation: {
+                mcid: 'tnf/mcid/0.1',
+                // causation_id is null because a recovery is a fresh node, not a
+                // continuation of any prior frame; correlation_id is the channel.
+                trace_id: (0, crypto_1.randomUUID)(),
+                correlation_id: channelId,
+                causation_id: null,
+                gate_decisions: ['TENANT_SCOPE_GATE', 'CHANNEL_MEMBERSHIP_GATE'],
+            },
             metadata: (0, audit_js_1.attachAuditTrace)({
                 ...metadata,
                 isSystemMessage: true,
                 isRecoveryAttempt: true,
+                // Methodology §5.1/A — class=DIRECTIVE for relay-system recovery
+                intentClass: 'RELAY',
+                canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
+                idNumber: 'ID#:STALL_RECOVERY',
             }, {
                 source: 'standalone-relay',
                 actor: 'stall-detector',
                 channelId,
                 operationalHandle: 'stall-detector',
                 runtimeSessionId: 'stall-detector',
+                canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
             }),
         };
         console.log(`[Relay] Sending recovery message to channel ${channelId}`);

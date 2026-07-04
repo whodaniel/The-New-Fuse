@@ -8,10 +8,14 @@ export * from './hooks/useKanbanBoard.js';
 export * from './hooks/useTimeline.js';
 export * from './hooks/useKeyboardShortcuts.js';
 export * from './hooks/useUndoRedo.js';
-export { useAgents, useWorkflows } from './api.js';
-declare const apiUseAuth: any, restApiHooks: any;
+import * as apiHooks from './api/index.js';
+export { useAgents, useWorkflows } from './api/index.js';
+declare const apiUseAuth: typeof apiHooks.useAuth, restApiHooks: {
+    useAgents(options: apiHooks.UseAgentsOptions): apiHooks.UseAgentsResult;
+    useWorkflows(options: apiHooks.UseWorkflowsOptions): apiHooks.UseWorkflowsResult;
+};
 export { apiUseAuth as useApiAuth };
-export declare const apiHooksNamespace: any;
+export declare const apiHooksNamespace: typeof apiHooks;
 export { restApiHooks };
 export interface UseAuthResult {
     isAuthenticated: boolean;

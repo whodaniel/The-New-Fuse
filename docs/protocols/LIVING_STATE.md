@@ -2,32 +2,62 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** All P0 items complete. Handoff 0d4ea22c fully executed (LIVING_STATE reviewed, agent registration verified, 82 files committed). No pending actions. Awaiting new operator directive.
-(ghs.googlehosted.com). /about and /blog pages created with SPA routes.
-sync:repos verified. Awaiting new directives. (gcp-deploy.sh / cloudbuild.yaml).
-**Project ID:** `LAUNCH-001` **Handoff:** `ef70c596-2124-40bd-952e-5239f3e042a0`
-**Head:** `baab5b2825e5` login at app.thenewfuse.com/auth/login. **Project ID:**
-`LAUNCH-001` **Handoff:** `30532802-3db1-429c-80f3-245a94a7cd75` **Head:**
-`199370ded064`
+**Current Directive:** All P0 items complete. Handoff 0d4ea22c fully executed
+(LIVING_STATE reviewed, agent registration verified, 82 files committed). No
+pending actions. Awaiting new operator directive. (ghs.googlehosted.com). /about
+and /blog pages created with SPA routes. sync:repos verified. Awaiting new
+directives. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:** `LAUNCH-001`
+**Handoff:** `ef70c596-2124-40bd-952e-5239f3e042a0` **Head:** `baab5b2825e5`
+login at app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001`
+**Handoff:** `30532802-3db1-429c-80f3-245a94a7cd75` **Head:** `199370ded064`
 
 ---
 
 ## ⚡ Active Steps
 
 1. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
-- [✅] 2026-06-29T08:29:15.434Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-06-29T10:09:07.749Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-06-29T10:11:53.553Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-01T04:23:31.232Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-01T13:53:47.713Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-01T18:45:09.017Z New script(s) created: cost-simulation-corrected.cjs, cost-simulation.cjs
-- [✅] 2026-07-01T18:45:09.017Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
+- [✅] 2026-06-29T08:29:15.434Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-06-29T10:09:07.749Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-06-29T10:11:53.553Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-01T04:23:31.232Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-01T13:53:47.713Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-01T18:45:09.017Z New script(s) created:
+  cost-simulation-corrected.cjs, cost-simulation.cjs
+- [✅] 2026-07-01T18:45:09.017Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-02T11:34:50.115Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-03T15:43:48.191Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-03T20:27:39.110Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T04:24:29.000Z TNF Framework Evolution Protocol implemented:
+- [✅] 2026-07-04T04:58:47.939Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T05:02:09.226Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T10:14:47.010Z New script(s) created:
+  cost-simulation-corrected.cjs, cost-simulation.cjs
+- [✅] 2026-07-04T10:14:47.010Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T10:22:16.222Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+  - Created TNF_FLEET_HEALTH_PROBE_PROTOCOL.md (v2.0 - adds NODE_PATH awareness)
+  - Created TNF_SELF_HEALING_PROTOCOL.md (v2.0 - module dependency awareness)
+  - Created TNF_MODULE_DEPENDENCY_AWARENESS.md (ioredis module resolution fix)
+  - Created TNF_AGENT_ROSTER_CLEANUP.md (stale agent archival protocol)
 
-
-
-
-
+- [✅] 2026-07-04T04:24:29.000Z Critical fix applied:
+  terminal-heartbeat-pulse.cjs now starts with correct NODE_PATH to resolve
+  ioredis module dependency
+- [✅] 2026-07-04T04:24:29.000Z TNF Agent Daemon started successfully (was not
+  running - caused 410 errors)
 
 - [✅] 2026-06-28T19:06:44.275Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
@@ -476,6 +506,6 @@ and generated refactoring_consensus_report.md.
   terminal-heartbeat state and LIVING_STATE.md directives to
   `~/.tnf/swarm-context.md` for AI consumption. Integrated into
   master-heartbeat-loop.cjs. Updated heartbeat prompt template to reference
-  swarm-context.md. Added swarm-context.md to TURN_ZERO_MANDATE.md and
-  AGENTS.md mandatory files. Fixed permission issues on cron scripts
+  swarm-context.md. Added swarm-context.md to TURN_ZERO_MANDATE.md and AGENTS.md
+  mandatory files. Fixed permission issues on cron scripts
   (terminal-heartbeat-cron.sh, tnf-director-cron.sh).

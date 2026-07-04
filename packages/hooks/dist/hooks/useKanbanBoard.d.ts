@@ -1,4 +1,4 @@
-import { FeatureSuggestion, TodoItem, SuggestionStatus, SuggestionService, TaskStatus } from '../types';
+import { FeatureSuggestion, TodoItem, SuggestionStatus, SuggestionService, TaskStatus } from '../types/index.js';
 declare enum DataType {
     text = "text",
     number = "number",
@@ -79,8 +79,8 @@ interface FilterCriteria {
     tags: string[];
 }
 export declare const useKanbanBoard: ({ suggestionService, initialSuggestions, initialTodos, retryAttempts }: UseKanbanBoardProps) => {
-    suggestions: any;
-    todos: any;
+    suggestions: FeatureSuggestion[];
+    todos: TodoItem[];
     loading: boolean;
     error: Error;
     updateSuggestionStatus: (id: string, status: SuggestionStatus) => Promise<void>;
@@ -95,10 +95,10 @@ export declare const useKanbanBoard: ({ suggestionService, initialSuggestions, i
     updateSearchTerm: (term: string) => void;
     updatePriorityFilter: (priorities: string[]) => void;
     updateTagsFilter: (tags: string[]) => void;
-    canUndo: any;
-    canRedo: any;
-    undo: any;
-    redo: any;
+    canUndo: boolean;
+    canRedo: boolean;
+    undo: () => void;
+    redo: () => void;
     airtableData: {
         table: Table;
         view: View;

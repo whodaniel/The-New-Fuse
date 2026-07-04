@@ -54,18 +54,30 @@ function createOrchestratorIdentity(sessionId) {
     });
 }
 class AgentRegistryService {
-    // pendingOnboarding: Map<string, any>; // This responsibility might belong to MasterClock orchestration
     constructor() {
+        this.REGISTRATION_COOLDOWN_MS = 2000; // 2 seconds between registration requests for the same sourceId
+        this.MAX_TOTAL_AGENTS = 500; // Hard cap on total registered agents in memory
         this.agents = new Map();
         this.nextAgentNumber = 1;
+        this.registrationTimestamps = new Map();
         // this.pendingOnboarding = new Map();
     }
     assignAgentId(sourceId, info = {}) {
+        const now = Date.now();
+        const lastAttempt = this.registrationTimestamps.get(sourceId);
+        if (lastAttempt && now - lastAttempt < this.REGISTRATION_COOLDOWN_MS) {
+            throw new Error(`Rate limit exceeded: Registration attempt for sourceId "${sourceId}" was made too quickly (minimum interval is ${this.REGISTRATION_COOLDOWN_MS}ms).`);
+        }
+        this.registrationTimestamps.set(sourceId, now);
         // Check if already assigned
         for (const [id, agent] of this.agents) {
             if (agent.sourceId === sourceId) {
                 return agent.agentId;
             }
+        }
+        // DoS Protection: check max agents
+        if (this.agents.size >= this.MAX_TOTAL_AGENTS) {
+            throw new Error(`Denial of service protection: Maximum active agents limit (${this.MAX_TOTAL_AGENTS}) reached. Cannot register sourceId "${sourceId}".`);
         }
         // Generate new ID
         const agentNum = String(this.nextAgentNumber++).padStart(2, '0');

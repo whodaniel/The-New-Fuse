@@ -32,6 +32,9 @@ export declare function createOrchestratorIdentity(sessionId: string): TnfAgentI
 export declare class AgentRegistryService {
     agents: Map<string, Agent>;
     nextAgentNumber: number;
+    private registrationTimestamps;
+    private readonly REGISTRATION_COOLDOWN_MS;
+    private readonly MAX_TOTAL_AGENTS;
     constructor();
     assignAgentId(sourceId: string, info?: any): string;
     recordHeartbeat(agentId: string): void;

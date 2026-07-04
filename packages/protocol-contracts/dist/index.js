@@ -3,6 +3,7 @@ export * from './crypto.js';
 export * from './envelope.js';
 export * from './handoff.js';
 export * from './identity.js';
+export * from './navigation.js';
 export * from './resource.js';
 export * from './sgp.js';
 export * from './twip.js';

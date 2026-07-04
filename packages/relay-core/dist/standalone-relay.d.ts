@@ -1,18 +1,4 @@
 #!/usr/bin/env node
-/**
- * TNF Relay Server - Standalone WebSocket Relay
- * Part of @the-new-fuse/relay-core package
- *
- * Usage:
- *   pnpm run relay          # Start on default port 3000
- *   PORT=3002 pnpm run relay  # Start on custom port
- *
- * Endpoints:
- *   WebSocket: ws://127.0.0.1:3000/ws
- *   Health:    http://localhost:3000/health
- *   Agents:    http://localhost:3000/agents
- *   Channels:  http://localhost:3000/channels
- */
 import { EventEmitter } from 'events';
 import { type TnfAgentLifecycleStatus } from './contracts/lifecycle.js';
 import type { OrchestrationTask } from './protocol/task-protocol.js';

@@ -431,38 +431,43 @@ class MasterClock {
         this.processMessage(envelope, 'redis');
     }
     processMessage(msg, source) {
-        this.metrics.messagesProcessed++;
-        const normalized = this.normalizeIncomingMessage(msg);
-        if (!normalized)
-            return;
-        switch (normalized.type) {
-            case 'CHANNEL_MESSAGE':
-                this.handleChannelMessage(normalized);
-                break;
-            case 'HEARTBEAT':
-                this.handleAgentHeartbeat(normalized);
-                break;
-            case 'AGENT_REGISTER':
-                this.handleAgentRegistration(normalized);
-                break;
-            case 'AGENT_JOINED':
-                this.handleAgentJoined(normalized);
-                break;
-            case 'CHANNEL_CREATE':
-                this.channelManager.handleChannelCreate(normalized);
-                break;
-            case 'SUPER_CYCLE_REGISTER':
-                this.superCycleScheduler.handleSuperCycleRegistration(normalized);
-                break;
-            case 'SUPER_CYCLE_HEARTBEAT':
-                this.superCycleScheduler.handleSuperCycleHeartbeat(normalized);
-                break;
-            case 'SUPER_CYCLE_UNREGISTER':
-                this.superCycleScheduler.handleSuperCycleUnregister(normalized);
-                break;
-            case 'WELCOME':
-                log('debug', 'RELAY', 'Welcome received', { clientId: normalized.clientId });
-                break;
+        try {
+            this.metrics.messagesProcessed++;
+            const normalized = this.normalizeIncomingMessage(msg);
+            if (!normalized)
+                return;
+            switch (normalized.type) {
+                case 'CHANNEL_MESSAGE':
+                    this.handleChannelMessage(normalized);
+                    break;
+                case 'HEARTBEAT':
+                    this.handleAgentHeartbeat(normalized);
+                    break;
+                case 'AGENT_REGISTER':
+                    this.handleAgentRegistration(normalized);
+                    break;
+                case 'AGENT_JOINED':
+                    this.handleAgentJoined(normalized);
+                    break;
+                case 'CHANNEL_CREATE':
+                    this.channelManager.handleChannelCreate(normalized);
+                    break;
+                case 'SUPER_CYCLE_REGISTER':
+                    this.superCycleScheduler.handleSuperCycleRegistration(normalized);
+                    break;
+                case 'SUPER_CYCLE_HEARTBEAT':
+                    this.superCycleScheduler.handleSuperCycleHeartbeat(normalized);
+                    break;
+                case 'SUPER_CYCLE_UNREGISTER':
+                    this.superCycleScheduler.handleSuperCycleUnregister(normalized);
+                    break;
+                case 'WELCOME':
+                    log('debug', 'RELAY', 'Welcome received', { clientId: normalized.clientId });
+                    break;
+            }
+        }
+        catch (e) {
+            log('error', 'MASTER_CLOCK', `Error processing message from ${source}: ${e.message}`, { error: e });
         }
     }
     normalizeIncomingMessage(msg) {
@@ -540,35 +545,51 @@ class MasterClock {
     }
     async handleRelayAgentRegisterRequest(req) {
         log('info', 'REGISTRY', `Handling register request from relay for source: ${req.sourceId}`);
-        const agentId = this.registry.assignAgentId(req.sourceId, {
-            canonicalEntityId: req.canonicalEntityId,
-            operationalHandle: req.name || req.sourceId,
-            runtimeSessionId: req.runtimeSessionId,
-            aliases: [req.sourceId, req.name].filter(Boolean),
-            platform: req.platform,
-            name: req.name,
-            capabilities: req.capabilities,
-            channels: req.channels,
-        });
-        this.metrics.agentsOnboarded++;
-        const agent = this.registry.getAgent(agentId);
-        if (req.replyTo) {
-            await this.redisClient.publish(req.replyTo, JSON.stringify({
-                type: 'REGISTRATION_SUCCESS',
-                payload: {
-                    agentId,
-                    canonicalEntityId: agent?.canonicalEntityId,
-                    operationalHandle: agent?.operationalHandle,
-                    runtimeSessionId: agent?.runtimeSessionId,
-                    aliases: agent?.aliases || [],
-                },
-            })).catch((err) => {
-                log('error', 'REGISTRY', `Failed to publish registration success to Redis: ${err.message}`);
+        try {
+            const agentId = this.registry.assignAgentId(req.sourceId, {
+                canonicalEntityId: req.canonicalEntityId,
+                operationalHandle: req.name || req.sourceId,
+                runtimeSessionId: req.runtimeSessionId,
+                aliases: [req.sourceId, req.name].filter(Boolean),
+                platform: req.platform,
+                name: req.name,
+                capabilities: req.capabilities,
+                channels: req.channels,
             });
+            this.metrics.agentsOnboarded++;
+            const agent = this.registry.getAgent(agentId);
+            if (req.replyTo) {
+                await this.redisClient.publish(req.replyTo, JSON.stringify({
+                    type: 'REGISTRATION_SUCCESS',
+                    payload: {
+                        agentId,
+                        canonicalEntityId: agent?.canonicalEntityId,
+                        operationalHandle: agent?.operationalHandle,
+                        runtimeSessionId: agent?.runtimeSessionId,
+                        aliases: agent?.aliases || [],
+                    },
+                })).catch((err) => {
+                    log('error', 'REGISTRY', `Failed to publish registration success to Redis: ${err.message}`);
+                });
+            }
+            const channelsToNotify = req.channels && req.channels.length > 0 ? req.channels : CONFIG.CHANNELS;
+            for (const channel of channelsToNotify) {
+                this.channelManager.broadcastToChannel(channel, this.createAssignmentMessage(agentId));
+            }
         }
-        const channelsToNotify = req.channels && req.channels.length > 0 ? req.channels : CONFIG.CHANNELS;
-        for (const channel of channelsToNotify) {
-            this.channelManager.broadcastToChannel(channel, this.createAssignmentMessage(agentId));
+        catch (err) {
+            log('error', 'REGISTRY', `Registration failed for source: ${req.sourceId}. Reason: ${err.message}`);
+            if (req.replyTo) {
+                await this.redisClient.publish(req.replyTo, JSON.stringify({
+                    type: 'REGISTRATION_FAILURE',
+                    payload: {
+                        sourceId: req.sourceId,
+                        error: err.message,
+                    },
+                })).catch((publishErr) => {
+                    log('error', 'REGISTRY', `Failed to publish registration failure to Redis: ${publishErr.message}`);
+                });
+            }
         }
     }
     handleAgentJoined(msg) {
