@@ -1,5 +1,5 @@
 {
-  "now": "2026-07-04T12:00:02Z",
+  "now": "2026-07-04T20:00:01Z",
   "generated_by": "tnf-process-atlas-generator",
   "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "cron": [
@@ -83,159 +83,79 @@
   "live": [
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1054 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+      "cmd": "10015 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIncDI1MTE3NWRiODViMTA0ZWFjODY4OTE4OTEyNDUzZmIwN3AyODc3NjI@key-shark-87762.upstash.io:6379' RELAY_URL='ws://127.0.0.1:3000/ws' LEDGER_API_BASE='https://api.thenewfuse.com' STALL_THRESHOLD='45000' RECOVERY_INTERVAL='30000' SELF_PROMPT_ENABLED='true' SELF_PROMPT_COOLDOWN_MS='30000' node dist/master-clock.js"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1262 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+      "cmd": "10036 node dist/master-clock.js"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1297 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+      "cmd": "14843 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1324 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+      "cmd": "15009 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1432 node dist/master-clock.js"
+      "cmd": "15120 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1434 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+      "cmd": "15189 node dist/master-clock.js"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1465 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+      "cmd": "76456 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1512 node dist/master-clock.js"
+      "cmd": "77181 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "4210 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+      "cmd": "77347 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "4229 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "4344 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "4505 node dist/master-clock.js"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "6751 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "6776 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "6792 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "6809 node dist/master-clock.js"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "40741 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "40751 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "40765 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "40798 node dist/master-clock.js"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "68580 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "68627 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "68694 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "68753 node dist/master-clock.js"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "76848 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "77002 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "77018 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "77035 node dist/master-clock.js"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "87131 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "87426 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "87526 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "87560 node dist/master-clock.js"
+      "cmd": "77682 node dist/master-clock.js"
     },
     {
       "role": "Broker Agent (task dispatcher)",
-      "cmd": "93657 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIncDI1MTE3NWRiODViMTA0ZWFjODY4OTE4OTEyNDUzZmIwN3AyODc3NjI@key-shark-87762.upstash.io:6379' LEDGER_API_BASE='https://api.thenewfuse.com' node dist/broker-agent.js"
+      "cmd": "10051 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIncDI1MTE3NWRiODViMTA0ZWFjODY4OTE4OTEyNDUzZmIwN3AyODc3NjI@key-shark-87762.upstash.io:6379' LEDGER_API_BASE='https://api.thenewfuse.com' node dist/broker-agent.js"
     },
     {
       "role": "Broker Agent (task dispatcher)",
-      "cmd": "93677 node dist/broker-agent.js"
+      "cmd": "10070 node dist/broker-agent.js"
+    },
+    {
+      "role": "Director Agent (escalation reviewer)",
+      "cmd": "60150 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='redis://localhost:6379' LEDGER_API_BASE='https://api.thenewfuse.com' DIRECTOR_AUTO_POLICY='risk-aware' node dist/director-agent.js"
+    },
+    {
+      "role": "Director Agent (escalation reviewer)",
+      "cmd": "60199 node dist/director-agent.js"
     },
     {
       "role": "Local Redis WebSocket Bridge",
-      "cmd": "1620 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/redis-ws-bridge.cjs"
+      "cmd": "633 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/redis-ws-bridge.cjs"
     },
     {
       "role": "Standalone Relay Server",
-      "cmd": "273 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
+      "cmd": "1971 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
     },
     {
       "role": "Standalone Relay Server",
-      "cmd": "3782 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
+      "cmd": "14436 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
     },
     {
       "role": "Relay Core Runtime",
-      "cmd": "3651 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run relay"
+      "cmd": "1945 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run relay"
     },
     {
       "role": "Relay Core Runtime",
-      "cmd": "99801 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run relay"
+      "cmd": "14031 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run relay"
     }
   ],
   "packages": [
@@ -491,7 +411,7 @@
   ],
   "summaries": {
     "cron_count": 19,
-    "live_count": 39,
+    "live_count": 19,
     "packages_count": 91,
     "apps_count": 29,
     "proto_count": 31,

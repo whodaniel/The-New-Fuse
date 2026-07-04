@@ -327,9 +327,29 @@ login at app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001`
   local last). Allow-clouds gate:
   `~/.tnf/sub-director/model-policy.yaml:{allow_cloud:false}`
   (operator-controlled). Envelope-level override via `{cloud_ok:true}` or
-  `{preferred_tier:...}`. Models: local → qwen2.5-coder-1.5b/3b-instruct
-  (llama.cpp server); cloud via OpenRouter using `OPENROUTER_API_KEY` env
-  (nvidia/meta/llama-3.3-70b, openrouter/deepseek-chat-v3-0324).
+  `{preferred_tier:...}`.
+
+  **Models are NOT hard-coded in canonical documents.** The active fleet is
+  sourced from `~/.tnf/sub-director/model-policy.yaml` (`models:` section) and
+  the live provider roster emitted by `tnf fleet probe --json`. Treat any
+  concrete model name visible in this document as **historical context**,
+  not authoritative. To change the active fleet, edit
+  `model-policy.yaml` and run `tnf fleet probe` to refresh; do NOT edit
+  LIVING_STATE.md to add or remove models.
+
+  Authoritative fleet state shape:
+
+  | Field | Source | Notes |
+  | ----- | ------ | ----- |
+  | local model + port | `model-policy.yaml:models.local` | llama.cpp server, default port 8081 (overridable via `models.local.port`) |
+  | cloud providers | `model-policy.yaml:models.cloud` | list of provider/model id pairs, e.g. `nvidia/meta/llama-3.3-70b-instruct` |
+  | active override | `models.preferred` (single `{provider}/{model}` string) | takes precedence over tier matrix |
+  | live probe status | `tnf fleet probe --json` output | refreshed each sub-director cycle; fail-closed if `preferred` is unreachable |
+
+  Past state (kept for archaeology only): local was `qwen2.5-coder-1.5b/3b-instruct`
+  on llama.cpp; cloud was `nvidia/meta/llama-3.3-70b-instruct` and
+  `openrouter/deepseek-chat-v3-0324` (OpenRouter credits exhausted as of
+  2026-05-17). These are NOT live.
 - **Drainer**: `~/.tnf/sub-director/run_one_envelope.py`. Pulls ONE envelope per
   cron window via `BRPOPLPUSH`, builds prompt, resolves+invokes, writes
   run-artifact under `~/.tnf/sub-director/run-artifacts/<envelope_id>.json`.
