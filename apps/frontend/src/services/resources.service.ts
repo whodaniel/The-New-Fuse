@@ -60,11 +60,7 @@ export class ResourcesService {
   }
 
   private createMessageId(): string {
-    if (typeof globalThis.crypto?.randomUUID === 'function') {
-      return globalThis.crypto.randomUUID();
-    }
-
-    return `msg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    return globalThis.crypto?.randomUUID?.() ?? `msg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
   }
 
   private async getAuthHeaders(): Promise<Record<string, string>> {

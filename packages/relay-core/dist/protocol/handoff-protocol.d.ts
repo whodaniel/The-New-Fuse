@@ -1,16 +1,16 @@
 import { type FederationGateDecision as FederationGateDecisionType, type HandoffAckInput as HandoffAckInputT, type HandoffAck as HandoffAckT, type HandoffPacketInput as HandoffPacketInputT, type HandoffPacket as HandoffPacketT, type HandoffPacketVersion as HandoffPacketVersionT, type HandoffPayload as HandoffPayloadT, type HandoffPriority as HandoffPriorityT, type HandoffScope as HandoffScopeT, type HandoffStatus as HandoffStatusT, type HandoffTargets as HandoffTargetsT, type MasterCumulativeId as MasterCumulativeIdT, type TNFResourcePointer as TNFResourcePointerT } from '@the-new-fuse/protocol-contracts';
 export declare const HandoffPriority: import("zod").ZodEnum<{
     low: "low";
-    normal: "normal";
     high: "high";
     critical: "critical";
+    normal: "normal";
 }>;
 export type HandoffPriority = HandoffPriorityT;
 export declare const HandoffStatus: import("zod").ZodEnum<{
     pending: "pending";
+    completed: "completed";
     received: "received";
     claimed: "claimed";
-    completed: "completed";
     rejected: "rejected";
 }>;
 export type HandoffStatus = HandoffStatusT;
@@ -182,9 +182,9 @@ export declare const HandoffPacketInput: import("zod").ZodObject<{
     }, import("zod/v4/core").$strict>>;
     priority: import("zod").ZodDefault<import("zod").ZodEnum<{
         low: "low";
-        normal: "normal";
         high: "high";
         critical: "critical";
+        normal: "normal";
     }>>;
     expiresAt: import("zod").ZodOptional<import("zod").ZodString>;
     tags: import("zod").ZodDefault<import("zod").ZodArray<import("zod").ZodString>>;
@@ -275,9 +275,9 @@ export declare const HandoffPacket: import("zod").ZodObject<{
     }, import("zod/v4/core").$strict>>>;
     priority: import("zod").ZodDefault<import("zod").ZodEnum<{
         low: "low";
-        normal: "normal";
         high: "high";
         critical: "critical";
+        normal: "normal";
     }>>;
     tags: import("zod").ZodDefault<import("zod").ZodArray<import("zod").ZodString>>;
     id: import("zod").ZodString;
@@ -289,9 +289,9 @@ export declare const HandoffPacket: import("zod").ZodObject<{
     expiresAt: import("zod").ZodString;
     status: import("zod").ZodDefault<import("zod").ZodEnum<{
         pending: "pending";
+        completed: "completed";
         received: "received";
         claimed: "claimed";
-        completed: "completed";
         rejected: "rejected";
     }>>;
 }, import("zod/v4/core").$strict>;
@@ -300,9 +300,9 @@ export declare const HandoffAck: import("zod").ZodObject<{
     packetId: import("zod").ZodString;
     agentId: import("zod").ZodString;
     status: import("zod").ZodEnum<{
+        completed: "completed";
         received: "received";
         claimed: "claimed";
-        completed: "completed";
         rejected: "rejected";
     }>;
     note: import("zod").ZodOptional<import("zod").ZodString>;
@@ -350,9 +350,9 @@ export declare const HandoffAckInput: import("zod").ZodObject<{
     packetId: import("zod").ZodString;
     agentId: import("zod").ZodString;
     status: import("zod").ZodEnum<{
+        completed: "completed";
         received: "received";
         claimed: "claimed";
-        completed: "completed";
         rejected: "rejected";
     }>;
     note: import("zod").ZodOptional<import("zod").ZodString>;

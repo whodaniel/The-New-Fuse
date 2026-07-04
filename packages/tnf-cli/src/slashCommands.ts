@@ -302,6 +302,30 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
     mode: 'cli',
     cliCommand: ['harness', 'cycle'],
   },
+  {
+    name: 'clean',
+    summary: 'Remove build artifacts (dist, .next, *.{d.ts,js.map}, .vite, *.log).',
+    usage: '/clean [--dry-run] [--include-node-modules]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['clean'],
+  },
+  {
+    name: 'tree',
+    summary: 'Print the monorepo apps/ and packages/ directories as a tree.',
+    usage: '/tree [--depth N] [--root PATH]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['tree'],
+  },
+  {
+    name: 'find',
+    summary: 'Search file contents across the monorepo using ripgrep (falls back to grep).',
+    usage: '/find <pattern> [--path PATH] [--glob GLOB] [--limit N]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['find'],
+  },
 ];
 
 export function parseSlashCommand(input: string): ParsedSlashCommand | null {

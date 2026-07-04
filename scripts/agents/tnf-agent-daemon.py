@@ -538,6 +538,40 @@ class LLMClient:
         self.tools = tools or []
         self._daemon_ref = None  # Set by TNFAgentDaemon
 
+        # Capability flag — true when the configured provider accepts
+        # tool_choice:"auto". Hosted NVIDIA / Groq / OpenRouter etc. always do.
+        # A raw vLLM server only does if it was started with
+        # --enable-auto-tool-choice --tool-call-parser=<name>.
+        # Environment override: TNF_LLM_SUPPORTS_TOOL_CHOICE=true|false
+        self.supports_tool_choice = self._detect_tool_choice_support(self.base_url)
+
+    @staticmethod
+    def _detect_tool_choice_support(base_url: str) -> bool:
+        """
+        vLLM (and other raw OpenAI-compatible servers started without
+        --enable-auto-tool-choice --tool-call-parser=...) reject requests
+        that include tool_choice:"auto" with HTTP 400. Hosted providers do not.
+
+        Autonomy-first default: we OPTIMISTICALLY enable tools for every
+        endpoint, including loopback. If the server actually rejects the
+        first `auto` call, callers should fall back to a tools-free retry.
+        Override per-process via TNF_LLM_SUPPORTS_TOOL_CHOICE=true|false.
+
+        Inference rule:
+          • TNF_LLM_SUPPORTS_TOOL_CHOICE=true|1  → force enable
+          • TNF_LLM_SUPPORTS_TOOL_CHOICE=false|0 → force disable
+          • Otherwise                             → ENABLE (optimistic)
+        """
+        explicit = (os.environ.get("TNF_LLM_SUPPORTS_TOOL_CHOICE") or "").strip().lower()
+        if explicit in ("true", "1"):
+            return True
+        if explicit in ("false", "0"):
+            return False
+        # Optimistic: try tools first; the daemon's HTTP error handler strips
+        # them and retries when the server explicitly complains about the
+        # tool_choice/parser flags.
+        return True
+
     def set_daemon_ref(self, daemon):
         """Set reference to daemon for tool execution."""
         self._daemon_ref = daemon
@@ -547,7 +581,25 @@ class LLMClient:
         response = self.chat_with_tools(user_message, system_prompt)
         return response.content if response else None
 
-    def chat_with_tools(self, user_message: str, system_prompt: Optional[str] = None, max_iterations: int = 10) -> Optional[ChatResponse]:
+    def chat_with_tools(
+        self,
+        user_message: str,
+        system_prompt: Optional[str] = None,
+        max_iterations: Optional[int] = None,
+    ) -> Optional[ChatResponse]:
+        """
+        Chat with tool calling support - handles tool call loops automatically.
+
+        Autonomy-first default: NO iteration cap. The agent runs until it
+        emits a final assistant message. Runaway work is bounded by the
+        per-call HTTP timeout (urllib default 180s, configurable), and
+        individual tools should enforce their own budgets.
+
+        Pass `max_iterations=<n>` to opt-in to a ceiling — useful in web
+        REPLs and tests. A value of 0 or negative also means "unlimited".
+        """
+        if max_iterations is None or max_iterations <= 0:
+            max_iterations = float('inf')
         """Chat with tool calling support - handles tool call loops automatically."""
         if not self.api_key:
             logger.warning("No LLM API key configured — skipping LLM call")
@@ -605,9 +657,24 @@ class LLMClient:
             "max_tokens": 4096,
         }
 
-        if self.tools:
+        # Only attach tools/tool_choice when the provider actually supports
+        # them. Raw vLLM servers (and other OpenAI-compatible runtimes started
+        # without --enable-auto-tool-choice --tool-call-parser=<name>) reject
+        # requests that include tool_choice:"auto" outright with HTTP 400,
+        # which previously killed the whole agent loop. When unsupported we
+        # fall back to a plain chat-completions call — the daemon still works,
+        # it just loses tool-calling until the server is configured correctly.
+        if self.tools and self.supports_tool_choice:
             payload["tools"] = self.tools
             payload["tool_choice"] = "auto"
+        elif self.tools and not self.supports_tool_choice:
+            logger.warning(
+                "Provider %s does not advertise tool_choice support — sending "
+                "tools-free request. Restart the upstream server with "
+                "`--enable-auto-tool-choice --tool-call-parser=<parser>` or set "
+                "TNF_LLM_SUPPORTS_TOOL_CHOICE=true to force tool calling.",
+                self.base_url,
+            )
 
         data = json.dumps(payload).encode("utf-8")
         headers = {
@@ -645,7 +712,52 @@ class LLMClient:
                 err_body = e.read().decode("utf-8", errors="replace")
             except Exception:
                 pass
-            logger.error(f"LLM HTTP {e.code}: {err_body[:500]}")
+            logger.debug(f"LLM HTTP {e.code}: {err_body[:500]}")
+
+            # Autonomy-first optimistic retry: if the server rejected `tools` /
+            # `tool_choice` due to a missing parser flag, demote and retry once
+            # without those fields. This keeps the daemon alive when the local
+            # vLLM hasn't been configured with the right launcher args.
+            if (
+                e.code == 400
+                and ("tool_choice" in payload or "tools" in payload)
+                and re.search(r"enable-auto-tool-choice|tool-call-parser|tool choice", err_body or "")
+            ):
+                demoted = {k: v for k, v in payload.items() if k not in ("tools", "tool_choice")}
+                logger.warning(
+                    "Server rejected tool_choice — retrying with tools-disabled payload "
+                    "(base_url=%s). Restart vLLM with "
+                    "--enable-auto-tool-choice --tool-call-parser=<parser> to restore "
+                    "tool calling.",
+                    self.base_url,
+                )
+                try:
+                    demoted_data = json.dumps(demoted).encode("utf-8")
+                    demoted_req = urllib.request.Request(
+                        url, data=demoted_data, headers=headers, method="POST"
+                    )
+                    with urllib.request.urlopen(demoted_req, timeout=180) as resp2:
+                        body2 = json.loads(resp2.read().decode("utf-8"))
+                        msg2 = body2["choices"][0]["message"]
+                        finish2 = body2["choices"][0].get("finish_reason", "stop")
+                        tool_calls2 = None
+                        if "tool_calls" in msg2:
+                            tool_calls2 = [
+                                ToolCall(
+                                    id=tc["id"],
+                                    name=tc["function"]["name"],
+                                    arguments=json.loads(tc["function"]["arguments"]),
+                                )
+                                for tc in msg2["tool_calls"]
+                            ]
+                        return ChatResponse(
+                            content=msg2.get("content"),
+                            tool_calls=tool_calls2,
+                            finish_reason=finish2,
+                        )
+                except Exception as retry_err:
+                    logger.error("Demoted retry also failed: %s", retry_err)
+                    return None
             return None
         except Exception as e:
             logger.error(f"LLM call failed: {e}")
@@ -1099,7 +1211,7 @@ You have access to tools. Use them to:
 
 Assess health and take proactive actions if needed."""
 
-        response = self.llm.chat_with_tools(prompt, system_prompt=TOOL_CALLING_SYSTEM_PROMPT, max_iterations=5)
+        response = self.llm.chat_with_tools(prompt, system_prompt=TOOL_CALLING_SYSTEM_PROMPT)
 
         if response and response.content:
             envelope = make_envelope(

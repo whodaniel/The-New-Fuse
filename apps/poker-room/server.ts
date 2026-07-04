@@ -18,8 +18,12 @@ const loadHoldemEngine = async () => {
 
 const app = express();
 const server = http.createServer(app);
+const corsOrigin = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'];
 const io = new Server(server, {
-  cors: { origin: '*' },
+  cors: {
+    origin: process.env.NODE_ENV === 'production' ? corsOrigin : '*',
+    credentials: true,
+  },
 });
 
 io.use(async (socket: any, next) => {

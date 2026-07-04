@@ -1,5 +1,5 @@
 import { Bot, Loader2, Plus, Search, Send, Settings, Sparkles, Users, Zap } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AISourceSelector from '@/components/ai/AISourceSelector';
 import { aiSourceService } from '@/services/aiSource.service';
 import { useApi } from '../hooks/useApi';

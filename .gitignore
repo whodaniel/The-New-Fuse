@@ -380,3 +380,20 @@ dogfood-output/
 # TNF harness temp outputs
 tnf_out.txt
 tnf_verify_output.txt
+
+.agent/runtime-logs/qa-swarm-service/heartbeat.json
+.agent/test-reports/_rolling-summary.json
+.agent/testing-status.json
+apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide
+apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent
+apps/external/gemini-cli-source
+apps/frontend/docs/audits/live-link-crawl.json
+apps/frontend/docs/audits/live-link-crawl.md
+docs/operations/tnf-full-auto-runs.jsonl
+docs/operations/tnf-full-auto-state.json
+
+.gitignore
+
+# Redis RDB snapshots and other runtime dumps
+temp-*.rdb
+*.rdb

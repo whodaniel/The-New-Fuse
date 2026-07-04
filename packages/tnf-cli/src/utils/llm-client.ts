@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveBuiltinToolsAsOpenAI } from './llm-tools.js';
 
 export interface LLMMessage {
   role: 'user' | 'assistant' | 'system';
@@ -11,6 +12,35 @@ export interface LLMOptions {
   temperature?: number;
   maxTokens?: number;
   timeoutMs?: number;
+  /** OpenAI-style tool definitions to send with the request. */
+  tools?: Array<Record<string, unknown>>;
+  /**
+   * Override tool_choice for this call. Defaults to "auto" when tools are
+   * supplied and the active provider supports tool calling. Pass "none" to
+   * explicitly disable tool calling for a single request.
+   */
+  toolChoice?: 'auto' | 'none' | 'required' | string;
+  /**
+   * Autonomy-first default: when the caller does NOT supply `tools`,
+   * attach the canonical TNF built-in tool set (bash, read_file,
+   * write_file, search_files, web_search, web_fetch, list_skills,
+   * load_skill, memory_recall). Pass:
+   *   • 'none'             → strip every built-in
+   *   • 'all'              → attach every default-enabled tool
+   *   • undefined          → default ('all')
+   *   • string[] of names  → subset, intersected with the catalog
+   *   • (anything truthy but no list)
+   *
+   * When `tools` is supplied alongside `builtinTools`, the explicit
+   * `tools` array wins and no built-ins are added.
+   */
+  builtinTools?: 'none' | 'all' | string[] | undefined;
+  /**
+   * Override streaming behavior for this call. Default behavior is set
+   * by `TNF_LLM_STREAM` ('always' / 'never' / 'auto'). A per-call value
+   * here is honoured with the highest precedence.
+   */
+  stream?: boolean;
 }
 
 /**
@@ -31,6 +61,14 @@ export interface ProviderDescriptor {
   note?: string;
   provider?: string; // logical provider name for special routing
   reasoningEffort?: string; // NeuralWatt GLM-5.2: low | medium | high
+  /**
+   * Whether this provider supports OpenAI-style tool calls / tool_choice:"auto".
+   * Hosted NVIDIA, Groq, OpenRouter, DeepSeek etc. do. A local vLLM server only
+   * does if it was launched with --enable-auto-tool-choice --tool-call-parser=…
+   * When undefined we infer from the endpoint URL (true for hosted, false for
+   * loopback unless TNF_LLM_SUPPORTS_TOOL_CHOICE is explicitly set).
+   */
+  supportsToolChoice?: boolean;
 }
 
 function parsePositiveIntegerEnv(name: string): number | null {
@@ -40,12 +78,255 @@ function parsePositiveIntegerEnv(name: string): number | null {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
 
+/**
+ * Autonomy-first default: 10 minutes per call instead of the previous
+ * 3 minutes. Long-running agents — especially sub-agent chains,
+ * terraform-level inference, and exhaustive fallback walks — routinely
+ * exceed the older cap. Override with TNF_LLM_TIMEOUT_MS or
+ * TNF_PROVIDER_TIMEOUT_MS.
+ */
 function defaultProviderTimeoutMs(): number {
   return (
     parsePositiveIntegerEnv('TNF_LLM_TIMEOUT_MS') ??
     parsePositiveIntegerEnv('TNF_PROVIDER_TIMEOUT_MS') ??
-    180000
+    600_000
   );
+}
+
+/**
+ * Maximum retry attempts on transient provider errors (429/5xx).
+ * Default 3 → primary + 2 retries before falling back. Override with
+ * TNF_LLM_RETRY_MAX. Set to 0 to disable retry.
+ */
+function retryMax(): number {
+  const raw = parsePositiveIntegerEnv('TNF_LLM_RETRY_MAX');
+  return raw === null ? 3 : raw;
+}
+
+/**
+ * Base backoff in ms for exponential retry. Doubles each attempt and
+ * honours Retry-After when the provider sends one. Override with
+ * TNF_LLM_RETRY_BASE_MS.
+ */
+function retryBaseMs(): number {
+  const raw = parsePositiveIntegerEnv('TNF_LLM_RETRY_BASE_MS');
+  return raw === null ? 500 : raw;
+}
+
+/**
+ * Decide whether a status code is worth retrying. 429 (rate limit) and
+ * 5xx (server-side) are transient by definition; 401/403/400/404 are
+ * not — they will fail again with the same request. 408 (request
+ * timeout) is also retried.
+ */
+function isRetryableStatus(status: number): boolean {
+  return status === 408 || status === 429 || (status >= 500 && status <= 599);
+}
+
+/**
+ * Sleep helper backed by setTimeout — NOT AbortSignal-based because we
+ * want to back off even if the parent AbortSignal hasn't fired yet.
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Parse `Retry-After` header (seconds OR HTTP-date) into ms. Returns
+ * null when the header is missing or unparseable — caller falls back
+ * to exponential backoff in that case.
+ */
+function parseRetryAfter(value: string | null): number | null {
+  if (!value) return null;
+  const trimmed = value.trim();
+  // Numeric seconds
+  const asInt = Number.parseInt(trimmed, 10);
+  if (Number.isFinite(asInt) && asInt >= 0 && /^\d+$/.test(trimmed)) {
+    return asInt * 1000;
+  }
+  // HTTP-date
+  const dateMs = Date.parse(trimmed);
+  if (Number.isFinite(dateMs)) {
+    return Math.max(0, dateMs - Date.now());
+  }
+  return null;
+}
+
+/**
+ * Wrap `fetch(url, init)` with automatic retry on transient errors.
+ * - Retries on 408/429/5xx with exponential backoff (base * 2^attempt).
+ * - Honours Retry-After when provided.
+ * - Respects the outer AbortSignal — does NOT swallow user cancels.
+ * - Bubbles non-retryable status codes immediately.
+ *
+ * Returned Response is the LAST attempt's response (success or final
+ * failure). The body is left unconsumed; callers parse it as usual.
+ */
+async function fetchWithRetry(
+  url: string,
+  init: RequestInit,
+  context: string
+): Promise<Response> {
+  const max = retryMax();
+  const base = retryBaseMs();
+  const outerSignal = init.signal;
+
+  let lastResponse: Response | null = null;
+  let lastError: unknown = null;
+
+  for (let attempt = 0; attempt <= max; attempt++) {
+    if (attempt > 0) {
+      const hint = parseRetryAfter(lastResponse?.headers.get('retry-after') ?? null);
+      const backoff = hint ?? Math.min(base * 2 ** (attempt - 1), 30_000);
+      if (process.env.TNF_DEBUG_PROVIDERS === 'true') {
+        console.warn(
+          `[tnf] retry attempt ${attempt}/${max} for ${context} after ${backoff}ms ` +
+            `(last status: ${lastResponse?.status ?? 'network-error'})`
+        );
+      }
+      await sleep(backoff);
+    }
+
+    try {
+      const response = await fetch(url, init);
+      lastResponse = response;
+      if (response.ok || !isRetryableStatus(response.status)) {
+        return response; // Success, or non-retryable failure → caller decides
+      }
+      // Drain the body so the connection is reuseable; do not parse yet.
+      try {
+        await response.clone().text();
+      } catch {
+        // Swallow — body drain failure shouldn't abort retry
+      }
+    } catch (err: any) {
+      // Network / DNS / abort errors. Honour the outer AbortSignal.
+      if (outerSignal?.aborted) throw err;
+      lastError = err;
+    }
+
+    // Loop continues if we have retries left AND the last status was retryable.
+    if (attempt >= max) break;
+  }
+
+  if (lastResponse) return lastResponse;
+  throw lastError instanceof Error
+    ? lastError
+    : new Error(`fetchWithRetry(${context}): exhausted ${max + 1} attempts`);
+}
+
+/**
+ * Per-request connectedness timeout for health probes / fast endpoints.
+ * Used when the caller demands a quick liveness check rather than a
+ * full chat completion (e.g. provider fallback chain walk).
+ */
+function probeTimeoutMs(): number {
+  return parsePositiveIntegerEnv('TNF_LLM_PROBE_TIMEOUT_MS') ?? 5_000;
+}
+
+/**
+ * Resolved streaming policy.
+ *  • 'always' → every chat call streams
+ *  • 'never'  → suppress streaming entirely
+ *  • 'auto'   → stream when the provider looks streaming-friendly
+ *
+ * 'auto' is the autonomy-first default — we trust the operator's
+ * preference to fall back to whatever default the env / per-caller
+ * override specifies.
+ */
+function resolveStreamPolicy(perCall?: boolean): 'always' | 'never' | 'auto' {
+  if (typeof perCall === 'boolean') return perCall ? 'always' : 'never';
+  const env = (process.env.TNF_LLM_STREAM || 'auto').trim().toLowerCase();
+  if (env === 'always' || env === 'true' || env === '1' || env === 'on') return 'always';
+  if (env === 'never' || env === 'false' || env === '0' || env === 'off') return 'never';
+  return 'auto';
+}
+
+/**
+ * vLLM (and other raw OpenAI-compatible servers started without
+ * `--enable-auto-tool-choice --tool-call-parser=…`) reject requests that
+ * include `tool_choice:"auto"`. Hosted providers (NVIDIA/Groq/OpenRouter/etc.)
+ * always support it.
+ *
+ * Autonomy-first default: we OPTIMISTICALLY assume tool-calling works even
+ * for loopback hosts. If the server actually rejects the first `auto` call,
+ * the request layer (callOpenAICompatible) retries once without tools before
+ * propagating the error. The user can still force the conservative behavior
+ * with `TNF_LLM_SUPPORTS_TOOL_CHOICE=false`. An explicit `true` short-circuits
+ * URL inspection entirely.
+ */
+function providerSupportsToolChoice(baseUrl: string): boolean {
+  const explicit = (process.env.TNF_LLM_SUPPORTS_TOOL_CHOICE || '').trim().toLowerCase();
+  if (explicit === 'true' || explicit === '1') return true;
+  if (explicit === 'false' || explicit === '0') return false;
+  // Optimistic default — assume the local server is configured correctly.
+  // callOpenAICompatible handles the 400-with-instruction-message fallback.
+  return true;
+}
+
+/**
+ * Mutate `payload` in place to add `tools` / `tool_choice` only when the
+ * active provider actually supports tool calling AND the caller supplied
+ * tools. We never emit `tool_choice` without `tools`, since OpenAI-compatible
+ * servers (most notably raw vLLM) reject `tool_choice:"auto"` outright.
+ *
+ * If the caller passed an explicit `toolChoice` of "none" we silently drop
+ * the tools field too — the caller is asking for tool-free generation.
+ *
+ * The autonomy-first default is: when the caller does NOT supply a tools
+ * array AND does not pass builtinTools:'none', we attach the canonical TNF
+ * built-in tool set so the agent loop can do real work without bespoke
+ * scaffolding at each call site.
+ */
+function applyToolPayload(
+  payload: Record<string, unknown>,
+  supportsToolChoice: boolean,
+  options: LLMOptions,
+  builtinToolsProvider?: (opts: LLMOptions) => Array<Record<string, unknown>>
+): void {
+  const explicitChoice = options.toolChoice;
+  if (explicitChoice === 'none') {
+    // Caller is opting out — strip anything tool-related.
+    delete payload.tools;
+    delete payload.tool_choice;
+    return;
+  }
+
+  // Resolve the effective tools list: caller-supplied wins over builtins.
+  const callerTools = options.tools;
+  let effectiveTools: Array<Record<string, unknown>> | undefined;
+  if (Array.isArray(callerTools) && callerTools.length > 0) {
+    effectiveTools = callerTools;
+  } else if (builtinToolsProvider && options.builtinTools !== 'none') {
+    const builtins = builtinToolsProvider(options);
+    if (builtins.length > 0) effectiveTools = builtins;
+  }
+
+  if (!effectiveTools || effectiveTools.length === 0) {
+    // Caller didn't ask for tool calling this turn.
+    delete payload.tools;
+    delete payload.tool_choice;
+    return;
+  }
+
+  if (!supportsToolChoice) {
+    // Provider cannot honor tool_choice. We *could* fall back to injecting the
+    // tool descriptions into the system prompt, but that belongs to a higher
+    // layer (prompt-rewriting middleware). For now, drop silently and log.
+    if (process.env.TNF_DEBUG_PROVIDERS === 'true') {
+      console.warn(
+        '[tnf] tools supplied but provider does not support tool_choice — dropping. ' +
+          'If this is a raw vLLM server, restart it with ' +
+          '"--enable-auto-tool-choice --tool-call-parser=<parser>".'
+      );
+    }
+    delete payload.tools;
+    delete payload.tool_choice;
+    return;
+  }
+
+  payload.tools = effectiveTools;
+  payload.tool_choice = explicitChoice ?? 'auto';
 }
 
 /**
@@ -65,9 +346,23 @@ export class LLMClient {
   public baseUrl!: string;
   public model!: string;
   public providerName!: string;
+  /**
+   * Resolved capability flag — true when the active provider accepts
+   * OpenAI-style tool_choice:"auto". See providerSupportsToolChoice.
+   */
+  public supportsToolChoice = true;
   private readonly role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent';
   private envVars: Record<string, string> = {};
   private providers: ProviderDescriptor[] = [];
+  /**
+   * Per-call builtin-tool resolver. `applyToolPayload` invokes this with
+   * the call-site `options` so "all" / "none" / named subsets work the same
+   * way regardless of who is calling — callers don't have to manage the
+   * catalog themselves.
+   */
+  private _builtinToolsProvider = (options: LLMOptions): Array<Record<string, unknown>> => {
+    return resolveBuiltinToolsAsOpenAI(options);
+  };
 
   constructor(role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent' = 'worker') {
     this.role = role;
@@ -161,6 +456,7 @@ export class LLMClient {
       this.apiKey = explicitApiKey;
       this.model = explicitModel || 'model-auto';
       this.providerName = this.detectProviderFromUrl(explicitBaseUrl);
+      this.supportsToolChoice = providerSupportsToolChoice(explicitBaseUrl);
       // We consider explicit config as working even if the model is not alive;
       // the caller will handle errors at call time.
       return;
@@ -182,6 +478,10 @@ export class LLMClient {
       this.apiKey = key;
       this.model = provider.model;
       this.providerName = provider.id;
+      this.supportsToolChoice =
+        typeof provider.supportsToolChoice === 'boolean'
+          ? provider.supportsToolChoice
+          : providerSupportsToolChoice(provider.endpoint);
       return;
     }
 
@@ -217,6 +517,7 @@ export class LLMClient {
     this.apiKey = this.getEnv('NVIDIA_API_KEY') || 'missing-key';
     this.model = 'nvidia/nemotron-3-ultra-550b-a55b';
     this.providerName = 'nvidia-fallback';
+    this.supportsToolChoice = true; // Hosted NVIDIA supports tool_choice:"auto".
   }
 
   /** Detect provider name from URL pattern */
@@ -289,6 +590,16 @@ export class LLMClient {
       }
     }
 
+    // Streaming policy: 'auto' is the autonomy-first default. When the URL is
+    // obviously streaming-incompatible (gemini native) or the env says 'never',
+    // we skip. Otherwise stream, collapsing to a final string at the end.
+    const policy = resolveStreamPolicy(options.stream);
+    if (policy === 'always') {
+      let buffer = '';
+      for await (const chunk of this.chatStream(messages, options)) buffer += chunk;
+      return buffer;
+    }
+
     // Try primary provider
     try {
       return await this._callProvider(messages, options);
@@ -336,6 +647,314 @@ export class LLMClient {
     }
   }
 
+  /**
+   * Parallel-first winner: dispatch the same chat call to several providers
+   * simultaneously and return the first non-empty response. Used when an
+   * agent loop needs to keep moving despite a flaky single provider — the
+   * cost is N-times tokens, but for autonomy that's an acceptable tradeoff.
+   *
+   * Optional handles (bottom-up). Last-write-wins per message role; we keep
+   * a half-stable chat so we don't overwhelm fallback providers.
+   *
+   * Note: callers usually do NOT need this — `_callProvider` already
+   * walks the entire fallback chain on failure. This is for advanced
+   * latency-critical deployments that want the fastest read instead of
+   * the most-reliable read.
+   */
+  async chatCompleteParallelFirstWins(
+    providers: Array<{
+      baseUrl: string;
+      apiKey: string;
+      model: string;
+    }>,
+    messages: LLMMessage[],
+    options: LLMOptions = {}
+  ): Promise<string> {
+    const calls = providers.map((p) => async () => {
+      const url = `${p.baseUrl.replace(/\/$/, '')}/chat/completions`;
+      const payload: Record<string, unknown> = {
+        model: p.model,
+        messages,
+        temperature: options.temperature ?? 0.7,
+        max_tokens: options.maxTokens ?? 1000,
+      };
+      const policy = resolveStreamPolicy(options.stream);
+      if (policy === 'always') payload.stream = true;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + p.apiKey,
+        },
+        signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error(`Provider ${p.model} @ ${p.baseUrl} -> HTTP ${response.status}`);
+      }
+      const data = (await response.json()) as any;
+      const choice = data.choices?.[0]?.message;
+      return choice?.content || choice?.reasoning_content || choice?.reasoning || '';
+    });
+
+    // Promise.any first wins; all-reject path returns the joiner message.
+    try {
+      const settled = await Promise.any(calls.map((mk) => mk()));
+      return settled;
+    } catch (err) {
+      throw new Error(
+        `All ${providers.length} parallel providers failed: ${(err as Error)?.message ?? err}`
+      );
+    }
+  }
+
+  /**
+   * Tool-loop chat completion — runs the full "agent loop" transparently:
+   * call the model, parse tool_calls, dispatch to a caller-supplied executor,
+   * feed the tool result back into the message log, repeat until the model
+   * emits a final assistant message or `maxIterations` is hit.
+   *
+   * The executor signature is `(name, args) => Promise<string | object>`.
+   * Anything except the built-in tool set can be wired here: it doesn't have
+   * to live in `llm-tools.ts` — callers may pass their own toolspaces
+   * through `options.tools` and route execution however they like.
+   *
+   * This is the public mirror of the Python daemon's `chat_with_tools` —
+   * the autonomy-first default is `maxIterations: 25` so a single call can
+   * drive a non-trivial multi-step task end-to-end.
+   */
+  async chatCompleteWithTools(
+    messages: LLMMessage[],
+    executor: (name: string, args: Record<string, unknown>) => Promise<string | Record<string, unknown>>,
+    options: LLMOptions & { maxIterations?: number; systemPrompt?: string } = {}
+  ): Promise<{ content: string; toolCallsMade: number; iterations: number; finishReason: string }> {
+    /**
+     * Autonomy-first default: NO iteration cap. The whole point of
+     * chatCompleteWithTools is to let the agent keep working until it
+     * genuinely produces a final assistant message. Hard caps here
+     * silently killed long refactors, multi-environment migrations,
+     * and orchestration sweeps in the past.
+     *
+     * Pass `options.maxIterations: <n>` (positive integer) to opt-out —
+     * useful in tests, in web REPLs, and when the caller wants a hard
+     * ceiling against runaway loops (e.g. an obviously broken tool
+     * returning "more work" forever). A sentinel value of 0 also
+     * disables the cap; <0 falls back to unlimited.
+     */
+    const maxIter = options.maxIterations === undefined
+      ? Number.POSITIVE_INFINITY
+      : options.maxIterations <= 0
+        ? Number.POSITIVE_INFINITY
+        : options.maxIterations;
+    let iterations = 0;
+    let toolCallsMade = 0;
+
+    let working: LLMMessage[] = [...messages];
+    if (options.systemPrompt) {
+      working.unshift({ role: 'system', content: options.systemPrompt });
+    } else if (!working.some((m) => m.role === 'system')) {
+      // Always include a default autonomy-flavored system prompt so models
+      // remember they may call tools without explicit prompting each turn.
+      working.unshift({
+        role: 'system',
+        content:
+          'You are an autonomous TNF agent. Use the available tools liberally. ' +
+          'When a task is complete, return a final assistant message — do not loop forever. ' +
+          'Prefer observing before acting; prefer acting before guessing.',
+      });
+    }
+
+    /**
+     * Loop until either:
+     *   • the model emits a final assistant message (no tool_calls), or
+     *   • the per-call maxIterations ceiling is hit (sentinel only).
+     *
+     * No ceiling by default — autonomy-first. Runaway runs are bounded
+     * by the per-call HTTP timeout (`TNF_LLM_TIMEOUT_MS`, default 600s)
+     * and by sensible tool-executor backstops (large tools should
+     * throw or refuse after some internal budget).
+     */
+    for (let iter = 0; iter < maxIter; iter++) {
+      iterations++;
+      const response = await this._callProviderRaw(working, {
+        ...options,
+        toolChoice: options.toolChoice ?? 'auto',
+      });
+      if (!response.ok) break;
+      const choice = (response.body as any).choices?.[0]?.message;
+      const finish = (response.body as any).choices?.[0]?.finish_reason ?? 'stop';
+      const toolCalls = choice?.tool_calls as
+        | Array<{ id: string; function: { name: string; arguments: string } }>
+        | undefined;
+
+      working.push({
+        role: 'assistant',
+        content: choice?.content || '',
+        // Wire-shape augmentation: OpenAI tool_calls lands on assistant messages.
+        tool_calls: toolCalls,
+      } as LLMMessage & { tool_calls?: typeof toolCalls });
+
+      if (!toolCalls || toolCalls.length === 0) {
+        return {
+          content: choice?.content || '',
+          toolCallsMade,
+          iterations,
+          finishReason: finish,
+        };
+      }
+
+      for (const tc of toolCalls) {
+        const args = (() => {
+          try {
+            return JSON.parse(tc.function.arguments || '{}');
+          } catch {
+            return {};
+          }
+        })();
+        let resultText: string;
+        try {
+          const r = await executor(tc.function.name, args);
+          resultText = typeof r === 'string' ? r : JSON.stringify(r);
+        } catch (err) {
+          resultText = `tool_error: ${(err as Error)?.message ?? String(err)}`;
+        }
+        toolCallsMade++;
+        // Wire-shape augmentation: tool role + tool_call_id carry the result back.
+        working.push({
+          role: 'tool',
+          tool_call_id: tc.id,
+          content: resultText,
+        } as LLMMessage & { tool_call_id: string; role: 'tool' });
+      }
+    }
+
+    return {
+      content:
+        (working[working.length - 1] as any)?.content ||
+        `Agent loop hit maxIterations (${maxIter}) without a final assistant message.`,
+      toolCallsMade,
+      iterations,
+      finishReason: 'max_iterations',
+    };
+  }
+
+  /** Internal: returns the raw JSON body from a single non-streaming call. Used by `chatCompleteWithTools`. */
+  private async _callProviderRaw(
+    messages: LLMMessage[],
+    options: LLMOptions
+  ): Promise<{ ok: boolean; status: number; body: any }> {
+    const payload: Record<string, unknown> = {
+      model: this.model,
+      messages,
+      temperature: options.temperature ?? 0.7,
+      max_tokens: options.maxTokens ?? 1000,
+    };
+    applyToolPayload(payload, this.supportsToolChoice, options, this._builtinToolsProvider);
+
+    const url = `${this.baseUrl}/chat/completions`;
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + this.apiKey,
+    };
+    const res = await fetchWithRetry(
+      url,
+      {
+        method: 'POST',
+        headers,
+        signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
+        body: JSON.stringify(payload),
+      },
+      `${this.providerName}:${this.model}`
+    );
+    let body: any = null;
+    try {
+      body = await res.json();
+    } catch {
+      body = null;
+    }
+    return { ok: res.ok, status: res.status, body };
+  }
+
+  /**
+   * POST `payload` to the active provider's /chat/completions endpoint.
+   * If the server returns HTTP 400 pointing at missing tool_choice support
+   * (`--enable-auto-tool-choice` / `--tool-call-parser`) we automatically
+   * strip the tool fields from a clone of the payload and retry once. That
+   * keeps autonomous runs alive even when the local vLLM hasn't been
+   * pre-configured with the parser flags.
+   *
+   * Returns the raw fetch Response. Callers handle SSE / JSON parsing.
+   */
+  private async _postWithToolRetry(
+    payload: Record<string, unknown>,
+    options: LLMOptions,
+    timeoutMs: number
+  ): Promise<Response> {
+    const url = `${this.baseUrl}/chat/completions`;
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + this.apiKey,
+    };
+
+    let bodyJson = JSON.stringify(payload);
+    let response = await fetchWithRetry(
+      url,
+      {
+        method: 'POST',
+        headers,
+        signal: AbortSignal.timeout(timeoutMs),
+        body: bodyJson,
+      },
+      `${this.providerName}:${this.model}`
+    );
+
+    if (response.ok || response.status !== 400) return response;
+
+    const firstText = await response.clone().text();
+    const needsRetry =
+      /enable-auto-tool-choice|tool-call-parser|tool_choice/.test(firstText) &&
+      (Array.isArray(payload.tools) || 'tool_choice' in payload);
+    if (!needsRetry) {
+      // Not a tool_choice error — bubble the original response up.
+      return new Response(firstText, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+      });
+    }
+
+    // Demote: retry without tool fields, log once so the operator notices.
+    if (process.env.TNF_DEBUG_PROVIDERS === 'true') {
+      console.warn(
+        `[tnf] ${this.baseUrl} rejected tool_choice on first attempt — retrying tools-free. ` +
+          'For full tool calling, restart the upstream vLLM with ' +
+          '"--enable-auto-tool-choice --tool-call-parser=<parser>".'
+      );
+    }
+    const demoted: Record<string, unknown> = { ...payload };
+    delete demoted.tools;
+    delete demoted.tool_choice;
+    bodyJson = JSON.stringify(demoted);
+    response = await fetchWithRetry(
+      url,
+      {
+        method: 'POST',
+        headers,
+        signal: AbortSignal.timeout(timeoutMs),
+        body: bodyJson,
+      },
+      `${this.providerName}:${this.model} (tools-stripped)`
+    );
+    return response;
+  }
+
+  /** Detect whether a 400 implies a tool_choice configuration problem. */
+  static isToolChoiceRejection(status: number, body: string): boolean {
+    if (status !== 400) return false;
+    return /enable-auto-tool-choice|tool-call-parser|tool choice requires/i.test(body);
+  }
+
   /** OpenAI-compatible streaming via SSE */
   private async *_streamOpenAICompatible(
     messages: LLMMessage[],
@@ -352,16 +971,13 @@ export class LLMClient {
     if (reasoningEffort) {
       payload.reasoning_effort = reasoningEffort;
     }
+    applyToolPayload(payload, this.supportsToolChoice, options, this._builtinToolsProvider);
 
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
-      },
-      signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
-      body: JSON.stringify(payload),
-    });
+    const response = await this._postWithToolRetry(
+      payload,
+      options,
+      options.timeoutMs ?? defaultProviderTimeoutMs()
+    );
 
     if (!response.ok) {
       const error = await response.text();
@@ -450,16 +1066,13 @@ export class LLMClient {
     if (reasoningEffort) {
       payload.reasoning_effort = reasoningEffort;
     }
+    applyToolPayload(payload, this.supportsToolChoice, options, this._builtinToolsProvider);
 
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
-      },
-      signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
-      body: JSON.stringify(payload),
-    });
+    const response = await this._postWithToolRetry(
+      payload,
+      options,
+      options.timeoutMs ?? defaultProviderTimeoutMs()
+    );
 
     if (!response.ok) {
       const error = await response.text();

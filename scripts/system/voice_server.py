@@ -1113,6 +1113,24 @@ HTML_TEMPLATE = """
             setTimeout(checkMicState, 500);
         }
 
+        let lastStreamIndex = 0;
+        async function checkStream() {
+            try {
+                const resp = await fetch('/stream');
+                const data = await resp.json();
+                if (data.lines && data.lines.length > lastStreamIndex) {
+                    for (let i = lastStreamIndex; i < data.lines.length; i++) {
+                        const line = data.lines[i].trim();
+                        if (line) {
+                            addCacheItem(line);
+                        }
+                    }
+                    lastStreamIndex = data.lines.length;
+                }
+            } catch (e) {}
+            setTimeout(checkStream, 1000);
+        }
+
         async function startRadar() {
             if (mediaStream) return;
             userActivated = true;
@@ -1203,10 +1221,24 @@ HTML_TEMPLATE = """
 
         checkAiStatus();
         checkMicState();
+        checkStream();
     </script>
 </body>
 </html>
 """
+
+
+@app.route("/stream")
+def stream():
+    """Return recent transcription results for beam UI display."""
+    try:
+        if os.path.exists(STREAM_FILE):
+            with open(STREAM_FILE, "r") as f:
+                lines = f.readlines()
+            return {"lines": lines[-20:]}  # Last 20 lines
+        return {"lines": []}
+    except Exception as err:
+        return {"error": str(err), "lines": []}, 500
 
 
 @app.route("/")

@@ -30,9 +30,16 @@ export class ProtocolInterceptor {
   assimilation: AssimilationEngine;
   disclosure: ProceduralDisclosureService;
   directives: DirectiveConversionService;
+  /**
+   * When true, suppress all cosmetic console output from runPreFlightChecks
+   * while still running every check. Used by --no-splash consumers so CI
+   * pipes and LLM-driving agents get a clean JSON stdout.
+   */
+  silent: boolean;
 
-  constructor(repoRoot: string) {
+  constructor(repoRoot: string, options: { silent?: boolean } = {}) {
     this.repoRoot = repoRoot;
+    this.silent = Boolean(options.silent);
     this.turnZero = new TurnZeroService(repoRoot);
     this.livingState = new LivingStateService(repoRoot);
     this.handoff = new SessionHandoffService(repoRoot);
@@ -80,16 +87,23 @@ export class ProtocolInterceptor {
 
   /**
    * Run all protocol checks and return a summary.
+   * When constructed with `silent: true`, cosmetic console output is
+   * suppressed; checks still run and the summary is returned unchanged.
    */
   async runPreFlightChecks(): Promise<ProtocolSummary> {
-    console.log(chalk.bold('\n═══════════════════════════════════════'));
-    console.log(chalk.bold('  TNF Protocol Pre-Flight Checks'));
-    console.log(chalk.bold('═══════════════════════════════════════\n'));
+    const log = this.silent
+      ? () => {
+          /* silenced */
+        }
+      : (line: string) => console.log(line);
+    log(chalk.bold('\n═══════════════════════════════════════'));
+    log(chalk.bold('  TNF Protocol Pre-Flight Checks'));
+    log(chalk.bold('═══════════════════════════════════════\n'));
 
     const checks: ProtocolCheckResult[] = [];
 
     // 1. Turn Zero Mandate
-    console.log(chalk.bold('▶ Protocol: Turn Zero Mandate'));
+    log(chalk.bold('▶ Protocol: Turn Zero Mandate'));
     const turnZeroResult = await this.turnZero.execute();
     checks.push({
       name: 'Turn Zero Mandate',
@@ -100,7 +114,7 @@ export class ProtocolInterceptor {
     });
 
     // 2. Living State Synchronization
-    console.log(chalk.bold('\n▶ Protocol: Living State Sync'));
+    log(chalk.bold('\n▶ Protocol: Living State Sync'));
     const livingStateContent = this.livingState.readCurrentState();
     const livingStateOk =
       livingStateContent !== null && livingStateContent.includes('[STATUS:SYNCHRONIZED]');
@@ -112,15 +126,15 @@ export class ProtocolInterceptor {
         : 'LIVING_STATE.md missing or not synchronized',
     });
 
-    if (livingStateContent) {
+    if (!this.silent && livingStateContent) {
       const activeDirective = this.livingState.getCurrentDirective();
       if (activeDirective) {
-        console.log(chalk.cyan(`  Active Directive: ${activeDirective}`));
+        log(chalk.cyan(`  Active Directive: ${activeDirective}`));
       }
     }
 
     // 3. Procedural Disclosure
-    console.log(chalk.bold('\n▶ Protocol: Procedural Disclosure'));
+    log(chalk.bold('\n▶ Protocol: Procedural Disclosure'));
     const disclosureResult = await this.disclosure.executeCheck();
     checks.push({
       name: 'Procedural Disclosure',
@@ -131,7 +145,7 @@ export class ProtocolInterceptor {
     });
 
     // 4. Handoff Artifact Check
-    console.log(chalk.bold('\n▶ Protocol: Session Handoff'));
+    log(chalk.bold('\n▶ Protocol: Session Handoff'));
     const latestHandoff = this.handoff.readLatestJson();
     checks.push({
       name: 'Session Handoff',
@@ -142,7 +156,7 @@ export class ProtocolInterceptor {
     });
 
     // 5. Knowledge Tree Integrity
-    console.log(chalk.bold('\n▶ Protocol: Knowledge Tree Integrity'));
+    log(chalk.bold('\n▶ Protocol: Knowledge Tree Integrity'));
     const knowledgeTreePath = 'KNOWLEDGE_TREE.json';
     const knowledgeTreeOk = fs.existsSync(this.resolve(knowledgeTreePath));
     checks.push({
@@ -152,7 +166,7 @@ export class ProtocolInterceptor {
     });
 
     // 6. Integration Verification
-    console.log(chalk.bold('\n▶ Protocol: Integration Verification'));
+    log(chalk.bold('\n▶ Protocol: Integration Verification'));
     const coreProtocolsDir = 'docs/protocols';
     const coreProtocolsOk = fs.existsSync(this.resolve(coreProtocolsDir));
     checks.push({
@@ -163,24 +177,38 @@ export class ProtocolInterceptor {
         : 'Missing',
     });
 
-    // Summary
-    const allPassed = checks.every((c) => c.passed);
-    console.log(chalk.bold('\n═══════════════════════════════════════'));
-    console.log(chalk.bold('  Protocol Check Summary'));
-    console.log(chalk.bold('═══════════════════════════════════════\n'));
-    for (const check of checks) {
-      const icon = check.passed ? chalk.green('✓') : chalk.red('✗');
-      console.log(`${icon} ${check.name}: ${check.details}`);
-    }
+    // Summary — silent mode skips this entirely so the consumer gets a
+    // clean stdout (the JSON envelope) on the caller side.
+    if (!this.silent) {
+      const allPassed = checks.every((c) => c.passed);
+      log(chalk.bold('\n═══════════════════════════════════════'));
+      log(chalk.bold('  Protocol Check Summary'));
+      log(chalk.bold('═══════════════════════════════════════\n'));
+      for (const check of checks) {
+        const icon = check.passed ? chalk.green('✓') : chalk.red('✗');
+        log(`${icon} ${check.name}: ${check.details}`);
+      }
 
-    console.log(chalk.bold('\nResult:'));
-    if (allPassed) {
-      console.log(chalk.green('  ALL PROTOCOLS PASSED'));
+      log(chalk.bold('\nResult:'));
+      if (allPassed) {
+        log(chalk.green('  ALL PROTOCOLS PASSED'));
+      } else {
+        const failed = checks.filter((c) => !c.passed);
+        log(chalk.yellow(`  ${failed.length} protocol check(s) failed`));
+        for (const f of failed) {
+          log(chalk.yellow(`  - ${f.name}: ${f.details}`));
+        }
+      }
     } else {
+      // In silent mode, surface failures to stderr so CI doesn't lose them.
       const failed = checks.filter((c) => !c.passed);
-      console.log(chalk.yellow(`  ${failed.length} protocol check(s) failed`));
-      for (const f of failed) {
-        console.log(chalk.yellow(`  - ${f.name}: ${f.details}`));
+      if (failed.length > 0) {
+        process.stderr.write(
+          `[ProtocolInterceptor] silent mode: ${failed.length} protocol check(s) failed\n`
+        );
+        for (const f of failed) {
+          process.stderr.write(`  - ${f.name}: ${f.details}\n`);
+        }
       }
     }
 
@@ -189,7 +217,7 @@ export class ProtocolInterceptor {
     return {
       timestamp: new Date().toISOString(),
       checks,
-      allPassed,
+      allPassed: checks.every((c) => c.passed),
       activeDirective,
       turnZero: turnZeroResult,
     };

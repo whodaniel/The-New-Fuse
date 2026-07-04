@@ -1,7 +1,7 @@
 {
   "summary": {
-    "startedAt": "2026-06-23T23:53:03.923Z",
-    "generatedAt": "2026-06-24T00:01:25.824Z",
+    "startedAt": "2026-06-28T04:07:20.324Z",
+    "generatedAt": "2026-06-28T04:23:30.420Z",
     "settings": {
       "maxDepth": 5,
       "maxPagesPerDomain": 500,
@@ -25,7 +25,7 @@
         "checked": 45,
         "broken": 0,
         "semanticBroken": 0,
-        "pageErrors": 0
+        "pageErrors": 2
       },
       {
         "seed": "https://poker.ai-arcade.xyz/",
@@ -66,7 +66,18 @@
       "crawledPages": 36,
       "queuedRemaining": 0,
       "maxDepthReached": 3,
-      "pageErrors": [],
+      "pageErrors": [
+        {
+          "url": "https://ai-arcade.xyz/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.html",
+          "depth": 2,
+          "error": "page.$$eval: Execution context was destroyed, most likely because of a navigation"
+        },
+        {
+          "url": "https://ai-arcade.xyz/visualizations/VISUAL-DEMO.html",
+          "depth": 2,
+          "error": "page.$$eval: Execution context was destroyed, most likely because of a navigation"
+        }
+      ],
       "semanticBroken": [],
       "checks": [
         {
@@ -202,10 +213,10 @@
           "depth": 2,
           "url": "https://ai-arcade.xyz/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.html",
           "pageStatus": 200,
-          "pageError": null,
-          "title": "The New Fuse - AI Agent Orchestration Platform",
-          "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
-          "fingerprintHash": "62e4cc457d443496eef1aef0b6e2f6681730eb37",
+          "pageError": "page.$$eval: Execution context was destroyed, most likely because of a navigation",
+          "title": "",
+          "h1": "",
+          "fingerprintHash": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
           "status": 200,
           "ok": true,
           "finalUrl": "https://ai-arcade.xyz/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph",
@@ -526,10 +537,10 @@
           "depth": 2,
           "url": "https://ai-arcade.xyz/visualizations/VISUAL-DEMO.html",
           "pageStatus": 200,
-          "pageError": null,
-          "title": "The New Fuse - AI Agent Orchestration Platform",
-          "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
-          "fingerprintHash": "62e4cc457d443496eef1aef0b6e2f6681730eb37",
+          "pageError": "page.$$eval: Execution context was destroyed, most likely because of a navigation",
+          "title": "",
+          "h1": "",
+          "fingerprintHash": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
           "status": 200,
           "ok": true,
           "finalUrl": "https://ai-arcade.xyz/visualizations/VISUAL-DEMO",
@@ -1174,7 +1185,7 @@
           "pageError": null,
           "title": "The New Fuse - Agent Communication Flow",
           "h1": "🤖 Agent Communication Flow",
-          "fingerprintHash": "c966be82abce27fa67408205e71ad02121674f33",
+          "fingerprintHash": "3544ab95ee7deb004af6db2dde4382536ddb239c",
           "status": 200,
           "ok": true,
           "finalUrl": "https://thenewfuse.com/visualizations/agent-communication-flow",
@@ -1210,7 +1221,7 @@
           "pageError": null,
           "title": "The New Fuse - Monitoring Dashboard",
           "h1": "🎛️ Monitoring Dashboard",
-          "fingerprintHash": "aa05942a672cb48b540ce2ce3da34a4863925531",
+          "fingerprintHash": "9bf5c253278cfab370091cceea1b981d21b2e203",
           "status": 200,
           "ok": true,
           "finalUrl": "https://thenewfuse.com/visualizations/monitoring-dashboard",

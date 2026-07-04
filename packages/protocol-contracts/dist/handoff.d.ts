@@ -1,16 +1,16 @@
 import { z } from 'zod';
 export declare const HandoffPrioritySchema: z.ZodEnum<{
     low: "low";
-    normal: "normal";
     high: "high";
     critical: "critical";
+    normal: "normal";
 }>;
 export type HandoffPriority = z.infer<typeof HandoffPrioritySchema>;
 export declare const HandoffStatusSchema: z.ZodEnum<{
     pending: "pending";
+    completed: "completed";
     received: "received";
     claimed: "claimed";
-    completed: "completed";
     rejected: "rejected";
 }>;
 export type HandoffStatus = z.infer<typeof HandoffStatusSchema>;
@@ -182,9 +182,9 @@ export declare const HandoffPacketInputSchema: z.ZodObject<{
     }, z.core.$strict>>;
     priority: z.ZodDefault<z.ZodEnum<{
         low: "low";
-        normal: "normal";
         high: "high";
         critical: "critical";
+        normal: "normal";
     }>>;
     expiresAt: z.ZodOptional<z.ZodString>;
     tags: z.ZodDefault<z.ZodArray<z.ZodString>>;
@@ -275,9 +275,9 @@ export declare const HandoffPacketSchema: z.ZodObject<{
     }, z.core.$strict>>>;
     priority: z.ZodDefault<z.ZodEnum<{
         low: "low";
-        normal: "normal";
         high: "high";
         critical: "critical";
+        normal: "normal";
     }>>;
     tags: z.ZodDefault<z.ZodArray<z.ZodString>>;
     id: z.ZodString;
@@ -289,9 +289,9 @@ export declare const HandoffPacketSchema: z.ZodObject<{
     expiresAt: z.ZodString;
     status: z.ZodDefault<z.ZodEnum<{
         pending: "pending";
+        completed: "completed";
         received: "received";
         claimed: "claimed";
-        completed: "completed";
         rejected: "rejected";
     }>>;
 }, z.core.$strict>;
@@ -300,9 +300,9 @@ export declare const HandoffAckInputSchema: z.ZodObject<{
     packetId: z.ZodString;
     agentId: z.ZodString;
     status: z.ZodEnum<{
+        completed: "completed";
         received: "received";
         claimed: "claimed";
-        completed: "completed";
         rejected: "rejected";
     }>;
     note: z.ZodOptional<z.ZodString>;
@@ -349,9 +349,9 @@ export declare const HandoffAckSchema: z.ZodObject<{
     packetId: z.ZodString;
     agentId: z.ZodString;
     status: z.ZodEnum<{
+        completed: "completed";
         received: "received";
         claimed: "claimed";
-        completed: "completed";
         rejected: "rejected";
     }>;
     note: z.ZodOptional<z.ZodString>;

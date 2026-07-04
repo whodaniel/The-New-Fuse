@@ -512,4 +512,78 @@ export class GatewayAuthService implements OnModuleDestroy {
       'dev-refresh-secret-key-123'
     );
   }
+
+  async forgotPassword(
+    email: string,
+    cfTurnstileToken?: string,
+    ipAddress?: string,
+  ): Promise<{ success: boolean; message: string }> {
+    try {
+      const user = await this.sql`SELECT id, email FROM auth_users WHERE email = ${email}`;
+
+      if (!user || user.length === 0) {
+        return {
+          success: true,
+          message: 'If an account exists with this email, a reset link has been sent',
+        };
+      }
+
+      const resetToken = randomUUID();
+      const expiresAt = new Date(Date.now() + 3600000);
+
+      await this.sql`
+        INSERT INTO password_reset_tokens (user_id, token, expires_at, ip_address, created_at)
+        VALUES (${user[0].id}, ${resetToken}, ${expiresAt}, ${ipAddress || null}, NOW())
+      `;
+
+      this.logger.log(`Password reset requested for ${email} from IP: ${ipAddress}`);
+
+      return {
+        success: true,
+        message: 'If an account exists with this email, a reset link has been sent',
+      };
+    } catch (error) {
+      this.logger.error(`Forgot password error: ${error}`);
+      return {
+        success: true,
+        message: 'If an account exists with this email, a reset link has been sent',
+      };
+    }
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const hashedPassword = await hash(newPassword, 12);
+
+      const result = await this.sql`
+        WITH valid_token AS (
+          SELECT user_id FROM password_reset_tokens
+          WHERE token = ${token} AND expires_at > NOW() AND used_at IS NULL
+        ),
+        updated AS (
+          UPDATE auth_users SET password_hash = ${hashedPassword}, updated_at = NOW()
+          WHERE id IN (SELECT user_id FROM valid_token)
+          RETURNING id
+        ),
+        marked AS (
+          UPDATE password_reset_tokens SET used_at = NOW()
+          WHERE token = ${token}
+        )
+        SELECT COUNT(*) as count FROM updated
+      `;
+
+      if (!result || result.length === 0 || result[0].count === 0) {
+        throw new UnauthorizedException('Invalid or expired reset token');
+      }
+
+      return {
+        success: true,
+        message: 'Password has been reset successfully',
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) throw error;
+      this.logger.error(`Reset password error: ${error}`);
+      throw new UnauthorizedException('Invalid or expired reset token');
+    }
+  }
 }

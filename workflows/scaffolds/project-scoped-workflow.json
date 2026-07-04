@@ -1,0 +1,324 @@
+{
+  "name": "[TNF] Project-Scoped Workflow Scaffold",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "trigger-cron-001",
+      "name": "Cron Trigger (every 15m)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "wf-id-001",
+              "name": "workflow_id",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "run-id-001",
+              "name": "run_id",
+              "value": "={{ $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "ts-001",
+              "name": "ts",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "src-001",
+              "name": "source",
+              "value": "tnf.project-scoped.scaffold",
+              "type": "string"
+            },
+            {
+              "id": "rep-001",
+              "name": "repo",
+              "value": "=/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+              "type": "string"
+            },
+            {
+              "id": "event-001",
+              "name": "event",
+              "value": "tick",
+              "type": "string"
+            },
+            {
+              "id": "lane-001",
+              "name": "itinerary_lane",
+              "value": "n8n-supervised",
+              "type": "string"
+            },
+            {
+              "id": "tenant-001",
+              "name": "tenant_scope",
+              "value": "tnf.local",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "build-payload-001",
+      "name": "Build TNF Payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "env-check-001",
+              "leftValue": "={{ $env.TNF_SYNC_WEBHOOK }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-webhook-001",
+      "name": "If Webhook Env Set",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.TNF_SYNC_WEBHOOK }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-TNF-Source",
+              "value": "n8n-project-scaffold"
+            },
+            {
+              "name": "X-TNF-Workflow",
+              "value": "={{ $json.workflow_id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "enable": true,
+            "maxTries": 3
+          }
+        }
+      },
+      "id": "http-webhook-001",
+      "name": "POST to TNF Webhook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [960, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.TNF_CACHE_API || 'http://localhost:3100/api/workflows/n8n/ingest' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-TNF-Source",
+              "value": "n8n-project-scaffold-fallback"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "timeout": 8000,
+          "retry": {
+            "enable": true,
+            "maxTries": 2
+          }
+        }
+      },
+      "id": "http-fallback-001",
+      "name": "POST to Local Cache Ingest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [960, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.TNF_REDIS_BRIDGE || 'http://localhost:3001/a2a/publish' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-TNF-Source",
+              "value": "n8n-project-scaffold-bus"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"tnf:synaptic_bus\",\n  \"from\": \"n8n\",\n  \"type\": \"workflow.tick\",\n  \"payload\": {{ $json }}\n}",
+        "options": {
+          "timeout": 5000,
+          "retry": {
+            "enable": true,
+            "maxTries": 2
+          }
+        }
+      },
+      "id": "http-bus-001",
+      "name": "Publish to Synaptic Bus",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "errorMessage": "TNF project-scoped workflow failed: {{ $json.event }} from {{ $json.source }}"
+      },
+      "id": "error-out-001",
+      "name": "On Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [1200, 500]
+    }
+  ],
+  "connections": {
+    "Cron Trigger (every 15m)": {
+      "main": [
+        [
+          {
+            "node": "Build TNF Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build TNF Payload": {
+      "main": [
+        [
+          {
+            "node": "If Webhook Env Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Webhook Env Set": {
+      "main": [
+        [
+          {
+            "node": "POST to TNF Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "POST to Local Cache Ingest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST to TNF Webhook": {
+      "main": [
+        [
+          {
+            "node": "Publish to Synaptic Bus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST to Local Cache Ingest": {
+      "main": [
+        [
+          {
+            "node": "Publish to Synaptic Bus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "America/New_York"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "tnf"
+    },
+    {
+      "name": "scaffold"
+    },
+    {
+      "name": "project-scoped"
+    },
+    {
+      "name": "supervised"
+    }
+  ],
+  "meta": {
+    "instanceId": "tnf-project-scoped-scaffold",
+    "templateCredsSetupCompleted": false,
+    "description": "Project-scoped n8n scaffold bound to TNF repo. Routes through TNF_SYNC_WEBHOOK when present, falls back to local cache ingest, and publishes to the synaptic bus. Lane:n8n-supervised, tenant:tnf.local."
+  },
+  "pinData": {}
+}

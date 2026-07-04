@@ -1,6 +1,8 @@
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 import { getAuthTokenCandidates as resolveAuthTokenCandidates } from '@/utils/authToken';
 
+const generateId = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
 export type LedgerStatus =
   | 'submitted'
   | 'queued'
@@ -838,7 +840,7 @@ export async function bootstrapPersonalTimeline(): Promise<{
 
     if (existingEvents.length === 0) {
       const genesisEvent: TimelineEvent = {
-        id: `evt_local_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
+        id: `evt_local_${Date.now()}_${generateId()}`,
         eventType: 'historical_event',
         timestamp: new Date().toISOString(),
         actor: userId,

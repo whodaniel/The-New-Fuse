@@ -8,7 +8,7 @@ import {
 import { NodeProperties, NodeToolbox, WorkflowCanvas } from '@/components/workflow';
 import WorkflowAIAssistantPanel from '@/components/workflow/WorkflowAIAssistantPanel';
 import AISourceSelector from '@/components/ai/AISourceSelector';
-import { useWorkflow as useWorkflowContext } from '@/contexts/WorkflowContext';
+import { useWorkflowContext, WorkflowProvider } from '@/contexts/WorkflowContext';
 import { useWorkflow } from '@/hooks';
 import {
   ChevronLeft,

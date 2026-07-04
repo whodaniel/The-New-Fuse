@@ -43,7 +43,7 @@ const child_process_1 = require("child_process");
 const fs = __importStar(require("fs/promises"));
 const path = __importStar(require("path"));
 const util_1 = require("util");
-const index_js_1 = require("../parser/index.js");
+const parser_js_1 = require("../parser.js");
 const execAsync = (0, util_1.promisify)(child_process_1.exec);
 /**
  * Default configuration for skill loader
@@ -60,7 +60,7 @@ const DEFAULT_CONFIG = {
 class SkillLoader {
     constructor(config) {
         this.config = { ...DEFAULT_CONFIG, ...config };
-        this.parser = new index_js_1.SkillParser();
+        this.parser = new parser_js_1.SkillParser();
     }
     /**
      * Initialize the loader by cloning/updating the repository

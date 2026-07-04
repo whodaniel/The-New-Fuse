@@ -4,11 +4,11 @@
  * Integration layer for Anthropic's Claude Skills into The New Fuse
  */
 export * from './types/index.js';
-export { SkillParser } from './parser/index.js';
-export { SkillLoader } from './loader/index.js';
-export { SkillExecutor } from './executor/index.js';
-export { SkillRegistry } from './registry/index.js';
-export { MCPSkillProvider } from './integration/index.js';
+export { SkillParser } from './parser.js';
+export { SkillLoader } from './loader.js';
+export { SkillExecutor } from './executor.js';
+export { SkillRegistry } from './registry.js';
+export { MCPSkillProvider } from './integration.js';
 export { ClaudeSkillsManager } from './ClaudeSkillsManager.js';
 export declare const VERSION = "1.0.0";
 export declare const PACKAGE_INFO: {

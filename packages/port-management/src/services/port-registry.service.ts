@@ -2,7 +2,6 @@
 
 import { EventEmitter } from 'events';
 import * as net from 'net';
-import { checkPort } from 'node-port-check'; // Import checkPort from node-port-check
 import { execFileSync } from 'node:child_process';
 import * as portfinder from 'portfinder';
 import { createClient, type RedisClientType } from 'redis';
@@ -314,10 +313,16 @@ export class PortRegistryService extends EventEmitter {
    * Check if a port is available
    */
   async isPortAvailable(port: number, host: string = 'localhost'): Promise<boolean> {
-    // Use node-port-check for port availability
-    return checkPort(port, host)
-      .then(() => true)
-      .catch(() => false);
+    // Simple TCP check for port availability
+    return new Promise((resolve) => {
+      const server = net.createServer();
+      server.once('error', () => resolve(false));
+      server.once('listening', () => {
+        server.close();
+        resolve(true);
+      });
+      server.listen(port, host);
+    });
   }
 
   /**
