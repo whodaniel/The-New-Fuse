@@ -1,4 +1,3 @@
-// @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import chalk from 'chalk';
 import { Redis } from 'ioredis';
