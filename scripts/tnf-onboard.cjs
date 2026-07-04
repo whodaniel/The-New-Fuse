@@ -266,8 +266,9 @@ function readYamlPolicy() {
 }
 
 function extractParamCount(modelId) {
-  // Examples: qwen2.5-coder-1.5b-instruct, llama-3.3-70b-instruct,
-  //           mistral-large-3 (no size), gpt-oss-120b, nemotron-super-49b-v1.5.
+  // Recognises model IDs whose basename contains a parameter count suffix
+  // like "-1.5b", "-8b", "-70b", "-120b". Returns the parsed count or null.
+  // (See tnf-cli fleet evolution: handoff ad9830e6 for tier table.)
   if (!modelId || typeof modelId !== 'string') return null;
   const m = modelId.toLowerCase().match(/-(\d+(?:\.\d+)?)\s*b(?:[^a-z]|$)/);
   if (!m) return null;
