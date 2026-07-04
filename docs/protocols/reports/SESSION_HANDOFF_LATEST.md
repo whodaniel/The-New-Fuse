@@ -1,35 +1,36 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`
-Created At: `2026-07-04T16:21:50.219Z`
-Handoff ID: `606a375f-a504-45f1-97f7-0476fdbf46b6`
+Created At: `2026-07-04T21:17:56.451Z`
+Handoff ID: `ad9830e6-8408-44e3-ade3-de6e00faac03`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `tnf-cli-harness-implementation`
-- Head SHA: `47cbd243b3f8aa2bfa01cf442f985709037f8562`
+- Head SHA: `73a3546b814ddb1c2facefd8e9f4be1c01c86a92`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Final ratification: ec4164d7 -> f59e3c4 -> 47cbd24. Session-handoff-gate OK. AGENT_STATUS_LEDGER reconciliation complete.
+- CLI evolution ratified at 73a3546b81; protocol-trio re-emitted as fresh handoff covering LIVING_STATE
+- AGENT_STATUS_LEDGER
+- SESSION_HANDOFF_LATEST. Fleet-aware turn-zero + onboard budget + validator guards all green.
 
 ## Changed Paths
 
-- .agent/runtime-logs/qa-swarm-service/heartbeat.json
+- agent/runtime-logs/qa-swarm-service/heartbeat.json
 - .agent/test-reports/_rolling-summary.json
 - .agent/testing-status.json
-- .verifier/process-atlas.digest.md
-- .verifier/process-atlas.payload.json
-- .verifier/process-atlas.verify.json
-- .verifier/tnf-process-atlas.html
 - apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide
 - apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent
 - apps/external/gemini-cli-source
 - apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
 - apps/virtual-library-blueprints
-- packages/tnf-cli/tsconfig.tsbuildinfo
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 
 ## Continuation
 
@@ -46,9 +47,10 @@ Handoff ID: `606a375f-a504-45f1-97f7-0476fdbf46b6`
 
 ## Next Actions
 
-- Commit remaining uncommitted changes (12 file(s))
+- Review updated LIVING_STATE.md for new active steps
+- Commit remaining uncommitted changes (11 file(s))
 
 ## Artifacts
 
 **Commits:**
-- 47cbd243b3f8aa2bfa01cf442f985709037f8562
+- 73a3546b814ddb1c2facefd8e9f4be1c01c86a92
