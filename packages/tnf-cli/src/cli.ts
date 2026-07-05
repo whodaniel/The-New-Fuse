@@ -15582,6 +15582,48 @@ function enableAutonomousRuntimeDefaults(): void {
   }
 }
 
+/**
+ * TUI mode is resolved in priority order:
+ *   1. TNF_TUI_MODE env var    (one-shot override; 'LONG_RUN' | 'AUTONOMOUS' | 'INTERACTIVE')
+ *   2. ~/.tnf/tui-mode.json    (operator-persisted default)
+ *   3. 'INTERACTIVE'           (preserves historical behaviour: wait for operator input)
+ *
+ * The three modes differ in WHO is allowed to feed the prompt loop:
+ *   INTERACTIVE  → operator keystrokes only; loop blocks on ask() until typed.
+ *   AUTONOMOUS   → self-prompted after each LLM response (operator must `/autonomous on`).
+ *   LONG_RUN     → always-on autonomous continuation; operator typing INTERRUPTS cleanly
+ *                  by being consumed at the top of the loop before the queued continuation
+ *                  fires. Resets only on `.exit`, stdin close, or `TNF_TUI_MODE=INTERACTIVE`.
+ *
+ * This is the architectural lever that keeps the Kilo/Hermes/orchestrator-style
+ * fleet alive across long-lived turn-zero/turn-N cycles without the operator
+ * having to enable autonomous mode every time.
+ */
+type TuiMode = 'INTERACTIVE' | 'AUTONOMOUS' | 'LONG_RUN';
+
+function resolveTuiMode(): TuiMode {
+  const envMode = (process.env.TNF_TUI_MODE || '').trim().toUpperCase();
+  if (envMode === 'LONG_RUN' || envMode === 'AUTONOMOUS' || envMode === 'INTERACTIVE') {
+    return envMode;
+  }
+  // Persistence file (operator-set default)
+  try {
+    const home = process.env.HOME || os.homedir();
+    const configPath = path.join(home, '.tnf', 'tui-mode.json');
+    if (fs.existsSync(configPath)) {
+      const raw = fs.readFileSync(configPath, 'utf8');
+      const parsed = JSON.parse(raw);
+      const persisted = (parsed?.mode || '').toUpperCase();
+      if (persisted === 'LONG_RUN' || persisted === 'AUTONOMOUS' || persisted === 'INTERACTIVE') {
+        return persisted;
+      }
+    }
+  } catch {
+    // ignore malformed config; fall through to default
+  }
+  return 'INTERACTIVE';
+}
+
 function readHandoffNextActions(): string[] {
   try {
     const handoffPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
@@ -15836,6 +15878,15 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     options?.autonomous ||
     isTruthyEnv(process.env.TNF_INTERACTIVE_EXEC) ||
     isTruthyEnv(process.env.TNF_AUTONOMOUS_ON_BOOT);
+
+  // Resolve the persistent TUI mode. LONG_RUN keeps the agent alive without
+  // operator keystrokes; INTERACTIVE is the historical default (wait for input).
+  const tuiMode: TuiMode = resolveTuiMode();
+  if (tuiMode === 'LONG_RUN' && !autonomousMode) {
+    autonomousMode = true;
+    enableAutonomousRuntimeDefaults();
+  }
+
   const autonomousState: AutonomousSessionState = {
     continuePending: autonomousMode,
     handoffTaskIndex: 0,
@@ -15853,6 +15904,17 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
   if (autonomousMode) {
     enableAutonomousRuntimeDefaults();
     console.log(chalk.dim('  Autonomous shell execution: ON (auto-continue enabled)'));
+    if (tuiMode === 'LONG_RUN') {
+      console.log(
+        chalk.dim(
+          '  TUI mode: ') +
+        chalk.bold.cyan('LONG_RUN') +
+        chalk.dim(
+          '  (persisted at ~/.tnf/tui-mode.json; operator typing still interrupts; '
+          + 'unset with TNF_TUI_MODE=INTERACTIVE)'
+        )
+      );
+    }
   }
 
   // Start heartbeat to keep session alive
