@@ -1,6 +1,6 @@
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { authFetch } from '@/utils/authToken';
@@ -9,7 +9,35 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.thenewfuse.com
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState<string | null>(null);
+
+  // Surface the Stripe redirect outcome to the user. success/cancel are
+  // appended by Stripe to the successUrl/cancelUrl we send on checkout.
+  // processing is a rare in-between state Stripe uses while the session
+  // is still finalising — we leave the loading affordance on-screen.
+  // The params are cleared from the URL on first read so a refresh of
+  // /pricing doesn't re-fire the toasts forever.
+  useEffect(() => {
+    const status = searchParams.get('checkout');
+    if (!status) return;
+    if (status === 'success') {
+      toast.success(
+        'Subscription confirmed — your plan is active. The receipt is on its way to your email.',
+        { duration: 8000 }
+      );
+    } else if (status === 'cancel') {
+      toast.error(
+        'Checkout cancelled — no charge was made. Pick a plan whenever you’re ready.',
+        { duration: 6000 }
+      );
+    } else if (status === 'processing') {
+      toast('Finalising your subscription…', { icon: '⏳', duration: 5000 });
+    }
+    const next = new URLSearchParams(searchParams);
+    next.delete('checkout');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   const handleSubscribe = async (priceId: string) => {
     setLoading(priceId);
