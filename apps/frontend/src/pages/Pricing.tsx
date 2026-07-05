@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { authFetch } from '@/utils/authToken';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.thenewfuse.com';
 
 const Pricing = () => {
@@ -12,7 +14,7 @@ const Pricing = () => {
   const handleSubscribe = async (priceId: string) => {
     setLoading(priceId);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/billing/stripe/checkout`, {
+      const response = await authFetch(`${API_BASE_URL}/api/billing/stripe/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

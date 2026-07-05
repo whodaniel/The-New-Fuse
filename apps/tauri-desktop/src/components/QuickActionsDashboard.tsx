@@ -176,7 +176,7 @@ const ACTION_CATEGORIES: ActionCategory[] = [
         label: 'Open GitHub',
         icon: '📦',
         description: 'View the TNF GitHub repository',
-        url: 'https://github.com/whodaniel/fuse',
+        url: 'https://github.com/whodaniel/The-New-Fuse',
       },
       {
         id: 'open-cloud_runtime',

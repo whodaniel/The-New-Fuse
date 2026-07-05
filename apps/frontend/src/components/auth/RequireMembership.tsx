@@ -17,7 +17,7 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
   children,
   fallback = '/membership',
 }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, logout } = useAuth();
   const { isSuperAdmin } = useAuthorization();
   const [membership, setMembership] = useState<MembershipState | null>(null);
   const [isChecking, setIsChecking] = useState(true);
@@ -58,10 +58,21 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
         });
 
         if (!response.ok) {
-          if (response.status === 401 || response.status === 403) {
+          if (response.status === 401) {
             if (!canceled) {
               setMembership(null);
-              setRedirectTo('/auth/login');
+              if (logout) {
+                console.warn('[RequireMembership] 401 received, logging out to prevent loop');
+                logout();
+              }
+              setRedirectTo('/auth/login?error=auth_failed');
+            }
+            return;
+          }
+          if (response.status === 403) {
+            if (!canceled) {
+              setMembership({ active: false, tier: 'STARTER' });
+              setRedirectTo(fallback);
             }
             return;
           }

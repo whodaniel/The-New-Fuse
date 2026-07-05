@@ -230,7 +230,7 @@ const Settings: React.FC = () => {
                 <a href="https://docs.thenewfuse.com" target="_blank" rel="noopener">
                   Documentation
                 </a>
-                <a href="https://github.com/whodaniel/fuse" target="_blank" rel="noopener">
+                <a href="https://github.com/whodaniel/The-New-Fuse" target="_blank" rel="noopener">
                   GitHub
                 </a>
               </div>

@@ -8,8 +8,8 @@ web, and cloud.
 - **Public Site:** [thenewfuse.com](https://thenewfuse.com)
 - **Hosted App:** [app.thenewfuse.com](https://app.thenewfuse.com)
 - **Documentation:** [thenewfuse.com/docs](https://thenewfuse.com/docs)
-- **Open Source Runtime:**
-  [whodaniel/fuse-open-runtime](https://github.com/whodaniel/fuse-open-runtime)
+- **GitHub Repository:**
+  [whodaniel/The-New-Fuse](https://github.com/whodaniel/The-New-Fuse)
 
 ## Local Development
 
@@ -21,8 +21,8 @@ Prerequisites:
 - PostgreSQL 17+ for full API/database flows
 
 ```bash
-git clone https://github.com/whodaniel/the-new-fuse-next-gen.git
-cd the-new-fuse-next-gen
+git clone https://github.com/whodaniel/The-New-Fuse.git
+cd The-New-Fuse
 pnpm install
 cp .env.example .env
 touch .tnf.local.env
@@ -52,11 +52,12 @@ pnpm run release:gate:strict
 
 ## Public Release Flow
 
-TNF is developed in the combined monorepo (`whodaniel/the-new-fuse-next-gen`)
-and published into downstream distribution repositories:
+TNF is developed and published from a single public monorepo:
+`whodaniel/The-New-Fuse`.
 
-- `whodaniel/fuse-open-runtime`: open-source runtime distribution
-- `whodaniel/fuse-control-plane`: proprietary hosted SaaS control plane
+- `whodaniel/The-New-Fuse`: Open-source runtime distribution and application
+  code.
+- Proprietary SaaS control plane infrastructure is maintained privately.
 
 See `docs/REPO_SEPARATION.md` for the public/private boundary. Use the dry-run
 sync before publishing downstream repositories:

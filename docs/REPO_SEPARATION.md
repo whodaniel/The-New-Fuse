@@ -50,10 +50,10 @@ We develop in a single monorepo because:
 
 ## Repository Map
 
-### `whodaniel/the-new-fuse-next-gen` — Combined Monorepo (Development)
+### `whodaniel/The-New-Fuse` — Combined Public Monorepo
 
-This is where you work. It contains everything. Local clone may use the directory
-name `The-New-Fuse`; remote `the-new-fuse-next-gen` is canonical.
+This is where you work. It contains the open-source runtime and public facing
+features.
 
 ```
 The-New-Fuse/
@@ -90,14 +90,13 @@ The-New-Fuse/
     └── REPO_SEPARATION.md      # 📖 THIS FILE
 ```
 
-🟢 = Open source (goes to `fuse-open-runtime`) 🔴 = Proprietary (goes to
-`fuse-control-plane`, stubbed in `fuse-open-runtime`)
+🟢 = Open source (available in `The-New-Fuse`) 🔴 = Proprietary (goes to
+`fuse-control-plane`, stubbed in `The-New-Fuse`)
 
-### `whodaniel/fuse-open-runtime` — Open Source (Read-Only)
+### `whodaniel/The-New-Fuse` — Open Source (Public)
 
-Published automatically by `sync-repos.sh`. Contains everything from the
-monorepo MINUS proprietary content. Where proprietary code was removed, contract
-stubs are placed that:
+Contains everything from the monorepo MINUS proprietary content. Where
+proprietary code was removed, contract stubs are placed that:
 
 - Export types from `@the-new-fuse/control-plane-contracts`
 - Provide no-op stub classes with console warnings
@@ -152,11 +151,11 @@ pnpm run sync:repos -- --dry-run
 1. **Control-plane**: Clones `fuse-control-plane`, copies latest proprietary
    content from monorepo HEAD, commits, pushes.
 2. **Open-runtime**: Clones monorepo, removes all proprietary paths, creates
-   stub files, force-pushes to `fuse-open-runtime`.
+   stub files, ensures `The-New-Fuse` is clean.
 
 ### When to Sync
 
-- After merging significant PRs to `main` on `the-new-fuse-next-gen`
+- After merging significant PRs to `main` on `The-New-Fuse`
 - Before releases (tag first: `git tag vX.Y.Z`)
 - Whenever you want the public/private repos to reflect latest state
 
@@ -164,8 +163,9 @@ Recommended cadence:
 
 1. Merge → `main`
 2. `pnpm run sync:repos:dry-run`
-3. `pnpm run sync:repos` (or rely on `.github/workflows/repo-sync.yml` on push to `main`)
-4. Tag release on monorepo and on `fuse-open-runtime` after sync
+3. `pnpm run sync:repos` (or rely on `.github/workflows/repo-sync.yml` on push
+   to `main`)
+4. Tag release on monorepo and on `The-New-Fuse` after sync
 
 ---
 
@@ -181,7 +181,7 @@ these arrays:
 
 ### Rules
 
-1. **Every proprietary file must leave a stub** in `fuse-open-runtime`
+1. **Every proprietary file must leave a stub** in `The-New-Fuse`
 2. **Public code must never import private source** — only contracts
 3. **`packages/control-plane-contracts/` is always public** — it defines the API
    boundary between open and closed source
@@ -216,14 +216,14 @@ When you create new proprietary code:
 doesn't map cleanly to subtree semantics. A simple script that clones, filters,
 and pushes is more transparent and debuggable.
 
-**Q: Can I commit directly to fuse-open-runtime?** A: No. It will be overwritten
-on next sync. All changes go through the monorepo.
+**Q: Can I commit directly to The-New-Fuse?** A: Yes, this is the canonical repo
+now.
 
 **Q: What if I need to add a new proprietary component?** A: Add code to the
 monorepo, add its path to `scripts/sync-repos.sh`, add a stub, run sync.
 
-**Q: Is the monorepo public?** A: `whodaniel/the-new-fuse-next-gen` is the
-canonical private development workspace. Legacy `whodaniel/fuse` remains public
-for historical narrative; see `docs/lineage/REPO_LINEAGE.md` for archive status.
-The separation exists so `fuse-open-runtime` is a clean public release without
+**Q: Is the monorepo public?** A: `whodaniel/The-New-Fuse` is the canonical
+public development workspace. Legacy `whodaniel/fuse` remains public for
+historical narrative; see `docs/lineage/REPO_LINEAGE.md` for archive status. The
+separation exists so `The-New-Fuse` is a clean public release without
 proprietary internals.
