@@ -9,9 +9,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Module } from '@nestjs/common';
-import { WorkflowController } from './controllers/workflow.controller.js';
-import { WorkflowService } from '../services/workflow.service.js';
-import { WorkflowRepository, WorkflowExecutionRepository } from '../repositories/workflow.repository.js';
+import { WorkflowController } from './controllers/workflow.controller';
+import { WorkflowService } from '../services/workflow.service';
+import { WorkflowRepository, WorkflowExecutionRepository } from '../repositories/workflow.repository';
 let WorkflowModule = class WorkflowModule {
 };
 WorkflowModule = __decorate([

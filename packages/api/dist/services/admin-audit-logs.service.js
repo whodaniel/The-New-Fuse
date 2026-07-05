@@ -12,8 +12,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a;
 import { Injectable } from '@nestjs/common';
-import { AuditLogsRepository, } from '../repositories/audit-logs.repository.js';
+import { AuditLogsRepository, } from '../repositories/audit-logs.repository';
 let AdminAuditLogsService = class AdminAuditLogsService {
     constructor(auditLogsRepository) {
         this.auditLogsRepository = auditLogsRepository;
@@ -49,7 +50,7 @@ let AdminAuditLogsService = class AdminAuditLogsService {
 };
 AdminAuditLogsService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [AuditLogsRepository])
+    __metadata("design:paramtypes", [typeof (_a = typeof AuditLogsRepository !== "undefined" && AuditLogsRepository) === "function" ? _a : Object])
 ], AdminAuditLogsService);
 export { AdminAuditLogsService };
 //# sourceMappingURL=admin-audit-logs.service.js.map

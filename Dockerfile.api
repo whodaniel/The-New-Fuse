@@ -47,8 +47,8 @@ COPY packages/types/package.json packages/types/
 COPY packages/utils/package.json packages/utils/
 COPY packages/web-scraping/package.json packages/web-scraping/
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile --ignore-scripts || pnpm install --no-frozen-lockfile --ignore-scripts
+# Install dependencies (ignoring lockfile mismatches to ensure build succeeds)
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Copy source code
 COPY apps/api/ apps/api/
@@ -146,7 +146,7 @@ COPY packages/utils/package.json packages/utils/
 COPY packages/web-scraping/package.json packages/web-scraping/
 
 # Install production dependencies only
-RUN pnpm install --frozen-lockfile --ignore-scripts --prod || pnpm install --no-frozen-lockfile --ignore-scripts --prod || pnpm install --no-frozen-lockfile --ignore-scripts
+RUN pnpm install --no-frozen-lockfile --ignore-scripts --prod
 
 # Copy built files from builder
 COPY --from=builder /app/apps/api/dist/ /app/apps/api/dist/

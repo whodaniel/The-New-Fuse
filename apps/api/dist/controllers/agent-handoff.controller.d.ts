@@ -46,7 +46,7 @@ export declare class AgentHandoffController {
         version: "1.0" | "1.1";
         createdAt: string;
         expiresAt: string;
-        status: "pending" | "completed" | "rejected" | "received" | "claimed";
+        status: "pending" | "completed" | "received" | "claimed" | "rejected";
         cumulativeId?: {
             spec: "tnf/mcid/0.1";
             id: string;
@@ -103,7 +103,7 @@ export declare class AgentHandoffController {
     acknowledge(input: unknown, user: AuthUser): Promise<{
         packetId: string;
         agentId: string;
-        status: "completed" | "rejected" | "received" | "claimed";
+        status: "completed" | "received" | "claimed" | "rejected";
         cumulativeId: {
             spec: "tnf/mcid/0.1";
             id: string;
@@ -181,7 +181,7 @@ export declare class AgentHandoffController {
             version: "1.0" | "1.1";
             createdAt: string;
             expiresAt: string;
-            status: "pending" | "completed" | "rejected" | "received" | "claimed";
+            status: "pending" | "completed" | "received" | "claimed" | "rejected";
             cumulativeId?: {
                 spec: "tnf/mcid/0.1";
                 id: string;
@@ -260,7 +260,7 @@ export declare class AgentHandoffController {
         version: "1.0" | "1.1";
         createdAt: string;
         expiresAt: string;
-        status: "pending" | "completed" | "rejected" | "received" | "claimed";
+        status: "pending" | "completed" | "received" | "claimed" | "rejected";
         cumulativeId?: {
             spec: "tnf/mcid/0.1";
             id: string;

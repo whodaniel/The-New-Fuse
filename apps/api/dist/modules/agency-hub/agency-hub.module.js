@@ -13,6 +13,7 @@ const database_1 = require("@the-new-fuse/database");
 // import { AgencyHubModule as CoreAgencyHubModule } from '../../types/core';
 const unified_ledger_module_1 = require("../unified-ledger/unified-ledger.module");
 // Import existing controllers to maintain compatibility
+const metrics_service_1 = require("../../services/metrics.service");
 const a2a_auth_broker_controller_1 = require("./controllers/a2a-auth-broker.controller");
 const a2a_broker_controller_1 = require("./controllers/a2a-broker.controller");
 const agency_controller_1 = require("./controllers/agency.controller");
@@ -20,7 +21,6 @@ const analytics_controller_1 = require("./controllers/analytics.controller");
 const email_custodian_controller_1 = require("./controllers/email-custodian.controller");
 const service_request_controller_1 = require("./controllers/service-request.controller");
 const swarm_controller_1 = require("./controllers/swarm.controller");
-const metrics_service_1 = require("../../services/metrics.service");
 // Services - The Three Pillars of TNF Agent
 const a2a_auth_broker_service_1 = require("./services/a2a-auth-broker.service");
 const a2a_message_broker_service_1 = require("./services/a2a-message-broker.service");

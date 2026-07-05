@@ -12,22 +12,28 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LLMProviderService = exports.MockLLMRegistry = exports.LLM_REGISTRY = void 0;
+exports.LLMProviderService = exports.InMemoryLLMRegistry = exports.LLM_REGISTRY = void 0;
 const common_1 = require("@nestjs/common");
 const database_1 = require("@the-new-fuse/database");
 exports.LLM_REGISTRY = 'LLMRegistry';
-let MockLLMRegistry = class MockLLMRegistry {
+let InMemoryLLMRegistry = class InMemoryLLMRegistry {
+    constructor() {
+        this.providers = new Map();
+    }
     async registerProvider(id, config) {
-        // Mock implementation
+        this.providers.set(id, config);
     }
     async unregisterProvider(id) {
-        // Mock implementation
+        this.providers.delete(id);
+    }
+    getProvider(id) {
+        return this.providers.get(id);
     }
 };
-exports.MockLLMRegistry = MockLLMRegistry;
-exports.MockLLMRegistry = MockLLMRegistry = __decorate([
+exports.InMemoryLLMRegistry = InMemoryLLMRegistry;
+exports.InMemoryLLMRegistry = InMemoryLLMRegistry = __decorate([
     (0, common_1.Injectable)()
-], MockLLMRegistry);
+], InMemoryLLMRegistry);
 let LLMProviderService = class LLMProviderService {
     constructor(llmRegistry, db) {
         this.llmRegistry = llmRegistry;
@@ -201,7 +207,6 @@ let LLMProviderService = class LLMProviderService {
     }
     async registerClaudeCodeCLI() {
         try {
-            // Mock implementation - usually does nothing if in memory without persistence logic
             return null;
         }
         catch (error) {

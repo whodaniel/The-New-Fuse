@@ -1,9 +1,9 @@
 /**
  * Agent Discovery System Integration Tests
  */
-import { AgentDiscoveryRegistry } from '../agent-discovery-registry.service.js';
-import { CapabilityMatcher } from '../capability-matcher.service.js';
-import { AgentStatus, } from '../../types/agent-discovery.types.js';
+import { AgentDiscoveryRegistry } from '../agent-discovery-registry.service';
+import { CapabilityMatcher } from '../capability-matcher.service';
+import { AgentStatus, } from '../../types/agent-discovery.types';
 describe('Agent Discovery System', () => {
     let registry;
     let matcher;

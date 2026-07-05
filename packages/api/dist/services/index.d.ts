@@ -2,8 +2,8 @@
  * API services module
  */
 import type { Agent, Workflow, WorkflowExecution } from '@the-new-fuse/types';
-import { RedisService } from './redis.service.js';
-import type { ApiResponse, PaginatedResponse, PaginationParams } from '../types/index.js';
+import { RedisService } from './redis.service';
+import type { ApiResponse, PaginatedResponse, PaginationParams } from './types.js';
 /**
  * Base API service with common functionality
  */

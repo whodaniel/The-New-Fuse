@@ -4,7 +4,7 @@
  * This service provides business logic for Workflow operations.
  * It uses the Drizzle-based WorkflowRepository for data access.
  */
-import { WorkflowRepository, WorkflowExecutionRepository, type Workflow, type NewWorkflow, type WorkflowExecution } from '../repositories/workflow.repository.js';
+import { WorkflowRepository, WorkflowExecutionRepository, type Workflow, type NewWorkflow, type WorkflowExecution } from '../repositories/workflow.repository';
 export declare class WorkflowService {
     private readonly workflowRepository;
     private readonly executionRepository;

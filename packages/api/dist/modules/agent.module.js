@@ -10,10 +10,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Module } from '@nestjs/common';
 import { AgentController } from '../controllers/AgentController.js';
-import { AgentService } from '../services/agent.service.js';
-import { AgentRepository } from '../repositories/agent.repository.js';
-import { LocalAIDetectionService } from '../services/agent.service.js';
-import { AuthModule } from './auth/auth.module.js';
+import { AgentService } from '../services/agent.service';
+import { AgentRepository } from '../repositories/agent.repository';
+import { LocalAIDetectionService } from '../services/agent.service';
+import { AuthModule } from './auth/auth.module';
 let AgentModule = class AgentModule {
 };
 AgentModule = __decorate([

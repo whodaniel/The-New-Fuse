@@ -14,9 +14,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var AgentService_1;
+var _a;
 import { Injectable, Logger } from '@nestjs/common';
 import { AgentCapability } from '@the-new-fuse/types';
-import { AgentRepository } from '../repositories/agent.repository.js';
+import { AgentRepository } from '../repositories/agent.repository';
 import { toError } from '../utils/error.js';
 // Mock LocalAIDetectionService to avoid cross-package import issues
 export class LocalAIDetectionService {
@@ -345,8 +346,7 @@ let AgentService = AgentService_1 = class AgentService {
 };
 AgentService = AgentService_1 = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [AgentRepository,
-        LocalAIDetectionService])
+    __metadata("design:paramtypes", [typeof (_a = typeof AgentRepository !== "undefined" && AgentRepository) === "function" ? _a : Object, LocalAIDetectionService])
 ], AgentService);
 export { AgentService };
 //# sourceMappingURL=agent.service.js.map

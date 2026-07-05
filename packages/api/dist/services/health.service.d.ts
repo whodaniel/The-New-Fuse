@@ -3,7 +3,7 @@
  * Monitors the health of application dependencies
  * Updated to use Drizzle ORM instead of Drizzle
  */
-import { DatabaseService } from './database.service.js';
+import { DatabaseService } from './database.service';
 import { HealthIndicator } from '@nestjs/terminus';
 interface HealthIndicatorResult {
     [key: string]: {

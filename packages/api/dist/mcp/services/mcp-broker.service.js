@@ -13,7 +13,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var MCPBrokerService_1;
 import { Injectable, Logger } from '@nestjs/common';
-import { toError } from '../../utils/error.js'; // Import the helper
+import { toError } from '../../utils/error'; // Import the helper
 let MCPBrokerService = MCPBrokerService_1 = class MCPBrokerService {
     constructor() {
         this.logger = new Logger(MCPBrokerService_1.name);

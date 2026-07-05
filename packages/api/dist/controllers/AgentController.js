@@ -10,12 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b, _c;
 import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AgentDto } from '../modules/controllers/dto/agent.dto.js'; // Updated import path
-import { CurrentUser } from '../modules/decorators/current-user.decorator.js';
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js';
-import { AgentService } from '../services/agent.service.js';
+import { AgentDto } from '../modules/controllers/dto/agent.dto'; // Updated import path
+import { CurrentUser } from '../modules/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
+import { AgentService } from '../services/agent.service';
 import { toError } from '../utils/error.js';
 let AgentController = class AgentController {
     constructor(agentService) {
@@ -145,7 +146,7 @@ __decorate([
     __param(0, Body()),
     __param(1, CurrentUser()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [AgentDto, Object, Object]),
+    __metadata("design:paramtypes", [typeof (_b = typeof AgentDto !== "undefined" && AgentDto) === "function" ? _b : Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], AgentController.prototype, "createAgent", null);
 __decorate([
@@ -158,7 +159,7 @@ __decorate([
     __param(1, Body()),
     __param(2, CurrentUser()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, AgentDto, Object, Object]),
+    __metadata("design:paramtypes", [String, typeof (_c = typeof AgentDto !== "undefined" && AgentDto) === "function" ? _c : Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], AgentController.prototype, "updateAgent", null);
 __decorate([
@@ -198,7 +199,7 @@ AgentController = __decorate([
     ApiTags('agents'),
     Controller('agents'),
     UseGuards(JwtAuthGuard),
-    __metadata("design:paramtypes", [AgentService])
+    __metadata("design:paramtypes", [typeof (_a = typeof AgentService !== "undefined" && AgentService) === "function" ? _a : Object])
 ], AgentController);
 export { AgentController };
 //# sourceMappingURL=AgentController.js.map

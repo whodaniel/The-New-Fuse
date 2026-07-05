@@ -11,10 +11,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a;
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck } from '@nestjs/terminus';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { HealthService } from '../services/health.service.js';
+import { HealthService } from '../services/health.service';
 let HealthController = class HealthController {
     constructor(healthService) {
         this.healthService = healthService;
@@ -38,7 +39,7 @@ __decorate([
 HealthController = __decorate([
     ApiTags('health'),
     Controller('health'),
-    __metadata("design:paramtypes", [HealthService])
+    __metadata("design:paramtypes", [typeof (_a = typeof HealthService !== "undefined" && HealthService) === "function" ? _a : Object])
 ], HealthController);
 export { HealthController };
 //# sourceMappingURL=health.controller.js.map

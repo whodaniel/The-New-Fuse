@@ -1,5 +1,5 @@
-import { AgentService } from '../services/agent.service.js';
-import { WorkflowService } from '../services/workflow.service.js';
+import { AgentService } from '../services/agent.service';
+import { WorkflowService } from '../services/workflow.service';
 interface UserModel {
     id: string;
     [key: string]: any;

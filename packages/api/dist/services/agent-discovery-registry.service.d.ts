@@ -6,7 +6,7 @@
  */
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
-import { AgentHeartbeat, AgentRegistration, DiscoveredAgent, DiscoveryQuery, DiscoveryQueryResult } from '../types/agent-discovery.types.js';
+import { AgentHeartbeat, AgentRegistration, DiscoveredAgent, DiscoveryQuery, DiscoveryQueryResult } from '../types/agent-discovery.types';
 export interface DiscoveryRegistryOptions {
     /** Redis connection options */
     redis?: {

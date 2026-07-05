@@ -10,8 +10,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a;
 import { Injectable } from '@nestjs/common';
-import { ConfigurationRepository } from '../repositories/configuration.repository.js';
+import { ConfigurationRepository } from '../repositories/configuration.repository';
 let AdminConfigurationService = class AdminConfigurationService {
     constructor(configRepository) {
         this.configRepository = configRepository;
@@ -33,7 +34,7 @@ let AdminConfigurationService = class AdminConfigurationService {
 };
 AdminConfigurationService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [ConfigurationRepository])
+    __metadata("design:paramtypes", [typeof (_a = typeof ConfigurationRepository !== "undefined" && ConfigurationRepository) === "function" ? _a : Object])
 ], AdminConfigurationService);
 export { AdminConfigurationService };
 //# sourceMappingURL=admin-configuration.service.js.map

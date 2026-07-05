@@ -35,6 +35,8 @@ async function bootstrap(): Promise<void> {
   });
 
   // Back-compat: clients still call /v1/* or /api/v1/* while routes are registered at /api/*.
+  // Also rewrite checklist probe paths (M02/M05) so they hit NestJS controllers under /api.
+  const CHECKLIST_REWRITES = new Set(['/docs', '/pricing', '/features']);
   app.use((req, _res, next) => {
     const rawUrl = req.url || '';
     const queryIndex = rawUrl.indexOf('?');
@@ -53,6 +55,11 @@ async function bootstrap(): Promise<void> {
       }
     } else if (pathname === '/api/v1') {
       pathname = '/api';
+    }
+
+    // M02/M05: Rewrite bare /docs, /pricing, /features, /bridges/* to /api/*
+    if (CHECKLIST_REWRITES.has(pathname) || pathname.startsWith('/bridges/')) {
+      pathname = `/api${pathname}`;
     }
 
     if (pathname + query !== rawUrl) {
@@ -114,11 +121,30 @@ async function bootstrap(): Promise<void> {
       timestamp: new Date().toISOString(),
     });
   });
-  app.getHttpAdapter().get('/api/v1/health', (req: any, res: any) => {
+  app.getHttpAdapter().get('/api/v1/health', async (req: any, res: any) => {
+    // V02: Include Redis connectivity status for monitoring dashboards
+    let redisConnected = false;
+    try {
+      const Redis = require('ioredis');
+      const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+      const client = new Redis(redisUrl, { connectTimeout: 2000, lazyConnect: true });
+      await client.connect();
+      const pong = await client.ping();
+      redisConnected = pong === 'PONG';
+      client.disconnect();
+    } catch {
+      // Redis unavailable — report gracefully, don't crash
+      redisConnected = false;
+    }
+
     res.json({
       status: 'ok',
       service: SERVICE_NAME_API,
       timestamp: new Date().toISOString(),
+      redis: {
+        connected: redisConnected,
+        note: redisConnected ? undefined : 'Redis unreachable from this deployment',
+      },
     });
   });
 

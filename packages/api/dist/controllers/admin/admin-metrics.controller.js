@@ -13,12 +13,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b;
 import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard.js';
-import { ApiLogsRepository } from '../../repositories/api-logs.repository.js';
-import { SystemMetricsService } from '../../services/system-metrics.service.js';
-import { toError } from '../../utils/error.js';
+import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard';
+import { ApiLogsRepository } from '../../repositories/api-logs.repository';
+import { SystemMetricsService } from '../../services/system-metrics.service';
+import { toError } from '../../utils/error';
 let AdminMetricsController = class AdminMetricsController {
     constructor(systemMetricsService, apiLogsRepository) {
         this.systemMetricsService = systemMetricsService;
@@ -102,8 +103,7 @@ AdminMetricsController = __decorate([
     ApiTags('admin', 'system'),
     Controller(),
     UseGuards(JwtAuthGuard),
-    __metadata("design:paramtypes", [SystemMetricsService,
-        ApiLogsRepository])
+    __metadata("design:paramtypes", [typeof (_a = typeof SystemMetricsService !== "undefined" && SystemMetricsService) === "function" ? _a : Object, typeof (_b = typeof ApiLogsRepository !== "undefined" && ApiLogsRepository) === "function" ? _b : Object])
 ], AdminMetricsController);
 export { AdminMetricsController };
 //# sourceMappingURL=admin-metrics.controller.js.map

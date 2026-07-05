@@ -4,7 +4,7 @@
  * Advanced capability matching with semantic search, fuzzy matching,
  * and capability composition for agent discovery.
  */
-import { AgentCapability, DiscoveredAgent, CapabilityComposition, CapabilityDependency } from '../types/agent-discovery.types.js';
+import { AgentCapability, DiscoveredAgent, CapabilityComposition, CapabilityDependency } from '../types/agent-discovery.types';
 export interface MatchScore {
     agent: DiscoveredAgent;
     capability: AgentCapability;

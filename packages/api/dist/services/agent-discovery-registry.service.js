@@ -5,7 +5,7 @@
  * and dynamic capability registration.
  */
 import { EventEmitter } from 'events';
-import { AgentStatus, DiscoveryEvent, } from '../types/agent-discovery.types.js';
+import { AgentStatus, DiscoveryEvent, } from '../types/agent-discovery.types';
 export class AgentDiscoveryRegistry extends EventEmitter {
     constructor(redisService, options = {}) {
         super();

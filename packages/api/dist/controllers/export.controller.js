@@ -13,7 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 import { Controller, Post, Body, Res, HttpStatus, UseGuards } from '@nestjs/common';
 import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
 class ExportConversationDto {
 }
 __decorate([

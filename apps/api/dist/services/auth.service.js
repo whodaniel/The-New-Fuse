@@ -129,7 +129,7 @@ let AuthService = AuthService_1 = class AuthService {
         const existing = await this.db.users.findByUsername(base);
         if (!existing)
             return base;
-        return `${base}_${Math.random().toString(36).slice(2, 7)}`;
+        return `${base}_${crypto.randomUUID().substring(0, 5)}`;
     }
     async validateToken(token) {
         try {
@@ -221,9 +221,7 @@ let AuthService = AuthService_1 = class AuthService {
         const fromMaster = this.configService.get('MASTER_SUPER_ADMIN_EMAILS');
         const fromOwner = this.configService.get('HOSTMARIA_OWNER_EMAILS');
         console.log(`Checking master admin for ${email}. MASTER_SUPER_ADMIN_EMAILS: ${fromMaster}, HOSTMARIA_OWNER_EMAILS: ${fromOwner}`);
-        const masterSuperAdmins = (fromMaster ||
-            fromOwner ||
-            'owner@example.com')
+        const masterSuperAdmins = (fromMaster || fromOwner || 'owner@example.com')
             .split(',')
             .map((e) => e.trim().toLowerCase())
             .filter(Boolean);
@@ -348,7 +346,8 @@ let AuthService = AuthService_1 = class AuthService {
             isActive: updated.isActive,
             createdAt: updated.createdAt,
             updatedAt: updated.updatedAt,
-            preferences: updated.preferences || profileData.preferences || {
+            preferences: updated.preferences ||
+                profileData.preferences || {
                 theme: 'system',
                 notifications: true,
             },

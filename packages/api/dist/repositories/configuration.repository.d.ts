@@ -27,10 +27,10 @@ export declare class ConfigurationRepository {
     }>;
     updateConfig(key: string, value: string, updatedBy?: string): Promise<{
         description: string;
+        key: string;
+        value: string;
         updatedAt: Date;
         category: string;
-        value: string;
-        key: string;
         sensitive: boolean;
         updatedBy: string;
     }>;

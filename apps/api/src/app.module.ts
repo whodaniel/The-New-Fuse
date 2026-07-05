@@ -27,6 +27,8 @@ import { CommunityController } from './controllers/community.controller';
 import { CompoundingMemoryController } from './controllers/compounding-memory.controller';
 import { HealthController } from './controllers/health.controller';
 import { LLMIntelController } from './controllers/llm-intel.controller';
+import { PublicInfoController } from './controllers/public-info.controller';
+import { BridgesController } from './controllers/bridges.controller';
 import { MCPServerController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
@@ -190,6 +192,8 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     AdminOpenClawOAuthController,
     N8nWorkflowsController,
     OnboardingController,
+    PublicInfoController, // M02: /docs, /pricing, /features as JSON
+    BridgesController, // M05: /bridges/telegram, /bridges/whatsapp health
   ],
   providers: [
     AppService,

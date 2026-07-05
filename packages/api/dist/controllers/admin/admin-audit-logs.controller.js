@@ -15,11 +15,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard.js';
-import { AdminAuditLogsService } from '../../services/admin-audit-logs.service.js';
-import { toError } from '../../utils/error.js';
+import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard';
+import { AdminAuditLogsService } from '../../services/admin-audit-logs.service';
+import { toError } from '../../utils/error';
 let AdminAuditLogsController = class AdminAuditLogsController {
     constructor(auditLogsService) {
         this.auditLogsService = auditLogsService;
@@ -98,7 +99,7 @@ AdminAuditLogsController = __decorate([
     ApiTags('admin'),
     Controller('admin/audit-logs'),
     UseGuards(JwtAuthGuard),
-    __metadata("design:paramtypes", [AdminAuditLogsService])
+    __metadata("design:paramtypes", [typeof (_a = typeof AdminAuditLogsService !== "undefined" && AdminAuditLogsService) === "function" ? _a : Object])
 ], AdminAuditLogsController);
 export { AdminAuditLogsController };
 //# sourceMappingURL=admin-audit-logs.controller.js.map

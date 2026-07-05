@@ -14,8 +14,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var WorkflowService_1;
+var _a, _b;
 import { Injectable, Logger } from '@nestjs/common';
-import { WorkflowRepository, WorkflowExecutionRepository, } from '../repositories/workflow.repository.js';
+import { WorkflowRepository, WorkflowExecutionRepository, } from '../repositories/workflow.repository';
 import { toError } from '../utils/error.js';
 let WorkflowService = WorkflowService_1 = class WorkflowService {
     constructor(workflowRepository, executionRepository) {
@@ -188,8 +189,7 @@ let WorkflowService = WorkflowService_1 = class WorkflowService {
 };
 WorkflowService = WorkflowService_1 = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [WorkflowRepository,
-        WorkflowExecutionRepository])
+    __metadata("design:paramtypes", [typeof (_a = typeof WorkflowRepository !== "undefined" && WorkflowRepository) === "function" ? _a : Object, typeof (_b = typeof WorkflowExecutionRepository !== "undefined" && WorkflowExecutionRepository) === "function" ? _b : Object])
 ], WorkflowService);
 export { WorkflowService };
 //# sourceMappingURL=workflow.service.js.map

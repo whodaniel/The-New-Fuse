@@ -5,8 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Module } from '@nestjs/common';
-import { UnifiedLedgerController } from './unified-ledger.controller.js';
-import { UnifiedLedgerService } from './unified-ledger.service.js';
+import { UnifiedLedgerController } from './unified-ledger.controller';
+import { UnifiedLedgerService } from './unified-ledger.service';
 let UnifiedLedgerModule = class UnifiedLedgerModule {
 };
 UnifiedLedgerModule = __decorate([

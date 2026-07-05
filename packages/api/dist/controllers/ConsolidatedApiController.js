@@ -10,12 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b;
 import { Controller, Get, Post, Put, Body, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js';
-import { AgentService } from '../services/agent.service.js';
-import { WorkflowService } from '../services/workflow.service.js';
-import { CurrentUser } from '../modules/decorators/current-user.decorator.js';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
+import { AgentService } from '../services/agent.service';
+import { WorkflowService } from '../services/workflow.service';
+import { CurrentUser } from '../modules/decorators/current-user.decorator';
 let ConsolidatedApiController = class ConsolidatedApiController {
     constructor(agentService, workflowService) {
         this.agentService = agentService;
@@ -342,8 +343,7 @@ ConsolidatedApiController = __decorate([
     Controller('api/v2'),
     UseGuards(JwtAuthGuard),
     ApiBearerAuth(),
-    __metadata("design:paramtypes", [AgentService,
-        WorkflowService])
+    __metadata("design:paramtypes", [typeof (_a = typeof AgentService !== "undefined" && AgentService) === "function" ? _a : Object, typeof (_b = typeof WorkflowService !== "undefined" && WorkflowService) === "function" ? _b : Object])
 ], ConsolidatedApiController);
 export { ConsolidatedApiController };
 //# sourceMappingURL=ConsolidatedApiController.js.map

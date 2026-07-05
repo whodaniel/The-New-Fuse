@@ -13,8 +13,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var HealthService_1;
+var _a;
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from './database.service.js';
+import { DatabaseService } from './database.service';
 import { HealthIndicator } from '@nestjs/terminus';
 import { toError } from '../utils/error.js';
 class HealthCheckError extends Error {
@@ -48,7 +49,7 @@ let HealthService = HealthService_1 = class HealthService extends HealthIndicato
 };
 HealthService = HealthService_1 = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [DatabaseService])
+    __metadata("design:paramtypes", [typeof (_a = typeof DatabaseService !== "undefined" && DatabaseService) === "function" ? _a : Object])
 ], HealthService);
 export { HealthService };
 //# sourceMappingURL=health.service.js.map
