@@ -2,7 +2,7 @@
 import { GlassCard } from '@/components/ui';
 import { useAuth } from '@/hooks/useAuth';
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 
 const Login = React.lazy(() => import('./Login'));
 const Register = React.lazy(() => import('./Register'));
@@ -10,11 +10,11 @@ const ForgotPassword = React.lazy(() => import('./ForgotPassword'));
 const ResetPassword = React.lazy(() => import('./ResetPassword'));
 const SSO = React.lazy(() => import('./SSO'));
 
-const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+const AuthLayout = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <GlassCard title="Welcome to The New Fuse" className="w-full max-w-lg p-4">
-        {children}
+        <Outlet />
       </GlassCard>
     </div>
   );
