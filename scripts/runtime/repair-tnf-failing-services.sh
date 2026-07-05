@@ -40,7 +40,7 @@ write_plist() {
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
-    <string>${HOME}/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${HOME}/Library/pnpm:${HOME}/.nvm/versions/node/v24.12.0/bin</string>
+    <string>${HOME}/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${HOME}/Library/pnpm:${HOME}/.local/bin:${HOME}/.nvm/versions/node/*/bin</string>
     <key>HOME</key>
     <string>${HOME}</string>
   </dict>
