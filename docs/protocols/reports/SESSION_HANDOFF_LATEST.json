@@ -1,24 +1,20 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "35c4fae2-f532-4ff7-a269-fd88507a3691",
-  "created_at": "2026-07-05T03:06:54.216Z",
+  "handoff_id": "df1eb476-5bc0-416e-a438-fd9bde17a793",
+  "created_at": "2026-07-05T03:45:04.909Z",
   "repository": "The-New-Fuse",
   "branch": "tnf-cli-harness-implementation",
-  "head_sha": "208bc60c0ac35e688e32626a51c68d04686dac7f",
+  "head_sha": "65daab090a25f4845eb6510c248db2f4be644995",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
   "work_summary": [
-    "Final close: CLI fleet-aware turn-zero ships at 208bc60c0a. All gates green after validator comment-cleanup."
+    "TUI LONG_RUN ships at 65daab090a. Kilo ttys010 was right — the agent shouldn stop without operator keystrokes. TUT passed."
   ],
   "changed_paths": [
-    ".agent/runtime-logs/qa-swarm-service/heartbeat.json",
+    "agent/runtime-logs/qa-swarm-service/heartbeat.json",
     ".agent/test-reports/_rolling-summary.json",
     ".agent/testing-status.json",
-    ".verifier/process-atlas.digest.md",
-    ".verifier/process-atlas.payload.json",
-    ".verifier/process-atlas.verify.json",
-    ".verifier/tnf-process-atlas.html",
     "apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide",
     "apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent",
     "apps/external/gemini-cli-source",
@@ -26,7 +22,8 @@
     "apps/virtual-library-blueprints",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "packages/tnf-cli/tsconfig.tsbuildinfo"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -49,11 +46,11 @@
   },
   "next_actions": [
     "Review updated LIVING_STATE.md for new active steps",
-    "Commit remaining uncommitted changes (14 file(s))"
+    "Commit remaining uncommitted changes (11 file(s))"
   ],
   "artifacts": {
     "commits": [
-      "208bc60c0ac35e688e32626a51c68d04686dac7f"
+      "65daab090a25f4845eb6510c248db2f4be644995"
     ],
     "deployment_urls": [],
     "database_migrations": []
