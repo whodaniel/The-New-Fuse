@@ -17,6 +17,28 @@ export const LandingHeader = () => {
           The New Fuse
         </Link>
         <div className="space-x-2" role="group" aria-label="Account actions">
+          <Link
+            to="https://github.com/whodaniel/fuse-open-runtime"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              variant="outline"
+              className="hidden sm:inline-flex focus:ring-4 focus:ring-primary/20"
+              aria-label="View on GitHub"
+            >
+              GitHub
+            </Button>
+          </Link>
+          <Link to="/dashboard/command-center">
+            <Button
+              variant="secondary"
+              className="hidden sm:inline-flex focus:ring-4 focus:ring-primary/20 bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20"
+              aria-label="Ask AI"
+            >
+              Ask AI
+            </Button>
+          </Link>
           <Link to="/auth/login">
             <Button
               variant="ghost"

@@ -64,6 +64,16 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Ask AI Button */}
+          <Link
+            to="/dashboard/command-center"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-all duration-200"
+            title="Ask AI for assistance"
+          >
+            <Sparkles className="h-4 w-4" />
+            <span className="hidden sm:inline">Ask AI</span>
+          </Link>
+
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}

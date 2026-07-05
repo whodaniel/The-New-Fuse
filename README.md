@@ -1,11 +1,15 @@
-# The New Fuse
+# <img src="https://thenewfuse.com/assets/brand/tnf-logo.png" alt="TNF Logo" width="32" height="32" align="center"> The New Fuse
 
-The New Fuse is an AI agent orchestration platform for building, coordinating,
-and operating multi-agent workflows.
+**The New Fuse (TNF)** is the definitive next-generation AI agent orchestration
+platform. Built for performance, security, and true autonomy, TNF empowers you
+to build, coordinate, and operate complex multi-agent workflows across desktop,
+web, and cloud.
 
-- Public site: https://thenewfuse.com
-- Hosted app: https://app.thenewfuse.com
-- Public docs: https://thenewfuse.com/docs
+- **Public Site:** [thenewfuse.com](https://thenewfuse.com)
+- **Hosted App:** [app.thenewfuse.com](https://app.thenewfuse.com)
+- **Documentation:** [thenewfuse.com/docs](https://thenewfuse.com/docs)
+- **Open Source Runtime:**
+  [whodaniel/fuse-open-runtime](https://github.com/whodaniel/fuse-open-runtime)
 
 ## Local Development
 
