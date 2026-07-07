@@ -64,7 +64,7 @@ export const LandingFooter = () => {
                 </li>
                 <li>
                   <a
-                    href="https://github.com/whodaniel/fuse-open-runtime"
+                    href="https://github.com/whodaniel/The-New-Fuse"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-foreground transition-colors focus:outline-none focus:underline"

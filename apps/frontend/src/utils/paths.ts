@@ -18,7 +18,7 @@ const paths = {
     settings: (slug: string) => `/workspace/${slug}/settings`,
     files: (slug: string) => `/workspace/${slug}/files`,
   },
-  github: () => 'https://github.com/whodaniel/fuse-open-runtime',
+  github: () => 'https://github.com/whodaniel/The-New-Fuse',
   discord: () => 'https://discord.gg/thenewfuse',
   docs: () => 'https://thenewfuse.com/docs',
 };

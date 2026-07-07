@@ -18,7 +18,7 @@ export const LandingHeader = () => {
         </Link>
         <div className="space-x-2" role="group" aria-label="Account actions">
           <Link
-            to="https://github.com/whodaniel/fuse-open-runtime"
+            to="https://github.com/whodaniel/The-New-Fuse"
             target="_blank"
             rel="noopener noreferrer"
           >
