@@ -12,6 +12,8 @@ WORKDIR /app
 # Copy package files first for caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY tsconfig.base.json ./
+COPY .agent ./.agent
+COPY .claude ./.claude
 COPY packages/tsconfig.base.json packages/
 
 # Copy API and workspace packages
@@ -151,6 +153,8 @@ RUN pnpm install --no-frozen-lockfile --ignore-scripts --prod
 # Copy built files from builder
 COPY --from=builder /app/apps/api/dist/ /app/apps/api/dist/
 COPY --from=builder /app/packages/ /app/packages/
+COPY --from=builder /app/.agent/ /app/.agent/
+COPY --from=builder /app/.claude/ /app/.claude/
 
 # Set environment
 ENV NODE_ENV=production

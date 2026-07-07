@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "./scripts/start-dev.sh",
-    "build": "node ../../scripts/parsers/mermaid_to_reactflow.mjs && node scripts/build-docs.mjs && vite build --mode production",
+    "build": "node ../../scripts/parsers/mermaid_to_reactflow.mjs && node scripts/build-docs.mjs && vite build --mode production && cp -r functions dist/",
     "build:frontend": "npm run build",
     "build:watch": "vite build --watch",
     "build:analyze": "vite build && npx vite-bundle-analyzer dist",

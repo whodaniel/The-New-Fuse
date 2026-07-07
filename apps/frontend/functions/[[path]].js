@@ -78,6 +78,9 @@ export async function onRequest(context) {
 
     // Functional routes on landing domain -> redirect to app subdomain
     const functionalPrefixes = [
+      '/auth',
+      '/login',
+      '/register',
       '/dashboard',
       '/agents',
       '/workflows',
