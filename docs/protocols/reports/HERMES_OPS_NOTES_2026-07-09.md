@@ -40,3 +40,20 @@ exits when parent session ends.
 Log: `~/.tnf/logs/daemon.log`. Heartbeat self-wake cron
 (`agents/tnf-heartbeat-selfwake.py`, \*/5) restarts daemon when down; fix
 requires patching `tnf-agent-daemon.py` / LLMClient redis tool schema.
+
+## Multi-Agent Operations Fixes (2026-07-09)
+
+1. **Local-Director Cron Spam (resolved):** `tnf-director-loop.cjs` was
+   persisting its task queue purely in-memory. Because it's invoked via cron, it
+   reset its `resonancePool` every minute, creating an infinite spam loop.
+   **Fix:** Refactored to load and persist `resonancePool.json` from
+   `~/.tnf/director/state/`.
+2. **Terminal Heartbeat Misidentification (resolved):**
+   `terminal-heartbeat-pulse.cjs` injected heartbeats into any terminal screen
+   scraping words like "gemini" or "claude" (which `pi` prints on startup).
+   **Fix:** Officially registered `pi` in `AGENT_COMMAND_HINTS` and hardened
+   string matching using word boundaries (`\b`).
+3. **Pi Agent 410 Gone Error (resolved):** `pi` threw 410 errors because
+   `z-ai/glm-5.1` is no longer active. **Fix:** Re-aligned
+   `~/.pi/agent/settings.json` to match Hermes's fallback (`nvidia` /
+   `minimaxai/minimax-m3`).

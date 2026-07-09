@@ -40,8 +40,9 @@ const config = {
   localHeartbeatMaxAgeMs: parsePositiveInt(process.env.TNF_DIRECTOR_LOCAL_HEARTBEAT_MAX_AGE_MS, 10 * 60 * 1000),
   terminalHeartbeatMaxAgeMs: parsePositiveInt(process.env.TNF_DIRECTOR_TERMINAL_HEARTBEAT_MAX_AGE_MS, 5 * 60 * 1000),
   terminalHistoryMaxAgeMs: parsePositiveInt(process.env.TNF_DIRECTOR_TERMINAL_HISTORY_MAX_AGE_MS, 12 * 60 * 60 * 1000),
+  resonancePoolFile: path.join(os.homedir(), '.tnf', 'director', 'state', 'resonancePool.json'),
   // LDA Issued resonancePool
-  resonancePool: [
+  defaultResonancePool: [
     'RESONANCE: Port MapReducePattern to terminal workflow.',
     'RESONANCE: Execute Consensus round for refactoring.',
     'RESONANCE: Fix Turbo concurrency collisions.',
@@ -109,6 +110,19 @@ function writeHealthState(status, metadata = {}) {
   const tempPath = `${config.healthStateFile}.tmp-${process.pid}-${Date.now()}`;
   fs.writeFileSync(tempPath, JSON.stringify(payload, null, 2), 'utf8');
   fs.renameSync(tempPath, config.healthStateFile);
+}
+
+function loadResonancePool() {
+  if (!fs.existsSync(config.resonancePoolFile)) {
+    return [...config.defaultResonancePool];
+  }
+  const parsed = safeReadJson(config.resonancePoolFile);
+  return Array.isArray(parsed) ? parsed : [...config.defaultResonancePool];
+}
+
+function saveResonancePool(pool) {
+  fs.mkdirSync(path.dirname(config.resonancePoolFile), { recursive: true });
+  fs.writeFileSync(config.resonancePoolFile, JSON.stringify(pool, null, 2), 'utf8');
 }
 
 function loadSessions() {
@@ -351,12 +365,17 @@ async function main() {
   let publishFailures = 0;
   let zeroSubscriberPublishes = 0;
   let published = 0;
+  
+  const currentPool = loadResonancePool();
+  let poolModified = false;
+
   try {
     await client.initialize();
 
     for (const agent of idleAgents) {
-      if (config.resonancePool.length === 0) break;
-      const task = config.resonancePool.shift();
+      if (currentPool.length === 0) break;
+      const task = currentPool.shift();
+      poolModified = true;
       const pingId = `relay_task_${Date.now()}_${agent.agentId}`;
       const envelope = {
         id: crypto.randomUUID(),
@@ -386,6 +405,11 @@ async function main() {
           error: String(error.message || error),
         });
       }
+    }
+    
+    if (poolModified) {
+      saveResonancePool(currentPool);
+      log('Saved updated resonance pool state to disk', { remainingTasks: currentPool.length });
     }
   } finally {
     try {

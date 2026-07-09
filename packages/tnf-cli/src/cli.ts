@@ -14,6 +14,7 @@ import { RedisAgentClient } from './RedisAgentClient.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
+import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
 import { Orchestrator } from './orchestration.js';
@@ -15361,6 +15362,7 @@ registerAssimilateCommand(program, repoRoot);
 registerTelegramCommands(program, repoRoot);
 registerAgentsClassifyCommand(program, repoRoot);
 registerAgentsRunCommand(program);
+registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
 
 const webhookCommand = program.command('webhook').description('Webhook management');

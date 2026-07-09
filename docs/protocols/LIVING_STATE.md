@@ -663,3 +663,10 @@ and generated refactoring_consensus_report.md.
   uncommitted files (cli.ts + tnf-agent-daemon.py + ops notes + directives-sync
   changes), (c) accept the smaller \*\*kwargs class-fix as one focused commit
   vs. the full working tree.
+- [✅] 2026-07-09T06:21:00.000Z Critical fixes applied: Local-Director
+  resonancePool task spam resolved by persisting state to
+  ~/.tnf/director/state/resonancePool.json. terminal-heartbeat-pulse.cjs regex
+  hardened with \b boundaries to prevent false agent triggerings, and `pi` agent
+  officially added to AGENT_COMMAND_HINTS. pi model settings updated to match
+  hermes provider (nvidia) and model (minimaxai/minimax-m3) to resolve 410
+  errors.

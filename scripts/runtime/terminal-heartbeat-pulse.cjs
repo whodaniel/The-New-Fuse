@@ -47,7 +47,7 @@ const execFileAsync = promisify(execFile);
 const { RedisAgentClient } = require(resolveSibling('redis-agent-client.cjs'));
 
 const KNOWN_SHELLS = new Set(['bash', 'fish', 'sh', 'zsh']);
-const AGENT_COMMAND_HINTS = ['codex', 'claude', 'gemini', 'goose', 'aider'];
+const AGENT_COMMAND_HINTS = ['codex', 'claude', 'gemini', 'goose', 'aider', 'pi'];
 const LOCK_STALE_MS = 5 * 60 * 1000;
 
 const config = {
@@ -63,7 +63,7 @@ const config = {
     path.join(os.homedir(), '.tnf', 'session-discovery'),
   promptTemplate:
     process.env.TNF_TERMINAL_HEARTBEAT_PROMPT_TEMPLATE ||
-    'TNF heartbeat {{heartbeatId}} for {{agentId}}: read ~/.tnf/swarm-context.md for swarm state, then continue your current owned task.',
+    'TNF heartbeat {{heartbeatId}} for {{agentId}}: read ~/.tnf/swarm-context.md and ~/.tnf/handoff-current.json for your task and swarm state, then execute it.',
   allowPromptInjection: true, // HARD-CODED TRUE for Perpetual Awakeness
   clearLine: process.env.TNF_TERMINAL_HEARTBEAT_CLEAR_LINE !== 'false',
   verifyQueueHints: process.env.TNF_TERMINAL_HEARTBEAT_VERIFY_QUEUE_HINTS !== 'false',
@@ -250,9 +250,10 @@ function isAgentLike(processContext, contentsTail) {
     .map((process) => `${process.commandName || ''} ${process.args || ''}`.toLowerCase())
     .join('\n');
   const contentHaystack = String(contentsTail || '').toLowerCase();
-  return AGENT_COMMAND_HINTS.some(
-    (hint) => processHaystack.includes(hint) || contentHaystack.includes(hint)
-  );
+  return AGENT_COMMAND_HINTS.some((hint) => {
+    const regex = new RegExp(`\\b${hint}\\b`, 'i');
+    return regex.test(processHaystack) || regex.test(contentHaystack);
+  });
 }
 
 function renderPrompt(agentId, heartbeatId) {

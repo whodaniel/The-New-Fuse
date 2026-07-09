@@ -302,6 +302,18 @@ function buildSwarmContext(heartbeat, livingState, handoff) {
     if (handoff.projectIds?.length) {
       lines.push(`**Projects:** ${handoff.projectIds.join(', ')}`);
     }
+    lines.push(``);
+    if (handoff.IMMEDIATE_TASKS?.length) {
+      lines.push(`### Immediate Tasks`);
+      handoff.IMMEDIATE_TASKS.forEach((t, i) => lines.push(`${i + 1}. ${t}`));
+      lines.push(``);
+    }
+    if (handoff.MISSION?.length) {
+      lines.push(`### Mission`);
+      handoff.MISSION.forEach(m => lines.push(`- ${m}`));
+      lines.push(``);
+    }
+    lines.push(`**Full Handoff Path:** ${config.handoffPath}`);
   } else {
     lines.push('_No active session handoff_');
   }
