@@ -17,7 +17,6 @@ import { registerAssimilateCommand } from './commands/assimilate.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
 import { Orchestrator } from './orchestration.js';
-import { resolvePrompt } from './utils/prompt-input.js';
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
 import { CronService } from './services/CronService.js';
 import { GoalsService } from './services/GoalsService.js';
@@ -36,6 +35,7 @@ import {
   renderSlashCommandList,
   type SlashCommandDefinition,
 } from './slashCommands.js';
+import { resolvePrompt } from './utils/prompt-input.js';
 
 const program = new Command();
 // Fallback for CommonJS/ESM compatibility
@@ -130,8 +130,8 @@ function loadLocalEnv(rootDir: string): void {
     Object.fromEntries(
       ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY']
         .filter((key) => process.env[key])
-        .map((key) => [key, process.env[key] as string]),
-    ),
+        .map((key) => [key, process.env[key] as string])
+    )
   );
   for (const [key, value] of Object.entries(aliasEntries)) {
     if (!value || exportedKeys.has(key) || process.env[key]) continue;
@@ -4777,22 +4777,14 @@ program
                 await runCommand('node', teArgs);
               } catch (turnEndErr: any) {
                 const msg = turnEndErr?.message ?? String(turnEndErr ?? 'unknown');
-                console.log(
-                  chalk.dim(
-                    `   [handoff-matrix] turn-end preflight skipped: ${msg}`
-                  )
-                );
+                console.log(chalk.dim(`   [handoff-matrix] turn-end preflight skipped: ${msg}`));
               }
               try {
                 await runGate();
                 gateOk = true;
               } catch (gateErr: any) {
                 const msg = gateErr?.message ?? String(gateErr ?? 'unknown');
-                console.log(
-                  chalk.yellow(
-                    `   [handoff-matrix] gate warning (non-fatal): ${msg}`
-                  )
-                );
+                console.log(chalk.yellow(`   [handoff-matrix] gate warning (non-fatal): ${msg}`));
                 console.log(
                   chalk.dim(
                     '   Run `pnpm run validate:session-handoff` to resolve; boot continues.'
@@ -4873,7 +4865,9 @@ program
                   )
                 );
                 console.log(chalk.cyan('   Manually launch any of:'));
-                console.log(chalk.cyan('     tnf forefront       (web UI + relay + browser auto-open)'));
+                console.log(
+                  chalk.cyan('     tnf forefront       (web UI + relay + browser auto-open)')
+                );
                 console.log(chalk.cyan('     tnf local-ui        (web UI only)'));
                 console.log(chalk.cyan('     tnf tui             (TNF TUI agent CLI)'));
                 console.log(chalk.cyan('     tnf local-ui --tauri  (native Tauri shell)'));
@@ -4885,7 +4879,10 @@ program
                 // the same path `tnf forefront status` reads from. We append a small
                 // provenance note so operators auditing the boot can trace which
                 // launcher ran without having to read CLI history.
-                const receiptPath = path.join(repoRoot, '.agent/runtime-logs/forefront-boot.latest.json');
+                const receiptPath = path.join(
+                  repoRoot,
+                  '.agent/runtime-logs/forefront-boot.latest.json'
+                );
                 if (fs.existsSync(receiptPath)) {
                   try {
                     const receipt = JSON.parse(fs.readFileSync(receiptPath, 'utf8'));
@@ -5297,22 +5294,38 @@ protocol
 
 program
   .command('clean')
-  .description('Remove build artifacts (dist, .next, *.{d.ts,js.map}), Vite caches, and stray *.log files')
+  .description(
+    'Remove build artifacts (dist, .next, *.{d.ts,js.map}), Vite caches, and stray *.log files'
+  )
   .option('--dry-run', 'Print what would be removed without deleting anything')
-  .option('--include-node-modules', 'Also delete node_modules directories (off by default; pnpm install restores)')
+  .option(
+    '--include-node-modules',
+    'Also delete node_modules directories (off by default; pnpm install restores)'
+  )
   .action(async (options: { dryRun?: boolean; includeNodeModules?: boolean }) => {
     try {
       const dry = !!options.dryRun;
       const remove = dry ? chalk.yellow : chalk.red;
-      const patterns: string[] = [
-        'dist', '.next', 'out', 'build', 'coverage', '.vite',
-      ];
+      const patterns: string[] = ['dist', '.next', 'out', 'build', 'coverage', '.vite'];
       const extensions = ['d.ts', 'd.ts.map', 'js.map'];
       console.log(chalk.bold.cyan('\n[TNF Clean]\n'));
       console.log(`Mode: ${dry ? chalk.yellow('dry-run') : chalk.red('delete')}`);
-      console.log(`node_modules: ${options.includeNodeModules ? chalk.red('yes') : chalk.green('no')}`);
+      console.log(
+        `node_modules: ${options.includeNodeModules ? chalk.red('yes') : chalk.green('no')}`
+      );
 
-      const pruneArgs = ['-type', 'd', '(', '-path', './.git', '-o', '-path', './apps/external', '-prune', ')'];
+      const pruneArgs = [
+        '-type',
+        'd',
+        '(',
+        '-path',
+        './.git',
+        '-o',
+        '-path',
+        './apps/external',
+        '-prune',
+        ')',
+      ];
       const targets = options.includeNodeModules ? [...patterns, 'node_modules'] : patterns;
       for (const pattern of targets) {
         const findArgs = ['.', ...pruneArgs, '-o', '-type', 'd', '-name', pattern, '-print'];
@@ -5331,7 +5344,11 @@ program
         const files = (result.stdout || '').split('\n').filter(Boolean);
         console.log(`${remove('REMOVE')} ${files.length} *.${ext} files`);
         if (!dry && files.length) {
-          spawnSync('find', ['.', ...pruneArgs, '-o', '-type', 'f', '-name', `*.${ext}`, '-delete'], { cwd: repoRoot });
+          spawnSync(
+            'find',
+            ['.', ...pruneArgs, '-o', '-type', 'f', '-name', `*.${ext}`, '-delete'],
+            { cwd: repoRoot }
+          );
         }
       }
 
@@ -5340,7 +5357,9 @@ program
       const logs = (logResult.stdout || '').split('\n').filter(Boolean);
       console.log(`${remove('REMOVE')} ${logs.length} *.log files`);
       if (!dry && logs.length) {
-        spawnSync('find', ['.', ...pruneArgs, '-o', '-type', 'f', '-name', '*.log', '-delete'], { cwd: repoRoot });
+        spawnSync('find', ['.', ...pruneArgs, '-o', '-type', 'f', '-name', '*.log', '-delete'], {
+          cwd: repoRoot,
+        });
       }
 
       console.log(chalk.green('\n[TNF Clean] Done.\n'));
@@ -5364,11 +5383,25 @@ program
       if (useTree) {
         await runCommand('tree', [`-L`, depth, '-d', '--noreport', root]);
       } else {
-        await runCommand('find', [root, '-maxdepth', depth, '-type', 'd',
-          '-not', '-path', '*/node_modules*',
-          '-not', '-path', '*/.git*',
-          '-not', '-path', '*/dist*',
-          '-not', '-path', '*/apps/external/*']);
+        await runCommand('find', [
+          root,
+          '-maxdepth',
+          depth,
+          '-type',
+          'd',
+          '-not',
+          '-path',
+          '*/node_modules*',
+          '-not',
+          '-path',
+          '*/.git*',
+          '-not',
+          '-path',
+          '*/dist*',
+          '-not',
+          '-path',
+          '*/apps/external/*',
+        ]);
       }
     } catch (err: any) {
       console.error(chalk.red(`Tree failed: ${err.message}`));
@@ -5403,12 +5436,33 @@ program
           '--exclude-dir=dist',
           '--exclude-dir=apps/external',
           pattern,
-          searchPath,
+          searchPath
         );
         await runCommand('grep', args);
       }
     } catch (err: any) {
       console.error(chalk.red(`Find failed: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('growth-audit')
+  .description(
+    'Inventory AI/runtime data growth paths (Hermes, TNF, Cursor, caches); diff vs last snapshot'
+  )
+  .option('--json', 'Emit JSON report only')
+  .option('--quiet', 'Suppress human-readable summary')
+  .option('--no-save', 'Do not update snapshot or append history')
+  .action(async (options: { json?: boolean; quiet?: boolean; save?: boolean }) => {
+    try {
+      const args = ['scripts/operations/tnf-growth-audit.cjs'];
+      if (options.json) args.push('--json');
+      if (options.quiet) args.push('--quiet');
+      if (options.save === false) args.push('--no-save');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
     }
   });
@@ -6882,7 +6936,10 @@ ai.command('chat')
 program
   .command('chat')
   .description('Start an interactive chat session with the TNF Orchestrator (Gemini OAuth)')
-  .argument('[query...]', 'Initial message. Use --task-file to read from a file, or pipe via stdin.')
+  .argument(
+    '[query...]',
+    'Initial message. Use --task-file to read from a file, or pipe via stdin.'
+  )
   .option('--task <text>', 'Inline override for the initial message.')
   .option('--task-file <path>', 'Read the initial message from a file (UTF-8). Use "-" for stdin.')
   .action(async (query: string[], options: { task?: string; taskFile?: string }) => {
@@ -15906,13 +15963,12 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     console.log(chalk.dim('  Autonomous shell execution: ON (auto-continue enabled)'));
     if (tuiMode === 'LONG_RUN') {
       console.log(
-        chalk.dim(
-          '  TUI mode: ') +
-        chalk.bold.cyan('LONG_RUN') +
-        chalk.dim(
-          '  (persisted at ~/.tnf/tui-mode.json; operator typing still interrupts; '
-          + 'unset with TNF_TUI_MODE=INTERACTIVE)'
-        )
+        chalk.dim('  TUI mode: ') +
+          chalk.bold.cyan('LONG_RUN') +
+          chalk.dim(
+            '  (persisted at ~/.tnf/tui-mode.json; operator typing still interrupts; ' +
+              'unset with TNF_TUI_MODE=INTERACTIVE)'
+          )
       );
     }
   }

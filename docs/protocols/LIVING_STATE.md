@@ -2,48 +2,124 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:** `d01db68f-a3dc-495e-a87d-cc02b1e1fd43` **Head:** `60586330b262`
-(LIVING_STATE reviewed, agent registration verified, 82 files committed). No
-pending actions. Awaiting new operator directive. (ghs.googlehosted.com). /about
-and /blog pages created with SPA routes. sync:repos verified. Awaiting new
-directives. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:** `LAUNCH-001`
-**Handoff:** `ef70c596-2124-40bd-952e-5239f3e042a0` **Head:** `baab5b2825e5`
-login at app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001`
-**Handoff:** `30532802-3db1-429c-80f3-245a94a7cd75` **Head:** `199370ded064`
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`d01db68f-a3dc-495e-a87d-cc02b1e1fd43` **Head:** `60586330b262` (LIVING_STATE
+reviewed, agent registration verified, 82 files committed). No pending actions.
+Awaiting new operator directive. (ghs.googlehosted.com). /about and /blog pages
+created with SPA routes. sync:repos verified. Awaiting new directives.
+(gcp-deploy.sh / cloudbuild.yaml). **Project ID:** `LAUNCH-001` **Handoff:**
+`ef70c596-2124-40bd-952e-5239f3e042a0` **Head:** `baab5b2825e5` login at
+app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001` **Handoff:**
+`30532802-3db1-429c-80f3-245a94a7cd75` **Head:** `199370ded064`
 
 ---
 
 ## ⚡ Active Steps
 
 1. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
-- [✅] 2026-07-04T14:00:23.115Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T14:59:33.267Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T16:18:19.109Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T16:21:50.216Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T21:09:29.264Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T21:13:48.076Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T21:17:56.449Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T03:05:22.991Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T03:06:54.209Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T03:44:07.290Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T03:45:04.907Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T14:21:55.123Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T14:36:39.576Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T18:54:16.554Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+- [✅] 2026-07-04T14:00:23.115Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T14:59:33.267Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T16:18:19.109Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T16:21:50.216Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T21:09:29.264Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T21:13:48.076Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-04T21:17:56.449Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-05T03:05:22.991Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-05T03:06:54.209Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-05T03:44:07.290Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-05T03:45:04.907Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-05T14:21:55.123Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-05T14:36:39.576Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-05T18:54:16.554Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-07T22:27:24.425Z New script(s) created:
+  federation-sequence-checker.cjs
+- [✅] 2026-07-07T22:27:24.425Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-08T16:20:29.989Z New script(s) created:
+  federation-sequence-checker.cjs
+- [✅] 2026-07-08T16:20:29.989Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-08T16:34:56.748Z New script(s) created:
+  federation-sequence-checker.cjs
+- [✅] 2026-07-08T16:34:56.748Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-09T02:21:39.936Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T02:21:39.936Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-09T02:21:58.625Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T02:21:58.625Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-09T02:55:00.000Z Curator question filed: Rate Limit Gateway has
+  no source counterpart in TNF_GOVERNANCE_TENETS.md §2-6 (verified via delegated
+  validator subagent deleg_138473bd, 5-pass Prometheus scan Pass 2). File:
+  docs/protocols/reports/CURATOR_QUESTION_RATE_LIMIT_GATEWAY_2026-07-08.md
+- [✅] 2026-07-09T02:55:00.000Z Self-heal gap surfaced by validator:
+  tnf-agent-daemon.py is NOT running (pgrep rc=1). Heartbeat OK (PIDs
+  37860/37861); Redis OK (PONG rc=0); cron-output jsonl directory empty despite
+  25 subdir shards. Follow-up: restart daemon via `tnf alive up` or operator
+  decision; investigate missing cron jsonl output.
+- [✅] 2026-07-09T02:55:00.000Z Directive-package test complete: 3 delegated
+  subagents audited the canonical docs/protocols/DIRECTIVES.md +
+  .agent/skills/tnf-directives/SKILL.md ecosystem. Drafts TNF_DIRECTIVES.md +
+  redundant cli.ts `directives` subcommand both rolled back; canonicity
+  preserved. cli.ts restored to HEAD+growth-audit at L5417 (single-copy,
+  type-check passes).
+- [✅] 2026-07-09T03:22:22.903Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T03:22:22.903Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-09T04:30:00.000Z Rate Limit Gateway drift resolved: anchored in
+  TNF_GOVERNANCE_TENETS.md §3.B; curator question
+  CURATOR_QUESTION_RATE_LIMIT_GATEWAY_2026-07-08.md marked RESOLVED (option a).
+- [✅] 2026-07-09T04:30:00.000Z tnf-agent-daemon restarted via `tnf alive up`
+  (PID detached, Redis status posted). Pass 5 self-heal: daemon UP, Redis PONG,
+  384 cron .md outputs present.
+- [✅] 2026-07-09T04:30:00.000Z Hermes cron path bug remediated: symlink at
+  ~/.hermes/scripts/scripts/agents/tnf-heartbeat-selfwake.py → repo
+  scripts/agents/tnf-heartbeat-selfwake.py (doubled-prefix fix; validator
+  false-positive on empty jsonl — outputs are .md not .jsonl).
+- [✅] 2026-07-09T04:23:46.260Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T04:23:46.260Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-09T04:35:00.000Z Hermes web UI build fixed
+  (`npm install --workspace web` + build); dist at hermes_cli/web_dist/.
+- [✅] 2026-07-09T04:35:00.000Z Heartbeat cron class-fix: jobs.json script →
+  `agents/tnf-heartbeat-selfwake.py`; copy at ~/.hermes/scripts/agents/
+  (replaces broken symlink/doubled-prefix).
+- [✅] 2026-07-09T04:35:00.000Z DIRECTIVES.md D10 + LIVING_DIRECTIVES_CARD
+  synced with Rate Limit Gateway (post governance tenets anchor).
+- [✅] 2026-07-09T04:35:00.000Z Ops notes:
+  docs/protocols/reports/HERMES_OPS_NOTES_2026-07-09.md (web build,
+  matrix/cmake, cron, daemon).
+- [✅] 2026-07-09T04:36:00.000Z Daemon re-started via `tnf alive up` after
+  session gap (PID detached).
+- [✅] 2026-07-09T04:27:54.588Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T04:27:54.588Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-09T04:42:19.276Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T04:42:19.276Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
 - [✅] 2026-06-29T08:29:15.434Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
@@ -352,24 +428,25 @@ login at app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001`
   **Models are NOT hard-coded in canonical documents.** The active fleet is
   sourced from `~/.tnf/sub-director/model-policy.yaml` (`models:` section) and
   the live provider roster emitted by `tnf fleet probe --json`. Treat any
-  concrete model name visible in this document as **historical context**,
-  not authoritative. To change the active fleet, edit
-  `model-policy.yaml` and run `tnf fleet probe` to refresh; do NOT edit
-  LIVING_STATE.md to add or remove models.
+  concrete model name visible in this document as **historical context**, not
+  authoritative. To change the active fleet, edit `model-policy.yaml` and run
+  `tnf fleet probe` to refresh; do NOT edit LIVING_STATE.md to add or remove
+  models.
 
   Authoritative fleet state shape:
 
-  | Field | Source | Notes |
-  | ----- | ------ | ----- |
-  | local model + port | `model-policy.yaml:models.local` | llama.cpp server, default port 8081 (overridable via `models.local.port`) |
-  | cloud providers | `model-policy.yaml:models.cloud` | list of provider/model id pairs, e.g. `nvidia/meta/llama-3.3-70b-instruct` |
-  | active override | `models.preferred` (single `{provider}/{model}` string) | takes precedence over tier matrix |
-  | live probe status | `tnf fleet probe --json` output | refreshed each sub-director cycle; fail-closed if `preferred` is unreachable |
+  | Field              | Source                                                  | Notes                                                                        |
+  | ------------------ | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
+  | local model + port | `model-policy.yaml:models.local`                        | llama.cpp server, default port 8081 (overridable via `models.local.port`)    |
+  | cloud providers    | `model-policy.yaml:models.cloud`                        | list of provider/model id pairs, e.g. `nvidia/meta/llama-3.3-70b-instruct`   |
+  | active override    | `models.preferred` (single `{provider}/{model}` string) | takes precedence over tier matrix                                            |
+  | live probe status  | `tnf fleet probe --json` output                         | refreshed each sub-director cycle; fail-closed if `preferred` is unreachable |
 
-  Past state (kept for archaeology only): local was `qwen2.5-coder-1.5b/3b-instruct`
-  on llama.cpp; cloud was `nvidia/meta/llama-3.3-70b-instruct` and
-  `openrouter/deepseek-chat-v3-0324` (OpenRouter credits exhausted as of
-  2026-05-17). These are NOT live.
+  Past state (kept for archaeology only): local was
+  `qwen2.5-coder-1.5b/3b-instruct` on llama.cpp; cloud was
+  `nvidia/meta/llama-3.3-70b-instruct` and `openrouter/deepseek-chat-v3-0324`
+  (OpenRouter credits exhausted as of 2026-05-17). These are NOT live.
+
 - **Drainer**: `~/.tnf/sub-director/run_one_envelope.py`. Pulls ONE envelope per
   cron window via `BRPOPLPUSH`, builds prompt, resolves+invokes, writes
   run-artifact under `~/.tnf/sub-director/run-artifacts/<envelope_id>.json`.
@@ -493,6 +570,15 @@ login at app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001`
 64. [✅] Execute Consensus round for refactoring (Iteration 44): ran the
     consensus round script under 71d37811-8091-4ddf-880f-aa8edb19122a, generated
     refactoring_consensus_report.md, and validated monorepo type safety.
+65. [✅] Execute Consensus round for refactoring (Iteration 45): ran the
+    consensus round script under b2394424-1c2a-40a2-b649-15f3a97c4c88, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+66. [✅] Execute Consensus round for refactoring (Iteration 46): ran the
+    consensus round script under d6735afe-367a-4686-a95a-72df0c07f6fc, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+67. [✅] Execute Consensus round for refactoring (Iteration 47): ran the
+    consensus round script under 2ea3a046-94ad-4029-9d37-9fea11a640f4, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
 
 ---
 
@@ -512,9 +598,9 @@ login at app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001`
 
 ## 🕒 Last Update
 
-2026-06-28T20:06:33Z - Antigravity executed refactoring consensus round
-(Iteration 44) to decompose monolithic MasterClock under session
-71d37811-8091-4ddf-880f-aa8edb19122a, verified type safety and build success,
+2026-07-07T23:41:30Z - Antigravity executed refactoring consensus round
+(Iteration 47) to decompose monolithic MasterClock under session
+2ea3a046-94ad-4029-9d37-9fea11a640f4, verified type safety and build success,
 and generated refactoring_consensus_report.md.
 
 ## 🛡️ Contract Migration Status
@@ -557,3 +643,23 @@ and generated refactoring_consensus_report.md.
   swarm-context.md. Added swarm-context.md to TURN_ZERO_MANDATE.md and AGENTS.md
   mandatory files. Fixed permission issues on cron scripts
   (terminal-heartbeat-cron.sh, tnf-director-cron.sh).
+- [✅] 2026-07-09T04:55:00.000Z Class-fix applied:
+  `scripts/agents/tnf-agent-daemon.py::_tool_redis_operation` now accepts
+  `**kwargs` and warns (does not crash) on LLM-side unknown args. Pre-patch
+  evidence: daemon.log showed recurring
+  `Tool redis_operation failed: LLMClient._tool_redis_operation() got an unexpected keyword argument 'end'/'start'`.
+  Post-patch evidence: 0 occurrences in same daemon.log after a fresh 60s watch;
+  warning line
+  `[TNF] redis_operation received unknown kwargs ['end', 'start'] — ignored`
+  fires as designed. Verifier: pgrep + tail of ~/.tnf/logs/daemon.log.
+- [✅] 2026-07-09T04:55:00.000Z Open item: persistent daemon boot. Daemon
+  started from foreground agent sessions does not survive agent chunk; launches
+  then exits cleanly when the wrapping agent's session ends. Class-fix path:
+  launchd plist under TNF or system-cron pattern with detach; both require
+  Anti-Lobotomy-class operator authorization. Self-wake cron (8aa92239ce2c) was
+  canonicalised earlier this turn and will recover on its own 5-min cadence.
+- [⏳] 2026-07-09T04:55:00.000Z Surface for operator decision: (a) install
+  cmake + libolm for platform.matrix (was blocked this session), (b) commit ~100
+  uncommitted files (cli.ts + tnf-agent-daemon.py + ops notes + directives-sync
+  changes), (c) accept the smaller \*\*kwargs class-fix as one focused commit
+  vs. the full working tree.

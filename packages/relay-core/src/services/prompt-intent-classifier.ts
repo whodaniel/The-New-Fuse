@@ -46,7 +46,9 @@ export function classifyIntent(input: {
   const from = (input.from || '').toLowerCase();
   const to = (input.to || '').toLowerCase();
   const meta = input.metadata || {};
-  const fromSelfEcho = Boolean(meta.mcid?.causation_id);
+  const mcid =
+    meta.mcid && typeof meta.mcid === 'object' ? (meta.mcid as Record<string, unknown>) : null;
+  const fromSelfEcho = Boolean(mcid?.causation_id);
 
   // DIRECTIVE — director + chair-substitute. The relay knows the director
   // by operational handle (DIRECTOR-001) or substitute name.

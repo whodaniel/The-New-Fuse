@@ -10,6 +10,12 @@ HEARTBEAT_JSONL_LINES="${TNF_HEARTBEAT_JSONL_LINES:-500}"
 
 echo "[swarm-disk-retention] root=${ROOT_DIR} retentionDays=${RETENTION_DAYS}"
 
+# Read-only growth inventory before any pruning (feeds ~/.tnf/growth-audit + JSONL history)
+if [[ -f "${ROOT_DIR}/scripts/operations/tnf-growth-audit.cjs" ]]; then
+  node "${ROOT_DIR}/scripts/operations/tnf-growth-audit.cjs" --quiet || \
+    echo "[swarm-disk-retention] growth-audit warning (non-fatal, exit=$?)"
+fi
+
 prune_dir() {
   local dir="$1"
   local label="$2"

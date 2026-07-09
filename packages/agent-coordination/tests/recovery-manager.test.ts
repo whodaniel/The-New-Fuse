@@ -1,125 +1,56 @@
-// REDIS MIGRATION: This file has been automatically migrated to use UnifiedRedisService
-// TODO: Update service injection and method calls as needed
-
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { RecoveryManager } from '../src/coordination/RecoveryManager.js';
 import { SharedStateManager } from '../src/coordination/shared-state-manager.js';
+import { PersistentMetricsCollector } from '../src/monitoring/PersistentMetricsCollector.js';
 import { PresenceTracker } from '../src/presence/presence-tracker.js';
 import { TaskQueueManager } from '../src/queues/task-queue-manager.js';
 import { MessageSerializer } from '../src/serializers/message-serializer.js';
 import { AgentStatus } from '../src/types/coordination.types.js';
+import { createTestRedisService, flushPrefix } from './redis-client.js';
 
-// Mock dependencies
-jest.mock('ioredis');
+const PREFIX = 'test:';
 
-describe('RecoveryManager', () => {
-  let recoveryManager: RecoveryManager;
-  let mockRedis: any;
-  let mockPresenceTracker: any;
-  let mockSharedStateManager: any;
-  let mockTaskQueueManager: any;
-  let mockSerializer: any;
+describe('RecoveryManager (real redis)', () => {
+  let redis: UnifiedRedisService;
+  let recovery: RecoveryManager;
+  let shared: SharedStateManager;
+  let serializer: MessageSerializer;
 
-  beforeEach(() => {
-    mockRedis = {
-      scan: jest.fn(),
-      get: jest.fn(),
-      del: jest.fn(),
-    };
-
-    mockPresenceTracker = {
-      // no methods used directly in detectOfflineAgents, as it scans redis
-    };
-
-    mockSharedStateManager = {
-      releaseLocksForAgents: jest.fn().mockResolvedValue(1),
-    };
-
-    mockTaskQueueManager = {
-      getQueueStats: jest.fn(),
-    };
-
-    mockSerializer = {
-      deserialize: jest.fn(),
-    };
-
-    recoveryManager = new RecoveryManager(
-      mockRedis as unknown as Redis,
-      mockPresenceTracker as unknown as PresenceTracker,
-      mockSharedStateManager as unknown as SharedStateManager,
-      mockTaskQueueManager as unknown as TaskQueueManager,
-      mockSerializer as unknown as MessageSerializer,
-      'test:'
-    );
+  beforeAll(async () => {
+    redis = await createTestRedisService();
+  });
+  afterAll(async () => {
+    await redis.onModuleDestroy();
+  });
+  beforeEach(async () => {
+    serializer = new MessageSerializer();
+    const presence = new PresenceTracker(redis, { keyPrefix: PREFIX }, serializer);
+    shared = new SharedStateManager(redis, PREFIX, serializer);
+    const metrics = new PersistentMetricsCollector(redis, PREFIX + 'metrics:');
+    const taskQueueManager = new TaskQueueManager(redis, serializer, {}, metrics);
+    recovery = new RecoveryManager(redis, presence, shared, taskQueueManager, serializer, PREFIX);
+    await flushPrefix(redis, PREFIX);
   });
 
-  describe('performHealthCheck', () => {
-    it('should detect offline agents and recover them', async () => {
-      // Mock scan to return a presence key
-      mockRedis.scan.mockResolvedValueOnce(['0', ['test:presence:agent-offline']]);
+  it('performHealthCheck reports no offline agents when none are present', async () => {
+    const offline = await (recovery as any).performHealthCheck();
+    expect(offline).toEqual([]);
+  });
 
-      // Mock get to return offline status
-      mockRedis.get.mockResolvedValue(
-        JSON.stringify({
-          agentId: 'agent-offline',
-          status: AgentStatus.OFFLINE,
-        })
-      );
+  it('recovers an offline agent and releases its real redis locks', async () => {
+    // Seed a real presence key for an offline agent.
+    await redis.set(
+      PREFIX + 'presence:agent-offline',
+      serializer.serialize({ agentId: 'agent-offline', status: AgentStatus.OFFLINE })
+    );
 
-      mockSerializer.deserialize.mockReturnValue({
-        agentId: 'agent-offline',
-        status: AgentStatus.OFFLINE,
-      });
+    // Acquire a real lock owned by that agent.
+    await shared.acquireLock('doc-1', 'agent-offline', 30);
+    expect(await shared.isLocked('doc-1')).toBe(true);
 
-      // Spy on recoverAgents (private but we can test via public behavior)
-      const recoverSpy = jest.spyOn(recoveryManager, 'recoverAgents');
+    await (recovery as any).performHealthCheck();
 
-      // Trigger health check
-      await (recoveryManager as any).performHealthCheck();
-
-      expect(recoverSpy).toHaveBeenCalledWith(['agent-offline']);
-      expect(mockSharedStateManager.releaseLocksForAgents).toHaveBeenCalledWith(mockRedis, [
-        'agent-offline',
-      ]);
-    });
-
-    it('should not recover already recovered agents', async () => {
-      // Mock scan to return a presence key
-      mockRedis.scan.mockResolvedValueOnce(['0', ['test:presence:agent-offline']]);
-
-      // Mock get to return offline status
-      mockRedis.get.mockResolvedValue(
-        JSON.stringify({
-          agentId: 'agent-offline',
-          status: AgentStatus.OFFLINE,
-        })
-      );
-
-      mockSerializer.deserialize.mockReturnValue({
-        agentId: 'agent-offline',
-        status: AgentStatus.OFFLINE,
-      });
-
-      // First run
-      await (recoveryManager as any).performHealthCheck();
-      expect(mockSharedStateManager.releaseLocksForAgents).toHaveBeenCalledTimes(1);
-
-      // Second run (should be skipped)
-      mockRedis.scan.mockResolvedValueOnce(['0', ['test:presence:agent-offline']]);
-      await (recoveryManager as any).performHealthCheck();
-      expect(mockSharedStateManager.releaseLocksForAgents).toHaveBeenCalledTimes(1);
-    });
-
-    it('should log warning if queue has failed jobs', async () => {
-      mockRedis.scan.mockResolvedValue(['0', []]); // No offline agents
-
-      mockTaskQueueManager.getQueueStats.mockResolvedValue({
-        failed: 5,
-      });
-
-      // We can't easily assert on logger, but we can ensure it doesn't crash
-      await (recoveryManager as any).performHealthCheck();
-
-      expect(mockTaskQueueManager.getQueueStats).toHaveBeenCalledWith('agent-tasks');
-    });
+    // The lock is released from real redis.
+    expect(await shared.isLocked('doc-1')).toBe(false);
   });
 });

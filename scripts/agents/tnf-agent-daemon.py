@@ -878,8 +878,12 @@ class LLMClient:
         except Exception as e:
             return {"error": str(e)}
 
-    def _tool_redis_operation(self, daemon, operation: str, key: str, value: Optional[str] = None, hash_field: Optional[str] = None, timeout: Optional[int] = None) -> Dict[str, Any]:
-        """Execute a Redis operation."""
+    def _tool_redis_operation(self, daemon, operation: str, key: str, value: Optional[str] = None, hash_field: Optional[str] = None, timeout: Optional[int] = None, **kwargs) -> Dict[str, Any]:
+        """Execute a Redis operation. Accepts and ignores unrecognised kwargs
+        so LLM-side prompt drift does not crash the daemon."""
+        unknown = sorted(kwargs.keys()) if kwargs else []
+        if unknown:
+            logger.warning(f"redis_operation received unknown kwargs {unknown} — ignored")
         if not daemon:
             return {"error": "Daemon reference not set"}
         try:

@@ -46,6 +46,7 @@ function upsertEnvLines(targetPath, additions) {
 }
 
 const sources = [
+  path.join(repoRoot, 'apps/backend/.env'),
   path.join(repoRoot, 'apps/api/.env'),
   path.join(repoRoot, 'apps/frontend/.env.local'),
   path.join(repoRoot, 'apps/frontend/.env.production'),
@@ -71,6 +72,13 @@ if (merged.SUPABASE_URL && !merged.VITE_SUPABASE_URL) {
 }
 if (merged.SUPABASE_ANON_KEY && !merged.VITE_SUPABASE_ANON_KEY) {
   rootAdditions.VITE_SUPABASE_ANON_KEY = merged.SUPABASE_ANON_KEY;
+}
+// Control-plane Postgres lives on Supabase — propagate pooler URL to repo root.
+if (merged.DATABASE_URL) {
+  rootAdditions.DATABASE_URL = merged.DATABASE_URL;
+}
+if (merged.MARKETPLACE_DATABASE_URL) {
+  rootAdditions.MARKETPLACE_DATABASE_URL = merged.MARKETPLACE_DATABASE_URL;
 }
 
 const libraryAdditions = {};

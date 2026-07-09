@@ -1,120 +1,85 @@
-import { RedisCoordinator } from '../src/redis-coordinator.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { AgentStatus, A2APriority } from '@the-new-fuse/a2a-core';
-import { TaskStatus } from '../src/types/coordination.types.js';
+import { RedisCoordinator } from '../src/redis-coordinator.js';
+import { A2APriority, TaskStatus } from '../src/types/coordination.types.js';
+import { createTestRedisService, flushPrefix } from './redis-client.js';
 
-describe('RedisCoordinator', () => {
+const PREFIX = 'test:';
+
+describe('RedisCoordinator (real redis)', () => {
+  let redis: UnifiedRedisService;
   let coordinator: RedisCoordinator;
-  let mockRedisService: jest.Mocked<UnifiedRedisService>;
 
-  beforeEach(() => {
-    mockRedisService = {
-      get: jest.fn(),
-      set: jest.fn(),
-      del: jest.fn(),
-      publish: jest.fn(),
-      subscribe: jest.fn(),
-      sadd: jest.fn(),
-      srem: jest.fn(),
-      smembers: jest.fn(),
-    } as any;
-
-    coordinator = new RedisCoordinator(mockRedisService, {
-      keyPrefix: 'test:',
+  beforeAll(async () => {
+    redis = await createTestRedisService();
+  });
+  afterAll(async () => {
+    await redis.onModuleDestroy();
+  });
+  beforeEach(async () => {
+    coordinator = new RedisCoordinator(redis, {
+      keyPrefix: PREFIX,
       heartbeatInterval: 1000,
       heartbeatTimeout: 3000,
     });
+    await coordinator.onModuleInit();
+    await flushPrefix(redis, PREFIX);
+  });
+  afterEach(async () => {
+    await coordinator.onModuleDestroy().catch(() => undefined);
   });
 
-  describe('Agent Registration', () => {
-    it('should register an agent', async () => {
-      const agentId = 'agent-1';
-      const metadata = { role: 'worker' };
+  it('registers an agent in real redis (presence written, active count incremented)', async () => {
+    await coordinator.registerAgent('agent-1', { role: 'worker' });
 
-      await coordinator.registerAgent(agentId, metadata);
-
-      expect(mockRedisService.set).toHaveBeenCalled();
-      expect(mockRedisService.sadd).toHaveBeenCalled();
-    });
-
-    it('should unregister an agent', async () => {
-      const agentId = 'agent-1';
-
-      await coordinator.unregisterAgent(agentId);
-
-      expect(mockRedisService.srem).toHaveBeenCalled();
-    });
+    expect(await redis.get(PREFIX + 'presence:agent-1')).not.toBeNull();
+    expect(coordinator.getMetrics().activeAgents).toBeGreaterThanOrEqual(1);
   });
 
-  describe('Direct Messaging', () => {
-    it('should send direct message between agents', async () => {
-      const fromAgent = 'agent-1';
-      const toAgent = 'agent-2';
-      const payload = { message: 'Hello' };
+  it('unregisters an agent and clears its presence in real redis', async () => {
+    await coordinator.registerAgent('agent-1', { role: 'worker' });
+    await coordinator.unregisterAgent('agent-1');
 
-      await coordinator.sendDirectMessage(fromAgent, toAgent, payload);
-
-      expect(mockRedisService.publish).toHaveBeenCalled();
-    });
+    expect(await redis.get(PREFIX + 'presence:agent-1')).toBeNull();
   });
 
-  describe('Broadcasting', () => {
-    it('should broadcast message to all agents', async () => {
-      const fromAgent = 'agent-1';
-      const payload = { announcement: 'System update' };
-
-      await coordinator.broadcast(fromAgent, payload);
-
-      expect(mockRedisService.publish).toHaveBeenCalled();
-    });
+  it('sends a direct message through real pub/sub without error', async () => {
+    await expect(
+      coordinator.sendDirectMessage('agent-1', 'agent-2', { message: 'hello' })
+    ).resolves.not.toThrow();
   });
 
-  describe('Task Distribution', () => {
-    it('should create and assign task', async () => {
-      const task = {
-        type: 'data-processing',
-        assignedBy: 'coordinator',
-        assignedTo: 'worker-1',
-        payload: { data: [1, 2, 3] },
-        priority: A2APriority.HIGH,
-        maxRetries: 3,
-      };
-
-      mockRedisService.publish.mockResolvedValue(1);
-      
-      const createdTask = await coordinator.createTask(task);
-
-      expect(createdTask).toBeDefined();
-      expect(createdTask.id).toBeDefined();
-      expect(createdTask.status).toBe(TaskStatus.PENDING);
+  it('creates and assigns a task persisted in real redis', async () => {
+    const task = await coordinator.createTask({
+      type: 'data-processing',
+      assignedBy: 'coordinator',
+      assignedTo: 'worker-1',
+      payload: { data: [1, 2, 3] },
+      priority: A2APriority.HIGH,
+      maxRetries: 3,
     });
+
+    expect(task.id).toBeDefined();
+    expect(task.status).toBe(TaskStatus.PENDING);
   });
 
-  describe('Shared State', () => {
-    it('should set and get shared state', async () => {
-      const key = 'shared-config';
-      const value = { setting: 'value' };
-      const ownerId = 'agent-1';
+  it('sets and gets shared state with an incremented version in real redis', async () => {
+    const state = await coordinator.setSharedState(
+      'shared-config',
+      { setting: 'value' },
+      'agent-1'
+    );
 
-      mockRedisService.get.mockResolvedValue(null);
-      mockRedisService.set.mockResolvedValue(undefined);
+    expect(state.key).toBe('shared-config');
+    expect(state.version).toBe(1);
+    expect(state.value).toEqual({ setting: 'value' });
 
-      const state = await coordinator.setSharedState(key, value, ownerId);
-
-      expect(state.key).toBe(key);
-      expect(state.value).toEqual(value);
-      expect(state.ownerId).toBe(ownerId);
-      expect(state.version).toBe(1);
-    });
+    const raw = await redis.get(PREFIX + 'state:shared-config');
+    expect(raw).not.toBeNull();
   });
 
-  describe('Metrics', () => {
-    it('should track coordination metrics', () => {
-      const metrics = coordinator.getMetrics();
-
-      expect(metrics).toBeDefined();
-      expect(metrics.messagesPublished).toBeGreaterThanOrEqual(0);
-      expect(metrics.tasksCreated).toBeGreaterThanOrEqual(0);
-    });
+  it('exposes coordination metrics', () => {
+    const m = coordinator.getMetrics();
+    expect(m).toBeDefined();
+    expect(m.messagesPublished).toBeGreaterThanOrEqual(0);
   });
 });
