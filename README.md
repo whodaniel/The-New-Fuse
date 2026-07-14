@@ -82,6 +82,8 @@ plane details in public issues.
 
 ## License
 
-The open runtime license is declared in the downstream public distribution. Do
-not assume the combined monorepo is the final open-source artifact; verify
-`docs/REPO_SEPARATION.md` and the downstream repository before public release.
+This repository is licensed under the **MIT License** — see [LICENSE](LICENSE).
+
+Proprietary control-plane paths are filtered when publishing
+[`fuse-open-runtime`](https://github.com/whodaniel/fuse-open-runtime); see
+`docs/REPO_SEPARATION.md`.

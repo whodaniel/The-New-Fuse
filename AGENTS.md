@@ -30,8 +30,8 @@ unit** defined by the triad:
 1.  **The Core (The MoE Engine):** The raw reasoning power (Gemini, Claude,
     Codex). This is the "compute" and the "fuel."
 2.  **The Context (The Harness):** The collective writing in this repository
-    (`SOUL.md`, `AGENTS.md`, `SKILLS.md`). These are the **Software Weights**
-    that define the agent's identity, ethics, and focus.
+    (`.agent/SOUL.md`, `AGENTS.md`, `.agent/skills/**/SKILL.md`). These are the
+    **Software Weights** that define the agent's identity, ethics, and focus.
 3.  **The Capability (The Tools/MCP):** The "Senses" and "Limbs" (Native
     Vision/Audio/Relay Synapses). This is how the agent interacts with the
     Merkle Tree.
@@ -40,7 +40,8 @@ unit** defined by the triad:
 
 Agents are expected to perform **Autonomous Self-Prompting**:
 
-- **Observe:** Read the `runtime-state.json` and `MEMORY.md` upon Turn Zero.
+- **Observe:** Read `.agent/runtime-state.json` and session handoff /
+  `docs/protocols/LIVING_STATE.md` upon Turn Zero.
 - **Synthesize:** Align current state with the **Gauntlet of Filters** defined
   in `docs/TNF_INTELLIGENCE_PIPELINE_GAUNTLET.md`.
 - **Actualize:** Transform distilled "factoids" into **Intent**, then execute

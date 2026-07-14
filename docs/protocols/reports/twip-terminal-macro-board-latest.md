@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]`
+`[DOC_AUDIT_BACKFILL:2026-07-14]` — header restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TWIP Terminal Macro Board (Latest)
 
 Generated: 2026-05-12T02:40:02.787Z

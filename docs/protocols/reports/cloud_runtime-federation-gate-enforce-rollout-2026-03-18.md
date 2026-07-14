@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # CloudRuntime Federation Gate Enforce Rollout Report
 
 Date: 2026-03-18  
@@ -5,8 +8,8 @@ Status: Completed
 
 ## Scope
 
-Promote production CloudRuntime gate policy from `warn` to `enforce` using phased
-canary:
+Promote production CloudRuntime gate policy from `warn` to `enforce` using
+phased canary:
 
 1. relay/broker service first
 2. api handoff service second

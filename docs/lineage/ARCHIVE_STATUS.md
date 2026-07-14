@@ -4,20 +4,21 @@
 
 ## Completed
 
-| Repo | Parity | Bundle | ARCHIVED.md | GitHub archived |
-| ---- | ------ | ------ | ----------- | --------------- |
-| NexusOrchestrator | PASS | `bundles/NexusOrchestrator.bundle` (83K) | Yes | **Yes** (2026-06-22) |
-| fuse-master | PASS | `bundles/fuse-master.bundle` (165M) | Yes | **Yes** (2026-06-22) |
-| fuse-mirror | PASS | `bundles/fuse-mirror.bundle` (1.7G) | Yes | **Yes** (2026-06-22) |
-| fuse | PASS | alias → `fuse-mirror.bundle` | Yes | **Yes** (2026-06-22) |
+| Repo              | Parity | Bundle                                   | ARCHIVED.md | GitHub archived      |
+| ----------------- | ------ | ---------------------------------------- | ----------- | -------------------- |
+| NexusOrchestrator | PASS   | `bundles/NexusOrchestrator.bundle` (83K) | Yes         | **Yes** (2026-06-22) |
+| fuse-master       | PASS   | `bundles/fuse-master.bundle` (165M)      | Yes         | **Yes** (2026-06-22) |
+| fuse-mirror       | PASS   | `bundles/fuse-mirror.bundle` (1.7G)      | Yes         | **Yes** (2026-06-22) |
+| fuse              | PASS   | alias → `fuse-mirror.bundle`             | Yes         | **Yes** (2026-06-22) |
 
 ## Deferred (bundle or size)
 
-_None — all lineage archive candidates with PASS parity are archived or covered by alias bundle._
+_None — all lineage archive candidates with PASS parity are archived or covered
+by alias bundle._
 
 ## Never archive (live)
 
-- `the-new-fuse-next-gen` — canonical dev
+- `The-New-Fuse` (ex `The-New-Fuse`) — canonical dev
 - `fuse-open-runtime` — open distribution
 - `fuse-control-plane` — proprietary distribution
 

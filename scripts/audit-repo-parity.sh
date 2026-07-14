@@ -38,7 +38,7 @@ remote_for_slug() {
   case "$1" in
     fuse|old-fuse) echo "https://github.com/whodaniel/fuse.git" ;;
     fuse-master|private-origin) echo "https://github.com/whodaniel/fuse-master.git" ;;
-    the-new-fuse-next-gen) echo "https://github.com/whodaniel/the-new-fuse-next-gen.git" ;;
+    the-new-fuse-next-gen) echo "https://github.com/whodaniel/The-New-Fuse.git" ;;
     fuse-open-runtime|open-runtime) echo "https://github.com/whodaniel/fuse-open-runtime.git" ;;
     fuse-control-plane|control-plane) echo "https://github.com/whodaniel/fuse-control-plane.git" ;;
     fuse-mirror|mirror) echo "https://github.com/whodaniel/fuse-mirror.git" ;;

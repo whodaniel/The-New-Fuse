@@ -6,7 +6,7 @@ set -euo pipefail
 # =============================================================================
 #
 # PURPOSE:
-#   Syncs the combined monorepo (whodaniel/the-new-fuse-next-gen) to the two downstream repos:
+#   Syncs the combined monorepo (whodaniel/The-New-Fuse; historical slug the-new-fuse-next-gen redirects here) to the two downstream repos:
 #     1. whodaniel/fuse-open-runtime   (90% open-source)
 #     2. whodaniel/fuse-control-plane  (10% proprietary)
 #

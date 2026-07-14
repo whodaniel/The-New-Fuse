@@ -1,3 +1,6 @@
+`[CLASS:PRIME] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TNF Agent Roster Cleanup Protocol
 
 Status: ACTIVE Protocol ID: TNF_AGENT_ROSTER_CLEANUP_v1.0 Created: 2026-07-04

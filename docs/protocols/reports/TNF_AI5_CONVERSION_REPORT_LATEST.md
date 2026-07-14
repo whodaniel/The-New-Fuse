@@ -1,3 +1,6 @@
+`[CLASS:PRIME] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TNF AI5 Conversion Report
 
 - Generated: `2026-06-11T18:37:57.845814Z`

@@ -1,3 +1,5 @@
+`[CLASS:PRIME] [STATUS:LOCKED]`
+
 # ⚡ TNF DIRECTIVES — Canonical Operating Directives for Every Agent
 
 **Status:** ACTIVE · **Class:** [CLASS:PRIME] · **Protocol ID:**

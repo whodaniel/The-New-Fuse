@@ -1,3 +1,5 @@
+`[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
+
 # 🪪 TNF LIVING DIRECTIVES CARD (one-page)
 
 **Class:** [CLASS:PRIME] · `docs/protocols/DIRECTIVES.md` wins over mirrors.

@@ -1,13 +1,17 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # Agent Status Ledger
 
-Updated: **2026-07-04T10:23:34.660Z** — handoff `d01db68f-a3dc-495e-a87d-cc02b1e1fd43` (`60586330b262`).
+Updated: **2026-07-04T10:23:34.660Z** — handoff
+`d01db68f-a3dc-495e-a87d-cc02b1e1fd43` (`60586330b262`).
 `ef70c596-2124-40bd-952e-5239f3e042a0` (`baab5b2825e5`).
 `30532802-3db1-429c-80f3-245a94a7cd75` (`199370ded064`).
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
 | **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
 | **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
@@ -117,24 +121,35 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (ef70c596-2124-40bd-952e-5239f3e042a0) | ✅ HANDOFF_READY |
 
-| 2026-06-26 | Orchestrator | Published SESSION_HANDOFF_LATEST (3a181f47-0cb6-4278-b6bd-aa53b295116c) | ✅ HANDOFF_READY |
+| 2026-06-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3a181f47-0cb6-4278-b6bd-aa53b295116c) | ✅ HANDOFF_READY |
 
-| 2026-06-26 | Orchestrator | Published SESSION_HANDOFF_LATEST (43bca6ff-0a6f-43d2-95c1-f59b126553c4) | ✅ HANDOFF_READY |
+| 2026-06-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(43bca6ff-0a6f-43d2-95c1-f59b126553c4) | ✅ HANDOFF_READY |
 
-| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST (d01db68f-a3dc-495e-a87d-cc02b1e1fd43) | ✅ HANDOFF_READY |
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d01db68f-a3dc-495e-a87d-cc02b1e1fd43) | ✅ HANDOFF_READY |
 
-| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST (d0d35edf-5c65-4990-912b-774bf158d0b5) | ✅ HANDOFF_READY |
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d0d35edf-5c65-4990-912b-774bf158d0b5) | ✅ HANDOFF_READY |
 
-| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST (05334c5e-8773-4bfe-becb-1f8d0e044330) | ✅ HANDOFF_READY |
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(05334c5e-8773-4bfe-becb-1f8d0e044330) | ✅ HANDOFF_READY |
 
-| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST (be71f172-3ff8-4cf4-8c08-5e18a75ed453) | ✅ HANDOFF_READY |
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(be71f172-3ff8-4cf4-8c08-5e18a75ed453) | ✅ HANDOFF_READY |
 
-| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST (606a375f-a504-45f1-97f7-0476fdbf46b6) | ✅ HANDOFF_READY |
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(606a375f-a504-45f1-97f7-0476fdbf46b6) | ✅ HANDOFF_READY |
 
-| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST (08937909-fa3a-4bbb-8035-6a96f2187daf) | ✅ HANDOFF_READY |
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(08937909-fa3a-4bbb-8035-6a96f2187daf) | ✅ HANDOFF_READY |
 
-| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST (35c4fae2-f532-4ff7-a269-fd88507a3691) | ✅ HANDOFF_READY |
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(35c4fae2-f532-4ff7-a269-fd88507a3691) | ✅ HANDOFF_READY |
 
-| 2026-07-05 | Orchestrator | Published SESSION_HANDOFF_LATEST (df1eb476-5bc0-416e-a438-fd9bde17a793) | ✅ HANDOFF_READY |
+| 2026-07-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(df1eb476-5bc0-416e-a438-fd9bde17a793) | ✅ HANDOFF_READY |
 
-| 2026-07-05 | Orchestrator | Published SESSION_HANDOFF_LATEST (31caf6d5-0612-4c58-9a88-e3209ed6f19a) | ✅ HANDOFF_READY |
+| 2026-07-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(31caf6d5-0612-4c58-9a88-e3209ed6f19a) | ✅ HANDOFF_READY |

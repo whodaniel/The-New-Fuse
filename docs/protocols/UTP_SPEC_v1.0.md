@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # Universal Timeline Protocol (UTP) - v1.0
 
 **Project:** The New Fuse (TNF) **Status:** Initial Draft (Inspired by

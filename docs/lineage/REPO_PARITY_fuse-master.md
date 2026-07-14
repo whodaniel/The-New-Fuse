@@ -7,19 +7,19 @@
 
 ## Role
 
-| Field | Value |
-| ----- | ----- |
-| Slug | `fuse-master` |
-| Remote | `https://github.com/whodaniel/fuse-master.git` |
-| Classification | `lineage-archive-candidate` |
-| Tracked paths (monorepo) | 98282 |
-| Tracked paths (target) | 18726 |
-| Remote tags | 0 |
-| Remote branches | 1 |
+| Field                    | Value                                          |
+| ------------------------ | ---------------------------------------------- |
+| Slug                     | `fuse-master`                                  |
+| Remote                   | `https://github.com/whodaniel/fuse-master.git` |
+| Classification           | `lineage-archive-candidate`                    |
+| Tracked paths (monorepo) | 98282                                          |
+| Tracked paths (target)   | 18726                                          |
+| Remote tags              | 0                                              |
+| Remote branches          | 1                                              |
 
 ## Notes
 
-Private origin snapshot; single-branch. Superseded by the-new-fuse-next-gen.
+Private origin snapshot; single-branch. Superseded by The-New-Fuse.
 
 ## Proprietary leakage (open-runtime gate)
 
@@ -42,9 +42,8 @@ packages/agent-coordination/
 
 ## Parity criteria
 
-| Criterion | Result |
-| --------- | ------ |
-| No proprietary paths in open-runtime | N/A |
-| Legacy runtime captured in monorepo | REVIEW |
-| Distribution sync path documented | N/A |
-
+| Criterion                            | Result |
+| ------------------------------------ | ------ |
+| No proprietary paths in open-runtime | N/A    |
+| Legacy runtime captured in monorepo  | REVIEW |
+| Distribution sync path documented    | N/A    |

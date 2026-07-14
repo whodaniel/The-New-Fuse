@@ -7,19 +7,20 @@
 
 ## Role
 
-| Field | Value |
-| ----- | ----- |
-| Slug | `fuse` |
-| Remote | `https://github.com/whodaniel/fuse.git` |
-| Classification | `lineage-archive-candidate` |
-| Tracked paths (monorepo) | 98282 |
-| Tracked paths (target) | 30537 |
-| Remote tags | 15 |
-| Remote branches | 364 |
+| Field                    | Value                                   |
+| ------------------------ | --------------------------------------- |
+| Slug                     | `fuse`                                  |
+| Remote                   | `https://github.com/whodaniel/fuse.git` |
+| Classification           | `lineage-archive-candidate`             |
+| Tracked paths (monorepo) | 98282                                   |
+| Tracked paths (target)   | 30537                                   |
+| Remote tags              | 15                                      |
+| Remote branches          | 364                                     |
 
 ## Notes
 
-Public legacy monorepo. Unique tags/branches preserved in TAGS_BRANCHES_EXPORT.md; runtime surface merged into the-new-fuse-next-gen.
+Public legacy monorepo. Unique tags/branches preserved in
+TAGS_BRANCHES_EXPORT.md; runtime surface merged into The-New-Fuse.
 
 ## Proprietary leakage (open-runtime gate)
 
@@ -46,9 +47,8 @@ packages/agent-coordination/
 
 ## Parity criteria
 
-| Criterion | Result |
-| --------- | ------ |
-| No proprietary paths in open-runtime | N/A |
-| Legacy runtime captured in monorepo | REVIEW |
-| Distribution sync path documented | N/A |
-
+| Criterion                            | Result |
+| ------------------------------------ | ------ |
+| No proprietary paths in open-runtime | N/A    |
+| Legacy runtime captured in monorepo  | REVIEW |
+| Distribution sync path documented    | N/A    |

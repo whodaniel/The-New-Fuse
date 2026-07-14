@@ -1,3 +1,6 @@
+`[CLASS:PRIME] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TNF Fleet Health Probe Protocol
 
 Status: ACTIVE Protocol ID: TNF_FLEET_HEALTH_PROBE_v2.0 Version: 2.0 (Evolved
