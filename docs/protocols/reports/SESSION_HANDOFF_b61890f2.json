@@ -6,7 +6,7 @@
   "supersedes_attempted_but_preview_only": "f81589d6-f361-46a5-a1a8-dcd13ec5895b",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "4a1a7909d0",
+  "head_sha": "54275d3dac",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
