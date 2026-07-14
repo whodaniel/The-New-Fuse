@@ -2,4 +2,21 @@
 > @the-new-fuse/sync-core@0.1.1 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core
 > eslint src
 
- ELIFECYCLE  Command failed.
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+TypeError: Error while loading rule '@typescript-eslint/no-unused-expressions': Cannot read properties of undefined (reading 'allowShortCircuit')
+Occurred while linting /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/src/index.ts
+    at Object.create (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/eslint/lib/rules/no-unused-expressions.js:85:5)
+    at create (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unused-expressions.js:30:32)
+    at Object.create (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@typescript-eslint/utils/dist/eslint-utils/RuleCreator.js:39:20)
+    at createRuleListeners (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/node_modules/eslint/lib/linter/linter.js:895:21)
+    at /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/node_modules/eslint/lib/linter/linter.js:1066:110
+    at Array.forEach (<anonymous>)
+    at runRules (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/node_modules/eslint/lib/linter/linter.js:1003:34)
+    at Linter._verifyWithFlatConfigArrayAndWithoutProcessors (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/node_modules/eslint/lib/linter/linter.js:1730:31)
+    at Linter._verifyWithFlatConfigArray (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/node_modules/eslint/lib/linter/linter.js:1861:21)
+    at Linter.verify (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/node_modules/eslint/lib/linter/linter.js:1433:65)
+ ELIFECYCLE  Command failed with exit code 2.

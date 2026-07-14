@@ -467,7 +467,9 @@ class MasterClock {
             }
         }
         catch (e) {
-            log('error', 'MASTER_CLOCK', `Error processing message from ${source}: ${e.message}`, { error: e });
+            log('error', 'MASTER_CLOCK', `Error processing message from ${source}: ${e.message}`, {
+                error: e,
+            });
         }
     }
     normalizeIncomingMessage(msg) {
@@ -559,7 +561,8 @@ class MasterClock {
             this.metrics.agentsOnboarded++;
             const agent = this.registry.getAgent(agentId);
             if (req.replyTo) {
-                await this.redisClient.publish(req.replyTo, JSON.stringify({
+                await this.redisClient
+                    .publish(req.replyTo, JSON.stringify({
                     type: 'REGISTRATION_SUCCESS',
                     payload: {
                         agentId,
@@ -568,7 +571,8 @@ class MasterClock {
                         runtimeSessionId: agent?.runtimeSessionId,
                         aliases: agent?.aliases || [],
                     },
-                })).catch((err) => {
+                }))
+                    .catch((err) => {
                     log('error', 'REGISTRY', `Failed to publish registration success to Redis: ${err.message}`);
                 });
             }
@@ -580,13 +584,15 @@ class MasterClock {
         catch (err) {
             log('error', 'REGISTRY', `Registration failed for source: ${req.sourceId}. Reason: ${err.message}`);
             if (req.replyTo) {
-                await this.redisClient.publish(req.replyTo, JSON.stringify({
+                await this.redisClient
+                    .publish(req.replyTo, JSON.stringify({
                     type: 'REGISTRATION_FAILURE',
                     payload: {
                         sourceId: req.sourceId,
                         error: err.message,
                     },
-                })).catch((publishErr) => {
+                }))
+                    .catch((publishErr) => {
                     log('error', 'REGISTRY', `Failed to publish registration failure to Redis: ${publishErr.message}`);
                 });
             }

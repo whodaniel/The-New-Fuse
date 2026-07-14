@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "rootDir": ".",
-    "module": "ESNext",
+    "module": "CommonJS",
     "target": "ESNext",
     "moduleResolution": "Bundler",
     "esModuleInterop": true,
@@ -9,6 +9,8 @@
     "allowJs": true,
     "skipLibCheck": true,
     "types": ["jest", "node"],
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "6.0",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   }
 }

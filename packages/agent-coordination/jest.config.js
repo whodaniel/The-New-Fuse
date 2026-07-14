@@ -2,10 +2,10 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/tests', '<rootDir>/src'],
   testMatch: ['**/*.test.ts', '**/*.spec.ts'],
-  extensionsToTreatAsEsm: ['.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   resolver: '<rootDir>/jest.resolver.cjs',
   moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
     '^@the-new-fuse/a2a-core$': '<rootDir>/../a2a-core/src/index.ts',
     '^@the-new-fuse/ap2-protocol$': '<rootDir>/../ap2-protocol/src/index.ts',
     '^@the-new-fuse/core-vector-db$': '<rootDir>/../core-vector-db/src/index.ts',
@@ -14,8 +14,9 @@ module.exports = {
     '^@the-new-fuse/utils$': '<rootDir>/../utils/src/index.ts',
   },
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { useESM: true, tsconfig: 'tsconfig.test.json' }],
+    '^.+\\.[tj]sx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
   },
+  transformIgnorePatterns: ['node_modules/(?!(uuid)/)'],
   globalSetup: '<rootDir>/globalSetup.ts',
   globalTeardown: '<rootDir>/globalTeardown.ts',
   coverageDirectory: 'coverage',

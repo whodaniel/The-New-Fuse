@@ -159,12 +159,35 @@ class TranscriptProcessorV4 {
 
   private loadGoogleKey(): void {
     try {
+      // 1. Try process.env first
+      if (process.env.GEMINI_API_KEY) {
+        this.googleApiKey = process.env.GEMINI_API_KEY;
+        console.log('[v4-pro] ✅ Google AI API Key loaded from process environment');
+        return;
+      }
+
+      // 2. Try ~/.hermes/.env
       const envPath = '/Users/danielgoldberg/.hermes/.env';
-      const envContent = fs.readFileSync(envPath, 'utf8');
-      const match = envContent.match(/GEMINI_API_KEY=(AIza[A-Za-z0-9\-_]+)/);
-      if (match) {
-        this.googleApiKey = match[1];
-        console.log('[v4-pro] ✅ Google AI API Key loaded');
+      if (fs.existsSync(envPath)) {
+        const envContent = fs.readFileSync(envPath, 'utf8');
+        const match = envContent.match(/GEMINI_API_KEY=(AIza[A-Za-z0-9\-_]+)/);
+        if (match) {
+          this.googleApiKey = match[1];
+          console.log('[v4-pro] ✅ Google AI API Key loaded from ~/.hermes/.env');
+          return;
+        }
+      }
+
+      // 3. Fallback to project root .env
+      const localEnvPath = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.env';
+      if (fs.existsSync(localEnvPath)) {
+        const envContent = fs.readFileSync(localEnvPath, 'utf8');
+        const match = envContent.match(/GEMINI_API_KEY=(AIza[A-Za-z0-9\-_]+)/);
+        if (match) {
+          this.googleApiKey = match[1];
+          console.log('[v4-pro] ✅ Google AI API Key loaded from project .env');
+          return;
+        }
       }
     } catch (e) {}
   }
