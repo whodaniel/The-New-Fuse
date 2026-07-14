@@ -33,7 +33,7 @@ pub fn open_browser_webview(app: AppHandle, url: String) -> Result<(), String> {
         .resizable(true);
 
     builder
-        .build(&app)
+        .build()
         .map(|_| ())
         .map_err(|e| format!("Failed to open TNF Browser webview: {}", e))
 }

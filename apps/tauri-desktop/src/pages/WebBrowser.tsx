@@ -4,34 +4,57 @@ import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useBrowserControl } from '../hooks/useBrowserControl';
 import { useFederationNode } from '../hooks/useFederationNode';
-import { useSettingsStore } from '../stores';
+import { useTnfBrowser } from '../hooks/useTnfBrowser';
 import {
-  openTNFBrowserWebview,
-  navigateTNFBrowserWebview,
-  focusTNFBrowserWebview,
   closeTNFBrowserWebview,
+  focusTNFBrowserWebview,
+  navigateTNFBrowserWebview,
+  openTNFBrowserWebview,
 } from '../lib/tnfBrowserWebview';
+import { useSettingsStore } from '../stores';
+
+type TabState = { id: number; title: string; url: string; loading: boolean };
 
 /**
- * Web Browser + TNF Browser Control Surface
- * Left: preview / new-tab UX. Right: relay-backed operator panel.
+ * TNF Browser control surface.
+ * Left: navigator / live preview. Right: protocol operator panel (:7331).
  */
 const WebBrowser: React.FC = () => {
   const browser = useBrowserControl();
+  const tnf = useTnfBrowser();
   const federation = useFederationNode();
   const { environment } = useSettingsStore();
   const [currentTab, setCurrentTab] = useState(0);
-  const [tabs, setTabs] = useState([
+  const [tabs, setTabs] = useState<TabState[]>([
     { id: 0, title: 'New Tab', url: 'about:blank', loading: false },
   ]);
-  const [inputUrl, setInputUrl] = useState('https://example.com');
+  const [inputUrl, setInputUrl] = useState('');
   const [webviewOpen, setWebviewOpen] = useState(false);
 
   useEffect(() => {
-    if (browser.state.currentUrl) {
-      setInputUrl(browser.state.currentUrl);
-    }
-  }, [browser.state.currentUrl]);
+    const liveUrl = tnf.state.currentUrl || browser.state.currentUrl;
+    if (!liveUrl) return;
+    setInputUrl(liveUrl);
+    setTabs((prev) => {
+      const tab = prev[currentTab];
+      if (!tab) return prev;
+      const nextTitle =
+        tnf.state.currentTitle ||
+        browser.state.currentTitle ||
+        liveUrl.replace(/^https?:\/\//, '').split('/')[0] ||
+        'Tab';
+      if (tab.url === liveUrl && tab.title === nextTitle) return prev;
+      return prev.map((item, index) =>
+        index === currentTab ? { ...item, url: liveUrl, title: nextTitle } : item
+      );
+    });
+  }, [
+    tnf.state.currentUrl,
+    tnf.state.currentTitle,
+    browser.state.currentUrl,
+    browser.state.currentTitle,
+    currentTab,
+  ]);
 
   const openLiveWebView = async (targetUrl: string) => {
     try {
@@ -51,8 +74,8 @@ const WebBrowser: React.FC = () => {
       tab.url = targetUrl;
       tab.title =
         title ||
-        targetUrl.replace('https://', '').replace('http://', '').split('/')[0] ||
-        'New Tab';
+        targetUrl.replace(/^https?:\/\//, '').split('/')[0] ||
+        (targetUrl === 'about:blank' ? 'New Tab' : 'Tab');
       return next;
     });
   };
@@ -60,16 +83,20 @@ const WebBrowser: React.FC = () => {
   const navigateToUrl = async (rawUrl: string, event?: React.FormEvent) => {
     event?.preventDefault();
     let targetUrl = rawUrl.trim();
-    if (!targetUrl) return;
+    if (!targetUrl || targetUrl === 'about:blank') return;
     if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
       targetUrl = `https://${targetUrl}`;
     }
 
     setInputUrl(targetUrl);
     applyUrlToTab(targetUrl);
-    await browser.navigate(targetUrl);
 
-    // Drive the real Tauri child WebView (native webview, not a sandboxed iframe).
+    if (tnf.state.status?.connected) {
+      await tnf.navigate(targetUrl);
+    } else {
+      await browser.navigate(targetUrl);
+    }
+
     if (webviewOpen) {
       try {
         await navigateTNFBrowserWebview(targetUrl);
@@ -90,7 +117,7 @@ const WebBrowser: React.FC = () => {
     const newTab = { id: newId, title: 'New Tab', url: 'about:blank', loading: false };
     setTabs((prev) => [...prev, newTab]);
     setCurrentTab(tabs.length);
-    setInputUrl('about:blank');
+    setInputUrl('');
   };
 
   const closeTab = (id: number, event: React.MouseEvent) => {
@@ -104,7 +131,8 @@ const WebBrowser: React.FC = () => {
     if (currentTab === index) {
       const nextTab = index === 0 ? 0 : index - 1;
       setCurrentTab(nextTab);
-      setInputUrl(newTabs[nextTab]?.url || 'about:blank');
+      const nextUrl = newTabs[nextTab]?.url || 'about:blank';
+      setInputUrl(nextUrl === 'about:blank' ? '' : nextUrl);
     } else if (currentTab > index) {
       setCurrentTab(currentTab - 1);
     }
@@ -112,28 +140,36 @@ const WebBrowser: React.FC = () => {
 
   const selectTab = (index: number) => {
     setCurrentTab(index);
-    setInputUrl(tabs[index]?.url || 'about:blank');
+    const nextUrl = tabs[index]?.url || 'about:blank';
+    setInputUrl(nextUrl === 'about:blank' ? '' : nextUrl);
   };
 
   const activeUrl = tabs[currentTab]?.url || 'about:blank';
+  const isBlank = activeUrl === 'about:blank';
+  const tnfConnected = Boolean(tnf.state.status?.connected);
+  const tnfListening = Boolean(tnf.state.status?.listening);
   const extensionMode = browser.state.extensionConnected;
+  const previewShot = tnf.state.lastScreenshot || browser.state.lastScreenshot;
+
+  const statusLabel = tnfConnected
+    ? 'TNF Browser live'
+    : tnfListening
+      ? 'TNF Browser ready'
+      : extensionMode
+        ? 'Extension connected'
+        : federation.state.registered
+          ? 'Federation'
+          : 'Offline';
+
+  const statusClass =
+    tnfConnected || extensionMode ? 'local' : federation.state.registered ? 'cloud' : 'offline';
 
   return (
     <PageShell
       className="page-fill"
       title="Browser Control"
-      subtitle="Lux Bridge — Chrome extension relay + operator panel (Forefront)"
-      actions={
-        <span
-          className={`env-badge ${extensionMode ? 'local' : federation.state.registered ? 'cloud' : 'offline'}`}
-        >
-          {extensionMode
-            ? 'Extension connected'
-            : federation.state.registered
-              ? 'Federation'
-              : 'Offline'}
-        </span>
-      }
+      subtitle="TNF Browser — live DOM control on :7331, with relay and federation fallbacks"
+      actions={<span className={`env-badge ${statusClass}`}>{statusLabel}</span>}
     >
       <SynergyStatusBar />
       <div className="page-fill-body">
@@ -145,43 +181,65 @@ const WebBrowser: React.FC = () => {
                   key={tab.id}
                   className={`tab ${currentTab === idx ? 'active' : ''}`}
                   onClick={() => selectTab(idx)}
+                  role="tab"
+                  aria-selected={currentTab === idx}
                 >
-                  <span className="tab-favicon">🌐</span>
+                  <span className="tab-mark" aria-hidden />
                   <span className="tab-title">{tab.title}</span>
-                  <button className="tab-close" onClick={(event) => closeTab(tab.id, event)}>
+                  <button
+                    className="tab-close"
+                    onClick={(event) => closeTab(tab.id, event)}
+                    aria-label={`Close ${tab.title}`}
+                    type="button"
+                  >
                     ×
                   </button>
                 </div>
               ))}
-              <button className="add-tab-btn" onClick={addTab}>
+              <button className="add-tab-btn" onClick={addTab} aria-label="New tab" type="button">
                 +
               </button>
             </div>
 
             <div className="browser-controls">
               <div className="nav-btns">
-                <button className="nav-btn" title="Back" onClick={() => void browser.goBack()}>
+                <button
+                  className="nav-btn"
+                  title="Back"
+                  type="button"
+                  onClick={() => void browser.goBack()}
+                >
                   ←
                 </button>
                 <button
                   className="nav-btn"
                   title="Forward"
+                  type="button"
                   onClick={() => void browser.goForward()}
                 >
                   →
                 </button>
-                <button className="nav-btn" title="Reload" onClick={() => void browser.refresh()}>
+                <button
+                  className="nav-btn"
+                  title="Reload"
+                  type="button"
+                  onClick={() => {
+                    if (tnfConnected) void tnf.reload();
+                    else void browser.refresh();
+                  }}
+                >
                   ↻
                 </button>
                 <button
                   className="nav-btn"
                   title="Home"
+                  type="button"
                   onClick={() => {
-                    setInputUrl('about:blank');
+                    setInputUrl('');
                     applyUrlToTab('about:blank', 'New Tab');
                   }}
                 >
-                  🏠
+                  ⌂
                 </button>
               </div>
 
@@ -192,76 +250,96 @@ const WebBrowser: React.FC = () => {
                   value={inputUrl}
                   onChange={(event) => setInputUrl(event.target.value)}
                   placeholder="Search or enter website address"
+                  aria-label="Address bar"
                 />
               </form>
 
               <div className="browser-actions">
                 <div className={`env-badge ${environment}`} title="Current Connection Environment">
-                  <span className="env-dot"></span>
+                  <span className="env-dot" />
                   {environment.charAt(0).toUpperCase() + environment.slice(1)}
                 </div>
-                <div className={`env-badge ${extensionMode ? 'local' : 'sandbox'}`}>
-                  {extensionMode ? 'Extension Live' : 'Preview Mode'}
+                <div
+                  className={`env-badge ${tnfConnected ? 'local' : tnfListening ? 'cloud' : 'sandbox'}`}
+                >
+                  {tnfConnected ? 'TNF Live' : tnfListening ? 'TNF Ready' : 'TNF Offline'}
                 </div>
-                <div className={`env-badge ${federation.state.registered ? 'local' : 'sandbox'}`}>
-                  {federation.state.registered ? 'Federation Live' : 'Federation Node'}
+                <div className={`env-badge ${extensionMode ? 'local' : 'sandbox'}`}>
+                  {extensionMode ? 'Relay Live' : 'Relay Idle'}
                 </div>
               </div>
             </div>
 
             <div className="content-area">
-              {activeUrl === 'about:blank' ? (
+              {isBlank ? (
                 <div className="new-tab-page">
                   <div className="new-tab-content">
-                    <h1>TNF Desktop App</h1>
-                    <p>The New Fuse — local browser control and standalone federation node.</p>
+                    <p className="brand-kicker">The New Fuse</p>
+                    <h1>TNF Browser</h1>
+                    <p className="lede">
+                      Drive a real Chromium session through the live DOM — discover, click, html,
+                      screenshot. Prefer inspect → act → verify.
+                    </p>
                     <form className="search-box" onSubmit={handleNavigate}>
                       <input
                         type="text"
-                        value={inputUrl === 'about:blank' ? '' : inputUrl}
+                        value={inputUrl}
                         onChange={(event) => setInputUrl(event.target.value)}
-                        placeholder="Navigate anywhere..."
+                        placeholder="Navigate anywhere…"
+                        aria-label="New tab navigation"
                       />
                       <button type="submit">Go</button>
                     </form>
                     <div className="shortcuts">
                       {[
-                        ['GitHub', 'https://github.com'],
+                        ['Example', 'https://example.com'],
                         ['TNF Docs', 'https://thenewfuse.com'],
                         ['Relay Health', 'http://127.0.0.1:3000/health'],
                       ].map(([label, url]) => (
                         <button
                           key={url}
-                          className="shortcut-card"
+                          className="shortcut-link"
+                          type="button"
                           onClick={() => {
                             void navigateToUrl(url);
                           }}
                         >
-                          <span>{label}</span>
+                          {label}
                         </button>
                       ))}
                     </div>
+                    <div className="startup-hint">
+                      {tnfListening ? (
+                        tnfConnected ? (
+                          <span>Connected to TNF Browser on :7331</span>
+                        ) : (
+                          <button type="button" onClick={() => void tnf.connect()}>
+                            Connect to running TNF Browser
+                          </button>
+                        )
+                      ) : (
+                        <button type="button" onClick={() => void tnf.startRuntime()}>
+                          Start TNF Browser runtime
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              ) : extensionMode ? (
+              ) : extensionMode && !tnfConnected ? (
                 <div className="extension-mode">
                   <div className="extension-banner">
                     <strong>Extension-controlled session</strong>
                     <p>{browser.state.currentTitle || activeUrl}</p>
-                    <button onClick={() => void browser.openNative(activeUrl)}>
+                    <button type="button" onClick={() => void browser.openNative(activeUrl)}>
                       Open in system browser
                     </button>
                   </div>
-                  {browser.state.lastScreenshot ? (
-                    <img
-                      src={browser.state.lastScreenshot}
-                      alt="Live browser preview"
-                      className="live-preview"
-                    />
+                  {previewShot ? (
+                    <img src={previewShot} alt="Live browser preview" className="live-preview" />
                   ) : (
                     <div className="live-placeholder">
                       <p>
-                        Use Screenshot or Analyze in the control panel to inspect the active tab.
+                        Use Screenshot or Discover in the control panel to inspect the active tab.
                       </p>
                     </div>
                   )}
@@ -270,12 +348,17 @@ const WebBrowser: React.FC = () => {
                 <div className="live-webview-surface">
                   <div className="live-webview-head">
                     <div className="live-webview-meta">
-                      <strong>TNF Browser — Live WebView</strong>
-                      <span className="live-webview-url">{browser.state.currentTitle || activeUrl}</span>
+                      <strong>Live surface</strong>
+                      <span className="live-webview-url">
+                        {tnf.state.currentTitle || browser.state.currentTitle || activeUrl}
+                      </span>
                     </div>
                     <div className="live-webview-actions">
-                      <button onClick={() => void focusTNFBrowserWebview()}>Focus Window</button>
+                      <button type="button" onClick={() => void focusTNFBrowserWebview()}>
+                        Focus Window
+                      </button>
                       <button
+                        type="button"
                         onClick={async () => {
                           try {
                             await closeTNFBrowserWebview();
@@ -290,20 +373,15 @@ const WebBrowser: React.FC = () => {
                     </div>
                   </div>
                   <div className="live-webview-body">
-                    {browser.state.lastScreenshot ? (
-                      <img
-                        src={browser.state.lastScreenshot}
-                        alt="Live browser preview"
-                        className="live-preview"
-                      />
+                    {previewShot ? (
+                      <img src={previewShot} alt="Live browser preview" className="live-preview" />
                     ) : (
                       <div className="live-placeholder">
                         <p>
-                          The live site renders in a real Tauri child WebView window (native
-                          webview, not a sandboxed iframe). Use <em>Focus Window</em> to bring it
-                          forward.
+                          The live site renders in a Tauri child WebView (native, not a sandboxed
+                          iframe). Use Focus Window, or run Discover / Screenshot from the panel.
                         </p>
-                        <button onClick={() => void openLiveWebView(activeUrl)}>
+                        <button type="button" onClick={() => void openLiveWebView(activeUrl)}>
                           Open Live Window
                         </button>
                       </div>
@@ -315,6 +393,23 @@ const WebBrowser: React.FC = () => {
           </div>
 
           <BrowserControlPanel
+            tnf={tnf.state}
+            onTnfConnect={tnf.connect}
+            onTnfDisconnect={tnf.disconnect}
+            onTnfStart={tnf.startRuntime}
+            onTnfNavigate={async (url) => {
+              setInputUrl(url);
+              applyUrlToTab(url);
+              await tnf.navigate(url);
+              if (webviewOpen) await navigateTNFBrowserWebview(url).catch(() => undefined);
+              else await openLiveWebView(url);
+            }}
+            onTnfReload={tnf.reload}
+            onTnfScreenshot={tnf.takeScreenshot}
+            onTnfDiscover={tnf.discover}
+            onTnfHtml={tnf.readHtml}
+            onTnfClick={tnf.click}
+            onTnfRefreshTabs={tnf.refreshTabs}
             state={browser.state}
             federation={federation.state}
             onConnect={browser.connect}
@@ -344,7 +439,7 @@ const WebBrowser: React.FC = () => {
           display: flex;
           height: 100%;
           background: var(--tnf-obsidian);
-          color: white;
+          color: var(--tnf-text-primary, white);
         }
         .browser-main {
           flex: 1;
@@ -360,57 +455,63 @@ const WebBrowser: React.FC = () => {
           min-height: 0;
           position: relative;
         }
-        .browser-notice, .extension-banner {
-          position: absolute;
-          bottom: 12px;
-          right: 12px;
-          background: rgba(0, 0, 0, 0.75);
+        .extension-banner {
+          margin: 16px;
+          background: rgba(0, 0, 0, 0.55);
           backdrop-filter: blur(8px);
-          padding: 10px 12px;
+          padding: 12px 14px;
           border-radius: 8px;
           font-size: 12px;
-          max-width: 320px;
-          z-index: 20;
+          border: 1px solid var(--tnf-border);
         }
-        .browser-notice button, .extension-banner button {
+        .extension-banner button {
           margin-top: 8px;
-          background: var(--tnf-primary);
-          color: white;
+          background: var(--tnf-accent, #06b6d4);
+          color: #042f2e;
           border: none;
           padding: 6px 12px;
           border-radius: 6px;
           cursor: pointer;
-          width: 100%;
+          font-weight: 600;
         }
-        .iframe-container, .extension-mode, .new-tab-page {
+        .extension-mode, .new-tab-page {
           width: 100%;
           height: 100%;
         }
-        .content-frame, .live-preview {
+        .live-preview {
           width: 100%;
           height: 100%;
           border: 0;
           background: #0f172a;
+          object-fit: contain;
         }
         .live-placeholder {
           display: grid;
           place-items: center;
+          gap: 12px;
           height: 100%;
           color: var(--tnf-text-muted);
           padding: 24px;
           text-align: center;
         }
-        .extension-banner {
-          position: static;
-          margin: 16px;
-          max-width: none;
+        .live-placeholder button,
+        .startup-hint button {
+          background: var(--tnf-accent, #06b6d4);
+          color: #042f2e;
+          border: none;
+          border-radius: 8px;
+          padding: 10px 14px;
+          cursor: pointer;
+          font-weight: 600;
         }
         .live-webview-surface {
           display: flex;
           flex-direction: column;
           width: 100%;
           height: 100%;
-          background: #0f172a;
+          background:
+            radial-gradient(ellipse at top, rgba(6, 182, 212, 0.08), transparent 55%),
+            #0f172a;
         }
         .live-webview-head {
           display: flex;
@@ -440,9 +541,9 @@ const WebBrowser: React.FC = () => {
           flex-shrink: 0;
         }
         .live-webview-actions button {
-          background: var(--tnf-primary);
+          background: rgba(255,255,255,0.06);
           color: white;
-          border: none;
+          border: 1px solid var(--tnf-border);
           border-radius: 6px;
           padding: 6px 12px;
           cursor: pointer;
@@ -482,13 +583,22 @@ const WebBrowser: React.FC = () => {
           min-width: 120px;
         }
         .tab.active {
-          background: rgba(99,102,241,0.18);
+          background: rgba(6,182,212,0.14);
+        }
+        .tab-mark {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: var(--tnf-accent, #06b6d4);
+          opacity: 0.7;
+          flex-shrink: 0;
         }
         .tab-close {
           background: transparent;
           border: none;
           color: inherit;
           cursor: pointer;
+          margin-left: auto;
         }
         .browser-controls {
           align-items: center;
@@ -503,10 +613,10 @@ const WebBrowser: React.FC = () => {
           background: rgba(255,255,255,0.05);
           border: 1px solid var(--tnf-border);
           color: white;
-          border-radius: 999px;
+          border-radius: 10px;
           padding: 10px 16px;
         }
-        .nav-btn, .add-tab-btn, .action-btn {
+        .nav-btn, .add-tab-btn {
           background: rgba(255,255,255,0.05);
           border: 1px solid var(--tnf-border);
           color: white;
@@ -523,13 +633,15 @@ const WebBrowser: React.FC = () => {
           align-items: center;
           gap: 6px;
           padding: 4px 8px;
-          border-radius: 999px;
+          border-radius: 8px;
           font-size: 11px;
           border: 1px solid rgba(255,255,255,0.12);
         }
         .env-badge.local { color: #4ade80; }
-        .env-badge.sandbox { color: #a78bfa; }
+        .env-badge.sandbox { color: #94a3b8; }
+        .env-badge.cloud { color: #67e8f9; }
         .env-badge.production { color: #fb7185; }
+        .env-badge.offline { color: #f87171; }
         .env-dot {
           width: 6px;
           height: 6px;
@@ -539,23 +651,39 @@ const WebBrowser: React.FC = () => {
         .new-tab-page {
           display: grid;
           place-items: center;
-          background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+          background:
+            radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.16), transparent 50%),
+            linear-gradient(180deg, #0b1224 0%, #020617 100%);
         }
         .new-tab-content {
           width: min(720px, 100%);
           padding: 32px;
           text-align: center;
+          animation: tnf-fade-in 420ms ease both;
+        }
+        .brand-kicker {
+          margin: 0 0 8px;
+          font-size: 12px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: var(--tnf-accent, #67e8f9);
         }
         .new-tab-content h1 {
-          margin: 0 0 8px;
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+          margin: 0 0 10px;
+          font-family: var(--tnf-font-heading, Outfit, sans-serif);
+          font-size: clamp(2rem, 4vw, 2.8rem);
+          color: var(--tnf-text-primary, #f8fafc);
+        }
+        .lede {
+          margin: 0 auto;
+          max-width: 34rem;
+          color: var(--tnf-text-secondary, #cbd5e1);
+          line-height: 1.55;
         }
         .search-box {
           display: flex;
           gap: 8px;
-          margin: 24px 0;
+          margin: 28px 0 18px;
         }
         .search-box input {
           flex: 1;
@@ -565,21 +693,40 @@ const WebBrowser: React.FC = () => {
           border-radius: 10px;
           padding: 12px 14px;
         }
-        .search-box button, .shortcut-card {
-          background: var(--tnf-primary);
-          color: white;
+        .search-box button {
+          background: var(--tnf-accent, #06b6d4);
+          color: #042f2e;
           border: none;
           border-radius: 10px;
           padding: 12px 16px;
           cursor: pointer;
+          font-weight: 600;
         }
         .shortcuts {
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 12px;
+          gap: 10px;
         }
-        .shortcut-card {
-          background: rgba(255,255,255,0.05);
+        .shortcut-link {
+          background: transparent;
+          border: 1px solid var(--tnf-border);
+          color: var(--tnf-text-secondary, #cbd5e1);
+          border-radius: 10px;
+          padding: 12px 14px;
+          cursor: pointer;
+        }
+        .shortcut-link:hover {
+          border-color: rgba(6,182,212,0.45);
+          color: white;
+        }
+        .startup-hint {
+          margin-top: 22px;
+          color: var(--tnf-text-muted);
+          font-size: 13px;
+        }
+        @media (max-width: 900px) {
+          .browser-page { flex-direction: column; }
+          .shortcuts { grid-template-columns: 1fr; }
         }
       `}</style>
         </div>

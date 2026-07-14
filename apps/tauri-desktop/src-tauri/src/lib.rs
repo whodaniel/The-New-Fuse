@@ -5,6 +5,7 @@ mod bridge;
 mod antigravity;
 mod oagi;
 mod browser_webview;
+mod tnf_browser_bridge;
 
 // HashMap imported on demand via bridge module
 use std::sync::Arc;
@@ -14,6 +15,7 @@ use serde::{Deserialize, Serialize};
 
 use bridge::BridgeManager;
 use antigravity::{AntigravityClient, AntigravityCredentials, AntigravityStatus, PageInfo, UserSettings};
+use tnf_browser_bridge::TnfBrowserBridge;
 
 // ============================================================================
 // STATE MANAGEMENT
@@ -381,6 +383,7 @@ async fn antigravity_save_recording(
 pub fn run() {
     tauri::Builder::default()
         .manage(AppState::default())
+        .manage(Arc::new(TnfBrowserBridge::default()))
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             // Core
@@ -426,7 +429,12 @@ pub fn run() {
             browser_webview::navigate_browser_webview,
             browser_webview::focus_browser_webview,
             browser_webview::close_browser_webview,
-            browser_webview::browser_webview_exists
+            browser_webview::browser_webview_exists,
+            // TNF Browser protocol bridge (:7331)
+            tnf_browser_bridge::tnf_browser_status,
+            tnf_browser_bridge::tnf_browser_connect,
+            tnf_browser_bridge::tnf_browser_disconnect,
+            tnf_browser_bridge::tnf_browser_command
         ])
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();

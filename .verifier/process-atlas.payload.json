@@ -1,5 +1,5 @@
 {
-  "now": "2026-07-14T16:00:04Z",
+  "now": "2026-07-14T20:00:02Z",
   "generated_by": "tnf-process-atlas-generator",
   "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "cron": [
@@ -147,7 +147,7 @@
     },
     {
       "role": "Standalone Relay Server",
-      "cmd": "56791 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
+      "cmd": "99465 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
     },
     {
       "role": "Relay Core Runtime",
@@ -155,7 +155,7 @@
     },
     {
       "role": "Relay Core Runtime",
-      "cmd": "56564 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run relay"
+      "cmd": "99281 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run relay"
     }
   ],
   "packages": [
@@ -186,6 +186,7 @@
     "compounding-memory",
     "contracts",
     "contracts-legacy",
+    "control-plane-contracts",
     "core",
     "core-auth",
     "core-error-handling",
@@ -239,6 +240,7 @@
     "telegram-bot-service",
     "test-utils",
     "testing",
+    "tnf-browser",
     "tnf-cli",
     "tnf-core",
     "tnf-note-taking",
@@ -258,6 +260,7 @@
     "api-gateway",
     "audio-trigger-kws-mvp",
     "backend",
+    "browser-extension",
     "casin8-games",
     "chrome-extension",
     "claim-tracker",
@@ -412,8 +415,8 @@
   "summaries": {
     "cron_count": 19,
     "live_count": 19,
-    "packages_count": 91,
-    "apps_count": 29,
+    "packages_count": 93,
+    "apps_count": 30,
     "proto_count": 31,
     "agent_scripts_count": 21,
     "relay_core_ts_count": 69

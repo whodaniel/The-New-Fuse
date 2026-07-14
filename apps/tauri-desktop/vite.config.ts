@@ -4,6 +4,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import compression from 'vite-plugin-compression';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { tnfBrowserBridgePlugin } from './vite-plugins/tnfBrowserBridge';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -29,6 +30,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
+      tnfBrowserBridgePlugin(),
       tsconfigPaths({
         ignoreConfigErrors: true,
         projects: [path.resolve(__dirname, 'tsconfig.json')],
@@ -380,6 +382,7 @@ export default defineConfig(({ mode }) => {
             req.url &&
             !req.url.startsWith('/api') &&
             !req.url.startsWith('/ws') &&
+            !req.url.startsWith('/__tnf-browser') &&
             !req.url.includes('.') &&
             req.method === 'GET'
           ) {
