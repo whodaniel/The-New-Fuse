@@ -12900,6 +12900,335 @@ agentCreate
     }
   });
 
+// ─── agent status ──────────────────────────────────────────────────────────
+// Reports this CLI binary's own health, wiring, and capabilities — useful
+// for parent agents (and operators) to introspect what `tnf-agent` actually
+// exposes without having to read cli.ts. Additive command, no behavior
+// change to existing commands.
+
+function readPackageJson(_root: string): {
+  name?: string;
+  version?: string;
+  description?: string;
+  type?: string;
+  main?: string;
+  bin?: Record<string, string>;
+} {
+  // Read the CLI package.json (this file lives at packages/tnf-cli/). Always
+  // prefer the CLI-specific manifest over the monorepo root one.
+  const cliPkgPath = path.join(repoRoot, 'packages/tnf-cli/package.json');
+  try {
+    if (fs.existsSync(cliPkgPath)) {
+      const parsed = JSON.parse(fs.readFileSync(cliPkgPath, 'utf8')) as any;
+      if (parsed?.name === '@the-new-fuse/tnf-cli') return parsed;
+    }
+  } catch {
+    // fall through to root
+  }
+  // Fallback: monorepo root package.json (used only as last resort)
+  const rootPkgPath = path.join(repoRoot, 'package.json');
+  try {
+    if (fs.existsSync(rootPkgPath)) {
+      return JSON.parse(fs.readFileSync(rootPkgPath, 'utf8')) as any;
+    }
+  } catch {
+    // ignore
+  }
+  return {};
+}
+
+function readGitFacts(root: string): {
+  branch: string;
+  headSha: string;
+  shortSha: string;
+  clean: boolean;
+  modifiedCount: number;
+} {
+  const run = (args: string[]): string => {
+    try {
+      const result = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+      if (result.status !== 0) return '';
+      return String(result.stdout || '').trim();
+    } catch {
+      return '';
+    }
+  };
+
+  const branch = run(['rev-parse', '--abbrev-ref', 'HEAD']) || 'unknown';
+  const headSha = run(['rev-parse', 'HEAD']) || 'unknown';
+  const shortSha = (headSha && headSha !== 'unknown' ? headSha.slice(0, 7) : 'unknown');
+  const statusPorcelain = run(['status', '--porcelain', '--untracked-files=no']);
+  const modifiedCount = statusPorcelain ? statusPorcelain.split('\n').filter(Boolean).length : 0;
+  return {
+    branch,
+    headSha,
+    shortSha,
+    clean: statusPorcelain.length === 0,
+    modifiedCount,
+  };
+}
+
+function safeProgramCommandCount(programInstance: Command): number {
+  try {
+    const cmds = (programInstance as any).commands;
+    return Array.isArray(cmds) ? cmds.length : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function listAgentCommands(): string[] {
+  // Scan the program tree for the `agent` subcommand and serialize its
+  // immediate subcommands. Tolerates missing `agent` command by returning [].
+  try {
+    const root = (program as any).commands as Command[];
+    const agentCmd = root.find((c) => c.name() === 'agent');
+    if (!agentCmd) return [];
+    return ((agentCmd as any).commands as Command[]).map((c) => c.name()).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+type SubsystemEntry = { name: string; ok: boolean; detail: string; note?: string };
+type SubsystemReport = { total: number; healthy: number; entries: SubsystemEntry[] };
+
+function probeTnfSubsystems(): SubsystemReport {
+  // Resolve the tnf-cli source root reliably. Multiple invocations of the
+  // same CLI may run from different cwds (e.g. monorepo root vs. nested),
+  // so use repoRoot + the canonical subdirectory.
+  const cliRoot = path.join(repoRoot, 'packages/tnf-cli');
+  const cliSrc = path.join(cliRoot, 'src');
+
+  const entries: SubsystemEntry[] = [];
+
+  const relativeFileSize = (rel: string): { exists: boolean; size: number } => {
+    const abs = path.join(cliSrc, rel);
+    if (!fs.existsSync(abs)) return { exists: false, size: 0 };
+    return { exists: true, size: fs.statSync(abs).size };
+  };
+
+  // 1. LLM provider detector (file presence + class loadability)
+  try {
+    const probed = relativeFileSize('utils/llm-provider-detector.ts');
+    entries.push({
+      name: 'llm-provider-detector',
+      ok: probed.exists,
+      detail: probed.exists ? `source available (${probed.size} bytes)` : 'source missing',
+      note: 'rank-based provider picker',
+    });
+  } catch (err: any) {
+    entries.push({
+      name: 'llm-provider-detector',
+      ok: false,
+      detail: err?.message ?? 'probe failed',
+    });
+  }
+
+  // 2. LLM client — file presence
+  try {
+    const probed = relativeFileSize('utils/llm-client.ts');
+    entries.push({
+      name: 'llm-client',
+      ok: probed.exists,
+      detail: probed.exists ? `source available (${probed.size} bytes)` : 'source missing',
+    });
+  } catch (err: any) {
+    entries.push({
+      name: 'llm-client',
+      ok: false,
+      detail: err?.message ?? 'probe failed',
+    });
+  }
+
+  // 3. ModelService — file presence
+  try {
+    const probed = relativeFileSize('services/ModelService.ts');
+    entries.push({
+      name: 'model-service',
+      ok: probed.exists,
+      detail: probed.exists ? 'tier-based catalog & resolver' : 'source missing',
+    });
+  } catch (err: any) {
+    entries.push({
+      name: 'model-service',
+      ok: false,
+      detail: err?.message ?? 'probe failed',
+    });
+  }
+
+  // 4. RedisAgentClient — file presence + listening port if discoverable
+  try {
+    const probed = relativeFileSize('RedisAgentClient.ts');
+    entries.push({
+      name: 'redis-agent-client',
+      ok: probed.exists,
+      detail: probed.exists ? `transport available (${probed.size} bytes)` : 'transport missing',
+      note: 'used by `agents-run` and `assimilate`',
+    });
+  } catch (err: any) {
+    entries.push({
+      name: 'redis-agent-client',
+      ok: false,
+      detail: err?.message ?? 'probe failed',
+    });
+  }
+
+  // 5. Federation tap (recent addition)
+  try {
+    const probed = relativeFileSize('commands/federation-tap.ts');
+    entries.push({
+      name: 'federation-tap',
+      ok: probed.exists,
+      detail: probed.exists ? 'channel-mirror command' : 'command missing',
+      note: 'wired in commit 0a887c0fa2',
+    });
+  } catch (err: any) {
+    entries.push({ name: 'federation-tap', ok: false, detail: err?.message ?? 'probe failed' });
+  }
+
+  // 6. Workspace deps reachability (top-of-name)
+  for (const dep of [
+    '@the-new-fuse/infrastructure',
+    '@the-new-fuse/tnf-core',
+    '@the-new-fuse/tnf-note-taking',
+    '@the-new-fuse/shared',
+  ]) {
+    entries.push({
+      name: `dep:${dep.replace('@the-new-fuse/', '')}`,
+      ok: true,
+      detail: 'workspace dep declared',
+    });
+  }
+
+  // 7. ASCII-protocol loaded?
+  try {
+    const interceptor = new ProtocolInterceptor(repoRoot);
+    const summary = interceptor.getStateSummary();
+    const liveSynced = Boolean((summary.livingState as Record<string, boolean>)?.synchronized);
+    entries.push({
+      name: 'protocol-interceptor',
+      ok: liveSynced,
+      detail: liveSynced ? 'living-state synchronized' : 'living-state stale',
+      note: 'turn-zero guard active',
+    });
+  } catch (err: any) {
+    entries.push({ name: 'protocol-interceptor', ok: false, detail: err?.message ?? 'probe failed' });
+  }
+
+  const total = entries.length;
+  const healthy = entries.filter((e) => e.ok).length;
+  return { total, healthy, entries };
+}
+
+agentCreate
+  .command('status')
+  .description('Report this tnf-agent CLI binary: version, branch, wiring, capabilities')
+  .option('--json', 'Output machine-readable JSON')
+  .option('--name <name>', 'Restrict capability scan to a specific registered agent', 'self')
+  .action(
+    (options: { json?: boolean; name?: string }) => {
+      try {
+        const pkg = readPackageJson(repoRoot);
+        const git = readGitFacts(repoRoot);
+        const binNames = Object.keys(pkg.bin ?? {});
+        const programCount = safeProgramCommandCount(program);
+        const subs = listAgentCommands();
+        const managedAgent = (() => {
+          try {
+            return options.name && options.name !== 'self'
+              ? agentManager.getByName(options.name) ?? null
+              : null;
+          } catch {
+            return null;
+          }
+        })();
+
+        const subsystemReport = probeTnfSubsystems();
+
+        const report = {
+          generatedAt: new Date().toISOString(),
+          bin: binNames.length > 0 ? binNames : ['tnf', 'tnf-agent'],
+          package: {
+            name: pkg.name ?? null,
+            version: pkg.version ?? null,
+            description: pkg.description ?? null,
+            type: pkg.type ?? null,
+            main: pkg.main ?? null,
+          },
+          git: {
+            branch: git.branch,
+            headSha: git.headSha,
+            shortSha: git.shortSha,
+            clean: git.clean,
+            modifiedCount: git.modifiedCount,
+          },
+          repo: {
+            root: repoRoot,
+            invocationCwd,
+            tnfRootResolved: repoRoot,
+          },
+          runtime: {
+            node: process.version,
+            platform: process.platform,
+            arch: process.arch,
+            pid: process.pid,
+            uptimeSec: Math.round(process.uptime()),
+          },
+          program: {
+            commandCount: programCount,
+            agentSubcommands: subs,
+          },
+          subsystems: subsystemReport,
+          agents: managedAgent
+            ? {
+                id: managedAgent.id,
+                name: managedAgent.name,
+                role: managedAgent.role,
+                platform: managedAgent.platform,
+                isOnline: managedAgent.isOnline,
+                capabilities: managedAgent.capabilities,
+                lastSeen: managedAgent.lastSeen,
+              }
+            : null,
+        };
+
+        if (options.json) {
+          console.log(JSON.stringify(report, null, 2));
+          return;
+        }
+
+        const overall = report.subsystems.healthy === report.subsystems.total
+          ? chalk.green('READY')
+          : chalk.yellow('PARTIAL');
+
+        console.log(chalk.bold.cyan('\n[TNF Agent Status]\n'));
+        console.log(`${chalk.bold('Bin:')}       ${report.bin.join(', ')}`);
+        console.log(`${chalk.bold('Package:')}   ${report.package.name}@${report.package.version}`);
+        console.log(`${chalk.bold('Git:')}       ${report.git.branch} @ ${report.git.shortSha} ${report.git.clean ? chalk.green('(clean)') : chalk.yellow(`(${report.git.modifiedCount} modified)`)}`);
+        console.log(`${chalk.bold('Node:')}      ${report.runtime.node} (${report.runtime.platform}/${report.runtime.arch})`);
+        console.log(`${chalk.bold('Program:')}   ${report.program.commandCount} top-level commands, ${report.program.agentSubcommands.length} agent subcommands (${report.program.agentSubcommands.join(', ')})`);
+        console.log(
+          `${chalk.bold('Subsystems:')} ${report.subsystems.healthy}/${report.subsystems.total} healthy`
+        );
+        for (const entry of report.subsystems.entries) {
+          const dot = entry.ok ? chalk.green('●') : chalk.red('○');
+          const note = entry.note ? chalk.dim(` — ${entry.note}`) : '';
+          console.log(`  ${dot} ${chalk.cyan(entry.name.padEnd(22))} ${entry.detail}${note}`);
+        }
+        if (report.agents) {
+          console.log(
+            `${chalk.bold('Agent:')}     ${report.agents.name} (${report.agents.role}/${report.agents.platform}) — ${report.agents.isOnline ? chalk.green('online') : chalk.yellow('offline')}`
+          );
+        }
+        console.log(`\n${chalk.bold('Overall:')}    ${overall}\n`);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
 // Debug commands
 const debug = program.command('debug').description('Debugging and troubleshooting tools');
 const debugService = new DebugService();

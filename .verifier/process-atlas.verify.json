@@ -1,9 +1,9 @@
 {
-  "now": "2026-07-14T12:00:02Z",
+  "now": "2026-07-14T16:00:04Z",
   "ok": true,
   "summaries": {
     "cron_count": 19,
-    "live_count": 191,
+    "live_count": 19,
     "packages_count": 91,
     "apps_count": 29,
     "proto_count": 31,
