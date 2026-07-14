@@ -1,60 +1,55 @@
+`[CLASS:INTEL] [STATUS:PENDING]`
+`[DOC_AUDIT_BACKFILL:2026-07-14]` — header restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-09T04:42:19.280Z` Handoff
-ID: `fba3db88-d414-4fbc-99e3-473482d7bba3`
+Protocol ACK: `TNF_PROTOCOL_ACK`
+Created At: `2026-07-14T12:50:52.731Z`
+Handoff ID: `c7937430-abd4-4fb8-844f-15e7ebf0203c`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `tnf-cli-harness-implementation`
-- Head SHA: `e258c904bcf503306997b75487af1918254e4da8`
+- Head SHA: `befcc140e847a11360c39b97ee39d1b272690962`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Continued from rate-limit interrupt. Patched
-  scripts/agents/tnf-agent-daemon.py::\_tool_redis_operation to absorb
-  \*\*kwargs (LLM prompt drift tolerant). Verified: 0
-  unexpected-keyword-argument errors in ~/.tnf/logs/daemon.log post-patch vs
-  recurring 'unexpected keyword arg end/start' pre-patch. Documented
-  launchd-class persistent-booting gap + 3 open operator decisions in
-  LIVING_STATE.
+- Modified 68 file(s)
 
 ## Changed Paths
 
 - .agent/runtime-logs/qa-swarm-service/heartbeat.json
-- .agent/test-reports/\_rolling-summary.json
+- .agent/test-reports/_rolling-summary.json
 - .agent/testing-status.json
-- .env.example
 - .verifier/process-atlas.digest.md
 - .verifier/process-atlas.payload.json
 - .verifier/process-atlas.verify.json
 - .verifier/tnf-process-atlas.html
 - apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide
-- apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app\_\_agent
+- apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent
 - apps/external/gemini-cli-source
 - apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
 - apps/frontend/src/data/codebase_map.json
-- apps/nexus-orchestrator/package.json
 - apps/virtual-library-blueprints
 - docs/protocols/LIVING_STATE.md
-- docs/protocols/TNF_GOVERNANCE_TENETS.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- package.json
 - packages/a2a-react/.turbo/turbo-lint.log
 - packages/ag-ui-core/.turbo/turbo-lint.log
 - packages/agent-coordination/jest.config.js
 - packages/agent-coordination/package.json
-- packages/agent-coordination/tests/persistent-metrics.test.ts
-- packages/agent-coordination/tests/recovery-manager.test.ts
-- packages/agent-coordination/tests/redis-coordinator.test.ts
+- packages/agent-coordination/tsconfig.test.json
 - packages/api-client/.turbo/turbo-lint.log
 - packages/api-types/.turbo/turbo-lint.log
+- packages/api/package.json
+- packages/core/package.json
 - packages/deployment-core/.turbo/turbo-lint.log
 - packages/fairtable-core/.turbo/turbo-test.log
 - packages/fairtable-utils/.turbo/turbo-test.log
 - packages/gemini-browser-skill/.turbo/turbo-test.log
+- packages/gemini-browser-skill/src/TranscriptProcessorV4.ts
 - packages/hooks/tsconfig.tsbuildinfo
 - packages/infrastructure/.turbo/turbo-test.log
 - packages/jules-skill/.turbo/turbo-lint.log
@@ -69,60 +64,33 @@ ID: `fba3db88-d414-4fbc-99e3-473482d7bba3`
 - packages/relay-core/dist/services/agent-registry.service.d.ts.map
 - packages/relay-core/dist/services/agent-registry.service.js.map
 - packages/relay-core/relay.log
-- packages/relay-core/src/services/prompt-intent-classifier.ts
 - packages/security/.turbo/turbo-lint.log
+- packages/security/src/utils/cryptoUtils.ts
+- packages/shared/tsconfig.tsbuildinfo
 - packages/sync-core/.turbo/turbo-lint.log
+- packages/sync-core/jest.config.js
+- packages/sync-core/package.json
+- packages/sync-core/src/cms/CMSIntegrationService.test.ts
+- packages/sync-core/src/config/SyncRedisConfig.ts
+- packages/sync-core/src/dashboard/SyncDashboardService.test.ts
+- packages/sync-core/src/error/SyncErrorHandler.ts
+- packages/sync-core/src/handoff/PromptHandoffFlywheel.test.ts
+- packages/sync-core/src/performance/FileChangeBatcher.ts
+- packages/sync-core/src/performance/PerformanceOptimizationService.test.ts
+- packages/sync-core/src/services/ConflictManager.test.ts
+- packages/sync-core/src/services/MasterClockService.test.ts
+- packages/sync-core/src/services/SyncOrchestrator.test.ts
+- packages/sync-core/src/tasks/TaskSynchronizationService.test.ts
+- packages/sync-core/src/watchers/EnhancedFileSystemWatcher.test.ts
 - packages/test-utils/.turbo/turbo-test.log
 - packages/testing/.turbo/turbo-lint.log
-- packages/tnf-cli/src/cli.ts
 - packages/tnf-cli/tsconfig.tsbuildinfo
 - packages/tnf-core/.turbo/turbo-test.log
-- packages/types/dist/messaging.js
-- packages/types/dist/messaging.js.map
-- packages/types/dist/user.d.ts
-- packages/types/dist/user.d.ts.map
 - packages/types/tsconfig.tsbuildinfo
 - packages/ui-consolidated/.turbo/turbo-lint.log
-- refactoring_consensus_report.md
-- scripts/agents/tnf-agent-daemon.py
-- scripts/library/wire-local-env.mjs
-- scripts/operations/hermes-state-retention.cjs
-- scripts/operations/swarm-disk-retention.sh
-- scripts/sync_to_supabase.cjs
-- docs/protocols/reports/HERMES_OPS_NOTES_2026-07-09.md
-- .agent/skills/tnf-directives/SKILL.md
-- .agent/skills/tnf-growth-audit/SKILL.md
-- .claude/agents/agent-registry-qa-agent.md
-- .claude/agents/auth-flow-qa-agent.md
-- .claude/agents/e2e-workflow-qa-agent.md
-- .claude/agents/frontend-verification-qa-agent.md
-- .claude/agents/interop-protocol-qa-agent.md
-- .claude/agents/mcp-bridge-qa-agent.md
-- .claude/agents/nexus-orchestrator-qa-agent.md
-- .claude/agents/qa-orchestrator-agent.md
-- .claude/agents/relay-server-qa-agent.md
-- .claude/agents/shared-state-qa-agent.md
-- .claude/agents/state-governor-qa-agent.md
-- .claude/agents/swarm-orchestration-qa-agent.md
-- .claude/agents/telegram-relay-qa-agent.md
-- .claude/agents/voice-bridge-qa-agent.md
-- .claude/agents/websocket-comms-qa-agent.md
-- .claude/agents/workflow-engine-qa-agent.md
-- QA_AGENTS.md
-- docs/protocols/DIRECTIVES.md
-- docs/protocols/LIVING_DIRECTIVES_CARD.md
-- docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md
-- docs/protocols/TNF_DIRECTIVES.md
-- docs/protocols/reports/CURATOR_QUESTION_RATE_LIMIT_GATEWAY_2026-07-08.md
-- docs/protocols/reports/RESONANCE_ITERATION_45.md
-- packages/agent-coordination/globalSetup.ts
-- packages/agent-coordination/globalTeardown.ts
-- packages/agent-coordination/jest.resolver.cjs
-- packages/agent-coordination/tests/redis-client.ts
-- packages/agent-coordination/tests/unit/message-serializer.test.ts
-- packages/agent-coordination/tsconfig.test.json
-- scripts/operations/tnf-growth-audit.cjs
-- scripts/orchestrator/federation-sequence-checker.cjs
+- packages/agent-coordination/tests/unit/test-jest-esm.test.ts
+- packages/sync-core/test-results.txt
+- packages/tnf-cli/src/commands/federation-tap.ts
 
 ## Continuation
 
@@ -130,11 +98,9 @@ ID: `fba3db88-d414-4fbc-99e3-473482d7bba3`
 - **Priority:** medium
 
 **Targets:**
-
 - orchestrator
 
 **Resume Checklist:**
-
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - Validate SESSION_HANDOFF_LATEST.json against schema
 - Execute listed next actions in order
@@ -142,10 +108,9 @@ ID: `fba3db88-d414-4fbc-99e3-473482d7bba3`
 ## Next Actions
 
 - Review updated LIVING_STATE.md for new active steps
-- Commit remaining uncommitted changes (91 file(s))
+- Commit remaining uncommitted changes (65 file(s))
 
 ## Artifacts
 
 **Commits:**
-
-- e258c904bcf503306997b75487af1918254e4da8
+- befcc140e847a11360c39b97ee39d1b272690962
