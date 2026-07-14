@@ -122,12 +122,14 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
           {dateHeaders.map((date, i) => (
             <div
               key={i}
-              className={`flex-shrink-0 border-r border-slate-600/70 flex flex-col items-center justify-center text-[10px] uppercase tracking-wider ${isToday(date) ? 'bg-sky-500/10 text-sky-400' : ''}`}
-              style={{ width: COLUMN_WIDTH }}
+              className={`relative flex-shrink-0 border-r border-slate-600/70 flex flex-col items-center justify-center text-[10px] uppercase tracking-wider py-2 z-20 ${
+                isToday(date) ? 'bg-sky-500/10 text-sky-300' : 'text-slate-300'
+              }`}
+              style={{ width: COLUMN_WIDTH, minHeight: 56 }}
             >
-              <span className="opacity-80">{format(date, 'MMM')}</span>
-              <span className="text-sm font-bold">{format(date, 'd')}</span>
-              <span className="opacity-80 text-[8px]">{format(date, 'EEE')}</span>
+              <span className="opacity-90 leading-none">{format(date, 'MMM')}</span>
+              <span className="text-sm font-bold leading-tight mt-1">{format(date, 'd')}</span>
+              <span className="opacity-80 text-[8px] leading-none mt-1">{format(date, 'EEE')}</span>
             </div>
           ))}
         </div>
@@ -137,11 +139,11 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
       <div ref={containerRef} className="flex-grow overflow-auto custom-scrollbar relative">
         {/* The Now Bar */}
         <div
-          className="absolute top-0 bottom-0 w-px bg-sky-500 z-20 pointer-events-none"
+          className="absolute top-0 bottom-0 w-px bg-sky-500 z-10 pointer-events-none"
           style={{ left: SIDEBAR_WIDTH + nowPosition }}
           aria-hidden
         >
-          <div className="absolute -top-1 -left-1 w-2 h-2 bg-sky-500 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]" />
+          <div className="absolute top-3 -left-1 w-2 h-2 bg-sky-500 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]" />
         </div>
 
         {plans.map((plan) => (

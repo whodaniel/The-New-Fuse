@@ -66,6 +66,35 @@ class SupabaseAuthDto {
   accessToken: string = '';
 }
 
+class ForgotPasswordDto {
+  @IsEmail()
+  email: string = '';
+
+  @IsString()
+  @IsOptional()
+  cfTurnstileToken?: string;
+}
+
+class ResetPasswordDto {
+  @IsString()
+  @IsNotEmpty()
+  token: string = '';
+
+  @IsString()
+  @MinLength(8)
+  newPassword: string = '';
+
+  @IsString()
+  @MinLength(8)
+  confirmPassword: string = '';
+}
+
+class ValidateTokenDto {
+  @IsString()
+  @IsNotEmpty()
+  token: string = '';
+}
+
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
@@ -111,8 +140,12 @@ export class AuthController {
   @Post('logout')
   @UseGuards(GatewayAuthGuard)
   @ApiOperation({ summary: 'User logout' })
+  @ApiBearerAuth('JWT-auth')
   @ApiResponse({ status: 200, description: 'Logout successful' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   logout() {
+    // GatewayAuthGuard already verified the user's identity and JWT
+    // This endpoint is a no-op; actual cleanup happens client-side
     return {
       success: true,
       message: 'Successfully logged out',
@@ -149,6 +182,83 @@ export class AuthController {
       throw new BadRequestException('Supabase accessToken is required');
     }
     return this.authService.supabaseAuth(body.accessToken);
+  }
+
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'Initiate password reset flow' })
+  @ApiBody({ description: 'Email for password reset' })
+  @ApiResponse({ status: 200, description: 'Reset email sent if user exists' })
+  async forgotPassword(@Body() body: ForgotPasswordDto, @Req() req: Request) {
+    const ipAddress = req.ip || req.socket?.remoteAddress;
+    return this.authService.forgotPassword(body.email, body.cfTurnstileToken, ipAddress);
+  }
+
+  @Get('verify-email')
+  @ApiOperation({ summary: 'Verify email using token after registration' })
+  @ApiResponse({ status: 302, description: 'Redirect to success page after verification' })
+  async verifyEmail() {
+    // Placeholder for email verification redirect logic
+    // Implementation can mean rendering a React SPA route; return helpful object here
+    return {
+      success: true,
+      message: 'Email verification initiated. Redirect to application to complete.',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Complete password reset using token' })
+  @ApiBody({ description: 'Reset token and new password' })
+  @ApiResponse({ status: 200, description: 'Password reset successful' })
+  async resetPassword(@Body() body: ResetPasswordDto) {
+    // Validate dto
+    if (body.newPassword !== body.confirmPassword) {
+      throw new BadRequestException('Passwords do not match');
+    }
+    return this.authService.resetPassword(body.token, body.newPassword);
+  }
+
+  @Get('status')
+  @Version('1')
+  @ApiOperation({ summary: 'Get lightweight auth session status' })
+  @ApiResponse({ status: 200, description: 'Session payload' })
+  async status(@Req() req: any) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      return { authenticated: false, user: null };
+    }
+
+    const token = authHeader.slice(7);
+    try {
+      const user = await this.authService.validateToken(token);
+      return {
+        authenticated: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          name: user.name,
+          role: user.role,
+          roles: user.roles,
+        },
+      };
+    } catch {
+      return { authenticated: false, user: null };
+    }
+  }
+
+  @Post('validate')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Validate a JWT token without user retrieval' })
+  @ApiResponse({ status: 200, description: 'Token valid' })
+  @ApiResponse({ status: 401, description: 'Token invalid' })
+  async validate(@Body() body: ValidateTokenDto) {
+    try {
+      const payload = await this.authService.validateToken(body.token);
+      return { valid: true, payload };
+    } catch {
+      return { valid: false, payload: null };
+    }
   }
 
   @Get('session')

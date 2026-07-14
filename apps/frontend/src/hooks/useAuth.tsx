@@ -10,6 +10,16 @@ import { hasSupabaseConfig, supabase } from '../lib/supabase';
 const AUTH_TOKEN_KEY = 'auth_token';
 const REQUEST_TIMEOUT_MS = 15_000;
 
+export class AuthTransientError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'AuthTransientError';
+    this.status = status;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Token helpers
 // ---------------------------------------------------------------------------
@@ -110,6 +120,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
       if (!res.ok) {
+        if (res.status === 429) {
+          throw new AuthTransientError(
+            'Too many authentication requests. Please wait a moment and try again.',
+            429
+          );
+        }
         console.warn(`[Auth] fetchMe returned ${res.status}`);
         return null;
       }
@@ -142,6 +158,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const payload = unwrap(rawPayload);
 
         if (!res.ok) {
+          if (res.status === 429) {
+            throw new AuthTransientError(
+              'Too many authentication requests. Please wait a moment and try again.',
+              429
+            );
+          }
           const msg =
             extractError(payload) ?? extractError(rawPayload as any) ?? `HTTP ${res.status}`;
           console.warn('[Auth] exchangeSupabaseToken failed:', msg);
@@ -530,16 +552,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const storedToken = getAuthToken();
         if (storedToken) {
           console.log('[Auth] Found stored token, validating…');
-          const u = await fetchMe(storedToken);
-          if (cancelled) return;
-          if (u?.id) {
-            console.log('[Auth] ✓ Stored token is valid');
-            setUser(u);
-            setIsLoading(false);
-            return;
+          try {
+            const u = await fetchMe(storedToken);
+            if (cancelled) return;
+            if (u?.id) {
+              console.log('[Auth] ✓ Stored token is valid');
+              setUser(u);
+              setIsLoading(false);
+              return;
+            }
+            console.log('[Auth] ✗ Stored token is invalid, clearing');
+            clearAuthToken();
+          } catch (err) {
+            if (cancelled) return;
+            if (err instanceof AuthTransientError) {
+              console.warn('[Auth] Token validation rate-limited — keeping stored session');
+              setError(err.message);
+              setIsLoading(false);
+              return;
+            }
+            throw err;
           }
-          console.log('[Auth] ✗ Stored token is invalid, clearing');
-          clearAuthToken();
         }
 
         // 2. Check for a Supabase session
@@ -570,6 +603,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               console.log('[Auth] No active Supabase session');
             }
           } catch (err: any) {
+            if (err instanceof AuthTransientError) {
+              console.warn('[Auth] Supabase exchange rate-limited — keeping session for retry');
+              setError(err.message);
+              if (!cancelled) setIsLoading(false);
+              return;
+            }
             console.warn('[Auth] Supabase session check failed:', err.message);
           }
         }

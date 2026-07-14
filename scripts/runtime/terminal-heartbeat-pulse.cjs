@@ -1,5 +1,15 @@
 #!/usr/bin/env node
 
+// Resolve dependencies at startup:
+//   - `../lib/tnf-single-instance-guard.cjs` is the canonical layout
+//     when this script lives in scripts/runtime/. When mirrored to
+//     ~/.tnf/bin/ by `scripts/runtime/terminal-heartbeat-cron.sh`
+//     install we ALSO copy scripts/lib/*.cjs into ~/.tnf/lib/ so the
+//     same relative path works in both homes.
+//   - `ioredis` lives in the repo's node_modules; pre-seed
+//     NODE_PATH or fall through to a relative module resolution that
+//     walks upward until it finds a node_modules.
+
 const { execFile } = require('child_process');
 const fs = require('fs');
 const fsp = require('fs/promises');
@@ -7,7 +17,24 @@ const os = require('os');
 const path = require('path');
 const { promisify } = require('util');
 
-const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+// Self-sufficient resolver for sibling-lib requires. We try `../lib`
+// (the canonical mirror layout) first, then walk up to the repo root
+// looking for `scripts/lib/`. Last resort: explicit error.
+function resolveSibling(filename) {
+  const candidates = [
+    path.join(__dirname, '..', 'lib', filename),
+    path.join(__dirname, 'lib', filename),
+    path.join(__dirname, '..', '..', 'scripts', 'lib', filename),
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return c;
+  }
+  throw new Error(
+    `[terminal-heartbeat-pulse] unable to locate ${filename} (tried: ${candidates.join(', ')})`
+  );
+}
+
+const { singleInstanceGuard } = require(resolveSibling('tnf-single-instance-guard.cjs'));
 const _guard = singleInstanceGuard({ lockName: 'tnf-terminal-heartbeat-pulse', staleMs: 120000 });
 if (!_guard.acquired) {
   console.log(JSON.stringify({ ok: true, skipped: 'already-running', lock: _guard.existingLock }));
@@ -17,10 +44,10 @@ if (!_guard.acquired) {
 
 const execFileAsync = promisify(execFile);
 
-const { RedisAgentClient } = require(path.join(__dirname, '..', 'lib', 'redis-agent-client.cjs'));
+const { RedisAgentClient } = require(resolveSibling('redis-agent-client.cjs'));
 
 const KNOWN_SHELLS = new Set(['bash', 'fish', 'sh', 'zsh']);
-const AGENT_COMMAND_HINTS = ['codex', 'claude', 'gemini', 'goose', 'aider'];
+const AGENT_COMMAND_HINTS = ['codex', 'claude', 'gemini', 'goose', 'aider', 'pi'];
 const LOCK_STALE_MS = 5 * 60 * 1000;
 
 const config = {
@@ -36,7 +63,7 @@ const config = {
     path.join(os.homedir(), '.tnf', 'session-discovery'),
   promptTemplate:
     process.env.TNF_TERMINAL_HEARTBEAT_PROMPT_TEMPLATE ||
-    'TNF heartbeat {{heartbeatId}} for {{agentId}}: report one-line status and continue your current owned task.',
+    'TNF heartbeat {{heartbeatId}} for {{agentId}}: read ~/.tnf/swarm-context.md and ~/.tnf/handoff-current.json for your task and swarm state, then execute it.',
   allowPromptInjection: true, // HARD-CODED TRUE for Perpetual Awakeness
   clearLine: process.env.TNF_TERMINAL_HEARTBEAT_CLEAR_LINE !== 'false',
   verifyQueueHints: process.env.TNF_TERMINAL_HEARTBEAT_VERIFY_QUEUE_HINTS !== 'false',
@@ -223,9 +250,10 @@ function isAgentLike(processContext, contentsTail) {
     .map((process) => `${process.commandName || ''} ${process.args || ''}`.toLowerCase())
     .join('\n');
   const contentHaystack = String(contentsTail || '').toLowerCase();
-  return AGENT_COMMAND_HINTS.some(
-    (hint) => processHaystack.includes(hint) || contentHaystack.includes(hint)
-  );
+  return AGENT_COMMAND_HINTS.some((hint) => {
+    const regex = new RegExp(`\\b${hint}\\b`, 'i');
+    return regex.test(processHaystack) || regex.test(contentHaystack);
+  });
 }
 
 function renderPrompt(agentId, heartbeatId) {

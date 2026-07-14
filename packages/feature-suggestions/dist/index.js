@@ -17,7 +17,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UnifiedLedgerTimelineService = exports.SuggestionStatus = exports.SuggestionPriority = exports.TimelineView = exports.TimelineSlider = exports.useTimeline = exports.useKanbanBoard = exports.useFeatureSuggestions = void 0;
+exports.UnifiedLedgerTimelineService = exports.SuggestionStatus = exports.SuggestionPriority = exports.FeatureStage = exports.TimelineView = exports.TimelineSlider = exports.useTimeline = exports.useKanbanBoard = exports.useFeatureSuggestions = void 0;
 // Export hooks
 var useFeatureSuggestions_js_1 = require("./hooks/useFeatureSuggestions.js");
 Object.defineProperty(exports, "useFeatureSuggestions", { enumerable: true, get: function () { return useFeatureSuggestions_js_1.useFeatureSuggestions; } });
@@ -32,6 +32,7 @@ var TimelineView_js_1 = require("./components/TimelineView.js");
 Object.defineProperty(exports, "TimelineView", { enumerable: true, get: function () { return __importDefault(TimelineView_js_1).default; } });
 // Export types - explicitly export SuggestionStatus from types to resolve ambiguity
 var index_js_1 = require("./types/index.js");
+Object.defineProperty(exports, "FeatureStage", { enumerable: true, get: function () { return index_js_1.FeatureStage; } });
 Object.defineProperty(exports, "SuggestionPriority", { enumerable: true, get: function () { return index_js_1.SuggestionPriority; } });
 Object.defineProperty(exports, "SuggestionStatus", { enumerable: true, get: function () { return index_js_1.SuggestionStatus; } });
 // Export service types

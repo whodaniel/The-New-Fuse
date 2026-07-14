@@ -1,10 +1,10 @@
-import { Permission } from "@the-new-fuse/types";
+import { Permission } from '@the-new-fuse/types';
 export declare class RoleService {
     findAll(): Promise<never[]>;
     getAllRoles(): Promise<{
         id: string;
         name: string;
-        permissions: any[];
+        permissions: Permission[];
     }[]>;
     updateRolePermissions(roleId: string, permissions: Permission[]): Promise<{
         id: string;

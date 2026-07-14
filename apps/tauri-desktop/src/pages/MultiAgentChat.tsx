@@ -1,20 +1,61 @@
 import React, { useEffect, useRef, useState } from 'react';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
+import type { FederationChannelMessage } from '../services/FederationNodeService';
+import FederationNodeService from '../services/FederationNodeService';
 import { wsService } from '../services/websocket';
-import { useAgentStore } from '../stores/agentStore';
-import type { Agent, ChatMessage } from '../types';
+import type { ChatMessage } from '../types';
 
 /**
  * Multi-Agent Chat Page
  * Chat with multiple AI agents simultaneously
  */
 const MultiAgentChat: React.FC = () => {
-  const { agents } = useAgentStore();
+  const { unifiedAgents, state: synergy, sendFederationMessage } = useOperatorSynergy();
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const loadingTimeoutRef = useRef<number | null>(null);
+
+  const clearLoadingTimeout = () => {
+    if (loadingTimeoutRef.current !== null) {
+      window.clearTimeout(loadingTimeoutRef.current);
+      loadingTimeoutRef.current = null;
+    }
+  };
+
+  const stopLoading = () => {
+    clearLoadingTimeout();
+    setIsLoading(false);
+  };
+
+  // Safety net so the typing indicator never spins forever if no reply arrives.
+  const armLoadingTimeout = (ms: number, notice: string) => {
+    clearLoadingTimeout();
+    loadingTimeoutRef.current = window.setTimeout(() => {
+      loadingTimeoutRef.current = null;
+      setIsLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `${Date.now()}-timeout`,
+          role: 'system',
+          content: notice,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+    }, ms);
+  };
+
+  useEffect(() => {
+    if (selectedAgents.length === 0 && unifiedAgents.length > 0) {
+      setSelectedAgents(unifiedAgents.slice(0, 2).map((agent) => agent.id));
+    }
+  }, [selectedAgents.length, unifiedAgents]);
 
   useEffect(() => {
     // Connect to WebSocket
@@ -24,12 +65,13 @@ const MultiAgentChat: React.FC = () => {
     // Listen for incoming messages
     const unsubMessages = wsService.on('chat:message', (data: ChatMessage) => {
       setMessages((prev) => [...prev, data]);
-      setIsLoading(false);
+      stopLoading();
     });
 
     return () => {
       unsubConnection();
       unsubMessages();
+      clearLoadingTimeout();
     };
   }, []);
 
@@ -37,13 +79,42 @@ const MultiAgentChat: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  useEffect(() => {
+    const handler = (raw?: unknown) => {
+      const payload = raw as FederationChannelMessage | undefined;
+      if (!payload?.content || payload.from === FederationNodeService.getState().agentId) return;
+
+      const agent = unifiedAgents.find((entry) => entry.id === payload.from);
+      if (selectedAgents.length > 0 && !selectedAgents.includes(payload.from)) return;
+
+      const incoming: ChatMessage = {
+        id: payload.id || `${Date.now()}-fed`,
+        role: 'agent',
+        content: payload.content,
+        agentId: payload.from,
+        agentName: agent?.name || payload.from,
+        timestamp: new Date(payload.timestamp || Date.now()).toISOString(),
+      };
+
+      setMessages((prev) => [...prev, incoming]);
+      stopLoading();
+    };
+
+    FederationNodeService.on('channel_message', handler);
+    return () => {
+      FederationNodeService.off('channel_message', handler);
+    };
+  }, [selectedAgents, unifiedAgents]);
+
   const handleSend = () => {
     if (!input.trim() || selectedAgents.length === 0) return;
+
+    const messageText = input.trim();
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: input,
+      content: messageText,
       timestamp: new Date().toISOString(),
     };
 
@@ -51,71 +122,37 @@ const MultiAgentChat: React.FC = () => {
     setInput('');
     setIsLoading(true);
 
-    // Send to WebSocket or simulate response
-    if (isConnected) {
-      wsService.sendChatMessage('main', input);
-    } else {
-      // Simulate agent responses
-      simulateAgentResponses(input, selectedAgents);
-    }
-  };
-
-  const simulateAgentResponses = (userInput: string, agentIds: string[]) => {
-    agentIds.forEach((agentId, index) => {
-      const agent = agents.find((a) => a.id === agentId);
-      if (!agent) return;
-
-      setTimeout(
-        () => {
-          const response: ChatMessage = {
-            id: `${Date.now()}-${agentId}`,
-            role: 'agent',
-            content: generateMockResponse(agent, userInput),
-            agentId: agent.id,
-            agentName: agent.name,
-            timestamp: new Date().toISOString(),
-          };
-          setMessages((prev) => [...prev, response]);
-          if (index === agentIds.length - 1) {
-            setIsLoading(false);
-          }
-        },
-        1000 + index * 800
+    // Send via API websocket, federation channel, or relay echo
+    if (isConnected && synergy.apiOnline) {
+      wsService.sendChatMessage('main', messageText, selectedAgents);
+      armLoadingTimeout(
+        30000,
+        '⚠️ No response from the API within 30s. The request may still be processing — check the agent or REST API on port 3001.'
       );
-    });
-  };
-
-  const generateMockResponse = (agent: Agent, input: string): string => {
-    const responses: Record<string, string[]> = {
-      claude: [
-        `I've analyzed your request: "${input.slice(0, 30)}...". Here's my perspective based on careful reasoning.`,
-        `Interesting question! Let me break this down systematically for you.`,
-        `Based on my analysis, I would recommend the following approach...`,
-      ],
-      gpt: [
-        `Great question! Here's what I think about "${input.slice(0, 30)}..."`,
-        `I've processed your input. Let me provide a comprehensive response.`,
-        `From my understanding, here's the best way to approach this...`,
-      ],
-      gemini: [
-        `I've searched and synthesized information about "${input.slice(0, 30)}..."`,
-        `Here's a multi-perspective analysis of your query.`,
-        `Based on multiple sources, I can provide the following insights...`,
-      ],
-      perplexity: [
-        `Based on my web search about "${input.slice(0, 30)}...", here's what I found:`,
-        `I've gathered the latest information on this topic...`,
-        `Here are the most relevant findings from across the web...`,
-      ],
-      custom: [
-        `Processing your request: "${input.slice(0, 30)}..."`,
-        `Analysis complete. Here are my findings...`,
-        `I've completed the task you requested.`,
-      ],
-    };
-
-    const typeResponses = responses[agent.type] || responses.custom;
-    return typeResponses[Math.floor(Math.random() * typeResponses.length)];
+    } else if (synergy.relayRegistered) {
+      const joined = FederationNodeService.getState().joinedChannels;
+      const channelId = joined[0] || 'general';
+      sendFederationMessage(
+        channelId,
+        JSON.stringify({
+          type: 'operator_chat',
+          content: messageText,
+          targets: selectedAgents,
+          from: FederationNodeService.getState().agentId,
+        })
+      );
+      armLoadingTimeout(8000, '⚠️ No federated agent replied within 8s.');
+    } else {
+      stopLoading();
+      const offlineNotice: ChatMessage = {
+        id: `${Date.now()}-offline`,
+        role: 'system',
+        content:
+          '⚠️ Relay and API are offline — message not sent. Connect relay from Dashboard → Forefront panel or start the REST API on port 3001.',
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, offlineNotice]);
+    }
   };
 
   const toggleAgent = (agentId: string) => {
@@ -124,7 +161,7 @@ const MultiAgentChat: React.FC = () => {
     );
   };
 
-  const getAgentColor = (type: Agent['type']) => {
+  const getAgentColor = (platform: string) => {
     const colors: Record<string, string> = {
       claude: '#f97316',
       gpt: '#10b981',
@@ -132,134 +169,160 @@ const MultiAgentChat: React.FC = () => {
       perplexity: '#8b5cf6',
       custom: '#64748b',
       local: '#eab308',
+      'tauri-desktop': '#6366f1',
+      'federation-node': '#8b5cf6',
     };
-    return colors[type] || '#64748b';
+    return colors[platform] || '#64748b';
   };
 
-  const activeAgents = agents.filter((a) => a.status !== 'error');
+  const activeAgents = unifiedAgents.filter((a) => a.status !== 'error' && a.status !== 'offline');
 
   return (
-    <div className="chat-container">
-      {/* Agent Selector Sidebar */}
-      <aside className="agent-selector">
-        <h3>Select Agents</h3>
-        <p className="helper-text">Choose agents to chat with</p>
-
-        <div className="agent-list">
-          {activeAgents.map((agent) => (
-            <button
-              key={agent.id}
-              className={`agent-item ${selectedAgents.includes(agent.id) ? 'selected' : ''}`}
-              onClick={() => toggleAgent(agent.id)}
-            >
-              <div className="agent-avatar" style={{ borderColor: getAgentColor(agent.type) }}>
-                {agent.type === 'claude' && '🧠'}
-                {agent.type === 'gpt' && '🤖'}
-                {agent.type === 'gemini' && '💎'}
-                {agent.type === 'perplexity' && '🔍'}
-                {agent.type === 'custom' && '⚙️'}
-                {agent.type === 'local' && '🏠'}
-              </div>
-              <div className="agent-info">
-                <span className="agent-name">{agent.name}</span>
-                <span className="agent-model">{agent.config.model}</span>
-              </div>
-              {selectedAgents.includes(agent.id) && <span className="check-mark">✓</span>}
-            </button>
-          ))}
-        </div>
-
-        <div className="connection-status">
-          <span className={`status-dot ${isConnected ? 'connected' : 'disconnected'}`}></span>
-          <span>{isConnected ? 'Connected' : 'Offline Mode'}</span>
-        </div>
-      </aside>
-
-      {/* Chat Area */}
-      <main className="chat-main">
-        <header className="chat-header">
-          <h2>Multi-Agent Chat</h2>
-          <div className="selected-agents">
-            {selectedAgents.map((id) => {
-              const agent = agents.find((a) => a.id === id);
-              if (!agent) return null;
-              return (
-                <span
-                  key={id}
-                  className="agent-chip"
-                  style={{ borderColor: getAgentColor(agent.type) }}
-                >
-                  {agent.name}
-                </span>
-              );
-            })}
-            {selectedAgents.length === 0 && (
-              <span className="no-agents">Select agents to start chatting</span>
-            )}
+    <PageShell
+      className="page-fill"
+      title="Multi-Agent Chat"
+      subtitle={`${activeAgents.length} agents available · ${synergy.relayRegistered ? 'federation' : synergy.apiOnline ? 'API' : 'offline'}`}
+      banner={
+        !synergy.relayRegistered && !(synergy.apiOnline && isConnected) ? (
+          <div className="offline-banner">
+            Chat requires the REST API websocket or a registered federation relay. Messages will not
+            be delivered while offline.
           </div>
-        </header>
+        ) : null
+      }
+    >
+      <SynergyStatusBar />
+      <div className="page-fill-body">
+        <div className="chat-container">
+          {/* Agent Selector Sidebar */}
+          <aside className="agent-selector">
+            <h3>Select Agents</h3>
+            <p className="helper-text">Choose agents to chat with</p>
 
-        <div className="messages-container">
-          {messages.length === 0 ? (
-            <div className="empty-state">
-              <span className="empty-icon">💬</span>
-              <h3>Start a Conversation</h3>
-              <p>Select one or more agents and send a message</p>
-            </div>
-          ) : (
-            messages.map((msg) => (
-              <div key={msg.id} className={`message ${msg.role}`}>
-                {msg.role === 'agent' && (
-                  <div className="message-header">
-                    <span
-                      className="agent-badge"
-                      style={{
-                        backgroundColor: getAgentColor(
-                          agents.find((a) => a.id === msg.agentId)?.type || 'custom'
-                        ),
-                      }}
-                    >
-                      {msg.agentName}
-                    </span>
+            <div className="agent-list">
+              {activeAgents.map((agent) => (
+                <button
+                  key={agent.id}
+                  className={`agent-item ${selectedAgents.includes(agent.id) ? 'selected' : ''}`}
+                  onClick={() => toggleAgent(agent.id)}
+                >
+                  <div
+                    className="agent-avatar"
+                    style={{ borderColor: getAgentColor(agent.platform) }}
+                  >
+                    {agent.source === 'federation' ? '🌐' : '🤖'}
                   </div>
-                )}
-                <div className="message-content">{msg.content}</div>
-                <div className="message-time">{new Date(msg.timestamp).toLocaleTimeString()}</div>
-              </div>
-            ))
-          )}
-          {isLoading && (
-            <div className="message agent loading">
-              <div className="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
+                  <div className="agent-info">
+                    <span className="agent-name">{agent.name}</span>
+                    <span className="agent-model">{agent.platform}</span>
+                  </div>
+                  {selectedAgents.includes(agent.id) && <span className="check-mark">✓</span>}
+                </button>
+              ))}
             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
 
-        <div className="input-container">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder={selectedAgents.length > 0 ? 'Type your message...' : 'Select agents first'}
-            disabled={selectedAgents.length === 0}
-          />
-          <button
-            className="send-button"
-            onClick={handleSend}
-            disabled={!input.trim() || selectedAgents.length === 0}
-          >
-            Send
-          </button>
-        </div>
-      </main>
+            <div className="connection-status">
+              <span
+                className={`status-dot ${synergy.relayRegistered || isConnected ? 'connected' : 'disconnected'}`}
+              ></span>
+              <span>
+                {synergy.apiOnline && isConnected
+                  ? 'API + WS'
+                  : synergy.relayRegistered
+                    ? 'Federation'
+                    : 'Offline'}
+              </span>
+            </div>
+          </aside>
 
-      <style>{`
+          {/* Chat Area */}
+          <div className="chat-main">
+            <header className="chat-header">
+              <div className="selected-agents">
+                {selectedAgents.map((id) => {
+                  const agent = unifiedAgents.find((a) => a.id === id);
+                  if (!agent) return null;
+                  return (
+                    <span
+                      key={id}
+                      className="agent-chip"
+                      style={{ borderColor: getAgentColor(agent.platform) }}
+                    >
+                      {agent.name}
+                    </span>
+                  );
+                })}
+                {selectedAgents.length === 0 && (
+                  <span className="no-agents">Select agents to start chatting</span>
+                )}
+              </div>
+            </header>
+
+            <div className="messages-container">
+              {messages.length === 0 ? (
+                <div className="empty-state">
+                  <span className="empty-icon">💬</span>
+                  <h3>Start a Conversation</h3>
+                  <p>Select one or more agents and send a message</p>
+                </div>
+              ) : (
+                messages.map((msg) => (
+                  <div key={msg.id} className={`message ${msg.role}`}>
+                    {msg.role === 'agent' && (
+                      <div className="message-header">
+                        <span
+                          className="agent-badge"
+                          style={{
+                            backgroundColor: getAgentColor(
+                              unifiedAgents.find((a) => a.id === msg.agentId)?.platform || 'custom'
+                            ),
+                          }}
+                        >
+                          {msg.agentName}
+                        </span>
+                      </div>
+                    )}
+                    <div className="message-content">{msg.content}</div>
+                    <div className="message-time">
+                      {new Date(msg.timestamp).toLocaleTimeString()}
+                    </div>
+                  </div>
+                ))
+              )}
+              {isLoading && (
+                <div className="message agent loading">
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="input-container">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                placeholder={
+                  selectedAgents.length > 0 ? 'Type your message...' : 'Select agents first'
+                }
+                disabled={selectedAgents.length === 0}
+              />
+              <button
+                className="send-button"
+                onClick={handleSend}
+                disabled={!input.trim() || selectedAgents.length === 0}
+              >
+                Send
+              </button>
+            </div>
+          </div>
+
+          <style>{`
         .chat-container {
           display: flex;
           height: 100%;
@@ -558,7 +621,9 @@ const MultiAgentChat: React.FC = () => {
           cursor: not-allowed;
         }
       `}</style>
-    </div>
+        </div>
+      </div>
+    </PageShell>
   );
 };
 

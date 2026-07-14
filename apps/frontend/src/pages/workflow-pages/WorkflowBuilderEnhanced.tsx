@@ -141,7 +141,7 @@ const nodeTypes = {
             </div>
           </div>
           <p className="text-sm font-bold text-white">{data.label}</p>
-          {data.model && <Badge variant="secondary">{data.model}</Badge>}
+          {data.model && typeof data.model === 'string' && <Badge variant="secondary">{data.model}</Badge>}
         </div>
       </CardContent>
     </GlassCard>

@@ -15,14 +15,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var WorkflowController_1;
+var _a, _b, _c;
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, HttpStatus, HttpCode } from '@nestjs/common';
-import { WorkflowService } from '../../services/workflow.service.js';
-import { BaseController } from './base.controller.js';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
-import { CurrentUser } from '../decorators/current-user.decorator.js';
-import { CreateWorkflowDto } from './dto/create-workflow.dto.js';
-import { UpdateWorkflowDto } from './dto/update-workflow.dto.js';
-import { WorkflowDto, WorkflowExecutionDto } from './dto/workflow.dto.js'; // Updated import path
+import { WorkflowService } from '../../services/workflow.service';
+import { BaseController } from './base.controller';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { CreateWorkflowDto } from './dto/create-workflow.dto';
+import { UpdateWorkflowDto } from './dto/update-workflow.dto';
+import { WorkflowDto, WorkflowExecutionDto } from './dto/workflow.dto'; // Updated import path
 import { ApiTags, ApiOperation, ApiResponse as SwaggerResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 let WorkflowController = WorkflowController_1 = class WorkflowController extends BaseController {
     constructor(workflowService) {
@@ -134,7 +135,7 @@ __decorate([
     __param(0, Body()),
     __param(1, CurrentUser()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [CreateWorkflowDto, Object]),
+    __metadata("design:paramtypes", [typeof (_b = typeof CreateWorkflowDto !== "undefined" && CreateWorkflowDto) === "function" ? _b : Object, Object]),
     __metadata("design:returntype", Promise)
 ], WorkflowController.prototype, "createWorkflow", null);
 __decorate([
@@ -148,7 +149,7 @@ __decorate([
     __param(1, Body()),
     __param(2, CurrentUser()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, UpdateWorkflowDto, Object]),
+    __metadata("design:paramtypes", [String, typeof (_c = typeof UpdateWorkflowDto !== "undefined" && UpdateWorkflowDto) === "function" ? _c : Object, Object]),
     __metadata("design:returntype", Promise)
 ], WorkflowController.prototype, "updateWorkflow", null);
 __decorate([
@@ -206,7 +207,7 @@ WorkflowController = WorkflowController_1 = __decorate([
     ApiTags('Workflows'),
     Controller('workflows'),
     UseGuards(JwtAuthGuard),
-    __metadata("design:paramtypes", [WorkflowService])
+    __metadata("design:paramtypes", [typeof (_a = typeof WorkflowService !== "undefined" && WorkflowService) === "function" ? _a : Object])
 ], WorkflowController);
 export { WorkflowController };
 //# sourceMappingURL=workflow.controller.js.map

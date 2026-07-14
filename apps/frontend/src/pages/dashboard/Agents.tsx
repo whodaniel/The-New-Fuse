@@ -1,4 +1,5 @@
 import { GlassCard, PremiumButton, StatsCard } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import { Activity, Bot, Eye, Loader2, PlayCircle, Sparkles, Target } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -21,13 +22,7 @@ const Agents = () => {
   const loadAgents = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/agents', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
-      });
+      const response = await authFetch('/api/agents');
 
       if (!response.ok) {
         throw new Error(`Failed to fetch agents (${response.status})`);
@@ -51,13 +46,8 @@ const Agents = () => {
   const handleDeploy = async (agentId: string) => {
     try {
       setDeployingId(agentId);
-      const response = await fetch(`/api/agents/${agentId}/deploy`, {
+      const response = await authFetch(`/api/agents/${agentId}/deploy`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
         body: JSON.stringify({ target: 'cloud' }),
       });
 

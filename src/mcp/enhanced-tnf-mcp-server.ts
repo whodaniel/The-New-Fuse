@@ -1,8 +1,30 @@
 #!/usr/bin/env node
 /**
- * Placeholder for TNF Enhanced MCP Server.
- * This is a minimal implementation to satisfy the doctor check.
- * TODO: Implement actual MCP server using @the-new-fuse/mcp-core.
+ * TNF Enhanced MCP Server — real implementation.
+ *
+ * Routes identity, list_agents, list_models, get_agent_details and
+ * get_system_status through the enhancedTnfTools tool-set. Replaces
+ * the previous `process.exit(0)` echo placeholder.
  */
-console.log('TNF Enhanced MCP Server placeholder - not implemented');
-process.exit(0);
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { enhancedTnfTools } from './tool-sets.js';
+import { initializeAndConnectMcpServer } from './utils/server-utils.js';
+
+async function launch(): Promise<void> {
+  const ok = await initializeAndConnectMcpServer(
+    'enhanced-tnf',
+    (server: McpServer) => {
+      for (const tool of enhancedTnfTools) tool(server);
+    },
+    'Enhanced TNF MCP Server'
+  );
+  if (!ok) {
+    console.error('[tnf-enhanced-mcp] failed to initialize; exiting non-zero');
+    process.exit(1);
+  }
+}
+
+launch().catch((err) => {
+  console.error('[tnf-enhanced-mcp] fatal:', err);
+  process.exit(1);
+});

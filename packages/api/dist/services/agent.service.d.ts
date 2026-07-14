@@ -5,7 +5,7 @@
  * It uses the Drizzle-based AgentRepository for data access.
  */
 import { AgentCapability } from '@the-new-fuse/types';
-import { AgentRepository, type Agent, type NewAgent } from '../repositories/agent.repository.js';
+import { AgentRepository, type Agent, type NewAgent } from '../repositories/agent.repository';
 export declare class LocalAIDetectionService {
     detectAndCreateAgents(_userId: string): Promise<any[]>;
     getAvailableProviders(): Promise<any[]>;

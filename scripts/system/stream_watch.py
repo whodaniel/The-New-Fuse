@@ -13,6 +13,11 @@ import sys
 import time
 import glob
 
+_SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+if _SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPT_DIR)
+from voice_user_tag import body_for_injection, U2A_RE
+
 def normalize_profile(raw: str | None) -> str:
     profile = (raw or "main").strip().lower()
     profile = re.sub(r"[^a-z0-9_-]+", "_", profile).strip("_")
@@ -128,9 +133,22 @@ for name in (
 STREAM_FILE = os.path.join(STATE_DIR, state_file_name("voice_stream.txt"))
 TARGET_JSON_FILE = os.path.join(STATE_DIR, state_file_name("voice_target.json"))
 LEGACY_TTY_FILE = os.path.join(STATE_DIR, state_file_name("voice_target_tty"))
+MIC_PAUSE_FILE = os.path.join(STATE_DIR, state_file_name("voice_mic_paused"))
 POLL_INTERVAL_SECONDS = 0.15
-IDLE_FLUSH_SECONDS = float(os.environ.get("VOICE_IDLE_FLUSH_SECONDS", "1.4"))
-MAX_FLUSH_SECONDS = float(os.environ.get("VOICE_MAX_FLUSH_SECONDS", "6.0"))
+IDLE_FLUSH_SECONDS = float(os.environ.get("VOICE_IDLE_FLUSH_SECONDS", "3.5"))
+MAX_FLUSH_SECONDS = float(os.environ.get("VOICE_MAX_FLUSH_SECONDS", "18.0"))
+MIN_FLUSH_CHARS = int(os.environ.get("VOICE_MIN_FLUSH_CHARS", "20"))
+CHAT_IDLE_FLUSH_SECONDS = float(os.environ.get("VOICE_CHAT_IDLE_FLUSH_SECONDS", "5.0"))
+CHAT_MAX_FLUSH_SECONDS = float(os.environ.get("VOICE_CHAT_MAX_FLUSH_SECONDS", "25.0"))
+CHAT_MIN_FLUSH_CHARS = int(os.environ.get("VOICE_CHAT_MIN_FLUSH_CHARS", "36"))
+CHAT_APP_HINTS = tuple(
+    hint.strip().lower()
+    for hint in os.environ.get(
+        "VOICE_CHAT_APP_HINTS",
+        "cursor,windsurf,chatgpt,claude,copilot,composer",
+    ).split(",")
+    if hint.strip()
+)
 A2A_SPEAK_ENABLED = os.environ.get("VOICE_A2A_SPEAK_ENABLED", "1").strip().lower() not in {
     "0",
     "false",
@@ -443,6 +461,62 @@ def is_terminal_like(app_name: str, bundle_id: str) -> bool:
     if "com.apple.terminal" in bundle or "iterm" in bundle:
         return True
     return False
+
+
+def is_chat_composer_target(target: dict | None) -> bool:
+    if not target:
+        return False
+    if target.get("kind") == "terminal":
+        return False
+    app = str(target.get("app", "")).strip().lower()
+    window = str(target.get("window", "")).strip().lower()
+    bundle = str(target.get("bundle_id", "")).strip().lower()
+    haystack = f"{app} {window} {bundle}"
+    return any(hint in haystack for hint in CHAT_APP_HINTS)
+
+
+def flush_settings_for_target(target: dict | None) -> tuple[float, float, int]:
+    if is_chat_composer_target(target):
+        return CHAT_IDLE_FLUSH_SECONDS, CHAT_MAX_FLUSH_SECONDS, CHAT_MIN_FLUSH_CHARS
+    return IDLE_FLUSH_SECONDS, MAX_FLUSH_SECONDS, MIN_FLUSH_CHARS
+
+
+def batch_char_count(chunks: list[str]) -> int:
+    return len(" ".join(chunks).strip())
+
+
+def should_flush_pending(
+    *,
+    now: float,
+    pending_chunks: list[str],
+    first_chunk_at: float | None,
+    last_chunk_at: float | None,
+    idle_seconds: float,
+    max_seconds: float,
+    min_chars: int,
+) -> tuple[bool, str]:
+    if not pending_chunks or last_chunk_at is None:
+        return False, ""
+    char_count = batch_char_count(pending_chunks)
+    if first_chunk_at is not None and (now - first_chunk_at) >= max_seconds:
+        return True, "max-window"
+    idle_elapsed = now - last_chunk_at
+    if idle_elapsed >= idle_seconds and char_count >= min_chars:
+        return True, "idle"
+    # Release very short leftovers after extended silence so they do not block forever.
+    if char_count > 0 and idle_elapsed >= idle_seconds * 2.5:
+        return True, "idle-stale"
+    return False, ""
+
+
+def flush_policy_label(target: dict | None) -> str:
+    idle_s, max_s, min_chars = flush_settings_for_target(target)
+    mode = "chat" if is_chat_composer_target(target) else "default"
+    return f"{mode} idle={idle_s:.1f}s max={max_s:.1f}s min_chars={min_chars}"
+
+
+def is_beam_paused() -> bool:
+    return os.path.exists(MIC_PAUSE_FILE)
 
 
 def inject_into_terminal(text: str, tty: str, press_enter: bool) -> tuple[int, str]:
@@ -824,12 +898,71 @@ def is_a2a_payload(text: str) -> bool:
     return bool(A2A_RE.match(text.strip()))
 
 
+def chronicle_enabled() -> bool:
+    return os.environ.get("VOICEBRIDGE_CHRONICLE", "1").strip().lower() not in {
+        "0",
+        "false",
+        "no",
+        "off",
+    }
+
+
+def maybe_anchor_voice_text(text: str) -> str:
+    if not chronicle_enabled():
+        return text
+    if is_a2a_payload(text):
+        return text
+    if re.search(r"\[(?:Voice @ chronicle|↑t)\b", text, re.IGNORECASE):
+        return text
+    try:
+        from voice_chronicle import build_anchored_voice_prompt
+
+        return build_anchored_voice_prompt(text, profile=VOICEBRIDGE_PROFILE)
+    except Exception as exc:
+        print(f"⚠️ [{VOICEBRIDGE_PROFILE}] Chronicle anchor skipped: {exc}")
+        return text
+
+
+def is_blocked_voice_tty(tty: str) -> bool:
+    blocked = os.environ.get("VOICEBRIDGE_BLOCKED_TTYS", "")
+    blocked_set = {item.strip() for item in blocked.split(",") if item.strip()}
+    if tty in blocked_set:
+        return True
+    try:
+        proc = subprocess.run(
+            ["ps", "-t", f"/dev/{tty}", "-o", "command="],
+            capture_output=True,
+            text=True,
+            timeout=2,
+            check=False,
+        )
+        cmd = (proc.stdout or "").strip()
+        if "packages/tnf-cli" in cmd and ("cli.ts" in cmd or "cli.js" in cmd):
+            return True
+    except Exception:
+        pass
+    return False
+
+
 def inject_text(text: str, target: dict | None) -> None:
-    single_line = " ".join(text.splitlines()).strip()
+    tagged_line = " ".join(text.splitlines()).strip()
+    single_line = body_for_injection(tagged_line)
     if not single_line:
         return
 
+    if is_beam_paused():
+        print(f"⏸️ [{VOICEBRIDGE_PROFILE}] Beam paused — skipped injection.")
+        return
+
     print(f"📡 Beaming from file: {single_line}")
+    if tagged_line != single_line and U2A_RE.match(tagged_line):
+        print(
+            f"🏷️ [{VOICEBRIDGE_PROFILE}] Speaker tag retained in stream; injecting body only.",
+        )
+
+    outbound = maybe_anchor_voice_text(single_line)
+    if outbound != single_line:
+        print(f"📜 [{VOICEBRIDGE_PROFILE}] Chronicle anchor applied.")
 
     if not target:
         print("⚠️ No destination lock set. Use voice-target-here or voice-target-pick.")
@@ -841,8 +974,14 @@ def inject_text(text: str, target: dict | None) -> None:
         if not tty:
             print("❌ Terminal target missing tty. Re-anchor with voice-target-here or Cmd+Option+Click.")
             return
+        if is_blocked_voice_tty(tty):
+            print(
+                f"🛡️ [{VOICEBRIDGE_PROFILE}] Skipped injection into protected tty {tty} "
+                f"(TNF interactive lane or VOICEBRIDGE_BLOCKED_TTYS)."
+            )
+            return
         rc, msg = inject_into_terminal(
-            single_line,
+            outbound,
             tty=tty,
             press_enter=bool(target.get("press_enter", True)),
         )
@@ -857,9 +996,9 @@ def inject_text(text: str, target: dict | None) -> None:
         tty = str(target.get("tty", "")).strip()
         if is_terminal_like(app_name, "") and tty:
             rc, msg = inject_into_terminal(
-                single_line,
+                outbound,
                 tty=tty,
-                press_enter=True,
+                press_enter=bool(target.get("press_enter", True)),
             )
             if rc != 0:
                 print(f"❌ Terminal(app) injection failed: {msg}")
@@ -873,7 +1012,7 @@ def inject_text(text: str, target: dict | None) -> None:
             print(f"⚠️ Terminal app target missing tty; falling back to generic app injection for {app_name}")
             
         rc, msg = inject_into_app(
-            single_line,
+            outbound,
             app_name=app_name,
             window_name=str(target.get("window", "")),
             press_enter=bool(target.get("press_enter", False)),
@@ -890,9 +1029,9 @@ def inject_text(text: str, target: dict | None) -> None:
         tty = str(target.get("tty", "")).strip()
         if is_terminal_like(app_name, bundle_id) and tty:
             rc, msg = inject_into_terminal(
-                single_line,
+                outbound,
                 tty=tty,
-                press_enter=True,
+                press_enter=bool(target.get("press_enter", True)),
             )
             if rc != 0:
                 print(f"❌ Terminal(point) injection failed: {msg}")
@@ -906,7 +1045,7 @@ def inject_text(text: str, target: dict | None) -> None:
             print(f"⚠️ Terminal point target missing tty; falling back to generic point injection for {app_name}")
 
         rc, msg = inject_into_point(
-            single_line,
+            outbound,
             x=int(target.get("x", 0)),
             y=int(target.get("y", 0)),
             press_enter=bool(target.get("press_enter", False)),
@@ -939,6 +1078,7 @@ def main() -> None:
 
     active_target = load_target(startup_tty)
     print(f"🎯 [{VOICEBRIDGE_PROFILE}] Active target: {target_label(active_target)}")
+    print(f"⏱️  [{VOICEBRIDGE_PROFILE}] Flush policy: {flush_policy_label(active_target)}")
 
     pending_chunks: list[str] = []
     first_chunk_at: float | None = None
@@ -973,7 +1113,9 @@ def main() -> None:
                     maybe_speak_a2a(text)
             return
 
-        batch_text = normalize_batch_text(" ".join(queued_chunks))
+        batch_text = normalize_batch_text(
+            " ".join(body_for_injection(chunk) for chunk in queued_chunks if chunk.strip()),
+        )
         if not batch_text:
             return
         print(f"📦 Flushing {chunk_count} chunk(s) [{reason}]")
@@ -1006,17 +1148,23 @@ def main() -> None:
                     flush_pending("retarget")
                     active_target = latest_target
                     print(f"🎯 [{VOICEBRIDGE_PROFILE}] Retargeted: {target_label(active_target)}")
+                    print(f"⏱️  [{VOICEBRIDGE_PROFILE}] Flush policy: {flush_policy_label(active_target)}")
 
                 line = file_handle.readline()
                 if not line:
                     if pending_chunks and last_chunk_at is not None:
-                        idle_due = (now - last_chunk_at) >= IDLE_FLUSH_SECONDS
-                        max_due = (
-                            first_chunk_at is not None
-                            and (now - first_chunk_at) >= MAX_FLUSH_SECONDS
+                        idle_s, max_s, min_chars = flush_settings_for_target(active_target)
+                        due, reason = should_flush_pending(
+                            now=now,
+                            pending_chunks=pending_chunks,
+                            first_chunk_at=first_chunk_at,
+                            last_chunk_at=last_chunk_at,
+                            idle_seconds=idle_s,
+                            max_seconds=max_s,
+                            min_chars=min_chars,
                         )
-                        if idle_due or max_due:
-                            flush_pending("idle" if idle_due else "max-window")
+                        if due:
+                            flush_pending(reason)
                             continue
                     time.sleep(POLL_INTERVAL_SECONDS)
                     continue

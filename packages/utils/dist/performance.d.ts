@@ -1,2 +1,13 @@
-export {};
+export declare class PerformanceMonitor {
+    private startTime;
+    private endTime;
+    private marks;
+    constructor();
+    mark(name: string): void;
+    measure(startMark: string, endMark: string): number;
+    start(): void;
+    stop(): void;
+    getDuration(): number;
+    reset(): void;
+}
 //# sourceMappingURL=performance.d.ts.map

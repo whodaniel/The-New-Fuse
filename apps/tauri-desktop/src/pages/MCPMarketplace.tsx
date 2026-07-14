@@ -1,176 +1,37 @@
 import React, { useEffect, useState } from 'react';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { GoogleDriveWizard } from '../components/mcp/GoogleDriveWizard';
+import { resolveWebAppBaseUrl, webSurfaceUrl } from '../config/webSurfaces';
+import { useModalA11y } from '../hooks/useModalA11y';
+import { openExternal } from '../lib/openExternal';
 import { apiService } from '../services/api';
+import { useSettingsStore } from '../stores/settingsStore';
 import type { MCPServer } from '../types';
 
-// Mock Plugin Data (New Architecture)
 interface Plugin extends MCPServer {
   type: 'skill' | 'mcp' | 'agent' | 'bundle';
   capabilities?: string[];
 }
-
-const mockPlugins: Plugin[] = [
-  {
-    id: 'claude-skills',
-    name: 'Antigravity Skills Bridge',
-    description:
-      'The essential plugin for using official Claude Skills directly in your agent. Includes Frontend Design, PDF Analysis, and more.',
-    version: '1.0.0',
-    category: 'skills',
-    author: 'TNF Core',
-    installed: false,
-    enabled: false,
-    type: 'bundle',
-    capabilities: ['Skills Runtime', 'MCP Bridge'],
-    tools: [
-      {
-        name: 'skill_frontend_design',
-        description: 'Create distinctive, production-grade frontend interfaces',
-        inputSchema: {},
-      },
-      {
-        name: 'skill_doc_coauthoring',
-        description: ' Workflow for co-authoring documentation',
-        inputSchema: {},
-      },
-      {
-        name: 'skill_mcp_builder',
-        description: 'Guide for creating high-quality MCP servers',
-        inputSchema: {},
-      },
-    ],
-  },
-  {
-    id: 'google-drive',
-    name: 'Google Workspace',
-    description: 'Full integration with Drive, Docs, and Sheets.',
-    version: '1.0.0',
-    category: 'file',
-    author: 'Google',
-    installed: false,
-    enabled: false,
-    type: 'mcp',
-    tools: [
-      { name: 'read_doc', description: 'Read content', inputSchema: {} },
-      { name: 'create_doc', description: 'Create document', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'web-search',
-    name: 'Brave Search',
-    description: 'Privacy-focused web search integration.',
-    version: '2.0.0',
-    category: 'web',
-    author: 'TNF Core',
-    installed: true,
-    enabled: true,
-    type: 'mcp',
-    tools: [{ name: 'search', description: 'Search web', inputSchema: {} }],
-  },
-  {
-    id: 'github',
-    name: 'GitHub Pro',
-    description: 'Manage repositories, PRs, and Issues.',
-    version: '1.5.0',
-    category: 'code',
-    author: 'GitHub',
-    installed: false,
-    enabled: false,
-    type: 'mcp',
-    tools: [
-      { name: 'create_issue', description: 'Create a new issue', inputSchema: {} },
-      { name: 'list_repos', description: 'List repositories', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'youtube-curator',
-    name: 'YouTube Curator Agent',
-    description:
-      'Multimodal AI that watches your "Watch Later" playlist, understands video content (visuals + audio), and summarizes/actions it based on your goals.',
-    version: '0.1.0-alpha',
-    category: 'ai',
-    author: 'TNF / User',
-    installed: false,
-    enabled: false,
-    type: 'bundle',
-    capabilities: ['YouTube Data API', 'Multimodal Vision', 'Playlist Sync'],
-    tools: [
-      {
-        name: 'get_watch_later',
-        description: 'Retrieve generic or private Watch Later playlist',
-        inputSchema: {},
-      },
-      {
-        name: 'analyze_video_content',
-        description: 'Multimodal review of video frames & transcript',
-        inputSchema: {},
-      },
-      {
-        name: 'archive_watched',
-        description: 'Remove video from playlist after review',
-        inputSchema: {},
-      },
-    ],
-  },
-  {
-    id: 'slack',
-    name: 'Slack',
-    description: 'Send messages and interact with Slack workspaces.',
-    version: '1.1.0',
-    category: 'web',
-    author: 'Slack',
-    installed: false,
-    enabled: false,
-    type: 'mcp',
-    tools: [
-      { name: 'send_message', description: 'Send a message to a channel', inputSchema: {} },
-      { name: 'list_channels', description: 'List available channels', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'openai-vision',
-    name: 'OpenAI Vision',
-    description: 'Analyze images using GPT-4 Vision capabilities.',
-    version: '1.0.0',
-    category: 'ai',
-    author: 'OpenAI',
-    installed: false,
-    enabled: false,
-    type: 'mcp',
-    tools: [
-      { name: 'analyze_image', description: 'Analyze an image', inputSchema: {} },
-      { name: 'extract_text', description: 'Extract text from an image', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'drizzle',
-    name: 'Drizzle',
-    description: 'Interact with Drizzle ORM for database operations.',
-    version: '1.0.0',
-    category: 'database',
-    author: 'TNF Core',
-    installed: false,
-    enabled: false,
-    type: 'mcp',
-    tools: [
-      { name: 'read_model', description: 'Read data using Drizzle model', inputSchema: {} },
-      { name: 'update_model', description: 'Update data using Drizzle model', inputSchema: {} },
-    ],
-  },
-];
 
 /**
  * MCP Marketplace Page
  * Browse and install MCP servers and tools
  */
 const MCPMarketplace: React.FC = () => {
-  const [plugins, setPlugins] = useState<Plugin[]>(mockPlugins);
+  const { environment } = useSettingsStore();
+  const webMcpUrl = webSurfaceUrl(resolveWebAppBaseUrl(environment), '/mcp-hub');
+  const [plugins, setPlugins] = useState<Plugin[]>([]);
   const [loading, setLoading] = useState(false);
+  const [apiOffline, setApiOffline] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPlugin, setSelectedPlugin] = useState<Plugin | null>(null);
   const [showInstallModal, setShowInstallModal] = useState(false);
   const [showDriveWizard, setShowDriveWizard] = useState(false);
+  const [installError, setInstallError] = useState<string | null>(null);
+  const closeInstallModal = () => setShowInstallModal(false);
+  const installDialogRef = useModalA11y(showInstallModal, closeInstallModal);
 
   const categories = [
     { id: 'all', label: 'All', icon: '📦' },
@@ -190,12 +51,25 @@ const MCPMarketplace: React.FC = () => {
   const fetchServers = async () => {
     setLoading(true);
     const response = await apiService.getMCPServers();
-    if (response.success && response.data) {
-      // Merge real plugins (mapped from servers) with our mock plugins
-      // For now, we'll just use mocks for the full 'Plugin' experience until backend catches up
-      setPlugins(mockPlugins);
+    if (response.success && response.data && response.data.length > 0) {
+      const mapped: Plugin[] = response.data.map((server) => ({
+        id: server.id,
+        name: server.name,
+        description: server.description || 'MCP server',
+        category: server.category || 'ai',
+        version: server.version || '1.0.0',
+        author: server.author || 'TNF',
+        installed: server.installed,
+        enabled: server.enabled,
+        type: 'mcp' as const,
+        tools: server.tools || [],
+        capabilities: server.tools?.map((tool) => tool.name) || [],
+      }));
+      setPlugins(mapped);
+      setApiOffline(false);
     } else {
-      setPlugins(mockPlugins);
+      setPlugins([]);
+      setApiOffline(true);
     }
     setLoading(false);
   };
@@ -228,13 +102,13 @@ const MCPMarketplace: React.FC = () => {
 
     const response = await apiService.installMCPServer(server.id);
     if (response.success) {
+      setInstallError(null);
       setPlugins((prev) =>
         prev.map((s) => (s.id === server.id ? { ...s, installed: true, enabled: true } : s))
       );
     } else {
-      // Simulate install for demo
-      setPlugins((prev) =>
-        prev.map((s) => (s.id === server.id ? { ...s, installed: true, enabled: true } : s))
+      setInstallError(
+        'Install failed — REST API offline. Start the TNF API on port 3001 to enable installs.'
       );
     }
     setShowInstallModal(false);
@@ -260,23 +134,47 @@ const MCPMarketplace: React.FC = () => {
   };
 
   return (
-    <div className="page-container">
-      <header className="page-header">
-        <div>
-          <h1 className="page-title">Plugin Store</h1>
-          <p className="page-subtitle">Extend Antigravity with Skills, MCP Servers, and Agents</p>
-        </div>
-        <div className="header-stats">
-          <div className="stat">
-            <span className="stat-value">{installedPlugins.length}</span>
-            <span className="stat-label">Installed</span>
+    <PageShell
+      title="MCP Store"
+      subtitle="Extend TNF with Skills, MCP servers, and agent tool bundles"
+      actions={
+        <>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => void openExternal(webMcpUrl)}
+          >
+            Web MCP Hub
+          </button>
+          <div className="header-stats">
+            <div className="stat">
+              <span className="stat-value">{installedPlugins.length}</span>
+              <span className="stat-label">Installed</span>
+            </div>
+            <div className="stat">
+              <span className="stat-value">{installedPlugins.filter((s) => s.enabled).length}</span>
+              <span className="stat-label">Active</span>
+            </div>
           </div>
-          <div className="stat">
-            <span className="stat-value">{installedPlugins.filter((s) => s.enabled).length}</span>
-            <span className="stat-label">Active</span>
-          </div>
-        </div>
-      </header>
+        </>
+      }
+      banner={
+        <>
+          {apiOffline ? (
+            <div className="offline-banner" role="status">
+              REST API offline — catalog empty until port 3001 is reachable. Browse the web MCP hub
+              for full catalog.
+            </div>
+          ) : null}
+          {installError ? (
+            <div className="offline-banner" role="alert">
+              {installError}
+            </div>
+          ) : null}
+        </>
+      }
+    >
+      <SynergyStatusBar />
 
       {/* Search and Filter */}
       <div className="search-bar">
@@ -405,11 +303,23 @@ const MCPMarketplace: React.FC = () => {
 
       {/* Install Modal */}
       {showInstallModal && selectedPlugin && (
-        <div className="modal-overlay" onClick={() => setShowInstallModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={closeInstallModal} role="presentation">
+          <div
+            ref={installDialogRef}
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="install-plugin-title"
+          >
             <div className="modal-header">
-              <h2>Install {selectedPlugin.name}</h2>
-              <button className="close-btn" onClick={() => setShowInstallModal(false)}>
+              <h2 id="install-plugin-title">Install {selectedPlugin.name}</h2>
+              <button
+                type="button"
+                className="close-btn"
+                onClick={closeInstallModal}
+                aria-label="Close"
+              >
                 ×
               </button>
             </div>
@@ -432,10 +342,14 @@ const MCPMarketplace: React.FC = () => {
               </div>
             </div>
             <div className="modal-footer">
-              <button className="secondary-btn" onClick={() => setShowInstallModal(false)}>
+              <button type="button" className="secondary-btn" onClick={closeInstallModal}>
                 Cancel
               </button>
-              <button className="primary-btn" onClick={() => handleInstall(selectedPlugin)}>
+              <button
+                type="button"
+                className="primary-btn"
+                onClick={() => handleInstall(selectedPlugin)}
+              >
                 Install Server
               </button>
             </div>
@@ -478,6 +392,15 @@ const MCPMarketplace: React.FC = () => {
         .page-subtitle {
           color: var(--tnf-text-muted);
           margin: 4px 0 0;
+        }
+
+        .offline-banner {
+          margin-bottom: 16px;
+          padding: 12px 16px;
+          border-radius: 10px;
+          background: rgba(245, 158, 11, 0.12);
+          border: 1px solid rgba(245, 158, 11, 0.3);
+          color: #fcd34d;
         }
 
         .header-stats {
@@ -869,7 +792,7 @@ const MCPMarketplace: React.FC = () => {
           color: var(--tnf-text-muted);
         }
       `}</style>
-    </div>
+    </PageShell>
   );
 };
 

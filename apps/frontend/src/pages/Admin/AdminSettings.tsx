@@ -11,6 +11,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import { AlertCircle, Database, RefreshCw, Save, Server, Shield } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
@@ -151,7 +152,7 @@ const AdminSettings: React.FC = () => {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/settings');
+      const response = await authFetch('/api/admin/settings');
       if (response.ok) {
         const data = await response.json();
         setSettings(data);
@@ -166,11 +167,8 @@ const AdminSettings: React.FC = () => {
   const saveSettings = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/settings', {
+      const response = await authFetch('/api/admin/settings', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(settings),
       });
 

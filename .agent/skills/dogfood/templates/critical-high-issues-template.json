@@ -1,0 +1,62 @@
+{
+  "issues": [
+    {
+      "id": "CORS-001",
+      "severity": "Critical",
+      "category": "Security",
+      "domain": "app.thenewfuse.com",
+      "title": "Wildcard CORS Misconfiguration",
+      "description": "The domain app.thenewfuse.com allows requests from any origin (access-control-allow-origin: *). This is a critical security vulnerability that could allow malicious websites to make authenticated requests to this API on behalf of users.",
+      "steps_to_reproduce": [
+        "Send a request to https://app.thenewfuse.com/ with Origin: https://evil-test.com header",
+        "Check the response headers for access-control-allow-origin"
+      ],
+      "expected_behavior": "Should either reject the request or only allow specific trusted origins",
+      "actual_behavior": "Returns access-control-allow-origin: * allowing any origin",
+      "url": "https://app.thenewfuse.com/",
+      "recommended_fix": "Configure CORS policy to only allow specific trusted origins (e.g., https://app.thenewfuse.com, https://thenewfuse.com). Remove wildcard (*) from access-control-allow-origin header.",
+      "fix_agent_tag": "security"
+    },
+    {
+      "id": "CORS-002",
+      "severity": "Critical",
+      "category": "Security",
+      "domain": "relay.thenewfuse.com",
+      "title": "Wildcard CORS Misconfiguration",
+      "description": "The domain relay.thenewfuse.com allows requests from any origin (access-control-allow-origin: *). This is a critical security vulnerability.",
+      "steps_to_reproduce": [
+        "Send a request to https://relay.thenewfuse.com/ with Origin: https://evil-test.com header",
+        "Check the response headers for access-control-allow-origin"
+      ],
+      "expected_behavior": "Should either reject the request or only allow specific trusted origins",
+      "actual_behavior": "Returns access-control-allow-origin: * allowing any origin",
+      "url": "https://relay.thenewfuse.com/",
+      "recommended_fix": "Configure CORS policy to only allow specific trusted origins. Remove wildcard (*) from access-control-allow-origin header.",
+      "fix_agent_tag": "security"
+    },
+    {
+      "id": "CORS-003",
+      "severity": "High",
+      "category": "Security",
+      "domain": "api.thenewfuse.com",
+      "title": "CORS Rejection Returns 500 Error",
+      "description": "CORS preflight failures on api.thenewfuse.com return HTTP 500 instead of appropriate 403 status. This pollutes error tracking systems and leaks implementation details.",
+      "steps_to_reproduce": [
+        "Send a request to https://api.thenewfuse.com/ with Origin: https://evil-test.com header",
+        "Check the HTTP status code"
+      ],
+      "expected_behavior": "Should return 403 Forbidden or no CORS header",
+      "actual_behavior": "Returns HTTP 500 Internal Server Error",
+      "url": "https://api.thenewfuse.com/",
+      "recommended_fix": "Configure CORS middleware to return proper 403 status for rejected origins instead of 500. Ensure CORS errors don't trigger server error handlers.",
+      "fix_agent_tag": "backend"
+    }
+  ],
+  "metadata": {
+    "audit_date": "2026-05-05T15:15:53.876725Z",
+    "total_critical": 2,
+    "total_high": 1,
+    "generated_by": "Hermes Agent TNF Dogfood Swarm",
+    "mode": "headless-security-audit"
+  }
+}

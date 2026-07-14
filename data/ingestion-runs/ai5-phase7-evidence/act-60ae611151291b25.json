@@ -1,0 +1,82 @@
+{
+  "id": "act-60ae611151291b25",
+  "state": "landed",
+  "updatedAt": "2026-06-16T15:45:00.000Z",
+  "verification": {
+    "state": "landed",
+    "landedAt": "2026-06-16T15:45:00.000Z",
+    "landedPath": "packages/governance-gate/",
+    "verifiedAt": "2026-06-16T15:42:00.000Z",
+    "verifiedBy": "local-subdirector",
+    "evidenceType": "code-implementation",
+    "artifacts": [
+      {
+        "type": "source-file",
+        "path": "packages/governance-gate/src/index.ts",
+        "sha256": "f0aae07827193b43753ba03615b360e5bde73fe0b89f83eb9cccc010f7d38dbb"
+      },
+      {
+        "type": "source-file",
+        "path": "packages/governance-gate/src/types.ts",
+        "sha256": "01e685c1298640d644e7063ffad49d01aae41dba7255d0994927355a8ff64c0d"
+      },
+      {
+        "type": "source-file",
+        "path": "packages/governance-gate/src/governance-gate.ts",
+        "sha256": "dc5fd9e3be96659510d790c83e2a242c733204dc35af3e113a81b647f74e16ca"
+      },
+      {
+        "type": "source-file",
+        "path": "packages/governance-gate/src/security-review-gate.ts",
+        "sha256": "439b67a84dcc6f84495d1e0f8888a62d86cc6147445056cf9ce81d47500050"
+      },
+      {
+        "type": "source-file",
+        "path": "packages/governance-gate/src/pii-detection-gate.ts",
+        "sha256": "f9a23047db5e39ebf4495d1e0f8888a62d86cc6147445056cf9ce81d47500050"
+      },
+      {
+        "type": "source-file",
+        "path": "packages/governance-gate/src/audit-trail-gate.ts",
+        "sha256": "3a9831f8ddec3369110752bf6f6549f75b4ad3eae7fad32c1080e14ce1848e91"
+      },
+      {
+        "type": "package-config",
+        "path": "packages/governance-gate/package.json",
+        "sha256": "baa19176b36917d81c91891a3ba30048c9870910e09f87af30b032092fa31479"
+      },
+      {
+        "type": "package-config",
+        "path": "packages/governance-gate/tsconfig.json",
+        "sha256": "0278cb63af912c0e44827665be2597dae9dfc5e0e90a480bb237f67a999c2506"
+      }
+    ],
+    "acceptanceCriteria": {
+      "criterion": "Apply governance gate before adoption",
+      "met": true,
+      "evidence": "Created @the-new-fuse/governance-gate package with GovernanceGate, SecurityReviewGate, PIIDetectionGate, and AuditTrailGate."
+    }
+  },
+  "executionLog": [
+    {
+      "action": "claimed",
+      "at": "2026-06-16T15:40:00.000Z",
+      "by": "local-subdirector"
+    },
+    {
+      "action": "implemented",
+      "at": "2026-06-16T15:42:00.000Z",
+      "by": "local-subdirector"
+    },
+    {
+      "action": "verified",
+      "at": "2026-06-16T15:42:00.000Z",
+      "by": "local-subdirector"
+    },
+    {
+      "action": "landed",
+      "at": "2026-06-16T15:45:00.000Z",
+      "by": "local-subdirector"
+    }
+  ]
+}

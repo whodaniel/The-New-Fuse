@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AgentDto } from '../modules/controllers/dto/agent.dto.js';
-import { AgentService } from '../services/agent.service.js';
+import { AgentDto } from '../modules/controllers/dto/agent.dto';
+import { AgentService } from '../services/agent.service';
 interface User {
     id: string;
     [key: string]: any;

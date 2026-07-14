@@ -4,9 +4,11 @@ export interface LLMRegistry {
     unregisterProvider(id: string): Promise<void>;
 }
 export declare const LLM_REGISTRY = "LLMRegistry";
-export declare class MockLLMRegistry implements LLMRegistry {
+export declare class InMemoryLLMRegistry implements LLMRegistry {
+    private readonly providers;
     registerProvider(id: string, config: any): Promise<void>;
     unregisterProvider(id: string): Promise<void>;
+    getProvider(id: string): Record<string, unknown> | undefined;
 }
 export interface LLMProviderDTO {
     id: string;

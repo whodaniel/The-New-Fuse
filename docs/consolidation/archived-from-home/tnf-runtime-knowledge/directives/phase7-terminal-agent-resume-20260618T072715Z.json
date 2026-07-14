@@ -1,0 +1,38 @@
+{
+  "id": "phase7-terminal-agent-resume-20260618T072715Z",
+  "type": "task",
+  "from": {
+    "agentId": "codex-terminal-coordinator",
+    "role": "local-director"
+  },
+  "to": {
+    "broadcast": true
+  },
+  "payload": {
+    "id": "phase7-tight-loop-batch-001-resume",
+    "title": "Resume TNF Phase 7 tight-loop batch 001",
+    "priority": "high",
+    "owner": "local-subdirector",
+    "targets": ["forge-agent", "historian", "top-level-terminal-agents"],
+    "description": "Execute the Turn Zero Mandate, read docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.md and data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json, then convert the claimed Phase 7 directives into verified work with evidence. Update directive states only with evidence artifacts before marking verified or landed. Regenerate the Phase 7 ledger after each completed batch.",
+    "canonicalFiles": [
+      "docs/protocols/TURN_ZERO_MANDATE.md",
+      "docs/protocols/LIVING_STATE.md",
+      "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+      "docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.md",
+      "data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json"
+    ],
+    "verification": [
+      "Evidence JSON exists under data/ingestion-runs/ai5-phase7-evidence/",
+      "data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json reflects claimed/running/verified/landed state transitions",
+      "python3 scripts/autonomy/phase7_directive_conversion_loop.py --claim-batch --adopt-claimed --batch-size 10 --json completes",
+      "docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.json summary reflects the new conversion state"
+    ],
+    "constraints": [
+      "Do not mark a directive verified or landed without concrete file, command, log, or test evidence.",
+      "Do not create legacy task_plan.md/findings.md/progress.md unless explicitly requested.",
+      "Use TNF-native relay and persisted artifacts before raw terminal injection."
+    ]
+  },
+  "timestamp": "2026-06-18T07:27:15.636776Z"
+}

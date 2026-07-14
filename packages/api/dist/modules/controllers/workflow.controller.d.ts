@@ -2,8 +2,8 @@
  * Workflow controller implementation
  * Provides standardized REST API endpoints for workflow operations
  */
-import { WorkflowService } from '../../services/workflow.service.js';
-import { BaseController } from './base.controller.js';
+import { WorkflowService } from '../../services/workflow.service';
+import { BaseController } from './base.controller';
 interface WorkflowModel {
     id: string;
     name: string;
@@ -23,8 +23,8 @@ interface ApiResponse<T> {
     error?: string;
     meta?: Record<string, unknown>;
 }
-import { CreateWorkflowDto } from './dto/create-workflow.dto.js';
-import { UpdateWorkflowDto } from './dto/update-workflow.dto.js';
+import { CreateWorkflowDto } from './dto/create-workflow.dto';
+import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 export declare class WorkflowController extends BaseController {
     private readonly workflowService;
     constructor(workflowService: WorkflowService);

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatedEmoji } from '../components/AnimatedEmoji';
@@ -19,7 +19,7 @@ const StatsSection: React.FC = () => {
   return (
     <section
       ref={statsRef}
-      className="bg-linear-to-r from-blue-600 to-indigo-600 py-16 sm:py-20"
+      className="bg-gradient-to-r from-blue-600 to-indigo-600 py-16 sm:py-20"
       aria-label="Platform statistics"
     >
       <div className="mx-auto max-w-7xl px-3 lg:px-8">
@@ -240,7 +240,7 @@ export default function HomePage() {
       {/* Hero Section with Modern Gradient Background and Animations */}
       <section
         ref={heroRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"
         aria-labelledby="hero-heading"
       >
         {/* Animated Background Elements */}
@@ -294,7 +294,7 @@ export default function HomePage() {
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, ease: 'easeOut' }}
             >
-              <span className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-none backdrop-blur-sm hover:shadow-none transition-shadow duration-300">
+              <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-none backdrop-blur-sm hover:shadow-none transition-shadow duration-300">
                 <motion.span
                   animate={{ rotate: [0, 15, -15, 0] }}
                   transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
@@ -315,7 +315,7 @@ export default function HomePage() {
             >
               <span className="block">Orchestrate, Automate,</span>
               <motion.span
-                className="block bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent"
+                className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent"
                 initial={{ opacity: 0, x: -20 }}
                 animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
@@ -366,7 +366,7 @@ export default function HomePage() {
               >
                 <Link
                   to="/auth/register"
-                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-2 text-base font-semibold text-white shadow-none hover:shadow-none transition-all duration-300 overflow-hidden"
+                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-2 text-base font-semibold text-white shadow-none hover:shadow-none transition-all duration-300 overflow-hidden"
                 >
                   <span className="relative z-10">Get Started</span>
                   <motion.svg
@@ -384,7 +384,7 @@ export default function HomePage() {
                       d="M13 7l5 5m0 0l-5 5m5-5H6"
                     />
                   </motion.svg>
-                  <div className="absolute inset-0 bg-linear-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </Link>
               </motion.div>
 
@@ -977,10 +977,7 @@ export default function HomePage() {
                       </Link>
                     </li>
                     <li>
-                      <Link
-                        to="/docs"
-                        className="text-sm leading-6 text-gray-300 hover:text-white"
-                      >
+                      <Link to="/docs" className="text-sm leading-6 text-gray-300 hover:text-white">
                         Community Forum
                       </Link>
                     </li>

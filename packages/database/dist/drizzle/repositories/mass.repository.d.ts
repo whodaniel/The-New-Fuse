@@ -2,48 +2,48 @@ import { agentPromptVersions, optimizationJobs, workflowTopologies } from '../sc
 export declare const optimizationJobRepository: {
     findById: (id: string) => Promise<{
         id: string;
-        type: string;
-        status: string;
-        config: unknown;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         userId: string | null;
+        type: string;
+        config: unknown;
         error: string | null;
         targetId: string;
         results: unknown;
     } | undefined>;
     findByUser: (userId: string, status?: string, type?: string) => Promise<{
         id: string;
-        type: string;
-        status: string;
-        config: unknown;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         userId: string | null;
+        type: string;
+        config: unknown;
         error: string | null;
         targetId: string;
         results: unknown;
     }[]>;
     findByTargetId: (targetId: string, userId: string) => Promise<{
         id: string;
-        type: string;
-        status: string;
-        config: unknown;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         userId: string | null;
+        type: string;
+        config: unknown;
         error: string | null;
         targetId: string;
         results: unknown;
     }[]>;
     create: (data: typeof optimizationJobs.$inferInsert) => Promise<{
         id: string;
-        type: string;
-        status: string;
-        config: unknown;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         userId: string | null;
+        type: string;
+        config: unknown;
         error: string | null;
         targetId: string;
         results: unknown;

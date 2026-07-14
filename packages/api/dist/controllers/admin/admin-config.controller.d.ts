@@ -3,7 +3,7 @@
  * Route: admin/config
  */
 import { Response } from 'express';
-import { AdminConfigurationService } from '../../services/admin-configuration.service.js';
+import { AdminConfigurationService } from '../../services/admin-configuration.service';
 interface User {
     id: string;
 }

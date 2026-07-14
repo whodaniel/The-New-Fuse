@@ -1,0 +1,57 @@
+=== Security Audit for extreamix.com ===
+
+1. DNS Resolution:
+172.67.158.53
+104.21.90.168
+
+2. Security Headers:
+HTTP/2 200 
+date: Tue, 05 May 2026 15:11:40 GMT
+content-type: text/html; charset=UTF-8
+vary: Accept-Encoding
+x-powered-by: Express
+cache-control: public, max-age=0
+set-cookie: GAESA=Cp4BMDAwN2I3MzRkOWQ2NjFjYjE1OTg4NzY5ZDY3YWZlYjRhNDFmNzI3NGMwNTM2NzA1NmFhZTAzNDA0MGEwZTMyNzYyODFiMmFmMGMwNjQ3ZDZjYjkxOTExNTQzODYyOGQ4NWRmYTI1YTE2OTA2OTZjOGYzOTNiNTNlYTVhMDU5ZDBlNzVlNDVlZmVhYzYwM2JlOGVhMTNhMzFiNTU5ZDMQpMPHxd8z; expires=Thu, 04-Jun-2026 15:11:40 GMT; path=/
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+via: 1.1 google
+alt-svc: h3=":443"; ma=86400
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ZX0tMVzuWwN9xWtrnSxqaY4RQ8Y7H0S037D203jjoNETyNFo0Yx%2FMri0HGcHdtuaek%2FpANst7tV82lkf0rQHozuXXxyKydyTuEsunZAb0KJQeoP2WeXLGDK4nyQ7NOKX"}]}
+cf-ray: 9f70add50f914138-ORD
+
+
+3. CORS Audit:
+   Testing with evil origin:
+
+
+   Testing CORS error code:
+   Status with evil origin: 200
+
+4. Route Availability:
+   /login: 200
+   /register: 200
+   /dashboard: 200
+   /pricing: 200
+   /docs: 200
+   /api/health: 200
+
+5. Information Disclosure:
+   Checking for version/internal info:
+No obvious version info found
+
+   Checking for exposed API docs:
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" con
+
+   Checking for API index:
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" con
+
+/Users/danielgoldberg/.hermes/skills/dogfood/scripts/quick-security-audit.sh: line 196: syntax error: unexpected end of file

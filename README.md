@@ -1,11 +1,15 @@
-# The New Fuse
+# <img src="https://thenewfuse.com/assets/brand/tnf-logo.png" alt="TNF Logo" width="32" height="32" align="center"> The New Fuse
 
-The New Fuse is an AI agent orchestration platform for building, coordinating,
-and operating multi-agent workflows.
+**The New Fuse (TNF)** is the definitive next-generation AI agent orchestration
+platform. Built for performance, security, and true autonomy, TNF empowers you
+to build, coordinate, and operate complex multi-agent workflows across desktop,
+web, and cloud.
 
-- Public site: https://thenewfuse.com
-- Hosted app: https://app.thenewfuse.com
-- Public docs: https://thenewfuse.com/docs
+- **Public Site:** [thenewfuse.com](https://thenewfuse.com)
+- **Hosted App:** [app.thenewfuse.com](https://app.thenewfuse.com)
+- **Documentation:** [thenewfuse.com/docs](https://thenewfuse.com/docs)
+- **GitHub Repository:**
+  [whodaniel/The-New-Fuse](https://github.com/whodaniel/The-New-Fuse)
 
 ## Local Development
 
@@ -17,8 +21,8 @@ Prerequisites:
 - PostgreSQL 17+ for full API/database flows
 
 ```bash
-git clone https://github.com/whodaniel/fuse.git
-cd fuse
+git clone https://github.com/whodaniel/The-New-Fuse.git
+cd The-New-Fuse
 pnpm install
 cp .env.example .env
 touch .tnf.local.env
@@ -28,6 +32,9 @@ pnpm run dev
 Use `.tnf.local.env` for machine-specific assets such as `TNF_ROOT`,
 `TNF_RELAY_URL`, custom `TNF_PORTS`, and intentional occupied-port allowances.
 See `docs/reference/local-runtime-profile.md`.
+
+For using the **local open-source install** together with a **thenewfuse.com
+account**, see `docs/reference/local-oss-with-hosted-account.md`.
 
 Before booting local services, inspect the active port surface:
 
@@ -45,11 +52,12 @@ pnpm run release:gate:strict
 
 ## Public Release Flow
 
-TNF is developed in this combined monorepo and published into downstream
-distribution repositories:
+TNF is developed and published from a single public monorepo:
+`whodaniel/The-New-Fuse`.
 
-- `whodaniel/fuse-open-runtime`: open-source runtime distribution
-- `whodaniel/fuse-control-plane`: proprietary hosted SaaS control plane
+- `whodaniel/The-New-Fuse`: Open-source runtime distribution and application
+  code.
+- Proprietary SaaS control plane infrastructure is maintained privately.
 
 See `docs/REPO_SEPARATION.md` for the public/private boundary. Use the dry-run
 sync before publishing downstream repositories:
@@ -74,6 +82,8 @@ plane details in public issues.
 
 ## License
 
-The open runtime license is declared in the downstream public distribution.
-Do not assume the combined monorepo is the final open-source artifact; verify
-`docs/REPO_SEPARATION.md` and the downstream repository before public release.
+This repository is licensed under the **MIT License** — see [LICENSE](LICENSE).
+
+Proprietary control-plane paths are filtered when publishing
+[`fuse-open-runtime`](https://github.com/whodaniel/fuse-open-runtime); see
+`docs/REPO_SEPARATION.md`.

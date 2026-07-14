@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FederatedAgent, relaySwarmService } from '../services/RelaySwarmService';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useModalA11y } from '../hooks/useModalA11y';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { useAgentStore } from '../stores/agentStore';
 import type { Agent } from '../types';
 
@@ -8,24 +11,28 @@ import type { Agent } from '../types';
  * Manage and monitor your AI agent swarm
  */
 const AgentHub: React.FC = () => {
-  const { agents, loading, fetchAgents, startAgent, stopAgent, deleteAgent, createAgent } =
-    useAgentStore();
+  const {
+    agents,
+    loading,
+    error,
+    apiOffline,
+    fetchAgents,
+    startAgent,
+    stopAgent,
+    deleteAgent,
+    createAgent,
+  } = useAgentStore();
+  const { unifiedAgents, state: synergy } = useOperatorSynergy();
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'idle' | 'error'>('all');
-  const [federatedAgents, setFederatedAgents] = useState<FederatedAgent[]>([]);
 
   useEffect(() => {
     fetchAgents();
-
-    // Connect to Federated Swarm
-    relaySwarmService.connect();
-    const unsubscribe = relaySwarmService.subscribe((list) => {
-      setFederatedAgents(list);
-    });
-
-    return () => unsubscribe();
   }, [fetchAgents]);
+
+  const federatedAgents = unifiedAgents.filter((agent) => agent.source === 'federation');
 
   const filteredAgents = agents.filter((agent) => {
     if (filter === 'all') return true;
@@ -63,21 +70,29 @@ const AgentHub: React.FC = () => {
   };
 
   return (
-    <div className="page-container">
-      <header className="page-header">
-        <div>
-          <h1 className="page-title">Agent Hub</h1>
-          <p className="page-subtitle">Manage your AI agent swarm</p>
-        </div>
-        <div className="header-actions">
-          <button className="secondary-button" onClick={() => fetchAgents()}>
-            🔄 Refresh
+    <PageShell
+      title="Agent Hub"
+      subtitle="Manage your AI agent swarm — REST agents plus federation peers"
+      actions={
+        <>
+          <button type="button" className="secondary-button" onClick={() => fetchAgents()}>
+            Refresh
           </button>
-          <button className="primary-button" onClick={() => setShowCreateModal(true)}>
+          <button type="button" className="primary-button" onClick={() => setShowCreateModal(true)}>
             + Create Agent
           </button>
-        </div>
-      </header>
+        </>
+      }
+      banner={
+        apiOffline ? (
+          <div className="offline-banner">
+            REST API offline — local agent CRUD unavailable. Federation agents (
+            {federatedAgents.length}) still visible via relay.
+          </div>
+        ) : null
+      }
+    >
+      <SynergyStatusBar />
 
       {/* Filter Tabs */}
       <div className="filter-tabs">
@@ -115,9 +130,11 @@ const AgentHub: React.FC = () => {
       </div>
 
       {/* Federated Swarm Section */}
-      {federatedAgents.length > 0 && (
-        <section className="federated-swarm">
-          <h2 className="section-title">📡 Federated Swarm (Live)</h2>
+      <section className="federated-swarm">
+        <h2 className="section-title">
+          📡 Federated Swarm {synergy.relayRegistered ? '(registered)' : '(connecting)'}
+        </h2>
+        {federatedAgents.length > 0 ? (
           <div className="agent-grid">
             {federatedAgents.map((agent) => (
               <div key={agent.id} className="agent-card federated">
@@ -131,7 +148,7 @@ const AgentHub: React.FC = () => {
                 <h3 className="agent-name">{agent.name}</h3>
                 <div className="agent-meta">
                   <span className="agent-type">{agent.platform}</span>
-                  <span className="agent-role">{agent.role}</span>
+                  <span className="agent-role">{agent.status}</span>
                 </div>
                 <div className="agent-capabilities">
                   {agent.capabilities.map((cap) => (
@@ -140,25 +157,41 @@ const AgentHub: React.FC = () => {
                     </span>
                   ))}
                 </div>
-                <div className="agent-footer">
-                  <span className="last-active">
-                    Seen: {new Date(agent.lastSeen).toLocaleTimeString()}
-                  </span>
-                </div>
               </div>
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <p className="offline-notice">
+            {synergy.relayConnected
+              ? 'No federated agents visible yet. Registration may still be completing via relay.'
+              : 'Synergy plane connecting to relay…'}
+          </p>
+        )}
+      </section>
 
       {/* Local Agent Grid */}
-      <h2 className="section-title">🏠 Local Agents</h2>
+      <h2 className="section-title">🏠 Local Agents (REST API)</h2>
+      {apiOffline && error && (
+        <div className="offline-banner">
+          <strong>API offline:</strong> {error}
+        </div>
+      )}
       {loading ? (
         <div className="loading-state">Loading agents...</div>
+      ) : filteredAgents.length === 0 ? (
+        <div className="empty-state">
+          {apiOffline ? 'No local agents — start the TNF REST API on port 3001.' : 'No agents yet.'}
+        </div>
       ) : (
         <div className="agent-grid">
           {filteredAgents.map((agent) => (
-            <div key={agent.id} className="agent-card" onClick={() => setSelectedAgent(agent)}>
+            <button
+              key={agent.id}
+              type="button"
+              className="agent-card"
+              onClick={() => setSelectedAgent(agent)}
+              aria-label={`Open ${agent.name} details`}
+            >
               <div className="agent-header">
                 <span className="agent-type-icon">{getTypeIcon(agent.type)}</span>
                 <div
@@ -208,7 +241,7 @@ const AgentHub: React.FC = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </button>
           ))}
 
           {/* Add New Agent Card */}
@@ -269,6 +302,23 @@ const AgentHub: React.FC = () => {
         .page-subtitle {
           color: var(--tnf-text-muted, #64748b);
           margin: 4px 0 0;
+        }
+
+        .offline-banner,
+        .offline-notice,
+        .empty-state {
+          margin-bottom: 16px;
+          padding: 12px 16px;
+          border-radius: 10px;
+          background: rgba(239, 68, 68, 0.12);
+          border: 1px solid rgba(239, 68, 68, 0.25);
+          color: #fecaca;
+        }
+
+        .empty-state {
+          background: rgba(100, 116, 139, 0.12);
+          border-color: rgba(100, 116, 139, 0.25);
+          color: #cbd5e1;
         }
 
         .header-actions {
@@ -391,6 +441,10 @@ const AgentHub: React.FC = () => {
           cursor: pointer;
           position: relative;
           overflow: hidden;
+          width: 100%;
+          text-align: left;
+          font: inherit;
+          color: inherit;
         }
 
         .agent-card::before {
@@ -571,7 +625,7 @@ const AgentHub: React.FC = () => {
           text-transform: uppercase;
         }
       `}</style>
-    </div>
+    </PageShell>
   );
 };
 
@@ -581,12 +635,21 @@ const AgentDetailModal: React.FC<{
   onClose: () => void;
   onDelete: () => void;
 }> = ({ agent, onClose, onDelete }) => {
+  const dialogRef = useModalA11y(true, onClose);
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={onClose} role="presentation">
+      <div
+        ref={dialogRef}
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="agent-detail-title"
+      >
         <div className="modal-header">
-          <h2>{agent.name}</h2>
-          <button className="close-btn" onClick={onClose}>
+          <h2 id="agent-detail-title">{agent.name}</h2>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>
@@ -766,6 +829,7 @@ const CreateAgentModal: React.FC<{
   const [type, setType] = useState<Agent['type']>('custom');
   const [description, setDescription] = useState('');
   const [model, setModel] = useState('');
+  const dialogRef = useModalA11y(true, onClose);
 
   const handleCreate = () => {
     onCreate({
@@ -784,11 +848,18 @@ const CreateAgentModal: React.FC<{
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={onClose} role="presentation">
+      <div
+        ref={dialogRef}
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-agent-title"
+      >
         <div className="modal-header">
-          <h2>Create New Agent</h2>
-          <button className="close-btn" onClick={onClose}>
+          <h2 id="create-agent-title">Create New Agent</h2>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>

@@ -66,7 +66,7 @@ export declare class ResourcesController {
         id: string;
         name: string;
         description: string;
-        category: "data" | "development" | "ai" | "automation" | "productivity" | "communication" | "other";
+        category: "data" | "development" | "productivity" | "communication" | "automation" | "ai" | "other";
         tags: string[];
         author: string;
         version: string;
@@ -93,7 +93,7 @@ export declare class ResourcesController {
         id: string;
         name: string;
         description: string;
-        category: "data" | "development" | "ai" | "automation" | "productivity" | "communication" | "other";
+        category: "data" | "development" | "productivity" | "communication" | "automation" | "ai" | "other";
         tags: string[];
         author: string;
         version: string;
@@ -120,7 +120,7 @@ export declare class ResourcesController {
         id: string;
         name: string;
         description: string;
-        category: "data" | "development" | "ai" | "automation" | "productivity" | "communication" | "other";
+        category: "data" | "development" | "productivity" | "communication" | "automation" | "ai" | "other";
         tags: string[];
         author: string;
         version: string;
@@ -150,7 +150,7 @@ export declare class ResourcesController {
         id: string;
         name: string;
         description: string;
-        category: "data" | "development" | "ai" | "automation" | "productivity" | "communication" | "other";
+        category: "data" | "development" | "productivity" | "communication" | "automation" | "ai" | "other";
         tags: string[];
         author: string;
         version: string;
@@ -178,7 +178,7 @@ export declare class ResourcesController {
         id: string;
         name: string;
         description: string;
-        category: "data" | "development" | "ai" | "automation" | "productivity" | "communication" | "other";
+        category: "data" | "development" | "productivity" | "communication" | "automation" | "ai" | "other";
         tags: string[];
         author: string;
         version: string;
@@ -206,7 +206,7 @@ export declare class ResourcesController {
         id: string;
         name: string;
         description: string;
-        category: "data" | "development" | "ai" | "automation" | "productivity" | "communication" | "other";
+        category: "data" | "development" | "productivity" | "communication" | "automation" | "ai" | "other";
         tags: string[];
         author: string;
         version: string;

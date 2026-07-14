@@ -6,6 +6,7 @@
  */
 
 import * as vscode from 'vscode';
+import { randomUUID } from 'crypto';
 import { log } from '../../utils/logger';
 
 interface RegisteredAgent {
@@ -317,7 +318,7 @@ export class AgentRegistryService {
   }
 
   private generateToken(): string {
-    return Math.random().toString(36).substring(2, 15);
+    return randomUUID();
   }
 }
 

@@ -15,48 +15,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
-// import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service';
-// import { AgentSwarmOrchestrationService } from '../../../types/core/services/agent-swarm-orchestration.service';
-// import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service';
-// import { AuthGuard } from '../../../guards/auth.guard';
-// import { RolesGuard } from '../../../guards/roles.guard';
-// import { Roles } from '../../../decorators/roles.decorator';
+const agency_analytics_service_1 = require("../services/agency-analytics.service");
 let AnalyticsController = class AnalyticsController {
-    // constructor(
-    //   private readonly enhancedAgencyService: EnhancedAgencyService,
-    //   private readonly swarmOrchestrationService: AgentSwarmOrchestrationService,
-    //   private readonly serviceCategoryRouter: ServiceCategoryRouterService
-    // ) {}
+    constructor(agencyAnalyticsService) {
+        this.agencyAnalyticsService = agencyAnalyticsService;
+    }
     async getAnalyticsOverview(agencyId, timeframe = '30d') {
-        this.notImplemented('Agency analytics overview');
+        return this.agencyAnalyticsService.getOverview(agencyId, timeframe);
     }
-    async getPerformanceMetrics(agencyId, timeframe = '7d', granularity = 'hour') {
-        this.notImplemented('Agency performance metrics');
+    async getPerformanceMetrics(agencyId, timeframe = '7d', _granularity = 'hour') {
+        return this.agencyAnalyticsService.getPerformance(agencyId, timeframe);
     }
-    async getProviderPerformance(agencyId, timeframe = '30d', categoryId) {
-        this.notImplemented('Provider performance analytics');
+    async getProviderPerformance(agencyId, timeframe = '30d', _categoryId) {
+        return this.agencyAnalyticsService.getProviderPerformance(agencyId, timeframe);
     }
-    async getQualityTrends(agencyId, timeframe = '90d', breakdown = 'category') {
-        this.notImplemented('Quality trend analytics');
-    }
-    async getUtilizationMetrics(agencyId, timeframe = '24h') {
-        this.notImplemented('Resource utilization analytics');
-    }
-    async getCostAnalysis(agencyId, timeframe = '30d', breakdown = 'category') {
-        this.notImplemented('Cost analysis');
-    }
-    async getBottleneckAnalysis(agencyId, timeframe = '7d') {
-        this.notImplemented('Bottleneck analysis');
-    }
-    async getPredictiveAnalytics(agencyId, horizon = '30d') {
-        this.notImplemented('Predictive analytics');
-    }
-    async exportAnalyticsData(agencyId, timeframe = '30d', format = 'json', include // comma-separated list
-    ) {
-        this.notImplemented('Analytics export');
-    }
-    notImplemented(feature) {
-        throw new common_1.HttpException(`${feature} is not implemented in this deployment.`, common_1.HttpStatus.NOT_IMPLEMENTED);
+    async getQualityTrends(agencyId, timeframe = '90d', _breakdown = 'category') {
+        return this.agencyAnalyticsService.getQualityTrends(agencyId, timeframe);
     }
 };
 exports.AnalyticsController = AnalyticsController;
@@ -103,65 +77,10 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getQualityTrends", null);
-__decorate([
-    (0, common_1.Get)(':agencyId/utilization'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get resource utilization metrics' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Utilization metrics retrieved' }),
-    __param(0, (0, common_1.Param)('agencyId')),
-    __param(1, (0, common_1.Query)('timeframe')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getUtilizationMetrics", null);
-__decorate([
-    (0, common_1.Get)(':agencyId/cost-analysis'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get cost analysis and billing insights' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Cost analysis retrieved' }),
-    __param(0, (0, common_1.Param)('agencyId')),
-    __param(1, (0, common_1.Query)('timeframe')),
-    __param(2, (0, common_1.Query)('breakdown')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getCostAnalysis", null);
-__decorate([
-    (0, common_1.Get)(':agencyId/bottlenecks'),
-    (0, swagger_1.ApiOperation)({ summary: 'Identify performance bottlenecks' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Bottleneck analysis retrieved' }),
-    __param(0, (0, common_1.Param)('agencyId')),
-    __param(1, (0, common_1.Query)('timeframe')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getBottleneckAnalysis", null);
-__decorate([
-    (0, common_1.Get)(':agencyId/predictions'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get predictive analytics and recommendations' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Predictions retrieved' }),
-    __param(0, (0, common_1.Param)('agencyId')),
-    __param(1, (0, common_1.Query)('horizon')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getPredictiveAnalytics", null);
-__decorate([
-    (0, common_1.Get)(':agencyId/export'),
-    (0, swagger_1.ApiOperation)({ summary: 'Export analytics data' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Analytics data exported' }),
-    __param(0, (0, common_1.Param)('agencyId')),
-    __param(1, (0, common_1.Query)('timeframe')),
-    __param(2, (0, common_1.Query)('format')),
-    __param(3, (0, common_1.Query)('include')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "exportAnalyticsData", null);
 exports.AnalyticsController = AnalyticsController = __decorate([
     (0, swagger_1.ApiTags)('analytics'),
-    (0, common_1.Controller)('analytics')
-    // @UseGuards(AuthGuard, RolesGuard)
-    // @Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN)
-    ,
-    (0, swagger_1.ApiBearerAuth)()
+    (0, common_1.Controller)('analytics'),
+    (0, swagger_1.ApiBearerAuth)(),
+    __metadata("design:paramtypes", [agency_analytics_service_1.AgencyAnalyticsService])
 ], AnalyticsController);
 //# sourceMappingURL=analytics.controller.js.map

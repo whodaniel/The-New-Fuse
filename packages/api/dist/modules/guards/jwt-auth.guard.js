@@ -14,7 +14,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
-import { toError } from '../../utils/error.js'; // Import the helper
+import { toError } from '../../utils/error'; // Import the helper
 let JwtAuthGuard = class JwtAuthGuard extends AuthGuard('jwt') {
     constructor(jwtService) {
         super();

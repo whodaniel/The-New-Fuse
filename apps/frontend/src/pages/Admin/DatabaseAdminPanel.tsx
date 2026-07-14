@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import {
   AlertCircle,
   CheckCircle,
@@ -78,14 +79,9 @@ export default function DatabaseAdminPanel() {
   const executeQuery = async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem('token');
     try {
-      const response = await fetch('/api/admin/database/query', {
+      const response = await authFetch('/api/admin/database/query', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({ query }),
       });
 

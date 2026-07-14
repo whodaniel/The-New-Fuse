@@ -1,181 +1,157 @@
-# 📜 Central Agent Status Ledger
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
 
-`[CLASS:PRIME] [STATUS:LOCKED]`
+# Agent Status Ledger
 
-This ledger tracks the active efforts of all agents within The New Fuse. Its
-purpose is to ensure radical transparency and prevent non-destructive task
-overlap.
+Updated: **2026-07-04T10:23:34.660Z** — handoff
+`d01db68f-a3dc-495e-a87d-cc02b1e1fd43` (`60586330b262`).
+`ef70c596-2124-40bd-952e-5239f3e042a0` (`baab5b2825e5`).
+`30532802-3db1-429c-80f3-245a94a7cd75` (`199370ded064`).
 
----
+## Next Agent Focus (read first)
 
-## 🟢 Active Agents & Tasks
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
-| Agent Role               | Current Task                                      | Project ID  | Start Time        | Status         |
-| :----------------------- | :------------------------------------------------ | :---------- | :---------------- | :------------- |
-| **Historian/Journalist** | Ready for new audit/dossier                       | `INFRA-002` | 2026-04-30T01:15Z | ✅ Standing By |
-| **Forge Agent**          | Ready for new implementation task                 | `FORGE-003` | 2026-04-30T01:15Z | ✅ Standing By |
-| **Antigravity**          | Orchestrating continuous full-auto evolution loop | `FORGE-004` | 2026-06-11T18:31Z | 🔄 Running     |
+Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
-| **kilo-cli** | Kilo Code CLI coding agent (multi-vendor). Seeder: tnf agents
-classify + seed-agent-registry | `INFRA-002` | 2026-06-15T05:43:38Z | ✅
-Standing By | | **opencode-cli** | opencode CLI coding agent (TUI, sessioned).
-Seeder: tnf agents classify + seed-agent-registry | `INFRA-002` |
-2026-06-15T05:43:38Z | ✅ Standing By | | **pi-coding-agent** | Pi coding agent
-(@earendil-works/pi-coding-agent). Seeder: tnf agents classify +
-seed-agent-registry | `INFRA-002` | 2026-06-15T05:43:38Z | ✅ Standing By | |
-**claude-code** | Anthropic claude-code CLI coding agent (ACP-compatible).
-Seeder: tnf agents classify + seed-agent-registry | `INFRA-002` |
-2026-06-15T05:43:38Z | ✅ Standing By | | **tnf-hermes** | TNF entry point into
-Hermes Agent (orchestration harness). Seeder: tnf agents classify +
-seed-agent-registry | `INFRA-002` | 2026-06-15T05:43:38Z | ✅ Standing By | |
-**jules** | Google Jules CLI coding agent (fixed persona, opaque observe).
-Seeder: tnf agents classify + seed-agent-registry | `INFRA-002` |
-2026-06-15T05:43:38Z | ✅ Standing By |
+1. `docs/protocols/TURN_ZERO_MANDATE.md`
+2. `docs/protocols/LIVING_STATE.md`
+3. This ledger
+4. `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
+5. `docs/protocols/reports/FEDERATION_ID_HEARTBEAT_STALL_AUDIT_2026-06-20.md`
 
----
+## Green Federation (Channel Green)
 
-## 📝 Task History & Discarded Directives
+| Component             | Identity                               | Status                                                              |
+| --------------------- | -------------------------------------- | ------------------------------------------------------------------- |
+| BROKER-Green          | `TNF:LOCAL:AGENT:TNF:BROKER_GREEN:001` | **Restart required** — `green-channel-coordinator-service.sh start` |
+| Browser Agent         | `browser-*` + `ID#:` (deterministic)   | Extension background WS bridge                                      |
+| Claude tab            | `page-agent-*` + `ID#:`                | On Green when tab synced                                            |
+| ChatGPT tab           | `page-agent-*` + `ID#:`                | On Green; inbound confirmed                                         |
+| Gemini tab            | `page-agent-*` + `ID#:`                | On Green                                                            |
+| GLM tab (`chat.z.ai`) | `page-agent-*` + `ID#:`                | On Green; passive capture in dist-v7                                |
+| Gemini compute        | `tnf-gemini-redis-wrapper`             | Running (verify with `pgrep`)                                       |
+| Relay                 | `ws://127.0.0.1:3007/ws`               | OK                                                                  |
 
-| Date       | Agent        | Action                                                                                                                                                                                        | Outcome          |
-| :--------- | :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------- |
-| 2026-06-15 | Kilo         | Hardened TNF persistence: factory-boot now starts and records local Redis, factory-supervisor watches Redis health, and tnf-start-ai provisions MCP configs with local-tolerant doctor checks | ✅ COMPLETED     |
-| 2026-06-12 | Antigravity  | Resolved production auth failure, synced Drizzle schema to Supabase, and fixed API backend errors                                                                                             | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Bootstrapped infinite continuous full-auto evolution loop via tnf CLI                                                                                                                         | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Fixed Playwright E2E version conflict and decoupled TNF CLI services from legacy .hermes to ~/.tnf including daemon paths and TS method alignments.                                           | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Removed @ts-nocheck from main.tsx and App.tsx in Frontend, resolving 0 type errors via strict verification.                                                                                   | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Triaged Phase 7 pipeline and promoted 14 actionable directives to ready state.                                                                                                                | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Audited and bulk blocked 665 irrelevant V2 YouTube-extracted AI5 directives in Phase 7 loop                                                                                                   | ✅ COMPLETED     |
-| 2026-06-11 | Antigravity  | Auto-dispatched 600 eligible AI5 directives to Swarm (bypassed strict relevance gate for V2)                                                                                                  | ✅ COMPLETED     |
-| 2026-06-09 | Orchestrator | Published SESSION_HANDOFF_LATEST (7be3faa3-c136-498c-89a7-89b78ef7e4b7)                                                                                                                       | ✅ HANDOFF_READY |
-| 2026-06-09 | Antigravity  | Frontend UI Consolidation: Merged fragmented dashboards and chat interfaces into Unified Communication Canvas and Command Center (Hermes-derived) without functionality loss                  | ✅ COMPLETED     |
-| 2026-06-09 | Antigravity  | Phase 6 Initiation: Integrated Rust Envelope validator into Relay bridge, stress-tested protocol contracts (>9500 env/s), generated AI5 KPI report                                            | ✅ COMPLETED     |
-| 2026-06-03 | Codex        | TNF boot resilience repair: health-aware port preflight, wrapper liveness checks, bounded WhatsApp verifier, and portable Turn Zero prompt verification                                       | ✅ COMPLETED     |
-| 2026-06-03 | Antigravity  | Skill Management Context Optimization (Active/Inactive Vaults implementation for Codex and TNF)                                                                                               | ✅ COMPLETED     |
-| 2026-05-23 | Orchestrator | AI5 Ingestion Pipeline Optimization (V2 Extractor & Batch Reprocessing)                                                                                                                       | ✅ COMPLETED     |
-| 2026-05-19 | Orchestrator | Published SESSION_HANDOFF_LATEST and updated Living State                                                                                                                                     | ✅ COMPLETED     |
-| 2026-05-17 | Orchestrator | Published SESSION_HANDOFF_LATEST (0e3baf56-6336-4c3f-bd2e-b560f0c0a8a3)                                                                                                                       | ✅ HANDOFF_READY |
+## Federated ID Coverage (2026-06-20)
 
-| 2026-05-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(5cf28663-200c-4acb-a72b-79120d3aa610) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(8ec5c854-ca74-4b6b-9e1c-c5d22a8f4032) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(b8eb979b-d850-4785-8e6a-211cc2de57a0) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(b8d3a237-2094-4c52-b682-a36e330cd964) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(49803185-a57d-4a59-94d1-4985a3cd2b55) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(398f71d0-4e6a-40bf-8856-00e49c2e3449) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(3866d5c5-d799-452e-973a-254a28e6476f) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(1a310224-18ad-4132-92f3-164d335adafe) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(32fc7788-0d33-455b-80e3-3c4c01e50768) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(37908447-bfb0-497c-9e08-ff1f6d43312b) | ✅ HANDOFF_READY | | 2026-05-17 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(c0388925-c460-4e9a-b81c-f237119e8252) | ✅ HANDOFF_READY | | 2026-05-16 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(b652e7e6-0766-4276-b4dd-d13539aa8a69) | ✅ HANDOFF_READY | | 2026-05-16 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(a4d29772-5f90-4ed8-b410-26ea89b9c3df) | ✅ HANDOFF_READY | | 2026-05-16 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(befe9583-c01c-4eff-aea3-52afa013a1ed) | ✅ HANDOFF_READY | | 2026-05-16 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(8962e426-2c03-408f-8a38-102f4350558a) | ✅ HANDOFF_READY | | 2026-05-16 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(1b28e7bd-44ca-4619-ac5e-81319f9848ec) | ✅ HANDOFF_READY | | 2026-05-16 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(2513f21c-85f1-4e1d-99fa-e2d09756ab47) | ✅ HANDOFF_READY | | 2026-05-16 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(6455d324-03f4-4a9e-9501-d8e7dca22e5a) | ✅ HANDOFF_READY | | 2026-05-15 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(a75cb480-a3f0-4932-bba3-068fb86a51a8) | ✅ HANDOFF_READY | | 2026-05-15 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(773cfca4-ae2d-455e-ad67-8e757be25980) | ✅ HANDOFF_READY | | 2026-05-15 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(db769e69-13a6-4a49-8ea3-b5d6512e3793) | ✅ HANDOFF_READY | | 2026-05-13 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(a32d5ff0-d240-40d8-805f-1a00bc8aa2cf) | ✅ HANDOFF_READY | | 2026-05-13 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(8483dc33-4d11-40b6-a910-8efac9ee1508) | ✅ HANDOFF_READY | | 2026-05-12 |
-Antigravity | Published SESSION_HANDOFF_LATEST
-(a5e0f1ce-46a8-4de3-83a2-7e25b0537eac) | ✅ HANDOFF_READY | | 2026-05-12 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(f66c6f21-91e9-4631-8356-bc5652b080de) | ✅ HANDOFF_READY | | 2026-05-12 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(a49b3fd1-952b-4de9-8b50-50094cee53cb) | ✅ HANDOFF_READY | | 2026-05-12 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(08248622-7b7c-4b58-83bb-05a6248141c1) | ✅ HANDOFF_READY | | 2026-05-12 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(99f16bff-37af-43d6-9463-32e0c08cfe09) | ✅ HANDOFF_READY | | 2026-05-12 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(b8cdeeff-280e-49c4-bee4-ea4486d18501) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(8da47304-efee-40d7-b1d2-933e32f514f4) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(60f8bc2b-dabb-4c78-ab35-1573eb299c3d) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(517d98fe-419a-45e9-93b0-0bdb2c0649e3) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(a948453a-9d5c-4e85-99a2-0de098be8399) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(7d735791-57d7-4bf9-a149-c2bfcab3d9d7) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(fea8cad3-3654-4145-81ab-a3d45b515605) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(7ba96455-2618-4baf-b27c-0b83cc50d5ef) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(55a33618-fd92-404d-8179-4e08ae735387) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(06fcd27c-f5f8-407e-b09a-8a2c28f279e4) | ✅ HANDOFF_READY | | 2026-05-11 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(7d5e88fe-d80f-41c5-8ace-07208a1076de) | ✅ HANDOFF_READY | | 2026-05-09 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(f8a45236-da31-458c-a25a-4ca1bc6a8609) | ✅ HANDOFF_READY | | 2026-05-09 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(97610355-ca12-4433-b560-3e2bcae5716f) | ✅ HANDOFF_READY | | 2026-05-09 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(6cbeeb5a-ce3b-4297-96e3-2f597c4b4b13) | ✅ HANDOFF_READY | | 2026-05-09 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(c3143ce4-923b-4b04-b1dc-4554e4527cbe) | ✅ HANDOFF_READY | | 2026-05-09 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(b7adee4d-22c7-4e08-b4e8-91cdb794930b) | ✅ HANDOFF_READY | | 2026-05-08 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(8f8e3766-f17c-4504-83f3-0cbb14ba67e6) | ✅ HANDOFF_READY | | 2026-05-08 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(59c4d423-8c52-47d5-a632-d3d03e30f56a) | ✅ HANDOFF_READY | | 2026-05-08 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(9ab4dd15-fd0c-4b0f-bace-024dd4c556e9) | ✅ HANDOFF_READY | | 2026-05-08 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(534067fc-ffb5-4cf8-9791-6ca7612684ad) | ✅ HANDOFF_READY | | 2026-05-08 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(5d02211d-7fb5-44de-8b4b-f430dbc499f0) | ✅ HANDOFF_READY | | 2026-05-08 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(0d4aeac8-a747-47e7-9ba5-6a428efa73b8) | ✅ HANDOFF_READY | | 2026-05-08 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(b0fb3c7b-9ea3-413b-b182-b913ec6c852d) | ✅ HANDOFF_READY | | 2026-05-08 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(34e24b45-a7b0-441f-97b4-3b94eb3dc4b6) | ✅ HANDOFF_READY | | 2026-05-08 |
-Orchestrator | Published `SESSION_HANDOFF_LATEST` and enforced TNF handoff gate
-| ✅ HANDOFF_READY | | 2026-04-30 | Historian | High-Scale Forge: 100%
-Extraction Density | ✅ GAP CLOSED (645 Artifacts) | | 2026-04-30 | System Admin
-| Emergency Maintenance: Freed 1.4GB disk space | ✅ Infrastructure Restored | |
-2026-04-29 | System Admin | Context Pruning (Deleted 38MB session) | ✅ System
-Stabilized | | 2026-04-29 | Historian | Codified Active State Maintenance
-Protocol | ✅ Protocols Updated | | 2026-04-29 | Historian | Created Gemini 3.1
-Dossier & Incident Report | ✅ Documentation Synced | | 2026-04-29 | Historian |
-Discarded YouTube #635 & #643 | 🛑 OUT OF SCOPE (User Directive) |
+| Layer                       | canonicalEntityId | idNumber | mcid                            |
+| --------------------------- | ----------------- | -------- | ------------------------------- |
+| Master Clock self-prompt    | ✅                | —        | ✅ full v0.1 + gates            |
+| BROKER-Green                | ✅                | bridge   | ✅                              |
+| Extension MESSAGE_SEND      | ✅                | ✅       | ✅                              |
+| Extension HEARTBEAT         | ✅                | ✅       | —                               |
+| Frontload onboarding packet | ✅                | ✅       | ✅                              |
+| Stall recovery frames       | ✅ broker         | ✅       | ✅ full mcid + causation        |
+| Session handoff JSON emit   | ✅                | ✅       | ✅ federation_lineage v1.1      |
+| SelfPrompter steps          | ✅                | ✅       | ✅ per-step mcid + relay mirror |
 
----
+## Heartbeat / Stall Defensive Stack
 
-## 🔔 Reporting Protocol
+| Process                   | Interval            | ID metadata                                   |
+| ------------------------- | ------------------- | --------------------------------------------- |
+| Master Clock              | 3s heartbeat        | AGENT-XX assignment                           |
+| Relay StallDetector       | 45s stall threshold | broker idNumber + mcid on recovery            |
+| Extension page heartbeats | 30s                 | **idNumber + canonicalEntityId (2026-06-20)** |
+| BROKER-Green              | 30s                 | broker mcid on register                       |
+| Extension stall watchdog  | configurable        | wake_ping events (no idNumber)                |
 
-1. **Log In:** Register your task at the start of a session.
-2. **Heartbeat:** Update status if the task changes significantly.
-3. **Log Out:** Move task to history upon completion.
+### Newly Registered (This Session)
 
-| 2026-05-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(e1b3750d-e4f9-4cf8-a249-e02de0f848e6) | ✅ HANDOFF_READY |
+| Agent                       | Identity                                          | Status                                           |
+| --------------------------- | ------------------------------------------------- | ------------------------------------------------ |
+| agent-registry-manager      | `TNF:LOCAL:AGENT:AGENT-REGISTRY-MANAGER:001`      | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| backend-specialist          | `TNF:LOCAL:AGENT:BACKEND-SPECIALIST:001`          | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| reputation-management-agent | `TNF:LOCAL:AGENT:REPUTATION-MANAGEMENT-AGENT:001` | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| LLM API Scout Agent         | `TNF:LOCAL:AGENT:LLM API SCOUT AGENT:001`         | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| LLM Endpoint Tester Agent   | `TNF:LOCAL:AGENT:LLM ENDPOINT TESTER AGENT:001`   | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| thenewfuse-frontend-tester  | `TNF:LOCAL:AGENT:THENEWFUSE-FRONTEND-TESTER:001`  | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| tnf-fleet-health-probe      | `TNF:LOCAL:AGENT:TNF-FLEET-HEALTH-PROBE:001`      | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+| LLM Validation Worker Agent | `TNF:LOCAL:AGENT:LLM VALIDATION WORKER AGENT:001` | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+
+## Protocol Gaps (prioritized)
+
+1. **BROKER-Green intermittent** — must start after fleet restart
+2. **Extension + relay reload mandatory** — dist-v7 + relay restart; verify with
+   `curl -sS http://127.0.0.1:3007/health` (no `/handoff-lineage` route)
+3. **Master Clock sequential idNumber** — requires Redis bridge live for
+   REGISTRATION_CONFIRMED
+4. **Phase 2** — intent frames, CER, snapshot versioning (ChatGPT spec)
+
+## Session Logs
+
+- `~/.tnf/green-coordinator/federation-session-log.jsonl`
+- `~/.tnf/green-coordinator/four-agent-session.jsonl`
+- `~/.tnf/green-coordinator/inbound-ai-responses.jsonl`
+- `~/.tnf/handoff-current.json` (mirror of SESSION_HANDOFF)
+
+## Operator
+
+- **Director**: `cursor-auto-operator`
+- **Active channel**: Green
+- **Handoff ID**: `ee61db00-218d-4d00-8539-54c2d153d8a6`
+- **Cumulative mcid**: `27ba9127-5afb-41bc-83f9-d365a54c8315`
+- **Next**: P0 restart checklist in SESSION_HANDOFF_LATEST.md → four-agent
+  verification
+
+| 2026-06-20 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ee61db00-218d-4d00-8539-54c2d153d8a6) | ✅ HANDOFF_READY |
+
+| 2026-06-21 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0f195b52-6711-46ea-9c1e-6c33587e29aa) | ✅ HANDOFF_READY |
+
+| 2026-06-21 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3780c9a4-ea23-4700-8037-37d5684bfc2b) | ✅ HANDOFF_READY |
+
+| 2026-06-21 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(72de22f9-f7d7-4496-b07c-e1dd86770854) | ✅ HANDOFF_READY |
+
+| 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(cffffbbe-d465-4593-a419-9905dd389fad) | ✅ HANDOFF_READY |
+
+| 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7c63cbe6-5db1-4be1-95bc-1ee6ce3d108c) | ✅ HANDOFF_READY |
+
+| 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(30532802-3db1-429c-80f3-245a94a7cd75) | ✅ HANDOFF_READY |
+
+| 2026-06-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ef70c596-2124-40bd-952e-5239f3e042a0) | ✅ HANDOFF_READY |
+
+| 2026-06-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3a181f47-0cb6-4278-b6bd-aa53b295116c) | ✅ HANDOFF_READY |
+
+| 2026-06-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(43bca6ff-0a6f-43d2-95c1-f59b126553c4) | ✅ HANDOFF_READY |
+
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d01db68f-a3dc-495e-a87d-cc02b1e1fd43) | ✅ HANDOFF_READY |
+
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d0d35edf-5c65-4990-912b-774bf158d0b5) | ✅ HANDOFF_READY |
+
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(05334c5e-8773-4bfe-becb-1f8d0e044330) | ✅ HANDOFF_READY |
+
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(be71f172-3ff8-4cf4-8c08-5e18a75ed453) | ✅ HANDOFF_READY |
+
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(606a375f-a504-45f1-97f7-0476fdbf46b6) | ✅ HANDOFF_READY |
+
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(08937909-fa3a-4bbb-8035-6a96f2187daf) | ✅ HANDOFF_READY |
+
+| 2026-07-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(35c4fae2-f532-4ff7-a269-fd88507a3691) | ✅ HANDOFF_READY |
+
+| 2026-07-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(df1eb476-5bc0-416e-a438-fd9bde17a793) | ✅ HANDOFF_READY |
+
+| 2026-07-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(31caf6d5-0612-4c58-9a88-e3209ed6f19a) | ✅ HANDOFF_READY | | 2026-07-14 |
+Orchestrator | Recreated control-plane-contracts + pushed agent status
+(38848cd6) | ✅ HANDOFF_READY |

@@ -8,8 +8,12 @@ SERVICE_HOME="$HOME/.tnf/terminal-heartbeat"
 BIN_DIR="$SERVICE_HOME/bin"
 LOG_DIR="$SERVICE_HOME/logs"
 STATE_DIR="$SERVICE_HOME/state"
-SOURCE_SCRIPT="$HOME/.tnf/bin/terminal-heartbeat-pulse.cjs"
+# Canonical source = repo runtime script. The OLD code used
+# $HOME/.tnf/bin/... as both source and destination which is a no-op;
+# fix is to read from the repo and mirror to two destinations.
+CANONICAL_SCRIPT="${ROOT_DIR}/scripts/runtime/terminal-heartbeat-pulse.cjs"
 MIRRORED_SCRIPT="$BIN_DIR/terminal-heartbeat-pulse.cjs"
+HOME_BIN_SCRIPT="$HOME/.tnf/bin/terminal-heartbeat-pulse.cjs"
 LOG_FILE="$LOG_DIR/cron.log"
 NODE_BIN_VALUE="${TNF_TERMINAL_HEARTBEAT_NODE_BIN:-$(command -v node)}"
 SCHEDULE_VALUE="${TNF_TERMINAL_HEARTBEAT_CRON_SCHEDULE:-* * * * *}"
@@ -20,17 +24,55 @@ ensure_dirs() {
   mkdir -p "$STATE_DIR"
 }
 
+# Resolve the canonical repo root from this script's location
+# (scripts/runtime/terminal-heartbeat-cron.sh) so we can mirror the
+# helper library that ships alongside it. scripts/lib is the layout
+# the runtime scripts expect when they `require('../lib/...')` —
+# if ~/.tnf/lib/ is missing those requires fail with MODULE_NOT_FOUND.
+REPO_ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REPO_LIB_DIR="${REPO_ROOT_DIR}/scripts/lib"
+HOME_LIB_DIR="$HOME/.tnf/lib"
+
+sync_lib() {
+  ensure_dirs
+  if [ -d "$REPO_LIB_DIR" ]; then
+    mkdir -p "$HOME_LIB_DIR"
+    # Mirror any .cjs / .js / .sh that the runtime scripts require from
+    # ../lib. Keep this idempotent and silent — we do NOT want boot
+    # to fail when scripts/lib is empty (it's optional).
+    # NOTE: avoid bash's extglob `*.{a,b}` here — it requires `shopt -s
+    # extglob` first, and bash 3.x on older macOS barfs on bare brace
+    # expansion. Three explicit loops stay portable.
+    for f in "$REPO_LIB_DIR"/*.cjs "$REPO_LIB_DIR"/*.js "$REPO_LIB_DIR"/*.sh; do
+      [ -e "$f" ] || continue
+      cp -f "$f" "$HOME_LIB_DIR/"
+    done
+  fi
+}
+
 sync_script() {
   ensure_dirs
-  cp "$SOURCE_SCRIPT" "$MIRRORED_SCRIPT"
+  # Mirror the canonical repo script to BOTH known homes so cron
+  # (which launches from SERVICE_HOME) and ad-hoc shells (which may
+  # invoke ~/.tnf/bin/<x> directly) both get the latest binary.
+  if [ ! -f "$CANONICAL_SCRIPT" ]; then
+    echo "[terminal-heartbeat-cron] missing canonical script at $CANONICAL_SCRIPT" >&2
+    return 1
+  fi
+  cp "$CANONICAL_SCRIPT" "$MIRRORED_SCRIPT"
   chmod +x "$MIRRORED_SCRIPT"
+  mkdir -p "$(dirname "$HOME_BIN_SCRIPT")"
+  cp "$CANONICAL_SCRIPT" "$HOME_BIN_SCRIPT"
+  chmod +x "$HOME_BIN_SCRIPT"
 }
 
 cron_line() {
-  printf '%s cd "%s" && PATH="%s:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" TNF_TERMINAL_HEARTBEAT_STATE_DIR="%s" "%s" "%s" >> "%s" 2>&1 %s\n' \
+  printf '%s cd "%s" && PATH="%s:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" NODE_PATH="%s/node_modules:%s/packages/tnf-cli/node_modules" TNF_TERMINAL_HEARTBEAT_STATE_DIR="%s" "%s" "%s" >> "%s" 2>&1 %s\n' \
     "$SCHEDULE_VALUE" \
     "$SERVICE_HOME" \
     "$(dirname "$NODE_BIN_VALUE")" \
+    "${REPO_ROOT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}" \
+    "${REPO_ROOT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}" \
     "$STATE_DIR" \
     "$NODE_BIN_VALUE" \
     "$MIRRORED_SCRIPT" \
@@ -39,6 +81,7 @@ cron_line() {
 }
 
 install_cron() {
+  sync_lib
   sync_script
   local tmp_cron
   tmp_cron="$(mktemp)"

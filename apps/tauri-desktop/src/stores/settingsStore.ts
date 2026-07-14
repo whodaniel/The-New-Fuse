@@ -1,6 +1,14 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import {
+  ENV_ENDPOINTS,
+  deriveWsUrlFromApi,
+  type EndpointSet,
+  type TnfDesktopEnvironment,
+} from '../config/endpoints';
+import { safeStorage } from '../lib/safeStorage';
 import BrowserControlService from '../services/BrowserControlService';
+import FederationNodeService from '../services/FederationNodeService';
 import apiService from '../services/api';
 import wsService from '../services/websocket';
 
@@ -8,7 +16,7 @@ import wsService from '../services/websocket';
  * Settings Store - Manage application settings and connection state
  */
 
-export type Environment = 'local' | 'sandbox' | 'production' | 'custom';
+export type Environment = TnfDesktopEnvironment;
 
 interface SettingsState {
   environment: Environment;
@@ -22,20 +30,7 @@ interface SettingsState {
   toggleCloudMode: () => void;
 }
 
-const ENV_CONFIG: Record<Exclude<Environment, 'custom'>, { api: string; ws: string }> = {
-  local: {
-    api: 'http://localhost:3001',
-    ws: 'ws://localhost:3001/ws',
-  },
-  sandbox: {
-    api: 'https://api-gateway-241337102384.us-central1.run.app',
-    ws: 'wss://api-gateway-241337102384.us-central1.run.app/ws', // Backend typically handles WS on the same port/domain
-  },
-  production: {
-    api: 'https://thenewfuse.com/api',
-    ws: 'wss://thenewfuse.com/ws', // Assumes /ws is the WebSocket endpoint on production
-  },
-};
+const ENV_CONFIG: Record<Exclude<Environment, 'custom'>, EndpointSet> = ENV_ENDPOINTS;
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
@@ -48,31 +43,30 @@ export const useSettingsStore = create<SettingsState>()(
       setEnvironment: (env) => {
         let apiUrl = '';
         let wsUrl = '';
+        let relayUrl = '';
 
         if (env === 'custom') {
           apiUrl = get().customApiUrl;
-          // Simple derivation for custom URLs, can be improved or made explicit in UI later
-          wsUrl = apiUrl.startsWith('https')
-            ? apiUrl.replace('https', 'wss').replace('/api', '') + '/ws'
-            : apiUrl.replace('http', 'ws').replace('/api', '') + '/ws';
+          wsUrl = deriveWsUrlFromApi(apiUrl);
+          relayUrl = ENV_CONFIG.local.relay;
         } else {
           const config = ENV_CONFIG[env as Exclude<Environment, 'custom'>];
           apiUrl = config.api;
           wsUrl = config.ws;
+          relayUrl = config.relay;
         }
 
         set({ environment: env, apiUrl });
 
-        // Update services
         if (apiUrl) {
           apiService.setBaseUrl(apiUrl);
         }
         if (wsUrl) {
           wsService.setUrl(wsUrl);
-          // Assuming Relay shares the same WS URL structure for now,
-          // or we can add a specific 'relay' field to ENV_CONFIG later.
-          // For now, syncing them ensures "Cloud" mode points to Cloud WS.
-          BrowserControlService.setRelayUrl(wsUrl);
+        }
+        if (relayUrl) {
+          BrowserControlService.setRelayUrl(relayUrl);
+          FederationNodeService.setRelayUrl(relayUrl);
         }
       },
 
@@ -97,10 +91,16 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'tnf-settings-store',
+      storage: createJSONStorage(() => safeStorage),
       // Ensure we re-apply the base URL on load
       onRehydrateStorage: () => (state) => {
         if (state?.apiUrl) {
           apiService.setBaseUrl(state.apiUrl);
+        }
+        if (state?.environment && state.environment !== 'custom') {
+          const relayUrl = ENV_CONFIG[state.environment].relay;
+          BrowserControlService.setRelayUrl(relayUrl);
+          FederationNodeService.setRelayUrl(relayUrl);
         }
       },
     }

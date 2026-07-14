@@ -4,10 +4,9 @@
 
 set -euo pipefail
 
-if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
-    # shellcheck disable=SC1090
-    source "$HOME/bin/voicebridge-paths.sh"
-fi
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=voicebridge-paths.sh
+source "$_SCRIPT_DIR/voicebridge-paths.sh"
 usage() {
     echo "Usage: listen [--profile A|B|...]"
 }
@@ -80,6 +79,7 @@ else
     LISTEN_STREAM_FILE="${LISTEN_STREAM_FILE:-$VOICEBRIDGE_STATE_DIR/voice_stream.txt}"
 fi
 LISTEN_PRESS_ENTER="${LISTEN_PRESS_ENTER:-1}"
+LISTEN_SILENCE_END_SECONDS="${LISTEN_SILENCE_END_SECONDS:-2.8}"
 MODEL_CANDIDATES=(
   "${LISTEN_WHISPER_MODEL:-}"
   "$MODEL_DIR/ggml-large-v3-turbo.bin"
@@ -277,7 +277,14 @@ append_to_stream() {
     if [[ "$mode" == "stream" || "$mode" == "auto" ]]; then
         if [[ "$mode" == "stream" || -f "$LISTEN_STREAM_FILE" || stream_bridge_active ]]; then
             mkdir -p "$(dirname "$LISTEN_STREAM_FILE")"
-            printf '%s\n' "$text" >> "$LISTEN_STREAM_FILE"
+            tagged="$(
+                VOICEBRIDGE_PROFILE="$VOICEBRIDGE_PROFILE" \
+                python3 "$_SCRIPT_DIR/voice_user_tag.py" "$text"
+            )"
+            if [[ -z "$tagged" ]]; then
+                tagged="$text"
+            fi
+            printf '%s\n' "$tagged" >> "$LISTEN_STREAM_FILE"
             echo "✅ DONE (stream): $text"
             return 0
         fi
@@ -311,9 +318,19 @@ inject_keystroke_fallback() {
 run_once() {
     local args output text
 
+    if command -v voicebridge_state_file >/dev/null 2>&1; then
+        LISTEN_MIC_PAUSE_FILE="$(voicebridge_state_file "voice_mic_paused")"
+    else
+        LISTEN_MIC_PAUSE_FILE="${VOICEBRIDGE_STATE_DIR}/voice_mic_paused"
+    fi
+    if [[ -f "$LISTEN_MIC_PAUSE_FILE" ]]; then
+        sleep 0.35
+        return
+    fi
+
     echo ""
-    echo "🎙️  LISTENING... (Speak now, then pause for 2 seconds)"
-    rec -q -c 1 -r 16000 "$AUDIO_FILE" silence 1 0.1 3% 1 2.0 3% 2>/dev/null
+    echo "🎙️  LISTENING... (Speak now, then pause for ${LISTEN_SILENCE_END_SECONDS}s)"
+    rec -q -c 1 -r 16000 "$AUDIO_FILE" silence 1 0.1 3% 1 "${LISTEN_SILENCE_END_SECONDS}" 3% 2>/dev/null
 
     if [[ ! -s "$AUDIO_FILE" ]]; then
         sleep 0.25

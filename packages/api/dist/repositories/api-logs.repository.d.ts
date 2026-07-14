@@ -172,15 +172,15 @@ export declare class ApiLogsRepository {
     private readonly db;
     constructor(db: DrizzleClient);
     logRequest(data: typeof apiLogs.$inferInsert): Promise<{
-        id: string;
-        userAgent: string;
-        createdAt: Date;
-        method: string;
-        path: string;
-        statusCode: number;
         userId: string;
         duration: number;
+        id: string;
+        createdAt: Date;
         ip: string;
+        method: string;
+        statusCode: number;
+        userAgent: string;
+        path: string;
     }[]>;
     getRecentLogs(limit?: number): Promise<{
         id: string;

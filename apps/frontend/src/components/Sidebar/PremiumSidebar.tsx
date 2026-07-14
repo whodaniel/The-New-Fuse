@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, X, Zap } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { SIDEBAR_NAVIGATION, type SidebarNavItem } from '../../config/sidebarNavigation';
@@ -71,28 +71,19 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
       >
         <div className="flex flex-col h-full">
           {/* Logo Area */}
-          <div className="h-14 flex items-center px-4 border-b border-slate-800">
+          <div className="h-14 shrink-0 flex items-center justify-between px-3 border-b border-slate-800 overflow-hidden">
             <div
-              className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}
+              className={`flex items-center gap-2.5 min-w-0 ${isCollapsed ? 'justify-center w-full' : ''}`}
             >
-              {!isCollapsed && (
+              <div className="shrink-0 w-8 h-8 rounded-md border border-slate-700/80 bg-slate-900/90 flex items-center justify-center overflow-hidden p-1">
                 <img
                   src={TNF_LOGO_URL}
-                  alt="The New Fuse"
-                  className="h-7 w-auto object-contain"
+                  alt={isCollapsed ? 'TNF' : 'The New Fuse'}
+                  className="max-h-full max-w-full w-auto h-auto object-contain"
                 />
-              )}
-              {isCollapsed && (
-                <img
-                  src={TNF_LOGO_URL}
-                  alt="TNF"
-                  className="h-7 w-7 object-contain"
-                />
-              )}
+              </div>
               {!isCollapsed && (
-                <span className="text-base font-semibold text-slate-100 whitespace-nowrap">
-                  The New Fuse
-                </span>
+                <span className="text-sm font-semibold text-slate-100 truncate">The New Fuse</span>
               )}
             </div>
             <button

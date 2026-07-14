@@ -2,6 +2,8 @@ import { GlassCard, StatsCard } from '@/components/ui/premium/GlassCard';
 import { PremiumButton } from '@/components/ui/premium/PremiumButton';
 import GraphVisualizerWrapper from '@/components/wizard/graph/GraphVisualizer';
 import { useAuthorization } from '@/hooks/useAuthorization';
+import { relayGetJson, relayGetOptionalJson } from '@/services/relayHttp.client';
+import { authFetch } from '@/utils/authToken';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import {
   Activity,
@@ -181,7 +183,7 @@ const getActivityMetadata = (activity: ActivityEvent): ActivityMetadata =>
   asMetadata(activity.metadata) || {};
 
 const mapRawActivityEvent = (e: Record<string, unknown>): ActivityEvent => ({
-  id: String(e.id || e.streamId || `evt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`),
+  id: String(e.id || e.streamId || `evt-${Date.now()}-${crypto.randomUUID()}`),
   type: String(e.type || e.eventType || 'message'),
   source: String(e.source || 'system'),
   content: String(e.content || ''),
@@ -592,9 +594,11 @@ export default function SuperAdminControlPanel() {
 
   const syncRecentActivity = useCallback(async () => {
     try {
-      const res = await fetch(`${relayHttpBase}/activity/recent?count=80`);
-      if (!res.ok) return;
-      const payload = await res.json();
+      const payload = await relayGetOptionalJson<{ events?: unknown[] }>(
+        relayHttpBase,
+        '/activity/recent?count=80'
+      );
+      if (!payload) return;
       const rows: ActivityEvent[] = (payload?.events || []).map(mapRawActivityEvent);
       if (!rows.length) return;
 
@@ -615,22 +619,11 @@ export default function SuperAdminControlPanel() {
     }
   }, [relayHttpBase]);
 
-  const adminAuthHeaders = useCallback(() => {
-    const token = localStorage.getItem('token');
-    const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
-    return headers;
-  }, []);
-
   const loadChronologicalProcesses = useCallback(async () => {
     setChronologicalLoading(true);
     setChronologicalError(null);
     try {
-      const res = await fetch('/api/admin/metrics/chronological-processes', {
-        headers: {
-          ...adminAuthHeaders(),
-        },
-      });
+      const res = await authFetch('/api/admin/metrics/chronological-processes');
       if (!res.ok) {
         throw new Error(`Failed to load chronological control plane (${res.status})`);
       }
@@ -662,7 +655,7 @@ export default function SuperAdminControlPanel() {
     } finally {
       setChronologicalLoading(false);
     }
-  }, [adminAuthHeaders]);
+  }, []);
 
   const updateProcessDraft = useCallback(
     (
@@ -690,12 +683,8 @@ export default function SuperAdminControlPanel() {
       setBusyProcessMap((prev) => ({ ...prev, [process.id]: true }));
       setChronologicalError(null);
       try {
-        const res = await fetch(`/api/admin/metrics/chronological-processes/${process.id}`, {
+        const res = await authFetch(`/api/admin/metrics/chronological-processes/${process.id}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            ...adminAuthHeaders(),
-          },
           body: JSON.stringify({
             enabled: draft.enabled,
             cadence: draft.cadence,
@@ -717,7 +706,7 @@ export default function SuperAdminControlPanel() {
         setBusyProcessMap((prev) => ({ ...prev, [process.id]: false }));
       }
     },
-    [adminAuthHeaders, loadChronologicalProcesses, processDrafts]
+    [loadChronologicalProcesses, processDrafts]
   );
 
   const runChronologicalProcessNow = useCallback(
@@ -725,12 +714,10 @@ export default function SuperAdminControlPanel() {
       setBusyProcessMap((prev) => ({ ...prev, [process.id]: true }));
       setChronologicalError(null);
       try {
-        const res = await fetch(`/api/admin/metrics/chronological-processes/${process.id}/run`, {
-          method: 'POST',
-          headers: {
-            ...adminAuthHeaders(),
-          },
-        });
+        const res = await authFetch(
+          `/api/admin/metrics/chronological-processes/${process.id}/run`,
+          { method: 'POST' }
+        );
         if (!res.ok) {
           const errorText = await res.text();
           throw new Error(errorText || `Run failed (${res.status})`);
@@ -744,39 +731,31 @@ export default function SuperAdminControlPanel() {
         setBusyProcessMap((prev) => ({ ...prev, [process.id]: false }));
       }
     },
-    [adminAuthHeaders, loadChronologicalProcesses]
+    [loadChronologicalProcesses]
   );
 
-  const openProcessHistoryModal = useCallback(
-    async (process: ChronologicalProcess) => {
-      setHistoryModalProcess(process);
-      setHistoryModalLoading(true);
-      setHistoryModalError(null);
-      setHistoryModalData(null);
-      try {
-        const res = await fetch(
-          `/api/admin/metrics/chronological-processes/${process.id}/history?limit=200`,
-          {
-            headers: {
-              ...adminAuthHeaders(),
-            },
-          }
-        );
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(errorText || `History failed (${res.status})`);
-        }
-        const payload = (await res.json()) as ChronologicalProcessHistoryPayload;
-        setHistoryModalData(payload);
-      } catch (err) {
-        console.error(`Failed to load process history ${process.id}`, err);
-        setHistoryModalError(`Unable to load history for ${process.title}.`);
-      } finally {
-        setHistoryModalLoading(false);
+  const openProcessHistoryModal = useCallback(async (process: ChronologicalProcess) => {
+    setHistoryModalProcess(process);
+    setHistoryModalLoading(true);
+    setHistoryModalError(null);
+    setHistoryModalData(null);
+    try {
+      const res = await authFetch(
+        `/api/admin/metrics/chronological-processes/${process.id}/history?limit=200`
+      );
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || `History failed (${res.status})`);
       }
-    },
-    [adminAuthHeaders]
-  );
+      const payload = (await res.json()) as ChronologicalProcessHistoryPayload;
+      setHistoryModalData(payload);
+    } catch (err) {
+      console.error(`Failed to load process history ${process.id}`, err);
+      setHistoryModalError(`Unable to load history for ${process.title}.`);
+    } finally {
+      setHistoryModalLoading(false);
+    }
+  }, []);
 
   const closeProcessHistoryModal = useCallback(() => {
     setHistoryModalProcess(null);
@@ -848,12 +827,12 @@ export default function SuperAdminControlPanel() {
     setLoading(true);
     try {
       const [healthRes, activityRes, agentsRes, channelsRes] = await Promise.all([
-        fetch(`${relayHttpBase}/health`).then((res) => (res.ok ? res.json() : null)),
-        fetch(`${relayHttpBase}/activity/recent?count=50`).then((res) =>
-          res.ok ? res.json() : { events: [] }
-        ),
-        fetch(`${relayHttpBase}/agents`).then((res) => (res.ok ? res.json() : [])),
-        fetch(`${relayHttpBase}/channels`).then((res) => (res.ok ? res.json() : [])),
+        relayGetOptionalJson<Record<string, unknown>>(relayHttpBase, '/health'),
+        relayGetJson<{ events?: unknown[] }>(relayHttpBase, '/activity/recent?count=50', {
+          events: [],
+        }),
+        relayGetJson<unknown[]>(relayHttpBase, '/agents', []),
+        relayGetJson<unknown[]>(relayHttpBase, '/channels', []),
       ]);
 
       if (healthRes) {
@@ -978,11 +957,7 @@ export default function SuperAdminControlPanel() {
     if (!confirm('EMERGENCY: Are you sure you want to HALT ALL AGENTS across the network?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/autonomous/director/stop', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await authFetch('/api/autonomous/director/stop', { method: 'POST' });
       if (res.ok) {
         alert('HALT command issued successfully.');
       } else {

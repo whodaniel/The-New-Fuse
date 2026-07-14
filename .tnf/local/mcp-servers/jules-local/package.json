@@ -1,0 +1,14 @@
+{
+  "name": "@tnf/jules-local",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TNF-native polyfill MCP server implementing the minimal Jules surface required by Phase 7 (status, create-task, get-task). Self-contained — no external dependency on cloud. Jules.",
+  "type": "module",
+  "bin": {
+    "tnf-jules-local": "./bin/mcp-server.mjs"
+  },
+  "scripts": {
+    "start": "node ./bin/mcp-server.mjs"
+  },
+  "dependencies": {}
+}

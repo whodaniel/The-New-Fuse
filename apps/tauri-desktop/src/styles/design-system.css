@@ -42,6 +42,20 @@
   --tnf-shadow-neon: 0 0 15px rgba(99, 102, 241, 0.3);
 }
 
+html.light {
+  --tnf-obsidian: #f8fafc;
+  --tnf-deep-space: #e2e8f0;
+  --tnf-surface: rgba(255, 255, 255, 0.85);
+  --tnf-surface-hover: rgba(241, 245, 249, 0.95);
+  --tnf-surface-active: rgba(226, 232, 240, 1);
+  --tnf-border: rgba(15, 23, 42, 0.12);
+  --tnf-border-hover: rgba(15, 23, 42, 0.2);
+  --tnf-text-primary: #0f172a;
+  --tnf-text-secondary: #334155;
+  --tnf-text-muted: #64748b;
+  --tnf-shadow-neon: 0 0 15px rgba(99, 102, 241, 0.15);
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;

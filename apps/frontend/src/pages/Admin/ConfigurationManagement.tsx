@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { authFetch } from '@/utils/authToken';
 import {
   AlertTriangle,
   CheckCircle,
@@ -44,12 +45,7 @@ export default function ConfigurationManagement() {
   const loadConfigs = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/config', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const response = await authFetch('/api/admin/config');
 
       if (!response.ok) {
         throw new Error(`Failed to fetch configuration: ${response.statusText}`);
@@ -97,12 +93,8 @@ export default function ConfigurationManagement() {
 
   const handleSave = async (key: string) => {
     try {
-      const response = await fetch(`/api/admin/config/${key}`, {
+      const response = await authFetch(`/api/admin/config/${key}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
         body: JSON.stringify({ value: editValue }),
       });
 

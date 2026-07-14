@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { apiService } from '../services/api';
 
 export interface User {
   id: string;
@@ -9,44 +10,73 @@ export interface User {
   photoURL?: string;
 }
 
-export const useAuth = () => {
+interface AuthContextValue {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  isConfigured: boolean;
+  loginWithGoogle: () => Promise<void>;
+  logout: () => Promise<void>;
+  isAuthenticated: boolean;
+}
+
+const syncApiToken = async () => {
+  if (!isSupabaseConfigured) {
+    apiService.clearToken();
+    return;
+  }
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    apiService.setToken(session.access_token);
+  } else {
+    apiService.clearToken();
+  }
+};
+
+const AuthContext = createContext<AuthContextValue | null>(null);
+
+const mapUser = (supabaseUser: SupabaseUser): User => ({
+  id: supabaseUser.id,
+  email: supabaseUser.email || '',
+  name: supabaseUser.user_metadata?.full_name || supabaseUser.email || '',
+  photoURL: supabaseUser.user_metadata?.avatar_url || undefined,
+});
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const mapUser = (supabaseUser: SupabaseUser): User => {
-    return {
-      id: supabaseUser.id,
-      email: supabaseUser.email || '',
-      name: supabaseUser.user_metadata?.full_name || supabaseUser.email || '',
-      photoURL: supabaseUser.user_metadata?.avatar_url || undefined,
-    };
-  };
-
   useEffect(() => {
-    // Check active session
     const initAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         if (session?.user) {
           setUser(mapUser(session.user));
         }
-      } catch (err: any) {
+        await syncApiToken();
+      } catch (err: unknown) {
         console.error('Error initializing auth:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    initAuth();
+    void initAuth();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser(mapUser(session.user));
       } else {
         setUser(null);
       }
+      void syncApiToken();
       setLoading(false);
     });
 
@@ -59,15 +89,15 @@ export const useAuth = () => {
     setLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error: authError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
-        }
+          redirectTo: window.location.origin,
+        },
       });
-      if (error) throw error;
-    } catch (err: any) {
-      setError(err.message);
+      if (authError) throw authError;
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
       setLoading(false);
     }
   }, []);
@@ -75,22 +105,33 @@ export const useAuth = () => {
   const logout = useCallback(async () => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      const { error: authError } = await supabase.auth.signOut();
+      if (authError) throw authError;
       setUser(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
   }, []);
 
-  return {
+  const value: AuthContextValue = {
     user,
     loading,
     error,
+    isConfigured: isSupabaseConfigured,
     loginWithGoogle,
     logout,
     isAuthenticated: !!user,
   };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = (): AuthContextValue => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

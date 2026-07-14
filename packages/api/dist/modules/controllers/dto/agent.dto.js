@@ -98,7 +98,7 @@ __decorate([
     ApiProperty({
         description: 'Primary configuration payload',
         required: false,
-        type: Object,
+        type: 'object',
         additionalProperties: true,
     }),
     __metadata("design:type", Object)
@@ -108,7 +108,7 @@ __decorate([
     ApiProperty({
         description: 'Configuration alias from legacy/new UI payloads',
         required: false,
-        type: Object,
+        type: 'object',
         additionalProperties: true,
     }),
     __metadata("design:type", Object)
@@ -118,7 +118,7 @@ __decorate([
     ApiProperty({
         description: 'Public profile metadata',
         required: false,
-        type: Object,
+        type: 'object',
         additionalProperties: true,
     }),
     __metadata("design:type", Object)

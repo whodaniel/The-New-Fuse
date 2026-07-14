@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { SuggestionStatus, TaskStatus } from '../types';
-import { useUndoRedo } from './useUndoRedo';
+import { SuggestionStatus, TaskStatus } from '../types/index.js';
+import { useUndoRedo } from './useUndoRedo.js';
 // Temporarily commented out to fix build
 // import {
 //   Table,

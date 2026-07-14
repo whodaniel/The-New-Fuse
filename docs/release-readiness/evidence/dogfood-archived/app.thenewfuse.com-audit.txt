@@ -1,0 +1,61 @@
+=== Security Audit for app.thenewfuse.com ===
+
+1. DNS Resolution:
+104.21.33.201
+172.67.166.88
+
+2. Security Headers:
+HTTP/2 200 
+date: Tue, 05 May 2026 15:11:18 GMT
+content-type: text/html; charset=utf-8, text/html; charset=utf-8
+access-control-allow-origin: *
+cache-control: public, max-age=0, must-revalidate
+etag: "418662913ac81e372f8415a73379d309"
+x-tnf-routing: SPA-App
+access-control-allow-headers: Content-Type, Authorization, X-Requested-With
+access-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS
+cross-origin-opener-policy: same-origin-allow-popups
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=gyXaCkdyC4cYv8i1N5vHxh%2BmANd469kO8l1fqBvodXUTRpUoR0BjA%2F6QsLIfdzdVC1Nh2F2VFbW4w9IrU0XIswXqLzFsR1oY0llQ1WLZZWl07l3kQKlEPRGB6wvWrmDTRhbT6Kg%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 9f70ad4eff6f90c6-ORD
+alt-svc: h3=":443"; ma=86400
+
+
+3. CORS Audit:
+   Testing with evil origin:
+access-control-allow-origin: *
+
+   Testing CORS error code:
+   Status with evil origin: 200
+
+4. Route Availability:
+   /login: 200
+   /register: 200
+   /dashboard: 200
+   /pricing: 301
+   /docs: 301
+   /api/health: 200
+
+5. Information Disclosure:
+   Checking for version/internal info:
+          // Patch prototype AND instance so polyfills or wrappers calling either path are protected.
+              'path',
+            // Scheduler module - used internally by React, some external scripts try to import it directly
+    <meta name="api-version" content="v1.0" />
+
+   Checking for exposed API docs:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="wi
+
+   Checking for API index:
+{"statusCode":404,"timestamp":"2026-05-05T15:11:31.558Z","path":"/api/v1","method":"GET","message":"
+
+/Users/danielgoldberg/.hermes/skills/dogfood/scripts/quick-security-audit.sh: line 196: syntax error: unexpected end of file

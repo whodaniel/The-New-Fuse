@@ -1,5 +1,2 @@
-/**
- * TNF Federation Types - Shared Package Export
- */
-
-export * from './types.js';
+export * from './protocol.js';
+export * from './FederationNodeClient.js';

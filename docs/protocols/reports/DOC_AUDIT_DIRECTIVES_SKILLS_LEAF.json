@@ -1,0 +1,356 @@
+{
+  "triad": {
+    "docs/protocols/DIRECTIVES.md": {
+      "exists": true,
+      "bytes": 23633,
+      "class": "PRIME",
+      "status": "LOCKED",
+      "mentions_canonical": true,
+      "superseded_by": null,
+      "protocol_id": "TNF_DIRECTIVES_CANONICAL"
+    },
+    "docs/protocols/TNF_DIRECTIVES.md": {
+      "exists": true,
+      "bytes": 22934,
+      "class": "PRIME",
+      "status": "ARCHIVED",
+      "mentions_canonical": true,
+      "superseded_by": "docs/protocols/DIRECTIVES.md",
+      "protocol_id": null
+    },
+    "docs/protocols/LIVING_DIRECTIVES_CARD.md": {
+      "exists": true,
+      "bytes": 3929,
+      "class": "PRIME",
+      "status": null,
+      "mentions_canonical": true,
+      "superseded_by": null,
+      "protocol_id": null
+    },
+    ".agent/skills/tnf-directives/SKILL.md": {
+      "exists": true,
+      "bytes": 6320,
+      "class": "PRIME",
+      "status": null,
+      "mentions_canonical": true,
+      "superseded_by": null,
+      "protocol_id": null
+    }
+  },
+  "canonical_verdict": "DIRECTIVES.md is canonical; LIVING_DIRECTIVES_CARD is one-pager; TNF_DIRECTIVES is ARCHIVED",
+  "skills_total": 545,
+  "skills_categories": {
+    ".system": 2,
+    "agent-browser": 1,
+    "agent-discovery-protocol": 1,
+    "anthropic": 16,
+    "antigravity": 235,
+    "api-gateway": 1,
+    "auto-updater": 1,
+    "automation-workflows": 1,
+    "baidu-search": 1,
+    "blogwatcher": 1,
+    "brave-search": 1,
+    "browser-automation": 1,
+    "browser-session-auth-bridge": 1,
+    "business-law-specialist-agent": 1,
+    "byterover": 1,
+    "chatgpt-apps": 1,
+    "clawddocs": 1,
+    "clawhub-skill-scout": 1,
+    "cloudflare-deploy": 1,
+    "context-frontloader": 1,
+    "continuous-improvement": 1,
+    "cursor-watch-learn-operator": 1,
+    "data": 2,
+    "design-md": 1,
+    "develop-web-game": 1,
+    "doc": 1,
+    "dogfood": 12,
+    "dual-swarm-isolation": 1,
+    "elite-longterm-memory": 1,
+    "engineering": 5,
+    "enhance-prompt": 1,
+    "env-manager": 1,
+    "feedback-integration": 1,
+    "figma": 1,
+    "figma-implement-design": 1,
+    "find-skills": 1,
+    "framework-consciousness": 1,
+    "free-ride": 1,
+    "frontend-design": 1,
+    "gh-address-comments": 1,
+    "gh-fix-ci": 1,
+    "github": 1,
+    "gmail": 1,
+    "gog": 1,
+    "himalaya": 1,
+    "humanize-ai-text": 1,
+    "humanizer": 1,
+    "imagegen": 1,
+    "imported-claude-agents": 118,
+    "jules-autonomous-loop": 1,
+    "jules-delegation": 1,
+    "jules-followup-ops": 1,
+    "jupyter-notebook": 1,
+    "keychain-login-autotype": 1,
+    "library-of-living-knowledge": 1,
+    "limitation-challenge-schema-loop": 1,
+    "linear": 1,
+    "lnbits-with-qrcode": 1,
+    "long-range-business-plan-architect": 1,
+    "master-of-taxonomies": 1,
+    "mcporter": 1,
+    "meta": 1,
+    "model-usage": 1,
+    "multimodal-feature-extraction": 1,
+    "nano-banana-pro": 1,
+    "nano-pdf": 1,
+    "netlify-deploy": 1,
+    "news-scouting": 1,
+    "notion": 1,
+    "notion-knowledge-capture": 1,
+    "notion-meeting-intelligence": 1,
+    "notion-research-documentation": 1,
+    "notion-spec-to-implementation": 1,
+    "obsidian": 1,
+    "openai-docs": 1,
+    "openai-whisper": 1,
+    "openclaw-assistant-setup": 1,
+    "openclaw-oauth-rotation": 1,
+    "openclaw-onboarding-wizard": 1,
+    "openclaw-protocol": 1,
+    "openclaw-provider-rollout": 1,
+    "openclaw-sherpa": 1,
+    "openclaw-sherpa-service": 1,
+    "openclaw-universal-knowledge": 1,
+    "openclaw-wizard-cli-automation": 1,
+    "openclaw-wizard-cli-reference": 1,
+    "ops": 4,
+    "orchestrator": 1,
+    "pdf": 1,
+    "personal-archaeology-orchestration": 1,
+    "personal-historical-archaeology": 1,
+    "planning-with-files": 1,
+    "playwright": 1,
+    "proactive-agent": 1,
+    "react-components": 1,
+    "remotion": 1,
+    "render-deploy": 1,
+    "report-lifecycle": 1,
+    "review-bugbot": 1,
+    "review-security": 1,
+    "screenshot": 1,
+    "security": 13,
+    "security-best-practices": 1,
+    "security-ownership-map": 1,
+    "security-threat-model": 1,
+    "self-improving-agent": 1,
+    "sentry": 1,
+    "shadcn-ui": 1,
+    "skill-builder": 1,
+    "skill-creator": 1,
+    "slack": 1,
+    "sonoscli": 1,
+    "sora": 1,
+    "speech": 1,
+    "spreadsheet": 1,
+    "sspdf": 1,
+    "sspdf-theme-generator": 1,
+    "stitch-direct": 1,
+    "stitch-loop": 1,
+    "stock-analysis": 1,
+    "summarize": 1,
+    "tavily-search": 1,
+    "tnf-cli-agent-interoperability": 1,
+    "tnf-cli-parity-upgrade": 1,
+    "tnf-cli-sdk-interoperability": 1,
+    "tnf-cursor-harness-protocol": 1,
+    "tnf-directives": 1,
+    "tnf-framework-overview": 1,
+    "tnf-frontend-deploy": 1,
+    "tnf-full-auto-network-autopilot": 1,
+    "tnf-growth-audit": 1,
+    "tnf-harness-master-loop": 1,
+    "tnf-harness-protocol": 1,
+    "tnf-health-check": 1,
+    "tnf-iphone-vision-bridge": 1,
+    "tnf-multi-agent-state-governor": 1,
+    "tnf-timeline-debug": 1,
+    "transcribe": 1,
+    "vercel-deploy": 1,
+    "video-frames": 1,
+    "voice-link-trigger": 1,
+    "weather": 1,
+    "web-game-deterministic-loop": 1,
+    "webpilot": 1,
+    "yeet": 1,
+    "youtube-api-skill": 1,
+    "youtube-watcher": 1
+  },
+  "skills_sampled": 25,
+  "skills_broken": [
+    {
+      "skill": ".agent/skills/.system/skill-creator/SKILL.md",
+      "missing": [
+        "scripts/rotate_pdf.py",
+        "references/finance.md",
+        "references/mnda.md",
+        "references/policies.md",
+        "references/api_docs.md"
+      ]
+    },
+    {
+      "skill": ".agent/skills/agent-discovery-protocol/SKILL.md",
+      "missing": ["YYYY-MM-DDTHH-MM-SS_{Channel}_orchestration.md"]
+    },
+    {
+      "skill": ".agent/skills/clawddocs/SKILL.md",
+      "missing": ["recent.sh"]
+    },
+    {
+      "skill": ".agent/skills/clawhub-skill-scout/SKILL.md",
+      "missing": [
+        "python3 scripts/check_clawhub_api.py",
+        "/path/to/.codex/skills/skill-builder/SKILL.md",
+        "/path/to/.codex/skills/openai-docs/SKILL.md",
+        "python3 scripts/check_clawhub_api.py",
+        "install_shortlist.py"
+      ]
+    },
+    {
+      "skill": ".agent/skills/context-frontloader/SKILL.md",
+      "missing": ["CLAUDE.md"]
+    },
+    {
+      "skill": ".agent/skills/continuous-improvement/SKILL.md",
+      "missing": ["scripts/improver/scan.js", "scripts/improver/fix-env.js"]
+    },
+    {
+      "skill": ".agent/skills/cursor-watch-learn-operator/SKILL.md",
+      "missing": [
+        "metadata.json",
+        "analysis/timeline.json",
+        "analysis/event_report.json",
+        "analysis/actionable_report.md",
+        "analysis/full_summation.json",
+        "analysis/llm_interpretations.json",
+        "analysis/full_summation.json"
+      ]
+    },
+    {
+      "skill": ".agent/skills/design-md/SKILL.md",
+      "missing": ["DESIGN.md", "DESIGN.md", "DESIGN.md"]
+    }
+  ],
+  "agents_paths": [
+    {
+      "ref": "AGENTS.md",
+      "resolved": "AGENTS.md"
+    },
+    {
+      "ref": "GET /categories",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "GET /categories/Agent%20%26%20System",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "GET /distribution",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "GET /files?search=agent&count=30",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "GET /lookup?query=agent&max_results=20",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "GET /power-phrases",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "GET /power-phrases/agent",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "GET /stats",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "GET /top?count=50&category=Agent%20%26%20System",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "MEMORY.md",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "POST /lookup",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "SKILLS.md",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "SOUL.md",
+      "resolved": ".agent/SOUL.md"
+    },
+    {
+      "ref": "apps/frontend/public/visualizations/TNF_CONCORDANCE_VISUALIZER.html",
+      "resolved": "apps/frontend/public/visualizations/TNF_CONCORDANCE_VISUALIZER.html"
+    },
+    {
+      "ref": "concordance_results/",
+      "resolved": "concordance_results"
+    },
+    {
+      "ref": "docs/TNF_INTELLIGENCE_PIPELINE_GAUNTLET.md",
+      "resolved": "docs/TNF_INTELLIGENCE_PIPELINE_GAUNTLET.md"
+    },
+    {
+      "ref": "https://wslydgtgindrywldatbv.supabase.co/functions/v1/concordance/",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525/",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "packages/mcp-concordance-server/",
+      "resolved": "packages/mcp-concordance-server"
+    },
+    {
+      "ref": "packages/ui-consolidated/src/components/features/concordance-viewer/ConcordanceViewer.tsx",
+      "resolved": "packages/ui-consolidated/src/components/features/concordance-viewer/ConcordanceViewer.tsx"
+    },
+    {
+      "ref": "px * (25.4/96) = mm",
+      "resolved": "MISSING"
+    },
+    {
+      "ref": "runtime-state.json",
+      "resolved": ".agent/runtime-state.json"
+    },
+    {
+      "ref": "scripts/generate_concordance.py",
+      "resolved": "scripts/generate_concordance.py"
+    },
+    {
+      "ref": "scripts/generate_concordance_viz.py",
+      "resolved": "scripts/generate_concordance_viz.py"
+    },
+    {
+      "ref": "supabase/functions/concordance/index.ts",
+      "resolved": "supabase/functions/concordance/index.ts"
+    },
+    {
+      "ref": "~/.agents/skills/concordance/SKILL.md",
+      "resolved": "MISSING"
+    }
+  ]
+}

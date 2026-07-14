@@ -24,7 +24,7 @@ tnf
 ### Setup
 
 ```bash
-git clone https://github.com/whodaniel/fuse.git
+git clone https://github.com/whodaniel/The-New-Fuse.git
 cd fuse
 pnpm install
 pnpm run docker:start    # PostgreSQL (5433) + Redis (6380)

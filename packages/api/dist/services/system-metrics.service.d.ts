@@ -4,7 +4,7 @@
  * Provides real-time system and application metrics.
  */
 import { type DrizzleClient } from '@the-new-fuse/database';
-import { ApiLogsRepository } from '../repositories/api-logs.repository.js';
+import { ApiLogsRepository } from '../repositories/api-logs.repository';
 export declare class SystemMetricsService {
     private readonly db;
     private readonly apiLogsRepository;

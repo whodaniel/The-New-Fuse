@@ -1,5 +1,6 @@
-import { apiService } from '@/services/api';
+import AISourceSelector from '@/components/ai/AISourceSelector';
 import { agentService } from '@/services/AgentService';
+import { aiSourceService } from '@/services/aiSource.service';
 import { resourcesService } from '@/services/resources.service';
 import { useWorkflow } from '@/contexts/WorkflowContext';
 import { useAuthorization } from '@/hooks/useAuthorization';
@@ -25,6 +26,7 @@ import { toast } from 'sonner';
 
 interface WorkflowAIAssistantPanelProps {
   onApplyMeta?: (name?: string, description?: string) => void;
+  initialPrompt?: string;
 }
 
 type AiWorkflowSpec = {
@@ -100,12 +102,13 @@ User request: ${prompt}`;
 
 export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> = ({
   onApplyMeta,
+  initialPrompt,
 }) => {
   const { nodes, edges, actions } = useWorkflow();
   const { user } = useAuth();
   const { workspace } = useWorkspace();
   const { isSuperAdmin, isAnyAgencyAdmin } = useAuthorization();
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState(initialPrompt || '');
   const [mode, setMode] = useState<'replace' | 'append'>('replace');
   const [selectedAgent, setSelectedAgent] = useState('');
   const [templates, setTemplates] = useState<{ id: string; name: string }[]>([]);
@@ -117,6 +120,12 @@ export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> =
     () => ['input', 'agent', 'mcpTool', 'prompt', 'condition', 'transform', 'loop', 'subworkflow', 'output', 'notification', 'a2a'],
     []
   );
+
+  useEffect(() => {
+    if (initialPrompt?.trim()) {
+      setPrompt(initialPrompt.trim());
+    }
+  }, [initialPrompt]);
 
   useEffect(() => {
     const loadOptions = async () => {
@@ -219,9 +228,8 @@ export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> =
           },
         });
       } else {
-        responsePayload = await apiService.post('/orchestration/chat', {
+        const result = await aiSourceService.chat({
           message,
-          swarmId: 'default-swarm',
           context: {
             intent: 'workflow_generation',
             workspaceId: workspace?.id,
@@ -231,6 +239,7 @@ export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> =
             userId: user?.id,
           },
         });
+        responsePayload = { response: result.text };
       }
 
       const text = extractText(responsePayload);
@@ -272,6 +281,7 @@ export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> =
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!selectedAgent ? <AISourceSelector compact label="AI Source" /> : null}
         <div className="space-y-2">
           <Label className="text-xs text-muted-foreground">Prompt</Label>
           <Input

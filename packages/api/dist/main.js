@@ -7,15 +7,15 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger } from '@nestjs/common';
-import { AppModule } from './app.module.js';
-import { GlobalExceptionFilter } from './filters/global-exception.filter.js';
+import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
 async function bootstrap() {
     const logger = new Logger('Bootstrap');
     // Create NestJS application
     const app = await NestFactory.create(AppModule);
     // Get configuration
     const configService = app.get(ConfigService);
-    const port = configService.get('PORT', 3000);
+    const port = configService.get('API_PORT', 3000);
     // Set global prefix for all routes
     app.setGlobalPrefix('api/v1');
     // Enable CORS

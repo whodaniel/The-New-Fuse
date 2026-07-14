@@ -60,7 +60,7 @@ interface PendingRequest {
 
 class BrowserControlServiceClass extends EventEmitter<BrowserControlEvent> {
   private ws: WebSocket | null = null;
-  private relayUrl: string = 'ws://localhost:3000';
+  private relayUrl: string = 'ws://127.0.0.1:3000/ws';
   private connected: boolean = false;
 
   setRelayUrl(url: string) {
@@ -93,6 +93,10 @@ class BrowserControlServiceClass extends EventEmitter<BrowserControlEvent> {
   async connect(relayUrl?: string): Promise<boolean> {
     if (relayUrl) {
       this.relayUrl = relayUrl;
+    }
+
+    if (this.connected && this.ws?.readyState === WebSocket.OPEN) {
+      return true;
     }
 
     console.log(`🔌 Connecting to TNF Relay at ${this.relayUrl}...`);

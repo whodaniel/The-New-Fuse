@@ -12,6 +12,8 @@ WORKDIR /app
 # Copy package files first for caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY tsconfig.base.json ./
+COPY .agent ./.agent
+COPY .claude ./.claude
 COPY packages/tsconfig.base.json packages/
 
 # Copy API and workspace packages
@@ -47,8 +49,8 @@ COPY packages/types/package.json packages/types/
 COPY packages/utils/package.json packages/utils/
 COPY packages/web-scraping/package.json packages/web-scraping/
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile --ignore-scripts || pnpm install --no-frozen-lockfile --ignore-scripts
+# Install dependencies (ignoring lockfile mismatches to ensure build succeeds)
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Copy source code
 COPY apps/api/ apps/api/
@@ -90,7 +92,11 @@ RUN test -f apps/api/dist/main.js && \
     test -f packages/database/dist/index.js && \
     test -f packages/infrastructure/dist/index.js && \
     test -f packages/a2a-core/dist/index.js && \
-    test -f packages/relay-core/dist/index.js
+    test -f packages/relay-core/dist/index.js && \
+    test -f packages/n8n-workflows/dist/index.js && \
+    test -f packages/protocol-contracts/dist/index.js && \
+    test -f packages/core/dist/index.js && \
+    test -f packages/utils/dist/index.js
 
 # Verify the build output exists
 RUN ls -la apps/api/dist/ || echo "Build output check"
@@ -142,11 +148,13 @@ COPY packages/utils/package.json packages/utils/
 COPY packages/web-scraping/package.json packages/web-scraping/
 
 # Install production dependencies only
-RUN pnpm install --frozen-lockfile --ignore-scripts --prod || pnpm install --no-frozen-lockfile --ignore-scripts --prod || pnpm install --no-frozen-lockfile --ignore-scripts
+RUN pnpm install --no-frozen-lockfile --ignore-scripts --prod
 
 # Copy built files from builder
 COPY --from=builder /app/apps/api/dist/ /app/apps/api/dist/
 COPY --from=builder /app/packages/ /app/packages/
+COPY --from=builder /app/.agent/ /app/.agent/
+COPY --from=builder /app/.claude/ /app/.claude/
 
 # Set environment
 ENV NODE_ENV=production

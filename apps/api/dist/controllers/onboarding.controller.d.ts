@@ -11,12 +11,12 @@ export declare class OnboardingController {
     constructor(authService: AuthService, configService: ConfigService);
     start(body: OnboardingStartDto, req: Request): Promise<{
         success: boolean;
-        userType: "human" | "ai_agent";
+        userType: "ai_agent" | "human";
         sessionId: string;
         inviteOnly: boolean;
         access: {
             inviteValidated: boolean;
-            inviteSource: "env" | "db" | null;
+            inviteSource: "db" | "env" | null;
             tokenValidated: boolean;
         };
     }>;

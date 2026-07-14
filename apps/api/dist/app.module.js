@@ -38,6 +38,8 @@ const community_controller_1 = require("./controllers/community.controller");
 const compounding_memory_controller_1 = require("./controllers/compounding-memory.controller");
 const health_controller_1 = require("./controllers/health.controller");
 const llm_intel_controller_1 = require("./controllers/llm-intel.controller");
+const public_info_controller_1 = require("./controllers/public-info.controller");
+const bridges_controller_1 = require("./controllers/bridges.controller");
 const mcp_controller_1 = require("./controllers/mcp.controller");
 const models_controller_1 = require("./controllers/models.controller");
 const n8n_workflows_controller_1 = require("./controllers/n8n-workflows.controller");
@@ -113,7 +115,7 @@ let AppModule = class AppModule {
         // TODO: Re-enable after fixing middleware implementation
         consumer
             .apply(enhanced_security_middleware_1.EnhancedSecurityMiddleware)
-            .exclude('agents/(.*)', 'a2a/(.*)', 'system/(.*)') // Global prefix adds /api
+            .exclude('agents/(.*)', 'a2a/(.*)', 'system/(.*)', 'auth/(.*)') // Global prefix adds /api
             .forRoutes('*');
     }
 };
@@ -212,6 +214,8 @@ exports.AppModule = AppModule = __decorate([
             admin_openclaw_oauth_controller_1.AdminOpenClawOAuthController,
             n8n_workflows_controller_1.N8nWorkflowsController,
             onboarding_controller_1.OnboardingController,
+            public_info_controller_1.PublicInfoController, // M02: /docs, /pricing, /features as JSON
+            bridges_controller_1.BridgesController, // M05: /bridges/telegram, /bridges/whatsapp health
         ],
         providers: [
             app_service_1.AppService,
@@ -220,7 +224,7 @@ exports.AppModule = AppModule = __decorate([
             // LLM Provider Services
             {
                 provide: llm_provider_service_1.LLM_REGISTRY,
-                useClass: llm_provider_service_1.MockLLMRegistry,
+                useClass: llm_provider_service_1.InMemoryLLMRegistry,
             },
             llm_provider_service_1.LLMProviderService,
             agent_pfp_overrides_service_1.AgentPfpOverridesService,

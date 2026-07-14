@@ -5,6 +5,7 @@
  * build orchestration with staged execution and real-time monitoring.
  */
 import { EventEmitter } from 'events';
+import { BuildProcessThrottler } from '../concurrency/BuildProcessThrottler.js';
 import { ConcurrencyController } from '../concurrency/ConcurrencyController.js';
 import { DependencyGraphAnalyzer } from '../dependency/DependencyGraphAnalyzer.js';
 import { DEFAULT_CONFIG } from '../index.js';
@@ -19,19 +20,27 @@ export class BuildOrchestrator extends EventEmitter {
     memoryMonitor;
     dependencyAnalyzer;
     concurrencyController;
+    buildThrottler;
     typescriptManager;
     isBuilding = false;
     shouldStop = false;
     currentStrategy;
     buildStartTime = 0;
     buildMetrics = this.initializeMetrics();
-    constructor(workspaceRoot = process.cwd(), systemResourceDetector, memoryMonitor, dependencyAnalyzer, concurrencyController, typescriptManager) {
+    constructor(workspaceRoot = process.cwd(), systemResourceDetector, memoryMonitor, dependencyAnalyzer, concurrencyController, typescriptManager, buildThrottler) {
         super();
         // Initialize components with defaults if not provided
         this.systemResourceDetector = systemResourceDetector || new SystemResourceDetector();
         this.memoryMonitor = memoryMonitor || MemoryMonitor.getInstance();
         this.dependencyAnalyzer = dependencyAnalyzer || new DependencyGraphAnalyzer();
         this.concurrencyController = concurrencyController || new ConcurrencyController();
+        this.buildThrottler =
+            buildThrottler ||
+                new BuildProcessThrottler({
+                    maxConcurrency: this.concurrencyController.getCurrentConcurrency(),
+                    memoryThreshold: DEFAULT_CONFIG.MEMORY_THRESHOLD_MB, // Use a default or strategy-defined threshold
+                    processMemoryLimit: DEFAULT_CONFIG.PROCESS_MEMORY_LIMIT_MB,
+                });
         this.typescriptManager = typescriptManager || new TypeScriptCompilationManager();
         // Set up memory monitoring callbacks
         this.setupMemoryMonitoring();
@@ -55,6 +64,7 @@ export class BuildOrchestrator extends EventEmitter {
             this.memoryMonitor.setThreshold(strategy.memoryThreshold);
             // Set up concurrency control
             this.concurrencyController.setMaxConcurrency(strategy.maxConcurrency);
+            this.buildThrottler.setMaxConcurrency(this.concurrencyController.getCurrentConcurrency());
             // Analyze dependencies and create build stages
             const workspaceRoot = process.cwd();
             const dependencies = await this.dependencyAnalyzer.analyzeDependencies(workspaceRoot);
@@ -264,11 +274,19 @@ export class BuildOrchestrator extends EventEmitter {
      * Build a single package
      */
     async buildPackage(packageName, strategy) {
-        // This is a placeholder for actual package building logic
-        // In a real implementation, this would call bun build or similar
-        // Simulate build time (shorter for tests)
-        const buildTime = Math.random() * 200 + 100; // 100-300ms
-        await this.sleep(buildTime);
+        // Use BuildProcessThrottler to execute the build command
+        const taskId = `build-${packageName}-${Date.now()}`;
+        const command = 'turbo'; // Assuming turbo is in PATH
+        const args = ['run', 'build', `--filter=${packageName}`];
+        // Add task to throttler and wait for completion
+        const result = await this.buildThrottler.addTask({
+            id: taskId,
+            command,
+            args,
+            cwd: process.cwd(), // Or the package's specific directory if needed
+            timeout: strategy.buildTimeout || DEFAULT_CONFIG.DEFAULT_BUILD_TIMEOUT, // Add DEFAULT_BUILD_TIMEOUT to config
+        });
+        await this.buildThrottler.waitForTask(taskId);
         // Check if we should use TypeScript compilation optimization
         if (strategy.enableIncremental) {
             // Use TypeScript manager for .ts/.tsx files
@@ -311,6 +329,7 @@ export class BuildOrchestrator extends EventEmitter {
             this.concurrencyController.adjustConcurrency(usage);
             const newConcurrency = this.concurrencyController.getCurrentConcurrency();
             if (newConcurrency !== oldConcurrency) {
+                this.buildThrottler.setMaxConcurrency(newConcurrency); // Synchronize with throttler
                 this.emitBuildEvent('concurrency-adjusted', {
                     oldConcurrency,
                     newConcurrency,

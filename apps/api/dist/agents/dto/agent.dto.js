@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentResponseDto = exports.UpdateAgentDto = exports.CreateAgentDto = exports.AgentProfileDto = void 0;
 const class_validator_1 = require("class-validator");
@@ -65,7 +64,7 @@ __decorate([
 ], CreateAgentDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsEnum)(types_1.AgentType),
-    __metadata("design:type", typeof (_a = typeof types_1.AgentType !== "undefined" && types_1.AgentType) === "function" ? _a : Object)
+    __metadata("design:type", String)
 ], CreateAgentDto.prototype, "type", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -118,7 +117,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEnum)(types_1.AgentStatus),
-    __metadata("design:type", typeof (_b = typeof types_1.AgentStatus !== "undefined" && types_1.AgentStatus) === "function" ? _b : Object)
+    __metadata("design:type", String)
 ], UpdateAgentDto.prototype, "status", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),

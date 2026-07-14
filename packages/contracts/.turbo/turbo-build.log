@@ -1,6 +1,0 @@
-
-> @the-new-fuse/contracts@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts
-> hardhat compile 2>/dev/null || tsc --noEmit --skipLibCheck || echo 'contracts: build ok (solidity-only package)'
-
-
- ELIFECYCLE  Command failed.

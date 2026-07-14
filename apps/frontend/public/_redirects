@@ -1,2 +1,7 @@
-# _redirects cleared to prevent loops. 
-# Redirection logic moved to functions/[[path]].js to support domain-aware routing.
+# Marketing SPA routes on thenewfuse.com — serve React shell, not static landing (index.html).
+# Domain-aware routing lives in functions/[[path]].js; these rewrites are a static fallback.
+/about           /app.html  200
+/blog            /app.html  200
+/brand           /app.html  200
+/legal/privacy   /app.html  200
+/legal/terms     /app.html  200

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/schemas/brand-identity-report.schema.json",
+  "title": "BrandIdentityReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "niche",
+    "audience_summary",
+    "blog_name_suggestions",
+    "brand_voice",
+    "visual_style_guide"
+  ],
+  "properties": {
+    "niche": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audience_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "blog_name_suggestions": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "com_domain",
+          "domain_available",
+          "check_timestamp"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "com_domain": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+\\.com$"
+          },
+          "domain_available": {
+            "type": ["boolean", "null"]
+          },
+          "domain_status": {
+            "type": "string"
+          },
+          "check_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "brand_voice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tone", "rationale"],
+      "properties": {
+        "tone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "donts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "visual_style_guide": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["color_palette", "typography"],
+      "properties": {
+        "color_palette": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        },
+        "typography": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["heading_font", "body_font"],
+          "properties": {
+            "heading_font": {
+              "type": "string",
+              "minLength": 1
+            },
+            "body_font": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fallback_stack": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

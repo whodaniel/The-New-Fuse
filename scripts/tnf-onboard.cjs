@@ -11,6 +11,8 @@ const CANONICAL_SESSION_HANDOFF_MD = 'docs/protocols/reports/SESSION_HANDOFF_LAT
 const CANONICAL_TURN_ZERO_MANDATE = 'docs/protocols/TURN_ZERO_MANDATE.md';
 const DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS = 8000;
 const DEFAULT_FRONTLOAD_BUDGET_WORDS = 3500;
+const FRONTLOAD_BUDGET_FLOOR_WORDS = 800;
+const FLEET_PROBE_TIMEOUT_MS = 3000;
 const FRONTLOAD_CHECKLIST = [
   '.agent/SYSTEM_PROMPT.md',
   '.agent/context/resource-map.md',
@@ -123,7 +125,284 @@ function countWords(relPath) {
   return matches ? matches.length : 0;
 }
 
-function printFrontloadBudget(budgetWords) {
+function parseScalar(value) {
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  if (value === 'null' || value === '~') return null;
+  if (/^-?\d+$/.test(value)) return parseInt(value, 10);
+  if (/^-?\d+\.\d+$/.test(value)) return parseFloat(value);
+  if ((value.startsWith('"') && value.endsWith('"'))
+      || (value.startsWith("'") && value.endsWith("'"))) {
+    return value.slice(1, -1);
+  }
+  return value;
+}
+
+function readYamlPolicy() {
+  // Operator-authored micro-YAML reader. We support: top-level scalars,
+  // nested maps, list-of-scalars and list-of-maps. Indentation is tracked per
+  // line; sibling transitions are handled by rebalancing the indent stack.
+  // Sufficient for any reasonable model-policy.yaml; not a full YAML 1.2 spec.
+  const home = process.env.HOME;
+  if (!home) return null;
+  const candidates = [
+    path.join(home, '.tnf', 'sub-director', 'model-policy.yaml'),
+    path.join(home, '.tnf', 'sub-director', 'model-policy.yml'),
+  ];
+  let text = null;
+  let chosenPath = null;
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      chosenPath = candidate;
+      text = fs.readFileSync(candidate, 'utf8');
+      break;
+    }
+  }
+  if (text === null) return null;
+
+  // Tokenize: each non-blank, non-comment line records its indent + content.
+  const tokens = [];
+  for (const raw of text.split(/\r?\n/)) {
+    if (!raw.trim() || raw.trim().startsWith('#')) continue;
+    const m = raw.match(/^(\s*)/);
+    tokens.push({ indent: m ? m[1].length : 0, content: raw.slice(m ? m[1].length : 0) });
+  }
+
+  // Recursive-descent YAML reader. `pos` advances; `minIndent` constrains how
+  // far we can descend from the caller's reference point.
+  function readBlock(minIndent) {
+    if (pos >= tokens.length) return null;
+    const localIndent = tokens[pos].indent;
+    if (localIndent < minIndent) return null;
+    const container = {};
+    const arr = [];
+    const seenList = false;
+
+    while (pos < tokens.length) {
+      const tok = tokens[pos];
+      if (tok.indent < localIndent) break;
+      if (tok.indent > localIndent) {
+        // Shouldn't happen if we balanced correctly — skip defensively.
+        pos += 1;
+        continue;
+      }
+      const content = tok.content;
+      if (content.startsWith('- ')) {
+        // List item at this indent
+        const head = content.slice(2);
+        if (head.includes(':')) {
+          const idx = head.indexOf(':');
+          const k = head.slice(0, idx).trim();
+          const v = head.slice(idx + 1).trim();
+          const item = { [k]: v ? parseScalar(v) : null };
+          // If the value is empty, the subsequent indented lines are its
+          // children — call readBlock first.
+          if (!v) {
+            pos += 1;
+            const childIndent = pos < tokens.length ? tokens[pos].indent : -1;
+            if (childIndent > localIndent) {
+              item[k] = readBlock(childIndent);
+            }
+          }
+          arr.push(item);
+        } else {
+          arr.push(parseScalar(head));
+        }
+        pos += 1;
+        continue;
+      }
+      if (content.includes(':')) {
+        const idx = content.indexOf(':');
+        const k = content.slice(0, idx).trim();
+        const v = content.slice(idx + 1).trim();
+        if (v) {
+          container[k] = parseScalar(v);
+          pos += 1;
+        } else {
+          // Key-only — children follow at greater indent
+          pos += 1;
+          const childIndent = pos < tokens.length ? tokens[pos].indent : -1;
+          if (childIndent > localIndent) {
+            container[k] = readBlock(childIndent);
+          } else {
+            container[k] = null;
+          }
+        }
+        continue;
+      }
+      // Unknown — skip
+      pos += 1;
+    }
+    // Decide: did we see any list items? If yes, return array. Otherwise map.
+    if (arr.length && Object.keys(container).length === 0) return arr;
+    if (arr.length) {
+      // mixed: prefer array if any list items present
+      return arr;
+    }
+    return container;
+  }
+
+  let pos = 0;
+  const rootIndent = tokens.length ? tokens[0].indent : 0;
+  // Reset all tokens' indent values relative to rootIndent so root is 0.
+  for (const t of tokens) t.indent -= rootIndent;
+  const parsed = readBlock(0);
+  // Strip undefined entries
+  function clean(o) {
+    if (Array.isArray(o)) return o.map(clean).filter((x) => x !== undefined);
+    if (o && typeof o === 'object') {
+      const out = {};
+      for (const k of Object.keys(o)) {
+        const v = clean(o[k]);
+        if (v !== undefined) out[k] = v;
+      }
+      return out;
+    }
+    return o;
+  }
+  const result = clean(parsed) || {};
+  result._sourcePath = chosenPath;
+  return result;
+}
+
+function extractParamCount(modelId) {
+  // Recognises model IDs whose basename contains a parameter count suffix
+  // like "-1.5b", "-8b", "-70b", "-120b". Returns the parsed count or null.
+  // (See tnf-cli fleet evolution: handoff ad9830e6 for tier table.)
+  if (!modelId || typeof modelId !== 'string') return null;
+  const m = modelId.toLowerCase().match(/-(\d+(?:\.\d+)?)\s*b(?:[^a-z]|$)/);
+  if (!m) return null;
+  const num = parseFloat(m[1]);
+  return Number.isFinite(num) ? num * 1e9 : null;
+}
+
+function resolveAdaptiveBudget(preferredBudget) {
+  // If the caller pinned --frontload-budget-words, respect it.
+  if (Number.isFinite(preferredBudget) && preferredBudget !== DEFAULT_FRONTLOAD_BUDGET_WORDS) {
+    return { budget: preferredBudget, provenance: { source: 'cli', detail: `--frontload-budget-words=${preferredBudget}` } };
+  }
+  const policy = readYamlPolicy();
+  if (!policy) {
+    return {
+      budget: 1500,
+      provenance: { source: 'cautious-default', detail: 'no model-policy.yaml — assume frontier context with reduced capability' },
+    };
+  }
+  const preferred = (policy.models && (policy.models.preferred || policy.preferred)) || null;
+  const local = (policy.models && policy.models.local) || null;
+  const cloud = (policy.models && policy.models.cloud) || null;
+  let resolvedModel = null;
+  let resolvedSource = null;
+  if (typeof preferred === 'string') {
+    resolvedModel = preferred.split('/').pop();
+    resolvedSource = 'preferred';
+  } else if (typeof local === 'string') {
+    resolvedModel = local.split('/').pop();
+    resolvedSource = 'local';
+  } else if (local && typeof local === 'object' && local.model) {
+    resolvedModel = String(local.model).split('/').pop();
+    resolvedSource = 'local';
+  } else if (Array.isArray(cloud) && cloud.length) {
+    const first = cloud[0];
+    if (typeof first === 'string') {
+      resolvedModel = first.split('/').pop();
+    } else if (first && typeof first === 'object' && first.model) {
+      resolvedModel = String(first.model);
+    }
+    resolvedSource = 'cloud[0]';
+  }
+  const params = extractParamCount(resolvedModel);
+  let budget;
+  let tier;
+  if (params === null) {
+    budget = Math.max(1500, DEFAULT_FRONTLOAD_BUDGET_WORDS);
+    tier = 'unknown-size';
+  } else if (params <= 3e9) {
+    budget = 800; tier = 'tiny (<=3B)';
+  } else if (params <= 1.2e10) {
+    budget = 2000; tier = 'small (3B-12B)';
+  } else if (params <= 7e10) {
+    budget = 3500; tier = 'large (12B-70B)';
+  } else {
+    budget = 5000; tier = 'frontier (>70B)';
+  }
+  budget = Math.max(FRONTLOAD_BUDGET_FLOOR_WORDS, budget);
+  return {
+    budget,
+    provenance: {
+      source: 'adaptive-fleet',
+      detail: `${resolvedSource || 'no-source'} → ${resolvedModel || 'unknown'} [${tier}, ${params ? Math.round(params / 1e9) + 'B' : '?'}]`,
+    },
+  };
+}
+
+async function probeFleet(policy) {
+  if (!policy || !policy.models) {
+    return { attempted: false, providers: [], preferred: null };
+  }
+  const cloud = policy.models.cloud;
+  const preferred = policy.models.preferred || policy.preferred || null;
+  const providers = [];
+  if (Array.isArray(cloud)) {
+    for (const entry of cloud) {
+      let provider = null;
+      let model = null;
+      if (typeof entry === 'string') {
+        const idx = entry.lastIndexOf('/');
+        if (idx > 0) { provider = entry.slice(0, idx); model = entry.slice(idx + 1); }
+      } else if (entry && typeof entry === 'object') {
+        provider = entry.provider || null;
+        model = entry.model || null;
+      }
+      if (!provider) continue;
+      providers.push({ provider, model, status: 'unknown', latencyMs: null });
+    }
+  }
+  // Cheap HEAD probe — prefer HTTPS HEAD against provider's base URL.
+  // We DO NOT call /chat/completions here; just check TLS + reachability.
+  const heads = await Promise.all(providers.slice(0, 8).map(async (p) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), FLEET_PROBE_TIMEOUT_MS);
+    const base = providerBaseUrl(p.provider);
+    try {
+      const start = Date.now();
+      const res = await fetch(base, { method: 'HEAD', signal: controller.signal });
+      clearTimeout(timer);
+      p.status = res.ok || res.status === 405 /* HEAD not allowed but reachable */ ? 'reachable' : `http-${res.status}`;
+      p.latencyMs = Date.now() - start;
+    } catch (error) {
+      clearTimeout(timer);
+      p.status = error && error.name === 'AbortError' ? 'timeout' : 'unreachable';
+    }
+    return p;
+  }));
+  const preferredStr = typeof preferred === 'string' ? preferred : null;
+  return {
+    attempted: true,
+    providers: heads,
+    preferred: preferredStr,
+    preferredReachable: preferredStr ? heads.some(
+      (h) => (h.provider + '/' + h.model).endsWith(preferredStr.replace(/^.*?\//, ''))
+        || h.provider === preferredStr.split('/')[0]
+    ) : null,
+  };
+}
+
+function providerBaseUrl(provider) {
+  // Minimal mapping; CLI failures here are SURFACED, not authoritatively
+  // resolved — the federation does that. This is a no-auth reachability ping.
+  const map = {
+    nvidia: 'https://integrate.api.nvidia.com/',
+    openrouter: 'https://openrouter.ai/',
+    anthropic: 'https://api.anthropic.com/',
+    openai: 'https://api.openai.com/',
+    minimax: 'https://api.minimax.ai/',
+    google: 'https://generativelanguage.googleapis.com/',
+  };
+  return map[provider] || `https://${provider}.`;
+}
+
+function printFrontloadBudget(budgetWords, provenance = {}) {
   const rows = FRONTLOAD_BUDGET_PROFILE.map((entry) => ({
     ...entry,
     present: exists(entry.path),
@@ -138,6 +417,9 @@ function printFrontloadBudget(budgetWords) {
     .reduce((sum, row) => sum + row.words, 0);
   const roughTokens = Math.ceil(totalWords * 1.33);
 
+  if (provenance.source) {
+    console.log(`- budget source: ${provenance.source}` + (provenance.detail ? ` (${provenance.detail})` : ''));
+  }
   console.log(`- configured budget: ${budgetWords} words`);
   console.log(`- eager Turn Zero packet: ${eagerWords} words`);
   console.log(`- deferred reference context: ${deferredWords} words`);
@@ -857,7 +1139,31 @@ async function main() {
   FRONTLOAD_CHECKLIST.forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
   printHeader('Frontload Token Budget');
-  printFrontloadBudget(parsed.frontloadBudgetWords);
+  const { budget: resolvedBudget, provenance: budgetProvenance } = resolveAdaptiveBudget(parsed.frontloadBudgetWords);
+  printFrontloadBudget(resolvedBudget, budgetProvenance);
+  printHeader('Live Fleet Probe');
+  const fleetPolicy = readYamlPolicy();
+  if (!fleetPolicy) {
+    console.log('- skipped (no model-policy.yaml; fleet cannot be probed)');
+    console.log('  Hint: write ~/.tnf/sub-director/model-policy.yaml to enable reachable probing');
+  } else {
+    const probe = await probeFleet(fleetPolicy);
+    if (!probe.attempted) {
+      console.log('- skipped (policy file has no models.cloud list)');
+    } else {
+      probe.providers.forEach((p) => {
+        const latency = p.latencyMs === null ? '' : ` (${p.latencyMs}ms)`;
+        console.log(`- ${p.provider}/${p.model || '?'} → ${p.status}${latency}`);
+      });
+      if (probe.preferred) {
+        console.log(`- preferred: ${probe.preferred}`);
+        if (probe.preferredReachable === false) {
+          console.log('  WARN: preferred model is unreachable on the live fleet');
+          console.log('  Hint: pick a different model in model-policy.yaml:models.preferred or restart operator cycle');
+        }
+      }
+    }
+  }
 
   printHeader('Turn Zero Authority');
   console.log(`- canonical source: ${CANONICAL_TURN_ZERO_MANDATE}`);
@@ -886,6 +1192,18 @@ async function main() {
   } else {
     console.log('- source: missing');
     console.log('- WARN no handoff source discovered');
+  }
+
+  try {
+    const { syncFromRepo } = require('./lib/sync-handoff-cache.cjs');
+    const syncResult = syncFromRepo(ROOT);
+    if (syncResult.ok) {
+      console.log(`- home cache: ${syncResult.cachePath} (${syncResult.handoff_id})`);
+    } else {
+      console.log(`- WARN home cache sync skipped: ${syncResult.reason}`);
+    }
+  } catch (error) {
+    console.log(`- WARN home cache sync failed: ${error?.message || error}`);
   }
 
   const legacyLatest = inspectLegacyOpenClawLatestPointer();

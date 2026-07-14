@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentController = void 0;
 const common_1 = require("@nestjs/common");
@@ -862,7 +861,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_a = typeof types_1.CreateAgentDto !== "undefined" && types_1.CreateAgentDto) === "function" ? _a : Object, Object]),
+    __metadata("design:paramtypes", [types_1.CreateAgentDto, Object]),
     __metadata("design:returntype", Promise)
 ], AgentController.prototype, "createAgent", null);
 __decorate([
@@ -876,7 +875,7 @@ __decorate([
     __param(4, (0, common_1.Query)('page')),
     __param(5, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, typeof (_b = typeof types_1.AgentType !== "undefined" && types_1.AgentType) === "function" ? _b : Object, typeof (_c = typeof types_1.AgentStatus !== "undefined" && types_1.AgentStatus) === "function" ? _c : Object, String, String, String]),
+    __metadata("design:paramtypes", [Object, String, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], AgentController.prototype, "getAgents", null);
 __decorate([
@@ -925,7 +924,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __param(2, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, typeof (_d = typeof types_1.UpdateAgentDto !== "undefined" && types_1.UpdateAgentDto) === "function" ? _d : Object, Object]),
+    __metadata("design:paramtypes", [String, types_1.UpdateAgentDto, Object]),
     __metadata("design:returntype", Promise)
 ], AgentController.prototype, "updateAgent", null);
 __decorate([

@@ -14,7 +14,8 @@
   "references": [
     { "path": "../tnf-core" },
     { "path": "../infrastructure" },
-    { "path": "../tnf-note-taking" }
+    { "path": "../tnf-note-taking" },
+    { "path": "../shared" }
   ],
   "exclude": ["node_modules", "dist"]
 }

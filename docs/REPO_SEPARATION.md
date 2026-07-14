@@ -3,7 +3,7 @@
 > **Status**: Active — This is the canonical reference for how TNF code is
 > distributed across repositories.
 >
-> **Last Updated**: 2026-03-24
+> **Last Updated**: 2026-07-14
 
 ---
 
@@ -13,14 +13,14 @@
 publication repos.**
 
 ```
-whodaniel/fuse  (COMBINED MONOREPO — you develop here)
-    │
-    ├──► whodaniel/fuse-open-runtime   (90% open-source, read-only target)
-    └──► whodaniel/fuse-control-plane  (10% proprietary, read-only target)
+whodaniel/The-New-Fuse  (COMBINED MONOREPO — you develop here)
+    │                    (historical slug `the-new-fuse-next-gen` 301-redirects here)
+    ├──► whodaniel/fuse-open-runtime   (90% open-source, read-only publish target)
+    └──► whodaniel/fuse-control-plane  (10% proprietary, read-only publish target)
 ```
 
 - **NEVER commit directly to `fuse-open-runtime` or `fuse-control-plane`.**
-- **ALL development happens in `whodaniel/fuse`.**
+- **ALL development happens in `whodaniel/The-New-Fuse`.**
 - Run `pnpm run sync:repos` to push changes to both downstream repos.
 - The proprietary boundary is defined in `scripts/sync-repos.sh` (the
   `PROPRIETARY_*` arrays).
@@ -50,9 +50,10 @@ We develop in a single monorepo because:
 
 ## Repository Map
 
-### `whodaniel/fuse` — Combined Monorepo (Development)
+### `whodaniel/The-New-Fuse` — Combined Public Monorepo
 
-This is where you work. It contains everything.
+This is where you work. It contains the open-source runtime and public facing
+features.
 
 ```
 The-New-Fuse/
@@ -66,7 +67,7 @@ The-New-Fuse/
 │   ├── relay-server/           # 🟢 WebSocket relay
 │   ├── nexus-orchestrator/     # 🔴 PROPRIETARY
 │   ├── picoclaw-overseer/      # 🔴 PROPRIETARY
-│   ├── electron-desktop/       # 🟢
+│   ├── tauri-desktop/         # 🟢
 │   ├── vscode-extension/       # 🟢
 │   ├── chrome-extension/       # 🟢
 │   └── ...                     # 🟢 (all others are open)
@@ -76,27 +77,25 @@ The-New-Fuse/
 │   │       ├── master-clock.ts # 🔴 PROPRIETARY (stubbed in open-runtime)
 │   │       ├── broker-agent.ts # 🔴 PROPRIETARY (stubbed in open-runtime)
 │   │       └── index.ts        # 🟢
-│   ├── control-plane-contracts/# 🟢 PUBLIC API surface for control-plane
+│   ├── control-plane-contracts/# 🟢 PUBLIC API surface for control-plane stubs
 │   ├── agent-coordination/     # 🔴 PROPRIETARY
 │   └── ...                     # 🟢 (all others are open)
 ├── cloudflare-sharedstate/     # 🔴 PROPRIETARY
-├── orchestrate-*.js            # 🔴 PROPRIETARY scripts
-├── tnf-orchestrator*.js        # 🔴 PROPRIETARY scripts
-├── tnf-master-orchestrator.ts  # 🔴 PROPRIETARY
 ├── scripts/
+│   ├── registry/orchestrator/  # 🔴 PROPRIETARY orchestration scripts (names in PROPRIETARY_SCRIPTS)
 │   └── sync-repos.sh           # ⚙️ THE SYNC SCRIPT
 └── docs/
     └── REPO_SEPARATION.md      # 📖 THIS FILE
 ```
 
-🟢 = Open source (goes to `fuse-open-runtime`) 🔴 = Proprietary (goes to
-`fuse-control-plane`, stubbed in `fuse-open-runtime`)
+🟢 = Open source (ships in `fuse-open-runtime`) 🔴 = Proprietary (full source
+stays in the combined monorepo `The-New-Fuse`, extracted to
+`fuse-control-plane`, stubbed in the open-runtime publish tree)
 
-### `whodaniel/fuse-open-runtime` — Open Source (Read-Only)
+### `whodaniel/fuse-open-runtime` — Open Source Publish Target (Public)
 
-Published automatically by `sync-repos.sh`. Contains everything from the
-monorepo MINUS proprietary content. Where proprietary code was removed, contract
-stubs are placed that:
+Published from the monorepo MINUS proprietary content. Where proprietary code
+was removed, contract stubs are placed that:
 
 - Export types from `@the-new-fuse/control-plane-contracts`
 - Provide no-op stub classes with console warnings
@@ -151,13 +150,21 @@ pnpm run sync:repos -- --dry-run
 1. **Control-plane**: Clones `fuse-control-plane`, copies latest proprietary
    content from monorepo HEAD, commits, pushes.
 2. **Open-runtime**: Clones monorepo, removes all proprietary paths, creates
-   stub files, force-pushes to `fuse-open-runtime`.
+   stub files, pushes clean tree to `fuse-open-runtime`.
 
 ### When to Sync
 
-- After merging significant PRs to `main`
-- Before releases
+- After merging significant PRs to `main` on `The-New-Fuse`
+- Before releases (tag first: `git tag vX.Y.Z`)
 - Whenever you want the public/private repos to reflect latest state
+
+Recommended cadence:
+
+1. Merge → `main`
+2. `pnpm run sync:repos:dry-run`
+3. `pnpm run sync:repos` (or rely on `.github/workflows/repo-sync.yml` on push
+   to `main`)
+4. Tag release on monorepo and on `fuse-open-runtime` after sync
 
 ---
 
@@ -173,10 +180,12 @@ these arrays:
 
 ### Rules
 
-1. **Every proprietary file must leave a stub** in `fuse-open-runtime`
+1. **Every proprietary file must leave a stub** in the **open-runtime publish
+   tree** (`fuse-open-runtime`)
 2. **Public code must never import private source** — only contracts
 3. **`packages/control-plane-contracts/` is always public** — it defines the API
-   boundary between open and closed source
+   boundary between open and closed source; stubs import
+   `@the-new-fuse/control-plane-contracts`
 4. **The control-plane repo may consume public packages** as library
    dependencies
 
@@ -208,13 +217,14 @@ When you create new proprietary code:
 doesn't map cleanly to subtree semantics. A simple script that clones, filters,
 and pushes is more transparent and debuggable.
 
-**Q: Can I commit directly to fuse-open-runtime?** A: No. It will be overwritten
-on next sync. All changes go through the monorepo.
+**Q: Can I commit directly to The-New-Fuse?** A: Yes, this is the canonical repo
+now.
 
 **Q: What if I need to add a new proprietary component?** A: Add code to the
 monorepo, add its path to `scripts/sync-repos.sh`, add a stub, run sync.
 
-**Q: Is the monorepo public?** A: Yes, `whodaniel/fuse` is currently public. It
-contains proprietary code because it's the development workspace. The separation
-exists so that `fuse-open-runtime` is a clean public release without proprietary
-internals.
+**Q: Is the monorepo public?** A: `whodaniel/The-New-Fuse` is the canonical
+public development workspace. Legacy `whodaniel/fuse` remains public for
+historical narrative; see `docs/lineage/REPO_LINEAGE.md` for archive status. The
+separation exists so `The-New-Fuse` is a clean public release without
+proprietary internals.

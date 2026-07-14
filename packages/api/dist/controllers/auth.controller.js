@@ -21,8 +21,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { drizzleUserRepository } from '@the-new-fuse/database';
 import * as bcrypt from 'bcrypt';
-import { CurrentUser } from '../modules/decorators/current-user.decorator.js';
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js';
+import { CurrentUser } from '../modules/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
 /**
  * Login request DTO
  */

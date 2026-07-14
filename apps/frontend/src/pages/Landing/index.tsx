@@ -55,7 +55,7 @@ export default function LandingPage() {
             </div>
             {/* Hero Image - Responsive */}
             <div className="flex-1 w-full max-w-lg lg:max-w-none animate-slide-in-right">
-              <div className="relative aspect-square md:aspect-video rounded-md bg-linear-to-br from-primary/20 to-accent/20 backdrop-blur-sm p-4 flex items-center justify-center">
+              <div className="relative aspect-square md:aspect-video rounded-md bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm p-4 flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
                     <svg
@@ -95,7 +95,7 @@ export default function LandingPage() {
         <div className="container mx-auto max-w-7xl">
           <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-12">
             <div className="flex-1 animate-slide-in-left">
-              <div className="aspect-video rounded-md bg-linear-to-br from-accent/20 to-primary/20 flex items-center justify-center">
+              <div className="aspect-video rounded-md bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
                 <p className="text-muted-foreground">About Illustration</p>
               </div>
             </div>
@@ -149,7 +149,9 @@ export default function LandingPage() {
             </p>
             <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-900/30 rounded-full">
               <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
-              <span className="text-sm font-medium text-amber-800 dark:text-amber-200">Early Access</span>
+              <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                Early Access
+              </span>
             </div>
           </div>
 
@@ -170,7 +172,7 @@ export default function LandingPage() {
               },
               {
                 name: 'Pro',
-                price: '$30/mo',
+                price: 'Coming soon',
                 features: [
                   'Up to 25 AI Agents',
                   'Advanced Workflow Automation',
@@ -181,7 +183,7 @@ export default function LandingPage() {
                 ],
                 highlighted: true,
                 cta: '/auth/register',
-                ctaText: 'Upgrade to Professional',
+                ctaText: 'Join Beta Free',
               },
               {
                 name: 'Enterprise',
@@ -348,7 +350,7 @@ export default function LandingPage() {
           </div>
           <div className="border-t border-border pt-8 text-center">
             <p className="text-base text-muted-foreground">
-              © 2025 The New Fuse. All rights reserved.
+              © 2026 The New Fuse. All rights reserved.
             </p>
           </div>
         </div>

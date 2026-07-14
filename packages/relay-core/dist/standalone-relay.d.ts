@@ -1,18 +1,4 @@
 #!/usr/bin/env node
-/**
- * TNF Relay Server - Standalone WebSocket Relay
- * Part of @the-new-fuse/relay-core package
- *
- * Usage:
- *   pnpm run relay          # Start on default port 3000
- *   PORT=3002 pnpm run relay  # Start on custom port
- *
- * Endpoints:
- *   WebSocket: ws://127.0.0.1:3000/ws
- *   Health:    http://localhost:3000/health
- *   Agents:    http://localhost:3000/agents
- *   Channels:  http://localhost:3000/channels
- */
 import { EventEmitter } from 'events';
 import { type TnfAgentLifecycleStatus } from './contracts/lifecycle.js';
 import type { OrchestrationTask } from './protocol/task-protocol.js';
@@ -78,6 +64,9 @@ export declare class TNFRelayServer extends EventEmitter {
     private readonly activityStreamKey;
     private readonly activityChannelPrefix;
     private readonly activityMaxLen;
+    private registryReplySubscriber;
+    private registryReplySubscriberReady;
+    private pendingAgentRegistrations;
     constructor(port?: number);
     private handleHttpRequest;
     /**
@@ -104,6 +93,9 @@ export declare class TNFRelayServer extends EventEmitter {
     private ensureActivityPersistenceReady;
     private handleAgentDisconnect;
     private send;
+    private setupRegistryReplyListener;
+    private handleRegistryReply;
+    private finalizeAgentRegistration;
     private handleBridgeEgress;
     dispatchTask(task: OrchestrationTask, channelId: string): void;
     private persistTaskDispatch;

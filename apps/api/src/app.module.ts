@@ -27,6 +27,8 @@ import { CommunityController } from './controllers/community.controller';
 import { CompoundingMemoryController } from './controllers/compounding-memory.controller';
 import { HealthController } from './controllers/health.controller';
 import { LLMIntelController } from './controllers/llm-intel.controller';
+import { PublicInfoController } from './controllers/public-info.controller';
+import { BridgesController } from './controllers/bridges.controller';
 import { MCPServerController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
@@ -40,7 +42,7 @@ import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
 import { GraphqlModule } from './graphql/graphql.module';
 import { LLMProviderController } from './llm/llm-provider.controller';
-import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
+import { InMemoryLLMRegistry, LLMProviderService, LLM_REGISTRY } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
 import { AccessModule } from './modules/access/access.module';
 import { AdminModule } from './modules/admin/admin.module';
@@ -190,6 +192,8 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     AdminOpenClawOAuthController,
     N8nWorkflowsController,
     OnboardingController,
+    PublicInfoController, // M02: /docs, /pricing, /features as JSON
+    BridgesController, // M05: /bridges/telegram, /bridges/whatsapp health
   ],
   providers: [
     AppService,
@@ -198,7 +202,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     // LLM Provider Services
     {
       provide: LLM_REGISTRY,
-      useClass: MockLLMRegistry,
+      useClass: InMemoryLLMRegistry,
     },
     LLMProviderService,
     AgentPfpOverridesService,
@@ -246,7 +250,7 @@ export class AppModule implements NestModule {
     // TODO: Re-enable after fixing middleware implementation
     consumer
       .apply(EnhancedSecurityMiddleware)
-      .exclude('agents/(.*)', 'a2a/(.*)', 'system/(.*)') // Global prefix adds /api
+      .exclude('agents/(.*)', 'a2a/(.*)', 'system/(.*)', 'auth/(.*)') // Global prefix adds /api
       .forRoutes('*');
   }
 }

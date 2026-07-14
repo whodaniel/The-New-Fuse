@@ -1,0 +1,428 @@
+{
+  "generatedAt": "2026-06-16T11:31:29.821863",
+  "batchId": "ai5-phase7-batch-002",
+  "owner": "local-subdirector",
+  "objective": "Convert next 10 AI5 directives (5 critical, 1 high, 4 medium) into verified work.",
+  "state": "synced",
+  "records": [
+    {
+      "id": "act-835de9bc3d8c04b3",
+      "status": "landed",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Security evaluation",
+      "description": "Apply governance gate before adoption: Security evaluation",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Security evaluation",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 25,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-06-11T18:19:59.232898Z",
+      "source": {
+        "source_id": "yt-ai5-lAAcjj5fISE",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=lAAcjj5fISE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=1&pp=iAQBsAgC",
+        "source_title": "Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenSwarm & TokenSpeed #256",
+        "artifact_id": "eia-412f3d6ee6d014b7",
+        "artifact_generated_at": "2026-05-19T07:42:35+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.056,
+        "transcript_status": "cache_hit"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821810"
+    },
+    {
+      "id": "act-be553bc6c292ac9f",
+      "status": "landed",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: We're adding security to our batch tool",
+      "description": "Apply governance gate before adoption: We're adding security to our batch tool",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: We're adding security to our batch tool",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 25,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-06-11T18:19:58.837834Z",
+      "source": {
+        "source_id": "yt-ai5-PIdETjcXNIk",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+        "source_title": "Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+        "artifact_id": "eia-765120d1a314bae3",
+        "artifact_generated_at": "2026-05-19T07:44:10+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821835"
+    },
+    {
+      "id": "act-ba65817fba8250a3",
+      "status": "landed",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: have a security hole that you don't even",
+      "description": "Apply governance gate before adoption: have a security hole that you don't even",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: have a security hole that you don't even",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 25,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-06-11T18:19:59.132035Z",
+      "source": {
+        "source_id": "yt-ai5-hTpHmLFXBrc",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=hTpHmLFXBrc&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=10&pp=iAQBsAgC",
+        "source_title": "Vercel Just Fixed Vibe Coding's Biggest Problem",
+        "artifact_id": "eia-dc1b7a2feb228930",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.063,
+        "transcript_status": "cache_hit"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821840"
+    },
+    {
+      "id": "act-60ae611151291b25",
+      "status": "landed",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: scary security breach, it'll just",
+      "description": "Apply governance gate before adoption: scary security breach, it'll just",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: scary security breach, it'll just",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 25,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-06-11T18:19:58.613825Z",
+      "source": {
+        "source_id": "yt-ai5-65IAqRUxg3c",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=65IAqRUxg3c&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=8&pp=iAQBsAgC",
+        "source_title": "AI Agents run my business and life",
+        "artifact_id": "eia-1097d1b5e0e44b43",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821843"
+    },
+    {
+      "id": "act-fa38d4465b2d5e57",
+      "status": "landed",
+      "priority": "critical",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: security teams start raging because",
+      "description": "Apply governance gate before adoption: security teams start raging because",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: security teams start raging because",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 25,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-06-11T18:19:59.339674Z",
+      "source": {
+        "source_id": "yt-ai5-ohKt066uFhg",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=ohKt066uFhg&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=6&t=259s&pp=iAQBsAgC",
+        "source_title": "Viktor: AI Coworker That Lives in Slack \u2014 Fryderyk Wiatrowski",
+        "artifact_id": "eia-d947ac4004455b56",
+        "artifact_generated_at": "2026-05-19T07:42:36+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.043,
+        "transcript_status": "cache_hit"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821845"
+    },
+    {
+      "id": "act-959a1803b50a5edf",
+      "status": "blocked",
+      "priority": "high",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "procedural_activation",
+      "title": "[AI5] Configure Tracing for Raw Data Capture",
+      "description": "Configure Tracing for Raw Data Capture\n\nSteps:\n- Implement a tracing mechanism to capture the raw data required for running evaluations.\n\nRationale: Explicitly mentioned as the initial technical step to gather essential data for evaluations.",
+      "acceptance": "Execution evidence captured for: Configure Tracing for Raw Data Capture",
+      "confidence": {
+        "score": 0.7,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 0,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "v2-extracted",
+        "file_hints": [
+          "AI Agent / Application Code / Evaluation Framework"
+        ]
+      },
+      "createdAt": "2026-06-11T18:19:59.033372Z",
+      "source": {
+        "source_id": "yt-ai5-Xfl50508LZM",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=Xfl50508LZM&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=20&t=211s&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+        "source_title": "Ship Real Agents: Hands-On Evals for Agentic Applications \u2014 Laurie Voss, Arize",
+        "artifact_id": "eia-ae0ed17d07619c7e",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821848"
+    },
+    {
+      "id": "act-e82cfdee8bf67e30",
+      "status": "blocked",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "procedural_activation",
+      "title": "[AI5] Acknowledge and Sign Off Non-Blocking Nitpick",
+      "description": "Acknowledge and Sign Off Non-Blocking Nitpick\n\nSteps:\n- Identify a specific non-blocking nitpick (minor issue) within the current review context.\n- Officially acknowledge and sign off on this identified non-blocking nitpick through the designated review interface or communication method.\n\nRationale: Directly instructs a specific action within a review workflow, requiring identification of a minor issue and subsequent formal sign-off.",
+      "acceptance": "Execution evidence captured for: Acknowledge and Sign Off Non-Blocking Nitpick",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 30,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "v2-extracted",
+        "file_hints": [
+          "review_management_system_api"
+        ]
+      },
+      "createdAt": "2026-06-11T18:19:58.837675Z",
+      "source": {
+        "source_id": "yt-ai5-PIdETjcXNIk",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=PIdETjcXNIk&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=35&pp=iAQB0gcJCQQLAYcqIYzvsAgC",
+        "source_title": "Pi to Pi: Two-Way Agent Orchestration with the Pi Coding Agent",
+        "artifact_id": "eia-765120d1a314bae3",
+        "artifact_generated_at": "2026-05-19T07:44:10+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "fetched"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821854"
+    },
+    {
+      "id": "act-139e5f5f71b9a8a3",
+      "status": "blocked",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Is it in the ownership",
+      "description": "Apply governance gate before adoption: Is it in the ownership",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Is it in the ownership",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-06-11T18:19:59.150449Z",
+      "source": {
+        "source_id": "yt-ai5-jwtpMSRAPAQ",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=jwtpMSRAPAQ&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=15&pp=iAQBsAgC",
+        "source_title": "The Trillion Dollar Agentic Workflow Opportunity Is Here",
+        "artifact_id": "eia-76688f36dc87a0c1",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.026,
+        "transcript_status": "cache_hit"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821856"
+    },
+    {
+      "id": "act-0d6b025a7f285671",
+      "status": "blocked",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: That's the failure rate of",
+      "description": "Apply governance gate before adoption: That's the failure rate of",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: That's the failure rate of",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-06-11T18:19:59.394199Z",
+      "source": {
+        "source_id": "yt-ai5-s3rNDndvav0",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=s3rNDndvav0&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=22&pp=iAQBsAgC",
+        "source_title": "The biggest AI breakthrough in medicine & drug discovery",
+        "artifact_id": "eia-3aa7edbb50a4ab89",
+        "artifact_generated_at": "2026-05-19T07:42:38+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.024,
+        "transcript_status": "cache_hit"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821858"
+    },
+    {
+      "id": "act-6528bcfe53e3c6e4",
+      "status": "blocked",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: There is also a hallucination gate and",
+      "description": "Apply governance gate before adoption: There is also a hallucination gate and",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: There is also a hallucination gate and",
+      "confidence": {
+        "score": 0.6,
+        "label": "medium"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-06-11T18:19:58.565536Z",
+      "source": {
+        "source_id": "yt-ai5-4XvM-0o3A-4",
+        "source_type": "video",
+        "source_uri": "https://www.youtube.com/watch?v=4XvM-0o3A-4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=12&pp=iAQBsAgC",
+        "source_title": "Hermes Agent 3.0 (Crazy Upgrades): HERMES Agent is TOO GOOD NOW!",
+        "artifact_id": "eia-66e38b413dd7e570",
+        "artifact_generated_at": "2026-05-19T07:42:37+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.09,
+        "transcript_status": "cache_hit"
+      },
+      "claimedBy": "local-subdirector",
+      "claimedAt": "2026-06-16T11:31:29.821861"
+    }
+  ]
+}

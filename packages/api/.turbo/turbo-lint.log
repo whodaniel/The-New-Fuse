@@ -2,4 +2,57 @@
 > @the-new-fuse/api@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api
 > eslint src
 
- ELIFECYCLE  Command failed.
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/auth/guards/jwt-auth.guard.ts
+  12:38  warning  '_info' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/controllers/AgentController.ts
+  58:26  warning  '_createdAt' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  58:49  warning  '_updatedAt' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  83:26  warning  '_createdAt2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  83:50  warning  '_updatedAt2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/controllers/ConsolidatedApiController.ts
+  161:53  warning  'req' is defined but never used              @typescript-eslint/no-unused-vars
+  297:24  warning  'status' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  419:40  warning  'userId' is defined but never used           @typescript-eslint/no-unused-vars
+  435:39  warning  'period' is defined but never used           @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/guards/rate-limit.guard.ts
+  18:35  warning  '_context' is defined but never used               @typescript-eslint/no-unused-vars
+  18:63  warning  '_throttlerLimitDetail' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/mcp/services/mcp-broker.service.ts
+  179:5  warning  'params' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  180:5  warning  'context' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/middleware/auth.ts
+  39:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/middleware/error.middleware.ts
+  37:3  warning  '_next' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/modules/controllers/base.controller.ts
+  54:39  warning  'details' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/modules/guards/jwt-auth.guard.ts
+  42:49  warning  '_context' is defined but never used  @typescript-eslint/no-unused-vars
+  42:77  warning  '_status' is defined but never used   @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/services/agent.service.ts
+  15:31  warning  '_userId' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/services/index.ts
+   82:22  warning  '_id' is defined but never used  @typescript-eslint/no-unused-vars
+  133:34  warning  '_id' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/services/system-metrics.service.ts
+  53:9   warning  'total' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  55:7   warning  'idle' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  84:14  warning  'error' is defined but never used           @typescript-eslint/no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/api/src/types/shims.ts
+  1:1  warning  Do not use "@ts-nocheck" because it alters compilation errors  @typescript-eslint/ban-ts-comment
+
+✖ 25 problems (0 errors, 25 warnings)
+

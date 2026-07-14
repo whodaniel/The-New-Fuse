@@ -7,8 +7,8 @@ export class ConcurrencyController {
     maxConcurrency;
     minConcurrency = 1;
     defaultConcurrency;
-    memoryThreshold = 0.8; // 80% memory threshold
-    adjustmentFactor = 0.25; // 25% adjustment per step
+    memoryThreshold = 0.7; // 70% memory threshold (more conservative)
+    adjustmentFactor = 0.33; // 33% adjustment per step (more aggressive reduction)
     constructor(initialConcurrency, maxConcurrency) {
         this.currentConcurrency = initialConcurrency || 2;
         this.maxConcurrency = maxConcurrency || 8;

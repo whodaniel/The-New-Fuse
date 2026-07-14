@@ -17,7 +17,7 @@ Ensure your system meets these requirements:
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/whodaniel/fuse.git
+git clone https://github.com/whodaniel/The-New-Fuse.git
 cd fuse
 ```
 
@@ -125,6 +125,7 @@ pnpm run release:gate:strict
 ### Common Issues
 
 1. Database Connection
+
 ```bash
 # Check database logs
 docker compose -f packages/sync-core/docker-compose.yml logs postgres
@@ -134,6 +135,7 @@ psql -h localhost -U postgres -d fuse
 ```
 
 2. Redis Connection
+
 ```bash
 # Check Redis logs
 docker compose -f packages/sync-core/docker-compose.yml logs redis
@@ -143,6 +145,7 @@ redis-cli ping
 ```
 
 3. Build Issues
+
 ```bash
 # Clean and rebuild
 pnpm run build:cleanup
@@ -151,6 +154,7 @@ pnpm run build
 ```
 
 4. Port Conflicts
+
 ```bash
 # Inspect active listeners
 ./tnf ports status

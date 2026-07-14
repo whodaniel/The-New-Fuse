@@ -10,6 +10,9 @@ export declare class SecurityGuard implements CanActivate {
     canActivate(context: ExecutionContext): Promise<boolean>;
     private getSecurityOptions;
     private checkRateLimit;
+    private normalizeRequestPath;
+    private isAuthBootstrapPath;
+    private checkAuthBootstrapRateLimit;
     private resolvePositiveInteger;
     private pruneRateLimitData;
     private validateAndSanitizeInput;

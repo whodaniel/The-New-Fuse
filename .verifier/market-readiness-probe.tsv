@@ -1,0 +1,8 @@
+ProbeTimestampUTC	2026-06-20T18:54:25Z
+Hostname	URL	HTTP	Latency	Excerpt	Verified
+api.thenewfuse.com	https://api.thenewfuse.com/health	200	0.189184	{"status":"healthy","service":"api"}	Y
+api.thenewfuse.com	https://api.thenewfuse.com/	200	0.221709	{"status":"healthy","service":"api"}	Y
+thenewfuse.com	https://thenewfuse.com/	200	0.155225	<!DOCTYPE html><html lang="en"><head>  <meta charset="UTF-8">  <meta name="viewport" content="width=device-width,ini	Y
+thenewfuse.com	https://thenewfuse.com/docs	200	0.150558	<!DOCTYPE html><html lang="en"><head>  <meta charset="UTF-8">  <meta name="viewport" content="width=device-width, in	Y
+thenewfuse.com	https://thenewfuse.com/pricing	200	0.128664	<!DOCTYPE html><html lang="en"><head>  <meta charset="UTF-8">  <meta name="viewport" content="width=device-width, in	Y
+thenewfuse.com	https://thenewfuse.com/features	200	0.130620	<!DOCTYPE html><html lang="en"><head>  <meta charset="UTF-8">  <meta name="viewport" content="width=device-width, in	Y

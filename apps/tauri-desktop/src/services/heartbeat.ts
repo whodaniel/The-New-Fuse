@@ -4,6 +4,7 @@
  */
 
 import { EventEmitter } from 'events';
+import { safeStorage } from '../lib/safeStorage';
 
 export interface AgentHealth {
   agentId: string;
@@ -86,7 +87,7 @@ export class HeartbeatClientService extends EventEmitter {
    */
   private detectCloudSandboxUrl(): string {
     // Check for stored URL first
-    const storedUrl = localStorage.getItem('cloudSandboxUrl');
+    const storedUrl = safeStorage.getItem('cloudSandboxUrl');
     if (storedUrl) {
       // Ensure the heartbeat path is appended
       if (!storedUrl.includes('/ws/heartbeat')) {

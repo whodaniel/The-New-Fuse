@@ -2,6 +2,3 @@
 > @tnf/build-optimization@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/build-optimization
 > tsc -b
 
-tsconfig.json(6,5): error TS5011: The common source directory of 'tsconfig.json' is '..'. The 'rootDir' setting must be explicitly set to this or another path to adjust your output's file layout.
-  Visit https://aka.ms/ts6 for migration information.
- ELIFECYCLE  Command failed with exit code 1.

@@ -15,6 +15,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import { Eye, Lock, Plus, Search, Unlock, Users } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
@@ -61,14 +62,7 @@ const WorkspaceManagement: React.FC = () => {
     try {
       setLoading(true);
       setLoadError(null);
-      const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
-      const response = await fetch('/api/admin/workspaces', {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        credentials: 'include',
-      });
+      const response = await authFetch('/api/admin/workspaces');
       if (!response.ok)
         throw new Error(`Workspace admin endpoint unavailable (${response.status})`);
 
@@ -131,7 +125,7 @@ const WorkspaceManagement: React.FC = () => {
 
   const suspendWorkspace = async (workspaceId: string) => {
     try {
-      const response = await fetch(`/api/admin/workspaces/${workspaceId}/suspend`, {
+      const response = await authFetch(`/api/admin/workspaces/${workspaceId}/suspend`, {
         method: 'POST',
       });
       if (response.ok) {
@@ -144,7 +138,7 @@ const WorkspaceManagement: React.FC = () => {
 
   const activateWorkspace = async (workspaceId: string) => {
     try {
-      const response = await fetch(`/api/admin/workspaces/${workspaceId}/activate`, {
+      const response = await authFetch(`/api/admin/workspaces/${workspaceId}/activate`, {
         method: 'POST',
       });
       if (response.ok) {

@@ -1,19 +1,15 @@
-import React, { Suspense, lazy } from 'react';
+import React, { lazy, Suspense, useCallback, useState } from 'react';
+import CommandPalette, { useCommandPaletteShortcut } from './components/layout/CommandPalette';
+import NavIcon from './components/layout/NavIcon';
+import SidebarAuth from './components/layout/SidebarAuth';
 import { useRoute } from './components/route-context';
+import './ComprehensiveRouter.css';
+import { ROUTE_COMPONENTS } from './config/routeComponents';
+import { isKnownRoute, NAV_GROUPS, routesForGroup } from './config/routes';
 import { useLayout } from './contexts/LayoutContext';
+import { useOperatorSynergy } from './hooks/useOperatorSynergy';
 
-// Lazy load pages
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const AgentHub = lazy(() => import('./pages/AgentHub'));
-const AntigravityHub = lazy(() => import('./pages/AntigravityHub'));
-const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'));
-const MultiAgentChat = lazy(() => import('./pages/MultiAgentChat'));
-const MCPMarketplace = lazy(() => import('./pages/MCPMarketplace'));
-const Analytics = lazy(() => import('./pages/Analytics'));
-const Settings = lazy(() => import('./pages/Settings'));
-const WebBrowser = lazy(() => import('./pages/WebBrowser'));
-const OAGIHub = lazy(() => import('./pages/OAGIHub'));
-const SwarmTerminal = lazy(() => import('./pages/SwarmTerminal'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 /**
  * The New Fuse Tauri Desktop - Comprehensive Router
@@ -22,51 +18,17 @@ const SwarmTerminal = lazy(() => import('./pages/SwarmTerminal'));
 const ComprehensiveRouter: React.FC = () => {
   const { currentRoute, navigate } = useRoute();
   const { sidebarCollapsed, sidebarOpen, isMobile, toggleSidebar, setSidebarOpen } = useLayout();
-
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '/dashboard', section: 'main' },
-    { id: 'agents', label: 'Agent Hub', icon: '🤖', route: '/agents', section: 'main' },
-    { id: 'terminal', label: 'Swarm Terminal', icon: '📟', route: '/terminal', section: 'main' },
-    { id: 'oagi', label: 'OAGI Hub', icon: '🖥️', route: '/oagi', section: 'main' },
-    { id: 'antigravity', label: 'Antigravity', icon: '🔮', route: '/antigravity', section: 'main' },
-    { id: 'chat', label: 'Chat', icon: '💬', route: '/chat', section: 'main' },
-    { id: 'workflows', label: 'Workflows', icon: '⚡', route: '/workflows', section: 'main' },
-    { id: 'browser', label: 'Web Browser', icon: '🌐', route: '/browser', section: 'main' },
-    { id: 'analytics', label: 'Analytics', icon: '📊', route: '/analytics', section: 'main' },
-    { id: 'mcp', label: 'MCP Store', icon: '🔧', route: '/mcp', section: 'tools' },
-    { id: 'settings', label: 'Settings', icon: '⚙️', route: '/settings', section: 'system' },
-  ];
-
-  const mainNav = navItems.filter((item) => item.section === 'main');
-  const toolsNav = navItems.filter((item) => item.section === 'tools');
-  const systemNav = navItems.filter((item) => item.section === 'system');
+  const { state: synergy } = useOperatorSynergy();
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const togglePalette = useCallback(() => setPaletteOpen((prev) => !prev), []);
+  useCommandPaletteShortcut(togglePalette);
 
   const renderPage = () => {
-    switch (currentRoute) {
-      case '/agents':
-        return <AgentHub />;
-      case '/antigravity':
-        return <AntigravityHub />;
-      case '/oagi':
-        return <OAGIHub />;
-      case '/terminal':
-        return <SwarmTerminal />;
-      case '/chat':
-        return <MultiAgentChat />;
-      case '/workflows':
-        return <WorkflowBuilder />;
-      case '/analytics':
-        return <Analytics />;
-      case '/mcp':
-        return <MCPMarketplace />;
-      case '/settings':
-        return <Settings />;
-      case '/browser':
-        return <WebBrowser />;
-      case '/dashboard':
-      default:
-        return <Dashboard />;
+    const PageComponent = ROUTE_COMPONENTS[currentRoute];
+    if (!isKnownRoute(currentRoute) || !PageComponent) {
+      return <NotFound attemptedRoute={currentRoute} />;
     }
+    return <PageComponent />;
   };
 
   const handleNavClick = (route: string) => {
@@ -77,17 +39,43 @@ const ComprehensiveRouter: React.FC = () => {
     }
   };
 
+  const connectionDotClass = (() => {
+    if (synergy.relayConnected) {
+      return 'online';
+    }
+    if (synergy.relayRegistered) {
+      return 'warn';
+    }
+    return 'offline';
+  })();
+
+  const connectionLabel = (() => {
+    if (synergy.relayRegistered) {
+      return `Federation · ${synergy.unifiedAgents.length} agents`;
+    }
+    if (synergy.relayConnected) {
+      return 'Relay connected';
+    }
+    return 'Offline';
+  })();
+
   return (
     <div className="app-container">
       {/* Mobile Header */}
       {isMobile && (
         <header className="mobile-header">
-          <button className="hamburger-btn" onClick={toggleSidebar}>
+          <button
+            type="button"
+            className="hamburger-btn"
+            onClick={toggleSidebar}
+            aria-label={sidebarOpen ? 'Close navigation' : 'Open navigation'}
+          >
             {sidebarOpen ? '✕' : '☰'}
           </button>
           <div className="mobile-logo">
             <span className="logo-icon">🔥</span>
-            <span className="logo-text">The New Fuse</span>
+            <span className="logo-text">TNF Desktop</span>
+            <span className="logo-sub">The New Fuse</span>
           </div>
           <div className="mobile-header-spacer"></div>
         </header>
@@ -95,7 +83,12 @@ const ComprehensiveRouter: React.FC = () => {
 
       {/* Mobile Overlay */}
       {isMobile && sidebarOpen && (
-        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>
+        <button
+          type="button"
+          className="sidebar-overlay"
+          aria-label="Close navigation"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
 
       {/* Sidebar */}
@@ -107,68 +100,84 @@ const ComprehensiveRouter: React.FC = () => {
           <div className="sidebar-header">
             <div className="logo">
               <span className="logo-icon">🔥</span>
-              {!sidebarCollapsed && <span className="logo-text">The New Fuse</span>}
+              {!sidebarCollapsed && (
+                <>
+                  <span className="logo-text">TNF Desktop</span>
+                  <span className="logo-sub">The New Fuse</span>
+                </>
+              )}
             </div>
-            <button className="collapse-btn" onClick={toggleSidebar}>
+            <button
+              type="button"
+              className="collapse-btn"
+              onClick={toggleSidebar}
+              aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
               {sidebarCollapsed ? '→' : '←'}
             </button>
           </div>
         )}
 
-        <nav className="sidebar-nav">
-          {/* Main Navigation */}
-          {!sidebarCollapsed && <div className="nav-section-label">Main</div>}
-          {mainNav.map((item) => (
-            <button
-              key={item.id}
-              className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
-              onClick={() => handleNavClick(item.route)}
-              title={sidebarCollapsed ? item.label : undefined}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
-            </button>
-          ))}
-
-          {/* Tools */}
-          {!sidebarCollapsed && <div className="nav-section-label">Tools</div>}
-          {toolsNav.map((item) => (
-            <button
-              key={item.id}
-              className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
-              onClick={() => handleNavClick(item.route)}
-              title={sidebarCollapsed ? item.label : undefined}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
-            </button>
-          ))}
+        <nav className="sidebar-nav" aria-label="Primary">
+          {NAV_GROUPS.filter((group) => group.id !== 'system').map((group) => {
+            const groupRoutes = routesForGroup(group.id);
+            if (groupRoutes.length === 0) return null;
+            return (
+              <React.Fragment key={group.id}>
+                {!sidebarCollapsed ? <div className="nav-section-label">{group.label}</div> : null}
+                {groupRoutes.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`nav-item ${currentRoute === item.path ? 'active' : ''}`}
+                    onClick={() => handleNavClick(item.path)}
+                    title={sidebarCollapsed ? item.label : undefined}
+                    aria-current={currentRoute === item.path ? 'page' : undefined}
+                  >
+                    <span className="nav-icon">
+                      <NavIcon id={item.id} />
+                    </span>
+                    {!sidebarCollapsed ? (
+                      <span className="nav-label">
+                        {item.label}
+                        {item.badge ? <span className="nav-badge">{item.badge}</span> : null}
+                      </span>
+                    ) : null}
+                  </button>
+                ))}
+              </React.Fragment>
+            );
+          })}
 
           <div className="nav-spacer" />
 
-          {/* System */}
-          {systemNav.map((item) => (
+          {routesForGroup('system').map((item) => (
             <button
               key={item.id}
-              className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
-              onClick={() => handleNavClick(item.route)}
+              type="button"
+              className={`nav-item ${currentRoute === item.path ? 'active' : ''}`}
+              onClick={() => handleNavClick(item.path)}
               title={sidebarCollapsed ? item.label : undefined}
+              aria-current={currentRoute === item.path ? 'page' : undefined}
             >
-              <span className="nav-icon">{item.icon}</span>
-              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
+              <span className="nav-icon">
+                <NavIcon id={item.id} />
+              </span>
+              {!sidebarCollapsed ? <span className="nav-label">{item.label}</span> : null}
             </button>
           ))}
         </nav>
 
         <div className="sidebar-footer">
+          <SidebarAuth collapsed={sidebarCollapsed} />
           {!sidebarCollapsed && (
             <>
               <div className="connection-indicator">
-                <span className="status-dot online"></span>
-                <span>Connected</span>
+                <span className={`status-dot ${connectionDotClass}`}></span>
+                <span>{connectionLabel}</span>
               </div>
               <div className="version-info">
-                <span>v4.0.0</span>
+                <span>v4.1.0</span>
                 <span className="build-type">Tauri</span>
               </div>
             </>
@@ -180,6 +189,8 @@ const ComprehensiveRouter: React.FC = () => {
       <main className={`main-content ${isMobile ? 'mobile' : ''}`}>
         <Suspense fallback={<LoadingScreen />}>{renderPage()}</Suspense>
       </main>
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
 
       <style>{`
         .app-container {
@@ -241,6 +252,9 @@ const ComprehensiveRouter: React.FC = () => {
           background: rgba(0, 0, 0, 0.6);
           backdrop-filter: blur(4px);
           z-index: 90;
+          border: none;
+          padding: 0;
+          cursor: pointer;
         }
 
         /* Sidebar */
@@ -305,6 +319,14 @@ const ComprehensiveRouter: React.FC = () => {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
+        }
+
+        .logo-sub {
+          display: block;
+          font-size: 11px;
+          color: var(--tnf-text-muted, #64748b);
+          font-weight: 500;
+          margin-top: 2px;
         }
 
         .collapse-btn {
@@ -372,18 +394,129 @@ const ComprehensiveRouter: React.FC = () => {
         }
 
         .nav-icon {
-          font-size: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           width: 24px;
-          text-align: center;
+          height: 24px;
+          color: inherit;
+          opacity: 0.85;
+        }
+
+        .nav-item.active .nav-icon {
+          opacity: 1;
+          color: var(--tnf-primary-light, #8b5cf6);
         }
 
         .nav-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
           font-weight: 500;
+        }
+
+        .nav-badge {
+          font-size: 9px;
+          letter-spacing: 0.08em;
+          padding: 2px 6px;
+          border-radius: 999px;
+          background: rgba(99, 102, 241, 0.18);
+          color: #c4b5fd;
+          border: 1px solid rgba(99, 102, 241, 0.35);
         }
 
         .sidebar-footer {
           padding: 16px;
           border-top: 1px solid var(--tnf-border);
+        }
+
+        .sidebar-auth {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-bottom: 12px;
+        }
+
+        .sidebar-auth-muted {
+          font-size: 11px;
+          color: var(--tnf-text-muted);
+        }
+
+        .sidebar-auth-user {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
+        }
+
+        .sidebar-auth-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          flex-shrink: 0;
+          object-fit: cover;
+        }
+
+        .sidebar-auth-initial {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(99, 102, 241, 0.25);
+          color: #c4b5fd;
+          font-weight: 700;
+          font-size: 13px;
+        }
+
+        .sidebar-auth-meta {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+
+        .sidebar-auth-name {
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--tnf-text-primary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .sidebar-auth-email {
+          font-size: 11px;
+          color: var(--tnf-text-muted);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .sidebar-auth-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          width: 100%;
+          padding: 8px 10px;
+          border-radius: 8px;
+          border: 1px solid var(--tnf-border);
+          background: var(--tnf-surface);
+          color: var(--tnf-text-secondary);
+          font-size: 12px;
+          cursor: pointer;
+        }
+
+        .sidebar-auth-btn:hover {
+          background: var(--tnf-surface-hover);
+        }
+
+        .sidebar-auth-primary {
+          border-color: rgba(99, 102, 241, 0.35);
+          color: #c4b5fd;
+        }
+
+        .sidebar-auth-error {
+          font-size: 11px;
+          color: var(--tnf-error);
         }
 
         .connection-indicator {
@@ -404,6 +537,16 @@ const ComprehensiveRouter: React.FC = () => {
         .status-dot.online {
           background: var(--tnf-success, #10b981);
           box-shadow: 0 0 8px var(--tnf-success);
+        }
+
+        .status-dot.warn {
+          background: var(--tnf-warning, #f59e0b);
+          box-shadow: 0 0 8px var(--tnf-warning);
+        }
+
+        .status-dot.offline {
+          background: var(--tnf-error, #ef4444);
+          box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
         }
 
         .version-info {
@@ -462,7 +605,7 @@ const ComprehensiveRouter: React.FC = () => {
 
 // Loading Screen Component
 const LoadingScreen: React.FC = () => (
-  <div className="loading-screen">
+  <div className="loading-screen" role="status" aria-live="polite">
     <div className="loading-content">
       <div className="loading-spinner"></div>
       <p>Loading...</p>

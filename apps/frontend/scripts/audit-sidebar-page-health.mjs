@@ -160,6 +160,11 @@ function score(content) {
   return { risk, status, hits };
 }
 
+function stripRouteQuery(href) {
+  const q = href.indexOf('?');
+  return q >= 0 ? href.slice(0, q) : href;
+}
+
 function main() {
   const routerSrc = fs.readFileSync(ROUTER_FILE, 'utf8');
   const sidebarSrc = fs.readFileSync(SIDEBAR_FILE, 'utf8');
@@ -171,7 +176,8 @@ function main() {
   const routeMap = extractRouteMap(routerSrc, importMap);
 
   const pages = sidebarItems.map((item) => {
-    const targetRoute = redirectMap.get(item.href) || item.href;
+    const normalizedHref = stripRouteQuery(item.href);
+    const targetRoute = redirectMap.get(item.href) || redirectMap.get(normalizedHref) || normalizedHref;
     const routeTarget = routeMap.get(targetRoute);
     const file = routeTarget
       ? routeTarget.local

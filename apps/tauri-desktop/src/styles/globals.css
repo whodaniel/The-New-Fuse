@@ -1,14 +1,9 @@
 @import 'tailwindcss';
-@config "../../tailwind.config.ts";
-
-/* Import comprehensive design system */
 @import './design-system.css';
-
-/* Import landing page animations */
 @import './landing-animations.css';
-
-/* Premium Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+@config "../../tailwind.config.ts";
 
 @theme {
   --color-border: hsl(var(--border));
@@ -83,15 +78,35 @@
   --radius: 0.75rem; /* Increased radius for modern look */
 }
 
-/* Force Dark Mode Premium Global Styles */
-body {
-  color: #f8fafc; /* Slate 50 */
-  background-color: #020617; /* Slate 950 Base */
+html.dark body,
+body.tnf-dark {
+  color: #f8fafc;
+  background-color: #020617;
   background-image:
     radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
     radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
     linear-gradient(180deg, #020617 0%, #0f172a 100%);
   background-attachment: fixed;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+html.light body,
+body.tnf-light {
+  color: #0f172a;
+  background-color: #f8fafc;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  background-attachment: fixed;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Default before ThemeProvider hydrates */
+body {
+  color: #f8fafc;
+  background-color: #020617;
   font-family: 'Plus Jakarta Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }

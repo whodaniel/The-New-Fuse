@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TWIP Terminal Identification Surfaces (v0.1)
 
 Status: Draft  
@@ -40,7 +43,8 @@ normalize those signals into TWIP.
 6. Container/orchestrator surface
    - Signal examples: container id, pod name, namespace, node id
    - Strength: required for cloud-native terminal sessions
-   - TWIP target: `scope.host_id` plus extension metadata (`x_container`, `x_k8s`)
+   - TWIP target: `scope.host_id` plus extension metadata (`x_container`,
+     `x_k8s`)
 
 7. Workspace/runtime surface
    - Signal examples: repo root fingerprint, tenant, runtime instance id

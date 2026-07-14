@@ -12,10 +12,15 @@ tnf onboard
 2. `docs/protocols/LIVING_STATE.md`
 3. `docs/protocols/AGENT_STATUS_LEDGER.md`
 4. `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` (if present)
-5. `.agent/SYSTEM_PROMPT.md`
-6. `.agent/context/resource-map.md`
-7. `.agent/context/agent-onboarding.md`
-8. `.agent/workflows/frontload.md`
+5. `~/.tnf/swarm-context.md` (swarm terminal state, coordination issues, active directives - updated every heartbeat cycle)
+6. `.agent/SYSTEM_PROMPT.md`
+7. `.agent/context/resource-map.md`
+8. `.agent/context/agent-onboarding.md`
+9. `.agent/workflows/frontload.md`
+10. `docs/core/ENGINEERING_PRINCIPLES.md`
+11. `docs/core/SOUL.md`, `docs/core/USER.md`, `docs/core/IDENTITY.md`,
+    `docs/core/HEARTBEAT.md`
+12. `docs/operations/STALL_DEFENSE.md`
 
 ## Where Resources Live
 

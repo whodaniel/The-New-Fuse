@@ -1,8 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { NetworkGraph } from '../components/NetworkGraph';
+import React, { Suspense, lazy, useState } from 'react';
+import ForefrontOperatorPanel from '../components/ForefrontOperatorPanel';
+import ConfirmDialog from '../components/layout/ConfirmDialog';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { QuickActionsDashboard } from '../components/QuickActionsDashboard';
-import { Terminal } from '../components/Terminal';
-import { apiService } from '../services/api';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
+import BrowserControlService from '../services/BrowserControlService';
+import FederationNodeService from '../services/FederationNodeService';
+
+const NetworkGraph = lazy(() =>
+  import('../components/NetworkGraph').then((m) => ({ default: m.NetworkGraph }))
+);
+const Terminal = lazy(() => import('../components/Terminal'));
 
 /**
  * Dashboard Page - System Console Edition
@@ -10,75 +19,78 @@ import { apiService } from '../services/api';
  */
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'monitor' | 'controls'>('monitor');
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    const checkStatus = async () => {
-      const healthy = await apiService.healthCheck();
-      setIsConnected(healthy);
-    };
-    checkStatus();
-    const interval = setInterval(checkStatus, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const [confirmStopOpen, setConfirmStopOpen] = useState(false);
+  const { state: synergy } = useOperatorSynergy();
 
   const handleEmergencyStop = () => {
-    // In a real implementation, this would call a tauri command to kill all processes
-    const confirm = window.confirm(
-      '⚠️ EMERGENCY STOP: This will kill all agents and close connections. Are you sure?'
-    );
-    if (confirm) {
-      console.log('Emergency stop triggered');
-      // apiService.stopAll() // To be implemented
-    }
+    FederationNodeService.disconnect();
+    BrowserControlService.disconnect();
+    setConfirmStopOpen(false);
   };
 
   return (
-    <div className="dashboard-container">
-      {/* Header */}
-      <header className="dashboard-header">
-        <div>
-          <h1 className="page-title">System Console</h1>
-          <p className="page-subtitle">
-            {isConnected ? '🟢 Connected via Local Relay' : '🔴 Local Relay Offline'}
-          </p>
-        </div>
-
+    <PageShell
+      title="System Console"
+      subtitle={
+        synergy.relayConnected
+          ? 'Synergy plane online'
+          : 'Synergy plane offline — connect relay from Forefront panel'
+      }
+      actions={
+        <>
+          <button
+            type="button"
+            className="emergency-stop-btn secondary-button"
+            onClick={() => setConfirmStopOpen(true)}
+            title="Kill Switch"
+            aria-label="Emergency stop — disconnect relay, federation, and browser control"
+          >
+            STOP
+          </button>
+          <span className="env-badge local">
+            RELAY: {synergy.relayHealth ? `${synergy.relayHealth.channels} ch` : 'offline'}
+          </span>
+          <span className={`env-badge ${synergy.apiOnline ? 'cloud' : 'offline'}`}>
+            API: {synergy.apiOnline ? 'online' : 'offline'}
+          </span>
+        </>
+      }
+    >
+      <SynergyStatusBar />
+      <div className="tab-switcher-row">
         <div className="tab-switcher">
           <button
+            type="button"
             className={`tab-btn ${activeTab === 'monitor' ? 'active' : ''}`}
             onClick={() => setActiveTab('monitor')}
           >
-            📡 Monitor
+            Monitor
           </button>
           <button
+            type="button"
             className={`tab-btn ${activeTab === 'controls' ? 'active' : ''}`}
             onClick={() => setActiveTab('controls')}
           >
-            ⚡ Controls
+            Controls
           </button>
         </div>
+      </div>
 
-        <div className="header-actions">
-          <button className="emergency-stop-btn" onClick={handleEmergencyStop} title="Kill Switch">
-            🛑 STOP
-          </button>
-          <span className="env-badge local">LOCAL: 3000</span>
-          <span className="env-badge cloud">CLOUD: Connected</span>
-        </div>
-      </header>
-
-      {/* Tab Content */}
       <div className="console-content">
+        <ForefrontOperatorPanel />
         {activeTab === 'monitor' ? (
           <div className="console-grid">
             {/* Top Row: Network Visualization */}
             <div className="console-card full-width">
               <div className="card-header">
                 <h3>Resources & Topology</h3>
-                <span className="live-indicator">● LIVE</span>
+                <span className="live-indicator">
+                  {synergy.relayConnected ? '● LIVE' : '○ OFFLINE'}
+                </span>
               </div>
-              <NetworkGraph />
+              <Suspense fallback={<div className="lazy-panel">Loading topology…</div>}>
+                <NetworkGraph nodes={synergy.topology.nodes} links={synergy.topology.links} />
+              </Suspense>
             </div>
 
             {/* Bottom Left: System Health */}
@@ -88,19 +100,31 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="process-list">
                 <div className="process-item">
-                  <span className="status-dot green"></span>
-                  <span>Tauri Bridge Relay</span>
-                  <span className="pid">PID: 8421</span>
+                  <span className={`status-dot ${synergy.relayHealth ? 'green' : 'red'}`}></span>
+                  <span>Standalone Relay</span>
+                  <span className="pid">
+                    {synergy.relayHealth
+                      ? `${synergy.relayHealth.agents} agents · ${Math.round(synergy.relayHealth.uptime)}s uptime`
+                      : 'DOWN'}
+                  </span>
                 </div>
                 <div className="process-item">
-                  <span className="status-dot green"></span>
-                  <span>Redis Server</span>
-                  <span className="pid">PID: 6379</span>
+                  <span className={`status-dot ${synergy.apiOnline ? 'green' : 'red'}`}></span>
+                  <span>REST API</span>
+                  <span className="pid">{synergy.apiOnline ? 'HEALTHY' : 'OFFLINE'}</span>
                 </div>
                 <div className="process-item">
-                  <span className={`status-dot ${isConnected ? 'green' : 'red'}`}></span>
-                  <span>Cloud WebSocket</span>
-                  <span className="pid">{isConnected ? 'ESTABLISHED' : 'CLOSED'}</span>
+                  <span
+                    className={`status-dot ${synergy.relayRegistered ? 'green' : synergy.relayConnected ? 'yellow' : 'red'}`}
+                  ></span>
+                  <span>Federation Node</span>
+                  <span className="pid">
+                    {synergy.relayRegistered
+                      ? 'REGISTERED'
+                      : synergy.relayConnected
+                        ? 'CONNECTING'
+                        : 'OFFLINE'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -110,7 +134,9 @@ const Dashboard: React.FC = () => {
               <div className="card-header">
                 <h3>Bridge Logs</h3>
               </div>
-              <Terminal className="console-terminal" showQuickActions={false} />
+              <Suspense fallback={<div className="lazy-panel">Loading logs…</div>}>
+                <Terminal className="console-terminal" showQuickActions={false} />
+              </Suspense>
             </div>
           </div>
         ) : (
@@ -149,6 +175,10 @@ const Dashboard: React.FC = () => {
           color: #94a3b8;
           font-size: 14px;
           margin: 4px 0 0;
+        }
+
+        .tab-switcher-row {
+          margin-bottom: 16px;
         }
 
         .tab-switcher {
@@ -208,6 +238,7 @@ const Dashboard: React.FC = () => {
         }
         .env-badge.local { background: rgba(16, 185, 129, 0.2); color: #10b981; }
         .env-badge.cloud { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .env-badge.offline { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
 
         .console-content {
             flex: 1;
@@ -231,6 +262,12 @@ const Dashboard: React.FC = () => {
           gap: 16px;
           flex: 1;
           min-height: 0;
+        }
+
+        @media (max-width: 768px) {
+          .console-grid {
+            grid-template-columns: 1fr;
+          }
         }
 
         .console-card {
@@ -297,8 +334,9 @@ const Dashboard: React.FC = () => {
         height: 8px;
         border-radius: 50%;
       }
-      .status-dot.green { background: #10b981; box-shadow: 0 0 8px #10b981; }
-      .status-dot.red { background: #ef4444; }
+        .status-dot.green { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .status-dot.yellow { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+        .status-dot.red { background: #ef4444; }
 
       .pid {
         margin-left: auto;
@@ -310,13 +348,32 @@ const Dashboard: React.FC = () => {
         min-height: 0;
       }
 
+      .lazy-panel {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 13px;
+        padding: 24px;
+      }
+
       @keyframes pulse {
         0% { opacity: 1; }
         50% { opacity: 0.5; }
         100% { opacity: 1; }
       }
       `}</style>
-    </div>
+      <ConfirmDialog
+        open={confirmStopOpen}
+        title="Emergency stop"
+        message="This will disconnect relay, federation, and browser control. Continue?"
+        confirmLabel="Stop all"
+        tone="danger"
+        onConfirm={handleEmergencyStop}
+        onCancel={() => setConfirmStopOpen(false)}
+      />
+    </PageShell>
   );
 };
 

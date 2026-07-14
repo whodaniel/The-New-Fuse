@@ -1,0 +1,53 @@
+=== Security Audit for relay.thenewfuse.com ===
+
+1. DNS Resolution:
+ghs.googlehosted.com.
+142.250.188.19
+
+2. Security Headers:
+HTTP/2 404 
+x-powered-by: Express
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS
+access-control-allow-headers: Content-Type, Authorization
+content-security-policy: default-src 'none'
+x-content-type-options: nosniff
+content-type: text/html; charset=utf-8
+x-cloud-trace-context: dd5356b1dd04b77b82a6c295c7344904;o=1
+content-length: 136
+date: Tue, 05 May 2026 15:12:50 GMT
+server: Google Frontend
+
+
+3. CORS Audit:
+   Testing with evil origin:
+access-control-allow-origin: *
+
+   Testing CORS error code:
+   Status with evil origin: 404
+
+4. Route Availability:
+   /login: 404
+   WARNING: Route /login returns 404
+   /register: 404
+   WARNING: Route /register returns 404
+   /dashboard: 404
+   WARNING: Route /dashboard returns 404
+   /pricing: 404
+   WARNING: Route /pricing returns 404
+   /docs: 404
+   WARNING: Route /docs returns 404
+   /api/health: 404
+   WARNING: Route /api/health returns 404
+
+5. Information Disclosure:
+   Checking for version/internal info:
+No obvious version info found
+
+   Checking for exposed API docs:
+
+
+   Checking for API index:
+
+
+/Users/danielgoldberg/.hermes/skills/dogfood/scripts/quick-security-audit.sh: line 196: syntax error: unexpected end of file

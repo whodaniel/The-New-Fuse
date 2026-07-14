@@ -3,7 +3,7 @@
  *
  * Service for retrieving and managing audit logs in the admin panel.
  */
-import { AuditLogEntry, AuditLogQuery, AuditLogsRepository } from '../repositories/audit-logs.repository.js';
+import { AuditLogEntry, AuditLogQuery, AuditLogsRepository } from '../repositories/audit-logs.repository';
 export declare class AdminAuditLogsService {
     private readonly auditLogsRepository;
     constructor(auditLogsRepository: AuditLogsRepository);
@@ -21,12 +21,7 @@ export declare class AdminAuditLogsService {
     /**
      * Get audit log statistics
      */
-    getStatistics(startDate?: Date, endDate?: Date): Promise<{
-        total: number;
-        byAction: Record<string, number>;
-        byStatus: Record<string, number>;
-        byResourceType: Record<string, number>;
-    }>;
+    getStatistics(startDate?: Date, endDate?: Date): Promise<any>;
     /**
      * Create an audit log manually (if needed by admin)
      */

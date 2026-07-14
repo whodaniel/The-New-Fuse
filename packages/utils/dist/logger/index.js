@@ -69,5 +69,6 @@ export class LoggerWrapper {
 export const createCustomizedLogger = (config) => {
     return new LoggerWrapper(config);
 };
+export { LoggerWrapper as Logger };
 export default createCustomizedLogger;
 //# sourceMappingURL=index.js.map

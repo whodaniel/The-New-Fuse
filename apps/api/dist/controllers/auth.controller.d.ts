@@ -127,11 +127,34 @@ export declare class AuthController {
         email: any;
         username: any;
         name: any;
+        displayName: any;
         role: any;
         roles: any;
         isActive: any;
         createdAt: any;
         updatedAt: any;
+        preferences: any;
+    }>;
+    updateMe(req: any, body: {
+        displayName?: string;
+        bio?: string;
+        preferences?: {
+            theme?: 'light' | 'dark' | 'system';
+            notifications?: boolean;
+        };
+    }): Promise<{
+        id: string;
+        email: string;
+        username: string | null;
+        name: string | null;
+        displayName: string | null;
+        bio: {};
+        role: "USER" | "ADMIN" | "SUPER_ADMIN" | "AGENCY_OWNER" | "AGENCY_ADMIN" | "AGENCY_MANAGER" | "AGENT_OPERATOR";
+        roles: string[];
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: {};
     }>;
     session(req: Request): Promise<{
         authenticated: boolean;

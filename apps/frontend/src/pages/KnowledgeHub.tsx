@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import { Book, Database, Layers, Search, Settings, Shield, Upload, Zap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { MemoryVisualizer } from '../components/memory/visualization/MemoryVisualizer';
@@ -25,8 +26,8 @@ export const KnowledgeHub: React.FC = () => {
     setFetchError(null);
     try {
       const [indicesResponse, clustersResponse] = await Promise.all([
-        fetch('/api/knowledge/indices'),
-        fetch('/api/knowledge/clusters'),
+        authFetch('/api/knowledge/indices'),
+        authFetch('/api/knowledge/clusters'),
       ]);
 
       const nextIndices =

@@ -1,0 +1,8 @@
+agent:
+  name: super-director
+  provider: openai
+  model: gpt-5
+  default_prompt: "Run the super-director workflow using SKILL.md instructions."
+source:
+  kind: imported-claude-agent
+  agent_file: .claude/agents/super-director.md

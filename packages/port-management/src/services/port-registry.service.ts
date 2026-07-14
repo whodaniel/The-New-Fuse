@@ -2,30 +2,54 @@
 
 import { EventEmitter } from 'events';
 import * as net from 'net';
-import { checkPort } from 'node-port-check'; // Import checkPort from node-port-check
 import { execFileSync } from 'node:child_process';
 import * as portfinder from 'portfinder';
-import { createClient } from 'redis'; // Assume redis client is available or mocked
+import { createClient, type RedisClientType } from 'redis';
 
-// Mock Redis client and lock functions for now
-const mockRedisClient = {
-  connect: async () => {}, // Mock connect
-  disconnect: async () => {}, // Mock disconnect
-  setnx: async (key: string, value: string) => {
-    // Mock setnx (set if not exists)
-    const isLocked = process.env[key] === 'locked';
-    if (!isLocked) {
-      process.env[key] = 'locked';
-      return 1; // Successfully acquired lock
-    }
-    return 0; // Failed to acquire lock
-  },
-  del: async (key: string) => {
-    // Mock del
-    delete process.env[key];
-    return 1; // Successfully released lock
-  },
-};
+interface PortLockClient {
+  connect(): Promise<void>;
+  disconnect(): Promise<void>;
+  setnx(key: string, value: string): Promise<number>;
+  del(key: string): Promise<number>;
+}
+
+function createLocalPortLockClient(): PortLockClient {
+  const locks = new Map<string, string>();
+  return {
+    connect: async () => {},
+    disconnect: async () => {
+      locks.clear();
+    },
+    setnx: async (key: string, value: string) => {
+      if (locks.has(key)) return 0;
+      locks.set(key, value);
+      return 1;
+    },
+    del: async (key: string) => (locks.delete(key) ? 1 : 0),
+  };
+}
+
+async function createPortLockClient(): Promise<PortLockClient> {
+  const url = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+  const client: RedisClientType = createClient({ url });
+  client.on('error', () => {});
+  try {
+    await client.connect();
+    return {
+      connect: async () => {},
+      disconnect: async () => {
+        await client.disconnect();
+      },
+      setnx: async (key: string, value: string) => {
+        const result = await client.set(key, value, { NX: true });
+        return result ? 1 : 0;
+      },
+      del: async (key: string) => await client.del(key),
+    };
+  } catch {
+    return createLocalPortLockClient();
+  }
+}
 
 export interface PortRegistration {
   id: string;
@@ -124,7 +148,8 @@ function parsePortList(value: string | undefined): number[] {
 }
 
 export class PortRegistryService extends EventEmitter {
-  private redisClient: typeof mockRedisClient; // Using mock client for now
+  private redisClient: PortLockClient | null = null;
+  private redisInitPromise: Promise<void> | null = null;
 
   private registry: Map<string, PortRegistration> = new Map();
   private configurations: Map<string, ServiceConfiguration> = new Map();
@@ -133,12 +158,25 @@ export class PortRegistryService extends EventEmitter {
 
   constructor() {
     super();
-    this.redisClient = mockRedisClient; // Initialize mock client
-    this.redisClient.connect().catch(console.error); // Connect mock client
+    this.redisInitPromise = this.initializeRedisClient();
     this.loadConfigurations();
   }
-    super();
-    this.loadConfigurations();
+
+  private async initializeRedisClient(): Promise<void> {
+    this.redisClient = await createPortLockClient();
+    await this.redisClient.connect();
+  }
+
+  private async getRedisClient(): Promise<PortLockClient> {
+    if (!this.redisInitPromise) {
+      this.redisInitPromise = this.initializeRedisClient();
+    }
+    await this.redisInitPromise;
+    if (!this.redisClient) {
+      this.redisClient = createLocalPortLockClient();
+      await this.redisClient.connect();
+    }
+    return this.redisClient;
   }
 
   /**
@@ -181,8 +219,6 @@ export class PortRegistryService extends EventEmitter {
         );
       }
       preReservedPort = true; // Mark as pre-reserved
-    } else {
-      // If an explicit port is provided, try to acquire a lock immediately
       const lockAcquired = await this.acquirePortLock(port);
       if (!lockAcquired) {
         throw new Error(
@@ -214,8 +250,7 @@ export class PortRegistryService extends EventEmitter {
       this.releaseTemporaryReservation(port!);
     } else {
       // If not pre-reserved, but an explicit port was given and locked, release the lock
-      await this.releasePortLock(port!); 
-    }
+      await this.releasePortLock(port!);
     }
 
     return registration;
@@ -278,10 +313,16 @@ export class PortRegistryService extends EventEmitter {
    * Check if a port is available
    */
   async isPortAvailable(port: number, host: string = 'localhost'): Promise<boolean> {
-    // Use node-port-check for port availability
-    return checkPort(port, host)
-      .then(() => true)
-      .catch(() => false);
+    // Simple TCP check for port availability
+    return new Promise((resolve) => {
+      const server = net.createServer();
+      server.once('error', () => resolve(false));
+      server.once('listening', () => {
+        server.close();
+        resolve(true);
+      });
+      server.listen(port, host);
+    });
   }
 
   /**
@@ -501,19 +542,18 @@ export class PortRegistryService extends EventEmitter {
   private async acquirePortLock(port: number, timeoutMs: number = 2000): Promise<boolean> {
     const lockKey = `port_lock:${port}`;
     const startTime = Date.now();
+    const redisClient = await this.getRedisClient();
     while (Date.now() - startTime < timeoutMs) {
       try {
-        const acquired = await this.redisClient.setnx(lockKey, 'locked');
+        const acquired = await redisClient.setnx(lockKey, 'locked');
         if (acquired === 1) {
-          // console.log(`Acquired lock for port ${port}`);
           return true;
         }
       } catch (err) {
         console.error(`Error acquiring Redis lock for port ${port}:`, err);
-        // In case of Redis error, proceed without lock to avoid blocking indefinitely
-        return true; 
+        return true;
       }
-      await new Promise((resolve) => setTimeout(resolve, 100)); // Wait a bit before retrying
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
     console.warn(`Failed to acquire lock for port ${port} after ${timeoutMs}ms.`);
     return false;
@@ -522,8 +562,8 @@ export class PortRegistryService extends EventEmitter {
   private async releasePortLock(port: number): Promise<void> {
     const lockKey = `port_lock:${port}`;
     try {
-      await this.redisClient.del(lockKey);
-      // console.log(`Released lock for port ${port}`);
+      const redisClient = await this.getRedisClient();
+      await redisClient.del(lockKey);
     } catch (err) {
       console.error(`Error releasing Redis lock for port ${port}:`, err);
     }
@@ -535,7 +575,8 @@ export class PortRegistryService extends EventEmitter {
       this.monitoringInterval = null;
     }
     this.removeAllListeners();
-    // Disconnect Redis client on destroy
-    this.redisClient.disconnect().catch(console.error);
+    if (this.redisClient) {
+      this.redisClient.disconnect().catch(console.error);
+    }
   }
 }

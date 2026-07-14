@@ -8,9 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var ServiceOrUserAuthGuard_1;
+var _a, _b;
 import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
-import { JwtAuthGuard } from './jwt-auth.guard.js'; // Assuming this exists and works
-import { ApiKeyAuthGuard } from './api-key-auth.guard.js';
+import { JwtAuthGuard } from './jwt-auth.guard'; // Assuming this exists and works
+import { ApiKeyAuthGuard } from './api-key-auth.guard';
 let ServiceOrUserAuthGuard = ServiceOrUserAuthGuard_1 = class ServiceOrUserAuthGuard {
     constructor(jwtGuard, apiKeyGuard) {
         this.jwtGuard = jwtGuard;
@@ -58,8 +59,7 @@ let ServiceOrUserAuthGuard = ServiceOrUserAuthGuard_1 = class ServiceOrUserAuthG
 };
 ServiceOrUserAuthGuard = ServiceOrUserAuthGuard_1 = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [JwtAuthGuard,
-        ApiKeyAuthGuard])
+    __metadata("design:paramtypes", [typeof (_a = typeof JwtAuthGuard !== "undefined" && JwtAuthGuard) === "function" ? _a : Object, typeof (_b = typeof ApiKeyAuthGuard !== "undefined" && ApiKeyAuthGuard) === "function" ? _b : Object])
 ], ServiceOrUserAuthGuard);
 export { ServiceOrUserAuthGuard };
 //# sourceMappingURL=service-or-user-auth.guard.js.map

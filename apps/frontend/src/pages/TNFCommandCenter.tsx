@@ -13,6 +13,7 @@ import { CapabilityBadge } from '@/components/ui';
  */
 
 import { useFeatureCapabilities } from '@/hooks/useFeatureCapabilities';
+import { fetchFirstJson as fetchFirstJsonAuth } from '@/utils/fetchFirstJson';
 import {
   Activity,
   AlertTriangle,
@@ -551,30 +552,20 @@ export const TNFCommandCenter: React.FC = () => {
 
   const fetchFirstJson = useCallback(
     async (paths: string[], contextLabel: string): Promise<EndpointResolution> => {
-      for (let idx = 0; idx < paths.length; idx++) {
-        const path = paths[idx];
-        const usedFallback = idx > 0;
-        try {
-          const response = await fetch(path, { headers: { 'Content-Type': 'application/json' } });
-          if (!response.ok) {
-            continue;
-          }
-          const text = await response.text();
-          if (usedFallback) {
-            console.warn(
-              `[TNF Command Center] ${contextLabel} using fallback endpoint: ${paths[0]} -> ${path}`
-            );
-          }
-          return {
-            data: text ? JSON.parse(text) : {},
-            source: path,
-            usedFallback,
-          };
-        } catch (_error) {
-          continue;
-        }
+      const result = await fetchFirstJsonAuth(paths);
+      if (!result) {
+        throw new Error(`All endpoints failed: ${paths.join(', ')}`);
       }
-      throw new Error(`All endpoints failed: ${paths.join(', ')}`);
+      if (result.usedAlternate) {
+        console.warn(
+          `[TNF Command Center] ${contextLabel} using fallback endpoint: ${paths[0]} -> ${result.source}`
+        );
+      }
+      return {
+        data: result.data,
+        source: result.source,
+        usedFallback: result.usedAlternate,
+      };
     },
     []
   );

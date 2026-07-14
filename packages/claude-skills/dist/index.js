@@ -23,20 +23,20 @@ exports.PACKAGE_INFO = exports.VERSION = exports.ClaudeSkillsManager = exports.M
 // Core types
 __exportStar(require("./types/index.js"), exports);
 // Parser
-var index_js_1 = require("./parser/index.js");
-Object.defineProperty(exports, "SkillParser", { enumerable: true, get: function () { return index_js_1.SkillParser; } });
+var parser_js_1 = require("./parser.js");
+Object.defineProperty(exports, "SkillParser", { enumerable: true, get: function () { return parser_js_1.SkillParser; } });
 // Loader
-var index_js_2 = require("./loader/index.js");
-Object.defineProperty(exports, "SkillLoader", { enumerable: true, get: function () { return index_js_2.SkillLoader; } });
+var loader_js_1 = require("./loader.js");
+Object.defineProperty(exports, "SkillLoader", { enumerable: true, get: function () { return loader_js_1.SkillLoader; } });
 // Executor
-var index_js_3 = require("./executor/index.js");
-Object.defineProperty(exports, "SkillExecutor", { enumerable: true, get: function () { return index_js_3.SkillExecutor; } });
+var executor_js_1 = require("./executor.js");
+Object.defineProperty(exports, "SkillExecutor", { enumerable: true, get: function () { return executor_js_1.SkillExecutor; } });
 // Registry
-var index_js_4 = require("./registry/index.js");
-Object.defineProperty(exports, "SkillRegistry", { enumerable: true, get: function () { return index_js_4.SkillRegistry; } });
+var registry_js_1 = require("./registry.js");
+Object.defineProperty(exports, "SkillRegistry", { enumerable: true, get: function () { return registry_js_1.SkillRegistry; } });
 // MCP Integration
-var index_js_5 = require("./integration/index.js");
-Object.defineProperty(exports, "MCPSkillProvider", { enumerable: true, get: function () { return index_js_5.MCPSkillProvider; } });
+var integration_js_1 = require("./integration.js");
+Object.defineProperty(exports, "MCPSkillProvider", { enumerable: true, get: function () { return integration_js_1.MCPSkillProvider; } });
 // Main orchestrator
 var ClaudeSkillsManager_js_1 = require("./ClaudeSkillsManager.js");
 Object.defineProperty(exports, "ClaudeSkillsManager", { enumerable: true, get: function () { return ClaudeSkillsManager_js_1.ClaudeSkillsManager; } });

@@ -35,7 +35,7 @@ export declare class AdminMetricsController {
         totalAgents: number;
         activeAgents: number;
         totalWorkflows: number;
-        systemHealth: "healthy" | "critical" | "degraded";
+        systemHealth: "healthy" | "degraded" | "critical";
         uptime: number;
         memory: {
             used: number;
@@ -78,7 +78,7 @@ export declare class AdminMetricsController {
             total: number;
         };
         system: {
-            health: "healthy" | "critical" | "degraded";
+            health: "healthy" | "degraded" | "critical";
             uptime: number;
             memory: {
                 heapUsed: number;
@@ -202,7 +202,7 @@ export declare class AdminMetricsController {
                 } | null;
             };
             runtime: {
-                status: "healthy" | "error" | "running" | "manual" | "paused" | "scheduled";
+                status: "error" | "healthy" | "manual" | "scheduled" | "paused" | "running";
                 lastRunAt: string | null;
                 lastDurationMs: number | null;
                 lastExitCode: number | null;
@@ -277,7 +277,7 @@ export declare class AdminMetricsController {
             } | null;
         };
         runtime: {
-            status: "healthy" | "error" | "running" | "manual" | "paused" | "scheduled";
+            status: "error" | "healthy" | "manual" | "scheduled" | "paused" | "running";
             lastRunAt: string | null;
             lastDurationMs: number | null;
             lastExitCode: number | null;
@@ -347,7 +347,7 @@ export declare class AdminMetricsController {
                 } | null;
             };
             runtime: {
-                status: "healthy" | "error" | "running" | "manual" | "paused" | "scheduled";
+                status: "error" | "healthy" | "manual" | "scheduled" | "paused" | "running";
                 lastRunAt: string | null;
                 lastDurationMs: number | null;
                 lastExitCode: number | null;
@@ -392,7 +392,7 @@ export declare class AdminMetricsController {
             startedAt: string;
             finishedAt: string;
             durationMs: number;
-            status: "healthy" | "error";
+            status: "error" | "healthy";
             exitCode: number;
             error: string | null;
             outputPreview: string;

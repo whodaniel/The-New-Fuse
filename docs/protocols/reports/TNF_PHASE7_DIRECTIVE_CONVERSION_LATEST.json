@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T21:28:19.619787Z",
+  "generatedAt": "2026-06-16T02:44:24.498679Z",
   "phase": "phase7-directive-conversion",
   "actionQueuePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-action-queue.json",
   "ledgerPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-directive-conversion-ledger.json",
@@ -8,11 +8,11 @@
     "total": 689,
     "stateCounts": {
       "ready": 0,
-      "claimed": 0,
+      "claimed": 15,
       "running": 0,
-      "verified": 0,
+      "verified": 1,
       "landed": 31,
-      "blocked": 658,
+      "blocked": 642,
       "failed": 0
     },
     "laneCounts": {
@@ -24,14 +24,14 @@
       "product-intel-activation": 211,
       "security-audit": 35
     },
-    "active": 0,
-    "converted": 31,
-    "conversionRate": 4.5,
+    "active": 15,
+    "converted": 32,
+    "conversionRate": 4.64,
     "ready": 0,
-    "blocked": 658,
+    "blocked": 642,
     "blockReasonCounts": {
       "deepsec-no-analyzed-files": 1,
-      "irrelevant-context": 622,
+      "irrelevant-context": 606,
       "low-relevance": 32,
       "no-first-party-agentars-surface": 1,
       "no-first-party-shopping-list-surface": 1,
@@ -40,8 +40,8 @@
   },
   "batch": {
     "batchId": "ai5-phase7-batch-001",
-    "state": "claimed",
-    "size": 0,
+    "state": "planned",
+    "size": 10,
     "owner": "local-subdirector"
   }
 }

@@ -48,6 +48,12 @@ const MainLayout: React.FC = () => {
             <div className="flex items-center gap-4">
               {isAuthenticated ? (
                 <div className="flex items-center gap-4">
+                  <Link
+                    to="/dashboard/command-center"
+                    className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400 rounded text-[10px] font-black uppercase tracking-widest transition-all"
+                  >
+                    Ask AI
+                  </Link>
                   <div className="flex flex-col items-end hidden sm:flex">
                     <span className="text-[10px] font-black uppercase tracking-wider text-primary">
                       {user?.username || 'Pilot'}

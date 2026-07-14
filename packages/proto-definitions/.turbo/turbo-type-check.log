@@ -2,4 +2,3 @@
 > @the-new-fuse/proto-definitions@0.1.0 type-check /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/proto-definitions
 > tsc --noEmit
 
- ELIFECYCLE  Command failed.

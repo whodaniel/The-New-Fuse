@@ -1,5 +1,7 @@
-# Dependencies
-node_modules/
+# Lineage audit workdirs and cold bundles (local only)
+docs/lineage/.audit-work/
+docs/lineage/bundles/*.bundle
+
 .pnpm-store/
 **/client_secret.json
 .pnp
@@ -39,6 +41,8 @@ out/
 .env
 .env.full-auto
 .env.local
+.env.openai
+.env.telegram
 .env.*.local
 .env.development.local
 .env.test.local
@@ -334,3 +338,62 @@ apps/external/hardware/lightpanda
 # Large data files
 data/transcript*.json
 dump.rdb
+
+# Telegram bot credentials
+.env.tnf-telegram
+
+# Build artifacts
+node_modules/
+dist/
+build/
+*.br
+*.gz
+*.map
+!packages/*/dist/*.map
+
+# Bundler cache
+.apps/
+.pnp/
+.pnp.js
+
+# TNF operational (auto-generated, should not be committed)
+.agent/runtime-logs/
+data/protocols/CHANGE_OWNERSHIP.jsonl
+data/protocols/chronological-process-catalog.json
+data/protocols/cron-jobs.*
+data/telegram/
+
+# External research repos (temporary clones, not part of main repo)
+apps/external/
+apps/virtual-library-blueprints/
+data/llm-provider-status.json
+.agent/runtime-logs/**/*.json
+# Build artifacts and caches
+packages/.turbo/
+packages/ap2-protocol/.turbo/
+packages/client/.turbo/
+packages/contracts/.turbo/
+
+# Dogfood test outputs
+dogfood-output/
+
+# TNF harness temp outputs
+tnf_out.txt
+tnf_verify_output.txt
+
+.agent/runtime-logs/qa-swarm-service/heartbeat.json
+.agent/test-reports/_rolling-summary.json
+.agent/testing-status.json
+apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide
+apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent
+apps/external/gemini-cli-source
+apps/frontend/docs/audits/live-link-crawl.json
+apps/frontend/docs/audits/live-link-crawl.md
+docs/operations/tnf-full-auto-runs.jsonl
+docs/operations/tnf-full-auto-state.json
+
+.gitignore
+
+# Redis RDB snapshots and other runtime dumps
+temp-*.rdb
+*.rdb

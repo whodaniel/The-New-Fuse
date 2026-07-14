@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TNF Browser Control + Federation Node</title>
+    <link rel="stylesheet" href="/browser-control.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="hero">
+        <p class="eyebrow">TNF CLI HTML Panel</p>
+        <h1>Browser Control + Federation Node</h1>
+        <p>
+          Standalone operator surface for relay-backed browser control and federation channels.
+          Works without the Chrome extension for channel orchestration.
+        </p>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Connection</h2>
+          <label>Relay URL<input id="relay-url" value="ws://127.0.0.1:3000/ws" /></label>
+          <div class="status-row">
+            <span id="relay-status" class="pill off">Relay OFF</span>
+            <span id="register-status" class="pill off">Registered OFF</span>
+            <span id="node-id" class="meta">—</span>
+          </div>
+          <div class="actions">
+            <button id="connect-btn">Connect</button>
+            <button id="refresh-btn" class="ghost">Refresh</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Channels</h2>
+          <div class="actions">
+            <input id="new-channel" placeholder="New channel name" />
+            <button id="create-channel-btn">Create</button>
+          </div>
+          <select id="channel-select">
+            <option value="">Select channel…</option>
+          </select>
+          <div class="actions">
+            <button id="join-btn">Join</button>
+            <button id="leave-btn" class="ghost">Leave</button>
+            <button id="pause-btn" class="ghost">Pause</button>
+            <button id="resume-btn" class="ghost">Resume</button>
+          </div>
+        </article>
+
+        <article class="card wide">
+          <h2>Channel Message</h2>
+          <textarea id="message-input" rows="4" placeholder="Broadcast to selected channel…"></textarea>
+          <button id="send-btn">Send to Channel</button>
+        </article>
+
+        <article class="card wide">
+          <h2>Live Feed</h2>
+          <div id="feed" class="feed"></div>
+        </article>
+
+        <article class="card">
+          <h2>Agents</h2>
+          <ul id="agent-list" class="list"></ul>
+        </article>
+
+        <article class="card">
+          <h2>Activity</h2>
+          <div id="activity" class="activity"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="/federation-node-client.js"></script>
+    <script src="/browser-control.js"></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Fuse Desktop",
+  "productName": "TNF (The New Fuse) Desktop App",
   "version": "4.1.0",
   "identifier": "com.thenewfuse.desktop",
   "build": {
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Fuse Desktop - AI Orchestration Platform",
+        "title": "TNF (The New Fuse) Desktop App",
         "width": 1400,
         "height": 900,
         "minWidth": 1024,
@@ -26,7 +26,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' http://localhost:* https://*.workers.dev wss://*.workers.dev https://*.run.app; img-src 'self' data: https:; frame-src *"
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* https://*.workers.dev wss://*.workers.dev https://*.run.app https://thenewfuse.com wss://thenewfuse.com https://*.supabase.co wss://*.supabase.co; img-src 'self' data: https: blob:; frame-src 'self' https: http://localhost:* http://127.0.0.1:*"
     }
   },
   "bundle": {
@@ -37,8 +37,7 @@
   },
   "plugins": {
     "shell": {
-      "open": true,
-      "scope": []
+      "open": true
     },
     "fs": {
       "scope": ["$HOME/**", "$APPDATA/**", "$RESOURCE/**"]
@@ -46,6 +45,7 @@
     "http": {
       "scope": [
         "http://localhost:*",
+        "http://127.0.0.1:*",
         "https://*.workers.dev",
         "https://*.run.app",
         "https://*.thenewfuse.com"

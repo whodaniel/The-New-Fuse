@@ -1,10 +1,11 @@
 /**
  * Relay Swarm Service
  *
- * Connects directly to the TNF Relay (port 3000) to monitor
- * the live federated swarm of agents.
+ * Monitors the live federated swarm via the shared FederationNodeService
+ * (same protocol as Browser Control / Forefront federation panel).
  */
-import { v4 as uuidv4 } from 'uuid';
+import type { FederationAgent } from '@the-new-fuse/shared/federation/protocol';
+import FederationNodeService from './FederationNodeService';
 
 export interface FederatedAgent {
   id: string;
@@ -16,119 +17,78 @@ export interface FederatedAgent {
   capabilities: string[];
 }
 
+function mapFederatedAgent(agent: FederationAgent): FederatedAgent {
+  const offline = agent.status === 'offline' || agent.status === 'disconnected';
+  return {
+    id: agent.id,
+    name: agent.name,
+    role: String(agent.metadata?.role || 'agent'),
+    platform: String(agent.platform),
+    isOnline: !offline,
+    lastSeen: agent.lastSeen ? new Date(agent.lastSeen).toISOString() : new Date().toISOString(),
+    capabilities: agent.capabilities || [],
+  };
+}
+
 class RelaySwarmService {
-  private ws: WebSocket | null = null;
-  private agents: Map<string, FederatedAgent> = new Map();
   private listeners: Set<(agents: FederatedAgent[]) => void> = new Set();
-  private retryCount: number = 0;
-  private maxRetries: number = 5;
+  private bound = false;
 
-  constructor(private url: string = 'ws://127.0.0.1:3000/ws') {}
+  private ensureBound(): void {
+    if (this.bound) return;
+    this.bound = true;
 
-  connect() {
-    if (this.ws?.readyState === WebSocket.OPEN) return;
-
-    console.log(`📡 Connecting to TNF Relay Swarm: ${this.url}`);
-    this.ws = new WebSocket(this.url);
-
-    this.ws.onopen = () => {
-      console.log('✅ Connected to TNF Swarm Relay');
-      this.retryCount = 0;
-
-      // Register as a monitoring participant
-      this.send({
-        type: 'AGENT_REGISTER',
-        source: `tauri-hub-${uuidv4().slice(0, 8)}`,
-        payload: {
-          agent: {
-            name: 'Tauri Desktop Hub',
-            role: 'participant',
-            platform: 'tauri',
-          },
-        },
-      });
-
-      // Request initial agent list if supported by protocol
-      this.send({
-        type: 'DISCOVERY_QUERY',
-        payload: { query: 'all' },
-      });
+    const refresh = () => {
+      const agents = FederationNodeService.getState().agents.map(mapFederatedAgent);
+      this.notify(agents);
     };
 
-    this.ws.onmessage = (event) => {
-      try {
-        const msg = JSON.parse(event.data);
-        this.handleMessage(msg);
-      } catch (e) {
-        console.error('Failed to parse relay message', e);
-      }
-    };
-
-    this.ws.onclose = () => {
-      console.warn('❌ Disconnected from TNF Relay');
-      if (this.retryCount < this.maxRetries) {
-        this.retryCount++;
-        setTimeout(() => this.connect(), 5000);
-      }
-    };
+    FederationNodeService.on('connected', () => {
+      FederationNodeService.requestAgentList();
+      refresh();
+    });
+    FederationNodeService.on('registered', () => {
+      FederationNodeService.requestAgentList();
+      refresh();
+    });
+    FederationNodeService.on('agents_updated', (agents) => {
+      const list = ((agents as FederationAgent[]) || []).map(mapFederatedAgent);
+      this.notify(list);
+    });
   }
 
-  private handleMessage(msg: any) {
-    // Handle agent registration/updates from the swarm
-    if (msg.type === 'AGENT_REGISTERED' || msg.type === 'AGENT_UPDATE') {
-      const agent = msg.payload.agent;
-      this.agents.set(agent.id, {
-        ...agent,
-        isOnline: true,
-        lastSeen: new Date().toISOString(),
-      });
-      this.notify();
+  connect(): void {
+    this.ensureBound();
+    if (!FederationNodeService.isConnected()) {
+      void FederationNodeService.connect();
+      return;
     }
-
-    if (msg.type === 'DISCOVERY_RESPONSE') {
-      const swarmAgents = msg.payload.agents || [];
-      swarmAgents.forEach((agent: any) => {
-        this.agents.set(agent.id, {
-          ...agent,
-          isOnline: true,
-        });
-      });
-      this.notify();
-    }
-
-    if (msg.type === 'HEARTBEAT') {
-      const agentId = msg.source;
-      if (this.agents.has(agentId)) {
-        const agent = this.agents.get(agentId)!;
-        this.agents.set(agentId, {
-          ...agent,
-          isOnline: true,
-          lastSeen: new Date().toISOString(),
-        });
-        this.notify();
-      }
-    }
+    FederationNodeService.requestAgentList();
+    this.notify(FederationNodeService.getState().agents.map(mapFederatedAgent));
   }
 
-  private send(msg: any) {
-    if (this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify(msg));
-    }
-  }
-
-  subscribe(callback: (agents: FederatedAgent[]) => void) {
+  subscribe(callback: (agents: FederatedAgent[]) => void): () => void {
     this.listeners.add(callback);
-    callback(Array.from(this.agents.values()));
+    callback(FederationNodeService.getState().agents.map(mapFederatedAgent));
     return () => this.listeners.delete(callback);
   }
 
-  private notify() {
-    const agentList = Array.from(this.agents.values());
-    this.listeners.forEach((cb) => cb(agentList));
+  getAgents(): FederatedAgent[] {
+    return FederationNodeService.getState().agents.map(mapFederatedAgent);
   }
 
-  getAgents(): FederatedAgent[] {
-    return Array.from(this.agents.values());
+  isConnected(): boolean {
+    return FederationNodeService.isConnected();
+  }
+
+  isRegistered(): boolean {
+    return FederationNodeService.isRegistered();
+  }
+
+  private notify(agents: FederatedAgent[]): void {
+    for (const cb of this.listeners) {
+      cb(agents);
+    }
   }
 }
 

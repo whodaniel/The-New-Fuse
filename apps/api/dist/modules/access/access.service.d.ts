@@ -45,12 +45,12 @@ export declare class AccessService {
             enabled: boolean;
             required: boolean;
             satisfied: boolean;
-            source: "env" | "db" | null;
+            source: "db" | "env" | null;
         };
         membership: {
             found: boolean;
             active: boolean;
-            tier: "ENTERPRISE" | "STARTER" | "PRO";
+            tier: "STARTER" | "PRO" | "ENTERPRISE";
             overrideActive: boolean;
             overrideTier: SubscriptionTier | null;
         };

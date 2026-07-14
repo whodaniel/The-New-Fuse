@@ -1,49 +1,44 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "24653047-aadf-4f4a-8eab-a1c9e3e6c7f8",
-  "created_at": "2026-06-15T21:28:19.619787Z",
+  "handoff_id": "38848cd6-50ab-45ad-8d2b-bb83d17f3c70",
+  "created_at": "2026-07-14T16:46:46.000Z",
   "repository": "The-New-Fuse",
-  "branch": "main",
-  "head_sha": "e578b677827193b8d25d2f6e8368d9d68e915d67",
+  "branch": "tnf-cli-harness-implementation",
+  "head_sha": "8e9b2724b07a4667dd96cfe19155d007cf85269f",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["INFRA-002", "FORGE-003"],
+  "project_ids": [],
   "work_summary": [
-    "Phase 6 completed: Rust-backed envelope validation integrated, protocol contracts stress-tested above 9500 envelopes/sec, and AI5 readiness KPIs confirmed 651 dispatch-ready directives.",
-    "Phase 7 initiated: directive conversion ledger created to track ready -> claimed -> running -> verified -> landed execution states.",
-    "Tight-loop batch selected: 0 high-priority directives claimed for local-subdirector execution governance."
+    "Pushed agent-status commit; recreated packages/control-plane-contracts"
   ],
   "changed_paths": [
-    "scripts/autonomy/phase7_directive_conversion_loop.py",
-    "data/ingestion-runs/ai5-phase7-directive-conversion-ledger.json",
-    "data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json",
-    "docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.json",
-    "docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.md",
-    "data/ingestion-runs/ai5-phase7-evidence/batch-001-zero-claim-verification.json"
+    "packages/control-plane-contracts/package.json",
+    "packages/control-plane-contracts/src/index.ts",
+    "packages/control-plane-contracts/README.md",
+    "docs/REPO_SEPARATION.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md"
   ],
   "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
-    "supabase_rls_audit": "na",
-    "notes": "Phase 7 directive conversion ledger reports total=689, ready=0, active=0, converted=31, batch_size=0."
+    "notes": "pnpm filter build for control-plane-contracts"
   },
   "continuation": {
-    "owner": "local-subdirector",
-    "targets": ["forge-agent", "historian"],
-    "priority": "high",
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
     "resume_checklist": [
-      "Read docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.md",
-      "Execute or delegate the claimed batch in data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json",
-      "Update directive states with evidence artifacts before marking verified or landed."
+      "Review/merge PR #69",
+      "Optional Hermes web UI build fix"
     ]
   },
   "next_actions": [
-    "Execute Phase 7 tight-loop batch 001 and capture verification evidence per directive.",
-    "Promote verified directive outcomes into landed code/docs with tests or audit artifacts.",
-    "Regenerate conversion ledger and KPIs after each batch to measure completion velocity."
+    "Merge or continue review of PR #69",
+    "Optional Hermes web UI build repair"
   ],
   "artifacts": {
-    "commits": ["e578b677827193b8d25d2f6e8368d9d68e915d67"]
+    "commits": ["8e9b2724b07a4667dd96cfe19155d007cf85269f"],
+    "deployment_urls": ["https://github.com/whodaniel/The-New-Fuse/pull/69"],
+    "database_migrations": []
   }
 }

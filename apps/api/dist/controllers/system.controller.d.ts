@@ -65,8 +65,8 @@ export declare class SystemController {
             }[] | {
                 processId: "tnf-heartbeat-pulse" | "tnf-broker-sweep" | "tnf-director-cycle" | "tnf-audit-trail-sync" | "tnf-graph-refresh";
                 name: "Heartbeat Pulse" | "Broker Sweep" | "Director Cycle" | "Audit Trail Sync" | "Graph Refresh";
-                kind: "continuous-loop" | "scheduled-job";
-                owner: "orchestrator" | "audit" | "broker" | "director" | "graph";
+                kind: "scheduled-job" | "continuous-loop";
+                owner: "orchestrator" | "broker" | "director" | "audit" | "graph";
                 status: string;
                 stale: boolean;
                 heartbeatCount: number;

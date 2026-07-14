@@ -1,5 +1,6 @@
 // TNF Perpetual Status — The Living Dashboard
 // Shows every perpetual process, every relay, every heartbeat — in real time
+import { authFetch } from '@/utils/authToken';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
@@ -71,7 +72,7 @@ export default function PerpetualStatus() {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await fetch('/api/relay/health');
+        const res = await authFetch('/api/relay/health');
         const data = await res.json();
         if (data?.connectedAgents) {
           setRelayPeers(

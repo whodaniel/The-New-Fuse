@@ -14,19 +14,21 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var SyncOrchestrator_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SyncOrchestrator = void 0;
-// @ts-nocheck
 const common_1 = require("@nestjs/common");
 const database_1 = require("@the-new-fuse/database");
 const infrastructure_1 = require("@the-new-fuse/infrastructure");
 const prompt_templating_1 = require("@the-new-fuse/prompt-templating");
+const ConflictManager_1 = require("./ConflictManager"); // Import ConflictManager
 const events_1 = require("events");
 let SyncOrchestrator = SyncOrchestrator_1 = class SyncOrchestrator extends events_1.EventEmitter {
-    constructor(redisService, wsService, dbService, promptTemplateService) {
+    constructor(redisService, wsService, dbService, promptTemplateService, conflictManager // Inject ConflictManager
+    ) {
         super();
         this.redisService = redisService;
         this.wsService = wsService;
         this.dbService = dbService;
         this.promptTemplateService = promptTemplateService;
+        this.conflictManager = conflictManager;
         this.logger = new common_1.Logger(SyncOrchestrator_1.name);
         this.config = {
             syncChannelPrefix: 'sync:',
@@ -358,9 +360,15 @@ let SyncOrchestrator = SyncOrchestrator_1 = class SyncOrchestrator extends event
         try {
             // Check for conflicts
             const existingState = await this.getSyncState(operation.resourceType, operation.resourceId, operation.tenantId);
-            if (existingState && this.hasConflict(operation, existingState)) {
-                await this.createConflict(operation, existingState);
-                return;
+            if (existingState) {
+                // Determine the actual conflict type using ConflictManager's logic
+                const conflictType = this.conflictManager.determineConflictType(existingState, existingState.metadata, // localVersion is the existing state's metadata
+                operation.data // remoteVersion is the incoming operation data
+                );
+                if (conflictType) {
+                    await this.createConflict(operation, existingState, conflictType);
+                    return;
+                }
             }
             // Apply sync operation
             await this.applySyncOperation(operation);
@@ -482,7 +490,9 @@ let SyncOrchestrator = SyncOrchestrator_1 = class SyncOrchestrator extends event
             case 'checksum':
                 return 'merge';
             case 'concurrent':
-                return 'manual';
+                // TNF Resonance Fix: Changed concurrent modifications from manual intervention to latest_wins
+                // to address Turbo concurrency collisions. This can be made configurable if needed.
+                return 'latest_wins';
             default:
                 return 'latest_wins';
         }
@@ -525,13 +535,14 @@ let SyncOrchestrator = SyncOrchestrator_1 = class SyncOrchestrator extends event
         const operationChecksum = this.calculateChecksum(operation.data);
         return existingState.checksum !== operationChecksum;
     }
-    async createConflict(operation, existingState) {
+    async createConflict(operation, existingState, conflictType // Pass the determined conflict type
+    ) {
         const conflict = {
             id: this.generateOperationId(),
             resourceType: operation.resourceType,
             resourceId: operation.resourceId,
             tenantId: operation.tenantId,
-            conflictType: 'checksum',
+            conflictType: conflictType, // Use the determined conflict type
             localVersion: existingState.metadata,
             remoteVersion: operation.data,
             createdAt: new Date(),
@@ -720,6 +731,8 @@ exports.SyncOrchestrator = SyncOrchestrator = SyncOrchestrator_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, common_1.Inject)('IWebSocketService')),
     __metadata("design:paramtypes", [infrastructure_1.UnifiedRedisService, Object, database_1.DrizzleService,
-        prompt_templating_1.PromptTemplateServiceImpl])
+        prompt_templating_1.PromptTemplateServiceImpl,
+        ConflictManager_1.ConflictManager // Inject ConflictManager
+    ])
 ], SyncOrchestrator);
 //# sourceMappingURL=SyncOrchestrator.js.map

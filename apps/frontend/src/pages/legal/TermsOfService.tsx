@@ -77,10 +77,10 @@ const TermsOfService = () => {
 
           <h2>10. Copyright and Ownership</h2>
           <p>
-            © 2025 The New Fuse. All rights reserved. The New Fuse, including all content,
-            software, services, features, functionality, trademarks, and intellectual property are
-            the exclusive property of The New Fuse. Unauthorized use, reproduction, or
-            distribution of any materials is strictly prohibited.
+            © 2026 The New Fuse. All rights reserved. The New Fuse, including all content, software,
+            services, features, functionality, trademarks, and intellectual property are the
+            exclusive property of The New Fuse. Unauthorized use, reproduction, or distribution of
+            any materials is strictly prohibited.
           </p>
 
           <h2>11. Changes to Terms</h2>

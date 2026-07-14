@@ -2,6 +2,3 @@
 > @the-new-fuse/websocket-infrastructure@1.0.0 type-check /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/websocket-infrastructure
 > tsc --noEmit
 
-src/testing/websocket-client.ts(3,65): error TS2307: Cannot find module '../strategies.js' or its corresponding type declarations.
-src/testing/websocket-client.ts(224,10): error TS7006: Parameter 'error' implicitly has an 'any' type.
- ELIFECYCLE  Command failed with exit code 2.

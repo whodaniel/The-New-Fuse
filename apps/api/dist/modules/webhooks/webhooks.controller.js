@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var WebhooksController_1;
-var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhooksController = void 0;
 const common_1 = require("@nestjs/common");
@@ -158,7 +157,7 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Webhook registered successfully' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_a = typeof types_1.WebhookRegistrationRequest !== "undefined" && types_1.WebhookRegistrationRequest) === "function" ? _a : Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], WebhooksController.prototype, "registerWebhook", null);
 __decorate([
@@ -169,7 +168,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Headers)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_b = typeof types_1.IntegrationSource !== "undefined" && types_1.IntegrationSource) === "function" ? _b : Object, Object, Object]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], WebhooksController.prototype, "handleWebhook", null);
 __decorate([
@@ -192,7 +191,7 @@ __decorate([
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_c = typeof types_1.EventHistoryRequest !== "undefined" && types_1.EventHistoryRequest) === "function" ? _c : Object, Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], WebhooksController.prototype, "getEventHistory", null);
 __decorate([

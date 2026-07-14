@@ -1,0 +1,25 @@
+{
+  "id": "orchestration-cli-landing",
+  "state": "verified",
+  "verifiedAt": "2026-06-16T02:42:00Z",
+  "summary": "Landed Phase 7 orchestration CLI services in packages/tnf-cli: DirectiveConversionService, ProtocolInterceptor.getStateSummary(), protocol health/directives/sync/gate commands, and slash commands (/protocol, /directives, /living).",
+  "checks": [
+    {
+      "name": "protocol-health-cli",
+      "command": "pnpm exec tsx src/cli.ts protocol health",
+      "result": "pass",
+      "notes": "Turn Zero OK, Living State SYNCED, Disclosure READY"
+    },
+    {
+      "name": "typescript-compile",
+      "result": "pass",
+      "notes": "CLI entrypoint executes protocol health without type errors"
+    }
+  ],
+  "filesChanged": [
+    "packages/tnf-cli/src/orchestration/DirectiveConversionService.ts",
+    "packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/slashCommands.ts"
+  ]
+}

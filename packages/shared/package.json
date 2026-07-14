@@ -16,7 +16,21 @@
     "./validation": "./dist/validation/index.js",
     "./utils": "./dist/utils/index.js",
     "./hooks": "./dist/hooks/index.js",
-    "./browser-control/protocol": "./dist/browser-control/protocol.js"
+    "./federation": {
+      "types": "./dist/federation/index.d.ts",
+      "import": "./dist/federation/index.js",
+      "require": "./dist/federation/index.js"
+    },
+    "./federation/protocol": {
+      "types": "./dist/federation/protocol.d.ts",
+      "import": "./dist/federation/protocol.js",
+      "require": "./dist/federation/protocol.js"
+    },
+    "./browser-control/protocol": {
+      "types": "./dist/browser-control/protocol.d.ts",
+      "import": "./dist/browser-control/protocol.js",
+      "require": "./dist/browser-control/protocol.js"
+    }
   },
   "scripts": {
     "build": "tsc --build",

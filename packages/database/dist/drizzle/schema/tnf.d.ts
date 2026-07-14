@@ -556,7 +556,7 @@ export declare const tnfHarnesses: import("drizzle-orm/pg-core").PgTableWithColu
             tableName: "tnf_harnesses";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "user" | "admin" | "superadmin" | "dev" | "guest";
+            data: "admin" | "user" | "superadmin" | "dev" | "guest";
             driverParam: string;
             notNull: true;
             hasDefault: true;
@@ -1339,7 +1339,7 @@ export declare const tnfAgentDefinitions: import("drizzle-orm/pg-core").PgTableW
             tableName: "tnf_agent_definitions";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "user" | "admin" | "superadmin" | "dev" | "guest";
+            data: "admin" | "user" | "superadmin" | "dev" | "guest";
             driverParam: string;
             notNull: true;
             hasDefault: true;

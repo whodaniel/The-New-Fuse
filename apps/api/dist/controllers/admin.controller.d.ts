@@ -1,4 +1,4 @@
-import { Permission } from "@the-new-fuse/types";
+import { Permission } from '@the-new-fuse/types';
 import { AuditService } from '../services/audit.service';
 import { MetricsService } from '../services/metrics.service';
 import { RoleService } from '../services/role.service';
@@ -177,7 +177,7 @@ export declare class AdminController {
     getRoles(): Promise<{
         id: string;
         name: string;
-        permissions: any[];
+        permissions: Permission[];
     }[]>;
     /**
      * Update role permissions
@@ -374,7 +374,7 @@ export declare class AdminController {
         totalAgents: number;
         activeAgents: number;
         totalWorkflows: number;
-        systemHealth: "healthy" | "degraded" | "critical";
+        systemHealth: "healthy" | "critical" | "degraded";
         uptime: number;
         memory: {
             used: number;

@@ -14,12 +14,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../../modules/decorators/current-user.decorator.js';
-import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard.js';
-import { AdminConfigurationService } from '../../services/admin-configuration.service.js';
-import { toError } from '../../utils/error.js';
+import { CurrentUser } from '../../modules/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard';
+import { AdminConfigurationService } from '../../services/admin-configuration.service';
+import { toError } from '../../utils/error';
 let AdminConfigController = class AdminConfigController {
     constructor(configService) {
         this.configService = configService;
@@ -73,7 +74,7 @@ AdminConfigController = __decorate([
     ApiTags('admin'),
     Controller('admin/config'),
     UseGuards(JwtAuthGuard),
-    __metadata("design:paramtypes", [AdminConfigurationService])
+    __metadata("design:paramtypes", [typeof (_a = typeof AdminConfigurationService !== "undefined" && AdminConfigurationService) === "function" ? _a : Object])
 ], AdminConfigController);
 export { AdminConfigController };
 //# sourceMappingURL=admin-config.controller.js.map

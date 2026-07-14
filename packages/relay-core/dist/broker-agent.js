@@ -34,9 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
 const promises_1 = require("node:fs/promises");
 const path = __importStar(require("node:path"));
-const infrastructure_1 = require("@the-new-fuse/infrastructure");
 const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
@@ -712,7 +712,13 @@ class BrokerAgent {
         };
     }
     isWorkerAgent(agent) {
-        const role = String(agent.role || '').toLowerCase();
+        // Phase 8: prefer `daccRole` (canonical DACC-v1 position) over the
+        // legacy `role` field. Agents whose daccRole is director/orchestrator/broker
+        // are infrastructure-level, NOT eligible as worker dispatch targets.
+        // Fall back to inspecting both daccRole and the legacy `role` so existing
+        // emitters continue to classify correctly.
+        const daccRole = String(agent.daccRole || '').toLowerCase();
+        const legacyRole = String(agent.role || '').toLowerCase();
         const status = String(agent.status || '').toLowerCase();
         if (agent.isOnline === false)
             return false;
@@ -723,7 +729,12 @@ class BrokerAgent {
             return false;
         if (Date.now() - lastSeenMs > CONFIG.AGENT_STALE_MS)
             return false;
-        return !['broker', 'orchestrator', 'director'].includes(role);
+        if (['director', 'orchestrator', 'broker'].includes(daccRole))
+            return false;
+        // Legacy role field: same exclusion.
+        if (['broker', 'orchestrator', 'director'].includes(legacyRole))
+            return false;
+        return true;
     }
     getAgentId(agent) {
         return String(agent.id || agent.agentId || '');
@@ -746,6 +757,56 @@ class BrokerAgent {
         if (!Array.isArray(agent.capabilities))
             return [];
         return agent.capabilities.map((cap) => String(cap).toLowerCase());
+    }
+    // Phase 3 (audit 2026-06-14): fulfillment-awareness for broker dispatch.
+    // If the task itinerary declares modelHint / vendorHint / toolHints, prefer
+    // candidates whose fulfillment matches. This is purely a tie-breaker after
+    // role+capability filters; absence of fulfillment on the candidate is NOT a
+    // disqualifier (so legacy agents stay eligible).
+    fulfillmentMatchScore(agent, hints) {
+        if (!hints.vendorHint &&
+            !hints.modelHint &&
+            (!hints.toolHints || hints.toolHints.length === 0)) {
+            return 0;
+        }
+        const f = agent.fulfillment;
+        if (!f)
+            return 0;
+        let score = 0;
+        if (hints.vendorHint &&
+            f.vendor &&
+            String(f.vendor).toLowerCase() === hints.vendorHint.toLowerCase()) {
+            score += 5;
+        }
+        if (hints.modelHint &&
+            f.model &&
+            String(f.model).toLowerCase().includes(hints.modelHint.toLowerCase())) {
+            score += 3;
+        }
+        if (Array.isArray(hints.toolHints) && Array.isArray(f.tools)) {
+            const wanted = new Set(hints.toolHints.map((t) => String(t).toLowerCase()));
+            const have = new Set(f.tools.map((t) => String(t).toLowerCase()));
+            let overlap = 0;
+            wanted.forEach((w) => {
+                if (have.has(w))
+                    overlap += 1;
+            });
+            score += overlap;
+        }
+        return score;
+    }
+    extractFulfillmentHints(task) {
+        const itin = (task.itinerary || {});
+        const fulfillmentHints = (itin.fulfillmentHints || {});
+        const result = {};
+        if (typeof fulfillmentHints.vendor === 'string')
+            result.vendorHint = fulfillmentHints.vendor;
+        if (typeof fulfillmentHints.model === 'string')
+            result.modelHint = fulfillmentHints.model;
+        if (Array.isArray(fulfillmentHints.tools)) {
+            result.toolHints = fulfillmentHints.tools.filter((t) => typeof t === 'string');
+        }
+        return result;
     }
     async selectTargetAgent(task) {
         let registry = {};
@@ -783,6 +844,25 @@ class BrokerAgent {
             const capable = agents.find((agent) => requiredCapabilities.every((cap) => this.getCapabilityList(agent).includes(cap)));
             if (capable)
                 return this.getAgentId(capable);
+        }
+        // Phase 3 (audit 2026-06-14): fulfillment-aware tie-breaker. Tasks whose
+        // itinerary declares fulfillmentHints (vendor/model/tools) get a candidate
+        // whose matching fulfillment preferred. Legacy candidates without
+        // fulfillment metadata remain eligible.
+        const hints = this.extractFulfillmentHints(task);
+        if (hints.vendorHint || hints.modelHint || (hints.toolHints && hints.toolHints.length > 0)) {
+            const scored = [...agents]
+                .map((agent) => ({ agent, score: this.fulfillmentMatchScore(agent, hints) }))
+                .sort((a, b) => {
+                if (b.score !== a.score)
+                    return b.score - a.score;
+                const ta = Date.parse(String(a.agent.lastSeen || 0)) || 0;
+                const tb = Date.parse(String(b.agent.lastSeen || 0)) || 0;
+                return ta - tb;
+            });
+            if (scored.length > 0 && scored[0].score > 0) {
+                return this.getAgentId(scored[0].agent);
+            }
         }
         const sorted = [...agents].sort((a, b) => {
             const ta = Date.parse(String(a.lastSeen || 0)) || 0;

@@ -6,6 +6,9 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useModalA11y } from '../hooks/useModalA11y';
 import { AntigravityService, type AntigravityStatus, type PageInfo } from '../services';
 
 // ============================================================================
@@ -25,15 +28,23 @@ interface ConnectionModalProps {
 const ConnectionModal: React.FC<ConnectionModalProps> = ({ isOpen, onClose, onConnect }) => {
   const [serverAddress, setServerAddress] = useState('http://localhost:3000');
   const [csrfToken, setCsrfToken] = useState('');
+  const dialogRef = useModalA11y(isOpen, onClose);
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
+    <div className="modal-overlay" onClick={onClose} role="presentation">
+      <div
+        ref={dialogRef}
+        className="modal-container"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="antigravity-connect-title"
+      >
         <div className="modal-header">
-          <h2>🔮 Connect to Antigravity</h2>
-          <button className="close-btn" onClick={onClose}>
+          <h2 id="antigravity-connect-title">🔮 Connect to Antigravity</h2>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>
@@ -58,10 +69,14 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({ isOpen, onClose, onCo
           </div>
         </div>
         <div className="modal-footer">
-          <button className="btn-secondary" onClick={onClose}>
+          <button type="button" className="btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="btn-primary" onClick={() => onConnect(serverAddress, csrfToken)}>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => onConnect(serverAddress, csrfToken)}
+          >
             Connect
           </button>
         </div>
@@ -270,148 +285,152 @@ export const AntigravityHub: React.FC = () => {
   const isConnected = status?.connected || false;
 
   return (
-    <div className="antigravity-hub">
-      {/* Header */}
-      <div className="hub-header">
-        <div className="header-title">
-          <span className="icon-glow">🌐</span>
-          <div>
-            <h1>Browser Automation</h1>
-            <p className="subtitle">Agent & User Browser Bridge</p>
-          </div>
-        </div>
-
-        <div className="header-actions">
+    <PageShell
+      title="Antigravity"
+      subtitle="Agent and user browser bridge — cascade automation and screen recording"
+      actions={
+        <>
           <button
-            className={`status-badge ${isConnected ? 'connected' : 'disconnected'}`}
+            type="button"
+            className={`secondary-button ${isConnected ? 'env-badge local' : ''}`}
             onClick={() => !isConnected && setShowConnectionModal(true)}
             disabled={isConnecting}
           >
-            <span className="status-dot" />
-            {isConnecting ? 'Connecting...' : isConnected ? 'Connected' : 'Connect'}
+            {isConnecting ? 'Connecting…' : isConnected ? 'Connected' : 'Connect'}
           </button>
-
-          {isConnected && (
+          {isConnected ? (
             <>
-              <button className="icon-btn" onClick={handleRefresh} title="Refresh">
-                ↻
+              <button
+                type="button"
+                className="ghost-button"
+                onClick={handleRefresh}
+                title="Refresh"
+              >
+                Refresh
               </button>
-              <button className="icon-btn danger" onClick={handleDisconnect} title="Disconnect">
-                ⏻
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={handleDisconnect}
+                title="Disconnect"
+              >
+                Disconnect
               </button>
             </>
-          )}
-        </div>
-      </div>
-
-      {/* Status Card */}
-      <div className="status-card">
-        <div className="status-header">
-          <h2>System Status</h2>
-          {status && (
-            <span className={`status-indicator ${isConnected ? 'online' : 'offline'}`}>
-              {isConnected ? '● Online' : '○ Offline'}
-            </span>
-          )}
-        </div>
-
-        {status ? (
-          <div className="status-grid">
-            <div className="stat-item">
-              <span className="stat-value">{status.statusCode}</span>
-              <span className="stat-label">Status Code</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{pages.length}</span>
-              <span className="stat-label">Active Pages</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{status.version || 'N/A'}</span>
-              <span className="stat-label">Version</span>
-            </div>
-            <div className="stat-item full-width">
-              <span className="stat-message">{status.message}</span>
-            </div>
+          ) : null}
+        </>
+      }
+    >
+      <SynergyStatusBar />
+      <div className="antigravity-hub">
+        {/* Status Card */}
+        <div className="status-card">
+          <div className="status-header">
+            <h2>System Status</h2>
+            {status && (
+              <span className={`status-indicator ${isConnected ? 'online' : 'offline'}`}>
+                {isConnected ? '● Online' : '○ Offline'}
+              </span>
+            )}
           </div>
-        ) : (
-          <div className="empty-state">
-            <p>Connect to Antigravity to view system status</p>
-            <button
-              className="btn-primary"
-              onClick={() => setShowConnectionModal(true)}
-              disabled={isConnecting}
-            >
-              {isConnecting ? 'Connecting...' : 'Connect Now'}
-            </button>
+
+          {status ? (
+            <div className="status-grid">
+              <div className="stat-item">
+                <span className="stat-value">{status.statusCode}</span>
+                <span className="stat-label">Status Code</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">{pages.length}</span>
+                <span className="stat-label">Active Pages</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">{status.version || 'N/A'}</span>
+                <span className="stat-label">Version</span>
+              </div>
+              <div className="stat-item full-width">
+                <span className="stat-message">{status.message}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <p>Connect to Antigravity to view system status</p>
+              <button
+                className="btn-primary"
+                onClick={() => setShowConnectionModal(true)}
+                disabled={isConnecting}
+              >
+                {isConnecting ? 'Connecting...' : 'Connect Now'}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Quick Actions */}
+        {isConnected && (
+          <div className="quick-actions">
+            <div className="section-header">
+              <h2>Quick Actions</h2>
+            </div>
+            <div className="actions-grid">
+              <button
+                className={`action-card ${isRecording ? 'active' : ''}`}
+                onClick={isRecording ? handleStopRecording : handleStartRecording}
+              >
+                <span className="action-icon">{isRecording ? '⏹' : '⏺'}</span>
+                <span>{isRecording ? 'Stop Recording' : 'Start Recording'}</span>
+              </button>
+              <button className="action-card">
+                <span className="action-icon">📋</span>
+                <span>List Pages</span>
+              </button>
+              <button className="action-card">
+                <span className="action-icon">🎯</span>
+                <span>Focus Conversation</span>
+              </button>
+              <button className="action-card">
+                <span className="action-icon">⛔</span>
+                <span>Cancel Cascade</span>
+              </button>
+            </div>
           </div>
         )}
-      </div>
 
-      {/* Quick Actions */}
-      {isConnected && (
-        <div className="quick-actions">
-          <div className="section-header">
-            <h2>Quick Actions</h2>
-          </div>
-          <div className="actions-grid">
-            <button
-              className={`action-card ${isRecording ? 'active' : ''}`}
-              onClick={isRecording ? handleStopRecording : handleStartRecording}
-            >
-              <span className="action-icon">{isRecording ? '⏹' : '⏺'}</span>
-              <span>{isRecording ? 'Stop Recording' : 'Start Recording'}</span>
-            </button>
-            <button className="action-card">
-              <span className="action-icon">📋</span>
-              <span>List Pages</span>
-            </button>
-            <button className="action-card">
-              <span className="action-icon">🎯</span>
-              <span>Focus Conversation</span>
-            </button>
-            <button className="action-card">
-              <span className="action-icon">⛔</span>
-              <span>Cancel Cascade</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Pages List */}
-      {isConnected && pages.length > 0 && (
-        <div className="pages-section">
-          <div className="section-header">
-            <h2>Managed Pages</h2>
-            <span className="badge">{pages.length}</span>
-          </div>
-          <div className="pages-list">
-            {pages.map((page) => (
-              <div key={page.id} className="page-card">
-                <div className="page-favicon">
-                  {page.favicon ? <img src={page.favicon} alt="" /> : <span>🌐</span>}
+        {/* Pages List */}
+        {isConnected && pages.length > 0 && (
+          <div className="pages-section">
+            <div className="section-header">
+              <h2>Managed Pages</h2>
+              <span className="badge">{pages.length}</span>
+            </div>
+            <div className="pages-list">
+              {pages.map((page) => (
+                <div key={page.id} className="page-card">
+                  <div className="page-favicon">
+                    {page.favicon ? <img src={page.favicon} alt="" /> : <span>🌐</span>}
+                  </div>
+                  <div className="page-info">
+                    <h3>{page.title || 'Untitled'}</h3>
+                    <p>{page.url}</p>
+                  </div>
+                  <div className={`page-status ${page.active ? 'active' : ''}`}>
+                    {page.active ? '● Active' : '○ Idle'}
+                  </div>
                 </div>
-                <div className="page-info">
-                  <h3>{page.title || 'Untitled'}</h3>
-                  <p>{page.url}</p>
-                </div>
-                <div className={`page-status ${page.active ? 'active' : ''}`}>
-                  {page.active ? '● Active' : '○ Idle'}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Connection Modal */}
-      <ConnectionModal
-        isOpen={showConnectionModal}
-        onClose={() => setShowConnectionModal(false)}
-        onConnect={handleConnect}
-      />
+        {/* Connection Modal */}
+        <ConnectionModal
+          isOpen={showConnectionModal}
+          onClose={() => setShowConnectionModal(false)}
+          onConnect={handleConnect}
+        />
 
-      {/* Styles */}
-      <style>{`
+        {/* Styles */}
+        <style>{`
         .antigravity-hub {
           padding: 24px;
           max-width: 1200px;
@@ -759,7 +778,8 @@ export const AntigravityHub: React.FC = () => {
           }
         }
       `}</style>
-    </div>
+      </div>
+    </PageShell>
   );
 };
 

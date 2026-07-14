@@ -8,10 +8,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ApiKeyAuthGuard } from './guards/api-key-auth.guard.js';
-import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
-import { JwtStrategy } from './strategies/jwt.strategy.js';
-import { ServiceOrUserAuthGuard } from './guards/service-or-user-auth.guard.js';
+import { ApiKeyAuthGuard } from './guards/api-key-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { ServiceOrUserAuthGuard } from './guards/service-or-user-auth.guard';
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([

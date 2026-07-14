@@ -9,6 +9,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -48,16 +49,8 @@ export const WorkflowAnalytics: React.FC<WorkflowAnalyticsProps> = ({ workflowId
       setError(null);
 
       try {
-        const token = localStorage.getItem('token') || '';
-        const response = await fetch(
-          `/api/workflows/executions?workflowId=${encodeURIComponent(workflowId)}&limit=100`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: token ? `Bearer ${token}` : '',
-            },
-            credentials: 'include',
-          }
+        const response = await authFetch(
+          `/api/workflows/executions?workflowId=${encodeURIComponent(workflowId)}&limit=100`
         );
 
         if (!response.ok) {

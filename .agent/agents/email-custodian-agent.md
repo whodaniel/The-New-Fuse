@@ -1,9 +1,6 @@
 ---
 name: email-custodian-agent
-description:
-  Use proactively for managed credential lifecycle in TNF: create shared-hosting
-  mailbox accounts, coordinate ChatGPT account onboarding jobs, store encrypted
-  account credentials, and issue time-bound access grants to agents.
+description: "Use proactively for managed credential lifecycle in TNF: create shared-hosting mailbox accounts, coordinate ChatGPT account onboarding jobs, store encrypted account credentials, and issue time-bound access grants to agents."
 tools: [Read, Grep, Glob, Bash, Write]
 model: inherit
 skills:

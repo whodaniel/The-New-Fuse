@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-05-18T23:51:35Z",
+  "issues": [
+    {
+      "domain": "app.thenewfuse.com",
+      "severity": "Critical",
+      "category": "Security",
+      "description": "Wildcard CORS detected",
+      "fix_strategy": "Implement a specific `Access-Control-Allow-Origin` header instead of a wildcard. Review Cloudflare Workers/Pages configuration."
+    },
+    {
+      "domain": "api.thenewfuse.com",
+      "severity": "High",
+      "category": "Security",
+      "description": "CORS rejection returns 500",
+      "fix_strategy": "Configure CORS to return 403 or silently deny requests from invalid origins, instead of a 500 error. Review API Gateway/Cloudflare Worker configuration."
+    },
+    {
+      "domain": "api.thenewfuse.com",
+      "severity": "High",
+      "category": "Functional",
+      "description": "Routes /login, /register, /dashboard, /pricing, /docs return 404",
+      "fix_strategy": "Implement proper routing for these endpoints. Verify Cloudflare Worker or API Gateway routing rules. Create placeholder content or redirects if these routes are not intended to be live."
+    },
+    {
+      "domain": "relay.thenewfuse.com",
+      "severity": "High",
+      "category": "Functional",
+      "description": "Routes /login, /register, /dashboard, /pricing, /docs, /api/health return 404",
+      "fix_strategy": "Implement proper routing for these endpoints. Verify Cloudflare Worker or API Gateway routing rules. Create placeholder content or redirects if these routes are not intended to be live. Ensure DNS record for relay.thenewfuse.com exists and points to the correct origin."
+    }
+  ]
+}

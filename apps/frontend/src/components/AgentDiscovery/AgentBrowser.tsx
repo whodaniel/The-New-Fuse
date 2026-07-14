@@ -4,6 +4,7 @@
  * Real-time agent discovery and capability browsing interface
  */
 
+import { authFetch } from '@/utils/authToken';
 import {
   Activity,
   CheckCircle,
@@ -97,7 +98,7 @@ export const AgentBrowser: React.FC = () => {
         capability: searchQuery || undefined,
       };
 
-      const response = await fetch('/api/agents/discover', {
+      const response = await authFetch('/api/agents/discover', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(query),

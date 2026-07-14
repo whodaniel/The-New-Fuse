@@ -2,13 +2,29 @@ import OpsPageHeader from '@/components/ops/OpsPageHeader';
 import { ActionCard, GlassCard, PremiumButton } from '@/components/ui';
 import useWorkflow from '@/hooks/useWorkflow';
 import { formatDistanceToNow } from 'date-fns';
-import { Activity, Clock, Edit, Link2, Loader2, Play, Rocket, TrendingUp, Zap } from 'lucide-react';
-import { useEffect } from 'react';
+import {
+  Activity,
+  BookOpen,
+  Clock,
+  Cpu,
+  Edit,
+  Link2,
+  Loader2,
+  Network,
+  Play,
+  Rocket,
+  Sparkles,
+  TrendingUp,
+  Wand2,
+  Zap,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Workflows() {
   const navigate = useNavigate();
+  const [selectedPreviewId, setSelectedPreviewId] = useState<string | null>(null);
   const {
     workflows,
     executions,
@@ -24,6 +40,14 @@ export default function Workflows() {
     loadWorkflows();
     loadExecutions();
   }, [loadWorkflows, loadExecutions]);
+
+  useEffect(() => {
+    if (!selectedPreviewId && workflows.length > 0) {
+      setSelectedPreviewId(workflows[0].id);
+    }
+  }, [workflows, selectedPreviewId]);
+
+  const selectedPreviewWorkflow = workflows.find((w) => w.id === selectedPreviewId) ?? null;
 
   const handleEdit = (id: string) => {
     navigate(`/workflows/builder?id=${id}`);
@@ -118,13 +142,13 @@ export default function Workflows() {
     switch (status?.toLowerCase()) {
       case 'active':
       case 'completed':
-        return 'bg-linear-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30';
+        return 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30';
       case 'running':
-        return 'bg-linear-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30';
+        return 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30';
       case 'failed':
-        return 'bg-linear-to-r from-red-500/20 to-pink-500/20 text-red-300 border border-red-500/30';
+        return 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border border-red-500/30';
       default: // Draft or unknown
-        return 'bg-linear-to-r from-slate-500/20 to-slate-600/20 text-slate-300 border border-slate-500/30';
+        return 'bg-gradient-to-r from-slate-500/20 to-slate-600/20 text-slate-300 border border-slate-500/30';
     }
   };
 
@@ -189,50 +213,57 @@ export default function Workflows() {
         }
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
         <GlassCard className="p-4">
-          <p className="text-xs uppercase tracking-wide text-gray-400">Total Runs</p>
+          <p className="text-xs uppercase tracking-wide text-slate-400">Total Runs</p>
           <p className="text-2xl font-bold text-white mt-1">{executions.length}</p>
         </GlassCard>
         <GlassCard className="p-4">
-          <p className="text-xs uppercase tracking-wide text-gray-400">Running Now</p>
+          <p className="text-xs uppercase tracking-wide text-slate-400">Running Now</p>
           <p className="text-2xl font-bold text-white mt-1">{runningExecutions}</p>
         </GlassCard>
         <GlassCard className="p-4">
-          <p className="text-xs uppercase tracking-wide text-gray-400">Failure Count</p>
+          <p className="text-xs uppercase tracking-wide text-slate-400">Failure Count</p>
           <p className="text-2xl font-bold text-white mt-1">{failedExecutions}</p>
         </GlassCard>
       </div>
 
-      <GlassCard className="p-4">
+      <GlassCard className="p-4 relative z-10">
+        <p className="text-xs uppercase tracking-wide text-slate-400 mb-3">Execution Engines</p>
         <div className="flex flex-wrap items-center gap-2">
           <Link to="/workflows/builder">
             <PremiumButton size="sm" variant="secondary">
+              <Wand2 className="w-4 h-4 mr-2" />
               Builder
             </PremiumButton>
           </Link>
           <Link to="/workflows/builder-n8n">
             <PremiumButton size="sm" variant="secondary">
+              <Network className="w-4 h-4 mr-2" />
               N8N Builder
             </PremiumButton>
           </Link>
           <Link to="/workflows/nexus?layer=forge">
             <PremiumButton size="sm" variant="outline">
+              <Sparkles className="w-4 h-4 mr-2" />
               Nexus Forge
             </PremiumButton>
           </Link>
           <Link to="/workflows/nexus?layer=semantic">
             <PremiumButton size="sm" variant="outline">
+              <Cpu className="w-4 h-4 mr-2" />
               Nexus Semantic
             </PremiumButton>
           </Link>
           <Link to="/workflows/nexus?layer=memory">
             <PremiumButton size="sm" variant="outline">
+              <BookOpen className="w-4 h-4 mr-2" />
               Nexus Memory
             </PremiumButton>
           </Link>
           <Link to="/settings/api">
             <PremiumButton size="sm" variant="outline">
+              <Link2 className="w-4 h-4 mr-2" />
               API & Webhooks
             </PremiumButton>
           </Link>
@@ -340,18 +371,91 @@ export default function Workflows() {
       )}
 
       {/* Workflow Builder Section */}
-      <div className="animate-slide-in-up" style={{ animationDelay: '0.1s' }}>
+      <div className="relative z-10">
         <GlassCard>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-md bg-linear-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
               <Activity className="w-5 h-5 text-white" />
             </div>
-            <h2 className="text-xl font-bold text-white">Workflow Builder</h2>
+            <div>
+              <h2 className="text-xl font-bold text-white">Workflow Builder</h2>
+              <p className="text-sm text-slate-400">
+                Select a workflow to visualize or create a new one.
+              </p>
+            </div>
           </div>
-          <div className="h-96 bg-slate-900/50 rounded-md border border-slate-700/50 flex items-center justify-center backdrop-blur-sm">
-            <p className="text-slate-400">Select a workflow to visualize or create a new one.</p>
+
+          {workflows.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 mb-4">
+              {workflows.map((workflow) => {
+                const selected = selectedPreviewId === workflow.id;
+                return (
+                  <button
+                    key={workflow.id}
+                    type="button"
+                    onClick={() => setSelectedPreviewId(workflow.id)}
+                    className={`text-left rounded-md border p-3 transition ${
+                      selected
+                        ? 'border-purple-400/50 bg-purple-500/10'
+                        : 'border-slate-700 bg-slate-900/50 hover:border-slate-500'
+                    }`}
+                  >
+                    <p className="font-semibold text-white truncate">{workflow.name}</p>
+                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                      {workflow.description || 'No description provided'}
+                    </p>
+                    <p className="text-[10px] uppercase tracking-wide text-slate-500 mt-2">
+                      {workflow.nodes?.length || 0} steps · {workflow.status}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="h-40 rounded-md border border-dashed border-slate-700 flex items-center justify-center text-slate-400 mb-4">
+              No workflows available yet.
+            </div>
+          )}
+
+          <div className="h-48 bg-slate-900/70 rounded-md border border-slate-700/50 p-4">
+            {selectedPreviewWorkflow ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-lg font-semibold text-white">
+                    {selectedPreviewWorkflow.name}
+                  </h3>
+                  <span
+                    className={`px-2 py-1 rounded-full text-[10px] uppercase ${getStatusColor(selectedPreviewWorkflow.status)}`}
+                  >
+                    {selectedPreviewWorkflow.status}
+                  </span>
+                </div>
+                <p className="text-sm text-slate-300">
+                  {selectedPreviewWorkflow.description || 'No description provided.'}
+                </p>
+                <div className="flex flex-wrap gap-2 text-xs text-slate-400">
+                  <span>{selectedPreviewWorkflow.nodes?.length || 0} nodes</span>
+                  <span>v{selectedPreviewWorkflow.version}</span>
+                  <span>Last run: {getLastRun(selectedPreviewWorkflow.id)}</span>
+                </div>
+              </div>
+            ) : (
+              <p className="text-slate-400 h-full flex items-center justify-center">
+                Select a workflow card above to preview details.
+              </p>
+            )}
           </div>
-          <div className="mt-4 flex justify-end">
+
+          <div className="mt-4 flex justify-end gap-2">
+            {selectedPreviewWorkflow ? (
+              <PremiumButton
+                variant="secondary"
+                onClick={() => handleEdit(selectedPreviewWorkflow.id)}
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Selected
+              </PremiumButton>
+            ) : null}
             <Link to="/workflows/builder">
               <PremiumButton variant="gradient">
                 <Zap className="w-4 h-4 mr-2" />
@@ -366,7 +470,7 @@ export default function Workflows() {
       <div className="animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
         <GlassCard>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-md bg-linear-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-md bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
             <h2 className="text-xl font-bold text-white">Recent Executions</h2>

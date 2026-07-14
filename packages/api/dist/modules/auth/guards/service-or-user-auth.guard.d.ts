@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { JwtAuthGuard } from './jwt-auth.guard.js';
-import { ApiKeyAuthGuard } from './api-key-auth.guard.js';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { ApiKeyAuthGuard } from './api-key-auth.guard';
 export declare class ServiceOrUserAuthGuard implements CanActivate {
     private readonly jwtGuard;
     private readonly apiKeyGuard;

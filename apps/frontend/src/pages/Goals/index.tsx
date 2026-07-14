@@ -1,3 +1,4 @@
+import TalkToAIFormAssist from '@/components/forms/TalkToAIFormAssist';
 import { Button, Card, Input, Textarea } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import {
@@ -114,6 +115,20 @@ export default function GoalsPage() {
       </div>
 
       <Card className="p-4 space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">New Goal</h2>
+          <TalkToAIFormAssist
+            formTitle="Create Goal"
+            fields={[
+              { key: 'title', label: 'Goal title' },
+              { key: 'description', label: 'Goal description' },
+            ]}
+            onApply={(values) => {
+              if (values.title) setTitle(String(values.title));
+              if (values.description) setDescription(String(values.description));
+            }}
+          />
+        </div>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Goal title" />
         <Textarea
           value={description}

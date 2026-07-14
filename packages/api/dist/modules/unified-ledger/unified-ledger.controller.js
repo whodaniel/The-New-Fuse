@@ -10,8 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b, _c, _d, _e;
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { UnifiedLedgerService } from './unified-ledger.service.js';
+import { UnifiedLedgerService } from './unified-ledger.service';
+import { UnifiedRecordKind, UnifiedRecordStatus } from './unified-ledger.types';
 let UnifiedLedgerController = class UnifiedLedgerController {
     constructor(ledger) {
         this.ledger = ledger;
@@ -146,7 +148,7 @@ __decorate([
     __param(1, Query('status')),
     __param(2, Query('q')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [typeof (_b = typeof UnifiedRecordKind !== "undefined" && UnifiedRecordKind) === "function" ? _b : Object, typeof (_c = typeof UnifiedRecordStatus !== "undefined" && UnifiedRecordStatus) === "function" ? _c : Object, String]),
     __metadata("design:returntype", Promise)
 ], UnifiedLedgerController.prototype, "list", null);
 __decorate([
@@ -342,7 +344,7 @@ __decorate([
     __param(0, Query('status')),
     __param(1, Query('q')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [typeof (_d = typeof UnifiedRecordStatus !== "undefined" && UnifiedRecordStatus) === "function" ? _d : Object, String]),
     __metadata("design:returntype", Promise)
 ], UnifiedLedgerController.prototype, "listTasks", null);
 __decorate([
@@ -372,7 +374,7 @@ __decorate([
     __param(0, Query('status')),
     __param(1, Query('q')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [typeof (_e = typeof UnifiedRecordStatus !== "undefined" && UnifiedRecordStatus) === "function" ? _e : Object, String]),
     __metadata("design:returntype", Promise)
 ], UnifiedLedgerController.prototype, "listSuggestions", null);
 __decorate([
@@ -407,7 +409,7 @@ __decorate([
 ], UnifiedLedgerController.prototype, "voteSuggestion", null);
 UnifiedLedgerController = __decorate([
     Controller(),
-    __metadata("design:paramtypes", [UnifiedLedgerService])
+    __metadata("design:paramtypes", [typeof (_a = typeof UnifiedLedgerService !== "undefined" && UnifiedLedgerService) === "function" ? _a : Object])
 ], UnifiedLedgerController);
 export { UnifiedLedgerController };
 //# sourceMappingURL=unified-ledger.controller.js.map

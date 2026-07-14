@@ -73,12 +73,20 @@ let AuthController = class AuthController {
             email: currentUser.email,
             username: currentUser.username,
             name: currentUser.name,
+            displayName: currentUser.name || currentUser.username,
             role: currentUser.role,
             roles: currentUser.roles,
             isActive: currentUser.isActive,
             createdAt: currentUser.createdAt,
             updatedAt: currentUser.updatedAt,
+            preferences: currentUser.preferences || {
+                theme: 'system',
+                notifications: true,
+            },
         };
+    }
+    async updateMe(req, body) {
+        return this.authService.updateCurrentUserProfile(req.user.id, body);
     }
     async session(req) {
         const authHeader = req.headers.authorization;
@@ -209,6 +217,17 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "me", null);
+__decorate([
+    (0, common_1.Patch)('me'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, swagger_1.ApiOperation)({ summary: 'Update current user profile' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'User profile updated successfully' }),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "updateMe", null);
 __decorate([
     (0, common_1.Get)('session'),
     (0, swagger_1.ApiOperation)({ summary: 'Get lightweight auth session status' }),

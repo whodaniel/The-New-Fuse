@@ -39,10 +39,16 @@ const sanitizeErrorMessage = (input: unknown): string => {
 // Add a request interceptor to add the auth token to every request
 api.interceptors.request.use(
   async (config) => {
-    // Prefer Supabase token when available, then fall back to stored JWT.
+    // Prefer app JWT first, then Supabase session token.
     let bearerToken: string | null = null;
+    const storedToken =
+      localStorage.getItem('auth_token') ||
+      localStorage.getItem('authToken') ||
+      localStorage.getItem('accessToken') ||
+      localStorage.getItem('token');
+    if (storedToken) bearerToken = storedToken;
 
-    if (hasSupabaseConfig && supabase) {
+    if (!bearerToken && hasSupabaseConfig && supabase) {
       try {
         const { data, error } = await supabase.auth.getSession();
         if (!error) {
@@ -51,13 +57,6 @@ api.interceptors.request.use(
       } catch (error) {
         console.error('Error getting Supabase auth token:', error);
       }
-    }
-
-    if (!bearerToken) {
-      bearerToken =
-        localStorage.getItem('auth_token') ||
-        localStorage.getItem('authToken') ||
-        localStorage.getItem('token');
     }
 
     if (bearerToken) {
@@ -190,9 +189,12 @@ export const apiService = {
   },
 
   testWebhookUrl: async (url: string) => {
-    const response = await api.post<{ success: boolean; message: string }>('/api/v1/webhooks/test', {
-      url,
-    });
+    const response = await api.post<{ success: boolean; message: string }>(
+      '/api/v1/webhooks/test',
+      {
+        url,
+      }
+    );
     return response.data;
   },
 

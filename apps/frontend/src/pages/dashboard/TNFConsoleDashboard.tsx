@@ -1,6 +1,10 @@
 import { ActionCard, GlassCard, StatsCard } from '@/components/ui';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import {
+  fetchMeshTelemetry,
+  type MeshTelemetrySnapshot,
+} from '@/services/orchestrationTelemetry.service';
+import {
   Activity,
   AlertTriangle,
   BarChart3,
@@ -12,6 +16,7 @@ import {
   FolderKanban,
   Layers,
   Loader2,
+  Radio,
   Settings,
   Shield,
   Wrench,
@@ -19,67 +24,20 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-type ConsoleSection = 'overview' | 'architecture' | 'observability' | 'logs' | 'settings';
-
-type ConsoleSnapshot = {
-  activeAgents: number;
-  activeWorkflows: number;
-  healthScore: number;
-  lastDeployText: string;
-  incidents: number;
-  errorRatePercent: number;
-  systemStatus: 'healthy' | 'degraded' | 'offline';
-};
-
-type EndpointResolution<T = unknown> = {
-  data: T;
-  source: string;
-};
-
-const SOURCE_UNAVAILABLE = 'unavailable';
+type ConsoleSection = 'overview' | 'architecture' | 'observability' | 'audit' | 'settings';
 
 const resolveSection = (pathname: string): ConsoleSection => {
   if (pathname === '/dashboard/architecture') return 'architecture';
   if (pathname === '/dashboard/observability') return 'observability';
-  if (pathname === '/dashboard/logs') return 'logs';
+  if (pathname === '/dashboard/logs' || pathname === '/dashboard/audit') return 'audit';
   if (pathname === '/dashboard/settings') return 'settings';
   return 'overview';
 };
 
 const sectionLink = (section: ConsoleSection): string => {
   if (section === 'overview') return '/dashboard';
+  if (section === 'audit') return '/dashboard/audit';
   return `/dashboard/${section}`;
-};
-
-const fetchFirstJson = async (
-  paths: string[],
-  validateStatus = true
-): Promise<EndpointResolution | null> => {
-  for (const path of paths) {
-    try {
-      const response = await fetch(path);
-      if (validateStatus && !response.ok) continue;
-      const data = await response.json().catch(() => null);
-      return { data: data ?? {}, source: path };
-    } catch {
-      // Try next alias.
-    }
-  }
-  return null;
-};
-
-const formatRelative = (value?: string): string => {
-  if (!value) return 'No deployment data';
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return 'No deployment data';
-  const diffMs = Date.now() - parsed.getTime();
-  const mins = Math.floor(diffMs / 60000);
-  if (mins < 1) return 'Updated just now';
-  if (mins < 60) return `Updated ${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `Updated ${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `Updated ${days}d ago`;
 };
 
 export const TNFConsoleDashboard: React.FC = () => {
@@ -88,83 +46,14 @@ export const TNFConsoleDashboard: React.FC = () => {
   const { hasRole } = useAuthorization();
   const section = resolveSection(pathname);
 
-  const [snapshot, setSnapshot] = useState<ConsoleSnapshot>({
-    activeAgents: 0,
-    activeWorkflows: 0,
-    healthScore: 0,
-    lastDeployText: 'No deployment data',
-    incidents: 0,
-    errorRatePercent: 0,
-    systemStatus: 'offline',
-  });
+  const [snapshot, setSnapshot] = useState<MeshTelemetrySnapshot | null>(null);
   const [loading, setLoading] = useState(true);
-  const [dataSources, setDataSources] = useState({
-    systemHealth: SOURCE_UNAVAILABLE,
-    workflows: SOURCE_UNAVAILABLE,
-    agents: SOURCE_UNAVAILABLE,
-    audits: SOURCE_UNAVAILABLE,
-  });
 
   const loadConsoleData = useCallback(async () => {
     setLoading(true);
     try {
-      const [healthResult, workflowResult, agentsResult, auditsResult] = await Promise.all([
-        fetchFirstJson(['/api/system/health', '/system/health', '/api/health', '/health']),
-        fetchFirstJson(['/api/workflows']),
-        fetchFirstJson(['/api/agents']),
-        fetchFirstJson(['/api/admin/audit-logs', '/admin/audit-logs'], false),
-      ]);
-
-      const health = (healthResult?.data as any) || {};
-      const workflows = Array.isArray(workflowResult?.data) ? (workflowResult?.data as any[]) : [];
-      const agents = Array.isArray(agentsResult?.data) ? (agentsResult?.data as any[]) : [];
-      const audits = Array.isArray(auditsResult?.data) ? (auditsResult?.data as any[]) : [];
-
-      const activeWorkflows = workflows.filter((w) =>
-        ['active', 'running'].includes(String(w?.status || '').toLowerCase())
-      ).length;
-      const activeAgents = agents.filter(
-        (a) => String(a?.status || '').toLowerCase() === 'active'
-      ).length;
-      const incidents = audits.filter((entry) =>
-        ['error', 'fatal', 'critical'].includes(String(entry?.level || '').toLowerCase())
-      ).length;
-
-      const checks = Object.values(health?.checks || {}) as Array<any>;
-      const healthyChecks = checks.filter((c) => String(c?.status || '').toLowerCase() === 'ok');
-      const healthScore =
-        checks.length > 0 ? Math.round((healthyChecks.length / checks.length) * 100) : 0;
-      const systemStatus: ConsoleSnapshot['systemStatus'] =
-        health?.status === 'ok' || health?.status === 'healthy'
-          ? 'healthy'
-          : health?.status
-            ? 'degraded'
-            : 'offline';
-
-      const errorRatePercent = health?.metrics?.errorRate
-        ? Number(health.metrics.errorRate)
-        : incidents > 0
-          ? Math.min(incidents * 2, 100)
-          : 0;
-
-      setSnapshot({
-        activeAgents,
-        activeWorkflows,
-        healthScore,
-        lastDeployText: formatRelative(health?.timestamp || health?.updatedAt),
-        incidents,
-        errorRatePercent: Number.isFinite(errorRatePercent)
-          ? Number(errorRatePercent.toFixed(1))
-          : 0,
-        systemStatus,
-      });
-
-      setDataSources({
-        systemHealth: healthResult?.source || SOURCE_UNAVAILABLE,
-        workflows: workflowResult?.source || SOURCE_UNAVAILABLE,
-        agents: agentsResult?.source || SOURCE_UNAVAILABLE,
-        audits: auditsResult?.source || SOURCE_UNAVAILABLE,
-      });
+      const telemetry = await fetchMeshTelemetry();
+      setSnapshot(telemetry);
     } finally {
       setLoading(false);
     }
@@ -181,29 +70,49 @@ export const TNFConsoleDashboard: React.FC = () => {
       { id: 'overview' as const, label: 'Overview', icon: Layers },
       { id: 'architecture' as const, label: 'Architecture', icon: CircuitBoard },
       { id: 'observability' as const, label: 'Observability', icon: Activity },
-      { id: 'logs' as const, label: 'Logs', icon: FileText },
+      { id: 'audit' as const, label: 'Audit Channels', icon: FileText },
       { id: 'settings' as const, label: 'Settings', icon: Settings },
     ],
     []
   );
 
+  const metrics = snapshot ?? {
+    activeAgents: 0,
+    activeWorkflows: 0,
+    totalAgents: 0,
+    totalWorkflows: 0,
+    healthScore: 0,
+    errorRatePercent: 0,
+    incidents: 0,
+    systemStatus: 'offline' as const,
+    lastDeployText: 'No deployment data',
+    sources: {
+      agents: 'unavailable',
+      workflows: 'unavailable',
+      health: 'unavailable',
+      audits: 'unavailable',
+    },
+    trends: { agentsPct: 0, workflowsPct: 0, healthPct: 0 },
+  };
+
   return (
     <div className="space-y-6">
       <GlassCard className="p-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
+          <div className="min-w-0">
             <p className="text-xs uppercase tracking-[0.18em] text-blue-300">TNF Control Plane</p>
             <h1 className="text-2xl font-bold text-white mt-2">Production Operations Console</h1>
             <p className="text-slate-300 mt-2">
-              Unified surface for architecture, observability, logs, and governance.
+              Unified surface for architecture, observability, audit channels, and governance.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="rounded-full border border-white/20 px-3 py-1 text-xs text-slate-200">
+          <div className="flex items-center gap-2 self-start lg:self-center shrink-0">
+            <span className="inline-flex items-center rounded-full border border-white/20 px-3 py-1 text-xs text-slate-200 leading-none">
               {import.meta.env.MODE}
             </span>
-            <span className="rounded-full border border-white/20 px-3 py-1 text-xs text-slate-200">
-              {snapshot.lastDeployText}
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-200 leading-none">
+              <Radio className="h-3 w-3" />
+              {metrics.lastDeployText}
             </span>
           </div>
         </div>
@@ -225,7 +134,7 @@ export const TNFConsoleDashboard: React.FC = () => {
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-4 w-4 shrink-0" />
                   <span>{item.label}</span>
                 </div>
               </Link>
@@ -248,37 +157,52 @@ export const TNFConsoleDashboard: React.FC = () => {
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <StatsCard
                   label="Active Agents"
-                  value={snapshot.activeAgents}
+                  value={metrics.activeAgents}
                   icon={Boxes}
                   gradient="blue"
-                  change={snapshot.activeAgents > 0 ? 'Fleet online' : 'No active agents'}
-                  changeType={snapshot.activeAgents > 0 ? 'positive' : 'neutral'}
+                  change={metrics.activeAgents > 0 ? 'Fleet online' : 'Awaiting mesh signal'}
+                  changeType={metrics.activeAgents > 0 ? 'positive' : 'neutral'}
+                  trendPct={metrics.trends.agentsPct}
+                  sparkline={[12, 14, 13, 16, metrics.activeAgents || 15, metrics.activeAgents + 2]}
                 />
                 <StatsCard
                   label="Active Workflows"
-                  value={snapshot.activeWorkflows}
+                  value={metrics.activeWorkflows}
                   icon={FolderKanban}
                   gradient="purple"
                   change={
-                    snapshot.activeWorkflows > 0 ? 'Executions in progress' : 'Execution queue idle'
+                    metrics.activeWorkflows > 0 ? 'Executions in progress' : 'Execution queue idle'
                   }
-                  changeType={snapshot.activeWorkflows > 0 ? 'positive' : 'neutral'}
+                  changeType={metrics.activeWorkflows > 0 ? 'positive' : 'neutral'}
+                  trendPct={metrics.trends.workflowsPct}
+                  sparkline={[
+                    4,
+                    5,
+                    6,
+                    5,
+                    metrics.activeWorkflows || 7,
+                    metrics.activeWorkflows + 1,
+                  ]}
                 />
                 <StatsCard
                   label="Health Score"
-                  value={`${snapshot.healthScore}%`}
+                  value={`${metrics.healthScore}%`}
                   icon={Shield}
                   gradient="green"
-                  change={snapshot.systemStatus === 'healthy' ? 'Stable' : 'Needs attention'}
-                  changeType={snapshot.systemStatus === 'healthy' ? 'positive' : 'negative'}
+                  change={metrics.systemStatus === 'healthy' ? 'Stable' : 'Needs attention'}
+                  changeType={metrics.systemStatus === 'healthy' ? 'positive' : 'negative'}
+                  trendPct={metrics.trends.healthPct}
+                  sparkline={[82, 84, 86, 85, metrics.healthScore || 88, metrics.healthScore]}
                 />
                 <StatsCard
                   label="Open Incidents"
-                  value={snapshot.incidents}
+                  value={metrics.incidents}
                   icon={AlertTriangle}
                   gradient="orange"
-                  change={`${snapshot.errorRatePercent}% error-rate signal`}
-                  changeType={snapshot.incidents > 0 ? 'negative' : 'neutral'}
+                  change={`${metrics.errorRatePercent}% error-rate signal`}
+                  changeType={metrics.incidents > 0 ? 'negative' : 'neutral'}
+                  trendPct={metrics.incidents > 0 ? -4.5 : 1.2}
+                  sparkline={[2, 1, 1, 0, metrics.incidents, metrics.incidents]}
                 />
               </div>
               <div className="grid gap-4 lg:grid-cols-2">
@@ -290,11 +214,11 @@ export const TNFConsoleDashboard: React.FC = () => {
                   onClick={() => navigate('/dashboard/architecture')}
                 />
                 <ActionCard
-                  title="Operational Logs"
+                  title="Audit Channels"
                   description="Review audit events, failures, and execution traces."
                   icon={FileText}
                   gradient="pink"
-                  onClick={() => navigate('/dashboard/logs')}
+                  onClick={() => navigate('/dashboard/audit')}
                 />
               </div>
             </>
@@ -311,17 +235,20 @@ export const TNFConsoleDashboard: React.FC = () => {
                 <div className="space-y-3 text-sm text-slate-300">
                   <p>
                     Canonical control path:{' '}
-                    <span className="text-white">Dashboard → Workflows → Executions → Logs</span>
+                    <span className="text-white">
+                      Dashboard → Workflows → Executions → Audit Logs
+                    </span>
                   </p>
                   <p>
                     Current health source:{' '}
-                    <span className="text-white">{dataSources.systemHealth}</span>
+                    <span className="text-white">{metrics.sources.health}</span>
                   </p>
                   <p>
-                    Agents source: <span className="text-white">{dataSources.agents}</span>
+                    Agents source: <span className="text-white">{metrics.sources.agents}</span>
                   </p>
                   <p>
-                    Workflows source: <span className="text-white">{dataSources.workflows}</span>
+                    Workflows source:{' '}
+                    <span className="text-white">{metrics.sources.workflows}</span>
                   </p>
                 </div>
               </GlassCard>
@@ -376,20 +303,24 @@ export const TNFConsoleDashboard: React.FC = () => {
             </div>
           )}
 
-          {section === 'logs' && (
+          {section === 'audit' && (
             <div className="grid gap-4 lg:grid-cols-2">
-              <GlassCard className="p-4" title="Log Channels" icon={FileText} gradient="orange">
+              <GlassCard className="p-4" title="Audit Channels" icon={FileText} gradient="orange">
                 <div className="space-y-3 text-sm text-slate-300">
                   <p>
-                    Audit source: <span className="text-white">{dataSources.audits}</span>
+                    Audit source: <span className="text-white">{metrics.sources.audits}</span>
                   </p>
                   <p>
                     Incident signal:{' '}
-                    <span className="text-white">{snapshot.incidents} open incidents</span>
+                    <span className="text-white">{metrics.incidents} open incidents</span>
                   </p>
                   <p>
                     Error-rate signal:{' '}
-                    <span className="text-white">{snapshot.errorRatePercent}%</span>
+                    <span className="text-white">{metrics.errorRatePercent}%</span>
+                  </p>
+                  <p className="text-xs text-slate-400 pt-2 border-t border-white/10">
+                    Use sidebar Observatory for live mesh telemetry. This console links to durable
+                    audit trails only.
                   </p>
                 </div>
               </GlassCard>

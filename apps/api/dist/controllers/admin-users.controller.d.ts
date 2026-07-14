@@ -46,16 +46,16 @@ export declare class AdminUsersController {
         expiresAt?: string;
         attachRole?: boolean;
     }, req: any): Promise<{
-        status: "ACTIVE" | "EXPIRED" | "REVOKED";
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
-        expiresAt: Date | null;
-        tier: "ENTERPRISE" | "STARTER" | "PRO";
+        userId: string;
+        status: "ACTIVE" | "REVOKED" | "EXPIRED";
         reason: string | null;
+        tier: "STARTER" | "PRO" | "ENTERPRISE";
         createdByUserId: string | null;
         revokedByUserId: string | null;
+        expiresAt: Date | null;
         revokedAt: Date | null;
     }>;
     /**

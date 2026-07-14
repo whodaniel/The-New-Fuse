@@ -2,7 +2,7 @@
  * Health Check Controller
  * Provides health check endpoints for the application
  */
-import { HealthService } from '../services/health.service.js';
+import { HealthService } from '../services/health.service';
 interface HealthIndicatorResult {
     [key: string]: {
         status: string;

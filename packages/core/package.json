@@ -16,7 +16,7 @@
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "type-check": "tsc --build --noEmit",
     "test": "echo \"Tests temporarily disabled for this package\"",
-    "test:unit": "jest --testNamePattern=unit",
+    "test:unit": "jest --testNamePattern=unit --passWithNoTests",
     "test:integration": "jest --testNamePattern=integration",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

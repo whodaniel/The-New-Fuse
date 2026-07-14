@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Module } from '@nestjs/common';
-import { ExportController } from '../controllers/export.controller.js';
+import { ExportController } from '../controllers/export.controller';
 let ExportModule = class ExportModule {
 };
 ExportModule = __decorate([

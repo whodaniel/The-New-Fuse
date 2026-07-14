@@ -15,10 +15,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE_CLIENT, sql } from '@the-new-fuse/database';
 import * as os from 'os';
-import { ApiLogsRepository } from '../repositories/api-logs.repository.js';
+import { ApiLogsRepository } from '../repositories/api-logs.repository';
 let SystemMetricsService = class SystemMetricsService {
     constructor(db, apiLogsRepository) {
         this.db = db;
@@ -107,7 +108,7 @@ let SystemMetricsService = class SystemMetricsService {
 SystemMetricsService = __decorate([
     Injectable(),
     __param(0, Inject(DRIZZLE_CLIENT)),
-    __metadata("design:paramtypes", [Object, ApiLogsRepository])
+    __metadata("design:paramtypes", [Object, typeof (_a = typeof ApiLogsRepository !== "undefined" && ApiLogsRepository) === "function" ? _a : Object])
 ], SystemMetricsService);
 export { SystemMetricsService };
 //# sourceMappingURL=system-metrics.service.js.map

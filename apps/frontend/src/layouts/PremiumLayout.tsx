@@ -84,7 +84,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
           </div>
         </main>
 
-        <div className="fixed right-6 bottom-6 z-40 hidden xl:block">
+        <div className="fixed right-6 bottom-6 z-40">
           <FeatureAIAssistDock variant="dock" />
         </div>
       </div>

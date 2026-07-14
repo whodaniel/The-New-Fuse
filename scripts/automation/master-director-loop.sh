@@ -61,10 +61,10 @@ while true; do
   log "📡 Dispatching Strategic Batch to Swarm..."
   # Every cycle, we find something new to improve
   # Bolt: Performance
-  jules new --repo whodaniel/the-new-fuse-next-gen "You are 'Bolt' ⚡. Find the slowest part of the API or Frontend and optimize it by 10%." || true
+  jules new --repo whodaniel/The-New-Fuse "You are 'Bolt' ⚡. Find the slowest part of the API or Frontend and optimize it by 10%." || true
   
   # Palette: UI/UX
-  jules new --repo whodaniel/the-new-fuse-next-gen "You are 'Palette' 🎨. Identify one component that lacks interactive feedback and add a subtle animation or loading state." || true
+  jules new --repo whodaniel/The-New-Fuse "You are 'Palette' 🎨. Identify one component that lacks interactive feedback and add a subtle animation or loading state." || true
 
   log "💤 Cycle complete. Resting for 10 minutes..."
   sleep 600

@@ -66,6 +66,27 @@ export declare class AuthService {
     refresh(refreshToken: string): Promise<AuthResponse>;
     logout(): Promise<void>;
     getCurrentUser(userId: string): Promise<User | null>;
+    updateCurrentUserProfile(userId: string, profileData: {
+        displayName?: string;
+        bio?: string;
+        preferences?: {
+            theme?: 'light' | 'dark' | 'system';
+            notifications?: boolean;
+        };
+    }): Promise<{
+        id: string;
+        email: string;
+        username: string | null;
+        name: string | null;
+        displayName: string | null;
+        bio: {};
+        role: "USER" | "ADMIN" | "SUPER_ADMIN" | "AGENCY_OWNER" | "AGENCY_ADMIN" | "AGENCY_MANAGER" | "AGENT_OPERATOR";
+        roles: string[];
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: {};
+    }>;
     private verifyTurnstileIfEnabled;
     private generateTokens;
     private resolvePermissions;

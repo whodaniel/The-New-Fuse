@@ -1,0 +1,214 @@
+{
+  "missing_readme_packages": [
+    "a2a-protocol",
+    "a2a-react",
+    "agent-evaluation-framework",
+    "agentic-rag-search",
+    "ai-security-bridge",
+    "ap2-protocol",
+    "auth",
+    "build-optimization",
+    "data",
+    "deployment-core",
+    "eslint-config-custom",
+    "extension-core",
+    "fairtable-components",
+    "fairtable-core",
+    "fairtable-utils",
+    "feature-suggestions",
+    "feature-tracker",
+    "google-sheets-mcp-server",
+    "governance-gate",
+    "logger",
+    "mcp-concordance-server",
+    "mcp-tar-bridge",
+    "messaging-bridge",
+    "port-management",
+    "prompt-templating",
+    "proto-definitions",
+    "protocol-contracts",
+    "telegram-bot-service",
+    "test-utils",
+    "tnf-core",
+    "tnf-note-taking",
+    "web-scraping"
+  ],
+  "missing_readme_apps": [
+    "api",
+    "api-gateway",
+    "casin8-games",
+    "demo-agent-extension",
+    "myphoneremote-api",
+    "stripe-provider-bridge",
+    "visualization-hub"
+  ],
+  "name_absent_from_readme": [
+    {
+      "kind": "packages",
+      "dir": "agent",
+      "name": "@the-new-fuse/agent"
+    },
+    {
+      "kind": "packages",
+      "dir": "api",
+      "name": "@the-new-fuse/api"
+    },
+    {
+      "kind": "packages",
+      "dir": "contracts",
+      "name": "@the-new-fuse/contracts"
+    },
+    {
+      "kind": "packages",
+      "dir": "core-vector-db",
+      "name": "@the-new-fuse/core-vector-db"
+    },
+    {
+      "kind": "packages",
+      "dir": "fairtable-adapters",
+      "name": "@the-new-fuse/fairtable-adapters"
+    },
+    {
+      "kind": "packages",
+      "dir": "features",
+      "name": "@the-new-fuse/features"
+    },
+    {
+      "kind": "packages",
+      "dir": "integration-tests",
+      "name": "@the-new-fuse/integration-tests"
+    },
+    {
+      "kind": "packages",
+      "dir": "testing",
+      "name": "@the-new-fuse/testing"
+    },
+    {
+      "kind": "apps",
+      "dir": "backend",
+      "name": "@the-new-fuse/backend-app"
+    },
+    {
+      "kind": "apps",
+      "dir": "chrome-extension",
+      "name": "the-new-fuse-chrome-extension"
+    },
+    {
+      "kind": "apps",
+      "dir": "cloud-sandbox",
+      "name": "tnf-cloud-sandbox"
+    },
+    {
+      "kind": "apps",
+      "dir": "frontend",
+      "name": "@the-new-fuse/frontend-app"
+    },
+    {
+      "kind": "apps",
+      "dir": "gemini-bridge-extension",
+      "name": "tnf-gemini-bridge-extension"
+    },
+    {
+      "kind": "apps",
+      "dir": "nexus-orchestrator",
+      "name": "@the-new-fuse/nexus-orchestrator"
+    },
+    {
+      "kind": "apps",
+      "dir": "poker-room",
+      "name": "@the-new-fuse/poker-room"
+    },
+    {
+      "kind": "apps",
+      "dir": "skideancer-ide",
+      "name": "@the-new-fuse/theia-ide"
+    },
+    {
+      "kind": "apps",
+      "dir": "tauri-desktop",
+      "name": "@the-new-fuse/tauri-desktop"
+    },
+    {
+      "kind": "apps",
+      "dir": "telegram-mcp",
+      "name": "@tnf/telegram-mcp"
+    }
+  ],
+  "proprietary_paths": [
+    {
+      "path": "apps/backend/src/modules/orchestrator",
+      "exists": true,
+      "mentioned_in_repo_sep": true
+    },
+    {
+      "path": "apps/nexus-orchestrator",
+      "exists": true,
+      "mentioned_in_repo_sep": true
+    },
+    {
+      "path": "apps/picoclaw-overseer",
+      "exists": true,
+      "mentioned_in_repo_sep": true
+    },
+    {
+      "path": "packages/relay-core/src/master-clock.ts",
+      "exists": true,
+      "mentioned_in_repo_sep": true
+    },
+    {
+      "path": "packages/relay-core/src/broker-agent.ts",
+      "exists": true,
+      "mentioned_in_repo_sep": true
+    },
+    {
+      "path": "packages/agent-coordination",
+      "exists": true,
+      "mentioned_in_repo_sep": true
+    },
+    {
+      "path": "cloudflare-sharedstate",
+      "exists": true,
+      "mentioned_in_repo_sep": true
+    }
+  ],
+  "sync_arrays_counts": {
+    "files": 10,
+    "dirs": 0,
+    "scripts": 20
+  },
+  "sync_vs_doc_mismatches": [
+    {
+      "claim": "agent-coordination",
+      "in_REPO_SEPARATION": true,
+      "in_sync_repos": false
+    },
+    {
+      "claim": "nexus-orchestrator",
+      "in_REPO_SEPARATION": true,
+      "in_sync_repos": false
+    },
+    {
+      "claim": "picoclaw-overseer",
+      "in_REPO_SEPARATION": true,
+      "in_sync_repos": false
+    },
+    {
+      "claim": "cloudflare-sharedstate",
+      "in_REPO_SEPARATION": true,
+      "in_sync_repos": false
+    }
+  ],
+  "sync_dirs_sample": [],
+  "sync_files_sample": [
+    "packages/relay-core/src/master-clock.ts",
+    "packages/relay-core/src/broker-agent.ts",
+    "packages/relay-core/dist/master-clock.js",
+    "packages/relay-core/dist/master-clock.d.ts",
+    "packages/relay-core/dist/master-clock.js.map",
+    "packages/relay-core/dist/master-clock.d.ts.map",
+    "packages/relay-core/dist/broker-agent.js",
+    "packages/relay-core/dist/broker-agent.d.ts",
+    "packages/relay-core/dist/broker-agent.js.map",
+    "packages/relay-core/dist/broker-agent.d.ts.map"
+  ]
+}

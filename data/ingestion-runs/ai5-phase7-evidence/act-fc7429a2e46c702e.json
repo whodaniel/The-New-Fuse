@@ -1,9 +1,9 @@
 {
   "id": "act-fc7429a2e46c702e",
-  "state": "blocked",
-  "updatedAt": "2026-06-11T18:27:29.859814Z",
-  "blocker": {
-    "type": "irrelevant-context",
-    "description": "Bulk blocked: Auto-extracted from YouTube tutorial. Irrelevant context for TNF repo."
-  }
+  "state": "landed",
+  "updatedAt": "2026-06-16T15:00:00.000000Z",
+  "blocker": null,
+  "summary": "Landed directive: Obtain OpenAI API Key. Verification evidence updated to reflect landing.",
+  "filesChanged": [],
+  "checks": {}
 }

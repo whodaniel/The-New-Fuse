@@ -1,0 +1,169 @@
+{
+  "pass": "Tier A claim verification",
+  "head": "befcc140e847",
+  "counts": {
+    "OK": 17,
+    "FAIL": 6,
+    "WARN": 2,
+    "INFO": 0
+  },
+  "findings": [
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "README clone URL aligns with origin",
+      "evidence": "https://github.com/whodaniel/The-New-Fuse.git"
+    },
+    {
+      "severity": "OK",
+      "file": "LICENSE",
+      "finding": "LICENSE is MIT at root",
+      "evidence": "MIT License present"
+    },
+    {
+      "severity": "FAIL",
+      "file": "README.md vs GITHUB_README.md",
+      "finding": "LICENSE narrative conflict: README defers license; GITHUB_README badges MIT for this repo",
+      "evidence": null
+    },
+    {
+      "severity": "FAIL",
+      "file": "GITHUB_README.md",
+      "finding": "Node badge 22+ vs .nvmrc v20.20.2",
+      "evidence": {
+        "badge": "22+",
+        "nvmrc": "v20.20.2"
+      }
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "README pnpm 10+ matches packageManager pnpm@10.22.0",
+      "evidence": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c"
+    },
+    {
+      "severity": "FAIL",
+      "file": "GITHUB_README.md",
+      "finding": "GITHUB_README markets Agent/Harness/MCPClient from @the-new-fuse/core as installable API",
+      "evidence": {
+        "index_exports_Harness": false,
+        "index_len": 1019,
+        "package_name_ok": true
+      }
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "workspace exists apps/frontend",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "workspace exists apps/api",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "workspace exists apps/api-gateway",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "workspace exists packages/tnf-cli",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "workspace exists packages/relay-core",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "script dev",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "script release:gate",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "script release:gate:strict",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "script sync:repos:dry-run",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "script sync:repos",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "ref .env.example",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "ref docs/reference/local-runtime-profile.md",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "README.md",
+      "finding": "ref docs/reference/local-oss-with-hosted-account.md",
+      "evidence": null
+    },
+    {
+      "severity": "FAIL",
+      "file": "docs/REPO_SEPARATION.md",
+      "finding": "REPO_SEPARATION TL;DR stale monorepo name the-new-fuse-next-gen",
+      "evidence": "origin=The-New-Fuse"
+    },
+    {
+      "severity": "FAIL",
+      "file": "scripts/sync-repos.sh",
+      "finding": "sync-repos.sh comment still says the-new-fuse-next-gen",
+      "evidence": null
+    },
+    {
+      "severity": "FAIL",
+      "file": "docs/REPO_SEPARATION.md",
+      "finding": "REPO_SEPARATION dual heading both named The-New-Fuse (combined vs open artifact) \u2014 ambiguous",
+      "evidence": null
+    },
+    {
+      "severity": "OK",
+      "file": "AGENTS.md",
+      "finding": "AGENTS.md gauntlet doc exists",
+      "evidence": null
+    },
+    {
+      "severity": "WARN",
+      "file": "AGENTS.md",
+      "finding": "AGENTS.md SOUL.md at .agent/SOUL.md (not root)",
+      "evidence": ".agent/SOUL.md"
+    },
+    {
+      "severity": "WARN",
+      "file": "AGENTS.md",
+      "finding": "AGENTS.md SKILLS.md / MEMORY.md not at stated paths",
+      "evidence": "SKILLS.md and MEMORY.md missing at root"
+    }
+  ]
+}

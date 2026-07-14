@@ -1,4 +1,4 @@
-import type { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from '../types.js';
+import type { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from '../types';
 interface UseFeatureTrackerResult {
     feature: FeatureProgress | null;
     initializeFeature: (name: string, description: string, dependencies?: string[]) => FeatureProgress;

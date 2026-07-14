@@ -4,7 +4,7 @@
  * Exposes endpoints for managing audit logs in the admin panel.
  */
 import { Response } from 'express';
-import { AdminAuditLogsService } from '../../services/admin-audit-logs.service.js';
+import { AdminAuditLogsService } from '../../services/admin-audit-logs.service';
 export declare class AdminAuditLogsController {
     private readonly auditLogsService;
     constructor(auditLogsService: AdminAuditLogsService);

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ErrorBoundary from './components/core/ErrorBoundary';
 import PerformanceMonitor, {
+  PerformanceProvider,
   usePerformanceMonitor,
 } from './components/performance/PerformanceMonitor';
 import { RouteProvider } from './components/route-context';
@@ -9,6 +10,8 @@ import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
 import ComprehensiveRouter from './ComprehensiveRouter';
+import { AuthProvider } from './providers/AuthProvider';
+import { OperatorSynergyProvider } from './providers/OperatorSynergyProvider';
 
 const queryClient = new QueryClient();
 
@@ -57,9 +60,15 @@ export function App() {
       <ThemeProvider>
         <LayoutProvider>
           <RouteProvider>
-            <ErrorBoundary>
-              <AppContent />
-            </ErrorBoundary>
+            <AuthProvider>
+              <OperatorSynergyProvider>
+                <ErrorBoundary>
+                  <PerformanceProvider>
+                    <AppContent />
+                  </PerformanceProvider>
+                </ErrorBoundary>
+              </OperatorSynergyProvider>
+            </AuthProvider>
           </RouteProvider>
         </LayoutProvider>
       </ThemeProvider>

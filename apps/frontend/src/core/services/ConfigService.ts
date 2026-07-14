@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import { EventBus } from '../../domain/core/eventBus';
 import { StateManager } from '../../domain/core/stateManager';
 import { LoggingService } from '../../services/logging';
@@ -16,7 +17,7 @@ export class ConfigService {
   }
   async initialize() {
     try {
-      const response = await fetch('/api/config');
+      const response = await authFetch('/api/config');
       if (!response.ok) {
         throw new Error('Failed to fetch config');
       }
@@ -83,7 +84,7 @@ export class ConfigService {
   }
   async updateSetting(key, value) {
     try {
-      const response = await fetch('/api/config/settings', {
+      const response = await authFetch('/api/config/settings', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

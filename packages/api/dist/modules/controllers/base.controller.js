@@ -3,7 +3,7 @@
  * Provides standardized response formatting and error handling
  */
 import { Logger } from '@nestjs/common';
-import { toError } from '../../utils/error.js'; // Import the helper
+import { toError } from '../../utils/error'; // Import the helper
 export class BaseController {
     constructor(controllerName) {
         this.logger = new Logger(controllerName);

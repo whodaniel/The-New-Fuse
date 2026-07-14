@@ -43,6 +43,7 @@ const outputs = [
   ["codex", "codex.mcp.json"],
   ["claude", "claude.mcp.json"],
   ["gemini", "gemini.mcp.json"],
+  ["cursor", "cursor.mcp.json"],
   ["openclaw", "openclaw.mcp.json"],
   ["hermes", "hermes.mcp.json"],
   ["pi", "pi.mcp.json"],

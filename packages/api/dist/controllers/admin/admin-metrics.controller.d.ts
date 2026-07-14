@@ -2,8 +2,8 @@
  * Admin Metrics Controller
  */
 import { Response } from 'express';
-import { ApiLogsRepository } from '../../repositories/api-logs.repository.js';
-import { SystemMetricsService } from '../../services/system-metrics.service.js';
+import { ApiLogsRepository } from '../../repositories/api-logs.repository';
+import { SystemMetricsService } from '../../services/system-metrics.service';
 export declare class AdminMetricsController {
     private readonly systemMetricsService;
     private readonly apiLogsRepository;

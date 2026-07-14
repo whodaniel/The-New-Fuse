@@ -239,27 +239,27 @@ function buildConnectionEdges(repoSet) {
   );
   maybePush(
     'whodaniel/fuse',
-    'whodaniel/the-new-fuse-next-gen',
+    'whodaniel/The-New-Fuse',
     'next_generation_convergence',
     'Next-gen repository carries platform lineage and integration forward.',
-    ['https://github.com/whodaniel/fuse', 'https://github.com/whodaniel/the-new-fuse-next-gen']
+    ['https://github.com/whodaniel/fuse', 'https://github.com/whodaniel/The-New-Fuse']
   );
   maybePush(
-    'whodaniel/the-new-fuse-next-gen',
+    'whodaniel/The-New-Fuse',
     'whodaniel/virtual-library-blueprints',
     'knowledge_surface_integration',
     'Knowledge library system aligns with TNF workspace and publishing surface architecture.',
     [
-      'https://github.com/whodaniel/the-new-fuse-next-gen',
+      'https://github.com/whodaniel/The-New-Fuse',
       'https://github.com/whodaniel/virtual-library-blueprints',
     ]
   );
   maybePush(
-    'whodaniel/the-new-fuse-next-gen',
+    'whodaniel/The-New-Fuse',
     'whodaniel/EXTREAMIX',
     'media_pipeline_integration',
     'Interactive media stack aligns with TNF production pipelines.',
-    ['https://github.com/whodaniel/the-new-fuse-next-gen', 'https://github.com/whodaniel/EXTREAMIX']
+    ['https://github.com/whodaniel/The-New-Fuse', 'https://github.com/whodaniel/EXTREAMIX']
   );
 
   return edges;

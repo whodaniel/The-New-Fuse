@@ -1,5 +1,8 @@
 import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useState } from 'react';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { openExternal } from '../lib/openExternal';
 
 /**
  * OAGI Hub - Optimized Agentic General Intelligence Hub
@@ -15,9 +18,14 @@ const OAGIHub: React.FC = () => {
   useEffect(() => {
     const loadInitData = async () => {
       try {
-        const size = await invoke<{ width: number; height: number }>('get_screen_size');
-        setScreenSize(size);
-        addLog(`System initialized: ${size.width}x${size.height} display detected.`);
+        // Rust returns (width, height) tuple — not { width, height }.
+        const [width, height] = await invoke<[number, number]>('get_screen_size');
+        if (typeof width === 'number' && typeof height === 'number') {
+          setScreenSize({ width, height });
+          addLog(`System initialized: ${width}×${height} display detected.`);
+        } else {
+          addLog('Error: get_screen_size returned unexpected shape.');
+        }
       } catch (e) {
         addLog(`Error: Failed to get screen size. ${e}`);
       }
@@ -26,10 +34,12 @@ const OAGIHub: React.FC = () => {
 
     const interval = setInterval(async () => {
       try {
-        const pos = await invoke<{ x: number; y: number }>('get_mouse_position');
-        setMousePos(pos);
-      } catch (e) {
-        // Silent error for mouse pos
+        const [x, y] = await invoke<[number, number]>('get_mouse_position');
+        if (typeof x === 'number' && typeof y === 'number') {
+          setMousePos({ x, y });
+        }
+      } catch {
+        // Mouse position unavailable — silent between polls.
       }
     }, 500);
 
@@ -45,10 +55,11 @@ const OAGIHub: React.FC = () => {
     addLog('Capturing screen...');
     try {
       const result = await invoke<string>('capture_screen', {
-        fullScreen: true,
+        format: 'jpeg',
         quality: 80,
       });
-      setScreenshot(`data:image/jpeg;base64,${result}`);
+      // Rust already returns a data: URL; avoid double-prefixing.
+      setScreenshot(result.startsWith('data:') ? result : `data:image/jpeg;base64,${result}`);
       addLog('Screen captured successfully.');
     } catch (e) {
       addLog(`Capture failed: ${e}`);
@@ -57,146 +68,213 @@ const OAGIHub: React.FC = () => {
     }
   };
 
-  const executeAction = async (action: string, params: any) => {
+  const executeAction = async (
+    action: 'click' | 'scroll' | 'type' | 'hotkey' | 'wait',
+    params: Record<string, unknown>
+  ) => {
     addLog(`Executing ${action}...`);
     try {
-      await invoke(`execute_${action}`, params);
+      switch (action) {
+        case 'click':
+          await invoke('execute_click', {
+            x: params.x ?? 0,
+            y: params.y ?? 0,
+            button: params.button ?? 'left',
+          });
+          break;
+        case 'scroll':
+          await invoke('execute_scroll', {
+            amount: params.amount ?? 0,
+            x: params.x ?? 0,
+            y: params.y ?? 0,
+          });
+          break;
+        case 'type':
+          await invoke('execute_type', {
+            text: params.text ?? '',
+            delay: params.delay ?? 0,
+          });
+          break;
+        case 'hotkey':
+          await invoke('execute_hotkey', {
+            keys: params.keys ?? [],
+            interval: params.interval ?? 0.1,
+          });
+          break;
+        case 'wait':
+          await invoke('wait_duration', { seconds: params.seconds ?? 1 });
+          break;
+      }
       addLog(`${action} completed.`);
     } catch (e) {
       addLog(`${action} failed: ${e}`);
     }
   };
 
+  const runSelfCheck = async () => {
+    addLog('Self-Check: probing screen + mouse...');
+    await handleCapture();
+    try {
+      const [x, y] = await invoke<[number, number]>('get_mouse_position');
+      addLog(`Self-Check: mouse at ${x}, ${y}`);
+    } catch (e) {
+      addLog(`Self-Check: mouse probe failed — ${e}`);
+    }
+  };
+
+  const runBrowserLaunch = async () => {
+    await executeAction('hotkey', { keys: ['cmd', 'space'], interval: 0.1 });
+    await executeAction('wait', { seconds: 0.5 });
+    await executeAction('type', { text: 'Safari', delay: 30 });
+    await executeAction('wait', { seconds: 0.3 });
+    await executeAction('hotkey', { keys: ['return'], interval: 0.1 });
+  };
+
   return (
-    <div className="oagi-container">
-      <header className="oagi-header">
-        <div className="header-info">
-          <h1 className="page-title">OAGI Hub</h1>
-          <p className="page-subtitle">Visual Computer Use & Automation</p>
-        </div>
-        <div className="system-status">
-          <div className="status-item">
-            <span className="label">Screen:</span>
-            <span className="value">
-              {screenSize ? `${screenSize.width}×${screenSize.height}` : '---'}
-            </span>
-          </div>
-          <div className="status-item">
-            <span className="label">Mouse:</span>
-            <span className="value">{mousePos ? `${mousePos.x}, ${mousePos.y}` : '---'}</span>
-          </div>
-        </div>
-      </header>
-
-      <div className="oagi-grid">
-        {/* Visual Preview */}
-        <div className="preview-pane">
-          <div className="pane-header">
-            <h3>Visual Preview</h3>
-            <button
-              className={`capture-btn ${isCapturing ? 'loading' : ''}`}
-              onClick={handleCapture}
-              disabled={isCapturing}
-            >
-              {isCapturing ? '🔄' : '📸'} Capture Now
-            </button>
-          </div>
-          <div className="screenshot-container">
-            {screenshot ? (
-              <img src={screenshot} alt="Screen Capture" className="screenshot-img" />
-            ) : (
-              <div className="no-screenshot">
-                <div className="empty-icon">📺</div>
-                <p>No capture data available.</p>
-                <button className="primary-button" onClick={handleCapture}>
-                  Initialize Visual Context
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Action Controls */}
-        <div className="controls-pane">
-          <div className="pane-header">
-            <h3>Action Center</h3>
-          </div>
-          <div className="action-groups">
-            <div className="action-group">
-              <h4>Mouse Actions</h4>
-              <div className="action-buttons">
-                <button onClick={() => executeAction('click', { x: 500, y: 300 })}>
-                  Move & Left Click
-                </button>
-                <button onClick={() => executeAction('scroll', { deltaX: 0, deltaY: -500 })}>
-                  Scroll Up
-                </button>
-                <button onClick={() => executeAction('scroll', { deltaX: 0, deltaY: 500 })}>
-                  Scroll Down
-                </button>
-              </div>
+    <PageShell
+      title="OAGI Hub"
+      subtitle="Visual computer use — screen capture, mouse/keyboard automation via native Tauri layer"
+      actions={
+        <>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => void openExternal('https://thenewfuse.com/oagi')}
+          >
+            Web docs
+          </button>
+          <span className="env-badge local">
+            Screen: {screenSize ? `${screenSize.width}×${screenSize.height}` : '—'}
+          </span>
+          <span className="env-badge cloud">
+            Mouse: {mousePos ? `${mousePos.x}, ${mousePos.y}` : '—'}
+          </span>
+        </>
+      }
+    >
+      <SynergyStatusBar />
+      <div className="oagi-container">
+        <div className="oagi-grid">
+          {/* Visual Preview */}
+          <div className="preview-pane">
+            <div className="pane-header">
+              <h3>Visual Preview</h3>
+              <button
+                className={`capture-btn ${isCapturing ? 'loading' : ''}`}
+                onClick={handleCapture}
+                disabled={isCapturing}
+              >
+                {isCapturing ? '🔄' : '📸'} Capture Now
+              </button>
             </div>
-
-            <div className="action-group">
-              <h4>Keyboard Actions</h4>
-              <div className="action-buttons">
-                <button onClick={() => executeAction('type', { text: 'The New Fuse', delay: 50 })}>
-                  Type Test Text
-                </button>
-                <button onClick={() => executeAction('hotkey', { keys: ['cmd', 'space'] })}>
-                  Spotlight / Search
-                </button>
-                <button onClick={() => executeAction('hotkey', { keys: ['cmd', 'tab'] })}>
-                  Switch App
-                </button>
-              </div>
+            <div className="screenshot-container">
+              {screenshot ? (
+                <img src={screenshot} alt="Screen Capture" className="screenshot-img" />
+              ) : (
+                <div className="no-screenshot">
+                  <div className="empty-icon">📺</div>
+                  <p>No capture data available.</p>
+                  <button className="primary-button" onClick={handleCapture}>
+                    Initialize Visual Context
+                  </button>
+                </div>
+              )}
             </div>
+          </div>
 
-            <div className="action-group">
-              <h4>Automation Scripts</h4>
-              <div className="script-list">
-                <div className="script-item">
-                  <div className="script-info">
-                    <span className="script-name">Self-Check</span>
-                    <span className="script-desc">Verify system responsiveness</span>
+          {/* Action Controls */}
+          <div className="controls-pane">
+            <div className="pane-header">
+              <h3>Action Center</h3>
+            </div>
+            <div className="action-groups">
+              <div className="action-group">
+                <h4>Mouse Actions</h4>
+                <div className="action-buttons">
+                  <button onClick={() => executeAction('click', { x: 500, y: 300 })}>
+                    Move & Left Click
+                  </button>
+                  <button
+                    onClick={() => void executeAction('scroll', { amount: -500, x: 0, y: 0 })}
+                  >
+                    Scroll Up
+                  </button>
+                  <button onClick={() => void executeAction('scroll', { amount: 500, x: 0, y: 0 })}>
+                    Scroll Down
+                  </button>
+                </div>
+              </div>
+
+              <div className="action-group">
+                <h4>Keyboard Actions</h4>
+                <div className="action-buttons">
+                  <button
+                    onClick={() => executeAction('type', { text: 'The New Fuse', delay: 50 })}
+                  >
+                    Type Test Text
+                  </button>
+                  <button onClick={() => executeAction('hotkey', { keys: ['cmd', 'space'] })}>
+                    Spotlight / Search
+                  </button>
+                  <button onClick={() => executeAction('hotkey', { keys: ['cmd', 'tab'] })}>
+                    Switch App
+                  </button>
+                </div>
+              </div>
+
+              <div className="action-group">
+                <h4>Automation Scripts</h4>
+                <div className="script-list">
+                  <div className="script-item">
+                    <div className="script-info">
+                      <span className="script-name">Self-Check</span>
+                      <span className="script-desc">Verify system responsiveness</span>
+                    </div>
+                    <button type="button" className="run-btn" onClick={() => void runSelfCheck()}>
+                      Run
+                    </button>
                   </div>
-                  <button className="run-btn">Run</button>
-                </div>
-                <div className="script-item">
-                  <div className="script-info">
-                    <span className="script-name">Browser Launch</span>
-                    <span className="script-desc">Open default browser via keys</span>
+                  <div className="script-item">
+                    <div className="script-info">
+                      <span className="script-name">Browser Launch</span>
+                      <span className="script-desc">Open default browser via keys</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="run-btn"
+                      onClick={() => void runBrowserLaunch()}
+                    >
+                      Run
+                    </button>
                   </div>
-                  <button className="run-btn">Run</button>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Activity Logs */}
+          <div className="logs-pane">
+            <div className="pane-header">
+              <h3>Activity Logs</h3>
+              <button className="clear-btn" onClick={() => setLogs([])}>
+                Clear
+              </button>
+            </div>
+            <div className="logs-list">
+              {logs.length === 0 ? (
+                <div className="empty-logs">Initializing OAGI audit trail...</div>
+              ) : (
+                logs.map((log, i) => (
+                  <div key={i} className="log-entry">
+                    {log}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Activity Logs */}
-        <div className="logs-pane">
-          <div className="pane-header">
-            <h3>Activity Logs</h3>
-            <button className="clear-btn" onClick={() => setLogs([])}>
-              Clear
-            </button>
-          </div>
-          <div className="logs-list">
-            {logs.length === 0 ? (
-              <div className="empty-logs">Initializing OAGI audit trail...</div>
-            ) : (
-              logs.map((log, i) => (
-                <div key={i} className="log-entry">
-                  {log}
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
-
-      <style>{`
+        <style>{`
         .oagi-container {
           padding: 24px;
           height: 100%;
@@ -538,7 +616,8 @@ const OAGIHub: React.FC = () => {
           display: inline-block;
         }
       `}</style>
-    </div>
+      </div>
+    </PageShell>
   );
 };
 

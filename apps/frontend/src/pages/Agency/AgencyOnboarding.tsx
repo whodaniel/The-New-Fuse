@@ -58,7 +58,7 @@ const AgencyOnboarding: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 font-sans text-white">
       <div className="max-w-2xl w-full bg-slate-900 p-10 rounded-md border border-slate-800 shadow-none">
-        <h1 className="text-4xl font-bold bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
           Become a Sovereign Agency
         </h1>
         <p className="text-slate-400 text-lg mb-8">

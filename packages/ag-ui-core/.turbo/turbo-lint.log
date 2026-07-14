@@ -1,20 +1,4 @@
 
-> @the-new-fuse/ag-ui-core@1.0.1 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/ag-ui-core
+> @the-new-fuse/ag-ui-core@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/ag-ui-core
 > eslint src/**/*.ts
 
-Warning: React version not specified in eslint-plugin-react settings. See https://github.com/jsx-eslint/eslint-plugin-react#configuration .
-
-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/ag-ui-core/src/nestjs/AGUIService.ts
-  65:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  72:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  78:58  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  85:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  85:69  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/ag-ui-core/src/utils/VisualizationGenerator.ts
-   9:9   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  12:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-✖ 7 problems (0 errors, 7 warnings)
-
- ELIFECYCLE  Command failed.

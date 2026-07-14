@@ -2,6 +2,3 @@
 > @the-new-fuse/port-management@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/port-management
 > tsc -b
 
-src/services/port-registry.service.ts(7,27): error TS7016: Could not find a declaration file for module 'node-port-check'. '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/node-port-check/lib/index.js' implicitly has an 'any' type.
-  Try `npm i --save-dev @types/node-port-check` if it exists or add a new declaration (.d.ts) file containing `declare module 'node-port-check';`
- ELIFECYCLE  Command failed with exit code 1.

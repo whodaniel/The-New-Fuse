@@ -15,6 +15,14 @@
     "./validators.server": {
       "import": "./dist/server.js",
       "types": "./dist/server.d.ts"
+    },
+    "./logger": {
+      "import": "./dist/logger/index.js",
+      "types": "./dist/logger/index.d.ts"
+    },
+    "./logger/*": {
+      "import": "./dist/logger/*",
+      "types": "./dist/logger/*"
     }
   },
   "scripts": {

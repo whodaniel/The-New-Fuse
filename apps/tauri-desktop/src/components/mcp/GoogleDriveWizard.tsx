@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
+import { openExternal } from '../../lib/openExternal';
 
 interface SetupStep {
   id: string;
@@ -72,7 +73,7 @@ export const GoogleDriveWizard: React.FC<GoogleDriveWizardProps> = ({ onClose, o
   const openAuthUrl = () => {
     const url =
       'https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdocuments%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=http%3A%2F%2Flocalhost';
-    window.open(url, '_blank');
+    void openExternal(url);
   };
 
   const verifyAuth = async () => {

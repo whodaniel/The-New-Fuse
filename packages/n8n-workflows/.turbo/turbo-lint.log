@@ -2,21 +2,5 @@
 > @the-new-fuse/n8n-workflows@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows
 > eslint src
 
-
-Oops! Something went wrong! :(
-
-ESLint: 9.39.4
-
-ReferenceError: module is not defined in ES module scope
-This file is being treated as an ES module because it has a '.js' file extension and '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
-    at file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/eslint.config.js?mtime=1771758732315:1:1
-    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
-    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
-    at async dynamicImportConfig (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/node_modules/eslint/lib/config/config-loader.js:186:17)
-    at async loadConfigFile (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/node_modules/eslint/lib/config/config-loader.js:276:9)
-    at async ConfigLoader.calculateConfigArray (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/node_modules/eslint/lib/config/config-loader.js:589:23)
-    at async #calculateConfigArray (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/node_modules/eslint/lib/config/config-loader.js:743:23)
-    at async entryFilter (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/node_modules/eslint/lib/eslint/eslint-helpers.js:322:5)
-    at async NodeHfs.<anonymous> (file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@humanfs/core/src/hfs.js:574:24)
-    at async NodeHfs.walk (file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@humanfs/core/src/hfs.js:614:3)
- ELIFECYCLE  Command failed with exit code 2.
+Warning: React version not specified in eslint-plugin-react settings. See https://github.com/jsx-eslint/eslint-plugin-react#configuration .
+ ELIFECYCLE  Command failed.

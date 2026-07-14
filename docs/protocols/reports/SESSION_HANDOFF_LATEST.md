@@ -1,61 +1,29 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-06-15T21:28:19.619787Z`  
-Handoff ID: `24653047-aadf-4f4a-8eab-a1c9e3e6c7f8`
+Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-14T16:46:46.000Z` Handoff
+ID: `38848cd6-50ab-45ad-8d2b-bb83d17f3c70`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `main`
-- Head SHA: `e578b677827193b8d25d2f6e8368d9d68e915d67`
+- Branch: `tnf-cli-harness-implementation`
+- Head SHA: `8e9b2724b07a`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Phase 6 completed: Rust-backed envelope validation integrated, protocol
-  contracts stress-tested above 9500 envelopes/sec, and AI5 readiness KPIs
-  confirmed 651 dispatch-ready directives.
-- Phase 7 initiated: directive conversion ledger created to track ready ->
-  claimed -> running -> verified -> landed execution states.
-- Tight-loop batch selected: 0 high-priority directives claimed for
-  local-subdirector execution governance.
-
-## Changed Paths
-
-- scripts/autonomy/phase7_directive_conversion_loop.py
-- data/ingestion-runs/ai5-phase7-directive-conversion-ledger.json
-- data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json
-- docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.json
-- docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.md
-- data/ingestion-runs/ai5-phase7-evidence/batch-001-zero-claim-verification.json
-
-## Verification
-
-- privacy_guard: `na`
-- secret_sweep: `na`
-- docs_pii_guard: `na`
-- supabase_rls_audit: `na`
-
-## Continuation
-
-- Owner: `local-subdirector`
-- Targets: `forge-agent`, `historian`
-- Priority: `high`
-
-### Resume Checklist
-
-- Read docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.md
-- Execute or delegate the claimed batch in
-  data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json
-- Update directive states with evidence artifacts before marking verified or
-  landed.
+- Pushed `tnf agent status` commit to update PR #69
+- Recreated `packages/control-plane-contracts`
+  (`@the-new-fuse/control-plane-contracts`) with MasterClock/Broker public types
+  required by open-runtime stubs
 
 ## Next Actions
 
-- Execute Phase 7 tight-loop batch 001 and capture verification evidence per
-  directive.
-- Promote verified directive outcomes into landed code/docs with tests or audit
-  artifacts.
-- Regenerate conversion ledger and KPIs after each batch to measure completion
-  velocity.
+- Merge or continue review of PR #69
+- Optional: Hermes web UI build repair
+- Do not commit turbo/log noise
+
+## Artifacts
+
+- `8e9b2724b07a4667dd96cfe19155d007cf85269f`
+- PR https://github.com/whodaniel/The-New-Fuse/pull/69

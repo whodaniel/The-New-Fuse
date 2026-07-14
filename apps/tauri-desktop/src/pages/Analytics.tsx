@@ -1,117 +1,61 @@
-import React, { useEffect, useState } from 'react';
-
-/**
- * Analytics Page - Responsive Charts and Metrics
- * Unified from SaaS implementation with Tauri optimizations
- */
-
-// Types for analytics data
-interface AnalyticsOverview {
-  totalAgents: number;
-  activeAgents: number;
-  totalInteractions: number;
-  successRate: number;
-  averageResponseTime: number;
-  totalWorkflows: number;
-}
-
-interface PerformanceDataPoint {
-  timestamp: string;
-  requests: number;
-  responses: number;
-  errors: number;
-}
-
-interface AgentMetric {
-  agentId: string;
-  agentName: string;
-  totalTasks: number;
-  successRate: number;
-  avgResponseTime: number;
-  lastActive: string;
-}
-
-interface ProviderMetric {
-  provider: string;
-  totalRequests: number;
-  successRate: number;
-  avgLatency: number;
-  cost: number;
-}
+import React, { useState } from 'react';
+import PageShell from '../components/layout/PageShell';
+import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useAnalyticsData } from '../hooks/useAnalyticsData';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 
 const Analytics: React.FC = () => {
-  const [loading, setLoading] = useState(true);
+  const { state: synergy } = useOperatorSynergy();
   const [timeRange, setTimeRange] = useState('7d');
   const [activeTab, setActiveTab] = useState<'overview' | 'performance' | 'agents' | 'costs'>(
     'overview'
   );
+  const [exporting, setExporting] = useState(false);
 
-  // Mock data - would come from API
-  const [overview] = useState<AnalyticsOverview>({
-    totalAgents: 24,
-    activeAgents: 18,
-    totalInteractions: 15420,
-    successRate: 98.5,
-    averageResponseTime: 245,
-    totalWorkflows: 156,
-  });
+  const {
+    loading,
+    dataSource,
+    fetchError,
+    overview,
+    performanceData,
+    performanceAvailable,
+    agentMetrics,
+    agentMetricsAvailable,
+    providerMetrics,
+    providerMetricsAvailable,
+    maxRequests,
+    exportData,
+  } = useAnalyticsData(synergy, timeRange);
 
-  const [performanceData] = useState<PerformanceDataPoint[]>(
-    Array.from({ length: 7 }, (_, i) => ({
-      timestamp: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
-      requests: Math.floor(Math.random() * 500) + 300,
-      responses: Math.floor(Math.random() * 480) + 280,
-      errors: Math.floor(Math.random() * 20) + 5,
-    }))
-  );
+  const activeRate =
+    overview.totalAgents > 0 ? Math.round((overview.activeAgents / overview.totalAgents) * 100) : 0;
 
-  const [agentMetrics] = useState<AgentMetric[]>([
-    {
-      agentId: '1',
-      agentName: 'Research Assistant',
-      totalTasks: 342,
-      successRate: 99.2,
-      avgResponseTime: 156,
-      lastActive: '2 min ago',
-    },
-    {
-      agentId: '2',
-      agentName: 'Code Reviewer',
-      totalTasks: 289,
-      successRate: 97.8,
-      avgResponseTime: 203,
-      lastActive: '5 min ago',
-    },
-    {
-      agentId: '3',
-      agentName: 'Content Writer',
-      totalTasks: 198,
-      successRate: 98.5,
-      avgResponseTime: 189,
-      lastActive: '12 min ago',
-    },
-    {
-      agentId: '4',
-      agentName: 'Data Analyst',
-      totalTasks: 156,
-      successRate: 96.4,
-      avgResponseTime: 267,
-      lastActive: '1 hr ago',
-    },
-  ]);
+  const fmtNum = (value: number | null) => (value == null ? '—' : value.toLocaleString());
+  const fmtPct = (value: number | null) => (value == null ? '—' : `${value}%`);
+  const fmtMs = (value: number | null) => (value == null ? '—' : `${value}ms`);
+  const fmtCost = (value: number | null) => (value == null ? '—' : `$${value.toFixed(2)}`);
+  const totalCost = providerMetrics.reduce<number | null>((sum, p) => {
+    if (p.cost == null) return sum;
+    return (sum ?? 0) + p.cost;
+  }, null);
 
-  const [providerMetrics] = useState<ProviderMetric[]>([
-    { provider: 'OpenAI', totalRequests: 5420, successRate: 99.1, avgLatency: 145, cost: 1247.5 },
-    { provider: 'Anthropic', totalRequests: 3892, successRate: 98.7, avgLatency: 203, cost: 892.3 },
-    { provider: 'Google', totalRequests: 2108, successRate: 97.9, avgLatency: 189, cost: 707.7 },
-    { provider: 'Local', totalRequests: 856, successRate: 99.5, avgLatency: 45, cost: 0 },
-  ]);
-
-  useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, [timeRange]);
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const result = await exportData();
+      const blob = new Blob([JSON.stringify(result.payload, null, 2)], {
+        type: 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `tnf-analytics-${timeRange}-${result.source}.json`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -123,216 +67,293 @@ const Analytics: React.FC = () => {
   }
 
   return (
-    <div className="analytics-container">
-      {/* Header */}
-      <header className="analytics-header">
-        <div>
-          <h1 className="page-title">📊 Analytics</h1>
-          <p className="page-subtitle">Monitor performance and usage metrics</p>
-        </div>
-        <div className="header-controls">
+    <PageShell
+      title="Analytics"
+      subtitle={
+        dataSource === 'api'
+          ? `Live API metrics · ${overview.totalAgents} agents · ${timeRange}`
+          : `Live agent roster · ${synergy.unifiedAgents.length} agents · usage metrics need REST API`
+      }
+      banner={
+        fetchError ? (
+          <div className="offline-banner" role="status">
+            {fetchError}
+          </div>
+        ) : dataSource === 'api' ? (
+          <div className="info-banner" role="status">
+            Overview metrics from REST API (port 3001).
+            {!performanceAvailable && ' Request volume not returned by API.'}
+            {!providerMetricsAvailable && ' Provider usage/cost not returned by API.'}
+            {' Agent rows show the live roster; per-agent metrics not yet provided by the API.'}
+          </div>
+        ) : null
+      }
+      actions={
+        <>
           <select
-            className="time-select"
+            className="time-select secondary-button"
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
+            aria-label="Time range"
           >
             <option value="24h">Last 24 hours</option>
             <option value="7d">Last 7 days</option>
             <option value="30d">Last 30 days</option>
             <option value="90d">Last 90 days</option>
           </select>
-          <button className="export-btn">📥 Export</button>
-        </div>
-      </header>
-
-      {/* Tab Navigation */}
-      <div className="tab-nav">
-        {(['overview', 'performance', 'agents', 'costs'] as const).map((tab) => (
           <button
-            key={tab}
-            className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab)}
+            type="button"
+            className="secondary-button"
+            onClick={() => void handleExport()}
+            disabled={exporting || loading}
           >
-            {tab === 'overview' && '📈'}
-            {tab === 'performance' && '⚡'}
-            {tab === 'agents' && '🤖'}
-            {tab === 'costs' && '💰'}
-            <span className="tab-label">{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
+            {exporting ? 'Exporting…' : 'Export'}
           </button>
-        ))}
-      </div>
+        </>
+      }
+    >
+      <SynergyStatusBar />
+      <div className="analytics-container">
+        {/* Tab Navigation */}
+        <div className="tab-nav">
+          {(['overview', 'performance', 'agents', 'costs'] as const).map((tab) => (
+            <button
+              key={tab}
+              className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab === 'overview' && '📈'}
+              {tab === 'performance' && '⚡'}
+              {tab === 'agents' && '🤖'}
+              {tab === 'costs' && '💰'}
+              <span className="tab-label">{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
+            </button>
+          ))}
+        </div>
 
-      {/* Tab Content */}
-      <div className="tab-content">
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div className="overview-grid">
-            <StatCard
-              icon="🤖"
-              label="Total Agents"
-              value={overview.totalAgents}
-              subtitle={`${overview.activeAgents} active`}
-              color="purple"
-            />
-            <StatCard
-              icon="💬"
-              label="Total Interactions"
-              value={overview.totalInteractions.toLocaleString()}
-              subtitle={`${overview.averageResponseTime}ms avg response`}
-              color="blue"
-            />
-            <StatCard
-              icon="✅"
-              label="Success Rate"
-              value={`${overview.successRate}%`}
-              subtitle="Across all agents"
-              color="green"
-            />
-            <StatCard
-              icon="⚡"
-              label="Workflows"
-              value={overview.totalWorkflows}
-              subtitle="Executed successfully"
-              color="orange"
-            />
-            <StatCard
-              icon="⏱️"
-              label="Avg Response"
-              value={`${overview.averageResponseTime}ms`}
-              subtitle="Fleet performance"
-              color="cyan"
-            />
-            <StatCard
-              icon="📊"
-              label="Active Rate"
-              value={`${Math.round((overview.activeAgents / overview.totalAgents) * 100)}%`}
-              subtitle="Agent utilization"
-              color="pink"
-            />
-          </div>
-        )}
+        {/* Tab Content */}
+        <div className="tab-content">
+          {/* Overview Tab */}
+          {activeTab === 'overview' && (
+            <div className="overview-grid">
+              <StatCard
+                icon="🤖"
+                label="Total Agents"
+                value={overview.totalAgents}
+                subtitle={`${overview.activeAgents} active`}
+                color="purple"
+              />
+              <StatCard
+                icon="💬"
+                label="Total Interactions"
+                value={fmtNum(overview.totalInteractions)}
+                subtitle={
+                  overview.averageResponseTime == null
+                    ? 'Requires REST API'
+                    : `${overview.averageResponseTime}ms avg response`
+                }
+                color="blue"
+              />
+              <StatCard
+                icon="✅"
+                label="Success Rate"
+                value={fmtPct(overview.successRate)}
+                subtitle="Across all agents"
+                color="green"
+              />
+              <StatCard
+                icon="⚡"
+                label="Workflows"
+                value={fmtNum(overview.totalWorkflows)}
+                subtitle="Executed successfully"
+                color="orange"
+              />
+              <StatCard
+                icon="⏱️"
+                label="Avg Response"
+                value={fmtMs(overview.averageResponseTime)}
+                subtitle="Fleet performance"
+                color="cyan"
+              />
+              <StatCard
+                icon="📊"
+                label="Active Rate"
+                value={`${activeRate}%`}
+                subtitle="Agent utilization"
+                color="pink"
+              />
+            </div>
+          )}
 
-        {/* Performance Tab */}
-        {activeTab === 'performance' && (
-          <div className="performance-section">
-            <div className="chart-card">
-              <h3 className="chart-title">Request Volume</h3>
-              <div className="bar-chart">
-                {performanceData.map((point, index) => (
-                  <div key={index} className="bar-group">
-                    <div className="bar-container">
-                      <div
-                        className="bar requests"
-                        style={{ height: `${(point.requests / 800) * 100}%` }}
-                        title={`${point.requests} requests`}
-                      ></div>
-                      <div
-                        className="bar responses"
-                        style={{ height: `${(point.responses / 800) * 100}%` }}
-                        title={`${point.responses} responses`}
-                      ></div>
-                      <div
-                        className="bar errors"
-                        style={{ height: `${(point.errors / 800) * 100 * 5}%` }}
-                        title={`${point.errors} errors`}
-                      ></div>
-                    </div>
-                    <span className="bar-label">{point.timestamp}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="chart-legend">
-                <span className="legend-item">
-                  <span className="dot requests"></span> Requests
-                </span>
-                <span className="legend-item">
-                  <span className="dot responses"></span> Responses
-                </span>
-                <span className="legend-item">
-                  <span className="dot errors"></span> Errors
-                </span>
+          {/* Performance Tab */}
+          {activeTab === 'performance' && !performanceAvailable && (
+            <div className="performance-section">
+              <div className="chart-card">
+                <h3 className="chart-title">Request Volume</h3>
+                <div className="empty-state" role="status">
+                  Time-series request metrics are only available from the REST API (port 3001).
+                  Start the TNF API to populate this chart.
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+          {activeTab === 'performance' && performanceAvailable && (
+            <div className="performance-section">
+              <div className="chart-card">
+                <h3 className="chart-title">Request Volume</h3>
+                <div className="bar-chart">
+                  {performanceData.map((point, index) => (
+                    <div key={index} className="bar-group">
+                      <div className="bar-container">
+                        <div
+                          className="bar requests"
+                          style={{ height: `${(point.requests / maxRequests) * 100}%` }}
+                          title={`${point.requests} requests`}
+                        ></div>
+                        <div
+                          className="bar responses"
+                          style={{ height: `${(point.responses / maxRequests) * 100}%` }}
+                          title={`${point.responses} responses`}
+                        ></div>
+                        <div
+                          className="bar errors"
+                          style={{
+                            height: `${Math.min(100, (point.errors / maxRequests) * 100 * 5)}%`,
+                          }}
+                          title={`${point.errors} errors`}
+                        ></div>
+                      </div>
+                      <span className="bar-label">{point.timestamp}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="chart-legend">
+                  <span className="legend-item">
+                    <span className="dot requests"></span> Requests
+                  </span>
+                  <span className="legend-item">
+                    <span className="dot responses"></span> Responses
+                  </span>
+                  <span className="legend-item">
+                    <span className="dot errors"></span> Errors
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* Agents Tab */}
-        {activeTab === 'agents' && (
-          <div className="agents-table-section">
-            <div className="table-card">
-              <h3 className="table-title">Agent Performance</h3>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Agent</th>
-                      <th>Tasks</th>
-                      <th>Success</th>
-                      <th>Response</th>
-                      <th>Last Active</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {agentMetrics.map((agent) => (
-                      <tr key={agent.agentId}>
-                        <td className="agent-cell">
-                          <span className="agent-icon">🤖</span>
-                          <span>{agent.agentName}</span>
-                        </td>
-                        <td>{agent.totalTasks}</td>
-                        <td>
-                          <div className="progress-cell">
-                            <div className="progress-bar">
-                              <div
-                                className="progress-fill"
-                                style={{ width: `${agent.successRate}%` }}
-                              ></div>
-                            </div>
-                            <span className="progress-value">{agent.successRate}%</span>
-                          </div>
-                        </td>
-                        <td>{agent.avgResponseTime}ms</td>
-                        <td className="time-cell">{agent.lastActive}</td>
+          {/* Agents Tab */}
+          {activeTab === 'agents' && (
+            <div className="agents-table-section">
+              <div className="table-card">
+                <h3 className="table-title">Agent Performance</h3>
+                {!agentMetricsAvailable && (
+                  <div className="empty-state" role="status">
+                    Live agent roster shown. Per-agent task, success and latency metrics require the
+                    REST API (port 3001) and appear as “—” until then.
+                  </div>
+                )}
+                <div className="table-scroll">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Agent</th>
+                        <th>Tasks</th>
+                        <th>Success</th>
+                        <th>Response</th>
+                        <th>Last Active</th>
                       </tr>
+                    </thead>
+                    <tbody>
+                      {agentMetrics.map((agent) => (
+                        <tr key={agent.agentId}>
+                          <td className="agent-cell">
+                            <span className="agent-icon">🤖</span>
+                            <span>{agent.agentName}</span>
+                          </td>
+                          <td>{fmtNum(agent.totalTasks)}</td>
+                          <td>
+                            {agent.successRate == null ? (
+                              <span className="progress-value muted">—</span>
+                            ) : (
+                              <div className="progress-cell">
+                                <div className="progress-bar">
+                                  <div
+                                    className="progress-fill"
+                                    style={{ width: `${agent.successRate}%` }}
+                                  ></div>
+                                </div>
+                                <span className="progress-value">{agent.successRate}%</span>
+                              </div>
+                            )}
+                          </td>
+                          <td>{fmtMs(agent.avgResponseTime)}</td>
+                          <td className="time-cell">{agent.lastActive}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Costs Tab */}
+          {activeTab === 'costs' && !providerMetricsAvailable && (
+            <div className="costs-grid single">
+              <div className="cost-summary-card">
+                <h3>Cost Analytics</h3>
+                <div className="empty-state" role="status">
+                  Usage and cost metrics are only available from the REST API (port 3001). The live
+                  synergy roster does not include billing data.
+                </div>
+                {providerMetrics.length > 0 && (
+                  <div className="provider-list" style={{ marginTop: 16 }}>
+                    {providerMetrics.map((provider) => (
+                      <div key={provider.provider} className="provider-row">
+                        <div className="provider-info">
+                          <span className="provider-name">{provider.provider}</span>
+                          <span className="provider-requests">
+                            {provider.agentCount ?? 0} agent
+                            {(provider.agentCount ?? 0) === 1 ? '' : 's'}
+                          </span>
+                        </div>
+                        <div className="provider-cost muted">—</div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Costs Tab */}
-        {activeTab === 'costs' && (
-          <div className="costs-grid">
-            <div className="cost-summary-card">
-              <h3>Total Cost</h3>
-              <div className="total-cost">
-                ${providerMetrics.reduce((sum, p) => sum + p.cost, 0).toFixed(2)}
-              </div>
-              <div className="cost-period">Last {timeRange}</div>
-            </div>
-            <div className="provider-costs-card">
-              <h3>Cost by Provider</h3>
-              <div className="provider-list">
-                {providerMetrics.map((provider) => (
-                  <div key={provider.provider} className="provider-row">
-                    <div className="provider-info">
-                      <span className="provider-name">{provider.provider}</span>
-                      <span className="provider-requests">
-                        {provider.totalRequests.toLocaleString()} requests
-                      </span>
-                    </div>
-                    <div className="provider-cost">${provider.cost.toFixed(2)}</div>
                   </div>
-                ))}
+                )}
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+          {activeTab === 'costs' && providerMetricsAvailable && (
+            <div className="costs-grid">
+              <div className="cost-summary-card">
+                <h3>Total Cost</h3>
+                <div className="total-cost">{fmtCost(totalCost)}</div>
+                <div className="cost-period">Last {timeRange}</div>
+              </div>
+              <div className="provider-costs-card">
+                <h3>Cost by Provider</h3>
+                <div className="provider-list">
+                  {providerMetrics.map((provider) => (
+                    <div key={provider.provider} className="provider-row">
+                      <div className="provider-info">
+                        <span className="provider-name">{provider.provider}</span>
+                        <span className="provider-requests">
+                          {fmtNum(provider.totalRequests)} requests
+                        </span>
+                      </div>
+                      <div className="provider-cost">{fmtCost(provider.cost)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
-      <style>{`
+        <style>{`
         .analytics-container {
           padding: 16px;
           max-width: 1600px;
@@ -480,9 +501,24 @@ const Analytics: React.FC = () => {
         .stat-card.pink { border-left: 4px solid #ec4899; }
 
         .stat-icon { font-size: 24px; display: block; margin-bottom: 12px; }
-        .stat-value { font-size: 24px; font-weight: 700; display: block; }
-        .stat-label { font-size: 13px; color: var(--tnf-text-muted); display: block; margin-top: 4px; }
-        .stat-subtitle { font-size: 11px; color: var(--tnf-text-muted); display: block; margin-top: 8px; }
+        .stat-value {
+          font-size: 24px;
+          font-weight: 700;
+          display: block;
+          color: var(--tnf-text-primary, #f8fafc);
+        }
+        .stat-label {
+          font-size: 13px;
+          color: var(--tnf-text-secondary, #cbd5e1);
+          display: block;
+          margin-top: 4px;
+        }
+        .stat-subtitle {
+          font-size: 11px;
+          color: var(--tnf-text-muted, #94a3b8);
+          display: block;
+          margin-top: 8px;
+        }
 
         /* Chart Card */
         .chart-card {
@@ -644,6 +680,21 @@ const Analytics: React.FC = () => {
           color: var(--tnf-text-muted);
         }
 
+        /* Empty / unavailable states */
+        .empty-state {
+          padding: 20px;
+          border: 1px dashed var(--tnf-border);
+          border-radius: 12px;
+          color: var(--tnf-text-muted);
+          font-size: 13px;
+          line-height: 1.6;
+          background: rgba(255, 255, 255, 0.02);
+        }
+
+        .muted {
+          color: var(--tnf-text-muted);
+        }
+
         /* Costs */
         .costs-grid {
           display: grid;
@@ -652,7 +703,7 @@ const Analytics: React.FC = () => {
         }
 
         @media (min-width: 768px) {
-          .costs-grid {
+          .costs-grid:not(.single) {
             grid-template-columns: 300px 1fr;
           }
         }
@@ -741,7 +792,8 @@ const Analytics: React.FC = () => {
           to { transform: rotate(360deg); }
         }
       `}</style>
-    </div>
+      </div>
+    </PageShell>
   );
 };
 

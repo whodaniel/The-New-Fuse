@@ -43,6 +43,13 @@
     "tnf:harness:boot": "bash scripts/runtime/harness-boot.sh",
     "tnf:harness:status": "bash scripts/runtime/relay-monitor-service.sh status && crontab -l | grep tnf",
     "tnf:harness:uninstall": "bash scripts/runtime/relay-monitor-service.sh uninstall && bash scripts/runtime/terminal-heartbeat-cron.sh uninstall && bash scripts/runtime/tnf-director-cron.sh uninstall",
+    "tnf:local-ui": "node scripts/local-ui/tnf-local-ui-boot.cjs --web",
+    "tnf:local-ui:web": "node scripts/local-ui/tnf-local-ui-boot.cjs --web",
+    "tnf:local-ui:tauri": "node scripts/local-ui/tnf-local-ui-boot.cjs --tauri",
+    "tnf:local-ui:build": "pnpm --dir apps/tauri-desktop run build",
+    "tnf:forefront": "node scripts/local-ui/tnf-forefront-boot.cjs",
+    "tnf:forefront:tauri": "node scripts/local-ui/tnf-forefront-boot.cjs --tauri",
+    "tnf:browser-control": "node scripts/local-ui/serve-browser-control.cjs",
     "tnf:start:crawler": "docker compose -f docker-compose.crawler.yml up -d",
     "tnf:start:crawler:local": "bash scripts/start-crawler-local.sh",
     "framework-consciousness:init": "node scripts/framework-consciousness/initialize.cjs",
@@ -80,8 +87,15 @@
     "tnf:llm:dashboard": "open data/llm-intel/dashboard.html",
     "tnf:llm:report": "cat data/llm-intel/ranking-report-latest.md",
     "tnf:llm:apply-rankings": "node scripts/llm-intel/llm-apply-rankings.cjs",
+    "tnf:llm:sync-hermes": "node scripts/llm-intel/sync-hermes-llm-from-tnf.cjs",
     "tnf:llm:tui": "node scripts/llm-intel/llm-rankings-tui.cjs",
     "tnf:doctor": "node scripts/tnf-doctor.cjs",
+    "ops:wire-env": "node scripts/library/wire-local-env.mjs",
+    "ops:growth-audit": "node scripts/operations/tnf-growth-audit.cjs",
+    "ops:disk-retention": "bash scripts/operations/swarm-disk-retention.sh",
+    "ops:hermes:retention": "node scripts/operations/hermes-state-retention.cjs",
+    "ops:seed-control-plane": "node scripts/tnf-seed-control-plane.cjs",
+    "ops:sync-supabase": "node scripts/sync_to_supabase.cjs",
     "tnf:frontload:verify": "bash scripts/verify_frontload_state.sh",
     "improver:scan": "node scripts/improver/scan.cjs",
     "scout:scan": "node scripts/swarm/news-scout.cjs",
@@ -126,6 +140,7 @@
     "tnf:start:codex": "node scripts/tnf-start-ai.cjs codex",
     "tnf:start:claude": "node scripts/tnf-start-ai.cjs claude",
     "tnf:start:gemini": "node scripts/tnf-start-ai.cjs gemini",
+    "tnf:start:cursor": "node scripts/tnf-start-ai.cjs cursor",
     "tnf:start:pi": "node scripts/tnf-start-ai.cjs pi",
     "tnf:tauri:dmg": "node scripts/packaging/build-tauri-dmg.cjs",
     "tnf:journey:extract": "node scripts/timeline/extract-development-journey-evidence.mjs",
@@ -222,7 +237,7 @@
     "test:low-memory": "BUILD_MEMORY_LIMIT=1024 BUILD_CONCURRENCY=1 turbo run test --concurrency=1",
     "lint": "ESLINT_USE_FLAT_CONFIG=false turbo run lint",
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false turbo run lint:fix",
-    "lint:staged": "lint-staged",
+    "lint:staged": "lint-staged -c .lintstagedrc.js",
     "privacy:guard:staged": "node scripts/security/privacy-guard.cjs --mode=staged",
     "privacy:guard:pre-push": "node scripts/security/privacy-guard.cjs --mode=pre-push",
     "privacy:guard:repo": "node scripts/security/privacy-guard.cjs --mode=repo",
@@ -353,6 +368,11 @@
     "sync:repos:open": "bash scripts/sync-repos.sh --open",
     "sync:repos:control": "bash scripts/sync-repos.sh --control",
     "sync:repos:dry-run": "bash scripts/sync-repos.sh --dry-run",
+    "lineage:audit": "bash scripts/audit-repo-parity.sh all",
+    "lineage:bundle": "bash scripts/create-lineage-bundle.sh",
+    "lineage:check-leakage": "bash scripts/check-proprietary-leakage.sh",
+    "lineage:verify-export": "bash scripts/verify-open-runtime-export.sh",
+    "voice:drift-audit": "bash scripts/audit/voice-drift-audit.sh",
     "contracts:generate": "pnpm --filter @the-new-fuse/protocol-contracts run generate:all",
     "contracts:check": "pnpm --filter @the-new-fuse/protocol-contracts run check",
     "contracts:check:drift": "pnpm --filter @the-new-fuse/protocol-contracts run check:drift"
@@ -457,5 +477,11 @@
     "node": ">=20.20.0",
     "pnpm": "10.22.x"
   },
-  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c"
+  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c",
+  "pnpm": {
+    "overrides": {
+      "@types/three": "0.168.0",
+      "@types/react": "^18.2.61"
+    }
+  }
 }

@@ -2,8 +2,8 @@
  * WorkflowService
  * High-level service for managing n8n workflows
  */
-import { RegistryConfig } from '../registry/WorkflowRegistry.js';
-import { N8nWorkflow, WorkflowCategory, WorkflowImportRequest, WorkflowImportResponse, WorkflowSearchQuery, WorkflowSearchResult, WorkflowSource, WorkflowStats } from '../types/index.js';
+import type { RegistryConfig } from '../registry/WorkflowRegistry.js';
+import type { N8nWorkflow, WorkflowCategory, WorkflowImportRequest, WorkflowImportResponse, WorkflowSearchQuery, WorkflowSearchResult, WorkflowSource, WorkflowStats } from '../types/index.js';
 export declare class WorkflowService {
     private fetcher;
     private parser;

@@ -1,0 +1,1386 @@
+{
+  "generatedAt": "2026-06-17T16:50:21.902148Z",
+  "batchId": "ai5-phase7-batch-003",
+  "owner": "local-subdirector",
+  "objective": "Corrected retriage of irrelevant-context blanket block. Threshold≥4. Full pool all priorities.",
+  "state": "executed",
+  "records": [
+    {
+      "id": "act-0e78c0146f985be6",
+      "title": "[AI5] Configure Obsidian Vault for Hermes Reference",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-1552b2795875bac9",
+      "title": "[AI5] Invoke 'Zoom Out' Skill for Context",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-1a31d774754e0197",
+      "title": "[AI5] Establish and Maintain a Product 'Truth Layer' for AI Agents",
+      "score": 5,
+      "terms": [
+        "rust",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-265806da3c25a0a6",
+      "title": "[AI5] Enable Agent to Create and Update Skills",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-2eca5f14e0f59028",
+      "title": "[AI5] Engage Development Team for AI Agent Evaluation and Integration Planning",
+      "score": 5,
+      "terms": [
+        "evaluation",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-45454b957ac69563",
+      "title": "[AI5] Compose Agent with Configured LLM and ESQL Search Tool",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-55c38d47c3ef3448",
+      "title": "[AI5] Initiate Hermes Installation via Claude AI Command",
+      "score": 5,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-560208088d1223b5",
+      "title": "[AI5] Draft WhatsApp Responses for Growth Initiatives",
+      "score": 5,
+      "terms": [
+        "directive",
+        "harness"
+      ]
+    },
+    {
+      "id": "act-6501c8ee6dade286",
+      "title": "[AI5] Create a Custom AI Persona in Hermes Pantheon",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-65f851648aafa1f3",
+      "title": "[AI5] Utilize Hermes Video Analyze Tool",
+      "score": 5,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-7c4f6d32d4d8db87",
+      "title": "[AI5] Automate Daily Proactive Improvement Briefing via Hermes Cron Job",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-7cff5e36e6f8d470",
+      "title": "[AI5] Create and Populate Hermes Agent's Soul.md Knowledge File",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-9d19afc09fac4d45",
+      "title": "[AI5] Reinforce Tool Usage in Agent System Prompt",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-9dc06642234e5468",
+      "title": "[AI5] Re-evaluate Agent Task on Message Edit",
+      "score": 5,
+      "terms": [
+        "evaluation",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-9eeefc8449a9769e",
+      "title": "[AI5] Generate AI-Enhanced Video Content",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-a48980b50c60bf00",
+      "title": "[AI5] Inject Skill Usage Directive into Agent System Prompt",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-b00aea96f9c70445",
+      "title": "[AI5] Evaluate and Apply to Matching Job Listings",
+      "score": 5,
+      "terms": [
+        "evaluation",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-bfb31ceb5ee07d70",
+      "title": "[AI5] Generate Infographic on Topic via Voice Note",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-dbfa32a8e0d3e8d3",
+      "title": "[AI5] Activate Notebook LM Skill in Hermes Agent Chat",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-e2076f6bdf2a7a12",
+      "title": "[AI5] Measure Token Usage With Caveman Mode",
+      "score": 5,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-13a1b7ca5d88ad53",
+      "title": "[AI5] Verify and Test Gemini 3.2 Flash Availability",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-1f6f4dafbd19a29a",
+      "title": "[AI5] Automate P0 Security Incident Resolution",
+      "score": 4,
+      "terms": [
+        "dispatch"
+      ]
+    },
+    {
+      "id": "act-33b9b216e568f9b2",
+      "title": "[AI5] Analyze Raw Trace Data for Evaluation Planning",
+      "score": 4,
+      "terms": [
+        "trace",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "act-36bf56b423c939b2",
+      "title": "[AI5] Prevent Mobile App Secret Exposure",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-5d061786e9c1a0cf",
+      "title": "[AI5] Run Multiple LLMs for Comparative Analysis via Cursor",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-a2883e00e38e895b",
+      "title": "[AI5] Run Codebase Static Security Analysis",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-b330c8c8eccc8520",
+      "title": "[AI5] Deploy and Utilize Hermes Desktop for AI Agent Workflows",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-c3ef1ea43e86fcdf",
+      "title": "[AI5] Secure Agent Event Payloads",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-e6433f9e0354d7ed",
+      "title": "[AI5] Implement Comprehensive Audit Trail Logging",
+      "score": 4,
+      "terms": [
+        "trace"
+      ]
+    },
+    {
+      "id": "act-efd4b85dfa102f56",
+      "title": "[AI5] Configure LLM-as-a-Judge for Semantic Evaluation",
+      "score": 4,
+      "terms": [
+        "evaluation",
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-f29cbdce48f91fb7",
+      "title": "[AI5] Launch Agent TARS CLI",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-008e5676eb680874",
+      "title": "[AI5] Generate and Document Workflow Plan",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-03d3988294c1972b",
+      "title": "[AI5] Generate exe.dev Skill Feature Parity Document",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-0564ae71f8105b57",
+      "title": "[AI5] Implement Agent Action Reversal and Recovery Mechanisms",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-05f9539fd02e7608",
+      "title": "[AI5] Deploy Hermes Agent on Hostinger VPS (One-Click Install)",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-09270d64aa39bdb9",
+      "title": "[AI5] Design and Implement Purely Event-Sourced Agent Harness",
+      "score": 4,
+      "terms": [
+        "harness"
+      ]
+    },
+    {
+      "id": "act-092d6e2858e37deb",
+      "title": "[AI5] Generate Archon Workflow YAML",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-0affa8e525fa3233",
+      "title": "[AI5] Agent-Initiated Content Creation and Publishing Workflow with User Approva",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-0bdf89b7d114e328",
+      "title": "[AI5] Automate Refund Processing via Email Agent",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-0d22953eaa07b793",
+      "title": "[AI5] Configure Per-Task Max Retries in Kanban",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-0e4c48602ae87f13",
+      "title": "[AI5] Test Communication with Newly Configured Hermes Bot",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-0fd0cab9ce277417",
+      "title": "[AI5] Implement Structured Output Model for Search Agent",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-0fddeef198adf959",
+      "title": "[AI5] Generate Excalidraw Diagrams from Text via Hermes Agent Skill",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-103eee03c69f36f0",
+      "title": "[AI5] Install Hermes Agent via Terminal",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-11054ff261cb2f2a",
+      "title": "[AI5] Instruct exe.dev agent to build a new agent sandbox skill",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-132d531c99249071",
+      "title": "[AI5] Install Superbase Agent Skill for Database Expertise",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-199c2a16dbf25daf",
+      "title": "[AI5] Structure AI Prompts to Reference agents.md",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-1a69de47e5dcd42c",
+      "title": "[AI5] Initiate Pi's Guided Extension Development Workflow",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-1edfd33083211126",
+      "title": "[AI5] Install and Utilize Pre-shipped TypeScript Iterate API Client",
+      "score": 4,
+      "terms": []
+    },
+    {
+      "id": "act-1f6ce388e42d8eac",
+      "title": "[AI5] Modify Hardcoded Submitter Constant",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-216d8b6d9bea506e",
+      "title": "[AI5] Benchmark Language Model Performance with Token Speed",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-21b4186d862003a8",
+      "title": "[AI5] Install a Skill using a URL in Hermes Agent",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-25a4c13b380207bd",
+      "title": "[AI5] Delete Unused Vector Store",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-264bb488b4d43987",
+      "title": "[AI5] Execute Multimodal Queries with File Search Tool and Optional Metadata Fil",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-2784c57ee5a769f2",
+      "title": "[AI5] Attach Design System Markdown File to AI Prompt",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-28199a9e8dcecb26",
+      "title": "[AI5] Develop Custom Agent Skill",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-2adcc001e8b70fde",
+      "title": "[AI5] Process Patient Samples for Disease Diagnosis",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-2d059eb3eb65f888",
+      "title": "[AI5] Automate Marketing Ad Campaign Management and Optimization",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-2dacee67fc0de07d",
+      "title": "[AI5] Define Folder Structure in agents.md",
+      "score": 4,
+      "terms": []
+    },
+    {
+      "id": "act-2f3fa18391a46b12",
+      "title": "[AI5] Persist Information to Agent Memory and Context Files",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-30b064ef29015689",
+      "title": "[AI5] Disable agent testing by modifying `agents.md`",
+      "score": 4,
+      "terms": []
+    },
+    {
+      "id": "act-33989ce4c5709fe2",
+      "title": "[AI5] Enhance Tool Description with Trigger Conditions",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-34927fb9724ae9f9",
+      "title": "[AI5] Manage Durable Memory Content with Constraints",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-362ec074e2a1bfe1",
+      "title": "[AI5] Assemble Agent with LLM, System Prompt, and Search Tool",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-38ef8732d719be11",
+      "title": "[AI5] Execute Database Interaction Script via Shell Tool",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-38f57e2c88e2ab18",
+      "title": "[AI5] Enable Claude Experimental Agent Teams",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-3a91135d48813cba",
+      "title": "[AI5] Enhance Tool Description with Relational Constraints",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-3cfd7ccf4bbf999e",
+      "title": "[AI5] Customize Archon PIV Loop Exploration for Enhanced Context Handling",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-3ec3afdd20d90498",
+      "title": "[AI5] Install a Skill into Hermes Agent",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-41ad0ee781e7e991",
+      "title": "[AI5] Remix Design Elements on Variant.com for Customization",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "factory"
+      ]
+    },
+    {
+      "id": "act-4a072131de95f71b",
+      "title": "[AI5] Transition Capability Evals to Regression Evals",
+      "score": 4,
+      "terms": [
+        "evaluation"
+      ]
+    },
+    {
+      "id": "act-4c43091e594a9e9b",
+      "title": "[AI5] Investigate Genetic Positions and Selection Signals Using Aegis Browser",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-4c56d11302d7d2f7",
+      "title": "[AI5] Agent Initiates Asynchronous Communication and Awaits Response",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-4e0da2f50f207a89",
+      "title": "[AI5] Facilitate Codex Name Change Request",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-4eb42371e9e4fbf4",
+      "title": "[AI5] Configure XAI Custom Voices as TTS Provider with Cloning",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-5133b215e406e4d1",
+      "title": "[AI5] Initiate Hermes-GitHub Repository Mirroring",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-542836c82959cdda",
+      "title": "[AI5] Integrate Custom AI Shopping Skill",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-55f97eb5fe6655e5",
+      "title": "[AI5] Integrate Persuasion Strategy for Agent-Generated Ideas",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-5b4fa6a6b5e02fd0",
+      "title": "[AI5] Convert an Open-Source Repository into an Agent-Native CLI using CLI Anyth",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-5c2a65e5cb0e67f6",
+      "title": "[AI5] Attach Custom Metadata during Document Ingestion",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-5d18c32f51dab101",
+      "title": "[AI5] Run Script Without Agentic Loop Using no_agent Flag",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive",
+        "harness"
+      ]
+    },
+    {
+      "id": "act-5e7fb9f2f5ca3469",
+      "title": "[AI5] Run Codebase Architecture Improvement Scan",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-62c9d36c7d1152c4",
+      "title": "[AI5] Publish Marketing Content on LinkedIn",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-65f8f47fd76de883",
+      "title": "[AI5] Execute AI Agent and Examine Output Traces",
+      "score": 4,
+      "terms": [
+        "trace"
+      ]
+    },
+    {
+      "id": "act-66645cd7ec604cad",
+      "title": "[AI5] Browse Job Boards and Apply Search Filters",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-67b9d182c546b2ba",
+      "title": "[AI5] Enable Open Router Response Caching",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-68ef89cff955c924",
+      "title": "[AI5] Obtain User Approval Before Library Installation",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-695e8e7c686f51c9",
+      "title": "[AI5] Publish Core Product 'Truth Layer' Data to the Broader Internet",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-6ab18e51aa22e4ab",
+      "title": "[AI5] Automate Local Tasks with Doth a Thing",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-6e34bd88f75b1bdb",
+      "title": "[AI5] Query Notebook LM for Additional Sources",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-6ec33d750b2877fd",
+      "title": "[AI5] Validate NA10 MCP Integration and Grant Access",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "mcp",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-70bd1a9785a98bfd",
+      "title": "[AI5] Configure Pi for Kimmy Code Subscription",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-715573d0fe456aa1",
+      "title": "[AI5] Join the AI Profit Boardroom Community",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-71bd56b8f1457f92",
+      "title": "[AI5] Inform Agent about ElasticSearch Data Structure",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-71e7166326af9ae3",
+      "title": "[AI5] Archive Curator Items using Subcommand",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-742b043b09739576",
+      "title": "[AI5] Submit Multi-Part Inquiry to Hemy's AI Agent",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-74cbb2caffa04e5d",
+      "title": "[AI5] Instrument Agent Execution with OpenTelemetry Span",
+      "score": 4,
+      "terms": [
+        "trace"
+      ]
+    },
+    {
+      "id": "act-7560e6cc2eb0e5f1",
+      "title": "[AI5] Add New Model Provider Plugin",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-786a1c05736c9965",
+      "title": "[AI5] Activate Notebook LM Skill and Create Scribe",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-7a2d76f074454158",
+      "title": "[AI5] Configure AI Generation Tool for Web Output",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-7b64da24741dedf1",
+      "title": "[AI5] Delegate 3D Asset Program Generation to AI Coding Agent",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-7d35647f32bac73d",
+      "title": "[AI5] Perform Meta-Evaluation of Judge Accuracy",
+      "score": 4,
+      "terms": [
+        "evaluation"
+      ]
+    },
+    {
+      "id": "act-80b1d8c841236ea0",
+      "title": "[AI5] Develop exe.dev Mirroring Skill",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-81af8c752b7410a2",
+      "title": "[AI5] Generate Articulated 3D Object using Articcraft",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-82f2cf0931703c28",
+      "title": "[AI5] Define Agent System Prompt",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-8465d93e93ed9716",
+      "title": "[AI5] Update Kimmy API Key in Configuration",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-84c25406fe99e7eb",
+      "title": "[AI5] Develop Customer Support Agent Object Model Layer",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-85e38aaba11be5ae",
+      "title": "[AI5] Critique App Design System Implementation",
+      "score": 4,
+      "terms": [
+        "evaluation",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-87ea5b816c84623e",
+      "title": "[AI5] Create Notebook LM Skill in Hermes Agent Dashboard (Pantheon)",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-8c882bd0d548255a",
+      "title": "[AI5] Implement Answer Grounding with Source Traceability",
+      "score": 4,
+      "terms": [
+        "trace"
+      ]
+    },
+    {
+      "id": "act-8dbac311cf4aa373",
+      "title": "[AI5] Develop Pre-Action Reasoning using Reinforcement Learning",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-8ecacfd611e25102",
+      "title": "[AI5] Configure LLM Agent with System Prompt and Shell Tool",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-91df2b79c6dbe3df",
+      "title": "[AI5] Generate Multiple-Choice Personality Test JSON",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-92203bbb182d0c3c",
+      "title": "[AI5] Create YouTube Hermes Agent Folder",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-949b547464595ebb",
+      "title": "[AI5] Upgrade Agent's Language Model to 'mini'",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-97a183fc220c59c0",
+      "title": "[AI5] Test Multi-Question Tool (Questionnaire Extension)",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-995f77472cd5602b",
+      "title": "[AI5] Continuously Monitor Services and Propose Actions",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-9acb8349398b9e62",
+      "title": "[AI5] Automate Non-P0 Bug Fix PR Creation",
+      "score": 4,
+      "terms": [
+        "dispatch"
+      ]
+    },
+    {
+      "id": "act-9bc5d079a0925430",
+      "title": "[AI5] Explore Supplemental Gemini Tools",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-9be39c28eb37dde6",
+      "title": "[AI5] Implement Iterative Agent Development Loop",
+      "score": 4,
+      "terms": [
+        "trace",
+        "evaluation",
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-9e9e21f5ec81d20b",
+      "title": "[AI5] Store Current Plan in Plans Folder",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-a0404ab813d81745",
+      "title": "[AI5] Command agent to implement the loaded plan",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-a2b4075051ac413c",
+      "title": "[AI5] Validate Hermes' Access to NA10 MCP",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "mcp",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-a3c9cc7d128c3582",
+      "title": "[AI5] Prevent regeneration of provided recipes",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-a4b1d1556d7ed70e",
+      "title": "[AI5] Proactively Address Internal Complaints from Slack",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-a633ba575258e6e6",
+      "title": "[AI5] Schedule a Cron Job with Hermes Agent",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-a8391a4476bf6a19",
+      "title": "[AI5] Configure Phoenix Collector Endpoint",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-aad18f07843e80bb",
+      "title": "[AI5] Queue Follow-Up Work via /q Command in IDE",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-ad6dd2dbb637e0b0",
+      "title": "[AI5] Upload Multimodal Documents to Gemini File Search Store",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-ae40edb4a10b2ca7",
+      "title": "[AI5] Implement JCAI-style Web Agent DOM Processing and Action Execution",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-b09a7d99d8294208",
+      "title": "[AI5] Configure Cron Job for Script-Only Watchdog Mode",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-b1d8ab8ec2299503",
+      "title": "[AI5] Re-attempt plan implementation, adhering to `agents.md` rules and using su",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-b2228088ced753de",
+      "title": "[AI5] Integrate Custom Code into Agent Chain Workflow Steps",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-b325ecfd13c1be46",
+      "title": "[AI5] Configure Cloud-Based Claude Coding Environment",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-bbe23ea5104df741",
+      "title": "[AI5] Select OpenAI Codex During Hermes Setup",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-bc7eb8441262e51c",
+      "title": "[AI5] Initiate UI Rearchitecture Brainstorming with Ora Skill",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-bd6ddee3714aaf8e",
+      "title": "[AI5] Implement Manis-style Three-File Memory Pattern",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-c5806767e452d09d",
+      "title": "[AI5] Create agents.md file in application root",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-c83b65f2b15936b0",
+      "title": "[AI5] Terminate Agent Task on Message Deletion",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-c8d1a82e439a34b8",
+      "title": "[AI5] Implement 'Agent Command Center' UI View in HyperAgent",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-cb77eda4a99c5c6e",
+      "title": "[AI5] Execute Hermes Configuration Command in Terminal",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "mcp",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-cb9f877f18065264",
+      "title": "[AI5] List Archived Curator Items using Subcommand",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-cbb720fea37be366",
+      "title": "[AI5] Initiate Backend Development Planning",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-cd60bdcd946c5a6d",
+      "title": "[AI5] Populate `agents.md` with copied content",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-ce21ec36fdffeeea",
+      "title": "[AI5] Obtain Claude API Key",
+      "score": 4,
+      "terms": [
+        "evaluation"
+      ]
+    },
+    {
+      "id": "act-cf0c3f82634864c7",
+      "title": "[AI5] Automate Eval Explanation Categorization using LLM",
+      "score": 4,
+      "terms": [
+        "trace",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "act-d4c23e1e4365857f",
+      "title": "[AI5] Change VPS Hostname to YouTube Hermes",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-d71d6d010770a66f",
+      "title": "[AI5] Deploy Hermes Agent on Diverse Infrastructure",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-d74dd3debbfdf339",
+      "title": "[AI5] Set Agent to Full Autonomous Operation",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-dd5b553c1bc84c97",
+      "title": "[AI5] Evaluate Protein Binding Prediction for Mammal vs. AlphaFold 3",
+      "score": 4,
+      "terms": [
+        "evaluation"
+      ]
+    },
+    {
+      "id": "act-df220e8cc165d16f",
+      "title": "[AI5] Configure Cron Job for Script-Only Execution (No Agent Cron Mode)",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-e1a4bbe8b4825807",
+      "title": "[AI5] Run Verscel's React Best Practices Audit",
+      "score": 4,
+      "terms": []
+    },
+    {
+      "id": "act-e1f893c176f8edca",
+      "title": "[AI5] Add NA10 MCP Access Token to Hermes Configuration",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "mcp",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-e366adbdca8632b7",
+      "title": "[AI5] Generate Personalized Drug Prescriptions",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-e9395466c7416bb3",
+      "title": "[AI5] Remove Open Router Integration Boilerplate",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-ea063a361ddb75ab",
+      "title": "[AI5] Prune Curator Items using Subcommand",
+      "score": 4,
+      "terms": [
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-ef6f2818348f2e40",
+      "title": "[AI5] Configure a Business-Specific Gemini Notebook",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-f1dd173027df4006",
+      "title": "[AI5] Synchronize Pantheon Personas and Configurations to GitHub Mirror",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-f1f4f1f951a3a16a",
+      "title": "[AI5] Request Secure Token Configuration Command from Hermes",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-f27a39ac9ba61699",
+      "title": "[AI5] Schedule a Proactive Cron Job",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "hermes",
+        "directive"
+      ]
+    },
+    {
+      "id": "act-f2caf22abeb36b87",
+      "title": "[AI5] Initialize Open Spec in Project",
+      "score": 4,
+      "terms": [
+        "prompt"
+      ]
+    },
+    {
+      "id": "act-f73d41be5bb0dd08",
+      "title": "[AI5] Configure Agent Data Source with Markdown Files on File System",
+      "score": 4,
+      "terms": [
+        "agent loop"
+      ]
+    },
+    {
+      "id": "act-fac5dbc9fd08d94e",
+      "title": "[AI5] Configure Platform Allow Lists",
+      "score": 4,
+      "terms": [
+        "hermes"
+      ]
+    },
+    {
+      "id": "act-fb7606a4a02a8011",
+      "title": "[AI5] Implement Stream Processor for Coding Agent",
+      "score": 4,
+      "terms": [
+        "directive"
+      ]
+    },
+    {
+      "id": "act-fbe366005b597e1c",
+      "title": "[AI5] Measure Token Usage Without Caveman Mode",
+      "score": 4,
+      "terms": [
+        "prompt",
+        "directive"
+      ]
+    }
+  ],
+  "promotedCount": 165,
+  "executedAt": "2026-06-17T16:51:26.272987Z",
+  "evidenceFilesCreated": 165
+}

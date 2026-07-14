@@ -1,4 +1,0 @@
-Contact: mailto:security@thenewfuse.com
-Preferred-Languages: en
-Canonical: https://thenewfuse.com/.well-known/security.txt
-Policy: https://thenewfuse.com/docs

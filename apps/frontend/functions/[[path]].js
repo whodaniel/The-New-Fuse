@@ -19,12 +19,27 @@ export async function onRequest(context) {
     return context.env.ASSETS.fetch(context.request);
   }
 
+  // Legacy API docs alias should resolve to static docs, not the API gateway.
+  if (path === '/api/docs' || path.startsWith('/api/docs/')) {
+    const docsSuffix = path.slice('/api/docs'.length);
+    return Response.redirect(
+      new URL(`/docs${docsSuffix}${url.search}${url.hash}`, url.origin),
+      301
+    );
+  }
+
   // 1. API & WebSocket Routes - Proxy to backend services
   const API_GATEWAY = 'https://api.thenewfuse.com';
   const RELAY_SERVER = 'https://relay.thenewfuse.com';
 
   if (path.startsWith('/api/') || path.startsWith('/v1/') || path === '/api' || path === '/v1') {
-    return fetch(new Request(new URL(path + url.search, API_GATEWAY), context.request));
+    let apiPath = path;
+    if (apiPath.startsWith('/api/v1/')) {
+      apiPath = apiPath.replace('/api/v1/', '/api/');
+    } else if (apiPath.startsWith('/v1/') || apiPath === '/v1') {
+      apiPath = `/api${apiPath}`;
+    }
+    return fetch(new Request(new URL(apiPath + url.search, API_GATEWAY), context.request));
   }
 
   if (path.startsWith('/ws/') || path === '/ws') {
@@ -43,8 +58,29 @@ export async function onRequest(context) {
       return context.env.ASSETS.fetch(context.request);
     }
 
+    // Marketing SPA routes on landing domain -> serve app.html (not static index.html)
+    const landingSpaRoutes = ['/about', '/blog', '/brand', '/contact'];
+    const isLandingSpaRoute =
+      landingSpaRoutes.includes(path) || path === '/legal/privacy' || path === '/legal/terms';
+
+    if (isLandingSpaRoute) {
+      const appResponse = await context.env.ASSETS.fetch(
+        new Request(new URL('/app.html', url.origin))
+      );
+      const newHeaders = new Headers(appResponse.headers);
+      newHeaders.set('Content-Type', 'text/html; charset=utf-8');
+      newHeaders.set('X-TNF-Routing', 'SPA-Landing');
+      return new Response(appResponse.body, {
+        status: 200,
+        headers: newHeaders,
+      });
+    }
+
     // Functional routes on landing domain -> redirect to app subdomain
     const functionalPrefixes = [
+      '/auth',
+      '/login',
+      '/register',
       '/dashboard',
       '/agents',
       '/workflows',

@@ -2,7 +2,7 @@
  * WorkflowRegistry
  * Manages the registry of n8n workflows
  */
-import { N8nWorkflow, WorkflowCategory, WorkflowSearchQuery, WorkflowSearchResult, WorkflowSource, WorkflowStats } from '../types/index.js';
+import type { N8nWorkflow, WorkflowCategory, WorkflowSearchQuery, WorkflowSearchResult, WorkflowSource, WorkflowStats } from '../types/index.js';
 export interface RegistryConfig {
     storageDir?: string;
     enablePersistence?: boolean;

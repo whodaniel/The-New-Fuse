@@ -1,3 +1,6 @@
+`[CLASS:PRIME] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TNF Ingestion Run Report: AI 5 + NEW- May-2026
 
 - Run Timestamp: 2026-05-17T14:18:08.706959Z

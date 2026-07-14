@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.openclaw.tnf-heartbeat</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/danielgoldberg/.openclaw/workspace/scripts/cron/tnf-heartbeat.sh</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>300</integer>
+    <key>StandardOutPath</key>
+    <string>/tmp/openclaw-tnf-heartbeat.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/openclaw-tnf-heartbeat.err</string>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>

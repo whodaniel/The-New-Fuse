@@ -1,5 +1,5 @@
 import { OnModuleInit } from '@nestjs/common';
-import { FeedbackIteration, FunctionalLink, GoalRecord, ProjectPlanRecord, TimelineEvent, UnifiedRecordKind, UnifiedRecordStatus, UnifiedTaskRecord } from './unified-ledger.types.js';
+import { FeedbackIteration, FunctionalLink, GoalRecord, ProjectPlanRecord, TimelineEvent, UnifiedRecordKind, UnifiedRecordStatus, UnifiedTaskRecord } from './unified-ledger.types';
 type CreateRecordInput = Partial<UnifiedTaskRecord> & Pick<UnifiedTaskRecord, 'title' | 'description'>;
 export declare class UnifiedLedgerService implements OnModuleInit {
     private readonly logger;

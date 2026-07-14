@@ -8,22 +8,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClaudeSkillsManager = void 0;
 exports.getClaudeSkillsManager = getClaudeSkillsManager;
 exports.resetClaudeSkillsManager = resetClaudeSkillsManager;
-const index_js_1 = require("./executor/index.js");
-const index_js_2 = require("./integration/index.js");
-const index_js_3 = require("./loader/index.js");
-const index_js_4 = require("./parser/index.js");
-const index_js_5 = require("./registry/index.js");
+const executor_js_1 = require("./executor.js");
+const integration_js_1 = require("./integration.js");
+const loader_js_1 = require("./loader.js");
+const parser_js_1 = require("./parser.js");
+const registry_js_1 = require("./registry.js");
 /**
  * Main manager class for Claude Skills
  */
 class ClaudeSkillsManager {
     constructor(config) {
         this.initialized = false;
-        this.loader = new index_js_3.SkillLoader(config?.loader);
-        this.parser = new index_js_4.SkillParser();
-        this.executor = new index_js_1.SkillExecutor();
-        this.registry = new index_js_5.SkillRegistry();
-        this.mcpProvider = new index_js_2.MCPSkillProvider(this.registry, this.executor);
+        this.loader = new loader_js_1.SkillLoader(config?.loader);
+        this.parser = new parser_js_1.SkillParser();
+        this.executor = new executor_js_1.SkillExecutor();
+        this.registry = new registry_js_1.SkillRegistry();
+        this.mcpProvider = new integration_js_1.MCPSkillProvider(this.registry, this.executor);
         if (config?.autoInitialize) {
             this.initialize(config.prioritySkills).catch((error) => {
                 console.error('Failed to auto-initialize Claude Skills:', error);

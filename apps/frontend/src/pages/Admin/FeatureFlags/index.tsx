@@ -1,7 +1,14 @@
 // @ts-nocheck
-import { Switch, Tabs, toast } from '@/components/ui';
 import { FeatureFlagConditionsEditor } from '@/components/AdminPanel/FeatureFlagConditions';
-import { PremiumButton as Button, GlassCard as Card, PremiumInput as Input } from '@/components/ui';
+import {
+  PremiumButton as Button,
+  GlassCard as Card,
+  PremiumInput as Input,
+  Switch,
+  Tabs,
+  toast,
+} from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import { FeatureFlag, FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
 import { useEffect, useState } from 'react';
 
@@ -17,7 +24,7 @@ export default function FeatureFlagsAdmin() {
 
   async function loadFeatures() {
     try {
-      const response = await fetch('/api/admin/features');
+      const response = await authFetch('/api/admin/features');
       const data = await response.json();
       setFeatures(data);
     } catch (error) {
@@ -30,9 +37,8 @@ export default function FeatureFlagsAdmin() {
 
   async function createFeature(data: Partial<FeatureFlag>) {
     try {
-      const response = await fetch('/api/admin/features', {
+      const response = await authFetch('/api/admin/features', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
@@ -48,9 +54,8 @@ export default function FeatureFlagsAdmin() {
 
   async function updateFeature(id: string, data: Partial<FeatureFlag>) {
     try {
-      const response = await fetch(`/api/admin/features/${id}`, {
+      const response = await authFetch(`/api/admin/features/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
@@ -68,9 +73,7 @@ export default function FeatureFlagsAdmin() {
     if (!confirm('Are you sure you want to delete this feature?')) return;
 
     try {
-      const response = await fetch(`/api/admin/features/${id}`, {
-        method: 'DELETE',
-      });
+      const response = await authFetch(`/api/admin/features/${id}`, { method: 'DELETE' });
 
       if (!response.ok) throw new Error('Failed to delete feature');
 

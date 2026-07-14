@@ -1,4 +1,4 @@
-import { API_BASE as RESOLVED_API_BASE, API_V1_BASE as RESOLVED_API_V1_BASE } from './api-base';
+import { API_BASE as RESOLVED_API_BASE } from './api-base';
 
 /**
  * API Configuration
@@ -7,11 +7,14 @@ import { API_BASE as RESOLVED_API_BASE, API_V1_BASE as RESOLVED_API_V1_BASE } fr
  *
  * Strategy:
  * - Production: We use absolute URLs (VITE_API_URL) to bypass the broken Cloudflare
- *   Pages proxy and directly hit the API Gateway, which has proper CORS configured.
+ *   Pages proxy and directly hit the API, which has proper CORS configured.
  * - Development: We use relative paths (/api) so the Vite dev server handles routing.
+ *
+ * Note: Auth routes live at /api/auth/* on the API service (not /api/v1/auth/*).
+ * The API rewrites /api/v1/* → /api/* for backward compatibility with older clients.
  */
 
-const API_PREFIX = import.meta.env.PROD ? RESOLVED_API_V1_BASE : RESOLVED_API_BASE;
+const API_PREFIX = RESOLVED_API_BASE;
 
 export const API_BASE = API_PREFIX;
 // Backward-compatible alias used by legacy services.

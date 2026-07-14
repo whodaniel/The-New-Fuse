@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentResponseDto = exports.UpdateAgentDto = exports.CreateAgentDto = exports.AgentCapability = exports.AgentStatus = exports.AgentType = void 0;
 const class_validator_1 = require("class-validator");
@@ -33,7 +32,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({ enum: types_1.AgentType }),
     (0, class_validator_1.IsEnum)(types_1.AgentType),
-    __metadata("design:type", typeof (_a = typeof types_1.AgentType !== "undefined" && types_1.AgentType) === "function" ? _a : Object)
+    __metadata("design:type", String)
 ], CreateAgentDto.prototype, "type", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
@@ -72,7 +71,7 @@ __decorate([
     (0, swagger_1.ApiProperty)({ required: false, enum: types_1.AgentType }),
     (0, class_validator_1.IsEnum)(types_1.AgentType),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", typeof (_b = typeof types_1.AgentType !== "undefined" && types_1.AgentType) === "function" ? _b : Object)
+    __metadata("design:type", String)
 ], UpdateAgentDto.prototype, "type", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
@@ -96,7 +95,7 @@ __decorate([
     (0, swagger_1.ApiProperty)({ required: false, enum: types_1.AgentStatus }),
     (0, class_validator_1.IsEnum)(types_1.AgentStatus),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", typeof (_c = typeof types_1.AgentStatus !== "undefined" && types_1.AgentStatus) === "function" ? _c : Object)
+    __metadata("design:type", String)
 ], UpdateAgentDto.prototype, "status", void 0);
 class AgentResponseDto {
     constructor() {
@@ -120,11 +119,11 @@ __decorate([
 ], AgentResponseDto.prototype, "name", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ enum: types_1.AgentType }),
-    __metadata("design:type", typeof (_d = typeof types_1.AgentType !== "undefined" && types_1.AgentType) === "function" ? _d : Object)
+    __metadata("design:type", String)
 ], AgentResponseDto.prototype, "type", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ enum: types_1.AgentStatus }),
-    __metadata("design:type", typeof (_e = typeof types_1.AgentStatus !== "undefined" && types_1.AgentStatus) === "function" ? _e : Object)
+    __metadata("design:type", String)
 ], AgentResponseDto.prototype, "status", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ type: [String] }),
