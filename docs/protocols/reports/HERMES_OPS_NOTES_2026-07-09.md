@@ -57,3 +57,19 @@ requires patching `tnf-agent-daemon.py` / LLMClient redis tool schema.
    `z-ai/glm-5.1` is no longer active. **Fix:** Re-aligned
    `~/.pi/agent/settings.json` to match Hermes's fallback (`nvidia` /
    `minimaxai/minimax-m3`).
+
+## Web UI build follow-up (2026-07-14)
+
+After Hermes upstream update, `tsc -b` in `web/` failed on `*.test.ts` importing
+`vitest` when the workspace install was incomplete / test files were included in
+`tsconfig.app.json`. Durable fix applied locally:
+
+1. `npm install --workspace web` (devDeps: vitest, `@vitejs/plugin-react`,
+   `@types/qrcode`)
+2. Exclude `src/**/*.test.ts(x)` from `web/tsconfig.app.json` so production
+   `tsc -b` does not typecheck Vitest suites
+3. Verified: `npm run build` → `hermes_cli/web_dist/`; `npm test` → 11 files /
+   72 tests pass
+
+If `tnf hermes update` fails web again, re-run steps 1–2 before trusting stale
+dist.
