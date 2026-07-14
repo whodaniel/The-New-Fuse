@@ -3,10 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-04T10:23:34.660Z** — handoff
-`d01db68f-a3dc-495e-a87d-cc02b1e1fd43` (`60586330b262`).
-`ef70c596-2124-40bd-952e-5239f3e042a0` (`baab5b2825e5`).
-`30532802-3db1-429c-80f3-245a94a7cd75` (`199370ded064`).
+Updated: **2026-07-14T18:32:26.573Z** — handoff
+`eaaf0c4d-1f33-4080-871c-351f9a86e28f` (`779eaf5300d0`).
 
 ## Next Agent Focus (read first)
 
@@ -154,4 +152,6 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | 2026-07-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (31caf6d5-0612-4c58-9a88-e3209ed6f19a) | ✅ HANDOFF_READY | | 2026-07-14 |
 Orchestrator | Recreated control-plane-contracts + pushed agent status
-(38848cd6) | ✅ HANDOFF_READY |
+(38848cd6) | ✅ HANDOFF_READY | | 2026-07-14 | Orchestrator | Published
+SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READY
+|

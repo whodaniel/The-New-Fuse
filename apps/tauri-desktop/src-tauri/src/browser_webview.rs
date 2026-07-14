@@ -30,7 +30,6 @@ pub fn open_browser_webview(app: AppHandle, url: String) -> Result<(), String> {
     let builder = WebviewWindowBuilder::new(&app, WEBVIEW_LABEL, WebviewUrl::External(parsed))
         .title("TNF Browser — Live View")
         .inner_size(1280.0, 860.0)
-        .min_size(640.0, 480.0)
         .resizable(true);
 
     builder
