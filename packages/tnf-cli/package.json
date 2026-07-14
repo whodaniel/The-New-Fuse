@@ -27,6 +27,7 @@
     "@the-new-fuse/tnf-note-taking": "workspace:*",
     "@the-new-fuse/tnf-core": "workspace:*",
     "@the-new-fuse/shared": "workspace:*",
+    "@the-new-fuse/tnf-browser": "workspace:*",
     "@upstash/redis": "^1.37.0",
     "chalk": "^5.4.1",
     "commander": "^13.1.0",

@@ -152,8 +152,9 @@ implementation — determines whether the system becomes brittle.
 
 ## Skills Available
 
-- **webpilot** — CDP-free browser automation via Chrome extension + WebSocket
-  relay. Use for navigating, scraping, form-filling, any real browser task.
+- **tnf-browser** — TNF's assimilated CDP-free browser automation via Chrome
+  extension + WebSocket relay. Use for navigating, scraping, form-filling, any
+  real browser task. CLI: `tnf browser`.
 - **sspdf** — Declarative PDF generation engine. JSON source + theme = PDF. Use
   for invoices, reports, articles, any printable document.
 - **sspdf-theme-generator** — Generate sspdf theme files from brand specs. Use

@@ -1,29 +1,61 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-14T16:46:46.000Z` Handoff
-ID: `38848cd6-50ab-45ad-8d2b-bb83d17f3c70`
+Protocol ACK: `TNF_PROTOCOL_ACK`
+Created At: `2026-07-14T18:32:26.573Z`
+Handoff ID: `eaaf0c4d-1f33-4080-871c-351f9a86e28f`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `tnf-cli-harness-implementation`
-- Head SHA: `8e9b2724b07a`
+- Branch: `main`
+- Head SHA: `779eaf5300d0dcb458f5cbba2fe94d4788e8e1f7`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Pushed `tnf agent status` commit to update PR #69
-- Recreated `packages/control-plane-contracts`
-  (`@the-new-fuse/control-plane-contracts`) with MasterClock/Broker public types
-  required by open-runtime stubs
+- Modified 20 file(s)
+
+## Changed Paths
+
+- agent/test-reports/_rolling-summary.json
+- .agent/testing-status.json
+- AGENTS.md
+- apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent
+- apps/external/gemini-cli-source
+- apps/frontend/src/data/codebase_map.json
+- apps/tauri-desktop/src-tauri/Cargo.lock
+- apps/tauri-desktop/src-tauri/Cargo.toml
+- apps/tauri-desktop/src-tauri/src/lib.rs
+- apps/tauri-desktop/src/pages/WebBrowser.tsx
+- apps/virtual-library-blueprints
+- docs/consolidation/archived-from-home/ENGINEERING_PRINCIPLES_HOME.md
+- docs/core/ENGINEERING_PRINCIPLES.md
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/cli.ts
+- apps/browser-extension/
+- apps/tauri-desktop/src-tauri/src/browser_webview.rs
+- apps/tauri-desktop/src/lib/tnfBrowserWebview.ts
+- packages/tnf-browser/
+- packages/tnf-cli/src/commands/browser.ts
+
+## Continuation
+
+- **Owner:** operator
+- **Priority:** medium
+
+**Targets:**
+- orchestrator
+
+**Resume Checklist:**
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against schema
+- Execute listed next actions in order
 
 ## Next Actions
 
-- Merge or continue review of PR #69
-- Optional: Hermes web UI build repair
-- Do not commit turbo/log noise
+- Commit remaining uncommitted changes (20 file(s))
 
 ## Artifacts
 
-- `8e9b2724b07a4667dd96cfe19155d007cf85269f`
-- PR https://github.com/whodaniel/The-New-Fuse/pull/69
+**Commits:**
+- 779eaf5300d0dcb458f5cbba2fe94d4788e8e1f7

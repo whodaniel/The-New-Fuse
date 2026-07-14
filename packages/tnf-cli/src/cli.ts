@@ -14,6 +14,7 @@ import { RedisAgentClient } from './RedisAgentClient.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
+import { registerBrowserCommand } from './commands/browser.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
@@ -15688,6 +15689,7 @@ cronCommand
   });
 
 registerAssimilateCommand(program, repoRoot);
+registerBrowserCommand(program, repoRoot);
 registerTelegramCommands(program, repoRoot);
 registerAgentsClassifyCommand(program, repoRoot);
 registerAgentsRunCommand(program);

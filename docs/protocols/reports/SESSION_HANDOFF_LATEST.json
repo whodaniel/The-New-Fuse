@@ -1,44 +1,65 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "38848cd6-50ab-45ad-8d2b-bb83d17f3c70",
-  "created_at": "2026-07-14T16:46:46.000Z",
+  "handoff_id": "eaaf0c4d-1f33-4080-871c-351f9a86e28f",
+  "created_at": "2026-07-14T18:32:26.573Z",
   "repository": "The-New-Fuse",
-  "branch": "tnf-cli-harness-implementation",
-  "head_sha": "8e9b2724b07a4667dd96cfe19155d007cf85269f",
+  "branch": "main",
+  "head_sha": "779eaf5300d0dcb458f5cbba2fe94d4788e8e1f7",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
   "work_summary": [
-    "Pushed agent-status commit; recreated packages/control-plane-contracts"
+    "Modified 20 file(s)"
   ],
   "changed_paths": [
-    "packages/control-plane-contracts/package.json",
-    "packages/control-plane-contracts/src/index.ts",
-    "packages/control-plane-contracts/README.md",
-    "docs/REPO_SEPARATION.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/AGENT_STATUS_LEDGER.md"
+    "agent/test-reports/_rolling-summary.json",
+    ".agent/testing-status.json",
+    "AGENTS.md",
+    "apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent",
+    "apps/external/gemini-cli-source",
+    "apps/frontend/src/data/codebase_map.json",
+    "apps/tauri-desktop/src-tauri/Cargo.lock",
+    "apps/tauri-desktop/src-tauri/Cargo.toml",
+    "apps/tauri-desktop/src-tauri/src/lib.rs",
+    "apps/tauri-desktop/src/pages/WebBrowser.tsx",
+    "apps/virtual-library-blueprints",
+    "docs/consolidation/archived-from-home/ENGINEERING_PRINCIPLES_HOME.md",
+    "docs/core/ENGINEERING_PRINCIPLES.md",
+    "packages/tnf-cli/package.json",
+    "packages/tnf-cli/src/cli.ts",
+    "apps/browser-extension/",
+    "apps/tauri-desktop/src-tauri/src/browser_webview.rs",
+    "apps/tauri-desktop/src/lib/tnfBrowserWebview.ts",
+    "packages/tnf-browser/",
+    "packages/tnf-cli/src/commands/browser.ts"
   ],
   "verification": {
-    "notes": "pnpm filter build for control-plane-contracts"
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": ""
   },
   "continuation": {
     "owner": "operator",
-    "targets": ["orchestrator"],
+    "targets": [
+      "orchestrator"
+    ],
     "priority": "medium",
     "resume_checklist": [
-      "Review/merge PR #69",
-      "Optional Hermes web UI build fix"
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Execute listed next actions in order"
     ]
   },
   "next_actions": [
-    "Merge or continue review of PR #69",
-    "Optional Hermes web UI build repair"
+    "Commit remaining uncommitted changes (20 file(s))"
   ],
   "artifacts": {
-    "commits": ["8e9b2724b07a4667dd96cfe19155d007cf85269f"],
-    "deployment_urls": ["https://github.com/whodaniel/The-New-Fuse/pull/69"],
+    "commits": [
+      "779eaf5300d0dcb458f5cbba2fe94d4788e8e1f7"
+    ],
+    "deployment_urls": [],
     "database_migrations": []
   }
 }

@@ -1,6 +1,6 @@
-# Engineering Principles (from Hugo Palma - hugopalma.work)
+# TNF Engineering Principles
 
-Distilled principles from Hugo Palma's work and writing. Apply these when
+Distilled engineering principles for building systems. Apply these when
 building systems.
 
 ## Operating Loop: Inspect → Act → Verify

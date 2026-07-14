@@ -250387,7 +250387,7 @@
       "id": "AGENT_SKILL_0",
       "type": "class",
       "data": {
-        "label": "webpilot",
+        "label": "tnf-browser",
         "kind": "cls",
         "parentId": "DOMAIN_AGENTS",
         "childCount": 0,

@@ -5,6 +5,12 @@ import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useBrowserControl } from '../hooks/useBrowserControl';
 import { useFederationNode } from '../hooks/useFederationNode';
 import { useSettingsStore } from '../stores';
+import {
+  openTNFBrowserWebview,
+  navigateTNFBrowserWebview,
+  focusTNFBrowserWebview,
+  closeTNFBrowserWebview,
+} from '../lib/tnfBrowserWebview';
 
 /**
  * Web Browser + TNF Browser Control Surface
@@ -19,12 +25,23 @@ const WebBrowser: React.FC = () => {
     { id: 0, title: 'New Tab', url: 'about:blank', loading: false },
   ]);
   const [inputUrl, setInputUrl] = useState('https://example.com');
+  const [webviewOpen, setWebviewOpen] = useState(false);
 
   useEffect(() => {
     if (browser.state.currentUrl) {
       setInputUrl(browser.state.currentUrl);
     }
   }, [browser.state.currentUrl]);
+
+  const openLiveWebView = async (targetUrl: string) => {
+    try {
+      await openTNFBrowserWebview(targetUrl);
+      setWebviewOpen(true);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to open TNF Browser webview: ${message}`);
+    }
+  };
 
   const applyUrlToTab = (targetUrl: string, title?: string) => {
     setTabs((prev) => {
@@ -51,6 +68,17 @@ const WebBrowser: React.FC = () => {
     setInputUrl(targetUrl);
     applyUrlToTab(targetUrl);
     await browser.navigate(targetUrl);
+
+    // Drive the real Tauri child WebView (native webview, not a sandboxed iframe).
+    if (webviewOpen) {
+      try {
+        await navigateTNFBrowserWebview(targetUrl);
+      } catch (error) {
+        console.error('TNF Browser webview navigation failed', error);
+      }
+    } else {
+      await openLiveWebView(targetUrl);
+    }
   };
 
   const handleNavigate = async (event?: React.FormEvent) => {
@@ -239,21 +267,47 @@ const WebBrowser: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <div className="iframe-container">
-                  <iframe
-                    src={activeUrl}
-                    className="content-frame"
-                    title="Browser View"
-                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
-                  />
-                  <div className="browser-notice">
-                    <p>
-                      <strong>Preview mode:</strong> complex sites may block embedded previews.
-                      Connect the TNF Chrome extension for full browser control.
-                    </p>
-                    <button onClick={() => void browser.openNative(activeUrl)}>
-                      Open in Native Window
-                    </button>
+                <div className="live-webview-surface">
+                  <div className="live-webview-head">
+                    <div className="live-webview-meta">
+                      <strong>TNF Browser — Live WebView</strong>
+                      <span className="live-webview-url">{browser.state.currentTitle || activeUrl}</span>
+                    </div>
+                    <div className="live-webview-actions">
+                      <button onClick={() => void focusTNFBrowserWebview()}>Focus Window</button>
+                      <button
+                        onClick={async () => {
+                          try {
+                            await closeTNFBrowserWebview();
+                          } catch {
+                            /* ignore */
+                          }
+                          setWebviewOpen(false);
+                        }}
+                      >
+                        Close Window
+                      </button>
+                    </div>
+                  </div>
+                  <div className="live-webview-body">
+                    {browser.state.lastScreenshot ? (
+                      <img
+                        src={browser.state.lastScreenshot}
+                        alt="Live browser preview"
+                        className="live-preview"
+                      />
+                    ) : (
+                      <div className="live-placeholder">
+                        <p>
+                          The live site renders in a real Tauri child WebView window (native
+                          webview, not a sandboxed iframe). Use <em>Focus Window</em> to bring it
+                          forward.
+                        </p>
+                        <button onClick={() => void openLiveWebView(activeUrl)}>
+                          Open Live Window
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -350,6 +404,64 @@ const WebBrowser: React.FC = () => {
           position: static;
           margin: 16px;
           max-width: none;
+        }
+        .live-webview-surface {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: 100%;
+          background: #0f172a;
+        }
+        .live-webview-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 12px 16px;
+          border-bottom: 1px solid var(--tnf-border);
+          background: rgba(2, 6, 23, 0.92);
+        }
+        .live-webview-meta {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          min-width: 0;
+        }
+        .live-webview-url {
+          font-size: 12px;
+          color: var(--tnf-text-muted);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .live-webview-actions {
+          display: flex;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+        .live-webview-actions button {
+          background: var(--tnf-primary);
+          color: white;
+          border: none;
+          border-radius: 6px;
+          padding: 6px 12px;
+          cursor: pointer;
+        }
+        .live-webview-body {
+          flex: 1;
+          min-height: 0;
+          position: relative;
+          display: grid;
+          place-items: center;
+          padding: 24px;
+          text-align: center;
+        }
+        .live-webview-body .live-preview {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          border: 1px solid var(--tnf-border);
+          border-radius: 8px;
         }
         .add-tab-btn, .nav-btns, .address-bar-container, .browser-actions, .tab-bar {
           display: flex;

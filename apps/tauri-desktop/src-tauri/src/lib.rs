@@ -4,6 +4,7 @@
 mod bridge;
 mod antigravity;
 mod oagi;
+mod browser_webview;
 
 // HashMap imported on demand via bridge module
 use std::sync::Arc;
@@ -419,7 +420,13 @@ pub fn run() {
             oagi::execute_hotkey,
             oagi::get_screen_size,
             oagi::get_mouse_position,
-            oagi::wait_duration
+            oagi::wait_duration,
+            // TNF Browser embedded WebView
+            browser_webview::open_browser_webview,
+            browser_webview::navigate_browser_webview,
+            browser_webview::focus_browser_webview,
+            browser_webview::close_browser_webview,
+            browser_webview::browser_webview_exists
         ])
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
