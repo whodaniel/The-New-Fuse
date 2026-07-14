@@ -77,7 +77,7 @@ The-New-Fuse/
 │   │       ├── master-clock.ts # 🔴 PROPRIETARY (stubbed in open-runtime)
 │   │       ├── broker-agent.ts # 🔴 PROPRIETARY (stubbed in open-runtime)
 │   │       └── index.ts        # 🟢
-│   ├── control-plane-contracts/# 🟢 PUBLIC API surface (planned; recreate if absent)
+│   ├── control-plane-contracts/# 🟢 PUBLIC API surface for control-plane stubs
 │   ├── agent-coordination/     # 🔴 PROPRIETARY
 │   └── ...                     # 🟢 (all others are open)
 ├── cloudflare-sharedstate/     # 🔴 PROPRIETARY
@@ -183,9 +183,9 @@ these arrays:
 1. **Every proprietary file must leave a stub** in the **open-runtime publish
    tree** (`fuse-open-runtime`)
 2. **Public code must never import private source** — only contracts
-3. **`packages/control-plane-contracts/` is always public when present** — it
-   defines the API boundary between open and closed source (recreate if missing;
-   stubs import `@the-new-fuse/control-plane-contracts`)
+3. **`packages/control-plane-contracts/` is always public** — it defines the API
+   boundary between open and closed source; stubs import
+   `@the-new-fuse/control-plane-contracts`
 4. **The control-plane repo may consume public packages** as library
    dependencies
 

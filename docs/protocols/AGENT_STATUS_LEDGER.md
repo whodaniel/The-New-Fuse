@@ -152,4 +152,6 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 (df1eb476-5bc0-416e-a438-fd9bde17a793) | ✅ HANDOFF_READY |
 
 | 2026-07-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(31caf6d5-0612-4c58-9a88-e3209ed6f19a) | ✅ HANDOFF_READY |
+(31caf6d5-0612-4c58-9a88-e3209ed6f19a) | ✅ HANDOFF_READY | | 2026-07-14 |
+Orchestrator | Recreated control-plane-contracts + pushed agent status
+(38848cd6) | ✅ HANDOFF_READY |
