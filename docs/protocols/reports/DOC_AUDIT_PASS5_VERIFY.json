@@ -1,0 +1,48 @@
+{
+  "pass": "Pass 5 re-verify — post Act batch (2026-07-14)",
+  "head_note": "Re-verified against working tree after docs cohesion Act commit 3fd95aa9ca (+ later branch commits).",
+  "results": [
+    {
+      "id": "A1",
+      "verdict": "PASS",
+      "detail": "README License section unified to MIT + LICENSE pointer"
+    },
+    {
+      "id": "A2",
+      "verdict": "PASS",
+      "detail": "GITHUB_README Node badge 20.20+ matches .nvmrc/engines"
+    },
+    {
+      "id": "A2b",
+      "verdict": "PASS",
+      "detail": "GITHUB_README TypeScript 6.x badge"
+    },
+    {
+      "id": "A3",
+      "verdict": "PASS",
+      "detail": "Fantasy Agent/Harness/MCPClient demo removed from GITHUB_README"
+    },
+    {
+      "id": "A4",
+      "verdict": "PASS",
+      "detail": "REPO_SEPARATION develop-here = The-New-Fuse; next-gen noted as 301 alias"
+    },
+    {
+      "id": "A5",
+      "verdict": "PASS",
+      "detail": "Open publish heading is fuse-open-runtime"
+    },
+    {
+      "id": "A6",
+      "verdict": "PASS",
+      "detail": "AGENTS.md points at .agent/SOUL.md and skills glob"
+    }
+  ],
+  "counts": { "PASS": 7, "FAIL": 0 },
+  "follow_on": [
+    "Fixed remaining live fuse.git clone URLs in docs/README.md, guides/installation.md, development/guide.md, architecture/MONOREPO_ARCHITECTURE.md",
+    "Archive paths under docs/**/_archive** intentionally left historical",
+    "packages/control-plane-contracts still missing — separate implement task",
+    "Remaining dirty tree is turbo/tsbuildinfo/logs/submodule noise — do not commit"
+  ]
+}

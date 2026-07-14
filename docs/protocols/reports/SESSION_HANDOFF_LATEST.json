@@ -1,116 +1,42 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "c7937430-abd4-4fb8-844f-15e7ebf0203c",
-  "created_at": "2026-07-14T12:50:52.731Z",
+  "handoff_id": "e1dbb337-31f2-4ebb-839c-5d70f1ff91e2",
+  "created_at": "2026-07-14T14:26:49.000Z",
   "repository": "The-New-Fuse",
   "branch": "tnf-cli-harness-implementation",
-  "head_sha": "befcc140e847a11360c39b97ee39d1b272690962",
+  "head_sha": "0a887c0fa21646de5cd4f140f21594e2bbd8bccd",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
   "work_summary": [
-    "Modified 68 file(s)"
+    "Doc cohesion Act complete; Tier A Pass5 PASS; live fuse.git clone URLs fixed"
   ],
   "changed_paths": [
-    ".agent/runtime-logs/qa-swarm-service/heartbeat.json",
-    ".agent/test-reports/_rolling-summary.json",
-    ".agent/testing-status.json",
-    ".verifier/process-atlas.digest.md",
-    ".verifier/process-atlas.payload.json",
-    ".verifier/process-atlas.verify.json",
-    ".verifier/tnf-process-atlas.html",
-    "apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide",
-    "apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent",
-    "apps/external/gemini-cli-source",
-    "apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json",
-    "apps/frontend/src/data/codebase_map.json",
-    "apps/virtual-library-blueprints",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "packages/a2a-react/.turbo/turbo-lint.log",
-    "packages/ag-ui-core/.turbo/turbo-lint.log",
-    "packages/agent-coordination/jest.config.js",
-    "packages/agent-coordination/package.json",
-    "packages/agent-coordination/tsconfig.test.json",
-    "packages/api-client/.turbo/turbo-lint.log",
-    "packages/api-types/.turbo/turbo-lint.log",
-    "packages/api/package.json",
-    "packages/core/package.json",
-    "packages/deployment-core/.turbo/turbo-lint.log",
-    "packages/fairtable-core/.turbo/turbo-test.log",
-    "packages/fairtable-utils/.turbo/turbo-test.log",
-    "packages/gemini-browser-skill/.turbo/turbo-test.log",
-    "packages/gemini-browser-skill/src/TranscriptProcessorV4.ts",
-    "packages/hooks/tsconfig.tsbuildinfo",
-    "packages/infrastructure/.turbo/turbo-test.log",
-    "packages/jules-skill/.turbo/turbo-lint.log",
-    "packages/mcp-concordance-server/.turbo/turbo-test.log",
-    "packages/port-management/.turbo/turbo-lint.log",
-    "packages/proto-definitions/.turbo/turbo-lint.log",
-    "packages/protocol-contracts/tsconfig.tsbuildinfo",
-    "packages/relay-core/.turbo/turbo-lint.log",
-    "packages/relay-core/dist/.tsbuildinfo",
-    "packages/relay-core/dist/master-clock.js",
-    "packages/relay-core/dist/master-clock.js.map",
-    "packages/relay-core/dist/services/agent-registry.service.d.ts.map",
-    "packages/relay-core/dist/services/agent-registry.service.js.map",
-    "packages/relay-core/relay.log",
-    "packages/security/.turbo/turbo-lint.log",
-    "packages/security/src/utils/cryptoUtils.ts",
-    "packages/shared/tsconfig.tsbuildinfo",
-    "packages/sync-core/.turbo/turbo-lint.log",
-    "packages/sync-core/jest.config.js",
-    "packages/sync-core/package.json",
-    "packages/sync-core/src/cms/CMSIntegrationService.test.ts",
-    "packages/sync-core/src/config/SyncRedisConfig.ts",
-    "packages/sync-core/src/dashboard/SyncDashboardService.test.ts",
-    "packages/sync-core/src/error/SyncErrorHandler.ts",
-    "packages/sync-core/src/handoff/PromptHandoffFlywheel.test.ts",
-    "packages/sync-core/src/performance/FileChangeBatcher.ts",
-    "packages/sync-core/src/performance/PerformanceOptimizationService.test.ts",
-    "packages/sync-core/src/services/ConflictManager.test.ts",
-    "packages/sync-core/src/services/MasterClockService.test.ts",
-    "packages/sync-core/src/services/SyncOrchestrator.test.ts",
-    "packages/sync-core/src/tasks/TaskSynchronizationService.test.ts",
-    "packages/sync-core/src/watchers/EnhancedFileSystemWatcher.test.ts",
-    "packages/test-utils/.turbo/turbo-test.log",
-    "packages/testing/.turbo/turbo-lint.log",
-    "packages/tnf-cli/tsconfig.tsbuildinfo",
-    "packages/tnf-core/.turbo/turbo-test.log",
-    "packages/types/tsconfig.tsbuildinfo",
-    "packages/ui-consolidated/.turbo/turbo-lint.log",
-    "packages/agent-coordination/tests/unit/test-jest-esm.test.ts",
-    "packages/sync-core/test-results.txt",
-    "packages/tnf-cli/src/commands/federation-tap.ts"
+    "docs/README.md",
+    "docs/guides/installation.md",
+    "docs/development/guide.md",
+    "docs/architecture/MONOREPO_ARCHITECTURE.md",
+    "docs/protocols/reports/DOC_AUDIT_PASS5_VERIFY.json"
   ],
   "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
-    "supabase_rls_audit": "na",
-    "notes": ""
+    "notes": "Tier A post-Act PASS"
   },
   "continuation": {
     "owner": "operator",
-    "targets": [
-      "orchestrator"
-    ],
+    "targets": ["orchestrator"],
     "priority": "medium",
     "resume_checklist": [
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against schema",
-      "Execute listed next actions in order"
+      "Push branch when ready",
+      "Optional control-plane-contracts implement",
+      "Skip turbo/log noise commits"
     ]
   },
   "next_actions": [
-    "Review updated LIVING_STATE.md for new active steps",
-    "Commit remaining uncommitted changes (65 file(s))"
+    "Push or open PR for branch commits",
+    "Decide on packages/control-plane-contracts recreation"
   ],
   "artifacts": {
-    "commits": [
-      "befcc140e847a11360c39b97ee39d1b272690962"
-    ],
+    "commits": ["0a887c0fa21646de5cd4f140f21594e2bbd8bccd", "3fd95aa9ca"],
     "deployment_urls": [],
     "database_migrations": []
   }
