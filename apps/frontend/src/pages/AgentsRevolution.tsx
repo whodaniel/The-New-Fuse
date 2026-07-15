@@ -1,15 +1,16 @@
 // @ts-nocheck
 import { Badge, GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 import { useDebounce } from '@/hooks/useDebounce';
-import { agentService, type Agent } from '@/services/AgentService';
+import { agentService, type Agent, type AgentTemplate } from '@/services/AgentService';
 import {
   ArrowRight,
+  BookOpen,
   Bot,
   Clock,
   Cpu,
   HardDrive,
-  Layers,
   LayoutGrid,
+  Library,
   List,
   Network,
   Plus,
@@ -18,10 +19,9 @@ import {
   Terminal,
   Zap,
 } from 'lucide-react';
-import { memo, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-// Transformed agent interface for Command UI
 interface UIAgent {
   id: string;
   name: string;
@@ -38,6 +38,9 @@ interface UIAgent {
   type: string;
   pfpUrl?: string;
   capabilities: string[];
+  description?: string;
+  bank?: 'tnf' | 'claude';
+  filename?: string;
 }
 
 const transformAgent = (agent: Agent): UIAgent => {
@@ -58,6 +61,9 @@ const transformAgent = (agent: Agent): UIAgent => {
     type: agent.type || 'executor',
     pfpUrl: agent.metadata?.pfpUrl,
     capabilities: agent.capabilities || [],
+    description: agent.description,
+    bank: agent.metadata?.bank,
+    filename: agent.metadata?.filename,
     metrics: {
       throughput: agent.metadata?.throughput || '4.2k/s',
       latency: agent.metadata?.latency || '42ms',
@@ -67,158 +73,216 @@ const transformAgent = (agent: Agent): UIAgent => {
   };
 };
 
-const AgentCard = memo(({ agent }: { agent: UIAgent }) => {
-  const navigate = useNavigate();
+const transformTemplate = (template: AgentTemplate): UIAgent => ({
+  id: template.id,
+  name: template.name,
+  model: template.bank === 'claude' ? 'Claude Bank' : 'TNF Bank',
+  provider: template.bank,
+  status: 'STANDBY',
+  kernel: 'persona',
+  type: template.category || 'Library',
+  description: template.description,
+  bank: template.bank,
+  filename: template.filename,
+  capabilities: [],
+  metrics: {
+    throughput: '—',
+    latency: '—',
+    successRate: 0,
+  },
+});
 
-  const statusConfig = {
-    ACTIVE: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
-    STANDBY: { bg: 'bg-slate-500/10', text: 'text-slate-400', border: 'border-slate-500/20' },
-    FAULT: { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/20' },
-    TUNING: { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20' },
-  };
+const AgentCard = memo(
+  ({
+    agent,
+    mode,
+    onForge,
+  }: {
+    agent: UIAgent;
+    mode: 'fleet' | 'library';
+    onForge?: (agent: UIAgent) => void;
+  }) => {
+    const navigate = useNavigate();
 
-  const style = statusConfig[agent.status];
+    const statusConfig = {
+      ACTIVE: {
+        bg: 'bg-emerald-500/10',
+        text: 'text-emerald-400',
+        border: 'border-emerald-500/20',
+      },
+      STANDBY: { bg: 'bg-slate-500/10', text: 'text-slate-400', border: 'border-slate-500/20' },
+      FAULT: { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/20' },
+      TUNING: { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20' },
+    };
 
-  return (
-    <GlassCard
-      onClick={() => navigate(`/agents/${agent.id}`)}
-      className="group relative p-0 rounded-2xl border border-white/5 bg-slate-900/40 hover:border-amber-500/30 transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-xl"
-    >
-      <div className="absolute top-0 left-0 w-full h-1 bg-slate-800/50">
-        <div
-          className={`h-full ${style.bg.replace('/10', '')} transition-all duration-500`}
-          style={{ width: agent.status === 'ACTIVE' ? '100%' : '30%' }}
-        />
-      </div>
+    const style = statusConfig[agent.status];
 
-      <div className="p-6 space-y-6">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-xl bg-slate-950 border border-white/10 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform shadow-2xl">
-              {agent.pfpUrl ? (
-                <img src={agent.pfpUrl} alt={agent.name} className="w-full h-full object-cover" />
-              ) : (
-                <Bot className="w-8 h-8 text-slate-500" />
-              )}
-            </div>
-            <div>
-              <h3 className="text-xl font-black text-white tracking-tight group-hover:text-amber-400 transition-colors uppercase">
-                {agent.name}
-              </h3>
-              <div className="flex items-center gap-2 mt-1">
-                <Badge
-                  className={`${style.bg} ${style.text} ${style.border} text-[9px] font-black tracking-widest px-2 py-0.5`}
-                >
-                  {agent.status}
-                </Badge>
-                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tighter">
-                  {agent.kernel}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="p-2 bg-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-            <Terminal className="w-4 h-4 text-slate-400" />
-          </div>
+    return (
+      <GlassCard
+        onClick={() => {
+          if (mode === 'library') {
+            onForge?.(agent);
+            return;
+          }
+          navigate(`/agents/${agent.id}`);
+        }}
+        className="group relative p-0 rounded-2xl border border-white/5 bg-slate-900/40 hover:border-amber-500/30 transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-xl"
+      >
+        <div className="absolute top-0 left-0 w-full h-1 bg-slate-800/50">
+          <div
+            className={`h-full ${style.bg.replace('/10', '')} transition-all duration-500`}
+            style={{ width: mode === 'fleet' && agent.status === 'ACTIVE' ? '100%' : '30%' }}
+          />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 bg-black/40 rounded-lg border border-white/5 space-y-1">
-            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-              <Zap className="w-3 h-3 text-amber-500" /> Neural Link
-            </p>
-            <p className="text-xs font-bold text-white truncate">{agent.model}</p>
-          </div>
-          <div className="p-3 bg-black/40 rounded-lg border border-white/5 space-y-1">
-            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-              <Network className="w-3 h-3 text-sky-400" /> Interface
-            </p>
-            <p className="text-xs font-bold text-white truncate">{agent.type}</p>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-500 px-1">
-            <span>Kernel Telemetry</span>
-            <span className="text-amber-500">{agent.metrics.successRate}% RELIABILITY</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="bg-white/5 rounded p-2 text-center">
-              <p className="text-[8px] text-slate-500 font-bold mb-0.5">TPS</p>
-              <p className="text-xs font-black text-slate-200">{agent.metrics.throughput}</p>
-            </div>
-            <div className="bg-white/5 rounded p-2 text-center">
-              <p className="text-[8px] text-slate-500 font-bold mb-0.5">RTT</p>
-              <p className="text-xs font-black text-slate-200">{agent.metrics.latency}</p>
-            </div>
-            <div className="bg-white/5 rounded p-2 text-center">
-              <p className="text-[8px] text-slate-500 font-bold mb-0.5">FPS</p>
-              <p className="text-xs font-black text-slate-200">{agent.metrics.visionFps || '--'}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between pt-4 border-t border-white/5">
-          <div className="flex gap-1.5">
-            {agent.capabilities.slice(0, 2).map((cap) => (
-              <div
-                key={cap}
-                className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center"
-                title={cap}
-              >
-                {cap === 'relay' ? (
-                  <Network className="w-3 h-3 text-amber-500" />
+        <div className="p-6 space-y-4">
+          <div className="flex justify-between items-start gap-3">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="w-14 h-14 shrink-0 rounded-xl bg-slate-950 border border-white/10 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform">
+                {agent.pfpUrl ? (
+                  <img src={agent.pfpUrl} alt={agent.name} className="w-full h-full object-cover" />
+                ) : mode === 'library' ? (
+                  <BookOpen className="w-7 h-7 text-amber-500/80" />
                 ) : (
-                  <Layers className="w-3 h-3 text-sky-400" />
+                  <Bot className="w-7 h-7 text-slate-500" />
                 )}
               </div>
-            ))}
+              <div className="min-w-0">
+                <h3 className="text-lg font-black text-white tracking-tight group-hover:text-amber-400 transition-colors uppercase truncate">
+                  {agent.name}
+                </h3>
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <Badge
+                    className={`${style.bg} ${style.text} ${style.border} text-[9px] font-black tracking-widest px-2 py-0.5`}
+                  >
+                    {mode === 'library' ? (agent.bank || 'bank').toUpperCase() : agent.status}
+                  </Badge>
+                  <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tighter">
+                    {mode === 'library' ? agent.filename : agent.kernel}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="p-2 bg-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+              <ArrowRight className="w-4 h-4 text-amber-400" />
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-xs font-black text-amber-500 uppercase tracking-tighter">
-            Initialize Console <ArrowRight className="w-3.5 h-3.5" />
-          </div>
+
+          {agent.description ? (
+            <p className="text-xs text-slate-400 line-clamp-2">{agent.description}</p>
+          ) : null}
+
+          {mode === 'fleet' ? (
+            <div className="grid grid-cols-3 gap-2 text-[10px] uppercase tracking-wider text-slate-500">
+              <div>
+                <p className="font-black text-slate-600">Throughput</p>
+                <p className="text-slate-300 font-bold">{agent.metrics.throughput}</p>
+              </div>
+              <div>
+                <p className="font-black text-slate-600">Latency</p>
+                <p className="text-slate-300 font-bold">{agent.metrics.latency}</p>
+              </div>
+              <div>
+                <p className="font-black text-slate-600">Success</p>
+                <p className="text-slate-300 font-bold">{agent.metrics.successRate}%</p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/80">
+              Stock persona · Forge to create live instance
+            </p>
+          )}
         </div>
-      </div>
-    </GlassCard>
-  );
-});
+      </GlassCard>
+    );
+  }
+);
 
 AgentCard.displayName = 'AgentCard';
 
+type TabMode = 'fleet' | 'library';
+
 export const AgentsRevolution = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = (searchParams.get('tab') || 'fleet').toLowerCase();
+  const mode: TabMode = tabParam === 'library' ? 'library' : 'fleet';
+
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [agents, setAgents] = useState<UIAgent[]>([]);
+  const [fleet, setFleet] = useState<UIAgent[]>([]);
+  const [library, setLibrary] = useState<UIAgent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const setMode = (next: TabMode) => {
+    const params = new URLSearchParams(searchParams);
+    if (next === 'fleet') params.delete('tab');
+    else params.set('tab', next);
+    setSearchParams(params, { replace: true });
+  };
+
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const fetchedAgents = await agentService.getAgents();
-      setAgents(fetchedAgents.map(transformAgent));
+      const [fleetAgents, templates] = await Promise.all([
+        agentService.getFleetAgents().catch((err) => {
+          console.error(err);
+          return [] as Agent[];
+        }),
+        agentService.getLibraryTemplates('all').catch((err) => {
+          console.error(err);
+          return [] as AgentTemplate[];
+        }),
+      ]);
+      setFleet(fleetAgents.map(transformAgent));
+      setLibrary(templates.map(transformTemplate));
+      if (fleetAgents.length === 0 && templates.length === 0) {
+        setError(
+          'No fleet instances or stock personas returned. Confirm you are signed in and the agent bank catalog is deployed.'
+        );
+      }
     } catch (err) {
-      console.error('Error fetching fleet data:', err);
+      console.error('Error fetching fleet/library data:', err);
       setError('CRITICAL: Failed to synchronize with the operative ledger.');
-      setAgents([]);
+      setFleet([]);
+      setLibrary([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  const filteredAgents = agents.filter((agent) => {
-    const matchesSearch =
-      agent.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-      agent.model.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
-    return matchesSearch;
-  });
+  const agents = mode === 'fleet' ? fleet : library;
+
+  const filteredAgents = useMemo(
+    () =>
+      agents.filter((agent) => {
+        const q = debouncedSearchQuery.toLowerCase();
+        if (!q) return true;
+        return (
+          agent.name.toLowerCase().includes(q) ||
+          agent.model.toLowerCase().includes(q) ||
+          (agent.description || '').toLowerCase().includes(q) ||
+          (agent.filename || '').toLowerCase().includes(q)
+        );
+      }),
+    [agents, debouncedSearchQuery]
+  );
+
+  const handleForge = (agent: UIAgent) => {
+    const query = new URLSearchParams({
+      templateId: agent.filename || agent.id,
+      bank: agent.bank || 'tnf',
+      name: agent.name,
+    });
+    navigate(`/agents/new?${query.toString()}`);
+  };
 
   if (loading) {
     return (
@@ -256,7 +320,7 @@ export const AgentsRevolution = () => {
               </h1>
               <p className="text-slate-400 font-bold uppercase text-xs tracking-[0.2em] mt-3 flex items-center gap-2">
                 <Terminal className="w-3.5 h-3.5 text-amber-500" />
-                Real-time Hive Telemetry & Hardware Orchestration
+                Live instances + stock persona bank
               </p>
             </div>
           </div>
@@ -278,16 +342,56 @@ export const AgentsRevolution = () => {
           </div>
         </header>
 
+        <div className="inline-flex rounded-xl border border-white/10 bg-slate-950/60 p-1 gap-1">
+          <button
+            type="button"
+            onClick={() => setMode('fleet')}
+            className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-black uppercase tracking-widest transition-colors ${
+              mode === 'fleet'
+                ? 'bg-amber-500 text-black'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Bot className="w-3.5 h-3.5" />
+            Fleet ({fleet.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('library')}
+            className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-black uppercase tracking-widest transition-colors ${
+              mode === 'library'
+                ? 'bg-amber-500 text-black'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Library className="w-3.5 h-3.5" />
+            Library ({library.length})
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {[
-            { label: 'FLEET SIZE', value: agents.length, icon: Bot, color: 'text-amber-500' },
             {
-              label: 'ACTIVE SYNAPSES',
-              value: agents.filter((a) => a.status === 'ACTIVE').length,
+              label: mode === 'fleet' ? 'FLEET SIZE' : 'STOCK PERSONAS',
+              value: agents.length,
+              icon: mode === 'fleet' ? Bot : Library,
+              color: 'text-amber-500',
+            },
+            {
+              label: mode === 'fleet' ? 'ACTIVE SYNAPSES' : 'TNF BANK',
+              value:
+                mode === 'fleet'
+                  ? fleet.filter((a) => a.status === 'ACTIVE').length
+                  : library.filter((a) => a.bank === 'tnf').length,
               icon: Zap,
               color: 'text-emerald-500',
             },
-            { label: 'AVG LATENCY', value: '42ms', icon: Clock, color: 'text-sky-500' },
+            {
+              label: mode === 'fleet' ? 'AVG LATENCY' : 'CLAUDE BANK',
+              value: mode === 'fleet' ? '42ms' : library.filter((a) => a.bank === 'claude').length,
+              icon: Clock,
+              color: 'text-sky-500',
+            },
             { label: 'KERNEL LOAD', value: '14%', icon: Cpu, color: 'text-fuchsia-500' },
           ].map((stat) => (
             <GlassCard
@@ -307,12 +411,22 @@ export const AgentsRevolution = () => {
           ))}
         </div>
 
+        {error ? (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-200">
+            {error}
+          </div>
+        ) : null}
+
         <GlassCard className="p-4 bg-slate-900/40 border-white/5">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             <div className="flex-1 relative group w-full">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 w-4 h-4 group-focus-within:text-amber-500 transition-colors" />
               <PremiumInput
-                placeholder="Filter operatives by callsign, model backbone, or directive..."
+                placeholder={
+                  mode === 'fleet'
+                    ? 'Filter operatives by callsign, model backbone, or directive...'
+                    : 'Filter stock personas by name, bank, or filename...'
+                }
                 className="pl-12 h-14 bg-slate-950/50 border-slate-800 text-slate-100 placeholder:text-slate-600"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -346,19 +460,25 @@ export const AgentsRevolution = () => {
         {filteredAgents.length === 0 ? (
           <div className="text-center py-32 bg-slate-950/20 rounded-[3rem] border border-dashed border-slate-800">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-slate-900 flex items-center justify-center border border-white/10">
-              <Bot className="w-10 h-10 text-slate-700" />
+              {mode === 'library' ? (
+                <Library className="w-10 h-10 text-slate-700" />
+              ) : (
+                <Bot className="w-10 h-10 text-slate-700" />
+              )}
             </div>
             <h3 className="text-xl font-black text-white mb-2 uppercase tracking-tight">
-              No Operatives Registered
+              {mode === 'library' ? 'No Stock Personas Found' : 'No Operatives Registered'}
             </h3>
             <p className="text-slate-500 mb-8 max-w-sm mx-auto text-sm font-bold uppercase tracking-tighter">
-              Synchronize the ledger or forge a new operative soul to begin.
+              {mode === 'library'
+                ? 'Package the agent bank catalog or open Library after login.'
+                : 'Forge from Library stock or create a new operative.'}
             </p>
             <PremiumButton
-              onClick={() => navigate('/agents/new')}
+              onClick={() => (mode === 'library' ? setMode('fleet') : setMode('library'))}
               className="bg-amber-500 text-black font-black px-10 h-14"
             >
-              Forge First Operative
+              {mode === 'library' ? 'Back to Fleet' : 'Browse Library'}
             </PremiumButton>
           </div>
         ) : (
@@ -370,7 +490,7 @@ export const AgentsRevolution = () => {
             }
           >
             {filteredAgents.map((agent) => (
-              <AgentCard key={agent.id} agent={agent} />
+              <AgentCard key={agent.id} agent={agent} mode={mode} onForge={handleForge} />
             ))}
           </div>
         )}

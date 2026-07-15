@@ -1,56 +1,275 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-15T00:37:19.000Z` Handoff
-ID: `d1426bdf-f91b-45f6-be04-871f5d867b8b`
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-07-15T02:56:34.381Z`  
+Handoff ID: `cb8606c4-29fc-40b0-8db9-6c1c3d26fe7f`
 
 ## Scope
-
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `139dce3227` (plus uncommitted frontend IA + protocol work)
+- Head SHA: `47cde235c48fddb07c02bcacd834aaddc73e1d3a`
 - Sensitive Scope: `internal`
-- Project ID: `TNF-UI-IA`
 
 ## Work Summary
+- Protocol enforcement layer implemented for mandatory session handoff continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
-- Replaced always-open AI Assist panels with summon button + contextual dialog
-  (`FeatureAIAssistDock` + `openAIAssist`)
-- Consolidated chat into `/chat` ChatHub modes; redirected
-  multi/workspace/unified aliases
-- Consolidated Command Core; fixed Ask AI mislinks away from command-center
-- Canonicalized agent create to `/agents/new`; removed nested legacy Sidebars
-- Codified lessons: `docs/protocols/TNF_FRONTEND_IA_CANON.md`,
-  `TNF_AGENT_SHELL_HYGIENE.md`
-- Registered both in `DIRECTIVES.md` + `docs/core/AGENTS.md` mandatory context
-- Observed ~316 Cursor agent shell transcripts; live useful service:
-  tauri-desktop Vite `:1420`
+## Changed Paths
+- .agent/agents/agent-registry-qa-agent.md
+- .agent/agents/auth-flow-qa-agent.md
+- .agent/agents/contextual-model-implementation-architect.md
+- .agent/agents/e2e-workflow-qa-agent.md
+- .agent/agents/frontend-verification-qa-agent.md
+- .agent/agents/interop-protocol-qa-agent.md
+- .agent/agents/mcp-bridge-qa-agent.md
+- .agent/agents/nexus-orchestrator-qa-agent.md
+- .agent/agents/pi-coding-agent.md
+- .agent/agents/qa-orchestrator-agent.md
+- .agent/agents/relay-server-qa-agent.md
+- .agent/agents/shared-state-qa-agent.md
+- .agent/agents/staff-review-agent.md
+- .agent/agents/staffing-director-agent.md
+- .agent/agents/state-governor-qa-agent.md
+- .agent/agents/sub-director.md
+- .agent/agents/super-director.md
+- .agent/agents/swarm-orchestration-qa-agent.md
+- .agent/agents/telegram-relay-qa-agent.md
+- .agent/agents/voice-bridge-qa-agent.md
+- .agent/agents/websocket-comms-qa-agent.md
+- .agent/agents/workflow-engine-qa-agent.md
+- .agent/fleet/agent-pathway-matrix.json
+- .agent/skills/imported-claude-agents/agent-registry-manager/SKILL.md
+- .agent/skills/imported-claude-agents/agent-registry-manager/agents/openai.yaml
+- .agent/skills/imported-claude-agents/agent-registry-manager/references/tnf-agent-registry.md
+- .agent/skills/imported-claude-agents/agent-registry-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/agent-registry-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/agent-registry-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/auth-flow-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/auth-flow-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/auth-flow-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/cursor-watch-learn-operator/SKILL.md
+- .agent/skills/imported-claude-agents/cursor-watch-learn-operator/agents/openai.yaml
+- .agent/skills/imported-claude-agents/cursor-watch-learn-operator/references/source-agent.md
+- .agent/skills/imported-claude-agents/e2e-workflow-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/e2e-workflow-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/e2e-workflow-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/frontend-verification-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/frontend-verification-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/frontend-verification-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/interop-protocol-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/interop-protocol-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/interop-protocol-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/mcp-bridge-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/mcp-bridge-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/mcp-bridge-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/nexus-orchestrator-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/nexus-orchestrator-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/nexus-orchestrator-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/pi-coding-agent/SKILL.md
+- .agent/skills/imported-claude-agents/pi-coding-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/pi-coding-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/qa-orchestrator-agent/SKILL.md
+- .agent/skills/imported-claude-agents/qa-orchestrator-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/qa-orchestrator-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/relay-server-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/relay-server-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/relay-server-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/shared-state-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/shared-state-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/shared-state-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/state-governor-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/state-governor-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/state-governor-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/super-director/SKILL.md
+- .agent/skills/imported-claude-agents/super-director/references/source-agent.md
+- .agent/skills/imported-claude-agents/swarm-orchestration-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/swarm-orchestration-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/swarm-orchestration-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/telegram-relay-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/telegram-relay-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/telegram-relay-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/value-ladder-architect-agent/SKILL.md
+- .agent/skills/imported-claude-agents/value-ladder-architect-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/value-ladder-architect-agent/references/contracts.md
+- .agent/skills/imported-claude-agents/value-ladder-architect-agent/references/input-template.json
+- .agent/skills/imported-claude-agents/value-ladder-architect-agent/scripts/build_value_ladder_report.py
+- .agent/skills/imported-claude-agents/value-ladder-architect-agent/scripts/orchestrator_tick.py
+- .agent/skills/imported-claude-agents/value-ladder-architect-agent/scripts/run_30m_cycle.sh
+- .agent/skills/imported-claude-agents/value-ladder-architect-agent/scripts/run_pipeline.sh
+- .agent/skills/imported-claude-agents/value-ladder-architect-agent/scripts/validate_value_ladder_report.py
+- .agent/skills/imported-claude-agents/voice-bridge-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/voice-bridge-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/voice-bridge-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/websocket-comms-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/websocket-comms-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/websocket-comms-qa-agent/references/source-agent.md
+- .agent/skills/imported-claude-agents/workflow-engine-qa-agent/SKILL.md
+- .agent/skills/imported-claude-agents/workflow-engine-qa-agent/agents/openai.yaml
+- .agent/skills/imported-claude-agents/workflow-engine-qa-agent/references/source-agent.md
+- .agent/test-reports/_rolling-summary.json
+- .agent/testing-status.json
+- .skills/imported-claude-agents/agent-registry-qa-agent/SKILL.md
+- .skills/imported-claude-agents/agent-registry-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/agent-registry-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/auth-flow-qa-agent/SKILL.md
+- .skills/imported-claude-agents/auth-flow-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/auth-flow-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/e2e-workflow-qa-agent/SKILL.md
+- .skills/imported-claude-agents/e2e-workflow-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/e2e-workflow-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/frontend-verification-qa-agent/SKILL.md
+- .skills/imported-claude-agents/frontend-verification-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/frontend-verification-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/interop-protocol-qa-agent/SKILL.md
+- .skills/imported-claude-agents/interop-protocol-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/interop-protocol-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/mcp-bridge-qa-agent/SKILL.md
+- .skills/imported-claude-agents/mcp-bridge-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/mcp-bridge-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/nexus-orchestrator-qa-agent/SKILL.md
+- .skills/imported-claude-agents/nexus-orchestrator-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/nexus-orchestrator-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/pi-coding-agent/SKILL.md
+- .skills/imported-claude-agents/pi-coding-agent/agents/openai.yaml
+- .skills/imported-claude-agents/pi-coding-agent/references/source-agent.md
+- .skills/imported-claude-agents/qa-orchestrator-agent/SKILL.md
+- .skills/imported-claude-agents/qa-orchestrator-agent/agents/openai.yaml
+- .skills/imported-claude-agents/qa-orchestrator-agent/references/source-agent.md
+- .skills/imported-claude-agents/relay-server-qa-agent/SKILL.md
+- .skills/imported-claude-agents/relay-server-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/relay-server-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/shared-state-qa-agent/SKILL.md
+- .skills/imported-claude-agents/shared-state-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/shared-state-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/state-governor-qa-agent/SKILL.md
+- .skills/imported-claude-agents/state-governor-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/state-governor-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/swarm-orchestration-qa-agent/SKILL.md
+- .skills/imported-claude-agents/swarm-orchestration-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/swarm-orchestration-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/telegram-relay-qa-agent/SKILL.md
+- .skills/imported-claude-agents/telegram-relay-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/telegram-relay-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/voice-bridge-qa-agent/SKILL.md
+- .skills/imported-claude-agents/voice-bridge-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/voice-bridge-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/websocket-comms-qa-agent/SKILL.md
+- .skills/imported-claude-agents/websocket-comms-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/websocket-comms-qa-agent/references/source-agent.md
+- .skills/imported-claude-agents/workflow-engine-qa-agent/SKILL.md
+- .skills/imported-claude-agents/workflow-engine-qa-agent/agents/openai.yaml
+- .skills/imported-claude-agents/workflow-engine-qa-agent/references/source-agent.md
+- .verifier/process-atlas.digest.md
+- .verifier/process-atlas.payload.json
+- .verifier/process-atlas.verify.json
+- .verifier/tnf-process-atlas.html
+- AGENTS.md
+- Dockerfile.api
+- apps/api/assets/agent-bank/catalog.json
+- apps/api/src/services/agent-bank.service.ts
+- apps/browser-extension/content-script.js
+- apps/browser-extension/icons/icon-128.png
+- apps/browser-extension/icons/icon-16.png
+- apps/browser-extension/icons/icon-48.png
+- apps/browser-extension/manifest.json
+- apps/browser-extension/package.json
+- apps/browser-extension/runtime-config.js
+- apps/browser-extension/service-worker.js
+- apps/frontend/public/agent-bank/catalog.json
+- apps/frontend/src/ComprehensiveRouter.tsx
+- apps/frontend/src/components/Navigation/PremiumHeader.tsx
+- apps/frontend/src/components/ai/FeatureAIAssistDock.tsx
+- apps/frontend/src/components/layout/Header.tsx
+- apps/frontend/src/components/layout/LandingHeader.tsx
+- apps/frontend/src/components/layout/Sidebar.tsx
+- apps/frontend/src/config/legacyRedirects.ts
+- apps/frontend/src/config/sidebarNavigation.ts
+- apps/frontend/src/data/codebase_map.json
+- apps/frontend/src/layouts/MainLayout.tsx
+- apps/frontend/src/layouts/PublicLayout.tsx
+- apps/frontend/src/pages/Agents/NFTMarketplacePage.tsx
+- apps/frontend/src/pages/Agents/New.tsx
+- apps/frontend/src/pages/AgentsRevolution.tsx
+- apps/frontend/src/pages/CommandCore.tsx
+- apps/frontend/src/pages/chat/ChatHub.tsx
+- apps/frontend/src/pages/dashboard/agents/new.tsx
+- apps/frontend/src/pages/dashboard/index.tsx
+- apps/frontend/src/pages/workflow-pages/index.tsx
+- apps/frontend/src/services/AgentService.ts
+- apps/frontend/src/utils/aiAssistEvents.ts
+- apps/tauri-desktop/src-tauri/Cargo.lock
+- apps/tauri-desktop/src-tauri/Cargo.toml
+- apps/tauri-desktop/src-tauri/src/browser_webview.rs
+- apps/tauri-desktop/src-tauri/src/lib.rs
+- apps/tauri-desktop/src-tauri/src/tnf_browser_bridge.rs
+- apps/tauri-desktop/src/components/browser/BrowserControlPanel.tsx
+- apps/tauri-desktop/src/hooks/useTnfBrowser.ts
+- apps/tauri-desktop/src/lib/tnfBrowserWebview.ts
+- apps/tauri-desktop/src/pages/WebBrowser.tsx
+- apps/tauri-desktop/src/services/TnfBrowserService.ts
+- apps/tauri-desktop/src/services/index.ts
+- apps/tauri-desktop/vite-plugins/tnfBrowserBridge.ts
+- apps/tauri-desktop/vite.config.ts
+- data/agent-bank/catalog.json
+- docs/consolidation/archived-from-home/ENGINEERING_PRINCIPLES_HOME.md
+- docs/core/AGENTS.md
+- docs/core/ENGINEERING_PRINCIPLES.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/DIRECTIVES.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/TNF_AGENT_SHELL_HYGIENE.md
+- docs/protocols/TNF_FRONTEND_IA_CANON.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- docs/protocols/reports/SESSION_HANDOFF_b61890f2.json
+- docs/protocols/reports/SESSION_HANDOFF_b61890f2.md
+- docs/protocols/reports/agent-pathway-matrix.latest.json
+- package.json
+- packages/tnf-browser/LICENSE
+- packages/tnf-browser/README.md
+- packages/tnf-browser/client/cursor.js
+- packages/tnf-browser/client/element.js
+- packages/tnf-browser/client/index.js
+- packages/tnf-browser/client/keyboard.js
+- packages/tnf-browser/client/page.js
+- packages/tnf-browser/extension/content-script.js
+- packages/tnf-browser/extension/icons/icon-128.png
+- packages/tnf-browser/extension/icons/icon-16.png
+- packages/tnf-browser/extension/icons/icon-48.png
+- packages/tnf-browser/extension/manifest.json
+- packages/tnf-browser/extension/runtime-config.js
+- packages/tnf-browser/extension/service-worker.js
+- packages/tnf-browser/index.js
+- packages/tnf-browser/lib/auth.js
+- packages/tnf-browser/lib/cli-parser.js
+- packages/tnf-browser/lib/first-run.js
+- packages/tnf-browser/lib/launcher.js
+- packages/tnf-browser/lib/readiness.js
+- packages/tnf-browser/lib/server.js
+- packages/tnf-browser/package.json
+- packages/tnf-browser/protocol/PROTOCOL.md
+- packages/tnf-browser/tnf-browser.config.example.js
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/commands/browser.ts
+- scripts/agents/package-agent-bank-catalog.cjs
+
+## Verification
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
 
 ## Continuation
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
+- Priority: `high`
 
-- **Owner:** operator
-- **Priority:** high
-
-**Resume Checklist:**
-
-- Read `docs/protocols/TNF_FRONTEND_IA_CANON.md` before any frontend chrome/chat
-  change
-- Read `docs/protocols/TNF_AGENT_SHELL_HYGIENE.md` before “read all terminals”
-  style work
-- Commit frontend cohesion + protocol files when operator requests
-- Optionally verify/stop zombie long-lived agent shells (voice/relay duplicates)
+### Resume Checklist
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-
-1. Operator review + commit of UI cohesion + protocol canon
-2. Optional: update stale sitemap docs that still list `/workspace/chat` as
-   primary
-3. Optional: managed-process inventory for Vite/voice/relay vs abandoned shells
-
-## Artifacts
-
-- `docs/protocols/TNF_FRONTEND_IA_CANON.md`
-- `docs/protocols/TNF_AGENT_SHELL_HYGIENE.md`
-- `apps/frontend/src/components/ai/FeatureAIAssistDock.tsx`
-- `apps/frontend/src/pages/chat/ChatHub.tsx`
-- `apps/frontend/src/utils/aiAssistEvents.ts`
-- `apps/frontend/src/ComprehensiveRouter.tsx`
+- Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical work unit.

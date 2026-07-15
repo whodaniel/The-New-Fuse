@@ -1,5 +1,5 @@
 {
-  "now": "2026-07-14T20:00:02Z",
+  "now": "2026-07-15T00:00:03Z",
   "generated_by": "tnf-process-atlas-generator",
   "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "cron": [
@@ -83,14 +83,6 @@
   "live": [
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "2664 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='redis://localhost:6379' RELAY_URL='ws://127.0.0.1:3000/ws' LEDGER_API_BASE='https://api.thenewfuse.com' STALL_THRESHOLD='45000' RECOVERY_INTERVAL='30000' SELF_PROMPT_ENABLED='true' SELF_PROMPT_COOLDOWN_MS='30000' node dist/master-clock.js"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "2686 node dist/master-clock.js"
-    },
-    {
-      "role": "Master Clock (relay-core)",
       "cmd": "2872 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
     },
     {
@@ -104,22 +96,6 @@
     {
       "role": "Master Clock (relay-core)",
       "cmd": "2976 node dist/master-clock.js"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "56798 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "56823 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "56845 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "56878 node dist/master-clock.js"
     },
     {
       "role": "Broker Agent (task dispatcher)",
@@ -147,7 +123,7 @@
     },
     {
       "role": "Standalone Relay Server",
-      "cmd": "99465 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
+      "cmd": "51314 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
     },
     {
       "role": "Relay Core Runtime",
@@ -155,7 +131,7 @@
     },
     {
       "role": "Relay Core Runtime",
-      "cmd": "99281 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run relay"
+      "cmd": "51013 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run relay"
     }
   ],
   "packages": [
@@ -414,7 +390,7 @@
   ],
   "summaries": {
     "cron_count": 19,
-    "live_count": 19,
+    "live_count": 13,
     "packages_count": 93,
     "apps_count": 30,
     "proto_count": 31,

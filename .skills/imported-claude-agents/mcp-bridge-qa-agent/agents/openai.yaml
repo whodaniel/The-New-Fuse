@@ -1,0 +1,8 @@
+agent:
+  name: mcp-bridge-qa-agent
+  provider: openai
+  model: gpt-5
+  default_prompt: "Run the mcp-bridge-qa-agent workflow using SKILL.md instructions."
+source:
+  kind: imported-claude-agent
+  agent_file: .claude/agents/mcp-bridge-qa-agent.md

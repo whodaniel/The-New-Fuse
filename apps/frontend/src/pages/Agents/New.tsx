@@ -13,6 +13,7 @@ import {
   ToggleSwitch,
 } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
+import { agentService } from '@/services/AgentService';
 import { resourcesService } from '@/services/resources.service';
 import { AgentTemplate } from '@/types/resources';
 import { authFetch } from '@/utils/authToken';
@@ -98,11 +99,49 @@ const NewAgent: React.FC = () => {
 
   useEffect(() => {
     const templateId = searchParams.get('templateId');
-    if (!templateId) return;
+    const bankParam = searchParams.get('bank') as 'tnf' | 'claude' | null;
+    const nameParam = searchParams.get('name');
+    if (!templateId && !nameParam) return;
 
     const applyTemplate = async () => {
       setTemplateLoading(true);
       try {
+        // Library forge: stock bank personas (filename / bank / name query)
+        if (bankParam === 'tnf' || bankParam === 'claude') {
+          const bankTemplates = await agentService.getLibraryTemplates(bankParam);
+          const matched =
+            bankTemplates.find(
+              (entry) =>
+                entry.filename === templateId ||
+                entry.id === templateId ||
+                entry.id === `${bankParam}:${templateId}`
+            ) || bankTemplates.find((entry) => entry.name === nameParam);
+
+          if (!matched && !nameParam) {
+            throw new Error('Bank template not found');
+          }
+
+          const displayName = matched?.name || nameParam || templateId || 'Agent';
+          setFormData((prev) => ({
+            ...prev,
+            name: prev.name || displayName,
+            description:
+              prev.description ||
+              matched?.description ||
+              `Forged from ${bankParam} bank persona "${displayName}".`,
+            type: bankParam === 'claude' ? 'custom' : 'development',
+            model: bankParam === 'claude' ? 'claude-sonnet-4' : prev.model,
+          }));
+
+          toast({
+            title: 'Library Persona Loaded',
+            description: `Prefilled form from ${bankParam} bank: "${displayName}".`,
+          });
+          return;
+        }
+
+        if (!templateId) return;
+
         const templates = await resourcesService.getTemplates();
         const template = templates.find((entry) => entry.id === templateId);
         if (!template) {

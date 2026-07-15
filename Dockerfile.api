@@ -54,6 +54,7 @@ RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Copy source code
 COPY apps/api/ apps/api/
+COPY data/agent-bank/ data/agent-bank/
 COPY packages/a2a-core/ packages/a2a-core/
 COPY packages/agent/ packages/agent/
 COPY packages/ap2-protocol/ packages/ap2-protocol/
@@ -155,6 +156,9 @@ COPY --from=builder /app/apps/api/dist/ /app/apps/api/dist/
 COPY --from=builder /app/packages/ /app/packages/
 COPY --from=builder /app/.agent/ /app/.agent/
 COPY --from=builder /app/.claude/ /app/.claude/
+# Packaged Library catalog (Cloud Run fallback when bank dirs are slim/empty)
+COPY --from=builder /app/apps/api/assets/agent-bank/ /app/apps/api/assets/agent-bank/
+COPY --from=builder /app/data/agent-bank/ /app/data/agent-bank/
 
 # Set environment
 ENV NODE_ENV=production

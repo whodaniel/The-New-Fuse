@@ -21,6 +21,7 @@ export interface AgentTemplate {
   lastModified: Date;
   description?: string;
   category?: string;
+  sourcePath?: string;
 }
 
 @Injectable()
@@ -48,6 +49,51 @@ export class AgentBankService {
     }
 
     return process.cwd();
+  }
+
+  /** Packaged catalog paths for Cloud Run / containers without monorepo banks. */
+  private getPackagedCatalogPaths(): string[] {
+    const root = this.getWorkspaceRoot();
+    return [
+      process.env.TNF_AGENT_BANK_CATALOG,
+      path.join(root, 'data', 'agent-bank', 'catalog.json'),
+      path.join(root, 'apps', 'api', 'assets', 'agent-bank', 'catalog.json'),
+      path.join(process.cwd(), 'data', 'agent-bank', 'catalog.json'),
+      path.join(process.cwd(), 'assets', 'agent-bank', 'catalog.json'),
+      path.join(__dirname, '..', '..', 'assets', 'agent-bank', 'catalog.json'),
+    ].filter(Boolean) as string[];
+  }
+
+  private loadPackagedCatalog(): AgentTemplate[] {
+    for (const candidate of this.getPackagedCatalogPaths()) {
+      try {
+        if (!fs.existsSync(candidate)) continue;
+        const raw = JSON.parse(fs.readFileSync(candidate, 'utf-8'));
+        const templates = Array.isArray(raw?.templates)
+          ? raw.templates
+          : Array.isArray(raw)
+            ? raw
+            : [];
+        if (templates.length === 0) continue;
+        this.logger.log(
+          `Loaded packaged agent bank catalog from ${candidate} (${templates.length})`
+        );
+        return templates.map((t: any) => ({
+          id: String(t.id),
+          name: String(t.name || t.filename || t.id),
+          bank: t.bank === 'claude' ? 'claude' : 'tnf',
+          filename: String(t.filename || `${t.name || t.id}.md`),
+          size: Number(t.size || 0),
+          lastModified: t.lastModified ? new Date(t.lastModified) : new Date(),
+          description: t.description,
+          category: t.category,
+          sourcePath: t.sourcePath,
+        }));
+      } catch (err) {
+        this.logger.warn(`Failed reading packaged catalog ${candidate}: ${err}`);
+      }
+    }
+    return [];
   }
 
   /**
@@ -94,6 +140,15 @@ export class AgentBankService {
               const lines = content.split('\n');
               const titleLine = lines.find((l) => l.startsWith('# '));
               if (titleLine) name = titleLine.replace('# ', '').trim();
+              const descLine = lines.find(
+                (l) =>
+                  l.trim() &&
+                  !l.startsWith('#') &&
+                  !l.startsWith('---') &&
+                  !l.startsWith('```') &&
+                  !l.startsWith('- ')
+              );
+              if (descLine) description = descLine.trim().slice(0, 280);
             }
 
             templates.push({
@@ -104,6 +159,11 @@ export class AgentBankService {
               size: stat.size,
               lastModified: stat.mtime,
               description,
+              category: bankType === 'tnf' ? 'TNF Bank' : 'Claude Bank',
+              sourcePath: path.posix.join(
+                bankType === 'tnf' ? '.agent/agents' : '.claude/agents',
+                file
+              ),
             });
           }
         }
@@ -119,7 +179,32 @@ export class AgentBankService {
       scan(path.join(root, '.claude', 'agents'), 'claude');
     }
 
-    return templates;
+    // Fallback / hydrate from packaged catalog when filesystem banks are absent
+    // in production images (or when scan returns nothing for an allowed bank).
+    const needPackaged =
+      templates.length === 0 ||
+      (allowedBanks.includes('tnf') &&
+        (bank === 'tnf' || bank === 'all') &&
+        !templates.some((t) => t.bank === 'tnf')) ||
+      (allowedBanks.includes('claude') &&
+        (bank === 'claude' || bank === 'all') &&
+        !templates.some((t) => t.bank === 'claude'));
+
+    if (needPackaged) {
+      const packaged = this.loadPackagedCatalog().filter((t) => allowedBanks.includes(t.bank));
+      const byId = new Map(templates.map((t) => [t.id, t]));
+      for (const item of packaged) {
+        if (bank !== 'all' && item.bank !== bank) continue;
+        if (!byId.has(item.id)) {
+          byId.set(item.id, item);
+        }
+      }
+      return Array.from(byId.values()).sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    return templates
+      .filter((t) => (bank === 'all' ? true : t.bank === bank))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   /**
@@ -153,10 +238,13 @@ export class AgentBankService {
       throw new BadRequestException('Invalid file path');
     }
 
-    if (!fs.existsSync(fullPath) || !fs.statSync(fullPath).isFile()) {
-      throw new NotFoundException(`Template ${filename} not found in ${bank} bank`);
+    if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+      return fs.readFileSync(fullPath, 'utf-8');
     }
 
-    return fs.readFileSync(fullPath, 'utf-8');
+    // Packaged catalog is metadata-only; content still requires source checkout.
+    throw new NotFoundException(
+      `Template ${filename} not found in ${bank} bank (filesystem missing; redeploy with bank files or TNF_WORKSPACE)`
+    );
   }
 }

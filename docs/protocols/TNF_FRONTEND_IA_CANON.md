@@ -61,6 +61,12 @@ Aliases must **redirect**, not ship a second product.
 - Open event: `apps/frontend/src/utils/aiAssistEvents.ts`
   (`AI_ASSIST_OPEN_EVENT` / `openAIAssist`)
 - Chat hub: `apps/frontend/src/pages/chat/ChatHub.tsx`
+- Agent Fleet vs Library: `/agents` (`AgentsRevolution`) — Fleet = DB instances;
+  Library = stock bank catalog (`?tab=library`)
+- Packaged stock bank: `data/agent-bank/catalog.json` (mirrors under
+  `apps/frontend/public/agent-bank/` and `apps/api/assets/agent-bank/`); build
+  via `pnpm run agents:bank:package`; reconcile via
+  `pnpm run agents:bank:reconcile` / `tnf agents bank reconcile`
 - Layout mounts: `apps/frontend/src/layouts/PremiumLayout.tsx`,
   `PublicLayout.tsx`
 - Router: `apps/frontend/src/ComprehensiveRouter.tsx`

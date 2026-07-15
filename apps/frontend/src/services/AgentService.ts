@@ -29,9 +29,10 @@ export interface AgentTemplate {
   bank: 'tnf' | 'claude';
   filename: string;
   size: number;
-  lastModified: Date;
+  lastModified: Date | string;
   description?: string;
   category?: string;
+  sourcePath?: string;
 }
 
 export interface AgentExecution {
@@ -77,18 +78,20 @@ class AgentService {
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const { authFetch } = await import('@/utils/authToken');
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...((options.headers as Record<string, string>) || {}),
     };
 
+    // Prefer explicit constructor apiKey; otherwise authFetch attaches session JWT.
     if (this.apiKey) {
       headers['Authorization'] = `Bearer ${this.apiKey}`;
     }
 
     try {
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         ...options,
         headers,
       });
@@ -109,20 +112,70 @@ class AgentService {
     }
   }
 
+  /** Live DB instances for the signed-in user (Fleet). */
+  async getFleetAgents(): Promise<Agent[]> {
+    try {
+      const instances = await this.request<any[]>('/agents');
+      return (Array.isArray(instances) ? instances : []).map((a) => this.transformAgent(a));
+    } catch (error) {
+      console.error('Failed to get fleet agents', error);
+      throw error;
+    }
+  }
+
   /**
-   * Get all agents (merges instances and system templates)
+   * Stock persona bank (Library). Prefers API bank; falls back to packaged catalog.
+   */
+  async getLibraryTemplates(bank: 'tnf' | 'claude' | 'all' = 'all'): Promise<AgentTemplate[]> {
+    const query = bank && bank !== 'all' ? `?bank=${bank}` : '';
+    try {
+      const templates = await this.request<AgentTemplate[]>(`/agents/bank/templates${query}`);
+      if (Array.isArray(templates) && templates.length > 0) {
+        return templates;
+      }
+    } catch (error) {
+      console.warn('Agent bank API unavailable, trying packaged catalog', error);
+    }
+
+    return this.loadPackagedCatalog(bank);
+  }
+
+  private async loadPackagedCatalog(
+    bank: 'tnf' | 'claude' | 'all' = 'all'
+  ): Promise<AgentTemplate[]> {
+    try {
+      const response = await fetch('/agent-bank/catalog.json', { credentials: 'same-origin' });
+      if (!response.ok) return [];
+      const payload = await response.json();
+      const templates: AgentTemplate[] = Array.isArray(payload?.templates)
+        ? payload.templates
+        : Array.isArray(payload)
+          ? payload
+          : [];
+      return templates
+        .filter((t) => (bank === 'all' ? true : t.bank === bank))
+        .map((t) => ({
+          ...t,
+          lastModified: t.lastModified ? new Date(t.lastModified) : new Date(),
+        }));
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * @deprecated Prefer getFleetAgents + getLibraryTemplates.
+   * Kept for callers that still expect a merged list.
    */
   async getAgents(): Promise<Agent[]> {
     try {
       const [instancesResult, templatesResult] = await Promise.allSettled([
-        this.request<any[]>('/agents'),
-        this.request<AgentTemplate[]>('/agents/bank/templates'),
+        this.getFleetAgents(),
+        this.getLibraryTemplates('all'),
       ]);
 
-      const instances = instancesResult.status === 'fulfilled' ? instancesResult.value : [];
+      const activeAgents = instancesResult.status === 'fulfilled' ? instancesResult.value : [];
       const templates = templatesResult.status === 'fulfilled' ? templatesResult.value : [];
-
-      const activeAgents = instances.map((a) => this.transformAgent(a));
       const systemAgents = templates.map((t) => this.transformTemplateToAgent(t));
 
       const merged = [...activeAgents];
@@ -140,11 +193,7 @@ class AgentService {
   }
 
   async getAgentTemplates(): Promise<AgentTemplate[]> {
-    try {
-      return await this.request<AgentTemplate[]>('/agents/bank/templates');
-    } catch {
-      return [];
-    }
+    return this.getLibraryTemplates('all');
   }
 
   async getAgent(id: string): Promise<Agent> {
@@ -363,6 +412,7 @@ class AgentService {
   }
 
   private transformTemplateToAgent(template: AgentTemplate): Agent {
+    const modified = template.lastModified ? new Date(template.lastModified) : new Date();
     return {
       id: template.id,
       name: template.name,
@@ -372,9 +422,14 @@ class AgentService {
       status: 'standby',
       version: '1.0.0',
       configuration: {},
-      metadata: {},
-      createdAt: template.lastModified,
-      updatedAt: template.lastModified,
+      metadata: {
+        bank: template.bank,
+        filename: template.filename,
+        sourcePath: template.sourcePath,
+        isLibraryTemplate: true,
+      },
+      createdAt: modified,
+      updatedAt: modified,
     };
   }
 
