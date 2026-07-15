@@ -1,5 +1,5 @@
 {
-  "now": "2026-07-15T00:00:03Z",
+  "now": "2026-07-15T04:00:37Z",
   "generated_by": "tnf-process-atlas-generator",
   "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "cron": [
@@ -297,6 +297,7 @@
   "agent_scripts": [
     "scripts/agents/__pycache__",
     "scripts/agents/hermes-tnf-a2a-bridge.py",
+    "scripts/agents/package-agent-bank-catalog.cjs",
     "scripts/agents/provision-full-auto-network.cjs",
     "scripts/agents/reconcile-agent-banks.cjs",
     "scripts/agents/requirements.txt",
@@ -394,7 +395,7 @@
     "packages_count": 93,
     "apps_count": 30,
     "proto_count": 31,
-    "agent_scripts_count": 21,
+    "agent_scripts_count": 22,
     "relay_core_ts_count": 69
   }
 }

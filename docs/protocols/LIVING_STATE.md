@@ -2,7 +2,9 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:** `cb8606c4-29fc-40b0-8db9-6c1c3d26fe7f` **Head:** `47cde235c48f`
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`858a32ed-09b3-4c45-8e72-b5eafb0b085b` **Head:** `47cde235c48f`
 `TNF_FRONTEND_IA_CANON.md` + `TNF_AGENT_SHELL_HYGIENE.md` before
 chrome/chat/shell work. **Project ID:** `TNF-UI-IA` **Handoff:**
 `d1426bdf-f91b-45f6-be04-871f5d867b8b` **Head:** `139dce3227` (working tree may

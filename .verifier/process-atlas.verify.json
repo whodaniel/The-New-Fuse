@@ -1,5 +1,5 @@
 {
-  "now": "2026-07-15T00:00:03Z",
+  "now": "2026-07-15T04:00:37Z",
   "ok": true,
   "summaries": {
     "cron_count": 19,
@@ -7,7 +7,7 @@
     "packages_count": 93,
     "apps_count": 30,
     "proto_count": 31,
-    "agent_scripts_count": 21,
+    "agent_scripts_count": 22,
     "relay_core_ts_count": 69
   },
   "findings": []

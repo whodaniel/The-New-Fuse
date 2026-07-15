@@ -115,7 +115,7 @@ system across all pages in The New Fuse application.
 24. **`/workspace/overview`** - Workspace overview
 25. **`/workspace/analytics`** - Workspace analytics
 26. **`/workspace/members`** - Workspace members
-27. **`/workspace/chat`** - Workspace chat
+27. **`/chat?mode=workspace`** - Workspace chat (consolidated Chat Hub)
 28. **`/suggestions`** - Suggestions list
 29. **`/suggestions/new`** - New suggestion
 30. **`/suggestions/:id`** - Suggestion detail
