@@ -1,19 +1,10 @@
 // @ts-nocheck
-import {
-  Bell,
-  Building2,
-  CreditCard,
-  LogOut,
-  Menu,
-  Search,
-  Settings,
-  User,
-  Users,
-} from 'lucide-react';
+import { Building2, CreditCard, LogOut, Menu, Settings, Sparkles, User, Users } from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { openAIAssist } from '../../utils/aiAssistEvents';
 
 interface PremiumHeaderProps {
   onMenuClick: () => void;
@@ -24,8 +15,6 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
   const { user, logout } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const unreadNotificationCount = 0;
-  const hasUnreadNotifications = unreadNotificationCount > 0;
 
   const handleLogout = async () => {
     try {
@@ -35,22 +24,6 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
       console.error('Logout failed', error);
       toast.error('Failed to logout');
     }
-  };
-
-  const handleNotificationClick = () => {
-    toast(
-      hasUnreadNotifications
-        ? `${unreadNotificationCount} unread notification${unreadNotificationCount === 1 ? '' : 's'}`
-        : 'No new notifications',
-      {
-        icon: '🔔',
-        style: {
-          background: '#1e293b',
-          color: '#fff',
-          border: '1px solid rgba(255,255,255,0.1)',
-        },
-      }
-    );
   };
 
   return (
@@ -72,40 +45,18 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Search Bar - Hidden on mobile */}
-          <div className="hidden md:flex items-center px-4 py-2 rounded-full bg-transparent/5 border border-white/10 focus-within:border-blue-500/50 focus-within:bg-transparent/10 transition-all w-64">
-            <Search className="w-4 h-4 text-gray-400 mr-2" />
-            <input
-              type="text"
-              placeholder="Search anything..."
-              className="bg-transparent border-none outline-none text-sm text-white placeholder-gray-500 w-full"
-              aria-label="Search"
-            />
-          </div>
+          <button
+            type="button"
+            onClick={() => openAIAssist()}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-colors"
+            aria-label="Ask AI about this page"
+            title="Ask AI about this page"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span className="hidden sm:inline">Ask AI</span>
+          </button>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleNotificationClick}
-              className="p-2 text-gray-400 hover:text-white rounded-full hover:bg-transparent/10 transition-colors relative"
-              aria-label={
-                hasUnreadNotifications
-                  ? `View notifications (${unreadNotificationCount} unread)`
-                  : 'View notifications'
-              }
-              title={
-                hasUnreadNotifications
-                  ? `${unreadNotificationCount} unread notification${
-                      unreadNotificationCount === 1 ? '' : 's'
-                    }`
-                  : 'Notifications'
-              }
-            >
-              <Bell className="w-5 h-5" />
-              {hasUnreadNotifications && (
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
-              )}
-            </button>
-
             <div className="h-8 w-px bg-transparent/10 mx-2" />
 
             <div className="relative">

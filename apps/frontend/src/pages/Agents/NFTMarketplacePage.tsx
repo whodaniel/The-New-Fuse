@@ -400,7 +400,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
             </p>
           </div>
           <Button
-            onClick={() => navigate('/agents/create')}
+            onClick={() => navigate('/agents/new')}
             className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-2 px-3 rounded-md flex items-center gap-3 transition-all mt-6 sm:mt-0 shadow-none hover:shadow-none hover:scale-105"
           >
             <Plus className="w-5 h-5" />

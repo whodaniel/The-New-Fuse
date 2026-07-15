@@ -2,22 +2,32 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`d01db68f-a3dc-495e-a87d-cc02b1e1fd43` **Head:** `60586330b262` (LIVING_STATE
-reviewed, agent registration verified, 82 files committed). No pending actions.
-Awaiting new operator directive. (ghs.googlehosted.com). /about and /blog pages
-created with SPA routes. sync:repos verified. Awaiting new directives.
-(gcp-deploy.sh / cloudbuild.yaml). **Project ID:** `LAUNCH-001` **Handoff:**
-`ef70c596-2124-40bd-952e-5239f3e042a0` **Head:** `baab5b2825e5` login at
-app.thenewfuse.com/auth/login. **Project ID:** `LAUNCH-001` **Handoff:**
-`30532802-3db1-429c-80f3-245a94a7cd75` **Head:** `199370ded064`
+**Current Directive:** Frontend cohesion Act codified — read
+`TNF_FRONTEND_IA_CANON.md` + `TNF_AGENT_SHELL_HYGIENE.md` before
+chrome/chat/shell work. **Project ID:** `TNF-UI-IA` **Handoff:**
+`d1426bdf-f91b-45f6-be04-871f5d867b8b` **Head:** `139dce3227` (working tree may
+include uncommitted frontend IA + protocol files). Prior launch/session text
+retained below for continuity.
+
+**Prior notes:** Continue priority queue from SESSION_HANDOFF when not on UI-IA
+work. (ghs.googlehosted.com). /about and /blog pages created with SPA routes.
+sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
+`LAUNCH-001` **Handoff:** `ef70c596-2124-40bd-952e-5239f3e042a0` **Head:**
+`baab5b2825e5` login at app.thenewfuse.com/auth/login. **Project ID:**
+`LAUNCH-001` **Handoff:** `30532802-3db1-429c-80f3-245a94a7cd75` **Head:**
+`199370ded064`
 
 ---
 
 ## ⚡ Active Steps
 
-1. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
+1. [✅] 2026-07-15 Frontend IA: always-open AI Assist → summon dialog; ChatHub;
+   Command Core consolidation; Ask AI → `openAIAssist()`; nested Sidebars
+   removed; protocols `TNF_FRONTEND_IA_CANON` + `TNF_AGENT_SHELL_HYGIENE` added.
+2. [⏳] Commit/push frontend cohesion + protocol docs when operator requests.
+3. [⏳] Optional: reap stale Cursor agent shell transcripts / confirm live
+   services (tauri vite :1420, voice :50005, relay) are intentionally owned.
+4. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
 
 - [✅] 2026-07-09T06:39:01.091Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)

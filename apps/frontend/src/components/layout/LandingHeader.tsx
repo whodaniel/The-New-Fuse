@@ -1,4 +1,5 @@
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
+import { openAIAssist } from '@/utils/aiAssistEvents';
 import { Link } from 'react-router-dom';
 
 export const LandingHeader = () => {
@@ -30,15 +31,14 @@ export const LandingHeader = () => {
               GitHub
             </Button>
           </Link>
-          <Link to="/dashboard/command-center">
-            <Button
-              variant="secondary"
-              className="hidden sm:inline-flex focus:ring-4 focus:ring-primary/20 bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20"
-              aria-label="Ask AI"
-            >
-              Ask AI
-            </Button>
-          </Link>
+          <Button
+            variant="secondary"
+            className="hidden sm:inline-flex focus:ring-4 focus:ring-primary/20 bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20"
+            aria-label="Ask AI"
+            onClick={() => openAIAssist()}
+          >
+            Ask AI
+          </Button>
           <Link to="/auth/login">
             <Button
               variant="ghost"

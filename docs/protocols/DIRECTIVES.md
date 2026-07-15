@@ -36,7 +36,8 @@ crawl→synthesize loop that keeps this file repeatable & evolvable.
    Vetting, Velocity-Integrity, Self-Sufficiency, Resource Strategy, Executable
    Intelligence Framework, Core System Prompt Architecture, Information
    Intentions, Corporate Department Orchestration, MemPalace, Agent Targeted
-   Handoff v1.1)
+   Handoff v1.1, **Frontend IA Canon** `TNF_FRONTEND_IA_CANON.md`, **Agent Shell
+   Hygiene** `TNF_AGENT_SHELL_HYGIENE.md`)
 7. **Normative schemas** (`docs/protocols/schemas/*.json`) — handoff, merkle,
    cron-governance, executable-intelligence, agent-self-edit, sgp/twip envelopes
 8. **Project rules** — `docs/CLAUDE.md`, `docs/core/AGENTS.md`, `IDENTITY.md`,

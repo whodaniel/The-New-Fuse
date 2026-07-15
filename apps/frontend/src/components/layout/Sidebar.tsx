@@ -96,7 +96,6 @@ export function Sidebar({ className = '' }: SidebarProps) {
         </ul>
       </nav>
 
-      {/* Persistent Ask AI widget in sidebar */}
       {layout.sidebarOpen && (
         <div className="p-4 mt-auto border-t border-white/10 hidden md:block">
           <FeatureAIAssistDock variant="inline" />

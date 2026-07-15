@@ -1,6 +1,4 @@
 // @ts-nocheck
-import { Label } from '@/components/ui';
-import { Sidebar } from '@/components/layout/Sidebar';
 import {
   ActionCard,
   Dialog,
@@ -17,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   GlassCard,
+  Label,
   PremiumButton,
   PremiumInput,
   PremiumTextarea,
@@ -86,8 +85,6 @@ const WorkflowsPage: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Sidebar />
-
       <main className="flex-1 overflow-auto">
         <div className="container mx-auto py-6 space-y-6 animate-fade-in">
           <div className="flex justify-between items-center animate-slide-in-down">

@@ -1,60 +1,54 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "3f7a2482-2bdb-49aa-8af5-e0d7e34441c9",
-  "created_at": "2026-07-14T23:31:55.827Z",
+  "handoff_id": "d1426bdf-f91b-45f6-be04-871f5d867b8b",
+  "created_at": "2026-07-15T00:37:19.000Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "49e0347fa7b168c36d046f7342776e3c07f6e69a",
+  "head_sha": "139dce3227",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [],
-  "work_summary": ["Modified 23 file(s)"],
+  "project_ids": ["TNF-UI-IA"],
+  "work_summary": [
+    "Frontend IA cohesion: summon-only page assist, ChatHub, Command Core consolidation, Ask AI via openAIAssist",
+    "Protocols added: TNF_FRONTEND_IA_CANON, TNF_AGENT_SHELL_HYGIENE; registered in DIRECTIVES and AGENTS.md",
+    "Terminal audit: prefer live services over 316 agent shell transcripts"
+  ],
   "changed_paths": [
-    ".agent/test-reports/_rolling-summary.json",
-    ".agent/testing-status.json",
-    ".verifier/process-atlas.digest.md",
-    ".verifier/process-atlas.payload.json",
-    ".verifier/process-atlas.verify.json",
-    ".verifier/tnf-process-atlas.html",
-    "apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent",
-    "apps/external/gemini-cli-source",
-    "apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json",
-    "apps/tauri-desktop/src-tauri/src/browser_webview.rs",
-    "apps/tauri-desktop/src-tauri/src/lib.rs",
-    "apps/tauri-desktop/src/components/browser/BrowserControlPanel.tsx",
-    "apps/tauri-desktop/src/pages/WebBrowser.tsx",
-    "apps/tauri-desktop/src/services/index.ts",
-    "apps/tauri-desktop/vite.config.ts",
-    "apps/virtual-library-blueprints",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "apps/tauri-desktop/src-tauri/src/tnf_browser_bridge.rs",
-    "apps/tauri-desktop/src/hooks/useTnfBrowser.ts",
-    "apps/tauri-desktop/src/services/TnfBrowserService.ts",
-    "apps/tauri-desktop/vite-plugins/"
+    "docs/protocols/TNF_FRONTEND_IA_CANON.md",
+    "docs/protocols/TNF_AGENT_SHELL_HYGIENE.md",
+    "docs/protocols/DIRECTIVES.md",
+    "docs/core/AGENTS.md",
+    "docs/protocols/LIVING_STATE.md",
+    "apps/frontend/src/components/ai/FeatureAIAssistDock.tsx",
+    "apps/frontend/src/pages/chat/ChatHub.tsx",
+    "apps/frontend/src/utils/aiAssistEvents.ts",
+    "apps/frontend/src/ComprehensiveRouter.tsx"
   ],
   "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
-    "supabase_rls_audit": "na",
-    "notes": ""
+    "notes": "Blog default import fixed in ComprehensiveRouter; IA/protocol docs authored; UI changes pending operator commit"
   },
   "continuation": {
     "owner": "operator",
     "targets": ["orchestrator"],
-    "priority": "medium",
+    "priority": "high",
     "resume_checklist": [
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against schema",
-      "Execute listed next actions in order"
+      "Read TNF_FRONTEND_IA_CANON before frontend chrome/chat work",
+      "Read TNF_AGENT_SHELL_HYGIENE before bulk terminal inspect",
+      "Commit UI + protocol files when requested"
     ]
   },
-  "next_actions": ["Commit remaining uncommitted changes (22 file(s))"],
+  "next_actions": [
+    "Commit frontend cohesion + protocol canon when operator requests",
+    "Optional: update sitemap docs still naming /workspace/chat as primary",
+    "Optional: reclaim stale long-lived agent shells"
+  ],
   "artifacts": {
-    "commits": ["49e0347fa7b168c36d046f7342776e3c07f6e69a"],
+    "commits": ["139dce3227"],
     "deployment_urls": [],
-    "database_migrations": []
+    "database_migrations": [],
+    "protocols": [
+      "docs/protocols/TNF_FRONTEND_IA_CANON.md",
+      "docs/protocols/TNF_AGENT_SHELL_HYGIENE.md"
+    ]
   }
 }

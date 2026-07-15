@@ -1,18 +1,18 @@
-import { ALL_PAGES_CATALOG } from '@/config/routeCatalog';
 import AISourceSelector from '@/components/ai/AISourceSelector';
+import { ALL_PAGES_CATALOG } from '@/config/routeCatalog';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useAuth } from '@/providers/AuthProvider';
 import { agentService } from '@/services/AgentService';
 import { aiSourceService } from '@/services/aiSource.service';
 import { resourcesService } from '@/services/resources.service';
+import { AI_ASSIST_OPEN_EVENT } from '@/utils/aiAssistEvents';
 import { filterByTenancyContext } from '@/utils/tenancy';
-import { Bot, Sparkles, Wand2 } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import { Bot, MessageSquare, Sparkles, Wand2, X } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import {
@@ -28,6 +28,11 @@ import {
 interface FeatureAIAssistDockProps {
   variant?: 'dock' | 'inline';
   contextOverride?: { name: string; description?: string };
+}
+
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 const findPageInfo = (path: string) => {
@@ -71,15 +76,18 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
   const { user } = useAuth();
   const { workspace } = useWorkspace();
   const { isSuperAdmin, isAnyAgencyAdmin } = useAuthorization();
+  const [open, setOpen] = useState(false);
   const [agents, setAgents] = useState<{ id: string; name: string; description?: string }[]>([]);
-  const [templates, setTemplates] = useState<
-    { id: string; name: string; description?: string }[]
-  >([]);
+  const [templates, setTemplates] = useState<{ id: string; name: string; description?: string }[]>(
+    []
+  );
   const [selectedAgent, setSelectedAgent] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [prompt, setPrompt] = useState('');
-  const [response, setResponse] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const pageInfo = useMemo(() => {
     if (contextOverride) return contextOverride;
@@ -90,6 +98,40 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
       }
     );
   }, [contextOverride, location.pathname]);
+
+  const pageContext = useMemo(
+    () => ({
+      page: pageInfo?.name,
+      path: location.pathname,
+      description: pageInfo?.description,
+      workspaceId: workspace?.id,
+      workspaceName: workspace?.name,
+      tenantId: user?.tenantId,
+      agencyId: user?.agencyId,
+      userId: user?.id,
+    }),
+    [pageInfo, location.pathname, workspace?.id, workspace?.name, user]
+  );
+
+  // Reset chat when navigating to a different page so context stays accurate
+  useEffect(() => {
+    setMessages([]);
+    setPrompt('');
+    setSelectedAgent('');
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleOpen = () => setOpen(true);
+    window.addEventListener(AI_ASSIST_OPEN_EVENT, handleOpen);
+    return () => window.removeEventListener(AI_ASSIST_OPEN_EVENT, handleOpen);
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      inputRef.current?.focus();
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [open, messages]);
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -136,47 +178,41 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
   const handleAsk = async () => {
     if (!prompt.trim()) return;
 
+    const userMessage = prompt.trim();
+    setPrompt('');
     setLoading(true);
-    setResponse(null);
+    setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
 
     try {
       if (selectedAgent) {
-        const execution = await agentService.executeAgent(selectedAgent, prompt, {
-          context: {
-            page: pageInfo?.name,
-            path: location.pathname,
-            workspaceId: workspace?.id,
-            workspaceName: workspace?.name,
-            tenantId: user?.tenantId,
-            agencyId: user?.agencyId,
-            userId: user?.id,
-          },
+        const execution = await agentService.executeAgent(selectedAgent, userMessage, {
+          context: pageContext,
         });
         const executionText = extractText(execution);
-        if (executionText) {
-          setResponse(executionText);
-        } else {
-          setResponse('Agent task started. Check agent logs for detailed output.');
-        }
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: executionText || 'Agent task started. Check agent logs for detailed output.',
+          },
+        ]);
       } else {
         const result = await aiSourceService.chat({
-          message: `You are assisting a user inside "${pageInfo?.name}". ${pageInfo?.description || ''}\n\nUser request: ${prompt}`,
-          context: {
-            page: pageInfo?.name,
-            path: location.pathname,
-            workspaceId: workspace?.id,
-            workspaceName: workspace?.name,
-            tenantId: user?.tenantId,
-            agencyId: user?.agencyId,
-            userId: user?.id,
-          },
+          message: `You are assisting a user inside "${pageInfo?.name}" (${location.pathname}). ${pageInfo?.description || ''}\n\nUser request: ${userMessage}`,
+          context: pageContext,
         });
-        setResponse(result.text);
+        setMessages((prev) => [...prev, { role: 'assistant', content: result.text }]);
       }
     } catch (error: any) {
       console.error('AI request failed', error);
       toast.error(error?.message || 'AI request failed.');
-      setResponse(null);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: 'Sorry, I could not complete that request. Please try again.',
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -197,121 +233,231 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
       context: location.pathname,
       workspaceId: workspace?.id || '',
     });
-    navigate(`/agents/unified-creator?${query.toString()}`);
+    navigate(`/agents/new?${query.toString()}`);
   };
 
   const handleOpenAgents = () => {
     navigate('/agents');
   };
 
+  const triggerButton =
+    variant === 'inline' ? (
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="w-full justify-start gap-2 border-white/10 bg-slate-900/60 text-slate-100 hover:bg-slate-800/80"
+        onClick={() => setOpen(true)}
+        aria-label={`Ask AI about ${pageInfo?.name}`}
+      >
+        <MessageSquare className="h-4 w-4 text-blue-400" />
+        Ask AI
+      </Button>
+    ) : (
+      <Button
+        type="button"
+        size="lg"
+        className="h-14 w-14 rounded-full shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-500 text-white p-0"
+        onClick={() => setOpen(true)}
+        aria-label={`Ask AI about ${pageInfo?.name}`}
+      >
+        <Sparkles className="h-6 w-6" />
+      </Button>
+    );
+
   return (
-    <Card
-      className={
-        variant === 'dock'
-          ? 'w-full max-w-sm border border-white/10 bg-slate-950/80 backdrop-blur-md'
-          : 'w-full border border-white/10 bg-slate-900/80'
-      }
-    >
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-sm">
-          <Sparkles className="h-4 w-4 text-blue-400" />
-          AI Assist
-        </CardTitle>
-        <CardDescription>
-          {pageInfo?.name} — {pageInfo?.description || 'Make this feature work harder for you.'}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {!selectedAgent ? <AISourceSelector compact label="AI Source" /> : null}
-        <div className="space-y-2">
-          <Label htmlFor="ai-assist-prompt" className="text-xs text-muted-foreground">
-            Ask AI to help with this feature
-          </Label>
-          <div className="flex gap-2">
-            <Input
-              id="ai-assist-prompt"
-              placeholder="e.g. Create a workflow that triages support tickets"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-            />
-            <Button onClick={handleAsk} disabled={loading || !prompt.trim()} size="sm">
-              {loading ? 'Working...' : 'Ask'}
-            </Button>
-          </div>
-          {selectedAgent && (
-            <p className="text-[11px] text-muted-foreground">
-              Using agent: {agents.find((agent) => agent.id === selectedAgent)?.name}
-            </p>
-          )}
-          {response && (
-            <div className="rounded-md border border-white/10 bg-slate-950/70 p-3 text-xs text-slate-200 whitespace-pre-wrap">
-              {response}
-            </div>
-          )}
-        </div>
+    <>
+      {!open && triggerButton}
 
-        <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Premade Agents</Label>
-          <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select a template" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Templates</SelectLabel>
-                {templates.map((template) => (
-                  <SelectItem key={template.id} value={template.id}>
-                    {template.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={handleUseTemplate}
-            disabled={!selectedTemplate}
+      {open && (
+        <div
+          className={
+            variant === 'inline'
+              ? 'fixed inset-0 z-50 flex items-end justify-center sm:items-center p-4'
+              : 'fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6'
+          }
+        >
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ai-assist-title"
+            className="relative z-10 flex w-full max-w-md flex-col overflow-hidden rounded-xl border border-white/10 bg-slate-950 shadow-2xl"
+            style={{ maxHeight: 'min(640px, calc(100vh - 2rem))' }}
           >
-            <Wand2 className="h-4 w-4 mr-2" />
-            Customize This Agent
-          </Button>
-        </div>
+            <header className="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
+              <div className="min-w-0">
+                <h2
+                  id="ai-assist-title"
+                  className="flex items-center gap-2 text-sm font-semibold text-white"
+                >
+                  <Sparkles className="h-4 w-4 shrink-0 text-blue-400" />
+                  AI Assist
+                </h2>
+                <p className="mt-1 truncate text-xs text-slate-400">
+                  Context: {pageInfo?.name}
+                  {pageInfo?.description ? ` — ${pageInfo.description}` : ''}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 shrink-0 p-0 text-slate-400 hover:text-white"
+                onClick={() => setOpen(false)}
+                aria-label="Close AI Assist"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </header>
 
-        <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Existing Agents</Label>
-          <Select value={selectedAgent} onValueChange={setSelectedAgent}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select an agent" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Agents</SelectLabel>
-                {agents.map((agent) => (
-                  <SelectItem key={agent.id} value={agent.id}>
-                    {agent.name}
-                  </SelectItem>
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+              <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
+                {messages.length === 0 && (
+                  <div className="rounded-lg border border-dashed border-white/10 bg-slate-900/50 p-3 text-xs text-slate-400">
+                    Ask anything about <span className="text-slate-200">{pageInfo?.name}</span>.
+                    Your question is answered with this page&apos;s context.
+                  </div>
+                )}
+                {messages.map((msg, index) => (
+                  <div
+                    key={`${msg.role}-${index}`}
+                    className={`rounded-lg px-3 py-2 text-xs whitespace-pre-wrap ${
+                      msg.role === 'user'
+                        ? 'ml-6 bg-blue-600/80 text-white'
+                        : 'mr-6 border border-white/10 bg-slate-900/80 text-slate-200'
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
                 ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <p className="text-[11px] text-muted-foreground">
-            Pick a live agent to answer with specialized context.
-          </p>
-        </div>
+                {loading && (
+                  <div className="mr-6 rounded-lg border border-white/10 bg-slate-900/80 px-3 py-2 text-xs text-slate-400">
+                    Thinking…
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
 
-        <div className="flex flex-col gap-2">
-          <Button variant="default" size="sm" className="w-full" onClick={handleCreateAgent}>
-            <Bot className="h-4 w-4 mr-2" />
-            Create New Agent
-          </Button>
-          <Button variant="ghost" size="sm" className="w-full" onClick={handleOpenAgents}>
-            Browse Agent Library
-          </Button>
+              <div className="space-y-3 border-t border-white/10 px-4 py-3">
+                {!selectedAgent ? <AISourceSelector compact label="AI Source" /> : null}
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">Premade</Label>
+                    <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Template" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Templates</SelectLabel>
+                          {templates.map((template) => (
+                            <SelectItem key={template.id} value={template.id}>
+                              {template.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">Agent</Label>
+                    <Select value={selectedAgent} onValueChange={setSelectedAgent}>
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Optional" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Agents</SelectLabel>
+                          {agents.map((agent) => (
+                            <SelectItem key={agent.id} value={agent.id}>
+                              {agent.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {(selectedTemplate || selectedAgent) && (
+                  <div className="flex gap-2">
+                    {selectedTemplate && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 text-xs"
+                        onClick={handleUseTemplate}
+                      >
+                        <Wand2 className="mr-1 h-3 w-3" />
+                        Customize
+                      </Button>
+                    )}
+                    {selectedAgent && (
+                      <p className="flex-1 self-center text-[11px] text-muted-foreground truncate">
+                        Using: {agents.find((a) => a.id === selectedAgent)?.name}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Input
+                    ref={inputRef}
+                    id="ai-assist-prompt"
+                    placeholder={`Ask about ${pageInfo?.name}…`}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleAsk();
+                      }
+                    }}
+                    disabled={loading}
+                    className="text-sm"
+                  />
+                  <Button
+                    onClick={handleAsk}
+                    disabled={loading || !prompt.trim()}
+                    size="sm"
+                    className="shrink-0"
+                  >
+                    {loading ? '…' : 'Ask'}
+                  </Button>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex-1 text-xs"
+                    onClick={handleCreateAgent}
+                  >
+                    <Bot className="mr-1 h-3 w-3" />
+                    Create Agent
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex-1 text-xs"
+                    onClick={handleOpenAgents}
+                  >
+                    Browse Agents
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </>
   );
 };
 

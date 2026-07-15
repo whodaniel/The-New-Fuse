@@ -12,7 +12,8 @@ tnf onboard
 2. `docs/protocols/LIVING_STATE.md`
 3. `docs/protocols/AGENT_STATUS_LEDGER.md`
 4. `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` (if present)
-5. `~/.tnf/swarm-context.md` (swarm terminal state, coordination issues, active directives - updated every heartbeat cycle)
+5. `~/.tnf/swarm-context.md` (swarm terminal state, coordination issues, active
+   directives - updated every heartbeat cycle)
 6. `.agent/SYSTEM_PROMPT.md`
 7. `.agent/context/resource-map.md`
 8. `.agent/context/agent-onboarding.md`
@@ -21,6 +22,10 @@ tnf onboard
 11. `docs/core/SOUL.md`, `docs/core/USER.md`, `docs/core/IDENTITY.md`,
     `docs/core/HEARTBEAT.md`
 12. `docs/operations/STALL_DEFENSE.md`
+13. `docs/protocols/TNF_FRONTEND_IA_CANON.md` (frontend chrome / chat / Ask AI —
+    do not reintroduce always-open assist panels or duplicate chat homes)
+14. `docs/protocols/TNF_AGENT_SHELL_HYGIENE.md` (agent shell transcripts ≠
+    operator terminals; prefer short-lived shells)
 
 ## Where Resources Live
 

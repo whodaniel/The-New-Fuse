@@ -1,66 +1,56 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-14T23:31:55.827Z` Handoff
-ID: `3f7a2482-2bdb-49aa-8af5-e0d7e34441c9`
+Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-15T00:37:19.000Z` Handoff
+ID: `d1426bdf-f91b-45f6-be04-871f5d867b8b`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `49e0347fa7b168c36d046f7342776e3c07f6e69a`
+- Head SHA: `139dce3227` (plus uncommitted frontend IA + protocol work)
 - Sensitive Scope: `internal`
+- Project ID: `TNF-UI-IA`
 
 ## Work Summary
 
-- Modified 23 file(s)
-
-## Changed Paths
-
-- .agent/test-reports/\_rolling-summary.json
-- .agent/testing-status.json
-- .verifier/process-atlas.digest.md
-- .verifier/process-atlas.payload.json
-- .verifier/process-atlas.verify.json
-- .verifier/tnf-process-atlas.html
-- apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app\_\_agent
-- apps/external/gemini-cli-source
-- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
-- apps/tauri-desktop/src-tauri/src/browser_webview.rs
-- apps/tauri-desktop/src-tauri/src/lib.rs
-- apps/tauri-desktop/src/components/browser/BrowserControlPanel.tsx
-- apps/tauri-desktop/src/pages/WebBrowser.tsx
-- apps/tauri-desktop/src/services/index.ts
-- apps/tauri-desktop/vite.config.ts
-- apps/virtual-library-blueprints
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- apps/tauri-desktop/src-tauri/src/tnf_browser_bridge.rs
-- apps/tauri-desktop/src/hooks/useTnfBrowser.ts
-- apps/tauri-desktop/src/services/TnfBrowserService.ts
-- apps/tauri-desktop/vite-plugins/
+- Replaced always-open AI Assist panels with summon button + contextual dialog
+  (`FeatureAIAssistDock` + `openAIAssist`)
+- Consolidated chat into `/chat` ChatHub modes; redirected
+  multi/workspace/unified aliases
+- Consolidated Command Core; fixed Ask AI mislinks away from command-center
+- Canonicalized agent create to `/agents/new`; removed nested legacy Sidebars
+- Codified lessons: `docs/protocols/TNF_FRONTEND_IA_CANON.md`,
+  `TNF_AGENT_SHELL_HYGIENE.md`
+- Registered both in `DIRECTIVES.md` + `docs/core/AGENTS.md` mandatory context
+- Observed ~316 Cursor agent shell transcripts; live useful service:
+  tauri-desktop Vite `:1420`
 
 ## Continuation
 
 - **Owner:** operator
-- **Priority:** medium
-
-**Targets:**
-
-- orchestrator
+- **Priority:** high
 
 **Resume Checklist:**
 
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Execute listed next actions in order
+- Read `docs/protocols/TNF_FRONTEND_IA_CANON.md` before any frontend chrome/chat
+  change
+- Read `docs/protocols/TNF_AGENT_SHELL_HYGIENE.md` before “read all terminals”
+  style work
+- Commit frontend cohesion + protocol files when operator requests
+- Optionally verify/stop zombie long-lived agent shells (voice/relay duplicates)
 
 ## Next Actions
 
-- Commit remaining uncommitted changes (22 file(s))
+1. Operator review + commit of UI cohesion + protocol canon
+2. Optional: update stale sitemap docs that still list `/workspace/chat` as
+   primary
+3. Optional: managed-process inventory for Vite/voice/relay vs abandoned shells
 
 ## Artifacts
 
-**Commits:**
-
-- 49e0347fa7b168c36d046f7342776e3c07f6e69a
+- `docs/protocols/TNF_FRONTEND_IA_CANON.md`
+- `docs/protocols/TNF_AGENT_SHELL_HYGIENE.md`
+- `apps/frontend/src/components/ai/FeatureAIAssistDock.tsx`
+- `apps/frontend/src/pages/chat/ChatHub.tsx`
+- `apps/frontend/src/utils/aiAssistEvents.ts`
+- `apps/frontend/src/ComprehensiveRouter.tsx`

@@ -228,7 +228,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
       },
       {
         name: 'AI Command Center',
-        href: '/ai-command-center',
+        href: '/command-center?tab=streams',
         icon: Cpu,
         access: 'authenticated',
         requiredRoles: ['SUPER_ADMIN'],

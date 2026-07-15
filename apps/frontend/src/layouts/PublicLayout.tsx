@@ -14,10 +14,11 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
       <SmartNavigation />
 
       {/* Main Content Wrapper with top padding to account for fixed header */}
-      <main className="flex-1 pt-16 relative">
-        {children || <Outlet />}
+      <main className="flex-1 pt-16 relative">{children || <Outlet />}</main>
+
+      <div className="fixed right-6 bottom-6 z-40">
         <FeatureAIAssistDock variant="dock" />
-      </main>
+      </div>
 
       <SiteFooter />
     </div>

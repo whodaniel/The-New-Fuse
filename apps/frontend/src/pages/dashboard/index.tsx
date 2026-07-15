@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { Sidebar } from '@/components/layout/Sidebar';
 import { ActionCard, GlassCard, PremiumButton, StatsCard } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import { Agent, agentService } from '@/services/AgentService';
@@ -357,8 +356,6 @@ const Dashboard = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] bg-pink-600/10 rounded-full blur-[100px] animate-pulse" />
       </div>
-
-      <Sidebar />
 
       <main className="flex-1 p-4 overflow-auto relative z-10">
         <div className="max-w-7xl mx-auto">
