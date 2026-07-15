@@ -33,7 +33,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "test": "echo \"No tests for this package\" && exit 0"
+    "test": "npm run build:quiet && node --test --test-reporter=spec tests/*.test.cjs",
+    "test:dist-only": "node --test --test-reporter=spec tests/*.test.cjs",
+    "build:quiet": "tsc --skipLibCheck --noEmitOnError false 2>/dev/null"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
