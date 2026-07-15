@@ -53,6 +53,10 @@ packages/*
 !packages/relay-core/**
 !packages/security/
 !packages/security/**
+!packages/shared/
+!packages/shared/**
+!packages/tnf-browser/
+!packages/tnf-browser/**
 !packages/tnf-cli/
 !packages/tnf-cli/**
 !packages/tnf-core/
@@ -75,6 +79,17 @@ packages/*
 !.npmrc
 !Dockerfile.api
 !cloudbuild-api.yaml
+# Packaged stock banks for Library (Cloud Run fallback when FS banks slim)
+!data/
+!data/agent-bank/
+!data/agent-bank/**
+# Runtime bank sources scanned by AgentBankService / Dockerfile.api
+!.agent/
+!.agent/agents/
+!.agent/agents/**
+!.claude/
+!.claude/agents/
+!.claude/agents/**
 # Exclude node_modules and dist from all (these get rebuilt in Docker)
 **/node_modules/
 **/*.test.ts

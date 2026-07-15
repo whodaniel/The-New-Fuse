@@ -41,6 +41,8 @@ COPY packages/proto-definitions/package.json packages/proto-definitions/
 COPY packages/protocol-contracts/package.json packages/protocol-contracts/
 COPY packages/relay-core/package.json packages/relay-core/
 COPY packages/security/package.json packages/security/
+COPY packages/shared/package.json packages/shared/
+COPY packages/tnf-browser/package.json packages/tnf-browser/
 COPY packages/tnf-cli/package.json packages/tnf-cli/
 COPY packages/tnf-core/package.json packages/tnf-core/
 COPY packages/tnf-note-taking/package.json packages/tnf-note-taking/
@@ -78,6 +80,8 @@ COPY packages/proto-definitions/ packages/proto-definitions/
 COPY packages/protocol-contracts/ packages/protocol-contracts/
 COPY packages/relay-core/ packages/relay-core/
 COPY packages/security/ packages/security/
+COPY packages/shared/ packages/shared/
+COPY packages/tnf-browser/ packages/tnf-browser/
 COPY packages/tnf-cli/ packages/tnf-cli/
 COPY packages/tnf-core/ packages/tnf-core/
 COPY packages/tnf-note-taking/ packages/tnf-note-taking/
@@ -140,6 +144,8 @@ COPY packages/proto-definitions/package.json packages/proto-definitions/
 COPY packages/protocol-contracts/package.json packages/protocol-contracts/
 COPY packages/relay-core/package.json packages/relay-core/
 COPY packages/security/package.json packages/security/
+COPY packages/shared/package.json packages/shared/
+COPY packages/tnf-browser/package.json packages/tnf-browser/
 COPY packages/tnf-cli/package.json packages/tnf-cli/
 COPY packages/tnf-core/package.json packages/tnf-core/
 COPY packages/tnf-note-taking/package.json packages/tnf-note-taking/
