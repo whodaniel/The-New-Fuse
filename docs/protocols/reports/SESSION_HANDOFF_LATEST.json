@@ -1,13 +1,15 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "858a32ed-09b3-4c45-8e72-b5eafb0b085b",
-  "created_at": "2026-07-15T02:58:38.119Z",
+  "handoff_id": "4f58084d-8923-4892-bab5-7cc9d8bb32f3",
+  "created_at": "2026-07-15T12:22:20.350Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "47cde235c48fddb07c02bcacd834aaddc73e1d3a",
+  "head_sha": "df79b1a184dbf0432806a471d270266480cfd361",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "project_ids": [
+    "TNF-SESSION"
+  ],
   "work_summary": [
     "Protocol enforcement layer implemented for mandatory session handoff continuity.",
     "CI/hook gates now block critical changes without fresh handoff artifacts."
@@ -15,10 +17,7 @@
   "changed_paths": [
     ".agent/test-reports/_rolling-summary.json",
     ".agent/testing-status.json",
-    ".verifier/process-atlas.digest.md",
-    ".verifier/process-atlas.payload.json",
-    ".verifier/process-atlas.verify.json",
-    ".verifier/tnf-process-atlas.html",
+    "apps/frontend/src/data/codebase_map.json",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
@@ -29,11 +28,14 @@
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-07-15T02:58:41.651Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-07-15T12:22:22.410Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
+    "targets": [
+      "story-architect",
+      "librarian"
+    ],
     "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -46,6 +48,8 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["47cde235c48fddb07c02bcacd834aaddc73e1d3a"]
+    "commits": [
+      "df79b1a184dbf0432806a471d270266480cfd361"
+    ]
   }
 }

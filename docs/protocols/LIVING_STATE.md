@@ -2,7 +2,7 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:** `4f58084d-8923-4892-bab5-7cc9d8bb32f3` **Head:** `df79b1a184db`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `858a32ed-09b3-4c45-8e72-b5eafb0b085b` **Head:** `47cde235c48f`
 `TNF_FRONTEND_IA_CANON.md` + `TNF_AGENT_SHELL_HYGIENE.md` before

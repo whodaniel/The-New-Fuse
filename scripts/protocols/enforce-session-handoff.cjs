@@ -113,6 +113,19 @@ function isCriticalPath(filePath) {
   const normalized = normalizePath(filePath).toLowerCase();
   if (!normalized) return false;
   if (excludedFromCritical.has(normalized)) return false;
+  
+  // Ignore build/test outputs, node_modules, and logs
+  if (
+    normalized.includes('/node_modules/') ||
+    normalized.includes('/dist/') ||
+    normalized.endsWith('.log') ||
+    normalized.endsWith('.tsbuildinfo') ||
+    normalized.endsWith('.map') ||
+    normalized.endsWith('results.json')
+  ) {
+    return false;
+  }
+
   return criticalPathPatterns.some((pattern) => pattern.test(normalized));
 }
 
