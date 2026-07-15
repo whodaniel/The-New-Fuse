@@ -11,4 +11,5 @@
  * 7. Proper status tracking to prevent loops
  * 8. Success metrics and quality evaluation
  */
-export {};
+export declare const FEDERATED_BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+export declare function generateFederatedIdNumber(seq: number): string;

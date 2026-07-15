@@ -1,10 +1,10 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "4f58084d-8923-4892-bab5-7cc9d8bb32f3",
-  "created_at": "2026-07-15T12:22:20.350Z",
+  "handoff_id": "216c864b-e68f-4c60-ad00-79c5cc8b4647",
+  "created_at": "2026-07-15T21:36:47.371Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "df79b1a184dbf0432806a471d270266480cfd361",
+  "head_sha": "833a897e57abd7d55fd91478e1e3de11915fc5b2",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [
@@ -17,18 +17,42 @@
   "changed_paths": [
     ".agent/test-reports/_rolling-summary.json",
     ".agent/testing-status.json",
-    "apps/frontend/src/data/codebase_map.json",
+    ".verifier/process-atlas.digest.md",
+    ".verifier/process-atlas.payload.json",
+    ".verifier/process-atlas.verify.json",
+    ".verifier/tnf-process-atlas.html",
+    "apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json",
+    "data/agent-registry/agent_capabilities.json",
+    "data/agent-registry/agent_relationships.json",
+    "data/agent-registry/agent_tags.json",
+    "data/agent-registry/agents.json",
+    "data/agent-registry/registry_summary.json",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "packages/a2a-protocol/.turbo/turbo-test.log",
+    "packages/common/.turbo/turbo-test.log",
+    "packages/extension-core/.turbo/turbo-test.log",
+    "packages/fairtable-utils/.turbo/turbo-test.log",
+    "packages/gemini-browser-skill/src/TranscriptProcessorV2.d.ts",
+    "packages/gemini-browser-skill/src/TranscriptProcessorV2.js",
+    "packages/gemini-browser-skill/src/TranscriptProcessorV3.js",
+    "packages/gemini-browser-skill/src/TranscriptProcessorV4.js",
+    "packages/infrastructure/.turbo/turbo-test.log",
+    "packages/jules-skill/.turbo/turbo-test.log",
+    "packages/mcp-skills-server/.turbo/turbo-test.log",
+    "packages/protocol-contracts/.turbo/turbo-test.log",
+    "packages/resource-registry/.turbo/turbo-test.log",
+    "packages/test-utils/.turbo/turbo-test.log",
+    "scripts/protocols/verify-twip-signed-fixtures.test.cjs"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-07-15T12:22:22.410Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-07-15T21:36:52.064Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
@@ -49,7 +73,7 @@
   ],
   "artifacts": {
     "commits": [
-      "df79b1a184dbf0432806a471d270266480cfd361"
+      "833a897e57abd7d55fd91478e1e3de11915fc5b2"
     ]
   }
 }

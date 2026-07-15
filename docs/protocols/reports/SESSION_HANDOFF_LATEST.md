@@ -1,13 +1,13 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-07-15T12:22:20.350Z`  
-Handoff ID: `4f58084d-8923-4892-bab5-7cc9d8bb32f3`
+Created At: `2026-07-15T21:36:47.371Z`  
+Handoff ID: `216c864b-e68f-4c60-ad00-79c5cc8b4647`
 
 ## Scope
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `df79b1a184dbf0432806a471d270266480cfd361`
+- Head SHA: `833a897e57abd7d55fd91478e1e3de11915fc5b2`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -17,11 +17,35 @@ Handoff ID: `4f58084d-8923-4892-bab5-7cc9d8bb32f3`
 ## Changed Paths
 - .agent/test-reports/_rolling-summary.json
 - .agent/testing-status.json
-- apps/frontend/src/data/codebase_map.json
+- .verifier/process-atlas.digest.md
+- .verifier/process-atlas.payload.json
+- .verifier/process-atlas.verify.json
+- .verifier/tnf-process-atlas.html
+- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
+- data/agent-registry/agent_capabilities.json
+- data/agent-registry/agent_relationships.json
+- data/agent-registry/agent_tags.json
+- data/agent-registry/agents.json
+- data/agent-registry/registry_summary.json
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- packages/a2a-protocol/.turbo/turbo-test.log
+- packages/common/.turbo/turbo-test.log
+- packages/extension-core/.turbo/turbo-test.log
+- packages/fairtable-utils/.turbo/turbo-test.log
+- packages/gemini-browser-skill/src/TranscriptProcessorV2.d.ts
+- packages/gemini-browser-skill/src/TranscriptProcessorV2.js
+- packages/gemini-browser-skill/src/TranscriptProcessorV3.js
+- packages/gemini-browser-skill/src/TranscriptProcessorV4.js
+- packages/infrastructure/.turbo/turbo-test.log
+- packages/jules-skill/.turbo/turbo-test.log
+- packages/mcp-skills-server/.turbo/turbo-test.log
+- packages/protocol-contracts/.turbo/turbo-test.log
+- packages/resource-registry/.turbo/turbo-test.log
+- packages/test-utils/.turbo/turbo-test.log
+- scripts/protocols/verify-twip-signed-fixtures.test.cjs
 
 ## Verification
 - privacy_guard: `pass`

@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-05-17T06:43:26.011Z",
+  "generatedAt": "2026-07-15T16:35:26.653Z",
   "totals": {
-    "agents": 120,
-    "capabilities": 279,
+    "agents": 136,
+    "capabilities": 461,
     "relationships": 5,
-    "tags": 3821,
+    "tags": 4698,
     "byType": {
       "api": 73,
       "external": 5,
-      "local": 41,
-      "mcp": 1
+      "local": 55,
+      "mcp": 3
     }
   }
 }
