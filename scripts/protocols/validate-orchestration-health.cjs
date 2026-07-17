@@ -36,24 +36,31 @@ function validateOrchestrationHealth() {
   let failed = false;
 
   dataRows.forEach((row, index) => {
-    // Basic Markdown table parsing
-    const columns = row.split('|').map(col => col.trim()).filter(col => col.length > 0);
-    
-    if (columns.length < 12) {
-      console.warn(`Warning: Row ${index + 1} seems malformed or missing the governance columns.`);
+    // Slice split('|') without dropping empty cells so trailing/leading blanks
+    // and middle empty cells stay at their original index. Trim only the value
+    // we read, not the structural token count.
+    const raw = row.split('|');
+    // Drop the leading and trailing empty strings that surround `| col | col |`.
+    const columns = raw.length >= 2 && raw[0].trim() === '' ? raw.slice(1, -1) : raw;
+    const expectedColumns = 12;
+
+    if (columns.length !== expectedColumns) {
+      console.warn(
+        `Warning: Row ${index + 1} has ${columns.length} columns (expected ${expectedColumns}); skipping governance check.`
+      );
       return;
     }
 
-    const scheduleId = columns[0];
-    const lastAudited = columns[10];
-    const challengeRationale = columns[11];
+    const scheduleId = columns[0].trim();
+    const lastAudited = columns[10].trim();
+    const challengeRationale = columns[11].trim();
 
-    if (!lastAudited || lastAudited === '') {
+    if (!lastAudited) {
       console.error(`Error: Schedule '${scheduleId}' is missing a 'Last Audited' date.`);
       failed = true;
     }
 
-    if (!challengeRationale || challengeRationale === '') {
+    if (!challengeRationale) {
       console.error(`Error: Schedule '${scheduleId}' is missing a 'Challenge Rationale'.`);
       failed = true;
     }

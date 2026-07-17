@@ -1,5 +1,5 @@
 {
-  "now": "2026-07-15T20:00:02Z",
+  "now": "2026-07-17T04:00:04Z",
   "generated_by": "tnf-process-atlas-generator",
   "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "cron": [
@@ -96,6 +96,38 @@
     {
       "role": "Master Clock (relay-core)",
       "cmd": "2976 node dist/master-clock.js"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "26616 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "26781 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "26863 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "26948 node dist/master-clock.js"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "91430 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "91467 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "91506 node /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/../node_modules/pnpm/bin/pnpm.cjs --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "91548 node dist/master-clock.js"
     },
     {
       "role": "Broker Agent (task dispatcher)",
@@ -391,7 +423,7 @@
   ],
   "summaries": {
     "cron_count": 19,
-    "live_count": 13,
+    "live_count": 21,
     "packages_count": 93,
     "apps_count": 30,
     "proto_count": 31,

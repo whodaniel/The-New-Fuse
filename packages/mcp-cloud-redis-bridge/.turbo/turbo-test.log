@@ -1,0 +1,11 @@
+
+> @the-new-fuse/mcp-cloud-redis-bridge@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/mcp-cloud-redis-bridge
+> tsx tests/scaffold.test.ts
+
+  ✓ package.json OK
+  ✓ dist/index.js exists
+  ✓ tool count
+  ✓ stdio transport
+  ✓ redis URL
+
+All scaffold checks passed.

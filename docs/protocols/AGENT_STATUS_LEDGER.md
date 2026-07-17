@@ -3,7 +3,7 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-15T21:36:47.371Z** — handoff `216c864b-e68f-4c60-ad00-79c5cc8b4647` (`833a897e57ab`).
+Updated: **2026-07-15T21:38:35.405Z** — handoff `df7ffc21-0641-421e-9865-ffc3c313e1d5` (`16531fae0451`).
 `858a32ed-09b3-4c45-8e72-b5eafb0b085b` (`47cde235c48f`).
 
 ## Next Agent Focus (read first)
@@ -25,7 +25,7 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 | Component             | Identity                               | Status                                                              |
 | --------------------- | -------------------------------------- | ------------------------------------------------------------------- |
-| BROKER-Green          | `TNF:LOCAL:AGENT:TNF:BROKER_GREEN:001` | **Restart required** — `green-channel-coordinator-service.sh start` |
+| BROKER-Green          | `TNF:LOCAL:AGENT:TNF:BROKER_GREEN:001` | Running (verified)                                                  |
 | Browser Agent         | `browser-*` + `ID#:` (deterministic)   | Extension background WS bridge                                      |
 | Claude tab            | `page-agent-*` + `ID#:`                | On Green when tab synced                                            |
 | ChatGPT tab           | `page-agent-*` + `ID#:`                | On Green; inbound confirmed                                         |
@@ -72,7 +72,7 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 ## Protocol Gaps (prioritized)
 
-1. **BROKER-Green intermittent** — must start after fleet restart
+1. **BROKER-Green intermittent** — verified started and running
 2. **Extension + relay reload mandatory** — dist-v7 + relay restart; verify with
    `curl -sS http://127.0.0.1:3007/health` (no `/handoff-lineage` route)
 3. **Master Clock sequential idNumber** — requires Redis bridge live for
@@ -190,3 +190,5 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 | 2026-07-15 | Orchestrator | Published SESSION_HANDOFF_LATEST (258ac8ff-8c3d-4260-9e7b-bfe3a62b502e) | ✅ HANDOFF_READY |
 
 | 2026-07-15 | Orchestrator | Published SESSION_HANDOFF_LATEST (216c864b-e68f-4c60-ad00-79c5cc8b4647) | ✅ HANDOFF_READY |
+
+| 2026-07-15 | Orchestrator | Published SESSION_HANDOFF_LATEST (df7ffc21-0641-421e-9865-ffc3c313e1d5) | ✅ HANDOFF_READY |

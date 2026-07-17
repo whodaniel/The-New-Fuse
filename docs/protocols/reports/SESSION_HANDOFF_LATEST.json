@@ -1,10 +1,10 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "216c864b-e68f-4c60-ad00-79c5cc8b4647",
-  "created_at": "2026-07-15T21:36:47.371Z",
+  "handoff_id": "df7ffc21-0641-421e-9865-ffc3c313e1d5",
+  "created_at": "2026-07-15T21:38:35.405Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "833a897e57abd7d55fd91478e1e3de11915fc5b2",
+  "head_sha": "16531fae0451543d86ecdc032f6c929e0d96eb6d",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [
@@ -52,7 +52,7 @@
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-07-15T21:36:52.064Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-07-15T21:38:40.802Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
@@ -73,7 +73,7 @@
   ],
   "artifacts": {
     "commits": [
-      "833a897e57abd7d55fd91478e1e3de11915fc5b2"
+      "16531fae0451543d86ecdc032f6c929e0d96eb6d"
     ]
   }
 }
