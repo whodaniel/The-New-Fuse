@@ -78,6 +78,18 @@ const PROVIDER_FAILURE_PATTERNS = [
   },
 ];
 
+/** Heartbeats / stall pings should not burn Pi provider quota. */
+function isHeartbeatOrNoise(text) {
+  const raw = String(text || '').trim();
+  if (!raw) return true;
+  if (/^TNF heartbeat\b/i.test(raw)) return true;
+  if (/\bcron-heartbeat-/i.test(raw)) return true;
+  if (/please respond with a heartbeat or acknowledgment/i.test(raw)) return true;
+  if (/\bagent_stalled\b/i.test(raw)) return true;
+  if (/^\[SYSTEM\].*heartbeat/i.test(raw)) return true;
+  return false;
+}
+
 function parseList(value) {
   if (Array.isArray(value))
     return value
@@ -675,6 +687,26 @@ class PiRedisAgent {
         msg.content = msg.payload.data.customPrompt;
         messageType = 'task'; // process it as a task
       }
+    }
+
+    const contentText = String(msg?.content || msg?.payload?.content || '').trim();
+    if (isHeartbeatOrNoise(contentText)) {
+      // ACK without calling the LLM — prevents google/nvidia spam on cron broadcasts.
+      try {
+        await this.client.send('ACK heartbeat', {
+          replyTo: msg.id,
+          type: 'acknowledgment',
+          metadata: {
+            bridge: 'pi-redis-wrapper',
+            heartbeat: true,
+            provider: CONFIG.provider || null,
+            model: CONFIG.model || null,
+          },
+        });
+      } catch {
+        // ignore ack failures
+      }
+      return;
     }
 
     const sessionKey = this.resolveSessionKey(msg);

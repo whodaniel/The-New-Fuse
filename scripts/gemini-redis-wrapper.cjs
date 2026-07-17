@@ -79,9 +79,47 @@ function argsIncludeModel(args) {
 }
 
 function isRetryableProviderFailure(text) {
-  return /\b(429|rate.?limit|resource exhausted|model_capacity_exhausted|capacity available|overloaded|service unavailable|503)\b/i.test(
+  return /\b(429|rate.?limit|resource exhausted|model_capacity_exhausted|capacity available|overloaded|service unavailable|503|quota|quota.?exceeded|individual quota|auth|unauthorized|forbidden|api.?key|no api key)\b/i.test(
     String(text || '')
   );
+}
+
+function isHardProviderFailure(text) {
+  return /\b(quota|quota.?exceeded|individual quota|unauthorized|forbidden|api.?key|no api key|authentication|permission.?denied)\b/i.test(
+    String(text || '')
+  );
+}
+
+function isHeartbeatOrNoise(text) {
+  const value = String(text || '').trim();
+  if (!value) return true;
+  return /\b(tnf heartbeat|cron-heartbeat|heartbeat|please respond with a heartbeat|agent_stalled|self.?prompt)\b/i.test(
+    value
+  );
+}
+
+const CIRCUIT = {
+  openUntil: 0,
+  reason: '',
+  lastSignalAt: 0,
+};
+
+function circuitOpen() {
+  return Date.now() < CIRCUIT.openUntil;
+}
+
+function openCircuit(reason, minutes = Number(process.env.TNF_GEMINI_COOLDOWN_MINUTES || 180)) {
+  const ms = Math.max(5, Number(minutes) || 180) * 60 * 1000;
+  CIRCUIT.openUntil = Date.now() + ms;
+  CIRCUIT.reason = String(reason || 'provider failure').slice(0, 240);
+  console.warn(
+    `[gemini-wrapper] circuit open for ${Math.round(ms / 60000)}m: ${CIRCUIT.reason}`
+  );
+}
+
+function circuitBlockedResponse() {
+  const mins = Math.max(1, Math.ceil((CIRCUIT.openUntil - Date.now()) / 60000));
+  return `Gemini temporarily disabled (${mins}m remaining): ${CIRCUIT.reason || 'provider failure'}. Use nvidia/anthropic via harness failover.`;
 }
 
 // ============================================================================
@@ -161,6 +199,10 @@ class GeminiCLIInterface {
       try {
         const response = await this.promptOnce(text, extraArgs, model);
         lastResponse = response;
+        if (isHardProviderFailure(response)) {
+          openCircuit(response);
+          return circuitBlockedResponse();
+        }
         if (!isRetryableProviderFailure(response) || attempts.length === 1) {
           return response;
         }
@@ -169,7 +211,12 @@ class GeminiCLIInterface {
         );
       } catch (error) {
         lastError = error;
-        if (!isRetryableProviderFailure(error?.message || '') || attempts.length === 1) {
+        const errText = error?.message || String(error || '');
+        if (isHardProviderFailure(errText)) {
+          openCircuit(errText);
+          return circuitBlockedResponse();
+        }
+        if (!isRetryableProviderFailure(errText) || attempts.length === 1) {
           throw error;
         }
         console.warn(`[gemini-wrapper] ${model || 'configured model'} failed: ${error.message}`);
@@ -321,8 +368,79 @@ class GeminiRedisAgent {
   /**
    * Set up message handlers
    */
+  async handleIncoming(msg, messageType) {
+    const content = String(msg?.content || '');
+    if (isHeartbeatOrNoise(content)) {
+      await this.client.send('gemini:ack heartbeat (no LLM)', {
+        replyTo: msg.id,
+        type: 'response',
+        metadata: {
+          heartbeatAck: true,
+          processedBy: CONFIG.agentName,
+          platform: CONFIG.platform,
+          messageType,
+        },
+      });
+      return;
+    }
+
+    if (circuitOpen()) {
+      await this.client.send(circuitBlockedResponse(), {
+        replyTo: msg.id,
+        type: 'response',
+        metadata: {
+          circuitOpen: true,
+          processedBy: CONFIG.agentName,
+          platform: CONFIG.platform,
+          messageType,
+        },
+      });
+      return;
+    }
+
+    console.log(`\n📥 Received ${messageType} from ${msg.from?.agentName || 'unknown'}:`);
+    console.log(`   ${content.substring(0, 200)}`);
+
+    let promptText = content;
+    if (messageType === 'event' && msg.payload?.eventType === 'wake_ping' && msg.payload?.data?.customPrompt) {
+      promptText = msg.payload.data.customPrompt;
+    }
+
+    const response = await this.gemini.prompt(promptText);
+
+    if (isHardProviderFailure(response) || isHardProviderFailure(CIRCUIT.reason)) {
+      try {
+        const now = Date.now();
+        if (now - CIRCUIT.lastSignalAt > 60_000) {
+          CIRCUIT.lastSignalAt = now;
+          await publishProviderFailureSignal(this.client, {
+            channel: CONFIG.modelWatchdogChannel,
+            sourceAgent: CONFIG.agentName,
+            agentRole: CONFIG.agentRole,
+            platform: CONFIG.platform,
+            provider: 'google',
+            model: CONFIG.geminiModel,
+            category: 'auth',
+            message: String(response || CIRCUIT.reason || 'gemini provider failure'),
+          });
+        }
+      } catch (_) {
+        // ignore signal publish failures
+      }
+    }
+
+    await this.client.send(response, {
+      replyTo: msg.id,
+      type: 'response',
+      metadata: {
+        processedBy: CONFIG.agentName,
+        platform: CONFIG.platform,
+        messageType,
+      },
+    });
+  }
+
   setupHandlers() {
-    // Handle events (like wake_ping from the orchestrator)
     this.client.onMessage('event', async (msg) => {
       if (
         msg.payload?.eventType === 'wake_ping' &&
@@ -330,74 +448,19 @@ class GeminiRedisAgent {
       ) {
         return;
       }
-      console.log(`\n👑 Received event from ${msg.from.agentName}:`);
-      console.log(`   ${msg.content.substring(0, 200)}...`);
-
-      let promptText = msg.content;
-      if (msg.payload?.eventType === 'wake_ping' && msg.payload?.data?.customPrompt) {
-        promptText = msg.payload.data.customPrompt;
-      }
-
-      const response = await this.gemini.prompt(promptText);
-
-      await this.client.send(response, {
-        replyTo: msg.id,
-        type: 'response',
-        metadata: {
-          wasEvent: true,
-          processedBy: CONFIG.agentName,
-          platform: CONFIG.platform,
-        },
-      });
+      await this.handleIncoming(msg, 'event');
     });
 
-    // Handle broker-dispatched task envelopes.
     this.client.onMessage('task', async (msg) => {
-      console.log(`\n🎯 Received task from ${msg.from.agentName}:`);
-      console.log(`   ${msg.content.substring(0, 200)}...`);
-
-      const response = await this.gemini.prompt(msg.content);
-
-      await this.client.send(response, {
-        replyTo: msg.id,
-        type: 'response',
-        metadata: {
-          wasTask: true,
-          processedBy: CONFIG.agentName,
-          platform: CONFIG.platform,
-        },
-      });
+      await this.handleIncoming(msg, 'task');
     });
 
-    // Handle direct messages
     this.client.onMessage('message', async (msg) => {
-      console.log(`\n📨 Received message from ${msg.from.agentName}:`);
-      console.log(`   ${msg.content}`);
-
-      // Process through Gemini
-      const response = await this.gemini.prompt(msg.content);
-
-      // Send response back
-      await this.client.send(response, {
-        replyTo: msg.id,
-        type: 'response',
-      });
+      await this.handleIncoming(msg, 'message');
     });
 
-    // Handle commands
     this.client.onMessage('command', async (msg) => {
-      console.log(`\n📋 Received command from ${msg.from.agentName}:`);
-      console.log(`   ${msg.content}`);
-
-      // Process through Gemini
-      const response = await this.gemini.prompt(msg.content);
-
-      // Send response back
-      await this.client.send(response, {
-        replyTo: msg.id,
-        type: 'response',
-        metadata: { wasCommand: true },
-      });
+      await this.handleIncoming(msg, 'command');
     });
   }
 
@@ -420,11 +483,13 @@ class GeminiRedisAgent {
       });
 
       rl.on('line', async (line) => {
-        if (line.trim()) {
-          // Local test: send to Gemini and broadcast
-          const response = await this.gemini.prompt(line.trim());
-          await this.client.send(response);
+        if (!line.trim()) return;
+        if (circuitOpen()) {
+          console.log(circuitBlockedResponse());
+          return;
         }
+        const response = await this.gemini.prompt(line.trim());
+        await this.client.send(response);
       });
     });
   }
@@ -445,6 +510,16 @@ class GeminiRedisAgent {
 // ============================================================================
 
 async function main() {
+  if (
+    process.env.GEMINI_DISABLED === '1' ||
+    process.env.TNF_SKIP_GEMINI_WRAPPER === '1'
+  ) {
+    console.log(
+      '[gemini-wrapper] skipped: GEMINI_DISABLED/TNF_SKIP_GEMINI_WRAPPER=1 (primary provider is not google)'
+    );
+    process.exit(0);
+  }
+
   const agent = new GeminiRedisAgent();
   await agent.start();
 }

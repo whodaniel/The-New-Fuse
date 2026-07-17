@@ -159,12 +159,25 @@ tnf menu --full
 
 ```bash
 tnf boot --plan
+tnf boot --plan --with-claude --force-onboard
+tnf boot --non-interactive --no-attach-agent
+tnf boot --with-claude
 tnf boot
 tnf onboard
 tnf doctor
 tnf state show
 tnf state show --json
 tnf handoff show
+```
+
+`tnf boot` and `tnf boot --plan` share one pipeline
+(`packages/tnf-cli/src/boot/pipeline.ts`). Boot writes
+`.agent/runtime-logs/cli-boot.latest.json`. Profile arg is a receipt label
+(default `goldberg`). Claude wrapper is opt-in via `--with-claude` (`--all` does
+not start it). Turn Zero onboard is skipped by default after ProtocolInterceptor
+preflight; use `--force-onboard` to re-run `scripts/tnf-onboard.cjs`.
+
+```bash
 tnf handoff emit --auto-verify
 tnf handoff validate
 tnf protocol validate

@@ -121,13 +121,15 @@ test('the validator regex set captures personal absolute paths and the fixed leg
 test('scanRoots does not include any path with a personal absolute home', () => {
   // If the validator itself leaks a personal path in its scanRoots list,
   // every single run would be a flagged-leak. Confirm it does not.
+  // Use REGS (char-code-built) so this test file itself does not re-introduce
+  // the forbidden literals that the validator scans for.
   const scriptContent = fs.readFileSync(SCRIPT, 'utf8');
   assert.ok(
-    !scriptContent.includes('/Users/danielgoldberg'),
+    !scriptContent.includes(REGS.userPersonal),
     'validator must not invoke its own forbidden pattern in scanRoots'
   );
   assert.ok(
-    !scriptContent.includes('~/Desktop/A1-Inter-LLM-Com'),
+    !scriptContent.includes(REGS.desktopPersonal),
     'validator must not invoke desktop-A1 in scanRoots'
   );
   assert.ok(

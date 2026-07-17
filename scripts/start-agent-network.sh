@@ -41,6 +41,9 @@ WS_BRIDGE_PORT=3005
 PID_FILE="$SCRIPT_DIR/.agent-network-pids"
 WS_BRIDGE_LAUNCHD_LABEL="com.thenewfuse.redis-ws-bridge"
 WS_BRIDGE_LAUNCHD_PLIST="$HOME/Library/LaunchAgents/${WS_BRIDGE_LAUNCHD_LABEL}.plist"
+HARNESS_CONTEXT_ENV="${TNF_HARNESS_CONTEXT_ENV:-$PROJECT_ROOT/.agent/runtime-state/harness-context.env}"
+HARNESS_CONTEXT_RESOLVER="$PROJECT_ROOT/scripts/runtime/resolve-harness-context.cjs"
+AGENT_WRAPPER_LAUNCHER="$PROJECT_ROOT/scripts/runtime/launch-agent-wrapper.sh"
 
 # =============================================================================
 # FUNCTIONS
@@ -53,6 +56,48 @@ print_banner() {
     echo "║               Multi-Agent AI Orchestration System                  ║"
     echo "╚═══════════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
+}
+
+# Refresh adaptive harness context (models/providers/hosts for this user/env/time).
+# Terminal tabs source harness-context.env so wrappers do not inherit stale defaults.
+ensure_harness_context() {
+    local force_flag="${TNF_HARNESS_CONTEXT_FORCE:-}"
+    local args=()
+    if [[ "${force_flag}" == "1" || "${force_flag}" == "true" ]]; then
+        args+=(--force)
+    fi
+    if [[ -f "$HARNESS_CONTEXT_RESOLVER" ]]; then
+        echo -e "${BLUE}[0/4]${NC} Resolving adaptive harness context..."
+        if node "$HARNESS_CONTEXT_RESOLVER" "${args[@]}" ; then
+            if [[ -f "$HARNESS_CONTEXT_ENV" ]]; then
+                # shellcheck disable=SC1090
+                set -a
+                # shellcheck disable=SC1091
+                source "$HARNESS_CONTEXT_ENV"
+                set +a
+                echo -e "  ${GREEN}✓${NC} Context loaded: profile=${TNF_PROFILE:-?} model=${TNF_WORKING_MODEL:-?} api=${TNF_API_BASE:-?}"
+            else
+                echo -e "  ${YELLOW}!${NC} Resolver ran but env file missing: $HARNESS_CONTEXT_ENV"
+            fi
+        else
+            echo -e "  ${YELLOW}!${NC} Harness context resolver failed; Terminals may use wrapper defaults"
+        fi
+    else
+        echo -e "  ${YELLOW}!${NC} Missing $HARNESS_CONTEXT_RESOLVER"
+    fi
+}
+
+# Build a safe single-line AppleScript command that uses the adaptive launcher.
+terminal_launch_cmd() {
+    local wrapper_path="$1"
+    shift
+    local extras=("$@")
+    local cmd="$AGENT_WRAPPER_LAUNCHER $(printf '%q' "$wrapper_path")"
+    local extra
+    for extra in "${extras[@]}"; do
+      cmd+=" $(printf '%q' "$extra")"
+    done
+    printf '%s' "$cmd"
 }
 
 print_help() {
@@ -268,19 +313,20 @@ start_antigravity() {
 
     # Run in a new terminal or background
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS - open in new Terminal tab
-        osascript -e "tell application \"Terminal\" to do script \"export TNF_ONBOARDED=1 && cd '$PROJECT_ROOT' && node '$SCRIPT_DIR/antigravity-redis-wrapper.cjs'\""
+        # macOS - open in new Terminal tab via adaptive launcher
+        local launch_cmd
+        launch_cmd="$(terminal_launch_cmd "$SCRIPT_DIR/antigravity-redis-wrapper.cjs")"
+        osascript -e "tell application \"Terminal\" to do script \"$launch_cmd\""
         wait_for_wrapper "Antigravity" "antigravity-redis-wrapper.cjs" 20
     else
         # Linux - run in background with logs
-        node "$SCRIPT_DIR/antigravity-redis-wrapper.cjs" > /tmp/antigravity.log 2>&1 &
+        "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/antigravity-redis-wrapper.cjs" > /tmp/antigravity.log 2>&1 &
         AG_PID=$!
         echo $AG_PID >> "$PID_FILE"
         echo -e "  ${GREEN}✓${NC} Antigravity started (PID: $AG_PID)"
         echo -e "  ${CYAN}ℹ${NC}  Logs: /tmp/antigravity.log"
     fi
 }
-
 start_agent_wrapper() {
     local name=$1
     local script=$2
@@ -297,14 +343,16 @@ start_agent_wrapper() {
 
     local agent_id="tnf-${script%.*}"
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        osascript -e "tell application \"Terminal\" to do script \"export TNF_ONBOARDED=1 && export AGENT_ID='$agent_id' && cd '$PROJECT_ROOT' && node '$SCRIPT_DIR/$script'\""
+        local launch_cmd
+        launch_cmd="$(terminal_launch_cmd "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id")"
+        osascript -e "tell application \"Terminal\" to do script \"$launch_cmd\""
         wait_for_wrapper "$name" "$script" 25
     else
-        bash -c "source ~/.zshrc && source ~/.tnf-claude-env && AGENT_ID='$agent_id' node '$SCRIPT_DIR/$script' > '/tmp/$(echo "$name" | tr A-Z a-z).log' 2>&1 & echo \$! >> '$PID_FILE'"
+        "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id" > "/tmp/$(echo "$name" | tr A-Z a-z).log" 2>&1 &
+        echo $! >> "$PID_FILE"
         echo -e "  ${GREEN}✓${NC} $name started (headless fallback)"
     fi
 }
-
 stop_all() {
     echo -e "${YELLOW}Stopping all agent network components...${NC}"
 
@@ -468,6 +516,9 @@ print_banner
 rm -f "$PID_FILE"
 touch "$PID_FILE"
 
+# Adaptive context before any Terminal / wrapper launch
+ensure_harness_context
+
 # Start core components
 start_redis
 start_ws_bridge
@@ -479,7 +530,15 @@ if [ "$START_CLAUDE" = true ]; then
 fi
 
 if [ "$START_GEMINI" = true ]; then
-    start_agent_wrapper "Gemini" "gemini-redis-wrapper.cjs"
+    # Skip Gemini when harness resolved a non-Google primary (quota/failover).
+    # Override with TNF_FORCE_GEMINI_WRAPPER=1 if you still want the wrapper online.
+    if [ "${TNF_FORCE_GEMINI_WRAPPER:-0}" = "1" ]; then
+        start_agent_wrapper "Gemini" "gemini-redis-wrapper.cjs"
+    elif [ "${TNF_SKIP_GEMINI_WRAPPER:-0}" = "1" ] || [ "${GEMINI_DISABLED:-0}" = "1" ]; then
+        echo -e "${YELLOW}⏭️  Skipping Gemini wrapper (harness: non-Google primary / GEMINI_DISABLED)${NC}"
+    else
+        start_agent_wrapper "Gemini" "gemini-redis-wrapper.cjs"
+    fi
 fi
 
 if [ "$START_JULES" = true ]; then

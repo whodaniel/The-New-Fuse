@@ -11,6 +11,14 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
+import {
+  createBootPipeline,
+  printBootPlan,
+  toBootPlan,
+  writeBootReceipt,
+  type BootReceipt,
+  type BootStepResult,
+} from './boot/pipeline.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
@@ -4025,151 +4033,6 @@ function logRedisUnavailable(commandHint: string): never {
   process.exit(1);
 }
 
-type BootPlanStep = {
-  label: string;
-  critical: boolean;
-  launches: string[];
-  notes?: string[];
-};
-
-function buildBootPlan(nonInteractive?: boolean): BootPlanStep[] {
-  return [
-    {
-      label: 'Turn Zero onboarding surface',
-      critical: true,
-      launches: ['node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000'],
-      notes: [
-        'Prints canonical state and the raw-agent prompt before boot auth or runtime launch.',
-      ],
-    },
-    {
-      label: 'Port preflight',
-      critical: false,
-      launches: ['node scripts/tnf-ports.cjs preflight'],
-      notes: [
-        'Occupied TNF runtimes are allowed only when their health endpoints match the expected service.',
-        'Use --strict-gates or FACTORY_BOOT_PORT_PREFLIGHT_STRICT=true to fail on other occupied required ports.',
-      ],
-    },
-    {
-      label: 'Verifying environment variables',
-      critical: false,
-      launches: ['bash scripts/validate-env.sh'],
-    },
-    {
-      label: 'Mounting volumes',
-      critical: true,
-      launches: [
-        'mkdir -p .agent/runtime-state .agent/runtime-logs .agent/test-reports data/agent-registry',
-      ],
-    },
-    {
-      label: 'MCP health check',
-      critical: false,
-      launches: ['node scripts/mcp-health-check.cjs'],
-      notes: ['Warning-only local service misses are non-fatal unless TNF_MCP_HEALTH_STRICT=1.'],
-    },
-    {
-      label: 'Directive rotation scheduler',
-      critical: false,
-      launches: ['pnpm run factory:supercycle (detached)'],
-    },
-    {
-      label: 'LLM provider tester',
-      critical: false,
-      launches: ['node scripts/swarm/llm-provider-tester.cjs (detached)'],
-    },
-    {
-      label: 'Model fallback / ZeroClaw sandbox wake',
-      critical: false,
-      launches: ['node scripts/orchestrator/zeroclaw-boot.cjs'],
-      notes: ['CloudRuntime wake-up is optional when cloud_runtime CLI is absent.'],
-    },
-    {
-      label: 'Handoff matrix',
-      critical: false,
-      launches: ['node scripts/RelayHealthCheck.cjs when present'],
-    },
-    {
-      label: 'Platform gateways / relay factory',
-      critical: false,
-      launches: [
-        'bash scripts/orchestrator/factory-boot.sh',
-        'packages/relay-core/dist/standalone-relay.js',
-        'packages/relay-core/dist/master-clock.js',
-        'packages/relay-core/dist/broker-agent.js',
-        'packages/relay-core/dist/director-agent.js',
-        'scripts/swarm/project-planner.cjs',
-        '@the-new-fuse/workflow-engine src/orchestrator/start.ts',
-        'scripts/orchestrator/factory-supervisor.sh',
-      ],
-    },
-    {
-      label: 'Agent swarm',
-      critical: true,
-      launches: [
-        'Redis server',
-        'scripts/redis-ws-bridge.cjs',
-        'scripts/antigravity-redis-wrapper.cjs',
-        'scripts/claude-redis-wrapper.cjs',
-        'scripts/gemini-redis-wrapper.cjs',
-        'scripts/jules-redis-wrapper.cjs',
-        'scripts/pi-redis-wrapper.cjs',
-        'scripts/model-watchdog-failover-consumer.cjs',
-      ],
-      notes: [
-        'macOS Terminal tab launches are verified by process check before success is printed.',
-      ],
-    },
-    {
-      label: 'OpenClaw MCP/client surface',
-      critical: false,
-      launches: ['node scripts/tnf-start-ai.cjs openclaw'],
-      notes: ['If openclaw CLI is absent, boot provisions MCP config with --no-launch.'],
-    },
-    {
-      label: 'Hermes operator',
-      critical: false,
-      launches: ['hermes --daemon (detached)'],
-    },
-    {
-      label: 'Browser control panel',
-      critical: false,
-      launches: nonInteractive
-        ? ['skipped by --non-interactive']
-        : ['open https://thenewfuse.com/health'],
-    },
-    {
-      label: 'System health verification',
-      critical: false,
-      launches: ['bash scripts/system-health-verification.sh'],
-    },
-    {
-      label: 'Interactive TNF Agent attach',
-      critical: false,
-      launches: nonInteractive
-        ? ['skipped by --non-interactive']
-        : ['start TNF Agent operator lane when stdin is a TTY'],
-      notes: ['Use --no-attach-agent to leave the shell prompt after boot.'],
-    },
-  ];
-}
-
-function printBootPlan(name: string, nonInteractive?: boolean): void {
-  console.log(chalk.bold.cyan(`\nTNF Boot Plan: ${name}\n`));
-  for (const [index, step] of buildBootPlan(nonInteractive).entries()) {
-    const critical = step.critical ? chalk.red('critical') : chalk.yellow('warning-only');
-    console.log(`${index + 1}. ${chalk.bold(step.label)} (${critical})`);
-    for (const launch of step.launches) {
-      console.log(`   - ${launch}`);
-    }
-    for (const note of step.notes || []) {
-      console.log(chalk.dim(`   note: ${note}`));
-    }
-  }
-  console.log('');
-}
-
 type AutonomousSessionState = {
   continuePending: boolean;
   handoffTaskIndex: number;
@@ -4640,7 +4503,11 @@ program
   .command('boot')
   .alias('boor')
   .description('Master entry point to boot the entire TNF stack')
-  .argument('[name]', 'Profile/Instance name to boot', 'goldberg')
+  .argument(
+    '[name]',
+    'Profile/instance label written into boot receipt (default: goldberg)',
+    'goldberg'
+  )
   .option(
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
@@ -4650,6 +4517,19 @@ program
   .option('--plan', 'Print the boot launch graph without starting processes')
   .option('--strict-gates', 'Treat all boot step failures as fatal')
   .option('--skip-env-validation', 'Skip template environment validation step')
+  .option(
+    '--force-onboard',
+    'Re-run scripts/tnf-onboard.cjs even though ProtocolInterceptor already ran Turn Zero'
+  )
+  .option('--with-claude', 'Also start the Claude Redis wrapper (not included in --all by default)')
+  .option(
+    '--require-core',
+    'Treat factory + health verification as critical (implied by --strict-gates)'
+  )
+  .option(
+    '--autonomous',
+    'After stack bring-up, activate tnf alive + harness continuity (anti-stall)'
+  )
   .action(
     async (
       name: string,
@@ -4660,14 +4540,47 @@ program
         plan?: boolean;
         strictGates?: boolean;
         skipEnvValidation?: boolean;
+        forceOnboard?: boolean;
+        withClaude?: boolean;
+        requireCore?: boolean;
+        autonomous?: boolean;
       }
     ) => {
       try {
+        const bootOptions = {
+          profile: name,
+          nonInteractive: options.nonInteractive,
+          attachAgent: options.attachAgent,
+          strictGates: options.strictGates,
+          skipEnvValidation: options.skipEnvValidation,
+          forceOnboard: options.forceOnboard,
+          // Default: skip redundant onboard — ProtocolInterceptor already ran Turn Zero.
+          skipOnboard: !options.forceOnboard,
+          withClaude: options.withClaude,
+          requireCore: options.requireCore,
+          autonomous: options.autonomous,
+        };
+
+        const pipeline = createBootPipeline(
+          {
+            repoRoot,
+            runCommand,
+            findExecutableOnPath,
+          },
+          bootOptions
+        );
+
         if (options.plan) {
-          printBootPlan(name, options.nonInteractive);
+          printBootPlan(name, toBootPlan(pipeline), {
+            nonInteractive: options.nonInteractive,
+            withClaude: options.withClaude,
+            forceOnboard: options.forceOnboard,
+            requireCore: options.requireCore || options.strictGates,
+            autonomous: options.autonomous,
+          });
           return;
         }
-        await runTurnZeroOnboardSurface();
+
         requireSuperAdmin(options, 'boot');
         console.log(chalk.bold.cyan(`\n🚀 Booting TNF Stack: ${chalk.yellow(name)}\n`));
         if (options.nonInteractive) {
@@ -4676,264 +4589,84 @@ program
         if (options.strictGates) {
           console.log(chalk.dim('Gate mode: strict'));
         }
-
-        type BootStep = {
-          label: string;
-          critical: boolean;
-          action: () => Promise<void>;
-        };
-
-        const steps: BootStep[] = [
-          {
-            label: 'Checking port preflight',
-            critical: false,
-            action: async () => {
-              const args = ['scripts/tnf-ports.cjs', 'preflight'];
-              if (options.strictGates) args.push('--strict');
-              await runCommand('node', args);
-            },
-          },
-          {
-            label: 'Verifying environment variables',
-            critical: false,
-            action: async () => {
-              if (options.skipEnvValidation) {
-                console.log(chalk.dim('   Skipped (--skip-env-validation)'));
-                return;
-              }
-              await runCommand('bash', ['scripts/validate-env.sh']);
-            },
-          },
-          {
-            label: 'Mounting volumes (ensuring directories)',
-            critical: true,
-            action: async () => {
-              const dirs = [
-                '.agent/runtime-state',
-                '.agent/runtime-logs',
-                '.agent/test-reports',
-                'data/agent-registry',
-              ];
-              for (const dir of dirs) {
-                if (!fs.existsSync(path.join(repoRoot, dir))) {
-                  fs.mkdirSync(path.join(repoRoot, dir), { recursive: true });
-                  console.log(chalk.dim(`   Created ${dir}`));
-                }
-              }
-            },
-          },
-          {
-            label: 'Starting LLM health monitor',
-            critical: false,
-            action: async () => {
-              await runCommand('node', ['scripts/mcp-health-check.cjs']);
-            },
-          },
-          {
-            label: 'Starting directive rotation scheduler',
-            critical: false,
-            action: async () => {
-              // Run supercycle flywheel in background if not already running
-              await runCommand('pnpm', ['run', 'factory:supercycle'], { isBackground: true });
-            },
-          },
-          {
-            label: 'Starting LLM provider tester agent',
-            critical: false,
-            action: async () => {
-              // Run tester agent in background to continuously cycle through API keys and ensure viability
-              await runCommand('node', ['scripts/swarm/llm-provider-tester.cjs'], {
-                isBackground: true,
-              });
-            },
-          },
-          {
-            label: 'Starting model fallback chain',
-            critical: false,
-            action: async () => {
-              await runCommand('node', ['scripts/orchestrator/zeroclaw-boot.cjs']);
-            },
-          },
-          {
-            label: 'Initializing handoff matrix',
-            critical: false,
-            action: async () => {
-              // The session-handoff-gate fails whenever critical-path files
-              // (apps/, packages/, docs/protocols/, .env.example, .verifier/
-              // ...) are present in HEAD..@{u} but the three triage artifacts
-              // (LIVING_STATE.md, SESSION_HANDOFF_LATEST.{json,md},
-              // AGENT_STATUS_LEDGER.md) have not been re-staged. On a fresh
-              // boot that is the *normal* case — the previous session ended
-              // with critical changes checked in but no fresh handoff
-              // artifact emitted.
-              //
-              // First attempt: emit a fresh handoff via the canonical
-              // turn-end script. If that succeeds, re-run the gate. If the
-              // gate still fails, downgrade to a warning so the operator
-              // is not blocked from booting for a non-fatal liveness check.
-              const ghArgs = ['scripts/protocols/enforce-session-handoff.cjs', '--mode=ci'];
-              const teArgs = ['scripts/turn-end.cjs', '--no-stage'];
-              const runGate = () => runCommand('node', ghArgs);
-              let gateOk = false;
-              try {
-                await runCommand('node', teArgs);
-              } catch (turnEndErr: any) {
-                const msg = turnEndErr?.message ?? String(turnEndErr ?? 'unknown');
-                console.log(chalk.dim(`   [handoff-matrix] turn-end preflight skipped: ${msg}`));
-              }
-              try {
-                await runGate();
-                gateOk = true;
-              } catch (gateErr: any) {
-                const msg = gateErr?.message ?? String(gateErr ?? 'unknown');
-                console.log(chalk.yellow(`   [handoff-matrix] gate warning (non-fatal): ${msg}`));
-                console.log(
-                  chalk.dim(
-                    '   Run `pnpm run validate:session-handoff` to resolve; boot continues.'
-                  )
-                );
-              }
-              void gateOk;
-            },
-          },
-          {
-            label: 'Starting platform gateways',
-            critical: false,
-            action: async () => {
-              await runCommand('bash', ['scripts/orchestrator/factory-boot.sh'], {
-                env: {
-                  FACTORY_BOOT_REDIS_FAIL_OPEN: options.strictGates ? 'false' : 'true',
-                  FACTORY_BOOT_PORT_PREFLIGHT_STRICT: options.strictGates ? 'true' : 'false',
-                },
-              });
-            },
-          },
-          {
-            label: 'Booting agent swarm',
-            critical: true,
-            action: async () => {
-              await runCommand('bash', ['scripts/start-agent-network.sh', '--all']);
-            },
-          },
-          {
-            label: 'Starting OpenClaw gateway',
-            critical: false,
-            action: async () => {
-              const args = ['scripts/tnf-start-ai.cjs', 'openclaw'];
-              if (options.strictGates) args.push('--require-doctor');
-              if (options.nonInteractive || !findExecutableOnPath('openclaw')) {
-                args.push('--no-launch');
-                if (!findExecutableOnPath('openclaw')) {
-                  console.log(
-                    chalk.dim(
-                      '   OpenClaw CLI not found; provisioning MCP config without launching client'
-                    )
-                  );
-                }
-              }
-              await runCommand('node', args);
-            },
-          },
-          {
-            label: 'Starting Hermes operator agent',
-            critical: false,
-            action: async () => {
-              // Spawn hermes in detached background mode
-              await runCommand('hermes', ['--daemon'], { isBackground: true });
-            },
-          },
-          {
-            label: 'Bringing up browser control panel',
-            critical: false,
-            action: async () => {
-              if (options.nonInteractive) {
-                console.log(chalk.dim('   Skipped (--non-interactive)'));
-                return;
-              }
-              // DYNAMIC DISPATCH: was a static no-op printing docs lines.
-              // The real launcher is `scripts/local-ui/tnf-forefront-boot.cjs`
-              // (reachable via `tnf forefront`); we run it directly to avoid
-              // round-tripping through commander and to forward flags cleanly
-              // so the operator can chain `--tauri`, `--skip-relay`, etc.
-              const bootScript = path.join(repoRoot, 'scripts/local-ui/tnf-forefront-boot.cjs');
-              if (!fs.existsSync(bootScript)) {
-                // Truly absent in this checkout — surface the historical docs
-                // notice so the user knows which commands ARE available even
-                // though the bootstrap is unavailable. This replaces the prior
-                // static 3-line stub that always printed regardless.
-                console.log(
-                  chalk.dim(
-                    '   Forefront bootstrap script not found at scripts/local-ui/tnf-forefront-boot.cjs'
-                  )
-                );
-                console.log(chalk.cyan('   Manually launch any of:'));
-                console.log(
-                  chalk.cyan('     tnf forefront       (web UI + relay + browser auto-open)')
-                );
-                console.log(chalk.cyan('     tnf local-ui        (web UI only)'));
-                console.log(chalk.cyan('     tnf tui             (TNF TUI agent CLI)'));
-                console.log(chalk.cyan('     tnf local-ui --tauri  (native Tauri shell)'));
-                return;
-              }
-              try {
-                await runCommand('node', [bootScript], { env: { TNF_BOOT_PARENT: 'cli.boot' } });
-                // Receipt is canonicalized at .agent/runtime-logs/forefront-boot.latest.json —
-                // the same path `tnf forefront status` reads from. We append a small
-                // provenance note so operators auditing the boot can trace which
-                // launcher ran without having to read CLI history.
-                const receiptPath = path.join(
-                  repoRoot,
-                  '.agent/runtime-logs/forefront-boot.latest.json'
-                );
-                if (fs.existsSync(receiptPath)) {
-                  try {
-                    const receipt = JSON.parse(fs.readFileSync(receiptPath, 'utf8'));
-                    receipt.launchedVia = receipt.launchedVia
-                      ? `${receipt.launchedVia},cli.boot`
-                      : 'cli.boot';
-                    receipt.lastCliBootAt = new Date().toISOString();
-                    fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2));
-                  } catch {
-                    // Receipt is owned by the script — don't fail boot over it.
-                  }
-                }
-              } catch (fe: any) {
-                const msg = fe?.message ?? String(fe ?? 'unknown');
-                console.log(
-                  chalk.yellow(
-                    `   [browser-control-panel] foreground boot failed: ${msg} — falling back to manual commands`
-                  )
-                );
-                console.log(chalk.cyan('   Manually launch any of:'));
-                console.log(chalk.cyan('     tnf forefront'));
-                console.log(chalk.cyan('     tnf local-ui'));
-                console.log(chalk.cyan('     tnf tui'));
-                throw new Error(msg); // surface to operator via warning collector
-              }
-            },
-          },
-          {
-            label: 'Executing self-test and reporting status',
-            critical: false,
-            action: async () => {
-              await runCommand('bash', ['scripts/system-health-verification.sh']);
-            },
-          },
-        ];
+        if (options.requireCore) {
+          console.log(chalk.dim('Core mode: factory + health are critical'));
+        }
+        if (options.autonomous) {
+          console.log(chalk.dim('Continuity: alive + harness will arm after stack'));
+        }
+        if (options.withClaude) {
+          console.log(chalk.dim('Agents: Claude wrapper enabled'));
+        }
+        if (options.forceOnboard) {
+          console.log(chalk.dim('Onboard: forcing tnf-onboard.cjs re-run'));
+        }
 
         const warnings: string[] = [];
-        for (let i = 0; i < steps.length; i++) {
-          const step = steps[i];
-          process.stdout.write(chalk.white(`[${i + 1}/${steps.length}] ${step.label}... `));
+        const stepResults: BootStepResult[] = [];
+
+        for (let i = 0; i < pipeline.length; i++) {
+          const step = pipeline[i];
+          // Attach is TTY-gated after the receipt is written.
+          if (step.id === 'attach-agent') {
+            stepResults.push({
+              id: step.id,
+              label: step.label,
+              status: 'skipped',
+              critical: step.critical,
+              durationMs: 0,
+            });
+            continue;
+          }
+
+          process.stdout.write(chalk.white(`[${i + 1}/${pipeline.length}] ${step.label}... `));
+          const started = Date.now();
           try {
             await step.action();
             process.stdout.write(chalk.green('OK\n'));
-          } catch (err: any) {
+            stepResults.push({
+              id: step.id,
+              label: step.label,
+              status: 'ok',
+              critical: step.critical,
+              durationMs: Date.now() - started,
+            });
+          } catch (err: unknown) {
             process.stdout.write(chalk.red('FAILED\n'));
-            const message = err?.message || String(err);
+            const message = err instanceof Error ? err.message : String(err);
             const isFatal = Boolean(options.strictGates) || step.critical;
+            stepResults.push({
+              id: step.id,
+              label: step.label,
+              status: 'failed',
+              critical: step.critical,
+              error: message,
+              durationMs: Date.now() - started,
+            });
             if (isFatal) {
               console.error(chalk.red(`   Error in step "${step.label}": ${message}`));
+              const receipt: BootReceipt = {
+                source: 'cli.boot',
+                profile: name,
+                timestamp: new Date().toISOString(),
+                strictGates: Boolean(options.strictGates),
+                nonInteractive: Boolean(options.nonInteractive),
+                attachAgent: options.attachAgent !== false,
+                withClaude: Boolean(options.withClaude),
+                forceOnboard: Boolean(options.forceOnboard),
+                skipOnboard: bootOptions.skipOnboard,
+                skipEnvValidation: Boolean(options.skipEnvValidation),
+                requireCore: Boolean(options.requireCore || options.strictGates),
+                autonomous: Boolean(options.autonomous),
+                steps: stepResults,
+                warnings,
+                ok: false,
+              };
+              try {
+                writeBootReceipt(repoRoot, receipt);
+              } catch {
+                // Best-effort receipt on fatal path.
+              }
               throw new Error(`Critical boot failure in step: ${step.label}`);
             }
             const warningLine = `${step.label}: ${message}`;
@@ -4942,7 +4675,27 @@ program
           }
         }
 
+        const receipt: BootReceipt = {
+          source: 'cli.boot',
+          profile: name,
+          timestamp: new Date().toISOString(),
+          strictGates: Boolean(options.strictGates),
+          nonInteractive: Boolean(options.nonInteractive),
+          attachAgent: options.attachAgent !== false,
+          withClaude: Boolean(options.withClaude),
+          forceOnboard: Boolean(options.forceOnboard),
+          skipOnboard: bootOptions.skipOnboard,
+          skipEnvValidation: Boolean(options.skipEnvValidation),
+          requireCore: Boolean(options.requireCore || options.strictGates),
+          autonomous: Boolean(options.autonomous),
+          steps: stepResults,
+          warnings,
+          ok: true,
+        };
+        const receiptPath = writeBootReceipt(repoRoot, receipt);
+
         console.log(chalk.bold.green(`\n✅ TNF Stack "${name}" is now operational!\n`));
+        console.log(chalk.dim(`Boot receipt: ${receiptPath}`));
         if (warnings.length > 0) {
           console.log(chalk.yellow(`⚠️  Completed with ${warnings.length} warning(s):`));
           for (const warning of warnings) {
@@ -4963,8 +4716,9 @@ program
         } else {
           console.log(chalk.dim('Interactive TNF Agent attach skipped (stdin is not a TTY).'));
         }
-      } catch (err: any) {
-        console.error(chalk.red(`\n❌ Boot sequence aborted: ${err.message}`));
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error(chalk.red(`\n❌ Boot sequence aborted: ${message}`));
         process.exit(1);
       }
     }
@@ -5020,6 +4774,7 @@ program
   .action(async (name, role, platform, options) => {
     const client = new RedisAgentClient();
     try {
+      await client.initialize();
       // Phase 8: validate role and platform are in canonical taxonomy.
       if (!AGENT_ROLE_TRAITS.includes(role)) {
         console.error(
@@ -6089,6 +5844,29 @@ harness
       process.exit(1);
     }
   });
+
+harness
+  .command('context')
+  .description('Resolve adaptive harness context (models/providers/hosts) for agent Terminals')
+  .option('--force', 'Regenerate even if TTL has not expired')
+  .option('--json', 'Print machine-readable JSON')
+  .option('--profile <callsign>', 'Profile callsign override')
+  .option('--ttl-seconds <n>', 'Reuse window in seconds', '900')
+  .action(
+    async (options: { force?: boolean; json?: boolean; profile?: string; ttlSeconds?: string }) => {
+      try {
+        const args = ['scripts/runtime/resolve-harness-context.cjs'];
+        if (options.force) args.push('--force');
+        if (options.json) args.push('--json');
+        if (options.profile) args.push('--profile', options.profile);
+        if (options.ttlSeconds) args.push('--ttl-seconds', String(options.ttlSeconds));
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
 
 harness
   .command('inspect')
@@ -9220,27 +8998,21 @@ zeroTurnCommand
             action: async () => {
               try {
                 const { execSync } = await import('child_process');
-                const output = execSync('hermes cronjob action=list', { encoding: 'utf8' });
-                if (output.includes('heartbeat')) {
+                const output = execSync('hermes cron list', { encoding: 'utf8' });
+                if (/heartbeat/i.test(output)) {
                   console.log(chalk.dim('   Heartbeat self-wake cron active'));
                 } else {
                   console.log(chalk.yellow('   Heartbeat cron not found, installing...'));
-                  // Use the canonical TNF repo path. The symlink at
-                  // ~/.hermes/scripts/tnf-heartbeat-selfwake.py points here too,
-                  // but TNF should source scripts from its own tree.
-                  const tnfScript = path.join(
-                    repoRoot,
-                    'scripts',
-                    'agents',
-                    'tnf-heartbeat-selfwake.py'
+                  const hermesScript = path.join(
+                    os.homedir(),
+                    '.hermes/scripts/tnf-heartbeat-selfwake.py'
                   );
                   await runCommand('hermes', [
-                    'cronjob',
-                    'action=create',
-                    '--schedule',
+                    'cron',
+                    'create',
                     '*/5 * * * *',
                     '--script',
-                    path.join(os.homedir(), '.hermes/scripts/tnf-heartbeat-selfwake.py'),
+                    hermesScript,
                     '--name',
                     'TNF Heartbeat Self-Wake',
                     '--no-agent',
@@ -11627,17 +11399,41 @@ aliveCommand
         if (options.installCron) {
           console.log(chalk.dim('[4/4] Installing heartbeat self-wake cron (every 5 min)...'));
           const heartbeatScript = path.join(repoAgentsDir, 'tnf-heartbeat-selfwake.py');
-          await runCommand('hermes', [
-            'cronjob',
-            'action=create',
-            '--schedule',
-            '*/5 * * * *',
-            '--script',
-            heartbeatScript,
-            '--name',
-            'TNF Heartbeat Self-Wake',
-            '--no-agent',
-          ]);
+          const hermesScriptsDir = path.join(os.homedir(), '.hermes', 'scripts');
+          const hermesScriptLink = path.join(hermesScriptsDir, 'tnf-heartbeat-selfwake.py');
+          try {
+            fs.mkdirSync(hermesScriptsDir, { recursive: true });
+            if (!fs.existsSync(hermesScriptLink)) {
+              fs.symlinkSync(heartbeatScript, hermesScriptLink);
+            }
+          } catch {
+            // Best-effort link for Hermes --script path requirement.
+          }
+          // Hermes CLI migrated from `cronjob action=create` → `cron create`.
+          try {
+            await runCommand('hermes', [
+              'cron',
+              'create',
+              '*/5 * * * *',
+              '--script',
+              hermesScriptLink,
+              '--name',
+              'TNF Heartbeat Self-Wake',
+              '--no-agent',
+            ]);
+          } catch (cronErr: unknown) {
+            const msg = cronErr instanceof Error ? cronErr.message : String(cronErr);
+            // Idempotent: job may already exist from a prior install.
+            if (/already|exists|duplicate/i.test(msg)) {
+              console.log(chalk.dim('      Heartbeat cron already present'));
+            } else {
+              console.log(
+                chalk.yellow(
+                  `      Hermes cron create warning: ${msg} — harness heartbeat cron remains installed`
+                )
+              );
+            }
+          }
         } else {
           console.log(chalk.dim('[4/4] Skipping cron install (use --install-cron to enable)'));
         }
@@ -11739,7 +11535,7 @@ aliveCommand
     }
 
     try {
-      const out = execSync('hermes cronjob action=list 2>&1', {
+      const out = execSync('hermes cron list 2>&1', {
         encoding: 'utf8',
         stdio: ['pipe', 'pipe', 'ignore'],
       });
@@ -11822,7 +11618,7 @@ aliveCommand
     console.log(
       chalk.dim('   Note: heartbeat cron (if installed) still fires every 5 min to auto-restart.')
     );
-    console.log(chalk.dim('   To remove cron: hermes cronjob action=remove --id <jobId>\n'));
+    console.log(chalk.dim('   To remove cron: hermes cron remove <jobId>\n'));
   });
 
 // ============================================================================
@@ -11926,12 +11722,11 @@ heartbeatCommand
       process.exit(1);
     }
     await runCommand('hermes', [
-      'cronjob',
-      'action=create',
-      '--schedule',
+      'cron',
+      'create',
       '*/5 * * * *',
       '--script',
-      script,
+      path.join(os.homedir(), '.hermes/scripts/tnf-heartbeat-selfwake.py'),
       '--name',
       'TNF Heartbeat Self-Wake',
       '--no-agent',
@@ -11945,7 +11740,7 @@ heartbeatCommand
   .action(async () => {
     const { execSync } = await import('child_process');
     try {
-      const out = execSync('hermes cronjob action=list 2>&1', { encoding: 'utf8', stdio: 'pipe' });
+      const out = execSync('hermes cron list 2>&1', { encoding: 'utf8', stdio: 'pipe' });
       const match = out.match(
         /(?:id|job)[":= ]+"?([a-f0-9-]{20,})"?\s+[\s\S]*?TNF Heartbeat Self-Wake/i
       );
@@ -11954,7 +11749,7 @@ heartbeatCommand
         return;
       }
       const jobId = match[1];
-      await runCommand('hermes', ['cronjob', 'action=remove', '--id', jobId]);
+      await runCommand('hermes', ['cron', 'remove', jobId]);
       console.log(chalk.green(`✅ Heartbeat cron ${jobId} removed`));
     } catch (err: any) {
       console.error(chalk.red(`Failed: ${err.message}`));
@@ -12957,7 +12752,7 @@ function readGitFacts(root: string): {
 
   const branch = run(['rev-parse', '--abbrev-ref', 'HEAD']) || 'unknown';
   const headSha = run(['rev-parse', 'HEAD']) || 'unknown';
-  const shortSha = (headSha && headSha !== 'unknown' ? headSha.slice(0, 7) : 'unknown');
+  const shortSha = headSha && headSha !== 'unknown' ? headSha.slice(0, 7) : 'unknown';
   const statusPorcelain = run(['status', '--porcelain', '--untracked-files=no']);
   const modifiedCount = statusPorcelain ? statusPorcelain.split('\n').filter(Boolean).length : 0;
   return {
@@ -13114,7 +12909,11 @@ function probeTnfSubsystems(): SubsystemReport {
       note: 'turn-zero guard active',
     });
   } catch (err: any) {
-    entries.push({ name: 'protocol-interceptor', ok: false, detail: err?.message ?? 'probe failed' });
+    entries.push({
+      name: 'protocol-interceptor',
+      ok: false,
+      detail: err?.message ?? 'probe failed',
+    });
   }
 
   const total = entries.length;
@@ -13127,108 +12926,113 @@ agentCreate
   .description('Report this tnf-agent CLI binary: version, branch, wiring, capabilities')
   .option('--json', 'Output machine-readable JSON')
   .option('--name <name>', 'Restrict capability scan to a specific registered agent', 'self')
-  .action(
-    (options: { json?: boolean; name?: string }) => {
-      try {
-        const pkg = readPackageJson(repoRoot);
-        const git = readGitFacts(repoRoot);
-        const binNames = Object.keys(pkg.bin ?? {});
-        const programCount = safeProgramCommandCount(program);
-        const subs = listAgentCommands();
-        const managedAgent = (() => {
-          try {
-            return options.name && options.name !== 'self'
-              ? agentManager.getByName(options.name) ?? null
-              : null;
-          } catch {
-            return null;
-          }
-        })();
-
-        const subsystemReport = probeTnfSubsystems();
-
-        const report = {
-          generatedAt: new Date().toISOString(),
-          bin: binNames.length > 0 ? binNames : ['tnf', 'tnf-agent'],
-          package: {
-            name: pkg.name ?? null,
-            version: pkg.version ?? null,
-            description: pkg.description ?? null,
-            type: pkg.type ?? null,
-            main: pkg.main ?? null,
-          },
-          git: {
-            branch: git.branch,
-            headSha: git.headSha,
-            shortSha: git.shortSha,
-            clean: git.clean,
-            modifiedCount: git.modifiedCount,
-          },
-          repo: {
-            root: repoRoot,
-            invocationCwd,
-            tnfRootResolved: repoRoot,
-          },
-          runtime: {
-            node: process.version,
-            platform: process.platform,
-            arch: process.arch,
-            pid: process.pid,
-            uptimeSec: Math.round(process.uptime()),
-          },
-          program: {
-            commandCount: programCount,
-            agentSubcommands: subs,
-          },
-          subsystems: subsystemReport,
-          agents: managedAgent
-            ? {
-                id: managedAgent.id,
-                name: managedAgent.name,
-                role: managedAgent.role,
-                platform: managedAgent.platform,
-                isOnline: managedAgent.isOnline,
-                capabilities: managedAgent.capabilities,
-                lastSeen: managedAgent.lastSeen,
-              }
-            : null,
-        };
-
-        if (options.json) {
-          console.log(JSON.stringify(report, null, 2));
-          return;
+  .action((options: { json?: boolean; name?: string }) => {
+    try {
+      const pkg = readPackageJson(repoRoot);
+      const git = readGitFacts(repoRoot);
+      const binNames = Object.keys(pkg.bin ?? {});
+      const programCount = safeProgramCommandCount(program);
+      const subs = listAgentCommands();
+      const managedAgent = (() => {
+        try {
+          return options.name && options.name !== 'self'
+            ? (agentManager.getByName(options.name) ?? null)
+            : null;
+        } catch {
+          return null;
         }
+      })();
 
-        const overall = report.subsystems.healthy === report.subsystems.total
+      const subsystemReport = probeTnfSubsystems();
+
+      const report = {
+        generatedAt: new Date().toISOString(),
+        bin: binNames.length > 0 ? binNames : ['tnf', 'tnf-agent'],
+        package: {
+          name: pkg.name ?? null,
+          version: pkg.version ?? null,
+          description: pkg.description ?? null,
+          type: pkg.type ?? null,
+          main: pkg.main ?? null,
+        },
+        git: {
+          branch: git.branch,
+          headSha: git.headSha,
+          shortSha: git.shortSha,
+          clean: git.clean,
+          modifiedCount: git.modifiedCount,
+        },
+        repo: {
+          root: repoRoot,
+          invocationCwd,
+          tnfRootResolved: repoRoot,
+        },
+        runtime: {
+          node: process.version,
+          platform: process.platform,
+          arch: process.arch,
+          pid: process.pid,
+          uptimeSec: Math.round(process.uptime()),
+        },
+        program: {
+          commandCount: programCount,
+          agentSubcommands: subs,
+        },
+        subsystems: subsystemReport,
+        agents: managedAgent
+          ? {
+              id: managedAgent.id,
+              name: managedAgent.name,
+              role: managedAgent.role,
+              platform: managedAgent.platform,
+              isOnline: managedAgent.isOnline,
+              capabilities: managedAgent.capabilities,
+              lastSeen: managedAgent.lastSeen,
+            }
+          : null,
+      };
+
+      if (options.json) {
+        console.log(JSON.stringify(report, null, 2));
+        return;
+      }
+
+      const overall =
+        report.subsystems.healthy === report.subsystems.total
           ? chalk.green('READY')
           : chalk.yellow('PARTIAL');
 
-        console.log(chalk.bold.cyan('\n[TNF Agent Status]\n'));
-        console.log(`${chalk.bold('Bin:')}       ${report.bin.join(', ')}`);
-        console.log(`${chalk.bold('Package:')}   ${report.package.name}@${report.package.version}`);
-        console.log(`${chalk.bold('Git:')}       ${report.git.branch} @ ${report.git.shortSha} ${report.git.clean ? chalk.green('(clean)') : chalk.yellow(`(${report.git.modifiedCount} modified)`)}`);
-        console.log(`${chalk.bold('Node:')}      ${report.runtime.node} (${report.runtime.platform}/${report.runtime.arch})`);
-        console.log(`${chalk.bold('Program:')}   ${report.program.commandCount} top-level commands, ${report.program.agentSubcommands.length} agent subcommands (${report.program.agentSubcommands.join(', ')})`);
-        console.log(
-          `${chalk.bold('Subsystems:')} ${report.subsystems.healthy}/${report.subsystems.total} healthy`
-        );
-        for (const entry of report.subsystems.entries) {
-          const dot = entry.ok ? chalk.green('●') : chalk.red('○');
-          const note = entry.note ? chalk.dim(` — ${entry.note}`) : '';
-          console.log(`  ${dot} ${chalk.cyan(entry.name.padEnd(22))} ${entry.detail}${note}`);
-        }
-        if (report.agents) {
-          console.log(
-            `${chalk.bold('Agent:')}     ${report.agents.name} (${report.agents.role}/${report.agents.platform}) — ${report.agents.isOnline ? chalk.green('online') : chalk.yellow('offline')}`
-          );
-        }
-        console.log(`\n${chalk.bold('Overall:')}    ${overall}\n`);
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
+      console.log(chalk.bold.cyan('\n[TNF Agent Status]\n'));
+      console.log(`${chalk.bold('Bin:')}       ${report.bin.join(', ')}`);
+      console.log(`${chalk.bold('Package:')}   ${report.package.name}@${report.package.version}`);
+      console.log(
+        `${chalk.bold('Git:')}       ${report.git.branch} @ ${report.git.shortSha} ${report.git.clean ? chalk.green('(clean)') : chalk.yellow(`(${report.git.modifiedCount} modified)`)}`
+      );
+      console.log(
+        `${chalk.bold('Node:')}      ${report.runtime.node} (${report.runtime.platform}/${report.runtime.arch})`
+      );
+      console.log(
+        `${chalk.bold('Program:')}   ${report.program.commandCount} top-level commands, ${report.program.agentSubcommands.length} agent subcommands (${report.program.agentSubcommands.join(', ')})`
+      );
+      console.log(
+        `${chalk.bold('Subsystems:')} ${report.subsystems.healthy}/${report.subsystems.total} healthy`
+      );
+      for (const entry of report.subsystems.entries) {
+        const dot = entry.ok ? chalk.green('●') : chalk.red('○');
+        const note = entry.note ? chalk.dim(` — ${entry.note}`) : '';
+        console.log(`  ${dot} ${chalk.cyan(entry.name.padEnd(22))} ${entry.detail}${note}`);
       }
+      if (report.agents) {
+        console.log(
+          `${chalk.bold('Agent:')}     ${report.agents.name} (${report.agents.role}/${report.agents.platform}) — ${report.agents.isOnline ? chalk.green('online') : chalk.yellow('offline')}`
+        );
+      }
+      console.log(`\n${chalk.bold('Overall:')}    ${overall}\n`);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
     }
-  );
+  });
 
 // Debug commands
 const debug = program.command('debug').description('Debugging and troubleshooting tools');

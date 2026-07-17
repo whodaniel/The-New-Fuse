@@ -1,79 +1,14 @@
-# ── Aggressive .dockerignore for Cloud Build ──
-# The monorepo is 3.5+ GiB with node_modules. We only need the API and
-# its workspace dependencies for the Docker build.
-
-# ── VCS & IDE ──
-.git
-.github
-.gitignore
-.kilo
-.vscode
-.idea
-
-# ── Local secrets and operator profiles ──
 .env
 .env.*
 !.env.example
 !.env.*.example
-!.env.*.template
 .tnf.local.env
 .tnf.local.env.*
 **/.env
 **/.env.*
 !**/.env.example
 !**/.env.*.example
-!**/.env.*.template
-
-# ── Node modules (rebuilt in Docker) ──
-node_modules
-**/node_modules
 .pnpm-store
 **/.pnpm-store
-
-# ── Build outputs (rebuilt in Docker) ──
-build
-*.tsbuildinfo
-.next
-.turbo
-
-# ── Other apps (not needed for API build) ──
-apps/frontend
-apps/virtual-library-blueprints
-apps/external
-apps/mcp-servers
-apps/skideancer-ide
-
-# ── Reports & temp ──
-reports
-temp
-coverage
-test-results
-playwright-report
-bundle-analysis.html
-concordance_results
-scripts/generate_*
-
-# ── Go files ──
-**/cmd
-**/pkg
-**/*.go
-**/go.mod
-**/go.sum
-
-# ── TS build metadata ──
-# Keep checked-in package src JS/d.ts files in the deploy context. Several
-# workspace packages use generated source artifacts as compile-time inputs.
-packages/*/tsconfig.tsbuildinfo
-
-# ── Misc large files ──
-*.mp4
-*.mov
-*.zip
-*.tar.gz
-*.wasm
-*.png
-*.jpg
-*.jpeg
-*.svg
-*.ico
-!apps/api/public/**
+node_modules
+**/node_modules

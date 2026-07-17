@@ -254,3 +254,8 @@ log(
 - v1.0: Basic process monitoring and restart
 - v2.0: Added NODE_PATH/module dependency awareness, comprehensive failure mode
   coverage
+- v2.1 (2026-07-17): Bound to `TNF_AUTONOMOUS_CONTINUITY_PROTOCOL.md` —
+  non-stall stack (`tnf boot --require-core`, `tnf alive up`,
+  `tnf harness boot`, `tnf full-auto daemon start`); boot receipts at
+  `.agent/runtime-logs/cli-boot.latest.json`. New stall modes must update both
+  protocols in the same change set.
