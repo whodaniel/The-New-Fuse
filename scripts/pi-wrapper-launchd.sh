@@ -32,7 +32,7 @@ fi
 export AGENT_NAME="${AGENT_NAME:-pi}"
 export AGENT_ROLE="${AGENT_ROLE:-worker}"
 export PI_PROVIDER="${PI_PROVIDER:-${TNF_PROVIDER_FAMILY:-nvidia}}"
-export PI_MODEL="${PI_MODEL:-${TNF_WORKING_MODEL:-minimaxai/minimax-m3}}"
+export PI_MODEL="${PI_MODEL:-${TNF_WORKING_MODEL:-thinkingmachines/inkling}}"
 export PI_CMD="${PI_CMD:-pi}"
 export PI_TIMEOUT_MS="${PI_TIMEOUT_MS:-180000}"
 export REDIS_URL="${REDIS_URL:-redis://localhost:6379}"

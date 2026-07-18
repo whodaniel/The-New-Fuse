@@ -2,14 +2,19 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:** `df7ffc21-0641-421e-9865-ffc3c313e1d5` **Head:** `16531fae0451`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`858a32ed-09b3-4c45-8e72-b5eafb0b085b` **Head:** `47cde235c48f`
-`TNF_FRONTEND_IA_CANON.md` + `TNF_AGENT_SHELL_HYGIENE.md` before
-chrome/chat/shell work. **Project ID:** `TNF-UI-IA` **Handoff:**
-`d1426bdf-f91b-45f6-be04-871f5d867b8b` **Head:** `139dce3227` (working tree may
-include uncommitted frontend IA + protocol files). Prior launch/session text
-retained below for continuity.
+**Current Directive:** Triage 33 unrelated working-tree drifts (root, frontend,
+tnf-cli, tnf-browser, .verifier) **Project ID:** `TNF-SESSION` **Handoff:**
+`8409363d-172d-49b8-9135-1bd612f879ac` **Head:** `1b83ed4c7e67`
+`tnf:agent-registry` (callableWorker). Continuity via
+`TNF_AUTONOMOUS_CONTINUITY_PROTOCOL.md`. Full-auto daemon restarted with
+`--skip-build` to avoid OOM stalls. Advance handoff targets `story-architect` +
+`librarian`. **Project ID:** `TNF-AUTONOMY` **Handoff:**
+`c07ffb4a-6639-44a1-8fe3-5558a36c66dc` **Head:** `4173f555ba25`
+
+**Session note:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist when not on autonomy work. **Project ID:**
+`TNF-SESSION` **Handoff:** `c07ffb4a-6639-44a1-8fe3-5558a36c66dc` **Head:**
+`4173f555ba25`
 
 **Prior notes:** Continue priority queue from SESSION_HANDOFF when not on UI-IA
 work. (ghs.googlehosted.com). /about and /blog pages created with SPA routes.
@@ -23,13 +28,32 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 
 ## ⚡ Active Steps
 
-1. [✅] 2026-07-15 Frontend IA: always-open AI Assist → summon dialog; ChatHub;
-   Command Core consolidation; Ask AI → `openAIAssist()`; nested Sidebars
-   removed; protocols `TNF_FRONTEND_IA_CANON` + `TNF_AGENT_SHELL_HYGIENE` added.
-2. [⏳] Commit/push frontend cohesion + protocol docs when operator requests.
-3. [⏳] Optional: reap stale Cursor agent shell transcripts / confirm live
-   services (tauri vite :1420, voice :50005, relay) are intentionally owned.
-4. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
+1. [✅] 2026-07-17 Autonomous Continuity Protocol authored; self-healing bound
+   to
+
+- [✅] 2026-07-18T05:11:59.404Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+  continuity stack; boot pipeline gains `--require-core` + `--autonomous`.
+
+2. [✅] 2026-07-17 Anti-stall armed: full-auto daemon running, factory core
+   healthy, `scripts/runtime/tnf-anti-stall.sh` + agent loop every 15m.
+3. [✅] 2026-07-17 Local-runtime-boundary: HARDCODED_AGENT_BOOT_PROMPT personal
+   paths removed; validator OK; 33/33 protocol tests pass.
+4. [✅] 2026-07-17 Relaunched pi + antigravity via `launch-agent-wrapper.sh`
+   (nvidia/minimax); gemini wrapper left down (`GEMINI_DISABLED=1`).
+5. [⏳] Commit harness/spam-loop family when operator requests (see
+   `DOC_AUDIT_DIRTY_TREE_CLASSIFY.json`).
+6. [⏳] Master-clock herd: 6 `dist/master-clock` processes — await operator
+   handshake before any kill.
+7. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
+
+- [✅] 2026-07-15 Frontend IA: always-open AI Assist → summon dialog; ChatHub;
+- [✅] 2026-07-17T19:34:23.381Z New script(s) created:
+  validate-local-runtime-boundary.test.cjs, validate-sgp-schemas.test.cjs,
+  verify-terminal-visualizer-readiness.test.cjs
+- [✅] 2026-07-17T19:34:23.381Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
 - [✅] 2026-07-09T06:39:01.091Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)

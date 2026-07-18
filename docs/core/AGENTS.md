@@ -6,6 +6,18 @@ This repository uses TNF frontloading. Start every new AI terminal session with:
 tnf onboard
 ```
 
+Agent-network Terminals spawned by `tnf boot` / `start-agent-network.sh` must
+**not** rely on hard-coded models or hosts. They source adaptive context:
+
+```bash
+tnf harness context --force   # refresh models/providers/hosts for this user/env/time
+# Artifacts: .agent/runtime-state/harness-context.{env,latest.json,md}
+```
+
+Profile overrides live in `~/.tnf/profiles/<callsign>.json` under `harness.*`.
+Catalog truth: `~/.tnf/model-providers.json`. Live hosts:
+`.agent/runtime-state/*`.
+
 ## Mandatory Context Files
 
 1. `docs/protocols/TURN_ZERO_MANDATE.md` (canonical Turn Zero authority)

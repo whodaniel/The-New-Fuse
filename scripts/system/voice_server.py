@@ -22,6 +22,40 @@ from voice_user_tag import format_user_utterance, parse_user_utterance
 
 app = Flask(__name__)
 
+# Browser preview (Vite on :1420) and Tauri webviews call these APIs cross-origin.
+# Without ACAO, fetch() fails with "Failed to fetch" even when the server is healthy.
+_CORS_ALLOW_HEADERS = "Content-Type, Authorization, X-Requested-With"
+_CORS_ALLOW_METHODS = "GET, POST, OPTIONS, HEAD"
+
+
+@app.after_request
+def _add_cors_headers(response):
+    origin = (request.headers.get("Origin") or "").strip()
+    if origin:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Vary"] = "Origin"
+    else:
+        response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = _CORS_ALLOW_HEADERS
+    response.headers["Access-Control-Allow-Methods"] = _CORS_ALLOW_METHODS
+    return response
+
+
+@app.route("/mic_state", methods=["OPTIONS"])
+@app.route("/is_ai_speaking", methods=["OPTIONS"])
+@app.route("/kws_state", methods=["OPTIONS"])
+@app.route("/stt_state", methods=["OPTIONS"])
+@app.route("/mic_pause", methods=["OPTIONS"])
+@app.route("/mic_resume", methods=["OPTIONS"])
+@app.route("/activate", methods=["OPTIONS"])
+@app.route("/send", methods=["OPTIONS"])
+@app.route("/interrupt", methods=["OPTIONS"])
+@app.route("/ai_speaking", methods=["OPTIONS"])
+@app.route("/transcribe", methods=["OPTIONS"])
+def _cors_preflight():
+    return ("", 204)
+
+
 SUPERVISOR_LOG = os.environ.get("VOICE_SERVER_SUPERVISOR_LOG", "/tmp/voice_server_supervisor.log")
 
 

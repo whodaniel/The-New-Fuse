@@ -1,0 +1,78 @@
+{
+  "pass": "Skills stratified sample verify",
+  "sample_size": 151,
+  "total_skills": 545,
+  "broken_count": 12,
+  "broken_by_category": {
+    "self-improving-agent": 2,
+    "skill-builder": 2,
+    "jules-delegation": 1,
+    "feedback-integration": 4,
+    "mcporter": 1,
+    "jules-followup-ops": 1,
+    "openclaw-universal-knowledge": 1
+  },
+  "sample_issues": [
+    {
+      "skill": ".agent/skills/self-improving-agent/SKILL.md",
+      "ref": ".github/copilot-instructions.md",
+      "snippet": "ing | Promote to `CLAUDE.md`, `AGENTS.md`, and/or `.github/copilot-instructions.md` |\n| Workflow improvements | Promote to `AGENTS.md"
+    },
+    {
+      "skill": ".agent/skills/self-improving-agent/SKILL.md",
+      "ref": ".github/copilot-instructions.md",
+      "snippet": "\n   - `AGENTS.md` - workflows and automation\n   - `.github/copilot-instructions.md` - Copilot context\n\n## Logging Format\n\n### Learnin"
+    },
+    {
+      "skill": ".agent/skills/skill-builder/SKILL.md",
+      "ref": ".agent/skills/system-diagnostics/SKILL.md",
+      "snippet": "\n\n   ## Self-Referential Knowledge\n\n   - Extends: `.agent/skills/system-diagnostics/SKILL.md`\n   - Uses context: `.agent/context/tnf-architectu"
+    },
+    {
+      "skill": ".agent/skills/skill-builder/SKILL.md",
+      "ref": ".agent/context/tnf-architecture.md",
+      "snippet": "s/system-diagnostics/SKILL.md`\n   - Uses context: `.agent/context/tnf-architecture.md`\n   ```\n\n4. **Generate Scripts**:\n   - `check_dock"
+    },
+    {
+      "skill": ".agent/skills/jules-delegation/SKILL.md",
+      "ref": ".agent/context/tnf-architecture.md",
+      "snippet": "-builder/SKILL.md` (for task template patterns)\n- `.agent/context/tnf-architecture.md` (for codebase context)\n- `packages/jules-skill/` "
+    },
+    {
+      "skill": ".agent/skills/feedback-integration/SKILL.md",
+      "ref": ".tnf/bin/feedback-submit.cjs",
+      "snippet": "-------|----------------|\n| **Internal (Devs)** | `.tnf/bin/feedback-submit.cjs` script |\n| **Web Widget** | FAB button calling `P"
+    },
+    {
+      "skill": ".agent/skills/feedback-integration/SKILL.md",
+      "ref": ".tnf/bin/feedback-submit.cjs",
+      "snippet": "ate/Update\n\n| File | Action |\n|------|--------|\n| `.tnf/bin/feedback-submit.cjs` | Create - CLI feedback entry |\n| `.tnf/api/feedb"
+    },
+    {
+      "skill": ".agent/skills/feedback-integration/SKILL.md",
+      "ref": ".tnf/api/feedback.ts",
+      "snippet": "ack-submit.cjs` | Create - CLI feedback entry |\n| `.tnf/api/feedback.ts` | Create - API handler |\n| `packages/database/src"
+    },
+    {
+      "skill": ".agent/skills/feedback-integration/SKILL.md",
+      "ref": ".github/workflows/feedback.yml",
+      "snippet": "g-agent.skill.md` | Update - Include feedback |\n| `.github/workflows/feedback.yml` | Create - CI integration |\n\n---\n\n## Quick Start\n"
+    },
+    {
+      "skill": ".agent/skills/mcporter/SKILL.md",
+      "ref": "./config/mcporter.json",
+      "snippet": "er> --mode client|types`\n\nNotes\n- Config default: `./config/mcporter.json` (override with `--config`).\n- Prefer `--output js"
+    },
+    {
+      "skill": ".agent/skills/jules-followup-ops/SKILL.md",
+      "ref": ".env.local",
+      "snippet": "\n\n## Alerting\n\nSet these environment variables in `.env.local` for webhook alerts:\n\n- `JULES_ALERT_WEBHOOK_URL`\n"
+    },
+    {
+      "skill": ".agent/skills/openclaw-universal-knowledge/SKILL.md",
+      "ref": ".claude/.gemini/.kilo",
+      "snippet": "d` + `references/`).\n2. Publish flat adapters for `.claude/.gemini/.kilo`.\n3. Keep trigger, safety checks, and output contr"
+    }
+  ],
+  "note": "Sample is stratified 1-sample-per-category plus 3 from antigravity/imported-claude-agents. Whole-population scan deferred."
+}

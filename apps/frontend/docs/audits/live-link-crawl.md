@@ -1,6 +1,6 @@
 # Live Link Crawl
 
-Generated: 2026-06-28T04:23:30.420Z
+Generated: 2026-07-18T06:16:44.846Z
 
 ## Settings
 - max depth: 5
@@ -9,17 +9,17 @@ Generated: 2026-06-28T04:23:30.420Z
 
 ## Summary
 - seeds: 4
-- total checked links: 171
+- total checked links: 179
 - broken links: 8
 - internal broken: 0
 - external broken: 8
 - semantic broken: 0
 
 ## Per Seed
-- https://ai-arcade.xyz/ | pages=36 | maxDepth=3 | checked=45 | broken=0 | semanticBroken=0 | pageErrors=2
+- https://ai-arcade.xyz/ | pages=36 | maxDepth=3 | checked=45 | broken=0 | semanticBroken=0 | pageErrors=0
 - https://poker.ai-arcade.xyz/ | pages=1 | maxDepth=0 | checked=1 | broken=0 | semanticBroken=0 | pageErrors=0
 - https://ai-arcade-poker.pages.dev/ | pages=1 | maxDepth=0 | checked=1 | broken=0 | semanticBroken=0 | pageErrors=0
-- https://thenewfuse.com/ | pages=95 | maxDepth=3 | checked=124 | broken=8 | semanticBroken=0 | pageErrors=0
+- https://thenewfuse.com/ | pages=103 | maxDepth=3 | checked=132 | broken=8 | semanticBroken=0 | pageErrors=0
 
 ## Semantic Broken Links
 - none

@@ -8876,7 +8876,7 @@ zeroTurnCommand
   .command('boot')
   .description('Boot TNF for indefinite autonomous operation with zero manual turns')
   .option('--profile <name>', 'Profile/instance name', 'default')
-  .option('--model <model>', 'LLM model to use', 'minimaxai/minimax-m3')
+  .option('--model <model>', 'LLM model to use', 'thinkingmachines/inkling')
   .option('--no-daemon', 'Run in foreground mode (for debugging)')
   .option('--plan', 'Print boot plan without executing')
   .option(
@@ -11126,7 +11126,7 @@ const agentsLive = agents
 agentsLive
   .command('start')
   .description('Start the persistent agent daemon in live mode')
-  .option('--model <model>', 'Override LLM model (default: minimaxai/minimax-m3)')
+  .option('--model <model>', 'Override LLM model (default: thinkingmachines/inkling)')
   .option('--interval <seconds>', 'Autonomous think interval in seconds', '120')
   .option('--agent-id <id>', 'Override agent ID')
   .option('--agent-name <name>', 'Override agent display name')
@@ -11330,7 +11330,7 @@ const aliveCommand = program
 aliveCommand
   .command('up')
   .description('Bring up the persistent TNF agent daemon + heartbeat cron')
-  .option('--model <model>', 'LLM model override (default: minimaxai/minimax-m3)')
+  .option('--model <model>', 'LLM model override (default: thinkingmachines/inkling)')
   .option('--interval <seconds>', 'Autonomous think interval in seconds', '120')
   .option(
     '--no-bridge',
@@ -11470,7 +11470,7 @@ aliveCommand
           if (r) {
             await r.hset('tnf:alive:status', {
               started_at: new Date().toISOString(),
-              model: options.model || process.env.TNF_LLM_MODEL || 'minimaxai/minimax-m3',
+              model: options.model || process.env.TNF_LLM_MODEL || 'thinkingmachines/inkling',
               python: pythonBin,
               pid: String(process.pid),
             });

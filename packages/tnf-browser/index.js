@@ -8,9 +8,7 @@ const { authedWsUrl } = require('./lib/auth');
 const { BridgePage } = require('./client/page');
 const client = require('./client');
 
-
 // Config Loader
-
 
 const CONFIG_DEFAULTS = {
   browser: '',
@@ -83,8 +81,21 @@ const CONFIG_DEFAULTS = {
       stableRectTolerancePx: 2,
       stableRectTimeoutMs: 900,
     },
-    type: { baseDelayMin: 8, baseDelayMax: 20, variance: 4, pauseChance: 0, pauseMin: 0, pauseMax: 0 },
-    scroll: { amountMin: 180, amountMax: 320, backScrollChance: 0.03, backScrollMin: 8, backScrollMax: 24 },
+    type: {
+      baseDelayMin: 8,
+      baseDelayMax: 20,
+      variance: 4,
+      pauseChance: 0,
+      pauseMin: 0,
+      pauseMax: 0,
+    },
+    scroll: {
+      amountMin: 180,
+      amountMax: 320,
+      backScrollChance: 0.03,
+      backScrollMin: 8,
+      backScrollMax: 24,
+    },
   },
 };
 
@@ -92,7 +103,13 @@ function deepMerge(target, ...sources) {
   for (const source of sources) {
     if (!source) continue;
     for (const [key, val] of Object.entries(source)) {
-      if (val && typeof val === 'object' && !Array.isArray(val) && typeof target[key] === 'object' && !Array.isArray(target[key])) {
+      if (
+        val &&
+        typeof val === 'object' &&
+        !Array.isArray(val) &&
+        typeof target[key] === 'object' &&
+        !Array.isArray(target[key])
+      ) {
         target[key] = deepMerge({ ...target[key] }, val);
       } else if (val !== undefined) {
         target[key] = val;
@@ -103,13 +120,8 @@ function deepMerge(target, ...sources) {
 }
 
 function loadConfig(overrides = {}) {
-  const {
-    __configPath,
-    __sessionLog,
-    __sessionLogPath,
-    __internal,
-    ...configOverrides
-  } = overrides || {};
+  const { __configPath, __sessionLog, __sessionLogPath, __internal, ...configOverrides } =
+    overrides || {};
   let fileConfig = {};
   let sourcePath = null;
   const homeConfig = path.join(os.homedir(), 'tnf-browser');
@@ -118,10 +130,7 @@ function loadConfig(overrides = {}) {
     : null;
   const candidates = explicitConfig
     ? [explicitConfig]
-    : [
-        path.join(homeConfig, 'config.js'),
-        path.join(homeConfig, 'config.json'),
-      ];
+    : [path.join(homeConfig, 'config.js'), path.join(homeConfig, 'config.json')];
 
   for (const candidate of candidates) {
     if (fs.existsSync(candidate)) {
@@ -144,7 +153,7 @@ function loadConfig(overrides = {}) {
     runtimeOverrides.framework = {
       debug: {
         sessionLog: !!__sessionLog || !!__sessionLogPath,
-        ...( __sessionLogPath ? { sessionLogPath: __sessionLogPath } : {} ),
+        ...(__sessionLogPath ? { sessionLogPath: __sessionLogPath } : {}),
       },
     };
   }
@@ -161,9 +170,7 @@ function loadConfig(overrides = {}) {
 function resolvePathFromConfig(config, inputPath) {
   if (!inputPath) return inputPath;
   if (path.isAbsolute(inputPath)) return inputPath;
-  const baseDir = config.__sourcePath
-    ? path.dirname(config.__sourcePath)
-    : process.cwd();
+  const baseDir = config.__sourcePath ? path.dirname(config.__sourcePath) : process.cwd();
   return path.resolve(baseDir, inputPath);
 }
 
@@ -189,9 +196,10 @@ function resolveBootCommand(line) {
       if (!rest) return null;
       let url = rest;
       if (!url.includes('://')) {
-        url = (url.startsWith('localhost') || url.startsWith('127.0.0.1'))
-          ? 'http://' + url
-          : 'https://' + url;
+        url =
+          url.startsWith('localhost') || url.startsWith('127.0.0.1')
+            ? 'http://' + url
+            : 'https://' + url;
       }
       return { action: 'tabs.navigate', params: { url } };
     }
@@ -257,7 +265,10 @@ function resolveBootCommand(line) {
     case 'back':
       return { action: 'dom.evaluate', params: { fn: '() => { history.back(); return true; }' } };
     case 'forward':
-      return { action: 'dom.evaluate', params: { fn: '() => { history.forward(); return true; }' } };
+      return {
+        action: 'dom.evaluate',
+        params: { fn: '() => { history.forward(); return true; }' },
+      };
     case 'clear':
       if (!rest) return null;
       return { action: 'human.clearInput', params: { selector: rest } };
@@ -324,7 +335,10 @@ async function runBootSequence(transport, config) {
     if (typeof entry === 'object' && !Array.isArray(entry)) {
       if (entry.cookiesPath) {
         const result = await loadCookiesFromFile(transport, config, entry.cookiesPath);
-        log('INFO', `Boot cookies loaded from ${result.path} (${result.ok} ok, ${result.fail} failed)`);
+        log(
+          'INFO',
+          `Boot cookies loaded from ${result.path} (${result.ok} ok, ${result.fail} failed)`
+        );
         continue;
       }
       if (!entry.action) throw new Error('Boot command object requires action');
@@ -343,7 +357,10 @@ async function runBootSequence(transport, config) {
       const parts = trimmed.split(/\s+/);
       const filePath = parts[2] || 'cookies.json';
       const result = await loadCookiesFromFile(transport, config, filePath);
-      log('INFO', `Boot cookies loaded from ${result.path} (${result.ok} ok, ${result.fail} failed)`);
+      log(
+        'INFO',
+        `Boot cookies loaded from ${result.path} (${result.ok} ok, ${result.fail} failed)`
+      );
       continue;
     }
 
@@ -353,9 +370,7 @@ async function runBootSequence(transport, config) {
   }
 }
 
-
 // Start — launch browser + WS server, return transport
-
 
 async function start(overrides = {}) {
   const config = loadConfig(overrides);
@@ -377,7 +392,9 @@ async function start(overrides = {}) {
   // Kill anything holding our port from a previous run
   const port = config.port || 7331;
   try {
-    require('child_process').execSync(`lsof -ti:${port} | xargs kill -9 2>/dev/null || true`, { stdio: 'ignore' });
+    require('child_process').execSync(`lsof -ti:${port} | xargs kill -9 2>/dev/null || true`, {
+      stdio: 'ignore',
+    });
   } catch {}
 
   const fwDebug = config.framework?.debug || {};
@@ -385,7 +402,7 @@ async function start(overrides = {}) {
   if (fwDebug.sessionLog || fwDebug.sessionLogPath) {
     const sessionLogPath = resolvePathFromConfig(
       config,
-      fwDebug.sessionLogPath || path.join(os.homedir(), 'tnf-browser', 'tnf-browser.log'),
+      fwDebug.sessionLogPath || path.join(os.homedir(), 'tnf-browser', 'tnf-browser.log')
     );
     initDebugLog(sessionLogPath);
   }
@@ -393,7 +410,7 @@ async function start(overrides = {}) {
   if (!config.human?.calibrated) {
     log(
       'WARN',
-      'Using uncalibrated public profile. Built-in human settings are generic development defaults.',
+      'Using uncalibrated public profile. Built-in human settings are generic development defaults.'
     );
   }
 
@@ -407,7 +424,7 @@ async function start(overrides = {}) {
     fs.writeFileSync(
       path.join(extensionPath, 'token.json'),
       JSON.stringify({ token: authToken, port }),
-      { mode: 0o600 },
+      { mode: 0o600 }
     );
   } catch (err) {
     log('ERROR', `Could not write extension token.json: ${err.message}`);
@@ -429,7 +446,10 @@ async function start(overrides = {}) {
     const extConfig = await transport.send('framework.getConfig');
     debugLog('---', `Extension v${extConfig.version} (manifest: ${manifest.version})`);
     if (extConfig.version !== manifest.version) {
-      log('WARN', `Extension version mismatch! Running: ${extConfig.version}, expected: ${manifest.version}`);
+      log(
+        'WARN',
+        `Extension version mismatch! Running: ${extConfig.version}, expected: ${manifest.version}`
+      );
       debugLog('!!!', `VERSION MISMATCH running=${extConfig.version} expected=${manifest.version}`);
     } else {
       log('INFO', `Extension v${extConfig.version} verified`);
@@ -443,7 +463,7 @@ async function start(overrides = {}) {
     const tabs = await transport.send('tabs.list');
     if (tabs.length > 1) {
       const startUrl = config.startUrl || 'about:blank';
-      const keep = tabs.find(t => t.url === startUrl || t.active) || tabs[0];
+      const keep = tabs.find((t) => t.url === startUrl || t.active) || tabs[0];
       for (const tab of tabs) {
         if (tab.id !== keep.id) {
           await transport.send('tabs.close', {}, tab.id);
@@ -464,9 +484,7 @@ async function start(overrides = {}) {
   return { server, transport, browserProcess, config };
 }
 
-
 // startWithPage — convenience: start + create BridgePage on first tab
-
 
 async function startWithPage(overrides = {}) {
   const { server, transport, browserProcess, config } = await start(overrides);
@@ -474,7 +492,9 @@ async function startWithPage(overrides = {}) {
 
   // Find first non-extension tab
   const tabs = await transport.send('tabs.list');
-  let targetTab = tabs.find(t => !t.url.startsWith('chrome://') && !t.url.startsWith('chrome-extension://'));
+  let targetTab = tabs.find(
+    (t) => !t.url.startsWith('chrome://') && !t.url.startsWith('chrome-extension://')
+  );
   if (!targetTab && tabs.length > 0) targetTab = tabs[0];
 
   if (targetTab) {
@@ -486,9 +506,111 @@ async function startWithPage(overrides = {}) {
   return { server, page, browserProcess, config };
 }
 
+// attach — browser MODE: connect to an already-running browser whose TNF
+// extension is already loaded (e.g. the user's everyday Chrome with its normal
+// profile). Starts ONLY the WS server and waits for the live extension to
+// handshake in. This is the "attach" mode the harness must support alongside
+// the managed launch mode: no browser is spawned, no profile is touched.
+async function attach(overrides = {}) {
+  const config = loadConfig(overrides);
+  setLogLevel(config.logLevel);
+
+  const authToken = crypto.randomBytes(32).toString('hex');
+  config.authToken = authToken;
+  try {
+    const wpHome = path.join(os.homedir(), 'tnf-browser');
+    fs.mkdirSync(wpHome, { recursive: true });
+    fs.writeFileSync(path.join(wpHome, 'token'), authToken, { mode: 0o600 });
+  } catch (err) {
+    log('ERROR', `Could not write client token file: ${err.message}`);
+  }
+
+  const port = config.port || 7331;
+  try {
+    require('child_process').execSync(`lsof -ti:${port} | xargs kill -9 2>/dev/null || true`, {
+      stdio: 'ignore',
+    });
+  } catch {}
+
+  const fwDebug = config.framework?.debug || {};
+  if (fwDebug.sessionLog || fwDebug.sessionLogPath) {
+    const sessionLogPath = resolvePathFromConfig(
+      config,
+      fwDebug.sessionLogPath || path.join(os.homedir(), 'tnf-browser', 'tnf-browser.log')
+    );
+    initDebugLog(sessionLogPath);
+  }
+  log('INFO', `Attaching to already-running browser on port ${port} (no browser launch)`);
+  if (!config.human?.calibrated) {
+    log(
+      'WARN',
+      'Using uncalibrated public profile. Built-in human settings are generic development defaults.'
+    );
+  }
+
+  const server = createServer(config);
+  const extensionPath = path.join(__dirname, 'extension');
+
+  // The extension in the running browser reads token.json to learn the port +
+  // token. Write it so the already-loaded service worker can handshake.
+  try {
+    fs.writeFileSync(
+      path.join(extensionPath, 'token.json'),
+      JSON.stringify({ token: authToken, port }),
+      { mode: 0o600 }
+    );
+  } catch (err) {
+    log('ERROR', `Could not write extension token.json: ${err.message}`);
+  }
+
+  const transport = await server.waitForConnection();
+  log('INFO', 'Extension connected — ready for commands');
+
+  try {
+    const manifestPath = path.join(__dirname, 'extension', 'manifest.json');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    const extConfig = await transport.send('framework.getConfig');
+    if (extConfig.version !== manifest.version) {
+      log(
+        'WARN',
+        `Extension version mismatch! Running: ${extConfig.version}, expected: ${manifest.version}`
+      );
+    } else {
+      log('INFO', `Extension v${extConfig.version} verified`);
+    }
+  } catch (err) {
+    log('WARN', `Version check failed: ${err.message}`);
+  }
+
+  try {
+    await runBootSequence(transport, config);
+  } catch (err) {
+    log('WARN', `Boot sequence failed: ${err.message}`);
+  }
+
+  // Record the attach mode so the harness holds it across restarts.
+  try {
+    const { writeBrowserState } = require('./lib/launcher');
+    const st = JSON.parse(
+      require('fs').readFileSync(
+        path.join(os.homedir(), 'tnf-browser', 'browser-process.json'),
+        'utf8'
+      )
+    );
+    st.browserMode = {
+      mode: 'attach',
+      label: 'Attached (existing browser)',
+      patterns: [],
+      supportsLoadExtensionFlag: true,
+    };
+    st.extensionStrategy = 'attach';
+    writeBrowserState(st);
+  } catch {}
+
+  return { server, transport, browserProcess: null, config };
+}
 
 // connectToServer — connect to an already-running WS server as a client
-
 
 async function connectToServer(overrides = {}) {
   const config = loadConfig(overrides);
@@ -519,7 +641,9 @@ async function connectToServer(overrides = {}) {
           if (!eventListeners[event]) eventListeners[event] = [];
           eventListeners[event].push(fn);
         },
-        close() { ws.close(); },
+        close() {
+          ws.close();
+        },
       };
 
       ws.on('message', (data) => {
@@ -536,7 +660,9 @@ async function connectToServer(overrides = {}) {
 
       // Find first non-extension tab
       const tabs = await transport.send('tabs.list');
-      let targetTab = tabs.find(t => !t.url.startsWith('chrome://') && !t.url.startsWith('chrome-extension://'));
+      let targetTab = tabs.find(
+        (t) => !t.url.startsWith('chrome://') && !t.url.startsWith('chrome-extension://')
+      );
       if (!targetTab && tabs.length > 0) targetTab = tabs[0];
       if (targetTab) {
         page.setTabId(targetTab.id);
@@ -554,16 +680,19 @@ async function connectToServer(overrides = {}) {
   });
 }
 
-
 // Graceful shutdown helper — kills browser PID after delay
 
-
 function killBrowserAndExit(browserProcess, server, code = 1) {
-  if (server) try { server.close(); } catch {}
+  if (server)
+    try {
+      server.close();
+    } catch {}
   if (browserProcess && browserProcess.pid) {
     log('INFO', `Killing browser (PID ${browserProcess.pid}) in 2s...`);
     setTimeout(() => {
-      try { process.kill(browserProcess.pid); } catch {}
+      try {
+        process.kill(browserProcess.pid);
+      } catch {}
       clearBrowserState();
       process.exit(code);
     }, 2000);
@@ -574,25 +703,26 @@ function killBrowserAndExit(browserProcess, server, code = 1) {
 }
 
 if (require.main === module) {
-  start().then(({ server, browserProcess }) => {
-    log('INFO', 'Accepting WebSocket commands. Press Ctrl+C to stop.');
+  start()
+    .then(({ server, browserProcess }) => {
+      log('INFO', 'Accepting WebSocket commands. Press Ctrl+C to stop.');
 
-    process.on('SIGINT', () => {
-      log('INFO', 'Shutting down...');
-      killBrowserAndExit(browserProcess, server, 0);
+      process.on('SIGINT', () => {
+        log('INFO', 'Shutting down...');
+        killBrowserAndExit(browserProcess, server, 0);
+      });
+    })
+    .catch((err) => {
+      console.error('Failed to start:', err.message);
+      process.exit(1);
     });
-  }).catch(err => {
-    console.error('Failed to start:', err.message);
-    process.exit(1);
-  });
 }
-
 
 // Exports
 
-
 module.exports = {
   start,
+  attach,
   startWithPage,
   startSession: startWithPage,
   connectToServer,

@@ -222,6 +222,236 @@ function computeExtensionId(extensionAbsPath) {
   ).join('');
 }
 
+// Browser mode registry. Each mode knows whether its binary accepts the
+// `--load-extension` CLI flag. Branded Google Chrome blocks it
+// ("--load-extension is not allowed in Google Chrome, ignoring."), so those
+// modes must seed the extension on disk instead. The system detects the
+// running binary, records the resolved mode, and holds it across restarts.
+const BROWSER_MODES = {
+  chromium: {
+    label: 'Chromium',
+    patterns: [/chromium/i],
+    supportsLoadExtensionFlag: true,
+  },
+  chrome: {
+    label: 'Google Chrome',
+    patterns: [/google chrome/i, /\/chrome$/i, /\/chrome\.app\//i],
+    supportsLoadExtensionFlag: false,
+  },
+  brave: {
+    label: 'Brave',
+    patterns: [/brave/i],
+    supportsLoadExtensionFlag: true,
+  },
+  edge: {
+    label: 'Microsoft Edge',
+    patterns: [/microsoft edge/i, /\bedge\b/i],
+    supportsLoadExtensionFlag: true,
+  },
+  vivaldi: {
+    label: 'Vivaldi',
+    patterns: [/vivaldi/i],
+    supportsLoadExtensionFlag: true,
+  },
+  helium: {
+    label: 'Helium',
+    patterns: [/helium/i],
+    supportsLoadExtensionFlag: true,
+  },
+  arc: {
+    label: 'Arc',
+    patterns: [/arc/i],
+    supportsLoadExtensionFlag: true,
+  },
+  opera: {
+    label: 'Opera',
+    patterns: [/opera/i],
+    supportsLoadExtensionFlag: true,
+  },
+  unknown: {
+    label: 'Unknown Chromium-based browser',
+    patterns: [],
+    supportsLoadExtensionFlag: true,
+  },
+};
+
+function detectBrowserMode(browserPath) {
+  const key = String(browserPath || '');
+  for (const [mode, def] of Object.entries(BROWSER_MODES)) {
+    if (mode === 'unknown') continue;
+    if (def.patterns.some((re) => re.test(key))) {
+      return { mode, ...def };
+    }
+  }
+  return { mode: 'unknown', ...BROWSER_MODES.unknown };
+}
+
+// Hold the resolved browser mode across restarts. The mode is cached in the
+// browser-process state file so a later `start` reuses the same strategy
+// without re-probing the binary (which is slow and can change between runs).
+function readResolvedMode() {
+  const state = readBrowserState();
+  return state && state.browserMode ? state.browserMode : null;
+}
+
+function writeResolvedMode(browserPath) {
+  const detected = detectBrowserMode(browserPath);
+  const state = readBrowserState() || {};
+  state.browserMode = detected;
+  writeBrowserState(state);
+  return detected;
+}
+
+function resolveBrowserMode(browserPath, options = {}) {
+  if (!options.force) {
+    const cached = readResolvedMode();
+    if (cached && cached.mode) return cached;
+  }
+  return writeResolvedMode(browserPath);
+}
+
+// Known install locations per platform. Used to auto-discover a browser that
+// supports the `--load-extension` flag when the user's configured browser
+// (e.g. branded Google Chrome) blocks it. Browsers are listed most-preferred
+// first.
+const BROWSER_SEARCH_PATHS = {
+  darwin: [
+    '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser',
+    '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+    '/Applications/Vivaldi.app/Contents/MacOS/Vivaldi',
+    '/Applications/Helium.app/Contents/MacOS/Helium',
+    '/Applications/Arc.app/Contents/MacOS/Arc',
+    '/Applications/Opera.app/Contents/MacOS/Opera',
+  ],
+  linux: [
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser',
+    '/snap/bin/chromium',
+    '/usr/bin/brave',
+    '/usr/bin/brave-browser',
+    '/usr/bin/google-chrome-stable',
+    '/usr/bin/microsoft-edge',
+    '/usr/bin/edge',
+  ],
+  win32: [
+    'C:\\Program Files\\Chromium\\Application\\chrome.exe',
+    'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
+    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+  ],
+};
+
+// Find an installed flag-supported browser. Returns { path, mode } or null.
+function discoverFlagSupportedBrowser(options = {}) {
+  const platform = options.platform || process.platform;
+  const existsSync = options.existsSync || fs.existsSync;
+  const candidates = BROWSER_SEARCH_PATHS[platform] || [];
+  const preferred = options.preferPath;
+  if (preferred && existsSync(preferred)) {
+    const m = detectBrowserMode(preferred);
+    if (m.supportsLoadExtensionFlag) return { path: preferred, mode: m };
+  }
+  for (const p of candidates) {
+    if (existsSync(p)) {
+      const m = detectBrowserMode(p);
+      if (m.supportsLoadExtensionFlag) return { path: p, mode: m };
+    }
+  }
+  return null;
+}
+
+// Seed an unpacked extension into the profile the same way `--load-extension`
+// would, so browsers that block the CLI flag (branded Google Chrome) still
+// load it. Writes the extension files under Default/Extensions/<id>/<ver>_
+// and registers it in Local State. Used only when the mode does not support
+// the `--load-extension` flag.
+function seedExtensionIntoProfile(profilePath, extensionPath) {
+  const defaultDir = path.join(profilePath, 'Default');
+  fs.mkdirSync(defaultDir, { recursive: true });
+
+  const extAbs = path.resolve(extensionPath);
+  const manifest = JSON.parse(
+    fs.readFileSync(path.join(extAbs, 'manifest.json'), 'utf8'),
+  );
+  const version = String(manifest.version || '1.0.0');
+  const extId = computeExtensionId(extAbs);
+  const dest = path.join(defaultDir, 'Extensions', extId, `${version}_`);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.rmSync(dest, { recursive: true, force: true });
+  copyDir(extAbs, dest);
+
+  const localStatePath = path.join(profilePath, 'Local State');
+  let state = {};
+  if (fs.existsSync(localStatePath)) {
+    try {
+      state = JSON.parse(fs.readFileSync(localStatePath, 'utf8'));
+    } catch {}
+  }
+  state.extensions = state.extensions || {};
+  state.extensions.settings = state.extensions.settings || {};
+  state.extensions.settings[extId] = {
+    account_extension_type: 'LOCAL',
+    creation_flags: 1,
+    from_webstore: false,
+    installed_by_custodian: false,
+    manifest,
+    path: `Default/Extensions/${extId}/${version}_`,
+    location: 1,
+    state: 1,
+    version,
+    was_installed_by_default: false,
+    was_installed_by_oem: false,
+    install_time: '13300000000000000',
+  };
+  fs.writeFileSync(localStatePath, JSON.stringify(state));
+
+  // Chrome only starts an extension's service worker (and thus the runtime
+  // handshake) once it is registered AND enabled in the profile Preferences,
+  // not just Local State. Mirror the entry into Default/Preferences so the
+  // seeded extension is enabled and its SW actually runs.
+  const prefsPath = path.join(defaultDir, 'Preferences');
+  let prefs = {};
+  if (fs.existsSync(prefsPath)) {
+    try {
+      prefs = JSON.parse(fs.readFileSync(prefsPath, 'utf8'));
+    } catch {}
+  }
+  prefs.extensions = prefs.extensions || {};
+  prefs.extensions.settings = prefs.extensions.settings || {};
+  prefs.extensions.settings[extId] = {
+    account_extension_type: 'LOCAL',
+    creation_flags: 1,
+    from_webstore: false,
+    installed_by_custodian: false,
+    manifest,
+    path: `Default/Extensions/${extId}/${version}_`,
+    location: 1,
+    state: 1,
+    version,
+    was_installed_by_default: false,
+    was_installed_by_oem: false,
+    install_time: '13300000000000000',
+    acknowledged_external_extension_loaded: true,
+  };
+  if (!Array.isArray(prefs.extensions.pinned_extensions)) {
+    prefs.extensions.pinned_extensions = [];
+  }
+  if (!prefs.extensions.pinned_extensions.includes(extId)) {
+    prefs.extensions.pinned_extensions.push(extId);
+  }
+  fs.writeFileSync(prefsPath, JSON.stringify(prefs));
+  return extId;
+}
+
+function copyDir(src, dest) {
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const s = path.join(src, entry.name);
+    const d = path.join(dest, entry.name);
+    if (entry.isDirectory()) copyDir(s, d);
+    else if (entry.isFile()) fs.copyFileSync(s, d);
+  }
+}
+
 function getProfileSeed(config = {}) {
   return config.framework?.profileSeed || {};
 }
@@ -346,15 +576,64 @@ function launchBrowser(config, extensionPath) {
     seedProfile(profile, extensionPath, config);
   }
 
+  // Resolve and hold the browser mode so the correct extension-load strategy
+  // is used. Chromium-family browsers accept `--load-extension`; branded
+  // Google Chrome blocks it ("--load-extension is not allowed in Google
+  // Chrome, ignoring."), so those modes need an alternative strategy.
+  let mode = resolveBrowserMode(browser, config.framework?.browserMode || {});
+  let effectiveBrowser = browser;
+
+  if (!mode.supportsLoadExtensionFlag) {
+    // Best effort: seed the extension on disk so the profile at least carries
+    // it. Branded Chrome may still prune the registration on launch, so also
+    // try to fall back to an installed flag-supported browser which loads the
+    // extension reliably via the CLI flag.
+    seedExtensionIntoProfile(profile, extensionPath);
+    const alt = discoverFlagSupportedBrowser({ preferPath: config.framework?.preferBrowser });
+    if (alt) {
+      effectiveBrowser = alt.path;
+      mode = alt.mode;
+      console.log(
+        formatWarn(
+          `Configured browser blocks --load-extension (${mode.label}). ` +
+          `Falling back to ${alt.mode.label} at ${alt.path} which supports it. ` +
+          `Set "browser" in ~/tnf-browser/config.js to make this permanent.`,
+        ),
+      );
+    } else {
+      console.log(
+        formatWarn(
+          `Configured browser (${mode.label}) blocks --load-extension. ` +
+          `Seeded the extension on disk as a best effort; if it does not load, ` +
+          `open chrome://extensions and use "Load unpacked" on the TNF extension, ` +
+          `or set "browser" to Chromium/Brave/Edge/Helium in ~/tnf-browser/config.js.`,
+        ),
+      );
+    }
+  }
+
+  try {
+    const st = readBrowserState() || {};
+    st.browserMode = mode;
+    st.configuredBrowser = browser;
+    st.effectiveBrowser = effectiveBrowser;
+    st.extensionStrategy = mode.supportsLoadExtensionFlag ? 'load-extension-flag' : 'seed-on-disk';
+    writeBrowserState(st);
+  } catch {}
+
   const viewport = config.viewport || { width: 1280, height: 900 };
   const startUrl = config.startUrl || 'about:blank';
 
   const fwDebug = config.framework?.debug || {};
   const debugPort = fwDebug.devtools ? 9222 : null;
 
+  const loadExtensionArg = mode.supportsLoadExtensionFlag
+    ? [`--load-extension=${extensionPath}`]
+    : [];
+
   const args = [
     `--user-data-dir=${profile}`,
-    `--load-extension=${extensionPath}`,
+    ...loadExtensionArg,
     '--disable-fre',
     '--no-default-browser-check',
     '--no-first-run',
@@ -365,12 +644,20 @@ function launchBrowser(config, extensionPath) {
     startUrl,
   ];
 
-  const child = spawn(browser, args, {
+  const child = spawn(effectiveBrowser, args, {
     stdio: 'ignore',
     detached: true,
     env: browserEnv.env,
   });
-  writeBrowserState({ pid: child.pid, profile, browser });
+  const prior = readBrowserState() || {};
+  writeBrowserState({
+    pid: child.pid,
+    profile,
+    browser: effectiveBrowser,
+    configuredBrowser: browser,
+    browserMode: prior.browserMode,
+    extensionStrategy: prior.extensionStrategy,
+  });
   child.unref();
   return child;
 }
@@ -384,4 +671,10 @@ module.exports = {
   normalizeProfilePath,
   resolveBrowserDisplayEnv,
   formatWarn,
+  detectBrowserMode,
+  resolveBrowserMode,
+  discoverFlagSupportedBrowser,
+  seedExtensionIntoProfile,
+  computeExtensionId,
+  BROWSER_MODES,
 };

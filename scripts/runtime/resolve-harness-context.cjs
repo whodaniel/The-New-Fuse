@@ -102,7 +102,7 @@ function providerFamily(provider) {
   if (/gemini|google/.test(blob)) return 'google';
   if (/anthropic|claude/.test(blob)) return 'anthropic';
   if (/openai|gpt-oss|gpt-/.test(blob)) return 'openai';
-  if (/nvidia|minimax|mistral|llama|integrate\.api\.nvidia/.test(blob)) return 'nvidia';
+  if (/nvidia|minimax|mistral|llama|thinkingmachines|poolside|z-ai|integrate\.api\.nvidia/.test(blob)) return 'nvidia';
   if (/openrouter/.test(blob)) return 'openrouter';
   if (/deepseek/.test(blob)) return 'deepseek';
   if (/neuralwatt|glm/.test(blob)) return 'neuralwatt';
