@@ -432,15 +432,8 @@ export function rebuyPlayer(t, { playerId }) {
   // Leaving the old finishPosition caused computePayouts to pay
   // a \"ghost\" finish position for an active player.
   p.finishPosition = null;
-  // Remove from eliminationOrder — player is no longer eliminated.
   t.eliminationOrder = t.eliminationOrder.filter((e) => e.playerId !== playerId);
- // Reset finishPosition — player is back in the tournament.
- // Leaving the old finishPosition caused computePayouts to pay
- // a "ghost" finish position for an active player.
- p.finishPosition = null;
- // Remove from eliminationOrder — player is no longer eliminated.
- t.eliminationOrder = t.eliminationOrder.filter((e) => e.playerId !== playerId);
- // Rebuy may have a different price than buy-in (e.g., $10 buy-in + $5 rebuy).
+  // Rebuy may have a different price than buy-in (e.g., $10 buy-in + $5 rebuy).
  // Previously used t.buyInUnits which was incorrect when rebuy pricing differs.
  t.prizePoolUnits += t.rebuy.rebuyPriceUnits || t.buyInUnits;
 
@@ -454,6 +447,7 @@ export function rebuyPlayer(t, { playerId }) {
   } else {
     // For SNGs or non-running tournaments, rebalance immediately
     rebalanceTables(t);
+  }
   return snapshotTournament(t);
 }
 
