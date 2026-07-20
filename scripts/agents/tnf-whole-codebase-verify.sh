@@ -39,13 +39,9 @@ run_surface() {
   echo "START $name :: $cmd" | tee -a "$OUT/progress.log"
   started=$(date +%s)
   # Fully isolated child shell + new session when available
-  if command -v setsid >/dev/null 2>&1; then
-    setsid bash -c "$cmd" >"$log" 2>&1
-    code=$?
-  else
-    bash -c "$cmd" >"$log" 2>&1
-    code=$?
-  fi
+  # Isolated child; do not use setsid (missing on macOS)
+  bash -c "$cmd" >"$log" 2>&1
+  code=$?
   ended=$(date +%s)
   dur=$(( (ended-started)*1000 ))
   if [[ $code -eq 0 ]]; then ok=true; else ok=false; fi
