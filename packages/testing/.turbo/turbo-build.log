@@ -6,3 +6,4 @@
 > @the-new-fuse/testing@1.0.0 clean
 > rm -rf dist coverage test-results playwright-report tsconfig.tsbuildinfo
 
+ ELIFECYCLE  Command failed.

@@ -1,0 +1,9 @@
+{
+  "name": "B08-check-ts",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 0,
+  "cmd": "node scripts/check-ts.js",
+  "log": "logs/B08-check-ts.log",
+  "stdoutTail": "\nFound 0 errors in 23 files.\n"
+}

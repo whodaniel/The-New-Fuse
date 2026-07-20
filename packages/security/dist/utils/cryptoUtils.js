@@ -1,5 +1,4 @@
-import { createCipheriv, createDecipheriv, createHash, createHmac, timingSafeEqual as nodeTimingSafeEqual, randomBytes, } from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
+import { createCipheriv, createDecipheriv, createHash, createHmac, timingSafeEqual as nodeTimingSafeEqual, randomBytes, randomUUID, } from 'crypto';
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16; // For AES, this is always 16
 // Removed unused TAG_LENGTH constant
@@ -14,7 +13,7 @@ const KEY_LENGTH = 32; // For aes-256-gcm
  * @returns {string} A new UUID.
  */
 export function getUUID() {
-    return uuidv4();
+    return randomUUID();
 }
 /**
  * Example usage (remove direct crypto usage elsewhere):

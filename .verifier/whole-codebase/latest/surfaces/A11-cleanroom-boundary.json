@@ -1,0 +1,9 @@
+{
+  "name": "A11-cleanroom-boundary",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 1000,
+  "cmd": "node scripts/protocols/validate-cleanroom-boundary.cjs",
+  "log": "logs/A11-cleanroom-boundary.log",
+  "stdoutTail": "PASS: Dockerfile.cleanroom includes ENV TNF_ROOT=/home/tnfuser/Projects/The-New-Fuse\nPASS: Dockerfile.cleanroom includes ENV TNF_RELAY_URL=ws://127.0.0.1:3000/ws\nPASS: Dockerfile.cleanroom includes WORKDIR $TNF_ROOT\nPASS: Dockerfile.cleanroom includes validate-local-runtime-boundary.cjs\nPASS: Dockerfile.cleanroom excludes personal paths and fixed legacy relay literals\nPASS: .dockerignore includes .env\nPASS: .dockerignore includes .env.*\nPASS: .dockerignore includes !.env.example\nPASS: .dockerignore includes !.env.*.example\nPASS: .dockerignore includes .tnf.local.env\nPASS: .dockerignore includes .tnf.local.env.*\nPASS: .dockerignore includes **/.env\nPASS: .dockerignore includes **/.env.*\nPASS: .dockerignore includes !**/.env.example\nPASS: .dockerignore includes !**/.env.*.example\nPASS: .dockerignore includes .pnpm-store\nPASS: .dockerignore includes **/.pnpm-store\nPASS: .dockerignore includes node_modules\nPASS: .dockerignore includes **/node_modules\n[cleanroom-boundary] OK: clean-room Docker boundary is portable and local-secret safe\n"
+}

@@ -1,1 +1,0 @@
-{"version":3,"file":"toHavePermission.d.ts","sourceRoot":"","sources":["../../../../../src/matchers/toHavePermission.ts"],"names":[],"mappings":"AAEA,UAAU,mBAAmB;IAC3B,EAAE,EAAE,MAAM,CAAC;IACX,WAAW,CAAC,EAAE,MAAM,EAAE,CAAC;IACvB,KAAK,CAAC,EAAE;QAAE,IAAI,EAAE,MAAM,CAAC;QAAC,WAAW,EAAE,MAAM,EAAE,CAAA;KAAE,EAAE,CAAC;CACnD;AAED,eAAO,MAAM,gBAAgB,2IAc5B,CAAC"}

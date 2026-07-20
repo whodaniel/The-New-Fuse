@@ -1,5 +1,5 @@
 
 > @the-new-fuse/core-error-handling@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/core-error-handling
-> jest --passWithNoTests --passWithNoTests
+> jest --passWithNoTests
 
- ELIFECYCLE  Test failed. See above for more details.
+No tests found, exiting with code 0

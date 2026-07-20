@@ -1,0 +1,100 @@
+{
+  "runId": "whole-2026-07-20T05-56-17Z",
+  "timestamp": "2026-07-20T06:09:57.820Z",
+  "scope": "ENTIRE_CODEBASE",
+  "packageCount": 126,
+  "surfacesTotal": 29,
+  "passed": 18,
+  "failed": 11,
+  "ok": false,
+  "score": "18/29",
+  "failedSurfaces": [
+    {
+      "name": "A01-protocol-validate",
+      "exitCode": 1,
+      "durationMs": 17000,
+      "log": "logs/A01-protocol-validate.log"
+    },
+    {
+      "name": "A02-protocol-gate",
+      "exitCode": 1,
+      "durationMs": 15000,
+      "log": "logs/A02-protocol-gate.log"
+    },
+    {
+      "name": "A10-doc-tagging",
+      "exitCode": 1,
+      "durationMs": 0,
+      "log": "logs/A10-doc-tagging.log"
+    },
+    {
+      "name": "B02-validate-build",
+      "exitCode": 1,
+      "durationMs": 3000,
+      "log": "logs/B02-validate-build.log"
+    },
+    {
+      "name": "B03-check-agent-registration",
+      "exitCode": 1,
+      "durationMs": 1000,
+      "log": "logs/B03-check-agent-registration.log"
+    },
+    {
+      "name": "B07-validate-security",
+      "exitCode": 1,
+      "durationMs": 0,
+      "log": "logs/B07-validate-security.log"
+    },
+    {
+      "name": "C01-turbo-type-check",
+      "exitCode": 2,
+      "durationMs": 278000,
+      "log": "logs/C01-turbo-type-check.log"
+    },
+    {
+      "name": "C02-turbo-lint",
+      "exitCode": 1,
+      "durationMs": 35000,
+      "log": "logs/C02-turbo-lint.log"
+    },
+    {
+      "name": "C03-turbo-test-all",
+      "exitCode": 1,
+      "durationMs": 114000,
+      "log": "logs/C03-turbo-test-all.log"
+    },
+    {
+      "name": "C04-turbo-build-packages",
+      "exitCode": 1,
+      "durationMs": 192000,
+      "log": "logs/C04-turbo-build-packages.log"
+    },
+    {
+      "name": "C05-turbo-build-apps",
+      "exitCode": 1,
+      "durationMs": 25000,
+      "log": "logs/C05-turbo-build-apps.log"
+    }
+  ],
+  "passedSurfaces": [
+    "A03-protocol-schemas",
+    "A04-local-runtime",
+    "A05-protocol-health",
+    "A06-directive-verify-cycle",
+    "A07-turn-zero-authority",
+    "A08-handoff-source-drift",
+    "A09-sgp-schemas",
+    "A11-cleanroom-boundary",
+    "A12-agent-defs",
+    "A13-orchestration-health",
+    "B01-architecture",
+    "B04-check-structure",
+    "B05-audit-circular",
+    "B06-protocol-schemas-npm",
+    "B08-check-ts",
+    "D01-tnf-doctor-local",
+    "D02-alive-status",
+    "D03-agents-live-status"
+  ],
+  "outDir": ".verifier/whole-codebase/whole-2026-07-20T05-56-17Z"
+}

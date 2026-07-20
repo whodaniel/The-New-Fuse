@@ -12,12 +12,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ResourceRegistryController_1;
-var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResourceRegistryController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
-const dto_js_1 = require("../dto.js");
+const dto_1 = require("../dto");
 const resource_access_control_service_js_1 = require("../services/resource-access-control.service.js");
 const resource_registry_service_js_1 = require("../services/resource-registry.service.js");
 const index_js_1 = require("../types/index.js");
@@ -172,7 +171,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_a = typeof dto_js_1.CreateResourceDto !== "undefined" && dto_js_1.CreateResourceDto) === "function" ? _a : Object, Object]),
+    __metadata("design:paramtypes", [dto_1.CreateResourceDto, Object]),
     __metadata("design:returntype", Promise)
 ], ResourceRegistryController.prototype, "create", null);
 __decorate([
@@ -183,7 +182,7 @@ __decorate([
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_b = typeof dto_js_1.SearchResourceDto !== "undefined" && dto_js_1.SearchResourceDto) === "function" ? _b : Object, Object]),
+    __metadata("design:paramtypes", [dto_1.SearchResourceDto, Object]),
     __metadata("design:returntype", Promise)
 ], ResourceRegistryController.prototype, "search", null);
 __decorate([
@@ -218,7 +217,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, typeof (_c = typeof dto_js_1.UpdateResourceDto !== "undefined" && dto_js_1.UpdateResourceDto) === "function" ? _c : Object, Object]),
+    __metadata("design:paramtypes", [String, dto_1.UpdateResourceDto, Object]),
     __metadata("design:returntype", Promise)
 ], ResourceRegistryController.prototype, "update", null);
 __decorate([

@@ -1,4 +1,4 @@
-import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto.js';
+import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto';
 import { ResourceAccessControlService } from '../services/resource-access-control.service.js';
 import { ResourceRegistryService } from '../services/resource-registry.service.js';
 import { Resource, SearchResult } from '../types/index.js';

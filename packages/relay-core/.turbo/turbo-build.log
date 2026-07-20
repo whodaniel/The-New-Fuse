@@ -2,5 +2,4 @@
 > @the-new-fuse/relay-core@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core
 > tsc --skipLibCheck || echo '✅ Skipping TS errors for deployment (TS 5.9 regression)'
 
-src/services/prompt-intent-classifier.ts(49,43): error TS2339: Property 'causation_id' does not exist on type 'unknown'.
-✅ Skipping TS errors for deployment (TS 5.9 regression)
+ ELIFECYCLE  Command failed.

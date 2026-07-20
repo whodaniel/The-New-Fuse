@@ -1,0 +1,9 @@
+{
+  "name": "A12-agent-defs",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 0,
+  "cmd": "node scripts/validate-agent-defs.cjs",
+  "log": "logs/A12-agent-defs.log",
+  "stdoutTail": "🔍 Validating TNF agent definitions...\n\n📦 Checking skill references...\n  ✅ tnf-cli.md: 11 skills, all valid\n  ✅ tnf-cli.md: 11 skills, all valid\n\n📝 Checking slash command uniqueness...\n  ✅ 37 slash commands, no duplicates\n\n✅ All validations passed!\n"
+}

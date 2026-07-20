@@ -1,0 +1,9 @@
+{
+  "name": "A13-orchestration-health",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 0,
+  "cmd": "node scripts/protocols/validate-orchestration-health.cjs",
+  "log": "logs/A13-orchestration-health.log",
+  "stdoutTail": "Validating Orchestration Governance Health...\n✓ Found required governance columns.\n✅ Orchestration Governance check passed.\n"
+}

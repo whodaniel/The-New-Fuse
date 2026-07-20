@@ -1,0 +1,9 @@
+{
+  "name": "A07-turn-zero-authority",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 0,
+  "cmd": "node scripts/protocols/validate-turn-zero-authority.cjs --mode=ci",
+  "log": "logs/A07-turn-zero-authority.log",
+  "stdoutTail": "[turn-zero-authority] OK (ci): canonical Turn Zero authority and references are aligned\n"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "A06-directive-verify-cycle",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 0,
+  "cmd": "node scripts/agents/tnf-directive-verify-cycle.cjs",
+  "log": "logs/A06-directive-verify-cycle.log",
+  "stdoutTail": "{\n  \"ok\": true,\n  \"score\": \"9/9\",\n  \"cycleId\": \"cycle-2026-07-20T05-57-42-520Z\",\n  \"latest\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.verifier/directive-cycles/latest.json\",\n  \"nextActionHint\": \"triage_unconverted_directives\"\n}\n"
+}

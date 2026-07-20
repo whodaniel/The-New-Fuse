@@ -1,2 +1,0 @@
-export declare const toBeValidWorkflow: (this: import("expect").MatcherState, received: any, ...args: any[]) => Promise<import("./utils.js").CustomMatcherResult>;
-//# sourceMappingURL=toBeValidWorkflow.d.ts.map

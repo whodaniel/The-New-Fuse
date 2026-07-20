@@ -1,4 +1,4 @@
-import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto.js';
+import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto';
 import { Resource, ResourceAction, SearchResult } from '../types/index.js';
 export declare class ResourceRegistryService {
     private readonly logger;
