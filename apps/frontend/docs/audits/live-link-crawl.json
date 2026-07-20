@@ -1,7 +1,7 @@
 {
   "summary": {
-    "startedAt": "2026-07-20T04:33:59.059Z",
-    "generatedAt": "2026-07-20T04:43:44.455Z",
+    "startedAt": "2026-07-20T05:13:53.548Z",
+    "generatedAt": "2026-07-20T05:23:13.506Z",
     "settings": {
       "maxDepth": 5,
       "maxPagesPerDomain": 500,
@@ -1174,7 +1174,7 @@
           "pageError": null,
           "title": "The New Fuse - Agent Communication Flow",
           "h1": "🤖 Agent Communication Flow",
-          "fingerprintHash": "c15b7d0ac60f8e1250b6c69df4d829b9f78159e5",
+          "fingerprintHash": "5c05cf770bb5db1f620309f38e425e99029b7006",
           "status": 200,
           "ok": true,
           "finalUrl": "https://thenewfuse.com/visualizations/agent-communication-flow",
@@ -1210,7 +1210,7 @@
           "pageError": null,
           "title": "The New Fuse - Monitoring Dashboard",
           "h1": "🎛️ Monitoring Dashboard",
-          "fingerprintHash": "3370c2d8dc45c99bb2f589effc23bb24cde95bc8",
+          "fingerprintHash": "a1732b54eac1492a039b3e9b3dc42ffcf5bf093d",
           "status": 200,
           "ok": true,
           "finalUrl": "https://thenewfuse.com/visualizations/monitoring-dashboard",
