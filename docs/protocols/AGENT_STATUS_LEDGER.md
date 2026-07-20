@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-17T23:39:03.833Z** — handoff
+Updated: **2026-07-20T06:22:14.605Z** — handoff
+`e84e62c0-c3f8-469e-9c71-69855c7b9d01` (`fb12dac55ff7`).
 `8409363d-172d-49b8-9135-1bd612f879ac` (`1b83ed4c7e67`). Heartbeat reconcile:
 **2026-07-17T23:13Z** — `cron-heartbeat-ttys011-1784329995324` updated P1 count
 from stale "6 PIDs" to live `4 owner / 9 worker / 18 total`; no kill
@@ -12,9 +13,9 @@ from stale "6 PIDs" to live `4 owner / 9 worker / 18 total`; no kill
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                    |
-| -------- | ----------------------------------------------------------------------------------------- |
-| **P0**   | Triage 33 unrelated working-tree drifts (root, frontend, tnf-cli, tnf-browser, .verifier) |
+| Priority | Action                                                                                                                                                  |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Triage remaining failures in /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.verifier/whole-codebase/rerun-2026-07-20T06-22-13Z/SUMMARY.md |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -72,6 +73,14 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | thenewfuse-frontend-tester  | `TNF:LOCAL:AGENT:THENEWFUSE-FRONTEND-TESTER:001`  | **NEW** — registered at 2026-06-23T22:58:16.160Z |
 | tnf-fleet-health-probe      | `TNF:LOCAL:AGENT:TNF-FLEET-HEALTH-PROBE:001`      | **NEW** — registered at 2026-06-23T22:58:16.160Z |
 | LLM Validation Worker Agent | `TNF:LOCAL:AGENT:LLM VALIDATION WORKER AGENT:001` | **NEW** — registered at 2026-06-23T22:58:16.160Z |
+
+### Newly Registered (This Session)
+
+| Agent                   | Identity                                      | Status                                           |
+| ----------------------- | --------------------------------------------- | ------------------------------------------------ |
+| relay-server-qa-agent   | `TNF:LOCAL:AGENT:RELAY-SERVER-QA-AGENT:001`   | **NEW** — registered at 2026-07-20T06:17:43.087Z |
+| staff-review-agent      | `TNF:LOCAL:AGENT:STAFF-REVIEW-AGENT:001`      | **NEW** — registered at 2026-07-20T06:17:43.087Z |
+| staffing-director-agent | `TNF:LOCAL:AGENT:STAFFING-DIRECTOR-AGENT:001` | **NEW** — registered at 2026-07-20T06:17:43.087Z |
 
 ## Protocol Gaps (prioritized)
 
@@ -222,3 +231,12 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-07-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (8409363d-172d-49b8-9135-1bd612f879ac) | ✅ HANDOFF_READY |
+
+| 2026-07-20 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(703957ad-206b-484b-a746-699c2287fd16) | ✅ HANDOFF_READY |
+
+| 2026-07-20 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0e2172a9-539e-4cf9-acbf-ae8b03c649ad) | ✅ HANDOFF_READY |
+
+| 2026-07-20 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e84e62c0-c3f8-469e-9c71-69855c7b9d01) | ✅ HANDOFF_READY |

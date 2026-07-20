@@ -1,80 +1,152 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-18T05:11:59.411Z` Handoff
-ID: `af4167b7-1d64-4941-ae39-88a99d1cbe20`
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-07-20T06:22:14.605Z`  
+Handoff ID: `e84e62c0-c3f8-469e-9c71-69855c7b9d01`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `1b83ed4c7e6742a4a5526fdf917b8ad86e5b71d2`
+- Head SHA: `fb12dac55ff757123f90186e919b1913af26926a`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Modified 28 file(s)
+- Failed-surface rerun rerun-2026-07-20T06-22-13Z
 
 ## Changed Paths
 
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
-- .verifier/process-atlas.digest.md
-- .verifier/process-atlas.payload.json
-- .verifier/process-atlas.verify.json
-- .verifier/tnf-process-atlas.html
-- apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app\_\_agent
-- apps/external/gemini-cli-source
-- apps/frontend/docs/audits/live-link-crawl.json
-- apps/frontend/docs/audits/live-link-crawl.md
-- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
-- apps/frontend/src/data/codebase_map.json
-- apps/virtual-library-blueprints
-- docs/core/AGENTS.md
-- docs/operations/tnf-full-auto-daemon.log
-- docs/operations/tnf-full-auto-runs.jsonl
-- docs/operations/tnf-full-auto-state.json
+- .verifier/whole-codebase/CURRENT_RERUN
+- .verifier/whole-codebase/\_prep/
+- .verifier/whole-codebase/latest/LOGIC_REPORT.md
+- .verifier/whole-codebase/rerun-2026-07-20T06-22-13Z/
+- .verifier/whole-codebase/rerun.out
+- .verifier/whole-codebase/rerun.pid
+- .verifier/whole-codebase/whole-2026-07-20T05-42-39-540Z/inventory.json
+- .verifier/whole-codebase/whole-2026-07-20T05-42-39-540Z/surfaces/A01-protocol-validate.json
+- .verifier/whole-codebase/whole-2026-07-20T05-42-39-540Z/surfaces/A02-protocol-gate.json
+- .verifier/whole-codebase/whole-2026-07-20T05-46-49Z/inventory.json
+- .verifier/whole-codebase/whole-2026-07-20T05-46-49Z/surfaces/A01-protocol-validate.json
+- .verifier/whole-codebase/whole-2026-07-20T05-46-49Z/surfaces/A02-protocol-gate.json
+- .verifier/whole-codebase/whole-2026-07-20T05-51-02Z/inventory.json
+- .verifier/whole-codebase/whole-2026-07-20T05-51-02Z/surfaces/A01-protocol-validate.json
+- .verifier/whole-codebase/whole-2026-07-20T05-51-02Z/surfaces/A02-protocol-gate.json
+- .verifier/whole-codebase/whole-2026-07-20T05-51-02Z/surfaces/A03-protocol-schemas.json
+- .verifier/whole-codebase/whole-2026-07-20T05-52-58Z/inventory.json
+- .verifier/whole-codebase/whole-2026-07-20T05-52-58Z/surfaces/A01-protocol-validate.json
+- .verifier/whole-codebase/whole-2026-07-20T05-52-58Z/surfaces/A02-protocol-gate.json
+- apps/api/node_modules/cliui/build/tsconfig.tsbuildinfo
+- apps/api/tsconfig.tsbuildinfo
+- docs/library/EMAIL_EXCLUSION_REVIEW_2026-05-06.md
+- docs/library/EMAIL_NARRATIVE_DISCOVERY_2026-05-06.md
+- docs/library/EMAIL_SUPABASE_TIMELINE_VALIDATION_2026-05-06.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
+- docs/protocols/TNF_DOCUMENT_VETTING_PROCEDURE.md
+- docs/protocols/TNF_SYSTEM_LEXICON.md
+- docs/protocols/TNF_VIRTUAL_LIBRARY_CONSOLIDATION_PROTOCOL.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-browser/extension/service-worker.js
-- packages/tnf-browser/index.js
-- packages/tnf-browser/lib/launcher.js
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/utils/llm-provider-detector.ts
-- scripts/pi-wrapper-launchd.sh
-- scripts/runtime/resolve-harness-context.cjs
-- docs/protocols/reports/DOC_AUDIT_SKILLS_VERIFY.json
-- docs/protocols/reports/HEARTBEAT_REPORT_cron-heartbeat-ttys011-1784329995324.md
-- packages/tnf-browser/extension/token.json
-- packages/relay-core/relay.log
-- packages/types/dist/supabase.d.ts.map
-- packages/types/dist/supabase.js
-- packages/types/dist/supabase.js.map
-- packages/types/tsconfig.tsbuildinfo
+- packages/a2a-core/tsconfig.tsbuildinfo
+- packages/a2a-protocol/dist/tsconfig.tsbuildinfo
+- packages/a2a-react/tsconfig.tsbuildinfo
+- packages/ag-ui-core/tsconfig.tsbuildinfo
+- packages/agent-coordination/tsconfig.tsbuildinfo
+- packages/agent/.tsbuildinfo
+- packages/ap2-protocol/tsconfig.tsbuildinfo
+- packages/api-client/tsconfig.tsbuildinfo
+- packages/api-optimization/tsconfig.tsbuildinfo
+- packages/api-types/tsconfig.tsbuildinfo
+- packages/api/tsconfig.tsbuildinfo
+- packages/auth/dist/.tsbuildinfo
+- packages/backend/tsconfig.tsbuildinfo
+- packages/build-optimization/dist/tsconfig.tsbuildinfo
+- packages/build-optimization/tsconfig.tsbuildinfo
+- packages/claude-skills/tsconfig.tsbuildinfo
+- packages/client/tsconfig.tsbuildinfo
+- packages/common/tsconfig.tsbuildinfo
+- packages/contracts/dist/tsconfig.tsbuildinfo
+- packages/core-error-handling/tsconfig.tsbuildinfo
+- packages/core-monitoring/tsconfig.tsbuildinfo
+- packages/core-vector-db/tsconfig.tsbuildinfo
+- packages/core/dist/.tsbuildinfo
+- packages/data/dist/.tsbuildinfo
+- packages/database/tsconfig.tsbuildinfo
+- packages/deployment-core/tsconfig.tsbuildinfo
+- packages/extension-core/dist/.tsbuildinfo
+- packages/extension-system/dist/.tsbuildinfo
+- packages/fairtable-adapters/tsconfig.tsbuildinfo
+- packages/fairtable-components/tsconfig.tsbuildinfo
+- packages/fairtable-core/tsconfig.tsbuildinfo
+- packages/fairtable-utils/tsconfig.tsbuildinfo
+- packages/feature-suggestions/tsconfig.tsbuildinfo
+- packages/feature-tracker/dist/tsconfig.tsbuildinfo
+- packages/features/dist/tsconfig.tsbuildinfo
+- packages/gemini-browser-skill/tsconfig.tsbuildinfo
+- packages/google-sheets-mcp-server/node_modules/gaxios/build/cjs/tsconfig.cjs.tsbuildinfo
+- packages/google-sheets-mcp-server/node_modules/gaxios/build/esm/tsconfig.tsbuildinfo
+- packages/google-sheets-mcp-server/tsconfig.tsbuildinfo
+- packages/hooks/tsconfig.tsbuildinfo
+- packages/infrastructure/tsconfig.tsbuildinfo
+- packages/integration-tests/tsconfig.tsbuildinfo
+- packages/jules-integration/tsconfig.tsbuildinfo
+- packages/jules-skill/tsconfig.tsbuildinfo
+- packages/mcp-cloud-redis-bridge/dist/.tsbuildinfo
+- packages/mcp-concordance-server/tsconfig.tsbuildinfo
+- packages/mcp-core/dist/.tsbuildinfo
+- packages/mcp-skills-server/tsconfig.tsbuildinfo
+- packages/n8n-workflows/tsconfig.tsbuildinfo
+- packages/port-management/tsconfig.tsbuildinfo
+- packages/prompt-templating/tsconfig.tsbuildinfo
+- packages/proto-definitions/tsconfig.tsbuildinfo
+- packages/protocol-contracts/tsconfig.tsbuildinfo
+- packages/relay-core/dist/.tsbuildinfo
+- packages/resource-registry/tsconfig.tsbuildinfo
+- packages/security/tsconfig.tsbuildinfo
+- packages/shared/tsconfig.tsbuildinfo
+- packages/sync-core/dist/tsconfig.tsbuildinfo
+- packages/test-utils/tsconfig.tsbuildinfo
+- packages/tnf-cli/node_modules/@supabase/auth-js/dist/tsconfig.module.tsbuildinfo
+- packages/tnf-cli/node_modules/@supabase/auth-js/dist/tsconfig.tsbuildinfo
+- packages/tnf-cli/node_modules/@supabase/functions-js/dist/tsconfig.module.tsbuildinfo
+- packages/tnf-cli/node_modules/@supabase/functions-js/dist/tsconfig.tsbuildinfo
+- packages/tnf-cli/node_modules/@supabase/realtime-js/dist/tsconfig.module.tsbuildinfo
+- packages/tnf-cli/node_modules/@supabase/realtime-js/dist/tsconfig.tsbuildinfo
+- packages/tnf-cli/tsconfig.tsbuildinfo
+- packages/tnf-core/tsconfig.tsbuildinfo
+- packages/tnf-note-taking/tsconfig.tsbuildinfo
+- packages/ui-consolidated/tsconfig.tsbuildinfo
+- packages/utils/dist/.tsbuildinfo
+- packages/websocket-infrastructure/tsconfig.tsbuildinfo
+- packages/workflow-engine/dist/.tsbuildinfo
+- scripts/agents/tnf-failed-surface-rerun.sh
+- scripts/agents/tnf-whole-codebase-verify.sh
+- scripts/validate-security.cjs
+
+## Verification
+
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
 
 ## Continuation
 
-- **Owner:** operator
-- **Priority:** medium
+- Owner: `tnf-core`
+- Targets: `story-architect`, `librarian`
+- Priority: `high`
 
-**Targets:**
-
-- orchestrator
-
-**Resume Checklist:**
+### Resume Checklist
 
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Execute listed next actions in order
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
 
-- Review updated LIVING_STATE.md for new active steps
-- Commit remaining uncommitted changes (30 file(s))
-
-## Artifacts
-
-**Commits:**
-
-- 1b83ed4c7e6742a4a5526fdf917b8ad86e5b71d2
+- Triage remaining failures in
+  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.verifier/whole-codebase/rerun-2026-07-20T06-22-13Z/SUMMARY.md

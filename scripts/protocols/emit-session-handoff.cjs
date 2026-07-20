@@ -258,7 +258,13 @@ function syncLivingState(handoffPayload) {
   }
 
   const projectId = handoffPayload.project_ids?.[0] || 'TNF-SESSION';
-  const leadAction = handoffPayload.next_actions?.[0] || 'Execute SESSION_HANDOFF_LATEST next actions.';
+  let leadAction = handoffPayload.next_actions?.[0] || 'Execute SESSION_HANDOFF_LATEST next actions.';
+  // Keep LIVING_STATE free of personal absolute paths (local-runtime-boundary).
+  const absRoot = `${repoRoot}${path.sep}`;
+  if (leadAction.startsWith(absRoot)) {
+    leadAction = leadAction.slice(absRoot.length);
+  }
+  leadAction = leadAction.split(repoRoot).join('.');
   const handoffId = handoffPayload.handoff_id;
   const headShort = String(handoffPayload.head_sha || '').slice(0, 12);
   const directiveLine =

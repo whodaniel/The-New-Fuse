@@ -1,0 +1,17 @@
+rerunId=rerun-2026-07-20T06-22-13Z out=/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.verifier/whole-codebase/rerun-2026-07-20T06-22-13Z
+START A01-protocol-validate :: tnf protocol validate
+2026-07-20T06:22:22Z FAIL A01-protocol-validate exit=1 8000ms
+START A02-protocol-gate :: tnf protocol gate
+2026-07-20T06:22:27Z PASS A02-protocol-gate exit=0 5000ms
+START A10-doc-tagging :: node scripts/protocols/validate-doc-tagging.cjs
+2026-07-20T06:22:28Z PASS A10-doc-tagging exit=0 1000ms
+START B02-validate-build :: node scripts/validate-build.cjs
+2026-07-20T06:22:29Z FAIL B02-validate-build exit=1 1000ms
+START B03-check-agent-registration :: node scripts/check-agent-registration.cjs
+2026-07-20T06:22:29Z PASS B03-check-agent-registration exit=0 0ms
+START B07-validate-security :: node scripts/validate-security.cjs
+2026-07-20T06:22:36Z FAIL B07-validate-security exit=1 7000ms
+START C01-turbo-type-check :: pnpm exec turbo run type-check --concurrency=2
+2026-07-20T06:28:06Z FAIL C01-turbo-type-check exit=2 329000ms
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/agents/tnf-failed-surface-rerun.sh: line 72: unexpected EOF while looking for matching `"'
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/agents/tnf-failed-surface-rerun.sh: line 90: syntax error: unexpected end of file

@@ -2,7 +2,9 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Triage 33 unrelated working-tree drifts (root, frontend,
+**Current Directive:** Triage remaining failures in
+`.verifier/whole-codebase/latest-rerun/SUMMARY.md` **Project ID:** `TNF-SESSION`
+**Handoff:** `e84e62c0-c3f8-469e-9c71-69855c7b9d01` **Head:** `fb12dac55ff7`
 tnf-cli, tnf-browser, .verifier) **Project ID:** `TNF-SESSION` **Handoff:**
 `8409363d-172d-49b8-9135-1bd612f879ac` **Head:** `1b83ed4c7e67`
 `tnf:agent-registry` (callableWorker). Continuity via

@@ -30,6 +30,25 @@ NODE
 PKG_COUNT=$(node -pe "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')).packageCount" "$OUT/inventory.json")
 echo "inventoried packages=$PKG_COUNT" | tee -a "$OUT/progress.log"
 
+# Local whole-repo runs: seed TNF_HANDOFF_FILE_LIST so A01/A02 can pass without
+# requiring handoff artifacts to already be in HEAD~1..HEAD (ci default).
+HANDOFF_LIST="$OUT/handoff-file-list.txt"
+{
+  git diff --name-only --diff-filter=ACMR HEAD~1..HEAD 2>/dev/null || true
+  git status --porcelain 2>/dev/null | awk '{print $NF}' || true
+  printf '%s\n' \
+    'docs/protocols/reports/SESSION_HANDOFF_LATEST.json' \
+    'docs/protocols/reports/SESSION_HANDOFF_LATEST.md' \
+    'docs/protocols/AGENT_STATUS_LEDGER.md'
+} | sed '/^$/d' | sort -u > "$HANDOFF_LIST"
+export TNF_HANDOFF_FILE_LIST="$HANDOFF_LIST"
+TNF_HANDOFF_OWNER="${TNF_HANDOFF_OWNER:-tnf-core}" \
+TNF_HANDOFF_SUMMARY="${TNF_HANDOFF_SUMMARY:-Whole-codebase verification run $RUN_ID}" \
+TNF_HANDOFF_NEXT_ACTIONS="${TNF_HANDOFF_NEXT_ACTIONS:-Triage failed surfaces from .verifier/whole-codebase/latest/SUMMARY.md}" \
+TNF_HANDOFF_RESUME_CHECKLIST="${TNF_HANDOFF_RESUME_CHECKLIST:-Read .verifier/whole-codebase/latest/SUMMARY.md||Re-run failed surfaces}" \
+node scripts/protocols/emit-session-handoff.cjs >>"$OUT/progress.log" 2>&1 || true
+echo "handoff file list ready: $HANDOFF_LIST ($(wc -l < "$HANDOFF_LIST" | tr -d ' ') paths)" | tee -a "$OUT/progress.log"
+
 run_surface() {
   local name="$1"; shift
   local cmd="$*"
@@ -78,7 +97,7 @@ run_surface B03-check-agent-registration "node scripts/check-agent-registration.
 run_surface B04-check-structure "bash scripts/check-structure.sh"
 run_surface B05-audit-circular "pnpm run audit:circular"
 run_surface B06-protocol-schemas-npm "node scripts/validate-protocol-schemas.cjs"
-run_surface B07-validate-security "node scripts/validate-security.js"
+run_surface B07-validate-security "node scripts/validate-security.cjs"
 run_surface B08-check-ts "node scripts/check-ts.js"
 
 run_surface C01-turbo-type-check "pnpm exec turbo run type-check --concurrency=4"

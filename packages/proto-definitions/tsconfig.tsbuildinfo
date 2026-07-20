@@ -1,1 +1,0 @@
-{"root":["./src/index.spec.ts","./src/index.ts","./src/generated/vector_store_grpc_pb.d.ts","./src/generated/vector_store_grpc_pb.js","./src/generated/vector_store_pb.d.ts","./src/generated/vector_store_pb.js"],"version":"6.0.2"}
