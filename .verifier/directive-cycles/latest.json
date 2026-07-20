@@ -1,0 +1,189 @@
+{
+  "ok": true,
+  "cycleId": "cycle-2026-07-20T05-33-02-632Z",
+  "actor": "agent:tnf-core",
+  "hitl": false,
+  "timestamp": "2026-07-20T05:33:02.787Z",
+  "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "score": "9/9",
+  "checks": [
+    {
+      "id": "D1",
+      "title": "Directive Conversion Ledger",
+      "ok": true,
+      "detail": {
+        "exists": true,
+        "rel": "docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md",
+        "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md",
+        "bytes": 6951,
+        "mtime": "2026-07-14T13:43:44.927Z",
+        "sha256": "b8b16853102eeae4f704d9908e44c594e888546d1b744ef222243db9be180604",
+        "unconvertedHint": 4
+      },
+      "gate": "PRIORITIZE_UNBLOCK"
+    },
+    {
+      "id": "D2",
+      "title": "Phase 7 Blocked Audit",
+      "ok": true,
+      "detail": {
+        "exists": true,
+        "rel": "docs/protocols/reports/TNF_PHASE7_BLOCKED_AUDIT.md",
+        "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/TNF_PHASE7_BLOCKED_AUDIT.md",
+        "bytes": 12967,
+        "mtime": "2026-07-14T13:43:51.022Z",
+        "sha256": "3cd249295e04f0e0c4cc64d156e90632ee86c7c85f2f8d1a811f7d0502a68511",
+        "blockedHint": 11
+      },
+      "gate": "INCLUDE_UNBLOCK_PLAN"
+    },
+    {
+      "id": "D3",
+      "title": "Directive Classification + Governance Schema",
+      "ok": true,
+      "detail": {
+        "schema": {
+          "exists": true,
+          "rel": "docs/protocols/schemas/tnf-cron-governance.schema.json",
+          "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/schemas/tnf-cron-governance.schema.json",
+          "bytes": 6863,
+          "mtime": "2026-05-16T18:57:39.348Z",
+          "sha256": "a72f55605226c124131a0862ee244578bfefa9c7a9476331e361db95c0d22ada"
+        },
+        "classif": {
+          "exists": true,
+          "rel": "docs/protocols/reports/DOC_AUDIT_POLICY_CLASSIFICATION_2026-07-14.md",
+          "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/DOC_AUDIT_POLICY_CLASSIFICATION_2026-07-14.md",
+          "bytes": 7440,
+          "mtime": "2026-07-14T13:43:50.399Z",
+          "sha256": "74f5c18403013c99d5beccd42f18505ceacee8bb76e3ed7e4373f3f61774d2dc"
+        },
+        "synth": {
+          "exists": true,
+          "rel": "docs/protocols/TNF_GOVERNANCE_SYNTHESIS_v2.0.md",
+          "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/TNF_GOVERNANCE_SYNTHESIS_v2.0.md",
+          "bytes": 41937,
+          "mtime": "2026-07-14T13:46:46.664Z",
+          "sha256": "8a2f8e1a88d159b96ec2a760be0121c4fb021d59b864c7a9e53017db4990c1b4"
+        },
+        "schemaValid": true,
+        "schemaFields": {
+          "hasLane": false,
+          "hasScope": true,
+          "hasBroker": false
+        }
+      },
+      "gate": "PASS"
+    },
+    {
+      "id": "D4",
+      "title": "Heartbeat Stall Detection",
+      "ok": true,
+      "detail": {
+        "heartbeatReport": {
+          "exists": true,
+          "rel": "docs/protocols/reports/HEARTBEAT_REPORT_cron-heartbeat-ttys011-1784329995324.md",
+          "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/HEARTBEAT_REPORT_cron-heartbeat-ttys011-1784329995324.md",
+          "bytes": 5655,
+          "mtime": "2026-07-18T06:41:53.906Z",
+          "sha256": "d1218f3161bcc0effb710d7785d693113fdb6c2e6a3fe9f81c3b20734d3051fa"
+        },
+        "swarm": {
+          "exists": true,
+          "bytes": 2052,
+          "coherence": null,
+          "stallHint": true,
+          "sha256": "20d5628ac5661b0a3f864b4e82a3620f5cbdb3e18e98e5ca671e2be35d6b736b",
+          "mtime": "2026-07-20T05:32:57.109Z"
+        }
+      },
+      "gate": "LANE_ROTATE"
+    },
+    {
+      "id": "D5",
+      "title": "Federation Identity Audit",
+      "ok": true,
+      "detail": {
+        "exists": false,
+        "rel": "docs/protocols/reports/FEDERATION_ID_ENCODING_AUDIT_2026-06-14.md",
+        "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/FEDERATION_ID_ENCODING_AUDIT_2026-06-14.md",
+        "optional": true
+      },
+      "gate": "WARN_MISSING_OPTIONAL"
+    },
+    {
+      "id": "D6",
+      "title": "Governance Dispatch Enforcement Ready",
+      "ok": true,
+      "detail": {
+        "schemaValid": true,
+        "schemaFields": {
+          "hasLane": false,
+          "hasScope": true,
+          "hasBroker": false
+        }
+      },
+      "gate": "PASS"
+    },
+    {
+      "id": "D7",
+      "title": "Curator Rate Limit / Runtime Load",
+      "ok": true,
+      "detail": {
+        "rate": {
+          "exists": true,
+          "rel": "docs/protocols/reports/CURATOR_QUESTION_RATE_LIMIT_GATEWAY_2026-07-08.md",
+          "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/CURATOR_QUESTION_RATE_LIMIT_GATEWAY_2026-07-08.md",
+          "bytes": 4684,
+          "mtime": "2026-07-09T05:18:39.651Z",
+          "sha256": "6a2db3c450d152980467b965a916a003b85abf694dbd3cf0288b7648cae021cf"
+        },
+        "redisPing": "PONG",
+        "clientCount": 1970,
+        "buildProcs": 8,
+        "overloaded": true
+      },
+      "gate": "ADAPT_CADENCE"
+    },
+    {
+      "id": "D8",
+      "title": "Core System Prompt Architecture",
+      "ok": true,
+      "detail": {
+        "exists": true,
+        "rel": "docs/protocols/CORE_SYSTEM_PROMPT_ARCHITECTURE.md",
+        "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/CORE_SYSTEM_PROMPT_ARCHITECTURE.md",
+        "bytes": 6445,
+        "mtime": "2026-06-12T06:16:38.322Z",
+        "sha256": "f4501e21172e4a89179e1d2b1f696c030c026b4d89f9b3cda26724d9f0675432"
+      },
+      "gate": "PASS"
+    },
+    {
+      "id": "D9",
+      "title": "Concurrent Protocol + Resonance",
+      "ok": true,
+      "detail": {
+        "concurrent": {
+          "exists": true,
+          "rel": "docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md",
+          "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md",
+          "bytes": 11530,
+          "mtime": "2026-07-09T05:18:38.993Z",
+          "sha256": "4f8a30c54b9d3242502fef54f6d72437072b312e9edf6a5ce6f38c250f68096a"
+        },
+        "resonance": {
+          "exists": true,
+          "rel": "docs/protocols/reports/RESONANCE_ITERATION_21.md",
+          "abs": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/RESONANCE_ITERATION_21.md",
+          "bytes": 1230,
+          "mtime": "2026-07-14T13:43:50.560Z",
+          "sha256": "299d799bf65dbfe5de2f60f067bfb1c2b998624d2b2e3a23b932023567e72d36"
+        },
+        "coherence": null
+      },
+      "gate": "PASS"
+    }
+  ],
+  "nextActionHint": "triage_unconverted_directives"
+}
