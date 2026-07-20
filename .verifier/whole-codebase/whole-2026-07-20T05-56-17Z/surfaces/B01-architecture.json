@@ -1,0 +1,9 @@
+{
+  "name": "B01-architecture",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 0,
+  "cmd": "node scripts/validation/validate-architecture.js",
+  "log": "logs/B01-architecture.log",
+  "stdoutTail": "Validating Information Architecture compliance...\nValidating document structure...\nValidating cross-references...\nValidating MCP protocol compliance...\nValidating message formats...\nValidating API compliance...\nValidating integration patterns...\nExporting metrics...\nGenerating validation report...\nValidation complete. Report generated.\n"
+}

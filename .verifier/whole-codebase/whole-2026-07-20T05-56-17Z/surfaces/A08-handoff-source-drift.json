@@ -1,0 +1,9 @@
+{
+  "name": "A08-handoff-source-drift",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 0,
+  "cmd": "node scripts/protocols/validate-handoff-source-drift.cjs --mode=ci",
+  "log": "logs/A08-handoff-source-drift.log",
+  "stdoutTail": "[handoff-source-drift] WARN (ci): legacy pointer not present; skipping pointer consistency check: /Users/danielgoldberg/.openclaw/workspace/handoff/LATEST.md\n[handoff-source-drift] OK (ci): canonical source verified\n"
+}

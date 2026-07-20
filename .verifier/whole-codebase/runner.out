@@ -3,3 +3,9 @@ inventoried packages=126
 START A01-protocol-validate :: tnf protocol validate
 2026-07-20T05:56:35Z FAIL A01-protocol-validate exit=1 17000ms
 START A02-protocol-gate :: tnf protocol gate
+2026-07-20T05:56:50Z FAIL A02-protocol-gate exit=1 15000ms
+START A03-protocol-schemas :: tnf protocol schemas
+2026-07-20T05:57:04Z PASS A03-protocol-schemas exit=0 14000ms
+START A04-local-runtime :: tnf protocol local-runtime
+2026-07-20T05:57:22Z PASS A04-local-runtime exit=0 18000ms
+START A05-protocol-health :: tnf protocol health --json
