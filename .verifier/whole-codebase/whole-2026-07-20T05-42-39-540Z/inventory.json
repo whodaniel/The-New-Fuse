@@ -1,0 +1,2380 @@
+{
+  "runId": "whole-2026-07-20T05-42-39-540Z",
+  "timestamp": "2026-07-20T05:42:39.713Z",
+  "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "packageCount": 126,
+  "packages": [
+    {
+      "path": "apps/ai-arcade",
+      "name": "ai-arcade",
+      "scripts": [
+        "dev",
+        "build",
+        "preview"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/api",
+      "name": "@the-new-fuse/api-server",
+      "scripts": [
+        "clean",
+        "build",
+        "build:watch",
+        "migrate:deploy",
+        "dev",
+        "start",
+        "start:dev",
+        "start:debug",
+        "start:prod",
+        "test",
+        "test:unit",
+        "test:integration",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "arcade:listener",
+        "arcade:sweep",
+        "claude-dev"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/api-gateway",
+      "name": "@the-new-fuse/api-gateway",
+      "scripts": [
+        "clean",
+        "build",
+        "build:watch",
+        "dev",
+        "start",
+        "start:dev",
+        "start:debug",
+        "start:prod",
+        "test",
+        "test:unit",
+        "test:integration",
+        "test:e2e",
+        "test:watch",
+        "test:coverage",
+        "test:debug",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/audio-trigger-kws-mvp",
+      "name": "@the-new-fuse/audio-trigger-kws-mvp",
+      "scripts": [
+        "build",
+        "type-check",
+        "dev",
+        "serve",
+        "start",
+        "demo",
+        "demo:full"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/backend",
+      "name": "@the-new-fuse/backend-app",
+      "scripts": [
+        "prebuild",
+        "build",
+        "build:watch",
+        "dev",
+        "start",
+        "start:dev",
+        "start:debug",
+        "start:prod",
+        "test",
+        "test:unit",
+        "test:integration",
+        "test:e2e",
+        "test:watch",
+        "test:coverage",
+        "test:debug",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clean"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/browser-extension",
+      "name": "@the-new-fuse/browser-extension",
+      "scripts": [
+        "build",
+        "load"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/casin8-games",
+      "name": "casin8-games-backend",
+      "scripts": [
+        "start"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/chrome-extension/aivi/backend",
+      "name": "ai-video-intelligence-backend",
+      "scripts": [
+        "start",
+        "dev",
+        "migrate",
+        "seed",
+        "billing:notice"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/chrome-extension/aivi",
+      "name": "aivi-suite",
+      "scripts": [],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/chrome-extension",
+      "name": "the-new-fuse-chrome-extension",
+      "scripts": [
+        "generate-icons",
+        "generate-notification-icons",
+        "build",
+        "build:v5",
+        "build:v6",
+        "build:v7",
+        "dev:v5",
+        "dev:v6",
+        "dev:v7",
+        "prebuild",
+        "dev",
+        "package",
+        "test",
+        "test:self-prompter",
+        "test:self-prompter:coverage",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "clean",
+        "clean:build",
+        "clean:v5",
+        "clean:v6",
+        "typecheck",
+        "typecheck:self-prompter",
+        "build:package",
+        "aivi:inventory",
+        "aivi:backend:install",
+        "aivi:backend:start",
+        "aivi:backend:dev",
+        "aivi:cli:status",
+        "aivi:cli:batch",
+        "aivi:cli:fetch-data",
+        "aivi:docs:index",
+        "store:pack:verify",
+        "store:pack:list-assets"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/claim-tracker/extension",
+      "name": "claim-tracker-extension",
+      "scripts": [],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/claim-tracker/retrieval",
+      "name": "claim-tracker-retrieval",
+      "scripts": [],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/claim-tracker/web",
+      "name": "claim-tracker-web",
+      "scripts": [],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/claim-tracker/worker",
+      "name": "claim-tracker-worker",
+      "scripts": [],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/cloud-sandbox",
+      "name": "tnf-cloud-sandbox",
+      "scripts": [
+        "dev",
+        "build",
+        "start"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/demo-agent-extension",
+      "name": "demo-agent-extension",
+      "scripts": [],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/external/ai-studio-automator/backend",
+      "name": "ai-video-intelligence-backend",
+      "scripts": [
+        "start",
+        "dev",
+        "migrate",
+        "seed"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/external/forge-hub/hub-client",
+      "name": "forge-hub-client",
+      "scripts": [
+        "start"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/external/forge-hub/hub-server",
+      "name": "forge-hub-server",
+      "scripts": [
+        "start"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/external/forge-hub",
+      "name": "forge-hub",
+      "scripts": [
+        "self-test",
+        "doctor"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/external/gemini-cli-source",
+      "name": "@google/gemini-cli",
+      "scripts": [
+        "start",
+        "start:a2a-server",
+        "debug",
+        "deflake",
+        "deflake:test:integration:sandbox:none",
+        "deflake:test:integration:sandbox:docker",
+        "auth:npm",
+        "auth:docker",
+        "auth",
+        "generate",
+        "predocs:settings",
+        "schema:settings",
+        "docs:settings",
+        "docs:keybindings",
+        "build",
+        "build-and-start",
+        "build:vscode",
+        "build:all",
+        "build:packages",
+        "build:sandbox",
+        "bundle",
+        "test",
+        "test:ci",
+        "test:scripts",
+        "test:always_passing_evals",
+        "test:all_evals",
+        "test:e2e",
+        "test:integration:all",
+        "test:integration:sandbox:none",
+        "test:integration:sandbox:docker",
+        "test:integration:sandbox:podman",
+        "lint",
+        "lint:fix",
+        "lint:ci",
+        "lint:all",
+        "format",
+        "typecheck",
+        "preflight",
+        "prepare",
+        "prepare:package",
+        "release:version",
+        "telemetry",
+        "check:lockfile",
+        "clean",
+        "pre-commit"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/frontend",
+      "name": "@the-new-fuse/frontend-app",
+      "scripts": [
+        "dev",
+        "build",
+        "build:frontend",
+        "build:watch",
+        "build:analyze",
+        "build:stats",
+        "deploy:pages",
+        "start",
+        "start:preview",
+        "preview",
+        "test",
+        "test:unit",
+        "test:integration",
+        "test:watch",
+        "test:coverage",
+        "test:ui",
+        "audit:navigation",
+        "audit:static-links",
+        "audit:all-links",
+        "audit:live-links",
+        "audit:all-routes-semantic",
+        "audit:auth-paths",
+        "audit:self-improvement-scorecard",
+        "audit:experience-architecture",
+        "audit:sidebar-health",
+        "audit:route-guards",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clear-ports",
+        "clean",
+        "perf:monitor",
+        "bundle:report"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/frontend/public/visualizations",
+      "name": "self-contained-visualizations",
+      "scripts": [
+        "generate",
+        "example",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/gemini-bridge-extension/aivi/backend",
+      "name": "ai-video-intelligence-backend",
+      "scripts": [
+        "start",
+        "dev",
+        "migrate",
+        "seed",
+        "billing:notice"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/gemini-bridge-extension",
+      "name": "tnf-gemini-bridge-extension",
+      "scripts": [
+        "generate-icons",
+        "generate-notification-icons",
+        "build",
+        "build:v5",
+        "build:v6",
+        "build:v7",
+        "dev:v5",
+        "dev:v6",
+        "dev:v7",
+        "prebuild",
+        "dev",
+        "package",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "clean",
+        "clean:build",
+        "clean:v5",
+        "clean:v6",
+        "typecheck",
+        "build:package",
+        "aivi:inventory",
+        "aivi:backend:install",
+        "aivi:backend:start",
+        "aivi:backend:dev",
+        "aivi:cli:status",
+        "aivi:cli:batch",
+        "aivi:cli:fetch-data",
+        "aivi:docs:index",
+        "store:pack:verify",
+        "store:pack:list-assets"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/mcp-servers/devops-bridge",
+      "name": "@the-new-fuse/devops-bridge-mcp",
+      "scripts": [
+        "build",
+        "start",
+        "dev"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/mcp-servers/tnf-network-mcp",
+      "name": "@the-new-fuse/tnf-network-mcp",
+      "scripts": [
+        "build",
+        "start",
+        "dev"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/mcp-servers/vision-bridge-mcp",
+      "name": "@the-new-fuse/vision-bridge-mcp",
+      "scripts": [
+        "build",
+        "start",
+        "dev"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/myphoneremote-api",
+      "name": "@the-new-fuse/myphoneremote-api",
+      "scripts": [
+        "dev",
+        "build",
+        "start",
+        "start:prod"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/nexus-orchestrator",
+      "name": "@the-new-fuse/nexus-orchestrator",
+      "scripts": [
+        "dev",
+        "build",
+        "preview",
+        "clean",
+        "lint"
+      ],
+      "hasTest": false,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/poker-room",
+      "name": "@the-new-fuse/poker-room",
+      "scripts": [
+        "dev",
+        "build",
+        "start",
+        "preview",
+        "clean",
+        "lint"
+      ],
+      "hasTest": false,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/relay-server",
+      "name": "tnf-relay-complete",
+      "scripts": [
+        "start",
+        "start:mcp",
+        "setup",
+        "build-ui",
+        "dev-ui",
+        "manual-setup",
+        "manual-uninstall"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/relay-server/ui",
+      "name": "tnf-relay-ui",
+      "scripts": [
+        "start",
+        "build",
+        "test",
+        "eject"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/skideancer-ide",
+      "name": "@the-new-fuse/theia-ide",
+      "scripts": [
+        "build",
+        "build:optimized",
+        "start",
+        "start:basic",
+        "dev",
+        "clean",
+        "rebuild",
+        "ide",
+        "ide:build",
+        "theia:build",
+        "theia:start",
+        "theia"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/skideancer-ide/packages/skideancer-ai-agent",
+      "name": "@fuse/skideancer-ai-agent",
+      "scripts": [
+        "clean",
+        "build",
+        "watch"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/stripe-provider-bridge",
+      "name": "@the-new-fuse/stripe-provider-bridge",
+      "scripts": [
+        "dev",
+        "build",
+        "start"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/tauri-desktop",
+      "name": "@the-new-fuse/tauri-desktop",
+      "scripts": [
+        "dev",
+        "dev:dynamic-port",
+        "build",
+        "build:deps",
+        "build:watch",
+        "build:analyze",
+        "build:stats",
+        "start",
+        "start:preview",
+        "preview",
+        "test",
+        "test:e2e",
+        "test:e2e:install",
+        "test:unit",
+        "test:integration",
+        "test:watch",
+        "test:coverage",
+        "test:ui",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clear-ports",
+        "clean",
+        "perf:monitor",
+        "bundle:report",
+        "tauri",
+        "tauri:dev",
+        "tauri:build",
+        "tauri:build:dmg"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/telegram-mcp",
+      "name": "@tnf/telegram-mcp",
+      "scripts": [
+        "daemon",
+        "mcp",
+        "push-service",
+        "start"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/virtual-library-blueprints/ai-relay",
+      "name": "virtual-library-ai-relay",
+      "scripts": [
+        "start",
+        "dev"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/virtual-library-blueprints/cloudflare-virtual-library",
+      "name": "tnf-virtual-library-proxy",
+      "scripts": [
+        "dev",
+        "deploy",
+        "tail"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/virtual-library-blueprints",
+      "name": "virtual-library-blueprints",
+      "scripts": [
+        "dev",
+        "build",
+        "preview",
+        "lint",
+        "typecheck",
+        "test",
+        "test:watch",
+        "smoke:dev",
+        "test:all",
+        "relay:start",
+        "relay:dev",
+        "deploy:gcp",
+        "deploy:cloudflare",
+        "deploy",
+        "db:migrate"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/virtual-library-blueprints/virtual-library-blueprints/ai-relay",
+      "name": "virtual-library-ai-relay",
+      "scripts": [
+        "start",
+        "dev",
+        "terminal"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/virtual-library-blueprints/virtual-library-blueprints/cloudflare-virtual-library",
+      "name": "tnf-virtual-library-proxy",
+      "scripts": [
+        "dev",
+        "deploy",
+        "tail"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/virtual-library-blueprints/virtual-library-blueprints",
+      "name": "virtual-library-blueprints",
+      "scripts": [
+        "dev",
+        "build",
+        "preview",
+        "lint",
+        "typecheck",
+        "deploy:gcp",
+        "deploy:cloudflare",
+        "deploy",
+        "db:migrate"
+      ],
+      "hasTest": false,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "apps/visualization-hub",
+      "name": "@the-new-fuse/visualization-hub",
+      "scripts": [
+        "dev",
+        "build",
+        "preview",
+        "lint"
+      ],
+      "hasTest": false,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/vscode-extension/out",
+      "name": "the-new-fuse",
+      "scripts": [
+        "compile",
+        "watch",
+        "lint",
+        "test",
+        "package"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/vscode-extension/out_vsix/extension",
+      "name": "the-new-fuse",
+      "scripts": [
+        "compile",
+        "watch",
+        "lint",
+        "test",
+        "package"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "apps/vscode-extension",
+      "name": "the-new-fuse",
+      "scripts": [
+        "compile",
+        "watch",
+        "lint",
+        "test",
+        "package"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/a2a-core",
+      "name": "@the-new-fuse/a2a-core",
+      "scripts": [
+        "build",
+        "build:watch",
+        "dev",
+        "test",
+        "test:unit",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clean",
+        "prepublishOnly"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/a2a-protocol",
+      "name": "@tnf/a2a-protocol",
+      "scripts": [
+        "build",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/a2a-react",
+      "name": "@the-new-fuse/a2a-react",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/ag-ui-core/examples",
+      "name": "ag-ui-examples",
+      "scripts": [
+        "python",
+        "node",
+        "node:watch"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/ag-ui-core",
+      "name": "@the-new-fuse/ag-ui-core",
+      "scripts": [
+        "build",
+        "dev",
+        "test",
+        "lint"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/agent",
+      "name": "@the-new-fuse/agent",
+      "scripts": [
+        "build",
+        "clean",
+        "lint",
+        "test",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/agent-coordination",
+      "name": "@the-new-fuse/agent-coordination",
+      "scripts": [
+        "build",
+        "build:watch",
+        "dev",
+        "test",
+        "test:unit",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clean"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/agent-evaluation-framework",
+      "name": "@the-new-fuse/agent-evaluation-framework",
+      "scripts": [
+        "build",
+        "test",
+        "lint"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/agentic-rag-search",
+      "name": "@the-new-fuse/agentic-rag-search",
+      "scripts": [
+        "build",
+        "test",
+        "lint"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/ai-security-bridge",
+      "name": "@the-new-fuse/ai-security-bridge",
+      "scripts": [
+        "build",
+        "test",
+        "lint"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/ap2-protocol",
+      "name": "@the-new-fuse/ap2-protocol",
+      "scripts": [
+        "build",
+        "build:watch",
+        "clean",
+        "prepublishOnly",
+        "test",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/api",
+      "name": "@the-new-fuse/api",
+      "scripts": [
+        "build",
+        "build:api",
+        "build:force",
+        "build:ignore-errors",
+        "build:production",
+        "build:watch",
+        "clean",
+        "clean:test",
+        "type-check",
+        "dev",
+        "start",
+        "start:dev",
+        "start:debug",
+        "start:prod",
+        "test",
+        "test:unit",
+        "test:integration",
+        "test:e2e",
+        "test:watch",
+        "test:coverage",
+        "test:ci",
+        "lint",
+        "lint:fix",
+        "docker:build",
+        "format",
+        "format:check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/api-client",
+      "name": "@the-new-fuse/api-client",
+      "scripts": [
+        "build",
+        "clean",
+        "dev",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/api-optimization",
+      "name": "@the-new-fuse/api-optimization",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "test",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/api-types",
+      "name": "@the-new-fuse/api-types",
+      "scripts": [
+        "build",
+        "clean",
+        "dev",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/auth",
+      "name": "@the-new-fuse/auth",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/backend",
+      "name": "@the-new-fuse/backend",
+      "scripts": [
+        "build",
+        "dev",
+        "start",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/build-optimization",
+      "name": "@tnf/build-optimization",
+      "scripts": [
+        "build",
+        "build:memory-optimized",
+        "build:staged",
+        "dev",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clean"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/claude-skills",
+      "name": "@the-new-fuse/claude-skills",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "type-check",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/client",
+      "name": "@the-new-fuse/client",
+      "scripts": [
+        "build",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/common",
+      "name": "@the-new-fuse/common",
+      "scripts": [
+        "build",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/contracts",
+      "name": "@the-new-fuse/contracts",
+      "scripts": [
+        "compile",
+        "test",
+        "deploy",
+        "deploy:merkaba",
+        "deploy:sidepot-router",
+        "verify",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "clean",
+        "build"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/control-plane-contracts",
+      "name": "@the-new-fuse/control-plane-contracts",
+      "scripts": [
+        "build",
+        "clean",
+        "dev",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/core",
+      "name": "@the-new-fuse/core",
+      "scripts": [
+        "build",
+        "build:core",
+        "dev",
+        "build:watch",
+        "build:production",
+        "clean",
+        "type-check",
+        "test",
+        "test:unit",
+        "test:integration",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/core-error-handling",
+      "name": "@the-new-fuse/core-error-handling",
+      "scripts": [
+        "build",
+        "build:foundation",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clean"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/core-monitoring",
+      "name": "@the-new-fuse/core-monitoring",
+      "scripts": [
+        "build",
+        "build:foundation",
+        "build:watch",
+        "dev",
+        "test",
+        "test:unit",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clean"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/core-vector-db",
+      "name": "@the-new-fuse/core-vector-db",
+      "scripts": [
+        "build",
+        "dev",
+        "start",
+        "start:grpc",
+        "dev:grpc",
+        "test",
+        "lint",
+        "clean",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/data",
+      "name": "@the-new-fuse/data",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/database",
+      "name": "@the-new-fuse/database",
+      "scripts": [
+        "build",
+        "build:foundation",
+        "drizzle:generate",
+        "drizzle:migrate",
+        "drizzle:push",
+        "drizzle:pull",
+        "drizzle:studio",
+        "drizzle:check",
+        "admin:set-super",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "test:verbose",
+        "lint",
+        "clean",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/deployment-core",
+      "name": "@the-new-fuse/deployment-core",
+      "scripts": [
+        "build",
+        "build:watch",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "type-check",
+        "clean",
+        "format",
+        "format:check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/eslint-config-custom",
+      "name": "eslint-config-custom",
+      "scripts": [
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "build",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/extension-core",
+      "name": "@the-new-fuse/extension-core",
+      "scripts": [
+        "build",
+        "clean",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/extension-system",
+      "name": "@the-new-fuse/extension-system",
+      "scripts": [
+        "build",
+        "build:watch",
+        "clean",
+        "dev",
+        "lint",
+        "lint:fix",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "type-check",
+        "format",
+        "format:check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/fairtable-adapters",
+      "name": "@the-new-fuse/fairtable-adapters",
+      "scripts": [
+        "build",
+        "dev",
+        "test",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/fairtable-components",
+      "name": "@the-new-fuse/fairtable-components",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/fairtable-core",
+      "name": "@the-new-fuse/fairtable-core",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "test",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/fairtable-utils",
+      "name": "@the-new-fuse/fairtable-utils",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/feature-suggestions",
+      "name": "@the-new-fuse/feature-suggestions",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/feature-tracker",
+      "name": "@the-new-fuse/feature-tracker",
+      "scripts": [
+        "build",
+        "clean",
+        "dev",
+        "test",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/features",
+      "name": "@the-new-fuse/features",
+      "scripts": [
+        "build",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/gemini-browser-skill",
+      "name": "@the-new-fuse/gemini-browser-skill",
+      "scripts": [
+        "build",
+        "dev",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/google-sheets-mcp-server",
+      "name": "@the-new-fuse/google-sheets-mcp-server",
+      "scripts": [
+        "build",
+        "start",
+        "dev",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/governance-gate",
+      "name": "@the-new-fuse/governance-gate",
+      "scripts": [
+        "build",
+        "test",
+        "lint"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/hooks",
+      "name": "@the-new-fuse/hooks",
+      "scripts": [
+        "build",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/infrastructure",
+      "name": "@the-new-fuse/infrastructure",
+      "scripts": [
+        "build",
+        "build:foundation",
+        "dev",
+        "test",
+        "lint",
+        "clean",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/integration-tests",
+      "name": "@the-new-fuse/integration-tests",
+      "scripts": [
+        "test",
+        "test:watch",
+        "test:coverage",
+        "test:integration",
+        "test:e2e",
+        "test:performance",
+        "test:workflow-builder",
+        "test:workflow-builder:watch",
+        "test:workflow-builder:coverage",
+        "test:all",
+        "build",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/jules-integration",
+      "name": "@the-new-fuse/jules-integration",
+      "scripts": [
+        "build",
+        "dev",
+        "test",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/jules-skill",
+      "name": "@the-new-fuse/jules-skill",
+      "scripts": [
+        "build",
+        "clean",
+        "lint",
+        "type-check",
+        "mcp:start",
+        "mcp:dev",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/logger",
+      "name": "@the-new-fuse/logger",
+      "scripts": [
+        "build",
+        "test",
+        "lint"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/mcp-cloud-redis-bridge",
+      "name": "@the-new-fuse/mcp-cloud-redis-bridge",
+      "scripts": [
+        "build",
+        "start",
+        "dev",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/mcp-concordance-server",
+      "name": "@the-new-fuse/mcp-concordance-server",
+      "scripts": [
+        "build",
+        "dev",
+        "start",
+        "clean",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/mcp-core",
+      "name": "@the-new-fuse/mcp-core",
+      "scripts": [
+        "build",
+        "build:types",
+        "build:production",
+        "dev",
+        "clean",
+        "type-check",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "test:performance",
+        "test:integration",
+        "test:unit",
+        "lint",
+        "lint:fix",
+        "docs:generate",
+        "prepublishOnly",
+        "format",
+        "format:check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/mcp-skills-server",
+      "name": "@the-new-fuse/mcp-skills-server",
+      "scripts": [
+        "build",
+        "dev",
+        "start",
+        "watch",
+        "clean",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/mcp-tar-bridge",
+      "name": "@the-new-fuse/mcp-tar-bridge",
+      "scripts": [
+        "build",
+        "test",
+        "lint"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/messaging-bridge",
+      "name": "@the-new-fuse/messaging-bridge",
+      "scripts": [
+        "build",
+        "test",
+        "lint"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/n8n-workflows",
+      "name": "@the-new-fuse/n8n-workflows",
+      "scripts": [
+        "build",
+        "build:watch",
+        "clean",
+        "dev",
+        "lint",
+        "lint:fix",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "type-check",
+        "format",
+        "format:check",
+        "fetch:workflows",
+        "sync:workflows"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/port-management",
+      "name": "@the-new-fuse/port-management",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "lint",
+        "test",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/prompt-templating",
+      "name": "@the-new-fuse/prompt-templating",
+      "scripts": [
+        "build",
+        "build:foundation",
+        "dev",
+        "test",
+        "lint",
+        "clean",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/proto-definitions",
+      "name": "@the-new-fuse/proto-definitions",
+      "scripts": [
+        "build",
+        "dev",
+        "test",
+        "lint",
+        "clean",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/protocol-contracts",
+      "name": "@the-new-fuse/protocol-contracts",
+      "scripts": [
+        "build",
+        "dev",
+        "type-check",
+        "type-check:tsgo",
+        "generate:jsonschema",
+        "generate:python",
+        "generate:all",
+        "check",
+        "check:drift",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "clean",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/relay-core",
+      "name": "@the-new-fuse/relay-core",
+      "scripts": [
+        "build",
+        "build:types",
+        "dev",
+        "start",
+        "relay",
+        "relay:dev",
+        "master-clock",
+        "master-clock:dev",
+        "broker-agent",
+        "broker-agent:dev",
+        "director-agent",
+        "director-agent:dev",
+        "super-cycle:event",
+        "super-cycle:status",
+        "super-cycle:self-prompts",
+        "orchestrate",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test",
+        "test:dist-only",
+        "build:quiet"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/resource-registry",
+      "name": "@the-new-fuse/resource-registry",
+      "scripts": [
+        "build",
+        "build:watch",
+        "dev",
+        "test",
+        "test:unit",
+        "test:integration",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clean"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/security",
+      "name": "@the-new-fuse/security",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/shared",
+      "name": "@the-new-fuse/shared",
+      "scripts": [
+        "build",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "clean"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/sync-core",
+      "name": "@the-new-fuse/sync-core",
+      "scripts": [
+        "build",
+        "lint",
+        "clean",
+        "start",
+        "start:dev",
+        "test",
+        "test:watch",
+        "test:unit",
+        "test:integration",
+        "test:performance",
+        "test:security",
+        "test:coverage",
+        "test:all",
+        "deploy",
+        "deploy:docker",
+        "deploy:k8s",
+        "deploy:cleanup",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/telegram-bot-service",
+      "name": "@the-new-fuse/telegram-bot-service",
+      "scripts": [
+        "build",
+        "start",
+        "test",
+        "lint"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/test-utils",
+      "name": "@the-new-fuse/test-utils",
+      "scripts": [
+        "build",
+        "test",
+        "clean",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/testing",
+      "name": "@the-new-fuse/testing",
+      "scripts": [
+        "build",
+        "test",
+        "test:perf",
+        "test:perf:ci",
+        "clean",
+        "test:contracts",
+        "watch",
+        "test:e2e",
+        "test:e2e:ui",
+        "test:e2e:debug",
+        "test:e2e:report",
+        "install:browsers",
+        "test:e2e:parallel",
+        "test:e2e:perf",
+        "test:e2e:visual",
+        "test:e2e:critical",
+        "test:e2e:update-snapshots",
+        "test:e2e:smoke",
+        "test:e2e:watch",
+        "test:e2e:ci",
+        "pretest",
+        "lint",
+        "format",
+        "analyze:performance",
+        "lint:fix",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/tnf-browser",
+      "name": "@the-new-fuse/tnf-browser",
+      "scripts": [
+        "start",
+        "postinstall"
+      ],
+      "hasTest": false,
+      "hasLint": false,
+      "hasBuild": false,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/tnf-cli",
+      "name": "@the-new-fuse/tnf-cli",
+      "scripts": [
+        "build",
+        "clean",
+        "start",
+        "dev",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/tnf-core",
+      "name": "@the-new-fuse/tnf-core",
+      "scripts": [
+        "build",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/tnf-note-taking",
+      "name": "@the-new-fuse/tnf-note-taking",
+      "scripts": [
+        "build",
+        "clean",
+        "start",
+        "dev",
+        "type-check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": false,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/types",
+      "name": "@the-new-fuse/types",
+      "scripts": [
+        "build",
+        "dev",
+        "clean",
+        "prebuild",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "test"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": false
+    },
+    {
+      "path": "packages/ui-consolidated",
+      "name": "@the-new-fuse/ui-consolidated",
+      "scripts": [
+        "build",
+        "dev",
+        "lint",
+        "clean",
+        "typecheck",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "storybook",
+        "build-storybook",
+        "migrate",
+        "migrate:dry",
+        "prune",
+        "prune:dry",
+        "prune:remove",
+        "prune:remove:dry",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/utils",
+      "name": "@the-new-fuse/utils",
+      "scripts": [
+        "build",
+        "build:watch",
+        "dev",
+        "test",
+        "test:unit",
+        "test:watch",
+        "lint",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check",
+        "clean"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/web-scraping",
+      "name": "@the-new-fuse/web-scraping",
+      "scripts": [
+        "build",
+        "dev",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "lint",
+        "clean",
+        "lint:fix",
+        "format",
+        "format:check",
+        "type-check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/websocket-infrastructure",
+      "name": "@the-new-fuse/websocket-infrastructure",
+      "scripts": [
+        "build",
+        "dev",
+        "test",
+        "test:watch",
+        "test:cov",
+        "lint",
+        "format",
+        "lint:fix",
+        "format:check",
+        "type-check",
+        "clean"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    },
+    {
+      "path": "packages/workflow-engine",
+      "name": "@the-new-fuse/workflow-engine",
+      "scripts": [
+        "build",
+        "build:watch",
+        "clean",
+        "clean:test",
+        "dev",
+        "lint",
+        "lint:fix",
+        "test",
+        "test:watch",
+        "test:coverage",
+        "type-check",
+        "format",
+        "format:check"
+      ],
+      "hasTest": true,
+      "hasLint": true,
+      "hasBuild": true,
+      "hasTypecheck": true
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+runId=whole-2026-07-20T05-52-58Z out=/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.verifier/whole-codebase/whole-2026-07-20T05-52-58Z
+inventoried packages=126
+START A01-protocol-validate :: tnf protocol validate
+2026-07-20T05:53:16Z PASS A01-protocol-validate exit=0 17000ms
+START A02-protocol-gate :: tnf protocol gate
+2026-07-20T05:53:32Z PASS A02-protocol-gate exit=0 16000ms
+START A03-protocol-schemas :: tnf protocol schemas
