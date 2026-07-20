@@ -1,0 +1,9 @@
+{
+  "name": "B03-check-agent-registration",
+  "ok": false,
+  "exitCode": 1,
+  "durationMs": 1000,
+  "cmd": "node scripts/check-agent-registration.cjs",
+  "log": "logs/B03-check-agent-registration.log",
+  "stdoutTail": "TNF Agent Registration Checker\nWorkspace: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\n\nFound 11 agent definition(s) in .agent/agents/\nFound 10 registered agent identity/ies in ledger\n\nUnregistered agents (3):\n  - relay-server-qa-agent (relay-server-qa-agent.md)\n  - staff-review-agent (staff-review-agent.md)\n  - staffing-director-agent (staffing-director-agent.md)\n\nRun with --fix to auto-register missing agents.\n"
+}

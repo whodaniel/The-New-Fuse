@@ -1,0 +1,9 @@
+{
+  "name": "B05-audit-circular",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 28000,
+  "cmd": "pnpm run audit:circular",
+  "log": "logs/B05-audit-circular.log",
+  "stdoutTail": "[WARN] The \"pnpm\" field in package.json is no longer read by pnpm. The following keys were ignored: \"pnpm.overrides\". See https://pnpm.io/settings for the new home of each setting.\n\n> the-new-fuse@ audit:circular /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\n> pnpm dlx madge --circular apps/api/src\n\nProgress: resolved 1, reused 0, downloaded 0, added 0\nProgress: resolved 47, reused 0, downloaded 0, added 0\nProgress: resolved 57, reused 0, downloaded 0, added 0\nProgress: resolved 95, reused 0, downloaded 0, added 0\nProgress: resolved 122, reused 0, downloaded 0, added 0\nProgress: resolved 129, reused 0, downloaded 0, added 0\nPackages: +135\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nProgress: resolved 135, reused 0, downloaded 0, added 0\nProgress: resolved 135, reused 108, downloaded 0, added 0\nProgress: resolved 135, reused 119, downloaded 11, added 4\nProgress: resolved 135, reused 119, downloaded 16, added 109\nProgress: resolved 135, reused 119, downloaded 16, added 135, done\n- Finding files\nProcessed 0 files (3.9s) \n\n✔ No circular dependency found!\n\n"
+}

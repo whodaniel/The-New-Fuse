@@ -1,0 +1,9 @@
+{
+  "name": "B06-protocol-schemas-npm",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 0,
+  "cmd": "node scripts/validate-protocol-schemas.cjs",
+  "log": "logs/B06-protocol-schemas-npm.log",
+  "stdoutTail": "[protocol-schema-gate] OK\n"
+}

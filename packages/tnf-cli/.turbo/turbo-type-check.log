@@ -1,4 +1,0 @@
-
-> @the-new-fuse/tnf-cli@1.0.0 type-check /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli
-> tsc -p tsconfig.json --noEmit
-

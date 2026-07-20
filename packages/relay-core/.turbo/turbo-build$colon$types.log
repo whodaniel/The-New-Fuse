@@ -1,5 +1,0 @@
-
-> @the-new-fuse/relay-core@1.0.0 build:types /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core
-> tsc --declaration --emitDeclarationOnly --outDir dist
-
- ELIFECYCLE  Command failed.
