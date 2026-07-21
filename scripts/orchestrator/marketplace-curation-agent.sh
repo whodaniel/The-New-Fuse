@@ -7,6 +7,13 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "${ROOT_DIR}/scripts/lib/tnf-lock.sh"
 tnf_acquire_lock "marketplace-curation-agent" 600
 
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "${ROOT_DIR}/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
 MARKETPLACE_ITEMS_FILE="${ROOT_DIR}/data/marketplace/catalog-items.json"
 CATALOG_LOG="${ROOT_DIR}/.agent/runtime-logs/marketplace-curation.log"
 STATE_DIR="${ROOT_DIR}/.agent/runtime-state/marketplace"

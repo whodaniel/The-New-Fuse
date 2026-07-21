@@ -3,6 +3,14 @@
 # Invoked by Cursor agent loop / operators. Exit 0 = healthy or healed; 1 = blocked.
 set -euo pipefail
 
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 export TNF_SUPER_ADMIN_INPUT_TOKEN="${TNF_SUPER_ADMIN_INPUT_TOKEN:-${TNF_SUPER_ADMIN_TOKEN:-}}"

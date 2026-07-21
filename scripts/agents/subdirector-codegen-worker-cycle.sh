@@ -11,6 +11,13 @@
 # **NOTE**: gcp-build-submit capability deliberately absent from infra worker.
 set -uo pipefail
 
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
 REPO_ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
 REGISTRY_ID="agent_hermes-codegen-worker_1782364000001"
 LOG="$HOME/.tnf/poll-jobs/tnf-subdirector-codegen-worker/cron.log"

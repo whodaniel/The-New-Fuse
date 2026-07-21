@@ -361,6 +361,18 @@ async function main() {
     idleAgents: idleAgents.length,
   });
 
+  // --- Fleet-wide pause gate (2026-07-21) ---
+  // Deliberately placed AFTER emitHealthEscalations/writeHealthState, not at
+  // the top of main(): health monitoring and operator paging should keep
+  // running even while the fleet is paused (that's exactly when an operator
+  // most needs to still hear about a real problem). Only the actual
+  // directive-dispatch work below is gated.
+  const { isFleetPaused } = require('../lib/tnf-fleet-mode.cjs');
+  if (isFleetPaused()) {
+    log('Fleet paused — skipping directive dispatch (health monitoring above still ran)');
+    return;
+  }
+
   const client = new RedisAgentClient();
   let publishFailures = 0;
   let zeroSubscriberPublishes = 0;

@@ -27,6 +27,13 @@
 
 set -euo pipefail
 
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
 RUNTIME_DIR="${HOME}/.tnf/runtime/improver-watchdog"
 STATE_FILE="$RUNTIME_DIR/state.json"
 SIG_FILE="$RUNTIME_DIR/last-sig.txt"

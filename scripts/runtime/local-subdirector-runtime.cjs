@@ -7,6 +7,13 @@ if (!_subdirectorGuard.acquired) {
   process.exit(0);
 }
 
+// --- Fleet-wide pause gate (2026-07-21) ---
+const { isFleetPaused } = require('../lib/tnf-fleet-mode.cjs');
+if (isFleetPaused()) {
+  console.log(JSON.stringify({ ok: true, skipped: 'fleet-paused' }));
+  process.exit(0);
+}
+
 const { createHash } = require('crypto');
 const { execFile } = require('child_process');
 const fs = require('fs');

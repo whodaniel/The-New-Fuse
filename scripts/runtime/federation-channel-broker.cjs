@@ -379,6 +379,13 @@ class FederationChannelBroker {
 }
 
 if (require.main === module) {
+  // --- Fleet-wide pause gate (2026-07-21) ---
+  const { isFleetPaused } = require(path.join(__dirname, '..', 'lib', 'tnf-fleet-mode.cjs'));
+  if (isFleetPaused()) {
+    console.log(JSON.stringify({ ok: true, skipped: 'fleet-paused' }));
+    process.exit(0);
+  }
+
   if (!CONFIG.channelId) {
     console.error(
       JSON.stringify({

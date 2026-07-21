@@ -9,6 +9,18 @@ const { execFile } = require('child_process');
 
 const execFileAsync = promisify(execFile);
 
+// --- Fleet-wide pause gate (2026-07-21) ---
+// Note: this script only reads state and synthesizes swarm-context.md — it
+// doesn't take autonomous action on its own. Gated anyway for consistency
+// and because a paused fleet's context snapshot going stale is itself a
+// useful, honest signal (rather than a swarm-context.md that keeps looking
+// "current" while everything else is paused).
+const { isFleetPaused } = require('../lib/tnf-fleet-mode.cjs');
+if (isFleetPaused()) {
+  console.log(JSON.stringify({ ok: true, skipped: 'fleet-paused' }));
+  process.exit(0);
+}
+
 const { RedisAgentClient } = require('../lib/redis-agent-client.cjs');
 
 const ROOT_DIR = process.env.TNF_REPO_ROOT || path.resolve(__dirname, '../..');

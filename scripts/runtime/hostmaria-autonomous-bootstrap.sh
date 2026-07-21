@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 PROJECTS_FILE="${HOSTMARIA_PROJECTS_FILE:-$HOME/.tnf/hostmaria/projects.txt}"

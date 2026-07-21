@@ -6,6 +6,13 @@
 # (submission is sub-director dual-key action).
 set -uo pipefail
 
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
 REPO_ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
 REGISTRY_ID="agent_hermes-infra-worker_1782364000002"
 LOG="$HOME/.tnf/poll-jobs/tnf-subdirector-infra-worker/cron.log"

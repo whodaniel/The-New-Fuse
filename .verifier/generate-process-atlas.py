@@ -408,11 +408,32 @@ def _emit_digest(path, payload):
     path.write_text("\n".join(L))
 
 
+def _fleet_paused():
+    """Fleet-wide pause gate (2026-07-21), same semantics as
+    scripts/lib/tnf-fleet-mode.cjs: missing file -> not paused; a file that
+    exists but fails to parse fails SAFE to paused (uncertainty should
+    resolve to the safer state for an operator kill-switch)."""
+    import json as _json
+    mode_file = Path.home() / ".tnf" / "fleet" / "mode.json"
+    if not mode_file.exists():
+        return False
+    try:
+        data = _json.loads(mode_file.read_text())
+        return data.get("mode") in ("paused", "injection-paused")
+    except Exception:
+        return True
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--check", action="store_true", help="verification only (no regen)")
     p.add_argument("--json", action="store_true", help="emit JSON payload only")
     args = p.parse_args()
+
+    if _fleet_paused():
+        import json as _json
+        print(_json.dumps({"ok": True, "skipped": "fleet-paused"}))
+        return
 
     payload = build_payload()
     ok, findings = verify(payload)
