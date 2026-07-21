@@ -12,7 +12,6 @@ Reporting window: [YYYY-MM-DD] to [YYYY-MM-DD]
 - Continuity starts:
 
 Top 3 changes this week:
-
 1.
 2.
 3.
@@ -53,7 +52,6 @@ Top 3 changes this week:
 ## 3) Traffic Source Breakdown
 
 For each source (YouTube, Instagram, TikTok, LinkedIn, Email, Paid, Community):
-
 - Sessions
 - Leads
 - CPL (if paid)
@@ -83,13 +81,13 @@ For each source (YouTube, Instagram, TikTok, LinkedIn, Email, Paid, Community):
 
 ## 7) Next Week Actions
 
-1.
-2.
-3.
+1. 
+2. 
+3. 
 
 Owner assignment:
-
 - Growth:
 - Content:
 - Automation:
 - Sales:
+

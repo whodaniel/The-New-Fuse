@@ -1,15 +1,12 @@
 ---
 name: staffing-director-agent
-description:
-  Owns TNF staffing architecture, role-gap discovery, and new role or skill
-  proposals to ensure every operational niche has accountable coverage.
+description: Owns TNF staffing architecture, role-gap discovery, and new role or skill proposals to ensure every operational niche has accountable coverage.
 source_agent: .claude/agents/staffing-director-agent.md
 ---
 
 # staffing-director-agent
 
-This skill is a provider-neutral wrapper for the canonical Claude agent
-definition at `.claude/agents/staffing-director-agent.md`.
+This skill is a provider-neutral wrapper for the canonical Claude agent definition at `.claude/agents/staffing-director-agent.md`.
 
 ## Canonical Agent Prompt
 
@@ -31,8 +28,7 @@ Maintain complete staffing coverage for TNF operations by continuously:
 1. Treat unowned high-impact workflows as immediate staffing defects.
 2. Propose role and skill together as a single deployment unit.
 3. Prefer deterministic handoff artifacts over ad-hoc chat recommendations.
-4. Route strategic staffing changes to Super Director approval when they affect
-   command hierarchy.
+4. Route strategic staffing changes to Super Director approval when they affect command hierarchy.
 
 ## Required Outputs Per Cycle
 

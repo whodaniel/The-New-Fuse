@@ -15,7 +15,7 @@ from stale "6 PIDs" to live `4 owner / 9 worker / 18 total`; no kill
 
 | Priority | Action                                                                                                                                                  |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Triage remaining failures in /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.verifier/whole-codebase/rerun-2026-07-20T06-22-13Z/SUMMARY.md |
+| **P0**   | Post-wake: B02 PASS (validator class-fix); re-run failed-surface suite for C01 lock; B07 still env-gated. See POST_WAKE_REPORT + REMEDIATION.md |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 

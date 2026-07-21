@@ -12,11 +12,9 @@ bash "$VLA_DIR/scripts/run_pipeline.sh" \
 
 ## 2) Dispatch order (strict)
 
-T01 -> T02 -> (T03,T04,T05) -> T06 -> T07 -> T08 -> T09 -> (T10,T11) ->
-(T12,T13)
+T01 -> T02 -> (T03,T04,T05) -> T06 -> T07 -> T08 -> T09 -> (T10,T11) -> (T12,T13)
 
-Manifest:
-`/Users/<owner>/.codex/skills/imported-claude-agents/value-ladder-architect-agent/output/agent_dispatch_manifest.json`
+Manifest: `/Users/<owner>/.codex/skills/imported-claude-agents/value-ladder-architect-agent/output/agent_dispatch_manifest.json`
 
 ## 3) Copy/paste dispatch prompts
 

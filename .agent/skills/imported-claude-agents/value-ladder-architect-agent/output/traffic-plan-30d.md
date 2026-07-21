@@ -1,11 +1,9 @@
 # Traffic Plan - 30 Days
 
 Primary goal:
-
 - Feed Lead Magnet Funnel and Webinar Funnel with qualified traffic.
 
 North-star metrics:
-
 - Leads/week
 - Webinar registrations/week
 - Cost per lead
@@ -21,28 +19,24 @@ North-star metrics:
 ## Weekly execution cadence
 
 ### Week 1
-
 - Publish 3 short-form clips with CTA to Free Growth Playbook
 - Publish 1 long-form case-study post
 - Send newsletter: "new playbook" announcement
 - Post educational thread in 2 relevant communities
 
 ### Week 2
-
 - Publish 4 short-form clips (objection-focused)
 - Publish 1 webinar teaser post
 - Run retargeting ads to lead magnet visitors (7-day window)
 - Newsletter: one quick win + webinar invite
 
 ### Week 3
-
 - Publish 3 short-form clips + 1 live Q&A
 - Publish 1 founder story post with CTA
 - Community posts focused on checklist value (no hard sell)
 - Newsletter: webinar replay + deadline
 
 ### Week 4
-
 - Publish 4 short-form clips from testimonials/results
 - Publish 1 optimization breakdown post
 - Reactivation email to non-openers + no-show segment
@@ -65,15 +59,12 @@ North-star metrics:
 ## Distribution templates
 
 Short-form CTA:
-
 - "Comment PLAYBOOK and I’ll send the free framework."
 
 LinkedIn CTA:
-
 - "I turned this into a one-page playbook. Grab it free in the first comment."
 
 Newsletter CTA:
-
 - "Download the playbook, then join the training where we build it live."
 
 ## Budget split (if paid)
@@ -86,3 +77,4 @@ Newsletter CTA:
 - Monday: publish schedule + creative backlog
 - Wednesday: mid-week KPI check + creative swaps
 - Friday: funnel KPI review and next-week iteration plan
+

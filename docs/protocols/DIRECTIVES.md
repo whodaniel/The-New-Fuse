@@ -58,8 +58,14 @@ These are hard requirements. Violation is a protocol failure.
 - **D1 — Turn Zero before any code change.** At session start, run the Turn Zero
   sequence (`tnf onboard` for frontloaded terminals; full 8-step in SWARM mode).
   Read `LIVING_STATE.md`, `AGENT_STATUS_LEDGER.md`, the session handoff,
-  frontload context. **Await operator confirmation before code changes** unless
-  explicitly authorized. — `TURN_ZERO_MANDATE.md`,
+  frontload context. Operator Daniel Goldberg authorized autonomous continuous
+  execution for long-running TNF tasks, confirmed directly in chat with Claude
+  Code on 2026-07-21 — no confirmation-block required for runs within that
+  authorization. Still-required regardless of this authorization: destructive
+  operations (process kills, force-push, hard deletes), commits, and any
+  handling of secrets/credentials still need explicit per-action operator
+  confirmation — this directive covers routine long-running task execution,
+  not those categories. — `TURN_ZERO_MANDATE.md`,
   `CORE_SYSTEM_PROMPT_ARCHITECTURE.md`
 - **D2 — Operating Loop: Inspect → Act → Verify.** Never guess; read state
   first. Never assume success; confirm after. Prefer structured

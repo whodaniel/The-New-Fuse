@@ -1,9 +1,9 @@
 {
-  "now": "2026-07-21T00:00:03Z",
+  "now": "2026-07-21T04:00:07Z",
   "ok": false,
   "summaries": {
     "cron_count": 19,
-    "live_count": 1,
+    "live_count": 25,
     "packages_count": 93,
     "apps_count": 30,
     "proto_count": 31,
@@ -11,7 +11,9 @@
     "relay_core_ts_count": 69
   },
   "findings": [
-    ["MISSING_MASTER_CLOCK", "master-clock process not running"],
-    ["MISSING_BROKER", "broker-agent process not running"]
+    [
+      "MISSING_BROKER",
+      "broker-agent process not running"
+    ]
   ]
 }

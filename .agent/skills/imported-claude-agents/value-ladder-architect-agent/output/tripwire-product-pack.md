@@ -1,6 +1,7 @@
 # Tripwire Product Pack
 
-Product: Starter Toolkit ($27) Product Type: Implementation templates bundle
+Product: Starter Toolkit ($27)
+Product Type: Implementation templates bundle
 Goal: monetize early intent and improve core offer conversion readiness.
 
 ## 1) Product Contents
@@ -22,30 +23,25 @@ Goal: monetize early intent and improve core offer conversion readiness.
 ## 3) Onboarding Copy
 
 Confirmation headline:
-
 - You now have the exact toolkit to implement your funnel faster.
 
 Start-here CTA:
-
 - Open the 30-minute setup checklist
 
 Usage framing:
-
 - Do not build everything at once. Complete one template each day for 5 days.
 
 ## 4) Product Positioning
 
 Core promise:
-
 - Skip blank-page friction and move from planning to execution this week.
 
 Primary objections handled:
-
 - "Templates won’t match my niche" -> includes adaptation examples
 - "I don’t have time" -> 30-minute daily sprint structure
 
 ## 5) Upgrade Bridge
 
 Exit intent and post-purchase CTA:
-
 - Join the next training webinar to implement the full system and scale results.
+

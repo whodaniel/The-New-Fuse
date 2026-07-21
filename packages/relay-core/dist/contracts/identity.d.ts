@@ -1,5 +1,17 @@
 import { type TnfAgentIdentityRecord, type TnfCanonicalEntityParts, type TnfIdentityCategory as TnfIdentityCategoryType } from '@the-new-fuse/protocol-contracts';
-export declare const TnfIdentityCategory: any;
+export declare const TnfIdentityCategory: import("zod").ZodEnum<{
+    AGENT: "AGENT";
+    SESSION: "SESSION";
+    CHANNEL: "CHANNEL";
+    WORKFLOW: "WORKFLOW";
+    TASK: "TASK";
+    SCHEDULE: "SCHEDULE";
+    HARNESS: "HARNESS";
+    MCP: "MCP";
+    LLM: "LLM";
+    USER: "USER";
+    SYSTEM: "SYSTEM";
+}>;
 export type TnfIdentityCategory = TnfIdentityCategoryType;
 export type { TnfAgentIdentityRecord, TnfCanonicalEntityParts };
 export declare function buildCanonicalEntityId(parts: TnfCanonicalEntityParts): string;

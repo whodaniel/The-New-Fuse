@@ -20,13 +20,14 @@
 ## ValueLadderReport
 
 - Root key: `value_ladder_report`
-- Required sections: `assumptions`, `product_and_service_catalog`,
-  `value_ladder_rungs`, `funnel_mapping`, `ecosystem_flowchart_mermaid`,
-  `strategic_narrative`
-- Funnel keys and types: `front_end`=`LeadMagnetFunnel`,
-  `front_end_monetization`=`TripwireFunnel`, `mid_tier`=`WebinarFunnel`,
-  `back_end`=`HighTicketFunnel`,
-  `retention_and_ltv_extension`=`ContinuityRetentionLoop`
+- Required sections:
+`assumptions`, `product_and_service_catalog`, `value_ladder_rungs`, `funnel_mapping`, `ecosystem_flowchart_mermaid`, `strategic_narrative`
+- Funnel keys and types:
+`front_end`=`LeadMagnetFunnel`,
+`front_end_monetization`=`TripwireFunnel`,
+`mid_tier`=`WebinarFunnel`,
+`back_end`=`HighTicketFunnel`,
+`retention_and_ltv_extension`=`ContinuityRetentionLoop`
 
 ## CLI Pipeline
 
@@ -40,6 +41,5 @@ bash "$VLA_DIR/scripts/run_pipeline.sh" \
 ```
 
 The pipeline does:
-
 1. Build deterministic report JSON from input.
 2. Validate report against required contract rules.

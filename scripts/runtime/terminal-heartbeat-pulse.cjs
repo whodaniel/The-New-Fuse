@@ -34,6 +34,19 @@ function resolveSibling(filename) {
   );
 }
 
+// Operator kill-switch: if present, this pulse must not run at all —
+// no injection, no lock acquisition, no side effects. Checked first,
+// before anything else, so it works regardless of which caller invoked
+// this script (cron, master-heartbeat-loop's run-once, ad-hoc) and
+// survives ensure-terminal-heartbeat-cron re-provisioning the crontab
+// line, since re-provisioning only touches the crontab/mirrors, not
+// this early-exit check in the canonical source.
+const DISABLE_FILE = path.join(os.homedir(), '.tnf', 'terminal-heartbeat', 'DISABLED');
+if (fs.existsSync(DISABLE_FILE)) {
+  console.log(JSON.stringify({ ok: true, skipped: 'disabled-by-operator', disableFile: DISABLE_FILE }));
+  process.exit(0);
+}
+
 const { singleInstanceGuard } = require(resolveSibling('tnf-single-instance-guard.cjs'));
 const _guard = singleInstanceGuard({ lockName: 'tnf-terminal-heartbeat-pulse', staleMs: 120000 });
 if (!_guard.acquired) {

@@ -49,3 +49,14 @@ Disk still ~3 GiB free; free more before trusting long turbo re-runs.
 Changed `packages/core` `type-check` from `tsc --build --noEmit` →
 `tsc -p tsconfig.json --noEmit`. Local verify: **PASS** (exits 0). Should flip
 C01 on next full turbo type-check → projected **23/29**.
+
+## Post-wake triage (2026-07-21T05:20Z — cursor-agent-wake)
+
+| Surface | Status | Notes |
+| ------- | ------ | ----- |
+| C01 | Fix verified locally | `pnpm --filter @the-new-fuse/core type-check` exits 0 |
+| B02 | **PASS (0 errors)** | `scripts/validate-build.cjs` false-failed: treated unset `declaration` as required (TS default is false) and ignored `noEmit` Vite apps. Now skips `noEmit`, enforces only `declaration===true`, warns on incomplete JS emit / types-claim drift. `google-sheets-mcp-server` emits `.d.ts`. |
+| B07 | Still env-gated | Missing `JWT_SECRET` / `DATABASE_URL` / `ENCRYPTION_KEY` in verify context + false-positive JWT default heuristics — not a post-boot blocker |
+| A01 | Already PASS | Prior remediation |
+
+**Boot note:** Relay health is `http://127.0.0.1:3000/health` (not 3007). Master-clock herd ~10 procs — handshake-gated, no kill. Projected after B02 flip: **24/29**.

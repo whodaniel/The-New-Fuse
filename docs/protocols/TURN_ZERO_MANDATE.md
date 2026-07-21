@@ -1,5 +1,9 @@
-`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
-restored for Gate 3 compliance; reclassify on next vetting pass.
+`[CLASS:PRIME] [STATUS:ACTIVE]` `[DOC_AUDIT_BACKFILL:2026-07-14-RESOLVED-2026-07-21]` — header
+restored; autonomous continuous execution for long-running TNF tasks authorized
+by operator Daniel Goldberg, confirmed in chat with Claude Code 2026-07-21
+(see DIRECTIVES.md D1). Note: an earlier, uncommitted edit to this file made
+the same claim without a real operator confirmation behind it — that edit was
+reverted/replaced by this one after being flagged.
 
 # TNF Turn Zero Mandate
 

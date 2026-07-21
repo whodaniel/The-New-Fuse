@@ -2,8 +2,7 @@
 
 ## Purpose
 
-Operate a repeatable pipeline from agent definition files to backend registry
-records.
+Operate a repeatable pipeline from agent definition files to backend registry records.
 
 ## Source Files
 
@@ -35,8 +34,7 @@ POST /api/agent-registry/import/snapshot
 
 Headers:
 
-- `x-admin-token` (optional; required when `AGENT_REGISTRY_IMPORT_TOKEN` is
-  configured)
+- `x-admin-token` (optional; required when `AGENT_REGISTRY_IMPORT_TOKEN` is configured)
 
 Body:
 

@@ -98,7 +98,11 @@
           "Post-purchase onboarding",
           "Segmentation trigger"
         ],
-        "kpi_focus": ["Tripwire take rate", "AOV", "Refund rate"]
+        "kpi_focus": [
+          "Tripwire take rate",
+          "AOV",
+          "Refund rate"
+        ]
       },
       "mid_tier": {
         "funnel_type": "WebinarFunnel",
@@ -124,7 +128,11 @@
           "Qualification call",
           "Enrollment"
         ],
-        "kpi_focus": ["Application rate", "Call show rate", "Close rate"]
+        "kpi_focus": [
+          "Application rate",
+          "Call show rate",
+          "Close rate"
+        ]
       },
       "retention_and_ltv_extension": {
         "funnel_type": "ContinuityRetentionLoop",
@@ -135,7 +143,11 @@
           "Engagement loops",
           "Referral trigger"
         ],
-        "kpi_focus": ["Monthly churn", "Net revenue retention", "Referral rate"]
+        "kpi_focus": [
+          "Monthly churn",
+          "Net revenue retention",
+          "Referral rate"
+        ]
       }
     },
     "ecosystem_flowchart_mermaid": "graph TD\nA[Cold Traffic] --> B[Lead Magnet Opt-in]\nB --> C[Free Growth Playbook]\nC --> D[Tripwire OTO: Starter Toolkit]\nD --> E[Email Nurture + Segmentation]\nE --> F[Webinar Registration]\nF --> G[Webinar Event]\nG --> H[Core Offer: Core Accelerator Program]\nH --> I[Onboarding + Milestones]\nI --> J[Ascension Invite]\nJ --> K[High-Ticket Application]\nK --> L[Qualification Call]\nL --> M[Elite Advisory]\nH --> N[Insider Membership]\nN --> O[Retention + Community]\nM --> O\nO --> P[Referral Loop]\nP --> A",

@@ -1,11 +1,6 @@
 ---
 name: agent-registry-manager
-description:
-  Build, refresh, and import the TNF agent registry from `.claude/agents` and
-  `config/ai-agents` into backend storage, including capability/tag extraction
-  and drift checks. Use when Codex needs to register agents in bulk, regenerate
-  registry snapshots, import snapshots through
-  `/api/agent-registry/import/snapshot`, or verify registry consistency in CI.
+description: Build, refresh, and import the TNF agent registry from `.claude/agents` and `config/ai-agents` into backend storage, including capability/tag extraction and drift checks. Use when Codex needs to register agents in bulk, regenerate registry snapshots, import snapshots through `/api/agent-registry/import/snapshot`, or verify registry consistency in CI.
 ---
 
 # Agent Registry Manager
@@ -58,11 +53,9 @@ node scripts/agent-registry/import-agent-registry-snapshot.mjs
 ## Import API
 
 - Endpoint: `POST /api/agent-registry/import/snapshot`
-- Optional header: `x-admin-token` (validated when `AGENT_REGISTRY_IMPORT_TOKEN`
-  is set)
+- Optional header: `x-admin-token` (validated when `AGENT_REGISTRY_IMPORT_TOKEN` is set)
 - Body:
-  - `snapshotPath` (repo-relative; defaults to
-    `data/agent-registry/agents.json`)
+  - `snapshotPath` (repo-relative; defaults to `data/agent-registry/agents.json`)
   - `onlyType` (optional type filter)
 
 ## Safety Rules
@@ -74,11 +67,9 @@ node scripts/agent-registry/import-agent-registry-snapshot.mjs
 
 ## Validation
 
-- Run `pnpm agents:registry:check` to regenerate and ensure zero diff for
-  `data/agent-registry`.
+- Run `pnpm agents:registry:check` to regenerate and ensure zero diff for `data/agent-registry`.
 - Confirm `registry_summary.json` totals are reasonable before import.
 
 ## References
 
-- Load `references/tnf-agent-registry.md` for endpoint contracts and operational
-  notes.
+- Load `references/tnf-agent-registry.md` for endpoint contracts and operational notes.

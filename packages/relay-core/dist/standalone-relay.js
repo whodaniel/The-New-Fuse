@@ -70,7 +70,7 @@ const stall_detector_js_1 = require("./services/stall-detector.js");
 const Logger_js_1 = require("./utils/Logger.js");
 const TerminalFormatter_js_1 = require("./utils/TerminalFormatter.js");
 // Configuration
-const PORT = parseInt(process.env.RELAY_PORT || '3007', 10);
+const PORT = parseInt(process.env.RELAY_PORT || '3000', 10);
 const RELAY_HOST = (process.env.RELAY_HOST || '0.0.0.0').trim() || '0.0.0.0';
 const HEARTBEAT_INTERVAL = 30000;
 const AGENT_TIMEOUT = 60000;
