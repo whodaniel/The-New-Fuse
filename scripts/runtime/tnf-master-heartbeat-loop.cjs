@@ -375,6 +375,38 @@ async function main() {
     while (!shouldStop) {
       cycle += 1;
       const cycleStartedMs = Date.now();
+
+      // --- Fleet-wide pause gate (2026-07-21) ---
+      // Keep the heartbeat process alive and writing state (so monitoring can
+      // see it's running), but skip all autonomous command dispatch when paused.
+      // This is the root scheduler — pausing it effectively pauses everything
+      // it orchestrates (terminal-heartbeat-pulse, director-cron, etc.).
+      const { isFleetPaused } = require(path.join(__dirname, '..', 'lib', 'tnf-fleet-mode.cjs'));
+      if (isFleetPaused()) {
+        const pausedPayload = {
+          generatedAt: nowIso(),
+          status: 'fleet-paused',
+          cycle,
+          actor: {
+            id: process.env.TNF_MASTER_HEARTBEAT_ACTOR_ID || 'tnf-master-heartbeat',
+            role: 'tnf-master-clock',
+          },
+          config: {
+            rootDir: config.rootDir,
+            intervalMs: config.intervalMs,
+          },
+          summary: { totalSteps: 0, failedSteps: 0 },
+          steps: [],
+        };
+        await writePayload(pausedPayload);
+        console.log(`[master-heartbeat] cycle=${cycle} status=fleet-paused (skipping command dispatch)`);
+        const elapsed = Date.now() - cycleStartedMs;
+        const delayMs = Math.max(1000, config.intervalMs - elapsed);
+        if (config.runOnce) break;
+        await sleep(delayMs);
+        continue;
+      }
+
       const payload = runCycle(cycle);
       await writePayload(payload);
 

@@ -4,6 +4,13 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "${ROOT_DIR}/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
 SERVICE_LOG_DIR="$ROOT_DIR/.agent/runtime-logs/qa-swarm-service"
 HEARTBEAT_FILE="$SERVICE_LOG_DIR/heartbeat.json"
 mkdir -p "$SERVICE_LOG_DIR"

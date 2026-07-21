@@ -6,6 +6,14 @@ set -euo pipefail
 export PATH="/Users/danielgoldberg/.nvm/versions/node/v20.20.2/bin:/Users/danielgoldberg/.hermes/node/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "${REPO_ROOT}/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
 HARNESS_ENV="${TNF_HARNESS_CONTEXT_ENV:-$REPO_ROOT/.agent/runtime-state/harness-context.env}"
 HARNESS_RESOLVER="$REPO_ROOT/scripts/runtime/resolve-harness-context.cjs"
 NODE_BIN="$(command -v node || true)"

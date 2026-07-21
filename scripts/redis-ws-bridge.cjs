@@ -21,6 +21,16 @@ const WebSocket = require('ws');
 const http = require('http');
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
 
+// --- Fleet-wide pause gate (2026-07-21) ---
+const path = require('path');
+const { isFleetPaused } = require(path.join(__dirname, 'lib', 'tnf-fleet-mode.cjs'));
+if (isFleetPaused()) {
+  console.log(JSON.stringify({ ok: true, skipped: 'fleet-paused' }));
+  process.exit(0);
+}
+
+// ============================================================================
+
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
