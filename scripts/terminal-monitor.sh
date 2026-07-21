@@ -13,6 +13,41 @@ mkdir -p "$CONTENT_DIR"
 echo "=== TERMINAL MONITORING SYSTEM INITIALIZED ===" >> "$MONITORING_LOG"
 echo "Timestamp: $(date)" >> "$MONITORING_LOG"
 
+# --- Autonomy safety gates (mirrors orchestrator-system.sh pattern) ---
+# System-wide "is a human actively at the keyboard/mouse right now" check
+# (macOS HIDIdleTime, seconds since last input event, any app). Conservative:
+# on error, treat as "active" (i.e. block) rather than risk injecting.
+check_human_idle() {
+    local min_idle="${TNF_TERMINAL_MONITOR_MIN_IDLE_SECONDS:-20}"
+    local idle_seconds
+    idle_seconds=$(ioreg -c IOHIDSystem 2>/dev/null | awk '/HIDIdleTime/ {print int($NF/1000000000); exit}')
+    if [[ -z "$idle_seconds" ]]; then
+        echo "$(date): idle check failed to read HIDIdleTime; treating as active (blocking injection)" >> "$MONITORING_LOG"
+        return 1
+    fi
+    if (( idle_seconds < min_idle )); then
+        echo "$(date): system active ${idle_seconds}s ago (< ${min_idle}s threshold); a human may be present, blocking injection" >> "$MONITORING_LOG"
+        return 1
+    fi
+    return 0
+}
+
+# Fleet-wide injection pause gate (~/.tnf/fleet/mode.json).
+# Reads the mode.json file written by `tnf harness pause [--injection-only]`.
+# When mode is 'paused' or 'injection-paused', returns 0 (skip); otherwise 1.
+check_fleet_injection_pause() {
+    local mode_file="${HOME}/.tnf/fleet/mode.json"
+    if [[ -f "$mode_file" ]]; then
+        local mode
+        mode=$(node -e "try{const f=require('fs').readFileSync('$mode_file','utf8');const j=JSON.parse(f);process.stdout.write(typeof j.mode==='string'?j.mode:'running');}catch(e){process.stdout.write('running');}" 2>/dev/null)
+        if [[ "$mode" == "paused" || "$mode" == "injection-paused" ]]; then
+            echo "$(date): fleet-mode='$mode' — blocking injection" >> "$MONITORING_LOG"
+            return 0
+        fi
+    fi
+    return 1
+}
+
 # Function to get and track terminal PID
 track_terminal_pid() {
     local terminal_number="$1"
@@ -127,12 +162,24 @@ detect_errors() {
 auto_resubmit_flash() {
     local terminal_number="$1"
     local original_task="$2"
-    
+
     echo "$(date): Auto-resubmitting task to Flash model in Terminal $terminal_number" >> "$MONITORING_LOG"
-    
+
+    # Fleet-pause gate — if operator paused the fleet, skip cleanly.
+    if check_fleet_injection_pause; then
+        echo "$(date): Skipping Flash resubmission for Terminal $terminal_number (fleet injection paused)" >> "$MONITORING_LOG"
+        return 5
+    fi
+
+    # HIDIdleTime gate — if a human may be present, refuse to inject.
+    if ! check_human_idle; then
+        echo "$(date): Skipping Flash resubmission for Terminal $terminal_number (human may be active)" >> "$MONITORING_LOG"
+        return 6
+    fi
+
     # Focus the terminal
     focus_terminal_by_pid "$terminal_number"
-    
+
     # Send resubmission
     # Escaping double quotes for AppleScript
     local escaped_task

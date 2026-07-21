@@ -5,6 +5,7 @@ const path = require('node:path');
 const { execFile } = require('node:child_process');
 const { promisify } = require('node:util');
 const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const { isFleetPaused, readFleetMode } = require('../lib/tnf-fleet-mode.cjs');
 
 const execFileAsync = promisify(execFile);
 
@@ -142,6 +143,36 @@ function acquireLock(lockPath, staleAfterMs, payload) {
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
+
+  // Fleet-wide pause gate — gates all 7 live cron entries in one place.
+  // Checked BEFORE the single-instance guard (and well before any
+  // catalog/registry/state I/O) so a paused fleet doesn't even acquire a
+  // process lock for work it isn't going to do, and skips cleanly with
+  // exit 0 (the cron harness treats exit 0 OK).
+  const fleetState = readFleetMode();
+  if (fleetState.mode === 'paused') {
+    console.log(
+      JSON.stringify(
+        {
+          ok: true,
+          skipped: 'fleet-paused',
+          reason: fleetState.reason || 'fleet-paused',
+          processId: options.processId,
+          fleetMode: fleetState.mode,
+          fleetUpdatedAt: fleetState.updatedAt,
+          fleetUpdatedBy: fleetState.updatedBy,
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+  // Note: 'injection-paused' does NOT gate cron via this path —
+  // cron-driven cron work (writing logs, gating other processes)
+  // should continue. Injection-only scripts must check
+  // isInjectionPaused() themselves.
+
   const processGuard = singleInstanceGuard({
     lockName: `run-chrono-${slugify(options.processId)}`,
     staleMs: 30000,

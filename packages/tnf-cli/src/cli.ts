@@ -5869,6 +5869,138 @@ harness
   );
 
 harness
+  .command('pause')
+  .description('Pause all autonomous TNF fleet activity (cron + launchd + heartbeat injection)')
+  .option('--reason <text>', 'Human-readable reason for the pause')
+  .option(
+    '--injection-only',
+    'Only pause injection-class operations (keystroke + prompt injection); leave cron work running'
+  )
+  .action(async (options: { reason?: string; injectionOnly?: boolean }) => {
+    try {
+      const repoRootLocal = path.join(__dirname, '..', '..', '..');
+      const fleetModeScript = path.join(repoRootLocal, 'scripts', 'lib', 'tnf-fleet-mode.cjs');
+      if (!fs.existsSync(fleetModeScript)) {
+        throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
+      }
+      const { setFleetMode, FLEET_MODE_FILE } = require(fleetModeScript);
+      const mode = options.injectionOnly ? 'injection-paused' : 'paused';
+      const reason =
+        options.reason || `paused via tnf harness pause at ${new Date().toISOString()}`;
+      const payload = setFleetMode(mode, reason, 'tnf-cli');
+      console.log(chalk.yellow(`\n[TNF Fleet Paused]`));
+      console.log(`  mode:           ${chalk.bold(payload.mode)}`);
+      console.log(`  reason:         ${payload.reason}`);
+      console.log(`  updatedAt:      ${payload.updatedAt}`);
+      console.log(`  state file:     ${FLEET_MODE_FILE}`);
+      console.log(chalk.dim(`\nUse 'tnf harness resume' to restore autonomous operation.\n`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+harness
+  .command('resume')
+  .description('Resume normal autonomous TNF fleet activity (clear pause state)')
+  .action(async () => {
+    try {
+      const repoRootLocal = path.join(__dirname, '..', '..', '..');
+      const fleetModeScript = path.join(repoRootLocal, 'scripts', 'lib', 'tnf-fleet-mode.cjs');
+      if (!fs.existsSync(fleetModeScript)) {
+        throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
+      }
+      const { clearFleetMode, FLEET_MODE_FILE } = require(fleetModeScript);
+      const result = clearFleetMode();
+      if (!result.ok) {
+        throw new Error(`Resume failed: ${result.error}`);
+      }
+      console.log(chalk.green(`\n[TNF Fleet Resumed]`));
+      console.log(`  state file:     ${FLEET_MODE_FILE} (removed or never existed)`);
+      console.log(`  cron + launchd + heartbeat should resume on next cycle.\n`);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+harness
+  .command('fleet-status')
+  .alias('status')
+  .description('Show current fleet pause state + fleet health snapshot')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (options: { json?: boolean }) => {
+    try {
+      const repoRootLocal = path.join(__dirname, '..', '..', '..');
+      const fleetModeScript = path.join(repoRootLocal, 'scripts', 'lib', 'tnf-fleet-mode.cjs');
+      if (!fs.existsSync(fleetModeScript)) {
+        throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
+      }
+      const { readFleetMode, FLEET_MODE_FILE } = require(fleetModeScript);
+      const state = readFleetMode();
+
+      // Lightweight fleet health snapshot — last heartbeat + cron control-plane state age
+      const heartbeatPath = path.join(
+        os.homedir(),
+        '.tnf',
+        'terminal-heartbeat',
+        'pulse.lock.json'
+      );
+      let heartbeatAgeSec: number | null = null;
+      try {
+        if (fs.existsSync(heartbeatPath)) {
+          const mtimeMs = fs.statSync(heartbeatPath).mtimeMs;
+          heartbeatAgeSec = Math.round((Date.now() - mtimeMs) / 1000);
+        }
+      } catch {
+        /* heartbeat lock unreadable */
+      }
+
+      const summary = {
+        fleetMode: state.mode,
+        paused: state.paused,
+        reason: state.reason,
+        updatedAt: state.updatedAt,
+        updatedBy: state.updatedBy,
+        stateFile: FLEET_MODE_FILE,
+        heartbeatLockAgeSeconds: heartbeatAgeSec,
+        readError: state.error,
+      };
+
+      if (options.json) {
+        console.log(JSON.stringify(summary, null, 2));
+        return;
+      }
+
+      const modeColor =
+        state.mode === 'paused'
+          ? chalk.red.bold
+          : state.mode === 'injection-paused'
+            ? chalk.yellow.bold
+            : chalk.green.bold;
+      console.log(chalk.bold.cyan('\n[TNF Fleet Status]\n'));
+      console.log(`  mode:              ${modeColor(state.mode)}`);
+      console.log(`  paused:            ${state.paused ? chalk.red('YES') : chalk.green('no')}`);
+      console.log(`  reason:            ${state.reason || chalk.dim('(none)')}`);
+      console.log(`  updatedAt:         ${state.updatedAt || chalk.dim('(never)')}`);
+      console.log(`  updatedBy:         ${state.updatedBy || chalk.dim('(unknown)')}`);
+      console.log(
+        `  heartbeat lock:    ${
+          heartbeatAgeSec === null
+            ? chalk.dim('(no lock file)')
+            : heartbeatAgeSec < 600
+              ? chalk.green(`${heartbeatAgeSec}s ago`)
+              : chalk.yellow(`${heartbeatAgeSec}s ago (stale?)`)
+        }`
+      );
+      console.log(`  state file:        ${chalk.dim(FLEET_MODE_FILE)}\n`);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+harness
   .command('inspect')
   .description('Inspect harness health: protocol, agents, and live agent loop')
   .option('--json', 'Output machine-readable JSON')

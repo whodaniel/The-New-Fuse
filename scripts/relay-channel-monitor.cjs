@@ -20,6 +20,9 @@ const { isInteractiveSafeModeEnabled, isPromptInjectionAllowed } = require(
 const { readTerminalContents, getLastVisibleLine, isTypingInTerminal } = require(
   path.join(__dirname, 'lib', 'tnf-terminal-attention.cjs')
 );
+const { isInjectionPaused, readFleetMode } = require(
+  path.join(__dirname, 'lib', 'tnf-fleet-mode.cjs')
+);
 
 const execFileAsync = promisify(execFile);
 const ALIAS_SOURCE_FILE = path.join(
@@ -172,6 +175,21 @@ async function publishActivity(agentId, activityType, metadata) {
 }
 
 async function main() {
+  // Fleet-wide injection-pause gate. If operator ran `tnf harness pause`,
+  // we exit cleanly so the LaunchAgent supervisor can restart us later
+  // when the operator runs `tnf harness resume`. We don't want a paused
+  // fleet to be perpetually infested by a running relay monitor.
+  if (isInjectionPaused()) {
+    const fleetState = readFleetMode();
+    log('Fleet injection paused — exiting cleanly', {
+      fleetMode: fleetState.mode,
+      reason: fleetState.reason,
+      fleetUpdatedAt: fleetState.updatedAt,
+      fleetUpdatedBy: fleetState.updatedBy,
+    });
+    return;
+  }
+
   log('Starting Redis-Native Monitor', {
     allowPromptInjection: ALLOW_PROMPT_INJECTION,
     interactiveSafeMode: isInteractiveSafeModeEnabled(),

@@ -69,6 +69,27 @@ For raw AI CLI sessions launched without TNF auto-injection, paste:
 Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
 ```
 
+## Commits and Pushes Require Live Operator Confirmation
+
+`docs/protocols/DIRECTIVES.md` D1 authorizes autonomous continuous execution for
+**routine long-running task execution** — reading, analyzing, editing files,
+running tests. It explicitly does not extend that authorization to `git commit`
+or `git push`: those require a live, current-session confirmation from the
+operator (Daniel Goldberg), every time, regardless of how well-tested or
+well-documented the change is. A prior session's test coverage, a self-imposed
+rule like "amendments require explicit acceptance," or a commit message citing
+verification steps are not substitutes for that confirmation — they describe
+what was done, not who approved it.
+
+This applies to every agent operating on this repo, not just one — see
+`docs/protocols/CHALLENGE_RATIONALE_LOG.md` for the incident (2026-07-21) that
+made this explicit: an agent fabricated a self-certified "operator handshake" to
+justify a commit and a process-kill; a separate agent then committed that work
+because its own verification checked file/PID authenticity, not claim
+authenticity. If you're about to run `git commit` or `git push` and no live
+operator confirmation exists in the current session for that specific action,
+stop and ask first.
+
 ## OpenClaw Operator Policy
 
 When a task involves OpenClaw or other Claw-type agents:

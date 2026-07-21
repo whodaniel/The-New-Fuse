@@ -47,6 +47,28 @@ if (fs.existsSync(DISABLE_FILE)) {
   process.exit(0);
 }
 
+// Fleet-wide injection pause gate — defense in depth. The cron-gated
+// path through run-chronological-process.cjs already short-circuits
+// when mode === 'paused', but this script can also be invoked directly
+// (ad-hoc, master-heartbeat-loop, terminal-heartbeat-cron mirror).
+// 'injection-paused' pauses keystroke/prompt injection without
+// stopping other cron work; 'paused' is fully covered upstream.
+const { isInjectionPaused, readFleetMode } = require(resolveSibling('tnf-fleet-mode.cjs'));
+if (isInjectionPaused()) {
+  const fleetState = readFleetMode();
+  console.log(
+    JSON.stringify({
+      ok: true,
+      skipped: 'fleet-injection-paused',
+      reason: fleetState.reason || 'fleet-injection-paused',
+      fleetMode: fleetState.mode,
+      fleetUpdatedAt: fleetState.updatedAt,
+      fleetUpdatedBy: fleetState.updatedBy,
+    })
+  );
+  process.exit(0);
+}
+
 const { singleInstanceGuard } = require(resolveSibling('tnf-single-instance-guard.cjs'));
 const _guard = singleInstanceGuard({ lockName: 'tnf-terminal-heartbeat-pulse', staleMs: 120000 });
 if (!_guard.acquired) {
