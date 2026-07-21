@@ -27,16 +27,31 @@ ensure_dirs() {
 # Resolve the canonical repo root from this script's location
 # (scripts/runtime/terminal-heartbeat-cron.sh) so we can mirror the
 # helper library that ships alongside it. scripts/lib is the layout
-# the runtime scripts expect when they `require('../lib/...')` —
-# if ~/.tnf/lib/ is missing those requires fail with MODULE_NOT_FOUND.
+# the runtime scripts expect when they `require('../lib/...')`.
+#
+# There are TWO mirror homes the deployed script can run from (see
+# sync_script() below: $BIN_DIR = $SERVICE_HOME/bin, which is what the
+# live cron entry actually invokes via $MIRRORED_SCRIPT, and
+# $HOME/.tnf/bin, for "ad-hoc shells" per that function's own comment).
+# `../lib` relative to each resolves to a DIFFERENT directory
+# ($SERVICE_HOME/lib vs $HOME/.tnf/lib) — this function previously only
+# synced the latter, so any script requiring a sibling lib module while
+# running from $SERVICE_HOME/bin (the real cron path) got
+# MODULE_NOT_FOUND unless that lib happened to have a stale copy left
+# over from something else. Fixed 2026-07-21 after this broke the live
+# cron every minute for scripts/lib/tnf-interactive-safe-mode.cjs and
+# scripts/lib/tnf-terminal-attention.cjs immediately after they were
+# added — mirror to both homes now, matching sync_script()'s pattern.
 REPO_ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 REPO_LIB_DIR="${REPO_ROOT_DIR}/scripts/lib"
 HOME_LIB_DIR="$HOME/.tnf/lib"
+SERVICE_LIB_DIR="$SERVICE_HOME/lib"
 
 sync_lib() {
   ensure_dirs
   if [ -d "$REPO_LIB_DIR" ]; then
     mkdir -p "$HOME_LIB_DIR"
+    mkdir -p "$SERVICE_LIB_DIR"
     # Mirror any .cjs / .js / .sh that the runtime scripts require from
     # ../lib. Keep this idempotent and silent — we do NOT want boot
     # to fail when scripts/lib is empty (it's optional).
@@ -46,6 +61,7 @@ sync_lib() {
     for f in "$REPO_LIB_DIR"/*.cjs "$REPO_LIB_DIR"/*.js "$REPO_LIB_DIR"/*.sh; do
       [ -e "$f" ] || continue
       cp -f "$f" "$HOME_LIB_DIR/"
+      cp -f "$f" "$SERVICE_LIB_DIR/"
     done
   fi
 }
@@ -67,7 +83,18 @@ sync_script() {
 }
 
 cron_line() {
-  printf '%s cd "%s" && PATH="%s:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" NODE_PATH="%s/node_modules:%s/packages/tnf-cli/node_modules" TNF_TERMINAL_HEARTBEAT_STATE_DIR="%s" "%s" "%s" >> "%s" 2>&1 %s\n' \
+  # TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION / TNF_INTERACTIVE_SAFE_MODE
+  # are set explicitly here because this crontab entry is, today, the only
+  # live invocation path for the pulse script (tnf-master-heartbeat-loop.cjs's
+  # per-cycle `terminal-heartbeat-cron.sh run-once` call hits an unhandled
+  # case branch and no-ops — see git history/plan notes). Without setting
+  # these here, the pulse script's new safe-by-default config would silently
+  # stop all pulsing, since crontab invocations otherwise get no env vars.
+  # The real protection against corrupting an attended session is the
+  # per-terminal attention check in the script itself (isTtyRecentlyActive +
+  # isTypingInTerminal), not this flag — this flag just preserves "unattended
+  # terminals keep getting pulsed" as the default, same as before.
+  printf '%s cd "%s" && PATH="%s:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" NODE_PATH="%s/node_modules:%s/packages/tnf-cli/node_modules" TNF_TERMINAL_HEARTBEAT_STATE_DIR="%s" TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="true" TNF_INTERACTIVE_SAFE_MODE="false" "%s" "%s" >> "%s" 2>&1 %s\n' \
     "$SCHEDULE_VALUE" \
     "$SERVICE_HOME" \
     "$(dirname "$NODE_BIN_VALUE")" \

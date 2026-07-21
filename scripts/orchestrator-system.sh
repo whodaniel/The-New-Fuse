@@ -39,12 +39,39 @@ init_orchestrator() {
     echo "Orchestrator initialization complete. Monitoring 5 terminals." >> "$ORCHESTRATOR_LOG"
 }
 
+# System-wide "is a human actively at the keyboard/mouse right now" check
+# (macOS HIDIdleTime, seconds since last input event, any app). Kiro has
+# no AppleScript-readable buffer the way Terminal.app does, so unlike
+# scripts/lib/tnf-terminal-attention.cjs's per-window content check, this
+# is the best available signal before force-activating Kiro and typing
+# blindly via `keystroke`. Conservative: on error, treat as "active"
+# (i.e. block) rather than risk injecting.
+check_human_idle() {
+    local min_idle="${TNF_ORCHESTRATOR_MIN_IDLE_SECONDS:-20}"
+    local idle_seconds
+    idle_seconds=$(ioreg -c IOHIDSystem 2>/dev/null | awk '/HIDIdleTime/ {print int($NF/1000000000); exit}')
+    if [[ -z "$idle_seconds" ]]; then
+        echo "$(date): idle check failed to read HIDIdleTime; treating as active (blocking injection)" >> "$ORCHESTRATOR_LOG"
+        return 1
+    fi
+    if (( idle_seconds < min_idle )); then
+        echo "$(date): system active ${idle_seconds}s ago (< ${min_idle}s threshold); a human may be present, blocking injection" >> "$ORCHESTRATOR_LOG"
+        return 1
+    fi
+    return 0
+}
+
 # Function to focus specific terminal using Kiro IDE commands
 focus_terminal() {
     local terminal_number="$1"
-    
+
+    if ! check_human_idle; then
+        echo "$(date): Skipping focus/injection for Terminal $terminal_number (human may be active)" >> "$ORCHESTRATOR_LOG"
+        return 1
+    fi
+
     echo "$(date): Focusing Terminal $terminal_number" >> "$ORCHESTRATOR_LOG"
-    
+
     # Activate Kiro
     osascript -e "tell application \"Kiro\" to activate" >/dev/null 2>&1
     sleep 1
@@ -90,9 +117,12 @@ handle_flash_resubmission() {
     local original_task="$2"
     
     echo "$(date): Handling Flash model resubmission for Terminal $terminal_number" >> "$ORCHESTRATOR_LOG"
-    
-    focus_terminal "$terminal_number"
-    
+
+    if ! focus_terminal "$terminal_number"; then
+        echo "$(date): Aborting Flash resubmission for Terminal $terminal_number (focus_terminal blocked)" >> "$ORCHESTRATOR_LOG"
+        return 1
+    fi
+
     # Send resubmission command
     osascript -e "tell application \"System Events\" to keystroke \"RESUBMITTING TASK for Flash model:
 
@@ -133,9 +163,12 @@ attempt_terminal_recovery() {
     local terminal_number="$1"
     
     echo "$(date): Attempting recovery for dormant Terminal $terminal_number" >> "$ORCHESTRATOR_LOG"
-    
-    focus_terminal "$terminal_number"
-    
+
+    if ! focus_terminal "$terminal_number"; then
+        echo "$(date): Aborting recovery attempt for Terminal $terminal_number (focus_terminal blocked)" >> "$ORCHESTRATOR_LOG"
+        return 1
+    fi
+
     # Send a gentle ping to check if Gemini is responsive
     osascript -e 'tell application "System Events" to keystroke "Status check - are you processing the assigned task?"' -e 'delay 0.5' -e 'tell application "System Events" to keystroke return' >/dev/null 2>&1
     

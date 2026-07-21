@@ -14,6 +14,12 @@ const fs = require('fs');
 const { execFile } = require('child_process');
 const { promisify } = require('util');
 const { RedisAgentClient } = require(path.join(__dirname, 'lib', 'redis-agent-client.cjs'));
+const { isInteractiveSafeModeEnabled, isPromptInjectionAllowed } = require(
+  path.join(__dirname, 'lib', 'tnf-interactive-safe-mode.cjs')
+);
+const { readTerminalContents, getLastVisibleLine, isTypingInTerminal } = require(
+  path.join(__dirname, 'lib', 'tnf-terminal-attention.cjs')
+);
 
 const execFileAsync = promisify(execFile);
 const ALIAS_SOURCE_FILE = path.join(
@@ -23,57 +29,13 @@ const ALIAS_SOURCE_FILE = path.join(
   'state',
   'local-subdirector-heartbeat.json'
 );
-const ALLOW_PROMPT_INJECTION =
-  String(process.env.TNF_RELAY_MONITOR_ALLOW_PROMPT_INJECTION || 'false').toLowerCase() === 'true';
-const INTERACTIVE_SAFE_MODE_ENV = process.env.TNF_INTERACTIVE_SAFE_MODE || '';
+const ALLOW_PROMPT_INJECTION = isPromptInjectionAllowed('TNF_RELAY_MONITOR_ALLOW_PROMPT_INJECTION');
 const INTERACTIVE_SAFE_MODE_FILE =
   process.env.TNF_INTERACTIVE_SAFE_MODE_FILE ||
   path.join(process.env.HOME, '.tnf', 'flags', 'interactive-safe-mode');
 
 function log(message, metadata = {}) {
   console.log(JSON.stringify({ timestamp: new Date().toISOString(), message, role: 'Relay-Monitor', ...metadata }));
-}
-
-function isInteractiveSafeModeEnabled() {
-  if (String(INTERACTIVE_SAFE_MODE_ENV).trim()) {
-    return String(INTERACTIVE_SAFE_MODE_ENV).toLowerCase() !== 'false';
-  }
-  return fs.existsSync(INTERACTIVE_SAFE_MODE_FILE);
-}
-
-async function readTerminalContents(windowId) {
-  const { stdout } = await execFileAsync('osascript', [
-    '-e',
-    `tell application "Terminal" to contents of selected tab of window id ${Number(windowId)}`,
-  ]);
-  return String(stdout || '');
-}
-
-function getLastVisibleLine(contents) {
-  const lines = String(contents || '')
-    .split(/\r?\n/)
-    .map((line) => line.replace(/\u001b\[[0-9;]*m/g, ''));
-  for (let i = lines.length - 1; i >= 0; i -= 1) {
-    const line = lines[i];
-    if (line && line.trim()) return line;
-  }
-  return '';
-}
-
-function isTypingInTerminal(contents) {
-  const line = getLastVisibleLine(contents);
-  if (!line) return false;
-  const trimmed = line.trim();
-  if (!trimmed) return false;
-  if (trimmed.includes('tab to queue message')) return true;
-  if (trimmed.startsWith('› TNF wake') || trimmed.startsWith('› TNF heartbeat')) return false;
-  if (trimmed.startsWith('/')) return true;
-  const promptMatch = line.match(/(?:[%$#>❯])\s*(.*)$/);
-  if (!promptMatch) return false;
-  const tail = String(promptMatch[1] || '').trim();
-  if (!tail) return false;
-  if (tail.startsWith('TNF wake') || tail.startsWith('TNF heartbeat')) return false;
-  return true;
 }
 
 async function terminalDoScript(windowId, command) {

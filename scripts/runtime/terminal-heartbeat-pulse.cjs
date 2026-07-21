@@ -58,6 +58,14 @@ if (!_guard.acquired) {
 const execFileAsync = promisify(execFile);
 
 const { RedisAgentClient } = require(resolveSibling('redis-agent-client.cjs'));
+const { isInteractiveSafeModeEnabled, isPromptInjectionAllowed } = require(
+  resolveSibling('tnf-interactive-safe-mode.cjs')
+);
+const {
+  isTtyRecentlyActive,
+  readTerminalContents: readTerminalContentsShared,
+  isTypingInTerminal,
+} = require(resolveSibling('tnf-terminal-attention.cjs'));
 
 const KNOWN_SHELLS = new Set(['bash', 'fish', 'sh', 'zsh']);
 const AGENT_COMMAND_HINTS = ['codex', 'claude', 'gemini', 'goose', 'aider', 'pi'];
@@ -77,11 +85,18 @@ const config = {
   promptTemplate:
     process.env.TNF_TERMINAL_HEARTBEAT_PROMPT_TEMPLATE ||
     'TNF heartbeat {{heartbeatId}} for {{agentId}}: read ~/.tnf/swarm-context.md and ~/.tnf/handoff-current.json for your task and swarm state, then execute it.',
-  allowPromptInjection: true, // HARD-CODED TRUE for Perpetual Awakeness
+  allowPromptInjection: isPromptInjectionAllowed('TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION'),
   clearLine: process.env.TNF_TERMINAL_HEARTBEAT_CLEAR_LINE !== 'false',
   verifyQueueHints: process.env.TNF_TERMINAL_HEARTBEAT_VERIFY_QUEUE_HINTS !== 'false',
   contentTailChars: parsePositiveInt(process.env.TNF_TERMINAL_HEARTBEAT_CONTENT_TAIL_CHARS, 1200),
   maxTargets: parsePositiveInt(process.env.TNF_TERMINAL_HEARTBEAT_MAX_TARGETS, 0),
+  // Cheap sync pre-filter: skip a terminal whose tty had any I/O (agent
+  // output included, not just human keystrokes) more recently than this —
+  // intentionally over-protective, see scripts/lib/tnf-terminal-attention.cjs.
+  idleThresholdMs: parsePositiveInt(process.env.TNF_TERMINAL_HEARTBEAT_IDLE_THRESHOLD_MS, 6000),
+  protectedSessionsFile:
+    process.env.TNF_TERMINAL_HEARTBEAT_PROTECTED_SESSIONS_FILE ||
+    path.join(os.homedir(), '.tnf', 'terminal-heartbeat', 'protected-sessions.json'),
 };
 
 function parsePositiveInt(value, fallback) {
@@ -118,6 +133,20 @@ function readManagedSessions() {
     return Array.isArray(parsed?.sessions) ? parsed.sessions : [];
   } catch (_error) {
     return [];
+  }
+}
+
+// Manual, operator-edited exclude-list — e.g. `{"protected":[{"agentId":"tnf-local-terminal-ttys004","reason":"operator-typing"}]}`.
+// A durable alternative to the blunt global DISABLE_FILE for excluding one
+// specific terminal without stopping the pulse everywhere.
+function readProtectedAgentIds() {
+  try {
+    const raw = fs.readFileSync(config.protectedSessionsFile, 'utf8');
+    const parsed = JSON.parse(raw);
+    const entries = Array.isArray(parsed?.protected) ? parsed.protected : [];
+    return new Set(entries.map((entry) => String(entry?.agentId || '')).filter(Boolean));
+  } catch (_error) {
+    return new Set();
   }
 }
 
@@ -276,16 +305,18 @@ function renderPrompt(agentId, heartbeatId) {
 }
 
 function shouldTargetSession(observedSession, managedSession, protectedAgentIds) {
-  // Collective Heartbeat Rule: If it looks like an agent and has a TTY, pulse it.
-  return observedSession.agentLike && observedSession.tty;
+  // Collective Heartbeat Rule: If it looks like an agent and has a TTY, pulse it —
+  // UNLESS it's on the manual exclude-list, or its tty has had I/O more
+  // recently than idleThresholdMs (cheap pre-filter; the authoritative
+  // isTypingInTerminal check runs again, fresh, right before injection).
+  if (!(observedSession.agentLike && observedSession.tty)) return false;
+  if (protectedAgentIds && protectedAgentIds.has(observedSession.agentId)) return false;
+  if (isTtyRecentlyActive(observedSession.tty, config.idleThresholdMs)) return false;
+  return true;
 }
 
 async function readTerminalContents(windowId) {
-  const { stdout } = await execFileAsync('osascript', [
-    '-e',
-    `tell application "Terminal" to contents of selected tab of window id ${Number(windowId)}`,
-  ]);
-  return String(stdout || '');
+  return readTerminalContentsShared(windowId, execFileAsync);
 }
 
 async function pressTerminalKey(windowId, keyCode) {
@@ -380,6 +411,35 @@ async function flushAnyPendingTnfPrompt(windowId) {
 }
 
 async function injectHeartbeat(target) {
+  // Authoritative attention check, done fresh right before the
+  // focus-stealing/keystroke call — time passes between the earlier JXA
+  // poll (isTtyRecentlyActive pre-filter in shouldTargetSession) and here,
+  // so this re-checks against current terminal contents rather than a
+  // stale snapshot. This is what actually catches "human is mid-keystroke
+  // right now" (an unsubmitted prompt/composer line).
+  if (target.windowId) {
+    try {
+      const preflightContents = await readTerminalContents(target.windowId);
+      if (isTypingInTerminal(preflightContents)) {
+        return {
+          agentId: target.agentId,
+          tty: target.tty,
+          windowId: target.windowId,
+          heartbeatId: null,
+          method: 'skipped-typing',
+          submitted: false,
+          skippedReason: 'typing-in-progress',
+          enterAttempts: 0,
+          queueHintPresent: false,
+          injectedAt: nowIso(),
+        };
+      }
+    } catch (_error) {
+      // If we can't read contents, fall through and let the normal
+      // injection path fail/succeed on its own terms below.
+    }
+  }
+
   const heartbeatId = `cron-heartbeat-${normalizeTty(target.tty)}-${Date.now()}`;
   const prompt = renderPrompt(target.agentId, heartbeatId);
   const escapedPrompt = `${config.clearLine ? '\u0015' : ''}${prompt}`;
@@ -534,6 +594,26 @@ async function main() {
     return;
   }
 
+  // Global operator injection gate — distinct from the blunt DISABLE_FILE
+  // kill-switch at the top of this file, and distinct from discovery.
+  // isInteractiveSafeModeEnabled()/allowPromptInjection control ONLY
+  // whether the injection loop runs below; they must NOT also suppress
+  // polling/discovery (`observed[]`), because several other consumers
+  // depend on that array for non-injection purposes regardless of
+  // whether injection itself is allowed right now: tnf-director-loop.cjs
+  // (fallback session source + stale-heartbeat escalation paging),
+  // tnf-onboard-twip.cjs (duplicate-lane guard), tnf-fleet-status.cjs
+  // (heartbeat-age-based degraded status), fleet-role-map-reconcile.cjs
+  // (role map). An earlier version of this gate zeroed observed[] too,
+  // which silently starved all of those on every safe-mode/policy skip —
+  // fixed so only the injection step is conditional now.
+  const injectionAllowed = !isInteractiveSafeModeEnabled() && config.allowPromptInjection;
+  const injectionSkippedReason = isInteractiveSafeModeEnabled()
+    ? 'interactive-safe-mode'
+    : !config.allowPromptInjection
+      ? 'prompt-injection-disabled'
+      : null;
+
   try {
     const terminals = await pollTerminalWindows();
     const processTable = await collectProcessTable();
@@ -543,6 +623,7 @@ async function main() {
         .filter((session) => session && session.agentId)
         .map((session) => [String(session.agentId), session])
     );
+    const protectedAgentIds = readProtectedAgentIds();
     const observed = [];
 
     for (const terminal of terminals) {
@@ -563,9 +644,11 @@ async function main() {
       });
     }
 
-    let targets = observed.filter((session) =>
-      shouldTargetSession(session, managedByAgentId.get(session.agentId))
-    );
+    let targets = injectionAllowed
+      ? observed.filter((session) =>
+          shouldTargetSession(session, managedByAgentId.get(session.agentId), protectedAgentIds)
+        )
+      : [];
     if (config.maxTargets > 0) {
       targets = targets.slice(0, config.maxTargets);
     }
@@ -586,21 +669,32 @@ async function main() {
     const payload = {
       generatedAt: nowIso(),
       actor: { id: config.actorId, role: 'tnf-master-clock' },
-      status: injections.some((target) => target.queueHintPresent) ? 'degraded' : 'healthy',
+      status: injectionSkippedReason
+        ? 'skipped-safe-mode'
+        : injections.some((target) => target.queueHintPresent)
+          ? 'degraded'
+          : 'healthy',
       summary: {
         observedSessions: observed.length,
         agentSessions: observed.filter((session) => session.agentLike).length,
         targetedSessions: targets.length,
-        injections: injections.length,
+        // injections counts only attempts that actually sent keystrokes —
+        // an attempt skipped by the typing-in-progress preflight check
+        // (method: 'skipped-typing') was targeted but never touched the
+        // terminal, so it shouldn't inflate this count.
+        injections: injections.filter((target) => target.method !== 'skipped-typing').length,
         queueHintFailures: injections.filter((target) => target.queueHintPresent).length,
       },
       observed,
       targets: injections,
-      functionalGaps: [
-        'PERPETUAL AWAKENESS: Prompt injection is now hard-coded to TRUE.',
-        'Collective Heartbeat Rule: Every agent-like TTY is pulsed every minute, including the Director.',
-        'Non-destructive Flush: Pulse only attempts safe prompt cleanup before injection (no forced interrupt).',
-      ],
+      skippedForAttention: injections.filter((target) => target.skippedReason === 'typing-in-progress').length,
+      functionalGaps: injectionSkippedReason
+        ? [`Injection skipped: ${injectionSkippedReason} (discovery still ran; observed[] is current).`]
+        : [
+            'Attention-aware: sessions with recent tty I/O (idleThresholdMs) or an in-progress unsubmitted line (isTypingInTerminal) are skipped, not just agent-like+tty.',
+            'Collective Heartbeat Rule: every remaining agent-like, unattended TTY is pulsed.',
+            'Non-destructive Flush: pulse only attempts safe prompt cleanup before injection (no forced interrupt).',
+          ],
     };
 
     await writeArtifacts(payload);

@@ -329,6 +329,8 @@
     "gitlink:reachability:verify:ci": "node scripts/protocols/verify-gitlink-reachability.cjs --mode=ci --file-list=.tnf_changed_files",
     "validate:release-train": "node scripts/protocols/validate-release-train.cjs",
     "validate:doc-tagging": "node scripts/protocols/validate-doc-tagging.cjs",
+    "validate:locked-doc-ledger:staged": "node scripts/protocols/validate-locked-doc-ledger.cjs --mode=staged",
+    "validate:locked-doc-ledger:ci": "node scripts/protocols/validate-locked-doc-ledger.cjs --mode=ci",
     "validate:federation-gate:synthetic": "node scripts/protocols/synthetic-federation-gate-check.cjs --json",
     "validate:twip:conformance": "node scripts/protocols/twip-conformance.cjs",
     "validate:master-clock-sync": "node scripts/protocols/master-clock-sync-audit.cjs",
