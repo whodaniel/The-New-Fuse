@@ -1,1 +1,0 @@
-{"version":3,"file":"phase.d.ts","sourceRoot":"","sources":["../../src/types/phase.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,WAAW,CAAC;AAEjC,MAAM,WAAW,mBAAmB;IAChC,EAAE,EAAE,MAAM,CAAC;IACX,KAAK,EAAE,IAAI,EAAE,CAAC;IACd,MAAM,EAAE,SAAS,GAAG,SAAS,GAAG,WAAW,GAAG,QAAQ,CAAC;CAC1D"}

@@ -1,1 +1,0 @@
-{"version":3,"file":"error-dashboard.service.d.ts","sourceRoot":"","sources":["../../src/monitoring/error-dashboard.service.ts"],"names":[],"mappings":"AAEA,qBACa,qBAAqB;IAChC,OAAO,CAAC,QAAQ,CAAC,MAAM,CAA0C;;IAIjE,WAAW,CAAC,KAAK,EAAE,KAAK,EAAE,OAAO,GAAE,MAAM,CAAC,MAAM,EAAE,GAAG,CAAM,GAAG,IAAI;CAQnE"}

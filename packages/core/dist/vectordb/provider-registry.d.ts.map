@@ -1,1 +1,0 @@
-{"version":3,"file":"provider-registry.d.ts","sourceRoot":"","sources":["../../src/vectordb/provider-registry.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,iBAAiB,EAAE,mBAAmB,EAAE,MAAM,YAAY,CAAC;AA8BpE,qBAAa,gBAAgB;IAC3B,MAAM,CAAC,cAAc,CAAC,MAAM,EAAE,iBAAiB,GAAG,mBAAmB;CActE"}

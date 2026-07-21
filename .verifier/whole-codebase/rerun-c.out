@@ -1,0 +1,25 @@
+continueC=rerun-c-2026-07-20T06-30-14Z
+START C02-turbo-lint :: pnpm run lint
+2026-07-20T06:31:34Z FAIL C02-turbo-lint exit=1 80000ms
+START C03-turbo-test-all :: pnpm run test:all
+2026-07-20T06:33:17Z FAIL C03-turbo-test-all exit=1 103000ms
+START C04-turbo-build-packages :: pnpm run build:packages
+2026-07-20T06:41:20Z FAIL C04-turbo-build-packages exit=2 482000ms
+START C05-turbo-build-apps :: pnpm run build:apps
+2026-07-20T06:41:48Z FAIL C05-turbo-build-apps exit=1 28000ms
+[stdin]:13
+${summary.failedSurfaces.map(f=>`- ${f.name}`).join('
+                                                    ^
+Expected ',', got 'string literal'
+
+SyntaxError: Invalid or unexpected token
+    at makeContextifyScript (node:internal/vm:185:14)
+    at compileScript (node:internal/process/execution:383:10)
+    at evalTypeScript (node:internal/process/execution:256:22)
+    at node:internal/main/eval_stdin:53:5
+    at ReadStream.<anonymous> (node:internal/process/execution:201:5)
+    at ReadStream.emit (node:events:519:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+
+Node.js v22.22.3

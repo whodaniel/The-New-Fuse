@@ -2,3 +2,5 @@
 > @the-new-fuse/protocol-contracts@0.1.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/protocol-contracts
 > tsc -b
 
+ ELIFECYCLE  Command failed.
+ WARN   Local package.json exists, but node_modules missing, did you mean to install?

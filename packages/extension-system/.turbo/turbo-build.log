@@ -2,5 +2,3 @@
 > @the-new-fuse/extension-system@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/extension-system
 > tsc -b
 
-../relay-core/src/services/prompt-intent-classifier.ts(49,43): error TS2339: Property 'causation_id' does not exist on type 'unknown'.
- ELIFECYCLE  Command failed with exit code 2.

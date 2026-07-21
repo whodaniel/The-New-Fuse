@@ -1,1 +1,0 @@
-{"version":3,"file":"SmartAPIGateway.d.ts","sourceRoot":"","sources":["../../src/api-management/SmartAPIGateway.ts"],"names":[],"mappings":"AAAA,qBAAa,eAAe;IAC1B,OAAO,CAAC,MAAM,CAAoC;;IAK3C,aAAa,CAAC,IAAI,EAAE,MAAM,EAAE,OAAO,EAAE,QAAQ,GAAG,IAAI;IAI9C,aAAa,CAAC,IAAI,EAAE,MAAM,EAAE,IAAI,CAAC,EAAE,GAAG,GAAG,OAAO,CAAC,GAAG,CAAC;CAOnE"}

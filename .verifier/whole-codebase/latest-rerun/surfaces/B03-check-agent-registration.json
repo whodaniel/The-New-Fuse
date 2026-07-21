@@ -1,0 +1,9 @@
+{
+  "name": "B03-check-agent-registration",
+  "ok": true,
+  "exitCode": 0,
+  "durationMs": 0,
+  "cmd": "node scripts/check-agent-registration.cjs",
+  "log": "logs/B03-check-agent-registration.log",
+  "stdoutTail": "TNF Agent Registration Checker\nWorkspace: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\n\nFound 11 agent definition(s) in .agent/agents/\nFound 13 registered agent identity/ies in ledger\n\nAll agents are registered.\n"
+}

@@ -1,1 +1,0 @@
-{"version":3,"file":"back-compat.middleware.d.ts","sourceRoot":"","sources":["../../src/middleware/back-compat.middleware.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,YAAY,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAI1D,wBAAgB,oBAAoB,CAAC,GAAG,EAAE,OAAO,EAAE,IAAI,EAAE,QAAQ,EAAE,IAAI,EAAE,YAAY,QAUpF"}

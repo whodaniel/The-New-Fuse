@@ -1,1 +1,0 @@
-{"version":3,"file":"performance.d.ts","sourceRoot":"","sources":["../../src/monitoring/performance.ts"],"names":[],"mappings":"AAEA,qBACa,kBAAkB;IAC3B,OAAO,CAAC,QAAQ,CAAC,MAAM,CAAuC;IAC9D,OAAO,CAAC,QAAQ,CAAC,MAAM,CAA6B;;IAIpD,KAAK,CAAC,IAAI,EAAE,MAAM,GAAG,IAAI;IAKzB,GAAG,CAAC,IAAI,EAAE,MAAM,GAAG,IAAI;CAW1B"}

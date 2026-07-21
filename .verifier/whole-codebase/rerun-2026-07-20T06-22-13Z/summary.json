@@ -1,0 +1,42 @@
+{
+  "runId": "rerun-2026-07-20T06-22-13Z",
+  "timestamp": "2026-07-20T06:29:29.669Z",
+  "scope": "FAILED_SURFACE_RERUN",
+  "note": "runner died mid-suite; partial results",
+  "surfacesTotal": 7,
+  "passed": 3,
+  "failed": 4,
+  "ok": false,
+  "score": "3/7",
+  "failedSurfaces": [
+    {
+      "name": "A01-protocol-validate",
+      "exitCode": 1,
+      "durationMs": 8000,
+      "log": "logs/A01-protocol-validate.log"
+    },
+    {
+      "name": "B02-validate-build",
+      "exitCode": 1,
+      "durationMs": 1000,
+      "log": "logs/B02-validate-build.log"
+    },
+    {
+      "name": "B07-validate-security",
+      "exitCode": 1,
+      "durationMs": 7000,
+      "log": "logs/B07-validate-security.log"
+    },
+    {
+      "name": "C01-turbo-type-check",
+      "exitCode": 2,
+      "durationMs": 329000,
+      "log": "logs/C01-turbo-type-check.log"
+    }
+  ],
+  "passedSurfaces": [
+    "A02-protocol-gate",
+    "A10-doc-tagging",
+    "B03-check-agent-registration"
+  ]
+}

@@ -1,1 +1,0 @@
-{"version":3,"file":"route-fallback.middleware.d.ts","sourceRoot":"","sources":["../../src/middleware/route-fallback.middleware.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAE1D,wBAAgB,uBAAuB,CAAC,GAAG,EAAE,OAAO,EAAE,GAAG,EAAE,QAAQ,EAAE,IAAI,EAAE,YAAY,QAkBtF"}

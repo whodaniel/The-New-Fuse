@@ -1,0 +1,33 @@
+{
+  "runId": "rerun-c-2026-07-20T06-30-14Z",
+  "timestamp": "2026-07-20T06:42:47.891Z",
+  "scope": "C_LAYER_CONTINUE",
+  "surfacesTotal": 4,
+  "passed": 0,
+  "failed": 4,
+  "ok": false,
+  "score": "0/4",
+  "failedSurfaces": [
+    {
+      "name": "C02-turbo-lint",
+      "exitCode": 1,
+      "durationMs": 80000
+    },
+    {
+      "name": "C03-turbo-test-all",
+      "exitCode": 1,
+      "durationMs": 103000
+    },
+    {
+      "name": "C04-turbo-build-packages",
+      "exitCode": 2,
+      "durationMs": 482000
+    },
+    {
+      "name": "C05-turbo-build-apps",
+      "exitCode": 1,
+      "durationMs": 28000
+    }
+  ],
+  "passedSurfaces": []
+}

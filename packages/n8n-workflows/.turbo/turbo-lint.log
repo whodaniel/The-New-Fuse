@@ -3,4 +3,125 @@
 > eslint src
 
 Warning: React version not specified in eslint-plugin-react settings. See https://github.com/jsx-eslint/eslint-plugin-react#configuration .
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/src/fetcher/WorkflowFetcher.ts
+   70:9   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  106:9   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  111:9   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  148:39  warning  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  154:9   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  186:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  193:35  warning  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/src/parser/WorkflowParser.ts
+   21:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   70:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   82:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   87:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  143:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  163:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  191:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  203:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  207:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  411:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/src/registry/WorkflowRegistry.ts
+  103:9  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  297:7  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/src/scripts/fetch-workflows.ts
+  11:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  18:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  21:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  24:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  25:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  26:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  28:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  29:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  31:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  33:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  36:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  38:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  41:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  42:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  43:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  44:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  46:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  48:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  52:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  58:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/src/scripts/sync-workflows.ts
+  13:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  25:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  26:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  27:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  28:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  40:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  41:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  48:5  error    Promise returned in function argument where a void return was expected             @typescript-eslint/no-misused-promises
+  54:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/src/scripts/test-integration.ts
+   13:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   16:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   23:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   26:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   56:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   57:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   58:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   61:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   66:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   69:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   71:7   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   74:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   77:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   85:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   88:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   94:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   95:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   98:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  100:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  101:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  106:7   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  108:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  111:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  113:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  114:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  115:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  116:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  119:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  121:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  122:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  126:7   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  128:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  131:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  133:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  136:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  139:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  142:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  143:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  144:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  145:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  146:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  148:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  150:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  153:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  155:3   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  166:10  error    'result' is defined but never used. Allowed unused args must match /^_/u           @typescript-eslint/no-unused-vars
+  167:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/src/services/WorkflowService.ts
+  62:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  77:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/n8n-workflows/src/types/index.ts
+  12:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  69:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  72:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 102 problems (2 errors, 100 warnings)
+
  ELIFECYCLE  Command failed.

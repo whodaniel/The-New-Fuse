@@ -1,1 +1,0 @@
-{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../ui/command-palette/index.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AAEH,OAAO,EAAE,cAAc,EAAE,MAAM,qBAAqB,CAAC;AACrD,YAAY,EAAE,OAAO,EAAE,eAAe,EAAE,MAAM,qBAAqB,CAAC;AAEpE,OAAO,EAAE,iBAAiB,EAAE,kBAAkB,EAAE,iBAAiB,EAAE,MAAM,wBAAwB,CAAC;AAClG,YAAY,EAAE,sBAAsB,EAAE,wBAAwB,EAAE,MAAM,wBAAwB,CAAC"}

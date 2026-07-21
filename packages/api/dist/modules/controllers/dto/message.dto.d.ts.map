@@ -1,1 +1,0 @@
-{"version":3,"file":"message.dto.d.ts","sourceRoot":"","sources":["../../../../src/modules/controllers/dto/message.dto.ts"],"names":[],"mappings":"AAEA;;GAEG;AACH,qBAAa,UAAU;IAErB,EAAE,EAAE,MAAM,CAAM;IAGhB,OAAO,EAAE,MAAM,CAAM;IAGrB,IAAI,EAAE,MAAM,CAAM;IAGlB,MAAM,EAAE,MAAM,CAAM;IAGpB,WAAW,CAAC,EAAE,MAAM,CAAC;IAGrB,SAAS,CAAC,EAAE,MAAM,CAAC;IAGnB,SAAS,EAAE,IAAI,CAAc;CAC9B"}
