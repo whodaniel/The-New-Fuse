@@ -2,10 +2,10 @@
  * Custom Element Guard: Prevents crashes from duplicate definitions.
  * Moved from inline script in index.html to comply with CSP (no unsafe-inline).
  */
-(function() {
+(function () {
   try {
     const originalDefine = customElements.define;
-    customElements.define = function(name, constructor, options) {
+    customElements.define = function (name, constructor, options) {
       if (customElements.get(name)) {
         console.warn(`[TNF] Custom element '${name}' is already defined. Ignoring duplicate.`);
         return;
@@ -20,7 +20,7 @@
         throw e;
       }
     };
-  } catch(e) {
+  } catch (e) {
     console.error('[TNF] Failed to activate Custom Element Guard', e);
   }
 })();

@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-22T13:17:08.557Z** — handoff `7b497037-01eb-48ac-9916-9b5177fc20fa` (`b9c1298e41e3`).
+Updated: **2026-07-22T13:17:08.557Z** — handoff
+`7b497037-01eb-48ac-9916-9b5177fc20fa` (`b9c1298e41e3`).
 `c1b8b297-baba-482e-a0dd-9801a46e9616` (`13806d3f5980`).
 `e84e62c0-c3f8-469e-9c71-69855c7b9d01` (`fb12dac55ff7`).
 `8409363d-172d-49b8-9135-1bd612f879ac` (`1b83ed4c7e67`). Heartbeat reconcile:
@@ -28,8 +29,8 @@ were per-action operator-confirmed, not self-authorized — see
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
+| Priority | Action                                                                                                                                                                |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **P0**   | Triage C03 contracts/core-monitoring tests; triage C04 @the-new-fuse/api missing modules; await live Daniel handshake before master-clock cull; commit when requested |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
@@ -262,8 +263,11 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 | 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (c1b8b297-baba-482e-a0dd-9801a46e9616) | ✅ HANDOFF_READY |
 
-| 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST (da89e1d6-c8e3-44c0-ba60-6bf7a9f13172) | ✅ HANDOFF_READY |
+| 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(da89e1d6-c8e3-44c0-ba60-6bf7a9f13172) | ✅ HANDOFF_READY |
 
-| 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST (2aa76e3c-7da1-4e19-b0d7-9727fc0bb53d) | ✅ HANDOFF_READY |
+| 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(2aa76e3c-7da1-4e19-b0d7-9727fc0bb53d) | ✅ HANDOFF_READY |
 
-| 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST (7b497037-01eb-48ac-9916-9b5177fc20fa) | ✅ HANDOFF_READY |
+| 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7b497037-01eb-48ac-9916-9b5177fc20fa) | ✅ HANDOFF_READY |

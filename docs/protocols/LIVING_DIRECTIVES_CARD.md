@@ -4,7 +4,9 @@
 
 **Class:** [CLASS:PRIME] · `docs/protocols/DIRECTIVES.md` wins over mirrors.
 **TNF = primary control plane.** OpenClaw/Claws = optional routed surfaces.
+
 ## CORE TENET (CORRECTED 2026-07-22): PARODY + ASSIMILATE the BEST from ANY and ALL cutting-edge AI agents. Daily news gathering by scouting agents (SCOUT / knowledge-scout-sprint) feeds this cycle. NOT "Hermes-to-TNF parity".
+
 **Maintained by:** `tnf-directives` skill (crawl→synthesize, repeatable &
 evolvable).
 

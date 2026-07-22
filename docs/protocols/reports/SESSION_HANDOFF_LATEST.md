@@ -1,8 +1,7 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`
-Created At: `2026-07-22T17:29:55.152Z`
-Handoff ID: `c35d8b20-2114-4dd3-ac65-667f591b2e3a`
+Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-22T17:29:55.152Z` Handoff
+ID: `c35d8b20-2114-4dd3-ac65-667f591b2e3a`
 
 ## Scope
 
@@ -20,7 +19,7 @@ Handoff ID: `c35d8b20-2114-4dd3-ac65-667f591b2e3a`
 - agent/SYSTEM_PROMPT.md
 - .agent/agents/tnf-cli.md
 - .agent/fleet/agent-pathway-matrix.json
-- .agent/test-reports/_rolling-summary.json
+- .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - .verifier/process-atlas.digest.md
 - .verifier/process-atlas.payload.json
@@ -84,7 +83,7 @@ Handoff ID: `c35d8b20-2114-4dd3-ac65-667f591b2e3a`
 - packages/api/src/repositories/index.ts
 - packages/api/src/schemas/agent.schema.ts
 - packages/api/src/schemas/export.schema.ts
-- packages/api/src/services/__tests__/agent-discovery.test.ts
+- packages/api/src/services/**tests**/agent-discovery.test.ts
 - packages/api/src/services/admin-audit-logs.service.ts
 - packages/api/src/services/admin-configuration.service.ts
 - packages/api/src/services/agent-discovery-registry.service.ts
@@ -264,9 +263,11 @@ Handoff ID: `c35d8b20-2114-4dd3-ac65-667f591b2e3a`
 - **Priority:** medium
 
 **Targets:**
+
 - orchestrator
 
 **Resume Checklist:**
+
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - Validate SESSION_HANDOFF_LATEST.json against schema
 - Execute listed next actions in order
@@ -280,4 +281,5 @@ Handoff ID: `c35d8b20-2114-4dd3-ac65-667f591b2e3a`
 ## Artifacts
 
 **Commits:**
+
 - b9c1298e41e3c7400131ba7a4d0bab80b6adfa78

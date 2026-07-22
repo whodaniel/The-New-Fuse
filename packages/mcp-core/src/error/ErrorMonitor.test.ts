@@ -17,8 +17,7 @@ import * as os from 'os';
 // TODO(tnf): refactor these suites onto jest fake timers so they are
 // deterministic under any load, then remove this guard.
 const hostOverloaded =
-  process.env.TNF_FORCE_PERF_TESTS !== '1' &&
-  os.loadavg()[0] > os.cpus().length * 2;
+  process.env.TNF_FORCE_PERF_TESTS !== '1' && os.loadavg()[0] > os.cpus().length * 2;
 const describeTimingSensitive = hostOverloaded ? describe.skip : describe;
 if (hostOverloaded) {
   // eslint-disable-next-line no-console

@@ -16,6 +16,10 @@ _(none)_
 
 ## Notes
 
-- A01 prior failure was absolute path in LIVING_STATE (already cleared) + handoff coverage drift — fixed via emit-session-handoff.
-- B07: local soft-mode (`TNF_SECURITY_LOCAL=1` / `TNF_WHOLE_CODEBASE_VERIFY=1`); production remains strict via `TNF_SECURITY_STRICT=1`.
-- Relay: Redis bridge publish soft-fail (no throw) to survive pre-connect AGENT_REGISTER race; MESSAGE_SEND flood from master-clock herd (6) can still starve `/health` — cull is **handshake-gated**.
+- A01 prior failure was absolute path in LIVING_STATE (already cleared) +
+  handoff coverage drift — fixed via emit-session-handoff.
+- B07: local soft-mode (`TNF_SECURITY_LOCAL=1` / `TNF_WHOLE_CODEBASE_VERIFY=1`);
+  production remains strict via `TNF_SECURITY_STRICT=1`.
+- Relay: Redis bridge publish soft-fail (no throw) to survive pre-connect
+  AGENT_REGISTER race; MESSAGE_SEND flood from master-clock herd (6) can still
+  starve `/health` — cull is **handshake-gated**.

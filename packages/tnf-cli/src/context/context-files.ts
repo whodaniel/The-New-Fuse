@@ -27,8 +27,8 @@
  */
 
 import * as fs from 'fs';
-import * as path from 'path';
 import * as os from 'os';
+import * as path from 'path';
 
 export interface LoadedContextFile {
   /** Absolute path on disk. */
@@ -181,9 +181,7 @@ export function loadContextFiles(options: ContextFilesOptions = {}): {
     out.map((f) => `- \`${f.label}\` (${f.kind}, ${f.bytes} bytes)`).join('\n') +
     '\n';
   const combined =
-    header +
-    '\n' +
-    out.map((f) => `## ${f.label}\n\n${f.content.trim()}`).join('\n\n---\n\n');
+    header + '\n' + out.map((f) => `## ${f.label}\n\n${f.content.trim()}`).join('\n\n---\n\n');
 
   return { files: out, combined, disabled: false };
 }

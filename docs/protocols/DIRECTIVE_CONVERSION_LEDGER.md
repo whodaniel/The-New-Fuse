@@ -3,10 +3,10 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Directive Conversion Ledger
 
-
 ## CORE TENET (CORRECTED 2026-07-22) — Protocol Enforcement
-TNF exists to PARODY + ASSIMILATE the BEST from ANY and ALL cutting-edge AI agents.
-Daily news gathering by scouting agents feeds the assimilation cycle.
+
+TNF exists to PARODY + ASSIMILATE the BEST from ANY and ALL cutting-edge AI
+agents. Daily news gathering by scouting agents feeds the assimilation cycle.
 NOT "Hermes-to-TNF parity". Self-iterative basis.
 
 **Purpose**: Track AI5 directives through execution states: `ready` → `claimed`

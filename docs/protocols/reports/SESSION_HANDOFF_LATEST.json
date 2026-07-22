@@ -8,9 +8,7 @@
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": [
-    "Modified 216 file(s)"
-  ],
+  "work_summary": ["Modified 216 file(s)"],
   "changed_paths": [
     "agent/SYSTEM_PROMPT.md",
     ".agent/agents/tnf-cli.md",
@@ -262,9 +260,7 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": [
-      "orchestrator"
-    ],
+    "targets": ["orchestrator"],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -278,9 +274,7 @@
     "Commit remaining uncommitted changes (198 file(s))"
   ],
   "artifacts": {
-    "commits": [
-      "b9c1298e41e3c7400131ba7a4d0bab80b6adfa78"
-    ],
+    "commits": ["b9c1298e41e3c7400131ba7a4d0bab80b6adfa78"],
     "deployment_urls": [],
     "database_migrations": []
   }

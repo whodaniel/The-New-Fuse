@@ -89,17 +89,17 @@ A **soft** warning fires once at `TNF_AUTONOMOUS_SOFT_TURN_RATIO` of that budget
 (default `0.8`) via a system message the agent sees on the next turn.
 
 In **LONG_RUN** (fully autonomous) mode only, the agent may override by emitting
-`TNF_EXTEND_TURN_CAP=<n>` (or bare `TNF_EXTEND_TURN_CAP`) in a response after the
-soft window opens. Extensions are clamped to
+`TNF_EXTEND_TURN_CAP=<n>` (or bare `TNF_EXTEND_TURN_CAP`) in a response after
+the soft window opens. Extensions are clamped to
 `TNF_AUTONOMOUS_TURN_CAP_CEILING` (default `4×` hard cap). Non-LONG_RUN sessions
 must hand off cleanly; they cannot self-extend.
 
-| Env                                    | Default | Role                                      |
-| -------------------------------------- | ------- | ----------------------------------------- |
-| `TNF_AUTONOMOUS_MAX_TURNS`             | `50`    | Hard self-continuation halt               |
-| `TNF_AUTONOMOUS_SOFT_TURN_RATIO`       | `0.8`   | Soft warning threshold (0–1 exclusive)    |
-| `TNF_AUTONOMOUS_TURN_CAP_CEILING`      | `200`   | Absolute self-extension ceiling           |
-| `TNF_AUTONOMOUS_TURN_EXTEND_DEFAULT`   | `25`    | Extension size when marker omits `<n>`    |
+| Env                                  | Default | Role                                   |
+| ------------------------------------ | ------- | -------------------------------------- |
+| `TNF_AUTONOMOUS_MAX_TURNS`           | `50`    | Hard self-continuation halt            |
+| `TNF_AUTONOMOUS_SOFT_TURN_RATIO`     | `0.8`   | Soft warning threshold (0–1 exclusive) |
+| `TNF_AUTONOMOUS_TURN_CAP_CEILING`    | `200`   | Absolute self-extension ceiling        |
+| `TNF_AUTONOMOUS_TURN_EXTEND_DEFAULT` | `25`    | Extension size when marker omits `<n>` |
 
 Implementation: `packages/tnf-cli/src/utils/autonomous-turn-cap.ts`.
 
@@ -113,8 +113,18 @@ Implementation: `packages/tnf-cli/src/utils/autonomous-turn-cap.ts`.
 | `tnf zero-turn boot`  | Hermes-centric autonomous lane                                                        |
 | `~/.tnf/bin/tnf-boot` | Host fleet profile launcher (Gate 0) — complementary, not a substitute for CLI boot   |
 
+## TUI launch default
+
+`tnf tui` defaults to **LONG_RUN** (full autonomous: shell exec +
+auto-continue). Resolution order: `TNF_TUI_MODE` → `~/.tnf/tui-mode.json` →
+`LONG_RUN`. Set `TNF_TUI_MODE=INTERACTIVE` (or persist that mode) to wait for
+operator input. Turns that emit zero fenced bash blocks inject a stall-break
+system nudge.
+
 ## Change Log
 
+- 2026-07-22: TUI default mode is LONG_RUN (full autonomous at launch); seed
+  `~/.tnf/tui-mode.json`; no-bash stall-break nudge on autonomous turns.
 - 2026-07-22: Soft autonomous turn cap + LONG_RUN `TNF_EXTEND_TURN_CAP` override
   (ceiling-clamped); see Soft Autonomous Turn Cap section.
 - 2026-07-17: v1.0 — initial continuity stack; binds boot receipts to anti-stall

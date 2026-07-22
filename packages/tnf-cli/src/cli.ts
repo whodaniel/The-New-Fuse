@@ -4076,6 +4076,8 @@ type AutonomousSessionState = {
   /** Absolute ceiling maxTurnsPerSession may be extended to via
    *  TNF_EXTEND_TURN_CAP markers (LONG_RUN mode only). */
   capCeiling: number;
+  /** Number of automatic hard-cap resets performed this session (bypass mode). */
+  capResets: number;
   /** Consecutive autonomous turns that produced zero executable bash blocks. */
   consecutiveNoBashTurns: number;
 };
@@ -16272,7 +16274,7 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
   console.log(chalk.cyan('╚══════════════════════════════════════════════╝'));
   console.log(
     chalk.dim(
-      ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous on for shell execution\n'
+      ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous off to pause shell auto-exec\n'
     )
   );
 
@@ -16305,6 +16307,7 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     maxTurnsPerSession: turnCapState.maxTurnsPerSession,
     softCapNotified: turnCapState.softCapNotified,
     capCeiling: turnCapState.capCeiling,
+    capResets: turnCapState.capResets,
     consecutiveNoBashTurns: 0,
   };
   const slashContext: InteractiveSlashContext = {

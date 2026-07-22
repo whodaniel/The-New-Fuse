@@ -74,11 +74,15 @@ export const GoogleDriveWizard: React.FC<GoogleDriveWizardProps> = ({ onClose, o
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
     if (!clientId) {
       addLog('Error: VITE_GOOGLE_CLIENT_ID environment variable is missing.');
-      alert('Google Client ID is not configured. Please set VITE_GOOGLE_CLIENT_ID in your environment.');
+      alert(
+        'Google Client ID is not configured. Please set VITE_GOOGLE_CLIENT_ID in your environment.'
+      );
       return;
     }
     const redirectUri = encodeURIComponent('http://localhost:1420/oauth/callback');
-    const scope = encodeURIComponent('https://www.googleapis.com/auth/documents https://www.googleapis.com/auth/drive');
+    const scope = encodeURIComponent(
+      'https://www.googleapis.com/auth/documents https://www.googleapis.com/auth/drive'
+    );
     const url = `https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=${scope}&response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${redirectUri}`;
     void openExternal(url);
   };

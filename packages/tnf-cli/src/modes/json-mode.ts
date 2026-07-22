@@ -31,8 +31,8 @@
 
 import * as fs from 'fs';
 import path from 'path';
+import { loadContextFiles, stripFrontmatter } from '../context/context-files.js';
 import { LLMClient, type LLMMessage } from '../utils/llm-client.js';
-import { stripFrontmatter, loadContextFiles } from '../context/context-files.js';
 
 export interface JsonModeOptions {
   prompt: string;
@@ -149,11 +149,13 @@ export async function runJsonMode(opts: JsonModeOptions): Promise<number> {
       timestamp: startedAt,
       cwd: opts.cwd ?? process.cwd(),
       prompt_chars: userContent.length,
-      context_files: opts.noContextFiles ? [] : loadContextFiles({
-        startDir: opts.cwd ?? process.cwd(),
-        walkAnchor: opts.repoRoot ?? opts.cwd ?? process.cwd(),
-        enabled: !opts.noContextFiles,
-      }).files.map((f) => ({ path: f.path, label: f.label, kind: f.kind, bytes: f.bytes })),
+      context_files: opts.noContextFiles
+        ? []
+        : loadContextFiles({
+            startDir: opts.cwd ?? process.cwd(),
+            walkAnchor: opts.repoRoot ?? opts.cwd ?? process.cwd(),
+            enabled: !opts.noContextFiles,
+          }).files.map((f) => ({ path: f.path, label: f.label, kind: f.kind, bytes: f.bytes })),
     },
   });
 

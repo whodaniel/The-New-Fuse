@@ -15,6 +15,12 @@ export type AutonomousTurnCapConfig = {
   softRatio: number;
   capCeiling: number;
   extendDefault: number;
+  /** When true, reaching the hard cap halts self-continuation (legacy
+   *  behavior). Default false: the cap and soft warning still fire and
+   *  display, but the counter automatically resets and the loop continues
+   *  (operator directive 2026-07-22: bypass on by default). Opt into the
+   *  halt with TNF_AUTONOMOUS_TURN_CAP_STRICT=1. */
+  strictHalt: boolean;
 };
 
 export type AutonomousTurnCapState = {
@@ -22,6 +28,8 @@ export type AutonomousTurnCapState = {
   maxTurnsPerSession: number;
   softCapNotified: boolean;
   capCeiling: number;
+  /** Number of automatic cap resets performed this session (bypass mode). */
+  capResets: number;
 };
 
 export type SoftCapWarning = {
@@ -64,7 +72,10 @@ export function loadAutonomousTurnCapConfig(
     parsePositiveInt(env.TNF_AUTONOMOUS_TURN_CAP_CEILING, maxTurns * 4)
   );
   const extendDefault = parsePositiveInt(env.TNF_AUTONOMOUS_TURN_EXTEND_DEFAULT, 25);
-  return { maxTurns, softRatio, capCeiling, extendDefault };
+  const strictHalt = ['1', 'true', 'yes', 'on'].includes(
+    String(env.TNF_AUTONOMOUS_TURN_CAP_STRICT || '').toLowerCase()
+  );
+  return { maxTurns, softRatio, capCeiling, extendDefault, strictHalt };
 }
 
 export function createAutonomousTurnCapState(
@@ -75,6 +86,7 @@ export function createAutonomousTurnCapState(
     maxTurnsPerSession: config.maxTurns,
     softCapNotified: false,
     capCeiling: config.capCeiling,
+    capResets: 0,
   };
 }
 
@@ -83,10 +95,7 @@ export function softTurnThreshold(maxTurnsPerSession: number, softRatio: number)
 }
 
 /** Returns requested extension size, or null if the marker is absent. */
-export function parseExtendTurnCapMarker(
-  response: string,
-  extendDefault: number
-): number | null {
+export function parseExtendTurnCapMarker(response: string, extendDefault: number): number | null {
   const match = String(response).match(EXTEND_MARKER_RE);
   if (!match) return null;
   if (match[1]) {
@@ -156,4 +165,39 @@ export function buildSoftCapWarning(
 
 export function isHardTurnCapReached(state: AutonomousTurnCapState): boolean {
   return state.turnsThisSession >= state.maxTurnsPerSession;
+}
+
+export type HardCapOutcome =
+  | { kind: 'none' }
+  | { kind: 'halt'; consoleLine: string }
+  | { kind: 'reset'; consoleLine: string; systemMessage: string };
+
+/**
+ * Resolve what happens when the hard cap is hit.
+ *
+ * Default (bypass): the cap still fires and displays, but the turn counter
+ * automatically resets and the loop continues — the cap acts as a visible
+ * checkpoint, not a stop. Set TNF_AUTONOMOUS_TURN_CAP_STRICT=1 for the
+ * legacy halt-and-await-operator behavior.
+ */
+export function handleHardTurnCap(
+  state: AutonomousTurnCapState,
+  config: Pick<AutonomousTurnCapConfig, 'strictHalt'>
+): HardCapOutcome {
+  if (!isHardTurnCapReached(state)) return { kind: 'none' };
+  if (config.strictHalt) {
+    return {
+      kind: 'halt',
+      consoleLine: `Autonomous turn cap reached (${state.maxTurnsPerSession}). Awaiting operator input. (strict mode)`,
+    };
+  }
+  state.capResets += 1;
+  const used = state.turnsThisSession;
+  state.turnsThisSession = 0;
+  state.softCapNotified = false;
+  return {
+    kind: 'reset',
+    consoleLine: `⏱ Autonomous turn cap reached (${used}/${state.maxTurnsPerSession}) — auto-reset #${state.capResets} engaged, continuing (set TNF_AUTONOMOUS_TURN_CAP_STRICT=1 to halt at cap)`,
+    systemMessage: `[Autonomous turn budget] Hard cap of ${state.maxTurnsPerSession} turns reached; automatic reset #${state.capResets} applied and the session continues. Treat this as a checkpoint: reassess the current task, drop unproductive loops, and update handoff state before proceeding.`,
+  };
 }
