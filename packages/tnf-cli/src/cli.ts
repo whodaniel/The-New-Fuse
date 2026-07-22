@@ -16536,6 +16536,44 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
       }
     });
 
+  // Operator-priority window (operator report 2026-07-22: "tnf is now always
+  // thinking, leaving me no time to manually prompt"). Before each autonomous
+  // continuation, hold an interruptible idle window with the prompt line
+  // visible: any keypress hands the turn to the operator (the keystroke stays
+  // in the readline buffer, so nothing is lost); plain Enter skips the wait;
+  // idle expiry proceeds autonomously. continuePending is NOT cleared on
+  // takeover, so autonomy resumes after the operator's input is handled.
+  const operatorWindowMs = (() => {
+    const parsedWindow = parseInt(
+      process.env.TNF_OPERATOR_WINDOW_MS || process.env.TNF_AUTONOMOUS_TURN_DELAY_MS || '8000',
+      10
+    );
+    return Number.isFinite(parsedWindow) && parsedWindow >= 0 ? parsedWindow : 8000;
+  })();
+
+  const waitForOperatorInterrupt = (windowMs: number): Promise<boolean> =>
+    new Promise((resolve) => {
+      let settled = false;
+      const finish = (tookOver: boolean) => {
+        if (settled) return;
+        settled = true;
+        process.stdin.off('keypress', onKey);
+        clearTimeout(timer);
+        resolve(tookOver);
+      };
+      const onKey = (_value: string, key: any) => {
+        // Plain Enter on an empty line = "continue now"; anything else is
+        // the operator starting to type — hand them the turn.
+        if (['return', 'enter'].includes(key?.name) && !String((rl as any).line || '').trim()) {
+          finish(false);
+          return;
+        }
+        finish(true);
+      };
+      const timer = setTimeout(() => finish(false), windowMs);
+      process.stdin.on('keypress', onKey);
+    });
+
   while (true) {
     const modelLabel = `${chalk.dim(client.providerName || 'model')}/${chalk.white(client.model.replace(/^.*\//, ''))}`;
     const promptWithModel =
@@ -16546,16 +16584,32 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     let trimmed: string;
     let fromAutonomousContinue = false;
 
+    let operatorTakeover = false;
     if (slashContext.autonomousMode && autonomousState.continuePending) {
+      if (String((rl as any).line || '').trim()) {
+        // Operator is mid-keystroke — never continue over a half-typed line.
+        operatorTakeover = true;
+      } else if (operatorWindowMs > 0 && process.stdin.isTTY) {
+        console.log(
+          chalk.dim(
+            `\n  ⏸ operator window ${Math.round(operatorWindowMs / 1000)}s — type to take over, Enter to continue now`
+          )
+        );
+        operatorTakeover = await waitForOperatorInterrupt(operatorWindowMs);
+      }
+      if (operatorTakeover) {
+        console.log(
+          chalk.cyan('  ⏸ Operator takeover — autonomous continue deferred until after your input')
+        );
+      }
+    }
+
+    if (slashContext.autonomousMode && autonomousState.continuePending && !operatorTakeover) {
       autonomousState.continuePending = false;
       fromAutonomousContinue = true;
       trimmed = buildAutonomousContinuePrompt(autonomousState);
       autonomousState.contextRefreshPending = false;
       console.log(chalk.dim('\n  ⟳ Autonomous continue (no operator input required)'));
-      const turnDelay = parseInt(process.env.TNF_AUTONOMOUS_TURN_DELAY_MS || '500', 10);
-      if (turnDelay > 0) {
-        await new Promise((resolve) => setTimeout(resolve, turnDelay));
-      }
     } else {
       let input: string;
       try {
