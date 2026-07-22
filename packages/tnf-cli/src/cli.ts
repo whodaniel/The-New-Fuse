@@ -233,7 +233,19 @@ async function ensureTurnZeroForAgentEntrypoint(): Promise<void> {
   }
 
   console.log(chalk.bold.cyan('\n[TNF Harness] Turn Zero onboarding before interactive agent\n'));
-  await runTurnZeroOnboardSurface();
+  try {
+    await runTurnZeroOnboardSurface();
+  } catch (err: any) {
+    // Onboarding is preparatory context, not a gate for the agent itself —
+    // a non-zero onboard exit (e.g. DB pooler teardown noise, observed live
+    // 2026-07-22) must not kill the interactive session. Boot triage inside
+    // onboard has already classified/reported whatever went wrong.
+    console.warn(
+      chalk.yellow(
+        `[TNF Harness] Turn Zero onboarding exited with an error (${err?.message ?? err}); continuing to the agent — see ~/.tnf/boot-triage-latest.json`
+      )
+    );
+  }
 }
 
 function isTruthyEnv(value: string | undefined): boolean {

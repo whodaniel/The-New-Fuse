@@ -31,7 +31,7 @@ const HOME_REGISTRY = path.join(os.homedir(), '.tnf', 'boot-triage', 'stale-expe
 const REPORT_PATH = path.join(os.homedir(), '.tnf', 'boot-triage-latest.json');
 
 const ERROR_LINE_RE = /\b(WARN|ERROR|FAIL(?:ED)?|missing|broken|unavailable|timed? ?out|ENOENT|EADDRINUSE)\b/i;
-const TRANSIENT_RE = /\b(DB unavailable|timed? ?out|ECONNREFUSED|ECONNRESET|redis.*(?:unavailable|refused)|lock.*(?:exists|held)|already-running)\b/i;
+const TRANSIENT_RE = /\b(DB unavailable|timed? ?out|ECONNREFUSED|ECONNRESET|CONNECTION_(?:DESTROYED|CLOSED|ENDED)|pooler teardown|redis.*(?:unavailable|refused)|lock.*(?:exists|held)|already-running)\b/i;
 
 function loadJsonIfPresent(p) {
   try {

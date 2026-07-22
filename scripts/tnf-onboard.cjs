@@ -4,6 +4,33 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { singleInstanceGuard } = require('./lib/tnf-single-instance-guard.cjs');
 
+// Managed poolers (Supabase et al) can reject connection teardown AFTER the
+// runtime-snapshot step deliberately timed out: postgres.js destroy timers
+// throw CONNECTION_DESTROYED outside any promise chain, which crashed the
+// entire boot (observed live 2026-07-22, tnf tui killed post-triage). That
+// class is cleanup noise from an already-handled timeout — swallow ONLY it;
+// every other uncaught error keeps default crash semantics.
+const PG_TEARDOWN_CODES = new Set(['CONNECTION_DESTROYED', 'CONNECTION_CLOSED', 'CONNECTION_ENDED']);
+function isPgTeardownError(err) {
+  return !!err && (PG_TEARDOWN_CODES.has(err.code) || PG_TEARDOWN_CODES.has(err.errno));
+}
+process.on('uncaughtException', (err) => {
+  if (isPgTeardownError(err)) {
+    console.log(`- transient: postgres pooler teardown after timeout (${err.code || err.errno}) — ignored`);
+    return;
+  }
+  console.error(err);
+  process.exit(1);
+});
+process.on('unhandledRejection', (err) => {
+  if (isPgTeardownError(err)) {
+    console.log(`- transient: postgres pooler teardown after timeout (${err?.code || err?.errno}) — ignored`);
+    return;
+  }
+  console.error(err);
+  process.exit(1);
+});
+
 const ROOT = process.cwd();
 const ONBOARD_GENERATED_MARKER = 'tnf-onboard --repair';
 const CANONICAL_SESSION_HANDOFF_JSON = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json';
