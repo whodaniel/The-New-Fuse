@@ -86,8 +86,27 @@ herd (6) still floods MESSAGE_SEND — **handshake-gated, no auto-kill**.
 | B02 validate-build                          | ✅          | 0 errors / 31 warnings                                                                                                                                 |
 | C02 `@the-new-fuse/client` lint             | ✅ FIXED    | Flat `eslint.config.js` lacked TS parser → `Parsing error: Unexpected token interface`. Added `@typescript-eslint/parser` (+ `.eslintrc.cjs` fallback) |
 | C05 `@the-new-fuse/browser-extension` build | ✅ FIXED    | Missing `scripts/build.js` — added static MV3 validator (no bundler)                                                                                   |
-| C03 / C04                                   | ⏳ open     | contracts/core-monitoring tests; `@the-new-fuse/api` missing modules — next triage                                                                     |
+| C03 / C04                                   | ✅ VERIFIED | See post-wake triage 2026-07-22T19:20Z below                                                                                                           |
 | Commit / push                               | ⏳ gated    | Operator confirmation required                                                                                                                         |
 
 **Durable learning:** Relay health probe is `http://127.0.0.1:3000/health`.
 Treat `:3007` as stale. Master-clock cull remains handshake-gated.
+
+## Post-wake triage (2026-07-22T19:20Z — cursor-agent)
+
+| Surface | Status | Notes |
+| ------- | ------ | ----- |
+| Agent registration | ✅ PASS | `check-agent-registration.cjs` — 11 defs / 13 ledger identities; all registered |
+| C03 `@the-new-fuse/contracts#test` | ✅ VERIFIED | HH606 solved by `hardhat.config.js` solc **0.8.28** + `evmVersion: cancun` (OZ 5.6.1 / `mcopy`). Live: **23 passing** |
+| C03 `@the-new-fuse/core-monitoring#test` | ✅ VERIFIED | Already green on prior rerun; live: **1 passed** |
+| C04 `@the-new-fuse/api#build` | ✅ VERIFIED | Prior TS2307 “missing modules” were NodeNext extension gaps + incomplete tree; modules now present + `.js` imports. Live: `tsc -b` **exit 0** |
+| Residual `tnf-gemini-bridge-extension#test` | ✅ VERIFIED | Live: **13 passed** / 2 suites (prior native-host noise was non-blocking) |
+| `@the-new-fuse/contracts#build` | ✅ VERIFIED | `hardhat compile` — nothing to compile / exit 0 |
+| Master-clock cull / commit | ⏳ gated | Still operator-handshake / operator-confirm |
+| Disk | ⚠️ tight | ~6.8 GiB free (99% full) — free more before long full-suite turbo |
+
+**Root-cause summary:**
+1. **C03 contracts:** OpenZeppelin `^0.8.24` + Cancun `mcopy` vs old Hardhat compiler pin → HH606.
+2. **C04 api:** Files existed later; failures were `moduleResolution: NodeNext` without extensioned relative imports (and a few truly-absent DTOs/types at the Jul-20 snapshot).
+
+**Projected whole-suite:** prior **26/29** → **28/29** on next harness C03/C04 flip (targeted package blockers cleared).
