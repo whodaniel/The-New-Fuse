@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T22:17:46.959Z",
+  "generatedAt": "2026-07-22T22:37:51.732Z",
   "schema": "tnf-rolling-summary-v1",
   "config": {
     "maxReportsPerType": 50,
@@ -108,20 +108,13 @@
       "recentMaxScore": 100,
       "trend": "stable-or-improving",
       "latestReport": {
-        "file": "integration-report-1784758666545.json",
-        "timestamp": "2026-07-22T22:17:46.529Z",
+        "file": "integration-report-1784759867854.json",
+        "timestamp": "2026-07-22T22:37:47.412Z",
         "score": 100,
         "status": "healthy",
         "lifecycle": "production"
       },
       "entries": [
-        {
-          "file": "integration-report-1784743783096.json",
-          "timestamp": "2026-07-22T18:09:29.329Z",
-          "score": 100,
-          "status": "healthy",
-          "lifecycle": "production"
-        },
         {
           "file": "integration-report-1784748138579.json",
           "timestamp": "2026-07-22T19:22:17.078Z",
@@ -184,6 +177,13 @@
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1784759867854.json",
+          "timestamp": "2026-07-22T22:37:47.412Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
         }
       ]
     },
@@ -198,20 +198,13 @@
       "recentMaxScore": 100,
       "trend": "stable-or-improving",
       "latestReport": {
-        "file": "uiux-report-1784758666957.json",
-        "timestamp": "2026-07-22T22:17:46.626Z",
+        "file": "uiux-report-1784759871729.json",
+        "timestamp": "2026-07-22T22:37:48.801Z",
         "score": 100,
         "status": "healthy",
         "lifecycle": "production"
       },
       "entries": [
-        {
-          "file": "uiux-report-1784746929976.json",
-          "timestamp": "2026-07-22T19:01:26.643Z",
-          "score": 100,
-          "status": "healthy",
-          "lifecycle": "production"
-        },
         {
           "file": "uiux-report-1784748152904.json",
           "timestamp": "2026-07-22T19:22:25.358Z",
@@ -271,6 +264,13 @@
         {
           "file": "uiux-report-1784758666957.json",
           "timestamp": "2026-07-22T22:17:46.626Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1784759871729.json",
+          "timestamp": "2026-07-22T22:37:48.801Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"

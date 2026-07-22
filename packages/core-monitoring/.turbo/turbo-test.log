@@ -1,13 +1,13 @@
 
 > @the-new-fuse/core-monitoring@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/core-monitoring
-> jest --passWithNoTests
+> jest --passWithNoTests --passWithNoTests
 
-PASS src/index.spec.ts (68.812 s)
+PASS src/index.spec.ts (43.821 s)
   Core Monitoring Exports
-    ✓ should be able to import from index (870 ms)
+    ✓ should be able to import from index (539 ms)
 
 Test Suites: 1 passed, 1 total
 Tests:       1 passed, 1 total
 Snapshots:   0 total
-Time:        78.149 s
+Time:        49.92 s, estimated 80 s
 Ran all test suites.
