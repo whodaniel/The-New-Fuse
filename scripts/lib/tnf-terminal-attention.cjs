@@ -11,8 +11,12 @@
 //     "recent activity" — a deliberately over-protective proxy used only
 //     to avoid unnecessary osascript round-trips before the real check.
 //   - isTypingInTerminal: the authoritative signal. Pattern-matches the
-//     last visible terminal line for an unsubmitted prompt/composer line,
-//     which is what actually happens when a human is mid-keystroke.
+//     trailing visible terminal lines for an unsubmitted prompt/composer
+//     line, which is what actually happens when a human is mid-keystroke.
+//     Checks BOTH the last visible line (plain shells, Codex `›` composer)
+//     AND a small trailing window for boxed-TUI composers (Claude Code and
+//     other Ink-style TUIs) whose input line renders above a bottom border
+//     and status lines — see hasBoxedComposerText.
 
 const fs = require('fs');
 const path = require('path');
@@ -46,10 +50,14 @@ async function readTerminalContents(windowId, execFn = execFileAsync) {
   return String(stdout || '');
 }
 
+function stripAnsi(line) {
+  return String(line || '').replace(/\[[0-9;]*[A-Za-z]/g, '');
+}
+
 function getLastVisibleLine(contents) {
   const lines = String(contents || '')
     .split(/\r?\n/)
-    .map((line) => line.replace(/\[[0-9;]*m/g, ''));
+    .map(stripAnsi);
   for (let i = lines.length - 1; i >= 0; i -= 1) {
     const line = lines[i];
     if (line && line.trim()) return line;
@@ -57,7 +65,44 @@ function getLastVisibleLine(contents) {
   return '';
 }
 
+// How many trailing visible lines to scan for a boxed-TUI composer. Boxed
+// composers render their input line ABOVE a bottom border (╰───╯) and one or
+// more status/hint lines, so the composer is never the last visible line.
+// The window is kept small so `│ > …` lines inside earlier scrollback or
+// quoted output can't false-positive.
+const COMPOSER_SCAN_WINDOW = 12;
+
+function isTnfInjectedText(text) {
+  return text.startsWith('TNF wake') || text.startsWith('TNF heartbeat');
+}
+
+// Detect an unsubmitted human line inside a box-drawing composer, e.g.
+// Claude Code's `│ > half-typed sentence          │`. Returns true only when
+// the composer holds real text — not empty, not the idle placeholder hint,
+// and not our own pending TNF injection. This is the guard that previously
+// missed: isTypingInTerminal only looked at the LAST visible line, which in
+// a boxed TUI is the border/status line, so heartbeat text spliced into a
+// half-typed human sentence and got submitted merged.
+function hasBoxedComposerText(contents) {
+  const lines = String(contents || '').split(/\r?\n/).map(stripAnsi);
+  const tail = [];
+  for (let i = lines.length - 1; i >= 0 && tail.length < COMPOSER_SCAN_WINDOW; i -= 1) {
+    if (lines[i] && lines[i].trim()) tail.push(lines[i]);
+  }
+  for (const line of tail) {
+    const m = line.trim().match(/^[│┃]\s*[>›❯]\s?(.*?)\s*[│┃]?$/);
+    if (!m) continue;
+    const text = String(m[1] || '').trim();
+    if (!text) return false; // empty composer — safe to inject
+    if (isTnfInjectedText(text)) return false; // our own pending injection
+    if (text.startsWith('Try "')) return false; // idle-composer placeholder hint
+    return true;
+  }
+  return false;
+}
+
 function isTypingInTerminal(contents) {
+  if (hasBoxedComposerText(contents)) return true;
   const line = getLastVisibleLine(contents);
   if (!line) return false;
   const trimmed = line.trim();
@@ -69,7 +114,7 @@ function isTypingInTerminal(contents) {
   if (!promptMatch) return false;
   const tail = String(promptMatch[1] || '').trim();
   if (!tail) return false;
-  if (tail.startsWith('TNF wake') || tail.startsWith('TNF heartbeat')) return false;
+  if (isTnfInjectedText(tail)) return false;
   return true;
 }
 
@@ -77,5 +122,6 @@ module.exports = {
   isTtyRecentlyActive,
   readTerminalContents,
   getLastVisibleLine,
+  hasBoxedComposerText,
   isTypingInTerminal,
 };
