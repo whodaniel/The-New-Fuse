@@ -90,7 +90,14 @@ function hasBoxedComposerText(contents) {
     if (lines[i] && lines[i].trim()) tail.push(lines[i]);
   }
   for (const line of tail) {
-    const m = line.trim().match(/^[│┃]\s*[>›❯]\s?(.*?)\s*[│┃]?$/);
+    // Two composer shapes:
+    //  - bordered box:   │ > half-typed text │   (older Claude Code, Ink TUIs)
+    //  - rule-delimited: ❯ half-typed text       (Claude Code v2.1.2xx: the
+    //    input line sits between ── horizontal rules above a status line, so
+    //    it is still never the LAST visible line)
+    const m =
+      line.trim().match(/^[│┃]\s*[>›❯]\s?(.*?)\s*[│┃]?$/) ||
+      line.trim().match(/^[❯›]\s?(.*)$/);
     if (!m) continue;
     const text = String(m[1] || '').trim();
     if (!text) return false; // empty composer — safe to inject

@@ -162,11 +162,7 @@ function parseRetryAfter(value: string | null): number | null {
  * Returned Response is the LAST attempt's response (success or final
  * failure). The body is left unconsumed; callers parse it as usual.
  */
-async function fetchWithRetry(
-  url: string,
-  init: RequestInit,
-  context: string
-): Promise<Response> {
+async function fetchWithRetry(url: string, init: RequestInit, context: string): Promise<Response> {
   const max = retryMax();
   const base = retryBaseMs();
   const outerSignal = init.signal;
@@ -726,7 +722,10 @@ export class LLMClient {
    */
   async chatCompleteWithTools(
     messages: LLMMessage[],
-    executor: (name: string, args: Record<string, unknown>) => Promise<string | Record<string, unknown>>,
+    executor: (
+      name: string,
+      args: Record<string, unknown>
+    ) => Promise<string | Record<string, unknown>>,
     options: LLMOptions & { maxIterations?: number; systemPrompt?: string } = {}
   ): Promise<{ content: string; toolCallsMade: number; iterations: number; finishReason: string }> {
     /**
@@ -742,11 +741,12 @@ export class LLMClient {
      * returning "more work" forever). A sentinel value of 0 also
      * disables the cap; <0 falls back to unlimited.
      */
-    const maxIter = options.maxIterations === undefined
-      ? Number.POSITIVE_INFINITY
-      : options.maxIterations <= 0
+    const maxIter =
+      options.maxIterations === undefined
         ? Number.POSITIVE_INFINITY
-        : options.maxIterations;
+        : options.maxIterations <= 0
+          ? Number.POSITIVE_INFINITY
+          : options.maxIterations;
     let iterations = 0;
     let toolCallsMade = 0;
 
@@ -777,7 +777,12 @@ export class LLMClient {
      */
     for (let iter = 0; iter < maxIter; iter++) {
       iterations++;
-      const response = await this._callProviderRaw(working, {
+      // Fallback-aware raw call: chatComplete walks the provider fallback
+      // chain on failure, but this loop previously called _callProviderRaw
+      // directly — a single primary-provider timeout crashed the whole
+      // tool-calling session (verified live 2026-07-22). Walk the same
+      // chain here so native tool calling is as resilient as plain chat.
+      const response = await this._callProviderRawWithFallbacks(working, {
         ...options,
         toolChoice: options.toolChoice ?? 'auto',
       });
@@ -1126,6 +1131,69 @@ export class LLMClient {
   // ── Fallback chain ──────────────────────────────────────────────────
 
   /** Try remaining providers from the catalog when the primary fails */
+  /**
+   * Raw-response twin of _tryFallbacks for the tool-calling loop: try the
+   * current provider, then walk the fallback chain, returning the first
+   * successful RAW response (tool_calls intact). On success via a fallback,
+   * the client stays switched to that provider (same sticky behavior as
+   * _tryFallbacks). Throws only if every provider throws; returns the last
+   * not-ok response otherwise so the caller's `!response.ok` handling runs.
+   */
+  private async _callProviderRawWithFallbacks(
+    messages: LLMMessage[],
+    options: LLMOptions
+  ): Promise<{ ok: boolean; body: unknown }> {
+    let lastNotOk: { ok: boolean; body: unknown } | null = null;
+    try {
+      const primary = await this._callProviderRaw(messages, options);
+      if (primary.ok) return primary;
+      lastNotOk = primary;
+    } catch {
+      // fall through to fallback chain
+    }
+
+    const sorted = [...this.providers].sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99));
+    const tried = new Set([`${this.baseUrl}::${this.model}`]);
+
+    for (const provider of sorted) {
+      const providerAttemptKey = `${provider.endpoint}::${provider.model}`;
+      if (tried.has(providerAttemptKey)) continue;
+      tried.add(providerAttemptKey);
+      if (provider.note && /402|410|exhausted|gone/i.test(provider.note)) continue;
+      const key = this.resolveApiKey(provider);
+      if (!key) continue;
+
+      const savedBaseUrl = this.baseUrl;
+      const savedApiKey = this.apiKey;
+      const savedModel = this.model;
+      const savedProvider = this.providerName;
+      try {
+        this.baseUrl = provider.endpoint;
+        this.apiKey = key;
+        this.model = provider.model;
+        this.providerName = provider.id;
+        const result = await this._callProviderRaw(messages, options);
+        if (result.ok) {
+          console.log(`[tnf] Tool-call fallback succeeded: ${provider.name} (${provider.model})`);
+          return result;
+        }
+        lastNotOk = result;
+        this.baseUrl = savedBaseUrl;
+        this.apiKey = savedApiKey;
+        this.model = savedModel;
+        this.providerName = savedProvider;
+      } catch {
+        this.baseUrl = savedBaseUrl;
+        this.apiKey = savedApiKey;
+        this.model = savedModel;
+        this.providerName = savedProvider;
+      }
+    }
+
+    if (lastNotOk) return lastNotOk;
+    throw new Error('All providers failed (thrown) during tool-calling raw call');
+  }
+
   private async _tryFallbacks(
     messages: LLMMessage[],
     options: LLMOptions,
