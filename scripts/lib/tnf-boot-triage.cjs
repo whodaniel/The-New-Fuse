@@ -85,10 +85,45 @@ function classifyLines(lines, staleEntries) {
 }
 
 /**
+ * Split ledger content into sections keyed by their `## ` headings, tracking
+ * which identities appear inside each. Federated/multitenant rule: an
+ * identity's SCOPE is the section it lives in. Identities inside a
+ * federation section (heading matches /federation/i) are federation
+ * components — their liveness is the federation layer's concern, so the
+ * definition-based staleness rule does not apply to them. Identities in a
+ * Historical section are already archived knowledge.
+ */
+function parseLedgerIdentityScopes(ledgerContent) {
+  const scopes = new Map(); // identity -> { section, federated, historical }
+  let section = '(preamble)';
+  for (const line of String(ledgerContent).split(/\r?\n/)) {
+    const heading = line.match(/^##\s+(.+)$/);
+    if (heading) section = heading[1].trim();
+    for (const m of line.matchAll(/`(TNF:[^`]+)`/g)) {
+      const id = m[1];
+      if (!scopes.has(id)) {
+        scopes.set(id, {
+          section,
+          federated: /federation/i.test(section),
+          historical: /historical/i.test(section),
+        });
+      }
+    }
+  }
+  return scopes;
+}
+
+/**
  * Reverse ledger check: identities registered in AGENT_STATUS_LEDGER.md that
  * have no current definition under .agent/agents/ are stale expectations —
  * past agents from previous edge cases. Knowledge of them is fine; expecting
  * them (counting them as registered actives) is not.
+ *
+ * Federated/multitenant scoping: identities inside federation sections are
+ * live components of that federation layer (exempt), and identities already
+ * in a Historical section are archived knowledge (exempt). The check only
+ * binds expectations for the definition layer of THIS workspace/tenant
+ * (TNF_ROOT_DIR) — other tenants' ledgers are theirs to govern.
  */
 function reverseLedgerCheck() {
   try {
@@ -109,14 +144,13 @@ function reverseLedgerCheck() {
       }
     }
     const ledger = fs.readFileSync(ledgerPath, 'utf8');
-    const identities = new Set(
-      (ledger.match(/`TNF:[^`]+`/g) || []).map((s) => s.replace(/`/g, ''))
-    );
+    const scopes = parseLedgerIdentityScopes(ledger);
     const stale = [];
-    for (const id of identities) {
+    for (const [id, scope] of scopes) {
+      if (scope.federated || scope.historical) continue; // federation/tenant-scoped or already archived
       // TNF:LOCAL:AGENT:<NAME>:NNN → <NAME>
       const name = (id.split(':')[3] || '').toUpperCase().replace(/[^A-Z0-9]+/g, '-');
-      if (name && !definedNames.has(name)) stale.push({ identity: id, name });
+      if (name && !definedNames.has(name)) stale.push({ identity: id, name, section: scope.section });
     }
     return { stale, defined: definedNames.size };
   } catch {
@@ -235,4 +269,5 @@ module.exports = {
   classifyLines,
   loadStaleExpectations,
   reverseLedgerCheck,
+  parseLedgerIdentityScopes,
 };

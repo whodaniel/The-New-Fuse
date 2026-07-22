@@ -12,6 +12,67 @@ function extractFrontmatterName(content) {
   return match ? match[1].trim() : null;
 }
 
+const HISTORICAL_HEADING = '## Historical Agents (Knowledge-Only)';
+
+/**
+ * Move stale definition-layer identities into a Historical section,
+ * preserving their federation/tenant scope of origin. Knowledge is kept —
+ * the identity, where it lived, when and why it was retired — while the
+ * active sections stop asserting the expectation. Only full table rows
+ * containing the identity are removed from active sections; prose mentions
+ * elsewhere are knowledge and stay untouched.
+ */
+function archiveStaleIdentities(staleIdentities, ledgerPath, ledgerContent) {
+  try {
+    let content = ledgerContent;
+    const today = new Date().toISOString().slice(0, 10);
+
+    // Ensure the Historical section exists (before Session Logs if present).
+    if (!content.includes(HISTORICAL_HEADING)) {
+      const historicalBlock = [
+        '',
+        HISTORICAL_HEADING,
+        '',
+        'Retired identities kept for ecosystem knowledge. Entries here are never',
+        'expected at boot; they record which federation/tenant scope each agent',
+        'served and why it was retired. See data/boot-stale-expectations.json',
+        'for path/artifact-level equivalents.',
+        '',
+        '| Identity | Origin Scope | Archived | Reason |',
+        '| -------- | ------------ | -------- | ------ |',
+        '',
+      ].join('\n');
+      const sessionLogsIdx = content.indexOf('## Session Logs');
+      content =
+        sessionLogsIdx >= 0
+          ? content.slice(0, sessionLogsIdx) + historicalBlock + '\n' + content.slice(sessionLogsIdx)
+          : content + '\n' + historicalBlock;
+    }
+
+    for (const s of staleIdentities) {
+      // Drop full table rows in active sections that assert this identity.
+      content = content
+        .split('\n')
+        .filter((line) => !(line.trimStart().startsWith('|') && line.includes(`\`${s.id}\``) && !line.includes('Origin Scope')))
+        .join('\n');
+      // Append the archive row under the Historical table header.
+      const row = `| \`${s.id}\` | ${s.section} | ${today} | no current definition; past edge case |`;
+      const headerIdx = content.indexOf('| Identity | Origin Scope | Archived | Reason |');
+      if (headerIdx >= 0) {
+        const insertAt = content.indexOf('\n', content.indexOf('\n', headerIdx) + 1) + 1;
+        content = content.slice(0, insertAt) + row + '\n' + content.slice(insertAt);
+      } else {
+        content += `\n${row}\n`;
+      }
+    }
+
+    fs.writeFileSync(ledgerPath, content);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function isOperationalAgent(filePath, content) {
   if (content.includes('[native-cron]') || content.includes('[tnf-native]')) return true;
   if (content.includes('schedule:') && content.match(/schedule:\s*every|schedule:\s*\*\//m)) return true;
@@ -143,11 +204,12 @@ function printUsage() {
   console.log('Options:');
   console.log('  -h, --help    Show this help');
   console.log('  --fix         Auto-register missing agents in the ledger');
+  console.log('  --archive     Move stale ledger identities into the Historical (knowledge-only) section');
   console.log('  --verbose     Show detailed output');
 }
 
 function parseArgs(argv) {
-  const result = { help: false, fix: false, verbose: false };
+  const result = { help: false, fix: false, verbose: false, archive: false };
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -157,6 +219,8 @@ function parseArgs(argv) {
       result.fix = true;
     } else if (arg === '--verbose') {
       result.verbose = true;
+    } else if (arg === '--archive') {
+      result.archive = true;
     }
   }
 
@@ -232,8 +296,14 @@ function main() {
 
   // Reverse check (operator directive 2026-07-22): ledger identities with no
   // current definition are stale expectations from past edge cases. Knowledge
-  // of them is fine; counting them as registered actives is not. Reported as
-  // knowledge-only so operators can archive them deliberately.
+  // of them is fine; counting them as registered actives is not.
+  //
+  // Federated/multitenant scoping: an identity's scope is the ledger section
+  // it lives in. Federation-section identities are live components of that
+  // federation layer (exempt from definition-based staleness); Historical-
+  // section identities are already archived knowledge (exempt). Expectations
+  // bind only to this workspace/tenant's definition layer (TNF_ROOT_DIR).
+  const { parseLedgerIdentityScopes } = require('./lib/tnf-boot-triage.cjs');
   const definedNormalized = new Set();
   for (const file of fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith('.md'))) {
     definedNormalized.add(
@@ -244,22 +314,32 @@ function main() {
       if (name) definedNormalized.add(name.toUpperCase().replace(/[^A-Z0-9]+/g, '-'));
     } catch {}
   }
+  const identityScopes = parseLedgerIdentityScopes(ledgerContent);
   const staleIdentities = [];
-  const seenNormalizedIds = new Set();
-  for (const rawId of registeredAgents) {
-    const id = rawId.replace(/`/g, '');
-    if (seenNormalizedIds.has(id)) continue; // ledger formatting duplicates
-    seenNormalizedIds.add(id);
+  for (const [id, scope] of identityScopes) {
+    if (scope.federated) continue; // federation-layer component; liveness owned there
+    if (scope.historical) continue; // already archived knowledge
     const name = (id.split(':')[3] || '').toUpperCase().replace(/[^A-Z0-9]+/g, '-');
-    if (name && !definedNormalized.has(name)) staleIdentities.push(id);
+    if (name && !definedNormalized.has(name)) staleIdentities.push({ id, section: scope.section });
   }
   if (staleIdentities.length > 0) {
     console.log('');
     console.log(
       `Stale ledger identities — knowledge-only, no current definition (${staleIdentities.length}):`
     );
-    for (const id of staleIdentities) {
-      console.log(`  - ${id}  [past edge case; not expected at boot]`);
+    for (const s of staleIdentities) {
+      console.log(`  - ${s.id}  [past edge case; scope: ${s.section}]`);
+    }
+    if (args.archive) {
+      console.log('');
+      const archived = archiveStaleIdentities(staleIdentities, LEDGER_PATH, ledgerContent);
+      console.log(
+        archived
+          ? `Archived ${staleIdentities.length} identity/ies to "## Historical Agents (Knowledge-Only)".`
+          : 'Archive step failed; ledger left unchanged.'
+      );
+    } else {
+      console.log('  Run with --archive to move them into "## Historical Agents (Knowledge-Only)".');
     }
   }
 
