@@ -2,5 +2,3 @@
 > @the-new-fuse/fairtable-adapters@1.0.0 type-check /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/fairtable-adapters
 > tsc --noEmit
 
-src/KanbanBoardAdapter.tsx(2,28): error TS2307: Cannot find module '@the-new-fuse/fairtable-components' or its corresponding type declarations.
- ELIFECYCLE  Command failed with exit code 2.

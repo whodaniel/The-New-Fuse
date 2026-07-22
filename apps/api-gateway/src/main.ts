@@ -9,12 +9,10 @@ import 'reflect-metadata';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as express from 'express';
-import { json, urlencoded } from 'express';
-import * as net from 'node:net';
-import * as tls from 'node:tls';
 import type { IncomingMessage, Server } from 'node:http';
+import * as net from 'node:net';
 import type { Duplex } from 'node:stream';
+import * as tls from 'node:tls';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
@@ -32,7 +30,12 @@ interface HttpRateLimitEntry {
 
 const httpRateLimitStore = new Map<string, HttpRateLimitEntry>();
 
-function parsePositiveInteger(value: string | undefined, fallback: number, min: number, max: number): number {
+function parsePositiveInteger(
+  value: string | undefined,
+  fallback: number,
+  min: number,
+  max: number
+): number {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) {
     return fallback;
@@ -60,7 +63,13 @@ function shouldSkipHttpRateLimit(req: any): boolean {
   }
 
   const path = req.path || req.url || '/';
-  return path === '/' || path === '/health' || path === '/api/health' || path === '/api/v1/health' || path.startsWith('/docs');
+  return (
+    path === '/' ||
+    path === '/health' ||
+    path === '/api/health' ||
+    path === '/api/v1/health' ||
+    path.startsWith('/docs')
+  );
 }
 
 function pruneHttpRateLimitStore(now: number, maxEntries: number): void {
@@ -80,9 +89,24 @@ function attachHttpRateLimit(app: any): void {
     return;
   }
 
-  const windowMs = parsePositiveInteger(process.env.API_GATEWAY_RATE_LIMIT_WINDOW_MS, 60_000, 1_000, 86_400_000);
-  const maxRequests = parsePositiveInteger(process.env.API_GATEWAY_RATE_LIMIT_REQUESTS, 600, 1, 1_000_000);
-  const maxEntries = parsePositiveInteger(process.env.API_GATEWAY_RATE_LIMIT_MAX_KEYS, 10_000, 100, 1_000_000);
+  const windowMs = parsePositiveInteger(
+    process.env.API_GATEWAY_RATE_LIMIT_WINDOW_MS,
+    60_000,
+    1_000,
+    86_400_000
+  );
+  const maxRequests = parsePositiveInteger(
+    process.env.API_GATEWAY_RATE_LIMIT_REQUESTS,
+    600,
+    1,
+    1_000_000
+  );
+  const maxEntries = parsePositiveInteger(
+    process.env.API_GATEWAY_RATE_LIMIT_MAX_KEYS,
+    10_000,
+    100,
+    1_000_000
+  );
 
   app.use((req: any, res: any, next: any) => {
     if (shouldSkipHttpRateLimit(req)) {
@@ -186,7 +210,9 @@ function attachWebSocketUpgradeProxy(server: Server) {
         )
         .join('\r\n');
 
-      outbound.write(`${req.method || 'GET'} ${targetPathForRequest(req, target)} HTTP/${req.httpVersion}\r\n`);
+      outbound.write(
+        `${req.method || 'GET'} ${targetPathForRequest(req, target)} HTTP/${req.httpVersion}\r\n`
+      );
       outbound.write(`${headerLines}\r\n\r\n`);
       if (head.length > 0) {
         outbound.write(head);
@@ -298,8 +324,6 @@ async function bootstrap() {
     next();
   });
 
-
-
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -315,6 +339,19 @@ async function bootstrap() {
 
   // Global interceptors
   app.useGlobalInterceptors(new LoggingInterceptor(), new ResponseInterceptor());
+
+  // Fallback: non-/api routes served by Next.js (pages at repo root)
+  app.use(async (req: any, res: any, nextMw: any) => {
+    try {
+      if (req.url && req.url.startsWith('/api')) return nextMw();
+      const { ensureNextHandler } = await import('./next-handler');
+      const handler = await ensureNextHandler();
+      await handler(req, res);
+    } catch (err) {
+      console.error('[next-fallback] error:', err);
+      nextMw();
+    }
+  });
 
   // Global prefix for ALL routes
   app.setGlobalPrefix('api');

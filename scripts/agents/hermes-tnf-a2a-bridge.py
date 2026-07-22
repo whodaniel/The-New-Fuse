@@ -2,6 +2,10 @@
 """
 Hermes-to-TNF A2A Bridge
 
+[CORE TENET: CORRECTED 2026-07-22]: TNF exists to PARODY + ASSIMILATE the BEST from
+ANY and ALL cutting-edge AI agents (NOT "Hermes-to-TNF parity"). This bridge is one
+instance of that assimilation — connecting systems at edges.
+
 Bidirectional bridge between Hermes Agent and the TNF Synaptic Bus.
 
 HERMES → TNF:

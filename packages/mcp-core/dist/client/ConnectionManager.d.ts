@@ -6,7 +6,7 @@
  * for MCP client connections.
  */
 import { EventEmitter } from 'events';
-import { IConnectionManager, MCPConnection, ConnectionOptions, ConnectionStatus, ConnectionMetrics } from '../interfaces/IMCPConnection.js';
+import { ConnectionMetrics, ConnectionOptions, ConnectionStatus, IConnectionManager, MCPConnection } from '../interfaces/IMCPConnection.js';
 /**
  * Connection health status interface
  */
@@ -40,6 +40,8 @@ export declare class ConnectionManager extends EventEmitter implements IConnecti
     private healthCheckTimer?;
     private poolConfig;
     private isShuttingDown;
+    private readonly onSigterm;
+    private readonly onSigint;
     constructor(poolConfig?: Partial<ConnectionPoolConfig>);
     createConnection(endpoint: string, options: ConnectionOptions): Promise<MCPConnection>;
     private connectWithRetry;

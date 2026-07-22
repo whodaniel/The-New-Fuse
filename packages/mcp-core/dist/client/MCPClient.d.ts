@@ -5,13 +5,13 @@
  * interface with connection management, request handling, and resource access.
  */
 import { EventEmitter } from 'events';
-import { IMCPClient } from '../interfaces/IMCPClient.js';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage.js';
-import { MCPResource, ResourceContent } from '../interfaces/IMCPResource.js';
 import { MCPCapability } from '../interfaces/IMCPCapability.js';
-import { ToolResult } from '../interfaces/IMCPTool.js';
+import { IMCPClient } from '../interfaces/IMCPClient.js';
 import { ConnectionOptions } from '../interfaces/IMCPConnection.js';
-import { MCPClientConfig, ClientStatistics, ClientStatus } from '../types/client.js';
+import { MCPNotification, MCPRequest, MCPResponse } from '../interfaces/IMCPMessage.js';
+import { MCPResource, ResourceContent } from '../interfaces/IMCPResource.js';
+import { ToolResult } from '../interfaces/IMCPTool.js';
+import { ClientStatistics, ClientStatus, MCPClientConfig } from '../types/client.js';
 import { NotificationCallback } from '../types/common.js';
 /**
  * MCP Client implementation

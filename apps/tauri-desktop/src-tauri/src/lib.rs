@@ -8,6 +8,7 @@ mod browser_webview;
 mod tnf_browser_bridge;
 
 // HashMap imported on demand via bridge module
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tauri::{Manager, State};
@@ -16,6 +17,106 @@ use serde::{Deserialize, Serialize};
 use bridge::BridgeManager;
 use antigravity::{AntigravityClient, AntigravityCredentials, AntigravityStatus, PageInfo, UserSettings};
 use tnf_browser_bridge::TnfBrowserBridge;
+
+// ============================================================================
+// PATH SANDBOXING — Security boundary for filesystem commands
+// ============================================================================
+
+/// Returns the list of directories that file system commands are allowed to access.
+/// Any path outside these roots is rejected.
+fn allowed_roots() -> Vec<PathBuf> {
+    let mut roots = Vec::new();
+
+    // Primary sandbox directory
+    if let Some(home) = dirs::home_dir() {
+        roots.push(home.join(".tnf-sandbox"));
+    }
+
+    // Tauri app data directory
+    if let Some(data) = dirs::data_dir() {
+        roots.push(data.join("com.thenewfuse.desktop"));
+    }
+
+    roots
+}
+
+/// Validates that `path` resolves to a location within one of the allowed roots.
+/// Returns the canonicalized path on success, or an error message on failure.
+fn validate_sandboxed_path(path: &str) -> Result<PathBuf, String> {
+    // Resolve the path (handles .., symlinks, etc.)
+    let candidate = Path::new(path);
+
+    // For paths that don't exist yet (write_file), resolve parent
+    let resolved = if candidate.exists() {
+        candidate.canonicalize()
+            .map_err(|e| format!("Path resolution failed: {}", e))?
+    } else {
+        // For new files, check that the parent directory is in the sandbox
+        let parent = candidate.parent()
+            .ok_or_else(|| "Invalid path: no parent directory".to_string())?;
+        if !parent.exists() {
+            return Err(format!("Parent directory does not exist: {}", parent.display()));
+        }
+        let resolved_parent = parent.canonicalize()
+            .map_err(|e| format!("Parent path resolution failed: {}", e))?;
+        resolved_parent.join(candidate.file_name().unwrap_or_default())
+    };
+
+    let roots = allowed_roots();
+    for root in &roots {
+        // Ensure the root exists for comparison (create sandbox dir if needed)
+        if let Ok(canonical_root) = root.canonicalize() {
+            if resolved.starts_with(&canonical_root) {
+                return Ok(resolved);
+            }
+        }
+        // Also check non-canonicalized for new sandbox dirs
+        if resolved.starts_with(root) {
+            return Ok(resolved);
+        }
+    }
+
+    Err(format!(
+        "Access denied: path '{}' is outside the sandbox. Allowed roots: {:?}",
+        path,
+        roots.iter().map(|r| r.display().to_string()).collect::<Vec<_>>()
+    ))
+}
+
+/// Validates that a URL is allowed for WebSocket bridge connections.
+/// Only permits wss:// to known hosts, or ws:// to localhost/127.0.0.1.
+fn validate_sandbox_url(url: &str) -> Result<(), String> {
+    let parsed = url::Url::parse(url)
+        .map_err(|e| format!("Invalid URL: {}", e))?;
+
+    match parsed.scheme() {
+        "ws" => {
+            let host = parsed.host_str().unwrap_or("");
+            if host == "localhost" || host == "127.0.0.1" || host == "[::1]" {
+                Ok(())
+            } else {
+                Err(format!("ws:// connections only allowed to localhost, got: {}", host))
+            }
+        }
+        "wss" => {
+            let host = parsed.host_str().unwrap_or("");
+            let allowed_suffixes = [
+                "thenewfuse.com",
+                ".run.app",
+                ".workers.dev",
+                ".supabase.co",
+                "localhost",
+                "127.0.0.1",
+            ];
+            if allowed_suffixes.iter().any(|s| host == *s || host.ends_with(s)) {
+                Ok(())
+            } else {
+                Err(format!("wss:// host not in allowlist: {}", host))
+            }
+        }
+        other => Err(format!("Unsupported scheme: {}", other)),
+    }
+}
 
 // ============================================================================
 // STATE MANAGEMENT
@@ -115,6 +216,7 @@ async fn get_bridge_status(state: State<'_, AppState>) -> Result<bool, String> {
 
 #[tauri::command]
 async fn set_sandbox_url(url: String, state: State<'_, AppState>) -> Result<(), String> {
+    validate_sandbox_url(&url)?;
     let mut sandbox_url = state.sandbox_url.lock().await;
     *sandbox_url = url;
     Ok(())
@@ -223,26 +325,36 @@ async fn mcp_list_tools(state: State<'_, AppState>) -> Result<Vec<serde_json::Va
 }
 
 // ============================================================================
-// TAURI COMMANDS - Local File System
+// TAURI COMMANDS - Local File System (Sandboxed)
+// All paths are validated against ~/.tnf-sandbox and $APPDATA.
 // ============================================================================
 
 #[tauri::command]
 async fn read_file(path: String) -> Result<String, String> {
-    tokio::fs::read_to_string(&path)
+    let validated = validate_sandboxed_path(&path)?;
+    tokio::fs::read_to_string(&validated)
         .await
         .map_err(|e| format!("Failed to read file: {}", e))
 }
 
 #[tauri::command]
 async fn write_file(path: String, content: String) -> Result<(), String> {
-    tokio::fs::write(&path, &content)
+    let validated = validate_sandboxed_path(&path)?;
+    // Ensure parent directory exists within sandbox
+    if let Some(parent) = validated.parent() {
+        tokio::fs::create_dir_all(parent)
+            .await
+            .map_err(|e| format!("Failed to create directory: {}", e))?;
+    }
+    tokio::fs::write(&validated, &content)
         .await
         .map_err(|e| format!("Failed to write file: {}", e))
 }
 
 #[tauri::command]
 async fn list_directory(path: String) -> Result<Vec<String>, String> {
-    let mut entries = tokio::fs::read_dir(&path)
+    let validated = validate_sandboxed_path(&path)?;
+    let mut entries = tokio::fs::read_dir(&validated)
         .await
         .map_err(|e| format!("Failed to read directory: {}", e))?;
 
@@ -254,38 +366,14 @@ async fn list_directory(path: String) -> Result<Vec<String>, String> {
 }
 
 #[tauri::command]
-async fn file_exists(path: String) -> bool {
-    tokio::fs::metadata(&path).await.is_ok()
+async fn file_exists(path: String) -> Result<bool, String> {
+    let validated = validate_sandboxed_path(&path)?;
+    Ok(tokio::fs::metadata(&validated).await.is_ok())
 }
 
-#[tauri::command]
-async fn execute_command(command: String) -> Result<String, String> {
-    println!("Executing command: {}", command);
-
-    #[cfg(target_os = "windows")]
-    let output = std::process::Command::new("cmd")
-        .args(["/C", &command])
-        .output();
-
-    #[cfg(not(target_os = "windows"))]
-    let output = std::process::Command::new("sh")
-        .arg("-c")
-        .arg(&command)
-        .output();
-
-    match output {
-        Ok(out) => {
-             let stdout = String::from_utf8_lossy(&out.stdout).to_string();
-             let stderr = String::from_utf8_lossy(&out.stderr).to_string();
-             if !out.status.success() {
-                 Ok(format!("{}\nError: {}", stdout, stderr))
-             } else {
-                 Ok(stdout)
-             }
-        },
-        Err(e) => Err(format!("Failed to execute: {}", e))
-    }
-}
+// NOTE: execute_command has been REMOVED (CRIT-1 remediation).
+// Arbitrary shell command execution from the webview is an RCE vulnerability.
+// If specific commands are needed, add them as individual, validated Tauri commands.
 
 // ============================================================================
 // TAURI COMMANDS - Service Status
@@ -397,12 +485,12 @@ pub fn run() {
             // MCP
             mcp_call_tool,
             mcp_list_tools,
-            // File System
+            // File System (sandboxed to ~/.tnf-sandbox)
             read_file,
             write_file,
             list_directory,
             file_exists,
-            execute_command,
+            // execute_command REMOVED — CRIT-1 RCE remediation
             // Services
             check_service_status,
             // Antigravity

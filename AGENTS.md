@@ -28,13 +28,22 @@ In TNF, an **Agent** is not merely an LLM. It is a **deterministic functional
 unit** defined by the triad:
 
 1.  **The Core (The MoE Engine):** The raw reasoning power (Gemini, Claude,
-    Codex). This is the "compute" and the "fuel."
+    Codex). This is the "compute" and the "fuel.
 2.  **The Context (The Harness):** The collective writing in this repository
     (`.agent/SOUL.md`, `AGENTS.md`, `.agent/skills/**/SKILL.md`). These are the
     **Software Weights** that define the agent's identity, ethics, and focus.
 3.  **The Capability (The Tools/MCP):** The "Senses" and "Limbs" (Native
     Vision/Audio/Relay Synapses). This is how the agent interacts with the
     Merkle Tree.
+
+### Core Tenet (CORRECTED 2026-07-22)
+
+TNF's core tenet is to **PARODY + ASSIMILATE the BEST from ANY and ALL
+cutting-edge AI agents**. This is achieved through open assimilation: reading
+the best patterns from any source, extracting what works, and codifying it into
+TNF-native capabilities, skills, and protocols. This principle applies on an
+ONGOING, SELF-ITERATIVE basis — each agent must perpetually update its
+definitions to reflect new discoveries from the broader AI ecosystem.
 
 ### Self-Prompting & Actualization
 

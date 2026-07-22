@@ -2,22 +2,3 @@
 > @the-new-fuse/claude-skills@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/claude-skills
 > tsc -b
 
-src/ClaudeSkillsManager.ts(7,31): error TS2307: Cannot find module './executor.js' or its corresponding type declarations.
-src/ClaudeSkillsManager.ts(8,34): error TS2307: Cannot find module './integration.js' or its corresponding type declarations.
-src/ClaudeSkillsManager.ts(9,29): error TS2307: Cannot find module './loader.js' or its corresponding type declarations.
-src/ClaudeSkillsManager.ts(10,29): error TS2307: Cannot find module './parser.js' or its corresponding type declarations.
-src/ClaudeSkillsManager.ts(11,31): error TS2307: Cannot find module './registry.js' or its corresponding type declarations.
-src/index.ts(11,29): error TS2307: Cannot find module './parser.js' or its corresponding type declarations.
-src/index.ts(14,29): error TS2307: Cannot find module './loader.js' or its corresponding type declarations.
-src/index.ts(17,31): error TS2307: Cannot find module './executor.js' or its corresponding type declarations.
-src/index.ts(20,31): error TS2307: Cannot find module './registry.js' or its corresponding type declarations.
-src/index.ts(23,34): error TS2307: Cannot find module './integration.js' or its corresponding type declarations.
-src/integration/MCPSkillProvider.ts(7,36): error TS2307: Cannot find module '../executor.js' or its corresponding type declarations.
-src/integration/MCPSkillProvider.ts(8,36): error TS2307: Cannot find module '../registry.js' or its corresponding type declarations.
-src/integration/MCPSkillProvider.ts(37,24): error TS7006: Parameter 'skill' implicitly has an 'any' type.
-src/integration/MCPSkillProvider.ts(67,24): error TS7006: Parameter 'skill' implicitly has an 'any' type.
-src/integration/MCPSkillProvider.ts(79,32): error TS7006: Parameter 's' implicitly has an 'any' type.
-src/integration/MCPSkillProvider.ts(111,24): error TS7006: Parameter 'skill' implicitly has an 'any' type.
-src/integration/MCPSkillProvider.ts(131,24): error TS7006: Parameter 'skill' implicitly has an 'any' type.
-src/loader/SkillLoader.ts(11,29): error TS2307: Cannot find module '../parser.js' or its corresponding type declarations.
- ELIFECYCLE  Command failed with exit code 2.

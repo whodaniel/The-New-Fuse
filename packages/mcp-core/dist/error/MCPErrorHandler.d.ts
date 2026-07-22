@@ -3,7 +3,7 @@
  * Implements error classification, recovery strategies, and monitoring
  */
 import { EventEmitter } from 'events';
-import { MCPErrorClass, ErrorRecoveryStrategy, ErrorStatistics } from '../types/error.js';
+import { ErrorRecoveryStrategy, ErrorStatistics, MCPErrorClass } from '../types/error.js';
 import { Logger } from '../utils/Logger.js';
 export interface ErrorHandlerConfig {
     /** Enable automatic error recovery */

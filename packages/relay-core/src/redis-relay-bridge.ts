@@ -269,8 +269,11 @@ export class RedisRelayBridge extends EventEmitter {
    * Publish a raw message to a specific Redis channel
    */
   async publish(channel: string, message: string): Promise<number> {
+    // Soft-fail while connecting / after disconnect — never crash the relay
+    // event loop (master-clock floods AGENT_REGISTER/CHANNEL_* on boot).
     if (!this.connected) {
-      throw new Error('Not connected to Redis');
+      console.warn(`[Redis-Bridge] Not connected, dropping publish to ${channel}`);
+      return 0;
     }
     return (this.redisClient as any).publish(channel, message);
   }
@@ -280,7 +283,8 @@ export class RedisRelayBridge extends EventEmitter {
    */
   async publishToIngress(envelope: TNFEnvelope): Promise<void> {
     if (!this.connected) {
-      throw new Error('Not connected to Redis');
+      console.warn('[Redis-Bridge] Not connected, dropping publishToIngress');
+      return;
     }
 
     const normalizedEnvelope = validateTNFEnvelope(envelope);
@@ -293,7 +297,8 @@ export class RedisRelayBridge extends EventEmitter {
    */
   async publishToAgent(agentId: string, envelope: TNFEnvelope): Promise<void> {
     if (!this.connected) {
-      throw new Error('Not connected to Redis');
+      console.warn(`[Redis-Bridge] Not connected, dropping publishToAgent ${agentId}`);
+      return;
     }
 
     const channel = `${this.config.egressChannelPrefix}:${agentId}`;

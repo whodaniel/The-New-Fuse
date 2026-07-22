@@ -3,7 +3,7 @@
  * Implements error classification, recovery strategies, and monitoring
  */
 import { EventEmitter } from 'events';
-import { ErrorSeverity } from '../types/error.js';
+import { ErrorSeverity, } from '../types/error.js';
 import { Logger } from '../utils/Logger.js';
 /**
  * Main MCP Error Handler class
@@ -20,7 +20,7 @@ export class MCPErrorHandler extends EventEmitter {
             statisticsInterval: 60000, // 1 minute
             enableLogging: true,
             logLevel: 'error',
-            ...config
+            ...config,
         };
         this.logger = logger || new Logger('MCPErrorHandler');
         this.statistics = {
@@ -30,9 +30,14 @@ export class MCPErrorHandler extends EventEmitter {
             errorsByCode: {},
             errorRate: 0,
             lastError: undefined,
-            mostCommonError: undefined
+            mostCommonError: undefined,
         };
-        this.initializeDefaultRecoveryStrategies();
+        // Note: initializeDefaultRecoveryStrategies() is intentionally not
+        // called here. Its strategies are non-functional placeholders (each
+        // recover() always returns false), so registering them by default only
+        // wastes a recovery attempt and adds delay before any real, working
+        // strategy a caller registers for the same error codes -- callers who
+        // want it can opt in explicitly.
         this.initializeDefaultErrorHandlers();
         if (this.config.statisticsInterval > 0) {
             this.startStatisticsCollection();
@@ -49,8 +54,12 @@ export class MCPErrorHandler extends EventEmitter {
             if (this.config.enableLogging) {
                 this.logError(error, context);
             }
-            // Emit error event
-            this.emit('error', error, context);
+            // Emit error notification. Deliberately not named 'error': EventEmitter
+            // treats an unlistened 'error' emit as a fatal, thrown exception, which
+            // silently broke every handleError() call for any caller that hadn't
+            // registered a listener (the exception was swallowed by the catch
+            // block below, always returning null).
+            this.emit('errorHandled', error, context);
             // Find and execute error handler
             const handler = this.findErrorHandler(error);
             if (handler) {
@@ -121,7 +130,7 @@ export class MCPErrorHandler extends EventEmitter {
         let lastError;
         // Find applicable recovery strategies
         const strategies = Array.from(this.recoveryStrategies.values())
-            .filter(strategy => strategy.applicableErrorCodes.includes(error.code))
+            .filter((strategy) => strategy.applicableErrorCodes.includes(error.code))
             .sort((a, b) => a.delay - b.delay); // Try faster strategies first
         for (const strategy of strategies) {
             if (attempts >= this.config.maxRecoveryAttempts) {
@@ -136,21 +145,21 @@ export class MCPErrorHandler extends EventEmitter {
                     this.logger.info(`Recovery successful with strategy: ${strategy.name}`, {
                         attempts,
                         duration,
-                        errorCode: error.code
+                        errorCode: error.code,
                     });
                     this.emit('recoverySuccess', {
                         error,
                         context,
                         strategy: strategy.name,
                         attempts,
-                        duration
+                        duration,
                     });
                     return {
                         success: true,
                         strategy: strategy.name,
                         attempts,
                         duration,
-                        data: { strategyUsed: strategy.name }
+                        data: { strategyUsed: strategy.name },
                     };
                 }
                 // Wait before next attempt if strategy has delay
@@ -159,29 +168,32 @@ export class MCPErrorHandler extends EventEmitter {
                 }
             }
             catch (recoveryError) {
-                lastError = recoveryError instanceof Error ? recoveryError : new Error(String(recoveryError));
+                lastError =
+                    recoveryError instanceof Error ? recoveryError : new Error(String(recoveryError));
                 this.logger.warn(`Recovery strategy ${strategy.name} failed:`, lastError);
             }
         }
         const duration = Date.now() - startTime;
-        this.logger.error(`All recovery attempts failed for error code: ${error.code}`, {
-            attempts,
-            duration,
-            lastError: lastError?.message
-        });
+        if (this.config.enableLogging) {
+            this.logger.error(`All recovery attempts failed for error code: ${error.code}`, {
+                attempts,
+                duration,
+                lastError: lastError?.message,
+            });
+        }
         this.emit('recoveryFailure', {
             error,
             context,
             attempts,
             duration,
-            lastError
+            lastError,
         });
         return {
             success: false,
             strategy: 'none',
             attempts,
             duration,
-            error: lastError
+            error: lastError,
         };
     }
     /**
@@ -214,15 +226,14 @@ export class MCPErrorHandler extends EventEmitter {
         this.statistics.errorsBySeverity[error.severity] =
             (this.statistics.errorsBySeverity[error.severity] || 0) + 1;
         // Update code statistics
-        this.statistics.errorsByCode[error.code] =
-            (this.statistics.errorsByCode[error.code] || 0) + 1;
+        this.statistics.errorsByCode[error.code] = (this.statistics.errorsByCode[error.code] || 0) + 1;
         // Update most common error
         const currentCount = this.statistics.errorsByCode[error.code];
         if (!this.statistics.mostCommonError || currentCount > this.statistics.mostCommonError.count) {
             this.statistics.mostCommonError = {
                 code: error.code,
                 message: error.message,
-                count: currentCount
+                count: currentCount,
             };
         }
         // Add to history (keep last 1000 errors)
@@ -243,7 +254,7 @@ export class MCPErrorHandler extends EventEmitter {
             correlationId: error.correlationId || context.correlationId,
             component: context.component,
             operation: context.operation,
-            metadata: context.metadata
+            metadata: context.metadata,
         };
         switch (error.severity) {
             case ErrorSeverity.CRITICAL:
@@ -275,7 +286,7 @@ export class MCPErrorHandler extends EventEmitter {
                 this.logger.debug('Attempting connection recovery');
                 // This would be implemented by the specific component
                 return false; // Placeholder
-            }
+            },
         });
         // Service retry strategy
         this.registerRecoveryStrategy({
@@ -287,7 +298,7 @@ export class MCPErrorHandler extends EventEmitter {
                 this.logger.debug('Attempting service recovery');
                 // This would be implemented by the specific component
                 return false; // Placeholder
-            }
+            },
         });
         // Authentication refresh strategy
         this.registerRecoveryStrategy({
@@ -299,7 +310,7 @@ export class MCPErrorHandler extends EventEmitter {
                 this.logger.debug('Attempting authentication refresh');
                 // This would be implemented by the auth component
                 return false; // Placeholder
-            }
+            },
         });
     }
     /**
@@ -313,7 +324,7 @@ export class MCPErrorHandler extends EventEmitter {
             handle: async (error, context) => {
                 this.logger.debug(`Generic handler processing error: ${error.code}`);
                 // Default handling logic
-            }
+            },
         });
     }
     /**
@@ -331,14 +342,14 @@ export class MCPErrorHandler extends EventEmitter {
     calculateErrorRate() {
         const now = Date.now();
         const oneMinuteAgo = now - 60000;
-        const recentErrors = this.errorHistory.filter(error => error.timestamp.getTime() > oneMinuteAgo);
+        const recentErrors = this.errorHistory.filter((error) => error.timestamp.getTime() > oneMinuteAgo);
         this.statistics.errorRate = recentErrors.length;
     }
     /**
      * Utility delay function
      */
     delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }
 /**
@@ -354,7 +365,7 @@ export class ErrorHandlerFactory {
             maxRecoveryAttempts: 3,
             statisticsInterval: 60000,
             enableLogging: true,
-            logLevel: 'error'
+            logLevel: 'error',
         });
     }
 }

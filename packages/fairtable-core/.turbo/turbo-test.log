@@ -2,15 +2,15 @@
 > @the-new-fuse/fairtable-core@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/fairtable-core
 > cross-env NODE_OPTIONS=--experimental-vm-modules jest
 
-(node:73426) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(node:66894) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-PASS dist/formulaEvaluator.test.js
-(node:73425) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+PASS dist/formulaEvaluator.test.js (8.23 s)
+(node:66895) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-PASS src/formulaEvaluator.test.ts
+PASS src/formulaEvaluator.test.ts (9.219 s)
 
 Test Suites: 2 passed, 2 total
 Tests:       2 passed, 2 total
 Snapshots:   0 total
-Time:        8.975 s
+Time:        27.245 s
 Ran all test suites.

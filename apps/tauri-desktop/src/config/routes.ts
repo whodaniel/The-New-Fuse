@@ -99,16 +99,20 @@ function readBootRouteFromUrl(): string | null {
 
 export function resolveBootRoute(initialRoute?: string): string {
   const fromUrl = readBootRouteFromUrl();
-  if (fromUrl) {
+  if (fromUrl && isKnownRoute(fromUrl)) {
     return fromUrl;
   }
 
   const persisted = safeStorage.getItem(ROUTE_STORAGE_KEY);
-  if (persisted) {
+  if (persisted && isKnownRoute(persisted)) {
     return persisted;
   }
 
-  return initialRoute || DEFAULT_ROUTE;
+  if (initialRoute && isKnownRoute(initialRoute)) {
+    return initialRoute;
+  }
+
+  return DEFAULT_ROUTE;
 }
 
 export function persistRoute(path: string): void {

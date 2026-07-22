@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 TNF Agent Daemon — The Persistent Heart of The New Fuse
+
+[CORE TENET (CORRECTED 2026-07-22)]: TNF exists to PARODY + ASSIMILATE the BEST from
+ANY and ALL cutting-edge AI agents (NOT "Hermes-to-TNF parity"). This applies on an
+ONGOING, SELF-ITERATIVE basis. See skill: assimilation-tenet for workflow.
 
 This is the missing piece: a daemon that STAYS ALIVE with an active LLM
 connection, registered on the Synaptic Bus, sending heartbeats, consuming

@@ -58,7 +58,11 @@ function buildDeck() {
  deck.push(`${rank}${suit}`);
  }
  }
-
+ // Deck integrity check — must have exactly 52 unique cards.
+ // Catches accidental duplicate constants or array mutation.
+ if (deck.length !== 52 || new Set(deck).size !== 52) {
+ throw new Error(`Deck integrity violation: ${deck.length} cards, ${new Set(deck).size} unique`);
+ }
  return deck;
 }
 
@@ -74,9 +78,6 @@ function drawCards(rng, deck, count) {
 function dealHoldemCards(engine, hand, seated) {
  const rng = createRng(`${engine.replaySeed}:${hand.handId}`);
  const deck = buildDeck();
-    if (deck.length !== 52 || new Set(deck).size !== 52) {
-      throw new Error(`Deck integrity violation: ${deck.length} cards, ${new Set(deck).size} unique`);
-    }
  const holeCards = {};
  for (const seat of seated) {
  holeCards[String(seat.seat)] = drawCards(rng, deck, 2);
@@ -582,8 +583,8 @@ export function legalActionsForSeat(engine, hand, seatNo) {
         const minTotal = hand.currentBet + hand.lastAggressiveDelta;
         const maxTotal = streetCommit + stack;
         legal.push({ action: 'raise', min: Math.min(maxTotal, minTotal), max: maxTotal });
-        legal.push({ action: 'allin', min: stack, max: stack });
       }
+      legal.push({ action: 'allin', min: stack, max: stack });
     }
   } else {
     legal.push({ action: 'check' });
@@ -764,9 +765,6 @@ export function startHand(engine, { handId, idempotencyKey }) {
  // meet the straddle's raise threshold.
  hand.minRaise = Math.max(hand.minRaise, hand.currentBet);
  straddleSeat.straddleRequested = 0;
-  for (const p of seated) { // NEW-G fix: Clear straddleRequested for all players
-    p.straddleRequested = 0;
-  }
  actingFrom = straddleSeatNo;
   }
 
@@ -1242,9 +1240,9 @@ export function recoverySnapshot(engine) {
     seq: engine.seq,
     events: engine.events,
     idempotency: {
-      actions: Array.from(engine.idempotency.actions.entries()),
-      settlements: Array.from(engine.idempotency.settlements.entries()),
-      handStarts: Array.from(engine.idempotency.handStarts.entries()),
+      actions: engine.idempotency?.actions ? [...engine.idempotency.actions.entries()] : [],
+      settlements: engine.idempotency?.settlements ? [...engine.idempotency.settlements.entries()] : [],
+      handStarts: engine.idempotency?.handStarts ? [...engine.idempotency.handStarts.entries()] : [],
     },
   });
 }
@@ -1266,17 +1264,18 @@ export function restoreFromRecovery(snapshot) {
   engine.riskCapsBySeat = cloneJson(snapshot.riskCapsBySeat || {});
   engine.hand = snapshot.hand ? cloneJson(snapshot.hand) : null;
   engine.pendingSeatMoves = cloneJson(snapshot.pendingSeatMoves || []);
-  1269|  // NEW-C fix: restore idempotency caches. If not restored, any in-flight action
-  1270|  // with an idempotency key could be replayed after crash recovery.
-  1271|  if (snapshot.idempotency) {
-  1272|    engine.idempotency.actions = new Map(snapshot.idempotency.actions || []);
-  1273|    engine.idempotency.settlements = new Map(snapshot.idempotency.settlements || []);
-  1274|    engine.idempotency.handStarts = new Map(snapshot.idempotency.handStarts || []);
-  1275|  }
-  1276|  engine.audit = cloneJson(snapshot.audit || { lastEventHash: 'genesis' });
-  1277|  engine.seq = Number(snapshot.seq || 0);
-  1278|  engine.events = cloneJson(snapshot.events || []);
-  
+  engine.audit = cloneJson(snapshot.audit || { lastEventHash: 'genesis' });
+  engine.seq = Number(snapshot.seq || 0);
+  engine.events = cloneJson(snapshot.events || []);
+
+  // Restore idempotency caches: cloneJson turns Map → plain object,
+  // so we must reconstruct them explicitly.
+  const rawIdem = snapshot.idempotency || { actions: {}, settlements: {}, handStarts: {} };
+  engine.idempotency = {
+    actions: new Map(Array.isArray(rawIdem.actions) ? rawIdem.actions : (rawIdem.actions ? Object.entries(rawIdem.actions) : [])),
+    settlements: new Map(Array.isArray(rawIdem.settlements) ? rawIdem.settlements : (rawIdem.settlements ? Object.entries(rawIdem.settlements) : [])),
+    handStarts: new Map(Array.isArray(rawIdem.handStarts) ? rawIdem.handStarts : (rawIdem.handStarts ? Object.entries(rawIdem.handStarts) : [])),
+  };
   return engine;
 }
 

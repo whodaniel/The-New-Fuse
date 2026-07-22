@@ -3,13 +3,13 @@
  */
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger.js';
-import { MetricsCollector } from './MetricsCollector.js';
 import { AlertManager } from './AlertManager.js';
-import { DashboardManager } from './DashboardManager.js';
-import { PerformanceMonitor } from './PerformanceMonitor.js';
-import { LoadTester } from './LoadTester.js';
 import { CacheMonitor } from './CacheMonitor.js';
 import { ConnectionPoolMonitor } from './ConnectionPoolMonitor.js';
+import { DashboardManager } from './DashboardManager.js';
+import { LoadTester } from './LoadTester.js';
+import { MetricsCollector } from './MetricsCollector.js';
+import { PerformanceMonitor } from './PerformanceMonitor.js';
 import { SystemHealthMonitor } from './SystemHealthMonitor.js';
 /**
  * Main monitoring system implementation
@@ -37,6 +37,7 @@ export class MonitoringSystem extends EventEmitter {
             await this.startComponents();
             this.running = true;
             this.startTime = new Date();
+            this.startTimeHighRes = performance.now();
             this.logger.info('Monitoring system initialized successfully');
             this.emit('initialized');
         }
@@ -59,6 +60,7 @@ export class MonitoringSystem extends EventEmitter {
             await this.stopComponents();
             this.running = false;
             this.startTime = undefined;
+            this.startTimeHighRes = undefined;
             this.logger.info('Monitoring system shutdown complete');
             this.emit('shutdown');
         }
@@ -159,7 +161,7 @@ export class MonitoringSystem extends EventEmitter {
      * Get monitoring status
      */
     async getStatus() {
-        const uptime = this.startTime ? Date.now() - this.startTime.getTime() : 0;
+        const uptime = this.startTimeHighRes !== undefined ? performance.now() - this.startTimeHighRes : 0;
         const components = {
             metricsCollector: !!this.metricsCollector,
             alertManager: !!this.alertManager,
@@ -168,12 +170,12 @@ export class MonitoringSystem extends EventEmitter {
             loadTester: !!this.loadTester,
             cacheMonitor: !!this.cacheMonitor,
             connectionPoolMonitor: !!this.connectionPoolMonitor,
-            systemHealthMonitor: !!this.systemHealthMonitor
+            systemHealthMonitor: !!this.systemHealthMonitor,
         };
         return {
             running: this.running,
             uptime,
-            components
+            components,
         };
     }
     /**
@@ -187,41 +189,41 @@ export class MonitoringSystem extends EventEmitter {
         this.metricsCollector = new MetricsCollector({
             interval: this.config.metricsInterval,
             retentionPeriod: this.config.retentionPeriod,
-            storage: this.config.storage
+            storage: this.config.storage,
         }, this.logger);
         // Initialize alert manager
         if (this.config.enableAlerting) {
             this.alertManager = new AlertManager({
                 checkInterval: this.config.alertInterval,
-                retentionPeriod: this.config.retentionPeriod
+                retentionPeriod: this.config.retentionPeriod,
             }, this.logger);
         }
         // Initialize dashboard manager
         if (this.config.enableDashboards) {
             this.dashboardManager = new DashboardManager({
                 refreshInterval: this.config.dashboardRefreshInterval,
-                storage: this.config.storage
+                storage: this.config.storage,
             }, this.logger);
         }
         // Initialize performance monitor
         this.performanceMonitor = new PerformanceMonitor({
             metricsInterval: this.config.metricsInterval,
-            retentionPeriod: this.config.retentionPeriod
+            retentionPeriod: this.config.retentionPeriod,
         }, this.logger);
         // Initialize load tester
         this.loadTester = new LoadTester(this.logger);
         // Initialize cache monitor
         this.cacheMonitor = new CacheMonitor({
-            retentionPeriod: this.config.retentionPeriod
+            retentionPeriod: this.config.retentionPeriod,
         }, this.logger);
         // Initialize connection pool monitor
         this.connectionPoolMonitor = new ConnectionPoolMonitor({
-            retentionPeriod: this.config.retentionPeriod
+            retentionPeriod: this.config.retentionPeriod,
         }, this.logger);
         // Initialize system health monitor
         this.systemHealthMonitor = new SystemHealthMonitor({
             checkInterval: 30000, // 30 seconds
-            timeout: 5000 // 5 seconds
+            timeout: 5000, // 5 seconds
         }, this.logger);
         this.logger.debug('All monitoring components initialized');
     }
@@ -297,8 +299,11 @@ export class MonitoringSystem extends EventEmitter {
         const lines = [];
         // Helper function to add metric
         const addMetric = (name, value, labels) => {
-            const labelStr = labels ?
-                `{${Object.entries(labels).map(([k, v]) => `${k}="${v}"`).join(',')}}` : '';
+            const labelStr = labels
+                ? `{${Object.entries(labels)
+                    .map(([k, v]) => `${k}="${v}"`)
+                    .join(',')}}`
+                : '';
             lines.push(`mcp_${name}${labelStr} ${value}`);
         };
         // Request metrics

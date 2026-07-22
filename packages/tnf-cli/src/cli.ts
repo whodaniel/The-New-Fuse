@@ -45,8 +45,21 @@ import {
   renderSlashCommandList,
   type SlashCommandDefinition,
 } from './slashCommands.js';
+import {
+  applyTurnCapExtension,
+  buildSoftCapWarning,
+  createAutonomousTurnCapState,
+  isHardTurnCapReached,
+  loadAutonomousTurnCapConfig,
+  parseExtendTurnCapMarker,
+} from './utils/autonomous-turn-cap.js';
 import { resolvePrompt } from './utils/prompt-input.js';
 
+// CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
+// Propagates to both open-source installable binary (packages/tnf-cli/dist/cli.js)
+// and hosted server-side orchestration (agent-bank/catalog + relay-core):
+// PARODY + ASSIMILATE the BEST from ANY and ALL cutting-edge AI agents.
+// NOT "Hermes-to-TNF parity". Ongoing, self-iterative. See assimilation-tenet skill.
 const program = new Command();
 // Fallback for CommonJS/ESM compatibility
 const _dirname =
@@ -3814,6 +3827,19 @@ function resolvePassthroughCommand(cliName: string): string {
     }
   }
 
+  // 5. Claude Code-specific install locations (native/local installs)
+  if (cliName === 'claude') {
+    const claudeCandidates = [
+      path.join(os.homedir(), '.claude', 'local', 'claude'),
+      path.join(os.homedir(), '.local', 'bin', 'claude'),
+      '/opt/homebrew/bin/claude',
+      '/usr/local/bin/claude',
+    ];
+    for (const candidate of claudeCandidates) {
+      if (isExecutableFile(candidate)) return candidate;
+    }
+  }
+
   // Return the bare name as last resort (will fail with ENOENT if not found)
   return cliName;
 }
@@ -3856,6 +3882,11 @@ function isGeminiPassthroughArgv(argv: string[]): boolean {
 function isCursorPassthroughArgv(argv: string[]): boolean {
   const subcommand = argv[2];
   return subcommand === 'cursor';
+}
+
+function isClaudePassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'claude';
 }
 
 let cachedTopLevelCommands: Record<string, Set<string>> = {};
@@ -4039,7 +4070,17 @@ type AutonomousSessionState = {
   contextRefreshPending: boolean;
   turnsThisSession: number;
   maxTurnsPerSession: number;
+  /** True once the approaching-cap notification has been issued for the
+   *  current cap value; reset whenever the cap is extended. */
+  softCapNotified: boolean;
+  /** Absolute ceiling maxTurnsPerSession may be extended to via
+   *  TNF_EXTEND_TURN_CAP markers (LONG_RUN mode only). */
+  capCeiling: number;
+  /** Consecutive autonomous turns that produced zero executable bash blocks. */
+  consecutiveNoBashTurns: number;
 };
+
+const autonomousTurnCapConfig = loadAutonomousTurnCapConfig();
 
 type InteractiveSlashContext = {
   messages: ChatMessage[];
@@ -4475,6 +4516,14 @@ async function handleInteractiveSlashCommand(
     console.log(
       `  Autonomous shell execution: ${context.autonomousMode ? chalk.green('ON') : chalk.yellow('OFF')}`
     );
+    if (context.autonomousState) {
+      const { turnsThisSession, maxTurnsPerSession, capCeiling } = context.autonomousState;
+      console.log(
+        chalk.dim(
+          `  Turn budget: ${turnsThisSession}/${maxTurnsPerSession} (soft warn @ ${Math.ceil(maxTurnsPerSession * autonomousTurnCapConfig.softRatio)}; ceiling ${capCeiling}; LONG_RUN may emit TNF_EXTEND_TURN_CAP=<n>)`
+        )
+      );
+    }
     if (context.autonomousMode) {
       enableAutonomousRuntimeDefaults();
       if (context.autonomousState) {
@@ -6917,6 +6966,14 @@ program
   .argument('[args...]', 'Arguments forwarded to cursor')
   .action(async (args: string[]) => {
     await runPassthrough('cursor', args);
+  });
+
+program
+  .command('claude')
+  .description('Pass through any Claude Code CLI command with TNF harness MCP routing')
+  .argument('[args...]', 'Arguments forwarded to claude')
+  .action(async (args: string[]) => {
+    await runPassthrough('claude', args);
   });
 
 program
@@ -15896,7 +15953,6 @@ const AUTONOMOUS_MAX_SHELL_BLOCKS = parseInt(
   process.env.TNF_AUTONOMOUS_MAX_SHELL_BLOCKS || '5',
   10
 );
-const AUTONOMOUS_MAX_TURNS = parseInt(process.env.TNF_AUTONOMOUS_MAX_TURNS || '50', 10);
 
 function enableAutonomousRuntimeDefaults(): void {
   if (!process.env.TNF_STALL_DEFENSE_TIMEOUT) {
@@ -15912,11 +15968,11 @@ function enableAutonomousRuntimeDefaults(): void {
  * TUI mode is resolved in priority order:
  *   1. TNF_TUI_MODE env var    (one-shot override; 'LONG_RUN' | 'AUTONOMOUS' | 'INTERACTIVE')
  *   2. ~/.tnf/tui-mode.json    (operator-persisted default)
- *   3. 'INTERACTIVE'           (preserves historical behaviour: wait for operator input)
+ *   3. 'LONG_RUN'              (full autonomous at launch — shell + auto-continue)
  *
  * The three modes differ in WHO is allowed to feed the prompt loop:
  *   INTERACTIVE  → operator keystrokes only; loop blocks on ask() until typed.
- *   AUTONOMOUS   → self-prompted after each LLM response (operator must `/autonomous on`).
+ *   AUTONOMOUS   → self-prompted after each LLM response with shell execution on.
  *   LONG_RUN     → always-on autonomous continuation; operator typing INTERRUPTS cleanly
  *                  by being consumed at the top of the loop before the queued continuation
  *                  fires. Resets only on `.exit`, stdin close, or `TNF_TUI_MODE=INTERACTIVE`.
@@ -15927,6 +15983,27 @@ function enableAutonomousRuntimeDefaults(): void {
  */
 type TuiMode = 'INTERACTIVE' | 'AUTONOMOUS' | 'LONG_RUN';
 
+const DEFAULT_TUI_MODE: TuiMode = 'LONG_RUN';
+
+function getTuiModeConfigPath(): string {
+  const home = process.env.HOME || os.homedir();
+  return path.join(home, '.tnf', 'tui-mode.json');
+}
+
+function persistTuiMode(mode: TuiMode): void {
+  try {
+    const configPath = getTuiModeConfigPath();
+    fs.mkdirSync(path.dirname(configPath), { recursive: true });
+    fs.writeFileSync(
+      configPath,
+      `${JSON.stringify({ mode, updatedAt: new Date().toISOString() }, null, 2)}\n`,
+      'utf8'
+    );
+  } catch {
+    // Persistence is best-effort; env override still works without it.
+  }
+}
+
 function resolveTuiMode(): TuiMode {
   const envMode = (process.env.TNF_TUI_MODE || '').trim().toUpperCase();
   if (envMode === 'LONG_RUN' || envMode === 'AUTONOMOUS' || envMode === 'INTERACTIVE') {
@@ -15934,8 +16011,7 @@ function resolveTuiMode(): TuiMode {
   }
   // Persistence file (operator-set default)
   try {
-    const home = process.env.HOME || os.homedir();
-    const configPath = path.join(home, '.tnf', 'tui-mode.json');
+    const configPath = getTuiModeConfigPath();
     if (fs.existsSync(configPath)) {
       const raw = fs.readFileSync(configPath, 'utf8');
       const parsed = JSON.parse(raw);
@@ -15947,7 +16023,7 @@ function resolveTuiMode(): TuiMode {
   } catch {
     // ignore malformed config; fall through to default
   }
-  return 'INTERACTIVE';
+  return DEFAULT_TUI_MODE;
 }
 
 function readHandoffNextActions(): string[] {
@@ -16206,19 +16282,30 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     isTruthyEnv(process.env.TNF_AUTONOMOUS_ON_BOOT);
 
   // Resolve the persistent TUI mode. LONG_RUN keeps the agent alive without
-  // operator keystrokes; INTERACTIVE is the historical default (wait for input).
+  // operator keystrokes; INTERACTIVE waits for input.
   const tuiMode: TuiMode = resolveTuiMode();
-  if (tuiMode === 'LONG_RUN' && !autonomousMode) {
+  if ((tuiMode === 'LONG_RUN' || tuiMode === 'AUTONOMOUS') && !autonomousMode) {
     autonomousMode = true;
     enableAutonomousRuntimeDefaults();
   }
+  // --autonomous means full autonomous at launch: persist LONG_RUN so relaunches match.
+  if (options?.autonomous && tuiMode !== 'LONG_RUN' && !process.env.TNF_TUI_MODE) {
+    persistTuiMode('LONG_RUN');
+  } else if (!fs.existsSync(getTuiModeConfigPath()) && !process.env.TNF_TUI_MODE) {
+    // Seed operator default so subsequent launches stay fully autonomous.
+    persistTuiMode(DEFAULT_TUI_MODE);
+  }
 
+  const turnCapState = createAutonomousTurnCapState(autonomousTurnCapConfig);
   const autonomousState: AutonomousSessionState = {
     continuePending: autonomousMode,
     handoffTaskIndex: 0,
     contextRefreshPending: false,
-    turnsThisSession: 0,
-    maxTurnsPerSession: AUTONOMOUS_MAX_TURNS,
+    turnsThisSession: turnCapState.turnsThisSession,
+    maxTurnsPerSession: turnCapState.maxTurnsPerSession,
+    softCapNotified: turnCapState.softCapNotified,
+    capCeiling: turnCapState.capCeiling,
+    consecutiveNoBashTurns: 0,
   };
   const slashContext: InteractiveSlashContext = {
     messages,
@@ -16230,12 +16317,12 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
   if (autonomousMode) {
     enableAutonomousRuntimeDefaults();
     console.log(chalk.dim('  Autonomous shell execution: ON (auto-continue enabled)'));
-    if (tuiMode === 'LONG_RUN') {
+    if (tuiMode === 'LONG_RUN' || tuiMode === 'AUTONOMOUS') {
       console.log(
         chalk.dim('  TUI mode: ') +
-          chalk.bold.cyan('LONG_RUN') +
+          chalk.bold.cyan(tuiMode) +
           chalk.dim(
-            '  (persisted at ~/.tnf/tui-mode.json; operator typing still interrupts; ' +
+            '  (default full-autonomous; persisted at ~/.tnf/tui-mode.json; operator typing still interrupts; ' +
               'unset with TNF_TUI_MODE=INTERACTIVE)'
           )
       );
@@ -16389,7 +16476,22 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
         const response = messages[messages.length - 1].content;
         const blocks = capInteractiveBashBlocks(extractInteractiveBashBlocks(response));
         if (blocks.length > 0) {
+          autonomousState.consecutiveNoBashTurns = 0;
           await runInteractiveBashBlocks(blocks, messages);
+        } else {
+          autonomousState.consecutiveNoBashTurns += 1;
+          const stallMsg = [
+            '[Autonomous stall break]',
+            `Zero fenced bash/sh blocks in the last ${autonomousState.consecutiveNoBashTurns} autonomous turn(s).`,
+            'Do NOT narrate. Emit 1–5 fenced ```bash blocks that run real commands now.',
+            'Inspect → Act → Verify. Prefer handoff next_actions.',
+          ].join('\n');
+          messages.push({ role: 'system', content: stallMsg });
+          console.log(
+            chalk.yellow(
+              `\n  ⚠ No bash blocks executed (${autonomousState.consecutiveNoBashTurns} turn(s)) — stall break injected`
+            )
+          );
         }
         const verifyChecks = await runAutonomousVerifyGates();
         const verifySummary = verifyChecks
@@ -16413,7 +16515,44 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
         if (actions.length > 0 && autonomousState.handoffTaskIndex < actions.length) {
           autonomousState.handoffTaskIndex += 1;
         }
-        if (autonomousState.turnsThisSession >= autonomousState.maxTurnsPerSession) {
+
+        // Cap-extension override: LONG_RUN only, after soft window, clamped to ceiling.
+        const requestedExtend = parseExtendTurnCapMarker(
+          String(response),
+          autonomousTurnCapConfig.extendDefault
+        );
+        if (requestedExtend !== null) {
+          const extension = applyTurnCapExtension(
+            autonomousState,
+            requestedExtend,
+            autonomousState.turnsThisSession,
+            autonomousTurnCapConfig.softRatio,
+            tuiMode
+          );
+          if (extension.kind === 'granted' || extension.kind === 'denied') {
+            console.log(
+              (extension.kind === 'granted' ? chalk.cyan : chalk.yellow)(
+                `\n  ${extension.consoleLine}`
+              )
+            );
+            messages.push({ role: 'system', content: extension.systemMessage });
+          }
+        }
+
+        // Soft cap: one-shot agent notification before hard halt.
+        const softWarning = buildSoftCapWarning(
+          autonomousState,
+          autonomousTurnCapConfig.softRatio,
+          tuiMode,
+          autonomousTurnCapConfig.extendDefault
+        );
+        if (softWarning) {
+          autonomousState.softCapNotified = true;
+          console.log(chalk.yellow(`\n  ${softWarning.consoleLine}`));
+          messages.push({ role: 'system', content: softWarning.systemMessage });
+        }
+
+        if (isHardTurnCapReached(autonomousState)) {
           console.log(
             chalk.yellow(
               `\n  Autonomous turn cap reached (${autonomousState.maxTurnsPerSession}). Awaiting operator input.`
@@ -16553,6 +16692,10 @@ async function main(): Promise<void> {
   }
   if (isCursorPassthroughArgv(argv)) {
     await runPassthrough('cursor', argv.slice(3));
+    return;
+  }
+  if (isClaudePassthroughArgv(argv)) {
+    await runPassthrough('claude', argv.slice(3));
     return;
   }
   const implicitArgs = resolveImplicitPassthroughArgs(argv);

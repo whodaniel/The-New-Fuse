@@ -1,19 +1,14 @@
 {
-  "now": "2026-07-21T04:00:07Z",
-  "ok": false,
+  "now": "2026-07-22T12:00:03Z",
+  "ok": true,
   "summaries": {
     "cron_count": 19,
-    "live_count": 25,
+    "live_count": 13,
     "packages_count": 93,
     "apps_count": 30,
-    "proto_count": 31,
+    "proto_count": 32,
     "agent_scripts_count": 26,
     "relay_core_ts_count": 69
   },
-  "findings": [
-    [
-      "MISSING_BROKER",
-      "broker-agent process not running"
-    ]
-  ]
+  "findings": []
 }

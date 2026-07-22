@@ -6,8 +6,8 @@
  * for MCP client connections.
  */
 import { EventEmitter } from 'events';
-import { ConnectionStatus } from '../interfaces/IMCPConnection.js';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error.js';
+import { ConnectionStatus, } from '../interfaces/IMCPConnection.js';
+import { JSONRPCErrorCode, MCPErrorClass, MCPErrorCode } from '../types/error.js';
 /**
  * WebSocket-based MCP Connection implementation
  */
@@ -16,6 +16,9 @@ class WebSocketMCPConnection extends EventEmitter {
         super();
         this.status = ConnectionStatus.DISCONNECTED;
         this.lastActivity = new Date();
+        // Set by close() so a deliberate close (vs. an unexpected drop) doesn't
+        // trigger the connection manager's automatic reconnection logic.
+        this.isIntentionalClose = false;
         this.ws = null;
         this.connectTime = null;
         this.bytesTransferred = 0;
@@ -31,7 +34,25 @@ class WebSocketMCPConnection extends EventEmitter {
         }
         this.status = ConnectionStatus.CONNECTING;
         this.connectTime = new Date();
-        return new Promise((resolve, reject) => {
+        return new Promise((resolvePromise, rejectPromise) => {
+            // Only the first settlement should take effect: onopen/onmessage,
+            // onerror, onclose, and the timeout handler below can all race to
+            // settle this promise (e.g. the timeout handler closes the socket,
+            // which synchronously fires onclose, which would otherwise settle
+            // the promise a second time with a less specific error).
+            let settled = false;
+            const resolve = () => {
+                if (settled)
+                    return;
+                settled = true;
+                resolvePromise();
+            };
+            const reject = (error) => {
+                if (settled)
+                    return;
+                settled = true;
+                rejectPromise(error);
+            };
             try {
                 // Convert HTTP/HTTPS URLs to WebSocket URLs with proper TLS support
                 let wsUrl = this.endpoint;
@@ -73,14 +94,19 @@ class WebSocketMCPConnection extends EventEmitter {
                         wsOptions.passphrase = options.tls.passphrase;
                 }
                 // Create WebSocket with options (Node.js) or just URL (browser)
-                this.ws = typeof window === 'undefined' && Object.keys(wsOptions).length > 0
-                    ? new WebSocket(wsUrl, wsOptions)
-                    : new WebSocket(wsUrl);
+                this.ws =
+                    typeof window === 'undefined' && Object.keys(wsOptions).length > 0
+                        ? new WebSocket(wsUrl, wsOptions)
+                        : new WebSocket(wsUrl);
                 const timeout = setTimeout(() => {
                     if (this.ws && this.ws.readyState !== WebSocket.OPEN) {
-                        this.ws.close();
                         this.status = ConnectionStatus.ERROR;
+                        // Reject before closing: close() can synchronously fire onclose,
+                        // which would otherwise settle the promise first with a less
+                        // specific error (guarded against by `settled`, but only the
+                        // first settlement's message reaches the caller).
                         reject(new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Connection timeout'));
+                        this.ws.close();
                     }
                 }, options.timeout);
                 this.ws.onopen = () => {
@@ -106,7 +132,8 @@ class WebSocketMCPConnection extends EventEmitter {
                     clearTimeout(timeout);
                     this.status = ConnectionStatus.ERROR;
                     this.emit('error', error);
-                    reject(new MCPErrorClass(MCPErrorCode.CONNECTION_FAILED, 'WebSocket error'));
+                    const message = error instanceof Error ? error.message : 'WebSocket error';
+                    reject(new MCPErrorClass(MCPErrorCode.CONNECTION_FAILED, message));
                 };
                 this.ws.onclose = () => {
                     clearTimeout(timeout);
@@ -136,6 +163,7 @@ class WebSocketMCPConnection extends EventEmitter {
         this.lastActivity = new Date();
     }
     async close() {
+        this.isIntentionalClose = true;
         if (this.ws) {
             this.ws.close();
             this.ws = null;
@@ -156,7 +184,7 @@ class WebSocketMCPConnection extends EventEmitter {
             averageConnectionTime: uptime,
             dataTransferred: this.bytesTransferred,
             lastActivity: this.lastActivity,
-            uptime
+            uptime,
         };
     }
     async ping() {
@@ -170,7 +198,7 @@ class WebSocketMCPConnection extends EventEmitter {
                 jsonrpc: '2.0',
                 id: `ping_${Date.now()}`,
                 method: 'ping',
-                params: {}
+                params: {},
             };
             const timeout = setTimeout(() => {
                 reject(new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Ping timeout'));
@@ -235,19 +263,25 @@ export class ConnectionManager extends EventEmitter {
         this.connectionHealth = new Map();
         this.reconnectTimers = new Map();
         this.isShuttingDown = false;
+        this.onSigterm = () => {
+            void this.shutdown();
+        };
+        this.onSigint = () => {
+            void this.shutdown();
+        };
         this.poolConfig = {
             maxConnections: 100,
             maxIdleTime: 300000, // 5 minutes
             healthCheckInterval: 30000, // 30 seconds
             reconnectInterval: 5000, // 5 seconds
             maxReconnectAttempts: 5,
-            ...poolConfig
+            ...poolConfig,
         };
         // Start health check monitoring
         this.startHealthMonitoring();
         // Handle process shutdown
-        process.on('SIGTERM', () => this.shutdown());
-        process.on('SIGINT', () => this.shutdown());
+        process.on('SIGTERM', this.onSigterm);
+        process.on('SIGINT', this.onSigint);
     }
     async createConnection(endpoint, options) {
         // Check connection pool limits
@@ -282,7 +316,7 @@ export class ConnectionManager extends EventEmitter {
             isHealthy: true,
             lastHealthCheck: new Date(),
             consecutiveFailures: 0,
-            averageResponseTime: 0
+            averageResponseTime: 0,
         });
         this.emit('connectionCreated', endpoint);
         return connection;
@@ -293,7 +327,7 @@ export class ConnectionManager extends EventEmitter {
             baseDelay: options.retryDelay,
             maxDelay: 30000, // 30 seconds max
             backoffMultiplier: 2,
-            jitter: 0.1
+            jitter: 0.1,
         };
         let lastError = null;
         for (let attempt = 0; attempt <= retryPolicy.maxAttempts; attempt++) {
@@ -306,14 +340,16 @@ export class ConnectionManager extends EventEmitter {
                 if (attempt < retryPolicy.maxAttempts) {
                     // Calculate delay with exponential backoff and jitter
                     const baseDelay = Math.min(retryPolicy.baseDelay * Math.pow(retryPolicy.backoffMultiplier || 2, attempt), retryPolicy.maxDelay);
-                    const jitter = retryPolicy.jitter ?
-                        (Math.random() * 2 - 1) * retryPolicy.jitter * baseDelay : 0;
+                    const jitter = retryPolicy.jitter
+                        ? (Math.random() * 2 - 1) * retryPolicy.jitter * baseDelay
+                        : 0;
                     const delay = Math.max(0, baseDelay + jitter);
-                    await new Promise(resolve => setTimeout(resolve, delay));
+                    await new Promise((resolve) => setTimeout(resolve, delay));
                 }
             }
         }
-        throw lastError || new MCPErrorClass(MCPErrorCode.CONNECTION_FAILED, 'Failed to connect after retries');
+        throw (lastError ||
+            new MCPErrorClass(MCPErrorCode.CONNECTION_FAILED, 'Failed to connect after retries'));
     }
     getConnection(endpoint) {
         return this.connections.get(endpoint) || null;
@@ -348,18 +384,18 @@ export class ConnectionManager extends EventEmitter {
                 averageConnectionTime: 0,
                 dataTransferred: 0,
                 lastActivity: new Date(),
-                uptime: 0
+                uptime: 0,
             };
         }
-        const metrics = connections.map(conn => conn.getMetrics());
+        const metrics = connections.map((conn) => conn.getMetrics());
         return {
             totalConnections: metrics.reduce((sum, m) => sum + m.totalConnections, 0),
             activeConnections: metrics.reduce((sum, m) => sum + m.activeConnections, 0),
             failedConnections: metrics.reduce((sum, m) => sum + m.failedConnections, 0),
             averageConnectionTime: metrics.reduce((sum, m) => sum + m.averageConnectionTime, 0) / metrics.length,
             dataTransferred: metrics.reduce((sum, m) => sum + m.dataTransferred, 0),
-            lastActivity: new Date(Math.max(...metrics.map(m => m.lastActivity.getTime()))),
-            uptime: metrics.reduce((sum, m) => sum + m.uptime, 0) / metrics.length
+            lastActivity: new Date(Math.max(...metrics.map((m) => m.lastActivity.getTime()))),
+            uptime: metrics.reduce((sum, m) => sum + m.uptime, 0) / metrics.length,
         };
     }
     listConnections() {
@@ -377,7 +413,7 @@ export class ConnectionManager extends EventEmitter {
             clearTimeout(timer);
         }
         this.reconnectTimers.clear();
-        const closePromises = Array.from(this.connections.keys()).map(endpoint => this.closeConnection(endpoint));
+        const closePromises = Array.from(this.connections.keys()).map((endpoint) => this.closeConnection(endpoint));
         await Promise.all(closePromises);
     }
     /**
@@ -402,24 +438,38 @@ export class ConnectionManager extends EventEmitter {
         const healthStats = Array.from(this.connectionHealth.values());
         return {
             totalConnections: connections.length,
-            activeConnections: connections.filter(c => c.isActive()).length,
-            inactiveConnections: connections.filter(c => !c.isActive()).length,
-            healthyConnections: healthStats.filter(h => h.isHealthy).length,
-            unhealthyConnections: healthStats.filter(h => !h.isHealthy).length,
+            activeConnections: connections.filter((c) => c.isActive()).length,
+            inactiveConnections: connections.filter((c) => !c.isActive()).length,
+            healthyConnections: healthStats.filter((h) => h.isHealthy).length,
+            unhealthyConnections: healthStats.filter((h) => !h.isHealthy).length,
             endpoints: Array.from(this.connections.keys()),
-            poolConfig: this.poolConfig
+            poolConfig: this.poolConfig,
         };
     }
     /**
      * Handle connection disconnection with automatic reconnection
      */
     handleConnectionDisconnected(endpoint) {
+        const connection = this.connections.get(endpoint);
         const health = this.connectionHealth.get(endpoint);
         if (health) {
             health.isHealthy = false;
             health.consecutiveFailures++;
         }
         this.emit('connectionClosed', endpoint);
+        // A deliberate connection.close() shouldn't trigger auto-reconnect --
+        // remove it from the active pool instead (matching closeConnection()'s
+        // behavior), while keeping the health record queryable.
+        if (connection?.isIntentionalClose) {
+            const timer = this.reconnectTimers.get(endpoint);
+            if (timer) {
+                clearTimeout(timer);
+                this.reconnectTimers.delete(endpoint);
+            }
+            this.connections.delete(endpoint);
+            this.connectionOptions.delete(endpoint);
+            return;
+        }
         // Attempt automatic reconnection if not shutting down
         if (!this.isShuttingDown) {
             this.scheduleReconnection(endpoint);
@@ -525,8 +575,7 @@ export class ConnectionManager extends EventEmitter {
                     health.isHealthy = true;
                     health.lastHealthCheck = new Date();
                     health.consecutiveFailures = 0;
-                    health.averageResponseTime =
-                        (health.averageResponseTime + responseTime) / 2;
+                    health.averageResponseTime = (health.averageResponseTime + responseTime) / 2;
                     health.lastError = undefined;
                 }
                 else {
@@ -590,8 +639,7 @@ export class ConnectionManager extends EventEmitter {
                 health.isHealthy = true;
                 health.lastHealthCheck = new Date();
                 health.consecutiveFailures = 0;
-                health.averageResponseTime =
-                    (health.averageResponseTime + responseTime) / 2;
+                health.averageResponseTime = (health.averageResponseTime + responseTime) / 2;
                 health.lastError = undefined;
                 return true;
             }
@@ -614,6 +662,16 @@ export class ConnectionManager extends EventEmitter {
      */
     async shutdown() {
         this.isShuttingDown = true;
+        if (this.healthCheckTimer) {
+            clearInterval(this.healthCheckTimer);
+            this.healthCheckTimer = undefined;
+        }
+        for (const timer of this.reconnectTimers.values()) {
+            clearTimeout(timer);
+        }
+        this.reconnectTimers.clear();
+        process.removeListener('SIGTERM', this.onSigterm);
+        process.removeListener('SIGINT', this.onSigint);
         await this.closeAllConnections();
         this.emit('shutdown');
     }
@@ -624,26 +682,27 @@ export class ConnectionManager extends EventEmitter {
         const connections = Array.from(this.connections.values());
         const healthStats = Array.from(this.connectionHealth.values());
         const totalResponseTime = healthStats.reduce((sum, h) => sum + h.averageResponseTime, 0);
-        const healthyConnections = healthStats.filter(h => h.isHealthy);
+        const healthyConnections = healthStats.filter((h) => h.isHealthy);
         return {
             pool: {
                 totalConnections: connections.length,
-                activeConnections: connections.filter(c => c.isActive()).length,
+                activeConnections: connections.filter((c) => c.isActive()).length,
                 healthyConnections: healthyConnections.length,
                 maxConnections: this.poolConfig.maxConnections,
-                utilizationPercentage: (connections.length / this.poolConfig.maxConnections) * 100
+                utilizationPercentage: (connections.length / this.poolConfig.maxConnections) * 100,
             },
             performance: {
                 averageResponseTime: healthStats.length > 0 ? totalResponseTime / healthStats.length : 0,
                 totalFailures: healthStats.reduce((sum, h) => sum + h.consecutiveFailures, 0),
-                reconnectionAttempts: this.reconnectTimers.size
+                reconnectionAttempts: this.reconnectTimers.size,
             },
             health: {
                 healthyPercentage: connections.length > 0 ? (healthyConnections.length / connections.length) * 100 : 0,
-                unhealthyConnections: healthStats.filter(h => !h.isHealthy).length,
-                lastHealthCheck: healthStats.length > 0 ?
-                    new Date(Math.max(...healthStats.map(h => h.lastHealthCheck.getTime()))) : null
-            }
+                unhealthyConnections: healthStats.filter((h) => !h.isHealthy).length,
+                lastHealthCheck: healthStats.length > 0
+                    ? new Date(Math.max(...healthStats.map((h) => h.lastHealthCheck.getTime())))
+                    : null,
+            },
         };
     }
     /**
@@ -652,11 +711,11 @@ export class ConnectionManager extends EventEmitter {
     getSecurityMetrics() {
         const connections = Array.from(this.connections.values());
         const options = Array.from(this.connectionOptions.values());
-        const tlsConnections = options.filter(opt => opt.tls?.enabled).length;
-        const authenticatedConnections = options.filter(opt => opt.auth).length;
+        const tlsConnections = options.filter((opt) => opt.tls?.enabled).length;
+        const authenticatedConnections = options.filter((opt) => opt.auth).length;
         const authTypes = options
-            .filter(opt => opt.auth)
-            .map(opt => opt.auth.type)
+            .filter((opt) => opt.auth)
+            .map((opt) => opt.auth.type)
             .reduce((acc, type) => {
             acc[type] = (acc[type] || 0) + 1;
             return acc;
@@ -667,12 +726,12 @@ export class ConnectionManager extends EventEmitter {
                 tlsPercentage: connections.length > 0 ? (tlsConnections / connections.length) * 100 : 0,
                 authenticatedConnections,
                 authenticationPercentage: connections.length > 0 ? (authenticatedConnections / connections.length) * 100 : 0,
-                authenticationTypes: authTypes
+                authenticationTypes: authTypes,
             },
             compliance: {
-                secureConnections: options.filter(opt => opt.tls?.enabled && opt.auth).length,
-                insecureConnections: options.filter(opt => !opt.tls?.enabled || !opt.auth).length
-            }
+                secureConnections: options.filter((opt) => opt.tls?.enabled && opt.auth).length,
+                insecureConnections: options.filter((opt) => !opt.tls?.enabled || !opt.auth).length,
+            },
         };
     }
     /**
@@ -682,29 +741,30 @@ export class ConnectionManager extends EventEmitter {
         const connections = Array.from(this.connections.values());
         const healthStats = Array.from(this.connectionHealth.values());
         const now = Date.now();
-        const metrics = connections.map(conn => conn.getMetrics());
+        const metrics = connections.map((conn) => conn.getMetrics());
         return {
             throughput: {
                 totalDataTransferred: metrics.reduce((sum, m) => sum + m.dataTransferred, 0),
-                averageDataPerConnection: metrics.length > 0 ?
-                    metrics.reduce((sum, m) => sum + m.dataTransferred, 0) / metrics.length : 0
+                averageDataPerConnection: metrics.length > 0
+                    ? metrics.reduce((sum, m) => sum + m.dataTransferred, 0) / metrics.length
+                    : 0,
             },
             latency: {
-                averageResponseTime: healthStats.length > 0 ?
-                    healthStats.reduce((sum, h) => sum + h.averageResponseTime, 0) / healthStats.length : 0,
-                minResponseTime: healthStats.length > 0 ?
-                    Math.min(...healthStats.map(h => h.averageResponseTime)) : 0,
-                maxResponseTime: healthStats.length > 0 ?
-                    Math.max(...healthStats.map(h => h.averageResponseTime)) : 0
+                averageResponseTime: healthStats.length > 0
+                    ? healthStats.reduce((sum, h) => sum + h.averageResponseTime, 0) / healthStats.length
+                    : 0,
+                minResponseTime: healthStats.length > 0 ? Math.min(...healthStats.map((h) => h.averageResponseTime)) : 0,
+                maxResponseTime: healthStats.length > 0 ? Math.max(...healthStats.map((h) => h.averageResponseTime)) : 0,
             },
             reliability: {
-                uptime: metrics.length > 0 ?
-                    metrics.reduce((sum, m) => sum + m.uptime, 0) / metrics.length : 0,
-                successRate: healthStats.length > 0 ?
-                    (healthStats.filter(h => h.isHealthy).length / healthStats.length) * 100 : 0,
-                failureRate: healthStats.length > 0 ?
-                    (healthStats.filter(h => !h.isHealthy).length / healthStats.length) * 100 : 0
-            }
+                uptime: metrics.length > 0 ? metrics.reduce((sum, m) => sum + m.uptime, 0) / metrics.length : 0,
+                successRate: healthStats.length > 0
+                    ? (healthStats.filter((h) => h.isHealthy).length / healthStats.length) * 100
+                    : 0,
+                failureRate: healthStats.length > 0
+                    ? (healthStats.filter((h) => !h.isHealthy).length / healthStats.length) * 100
+                    : 0,
+            },
         };
     }
 }

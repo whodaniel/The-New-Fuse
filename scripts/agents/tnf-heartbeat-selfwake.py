@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-TNF Heartbeat Self-Wake — ensures the TNF agent daemon and A2A bridge never stall.
+TNF Heartbeat Self-Wake — ensures the daemon + bridge + assimilation cycle stay alive.
+[CORE TENET 2026-07-22]: PARODY + ASSIMILATE best from ANY cutting-edge agent.
+Includes daily news gathering by scouting agents (SCOUT probe / knowledge-scout-sprint). — ensures the TNF agent daemon and A2A bridge never stall.
 
 Checks:
 1. Is the daemon process alive? If not, restart in watch mode.

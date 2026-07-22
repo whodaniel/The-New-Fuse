@@ -35,7 +35,7 @@ export class CircuitBreaker extends EventEmitter {
             rollingWindowSize: 10,
             rollingWindowTime: 60000, // 1 minute
             enableMonitoring: true,
-            ...config
+            ...config,
         };
         this.logger = logger || new Logger(`CircuitBreaker:${name}`);
         if (this.config.enableMonitoring) {
@@ -46,7 +46,7 @@ export class CircuitBreaker extends EventEmitter {
      * Execute a function with circuit breaker protection
      */
     async execute(fn) {
-        const startTime = Date.now();
+        const startTime = performance.now();
         this.totalRequests++;
         // Check if circuit is open
         if (this.state === CircuitState.OPEN) {
@@ -56,8 +56,8 @@ export class CircuitBreaker extends EventEmitter {
                 return {
                     success: false,
                     rejected: true,
-                    executionTime: Date.now() - startTime,
-                    error: new Error(`Circuit breaker is OPEN for ${this.name}`)
+                    executionTime: performance.now() - startTime,
+                    error: new Error(`Circuit breaker is OPEN for ${this.name}`),
                 };
             }
             else {
@@ -67,23 +67,23 @@ export class CircuitBreaker extends EventEmitter {
         }
         try {
             const result = await fn();
-            const executionTime = Date.now() - startTime;
+            const executionTime = performance.now() - startTime;
             this.onSuccess();
             return {
                 success: true,
                 data: result,
                 rejected: false,
-                executionTime
+                executionTime,
             };
         }
         catch (error) {
-            const executionTime = Date.now() - startTime;
+            const executionTime = performance.now() - startTime;
             this.onFailure(error instanceof Error ? error : new Error(String(error)));
             return {
                 success: false,
                 error: error instanceof Error ? error : new Error(String(error)),
                 rejected: false,
-                executionTime
+                executionTime,
             };
         }
     }
@@ -92,20 +92,19 @@ export class CircuitBreaker extends EventEmitter {
      */
     getStats() {
         const now = Date.now();
-        const timeUntilRetry = this.nextAttemptTime ?
-            Math.max(0, this.nextAttemptTime.getTime() - now) : undefined;
+        const timeUntilRetry = this.nextAttemptTime
+            ? Math.max(0, this.nextAttemptTime.getTime() - now)
+            : undefined;
         return {
             state: this.state,
             totalRequests: this.totalRequests,
             successfulRequests: this.successfulRequests,
             failedRequests: this.failedRequests,
             rejectedRequests: this.rejectedRequests,
-            successRate: this.totalRequests > 0 ?
-                (this.successfulRequests / this.totalRequests) * 100 : 0,
-            failureRate: this.totalRequests > 0 ?
-                (this.failedRequests / this.totalRequests) * 100 : 0,
+            successRate: this.totalRequests > 0 ? (this.successfulRequests / this.totalRequests) * 100 : 0,
+            failureRate: this.totalRequests > 0 ? (this.failedRequests / this.totalRequests) * 100 : 0,
             lastStateChange: this.lastStateChange,
-            timeUntilRetry
+            timeUntilRetry,
         };
     }
     /**
@@ -193,7 +192,7 @@ export class CircuitBreaker extends EventEmitter {
         const recentRequests = this.getRecentRequests();
         if (recentRequests >= this.config.rollingWindowSize) {
             const failureRate = recentFailures / recentRequests;
-            return failureRate >= (this.config.failureThreshold / this.config.rollingWindowSize);
+            return failureRate >= this.config.failureThreshold / this.config.rollingWindowSize;
         }
         return false;
     }
@@ -231,7 +230,7 @@ export class CircuitBreaker extends EventEmitter {
         this.requestHistory.push({ timestamp: now, success });
         // Clean up old entries
         const cutoff = new Date(now.getTime() - this.config.rollingWindowTime);
-        const firstValidIndex = this.requestHistory.findIndex(entry => entry.timestamp >= cutoff);
+        const firstValidIndex = this.requestHistory.findIndex((entry) => entry.timestamp >= cutoff);
         if (firstValidIndex > 0) {
             this.requestHistory.splice(0, firstValidIndex);
         }
@@ -245,8 +244,7 @@ export class CircuitBreaker extends EventEmitter {
      */
     getRecentFailures() {
         const cutoff = new Date(Date.now() - this.config.rollingWindowTime);
-        return this.requestHistory
-            .filter(entry => entry.timestamp >= cutoff && !entry.success)
+        return this.requestHistory.filter((entry) => entry.timestamp >= cutoff && !entry.success)
             .length;
     }
     /**
@@ -254,9 +252,7 @@ export class CircuitBreaker extends EventEmitter {
      */
     getRecentRequests() {
         const cutoff = new Date(Date.now() - this.config.rollingWindowTime);
-        return this.requestHistory
-            .filter(entry => entry.timestamp >= cutoff)
-            .length;
+        return this.requestHistory.filter((entry) => entry.timestamp >= cutoff).length;
     }
     /**
      * Start monitoring (emit periodic stats)
@@ -366,7 +362,7 @@ export class CircuitBreakerManager extends EventEmitter {
             totalCircuits,
             healthyCircuits,
             openCircuits,
-            halfOpenCircuits
+            halfOpenCircuits,
         };
     }
 }

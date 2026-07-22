@@ -5,7 +5,7 @@
  * retry logic, and comprehensive error handling.
  */
 import { EventEmitter } from 'events';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error.js';
+import { JSONRPCErrorCode, MCPErrorClass, MCPErrorCode } from '../types/error.js';
 import { MessageQueue } from './MessageQueue.js';
 /**
  * Message Router class for routing MCP requests
@@ -77,7 +77,7 @@ export class MessageRouter extends EventEmitter {
                 startTime,
                 targetService,
                 attempts: 0,
-                reject: reject // Store the reject function of this promise
+                reject: reject, // Store the reject function of this promise
             };
             this.activeRequests.set(requestId, tracker);
             try {
@@ -152,7 +152,7 @@ export class MessageRouter extends EventEmitter {
                 this.emit('notificationRouted', {
                     notification,
                     subscription: matchResult.subscription,
-                    matchResult
+                    matchResult,
                 });
             }
             catch (error) {
@@ -303,7 +303,7 @@ export class MessageRouter extends EventEmitter {
                 if (targetService) {
                     // Find specific target service
                     const allServices = this.loadBalancer.getAllServices();
-                    const serviceInstance = allServices.find(s => s.service.id === targetService);
+                    const serviceInstance = allServices.find((s) => s.service.id === targetService);
                     service = serviceInstance?.service || null;
                 }
                 else {
@@ -317,7 +317,7 @@ export class MessageRouter extends EventEmitter {
                         await this.queueRequest(request, targetService, {
                             priority: routingInfo?.metadata?.priority || 5,
                             maxRetries: routingInfo?.retryPolicy?.maxAttempts || 3,
-                            timeoutMs: routingInfo?.timeout || 300000
+                            timeoutMs: routingInfo?.timeout || 300000,
                         });
                         // Return a deferred response indicating the request was queued
                         return {
@@ -327,8 +327,8 @@ export class MessageRouter extends EventEmitter {
                                 status: 'queued',
                                 message: 'Request queued for offline service',
                                 targetService,
-                                timestamp: new Date().toISOString()
-                            }
+                                timestamp: new Date().toISOString(),
+                            },
                         };
                     }
                     else {
@@ -371,7 +371,8 @@ export class MessageRouter extends EventEmitter {
             }
         }
         // This should never be reached, but just in case
-        throw lastError || new MCPErrorClass(JSONRPCErrorCode.INTERNAL_ERROR, 'Request routing failed after all attempts');
+        throw (lastError ||
+            new MCPErrorClass(JSONRPCErrorCode.INTERNAL_ERROR, 'Request routing failed after all attempts'));
     }
     /**
      * Send request to a specific service
@@ -387,7 +388,8 @@ export class MessageRouter extends EventEmitter {
             setTimeout(() => {
                 clearTimeout(timeoutId);
                 // Simulate occasional failures for testing
-                if (Math.random() < 0.1) { // 10% failure rate
+                if (Math.random() < 0.1) {
+                    // 10% failure rate
                     reject(new MCPErrorClass(JSONRPCErrorCode.INTERNAL_ERROR, 'Simulated service error'));
                     return;
                 }
@@ -398,8 +400,8 @@ export class MessageRouter extends EventEmitter {
                     result: {
                         serviceId,
                         method: request.method,
-                        timestamp: new Date().toISOString()
-                    }
+                        timestamp: new Date().toISOString(),
+                    },
                 });
             }, Math.random() * 100 + 50); // 50-150ms response time
         });
@@ -414,7 +416,8 @@ export class MessageRouter extends EventEmitter {
             // Simulate notification sending
             setTimeout(() => {
                 // Simulate occasional failures
-                if (Math.random() < 0.05) { // 5% failure rate
+                if (Math.random() < 0.05) {
+                    // 5% failure rate
                     reject(new Error('Simulated notification failure'));
                     return;
                 }
@@ -436,10 +439,10 @@ export class MessageRouter extends EventEmitter {
      * Calculate retry delay with exponential backoff
      */
     calculateRetryDelay(attempt, retryPolicy) {
-        const baseDelay = retryPolicy.initialDelay || 1000;
-        const maxDelay = retryPolicy.maxDelay || 30000;
-        const multiplier = retryPolicy.backoffMultiplier || 2;
-        const jitter = retryPolicy.jitter || 0.1;
+        const baseDelay = retryPolicy.initialDelay ?? 1000;
+        const maxDelay = retryPolicy.maxDelay ?? 30000;
+        const multiplier = retryPolicy.backoffMultiplier ?? 2;
+        const jitter = retryPolicy.jitter ?? 0.1;
         let delay = baseDelay * Math.pow(multiplier, attempt - 1);
         delay = Math.min(delay, maxDelay);
         // Add jitter
@@ -453,7 +456,7 @@ export class MessageRouter extends EventEmitter {
      * Sleep for specified milliseconds
      */
     sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
     /**
      * Initialize metrics object
@@ -467,7 +470,7 @@ export class MessageRouter extends EventEmitter {
             requestsPerSecond: 0,
             activeConnections: 0,
             serviceDistribution: {},
-            errorDistribution: {}
+            errorDistribution: {},
         };
     }
     /**

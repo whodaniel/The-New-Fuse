@@ -886,14 +886,31 @@ export class TNFRelayServer extends EventEmitter {
         // Publish registration request to Redis for Master Clock
         if (this.bridge) {
           void this.setupRegistryReplyListener();
-          this.bridge.publish(
-            'tnf:relay:agent_register_requests',
-            JSON.stringify({
-              ...registrationRequest,
-              replyTo: `tnf:master:agent_registry_updates:${requestedAgentId}`, // Master clock replies here
+          void this.bridge
+            .publish(
+              'tnf:relay:agent_register_requests',
+              JSON.stringify({
+                ...registrationRequest,
+                replyTo: `tnf:master:agent_registry_updates:${requestedAgentId}`, // Master clock replies here
+              })
+            )
+            .then((n) => {
+              if (n > 0) {
+                console.log(
+                  `[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`
+                );
+              } else {
+                console.warn(
+                  `[Relay] AGENT_REGISTER for ${requestedAgentId} deferred (Redis bridge not ready).`
+                );
+              }
             })
-          );
-          console.log(`[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`);
+            .catch((err) => {
+              console.warn(
+                `[Relay] AGENT_REGISTER publish failed for ${requestedAgentId}:`,
+                err instanceof Error ? err.message : err
+              );
+            });
 
           const registrationTimeoutMs = isLoopbackAddress(remoteAddress) ? 1500 : 8000;
 

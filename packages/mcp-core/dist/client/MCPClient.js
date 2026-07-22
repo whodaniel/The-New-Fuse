@@ -7,10 +7,10 @@
 import { EventEmitter } from 'events';
 import { ConnectionStatus } from '../interfaces/IMCPConnection.js';
 import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
-import { ConnectionManager } from './ConnectionManager.js';
-import { RequestManager } from './RequestManager.js';
-import { EventManager } from './EventManager.js';
 import { ClientCache } from './ClientCache.js';
+import { ConnectionManager } from './ConnectionManager.js';
+import { EventManager } from './EventManager.js';
+import { RequestManager } from './RequestManager.js';
 /**
  * MCP Client implementation
  */
@@ -31,7 +31,7 @@ export class MCPClient extends EventEmitter {
             connectionFailures: 0,
             dataSent: 0,
             dataReceived: 0,
-            startTime: this.startTime
+            startTime: this.startTime,
         };
         this.connectionManager = new ConnectionManager();
         this.requestManager = new RequestManager(config.timeout, config.retryPolicy, config.options?.maxQueueSize);
@@ -40,7 +40,7 @@ export class MCPClient extends EventEmitter {
             maxSize: 1000,
             defaultTTL: config.options?.cacheTTL || 300000,
             cleanupInterval: 60000,
-            enableStatistics: true
+            enableStatistics: true,
         });
         this.setupEventHandlers();
         this.isInitialized = true;
@@ -95,7 +95,7 @@ export class MCPClient extends EventEmitter {
             retryAttempts: this.config.retryPolicy.maxAttempts,
             retryDelay: this.config.retryPolicy.baseDelay,
             keepAlive: true,
-            ...options
+            ...options,
         };
         try {
             const connection = await this.connectionManager.createConnection(endpoint, connectionOptions);
@@ -163,7 +163,7 @@ export class MCPClient extends EventEmitter {
             jsonrpc: '2.0',
             id: this.generateRequestId(),
             method: 'resources/list',
-            params: pattern ? { pattern } : {}
+            params: pattern ? { pattern } : {},
         };
         const response = await this.sendRequest(request);
         if (response.error) {
@@ -186,7 +186,7 @@ export class MCPClient extends EventEmitter {
             jsonrpc: '2.0',
             id: this.generateRequestId(),
             method: 'resources/read',
-            params: { uri }
+            params: { uri },
         };
         const response = await this.sendRequest(request);
         if (response.error) {
@@ -214,7 +214,7 @@ export class MCPClient extends EventEmitter {
             jsonrpc: '2.0',
             id: this.generateRequestId(),
             method: 'tools/call',
-            params: { name, arguments: params }
+            params: { name, arguments: params },
         };
         const response = await this.sendRequest(request);
         if (response.error) {
@@ -250,9 +250,9 @@ export class MCPClient extends EventEmitter {
                 capabilities: {},
                 clientInfo: {
                     name: this.config.name,
-                    version: this.config.version
-                }
-            }
+                    version: this.config.version,
+                },
+            },
         };
         const response = await this.sendRequest(request);
         if (response.error) {
@@ -269,8 +269,9 @@ export class MCPClient extends EventEmitter {
      * Check if the client is currently connected
      */
     isConnected() {
-        return this.currentEndpoint !== null &&
-            this.connectionManager.getConnectionStatus(this.currentEndpoint) === ConnectionStatus.CONNECTED;
+        return (this.currentEndpoint !== null &&
+            this.connectionManager.getConnectionStatus(this.currentEndpoint) ===
+                ConnectionStatus.CONNECTED);
     }
     /**
      * Get the current connection endpoint
@@ -317,7 +318,7 @@ export class MCPClient extends EventEmitter {
     getStatistics() {
         return {
             ...this.statistics,
-            lastRequestTime: this.statistics.totalRequests > 0 ? new Date() : undefined
+            lastRequestTime: this.statistics.totalRequests > 0 ? new Date() : undefined,
         };
     }
     /**
@@ -326,12 +327,12 @@ export class MCPClient extends EventEmitter {
     getStatus() {
         return {
             name: this.config.name,
-            connectionStatus: this.currentEndpoint ?
-                this.connectionManager.getConnectionStatus(this.currentEndpoint) :
-                ConnectionStatus.DISCONNECTED,
+            connectionStatus: this.currentEndpoint
+                ? this.connectionManager.getConnectionStatus(this.currentEndpoint)
+                : ConnectionStatus.DISCONNECTED,
             endpoint: this.currentEndpoint || undefined,
             lastActivity: this.statistics.lastRequestTime,
-            statistics: this.getStatistics()
+            statistics: this.getStatistics(),
         };
     }
     /**
@@ -385,8 +386,9 @@ export class MCPClient extends EventEmitter {
         try {
             // Disconnect from server
             await this.disconnect();
-            // Close all connections
-            await this.connectionManager.closeAllConnections();
+            // Shut down the connection manager (closes connections, clears
+            // timers, and removes its process-level signal listeners)
+            await this.connectionManager.shutdown();
             // Cleanup managers
             this.requestManager.cleanup();
             this.eventManager.cleanup();
@@ -425,7 +427,7 @@ export class MCPClient extends EventEmitter {
                 const interval = this.config.options.reconnectInterval || 5000;
                 for (let attempt = 1; attempt <= maxAttempts; attempt++) {
                     try {
-                        await new Promise(resolve => setTimeout(resolve, interval));
+                        await new Promise((resolve) => setTimeout(resolve, interval));
                         await this.reconnect();
                         this.emit('reconnected', endpoint, attempt);
                         break;

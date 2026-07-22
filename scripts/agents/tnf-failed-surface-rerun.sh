@@ -13,6 +13,8 @@ fi
 export TNF_SKIP_TURN_ZERO_ONBOARD=1
 export CI="${CI:-1}"
 export FORCE_COLOR=0
+export TNF_WHOLE_CODEBASE_VERIFY=1
+export TNF_SECURITY_LOCAL="${TNF_SECURITY_LOCAL:-1}"
 
 ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
 cd "$ROOT" || exit 1

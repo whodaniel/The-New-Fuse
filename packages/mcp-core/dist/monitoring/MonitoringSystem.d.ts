@@ -2,7 +2,7 @@
  * Comprehensive MCP Monitoring System
  */
 import { EventEmitter } from 'events';
-import { IMonitoringSystem, IMetricsCollector, IAlertManager, IDashboardManager, IPerformanceMonitor, ILoadTester, ICacheMonitor, IConnectionPoolMonitor, ISystemHealthMonitor } from '../interfaces/IMonitoring.js';
+import { IAlertManager, ICacheMonitor, IConnectionPoolMonitor, IDashboardManager, ILoadTester, IMetricsCollector, IMonitoringSystem, IPerformanceMonitor, ISystemHealthMonitor } from '../interfaces/IMonitoring.js';
 import { MonitoringConfig } from '../types/monitoring.js';
 import { Logger } from '../utils/Logger.js';
 /**
@@ -13,6 +13,7 @@ export declare class MonitoringSystem extends EventEmitter implements IMonitorin
     private config?;
     private running;
     private startTime?;
+    private startTimeHighRes?;
     private metricsCollector?;
     private alertManager?;
     private dashboardManager?;

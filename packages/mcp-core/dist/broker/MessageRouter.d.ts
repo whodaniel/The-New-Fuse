@@ -5,11 +5,11 @@
  * retry logic, and comprehensive error handling.
  */
 import { EventEmitter } from 'events';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage.js';
-import { IMessageRouter, EventCallback } from '../interfaces/IMessageRouter.js';
-import { RoutingMetrics, RoutingInfo } from '../types/broker.js';
-import { LoadBalancer } from './LoadBalancer.js';
+import { MCPNotification, MCPRequest, MCPResponse } from '../interfaces/IMCPMessage.js';
+import { EventCallback, IMessageRouter } from '../interfaces/IMessageRouter.js';
+import { RoutingInfo, RoutingMetrics } from '../types/broker.js';
 import { EventSubscriptionManager } from './EventSubscriptionManager.js';
+import { LoadBalancer } from './LoadBalancer.js';
 import { MessageQueue } from './MessageQueue.js';
 /**
  * Message Router class for routing MCP requests

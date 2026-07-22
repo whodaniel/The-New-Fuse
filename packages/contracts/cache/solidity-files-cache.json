@@ -1,18 +1,18 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/AuctionEngine.sol": {
-      "lastModificationDate": 1771144552081,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/AuctionEngine.sol": {
+      "lastModificationDate": 1771758711959,
       "contentHash": "2a18c01455a1f4d67da3c0f606601110",
       "sourceName": "src/AuctionEngine.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -22,7 +22,9 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
@@ -32,21 +34,27 @@
         "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
       ],
-      "versionPragmas": ["^0.8.19"],
-      "artifacts": ["AuctionEngine", "IGenesisNode", "IMerkabaCore"]
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "AuctionEngine",
+        "IGenesisNode",
+        "IMerkabaCore"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1771076988295,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1781120517734,
       "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -56,151 +64,35 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
-            }
-          }
-        }
-      },
-      "imports": ["../utils/Context.sol"],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["Ownable"]
-    },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1771076988277,
-      "contentHash": "9261adf6457863de3e9892f51317ec89",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": ["ast"]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [">=0.4.16"],
-      "artifacts": ["IERC20"]
-    },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
-      "lastModificationDate": 1771076988298,
-      "contentHash": "190613e556d509d9e9a0ea43dc5d891d",
-      "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": ["ast"]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["ReentrancyGuard"]
-    },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1771076987960,
-      "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
-      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": ["ast"]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["Context"]
-    },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/MerkabaCore.sol": {
-      "lastModificationDate": 1771144529921,
-      "contentHash": "6afc1da3a58b35d0fc7bb783235f8db0",
-      "sourceName": "src/MerkabaCore.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
+        "../utils/Context.sol"
       ],
-      "versionPragmas": ["^0.8.19"],
-      "artifacts": ["MerkabaCore"]
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-      "lastModificationDate": 1771076988277,
-      "contentHash": "513778b30d2750f5d2b9b19bbcf748a5",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
+      "lastModificationDate": 1781120517739,
+      "contentHash": "6e5efb502dd6652d12ad15eea2c5bdf4",
+      "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -210,27 +102,35 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
-      "imports": ["../IERC20.sol"],
-      "versionPragmas": [">=0.6.2"],
-      "artifacts": ["IERC20Metadata"]
+      "imports": [
+        "./StorageSlot.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ReentrancyGuard"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1771076988249,
-      "contentHash": "59dfce11284f2636db261df9b6a18f81",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1781120517544,
+      "contentHash": "9261adf6457863de3e9892f51317ec89",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -240,7 +140,155 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.16"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/Context.sol": {
+      "lastModificationDate": 1781120517466,
+      "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
+      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "cancun",
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/StorageSlot.sol": {
+      "lastModificationDate": 1781120517749,
+      "contentHash": "e656d64c4ce918f3d13030b91c935134",
+      "sourceName": "@openzeppelin/contracts/utils/StorageSlot.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "cancun",
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "StorageSlot"
+      ]
+    },
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+      "lastModificationDate": 1781120517552,
+      "contentHash": "513778b30d2750f5d2b9b19bbcf748a5",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "cancun",
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC20.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IERC20Metadata"
+      ]
+    },
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
+      "lastModificationDate": 1781120517492,
+      "contentHash": "d15c4d05583536e080f1960ab282772d",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "cancun",
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
             }
           }
         }
@@ -251,21 +299,25 @@
         "../../utils/Context.sol",
         "../../interfaces/draft-IERC6093.sol"
       ],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["ERC20"]
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ERC20"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/interfaces/draft-IERC6093.sol": {
-      "lastModificationDate": 1771076988229,
-      "contentHash": "5041977bbe908de2e6ed0270447f79ad",
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/interfaces/draft-IERC6093.sol": {
+      "lastModificationDate": 1781120517475,
+      "contentHash": "bcc76f4747d56c28c40ae272ef3470a6",
       "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC6093.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -275,27 +327,35 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
       "imports": [],
-      "versionPragmas": [">=0.8.4"],
-      "artifacts": ["IERC1155Errors", "IERC20Errors", "IERC721Errors"]
+      "versionPragmas": [
+        ">=0.8.4"
+      ],
+      "artifacts": [
+        "IERC1155Errors",
+        "IERC20Errors",
+        "IERC721Errors"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/utils/ERC721Utils.sol": {
-      "lastModificationDate": 1771076988258,
-      "contentHash": "4cefad279a37c895b709bce2b901816e",
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/utils/ERC721Utils.sol": {
+      "lastModificationDate": 1781120517518,
+      "contentHash": "eaad77accc6e32b20dfbbbe9813e1dce",
       "sourceName": "@openzeppelin/contracts/token/ERC721/utils/ERC721Utils.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -305,7 +365,9 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
@@ -314,21 +376,25 @@
         "../IERC721Receiver.sol",
         "../../../interfaces/draft-IERC6093.sol"
       ],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["ERC721Utils"]
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ERC721Utils"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
-      "lastModificationDate": 1771076988288,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
+      "lastModificationDate": 1781120517683,
       "contentHash": "d61660a41ce200e99816e4734f7fd202",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -338,27 +404,33 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
       "imports": [],
-      "versionPragmas": [">=0.5.0"],
-      "artifacts": ["IERC721Receiver"]
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IERC721Receiver"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
-      "lastModificationDate": 1771076988254,
-      "contentHash": "522ec023bce510c30dfbf61584f5a190",
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
+      "lastModificationDate": 1781120517508,
+      "contentHash": "ad5144b924800b6f617bc84e4f1fb556",
       "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -368,7 +440,9 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
@@ -382,21 +456,25 @@
         "../../utils/introspection/ERC165.sol",
         "../../interfaces/draft-IERC6093.sol"
       ],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["ERC721"]
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "ERC721"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1771076988303,
-      "contentHash": "d8f70caf0e0c77dc908176ed44812fb7",
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
+      "lastModificationDate": 1781120517749,
+      "contentHash": "d2fa243e766a193585b7e9bf36898d80",
       "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -406,7 +484,9 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
@@ -414,23 +494,28 @@
       "imports": [
         "./math/Math.sol",
         "./math/SafeCast.sol",
-        "./math/SignedMath.sol"
+        "./math/SignedMath.sol",
+        "./Bytes.sol"
       ],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["Strings"]
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "Strings"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
-      "lastModificationDate": 1771076988284,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
+      "lastModificationDate": 1781120517559,
       "contentHash": "f62e11dbd302e17a5621a1438f4e054c",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -440,27 +525,35 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
-      "imports": ["../../utils/introspection/IERC165.sol"],
-      "versionPragmas": [">=0.6.2"],
-      "artifacts": ["IERC721"]
+      "imports": [
+        "../../utils/introspection/IERC165.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IERC721"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1771076988248,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
+      "lastModificationDate": 1781120517490,
       "contentHash": "0906d06dca25210d4696dcef6dad2909",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -470,27 +563,35 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
-      "imports": ["./IERC165.sol"],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["ERC165"]
+      "imports": [
+        "./IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ERC165"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
-      "lastModificationDate": 1771076988286,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
+      "lastModificationDate": 1781120517560,
       "contentHash": "136c64eca25bcb8a68f43ac6605559f9",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -500,27 +601,71 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
-      "imports": ["../IERC721.sol"],
-      "versionPragmas": [">=0.6.2"],
-      "artifacts": ["IERC721Metadata"]
+      "imports": [
+        "../IERC721.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IERC721Metadata"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/math/Math.sol": {
-      "lastModificationDate": 1771076988291,
-      "contentHash": "5ec781e33d3a9ac91ffdc83d94420412",
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol": {
+      "lastModificationDate": 1781120517741,
+      "contentHash": "f28a38cd37f4225d0a91fb5405dd850f",
+      "sourceName": "@openzeppelin/contracts/utils/math/SafeCast.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "cancun",
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SafeCast"
+      ]
+    },
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/math/Math.sol": {
+      "lastModificationDate": 1781120517725,
+      "contentHash": "5b8c6935ac52b7494df19d6feb38f5cc",
       "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -530,27 +675,36 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
-      "imports": ["../Panic.sol", "./SafeCast.sol"],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["Math"]
+      "imports": [
+        "../Panic.sol",
+        "./SafeCast.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Math"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/math/SignedMath.sol": {
-      "lastModificationDate": 1771076988301,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/math/SignedMath.sol": {
+      "lastModificationDate": 1781120517743,
       "contentHash": "ae3528afb8bdb0a7dcfba5b115ee8074",
       "sourceName": "@openzeppelin/contracts/utils/math/SignedMath.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -560,27 +714,35 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
-      "imports": ["./SafeCast.sol"],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["SignedMath"]
+      "imports": [
+        "./SafeCast.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SignedMath"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol": {
-      "lastModificationDate": 1771076988299,
-      "contentHash": "2adca1150f58fc6f3d1f0a0f22ee7cca",
-      "sourceName": "@openzeppelin/contracts/utils/math/SafeCast.sol",
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/Bytes.sol": {
+      "lastModificationDate": 1781120517460,
+      "contentHash": "3b32ea3a40a2d708f61e7161f081ca93",
+      "sourceName": "@openzeppelin/contracts/utils/Bytes.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -590,27 +752,35 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
-      "imports": [],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["SafeCast"]
+      "imports": [
+        "./math/Math.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "Bytes"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/Panic.sol": {
-      "lastModificationDate": 1771076988297,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/Panic.sol": {
+      "lastModificationDate": 1781120517736,
       "contentHash": "2133dc13536b4a6a98131e431fac59e1",
       "sourceName": "@openzeppelin/contracts/utils/Panic.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -620,27 +790,33 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
       "imports": [],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["Panic"]
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Panic"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1771076988276,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1781120517543,
       "contentHash": "7074c93b1ea0a122063f26ddd1db1032",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -650,27 +826,33 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
       "imports": [],
-      "versionPragmas": [">=0.4.16"],
-      "artifacts": ["IERC165"]
+      "versionPragmas": [
+        ">=0.4.16"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/GenesisNode.sol": {
-      "lastModificationDate": 1771144547440,
-      "contentHash": "6b68065e49530bd37141f56fb6395d97",
-      "sourceName": "src/GenesisNode.sol",
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/SidepotManager.sol": {
+      "lastModificationDate": 1778957860147,
+      "contentHash": "248140cb8ae53fb48f81b7734239c4fc",
+      "sourceName": "src/SidepotManager.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -680,7 +862,131 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SidepotManager"
+      ]
+    },
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/PTPrizeHookRouter.sol": {
+      "lastModificationDate": 1778957860146,
+      "contentHash": "ff9e26dcd14db107f0ef9d073371d721",
+      "sourceName": "src/PTPrizeHookRouter.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "cancun",
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IPrizeHooks",
+        "ISidepotManager",
+        "PTPrizeHookRouter"
+      ]
+    },
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/MerkabaCore.sol": {
+      "lastModificationDate": 1771758711957,
+      "contentHash": "6afc1da3a58b35d0fc7bb783235f8db0",
+      "sourceName": "src/MerkabaCore.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "cancun",
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "MerkabaCore"
+      ]
+    },
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/GenesisNode.sol": {
+      "lastModificationDate": 1771758711952,
+      "contentHash": "6b68065e49530bd37141f56fb6395d97",
+      "sourceName": "src/GenesisNode.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "cancun",
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
             }
           }
         }
@@ -691,21 +997,25 @@
         "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol"
       ],
-      "versionPragmas": ["^0.8.19"],
-      "artifacts": ["GenesisNode"]
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "GenesisNode"
+      ]
     },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/MockERC20.sol": {
-      "lastModificationDate": 1771144598063,
+    "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/MockERC20.sol": {
+      "lastModificationDate": 1771758711956,
       "contentHash": "893ccb12b1236370a098340d84a2391b",
       "sourceName": "src/MockERC20.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.28",
         "settings": {
+          "evmVersion": "cancun",
           "optimizer": {
             "enabled": true,
             "runs": 200
           },
-          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -715,82 +1025,22 @@
                 "evm.methodIdentifiers",
                 "metadata"
               ],
-              "": ["ast"]
-            }
-          }
-        }
-      },
-      "imports": ["@openzeppelin/contracts/token/ERC20/ERC20.sol"],
-      "versionPragmas": ["^0.8.19"],
-      "artifacts": ["MockERC20"]
-    },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/SidepotManager.sol": {
-      "lastModificationDate": 1772070922310,
-      "contentHash": "248140cb8ae53fb48f81b7734239c4fc",
-      "sourceName": "src/SidepotManager.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": ["ast"]
+              "": [
+                "ast"
+              ]
             }
           }
         }
       },
       "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
       ],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["SidepotManager"]
-    },
-    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/PTPrizeHookRouter.sol": {
-      "lastModificationDate": 1772070946982,
-      "contentHash": "ff9e26dcd14db107f0ef9d073371d721",
-      "sourceName": "src/PTPrizeHookRouter.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": ["ast"]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
+      "versionPragmas": [
+        "^0.8.19"
       ],
-      "versionPragmas": ["^0.8.20"],
-      "artifacts": ["IPrizeHooks", "ISidepotManager", "PTPrizeHookRouter"]
+      "artifacts": [
+        "MockERC20"
+      ]
     }
   }
 }

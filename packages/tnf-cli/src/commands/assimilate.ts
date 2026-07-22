@@ -1,6 +1,12 @@
 import { Command } from 'commander';
 import { AssimilationService } from '../services/AssimilationService.js';
 
+// CORE TENET (CORRECTED 2026-07-22) — embedded in executable source for both
+// open-source installable and hosted server-side orchestration propagation:
+// TNF exists to PARODY + ASSIMILATE the BEST from ANY and ALL cutting-edge
+// AI agents (NOT "Hermes-to-TNF parity"). This applies on an ongoing,
+// self-iterative basis. See skill: assimilation-tenet for full workflow.
+
 export function registerAssimilateCommand(program: Command, repoRoot: string): void {
   const assimilate = program
     .command('assimilate')
