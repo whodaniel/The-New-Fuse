@@ -2,9 +2,10 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Triage C03 contracts/core-monitoring tests; triage C04
-@the-new-fuse/api missing modules; await live Daniel handshake before
-master-clock cull; commit when requested **Project ID:** `TNF-SESSION`
+**Current Directive:** C03/C04 verified green (contracts 23/23, core-monitoring
+PASS, api `tsc -b` exit 0) — next: optional gemini-bridge residual + full turbo
+C03/C04 rerun; await live Daniel handshake before master-clock cull; commit when
+requested **Project ID:** `TNF-SESSION`
 **Handoff:** `7b497037-01eb-48ac-9916-9b5177fc20fa` **Head:** `b9c1298e41e3`
 build) is clean apart from one environment-load-sensitive memory-threshold test,
 confirmed non-deterministic and not a real bug **Project ID:**
