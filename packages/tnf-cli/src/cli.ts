@@ -15916,7 +15916,9 @@ function loadTnfInteractiveContextPack(): string {
     '## Interactive Execution Policy',
     '',
     '- This TNF interactive lane can execute shell commands in the canonical workspace root.',
-    '- When the operator asks for autonomous execution, emit fenced ```bash blocks and the runtime will run them.',
+    '- PREFERRED: call the run_bash tool with a command; its stdout/stderr and exit code come back to you as the tool result.',
+    '- Fallback (only if tool calling is unavailable): emit fenced ```bash blocks and the runtime will run them.',
+    '- Never merely describe a command — either call run_bash or emit a fenced block.',
     '- Operators can also use `/exec <command>` or toggle `/autonomous on`.',
     '- Prefer Inspect → Act → Verify: read state, run commands, then verify with curl or status checks.',
     '- Relay health check: `curl -sS http://127.0.0.1:3007/health` (there is no `/handoff-lineage` HTTP route).',
@@ -16168,6 +16170,123 @@ async function runInteractiveBashBlocks(blocks: string[], messages: ChatMessage[
       content: `Interactive shell block ${index + 1}/${blocks.length} exit code: ${result.code}`,
     });
   }
+}
+
+// ── Native tool-calling turn (autonomous TUI) ────────────────────────────────
+//
+// The fenced-block convention stalls with reasoning-style models: they narrate
+// "let me run bash" without ever emitting a fence (observed live 2026-07-22 —
+// 50 consecutive no-op turns). Native OpenAI-style tool calling with the same
+// models works on the first try (verified live). This path also fixes a second
+// gap: executeInteractiveBash inherits stdio, so the model never saw command
+// OUTPUT, only exit codes — run_bash captures and returns output.
+
+const TUI_RUN_BASH_TOOL = {
+  type: 'function',
+  function: {
+    name: 'run_bash',
+    description:
+      'Execute a bash command in the TNF workspace root and return its combined stdout/stderr and exit code. Use this for every shell action instead of describing commands.',
+    parameters: {
+      type: 'object',
+      properties: {
+        command: { type: 'string', description: 'The bash command to run' },
+        timeout_seconds: {
+          type: 'number',
+          description: 'Optional timeout in seconds (default 120, max 600)',
+        },
+      },
+      required: ['command'],
+    },
+  },
+};
+
+const RUN_BASH_OUTPUT_TAIL_CHARS = 8000;
+
+async function executeCapturedBash(
+  command: string,
+  timeoutMs: number
+): Promise<{ ok: boolean; code: number; output: string; timedOut: boolean }> {
+  return new Promise((resolve) => {
+    const child = spawn('bash', ['-lc', command], {
+      cwd: repoRoot,
+      env: process.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let output = '';
+    let timedOut = false;
+    const capture = (chunk: Buffer) => {
+      output += chunk.toString('utf8');
+      // Keep memory bounded on chatty commands; the model only sees the tail anyway.
+      if (output.length > RUN_BASH_OUTPUT_TAIL_CHARS * 4) {
+        output = output.slice(-RUN_BASH_OUTPUT_TAIL_CHARS * 2);
+      }
+    };
+    child.stdout?.on('data', capture);
+    child.stderr?.on('data', capture);
+    const timer = setTimeout(() => {
+      timedOut = true;
+      child.kill('SIGKILL');
+    }, timeoutMs);
+    child.on('error', (err) => {
+      clearTimeout(timer);
+      resolve({ ok: false, code: 1, output: `spawn error: ${err.message}`, timedOut });
+    });
+    child.on('close', (code) => {
+      clearTimeout(timer);
+      resolve({ ok: code === 0 && !timedOut, code: code ?? 1, output, timedOut });
+    });
+  });
+}
+
+type NativeToolTurnResult = {
+  content: string;
+  toolCallsMade: number;
+  executed: Array<{ command: string; code: number; timedOut: boolean }>;
+};
+
+async function runAutonomousNativeToolTurn(
+  client: any,
+  messages: ChatMessage[]
+): Promise<NativeToolTurnResult> {
+  const executed: NativeToolTurnResult['executed'] = [];
+  const result = await client.chatCompleteWithTools(
+    messages,
+    async (name: string, args: Record<string, unknown>) => {
+      if (name !== 'run_bash') {
+        return { ok: false, error: `Unknown tool: ${name}. Only run_bash is available.` };
+      }
+      const command = String(args.command ?? '').trim();
+      if (!command) return { ok: false, error: 'run_bash requires a non-empty command' };
+      const timeoutSec = Math.min(600, Math.max(1, Number(args.timeout_seconds) || 120));
+      console.log(chalk.yellow(`\n  ⚡ run_bash: ${command.slice(0, 200)}`));
+      const res = await executeCapturedBash(command, timeoutSec * 1000);
+      executed.push({ command, code: res.code, timedOut: res.timedOut });
+      console.log(
+        res.ok
+          ? chalk.green(`  ✓ exit 0`)
+          : chalk.red(`  ✗ exit ${res.code}${res.timedOut ? ' (timed out)' : ''}`)
+      );
+      const tail =
+        res.output.length > RUN_BASH_OUTPUT_TAIL_CHARS
+          ? `[output truncated to last ${RUN_BASH_OUTPUT_TAIL_CHARS} chars]\n` +
+            res.output.slice(-RUN_BASH_OUTPUT_TAIL_CHARS)
+          : res.output;
+      return { ok: res.ok, exit_code: res.code, timed_out: res.timedOut, output: tail };
+    },
+    {
+      temperature: 0.7,
+      // Bound one autonomous turn: up to AUTONOMOUS_MAX_SHELL_BLOCKS tool
+      // rounds plus a final answer. The outer turn cap governs the session.
+      maxIterations: AUTONOMOUS_MAX_SHELL_BLOCKS + 1,
+      tools: [TUI_RUN_BASH_TOOL],
+    }
+  );
+  return {
+    content: String(result?.content ?? ''),
+    toolCallsMade: Number(result?.toolCallsMade ?? 0),
+    executed,
+  };
 }
 
 function readAbsoluteTextFileIfPresent(absolutePath: string, maxChars = 1600): string | null {
@@ -16468,8 +16587,58 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     try {
       startProcessingIndicator('Thinking');
       const useStreaming = process.env.TNF_USE_STREAMING === '1';
+      // Native tool calling is the default autonomous execution path
+      // (TNF_TUI_NATIVE_TOOLS=0 restores the fenced-block-only convention).
+      const useNativeTools =
+        slashContext.autonomousMode && process.env.TNF_TUI_NATIVE_TOOLS !== '0';
 
-      if (useStreaming) {
+      let turnResponseText = '';
+      let nativeToolCallsMade = 0;
+
+      if (useNativeTools) {
+        let nativeSucceeded = false;
+        try {
+          const native = await runAutonomousNativeToolTurn(client, messages);
+          stopProcessingIndicator(true);
+          nativeSucceeded = true;
+          nativeToolCallsMade = native.toolCallsMade;
+          turnResponseText = native.content;
+          if (native.content) {
+            console.log(chalk.cyan('\n  ' + native.content.replace(/\n/g, '\n  ')));
+          }
+          messages.push({ role: 'assistant', content: native.content || '' });
+          if (native.executed.length > 0) {
+            // chatCompleteWithTools works on a copy of the history, so record
+            // a durable summary of what actually ran for future turns.
+            messages.push({
+              role: 'system',
+              content:
+                `[run_bash] ${native.executed.length} command(s) executed this turn:\n` +
+                native.executed
+                  .map(
+                    (e, i) =>
+                      `${i + 1}. (exit ${e.code}${e.timedOut ? ', timed out' : ''}) ${e.command.slice(0, 200)}`
+                  )
+                  .join('\n'),
+            });
+          }
+        } catch (nativeErr: any) {
+          // Provider chain can't do tools right now — degrade to plain chat
+          // for this turn; fence extraction below still gives execution a shot.
+          console.log(
+            chalk.yellow(
+              `\n  ⚠ Native tool turn failed (${nativeErr?.message ?? nativeErr}); falling back to plain chat`
+            )
+          );
+        }
+        if (!nativeSucceeded) {
+          const response = await client.chatComplete(messages, { temperature: 0.7 });
+          stopProcessingIndicator(true);
+          console.log(chalk.cyan('\n  ' + response.replace(/\n/g, '\n  ')));
+          messages.push({ role: 'assistant', content: response });
+          turnResponseText = response;
+        }
+      } else if (useStreaming) {
         // Streaming mode: show response as it arrives
         process.stdout.write(chalk.cyan('\n  '));
         let fullResponse = '';
@@ -16480,34 +16649,42 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
         stopProcessingIndicator(true);
         console.log(''); // newline after streaming finishes
         messages.push({ role: 'assistant', content: fullResponse });
+        turnResponseText = fullResponse;
       } else {
         // Non-streaming mode: wait for complete response
         const response = await client.chatComplete(messages, { temperature: 0.7 });
         stopProcessingIndicator(true);
         console.log(chalk.cyan('\n  ' + response.replace(/\n/g, '\n  ')));
         messages.push({ role: 'assistant', content: response });
+        turnResponseText = response;
       }
 
       if (slashContext.autonomousMode) {
-        const response = messages[messages.length - 1].content;
-        const blocks = capInteractiveBashBlocks(extractInteractiveBashBlocks(response));
-        if (blocks.length > 0) {
+        const response = turnResponseText;
+        if (nativeToolCallsMade > 0) {
+          // Native path already executed everything; don't re-run fences the
+          // model may have merely quoted in its final answer.
           autonomousState.consecutiveNoBashTurns = 0;
-          await runInteractiveBashBlocks(blocks, messages);
         } else {
-          autonomousState.consecutiveNoBashTurns += 1;
-          const stallMsg = [
-            '[Autonomous stall break]',
-            `Zero fenced bash/sh blocks in the last ${autonomousState.consecutiveNoBashTurns} autonomous turn(s).`,
-            'Do NOT narrate. Emit 1–5 fenced ```bash blocks that run real commands now.',
-            'Inspect → Act → Verify. Prefer handoff next_actions.',
-          ].join('\n');
-          messages.push({ role: 'system', content: stallMsg });
-          console.log(
-            chalk.yellow(
-              `\n  ⚠ No bash blocks executed (${autonomousState.consecutiveNoBashTurns} turn(s)) — stall break injected`
-            )
-          );
+          const blocks = capInteractiveBashBlocks(extractInteractiveBashBlocks(response));
+          if (blocks.length > 0) {
+            autonomousState.consecutiveNoBashTurns = 0;
+            await runInteractiveBashBlocks(blocks, messages);
+          } else {
+            autonomousState.consecutiveNoBashTurns += 1;
+            const stallMsg = [
+              '[Autonomous stall break]',
+              `Zero commands executed in the last ${autonomousState.consecutiveNoBashTurns} autonomous turn(s).`,
+              'Do NOT narrate. Call the run_bash tool with a real command now (or emit 1–5 fenced ```bash blocks if tools are unavailable).',
+              'Inspect → Act → Verify. Prefer handoff next_actions.',
+            ].join('\n');
+            messages.push({ role: 'system', content: stallMsg });
+            console.log(
+              chalk.yellow(
+                `\n  ⚠ No commands executed (${autonomousState.consecutiveNoBashTurns} turn(s)) — stall break injected`
+              )
+            );
+          }
         }
         const verifyChecks = await runAutonomousVerifyGates();
         const verifySummary = verifyChecks
