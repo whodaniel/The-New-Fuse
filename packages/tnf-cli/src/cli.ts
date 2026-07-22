@@ -49,7 +49,7 @@ import {
   applyTurnCapExtension,
   buildSoftCapWarning,
   createAutonomousTurnCapState,
-  isHardTurnCapReached,
+  handleHardTurnCap,
   loadAutonomousTurnCapConfig,
   parseExtendTurnCapMarker,
 } from './utils/autonomous-turn-cap.js';
@@ -3889,6 +3889,11 @@ function isClaudePassthroughArgv(argv: string[]): boolean {
   return subcommand === 'claude';
 }
 
+function isPiPassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'pi';
+}
+
 let cachedTopLevelCommands: Record<string, Set<string>> = {};
 
 function getTnfTopLevelCommands(): Set<string> {
@@ -3942,7 +3947,7 @@ function resolveImplicitPassthroughArgs(
 ): { cliName: string; args: string[] } | null {
   const subcommand = argv[2];
   const tnfCommands = getTnfTopLevelCommands();
-  const passthroughTargets = ['openclaw', 'hermes', 'gemini', 'cursor'];
+  const passthroughTargets = ['openclaw', 'hermes', 'gemini', 'cursor', 'claude', 'pi'];
 
   if (!subcommand || subcommand === 'help') {
     const helpTarget = argv[3];
@@ -6976,6 +6981,14 @@ program
   .argument('[args...]', 'Arguments forwarded to claude')
   .action(async (args: string[]) => {
     await runPassthrough('claude', args);
+  });
+
+program
+  .command('pi')
+  .description('Pass through any Pi CLI command with TNF harness MCP routing')
+  .argument('[args...]', 'Arguments forwarded to pi')
+  .action(async (args: string[]) => {
+    await runPassthrough('pi', args);
   });
 
 program
@@ -16555,13 +16568,14 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
           messages.push({ role: 'system', content: softWarning.systemMessage });
         }
 
-        if (isHardTurnCapReached(autonomousState)) {
-          console.log(
-            chalk.yellow(
-              `\n  Autonomous turn cap reached (${autonomousState.maxTurnsPerSession}). Awaiting operator input.`
-            )
-          );
+        const hardCap = handleHardTurnCap(autonomousState, autonomousTurnCapConfig);
+        if (hardCap.kind === 'halt') {
+          console.log(chalk.yellow(`\n  ${hardCap.consoleLine}`));
           autonomousState.continuePending = false;
+        } else if (hardCap.kind === 'reset') {
+          console.log(chalk.yellow(`\n  ${hardCap.consoleLine}`));
+          messages.push({ role: 'system', content: hardCap.systemMessage });
+          autonomousState.continuePending = true;
         } else {
           autonomousState.continuePending = true;
         }
@@ -16699,6 +16713,10 @@ async function main(): Promise<void> {
   }
   if (isClaudePassthroughArgv(argv)) {
     await runPassthrough('claude', argv.slice(3));
+    return;
+  }
+  if (isPiPassthroughArgv(argv)) {
+    await runPassthrough('pi', argv.slice(3));
     return;
   }
   const implicitArgs = resolveImplicitPassthroughArgs(argv);
