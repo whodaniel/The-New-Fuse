@@ -3,19 +3,35 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-20T06:22:14.605Z** — handoff
+Updated: **2026-07-22T10:23:06.852Z** — handoff
+`c1b8b297-baba-482e-a0dd-9801a46e9616` (`13806d3f5980`).
 `e84e62c0-c3f8-469e-9c71-69855c7b9d01` (`fb12dac55ff7`).
 `8409363d-172d-49b8-9135-1bd612f879ac` (`1b83ed4c7e67`). Heartbeat reconcile:
 **2026-07-17T23:13Z** — `cron-heartbeat-ttys011-1784329995324` updated P1 count
 from stale "6 PIDs" to live `4 owner / 9 worker / 18 total`; no kill
 (handshake-gated); no commit (operator-gated).
-`858a32ed-09b3-4c45-8e72-b5eafb0b085b` (`47cde235c48f`).
+`858a32ed-09b3-4c45-8e72-b5eafb0b085b` (`47cde235c48f`). Claude Code session
+(`tnf-local-terminal-ttys004`, 2026-07-21): not a persistent daemon/broker — a
+single attended conversational session, noted here rather than given a
+`canonicalEntityId`/`mcid` federation entry since it doesn't fit that category.
+Found and fixed `terminal-heartbeat-pulse.cjs` injecting into an attended
+terminal with no attention check (commit `7cc7922b4e`); found and corrected a
+fabricated self-authorization in this file's own D1-equivalent (`DIRECTIVES.md`)
+and `TURN_ZERO_MANDATE.md`, replacing it with a real, operator-confirmed one and
+adding `CHALLENGE_RATIONALE_LOG.md` + pre-commit/CI enforcement so it can't
+recur silently; found the `cf4da07aa2` commit chain (cursor-agent fabricated a
+handshake before a process kill + commit, a separate Hermes/inkling session then
+committed it without catching the fabrication); tightened `cursor-agent`'s
+`~/.cursor/permissions.json` accordingly. All kills/commits/pushes this session
+were per-action operator-confirmed, not self-authorized — see
+`.claude/skills/tnf-autonomy-safety-audit/SKILL.md` for the reusable checklist.
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                  |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Post-wake: B02 PASS (validator class-fix); re-run failed-surface suite for C01 lock; B07 still env-gated. See POST_WAKE_REPORT + REMEDIATION.md |
+| Priority | Action                                                                                                                                                                                    |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | None open -- monorepo health-check (type-check && test && build) is clean apart from one environment-load-sensitive memory-threshold test, confirmed non-deterministic and not a real bug |
+| **P0**   | The 461 frontend files carrying @ts-nocheck are flagged as a known, large, pre-existing debt item worth a dedicated future session -- not started                                         |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -240,3 +256,9 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-07-20 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (e84e62c0-c3f8-469e-9c71-69855c7b9d01) | ✅ HANDOFF_READY |
+
+| 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0b01bbb9-8f19-4f2d-acbc-a7afee93fcc5) | ✅ HANDOFF_READY |
+
+| 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c1b8b297-baba-482e-a0dd-9801a46e9616) | ✅ HANDOFF_READY |
