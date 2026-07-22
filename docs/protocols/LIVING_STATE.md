@@ -5,15 +5,14 @@
 **Current Directive:** C03/C04 verified green (contracts 23/23, core-monitoring
 PASS, api `tsc -b` exit 0) — next: optional gemini-bridge residual + full turbo
 C03/C04 rerun; await live Daniel handshake before master-clock cull; commit when
-requested **Project ID:** `TNF-SESSION`
-**Handoff:** `7b497037-01eb-48ac-9916-9b5177fc20fa` **Head:** `b9c1298e41e3`
-build) is clean apart from one environment-load-sensitive memory-threshold test,
-confirmed non-deterministic and not a real bug **Project ID:**
-`TNF-MONOREPO-HEALTH` **Handoff:** `c1b8b297-baba-482e-a0dd-9801a46e9616`
-**Head:** `13806d3f5980` `.verifier/whole-codebase/latest-rerun/SUMMARY.md`
-**Project ID:** `TNF-SESSION` **Handoff:**
-`e84e62c0-c3f8-469e-9c71-69855c7b9d01` **Head:** `fb12dac55ff7` tnf-cli,
-tnf-browser, .verifier) **Project ID:** `TNF-SESSION` **Handoff:**
+requested **Project ID:** `TNF-SESSION` **Handoff:**
+`7b497037-01eb-48ac-9916-9b5177fc20fa` **Head:** `b9c1298e41e3` build) is clean
+apart from one environment-load-sensitive memory-threshold test, confirmed
+non-deterministic and not a real bug **Project ID:** `TNF-MONOREPO-HEALTH`
+**Handoff:** `c1b8b297-baba-482e-a0dd-9801a46e9616` **Head:** `13806d3f5980`
+`.verifier/whole-codebase/latest-rerun/SUMMARY.md` **Project ID:** `TNF-SESSION`
+**Handoff:** `e84e62c0-c3f8-469e-9c71-69855c7b9d01` **Head:** `fb12dac55ff7`
+tnf-cli, tnf-browser, .verifier) **Project ID:** `TNF-SESSION` **Handoff:**
 `8409363d-172d-49b8-9135-1bd612f879ac` **Head:** `1b83ed4c7e67`
 `tnf:agent-registry` (callableWorker). Continuity via
 `TNF_AUTONOMOUS_CONTINUITY_PROTOCOL.md`. Full-auto daemon restarted with
@@ -39,6 +38,9 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 ## ⚡ Active Steps
 
 1. [✅] 2026-07-17 Autonomous Continuity Protocol authored; self-healing bound
+
+- [✅] 2026-07-22T22:21:12.398Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
 - [✅] 2026-07-22T13:09:55.447Z New script(s) created: quick-start-mcp.sh
 - [✅] 2026-07-22T13:09:55.447Z System cron entries installed:

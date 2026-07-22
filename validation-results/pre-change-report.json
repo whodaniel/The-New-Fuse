@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-07-22T21:20:12.968Z",
+  "timestamp": "2026-07-22T22:22:45.230Z",
   "passed": 1,
   "failed": 4,
   "warnings": 2,
   "errors": [
-    "Tests failed: Command failed: pnpm test -- --passWithNoTests\nError: node exited with code 1\n",
+    "Tests failed: Command failed: pnpm test -- --passWithNoTests\n• turbo 2.9.10\n ERROR  @the-new-fuse/extension-core#test: command (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/extension-core) /Users/danielgoldberg/Library/pnpm/store/v11/links/@/pnpm/10.22.0/a2becbcb7505e9a063c5c23ba6ab466cafa94c787cbb880c01306aeddd376133/bin/pnpm run test --passWithNoTests exited (1)\n ERROR  run failed: command  exited (1)\n",
     "Package integrity check failed: ENOENT: no such file or directory, stat 'apps/external/gemini-cli-source/bundle/docs/CONTRIBUTING.md'",
     "Required tool not found: bun",
     "Environment validation failed: Command failed: bun --version\n/bin/sh: bun: command not found\n"
