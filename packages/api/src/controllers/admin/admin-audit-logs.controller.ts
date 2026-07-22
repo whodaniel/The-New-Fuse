@@ -7,10 +7,10 @@
 import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard';
-import { AuditLogQuery } from '../../repositories/audit-logs.repository';
-import { AdminAuditLogsService } from '../../services/admin-audit-logs.service';
-import { toError } from '../../utils/error';
+import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard.js';
+import { AuditLogQuery } from '../../repositories/audit-logs.repository.js';
+import { AdminAuditLogsService } from '../../services/admin-audit-logs.service.js';
+import { toError } from '../../utils/error.js';
 
 @ApiTags('admin')
 @Controller('admin/audit-logs')

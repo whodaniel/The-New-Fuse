@@ -7,7 +7,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { AgentCapability } from '@the-new-fuse/types';
-import { AgentRepository, type Agent, type NewAgent } from '../repositories/agent.repository';
+import { AgentRepository, type Agent, type NewAgent } from '../repositories/agent.repository.js';
 import { toError } from '../utils/error.js';
 
 // Mock LocalAIDetectionService to avoid cross-package import issues
