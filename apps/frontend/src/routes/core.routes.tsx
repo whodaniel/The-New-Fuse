@@ -21,7 +21,7 @@ const ConnectExtensionPage = lazy(() => import('../pages/ConnectExtension'));
 const PrivacyPolicyPage = lazy(() => import('../pages/legal/PrivacyPolicy'));
 const TermsOfServicePage = lazy(() => import('../pages/legal/TermsOfService'));
 const BrandIdentityPage = lazy(() => import('../pages/BrandIdentity'));
-const BlogPage = lazy(() => import('../pages/Blog').then((module) => ({ default: module.Blog })));
+const BlogPage = lazy(() => import('../pages/Blog'));
 const OnboardingPreviewPage = lazy(() => import('../pages/preview/OnboardingPreview'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 const VisualizationsPage = lazy(() => import('../pages/Visualizations'));

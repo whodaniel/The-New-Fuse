@@ -9,8 +9,7 @@ import type {
 } from '@/types/aiSource';
 
 const STORAGE_KEY = 'tnf.aiSource.v1';
-const DEFAULT_RELAY_URL =
-  import.meta.env.VITE_AI_RELAY_URL?.trim() || 'http://127.0.0.1:43120';
+const DEFAULT_RELAY_URL = import.meta.env.VITE_AI_RELAY_URL?.trim() || 'http://127.0.0.1:43120';
 
 type RelayDiscoverPayload = {
   profiles?: Array<{
@@ -63,7 +62,10 @@ function orchestratorDefault(): AISourceOption {
   };
 }
 
-function mapRelayProfile(profile: RelayDiscoverPayload['profiles'][number], relayBaseUrl: string): AISourceOption | null {
+function mapRelayProfile(
+  profile: NonNullable<RelayDiscoverPayload['profiles']>[number],
+  relayBaseUrl: string
+): AISourceOption | null {
   const id = profile?.id?.trim();
   if (!id) return null;
   return {
@@ -159,7 +161,8 @@ function extractText(payload: unknown): string | null {
     record.reply,
     (record.data as Record<string, unknown> | undefined)?.message,
     (record.data as Record<string, unknown> | undefined)?.response,
-    (record.choices as Array<{ message?: { content?: string } }> | undefined)?.[0]?.message?.content,
+    (record.choices as Array<{ message?: { content?: string } }> | undefined)?.[0]?.message
+      ?.content,
   ];
   for (const value of candidates) {
     if (typeof value === 'string' && value.trim()) return value.trim();

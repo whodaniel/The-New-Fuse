@@ -599,7 +599,9 @@ export default function SuperAdminControlPanel() {
         '/activity/recent?count=80'
       );
       if (!payload) return;
-      const rows: ActivityEvent[] = (payload?.events || []).map(mapRawActivityEvent);
+      const rows: ActivityEvent[] = (payload?.events || []).map((e) =>
+        mapRawActivityEvent(e as Record<string, unknown>)
+      );
       if (!rows.length) return;
 
       setActivities((prev) => {
@@ -827,12 +829,21 @@ export default function SuperAdminControlPanel() {
     setLoading(true);
     try {
       const [healthRes, activityRes, agentsRes, channelsRes] = await Promise.all([
-        relayGetOptionalJson<Record<string, unknown>>(relayHttpBase, '/health'),
+        relayGetOptionalJson<{
+          agents?: number;
+          channels?: number;
+          uptime?: string;
+          nodes?: string;
+          database?: { status?: string };
+          redis?: { status?: string };
+          status?: string;
+          load?: string;
+        }>(relayHttpBase, '/health'),
         relayGetJson<{ events?: unknown[] }>(relayHttpBase, '/activity/recent?count=50', {
           events: [],
         }),
-        relayGetJson<unknown[]>(relayHttpBase, '/agents', []),
-        relayGetJson<unknown[]>(relayHttpBase, '/channels', []),
+        relayGetJson<Agent[]>(relayHttpBase, '/agents', []),
+        relayGetJson<RelayChannel[]>(relayHttpBase, '/channels', []),
       ]);
 
       if (healthRes) {
@@ -867,7 +878,9 @@ export default function SuperAdminControlPanel() {
       }
 
       if (activityRes.events) {
-        setActivities(activityRes.events.map(mapRawActivityEvent));
+        setActivities(
+          activityRes.events.map((e) => mapRawActivityEvent(e as Record<string, unknown>))
+        );
       }
 
       setAgents(agentsRes);

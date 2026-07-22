@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Dropdown, DropdownOption } from '../Dropdown';
+import { Dropdown, DropdownOption } from '../Dropdown.js';
 
 // Mock the Icon component since it's used in Dropdown
 jest.mock('../../Icon', () => ({

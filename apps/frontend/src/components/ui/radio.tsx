@@ -19,7 +19,7 @@ export const Radio: React.FC<RadioProps> = ({
   className = '',
   children,
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = () => {
     if (onCheckedChange && !disabled) {
       onCheckedChange(value);
     }

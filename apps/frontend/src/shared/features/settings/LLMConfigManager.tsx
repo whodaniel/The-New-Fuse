@@ -55,7 +55,7 @@ export function LLMConfigManager({ currentConfig, onConfigUpdate }) {
             <Select.Content>
               {Object.values(SUPPORTED_PROVIDERS).map((provider) => (
                 <Select.Item key={provider} value={provider}>
-                  {PROVIDER_DEFAULTS[provider].name}
+                  {PROVIDER_DEFAULTS[provider].label}
                 </Select.Item>
               ))}
             </Select.Content>

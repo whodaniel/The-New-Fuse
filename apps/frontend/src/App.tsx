@@ -1,5 +1,3 @@
-import About from "./pages/About";
-import Blog from "./pages/Blog";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ErrorBoundary from './components/core/ErrorBoundary';
@@ -11,8 +9,8 @@ import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
 import { ShortcutsHelp } from './components/layout/ShortcutsHelp';
-import SubdomainRouter from './routers/SubdomainRouter';
 import { AuthProvider } from './hooks/useAuth';
+import SubdomainRouter from './routers/SubdomainRouter';
 
 const queryClient = new QueryClient();
 

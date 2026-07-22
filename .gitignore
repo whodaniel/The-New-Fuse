@@ -394,6 +394,12 @@ docs/operations/tnf-full-auto-state.json
 
 .gitignore
 
+# Stale compiled output previously committed directly into src/ (see
+# packages/ui-consolidated cleanup) -- outputs belong in dist/, not src/.
+packages/ui-consolidated/src/**/*.js
+packages/ui-consolidated/src/**/*.js.map
+!packages/ui-consolidated/src/**/*.config.js
+
 # Redis RDB snapshots and other runtime dumps
 temp-*.rdb
 *.rdb

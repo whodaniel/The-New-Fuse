@@ -1,4 +1,4 @@
-import { Injectable, OnModuleDestroy, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
@@ -84,6 +84,7 @@ const toUsername = (email: string): string => {
 
 @Injectable()
 export class GatewayAuthService implements OnModuleDestroy {
+  private readonly logger = new Logger(GatewayAuthService.name);
   private readonly sql = postgres(
     process.env.DATABASE_URL ||
       process.env.SUPABASE_DATABASE_URL ||
@@ -516,7 +517,7 @@ export class GatewayAuthService implements OnModuleDestroy {
   async forgotPassword(
     email: string,
     cfTurnstileToken?: string,
-    ipAddress?: string,
+    ipAddress?: string
   ): Promise<{ success: boolean; message: string }> {
     try {
       const user = await this.sql`SELECT id, email FROM auth_users WHERE email = ${email}`;
@@ -551,7 +552,10 @@ export class GatewayAuthService implements OnModuleDestroy {
     }
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+  async resetPassword(
+    token: string,
+    newPassword: string
+  ): Promise<{ success: boolean; message: string }> {
     try {
       const hashedPassword = await hash(newPassword, 12);
 

@@ -97,6 +97,10 @@ class FederationNodeServiceClass extends EventEmitter<FederationNodeServiceEvent
     this.client.sendChannelMessage(channelId, content, metadata);
   }
 
+  publishDesktopPresence(presence: Record<string, unknown>): void {
+    this.client.registerAgent({ metadata: { desktopPresence: presence } });
+  }
+
   sendA2AMessage(targetAgentId: string, content: string, messageType = 'task'): void {
     const joined = this.client.getState().joinedChannels;
     const channelId = joined[0] || 'general';

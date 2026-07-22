@@ -20,36 +20,39 @@ export interface ProviderConfig {
   endpoint?: string;
 }
 
-export const PROVIDER_DEFAULTS: Record<string, Partial<ProviderConfig> & { name: string }> = {
+export const PROVIDER_DEFAULTS: Record<
+  string,
+  Omit<Partial<ProviderConfig>, 'name'> & { label: string }
+> = {
   [SUPPORTED_PROVIDERS.OPENAI]: {
-    name: 'OpenAI',
+    label: 'OpenAI',
     model: 'gpt-4o',
     parameters: { temperature: 0.7, maxTokens: 2048 },
   },
   [SUPPORTED_PROVIDERS.ANTHROPIC]: {
-    name: 'Anthropic',
+    label: 'Anthropic',
     model: 'claude-3-5-sonnet',
     parameters: { temperature: 0.7, maxTokens: 4096 },
   },
   [SUPPORTED_PROVIDERS.GEMINI]: {
-    name: 'Google Gemini',
+    label: 'Google Gemini',
     model: 'gemini-1.5-pro',
     parameters: { temperature: 0.7, maxTokens: 2048 },
   },
   [SUPPORTED_PROVIDERS.OLLAMA]: {
-    name: 'Ollama (Local)',
+    label: 'Ollama (Local)',
     model: 'llama3',
     endpoint: 'http://localhost:11434',
     parameters: { temperature: 0.7, maxTokens: 2048 },
   },
   [SUPPORTED_PROVIDERS.LMSTUDIO]: {
-    name: 'LMStudio (Local)',
+    label: 'LMStudio (Local)',
     model: 'local-model',
     endpoint: 'http://localhost:1234/v1',
     parameters: { temperature: 0.7, maxTokens: 2048 },
   },
   [SUPPORTED_PROVIDERS.TNF_CLOUD]: {
-    name: 'TNF Cloud (Pro/Teams)',
+    label: 'TNF Cloud (Pro/Teams)',
     model: 'tnf-hosted',
     parameters: { temperature: 0.7, maxTokens: 4096 },
   },

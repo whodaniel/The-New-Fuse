@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Agent, MultiAgentChatProps } from '../types/multi-agent-chat.types';
+import { Agent, MultiAgentChatViewProps } from '../types/multi-agent-chat.types.js';
 import {
   DeleteIcon,
   EditIcon,
@@ -7,7 +7,7 @@ import {
   SystemIcon,
   providerDetails,
   useMultiAgentChat,
-} from './MultiAgentChatProvider';
+} from './MultiAgentChatProvider.js';
 
 // Agent Tag Component
 const AgentTag: React.FC<{ agent: Agent; onEdit: () => void; onDelete: () => void }> = ({
@@ -366,7 +366,7 @@ const RulesModal: React.FC<{
 };
 
 // Main MultiAgentChat Component
-export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
+export const MultiAgentChat: React.FC<MultiAgentChatViewProps> = ({
   className = '',
   theme = 'auto',
   onSessionStart,

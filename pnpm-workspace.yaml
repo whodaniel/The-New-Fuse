@@ -4,3 +4,7 @@ packages:
   - "!apps/skideancer-ide"
   - "packages/*"
   - "tools/*"
+
+overrides:
+  "@types/three": "0.168.0"
+  "@types/react": "^19.0.0"

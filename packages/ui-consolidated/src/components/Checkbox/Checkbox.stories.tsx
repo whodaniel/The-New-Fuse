@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Checkbox } from './Checkbox';
+import { Checkbox } from './Checkbox.js';
 
 const meta: Meta<typeof Checkbox> = {
   title: 'Components/Checkbox',
@@ -35,7 +35,7 @@ export const Default: Story = {
 export const WithHelperText: Story = {
   args: {
     label: 'Subscribe to newsletter',
-    helperText: 'We\'ll send you weekly updates',
+    helperText: "We'll send you weekly updates",
   },
 };
 

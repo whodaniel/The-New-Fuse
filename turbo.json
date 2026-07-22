@@ -182,13 +182,13 @@
       "cache": false
     },
     "type-check": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": ["^build"],
       "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
       "outputs": [],
       "outputLogs": "errors-only"
     },
     "dev": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
@@ -212,7 +212,7 @@
       "outputLogs": "new-only"
     },
     "test:unit": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": ["^build"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "**/*.test.*",

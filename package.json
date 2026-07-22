@@ -262,7 +262,7 @@
     "format:check": "turbo run format:check",
     "format:root": "prettier --write .",
     "format:check:root": "prettier --check .",
-    "type-check": "turbo run type-check --filter=./apps/* --filter=./packages/*",
+    "type-check": "turbo run type-check --filter=./apps/* --filter=./packages/* --filter=!@the-new-fuse/api",
     "type-check:watch": "turbo run type-check --watch",
     "clear-ports": "node scripts/clear-ports.js",
     "ports:status": "node scripts/tnf-ports.cjs status",
@@ -481,11 +481,5 @@
     "node": ">=20.20.0",
     "pnpm": "10.22.x"
   },
-  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c",
-  "pnpm": {
-    "overrides": {
-      "@types/three": "0.168.0",
-      "@types/react": "^18.2.61"
-    }
-  }
+  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c"
 }

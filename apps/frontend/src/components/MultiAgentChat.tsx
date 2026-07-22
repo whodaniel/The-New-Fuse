@@ -1,7 +1,6 @@
+import { aiSourceService } from '@/services/aiSource.service';
 import { Bot, Loader2, Plus, Search, Send, Settings, Sparkles, Users, Zap } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import AISourceSelector from '@/components/ai/AISourceSelector';
-import { aiSourceService } from '@/services/aiSource.service';
 import { useApi } from '../hooks/useApi';
 import { useToast } from '../hooks/useToast';
 import { GlassCard } from './ui/premium/GlassCard';
@@ -94,28 +93,8 @@ const MessageItem = React.memo<{ msg: Message }>(({ msg }) => {
 });
 MessageItem.displayName = 'MessageItem';
 
-const extractAssistantText = (
-  payload: any
-): { sender: string; text: string; agentId?: string } | null => {
-  const responseBody = payload?.data ?? payload;
-  const text =
-    responseBody?.message ??
-    responseBody?.response ??
-    responseBody?.reply ??
-    responseBody?.text ??
-    responseBody?.output?.text;
-
-  if (typeof text !== 'string' || text.trim().length === 0) return null;
-
-  return {
-    sender: String(responseBody?.agentName ?? responseBody?.agent?.name ?? 'Orchestrator'),
-    text,
-    agentId: responseBody?.agentId ?? responseBody?.agent?.id,
-  };
-};
-
 export const MultiAgentChat: React.FC = () => {
-  const { api, agentService } = useApi();
+  const { agentService } = useApi();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [activeAgents, setActiveAgents] = useState<ChatAgent[]>([]);
