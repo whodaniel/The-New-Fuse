@@ -230,9 +230,46 @@ function main() {
     }
   }
 
+  // Reverse check (operator directive 2026-07-22): ledger identities with no
+  // current definition are stale expectations from past edge cases. Knowledge
+  // of them is fine; counting them as registered actives is not. Reported as
+  // knowledge-only so operators can archive them deliberately.
+  const definedNormalized = new Set();
+  for (const file of fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith('.md'))) {
+    definedNormalized.add(
+      path.basename(file, '.md').toUpperCase().replace(/[^A-Z0-9]+/g, '-')
+    );
+    try {
+      const name = extractFrontmatterName(fs.readFileSync(path.join(AGENTS_DIR, file), 'utf8'));
+      if (name) definedNormalized.add(name.toUpperCase().replace(/[^A-Z0-9]+/g, '-'));
+    } catch {}
+  }
+  const staleIdentities = [];
+  const seenNormalizedIds = new Set();
+  for (const rawId of registeredAgents) {
+    const id = rawId.replace(/`/g, '');
+    if (seenNormalizedIds.has(id)) continue; // ledger formatting duplicates
+    seenNormalizedIds.add(id);
+    const name = (id.split(':')[3] || '').toUpperCase().replace(/[^A-Z0-9]+/g, '-');
+    if (name && !definedNormalized.has(name)) staleIdentities.push(id);
+  }
+  if (staleIdentities.length > 0) {
+    console.log('');
+    console.log(
+      `Stale ledger identities — knowledge-only, no current definition (${staleIdentities.length}):`
+    );
+    for (const id of staleIdentities) {
+      console.log(`  - ${id}  [past edge case; not expected at boot]`);
+    }
+  }
+
   console.log('');
   if (unregistered.length === 0) {
-    console.log('All agents are registered.');
+    console.log(
+      staleIdentities.length === 0
+        ? 'All agents are registered.'
+        : `All current agents are registered (${staleIdentities.length} stale ledger identity/ies noted above).`
+    );
     process.exit(0);
   } else {
     console.log(`Unregistered agents (${unregistered.length}):`);

@@ -1274,7 +1274,26 @@ async function main() {
   console.log('- Launch raw AI CLIs from the TNF repository root so ./docs/... resolves.');
 }
 
-main().catch((error) => {
-  console.error(`Bootstrap failed: ${error?.message || 'unknown error'}`);
-  process.exit(1);
-});
+// Boot-output triage (operator directive 2026-07-22): collect everything the
+// bootstrap prints, then agentically classify error-shaped lines — stale
+// expectations from past edge cases are demoted to knowledge-only, transient
+// infra is reported without escalation, and only real errors are surfaced
+// (with an agentic remediation hook). See scripts/lib/tnf-boot-triage.cjs.
+const { runBootTriage, createBootOutputCollector } = require('./lib/tnf-boot-triage.cjs');
+
+const bootCollector = createBootOutputCollector();
+main()
+  .then(() => {
+    bootCollector.restore();
+    runBootTriage(bootCollector.lines);
+  })
+  .catch((error) => {
+    bootCollector.restore();
+    console.error(`Bootstrap failed: ${error?.message || 'unknown error'}`);
+    try {
+      runBootTriage(bootCollector.lines);
+    } catch {
+      // Triage must never mask the original failure.
+    }
+    process.exit(1);
+  });
