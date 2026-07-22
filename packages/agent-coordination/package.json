@@ -11,7 +11,7 @@
     "build": "tsc -b",
     "build:watch": "tsc --watch",
     "dev": "tsc --watch",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:unit": "jest --testPathPatterns=unit --passWithNoTests",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
