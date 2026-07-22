@@ -1,0 +1,37 @@
+---
+description: TNF Inspect-Act-Verify discipline — verify every action against a proven pathway before treating it as complete
+alwaysApply: false
+---
+
+# TNF Inspect → Act → Verify
+
+The core execution discipline of The New Fuse. Apply it to any non-trivial
+change, command, or automated action.
+
+## The loop
+
+1. **Inspect** — gather ground truth first. Read the relevant files, run
+   read-only checks, and confirm the current state. Never act on assumptions.
+2. **Act** — make the smallest change that advances the goal. Prefer editing
+   existing files over creating new ones.
+3. **Verify** — confirm the change did what you intended using a **proven,
+   legacy testing pathway** (existing tests, type-check, lint, a known-good
+   command). Cutting-edge logic must be verified against a trusted baseline.
+
+## Velocity–Integrity balance
+
+When using experimental or cutting-edge logic, the Verify step MUST rely on a
+proven pathway to protect against unverified assumptions. Speed never overrides
+correctness for state-changing work.
+
+## Structured confirmation
+
+Never trust upstream agent or tool output at face value. Confirm results with a
+concrete signal: an exit code, a diff, a test result, or a file read — not just
+a claim that something succeeded.
+
+## Proliferation
+
+If you discover a better way to inspect, act, verify, recover, or route, codify
+it durably (a rule, skill, command, test, or doc) rather than leaving the
+improvement local and temporary.

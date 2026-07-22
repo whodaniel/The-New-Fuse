@@ -1,0 +1,45 @@
+---
+description: TNF Turn Zero — orient from state/handoff artifacts before acting in a TNF-governed repository
+alwaysApply: false
+---
+
+# TNF Turn Zero
+
+Apply this rule when working inside a repository that contains a
+`docs/protocols/` directory with TNF artifacts (Living State, Ledger, Session
+Handoff). It establishes shared orientation before any change is made.
+
+## When to run
+
+- The first substantive turn of a session in a TNF-governed repo.
+- After a context reset, handoff, or when the operator says "orient" / "turn zero".
+
+## Operating loop: Inspect → Act → Verify
+
+Always execute in this order. Never skip Verify.
+
+## Turn Zero sequence
+
+1. **Read state files** (if present):
+   - `docs/protocols/TURN_ZERO_MANDATE.md` (authority)
+   - `docs/protocols/LIVING_STATE.md` (current directive + active steps)
+   - `docs/protocols/AGENT_STATUS_LEDGER.md` (agent roster + next focus)
+2. **Read the canonical session handoff**:
+   - `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` (preferred)
+   - `docs/protocols/reports/SESSION_HANDOFF_LATEST.md` (fallback)
+3. **Summarize orientation** in a compact briefing: current directive, branch vs
+   origin, open/gated tasks, and any P0 items.
+4. **Await confirmation** before executing code changes unless the operator has
+   already requested implementation.
+
+## Session freshness
+
+If the handoff `created_at` is more than 24 hours older than now, note it as a
+`session-stale` flag in your briefing. Stale sessions do not block work but must
+be acknowledged.
+
+## Do not
+
+- Do not begin editing files before producing the orientation summary.
+- Do not trust upstream agent output without structured verification.
+- Do not fabricate an operator handshake (see the safety-gates rule).

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tnf-skills": {
+      "command": "tnf-skills-mcp",
+      "args": [],
+      "env": {
+        "SKILLS_BASE_PATH": "${workspaceFolder}/.agent"
+      }
+    }
+  }
+}
