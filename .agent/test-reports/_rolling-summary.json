@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T22:39:30.626Z",
+  "generatedAt": "2026-07-22T22:58:46.874Z",
   "schema": "tnf-rolling-summary-v1",
   "config": {
     "maxReportsPerType": 50,
@@ -108,20 +108,13 @@
       "recentMaxScore": 100,
       "trend": "stable-or-improving",
       "latestReport": {
-        "file": "integration-report-1784759968642.json",
-        "timestamp": "2026-07-22T22:39:28.397Z",
+        "file": "integration-report-1784761122514.json",
+        "timestamp": "2026-07-22T22:58:21.543Z",
         "score": 100,
         "status": "healthy",
         "lifecycle": "production"
       },
       "entries": [
-        {
-          "file": "integration-report-1784749353594.json",
-          "timestamp": "2026-07-22T19:42:33.567Z",
-          "score": 100,
-          "status": "healthy",
-          "lifecycle": "production"
-        },
         {
           "file": "integration-report-1784752248237.json",
           "timestamp": "2026-07-22T20:30:46.128Z",
@@ -181,6 +174,13 @@
         {
           "file": "integration-report-1784759968642.json",
           "timestamp": "2026-07-22T22:39:28.397Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1784761122514.json",
+          "timestamp": "2026-07-22T22:58:21.543Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
