@@ -23,6 +23,7 @@ const crypto = require('crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const { findBestMatch } = require('./lib/tnf-agent-match.cjs');
+const { recommendModel } = require('./lib/tnf-model-match.cjs');
 
 // ============================================================================
 // CONFIGURATION
@@ -536,6 +537,16 @@ class RedisAgentClient {
       const currentAgentName = this.agentInfo?.name;
       if (topMatch.name === currentAgentName) return;
 
+      // Model-level recommendation alongside the agent-level one — "which
+      // agent persona" and "which underlying LLM model" are both part of
+      // routing a task optimally, raised together 2026-07-23. Currently
+      // general health/latency/priority ranking only (real NVIDIA NGC data,
+      // not simulated) — not yet task-category-aware; see
+      // scripts/lib/tnf-model-match.cjs for why, and the tracked follow-up
+      // to fix the underlying per-category benchmark scrapers.
+      const modelRecommendation = recommendModel({ limit: 1 });
+      const topModel = modelRecommendation.models[0] || null;
+
       const logDir = path.join(process.cwd(), '.agent', 'runtime-logs');
       fs.mkdirSync(logDir, { recursive: true });
       const logPath = path.join(logDir, 'delegation-suggestions.jsonl');
@@ -545,6 +556,8 @@ class RedisAgentClient {
         currentAgentId: this.agentInfo?.id || null,
         suggestedAgent: topMatch.name,
         score: topMatch.score,
+        recommendedModel: topModel?.model || null,
+        recommendedModelStale: modelRecommendation.stale,
         taskPreview: taskText.slice(0, 200),
         messageId: message.id || null,
       };
