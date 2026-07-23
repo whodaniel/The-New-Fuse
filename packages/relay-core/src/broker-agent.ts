@@ -933,10 +933,15 @@ class BrokerAgent {
 
   private isWorkerAgent(agent: RegistryAgent): boolean {
     // Phase 8: prefer `daccRole` (canonical DACC-v1 position) over the
-    // legacy `role` field. Agents whose daccRole is director/orchestrator/broker
-    // are infrastructure-level, NOT eligible as worker dispatch targets.
+    // legacy `role` field. Agents whose daccRole is
+    // director/orchestrator/broker/coordinator/bridge are infrastructure-level,
+    // NOT eligible as worker dispatch targets. 'coordinator' (e.g.
+    // Project-Planner) and 'bridge' (e.g. hermes-bridge) were added
+    // 2026-07-22 after being found live in the registry with role values the
+    // CLI's AGENT_ROLE_TRAITS didn't yet recognize.
     // Fall back to inspecting both daccRole and the legacy `role` so existing
     // emitters continue to classify correctly.
+    const INFRA_ROLES = ['director', 'orchestrator', 'broker', 'coordinator', 'bridge'];
     const daccRole = String(agent.daccRole || '').toLowerCase();
     const legacyRole = String(agent.role || '').toLowerCase();
     const status = String(agent.status || '').toLowerCase();
@@ -945,9 +950,9 @@ class BrokerAgent {
     const lastSeenMs = Date.parse(String(agent.lastSeen || ''));
     if (!Number.isFinite(lastSeenMs)) return false;
     if (Date.now() - lastSeenMs > CONFIG.AGENT_STALE_MS) return false;
-    if (['director', 'orchestrator', 'broker'].includes(daccRole)) return false;
+    if (INFRA_ROLES.includes(daccRole)) return false;
     // Legacy role field: same exclusion.
-    if (['broker', 'orchestrator', 'director'].includes(legacyRole)) return false;
+    if (INFRA_ROLES.includes(legacyRole)) return false;
     return true;
   }
 

@@ -6,13 +6,23 @@ import { v4 as uuidv4 } from 'uuid';
 export interface AgentInfo {
   id: string;
   name: string;
-  role: 'orchestrator' | 'broker' | 'worker' | 'participant';
+  role:
+    | 'director'
+    | 'orchestrator'
+    | 'broker'
+    | 'worker'
+    | 'participant'
+    | 'coordinator'
+    | 'bridge'
+    | string;
   platform: 'antigravity' | 'gemini' | 'claude' | 'jules' | 'vscode' | 'browser' | string;
   status: 'active' | 'idle' | 'offline';
   capabilities: string[];
   registeredAt: string;
   lastSeen: string;
   isOnline?: boolean;
+  daccRole?: string;
+  directorTier?: 'super' | 'sub' | 'local';
 }
 
 export interface AgentMessage {
@@ -168,7 +178,13 @@ export class RedisAgentClient {
     return false;
   }
 
-  async register(name: string, role: any, platform: string, capabilities: string[] = []) {
+  async register(
+    name: string,
+    role: any,
+    platform: string,
+    capabilities: string[] = [],
+    extra: Partial<AgentInfo> = {}
+  ) {
     this.agentInfo = {
       id: `agent_${name}_${Date.now()}`,
       name,
@@ -178,6 +194,7 @@ export class RedisAgentClient {
       capabilities: capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(platform),
       registeredAt: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
+      ...extra,
     };
 
     if (!this.publisher && !this.upstash) throw new Error('Client not initialized');

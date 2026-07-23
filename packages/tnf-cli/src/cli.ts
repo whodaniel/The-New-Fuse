@@ -3129,8 +3129,65 @@ export const PLATFORM_TAXONOMY: string[] = [
 // DACC-v1 hierarchy values surfaced by `tnf traits list agent_roles`. These
 // two arrays are the contract for `tnf traits list`. Adding a new role or
 // platform here is the canonical way to extend the runtime taxonomy.
-const AGENT_ROLE_TRAITS = ['director', 'orchestrator', 'broker', 'worker', 'participant'];
+// 'coordinator' (e.g. Project-Planner) and 'bridge' (e.g. hermes-bridge) were
+// added after being found live in the agent registry but missing from this
+// list — see broker-agent.ts isWorkerAgent(), which excludes both from
+// worker-dispatch eligibility alongside director/orchestrator/broker.
+const AGENT_ROLE_TRAITS = [
+  'director',
+  'orchestrator',
+  'broker',
+  'worker',
+  'participant',
+  'coordinator',
+  'bridge',
+];
 const AGENT_PLATFORM_TRAITS = PLATFORM_TAXONOMY;
+// Valid qualifiers for `--director-tier`, used to distinguish the local
+// sub-director / cloud super-director authority split (see
+// .claude/agents/sub-director.md, super-director.md) without introducing new
+// `role` string values that would bypass exact-match role checks elsewhere
+// (e.g. broker-agent.ts isWorkerAgent()).
+const DIRECTOR_TIER_TRAITS = ['super', 'sub', 'local'];
+
+// Adaptability hook: operators can add new roles/platforms without a code
+// change by editing ~/.tnf/taxonomy-overrides.json:
+//   { "agent_roles": ["custom-role"], "agent_platforms": ["custom-platform"] }
+// These are unioned into the effective validation set (still warn-only) and
+// surfaced separately by `tnf traits list` as custom_agent_roles /
+// custom_agent_platforms so drift from the canonical baseline stays visible.
+interface TaxonomyOverrides {
+  agent_roles?: string[];
+  agent_platforms?: string[];
+}
+
+function loadTaxonomyOverrides(): TaxonomyOverrides {
+  const candidate = path.join(process.env.HOME || '', '.tnf', 'taxonomy-overrides.json');
+  try {
+    if (!fs.existsSync(candidate)) return {};
+    const parsed = JSON.parse(fs.readFileSync(candidate, 'utf-8'));
+    return {
+      agent_roles: Array.isArray(parsed?.agent_roles)
+        ? parsed.agent_roles.filter((v: unknown) => typeof v === 'string')
+        : [],
+      agent_platforms: Array.isArray(parsed?.agent_platforms)
+        ? parsed.agent_platforms.filter((v: unknown) => typeof v === 'string')
+        : [],
+    };
+  } catch {
+    return {};
+  }
+}
+
+const TAXONOMY_OVERRIDES = loadTaxonomyOverrides();
+const CUSTOM_AGENT_ROLES = (TAXONOMY_OVERRIDES.agent_roles || []).filter(
+  (r) => !AGENT_ROLE_TRAITS.includes(r)
+);
+const CUSTOM_AGENT_PLATFORMS = (TAXONOMY_OVERRIDES.agent_platforms || []).filter(
+  (p) => !PLATFORM_TAXONOMY.includes(p)
+);
+const EFFECTIVE_AGENT_ROLE_TRAITS = [...AGENT_ROLE_TRAITS, ...CUSTOM_AGENT_ROLES];
+const EFFECTIVE_PLATFORM_TAXONOMY = [...PLATFORM_TAXONOMY, ...CUSTOM_AGENT_PLATFORMS];
 const SUPER_ADMIN_COMMAND_TRAITS = [
   'tnf relay start',
   'tnf jules loop',
@@ -3460,9 +3517,16 @@ function buildTraitGroups(): TraitGroup[] {
   return [
     { name: 'agent_roles', values: AGENT_ROLE_TRAITS },
     { name: 'agent_platforms', values: AGENT_PLATFORM_TRAITS },
+    { name: 'director_tiers', values: DIRECTOR_TIER_TRAITS },
     { name: 'super_admin_protected', values: SUPER_ADMIN_COMMAND_TRAITS },
     { name: 'redis_required', values: REDIS_COMMAND_TRAITS },
     { name: 'provider_routed', values: PROVIDER_ROUTED_COMMAND_TRAITS },
+    ...(CUSTOM_AGENT_ROLES.length > 0
+      ? [{ name: 'custom_agent_roles', values: CUSTOM_AGENT_ROLES }]
+      : []),
+    ...(CUSTOM_AGENT_PLATFORMS.length > 0
+      ? [{ name: 'custom_agent_platforms', values: CUSTOM_AGENT_PLATFORMS }]
+      : []),
     ...(discoveredWorkerActions.length > 0
       ? [{ name: 'discovered_worker_actions', values: discoveredWorkerActions }]
       : []),
@@ -4824,16 +4888,23 @@ program
   .argument('[name]', 'Agent name', process.env.AGENT_NAME || 'unnamed-agent')
   .argument(
     '[role]',
-    `Agent role (${AGENT_ROLE_TRAITS.join(', ')})`,
+    `Agent role (${EFFECTIVE_AGENT_ROLE_TRAITS.join(', ')})`,
     process.env.AGENT_ROLE || 'worker'
   )
   .argument(
     '[platform]',
-    `Agent platform (${PLATFORM_TAXONOMY.join(', ')})`,
+    `Agent platform (${EFFECTIVE_PLATFORM_TAXONOMY.join(', ')})`,
     process.env.AGENT_PLATFORM || 'vscode'
   )
   .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
-  .option('--dacc-role <role>', `DACC-v1 hierarchy position (${AGENT_ROLE_TRAITS.join(', ')})`)
+  .option(
+    '--dacc-role <role>',
+    `DACC-v1 hierarchy position (${EFFECTIVE_AGENT_ROLE_TRAITS.join(', ')})`
+  )
+  .option(
+    '--director-tier <tier>',
+    `Director authority tier when role/dacc-role is director (${DIRECTOR_TIER_TRAITS.join(', ')})`
+  )
   .option(
     '--worker-action <action>',
     'Worker action primitive (e.g. code_generation, cli_coder, orchestrator)'
@@ -4844,25 +4915,42 @@ program
     try {
       await client.initialize();
       // Phase 8: validate role and platform are in canonical taxonomy.
-      if (!AGENT_ROLE_TRAITS.includes(role)) {
+      // Effective taxonomy = canonical baseline + ~/.tnf/taxonomy-overrides.json.
+      if (!EFFECTIVE_AGENT_ROLE_TRAITS.includes(role)) {
         console.error(
           chalk.yellow(
             `⚠ role '${role}' is not in the canonical DACC-v1 role traits ` +
-              `(${AGENT_ROLE_TRAITS.join(', ')}). Proceeding for backward ` +
-              `compatibility, but consider registering with a canonical role.`
+              `(${EFFECTIVE_AGENT_ROLE_TRAITS.join(', ')}). Proceeding for backward ` +
+              `compatibility, but consider registering with a canonical role, or add it ` +
+              `to ~/.tnf/taxonomy-overrides.json.`
           )
         );
       }
-      if (!PLATFORM_TAXONOMY.includes(platform)) {
+      if (!EFFECTIVE_PLATFORM_TAXONOMY.includes(platform)) {
         console.error(
           chalk.yellow(
             `⚠ platform '${platform}' is not in PLATFORM_TAXONOMY ` +
-              `(${PLATFORM_TAXONOMY.join(', ')}). Proceeding for backward ` +
-              `compatibility.`
+              `(${EFFECTIVE_PLATFORM_TAXONOMY.join(', ')}). Proceeding for backward ` +
+              `compatibility, or add it to ~/.tnf/taxonomy-overrides.json.`
           )
         );
       }
-      const agentInfo = await client.register(name, role, platform);
+      const directorTier: string | undefined = options.directorTier;
+      if (directorTier && !DIRECTOR_TIER_TRAITS.includes(directorTier)) {
+        console.error(
+          chalk.yellow(
+            `⚠ --director-tier '${directorTier}' is not one of ` +
+              `(${DIRECTOR_TIER_TRAITS.join(', ')}). Ignoring.`
+          )
+        );
+      }
+      const daccRole: string | undefined = options.daccRole;
+      const extra: Record<string, unknown> = {};
+      if (daccRole) extra.daccRole = daccRole;
+      if (directorTier && DIRECTOR_TIER_TRAITS.includes(directorTier)) {
+        extra.directorTier = directorTier;
+      }
+      const agentInfo = await client.register(name, role, platform, [], extra);
       console.log(chalk.green(`\n🤖 Registered as: ${chalk.bold(name)} (${role}) on ${platform}`));
       console.log(`   ID: ${chalk.dim(agentInfo.id)}`);
       console.log(`   Capabilities: ${chalk.dim(agentInfo.capabilities.join(', '))}`);
