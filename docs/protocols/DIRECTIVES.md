@@ -64,8 +64,8 @@ These are hard requirements. Violation is a protocol failure.
   authorization. Still-required regardless of this authorization: destructive
   operations (process kills, force-push, hard deletes), commits, and any
   handling of secrets/credentials still need explicit per-action operator
-  confirmation — this directive covers routine long-running task execution,
-  not those categories. — `TURN_ZERO_MANDATE.md`,
+  confirmation — this directive covers routine long-running task execution, not
+  those categories. — `TURN_ZERO_MANDATE.md`,
   `CORE_SYSTEM_PROMPT_ARCHITECTURE.md`
 - **D2 — Operating Loop: Inspect → Act → Verify.** Never guess; read state
   first. Never assume success; confirm after. Prefer structured
@@ -168,6 +168,20 @@ These are hard requirements. Violation is a protocol failure.
   branches; resolve via attribution/escalation tier. PRs with
   procedural/strategic changes MUST invoke `tnf:intel:ingest` or declare
   `NO_INTEL_DELTA`. — `MULTI_AGENT_INTEGRATION_PROTOCOL.md`
+- **D22 — Delegation-First Check.** Before performing non-trivial generic work,
+  check the local agent capability index (`scripts/lib/tnf-agent-match.cjs`) for
+  a specialized TNF agent that's a stronger fit; prefer delegating to it if one
+  exists. This is a minimal, TypeScript-native first step toward the A2A-based
+  delegation layer described in `DACC_PROTOCOL_MASTER_MANUAL.md` /
+  `DACC_POML_MCP_A2A_INTEGRATION_BLUEPRINT.md` — not a replacement for that
+  fuller vision, which remains a separate, much larger initiative. Enforced at
+  the shared Redis dispatch chokepoint
+  (`RedisAgentClient.handleIncomingMessage`, `scripts/tnf-agent-cli.cjs`) for
+  all wrapper-based agents: suggest and log a stronger-fit match, do not
+  silently reroute (see D8 human-in-the-loop tiering — auto-rerouting another
+  agent's assigned task is not a routine/tactical action to take unilaterally).
+  Supersedes A4's opt-in framing. — `DACC_PROTOCOL_MASTER_MANUAL.md`,
+  `AGENT_STATUS_LEDGER.md`
 
 ---
 
@@ -184,7 +198,10 @@ These are hard requirements. Violation is a protocol failure.
   (Thread-to-Task)
 - **A4 — Adopt / delegate via Agent Bank.** Dynamically discover/adopt personas
   and capabilities from `get_agent_bank_resources` (MCP) / `/api/agents/bank/*`.
-  — `AGENTS.md`
+  Note: `get_agent_bank_resources` does not exist as code anywhere in this repo
+  (confirmed 2026-07-23) — see D22 for the mandatory delegation-first check and
+  the real, minimal mechanism (`scripts/lib/tnf-agent-match.cjs`) that exists in
+  its place today. — `AGENTS.md`
 - **A5 — Spawn subagents & specialized loops.** Orchestrate PicoClaw
   (analyzers), OpenClaw (fleet/executor), ZeroClaw (sandbox) per task shape;
   route across the Department chain (Scout→Library→Forge→Governance→Connective

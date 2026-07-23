@@ -20,6 +20,9 @@ const Redis = require('ioredis');
 const { v4: uuidv4 } = require('uuid');
 const readline = require('readline');
 const crypto = require('crypto');
+const fs = require('node:fs');
+const path = require('node:path');
+const { findBestMatch } = require('./lib/tnf-agent-match.cjs');
 
 // ============================================================================
 // CONFIGURATION
@@ -339,6 +342,16 @@ class RedisAgentClient {
       // Log the message
       this.logIncomingMessage(message);
 
+      // DIRECTIVES.md D22 (Delegation-First Check): before dispatching a
+      // task-type message, see if a more specialized TNF agent is a
+      // stronger fit. Suggest and log only — never silently reroute (see
+      // D22/D8 in DIRECTIVES.md for why). Single chokepoint shared by every
+      // Redis-driven wrapper (pi/jules/gemini/...), so this applies to all
+      // of them from one place.
+      if (message.type === 'task') {
+        this.logDelegationSuggestion(message);
+      }
+
       // Call registered handlers
       const handlers = this.messageHandlers.get(message.type) || [];
       handlers.forEach((handler) => handler(message, channel));
@@ -503,6 +516,42 @@ class RedisAgentClient {
 
     if (message.expectsResponse) {
       console.log(`   ⏳ Expects response`);
+    }
+  }
+
+  /**
+   * DIRECTIVES.md D22: check the local agent capability index for a
+   * stronger-fit specialized agent before this task gets processed here.
+   * Suggest and log only (see D22/D8) — never reroutes automatically.
+   */
+  logDelegationSuggestion(message) {
+    try {
+      const taskText = String(message.content || '').trim();
+      if (!taskText) return;
+
+      const matches = findBestMatch(taskText, { limit: 1 });
+      if (matches.length === 0) return;
+
+      const topMatch = matches[0];
+      const currentAgentName = this.agentInfo?.name;
+      if (topMatch.name === currentAgentName) return;
+
+      const logDir = path.join(process.cwd(), '.agent', 'runtime-logs');
+      fs.mkdirSync(logDir, { recursive: true });
+      const logPath = path.join(logDir, 'delegation-suggestions.jsonl');
+      const entry = {
+        timestamp: new Date().toISOString(),
+        currentAgent: currentAgentName || 'unknown',
+        currentAgentId: this.agentInfo?.id || null,
+        suggestedAgent: topMatch.name,
+        score: topMatch.score,
+        taskPreview: taskText.slice(0, 200),
+        messageId: message.id || null,
+      };
+      fs.appendFileSync(logPath, JSON.stringify(entry) + '\n', 'utf8');
+    } catch (error) {
+      // Never let a delegation-suggestion failure block real task processing.
+      console.error('D22 delegation check failed (non-fatal):', error.message);
     }
   }
 

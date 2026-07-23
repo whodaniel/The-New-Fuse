@@ -38,6 +38,27 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: Daniel Goldberg (operator), confirmed via AskUserQuestion in a
   live Claude Code session, 2026-07-21.
 
+## 2026-07-23 — docs/protocols/DIRECTIVES.md
+
+- file: docs/protocols/DIRECTIVES.md
+- git_blob_sha: (see commit history for this session; entry logs the mutation
+  concurrently with the commit, not as a backfill)
+- rationale: Operator asked to raise delegation much higher in TNF's procedural
+  priority hierarchy, with real enforcement rather than documentation alone.
+  Research during the same session found delegation (A4) sat only under §2 "WHAT
+  TNF ALLOWS" (opt-in) with no mandatory §1 directive requiring an agent to
+  check for a better-suited specialized agent before doing generic work, and
+  that A4's named mechanism (`get_agent_bank_resources`) has zero code
+  references anywhere in the repo. Added D22 ("Delegation-First Check") to §1,
+  promoting delegation to mandatory, backed by a real (if intentionally minimal)
+  TypeScript capability matcher (`scripts/lib/tnf-agent-match.cjs`) wired into
+  the shared Redis dispatch chokepoint, and cross-referenced A4 to point at it.
+  This was presented as an explicit plan (via ExitPlanMode) naming this exact
+  `DIRECTIVES.md` edit before being approved, per the operator-confirmation
+  requirement for `[STATUS:LOCKED]` document mutations.
+- attributed_to: Daniel Goldberg (operator), confirmed via plan approval
+  (ExitPlanMode) in a live Claude Code session, 2026-07-23.
+
 ## 2026-07-21 — docs/protocols/TURN_ZERO_MANDATE.md
 
 - file: docs/protocols/TURN_ZERO_MANDATE.md
