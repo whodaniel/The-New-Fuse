@@ -17,6 +17,7 @@ const readline = require('readline');
 
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
 const { publishProviderFailureSignal } = require('./watchdog-signal-utils.cjs');
+const { isHeartbeatOrNoise } = require('./lib/tnf-heartbeat-filter.cjs');
 // Lazy-load pi-session-handoff to avoid pulling in monorepo deps at startup
 // const { publishPiSessionHandoff, buildGateDecisions } = require('./pi-session-handoff.cjs');
 
@@ -77,18 +78,6 @@ const PROVIDER_FAILURE_PATTERNS = [
     regex: /\b(402|insufficient credits|more credits|payment required|billing|quota exceeded)\b/i,
   },
 ];
-
-/** Heartbeats / stall pings should not burn Pi provider quota. */
-function isHeartbeatOrNoise(text) {
-  const raw = String(text || '').trim();
-  if (!raw) return true;
-  if (/^TNF heartbeat\b/i.test(raw)) return true;
-  if (/\bcron-heartbeat-/i.test(raw)) return true;
-  if (/please respond with a heartbeat or acknowledgment/i.test(raw)) return true;
-  if (/\bagent_stalled\b/i.test(raw)) return true;
-  if (/^\[SYSTEM\].*heartbeat/i.test(raw)) return true;
-  return false;
-}
 
 function parseList(value) {
   if (Array.isArray(value))
