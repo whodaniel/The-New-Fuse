@@ -3,7 +3,9 @@
 # Prefer adaptive harness context over hard-coded Google defaults.
 set -euo pipefail
 
-export PATH="/Users/danielgoldberg/.nvm/versions/node/v20.20.2/bin:/Users/danielgoldberg/.hermes/node/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
+# Pi (@earendil-works/pi-coding-agent) ships undici>=8 which needs Node 22+
+# (webidl.util.markAsUncloneable). Prefer hermes/nvm Node 22 ahead of Node 20.
+export PATH="/Users/danielgoldberg/.hermes/node/bin:/Users/danielgoldberg/.nvm/versions/node/v22.22.3/bin:/Users/danielgoldberg/.nvm/versions/node/v20.20.2/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -16,7 +18,23 @@ fi
 
 HARNESS_ENV="${TNF_HARNESS_CONTEXT_ENV:-$REPO_ROOT/.agent/runtime-state/harness-context.env}"
 HARNESS_RESOLVER="$REPO_ROOT/scripts/runtime/resolve-harness-context.cjs"
-NODE_BIN="$(command -v node || true)"
+# Prefer an explicit Node 22 binary; fall back to PATH order above.
+NODE_BIN=""
+for candidate in \
+  "/Users/danielgoldberg/.hermes/node/bin/node" \
+  "/Users/danielgoldberg/.nvm/versions/node/v22.22.3/bin/node" \
+  "$(command -v node || true)"; do
+  if [[ -n "$candidate" && -x "$candidate" ]]; then
+    major="$("$candidate" -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)"
+    if [[ "$major" -ge 22 ]]; then
+      NODE_BIN="$candidate"
+      break
+    fi
+  fi
+done
+if [[ -z "$NODE_BIN" ]]; then
+  NODE_BIN="$(command -v node || true)"
+fi
 
 cd "$REPO_ROOT"
 

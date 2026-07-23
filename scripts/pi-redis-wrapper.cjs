@@ -823,9 +823,20 @@ class PiRedisAgent {
       });
 
       rl.on('line', async (line) => {
-        if (!line.trim()) return;
+        const trimmed = line.trim();
+        if (!trimmed) return;
+        // Same guard processMessage() applies to Redis-delivered messages.
+        // Without it, anything injected into this process's stdin (e.g.
+        // terminal-heartbeat-pulse.cjs's simulated typing, if this wrapper
+        // happens to own the pty it targets) reaches pi.prompt() unfiltered
+        // — bypassing the exact "prevents provider spam on cron broadcasts"
+        // protection this file already has for the Redis path, and burning
+        // a live LLM invocation (with full bash/write/edit tool access) on
+        // every heartbeat tick. Found 2026-07-23 after an agent reached via
+        // this path auto-committed without live operator confirmation.
+        if (isHeartbeatOrNoise(trimmed)) return;
         const sessionKey = `tnf-pi-local-${Date.now()}`;
-        const runResult = await this.pi.prompt(line.trim(), {
+        const runResult = await this.pi.prompt(trimmed, {
           provider: CONFIG.provider || undefined,
           model: CONFIG.model || undefined,
           skills: parseList(CONFIG.skills),
