@@ -1,23 +1,20 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "5fdf423d-6d03-4287-b767-4a05d98eb9a8",
-  "created_at": "2026-07-23T05:37:54.744Z",
+  "handoff_id": "728816cb-06de-4cca-9cfa-fb89af650850",
+  "created_at": "2026-07-23T18:46:20.017Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "73c5fb7a7e6b9e06d3b2c99fe106c8f0f7e5e98e",
+  "head_sha": "aed73b9f67a2c4485f5c480e401c906a31707f1e",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": ["Modified 8 file(s)"],
+  "work_summary": [
+    "Modified 3 file(s)"
+  ],
   "changed_paths": [
-    ".agent/test-reports/_rolling-summary.json",
+    "agent/test-reports/_rolling-summary.json",
     ".agent/testing-status.json",
-    ".verifier/process-atlas.digest.md",
-    ".verifier/process-atlas.payload.json",
-    ".verifier/process-atlas.verify.json",
-    ".verifier/tnf-process-atlas.html",
-    "apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json",
-    "apps/virtual-library-blueprints"
+    "apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -28,7 +25,9 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": ["orchestrator"],
+    "targets": [
+      "orchestrator"
+    ],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -36,9 +35,13 @@
       "Execute listed next actions in order"
     ]
   },
-  "next_actions": ["Commit remaining uncommitted changes (7 file(s))"],
+  "next_actions": [
+    "Commit remaining uncommitted changes (2 file(s))"
+  ],
   "artifacts": {
-    "commits": ["73c5fb7a7e6b9e06d3b2c99fe106c8f0f7e5e98e"],
+    "commits": [
+      "aed73b9f67a2c4485f5c480e401c906a31707f1e"
+    ],
     "deployment_urls": [],
     "database_migrations": []
   }
