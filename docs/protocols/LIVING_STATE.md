@@ -38,8 +38,9 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 ## ⚡ Active Steps
 
 1. [✅] 2026-07-17 Autonomous Continuity Protocol authored; self-healing bound
-- [✅] 2026-07-23T18:46:20.014Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
+- [✅] 2026-07-23T18:46:20.014Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
 - [✅] 2026-07-23T05:37:54.740Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)

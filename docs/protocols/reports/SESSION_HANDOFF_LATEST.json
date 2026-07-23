@@ -8,9 +8,7 @@
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": [
-    "Modified 3 file(s)"
-  ],
+  "work_summary": ["Modified 3 file(s)"],
   "changed_paths": [
     "agent/test-reports/_rolling-summary.json",
     ".agent/testing-status.json",
@@ -25,9 +23,7 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": [
-      "orchestrator"
-    ],
+    "targets": ["orchestrator"],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -35,13 +31,9 @@
       "Execute listed next actions in order"
     ]
   },
-  "next_actions": [
-    "Commit remaining uncommitted changes (2 file(s))"
-  ],
+  "next_actions": ["Commit remaining uncommitted changes (2 file(s))"],
   "artifacts": {
-    "commits": [
-      "aed73b9f67a2c4485f5c480e401c906a31707f1e"
-    ],
+    "commits": ["aed73b9f67a2c4485f5c480e401c906a31707f1e"],
     "deployment_urls": [],
     "database_migrations": []
   }
