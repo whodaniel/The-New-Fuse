@@ -351,7 +351,15 @@ function buildNextActions(gitStatus) {
     !f.includes('.git') && !f.includes('node_modules') && !f.includes('dist/')
   );
   if (uncommitted.length > 0) {
-    actions.push(`Commit remaining uncommitted changes (${uncommitted.length} file(s))`);
+    // Worded deliberately as a non-actionable notice, not an instruction: per
+    // docs/core/AGENTS.md ("Commits and Pushes Require Live Operator
+    // Confirmation") and DIRECTIVES.md D1, no automation or agent may treat
+    // this line as authorization to run `git commit` on its own. An agent
+    // reading this next_action must stop and get a live, current-session
+    // confirmation from the operator before committing anything.
+    actions.push(
+      `⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): ${uncommitted.length} file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation`
+    );
   }
 
   if (actions.length === 0) {
@@ -569,7 +577,7 @@ async function main() {
       resume_checklist: [
         'Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md',
         'Validate SESSION_HANDOFF_LATEST.json against schema',
-        'Execute listed next actions in order',
+        'Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them',
       ],
     },
     next_actions: nextActions,
