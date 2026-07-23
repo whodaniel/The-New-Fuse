@@ -24,6 +24,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { findBestMatch } = require('./lib/tnf-agent-match.cjs');
 const { recommendModel } = require('./lib/tnf-model-match.cjs');
+const messageAuth = require('./lib/tnf-message-auth.cjs');
 
 // ============================================================================
 // CONFIGURATION
@@ -212,25 +213,53 @@ class RedisAgentClient {
    * Send a message to the network
    */
 
+  /**
+   * Sign an outgoing envelope.
+   *
+   * Delegates to lib/tnf-message-auth.cjs so signing and verification share one
+   * canonical serialization. The previous inline implementation used plain
+   * JSON.stringify (key-order dependent) and fell back to a literal
+   * 'default-secret' when A2A_SECRET_KEY was unset — both now refused at the
+   * library boundary.
+   */
   signMessage(data, type, channel) {
-    const secret = process.env.A2A_SECRET_KEY || 'default-secret';
-    const header = {
-      agent_id: this.agentInfo.id,
-      alg: 'HS256',
-      nonce: crypto.randomBytes(16).toString('hex'),
-      timestamp: Date.now(),
-    };
+    return messageAuth.signEnvelope(
+      { agent_id: this.agentInfo.id },
+      { type, channel, data }
+    );
+  }
 
-    const payload = {
-      type,
+  /**
+   * Verify an inbound envelope and decide whether to drop it.
+   *
+   * Unsigned traffic is reported as such rather than silently trusted: plenty
+   * of publishers on this bus (relay-core, external bridges) do not sign yet,
+   * which is exactly why TNF_MESSAGE_AUTH_MODE defaults to `warn`. Run in
+   * `warn` until the audit log is clean, then flip to `enforce`.
+   *
+   * @returns {{ verified: boolean, reject: boolean, agentId?: string }}
+   */
+  authenticateEnvelope(rawMessage, channel) {
+    if (!messageAuth.isSignedEnvelope(rawMessage)) {
+      const reject = messageAuth.getMode() === 'enforce';
+      messageAuth.audit({
+        event: 'message_auth_unsigned',
+        mode: messageAuth.getMode(),
+        action: reject ? 'rejected' : 'allowed_warn_mode',
+        reason: 'envelope carries no signature',
+        channel: channel ?? null,
+        claimed_agent_id: rawMessage?.from?.agentId ?? null,
+        claimed_role: rawMessage?.from?.role ?? null,
+      });
+      return { verified: false, reject };
+    }
+
+    const result = messageAuth.verifyAndAudit(rawMessage, {
       channel,
-      data,
-    };
-
-    const messageToSign = JSON.stringify({ header, payload });
-    const signature = crypto.createHmac('sha256', secret).update(messageToSign).digest('hex');
-
-    return { header, payload, signature };
+      messageId: rawMessage?.payload?.data?.id ?? null,
+      claimedRole: rawMessage?.payload?.data?.from?.role ?? null,
+    });
+    return { verified: result.ok, reject: result.reject, agentId: result.agentId };
   }
 
   async send(content, options = {}) {
@@ -332,7 +361,16 @@ class RedisAgentClient {
   handleIncomingMessage(channel, messageStr) {
     try {
       const rawMessage = JSON.parse(messageStr);
-      const message = this.normalizeIncomingMessage(rawMessage);
+
+      // Authenticate BEFORE anything reads the contents. Until 2026-07-23 the
+      // signature attached by signMessage() was never checked anywhere, so a
+      // sender's claimed identity and role were accepted verbatim from the
+      // wire on an unauthenticated Redis bus. Everything below this line
+      // treats the envelope as attacker-controlled until proven otherwise.
+      const authResult = this.authenticateEnvelope(rawMessage, channel);
+      if (authResult.reject) return;
+
+      const message = this.normalizeIncomingMessage(rawMessage, authResult);
       if (!message) return;
 
       // Don't process our own messages
@@ -365,14 +403,16 @@ class RedisAgentClient {
     }
   }
 
-  normalizeIncomingMessage(rawMessage) {
+  normalizeIncomingMessage(rawMessage, authResult = { verified: false }) {
     if (!rawMessage || typeof rawMessage !== 'object') {
       return null;
     }
 
-    // Unpack signed messages if present
+    // Unpack signed messages. The signature was checked in
+    // authenticateEnvelope() before we got here — this step is pure
+    // structural unwrapping and must never be the thing that decides trust.
     let msg = rawMessage;
-    if (rawMessage.header && rawMessage.payload && rawMessage.signature) {
+    if (messageAuth.isSignedEnvelope(rawMessage)) {
       if (rawMessage.payload.data && typeof rawMessage.payload.data === 'object') {
         msg = rawMessage.payload.data;
       }
@@ -424,8 +464,19 @@ class RedisAgentClient {
           msg.from.operationalHandle ||
           msg.from.agentId ||
           'unknown',
+        // Role as *claimed by the sender*. Never treat this as authorization.
+        // Phase 1 (scripts/lib/tnf-identity.cjs) resolves the authoritative
+        // role from the operator-owned registry keyed by the verified
+        // identity; until then, anything privilege-related must consult
+        // `roleVerified` rather than this field. See DIRECTIVES.md D8/D23.
         role: msg.from.role || 'worker',
+        claimedRole: msg.from.role || 'worker',
+        roleVerified: false,
         platform: msg.from.platform || 'relay-core',
+      },
+      auth: {
+        verified: Boolean(authResult?.verified),
+        agentId: authResult?.agentId ?? null,
       },
       to: msg.to,
       type: msg.type,
