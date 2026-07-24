@@ -2,6 +2,10 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
+
 MODE="${1:-warn}"
 ENVIRONMENT="${CLOUD_RUNTIME_ENVIRONMENT:-production}"
 API_SERVICE="${CLOUD_RUNTIME_API_SERVICE:-api}"
@@ -25,21 +29,15 @@ Usage:
   bash scripts/cloud_runtime/set-federation-gate-mode.sh [off|warn|enforce]
 
 Environment overrides:
-  CLOUD_RUNTIME_ENVIRONMENT      CloudRuntime environment (default: production)
-  CLOUD_RUNTIME_API_SERVICE      API service name (default: api)
-  CLOUD_RUNTIME_RELAY_SERVICE    Relay service name (default: relay-server)
+  CLOUD_RUNTIME_API_SERVICE / CLOUD_RUNTIME_RELAY_SERVICE  Cloud Run service names
+  TNF_GCP_PROJECT_ID / TNF_GCP_REGION                       GCP target (defaults set in tnf-cloud-run.sh)
   TNF_GATE_POLICY_ENDPOINT External gate endpoint
   TNF_GATE_POLICY_TOKEN    Optional gate auth token
-  WAIT_FOR_SUCCESS         1 to wait for success deployments, 0 to skip (default: 1)
+  WAIT_FOR_SUCCESS         1 to wait for ready services, 0 to skip (default: 1)
   WAIT_TIMEOUT_SECONDS     Max wait time (default: 600)
   WAIT_POLL_SECONDS        Poll interval (default: 10)
   APPLY_API                1 apply to API service, 0 skip (default: 1)
   APPLY_RELAY              1 apply to relay service, 0 skip (default: 1)
-  BROKER_CONTEXT_RISK_ESCALATION_LEVEL Context risk threshold (low|medium|high|critical; default: high)
-  BROKER_TWIP_SNAPSHOT_CACHE_MS        TWIP snapshot cache ms for broker (default: 15000)
-  BROKER_TWIP_INVENTORY_SNAPSHOT_PATH  Optional explicit TWIP snapshot path for broker runtime
-  BROKER_MAX_TWIP_CONTEXT_AGE_MS       Max TWIP context age in ms before stale (default: 900000)
-  BROKER_REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND true|false require context availability for terminal-bound tasks
 USAGE
 }
 
@@ -67,23 +65,10 @@ if [[ "${APPLY_API}" == "0" && "${APPLY_RELAY}" == "0" ]]; then
   exit 1
 fi
 
-if ! command -v cloud_runtime >/dev/null 2>&1; then
-  echo "ERROR: cloud_runtime CLI is not installed."
-  exit 1
-fi
-
-whoami_output="$(cloud_runtime whoami 2>&1 || true)"
-if [[ -z "${whoami_output}" ]]; then
-  echo "ERROR: unable to determine cloud_runtime auth state."
-  exit 1
-fi
-if echo "${whoami_output}" | grep -qi "login\|not authenticated\|Unauthorized"; then
-  echo "ERROR: cloud_runtime CLI is not authenticated (run: cloud_runtime login)."
-  exit 1
-fi
+tnf_require_gcloud
 
 echo "Applying federation gate mode: ${MODE}"
-echo "- environment: ${ENVIRONMENT}"
+echo "- project/region: $(tnf_gcp_project) / $(tnf_gcp_region)"
 echo "- api service: ${API_SERVICE}"
 echo "- relay service: ${RELAY_SERVICE}"
 echo "- endpoint: ${ENDPOINT}"
@@ -120,21 +105,21 @@ if [[ -n "${TWIP_INVENTORY_SNAPSHOT_PATH}" ]]; then
 fi
 
 if [[ "${APPLY_API}" == "1" ]]; then
-  cloud_runtime variable set -s "${API_SERVICE}" -e "${ENVIRONMENT}" "${api_vars[@]}"
+  tnf_cloud_run_update_env "${API_SERVICE}" "${api_vars[@]}"
 fi
 if [[ "${APPLY_RELAY}" == "1" ]]; then
-  cloud_runtime variable set -s "${RELAY_SERVICE}" -e "${ENVIRONMENT}" "${relay_vars[@]}"
+  tnf_cloud_run_update_env "${RELAY_SERVICE}" "${relay_vars[@]}"
 fi
 
 echo
 echo "Verifying variables (non-secret fields):"
 if [[ "${APPLY_API}" == "1" ]]; then
-  cloud_runtime variable list -s "${API_SERVICE}" -e "${ENVIRONMENT}" --kv \
-    | awk -F= '/^(TNF_GATE_POLICY_MODE|TNF_GATE_POLICY_ENDPOINT)=/{print "api " $1 "=" $2}'
+  tnf_cloud_run_env_json "${API_SERVICE}" \
+    | jq -r 'to_entries[] | select(.key|test("^TNF_GATE_POLICY_(MODE|ENDPOINT)$")) | "api \(.key)=\(.value)"'
 fi
 if [[ "${APPLY_RELAY}" == "1" ]]; then
-  cloud_runtime variable list -s "${RELAY_SERVICE}" -e "${ENVIRONMENT}" --kv \
-    | awk -F= '/^(BROKER_FEDERATION_GATE_MODE|BROKER_GATE_POLICY_ENDPOINT|BROKER_CONTEXT_RISK_ESCALATION_LEVEL|BROKER_TWIP_SNAPSHOT_CACHE_MS|BROKER_TWIP_INVENTORY_SNAPSHOT_PATH|BROKER_MAX_TWIP_CONTEXT_AGE_MS|BROKER_REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND|TNF_GATE_POLICY_MODE|TNF_GATE_POLICY_ENDPOINT)=/{print "relay " $1 "=" $2}'
+  tnf_cloud_run_env_json "${RELAY_SERVICE}" \
+    | jq -r 'to_entries[] | select(.key|test("^(BROKER_FEDERATION_GATE_MODE|BROKER_GATE_POLICY_ENDPOINT|BROKER_CONTEXT_RISK_ESCALATION_LEVEL|BROKER_TWIP_SNAPSHOT_CACHE_MS|BROKER_TWIP_INVENTORY_SNAPSHOT_PATH|BROKER_MAX_TWIP_CONTEXT_AGE_MS|BROKER_REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND|TNF_GATE_POLICY_MODE|TNF_GATE_POLICY_ENDPOINT)$")) | "relay \(.key)=\(.value)"'
 fi
 
 if [[ "${WAIT_FOR_SUCCESS}" != "1" ]]; then
@@ -143,61 +128,17 @@ if [[ "${WAIT_FOR_SUCCESS}" != "1" ]]; then
   exit 0
 fi
 
-if ! command -v jq >/dev/null 2>&1; then
-  echo
-  echo "WARNING: jq not found; skipping status wait."
-  exit 0
-fi
-
 echo
-echo "Waiting for deployment success..."
-start_ts="$(date +%s)"
+echo "Waiting for Cloud Run services to become ready..."
+max_attempts=$(( WAIT_TIMEOUT_SECONDS / WAIT_POLL_SECONDS ))
+if [[ "${max_attempts}" -lt 1 ]]; then max_attempts=1; fi
 
-while true; do
-  status_json="$(cloud_runtime service status -a --json)"
-  api_line="$(echo "${status_json}" | jq -r ".[] | select(.name==\"${API_SERVICE}\") | \"\(.status) \(.deploymentId)\"")"
-  relay_line="$(echo "${status_json}" | jq -r ".[] | select(.name==\"${RELAY_SERVICE}\") | \"\(.status) \(.deploymentId)\"")"
-  now_iso="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  if [[ "${APPLY_API}" == "1" && "${APPLY_RELAY}" == "1" ]]; then
-    echo "${now_iso} api=${api_line} relay=${relay_line}"
-  elif [[ "${APPLY_API}" == "1" ]]; then
-    echo "${now_iso} api=${api_line}"
-  else
-    echo "${now_iso} relay=${relay_line}"
-  fi
-
-  api_status="$(echo "${api_line}" | awk '{print $1}')"
-  relay_status="$(echo "${relay_line}" | awk '{print $1}')"
-
-  api_ok=1
-  relay_ok=1
-  if [[ "${APPLY_API}" == "1" ]]; then
-    if [[ "${api_status}" != "SUCCESS" ]]; then api_ok=0; fi
-  fi
-  if [[ "${APPLY_RELAY}" == "1" ]]; then
-    if [[ "${relay_status}" != "SUCCESS" ]]; then relay_ok=0; fi
-  fi
-  if [[ "${api_ok}" == "1" && "${relay_ok}" == "1" ]]; then
-    break
-  fi
-
-  api_failed=0
-  relay_failed=0
-  if [[ "${APPLY_API}" == "1" && "${api_status}" == "FAILED" ]]; then api_failed=1; fi
-  if [[ "${APPLY_RELAY}" == "1" && "${relay_status}" == "FAILED" ]]; then relay_failed=1; fi
-  if [[ "${api_failed}" == "1" || "${relay_failed}" == "1" ]]; then
-    echo "ERROR: Deployment failed for one or more services."
-    exit 2
-  fi
-
-  now_ts="$(date +%s)"
-  elapsed="$((now_ts - start_ts))"
-  if (( elapsed > WAIT_TIMEOUT_SECONDS )); then
-    echo "ERROR: Timed out waiting for success after ${WAIT_TIMEOUT_SECONDS}s."
-    exit 3
-  fi
-  sleep "${WAIT_POLL_SECONDS}"
-done
+if [[ "${APPLY_API}" == "1" ]]; then
+  tnf_cloud_run_wait_ready "${API_SERVICE}" "${max_attempts}" "${WAIT_POLL_SECONDS}"
+fi
+if [[ "${APPLY_RELAY}" == "1" ]]; then
+  tnf_cloud_run_wait_ready "${RELAY_SERVICE}" "${max_attempts}" "${WAIT_POLL_SECONDS}"
+fi
 
 echo
 echo "Federation gate mode rollout complete."

@@ -1,40 +1,48 @@
 #!/usr/bin/env bash
-
+# Thin wrapper: Codex OAuth sync → sync-openclaw-oauth-instance.sh (gcloud/Cloud Run).
 set -euo pipefail
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+cd "$ROOT_DIR"
+
 SERVICE="${OPENCLAW_CLOUD_RUNTIME_SERVICE:-openclaw-cloud}"
-PRIMARY_MODEL="${OPENCLAW_MODEL_PRIMARY_OVERRIDE:-model-auto}"
-FALLBACK_MODELS="${OPENCLAW_MODEL_FALLBACKS_OVERRIDE:-fallback-auto}"
 AUTH_FILE="${CODEX_AUTH_FILE:-$HOME/.codex/auth.json}"
+PRIMARY_MODEL="${OPENCLAW_MODEL_PRIMARY_OVERRIDE:-openai-codex/gpt-5.3-codex}"
+FALLBACK_MODELS="${OPENCLAW_MODEL_FALLBACKS_OVERRIDE:-openai-codex/gpt-5.2-codex}"
 INSTANCE_ID="${OPENCLAW_INSTANCE_ID:-}"
 INSTANCE_NAME="${OPENCLAW_INSTANCE_NAME:-}"
-MAX_SET_RETRIES="${MAX_SET_RETRIES:-20}"
-MAX_STATUS_RETRIES="${MAX_STATUS_RETRIES:-90}"
-SLEEP_SECONDS="${SLEEP_SECONDS:-3}"
+EXTRA=()
 
 usage() {
   cat <<'EOF'
 Usage:
   bash scripts/cloud_runtime/sync-openclaw-codex-account.sh [options]
 
-Options:
-  --service NAME          CloudRuntime service name (default: openclaw-cloud)
-  --auth-file PATH        Codex auth.json path (overrides CODEX_AUTH_FILE)
-  --codex-home PATH       Directory containing auth.json (sets --auth-file to PATH/auth.json)
-  --instance-id ID        Required TNF instance ID (e.g. TNF-OC-004)
-  --instance-name NAME    Required human-readable instance name
-  --primary-model MODEL   Primary model key (default: model-auto)
-  --fallbacks CSV         Fallback model list (default: fallback-auto)
-  --no-wait               Skip deployment wait loop
-  -h, --help              Show this help
-
-What it does:
-  1) Reads local Codex OAuth tokens from ~/.codex/auth.json
-  2) Syncs OPENAI_CODEX_* vars to CloudRuntime service
-  3) Forces Codex OAuth active with specified primary model
-  4) Verifies account/model vars and optionally waits for SUCCESS deploy
+Delegates to sync-openclaw-oauth-instance.sh --provider openai-codex (gcloud/Cloud Run).
 EOF
 }
-...
-# Rest of the file unchanged, it uses the variables defined at the top
-...
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --service) SERVICE="${2:-}"; shift 2 ;;
+    --auth-file) AUTH_FILE="${2:-}"; shift 2 ;;
+    --codex-home) AUTH_FILE="${2:-}/auth.json"; shift 2 ;;
+    --instance-id) INSTANCE_ID="${2:-}"; shift 2 ;;
+    --instance-name) INSTANCE_NAME="${2:-}"; shift 2 ;;
+    --primary-model) PRIMARY_MODEL="${2:-}"; shift 2 ;;
+    --fallbacks) FALLBACK_MODELS="${2:-}"; shift 2 ;;
+    --no-wait) EXTRA+=(--no-wait); shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "ERROR: unknown argument: $1"; usage; exit 1 ;;
+  esac
+done
+
+exec bash scripts/cloud_runtime/sync-openclaw-oauth-instance.sh \
+  --service "$SERVICE" \
+  --provider openai-codex \
+  --auth-file "$AUTH_FILE" \
+  --primary-model "$PRIMARY_MODEL" \
+  --fallbacks "$FALLBACK_MODELS" \
+  --instance-id "$INSTANCE_ID" \
+  --instance-name "$INSTANCE_NAME" \
+  "${EXTRA[@]}"

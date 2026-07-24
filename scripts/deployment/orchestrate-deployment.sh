@@ -196,8 +196,9 @@ deploy_rolling_update() {
     log SUCCESS "Build completed for $service"
 
     # Deploy service
-    if command -v cloud_runtime &>/dev/null; then
-      if ! cloud_runtime up --detach --service "$service"; then
+    if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: command -v cloud_runtime
+      if ! scripts/deployment/gcp-deploy.sh --service "$service"; then
         log ERROR "Deployment failed for $service"
         return 1
       fi
@@ -335,11 +336,12 @@ verify_deployment() {
   log STEP "Verifying deployment..."
 
   # Check if all services are running
-  if command -v cloud_runtime &>/dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: command -v cloud_runtime
     for service in $SERVICES; do
       log INFO "Checking service: $service"
 
-      if cloud_runtime status --service "$service" &>/dev/null; then
+      if gcloud run services list --service "$service" &>/dev/null; then
         log SUCCESS "$service is running"
       else
         log WARNING "$service status unknown"

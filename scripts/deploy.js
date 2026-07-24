@@ -24,50 +24,50 @@ class DeploymentManager {
       heroku: this.deployToHeroku.bind(this),
       local: this.buildForLocal.bind(this),
     };
-    
+
     this.environments = ['development', 'staging', 'production'];
   }
 
   async deploy(platform, environment = 'production') {
     console.log(`🚀 Starting deployment to ${platform} (${environment})...`);
-    
+
     if (!this.platforms[platform]) {
       throw new Error(`Unsupported platform: ${platform}`);
     }
-    
+
     if (!this.environments.includes(environment)) {
       throw new Error(`Unsupported environment: ${environment}`);
     }
 
     // Pre-deployment checks
     await this.preDeploymentChecks();
-    
+
     // Set environment
     process.env.NODE_ENV = environment;
-    
+
     // Platform-specific deployment
     await this.platforms[platform](environment);
-    
+
     console.log(`✅ Deployment to ${platform} completed successfully!`);
   }
 
   async preDeploymentChecks() {
     console.log('🔍 Running pre-deployment checks...');
-    
+
     // Check if all required files exist
     const requiredFiles = [
       'package.json',
       'apps/frontend/package.json',
       'apps/frontend/vite.config.ts',
     ];
-    
+
     for (const file of requiredFiles) {
       const filePath = path.join(rootDir, file);
       if (!fs.existsSync(filePath)) {
         throw new Error(`Required file missing: ${file}`);
       }
     }
-    
+
     // Run tests
     console.log('🧪 Running tests...');
     try {
@@ -75,7 +75,7 @@ class DeploymentManager {
     } catch (error) {
       console.warn('⚠️ Tests failed, but continuing deployment...');
     }
-    
+
     // Type checking
     console.log('🔧 Running type checks...');
     try {
@@ -83,13 +83,13 @@ class DeploymentManager {
     } catch (error) {
       console.warn('⚠️ Type checking failed, but continuing deployment...');
     }
-    
+
     console.log('✅ Pre-deployment checks completed!');
   }
 
   async deployToVercel(environment) {
     console.log('📡 Deploying to Vercel...');
-    
+
     // Create vercel.json configuration
     const vercelConfig = {
       version: 2,
@@ -100,36 +100,31 @@ class DeploymentManager {
           config: {
             distDir: 'dist',
             buildCommand: 'npm run build',
-          }
-        }
+          },
+        },
       ],
       routes: [
         {
           src: '/api/(.*)',
-          dest: '/api/$1'
+          dest: '/api/$1',
         },
         {
           src: '/(.*)',
-          dest: '/apps/frontend/dist/$1'
-        }
+          dest: '/apps/frontend/dist/$1',
+        },
       ],
       env: {
         NODE_ENV: environment,
         VITE_API_URL: '/api',
         VITE_WS_URL: '/ws',
-      }
+      },
     };
-    
-    fs.writeFileSync(
-      path.join(rootDir, 'vercel.json'),
-      JSON.stringify(vercelConfig, null, 2)
-    );
-    
+
+    fs.writeFileSync(path.join(rootDir, 'vercel.json'), JSON.stringify(vercelConfig, null, 2));
+
     // Deploy
-    const deployCmd = environment === 'production' 
-      ? 'vercel --prod'
-      : 'vercel --target staging';
-      
+    const deployCmd = environment === 'production' ? 'vercel --prod' : 'vercel --target staging';
+
     execSync(deployCmd, { cwd: rootDir, stdio: 'inherit' });
   }
 
@@ -138,7 +133,7 @@ class DeploymentManager {
 
     // CloudRuntime uses cloud_runtime.toml which is already configured
     // Just trigger deployment via CLI
-    const deployCmd = 'cloud_runtime up';
+    const deployCmd = 'scripts/deployment/gcp-deploy.sh';
 
     execSync(deployCmd, { cwd: rootDir, stdio: 'inherit' });
     console.log('✅ CloudRuntime deployment initiated!');
@@ -146,7 +141,7 @@ class DeploymentManager {
 
   async deployToDocker(environment) {
     console.log('🐳 Building Docker containers...');
-    
+
     // Create production Dockerfile
     const dockerfile = `
 FROM node:18-alpine AS builder
@@ -184,7 +179,7 @@ CMD ["nginx", "-g", "daemon off;"]
 `;
 
     fs.writeFileSync(path.join(rootDir, 'Dockerfile'), dockerfile);
-    
+
     // Create nginx configuration
     const nginxConfig = `
 events {}
@@ -220,17 +215,17 @@ http {
 `;
 
     fs.writeFileSync(path.join(rootDir, 'nginx.conf'), nginxConfig);
-    
+
     // Build Docker image
-    execSync(`docker build -t the-new-fuse:${environment} .`, { 
-      cwd: rootDir, 
-      stdio: 'inherit' 
+    execSync(`docker build -t the-new-fuse:${environment} .`, {
+      cwd: rootDir,
+      stdio: 'inherit',
     });
   }
 
   async deployToAWS(environment) {
     console.log('☁️ Deploying to AWS...');
-    
+
     // Create AWS SAM template
     const samTemplate = {
       AWSTemplateFormatVersion: '2010-09-09',
@@ -242,85 +237,80 @@ http {
             BucketName: `the-new-fuse-frontend-${environment}`,
             WebsiteConfiguration: {
               IndexDocument: 'index.html',
-              ErrorDocument: 'index.html'
-            }
-          }
+              ErrorDocument: 'index.html',
+            },
+          },
         },
         CloudFrontDistribution: {
           Type: 'AWS::CloudFront::Distribution',
           Properties: {
             DistributionConfig: {
-              Origins: [{
-                Id: 'S3Origin',
-                DomainName: { 'Fn::GetAtt': ['FrontendBucket', 'DomainName'] },
-                S3OriginConfig: {}
-              }],
+              Origins: [
+                {
+                  Id: 'S3Origin',
+                  DomainName: { 'Fn::GetAtt': ['FrontendBucket', 'DomainName'] },
+                  S3OriginConfig: {},
+                },
+              ],
               DefaultCacheBehavior: {
                 TargetOriginId: 'S3Origin',
-                ViewerProtocolPolicy: 'redirect-to-https'
+                ViewerProtocolPolicy: 'redirect-to-https',
               },
-              Enabled: true
-            }
-          }
-        }
-      }
+              Enabled: true,
+            },
+          },
+        },
+      },
     };
-    
-    fs.writeFileSync(
-      path.join(rootDir, 'sam-template.yaml'),
-      JSON.stringify(samTemplate, null, 2)
-    );
-    
+
+    fs.writeFileSync(path.join(rootDir, 'sam-template.yaml'), JSON.stringify(samTemplate, null, 2));
+
     // Build and deploy
     execSync('sam build', { cwd: rootDir, stdio: 'inherit' });
-    execSync(`sam deploy --stack-name the-new-fuse-${environment}`, { 
-      cwd: rootDir, 
-      stdio: 'inherit' 
+    execSync(`sam deploy --stack-name the-new-fuse-${environment}`, {
+      cwd: rootDir,
+      stdio: 'inherit',
     });
   }
 
   async deployToHeroku(environment) {
     console.log('🟣 Deploying to Heroku...');
-    
+
     // Create Procfile
     const procfile = `
 web: npm run start
 build: npm run build
 `;
-    
+
     fs.writeFileSync(path.join(rootDir, 'Procfile'), procfile.trim());
-    
+
     // Set Heroku config vars
-    const configVars = [
-      `NODE_ENV=${environment}`,
-      'VITE_API_URL=/api',
-      'VITE_WS_URL=/ws',
-    ];
-    
+    const configVars = [`NODE_ENV=${environment}`, 'VITE_API_URL=/api', 'VITE_WS_URL=/ws'];
+
     for (const configVar of configVars) {
-      execSync(`heroku config:set ${configVar}`, { 
-        cwd: rootDir, 
-        stdio: 'inherit' 
+      execSync(`heroku config:set ${configVar}`, {
+        cwd: rootDir,
+        stdio: 'inherit',
       });
     }
-    
+
     // Deploy to Heroku
     execSync('git push heroku main', { cwd: rootDir, stdio: 'inherit' });
   }
 
   async buildForLocal(environment) {
     console.log('🏠 Building for local deployment...');
-    
+
     // Set environment variables for local build
     process.env.VITE_API_URL = 'http://localhost:3001';
     process.env.VITE_WS_URL = 'ws://localhost:3001';
-    
+
     // Build the frontend
-    execSync('npm run build', { 
-      cwd: path.join(rootDir, 'apps/frontend'), 
-      stdio: 'inherit' 
+    execSync('npm run build', {
+      cwd: path.join(rootDir, 'apps/frontend'),
+      stdio: 'inherit',
     });
-    
+
     console.log(`✅ Local build completed! Files are in apps/frontend/dist/`);
   }
 }
@@ -332,7 +322,7 @@ const environment = args[1] || 'production';
 
 const deployment = new DeploymentManager();
 
-deployment.deploy(platform, environment).catch(error => {
+deployment.deploy(platform, environment).catch((error) => {
   console.error('❌ Deployment failed:', error.message);
   process.exit(1);
 });

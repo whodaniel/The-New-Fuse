@@ -61,25 +61,37 @@ fi
 
 echo "✅ Local .env.local updated"
 
-if command -v cloud_runtime >/dev/null 2>&1 && cloud_runtime whoami >/dev/null 2>&1; then
-  IFS=',' read -r -a RUNNER_SERVICES <<< "$RUNNER_SERVICES_CSV"
-  echo "🚄 Pushing vars to CloudRuntime services: ${RUNNER_SERVICES[*]}"
-  for svc in "${RUNNER_SERVICES[@]}"; do
-    set_cmd=(cloud_runtime variable set -s "$svc" -e "$ENVIRONMENT" "SCOUT_PROVIDER=$DEFAULT_PROVIDER")
-    if [ -n "$TAVILY_API_KEY" ]; then
-      set_cmd+=("TAVILY_API_KEY=$TAVILY_API_KEY")
-    fi
-    if [ -n "$EXA_API_KEY" ]; then
-      set_cmd+=("EXA_API_KEY=$EXA_API_KEY")
-    fi
-    if "${set_cmd[@]}" >/dev/null 2>&1; then
-      echo "   ✅ $svc"
-    else
-      echo "   ⚠️ $svc (skipped or unavailable)"
-    fi
-  done
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+if [[ -f "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh" ]]; then
+  # shellcheck disable=SC1091
+  source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
+fi
+
+if command -v gcloud >/dev/null 2>&1 && declare -F tnf_cloud_run_update_env >/dev/null 2>&1; then
+  if gcloud auth list --filter=status:ACTIVE --format='value(account)' 2>/dev/null | head -n1 | grep -q '.'; then
+    IFS=',' read -r -a RUNNER_SERVICES <<< "$RUNNER_SERVICES_CSV"
+    echo "☁️  Pushing scout vars to Cloud Run services: ${RUNNER_SERVICES[*]}"
+    for svc in "${RUNNER_SERVICES[@]}"; do
+      env_pairs=("SCOUT_PROVIDER=$DEFAULT_PROVIDER")
+      if [ -n "$TAVILY_API_KEY" ]; then
+        env_pairs+=("TAVILY_API_KEY=$TAVILY_API_KEY")
+      fi
+      if [ -n "$EXA_API_KEY" ]; then
+        env_pairs+=("EXA_API_KEY=$EXA_API_KEY")
+      fi
+      if tnf_cloud_run_update_env "$svc" "${env_pairs[@]}" >/dev/null 2>&1; then
+        echo "   ✅ $svc"
+      else
+        echo "   ⚠️ $svc (skipped or unavailable)"
+      fi
+    done
+  else
+    echo "ℹ️ gcloud not authenticated; skipped Cloud Run variable sync."
+  fi
 else
-  echo "ℹ️ CloudRuntime CLI not authenticated; skipped CloudRuntime variable sync."
+  echo "ℹ️ gcloud / tnf-cloud-run helper unavailable; skipped remote variable sync."
+  echo "   (legacy cloud_runtime CLI is retired)"
 fi
 
 echo ""

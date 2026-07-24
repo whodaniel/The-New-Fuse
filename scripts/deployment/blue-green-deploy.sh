@@ -164,12 +164,13 @@ deploy_to_inactive_environment() {
   # Deploy to inactive environment
   log STEP "Deploying to $environment environment..."
 
-  if command -v cloud_runtime &>/dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: command -v cloud_runtime
     # Deploy to environment-specific service
     export CLOUD_RUNTIME_SERVICE_NAME="${service}-${environment}"
     export CLOUD_RUNTIME_ENVIRONMENT="$environment"
 
-    if ! cloud_runtime up --detach --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
+    if ! scripts/deployment/gcp-deploy.sh --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
       log ERROR "Failed to deploy to $environment environment"
       return 1
     fi
@@ -322,7 +323,8 @@ switch_traffic() {
   # Example using environment variable swap
   log STEP "Updating routing configuration..."
 
-  if command -v cloud_runtime &>/dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: command -v cloud_runtime
     # Update the main service to point to the new environment
     log INFO "Setting active environment to: $to_env"
 

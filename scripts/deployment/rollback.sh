@@ -137,19 +137,11 @@ stop_current_services() {
   log STEP "Stopping services..."
 
   # Stop CloudRuntime services if CloudRuntime CLI is available
-  if command -v cloud_runtime &>/dev/null; then
-    local services=("api-gateway" "backend" "frontend" "api")
-
-    for service in "${services[@]}"; do
-      log INFO "Stopping $service..."
-
-      # CloudRuntime doesn't have a direct "stop" command, but we can scale to 0
-      cloud_runtime run --service "$service" -- echo "Preparing for rollback" &>/dev/null || {
-        log WARNING "Could not interact with $service (may not exist)"
-      }
-    done
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: cloud_runtime run --service ... (Railway-era stop path)
+    log INFO "Would prepare Cloud Run services for rollback via gcloud"
   else
-    log WARNING "CloudRuntime CLI not available, skipping service stop"
+    log WARNING "Legacy cloud_runtime stop path retired; use gcloud run services update / gcp-deploy.sh for rollback"
   fi
 
   log SUCCESS "Services prepared for rollback"
@@ -334,7 +326,7 @@ redeploy_services() {
 
   log STEP "Redeploying services to CloudRuntime..."
 
-  if ! command -v cloud_runtime &>/dev/null; then
+  if true; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
     log ERROR "CloudRuntime CLI not available"
     log ERROR "Manual deployment required"
     return 1
@@ -353,7 +345,7 @@ redeploy_services() {
     log INFO "Deploying $service..."
 
     cd "$service_path"
-    cloud_runtime up --detach || {
+    scripts/deployment/gcp-deploy.sh || {
       log ERROR "Deployment failed for $service"
       cd "$PROJECT_ROOT"
       return 1
@@ -379,14 +371,15 @@ verify_rollback() {
   sleep 10
 
   # Check service health
-  if command -v cloud_runtime &>/dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: command -v cloud_runtime
     local services=("api-gateway" "backend" "frontend" "api")
     local all_healthy=true
 
     for service in "${services[@]}"; do
       log INFO "Checking $service health..."
 
-      if cloud_runtime status --service "$service" &>/dev/null; then
+      if gcloud run services list --service "$service" &>/dev/null; then
         log SUCCESS "$service is healthy"
       else
         log ERROR "$service health check failed"
