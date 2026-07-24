@@ -25,6 +25,7 @@ const path = require('node:path');
 const { findBestMatch } = require('./lib/tnf-agent-match.cjs');
 const { recommendModel } = require('./lib/tnf-model-match.cjs');
 const messageAuth = require('./lib/tnf-message-auth.cjs');
+const identity = require('./lib/tnf-identity.cjs');
 
 // ============================================================================
 // CONFIGURATION
@@ -131,13 +132,27 @@ class RedisAgentClient {
    * Register this agent on the network
    */
   async register(name, role, platform, capabilities = []) {
-    const preferredId = String(process.env.AGENT_ID || '').trim();
+    const preferredId = String(process.env.AGENT_ID || process.env.TNF_AGENT_ID || '').trim();
     const resolvedId = preferredId || `agent_${name}_${Date.now()}`;
+
+    // Authority role is operator-owned (Phase 1). Operational role (orchestrator /
+    // broker / worker / …) stays for Redis routing; privilege decisions must use
+    // authorityRole from the registry, never a self-asserted elevated title.
+    const requestedAuthority = identity.isValidRole(role) ? role : 'worker';
+    const bootstrapped = identity.bootstrapAgentIdentity(resolvedId, requestedAuthority);
+    if (bootstrapped.elevatedRequestIgnored) {
+      console.warn(
+        `[tnf-identity] elevated role ${JSON.stringify(role)} ignored for ${resolvedId}; ` +
+          'operator must grant via roles.json (tnf-identity setAgentRole)'
+      );
+    }
 
     this.agentInfo = {
       id: resolvedId,
       name,
       role,
+      authorityRole: bootstrapped.role,
+      authoritySource: bootstrapped.roleSource,
       platform,
       status: 'active',
       capabilities: capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(platform),
@@ -454,6 +469,19 @@ class RedisAgentClient {
       content = JSON.stringify(payload);
     }
 
+    // Authoritative role comes from the operator-owned registry keyed by the
+    // verified agent_id (Phase 1). Wire claims are recorded only.
+    // See DIRECTIVES.md D8/D23.
+    const claimedRole = msg.from.role || 'worker';
+    const verifiedId = authResult?.verified
+      ? authResult?.agentId || msg.from.agentId || msg.from.id
+      : null;
+    const resolvedRole = identity.resolveRoleForMessage({
+      verified: Boolean(authResult?.verified),
+      agentId: verifiedId,
+      claimedRole,
+    });
+
     return {
       id: msg.id || uuidv4(),
       timestamp: msg.timestamp || new Date().toISOString(),
@@ -464,14 +492,11 @@ class RedisAgentClient {
           msg.from.operationalHandle ||
           msg.from.agentId ||
           'unknown',
-        // Role as *claimed by the sender*. Never treat this as authorization.
-        // Phase 1 (scripts/lib/tnf-identity.cjs) resolves the authoritative
-        // role from the operator-owned registry keyed by the verified
-        // identity; until then, anything privilege-related must consult
-        // `roleVerified` rather than this field. See DIRECTIVES.md D8/D23.
-        role: msg.from.role || 'worker',
-        claimedRole: msg.from.role || 'worker',
-        roleVerified: false,
+        role: resolvedRole.role,
+        claimedRole,
+        roleVerified: Boolean(resolvedRole.roleVerified),
+        authoritySource: resolvedRole.source,
+        claimMismatch: Boolean(resolvedRole.claimMismatch),
         platform: msg.from.platform || 'relay-core',
       },
       auth: {
