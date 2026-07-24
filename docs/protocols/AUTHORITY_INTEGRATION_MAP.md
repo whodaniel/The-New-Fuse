@@ -99,6 +99,16 @@ open-runtime one. This is the natural place for the SaaS/open split to land.
    gemini-redis-wrapper): request a grant, verify it, call the broker for a
    read-only action. This makes the isolation boundary meaningful and validates
    the contracts against a real consumer before fanning out.
+   - **DONE (library half, 2026-07-24):** `scripts/lib/tnf-authority-client.cjs`
+     is the agent-side API (`requestElevation → awaitGrant → verifyHeldGrant →
+     useCredential`, plus `withElevation`). An e2e test drives the full loop —
+     agent requests, operator approves, agent verifies and spends, secret never
+     reaches the agent. The contracts compose.
+   - **REMAINING (wrapper half):** a wrapper actually calls the client. This is
+     a one-line adoption left for the operator to make deliberately, because the
+     gemini/jules wrappers are maintained elsewhere and should not change
+     behaviour silently. Suggested shape: gate on an opt-in env flag
+     (default off) so the running fleet is unaffected until enabled.
 2. **Then migrate that wrapper's launcher to `tnf-agent`** and run
    `tnf-authority confirm-isolation`. Now the trust root is genuinely
    non-degraded for a real workload.
