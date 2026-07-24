@@ -237,9 +237,21 @@ These are hard requirements. Violation is a protocol failure.
     `AGENT_ID` set, `CI`, non-TTY stdin, or running as the agent account) and
     audits every refusal. An approval may narrow what was requested, never widen
     it, and the requester's role always comes from the registry: a role asserted
-    in the request body is recorded as a claim and ignored. **The credential
-    broker (Phase 4) does NOT exist** — no agent may claim brokered access to
-    any account.
+    in the request body is recorded as a claim and ignored.
+  - **The credential broker exists (Phase 4a, read-only).**
+    `scripts/lib/tnf-cred-broker.cjs` lets an agent invoke a **named,
+    operator-declared** action that touches a secret — the broker pulls the
+    secret from the OS keystore, runs the action with it injected out of band,
+    scrubs the output, and returns only the result. The agent gets an answer,
+    never a credential. Four gates, all failing closed: the action must be
+    declared; the caller's grant must be valid and hold `account:<action>`;
+    **mutating actions are refused in 4a**; and a **degraded trust root makes
+    the broker MORE restrictive** — under `file` it runs read-only non-sensitive
+    actions only and refuses anything mutating or marked `sensitive`, because a
+    grant is only as trustworthy as the root that signed it. **No agent may
+    perform an account mutation through TNF today**; mutating actions and their
+    per-action operator confirmation are deferred until the trust root is a real
+    boundary.
   - **How strong the refusal is depends entirely on the trust root.** Under
     `separate-uid` or better the boundary is the kernel: an agent cannot read
     the operator key, so it cannot forge an approval even if it defeats every

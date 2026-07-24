@@ -59,6 +59,35 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: Daniel Goldberg (operator), confirmed via plan approval
   (ExitPlanMode) in a live Claude Code session, 2026-07-23.
 
+## 2026-07-24 — docs/protocols/DIRECTIVES.md (D23 — Phase 4a credential broker)
+
+- file: docs/protocols/DIRECTIVES.md
+- git_blob_sha: (see commit history for this session; logged concurrently with
+  the commit)
+- rationale: Phase 4a built, so D23 must stop saying the credential broker does
+  not exist. `scripts/lib/tnf-cred-broker.cjs` lets an agent invoke a named,
+  operator-declared action against a secret without ever holding the secret: the
+  broker reads it from the OS keystore, injects it out of band, scrubs the
+  output, and returns only the result. Recorded in D23 because the broker guards
+  real accounts and its safety rests on properties an agent could otherwise
+  misrepresent: (1) four gates that all fail closed — undeclared action, invalid
+  or insufficient grant, mutating action (off in 4a), and trust-root policy;
+  (2) the trust-root gate makes the broker MORE conservative than the rest of
+  the stack when the root is weak, not equally trusting — under the `file` root
+  currently in force it runs read-only non-sensitive actions and refuses
+  everything mutating or `sensitive`, because a capability grant is only as
+  trustworthy as the root that signed it and a same-uid agent can forge grants
+  against a file root; (3) output scrubbing redacts any exact occurrence of the
+  secret even on the error path, since a failing call can echo its own auth
+  header. The build was kept read-only precisely because building account
+  mutation on top of a non-boundary root would be the highest-risk component on
+  the weakest foundation — that combination is deferred until the agent account
+  makes the root real. Verified live: a balance-check action returns the balance
+  with the API key scrubbed, and a payout action is refused.
+- attributed_to: Daniel Goldberg (operator), explicit "proceed" in a live Claude
+  Code session, 2026-07-24, with the standing instruction to build what does not
+  require the operator-only account-creation step.
+
 ## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23 — interactive review console)
 
 - file: docs/protocols/DIRECTIVES.md

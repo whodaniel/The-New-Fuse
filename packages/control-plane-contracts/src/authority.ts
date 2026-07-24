@@ -259,3 +259,74 @@ export interface ElevationBroker {
   decide(requestId: string, decision: ElevationDecision): Promise<void>;
   await(requestId: string, timeoutMs: number): Promise<ElevationDecision | null>;
 }
+
+// ============================================================================
+// CREDENTIAL BROKER
+// ============================================================================
+
+/**
+ * A named, pre-declared action that touches a secret the agent must never see.
+ *
+ * The broker performs the action on the agent's behalf: it pulls the secret
+ * from the OS keystore, runs the action with the secret injected out of band,
+ * and returns ONLY the result. The agent gets an answer, never a credential.
+ * This is the whole reason the broker exists — an agent that never holds a
+ * secret cannot leak, log, or exfiltrate one.
+ *
+ * Actions are declared by the operator, not requested ad hoc. An agent may only
+ * invoke actions that already exist in the registry, so the blast radius is a
+ * fixed, reviewable list rather than "whatever the agent asks for".
+ */
+export interface BrokerAction {
+  /** Stable id an agent names to invoke, e.g. `mail.list-unread`. */
+  name: string;
+  /** Capability the caller's grant must hold: `account:<name>`. */
+  requiredCapability: string;
+  /**
+   * Read-only actions cannot change external state. Only these run in phase 4a;
+   * mutating actions stay declared-but-refused until the trust root is a real
+   * boundary and per-action operator confirmation is wired.
+   */
+  readOnly: boolean;
+  /** Keystore reference for the secret this action needs. Resolved by the broker. */
+  secretRef: { service: string; account?: string };
+  /** Human description shown when an agent lists what it may do. */
+  description?: string;
+}
+
+export type BrokerRefusalReason =
+  | 'unknown-action'
+  | 'capability-missing'
+  | 'grant-invalid'
+  | 'mutating-action-disabled'
+  | 'trust-root-too-weak'
+  | 'secret-unavailable'
+  | 'operator-confirmation-required';
+
+export interface BrokerResult {
+  ok: boolean;
+  action: string;
+  /** Present on success. Guaranteed scrubbed of the secret value. */
+  output?: string;
+  refusal?: BrokerRefusalReason;
+  reason?: string;
+  /** The trust root in force when this ran, recorded for audit. */
+  rootKind?: TrustRootKind;
+}
+
+/**
+ * Implemented locally by the open runtime against the OS keystore, and by the
+ * proprietary control plane for hosted secrets. Both satisfy the same contract.
+ *
+ * `invoke` must fail closed on every path and must never place a secret in its
+ * return value, its logs, or an exception message.
+ */
+export interface CredentialBroker {
+  /** Actions the given grant is allowed to invoke. Safe to expose to an agent. */
+  listAllowed(signedGrant: SignedCapabilityGrant): Promise<BrokerAction[]>;
+  invoke(
+    actionName: string,
+    args: Record<string, unknown>,
+    signedGrant: SignedCapabilityGrant
+  ): Promise<BrokerResult>;
+}

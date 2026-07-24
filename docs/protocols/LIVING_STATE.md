@@ -2,7 +2,7 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:** `41db2ffc-ad4e-46b0-9c21-5b7e2e3adb78` **Head:** `c0dc522dcac4`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `02fe0d33-95d7-4e07-9879-a0c02a66c7fe` **Head:** `7fba1626662d` cull (6 procs) —
 type handshake in-session before any kill **Project ID:** `TNF-SESSION`
@@ -42,6 +42,8 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 ## ⚡ Active Steps
 
 - [✅] 2026-07-24T00:30:13.658Z System cron entries installed:
+- [✅] 2026-07-24T04:21:15.352Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-24T01:16:10.135Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
@@ -108,8 +110,16 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
   actually be launched as that user (launchd `UserName`, systemd `User=`), and
   the proof is `sudo -u tnf-agent cat ~/.tnf/authority/operator.ed25519` being
   denied. `tnf-authority status` reports which case is live.
-- [⏳] 2026-07-23 **Credential broker (Phase 4) NOT built.** No agent may claim
-  brokered access to any account.
+- [✅] 2026-07-24 **Phase 4a built: credential broker (read-only).**
+  `tnf-cred-broker.cjs` — an agent invokes a named operator-declared action; the
+  broker pulls the secret from the OS keystore, runs the action with it injected
+  out of band, scrubs the output, returns only the result. Four gates fail
+  closed (undeclared action / invalid grant / mutating / trust-root policy). A
+  degraded `file` root makes the broker MORE restrictive: read-only
+  non-sensitive only, mutating and `sensitive` refused. Output scrubbing covers
+  the error path. 16 tests. Verified live: balance returned with API key
+  scrubbed, payout refused. **Account mutation through TNF is not possible
+  today** — deferred until the trust root is a real boundary.
 - [⚠️] 2026-07-23 **Do not flip `TNF_MESSAGE_AUTH_MODE=enforce` yet.** Requires
   every agent to hold an Ed25519 keypair and every node to have imported its
   peers' public keys; flipping early silently drops traffic. See `.env.example`.
