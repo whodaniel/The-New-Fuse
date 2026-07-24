@@ -1,5 +1,17 @@
 
 > @the-new-fuse/fairtable-core@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/fairtable-core
-> cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests
+> cross-env NODE_OPTIONS=--experimental-vm-modules jest
 
- ELIFECYCLE  Test failed. See above for more details.
+(node:96406) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/formulaEvaluator.test.ts (10.466 s)
+(node:96407) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS dist/formulaEvaluator.test.js (11.774 s)
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+
+Test Suites: 2 passed, 2 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        39.758 s
+Ran all test suites.

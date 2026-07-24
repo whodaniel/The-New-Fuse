@@ -39,6 +39,10 @@ out/
 
 # Environment variables
 .env
+.env.*
+!.env.example
+!**/.env.example
+.env*.bak
 .env.full-auto
 .env.local
 .env.openai

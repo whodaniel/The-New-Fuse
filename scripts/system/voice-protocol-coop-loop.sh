@@ -5,7 +5,7 @@ A_PROFILE="a"
 B_PROFILE="b"
 INTERVAL_SECONDS="120"
 MODE="${VOICE_PROTOCOL_COOP_MODE:-silent}"
-VOICE_AGENT_SEND_BIN="${VOICE_AGENT_SEND_BIN:-$(command -v voice-agent-send || true)}"
+VOICE_AGENT_SEND_BIN="${VOICE_AGENT_SEND_BIN:-$(dirname "$0")/voice-agent-send}"
 
 usage() {
   cat <<USAGE

@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-22T13:17:08.557Z** — handoff
+Updated: **2026-07-23T19:34:33.997Z** — handoff
+`a69e0826-181e-411f-a3c2-3cb6a6d22e56` (`b2d907005c90`).
 `7b497037-01eb-48ac-9916-9b5177fc20fa` (`b9c1298e41e3`).
 `c1b8b297-baba-482e-a0dd-9801a46e9616` (`13806d3f5980`).
 `e84e62c0-c3f8-469e-9c71-69855c7b9d01` (`fb12dac55ff7`).
@@ -29,9 +30,12 @@ were per-action operator-confirmed, not self-authorized — see
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Triage C03 contracts/core-monitoring tests; triage C04 @the-new-fuse/api missing modules; await live Daniel handshake before master-clock cull; commit when requested |
+| Priority | Action                                                                                                                   |
+| -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **P0**   | ⚠️ NEEDS LIVE OPERATOR CONFIRMATION: master-clock herd cull (6 procs) — type handshake in-session before any kill        |
+| **P0**   | ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): pi-wrapper-launchd.sh + REMEDIATION triage + dirty state files |
+| **P0**   | Optional: repair voice-coop-loop (voice-agent-send missing) or switch to silent mode                                     |
+| **P0**   | When disk allows: full turbo whole-codebase harness for official ~28/29 score flip                                       |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -271,3 +275,9 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (7b497037-01eb-48ac-9916-9b5177fc20fa) | ✅ HANDOFF_READY |
+
+| 2026-07-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(52b5ffbf-08bf-4527-a144-8604c207d6ad) | ✅ HANDOFF_READY |
+
+| 2026-07-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(a69e0826-181e-411f-a3c2-3cb6a6d22e56) | ✅ HANDOFF_READY |

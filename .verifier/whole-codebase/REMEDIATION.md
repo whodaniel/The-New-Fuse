@@ -146,3 +146,24 @@ lsof -nP -iTCP:3000 | grep -c ESTABLISHED   # >0 = active WS clients (master-clo
 The WS bridge on **:3005** _does_ serve `/health` JSON. Under master-clock herd
 MESSAGE_SEND flood, even a real HTTP `/health` can be starved — socket-based
 checks are the reliable signal. Treat `:3007` as stale.
+
+## Post-wake triage (2026-07-23T19:30Z — cursor-agent-wake restart)
+
+| Surface           | Status         | Notes                                                                                                                                                                                                                                     |
+| ----------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Boot              | ✅             | Redis PONG; relay `:3000` LISTEN + `/health` ok + 4 ESTABLISHED; WS bridge `:3005` ok; master-heartbeat launchd; voice speak-daemon + voice-bridge + click-anchor + relay-a-b                                                             |
+| Master-clock herd | ⏳ pending     | **6** matching procs — no kill (await live Daniel handshake)                                                                                                                                                                              |
+| C01 / C03 / C04   | ✅ re-verified | `tsc` exit 0 / hardhat **23 passing** / `tsc -b` exit 0                                                                                                                                                                                   |
+| Pi redis wrapper  | ✅ FIXED       | Launchd PATH preferred Node **20**; `@earendil-works/pi-coding-agent` undici **8.5** needs Node **22** (`markAsUncloneable`). Fixed `scripts/pi-wrapper-launchd.sh` to prefer hermes/nvm Node 22; kickstart → agent_pi online + listening |
+| Gemini wrapper    | parked         | `GEMINI_DISABLED=1` (expected)                                                                                                                                                                                                            |
+| Voice coop-loop   | ⚠️ down        | `voice-agent-send not found` (spoken mode) — non-blocking; core voice stack up                                                                                                                                                            |
+| Commit / push     | ⏳ gated       | Operator confirmation required                                                                                                                                                                                                            |
+
+**Durable learning — Pi wrapper Node major:** do not put Node 20 ahead of hermes
+Node 22 on `PATH` for `com.tnf.pi-redis-wrapper`. Pi CLI shebang is
+`#!/usr/bin/env node`; undici 8.x crashes under Node 20. Prefer hermes
+`~/.hermes/node/bin` (v22) first.
+
+**Relay note (this wake):** `:3000` currently answers HTTP `/health` JSON _and_
+has WS clients. Keep socket `LISTEN`/`ESTABLISHED` as the authoritative liveness
+check; `/health` is a bonus when present. `:3007` remains stale.

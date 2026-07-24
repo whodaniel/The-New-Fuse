@@ -527,11 +527,25 @@ class JulesRedisAgent {
       });
 
       rl.on('line', async (line) => {
-        if (line.trim()) {
-          // Local test: create a task
+        const trimmed = line.trim();
+        if (!trimmed) return;
+
+        // Same guard applied to the 'event' handler above and to
+        // pi-redis-wrapper.cjs's equivalent stdin path — this specific gap
+        // (heartbeat text reaching createSession() unfiltered here, via a
+        // hardcoded nonexistent 'test/repo', with no try/catch) is what
+        // crashed ttys012 a second time after the first fix: it was firing
+        // real `jules new --repo test/repo <heartbeat text>` calls on every
+        // heartbeat tick until one finally errored loudly enough to take
+        // the whole process down. Found 2026-07-23 (second occurrence).
+        if (isHeartbeatOrNoise(trimmed)) return;
+
+        try {
           console.log('Creating test task...');
-          const sessionId = await this.sessionManager.createSession(line.trim(), 'test/repo');
+          const sessionId = await this.sessionManager.createSession(trimmed, 'test/repo');
           console.log(`Session created: ${sessionId}`);
+        } catch (error) {
+          console.error('Local test task failed (non-fatal):', error.message);
         }
       });
     });
