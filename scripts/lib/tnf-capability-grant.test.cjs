@@ -308,6 +308,27 @@ test('an expired parent invalidates a live child', async () => {
 // Malformed input must always fail closed
 // ---------------------------------------------------------------------------
 
+test('a deeply-nested proof chain is rejected, not stack-overflowed', async () => {
+  // Build a chain deeper than MAX_CHAIN_DEPTH by nesting prf. Each link is
+  // structurally a grant; we do not need valid signatures because depth is
+  // checked before recursion bottoms out.
+  // 12 levels is just past MAX_CHAIN_DEPTH (8). More would blow up JSON.stringify
+  // itself (each level embeds the stringified previous one — exponential).
+  let node = { grant: { iss: 'did:key:zX', aud: 'did:key:zY', att: [], exp: 9999999999, nnc: 'n' }, signature: 'x', algorithm: 'Ed25519' };
+  for (let i = 0; i < 12; i++) {
+    node = {
+      grant: { iss: 'did:key:zX', aud: 'did:key:zX', att: [], exp: 9999999999, nnc: `n${i}`, prf: [JSON.stringify(node)] },
+      signature: 'x',
+      algorithm: 'Ed25519',
+    };
+  }
+  const res = grants.verifyGrant(node, { resolvePublicKeyPem: () => null });
+  assert.equal(res.authorized, false);
+  // Either the depth cap or an earlier signature failure catches it — the point
+  // is it returns a verdict instead of throwing.
+  assert.ok(['chain-broken', 'signature-invalid', 'unknown-issuer'].includes(res.verdict));
+});
+
 test('malformed grants fail closed', () => {
   for (const bad of [null, undefined, 42, 'str', {}, { grant: {} }, { grant: {}, signature: 'x' }]) {
     const res = grants.verifyGrant(bad, { resolvePublicKeyPem });

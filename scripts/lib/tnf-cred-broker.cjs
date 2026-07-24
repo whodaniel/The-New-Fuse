@@ -139,9 +139,20 @@ function rootPolicy(selection, action) {
  * Last line of defence: even a read-only action could echo its secret back
  * (e.g. an API that returns the token it was called with). Redact any exact
  * occurrence of the secret before the result leaves the broker.
+ *
+ * HONEST LIMIT: this is exact-substring redaction, a BACKSTOP — not the primary
+ * protection. It does not catch a secret that the action re-encoded (base64,
+ * URL-encoding, hashing) before echoing it. The real protection is that the
+ * agent never receives the secret at all; scrub only cleans the action's own
+ * output. Do not rely on scrub to make an untrusted action safe to run — rely
+ * on the action itself being read-only and declared. A secret shorter than 6
+ * chars is not scrubbed, because redacting a short common string would corrupt
+ * ordinary output while providing negligible protection; such secrets must not
+ * be used with echoing actions.
  */
 function scrub(output, secret) {
   if (!secret || typeof output !== 'string') return output;
+  if (secret.length < 6) return output;
   return output.split(secret).join('«redacted-secret»');
 }
 

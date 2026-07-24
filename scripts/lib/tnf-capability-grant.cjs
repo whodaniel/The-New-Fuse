@@ -45,6 +45,10 @@ const DEFAULT_TTL_SECONDS = 15 * 60;
 /** Hard ceiling. A caller asking for longer gets clamped, and it is audited. */
 const MAX_TTL_SECONDS = 60 * 60;
 
+/** Max delegation-chain depth. Real chains are 1–2 links; this bounds a
+ *  crafted deep chain from exhausting the stack. */
+const MAX_CHAIN_DEPTH = 8;
+
 // ============================================================================
 // CANONICALIZATION
 // ============================================================================
@@ -234,8 +238,21 @@ async function issueGrant(opts) {
  * @param {boolean} [opts.consume]  mark the nonce used (single-use enforcement)
  */
 function verifyGrant(signed, opts) {
-  const { resolvePublicKeyPem, task, audience, now = Math.floor(Date.now() / 1000), consume = false } =
+  const { resolvePublicKeyPem, task, audience, now = Math.floor(Date.now() / 1000), consume = false, _depth = 0 } =
     opts || {};
+
+  // A crafted grant could carry a deeply-nested `prf` chain and exhaust the
+  // stack — a denial of service. Real delegation chains are short; cap the
+  // depth and fail closed well before recursion becomes a problem.
+  if (_depth > MAX_CHAIN_DEPTH) {
+    return {
+      verdict: 'chain-broken',
+      authorized: false,
+      effective: [],
+      chain: [],
+      reason: `delegation chain exceeds max depth ${MAX_CHAIN_DEPTH}`,
+    };
+  }
 
   const fail = (verdict, reason) => ({
     verdict,
@@ -306,6 +323,7 @@ function verifyGrant(signed, opts) {
         task,
         now,
         consume: false,
+        _depth: _depth + 1,
       });
       if (!parentResult.authorized) {
         return fail('chain-broken', `parent grant invalid: ${parentResult.reason}`);
@@ -322,6 +340,13 @@ function verifyGrant(signed, opts) {
     }
   }
 
+  // HONEST LIMIT: check-then-consume is not atomic. Two concurrent
+  // verifications of the same single-use grant could both observe it unconsumed
+  // and both pass before either writes. For a single-operator local tool this
+  // race is low-risk, but it is a real gap: single-use is enforced against
+  // sequential reuse, not a deliberate concurrent double-spend. Closing it fully
+  // needs an atomic claim (file lock or O_EXCL marker per nonce); tracked rather
+  // than papered over.
   if (isNonceConsumed(grant.nnc)) {
     return fail('replayed', `grant nonce ${grant.nnc} was already used`);
   }

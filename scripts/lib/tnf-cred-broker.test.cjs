@@ -189,9 +189,15 @@ test('rootPolicy allows everything under a strong root', () => {
 // ---------------------------------------------------------------------------
 
 test('scrub redacts every occurrence and tolerates absence', () => {
-  assert.equal(broker.scrub('a SEC b SEC c', 'SEC'), 'a «redacted-secret» b «redacted-secret» c');
-  assert.equal(broker.scrub('nothing here', 'SEC'), 'nothing here');
+  assert.equal(broker.scrub('a SECRETV b SECRETV c', 'SECRETV'), 'a «redacted-secret» b «redacted-secret» c');
+  assert.equal(broker.scrub('nothing here', 'SECRETV'), 'nothing here');
   assert.equal(broker.scrub('x', ''), 'x');
+});
+
+test('scrub leaves short secrets alone (documented backstop limit)', () => {
+  // Redacting a <6-char string would corrupt ordinary output for negligible
+  // gain; such secrets must not be used with echoing actions.
+  assert.equal(broker.scrub('the pin is 1234 ok', '1234'), 'the pin is 1234 ok');
 });
 
 // ---------------------------------------------------------------------------
