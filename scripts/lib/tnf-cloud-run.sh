@@ -79,8 +79,13 @@ tnf_cloud_run_write_env_file() {
   done
 }
 
-# Update Cloud Run service env vars. Remaining args are KEY=VAL pairs.
+# Update Cloud Run service env vars (merge — never replace the full set).
+# Remaining args are KEY=VAL pairs.
 # Usage: tnf_cloud_run_update_env SERVICE KEY=VAL ...
+#
+# IMPORTANT: `gcloud run ... --env-vars-file` replaces ALL env vars. Callers that
+# only pass rotated secrets would wipe service-specific keys (e.g.
+# OPENCLAW_GATEWAY_TOKEN). We merge with the current service template env first.
 tnf_cloud_run_update_env() {
   local service="$1"
   shift
@@ -88,9 +93,26 @@ tnf_cloud_run_update_env() {
     echo "ERROR: tnf_cloud_run_update_env SERVICE KEY=VAL..." >&2
     return 1
   fi
-  local tmp
+  tnf_require_gcloud
+  local tmp existing updates merged pair key value
   tmp="$(mktemp)"
-  tnf_cloud_run_write_env_file "${tmp}" "$@"
+  existing="$(tnf_cloud_run_env_json "${service}" 2>/dev/null || echo '{}')"
+  [[ -n "${existing}" ]] || existing='{}'
+  updates='{}'
+  for pair in "$@"; do
+    key="${pair%%=*}"
+    value="${pair#*=}"
+    updates="$(jq -c --arg k "${key}" --arg v "${value}" '.[$k]=$v' <<<"${updates}")"
+  done
+  merged="$(jq -c -n --argjson a "${existing}" --argjson b "${updates}" '$a + $b')"
+  : >"${tmp}"
+  while IFS= read -r key; do
+    value="$(jq -r --arg k "${key}" '.[$k] // empty' <<<"${merged}")"
+    value="${value//\\/\\\\}"
+    value="${value//\"/\\\"}"
+    value="${value//$'\n'/\\n}"
+    printf '%s: "%s"\n' "${key}" "${value}" >>"${tmp}"
+  done < <(jq -r 'keys[]' <<<"${merged}")
   gcloud run services update "${service}" \
     --project="$(tnf_gcp_project)" \
     --region="$(tnf_gcp_region)" \
