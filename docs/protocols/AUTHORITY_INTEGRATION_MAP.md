@@ -23,7 +23,7 @@ tested, but no wrapper requests a grant, verifies one, or calls the broker.
 
 **Consequence for the trust-root migration:** isolating agents to the
 `tnf-agent` uid gives defence-in-depth (they can't read the operator key), but
-nothing yet *depends* on that isolation, because no agent holds a grant that the
+nothing yet _depends_ on that isolation, because no agent holds a grant that the
 key protects. Migration and integration are coupled; doing the migration first
 is safe but not yet meaningful on its own.
 
@@ -49,7 +49,7 @@ break signing and self-updating:
 
 ### Worker-side — SHOULD migrate to uid 442 (untrusted; would hold grants)
 
-These are the untrusted LLM workers that, once integration lands, will *request*
+These are the untrusted LLM workers that, once integration lands, will _request_
 grants and call the broker — the processes the boundary exists to contain:
 
 - `scripts/gemini-redis-wrapper.cjs`, `jules-redis-wrapper.cjs`,
@@ -75,13 +75,13 @@ grants and call the broker — the processes the boundary exists to contain:
 `agent_api_grant_usage`) already implement a grant system — predating this work.
 It is **not a duplicate**; it is the same idea at a different trust boundary:
 
-| | `agentApiGrants` (exists) | `tnf-cred-broker` (Phase 4a) |
-| --- | --- | --- |
-| Boundary | Server / hosted gateway | Local machine |
-| Storage | Postgres, JWT bearer | OS keystore, UCAN grant |
-| Guards | LLM **provider** API access | any local secret / account |
-| Limits | rate, daily tokens, USD cap, revoke | TTL, task-bind, single-use, scrub |
-| Home | proprietary control plane | open runtime |
+|          | `agentApiGrants` (exists)           | `tnf-cred-broker` (Phase 4a)      |
+| -------- | ----------------------------------- | --------------------------------- |
+| Boundary | Server / hosted gateway             | Local machine                     |
+| Storage  | Postgres, JWT bearer                | OS keystore, UCAN grant           |
+| Guards   | LLM **provider** API access         | any local secret / account        |
+| Limits   | rate, daily tokens, USD cap, revoke | TTL, task-bind, single-use, scrub |
+| Home     | proprietary control plane           | open runtime                      |
 
 **Reconciliation (design note, not built):** both should conform to the
 `CredentialBroker` contract in `packages/control-plane-contracts`. The UCAN
@@ -100,10 +100,11 @@ open-runtime one. This is the natural place for the SaaS/open split to land.
    read-only action. This makes the isolation boundary meaningful and validates
    the contracts against a real consumer before fanning out.
    - **DONE (library half, 2026-07-24):** `scripts/lib/tnf-authority-client.cjs`
-     is the agent-side API (`requestElevation → awaitGrant → verifyHeldGrant →
-     useCredential`, plus `withElevation`). An e2e test drives the full loop —
-     agent requests, operator approves, agent verifies and spends, secret never
-     reaches the agent. The contracts compose.
+     is the agent-side API
+     (`requestElevation → awaitGrant → verifyHeldGrant → useCredential`, plus
+     `withElevation`). An e2e test drives the full loop — agent requests,
+     operator approves, agent verifies and spends, secret never reaches the
+     agent. The contracts compose.
    - **DONE (wrapper half, 2026-07-24):** wired at the SHARED chokepoint rather
      than per-wrapper. `RedisAgentClient.handleIncomingMessage`
      (scripts/tnf-agent-cli.cjs → `gateAndDispatch`) gates every Redis-driven
@@ -130,10 +131,20 @@ Migrating launchers before step 1 is safe but buys only defence-in-depth. Wiring
 a consumer first is what turns the whole stack from tested-in-isolation into
 load-bearing.
 
+**Operator turn-up checklist** (encryption migration → TNF launcher relaunch →
+confirm-isolation → flag → fan out): see
+[`AUTHORITY_TURNUP_RUNBOOK.md`](./AUTHORITY_TURNUP_RUNBOOK.md).
+
+**2026-07-24 afternoon update:** TNF launcher now drops to `tnf-agent`;
+`tnf authority workers|relaunch-workers` added; sudo false-pass on
+confirm-isolation fixed (SUDO_UID + live straggler re-check). Account exists;
+workers still on 501 — isolation not load-bearing yet.
+
 ---
 
-## 5. Explicitly out of scope of this sweep
+## 5. Explicitly out of scope of the original sweep (2026-07-24 morning)
 
-- No launcher was modified; no process migrated, killed, or restarted.
+- No launcher was modified _during the morning read-only sweep_; afternoon
+  turn-up later changed `scripts/runtime/launch-agent-wrapper.sh`.
 - The master-clock herd cull remains operator-gated (LIVING_STATE P0).
-- Credential rotation remains operator-only and outstanding.
+- Credential rotation was operator-reported complete the same day.

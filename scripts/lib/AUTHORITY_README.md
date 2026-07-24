@@ -22,9 +22,20 @@ implementation can satisfy the same interfaces.
 | `tnf-authority-console.cjs` | Interactive `tnf-authority review` — TTY-gated, no default action, double confirm, fences untrusted agent text. Phase 3. |
 | `tnf-cred-broker.cjs` | Agents act on secrets without holding them. Read-only in 4a; a degraded root is refused more. Phase 4a. |
 | `tnf-authority-client.cjs` | The agent-side API. `withElevation(p, fn)` runs `fn` only with a verified, operator-approved grant. First consumer. |
+| `tnf-authority-workers.cjs` | Shared SUDO_UID-aware straggler scan (confirm-isolation + trust-root probe). |
 
-CLI: `scripts/tnf-authority.cjs` (`review \| status \| list \| show \| approve \| deny \| confirm-isolation`).
-Account setup: `scripts/setup/tnf-agent-account.sh`.
+CLI: `tnf authority …` (wired in `packages/tnf-cli`) or
+`scripts/tnf-authority.cjs` directly
+(`review \| status \| list \| show \| approve \| deny \| confirm-isolation \|
+workers \| relaunch-workers`).
+Account setup: `tnf authority account` / `scripts/setup/tnf-agent-account.sh`.
+Encryption rotate: `tnf authority encrypt-rotate --plan|--apply`.
+Launcher: `scripts/runtime/launch-agent-wrapper.sh` drops to `tnf-agent` when
+that account exists (`TNF_RUN_AS_OPERATOR=1` opts out).
+
+**Never `sudo tnf authority …`.** Under sudo, `getuid()` is 0 and the straggler
+scan historically false-passed. Run as your normal user; nested
+`sudo -u tnf-agent` is fine.
 
 ## The one principle
 
@@ -38,10 +49,12 @@ history of fabricated-authorization incidents.
 
 1. Provision `A2A_SECRET_KEY`, then `TNF_MESSAGE_AUTH_MODE=enforce` (only after
    every agent has a keypair and peers' public keys are imported).
-2. `sudo bash scripts/setup/tnf-agent-account.sh`, migrate worker launchers to
-   the `tnf-agent` uid (see `docs/protocols/AUTHORITY_INTEGRATION_MAP.md`), then
-   `tnf-authority confirm-isolation`. Until then the root is honestly degraded.
-3. Adopt `tnf-authority-client` in one worker wrapper behind an opt-in flag.
+2. `tnf authority account` (done — uid 442), then
+   `tnf authority relaunch-workers` so wrappers run as `tnf-agent`, then
+   `tnf authority confirm-isolation` **as the normal user** (not `sudo tnf`).
+   Until workers are off uid 501, the root stays honestly weak even if a marker
+   file exists. See `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`.
+3. Flip `TNF_AUTHORITY_CONSUMER=1` on one pilot after isolation is real.
 
 ## Not built
 

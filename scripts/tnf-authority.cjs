@@ -9,7 +9,11 @@
  *   node scripts/tnf-authority.cjs show <requestId>
  *   node scripts/tnf-authority.cjs approve <requestId> [--ttl 900] [--only cap,cap] [--reason "..."]
  *   node scripts/tnf-authority.cjs deny <requestId> [--reason "..."]
+ *   node scripts/tnf-authority.cjs workers
+ *   node scripts/tnf-authority.cjs relaunch-workers
+ *   node scripts/tnf-authority.cjs confirm-isolation
  *
+ * Also: `tnf authority <same subcommands>` via packages/tnf-cli.
  * `approve` and `deny` refuse to run from agent context (see
  * tnf-elevation-broker.cjs). Under a `file` trust root those checks are
  * defence-in-depth only — `status` says so plainly, every time.
@@ -21,6 +25,13 @@ const fs = require('node:fs');
 const { execFileSync } = require('node:child_process');
 const broker = require('./lib/tnf-elevation-broker.cjs');
 const trust = require('./lib/tnf-trust-root.cjs');
+const {
+  WORKER_AGENT_PATTERNS,
+  operatorUid,
+  operatorGid,
+  workerAgentsRunningAsOperator,
+  resolveWorkerScript,
+} = require('./lib/tnf-authority-workers.cjs');
 
 function arg(flag, fallback = null) {
   const i = process.argv.indexOf(flag);
@@ -38,45 +49,8 @@ function fmtCaps(caps) {
  * Operator-side processes (master-clock, cron chronological jobs, this CLI) are
  * intentionally excluded — they legitimately run as the operator and hold the
  * key. See docs/protocols/AUTHORITY_INTEGRATION_MAP.md for the split.
+ * (Canonical list: scripts/lib/tnf-authority-workers.cjs)
  */
-const WORKER_AGENT_PATTERNS = [
-  'gemini-redis-wrapper',
-  'jules-redis-wrapper',
-  'claude-redis-wrapper',
-  'antigravity-redis-wrapper',
-  'pi-wrapper',
-  'pi-coding-agent',
-];
-
-/**
- * Find worker-agent processes running as the operator uid. Those can read the
- * operator key regardless of what the agent account can do, so their presence
- * means launch isolation is NOT real — the file-denial test alone would
- * false-pass. Returns a list of "pid command" strings.
- */
-function workerAgentsRunningAsOperator({ psOutput = null, selfUid = null } = {}) {
-  selfUid = selfUid ?? (typeof process.getuid === 'function' ? process.getuid() : null);
-  if (selfUid === null) return [];
-  let out = psOutput;
-  if (out === null) {
-    try {
-      out = execFileSync('ps', ['-axo', 'uid,pid,command'], { encoding: 'utf8' });
-    } catch {
-      return []; // can't enumerate — caller treats the check as inconclusive
-    }
-  }
-  const hits = [];
-  for (const line of out.split('\n')) {
-    const m = line.trim().match(/^(\d+)\s+(\d+)\s+(.*)$/);
-    if (!m) continue;
-    const [, uid, pid, command] = m;
-    if (Number.parseInt(uid, 10) !== selfUid) continue;
-    if (WORKER_AGENT_PATTERNS.some((p) => command.includes(p))) {
-      hits.push(`${pid} ${command.slice(0, 80)}`);
-    }
-  }
-  return hits;
-}
 
 /**
  * Attest that agents are isolated to the agent account.
@@ -90,6 +64,26 @@ function workerAgentsRunningAsOperator({ psOutput = null, selfUid = null } = {})
 async function cmdConfirmIsolation() {
   const agentUser = process.env.TNF_AGENT_USER || 'tnf-agent';
   const keyPath = trust.OPERATOR_KEY_PATH;
+  const opUid = operatorUid();
+
+  // `sudo tnf authority confirm-isolation` used to false-pass: getuid()===0 so
+  // the straggler scan looked for root-owned workers and found none while
+  // jules/antigravity still ran as the real operator. Prefer SUDO_UID; still
+  // warn so the operator knows to prefer a non-root invocation.
+  if (typeof process.getuid === 'function' && process.getuid() === 0) {
+    if (opUid === 0 || opUid === null) {
+      console.error(
+        'Refuse to confirm-isolation as root without SUDO_UID.\n' +
+          'Run as your normal user:  tnf authority confirm-isolation\n' +
+          '(sudo is only needed for nested `sudo -u tnf-agent` checks.)'
+      );
+      process.exitCode = 1;
+      return;
+    }
+    console.warn(
+      `note: running under sudo — using SUDO_UID=${opUid} for the operator straggler scan`
+    );
+  }
 
   if (!fs.existsSync(keyPath)) {
     console.error(`No operator key at ${keyPath} yet — nothing to protect. Run an approval first.`);
@@ -112,7 +106,7 @@ async function cmdConfirmIsolation() {
         '\nCould not run the test non-interactively (sudo needs a password).\n' +
           `Run this yourself and confirm it says "Permission denied":\n` +
           `    sudo -u ${agentUser} cat ${keyPath}\n` +
-          'Then re-run: tnf-authority confirm-isolation --force-after-manual-check'
+          'Then re-run: tnf authority confirm-isolation --force-after-manual-check'
       );
       process.exitCode = 1;
       return;
@@ -138,10 +132,11 @@ async function cmdConfirmIsolation() {
   const stragglers = workerAgentsRunningAsOperator();
   if (stragglers.length && !process.argv.includes('--force-after-manual-check')) {
     console.error(
-      `\n❌ ${stragglers.length} worker agent(s) are still running as the operator (uid can read the key):\n` +
-        stragglers.map((s) => `    ${s}`).join('\n') +
+      `\n❌ ${stragglers.length} worker agent(s) are still running as the operator (uid ${opUid} can read the key):\n` +
+        stragglers.map((s) => `    ${s.slice(0, 120)}`).join('\n') +
         `\n\nThe file-denial test passed, but these processes make isolation NOT real.\n` +
-        'Relaunch them as the agent account, then re-run. Marker NOT written.'
+        'Run: tnf authority relaunch-workers\n' +
+        'Then re-run. Marker NOT written.'
     );
     process.exitCode = 1;
     return;
@@ -149,9 +144,19 @@ async function cmdConfirmIsolation() {
 
   fs.writeFileSync(
     trust.ISOLATION_MARKER,
-    `confirmed ${new Date().toISOString()} by operator; file-denial=pass; worker-as-operator=none\n`,
+    `confirmed ${new Date().toISOString()} by operator uid=${opUid}; file-denial=pass; worker-as-operator=none\n`,
     { mode: 0o600 }
   );
+  // If we were invoked via sudo, chown the marker back to the real operator so
+  // a root-owned 0600 marker does not block later non-root reads/rewrites.
+  const gid = operatorGid();
+  if (typeof process.getuid === 'function' && process.getuid() === 0 && opUid !== null) {
+    try {
+      fs.chownSync(trust.ISOLATION_MARKER, opUid, gid ?? opUid);
+    } catch (err) {
+      console.warn(`warn: could not chown marker to uid ${opUid}: ${err.message}`);
+    }
+  }
   console.log(`\n✅ Isolation confirmed. Marker written: ${trust.ISOLATION_MARKER}`);
   console.log(
     'Confirmed: the agent account cannot read the key AND no known worker wrapper is\n' +
@@ -257,9 +262,105 @@ async function cmdApprove(id) {
   console.log(`   root:     ${record.rootKind}${record.rootDegraded ? ' (DEGRADED — not a boundary)' : ''}`);
 }
 
+function cmdWorkers() {
+  const hits = workerAgentsRunningAsOperator();
+  console.log('TNF Authority — worker processes\n');
+  if (!hits.length) {
+    console.log('  No known worker wrappers are running as the operator.');
+    console.log('  (Isolation straggler check is clean.)');
+    return;
+  }
+  console.log(`  ${hits.length} worker(s) still running as the operator (blocks confirm-isolation):\n`);
+  for (const h of hits) console.log(`    ${h}`);
+  console.log(
+    '\nRelaunch via the TNF launcher (drops to tnf-agent when the account exists):\n' +
+      '    tnf authority relaunch-workers\n' +
+      'Then: tnf authority confirm-isolation'
+  );
+}
+
 async function cmdDeny(id) {
   const record = await broker.decide(id, { decision: 'denied', reason: arg('--reason') });
   console.log(`🚫 Denied ${id}${record.reason ? ` — ${record.reason}` : ''}`);
+}
+
+/**
+ * Stop operator-uid worker wrappers and restart them through the TNF launcher,
+ * which drops to tnf-agent when that account exists.
+ */
+async function cmdRelaunchWorkers() {
+  const { spawn } = require('node:child_process');
+  const path = require('node:path');
+  const hits = workerAgentsRunningAsOperator();
+  if (!hits.length) {
+    console.log('No operator-uid worker wrappers to relaunch.');
+    return;
+  }
+
+  const launcher = path.join(__dirname, 'runtime', 'launch-agent-wrapper.sh');
+  // hits are "pid truncated-command" — match by known pattern, resolve script under scripts/.
+  const byScript = new Map();
+  for (const line of hits) {
+    const pid = String(line).trim().split(/\s+/)[0];
+    const pattern = WORKER_AGENT_PATTERNS.find((p) => line.includes(p));
+    if (!pattern) continue;
+    const scriptPath = path.join(__dirname, `${pattern}.cjs`);
+    if (!fs.existsSync(scriptPath)) {
+      console.error(`  skip ${pattern}: no ${scriptPath}`);
+      continue;
+    }
+    byScript.set(scriptPath, pid);
+  }
+
+  if (!byScript.size) {
+    console.error(
+      'Found stragglers but could not map them to scripts/*.cjs. Stop them manually, then:\n' +
+        '  bash scripts/runtime/launch-agent-wrapper.sh scripts/<wrapper>.cjs'
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log(`Stopping ${byScript.size} operator-uid worker(s)…\n`);
+  for (const [scriptPath, pid] of byScript) {
+    console.log(`  SIGTERM ${pid} (${path.basename(scriptPath)})`);
+    try {
+      process.kill(Number(pid), 'SIGTERM');
+    } catch (err) {
+      console.error(`    warn: ${err.message}`);
+    }
+  }
+  await new Promise((r) => setTimeout(r, 1500));
+
+  console.log('\nStarting via TNF launcher (will sudo -u tnf-agent)…\n');
+  for (const scriptPath of byScript.keys()) {
+    const logBase = path.basename(scriptPath).replace(/\.cjs$/, '');
+    const logPath = `/tmp/tnf-${logBase}.log`;
+    const out = fs.openSync(logPath, 'a');
+    const child = spawn('bash', [launcher, scriptPath], {
+      cwd: path.join(__dirname, '..'),
+      detached: true,
+      stdio: ['ignore', out, out],
+      env: process.env,
+    });
+    child.unref();
+    console.log(`  started ${path.basename(scriptPath)} → log ${logPath} (pid ${child.pid})`);
+  }
+
+  await new Promise((r) => setTimeout(r, 2500));
+  const still = workerAgentsRunningAsOperator();
+  if (still.length) {
+    console.error(
+      `\n❌ Still running as operator:\n${still.map((s) => `    ${s}`).join('\n')}\n` +
+        'sudo needs your password in a real terminal. Run:\n' +
+        '  tnf authority relaunch-workers\n' +
+        'or per wrapper:\n' +
+        '  bash scripts/runtime/launch-agent-wrapper.sh scripts/<wrapper>.cjs'
+    );
+    process.exitCode = 1;
+    return;
+  }
+  console.log('\n✅ No operator-uid worker stragglers. Next: tnf authority confirm-isolation');
 }
 
 async function main() {
@@ -274,8 +375,10 @@ async function main() {
       case 'show': cmdShow(id); break;
       case 'approve': await cmdApprove(id); break;
       case 'deny': await cmdDeny(id); break;
+      case 'workers': cmdWorkers(); break;
+      case 'relaunch-workers': await cmdRelaunchWorkers(); break;
       default:
-        console.log(require('node:fs').readFileSync(__filename, 'utf8').split('\n').slice(4, 13).join('\n').replace(/^ \* ?/gm, ''));
+        console.log(require('node:fs').readFileSync(__filename, 'utf8').split('\n').slice(4, 15).join('\n').replace(/^ \* ?/gm, ''));
         process.exitCode = cmd ? 1 : 0;
     }
   } catch (err) {

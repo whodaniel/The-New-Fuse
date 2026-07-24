@@ -66,3 +66,19 @@ test('the pattern list is non-empty and covers the known wrappers', () => {
   assert.ok(WORKER_AGENT_PATTERNS.includes('jules-redis-wrapper'));
   assert.ok(WORKER_AGENT_PATTERNS.length >= 4);
 });
+
+test('under sudo, SUDO_UID is the operator uid for the straggler scan', () => {
+  const { operatorUid } = require('./lib/tnf-authority-workers.cjs');
+  const saved = process.env.SUDO_UID;
+  process.env.SUDO_UID = '501';
+  try {
+    assert.equal(operatorUid(), 501);
+    const out = ps(['  501 1 node scripts/jules-redis-wrapper.cjs', '  0 2 node scripts/jules-redis-wrapper.cjs']);
+    const hits = workerAgentsRunningAsOperator({ psOutput: out });
+    assert.equal(hits.length, 1);
+    assert.match(hits[0], /jules-redis-wrapper/);
+  } finally {
+    if (saved === undefined) delete process.env.SUDO_UID;
+    else process.env.SUDO_UID = saved;
+  }
+});

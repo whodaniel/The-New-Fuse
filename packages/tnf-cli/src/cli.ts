@@ -5469,10 +5469,196 @@ program
     }
   });
 
+/**
+ * Agent-authority operator surface (Phases 0–4a).
+ * Thin wrappers over scripts/tnf-authority.cjs + setup/encryption tools so
+ * `tnf authority …` matches the turn-up runbook without inventing a second API.
+ */
+async function runAuthorityScript(args: string[]): Promise<void> {
+  await runCommand('node', ['scripts/tnf-authority.cjs', ...args]);
+}
+
+const authority = program
+  .command('authority')
+  .description(
+    'Agent authority: elevation review, trust root, isolation, account setup, ENCRYPTION_KEY rotate'
+  )
+  .action(async () => {
+    // Bare `tnf authority` → script usage (same as node scripts/tnf-authority.cjs).
+    try {
+      await runAuthorityScript([]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('review')
+  .description('Interactive elevation approval console (TTY; start here)')
+  .action(async () => {
+    try {
+      await runAuthorityScript(['review']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('status')
+  .description('Show trust-root selection and pending elevation requests')
+  .action(async () => {
+    try {
+      await runAuthorityScript(['status']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('list')
+  .description('List pending elevation requests')
+  .action(async () => {
+    try {
+      await runAuthorityScript(['list']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('show')
+  .description('Show one elevation request')
+  .argument('<requestId>', 'Elevation request id')
+  .action(async (requestId: string) => {
+    try {
+      await runAuthorityScript(['show', requestId]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('approve')
+  .description('Approve an elevation request (operator context only)')
+  .argument('<requestId>', 'Elevation request id')
+  .allowUnknownOption(true)
+  .argument('[passthrough...]', 'Extra flags: --ttl, --only, --reason')
+  .action(async (requestId: string, passthrough: string[] = []) => {
+    try {
+      await runAuthorityScript(['approve', requestId, ...normalizeForwardedArgs(passthrough)]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('deny')
+  .description('Deny an elevation request (operator context only)')
+  .argument('<requestId>', 'Elevation request id')
+  .allowUnknownOption(true)
+  .argument('[passthrough...]', 'Extra flags: --reason')
+  .action(async (requestId: string, passthrough: string[] = []) => {
+    try {
+      await runAuthorityScript(['deny', requestId, ...normalizeForwardedArgs(passthrough)]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('confirm-isolation')
+  .description('Prove tnf-agent cannot read the operator key; write isolation marker')
+  .option(
+    '--force-after-manual-check',
+    'After you personally verified Permission denied via sudo -u tnf-agent cat <key>'
+  )
+  .action(async (options: { forceAfterManualCheck?: boolean }) => {
+    try {
+      const args = ['confirm-isolation'];
+      if (options.forceAfterManualCheck) args.push('--force-after-manual-check');
+      await runAuthorityScript(args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('workers')
+  .description('List worker wrappers still running as the operator (blocks isolation)')
+  .action(async () => {
+    try {
+      await runAuthorityScript(['workers']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('relaunch-workers')
+  .description('Stop operator-uid workers and restart them via the TNF launcher as tnf-agent')
+  .action(async () => {
+    try {
+      await runAuthorityScript(['relaunch-workers']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('account')
+  .description('Create/check/remove the tnf-agent OS account (requires sudo)')
+  .option('--check', 'Report only; do not create')
+  .option('--remove', 'Remove the account')
+  .action(async (options: { check?: boolean; remove?: boolean }) => {
+    try {
+      const script = 'scripts/setup/tnf-agent-account.sh';
+      const extra: string[] = [];
+      if (options.check) extra.push('--check');
+      if (options.remove) extra.push('--remove');
+      // --check does not need root; create/remove do.
+      if (options.check) {
+        await runCommand('bash', [script, ...extra]);
+      } else {
+        await runCommand('sudo', ['bash', path.join(repoRoot, script), ...extra]);
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('encrypt-rotate')
+  .description(
+    'ENCRYPTION_KEY migration (decrypt-old → encrypt-new). Needs TNF_ENCRYPTION_KEY_OLD/NEW + DATABASE_URL'
+  )
+  .option('--plan', 'Dry-run report only (default safe mode if neither flag set)')
+  .option('--apply', 'Write re-encrypted values')
+  .action(async (options: { plan?: boolean; apply?: boolean }) => {
+    try {
+      const args = ['scripts/tnf-encryption-key-rotate.cjs'];
+      if (options.apply) args.push('--apply');
+      else args.push('--plan');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 const handoff = program
   .command('handoff')
   .description('Session handoff utilities for TNF continuity');
-
 handoff
   .command('show')
   .description('Show the canonical TNF session handoff')

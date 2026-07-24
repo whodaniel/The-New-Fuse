@@ -289,7 +289,13 @@ const separateUidProvider = {
     const agentUidRaw = tryExec('id', ['-u', agentUser]);
     const accountExists = agentUidRaw !== null;
     const agentUid = accountExists ? Number.parseInt(agentUidRaw.trim(), 10) : null;
-    const selfUid = typeof process.getuid === 'function' ? process.getuid() : null;
+    // Prefer SUDO_UID when this probe runs under `sudo` — otherwise root sees
+    // keyOwner≠selfUid and separate-uid collapses to "detected only".
+    let selfUid = typeof process.getuid === 'function' ? process.getuid() : null;
+    if (process.env.SUDO_UID) {
+      const n = Number.parseInt(process.env.SUDO_UID, 10);
+      if (Number.isFinite(n)) selfUid = n;
+    }
 
     if (!accountExists) {
       return detectedOnly('separate-uid', {
@@ -359,8 +365,45 @@ const separateUidProvider = {
           `isolation is NOT confirmed — agents may still run as the operator (uid ${selfUid}) and read ` +
           `the key. Migrate agent launchers to run as "${agentUser}", verify ` +
           `\`sudo -u ${agentUser} cat ${OPERATOR_KEY_PATH}\` is denied, then run ` +
-          '`tnf-authority confirm-isolation`.',
+          '`tnf authority confirm-isolation`.',
         detail: { agentUser, agentUid, selfUid, keyMode, verifiedLaunchIdentity: false, isolationConfirmed: false },
+      };
+    }
+
+    // Marker present is necessary but not sufficient: a sudo false-pass can
+    // write the marker while workers still share the operator uid. Re-check
+    // live processes; if any worker is still on the operator uid, refuse the
+    // strong guarantee (same honesty class as confirm-isolation).
+    let liveStragglers = [];
+    try {
+      const workers = require('./tnf-authority-workers.cjs');
+      liveStragglers = workers.workerAgentsRunningAsOperator({ selfUid });
+    } catch {
+      liveStragglers = [];
+    }
+    if (liveStragglers.length) {
+      return {
+        kind: 'separate-uid',
+        available: true,
+        guarantee: {
+          keyReadableBySameUid: true,
+          hardwareBound: false,
+          requiresHumanPresence: false,
+          survivesAgentCompromise: false,
+        },
+        summary:
+          `Isolation marker exists, but ${liveStragglers.length} worker wrapper(s) still run as the ` +
+          `operator (uid ${selfUid}) and can read the key. Run \`tnf authority relaunch-workers\` then ` +
+          '`tnf authority confirm-isolation`.',
+        detail: {
+          agentUser,
+          agentUid,
+          selfUid,
+          keyMode,
+          verifiedLaunchIdentity: false,
+          isolationConfirmed: true,
+          liveStragglers: liveStragglers.slice(0, 5),
+        },
       };
     }
 

@@ -2,7 +2,10 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:** `41db2ffc-ad4e-46b0-9c21-5b7e2e3adb78` **Head:** `c0dc522dcac4`
+**Current Directive:** Authority turn-up remaining — as normal user (not
+`sudo tnf`): `tnf authority relaunch-workers` → `confirm-isolation` → strong
+`separate-uid`. Runbook: `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`. **Project
+ID:** `TNF-AUTHORITY-TURNUP` **Updated:** `2026-07-24T19:17:03Z`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `02fe0d33-95d7-4e07-9879-a0c02a66c7fe` **Head:** `7fba1626662d` cull (6 procs) —
 type handshake in-session before any kill **Project ID:** `TNF-SESSION`
@@ -42,13 +45,24 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 ## ⚡ Active Steps
 
 - [✅] 2026-07-24T00:30:13.658Z System cron entries installed:
-- [✅] 2026-07-24T04:21:15.352Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-24T05:34:57.132Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-24T16:26:08.521Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T04:21:15.352Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T05:34:57.132Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T16:26:08.521Z System cron entries installed:
 
-
+- [✅] 2026-07-24 **Qoder CLI agent assimilation complete (P9)** — Agent
+  registry class fixed: `agent-registry-bridge.ts` now propagates
+  `fulfillment` + `traits` upstream; `CLI_QODER` enum added;
+  `.agent/agents/qodercli.md` + `qoder-agent-onboarding` skill created;
+  `.tnf/agent-registry-snapshot.json` verified (327 agents, 0 errors). Broker
+  fulfillment-aware selection (`broker-agent.ts:980-1089`) now has data to route
+  on. Next: confirm broker dispatch with `--require-model qoder` and await
+  operator handshake for master-clock cull. tnf-frontend-tester (5m),
+  tnf-fleet-health-probe (15m)
 
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
 - [✅] 2026-07-24T01:16:10.135Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-24T01:22:56.438Z System cron entries installed:
@@ -59,12 +73,13 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 - [✅] **2026-07-24 RESOLVED: leaked credentials rotated (operator-reported).**
   `apps/api/.env` + `.bak` copies + `CLOUD_MIGRATION_BLUEPRINT.md` history had
   live Supabase/Upstash/JWT/encryption/sharedstate values. All rotated per
-  operator on 2026-07-24, so the copies remaining in git history are now
-  worthless — the leak is closed whether or not history is ever rewritten.
-  Follow-through to confirm still landed: new creds present in the Cloud Run /
-  local runtime env; `ENCRYPTION_KEY` change reconciled with any data encrypted
-  under the old key; `JWT_SECRET` change invalidated live sessions (re-login);
-  `SHAREDSTATE_AUTH_TOKEN` change propagated to the federation gate.
+  operator on 2026-07-24 (including Supabase DB password, reconfirmed 2026-07-24
+  afternoon), so the copies remaining in git history are now worthless — the
+  leak is closed whether or not history is ever rewritten. Follow-through still
+  useful: `ENCRYPTION_KEY` change reconciled with any data encrypted under the
+  old key via `tnf authority encrypt-rotate`; `JWT_SECRET` change invalidated
+  live sessions (re-login); `SHAREDSTATE_AUTH_TOKEN` change propagated to the
+  federation gate.
 - [✅] 2026-07-23 **Agent identity layer built (D23).** A2A signing was
   decorative — an HMAC was attached and never verified, role was read off the
   wire, `A2A_SECRET_KEY` was unset so `'default-secret'` was live, and the bus
@@ -84,12 +99,31 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
   environment. Contracts published to
   `packages/control-plane-contracts/src/authority.ts` (public API boundary) so
   the proprietary hosted root implements the same interface. 27 tests.
-- [⚠️] 2026-07-23 **The active trust root on this workstation is `file` — not a
-  boundary.** `MacBookPro12,1` has no Secure Enclave (probed: OSStatus -25300).
-  Creating a `tnf-agent` account makes 0600 a kernel-enforced boundary at zero
-  cost; a FIDO2 token is stronger still and works on this hardware. Grants
-  signed under `file` are only as trustworthy as every process running as this
-  user, and `describeSelection()` says so at runtime.
+- [✅] 2026-07-24 **`tnf-agent` OS account created (uid 442).** Operator ran
+  `scripts/setup/tnf-agent-account.sh`; operator key is 0600. Account alone is
+  not a boundary — see turn-up status below.
+- [⚠️] 2026-07-24 **Trust root NOT yet load-bearing despite isolation marker.**
+  A `launch-isolation-confirmed` marker was written under
+  `sudo tnf authority confirm-isolation`, but that was a **false pass**: under
+  sudo, `getuid()` is 0 so the straggler scan looked for root-owned workers and
+  missed jules/antigravity/pi still on uid 501. Marker is root-owned. Probe now
+  re-checks live workers and correctly reports weak guarantee when stragglers
+  exist. **Do not run `sudo tnf authority …`** — run as the normal user; sudo is
+  only for nested `sudo -u tnf-agent` drops.
+- [✅] 2026-07-24 **Authority consumer gate + TNF CLI surface.** Consumer gate
+  centralized at `RedisAgentClient.handleIncomingMessage` (`e01f85cc17`),
+  default-off via `TNF_AUTHORITY_CONSUMER`. `tnf authority` wired in
+  `packages/tnf-cli`
+  (`review|status|list|show|approve|deny|confirm-isolation| account|encrypt-rotate|workers|relaunch-workers`).
+  TNF launcher (`scripts/runtime/launch-agent-wrapper.sh`) drops to `tnf-agent`
+  when the account exists. Shared helpers in
+  `scripts/lib/tnf-authority-workers.cjs` (SUDO_UID-aware). Operator turn-up
+  runbook: `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`.
+- [🔑] 2026-07-24 **OPERATOR ACTION (turn-up remaining):** as normal user (not
+  `sudo tnf`): `tnf authority relaunch-workers` → `tnf authority workers`
+  (clean) → `tnf authority confirm-isolation` → `tnf authority status` (want
+  strong `separate-uid`). Then flip `TNF_AUTHORITY_CONSUMER=1` on one pilot. PR
+  #70 merge remains operator review. See runbook.
 - [✅] 2026-07-23 **Phase 3 built: elevation approval channel.**
   `tnf-elevation-broker.cjs` + `scripts/tnf-authority.cjs`
   (`status|list|show|approve|deny`). Agents may `submit()` (grants nothing);
@@ -98,21 +132,12 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
   Approvals may narrow, never widen; the requester's role always comes from the
   registry and a self-asserted role is recorded as a claim and ignored. 15
   tests. Verified live: an agent with `TNF_AGENT_ID` set is refused.
-- [✅] 2026-07-23 **Interactive review console.**
+- [✅] 2026-07-23 **Interactive review console.** `tnf authority review` /
   `node scripts/tnf-authority.cjs review` — requires a TTY, **no default
   action** (bare Enter re-prompts, never approves), double confirmation
   restating exactly what will be granted, warnings rendered above the decision
   line, and the agent-written `justification` truncated + fenced as untrusted (a
   prompt-injection attempt is in the fixtures). 14 tests.
-- [🔑] 2026-07-23 **OPERATOR ACTION: run
-  `sudo bash scripts/setup/tnf-agent-account.sh`.** Until a dedicated
-  `tnf-agent` account exists, the trust root stays `file` and the broker's
-  agent-context checks are defence-in-depth only — a same-uid agent can unset an
-  env var and read the operator key. The account makes the boundary
-  kernel-enforced at zero cost. **The account alone is not enough**: agents must
-  actually be launched as that user (launchd `UserName`, systemd `User=`), and
-  the proof is `sudo -u tnf-agent cat ~/.tnf/authority/operator.ed25519` being
-  denied. `tnf-authority status` reports which case is live.
 - [✅] 2026-07-24 **Phase 4a built: credential broker (read-only).**
   `tnf-cred-broker.cjs` — an agent invokes a named operator-declared action; the
   broker pulls the secret from the OS keystore, runs the action with it injected
@@ -857,4 +882,8 @@ and generated refactoring_consensus_report.md.
   hardened with \b boundaries to prevent false agent triggerings, and `pi` agent
   officially added to AGENT_COMMAND_HINTS. pi model settings updated to match
   hermes provider (nvidia) and model (minimaxai/minimax-m3) to resolve 410
-  errors.
+  errors. [CLASS:PRIME] [STATUS:RESOLVED] Handoff
+  1d37a0e4-6cb8-43c8-9f2d-216b4243689a (turn 11, 2026-07-24): commit executed
+  (HEAD b68d36d) with live Daniel Goldberg confirmation ("commit these 4
+  files"); AGENTS.md gate satisfied; SESSION_HANDOFF_LATEST.json updated;
+  next_actions cleared.
