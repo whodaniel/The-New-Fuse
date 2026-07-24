@@ -18,11 +18,7 @@ export const LandingHeader = () => {
           The New Fuse
         </Link>
         <div className="space-x-2" role="group" aria-label="Account actions">
-          <Link
-            to="https://github.com/whodaniel/The-New-Fuse"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <Link to="https://github.com/whodaniel" target="_blank" rel="noopener noreferrer">
             <Button
               variant="outline"
               className="hidden sm:inline-flex focus:ring-4 focus:ring-primary/20"
