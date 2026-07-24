@@ -1,7 +1,8 @@
-import express from 'express';
 import cors from 'cors';
+import express from 'express';
 import { env } from './config/env';
 import { AudioTriggerRuntime } from './runtime/audio-trigger-runtime';
+import type { ProfileUpdate } from './services/profile/schema';
 import { WebSocketService } from './services/websocket.service';
 import type {
   AutoPromptRun,
@@ -12,7 +13,6 @@ import type {
   SelfAssessmentResult,
   VisualObjectDetection,
 } from './types/events';
-import type { ProfileUpdate } from './services/profile/schema';
 
 const app = express();
 app.use(cors());
@@ -28,7 +28,7 @@ wsService.connect();
 runtime.on('rule_fired', (event: RuleFireEvent) => {
   wsService.broadcast({
     type: 'KWS_RULE_FIRED',
-    ...event
+    ...event,
   });
 });
 
@@ -36,7 +36,7 @@ runtime.on('rule_fired', (event: RuleFireEvent) => {
 runtime.on('llm_result', (result: LlmBatchResult) => {
   wsService.broadcast({
     type: 'KWS_LLM_RESULT',
-    ...result
+    ...result,
   });
 });
 
@@ -61,9 +61,16 @@ runtime.on('context_card', (card: ContextLogCard) => {
   });
 });
 
-const apiKeyMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  if (!env.api.requireIngestAuth) return next();
-  const key = req.headers['x-api-key'] as string | undefined || req.query?.apiKey as string | undefined;
+const apiKeyMiddleware = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  if (!env.api.requireIngestAuth || !env.api.ingestApiKey) return next();
+  const key =
+    (req.headers['x-api-key'] as string | undefined) ||
+    (req.headers['x-edge-api-key'] as string | undefined) ||
+    (req.query?.apiKey as string | undefined);
   if (key !== env.api.ingestApiKey) {
     return res.status(401).json({ error: 'unauthorized' });
   }
@@ -103,7 +110,10 @@ const additionalContextEvents = new Set([
   'PostToolBatch',
 ]);
 
-const buildHookAdditionalContext = (trigger: AutomationTriggerEvent | undefined, runs: AutoPromptRun[]): string => {
+const buildHookAdditionalContext = (
+  trigger: AutomationTriggerEvent | undefined,
+  runs: AutoPromptRun[]
+): string => {
   if (!trigger || runs.length === 0) {
     return '';
   }
@@ -142,34 +152,39 @@ app.post('/v1/ingest/visual', apiKeyMiddleware, async (req, res) => {
   res.json({ ok: true, streamId, processedObjects: objects.length, generatedRuns: runs.length });
 });
 
-app.post('/v1/ingest/claude-hook', apiKeyMiddleware, claudeHookSecretMiddleware, async (req, res) => {
-  const payload = (req.body ?? {}) as Record<string, unknown>;
-  const result = await runtime.ingestClaudeHook(payload);
+app.post(
+  '/v1/ingest/claude-hook',
+  apiKeyMiddleware,
+  claudeHookSecretMiddleware,
+  async (req, res) => {
+    const payload = (req.body ?? {}) as Record<string, unknown>;
+    const result = await runtime.ingestClaudeHook(payload);
 
-  const response: Record<string, unknown> = {
-    ok: true,
-    accepted: result.accepted,
-    reason: result.reason ?? null,
-    hookEventName: result.hookEventName ?? null,
-    generatedRuns: result.runs.length,
-    streamId: result.trigger?.streamId ?? null,
-    triggerId: result.trigger?.triggerId ?? null,
-  };
-
-  if (
-    result.hookEventName &&
-    additionalContextEvents.has(result.hookEventName) &&
-    result.accepted &&
-    result.runs.length > 0
-  ) {
-    response.hookSpecificOutput = {
-      hookEventName: result.hookEventName,
-      additionalContext: buildHookAdditionalContext(result.trigger, result.runs),
+    const response: Record<string, unknown> = {
+      ok: true,
+      accepted: result.accepted,
+      reason: result.reason ?? null,
+      hookEventName: result.hookEventName ?? null,
+      generatedRuns: result.runs.length,
+      streamId: result.trigger?.streamId ?? null,
+      triggerId: result.trigger?.triggerId ?? null,
     };
-  }
 
-  res.json(response);
-});
+    if (
+      result.hookEventName &&
+      additionalContextEvents.has(result.hookEventName) &&
+      result.accepted &&
+      result.runs.length > 0
+    ) {
+      response.hookSpecificOutput = {
+        hookEventName: result.hookEventName,
+        additionalContext: buildHookAdditionalContext(result.trigger, result.runs),
+      };
+    }
+
+    res.json(response);
+  }
+);
 
 app.post('/v1/flush', apiKeyMiddleware, async (req, res) => {
   await runtime.flush();
