@@ -348,12 +348,18 @@ Legend: **COHERENT** | **DRIFT** | **CONTRADICTION** | **DEFERRED**
     "consumer gate at handleIncomingMessage"
   ],
   "audit_commit_context": "9c7e6bd7a1",
-  "edits_made_this_audit": "this report only; LOCKED DIRECTIVES not mutated"
+  "edits_made_this_audit": [
+    "AUTHORITY_INTEGRATION_MAP.md §1/§4 (handoff 31380d1611)",
+    "CODEBASE_PATHWAY_MAP addendum + JSON gaps (31380d1611)",
+    "DIRECTIVES.md D23 honesty + CHALLENGE_RATIONALE_LOG (follow-up)",
+    "pathway/coherence graph refresh"
+  ]
 }
 ```
 
 ---
 
-_Audit authored by logical-reasoning-agent, 2026-07-24. Read-only verification
-against cited paths; deliverable path:
-`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`._
+_Audit authored by logical-reasoning-agent + pathway-tracer + graph-writer,
+2026-07-24. Cross-checked against cited paths; deliverable path:
+`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`. D23 LOCKED
+honesty patch ledgered after operator requested this review._

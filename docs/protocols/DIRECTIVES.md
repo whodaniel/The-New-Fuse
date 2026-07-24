@@ -185,11 +185,11 @@ These are hard requirements. Violation is a protocol failure.
 - **D23 — Authority comes from verified identity, never from a wire claim.** A
   role asserted in a message body, a `federationId`, an `idNumber`, or an
   agent's own narration is a **claim**, not a credential. The sanctioned lookup
-  for an *authorization* decision is `resolveRole(verifiedAgentId)` in
+  for an _authorization_ decision is `resolveRole(verifiedAgentId)` in
   `scripts/lib/tnf-identity.cjs`, keyed by an agent id proven by an
-  **identity-bound (Ed25519) signature** and resolved against the
-  operator-owned registry `~/.tnf/authority/roles.json` (mode 0600, written only
-  from an operator shell).
+  **identity-bound (Ed25519) signature** and resolved against the operator-owned
+  registry `~/.tnf/authority/roles.json` (mode 0600, written only from an
+  operator shell).
   - **Classification is not authorization.** TNF has several other role and
     identity surfaces; none of them authorize anything. `agents.dacc_role`
     (`director | orchestrator | broker | worker | participant`) is assigned by
@@ -208,36 +208,36 @@ These are hard requirements. Violation is a protocol failure.
     `worker | sub-director | super-director`, the canonical agent names from
     `.claude/agents/`. There is no separate authority taxonomy to learn.
     (`local-director` was invented in the 2026-07-23 session and has been
-    removed; the real entity is `sub-director`.)
-  Specifically:
+    removed; the real entity is `sub-director`.) Specifically:
   - **A shared-secret (`kid: shared`) signature proves bus membership, not
     identity.** Every agent holds `A2A_SECRET_KEY`, so any holder can sign as
     any `agent_id`. Such messages resolve to `worker` regardless of what they
     claim, and are rejected outright when `TNF_MESSAGE_AUTH_MODE=enforce`.
     Verification lives in `scripts/lib/tnf-message-auth.cjs`.
-  - **Holding `sub-director` / `super-director` conveys the right to *request*
+  - **Holding `sub-director` / `super-director` conveys the right to _request_
     elevation — never standing elevated access.** Every privileged action still
     needs its own operator approval under D8's tiers.
-  - **Capability grants exist; the approval channel does not yet.** Grants are
-    UCAN-shaped and implemented in `scripts/lib/tnf-capability-grant.cjs`:
-    scoped, expiring (15m default, 60m ceiling), task-bound, single-use, and
-    **attenuating** — a delegation chain can only narrow, enforced at both issue
-    and verify time so a hand-crafted grant cannot widen it. Capabilities use
-    TNF's existing plain-language vocabulary from agent frontmatter
-    (`lane_coordination`, `prompt_injection`, …), not a parallel taxonomy.
+  - **Capability grants exist (UCAN-shaped).** Implemented in
+    `scripts/lib/tnf-capability-grant.cjs`: scoped, expiring (15m default, 60m
+    ceiling), task-bound, single-use, and **attenuating** — a delegation chain
+    can only narrow, enforced at both issue and verify time so a hand-crafted
+    grant cannot widen it. Capabilities use TNF's existing plain-language
+    vocabulary from agent frontmatter (`lane_coordination`, `prompt_injection`,
+    …), not a parallel taxonomy. The approval channel that issues them is the
+    next bullet (Phase 3) — do not read an older draft that denied Phase 3.
   - **The approval channel exists (Phase 3).**
     `scripts/lib/tnf-elevation-broker.cjs` + `scripts/tnf-authority.cjs`
     (`review | status | list | show | approve | deny`). **`review` is the
     intended entry point** — an interactive console that requires a TTY, has no
     default action (a bare Enter never approves), confirms twice while restating
-    exactly what will be granted, shows warnings *above* the decision line, and
+    exactly what will be granted, shows warnings _above_ the decision line, and
     fences the agent-written `justification` as an untrusted claim rather than
-    rendering it as tool output. An agent may `submit()` — that
-    grants nothing. `decide()` **refuses from agent context** (`TNF_AGENT_ID` /
-    `AGENT_ID` set, `CI`, non-TTY stdin, or running as the agent account) and
-    audits every refusal. An approval may narrow what was requested, never widen
-    it, and the requester's role always comes from the registry: a role asserted
-    in the request body is recorded as a claim and ignored.
+    rendering it as tool output. An agent may `submit()` — that grants nothing.
+    `decide()` **refuses from agent context** (`TNF_AGENT_ID` / `AGENT_ID` set,
+    `CI`, non-TTY stdin, or running as the agent account) and audits every
+    refusal. An approval may narrow what was requested, never widen it, and the
+    requester's role always comes from the registry: a role asserted in the
+    request body is recorded as a claim and ignored.
   - **The credential broker exists (Phase 4a, read-only).**
     `scripts/lib/tnf-cred-broker.cjs` lets an agent invoke a **named,
     operator-declared** action that touches a secret — the broker pulls the
@@ -257,31 +257,36 @@ These are hard requirements. Violation is a protocol failure.
     the operator key, so it cannot forge an approval even if it defeats every
     check in the broker. Under `file` those checks are **defence-in-depth only**
     — a same-uid agent can unset an env var and read the key directly.
-    `tnf-authority status` states which case is live. Do not cite a `file`-rooted
-    approval as though it were an enforced one.
+    `tnf-authority status` states which case is live. Do not cite a
+    `file`-rooted approval as though it were an enforced one.
   - **The trust root is probed, not assumed.** `scripts/lib/tnf-trust-root.cjs`
-    implements `TrustRootProvider` from
-    `@the-new-fuse/control-plane-contracts` and selects the strongest root that
-    actually works in the current environment (`fido2 | secure-enclave | tpm2 |
-    pkcs11 | remote-attestation | separate-uid | os-keystore | file`), so one
-    build adapts to a Linux server, a container, or an Intel Mac with no
+    implements `TrustRootProvider` from `@the-new-fuse/control-plane-contracts`
+    and selects the strongest root that actually works in the current
+    environment
+    (`fido2 | secure-enclave | tpm2 | pkcs11 | remote-attestation | separate-uid | os-keystore | file`),
+    so one build adapts to a Linux server, a container, or an Intel Mac with no
     configuration. `available: true` means signing genuinely works here — never
     "the hardware exists". A root that cannot survive an agent compromise
     reports `degraded` and says so out loud. **On the current workstation the
-    selected root is `file`, which is no boundary at all**; `separate-uid` would
-    make it one at no hardware cost, and a FIDO2 token would be stronger still.
-  - **Known limitation, stated rather than implied:** private keys are mode
-    0600 and `roles.json` is operator-owned, but agents run under the operator's
-    own uid and can therefore read or write those files directly. This closes
+    selected kind is typically `separate-uid` (available) but degraded** until
+    worker wrappers run as `tnf-agent`, isolation is attested
+    (`tnf authority confirm-isolation` as the normal user — never `sudo tnf`),
+    and no operator-uid stragglers remain. Until then it is **not** a
+    load-bearing boundary — treat strength as honestly weak even though the kind
+    name is not `file`. A FIDO2 token would be stronger still.
+  - **Known limitation, stated rather than implied:** private keys are mode 0600
+    and `roles.json` is operator-owned, but while workers still share the
+    operator uid they can read or write those files directly. This closes
     impersonation **across the bus** (a remote or compromised publisher cannot
     forge a director); it is **not** a boundary between co-resident processes on
-    the same machine. A real boundary requires a separate uid, an external
-    hardware token, or a biometric-gated key. **Secure Enclave is not an option
-    on the current workstation** — `MacBookPro12,1` (2015) predates the T1/T2
-    chip, confirmed empirically (`SecKeyCreateRandomKey` with
-    `kSecAttrTokenIDSecureEnclave` fails, OSStatus `-25300`). Do not describe
-    this layer as stronger than it is. —
-    `TNF_GOVERNANCE_TENETS.md` §3B, D8, `CHALLENGE_RATIONALE_LOG.md`
+    the same machine until isolation is proven. A real boundary requires a
+    separate uid in force, an external hardware token, or a biometric-gated key.
+    **Secure Enclave is not an option on the current workstation** —
+    `MacBookPro12,1` (2015) predates the T1/T2 chip, confirmed empirically
+    (`SecKeyCreateRandomKey` with `kSecAttrTokenIDSecureEnclave` fails, OSStatus
+    `-25300`). Do not describe this layer as stronger than it is. —
+    `TNF_GOVERNANCE_TENETS.md` §3B, D8, `CHALLENGE_RATIONALE_LOG.md`,
+    `AUTHORITY_TURNUP_RUNBOOK.md`
 
 ---
 

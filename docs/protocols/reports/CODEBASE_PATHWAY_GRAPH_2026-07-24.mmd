@@ -1,5 +1,6 @@
 %% TNF Codebase Pathway Graph — 2026-07-24
 %% Source: CODEBASE_PATHWAY_MAP_2026-07-24.json
+%% Coherence audit: 9c7e6bd7a1 — closed gaps (shim, SecureAuth USER) vs open fail-open
 %% Kind shapes: entry=stadium, handler=rect, gate=diamond, store=cylinder, cli=hex, bus=circle
 flowchart TB
   classDef entry fill:#2563eb,color:#fff,stroke:#1e3a8a
@@ -10,6 +11,7 @@ flowchart TB
   classDef bus fill:#dc2626,color:#fff,stroke:#991b1b
   classDef soft stroke:#ef4444,stroke-width:3px
   classDef failclosed stroke:#16a34a,stroke-width:3px
+  classDef closedgap stroke:#16a34a,stroke-width:3px
 
   entry-redis-agent-client("RedisAgentClient")
   handler-handle-incoming["handleIncomingMessage"]
@@ -38,14 +40,20 @@ flowchart TB
   bus-tnf-agents(("tnf:agents"))
   bus-tnf-conversations(("tnf:conversations"))
   bus-tnf-ingress(("tnf:bus:ingress"))
-  bus-tnf-egress(("tnf:bus:egress: agentId "))
+  bus-tnf-egress(("tnf:bus:egress: agentId"))
   store-agent-registry[("tnf:agent-registry")]
   entry-gemini-wrapper("gemini-redis-wrapper")
   entry-jules-wrapper("jules-redis-wrapper")
   entry-pi-wrapper("pi-redis-wrapper")
   entry-claude-wrapper("claude-redis-wrapper")
   entry-antigravity-wrapper("antigravity-redis-wrapper")
-  node-thin-redis-client("thin redis-agent-client (no auth gate)")
+  node-redis-agent-client-shim("redis-agent-client shim → full RedisAgentClient")
+  handler-stringify-signed-bus["stringifySignedBusMessage"]
+  gate-sign-bus-message-fail-open{"sign-bus-message catch → unsigned JSON"}
+  gate-gateway-auth-opt-in{"GatewayAuthGuard opt-in (no APP_GUARD)"}
+  pub-broker-heartbeat-unsigned(("BrokerAgent heartbeat (unsigned JSON)"))
+  pub-director-heartbeat-unsigned(("DirectorAgent heartbeat (unsigned JSON)"))
+  gate-secure-auth-user-default{"SecureAuthGuard USER default"}
   entry-standalone-relay("TNFRelayServer / tnf-relay")
   handler-redis-relay-bridge["RedisRelayBridge"]
   entry-master-clock("MasterClock")
@@ -83,7 +91,6 @@ flowchart TB
   gate-cred-broker-mutating{"cred broker mutating fail-closed"}
   gate-elevation-decide-agent-context{"decide() agent-context refuse"}
   gate-message-auth-warn{"message auth warn mode (soft)"}
-  gate-secure-auth-public-default{"SecureAuthGuard PUBLIC default"}
 
   class entry-redis-agent-client entry
   class handler-handle-incoming handler
@@ -119,7 +126,13 @@ flowchart TB
   class entry-pi-wrapper entry
   class entry-claude-wrapper entry
   class entry-antigravity-wrapper entry
-  class node-thin-redis-client entry
+  class node-redis-agent-client-shim entry
+  class handler-stringify-signed-bus handler
+  class gate-sign-bus-message-fail-open gate
+  class gate-gateway-auth-opt-in gate
+  class pub-broker-heartbeat-unsigned bus
+  class pub-director-heartbeat-unsigned bus
+  class gate-secure-auth-user-default gate
   class entry-standalone-relay entry
   class handler-redis-relay-bridge handler
   class entry-master-clock entry
@@ -157,14 +170,32 @@ flowchart TB
   class gate-cred-broker-mutating gate
   class gate-elevation-decide-agent-context gate
   class gate-message-auth-warn gate
-  class gate-secure-auth-public-default gate
-  class gate-message-auth-warn soft
-  class gate-secure-auth-public-default soft
-  class node-thin-redis-client soft
+  class handler-gate-and-dispatch failclosed
+  class gate-cred-readonly failclosed
+  class gate-cred-trust-root failclosed
+  class node-redis-agent-client-shim failclosed
+  class gate-sign-bus-message-fail-open soft
+  class gate-gateway-auth-opt-in soft
+  class pub-broker-heartbeat-unsigned soft
+  class pub-director-heartbeat-unsigned soft
+  class gate-secure-auth-user-default failclosed
+  class gate-secure-auth failclosed
   class gate-authority-consumer-off failclosed
   class gate-cred-broker-mutating failclosed
   class gate-elevation-decide-agent-context failclosed
+  class gate-message-auth-warn soft
 
+  node-redis-agent-client-shim -->|"loadFullClient + initialize"| entry-redis-agent-client
+  entry-broker-agent -.->|"task envelope publish"| handler-stringify-signed-bus
+  handler-redis-relay-bridge -->|"ingress / publishToIngress"| handler-stringify-signed-bus
+  handler-redis-relay-bridge -->|"publishToAgent egress"| handler-stringify-signed-bus
+  handler-stringify-signed-bus -.->|"publish unsigned JSON"| gate-sign-bus-message-fail-open
+  entry-broker-agent -.->|"publishes"| pub-broker-heartbeat-unsigned
+  pub-director-heartbeat-unsigned -.->|"DirectorAgent.startHeartbeat → HEARTBEAT_CHANNEL"| bus-tnf-agents
+  handler-stringify-signed-bus -->|"signed task/event envelopes"| bus-tnf-agents
+  handler-stringify-signed-bus -->|"publishes"| bus-tnf-ingress
+  handler-stringify-signed-bus -->|"publishes"| bus-tnf-egress
+  gate-gateway-auth -.->|"characterized_as"| gate-gateway-auth-opt-in
   entry-redis-agent-client -->|"subscriber message/pmessage"| handler-handle-incoming
   handler-handle-incoming -->|"authenticateEnvelope"| gate-message-auth
   gate-message-auth -->|"if not reject"| handler-normalize-message
@@ -188,7 +219,7 @@ flowchart TB
   entry-claude-wrapper -->|"depends_on"| entry-redis-agent-client
   entry-antigravity-wrapper -->|"depends_on"| entry-redis-agent-client
   entry-standalone-relay -->|"uses"| handler-redis-relay-bridge
-  handler-redis-relay-bridge -->|"publishes"| bus-tnf-ingress
+  handler-redis-relay-bridge -.->|"via stringifySignedBusMessage"| bus-tnf-ingress
   bus-tnf-egress -->|"subscribes"| handler-redis-relay-bridge
   bus-tnf-ingress -->|"feeds"| entry-redis-agent-client
   entry-master-clock -->|"starts"| handler-mc-heartbeat
@@ -199,7 +230,8 @@ flowchart TB
   entry-master-clock -->|"LEDGER_API_BASE"| entry-api-main
   entry-broker-agent -->|"reads"| store-agent-registry
   entry-broker-agent -->|"calls"| handler-broker-policy
-  handler-broker-policy -->|"publishes"| bus-tnf-agents
+  handler-broker-policy -.->|"signed task envelope → egress/ingress"| handler-stringify-signed-bus
+  handler-stringify-signed-bus -->|"after stringifySignedBusMessage"| bus-tnf-egress
   entry-api-main -->|"applies"| gate-security-guard
   gate-security-guard -->|"then"| gate-secure-auth
   gate-secure-auth -->|"allows"| handler-api-controllers

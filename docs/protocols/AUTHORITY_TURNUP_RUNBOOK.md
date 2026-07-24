@@ -4,8 +4,11 @@
 
 Annotated checklist for making the authority stack **load-bearing**. Code is
 complete through Phases 0–4a and the consumer gate at
-`RedisAgentClient.handleIncomingMessage` (commit `e01f85cc17`, PR #70). Nothing
-below is safe to invent or skip — every step needs your keys, sudo, or a
+`RedisAgentClient.handleIncomingMessage` (commit `e01f85cc17`, PR #70). A2A/HTTP
+fail-open close-out landed in `9c7e6bd7a1` (thin-client shim, SecureAuthGuard
+USER default, broker/relay signing). Coherence audit:
+[`reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`](./reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md).
+Nothing below is safe to invent or skip — every step needs your keys, sudo, or a
 deliberate production decision.
 
 **Do not reverse the order.** Encryption migration and credential rotation are
@@ -22,7 +25,8 @@ reference: `scripts/lib/AUTHORITY_README.md`.
 | Step                                             | State                                                                                                                 |
 | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
 | Consumer gate at Redis chokepoint (`e01f85cc17`) | ✅ code done, default-off                                                                                             |
-| `tnf authority` CLI surface                      | ✅ wired                                                                                                              |
+| A2A/HTTP fail-open close-out (`9c7e6bd7a1`)      | ✅ shim + USER default + signed broker/bridge (not enforce/consumer)                                                  |
+| `tnf authority` CLI surface                      | ✅ wired (`provision-keys` included)                                                                                  |
 | TNF launcher drops to `tnf-agent`                | ✅                                                                                                                    |
 | `tnf-agent` account (uid 442)                    | ✅ created                                                                                                            |
 | Operator key 0600                                | ✅                                                                                                                    |

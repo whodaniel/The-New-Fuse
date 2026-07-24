@@ -39,6 +39,10 @@ A2A bus: thin `scripts/lib/redis-agent-client.cjs` is a shim over the full
 authority gate). Broker-agent / redis-relay-bridge sign TNF envelopes via
 `packages/relay-core/src/protocol/sign-bus-message.ts`.
 
+HTTP: `apps/api` `SecureAuthGuard` defaults to USER (PUBLIC is explicit).
+`apps/api-gateway` still uses **opt-in** `GatewayAuthGuard` — parity gap; see
+pathway gaps / coherence audit.
+
 **Never `sudo tnf authority …`.** Under sudo, `getuid()` is 0 and the straggler
 scan historically false-passed. Run as your normal user; nested
 `sudo -u tnf-agent` is fine.

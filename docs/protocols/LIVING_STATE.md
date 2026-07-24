@@ -2,16 +2,14 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`f82b041a-f2d2-4edd-9cc9-b546c74269ec` **Head:** `9c7e6bd7a1c8` SecureAuthGuard
-USER default, broker/relay signing, `provision-keys`). Operator still needs
-(normal user, not `sudo tnf`): `tnf authority relaunch-workers` →
-`confirm-isolation` → strong `separate-uid`, then pilot
-`TNF_AUTHORITY_CONSUMER=1`. Runbook:
+**Current Directive:** Coherence audit complete —
+`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md` (verdict
+**mixed**). Operator (normal user, not `sudo tnf`):
+`tnf authority relaunch-workers` → `confirm-isolation` → strong `separate-uid`,
+then pilot `TNF_AUTHORITY_CONSUMER=1`. Runbook:
 `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`. **Project ID:**
-`TNF-AUTHORITY-TURNUP` **Updated:** `2026-07-24T22:45:00Z`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`TNF-AUTHORITY-TURNUP` **Updated:** `2026-07-24T23:35:00Z` **Handoff:**
+`f82b041a-f2d2-4edd-9cc9-b546c74269ec` **Head:** `9c7e6bd7a1` Prior:
 `02fe0d33-95d7-4e07-9879-a0c02a66c7fe` **Head:** `7fba1626662d` cull (6 procs) —
 type handshake in-session before any kill **Project ID:** `TNF-SESSION`
 **Handoff:** `a69e0826-181e-411f-a3c2-3cb6a6d22e56` **Head:** `b2d907005c90`

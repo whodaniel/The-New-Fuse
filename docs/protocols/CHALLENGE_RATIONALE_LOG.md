@@ -103,6 +103,24 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: found after operator paste of terminal output 2026-07-24; fixed
   in Cursor session same day; no authorization claim involved.
 
+## 2026-07-24 — docs/protocols/DIRECTIVES.md (D23 honesty — coherence audit)
+
+- file: docs/protocols/DIRECTIVES.md
+- git_blob_sha: (see commit history for this session; logged concurrently with
+  the commit)
+- rationale: Logical coherence audit
+  (`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`) found D23
+  self-contradicting: one bullet said “the approval channel does not yet” while
+  the next bullet correctly documented Phase 3 (`tnf-elevation-broker` +
+  `tnf-authority` review). Rewrote the grants bullet so it no longer denies
+  Phase 3. Also corrected the workstation trust-root naming: with `tnf-agent`
+  uid 442 present the probe selects `separate-uid` (available, degraded while
+  workers remain on uid 501), not a silent claim that the selected kind is still
+  `file`. Strength honesty unchanged — degraded `separate-uid` is still not a
+  load-bearing boundary. No permission widening; D23-class honesty only.
+- attributed_to: operator requested “logical coherence audit and protocol
+  review” in Cursor session 2026-07-24 on `fix/a2a-signature-verification`.
+
 ## 2026-07-24 — enforcement gaps closed (A2A shim + HTTP fail-closed + signed bus)
 
 - file: `scripts/lib/redis-agent-client.cjs`,
