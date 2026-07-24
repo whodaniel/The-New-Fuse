@@ -40,6 +40,34 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 
 ## ⚡ Active Steps
 
+- [✅] 2026-07-24T00:30:13.658Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+- [🔑] **2026-07-23 OPERATOR-ONLY, OPEN: rotate leaked credentials.**
+  `apps/api/.env` + 3 `.bak` copies were tracked and pushed to the **public**
+  `whodaniel/The-New-Fuse` with live values. Files removed from all 7 remote
+  tips and GitHub secret scanning + push protection enabled (verified), but
+  **tip cleanup does not invalidate a leaked credential — only rotation does.**
+  Order: Upstash → Supabase → `JWT_SECRET` → `ENCRYPTION_KEY` →
+  `SHAREDSTATE_AUTH_TOKEN` → anon key, plus `apps/backend/.env.performance`.
+  History remains dirty; a rewrite is optional and does NOT substitute for
+  rotation (GitHub keeps force-pushed commits reachable by SHA until Support
+  purges them).
+- [✅] 2026-07-23 **Agent identity layer built (D23).** A2A signing was
+  decorative — an HMAC was attached and never verified, role was read off the
+  wire, `A2A_SECRET_KEY` was unset so `'default-secret'` was live, and the bus
+  was unauthenticated. Any local process could claim `local-director`. Fixed
+  across `14e59ae213` (verification + `patch.js` removal), Phase 1 identity /
+  operator-owned role registry, and `e09161b9e2` (per-agent Ed25519 binding —
+  symmetric keys were rejected as insufficient, since any peer able to verify
+  an agent could also forge as it). 51 tests / 4 suites; impersonation verified
+  closed end-to-end. Branch `fix/a2a-signature-verification`.
+- [⏳] 2026-07-23 **Elevation layer NOT built.** Capability grants (Phase 2),
+  operator approval CLI (Phase 3), credential broker (Phase 4) do not exist.
+  D23 states this explicitly so no agent can claim a grant it cannot hold.
+- [⚠️] 2026-07-23 **Do not flip `TNF_MESSAGE_AUTH_MODE=enforce` yet.** Requires
+  every agent to hold an Ed25519 keypair and every node to have imported its
+  peers' public keys; flipping early silently drops traffic. See `.env.example`.
+
 1. [✅] 2026-07-17 Autonomous Continuity Protocol authored; self-healing bound
 
 - [✅] 2026-07-23T19:27:08.885Z System cron entries installed:

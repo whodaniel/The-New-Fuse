@@ -28,10 +28,38 @@ committed it without catching the fabrication); tightened `cursor-agent`'s
 were per-action operator-confirmed, not self-authorized — see
 `.claude/skills/tnf-autonomy-safety-audit/SKILL.md` for the reusable checklist.
 
+Claude Code session (`tnf-local-terminal`, 2026-07-23): attended conversational
+session, no `canonicalEntityId`. Asked to add a protected override granting a
+credentialed Local Director full system/network/account access. Found the
+premise rested on three things that were not true: D8 already grants Super Admin
+EXECUTIVE authority with zero enforcement code behind it; `federationId` is an
+unvalidated `varchar(255)` with no signature anywhere in
+`packages/shared/src/federation/`; and A2A signing was decorative —
+`signMessage()` attached an HMAC that **nothing verified**,
+`normalizeIncomingMessage()` discarded it and read `role` off the wire,
+`A2ASignatureWrapper` had no verify counterpart, `A2A_SECRET_KEY` was unset so
+the literal `'default-secret'` was live, and the bus was unauthenticated
+`redis://localhost:6379`. Any local process could publish a message claiming
+`local-director` and be believed. Built the enforcement layer instead of the
+override: signature verification (`14e59ae213`), operator-owned role registry
+(Phase 1), and per-agent Ed25519 identity binding (`e09161b9e2`) — symmetric
+per-agent keys were rejected as insufficient because any peer able to verify an
+agent could also forge as it. 51 tests / 4 suites; impersonation verified closed
+end-to-end against the real receive path. Elevation itself (capability grants,
+approval CLI, credential broker) is **not built** — D23 says so explicitly so no
+agent can claim a grant it cannot hold. Separately, a repo-mode secret sweep
+found `apps/api/.env` + 3 `.bak` copies tracked and pushed to the **public**
+`whodaniel/The-New-Fuse` with live Supabase/Upstash/JWT/encryption values;
+cleanup and GitHub hardening were done in a parallel lane and verified here, but
+**rotation remains outstanding and is operator-only**. All commits this session
+were per-action operator-confirmed; no self-authorization.
+
 ## Next Agent Focus (read first)
 
 | Priority | Action                                                                                                                   |
 | -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **P0**   | 🔑 OPERATOR-ONLY, STILL OPEN: rotate leaked credentials — Upstash → Supabase → `JWT_SECRET` → `ENCRYPTION_KEY` → `SHAREDSTATE_AUTH_TOKEN` → anon key, plus `apps/backend/.env.performance`. Tip cleanup did NOT invalidate them |
+| **P0**   | ⚠️ Do NOT set `TNF_MESSAGE_AUTH_MODE=enforce` until every agent has an Ed25519 keypair AND every node has imported its peers' public keys — otherwise traffic silently drops (see D23, `.env.example`) |
 | **P0**   | ⚠️ NEEDS LIVE OPERATOR CONFIRMATION: master-clock herd cull (6 procs) — type handshake in-session before any kill        |
 | **P0**   | ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): pi-wrapper-launchd.sh + REMEDIATION triage + dirty state files |
 | **P0**   | Optional: repair voice-coop-loop (voice-agent-send missing) or switch to silent mode                                     |

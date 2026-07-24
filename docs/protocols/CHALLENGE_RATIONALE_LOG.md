@@ -59,6 +59,38 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: Daniel Goldberg (operator), confirmed via plan approval
   (ExitPlanMode) in a live Claude Code session, 2026-07-23.
 
+## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23)
+
+- file: docs/protocols/DIRECTIVES.md
+- git_blob_sha: (see commit history for this session; logged concurrently with
+  the commit, not as a backfill)
+- rationale: Operator asked to add a protected override allowing a credentialed
+  Local Director / Sub-Director to hold elevated system, network, and account
+  access, gated by human-in-the-loop approval. Investigation during the same
+  session found the premise was half wrong in ways that changed the work: (a)
+  D8 already grants Super Admin EXECUTIVE authority in doctrine with **zero**
+  enforcement code behind it, so the blocker was a missing enforcement layer,
+  not a missing permission; (b) `federationId` is an unvalidated
+  `varchar(255)` with no signature or attestation anywhere in
+  `packages/shared/src/federation/`, so it could not serve as the credential
+  the request assumed; (c) A2A message signing was decorative — `signMessage()`
+  attached an HMAC that **nothing verified**, `normalizeIncomingMessage()`
+  discarded the signature and read `role` off the wire, `A2ASignatureWrapper`
+  had no verify counterpart, `A2A_SECRET_KEY` was unset so the literal
+  `'default-secret'` was in use, and the bus was unauthenticated
+  `redis://localhost:6379`. Any local process could therefore publish a message
+  claiming `local-director` and be believed. D23 records the rule that closed
+  this (authority derives only from an Ed25519-verified identity resolved
+  against the operator-owned registry), explicitly states that the elevation
+  layer itself is not yet built so no agent can claim to hold a grant, and
+  states the same-uid limitation plainly rather than letting file modes imply a
+  boundary that does not exist. Implemented across commits `14e59ae213`
+  (verification), Phase 1 identity/role registry, and `e09161b9e2` (per-agent
+  Ed25519 binding); 51 tests across 4 suites.
+- attributed_to: Daniel Goldberg (operator), confirmed via plan approval
+  (ExitPlanMode) in a live Claude Code session, 2026-07-23, and by explicit
+  "PROCEED" for the identity-binding work in the same session.
+
 ## 2026-07-21 — docs/protocols/TURN_ZERO_MANDATE.md
 
 - file: docs/protocols/TURN_ZERO_MANDATE.md

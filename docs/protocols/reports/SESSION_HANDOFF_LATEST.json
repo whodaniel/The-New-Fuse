@@ -1,66 +1,60 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "a69e0826-181e-411f-a3c2-3cb6a6d22e56",
-  "created_at": "2026-07-23T19:34:33.997Z",
+  "handoff_id": "d5c8d298-8a6d-42a6-b1bb-4b025329f2d5",
+  "created_at": "2026-07-24T00:30:13.664Z",
   "repository": "The-New-Fuse",
-  "branch": "main",
-  "head_sha": "b2d907005c90fb4c6c3fc7fcdff85bb91f4ae0dc",
+  "branch": "fix/a2a-signature-verification",
+  "head_sha": "e09161b9e284463423a7c4b57d2fdf20ff42b230",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "project_ids": [],
   "work_summary": [
-    "Post-restart wake complete: boot verified (Redis/relay:3000/WS:3005/heartbeat/voice core).",
-    "Velocity-Integrity re-verify: C01/C03(23)/C04 green.",
-    "Fixed stalled Pi wrapper (Node 20 PATH vs undici 8 needing Node 22) in scripts/pi-wrapper-launchd.sh; agent_pi online.",
-    "Wrote ~/.tnf/runtime/cursor-agent-wake/POST_WAKE_REPORT.json"
+    "A2A signing was decorative: HMAC attached but never verified; role read off the wire; A2A_SECRET_KEY unset so 'default-secret' was live; bus unauthenticated — any local process could claim local-director",
+    "Built the enforcement layer instead of the requested override: verification (14e59ae213) + operator-owned role registry + per-agent Ed25519 identity binding (e09161b9e2); symmetric per-agent keys rejected as insufficient",
+    "51 tests / 4 suites green; impersonation verified closed end-to-end against the real receive path",
+    "Added DIRECTIVES.md D23 + CHALLENGE_RATIONALE_LOG entry; elevation layer (Phases 2-4) explicitly documented as NOT built so no agent can claim a grant",
+    "OPERATOR-ONLY STILL OPEN: rotate credentials leaked to the public repo — Upstash",
+    "Supabase",
+    "JWT_SECRET",
+    "ENCRYPTION_KEY",
+    "SHAREDSTATE_AUTH_TOKEN",
+    "anon key"
   ],
   "changed_paths": [
-    ".agent/fleet/agent-pathway-matrix.json",
-    ".agent/test-reports/_rolling-summary.json",
-    ".agent/testing-status.json",
-    ".verifier/process-atlas.digest.md",
-    ".verifier/process-atlas.payload.json",
-    ".verifier/process-atlas.verify.json",
-    ".verifier/tnf-process-atlas.html",
-    ".verifier/whole-codebase/REMEDIATION.md",
-    "apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json",
-    "apps/virtual-library-blueprints",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/agent-pathway-matrix.latest.json",
-    "packages/relay-core/scripts/run-relay.cjs",
-    "packages/security/.turbo/turbo-build.log",
-    "packages/tnf-browser/extension/token.json",
-    "packages/ui-consolidated/.turbo/turbo-build.log",
-    "scripts/lib/tnf-port-reaper.cjs",
-    "scripts/runtime/terminal-heartbeat-pulse.cjs",
-    "scripts/turn-end.cjs"
+    "claude/skills/tnf-autonomy-safety-audit/SKILL.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/CHALLENGE_RATIONALE_LOG.md",
+    "docs/protocols/DIRECTIVES.md",
+    "docs/protocols/LIVING_STATE.md"
   ],
   "verification": {
     "privacy_guard": "na",
     "secret_sweep": "na",
     "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "C01 tsc exit 0; C03 23 passing; C04 tsc -b exit 0; Redis PONG; relay :3000 health ok; Pi online under hermes Node 22"
+    "notes": ""
   },
   "continuation": {
-    "owner": "cursor-agent",
-    "targets": ["orchestrator"],
-    "priority": "high",
+    "owner": "operator",
+    "targets": [
+      "orchestrator"
+    ],
+    "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
-      "Execute listed next actions in order and preserve privacy/security gates"
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
     ]
   },
   "next_actions": [
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION: master-clock herd cull (6 procs) — type handshake in-session before any kill",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): pi-wrapper-launchd.sh + REMEDIATION triage + dirty state files",
-    "Optional: repair voice-coop-loop (voice-agent-send missing) or switch to silent mode",
-    "When disk allows: full turbo whole-codebase harness for official ~28/29 score flip"
+    "Review updated LIVING_STATE.md for new active steps",
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 5 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": ["b2d907005c90fb4c6c3fc7fcdff85bb91f4ae0dc"]
+    "commits": [
+      "e09161b9e284463423a7c4b57d2fdf20ff42b230"
+    ],
+    "deployment_urls": [],
+    "database_migrations": []
   }
 }

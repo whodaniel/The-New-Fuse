@@ -83,6 +83,48 @@ around commit `7cc7922b4e` and `docs/protocols/CHALLENGE_RATIONALE_LOG.md`.
    `scripts/protocols/validate-locked-doc-ledger.cjs` in pre-commit + CI) — if
    you need to change what's authorized, add both.
 
+## If a mechanism decides WHO an agent is, or what role it holds
+
+Added 2026-07-23 after building the identity layer (`DIRECTIVES.md` D23). The
+findings below were all live in `main` at the time, not hypotheticals.
+
+1. **A signature nothing verifies is decoration.** `signMessage()` in
+   `scripts/tnf-agent-cli.cjs` computed an HMAC for months; no verify existed
+   anywhere in the repo, and `normalizeIncomingMessage()` unpacked the envelope
+   and threw the signature away. `A2ASignatureWrapper` had `wrap()` and no
+   counterpart. **Grep for the verify side, not the sign side** — the presence
+   of crypto calls tells you nothing about whether anything checks them.
+2. **A shared secret cannot establish individual identity.** If every agent
+   holds `A2A_SECRET_KEY`, any holder can sign as any `agent_id`. Symmetric
+   *per-agent* keys do not fix this either: whoever must verify agent A needs
+   A's key, and anything they can verify with they can forge with. On a
+   multi-verifier bus, identity requires asymmetric signing (Ed25519 here).
+   Ask: *who else holds the key needed to check this message?*
+3. **A key mode selector is a downgrade vector.** `header.kid` (or `alg`, or
+   any "which crypto did we use" field) must be pinned and the weaker mode
+   rejected in enforce mode — otherwise an attacker just selects the weak mode.
+   Same lesson as JWT `alg: none`.
+4. **Check that a guard's trigger condition ever occurs.** `saveRoleRegistry`
+   refused to run when `TNF_AGENT_ID` was set — but nothing in the repo *set*
+   `TNF_AGENT_ID`, so the guard never fired. `grep -rn 'VAR='` (assignment), not
+   just `process.env.VAR` (read), before believing a guard is active.
+5. **File modes are not a boundary against same-uid processes.** `0600` on
+   `~/.tnf/authority/keys/*` and `roles.json` protects against *other users*.
+   Agents run as the operator's uid, so they can read and write those files
+   regardless. Say so in the docs instead of letting the mode imply otherwise;
+   the real boundary is a separate uid or a biometric-gated key.
+6. **Staged rollouts must not go quiet while still insecure.** A `warn` mode
+   that verified legacy-signed traffic successfully would produce a clean log
+   and falsely signal "safe to enforce." Legacy envelopes are made to *fail*
+   verification deliberately, so a quiet log means the secret was really
+   provisioned. Check what a rollout flag's quiet state actually proves.
+7. **Secrets in `.env` are a repo problem, not just a config problem.** A
+   `secret-sweep --mode=repo` run during this work found `apps/api/.env` plus
+   three `.bak` copies **tracked and pushed to a public GitHub repo** with live
+   Supabase, Upstash, `JWT_SECRET`, and `ENCRYPTION_KEY` values. Tip cleanup
+   does not invalidate a leaked credential — only rotation does, and rewritten
+   history stays reachable by SHA on GitHub until Support purges it.
+
 ## Before committing/pushing on behalf of another agent's work
 
 - If you're finalizing a session (Turn End style) that touched files you didn't
