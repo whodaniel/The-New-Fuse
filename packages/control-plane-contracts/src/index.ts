@@ -8,6 +8,13 @@
  * @see docs/REPO_SEPARATION.md
  */
 
+/**
+ * Agent authority: environment-adaptive trust roots, UCAN-shaped capability
+ * grants, and the elevation approval channel. Local providers live in the open
+ * runtime; the hosted root implements the same contract. — DIRECTIVES.md D23
+ */
+export * from './authority.js';
+
 /** Master Clock timing / connection configuration (public shape). */
 export interface MasterClockConfig {
   heartbeatIntervalMs: number;
