@@ -43,6 +43,8 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 - [✅] 2026-07-24T00:30:13.658Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-24T01:16:10.135Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-24T01:22:56.438Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T01:29:08.242Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
 
 
 
@@ -89,6 +91,12 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
   Approvals may narrow, never widen; the requester's role always comes from the
   registry and a self-asserted role is recorded as a claim and ignored.
   15 tests. Verified live: an agent with `TNF_AGENT_ID` set is refused.
+- [✅] 2026-07-23 **Interactive review console.** `node scripts/tnf-authority.cjs
+  review` — requires a TTY, **no default action** (bare Enter re-prompts, never
+  approves), double confirmation restating exactly what will be granted,
+  warnings rendered above the decision line, and the agent-written
+  `justification` truncated + fenced as untrusted (a prompt-injection attempt is
+  in the fixtures). 14 tests.
 - [🔑] 2026-07-23 **OPERATOR ACTION: run `sudo bash scripts/setup/tnf-agent-account.sh`.**
   Until a dedicated `tnf-agent` account exists, the trust root stays `file` and
   the broker's agent-context checks are defence-in-depth only — a same-uid agent

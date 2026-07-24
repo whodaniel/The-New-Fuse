@@ -227,7 +227,12 @@ These are hard requirements. Violation is a protocol failure.
     (`lane_coordination`, `prompt_injection`, …), not a parallel taxonomy.
   - **The approval channel exists (Phase 3).**
     `scripts/lib/tnf-elevation-broker.cjs` + `scripts/tnf-authority.cjs`
-    (`status | list | show | approve | deny`). An agent may `submit()` — that
+    (`review | status | list | show | approve | deny`). **`review` is the
+    intended entry point** — an interactive console that requires a TTY, has no
+    default action (a bare Enter never approves), confirms twice while restating
+    exactly what will be granted, shows warnings *above* the decision line, and
+    fences the agent-written `justification` as an untrusted claim rather than
+    rendering it as tool output. An agent may `submit()` — that
     grants nothing. `decide()` **refuses from agent context** (`TNF_AGENT_ID` /
     `AGENT_ID` set, `CI`, non-TTY stdin, or running as the agent account) and
     audits every refusal. An approval may narrow what was requested, never widen

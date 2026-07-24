@@ -3,6 +3,7 @@
 /**
  * tnf-authority — operator CLI for the elevation approval channel.
  *
+ *   node scripts/tnf-authority.cjs review          <- interactive; start here
  *   node scripts/tnf-authority.cjs status
  *   node scripts/tnf-authority.cjs list
  *   node scripts/tnf-authority.cjs show <requestId>
@@ -135,6 +136,7 @@ async function main() {
   const id = process.argv[3];
   try {
     switch (cmd) {
+      case 'review': await require('./lib/tnf-authority-console.cjs').review(); break;
       case 'status': await cmdStatus(); break;
       case 'list': cmdList(); break;
       case 'show': cmdShow(id); break;

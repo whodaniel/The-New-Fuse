@@ -1,36 +1,38 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`
-Created At: `2026-07-24T01:22:56.443Z`
-Handoff ID: `7d15e523-4b15-4324-9ae0-a0c4ff287773`
+Created At: `2026-07-24T01:29:08.250Z`
+Handoff ID: `9501bfcd-ded9-4b2b-b607-32a91cc0bd19`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/a2a-signature-verification`
-- Head SHA: `3ce1adda8131131ada882098f089bd4b873bb45c`
+- Head SHA: `3455c9721f21d8838322e2cd7c529ccebc5cd7c1`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Phase 3 built: elevation approval channel (tnf-elevation-broker.cjs + scripts/tnf-authority.cjs). decide() refuses from agent context and audits every refusal; verified live that TNF_AGENT_ID is rejected
-- Approvals may narrow but never widen what was requested; requester role always comes from the operator-owned registry and a self-asserted role is recorded as a claim and ignored
-- separate-uid trust root promoted from detection-only to a real provider; scripts/setup/tnf-agent-account.sh added (OPERATOR must run with sudo - Claude cannot create system accounts)
-- OPERATOR ACTION: run tnf-agent-account.sh then launch agents AS that user; until then trust root stays file and broker checks are defence-in-depth only
-- Credential broker (Phase 4) still NOT built - no agent may claim brokered account access
-- STILL OPEN: rotate leaked credentials (Upstash Supabase JWT_SECRET ENCRYPTION_KEY SHAREDSTATE_AUTH_TOKEN anon key)
+- Interactive operator console added: node scripts/tnf-authority.cjs review — requires TTY
+- no default action (bare Enter never approves)
+- double confirmation restating exactly what will be granted
+- Warnings (role mismatch
+- missing registry entry
+- executive tier
+- degraded root) render ABOVE the decision line where they cannot be scrolled past
+- Agent-written justification is truncated and fenced as untrusted text — a prompt-injection attempt is included in the test fixtures
+- 107 tests across 7 suites green
+- OPERATOR ACTION still open: sudo bash scripts/setup/tnf-agent-account.sh then launch agents AS that user
+- STILL OPEN: rotate leaked credentials
 
 ## Changed Paths
 
-- ocs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/CHALLENGE_RATIONALE_LOG.md
+- ocs/protocols/CHALLENGE_RATIONALE_LOG.md
 - docs/protocols/DIRECTIVES.md
 - docs/protocols/LIVING_STATE.md
-- scripts/lib/tnf-trust-root.cjs
-- scripts/lib/tnf-elevation-broker.cjs
-- scripts/lib/tnf-elevation-broker.test.cjs
-- scripts/setup/tnf-agent-account.sh
 - scripts/tnf-authority.cjs
+- scripts/lib/tnf-authority-console.cjs
+- scripts/lib/tnf-authority-console.test.cjs
 
 ## Continuation
 
@@ -48,9 +50,9 @@ Handoff ID: `7d15e523-4b15-4324-9ae0-a0c4ff287773`
 ## Next Actions
 
 - Review updated LIVING_STATE.md for new active steps
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 9 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 6 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
 
 ## Artifacts
 
 **Commits:**
-- 3ce1adda8131131ada882098f089bd4b873bb45c
+- 3455c9721f21d8838322e2cd7c529ccebc5cd7c1

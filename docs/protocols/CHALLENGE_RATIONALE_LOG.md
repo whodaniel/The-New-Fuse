@@ -59,6 +59,30 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: Daniel Goldberg (operator), confirmed via plan approval
   (ExitPlanMode) in a live Claude Code session, 2026-07-23.
 
+## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23 — interactive review console)
+
+- file: docs/protocols/DIRECTIVES.md
+- git_blob_sha: (see commit history for this session; logged concurrently with
+  the commit)
+- rationale: Operator asked for the approval flow to be interactive. Added
+  `tnf-authority review` (`scripts/lib/tnf-authority-console.cjs`). Recorded in
+  D23 because several of its properties are security-relevant rather than
+  cosmetic, and an agent could otherwise describe the flow as safer than it is:
+  the console requires a TTY (the same condition that makes an approval
+  meaningful — a human was present); it has **no default action**, so a bare
+  Enter re-prompts and can never approve, which removes the "held key or
+  injected newline approves something" failure mode; approval is confirmed twice
+  with the second prompt restating the exact capabilities, audience, TTL and
+  task binding, so what is confirmed is what was read; warnings (role mismatch,
+  missing registry entry, executive tier, degraded root) render ABOVE the
+  decision line where they cannot be scrolled past; and the agent-written
+  `justification` is truncated and visually fenced as untrusted text, because it
+  is attacker-controlled input that would otherwise appear indistinguishable
+  from the tool's own output — a rendered prompt-injection attempt is included
+  in the test fixtures.
+- attributed_to: Daniel Goldberg (operator), explicit "proceed. Make it
+  interactive for me." in a live Claude Code session, 2026-07-23.
+
 ## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23 — Phase 3 approval channel)
 
 - file: docs/protocols/DIRECTIVES.md
