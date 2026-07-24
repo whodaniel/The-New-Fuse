@@ -19,6 +19,7 @@
 const { spawn, spawnSync } = require('child_process');
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
 const { publishProviderFailureSignal } = require('./watchdog-signal-utils.cjs');
+const wrapperAuthority = require('./lib/tnf-wrapper-authority.cjs');
 const readline = require('readline');
 
 // ============================================================================
@@ -404,6 +405,21 @@ class GeminiRedisAgent {
     let promptText = content;
     if (messageType === 'event' && msg.payload?.eventType === 'wake_ping' && msg.payload?.data?.customPrompt) {
       promptText = msg.payload.data.customPrompt;
+    }
+
+    // Authority gate (DEFAULT-OFF). With TNF_AUTHORITY_CONSUMER unset this is a
+    // no-op passthrough — zero behaviour change. When enabled, a task that
+    // declares `requiredCapabilities` is held until the operator approves an
+    // elevation grant; otherwise it is refused rather than executed.
+    // See scripts/lib/tnf-wrapper-authority.cjs and AUTHORITY_INTEGRATION_MAP.md.
+    const gate = await wrapperAuthority.gateTask(msg, { agentId: this.client.agentInfo?.id });
+    if (!gate.allowed) {
+      await this.client.send(`gemini: task requires elevation that was not granted — ${gate.reason}`, {
+        replyTo: msg.id,
+        type: 'response',
+        metadata: { elevationRefused: true, processedBy: CONFIG.agentName, platform: CONFIG.platform, messageType },
+      });
+      return;
     }
 
     const response = await this.gemini.prompt(promptText);
