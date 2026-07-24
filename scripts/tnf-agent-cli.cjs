@@ -27,6 +27,16 @@ const { recommendModel } = require('./lib/tnf-model-match.cjs');
 const messageAuth = require('./lib/tnf-message-auth.cjs');
 const identity = require('./lib/tnf-identity.cjs');
 
+/**
+ * Cheap sync check for the authority-consumer flag. Kept here (not via the
+ * authority module) so the DEFAULT-OFF hot path never loads the authority stack
+ * — zero cost and zero behaviour change until an operator opts in.
+ */
+function messageAuthorityEnabled() {
+  const v = String(process.env.TNF_AUTHORITY_CONSUMER || '').toLowerCase();
+  return v === '1' || v === 'true' || v === 'on';
+}
+
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
@@ -415,16 +425,60 @@ class RedisAgentClient {
         this.logDelegationSuggestion(message);
       }
 
-      // Call registered handlers
-      const handlers = this.messageHandlers.get(message.type) || [];
-      handlers.forEach((handler) => handler(message, channel));
+      // Authority gate (DEFAULT-OFF). isEnabled() is a cheap sync env check;
+      // when TNF_AUTHORITY_CONSUMER is unset this branch is skipped entirely and
+      // dispatch is unchanged for every wrapper. When enabled, a task that
+      // declares `requiredCapabilities` is held for operator elevation before it
+      // reaches any handler; on denial/timeout it is refused, not dispatched.
+      // One chokepoint covers every Redis-driven wrapper (gemini/jules/pi/...).
+      if (message.type === 'task' && messageAuthorityEnabled()) {
+        this.gateAndDispatch(message, channel);
+        return;
+      }
 
-      // Call catch-all handlers
-      const allHandlers = this.messageHandlers.get('*') || [];
-      allHandlers.forEach((handler) => handler(message, channel));
+      this.dispatchToHandlers(message, channel);
     } catch (error) {
       console.error('Error parsing message:', error.message);
     }
+  }
+
+  /** Dispatch a message to its registered handlers (and catch-all handlers). */
+  dispatchToHandlers(message, channel) {
+    const handlers = this.messageHandlers.get(message.type) || [];
+    handlers.forEach((handler) => handler(message, channel));
+    const allHandlers = this.messageHandlers.get('*') || [];
+    allHandlers.forEach((handler) => handler(message, channel));
+  }
+
+  /**
+   * Run the authority gate, then dispatch or refuse. Fails CLOSED: if the gate
+   * throws, the task is NOT dispatched — a task that reached the enabled gate
+   * must not slip through ungated on error.
+   */
+  async gateAndDispatch(message, channel) {
+    let gate;
+    try {
+      const wrapperAuthority = require('./lib/tnf-wrapper-authority.cjs');
+      gate = await wrapperAuthority.gateTask(message, { agentId: this.agentInfo?.id });
+    } catch (error) {
+      console.error(`[authority-gate] failed closed (task not dispatched): ${error.message}`);
+      return;
+    }
+    if (!gate.allowed) {
+      try {
+        await this.send(`task requires elevation that was not granted — ${gate.reason}`, {
+          replyTo: message.id,
+          type: 'response',
+          metadata: { elevationRefused: true, processedBy: this.agentInfo?.name },
+        });
+      } catch {
+        /* best-effort refusal notice */
+      }
+      return;
+    }
+    // Hand the approved grant to handlers so the task can spend it via the broker.
+    if (gate.grant) message.authorityGrant = gate.grant;
+    this.dispatchToHandlers(message, channel);
   }
 
   normalizeIncomingMessage(rawMessage, authResult = { verified: false }) {

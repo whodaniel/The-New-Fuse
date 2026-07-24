@@ -104,11 +104,20 @@ open-runtime one. This is the natural place for the SaaS/open split to land.
      useCredential`, plus `withElevation`). An e2e test drives the full loop —
      agent requests, operator approves, agent verifies and spends, secret never
      reaches the agent. The contracts compose.
-   - **REMAINING (wrapper half):** a wrapper actually calls the client. This is
-     a one-line adoption left for the operator to make deliberately, because the
-     gemini/jules wrappers are maintained elsewhere and should not change
-     behaviour silently. Suggested shape: gate on an opt-in env flag
-     (default off) so the running fleet is unaffected until enabled.
+   - **DONE (wrapper half, 2026-07-24):** wired at the SHARED chokepoint rather
+     than per-wrapper. `RedisAgentClient.handleIncomingMessage`
+     (scripts/tnf-agent-cli.cjs → `gateAndDispatch`) gates every Redis-driven
+     wrapper (gemini/jules/pi/claude/antigravity) uniformly — the same place
+     Phase 0 auth and the D22 check already live. A task that declares
+     `requiredCapabilities` is held for operator elevation before reaching any
+     handler; denial/timeout/error fail closed. DEFAULT-OFF via
+     `TNF_AUTHORITY_CONSUMER`: a cheap sync flag check skips the whole path when
+     unset, so the fleet is byte-for-byte unchanged until an operator opts in.
+     Verified: default-off delivers a capability-declaring task synchronously;
+     enabled + declared blocks until approved; the approved grant is attached to
+     the message as `authorityGrant` for the handler to spend. The centralized
+     gate supersedes the earlier gemini-only hook (removed to avoid
+     double-gating).
 2. **Then migrate that wrapper's launcher to `tnf-agent`** and run
    `tnf-authority confirm-isolation`. Now the trust root is genuinely
    non-degraded for a real workload.
