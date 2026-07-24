@@ -119,6 +119,16 @@ test('capabilities are read from payload / metadata / top-level', () => {
   assert.equal(wrap.extractRequiredCapabilities({ requiredCapabilities: [c] }).length, 1);
 });
 
+test('capabilities are read from nested broker payload.task', () => {
+  const c = { with: 'account:demo.read', can: 'demo.read' };
+  const caps = wrap.extractRequiredCapabilities({
+    type: 'task',
+    payload: { action: 'execute_task', task: { id: 't1', requiredCapabilities: [c] } },
+  });
+  assert.equal(caps.length, 1);
+  assert.deepEqual(caps[0], c);
+});
+
 // --- Enabled + declared caps → real elevation flow --------------------------
 
 test('flag ON: declared caps trigger elevation; approval yields a grant', async () => {

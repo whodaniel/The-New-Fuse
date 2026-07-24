@@ -103,6 +103,27 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: found after operator paste of terminal output 2026-07-24; fixed
   in Cursor session same day; no authorization claim involved.
 
+## 2026-07-24 — enforcement gaps closed (A2A shim + HTTP fail-closed + signed bus)
+
+- file: `scripts/lib/redis-agent-client.cjs`,
+  `apps/api/src/guards/secure-auth.guard.ts`,
+  `packages/relay-core/src/protocol/sign-bus-message.ts`, broker-agent /
+  redis-relay-bridge, `tnf authority provision-keys`
+- rationale: Pathway map gaps were load-bearing holes, not docs. Thin Redis
+  client published/subscribed without message-auth or authority gate — now a
+  shim over full `RedisAgentClient`. `SecureAuthGuard` defaulted to PUBLIC
+  (fail-open) — now USER with explicit PUBLIC allowlist
+  (health/auth/public-info/bridges/ webhook-incoming);
+  `TNF_SECURE_AUTH_DEFAULT=public` is emergency-only. Broker/relay TNF envelope
+  publishes now sign via canonical `tnf-message-auth.cjs`. Authority-shaped
+  `{with,can}` caps are hoisted onto broker task payloads and extracted from
+  nested `payload.task`. Does **not** flip `TNF_MESSAGE_AUTH_MODE=enforce` or
+  `TNF_AUTHORITY_CONSUMER` — those remain operator turn-up after isolation +
+  keypairs. Gateway still opt-in `GatewayAuthGuard` (parity gap documented, not
+  silently claimed closed).
+- attributed_to: Cursor session continuing authority turn-up on
+  `fix/a2a-signature-verification`.
+
 ## 2026-07-24 — docs/protocols/DIRECTIVES.md (D23 — Phase 4a credential broker)
 
 - file: docs/protocols/DIRECTIVES.md

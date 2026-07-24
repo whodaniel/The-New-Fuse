@@ -27,11 +27,17 @@ implementation can satisfy the same interfaces.
 CLI: `tnf authority …` (wired in `packages/tnf-cli`) or
 `scripts/tnf-authority.cjs` directly
 (`review \| status \| list \| show \| approve \| deny \| confirm-isolation \|
-workers \| relaunch-workers`).
+workers \| relaunch-workers \| provision-keys`).
 Account setup: `tnf authority account` / `scripts/setup/tnf-agent-account.sh`.
 Encryption rotate: `tnf authority encrypt-rotate --plan|--apply`.
+Keypairs (message-auth identity): `tnf authority provision-keys <agentId…>`.
 Launcher: `scripts/runtime/launch-agent-wrapper.sh` drops to `tnf-agent` when
 that account exists (`TNF_RUN_AS_OPERATOR=1` opts out).
+
+A2A bus: thin `scripts/lib/redis-agent-client.cjs` is a shim over the full
+`RedisAgentClient` (signs outbound A2A envelopes; inbound hits auth + optional
+authority gate). Broker-agent / redis-relay-bridge sign TNF envelopes via
+`packages/relay-core/src/protocol/sign-bus-message.ts`.
 
 **Never `sudo tnf authority …`.** Under sudo, `getuid()` is 0 and the straggler
 scan historically false-passed. Run as your normal user; nested

@@ -7,6 +7,7 @@ import {
 import type { Cluster, Redis } from 'ioredis';
 import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
+import { stringifySignedBusMessage } from './protocol/sign-bus-message.js';
 import { createTNFEnvelope } from './protocol/tnf-envelope.js';
 
 type QueueTask = {
@@ -1177,6 +1178,19 @@ class BrokerAgent {
       return;
     }
 
+    // Hoist authority-shaped `{ with, can }` caps onto the envelope payload so
+    // RedisAgentClient's authority consumer can gate them. Skill-string caps
+    // used for worker routing stay on `task.requiredCapabilities` only.
+    const authorityCaps = Array.isArray(task.requiredCapabilities)
+      ? task.requiredCapabilities.filter(
+          (c) =>
+            c &&
+            typeof c === 'object' &&
+            typeof (c as { with?: unknown }).with === 'string' &&
+            typeof (c as { can?: unknown }).can === 'string'
+        )
+      : [];
+
     const envelope = createTNFEnvelope(
       'task',
       { agentId: this.brokerId, role: 'coordinator', platform: 'broker-agent' },
@@ -1186,6 +1200,7 @@ class BrokerAgent {
         taskId: task.id,
         task,
         priority,
+        ...(authorityCaps.length > 0 ? { requiredCapabilities: authorityCaps } : {}),
       },
       {
         channelId,
@@ -1195,14 +1210,19 @@ class BrokerAgent {
 
     if (targetAgentId) {
       const channel = `${CONFIG.EGRESS_PREFIX}:${targetAgentId}`;
-      const payload = JSON.stringify(envelope);
+      const payload = stringifySignedBusMessage(this.brokerId, channel, envelope, 'task');
       if (this.upstash) {
         await this.upstash.publish(channel, payload);
       } else if (this.redis) {
         await this.redis.publish(channel, payload);
       }
     } else {
-      const payload = JSON.stringify(envelope);
+      const payload = stringifySignedBusMessage(
+        this.brokerId,
+        CONFIG.INGRESS_CHANNEL,
+        envelope,
+        'task'
+      );
       if (this.upstash) {
         await this.upstash.publish(CONFIG.INGRESS_CHANNEL, payload);
       } else if (this.redis) {

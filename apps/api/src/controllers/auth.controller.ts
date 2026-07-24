@@ -15,6 +15,7 @@ import { Request } from 'express';
 import { hasAuthorizationLevel } from '../auth/auth-policy';
 import { GenerateInviteCodeDto, LoginDto, RegisterDto, SupabaseAuthDto } from '../dtos/auth.dto';
 import { AuthGuard } from '../guards/auth.guard';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
 import { AuthService } from '../services/auth.service';
 
 @ApiTags('auth')
@@ -23,6 +24,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   async login(@Body() loginDto: LoginDto, @Req() req?: Request) {
@@ -31,6 +33,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
   @ApiOperation({ summary: 'User registration' })
   @ApiResponse({ status: 201, description: 'Registration successful' })
   async register(@Body() registerDto: RegisterDto, @Req() req?: Request) {
@@ -39,6 +42,7 @@ export class AuthController {
   }
 
   @Post('supabase')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
   @ApiOperation({ summary: 'Exchange Supabase token for platform JWT' })
   @ApiResponse({ status: 200, description: 'Exchange successful' })
   @ApiResponse({ status: 401, description: 'Invalid token' })
@@ -47,6 +51,7 @@ export class AuthController {
   }
 
   @Get('invite-policy')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
   @ApiOperation({ summary: 'Get invite-only registration policy state' })
   @ApiResponse({ status: 200, description: 'Invite policy payload' })
   async invitePolicy() {
@@ -82,6 +87,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
   @ApiOperation({ summary: 'Refresh token' })
   @ApiResponse({ status: 200, description: 'Token refreshed successfully' })
   async refresh(@Body() body: { refreshToken?: string; refresh_token?: string }) {
@@ -146,6 +152,7 @@ export class AuthController {
   }
 
   @Get('session')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
   @ApiOperation({ summary: 'Get lightweight auth session status' })
   @ApiResponse({ status: 200, description: 'Session payload' })
   async session(@Req() req: Request) {

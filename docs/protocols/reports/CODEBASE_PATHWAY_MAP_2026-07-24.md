@@ -46,8 +46,9 @@ controller → service → Drizzle/DB / Redis / external LLM.
 **Decision/branch points:**
 
 - `SecureAuthGuard`: if handler/class lacks `@RequireAuthLevel(...)`, **defaults
-  to `AuthLevel.PUBLIC`** (fail-open for auth unless controller adds
-  JwtAuthGuard / RequireAuthLevel / per-method AuthGuard).
+  to `AuthLevel.USER`** (fail-closed). Opt into PUBLIC with
+  `@RequireAuthLevel(PUBLIC)`. Emergency rollback:
+  `TNF_SECURE_AUTH_DEFAULT=public`.
 - Feature: `ENABLE_GRAPHQL` (off when adapter missing).
 - Auth service: `AUTH_INVITE_ONLY`, `AUTH_REQUIRE_TURNSTILE`.
 
@@ -487,8 +488,8 @@ Tasks **without** `requiredCapabilities` are never gated even when flag is on
 | Cred broker mutating actions             | **Fail-closed** (phase 4a + weak-root policy) even when stack used                                                                 |
 | Elevation `decide()` from agent context  | **Fail-closed** (env/TTY/uid checks; weak under `file` root)                                                                       |
 | `TNF_MESSAGE_AUTH_MODE=warn`             | **Not fail-closed** — unsigned traffic allowed with audit                                                                          |
-| `scripts/lib/redis-agent-client.cjs`     | Thin client — **no auth/authority** (decorative relative to full client)                                                           |
-| SecureAuthGuard default PUBLIC           | Routes without `RequireAuthLevel` / JwtAuthGuard may be **unenforced** at guard layer                                              |
+| `scripts/lib/redis-agent-client.cjs`     | **Closed 2026-07-24** — shim delegates to full `RedisAgentClient` (sign outbound A2A; inbound via auth chokepoint)                 |
+| SecureAuthGuard default USER             | **Closed 2026-07-24** — fail-closed; PUBLIC is explicit opt-in (`TNF_SECURE_AUTH_DEFAULT=public` emergency only)                   |
 | docs `AUTHORITY_INTEGRATION_MAP.md` note | Partially stale: chokepoint **is** wired; still accurate that default-off means grants are not load-bearing until flag + caps used |
 
 ---
@@ -496,16 +497,22 @@ Tasks **without** `requiredCapabilities` are never gated even when flag is on
 ## Gaps (routes/systems exist without matching enforcement)
 
 1. **Authority not load-bearing until** `TNF_AUTHORITY_CONSUMER=1` **and** tasks
-   declare `requiredCapabilities`.
-2. **Message auth soft mode** (`warn`) — forge/unsigned still dispatch.
-3. **Thin Redis clients** bypass A2A auth chokepoint.
-4. **Broker-agent policy gates ≠ authority grants** — no shared enforcement.
-5. **HTTP SecureAuthGuard PUBLIC default** — many controllers must opt into
-   USER/ADMIN or JwtAuthGuard; inconsistent coverage.
-6. **Dual API surfaces** (apps/api vs apps/backend vs gateway) — parity/auth
-   drift risk.
-7. **Relay publishers** may not sign envelopes yet (called out in message-auth
-   comments).
+   declare authority-shaped `requiredCapabilities` (`{ with, can }`).
+2. **Message auth soft mode** (`warn`) — forge/unsigned still dispatch until
+   keypairs exist (`tnf authority provision-keys`) and enforce is flipped.
+3. ~~Thin Redis clients bypass A2A auth~~ — **closed** (shim).
+4. **Broker skill-string caps vs authority `{with,can}`** — partially aligned:
+   broker hoists authority-shaped caps onto task envelope payload; skill strings
+   remain routing-only. Full shared policy engine still deferred.
+5. ~~HTTP SecureAuthGuard PUBLIC default~~ — **closed** (USER default + PUBLIC
+   allowlist on health/auth/public-info/bridges/webhook-incoming).
+6. **Dual API surfaces** (apps/api vs apps/backend vs gateway) — gateway still
+   uses **opt-in** `GatewayAuthGuard` (no global fail-closed APP_GUARD); parity
+   drift risk remains on routes that omit `@UseGuards`.
+7. ~~Relay/broker unsigned TNF envelope publishes~~ — **closed** for
+   broker-agent dispatch + redis-relay-bridge ingress/egress (via
+   `sign-bus-message.ts` → `tnf-message-auth.cjs`). Other publishers
+   (master-clock heartbeats, director-agent telemetry) may still be unsigned.
 
 ---
 

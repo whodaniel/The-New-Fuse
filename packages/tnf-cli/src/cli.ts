@@ -5656,6 +5656,45 @@ authority
     }
   });
 
+authority
+  .command('provision-keys')
+  .description(
+    'Ensure Ed25519 keypairs for agent ids (message-auth identity). Does not flip enforce mode.'
+  )
+  .argument('<agentIds...>', 'One or more agent ids (e.g. Local-Director broker-agent)')
+  .option('--rotate', 'Replace existing private keys (invalidates prior signatures)')
+  .action(async (agentIds: string[], options: { rotate?: boolean }) => {
+    try {
+      const identity = require(path.join(repoRoot, 'scripts/lib/tnf-identity.cjs')) as {
+        ensureAgentKeypair: (
+          id: string,
+          opts?: { rotate?: boolean }
+        ) => {
+          agentId: string;
+          privateKeyPath: string;
+          publicKeyPath: string;
+          created: boolean;
+        };
+      };
+      for (const raw of agentIds) {
+        const id = String(raw || '').trim();
+        if (!id) continue;
+        const kp = identity.ensureAgentKeypair(id, { rotate: Boolean(options.rotate) });
+        console.log(`${kp.created ? chalk.green('created') : chalk.cyan('exists')}  ${kp.agentId}`);
+        console.log(`  priv: ${kp.privateKeyPath}`);
+        console.log(`  pub:  ${kp.publicKeyPath}`);
+      }
+      console.log(
+        chalk.gray(
+          '\nKeys ready. Keep TNF_MESSAGE_AUTH_MODE=warn until every publisher signs and peers import pubs; then consider enforce.'
+        )
+      );
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 const handoff = program
   .command('handoff')
   .description('Session handoff utilities for TNF continuity');

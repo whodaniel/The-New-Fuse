@@ -198,9 +198,10 @@ tnf authority status
 Set the env on **that one** launchd/systemd unit or shell — not fleet-wide yet.
 
 ```bash
-# Example ad-hoc:
+# Example ad-hoc (prefer whatever wrapper you actually pilot — not gemini-specific):
 sudo -u tnf-agent env TNF_AUTHORITY_CONSUMER=1 \
-  node scripts/gemini-redis-wrapper.cjs
+  AGENT_NAME=pilot-worker \
+  node scripts/jules-redis-wrapper.cjs
 ```
 
 In a second terminal (operator uid):
@@ -209,8 +210,24 @@ In a second terminal (operator uid):
 tnf authority review
 ```
 
-Send / inject a task that declares `requiredCapabilities` (same shape the gate
-tests use). Expect:
+Inject a task that declares **authority-shaped** `requiredCapabilities`
+(`{ with, can }` — not skill-string lists used by broker routing):
+
+```json
+{
+  "type": "task",
+  "from": { "agentId": "Local-Director", "role": "orchestrator" },
+  "to": { "agentId": "pilot-worker" },
+  "payload": {
+    "message": "pilot elevation check",
+    "requiredCapabilities": [
+      { "with": "account:demo.read", "can": "demo.read" }
+    ]
+  }
+}
+```
+
+Expect:
 
 | Outcome        | What you should see                                        |
 | -------------- | ---------------------------------------------------------- |
@@ -241,12 +258,22 @@ After the pilot is boringly correct:
 Separate from the consumer flag. Only when every agent has an Ed25519 keypair
 and peers' public keys are imported:
 
+```bash
+# Provision (or confirm) Ed25519 keypairs for bus publishers / workers:
+tnf authority provision-keys Local-Director broker-agent redis-relay-bridge pilot-worker
+# Optional: --rotate (invalidates prior signatures — do not use casually)
+```
+
 1. Provision `A2A_SECRET_KEY` (bus membership — not identity).
-2. Run with `TNF_MESSAGE_AUTH_MODE=warn` and watch rejects.
+2. Run with `TNF_MESSAGE_AUTH_MODE=warn` and watch rejects / audits.
 3. Flip to `enforce` only when warn noise is understood and zero false rejects.
 
 Flipping enforce before keys exist drops agent bus traffic. See
 `scripts/lib/AUTHORITY_README.md`.
+
+**HTTP note (apps/api):** `SecureAuthGuard` now defaults to **USER**. Public
+auth/health/docs/bridges/webhook-incoming routes are explicitly
+`@RequireAuthLevel(PUBLIC)`. Emergency only: `TNF_SECURE_AUTH_DEFAULT=public`.
 
 ---
 

@@ -37,6 +37,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const infrastructure_1 = require("@the-new-fuse/infrastructure");
 const promises_1 = require("node:fs/promises");
 const path = __importStar(require("node:path"));
+const sign_bus_message_js_1 = require("./protocol/sign-bus-message.js");
 const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
@@ -927,18 +928,28 @@ class BrokerAgent {
             console.warn(`[Broker] Escalated ${task.id} to Director: ${policy.reason}`);
             return;
         }
+        // Hoist authority-shaped `{ with, can }` caps onto the envelope payload so
+        // RedisAgentClient's authority consumer can gate them. Skill-string caps
+        // used for worker routing stay on `task.requiredCapabilities` only.
+        const authorityCaps = Array.isArray(task.requiredCapabilities)
+            ? task.requiredCapabilities.filter((c) => c &&
+                typeof c === 'object' &&
+                typeof c.with === 'string' &&
+                typeof c.can === 'string')
+            : [];
         const envelope = (0, tnf_envelope_js_1.createTNFEnvelope)('task', { agentId: this.brokerId, role: 'coordinator', platform: 'broker-agent' }, targetAgentId ? { agentId: targetAgentId, role: 'worker' } : { broadcast: true }, {
             action: 'execute_task',
             taskId: task.id,
             task,
             priority,
+            ...(authorityCaps.length > 0 ? { requiredCapabilities: authorityCaps } : {}),
         }, {
             channelId,
             sessionId: this.brokerId,
         });
         if (targetAgentId) {
             const channel = `${CONFIG.EGRESS_PREFIX}:${targetAgentId}`;
-            const payload = JSON.stringify(envelope);
+            const payload = (0, sign_bus_message_js_1.stringifySignedBusMessage)(this.brokerId, channel, envelope, 'task');
             if (this.upstash) {
                 await this.upstash.publish(channel, payload);
             }
@@ -947,7 +958,7 @@ class BrokerAgent {
             }
         }
         else {
-            const payload = JSON.stringify(envelope);
+            const payload = (0, sign_bus_message_js_1.stringifySignedBusMessage)(this.brokerId, CONFIG.INGRESS_CHANNEL, envelope, 'task');
             if (this.upstash) {
                 await this.upstash.publish(CONFIG.INGRESS_CHANNEL, payload);
             }

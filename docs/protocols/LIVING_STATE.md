@@ -2,10 +2,13 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Authority turn-up remaining — as normal user (not
-`sudo tnf`): `tnf authority relaunch-workers` → `confirm-isolation` → strong
-`separate-uid`. Runbook: `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`. **Project
-ID:** `TNF-AUTHORITY-TURNUP` **Updated:** `2026-07-24T19:17:03Z`
+**Current Directive:** Authority enforcement code landed (thin Redis shim,
+SecureAuthGuard USER default, broker/relay signing, `provision-keys`). Operator
+still needs (normal user, not `sudo tnf`): `tnf authority relaunch-workers` →
+`confirm-isolation` → strong `separate-uid`, then pilot
+`TNF_AUTHORITY_CONSUMER=1`. Runbook:
+`docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`. **Project ID:**
+`TNF-AUTHORITY-TURNUP` **Updated:** `2026-07-24T22:45:00Z`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `02fe0d33-95d7-4e07-9879-a0c02a66c7fe` **Head:** `7fba1626662d` cull (6 procs) —
 type handshake in-session before any kill **Project ID:** `TNF-SESSION`

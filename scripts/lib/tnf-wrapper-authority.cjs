@@ -34,10 +34,24 @@ function isEnabled() {
  * ignored (a task cannot smuggle a capability through a malformed field).
  */
 function extractRequiredCapabilities(msg) {
-  const raw =
-    msg?.payload?.requiredCapabilities ||
-    msg?.metadata?.requiredCapabilities ||
-    msg?.requiredCapabilities;
+  // Authority-shaped caps are `{ with, can }`. Broker also uses
+  // `requiredCapabilities` as lowercase skill strings for routing — those are
+  // ignored here. Prefer explicit payload/metadata, then nested task (broker
+  // dispatch puts the queue task under payload.task).
+  const candidates = [
+    msg?.payload?.requiredCapabilities,
+    msg?.metadata?.requiredCapabilities,
+    msg?.requiredCapabilities,
+    msg?.payload?.task?.requiredCapabilities,
+    msg?.payload?.task?.metadata?.requiredCapabilities,
+  ];
+  let raw = null;
+  for (const c of candidates) {
+    if (Array.isArray(c) && c.length > 0) {
+      raw = c;
+      break;
+    }
+  }
   if (!Array.isArray(raw)) return [];
   return raw
     .filter((c) => c && typeof c.with === 'string' && typeof c.can === 'string')

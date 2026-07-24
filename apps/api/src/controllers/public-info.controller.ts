@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
 
 /**
  * Public Info Controller
@@ -16,6 +17,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
  */
 @ApiTags('public')
 @Controller()
+@RequireAuthLevel(AuthLevel.PUBLIC)
 export class PublicInfoController {
   @Get('docs')
   @ApiOperation({ summary: 'API documentation index' })
