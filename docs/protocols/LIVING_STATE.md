@@ -42,6 +42,8 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 
 - [✅] 2026-07-24T00:30:13.658Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-24T01:16:10.135Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T01:22:56.438Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
 
 
 - [🔑] **2026-07-23 OPERATOR-ONLY, OPEN: rotate leaked credentials.**
@@ -79,9 +81,24 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
   cost; a FIDO2 token is stronger still and works on this hardware. Grants
   signed under `file` are only as trustworthy as every process running as this
   user, and `describeSelection()` says so at runtime.
-- [⏳] 2026-07-23 **Approval channel NOT built.** Operator approval CLI (Phase 3)
-  and credential broker (Phase 4) do not exist. Until they do, no agent can
-  claim an operator approved anything — there is no channel for it.
+- [✅] 2026-07-23 **Phase 3 built: elevation approval channel.**
+  `tnf-elevation-broker.cjs` + `scripts/tnf-authority.cjs`
+  (`status|list|show|approve|deny`). Agents may `submit()` (grants nothing);
+  `decide()` refuses from agent context — `TNF_AGENT_ID`/`AGENT_ID`, `CI`,
+  non-TTY stdin, or running as the agent account — and audits every refusal.
+  Approvals may narrow, never widen; the requester's role always comes from the
+  registry and a self-asserted role is recorded as a claim and ignored.
+  15 tests. Verified live: an agent with `TNF_AGENT_ID` set is refused.
+- [🔑] 2026-07-23 **OPERATOR ACTION: run `sudo bash scripts/setup/tnf-agent-account.sh`.**
+  Until a dedicated `tnf-agent` account exists, the trust root stays `file` and
+  the broker's agent-context checks are defence-in-depth only — a same-uid agent
+  can unset an env var and read the operator key. The account makes the boundary
+  kernel-enforced at zero cost. **The account alone is not enough**: agents must
+  actually be launched as that user (launchd `UserName`, systemd `User=`), and
+  the proof is `sudo -u tnf-agent cat ~/.tnf/authority/operator.ed25519` being
+  denied. `tnf-authority status` reports which case is live.
+- [⏳] 2026-07-23 **Credential broker (Phase 4) NOT built.** No agent may claim
+  brokered access to any account.
 - [⚠️] 2026-07-23 **Do not flip `TNF_MESSAGE_AUTH_MODE=enforce` yet.** Requires
   every agent to hold an Ed25519 keypair and every node to have imported its
   peers' public keys; flipping early silently drops traffic. See `.env.example`.

@@ -266,26 +266,87 @@ const tpm2Provider = {
   },
 };
 
+/**
+ * separate-uid — the operator key is an ordinary file, but agents run under a
+ * different OS account, so the kernel enforces what 0600 otherwise only asks
+ * for. Signing is identical to `file`; the difference is entirely in who can
+ * read the key.
+ *
+ * Honest limit, surfaced in `summary`: this provider can verify that the agent
+ * account exists and that the key is 0600 owned by the current user. It CANNOT
+ * verify that every launchd job and shell actually runs as that account — and
+ * the boundary is only real if they do. `scripts/setup/tnf-agent-account.sh`
+ * ends with the one-line test that proves it.
+ */
 const separateUidProvider = {
   kind: 'separate-uid',
+
   async probe() {
     const agentUser = process.env.TNF_AGENT_USER || 'tnf-agent';
-    const exists = tryExec('id', ['-u', agentUser]) !== null;
+    const agentUidRaw = tryExec('id', ['-u', agentUser]);
+    const accountExists = agentUidRaw !== null;
+    const agentUid = accountExists ? Number.parseInt(agentUidRaw.trim(), 10) : null;
     const selfUid = typeof process.getuid === 'function' ? process.getuid() : null;
-    return detectedOnly('separate-uid', {
-      hardwarePresent: exists,
+
+    if (!accountExists) {
+      return detectedOnly('separate-uid', {
+        hardwarePresent: false,
+        absentReason:
+          `no dedicated agent account (looked for "${agentUser}") — ` +
+          'create one with `sudo bash scripts/setup/tnf-agent-account.sh` to make ' +
+          '0600 on the operator key a kernel-enforced boundary, at no hardware cost',
+        detail: { agentUser, selfUid },
+      });
+    }
+
+    // Running AS the agent account means this process is the governed side and
+    // must not hold the root at all.
+    if (selfUid !== null && agentUid === selfUid) {
+      return detectedOnly('separate-uid', {
+        hardwarePresent: true,
+        absentReason:
+          `this process is running as "${agentUser}" — an agent must never hold the operator root`,
+        detail: { agentUser, agentUid, selfUid },
+      });
+    }
+
+    // Key must exist and be owner-only, or the separate uid buys nothing.
+    let keyMode = null;
+    let keyOwner = null;
+    if (fs.existsSync(OPERATOR_KEY_PATH)) {
+      const st = fs.statSync(OPERATOR_KEY_PATH);
+      keyMode = st.mode & 0o777;
+      keyOwner = st.uid;
+    }
+    const permsOk = keyMode === null || (keyMode === 0o600 && keyOwner === selfUid);
+    if (!permsOk) {
+      return detectedOnly('separate-uid', {
+        hardwarePresent: true,
+        absentReason: `operator key is mode ${keyMode?.toString(8)} owned by uid ${keyOwner}; expected 0600 owned by ${selfUid}`,
+        detail: { agentUser, agentUid, selfUid, keyMode, keyOwner },
+      });
+    }
+
+    return {
+      kind: 'separate-uid',
+      available: true,
       guarantee: {
-        // The kernel, not a convention, keeps the agent out of the key file.
         keyReadableBySameUid: false,
         hardwareBound: false,
         requiresHumanPresence: false,
         survivesAgentCompromise: true,
       },
-      presentSummary: `Dedicated agent account "${agentUser}" exists: kernel-enforced file boundary`,
-      absentReason: `no dedicated agent account (looked for "${agentUser}") — creating one makes 0600 on the operator key a real boundary, at no hardware cost`,
-      detail: { agentUser, selfUid },
-    });
+      summary:
+        `Agent account "${agentUser}" (uid ${agentUid}) is distinct from the operator (uid ${selfUid}); ` +
+        'the kernel enforces the key boundary. NOTE: only real if agents are actually launched as that ' +
+        `user — verify with: sudo -u ${agentUser} cat ${OPERATOR_KEY_PATH} (must be denied)`,
+      detail: { agentUser, agentUid, selfUid, keyMode, verifiedLaunchIdentity: false },
+    };
   },
+
+  // The key is still a file; the boundary is who may read it.
+  getPublicKey: (...args) => fileProvider.getPublicKey(...args),
+  sign: (...args) => fileProvider.sign(...args),
 };
 
 const osKeystoreProvider = {

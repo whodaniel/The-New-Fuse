@@ -1,32 +1,24 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`
-Created At: `2026-07-24T01:16:10.141Z`
-Handoff ID: `d4f056e7-86cd-4e51-83bc-eb36de0a4581`
+Created At: `2026-07-24T01:22:56.443Z`
+Handoff ID: `7d15e523-4b15-4324-9ae0-a0c4ff287773`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/a2a-signature-verification`
-- Head SHA: `adda5f088a6e486f7e9b56c051e35278a6e8f36d`
+- Head SHA: `3ce1adda8131131ada882098f089bd4b873bb45c`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Phase 2 built: UCAN-shaped capability grants (tnf-capability-grant.cjs) — expiring
-- task-bound
-- single-use
-- attenuating; widening refused at BOTH issue and verify time
-- Environment-adaptive trust roots (tnf-trust-root.cjs) implementing TrustRootProvider from the public control-plane-contracts boundary; probes fido2/secure-enclave/tpm2/separate-uid/os-keystore/file and picks the strongest that genuinely works
-- Active root on this workstation is 'file' — NOT a boundary; no Secure Enclave on MacBookPro12-1 (probed OSStatus -25300). separate-uid is free and kernel-enforced; FIDO2 stronger
-- whodaniel/The-New-Fuse was PUBLIC with the full proprietary tree under MIT since 2026-04-25 — now PRIVATE. fuse-open-runtime was never affected; stubs verified by content not path existence
-- Approval CLI (Phase 3) and credential broker (Phase 4) still NOT built — no agent can claim an operator approved anything
-- OPERATOR-ONLY STILL OPEN: rotate leaked credentials (Upstash
-- Supabase
-- JWT_SECRET
-- ENCRYPTION_KEY
-- SHAREDSTATE_AUTH_TOKEN
-- anon key)
+- Phase 3 built: elevation approval channel (tnf-elevation-broker.cjs + scripts/tnf-authority.cjs). decide() refuses from agent context and audits every refusal; verified live that TNF_AGENT_ID is rejected
+- Approvals may narrow but never widen what was requested; requester role always comes from the operator-owned registry and a self-asserted role is recorded as a claim and ignored
+- separate-uid trust root promoted from detection-only to a real provider; scripts/setup/tnf-agent-account.sh added (OPERATOR must run with sudo - Claude cannot create system accounts)
+- OPERATOR ACTION: run tnf-agent-account.sh then launch agents AS that user; until then trust root stays file and broker checks are defence-in-depth only
+- Credential broker (Phase 4) still NOT built - no agent may claim brokered account access
+- STILL OPEN: rotate leaked credentials (Upstash Supabase JWT_SECRET ENCRYPTION_KEY SHAREDSTATE_AUTH_TOKEN anon key)
 
 ## Changed Paths
 
@@ -34,9 +26,11 @@ Handoff ID: `d4f056e7-86cd-4e51-83bc-eb36de0a4581`
 - docs/protocols/CHALLENGE_RATIONALE_LOG.md
 - docs/protocols/DIRECTIVES.md
 - docs/protocols/LIVING_STATE.md
-- scripts/lib/tnf-capability-grant.cjs
-- scripts/lib/tnf-capability-grant.test.cjs
 - scripts/lib/tnf-trust-root.cjs
+- scripts/lib/tnf-elevation-broker.cjs
+- scripts/lib/tnf-elevation-broker.test.cjs
+- scripts/setup/tnf-agent-account.sh
+- scripts/tnf-authority.cjs
 
 ## Continuation
 
@@ -54,9 +48,9 @@ Handoff ID: `d4f056e7-86cd-4e51-83bc-eb36de0a4581`
 ## Next Actions
 
 - Review updated LIVING_STATE.md for new active steps
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 7 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 9 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
 
 ## Artifacts
 
 **Commits:**
-- adda5f088a6e486f7e9b56c051e35278a6e8f36d
+- 3ce1adda8131131ada882098f089bd4b873bb45c

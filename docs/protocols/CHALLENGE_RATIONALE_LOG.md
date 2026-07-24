@@ -59,6 +59,34 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: Daniel Goldberg (operator), confirmed via plan approval
   (ExitPlanMode) in a live Claude Code session, 2026-07-23.
 
+## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23 — Phase 3 approval channel)
+
+- file: docs/protocols/DIRECTIVES.md
+- git_blob_sha: (see commit history for this session; logged concurrently with
+  the commit)
+- rationale: Phase 3 built, so D23 must stop saying the approval channel does
+  not exist. `scripts/lib/tnf-elevation-broker.cjs` implements `ElevationBroker`
+  from the public contracts boundary: agents may `submit()` (which grants
+  nothing), while `decide()` refuses from agent context and audits the refusal.
+  Two design points are recorded in the directive because they are the parts an
+  agent could otherwise misrepresent: (1) an approval may narrow what was
+  requested but never widen it, and the requester's role always comes from the
+  operator-owned registry — a role asserted in the request body is stored as
+  `claimedRole` and ignored, with any mismatch flagged to the operator; (2) the
+  strength of the agent-context refusal depends entirely on the trust root.
+  Under `separate-uid` or better it is the kernel; under `file` — the root
+  currently selected on this workstation — it is defence-in-depth only, since a
+  same-uid agent can unset an env var and read the operator key directly. D23
+  now says that explicitly so a `file`-rooted approval is never cited as an
+  enforced one. `scripts/setup/tnf-agent-account.sh` was added to create the
+  dedicated account that upgrades this to a real boundary; it must be run by the
+  operator with sudo, and it documents that the account alone changes nothing
+  until agents are actually launched as that user. The credential broker
+  (Phase 4) still does not exist and D23 continues to say so.
+- attributed_to: Daniel Goldberg (operator), explicit "proceed as per your
+  suggested" in a live Claude Code session, 2026-07-23, agreeing to create the
+  agent account before building the approval channel.
+
 ## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23 — Phase 2 grants + trust roots)
 
 - file: docs/protocols/DIRECTIVES.md
