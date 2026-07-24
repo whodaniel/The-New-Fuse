@@ -1,13 +1,13 @@
 import { apiLogs } from '../schema/api-logs.js';
 export declare class DrizzleApiLogsRepository {
     logRequest(data: typeof apiLogs.$inferInsert): Promise<{
-        path: string;
         duration: number;
         id: string;
         createdAt: Date;
         userId: string | null;
         userAgent: string | null;
         method: string;
+        path: string;
         statusCode: number;
         ip: string | null;
     }[]>;

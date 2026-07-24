@@ -7,8 +7,8 @@ export declare class DrizzlePromptTemplateRepository {
         updatedAt: Date;
         userId: string;
         category: string;
-        tags: string[];
         isPublic: boolean;
+        tags: string[];
         currentVersionId: string | null;
         analytics: unknown;
     }>;
@@ -72,13 +72,13 @@ export declare class DrizzlePromptTemplateRepository {
         name: string | null;
         createdAt: Date;
         isActive: boolean;
+        variables: Record<string, any>;
+        createdBy: string | null;
+        content: string;
         versionNumber: number;
         metrics: unknown;
-        content: string;
         label: string | null;
-        createdBy: string | null;
         templateId: string;
-        variables: Record<string, any>;
         blocks: any[];
         changelog: string | null;
     }>;
@@ -128,16 +128,16 @@ export declare class DrizzlePromptTemplateRepository {
     createSnippet(data: any): Promise<{
         id: string;
         name: string;
-        type: string;
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
-        parameters: unknown;
+        type: string;
         category: string;
-        tags: string[];
         usageCount: number;
-        content: string;
+        tags: string[];
         createdBy: string | null;
+        content: string;
+        parameters: unknown;
         isStarred: boolean;
     }>;
     findSnippetById(id: string): Promise<{
@@ -189,11 +189,11 @@ export declare class DrizzlePromptTemplateRepository {
     incrementSnippetUsage(id: string): Promise<void>;
     recordExecution(data: any): Promise<{
         id: string;
-        error: string | null;
-        success: boolean;
-        result: unknown;
-        templateId: string;
         variables: Record<string, any>;
+        error: string | null;
+        result: unknown;
+        success: boolean;
+        templateId: string;
         versionId: string;
         executedAt: Date;
         responseTime: number;
