@@ -34,6 +34,51 @@ function fmtCaps(caps) {
 }
 
 /**
+ * Worker-agent wrappers that are untrusted and MUST run as the agent account.
+ * Operator-side processes (master-clock, cron chronological jobs, this CLI) are
+ * intentionally excluded — they legitimately run as the operator and hold the
+ * key. See docs/protocols/AUTHORITY_INTEGRATION_MAP.md for the split.
+ */
+const WORKER_AGENT_PATTERNS = [
+  'gemini-redis-wrapper',
+  'jules-redis-wrapper',
+  'claude-redis-wrapper',
+  'antigravity-redis-wrapper',
+  'pi-wrapper',
+  'pi-coding-agent',
+];
+
+/**
+ * Find worker-agent processes running as the operator uid. Those can read the
+ * operator key regardless of what the agent account can do, so their presence
+ * means launch isolation is NOT real — the file-denial test alone would
+ * false-pass. Returns a list of "pid command" strings.
+ */
+function workerAgentsRunningAsOperator({ psOutput = null, selfUid = null } = {}) {
+  selfUid = selfUid ?? (typeof process.getuid === 'function' ? process.getuid() : null);
+  if (selfUid === null) return [];
+  let out = psOutput;
+  if (out === null) {
+    try {
+      out = execFileSync('ps', ['-axo', 'uid,pid,command'], { encoding: 'utf8' });
+    } catch {
+      return []; // can't enumerate — caller treats the check as inconclusive
+    }
+  }
+  const hits = [];
+  for (const line of out.split('\n')) {
+    const m = line.trim().match(/^(\d+)\s+(\d+)\s+(.*)$/);
+    if (!m) continue;
+    const [, uid, pid, command] = m;
+    if (Number.parseInt(uid, 10) !== selfUid) continue;
+    if (WORKER_AGENT_PATTERNS.some((p) => command.includes(p))) {
+      hits.push(`${pid} ${command.slice(0, 80)}`);
+    }
+  }
+  return hits;
+}
+
+/**
  * Attest that agents are isolated to the agent account.
  *
  * Does NOT take the operator's word for it: it runs the denial test itself —
@@ -85,9 +130,34 @@ async function cmdConfirmIsolation() {
     return;
   }
 
-  fs.writeFileSync(trust.ISOLATION_MARKER, `confirmed ${new Date().toISOString()} by operator\n`, { mode: 0o600 });
+  // The denial test proves the FILE boundary. It does NOT prove agents run as
+  // the agent account — a worker still running as the operator can read the key
+  // regardless. Refuse to write the marker while any such process is live, or
+  // the marker would certify a boundary that does not hold. This is the fix for
+  // the same over-claim class as the trust-root probe bug.
+  const stragglers = workerAgentsRunningAsOperator();
+  if (stragglers.length && !process.argv.includes('--force-after-manual-check')) {
+    console.error(
+      `\n❌ ${stragglers.length} worker agent(s) are still running as the operator (uid can read the key):\n` +
+        stragglers.map((s) => `    ${s}`).join('\n') +
+        `\n\nThe file-denial test passed, but these processes make isolation NOT real.\n` +
+        'Relaunch them as the agent account, then re-run. Marker NOT written.'
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  fs.writeFileSync(
+    trust.ISOLATION_MARKER,
+    `confirmed ${new Date().toISOString()} by operator; file-denial=pass; worker-as-operator=none\n`,
+    { mode: 0o600 }
+  );
   console.log(`\n✅ Isolation confirmed. Marker written: ${trust.ISOLATION_MARKER}`);
-  console.log('Trust root will now report separate-uid as a real (non-degraded) boundary.');
+  console.log(
+    'Confirmed: the agent account cannot read the key AND no known worker wrapper is\n' +
+      'running as the operator right now. The marker holds as long as agents continue to\n' +
+      'launch as the agent account — it is an attestation of the current launch setup.'
+  );
   const sel = await trust.selectTrustRoot();
   console.log(`\n${trust.describeSelection(sel)}`);
 }
@@ -216,4 +286,4 @@ async function main() {
 
 if (require.main === module) main();
 
-module.exports = { main };
+module.exports = { main, workerAgentsRunningAsOperator, WORKER_AGENT_PATTERNS };
