@@ -49,10 +49,10 @@ checks prompt for `sudo -u tnf-agent` when needed.
 | Isolation marker alone is **not** enough                 | Trust-root probe re-checks live worker uids; stragglers keep the weak guarantee.             |
 | PR #70 is open on `fix/a2a-signature-verification`       | Merge is your review call, not an agent action.                                              |
 
-Repo root for all commands:
+Repo root for all commands (from a clone of this repo):
 
 ```bash
-cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/The-New-Fuse   # your local checkout
 ```
 
 ---

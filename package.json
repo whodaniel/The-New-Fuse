@@ -239,7 +239,7 @@
     "test:low-memory": "BUILD_MEMORY_LIMIT=1024 BUILD_CONCURRENCY=1 turbo run test --concurrency=1",
     "lint": "ESLINT_USE_FLAT_CONFIG=false turbo run lint",
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false turbo run lint:fix",
-    "lint:staged": "lint-staged -c .lintstagedrc.js",
+    "lint:staged": "node scripts/lint-staged-retry.cjs",
     "privacy:guard:staged": "node scripts/security/privacy-guard.cjs --mode=staged",
     "privacy:guard:pre-push": "node scripts/security/privacy-guard.cjs --mode=pre-push",
     "privacy:guard:repo": "node scripts/security/privacy-guard.cjs --mode=repo",
