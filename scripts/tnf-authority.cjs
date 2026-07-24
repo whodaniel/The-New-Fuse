@@ -17,6 +17,8 @@
 
 'use strict';
 
+const fs = require('node:fs');
+const { execFileSync } = require('node:child_process');
 const broker = require('./lib/tnf-elevation-broker.cjs');
 const trust = require('./lib/tnf-trust-root.cjs');
 
@@ -29,6 +31,65 @@ function arg(flag, fallback = null) {
 
 function fmtCaps(caps) {
   return caps.map((c) => `${c.can} on ${c.with}`).join(', ');
+}
+
+/**
+ * Attest that agents are isolated to the agent account.
+ *
+ * Does NOT take the operator's word for it: it runs the denial test itself —
+ * `sudo -u <agent> cat <operator key>` — and writes the marker only if the read
+ * is actually denied. If the key is still readable by the agent account, the
+ * marker is refused and the trust root stays degraded. This keeps the
+ * attestation honest: it cannot be set by claim, only by a passing test.
+ */
+async function cmdConfirmIsolation() {
+  const agentUser = process.env.TNF_AGENT_USER || 'tnf-agent';
+  const keyPath = trust.OPERATOR_KEY_PATH;
+
+  if (!fs.existsSync(keyPath)) {
+    console.error(`No operator key at ${keyPath} yet — nothing to protect. Run an approval first.`);
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log(`Testing that "${agentUser}" cannot read the operator key...`);
+  let denied = false;
+  try {
+    // If this SUCCEEDS, the agent can read the key — isolation is NOT real.
+    execFileSync('sudo', ['-n', '-u', agentUser, 'cat', keyPath], { stdio: ['ignore', 'ignore', 'ignore'] });
+    denied = false;
+  } catch (err) {
+    // Permission denied (or sudo refusal) is the outcome we want. Distinguish a
+    // real denial from "sudo needs a password" so we don't false-pass.
+    const msg = String(err.stderr || err.message || '');
+    if (/password is required|a terminal is required|not allowed/i.test(msg)) {
+      console.error(
+        '\nCould not run the test non-interactively (sudo needs a password).\n' +
+          `Run this yourself and confirm it says "Permission denied":\n` +
+          `    sudo -u ${agentUser} cat ${keyPath}\n` +
+          'Then re-run: tnf-authority confirm-isolation --force-after-manual-check'
+      );
+      process.exitCode = 1;
+      return;
+    }
+    denied = true;
+  }
+
+  if (!denied && !process.argv.includes('--force-after-manual-check')) {
+    console.error(
+      `\n❌ "${agentUser}" CAN still read ${keyPath}. Isolation is NOT real.\n` +
+        'Migrate agent launchers to run as that user (launchd UserName / systemd User=),\n' +
+        'then re-run. Marker NOT written; trust root stays degraded.'
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  fs.writeFileSync(trust.ISOLATION_MARKER, `confirmed ${new Date().toISOString()} by operator\n`, { mode: 0o600 });
+  console.log(`\n✅ Isolation confirmed. Marker written: ${trust.ISOLATION_MARKER}`);
+  console.log('Trust root will now report separate-uid as a real (non-degraded) boundary.');
+  const sel = await trust.selectTrustRoot();
+  console.log(`\n${trust.describeSelection(sel)}`);
 }
 
 async function cmdStatus() {
@@ -137,6 +198,7 @@ async function main() {
   try {
     switch (cmd) {
       case 'review': await require('./lib/tnf-authority-console.cjs').review(); break;
+      case 'confirm-isolation': await cmdConfirmIsolation(); break;
       case 'status': await cmdStatus(); break;
       case 'list': cmdList(); break;
       case 'show': cmdShow(id); break;

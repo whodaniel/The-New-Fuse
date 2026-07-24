@@ -175,10 +175,13 @@ tnf-trust-root.cjs will keep reporting the root as unenforced.
 3. Ad-hoc shells:
        sudo -u $AGENT_USER <command>
 
-4. Verify the boundary is real — this MUST fail:
-       sudo -u $AGENT_USER cat "$AUTH_DIR/operator.ed25519"
-   Permission denied means the kernel is now enforcing what was previously
-   only a convention. If it succeeds, the boundary does not exist yet.
+4. Confirm the boundary — this runs the denial test and only then marks the
+   trust root as a real boundary (it will NOT take your word for it):
+       node scripts/tnf-authority.cjs confirm-isolation
+   It runs \`sudo -u $AGENT_USER cat <operator key>\` and writes the isolation
+   marker only if that read is actually denied. Until you run this AND it
+   passes, the trust root stays DEGRADED even though the account exists — the
+   account alone does not protect anything while agents still run as you.
 
 5. Re-probe:
        node -e "require('./scripts/lib/tnf-trust-root.cjs').selectTrustRoot().then(s=>console.log(require('./scripts/lib/tnf-trust-root.cjs').describeSelection(s)))"

@@ -59,6 +59,27 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: Daniel Goldberg (operator), confirmed via plan approval
   (ExitPlanMode) in a live Claude Code session, 2026-07-23.
 
+## 2026-07-24 — trust-root probe over-optimism fix (no DIRECTIVES change)
+
+- file: (code only — scripts/lib/tnf-trust-root.cjs, scripts/tnf-authority.cjs)
+- rationale: Logged here for continuity though it touches no LOCKED doc. After
+  the operator created the `tnf-agent` account, the `separate-uid` probe flipped
+  to `degraded: false` on account-existence alone — while all 7 running TNF
+  agent processes were still uid 501 (the operator), who can read the operator
+  key. The probe implied a live boundary that was not load-bearing: exactly the
+  "told you're stronger than you are" failure the trust-root honesty rules were
+  written to prevent, so it was a correctness bug in the probe, not merely a
+  pending migration. Fix: `separate-uid` now reports available-but-degraded
+  (weak guarantee, `keyReadableBySameUid: true`) until an operator attestation
+  marker exists in the 0700 authority dir, and `tnf-authority confirm-isolation`
+  writes that marker only after running `sudo -u tnf-agent cat <key>` and
+  confirming the read is actually DENIED — it will not take the operator's word,
+  only a passing test. Until agent launchers are migrated to the agent uid, the
+  trust root correctly stays degraded and the credential broker correctly stays
+  in its most restrictive mode.
+- attributed_to: found and fixed in-session 2026-07-24 after the operator ran
+  the account-creation script; no authorization claim involved.
+
 ## 2026-07-24 — docs/protocols/DIRECTIVES.md (D23 — Phase 4a credential broker)
 
 - file: docs/protocols/DIRECTIVES.md

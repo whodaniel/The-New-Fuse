@@ -374,6 +374,38 @@ test('a stronger guarantee outranks a weaker one', () => {
   assert.ok(strong > weak);
 });
 
+test('separate-uid stays DEGRADED until launch isolation is operator-confirmed', async () => {
+  // The bug this guards: the probe once reported non-degraded on account
+  // existence alone, implying a boundary that was not load-bearing because
+  // agents still ran as the operator uid.
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const path = require('node:path');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-iso-'));
+  const saved = { dir: process.env.TNF_AUTHORITY_DIR, marker: process.env.TNF_ISOLATION_MARKER, user: process.env.TNF_AGENT_USER };
+  process.env.TNF_AGENT_USER = 'root'; // a uid that reliably exists and differs from us
+  process.env.TNF_ISOLATION_MARKER = path.join(tmp, 'marker');
+
+  // Reload the module so it re-reads the marker path.
+  delete require.cache[require.resolve('./tnf-trust-root.cjs')];
+  const t = require('./tnf-trust-root.cjs');
+  try {
+    const before = (await t.probeAll()).find((d) => d.kind === 'separate-uid');
+    assert.equal(before.guarantee.survivesAgentCompromise, false, 'no marker → weak guarantee');
+    assert.match(before.summary, /isolation is NOT confirmed/);
+
+    fs.writeFileSync(process.env.TNF_ISOLATION_MARKER, 'confirmed');
+    const after = (await t.probeAll()).find((d) => d.kind === 'separate-uid');
+    assert.equal(after.guarantee.survivesAgentCompromise, true, 'marker present → real boundary');
+  } finally {
+    for (const [k, v] of Object.entries({ TNF_AUTHORITY_DIR: saved.dir, TNF_ISOLATION_MARKER: saved.marker, TNF_AGENT_USER: saved.user })) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+    delete require.cache[require.resolve('./tnf-trust-root.cjs')];
+  }
+});
+
 test('did:key encoding round-trips to a stable multibase form', () => {
   const { publicKey } = crypto.generateKeyPairSync('ed25519');
   const pem = publicKey.export({ type: 'spki', format: 'pem' });

@@ -39,6 +39,9 @@ const AUTHORITY_DIR =
 const OPERATOR_KEY_PATH =
   process.env.TNF_OPERATOR_KEY_PATH || path.join(AUTHORITY_DIR, 'operator.ed25519');
 const OPERATOR_PUB_PATH = `${OPERATOR_KEY_PATH}.pub`;
+/** Operator attestation that agents are actually isolated to the agent uid. */
+const ISOLATION_MARKER =
+  process.env.TNF_ISOLATION_MARKER || path.join(AUTHORITY_DIR, 'launch-isolation-confirmed');
 
 /** Mirrors TRUST_ROOT_PREFERENCE in the contracts package. */
 const TRUST_ROOT_PREFERENCE = Object.freeze([
@@ -327,6 +330,40 @@ const separateUidProvider = {
       });
     }
 
+    // The account existing and the key being locked is necessary but NOT
+    // sufficient. The boundary only protects anything if AGENTS actually run as
+    // that account — and the probe cannot see the uid of every agent process,
+    // so it must not claim the boundary is live on account-existence alone.
+    //
+    // Enforcement of that last step is an operator attestation: after migrating
+    // agent launchers and confirming `sudo -u <agent> cat <key>` is denied, the
+    // operator writes ISOLATION_MARKER (0600, inside the 0700 authority dir, so
+    // an agent cannot forge it — same trust model as roles.json). Until then
+    // this provider reports available-but-degraded: the account is ready, the
+    // boundary is not yet load-bearing.
+    const isolationConfirmed = fs.existsSync(ISOLATION_MARKER);
+    if (!isolationConfirmed) {
+      return {
+        kind: 'separate-uid',
+        available: true,
+        // Deliberately the WEAK guarantee: agents currently share the
+        // operator's uid, so today the key is readable by them.
+        guarantee: {
+          keyReadableBySameUid: true,
+          hardwareBound: false,
+          requiresHumanPresence: false,
+          survivesAgentCompromise: false,
+        },
+        summary:
+          `Agent account "${agentUser}" (uid ${agentUid}) exists and the key is locked, but launch ` +
+          `isolation is NOT confirmed — agents may still run as the operator (uid ${selfUid}) and read ` +
+          `the key. Migrate agent launchers to run as "${agentUser}", verify ` +
+          `\`sudo -u ${agentUser} cat ${OPERATOR_KEY_PATH}\` is denied, then run ` +
+          '`tnf-authority confirm-isolation`.',
+        detail: { agentUser, agentUid, selfUid, keyMode, verifiedLaunchIdentity: false, isolationConfirmed: false },
+      };
+    }
+
     return {
       kind: 'separate-uid',
       available: true,
@@ -337,10 +374,9 @@ const separateUidProvider = {
         survivesAgentCompromise: true,
       },
       summary:
-        `Agent account "${agentUser}" (uid ${agentUid}) is distinct from the operator (uid ${selfUid}); ` +
-        'the kernel enforces the key boundary. NOTE: only real if agents are actually launched as that ' +
-        `user — verify with: sudo -u ${agentUser} cat ${OPERATOR_KEY_PATH} (must be denied)`,
-      detail: { agentUser, agentUid, selfUid, keyMode, verifiedLaunchIdentity: false },
+        `Agent account "${agentUser}" (uid ${agentUid}) is distinct from the operator (uid ${selfUid}) ` +
+        'and launch isolation is operator-confirmed; the kernel enforces the key boundary.',
+      detail: { agentUser, agentUid, selfUid, keyMode, verifiedLaunchIdentity: true, isolationConfirmed: true },
     };
   },
 
@@ -469,6 +505,8 @@ module.exports = {
   base58btc,
   ensureOperatorKey,
   fileProvider,
+  separateUidProvider,
   OPERATOR_KEY_PATH,
   OPERATOR_PUB_PATH,
+  ISOLATION_MARKER,
 };
