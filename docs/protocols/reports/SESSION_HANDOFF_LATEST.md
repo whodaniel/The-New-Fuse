@@ -1,76 +1,46 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-07-24T23:25:12.879Z`  
-Handoff ID: `f82b041a-f2d2-4edd-9cc9-b546c74269ec`
+Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-24T23:38:13.621Z` Handoff
+ID: `72a63434-141f-4ed2-8b91-7d92d08e6dee`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/a2a-signature-verification`
-- Head SHA: `9c7e6bd7a1c812f17e2db90337c4618931294c59`
+- Head SHA: `f8e109bdfa507f4223771e5ce03c90f951fe0db2`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Committed: f8e109bdfa docs(authority): coherence audit follow-up — D23
+  honesty + graphs
 
 ## Changed Paths
 
-- apps/api/src/controllers/auth.controller.ts
-- apps/api/src/controllers/bridges.controller.ts
-- apps/api/src/controllers/health.controller.ts
-- apps/api/src/controllers/public-info.controller.ts
-- apps/api/src/guards/secure-auth.guard.ts
-- apps/api/src/modules/webhooks/webhooks.controller.ts
-- docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md
-- docs/protocols/CHALLENGE_RATIONALE_LOG.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/CODEBASE_PATHWAY_MAP_2026-07-24.md
-- packages/relay-core/dist/broker-agent.js
-- packages/relay-core/dist/broker-agent.js.map
-- packages/relay-core/dist/protocol/sign-bus-message.d.ts
-- packages/relay-core/dist/protocol/sign-bus-message.d.ts.map
-- packages/relay-core/dist/protocol/sign-bus-message.js
-- packages/relay-core/dist/protocol/sign-bus-message.js.map
-- packages/relay-core/dist/redis-relay-bridge.d.ts.map
-- packages/relay-core/dist/redis-relay-bridge.js
-- packages/relay-core/dist/redis-relay-bridge.js.map
-- packages/relay-core/src/broker-agent.ts
-- packages/relay-core/src/protocol/sign-bus-message.ts
-- packages/relay-core/src/redis-relay-bridge.ts
-- packages/tnf-cli/src/cli.ts
-- scripts/lib/AUTHORITY_README.md
-- scripts/lib/redis-agent-client.cjs
-- scripts/lib/redis-agent-client.shim.test.cjs
-- scripts/lib/tnf-wrapper-authority.cjs
-- scripts/lib/tnf-wrapper-authority.test.cjs
-
-## Verification
-
-- privacy_guard: `pass`
-- secret_sweep: `pass`
-- docs_pii_guard: `pass`
-- supabase_rls_audit: `na`
-
 ## Continuation
 
-- Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
-- Priority: `high`
+- **Owner:** operator
+- **Priority:** medium
 
-### Resume Checklist
+**Targets:**
+
+- orchestrator
+
+**Resume Checklist:**
 
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Validate SESSION_HANDOFF_LATEST.json against schema
+- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
+  CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop
+  and get live operator confirmation before running git commit/push for those,
+  do not auto-execute them
 
 ## Next Actions
 
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- Begin Turn Zero for next session
+
+## Artifacts
+
+**Commits:**
+
+- f8e109bdfa507f4223771e5ce03c90f951fe0db2
