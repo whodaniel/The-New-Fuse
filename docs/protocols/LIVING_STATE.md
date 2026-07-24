@@ -46,7 +46,12 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 
 - [✅] 2026-07-24T00:30:13.658Z System cron entries installed:
 - [✅] 2026-07-24T04:21:15.352Z System cron entries installed:
+- [✅] 2026-07-24T21:17:42.244Z New agent(s) created: qodercli
+- [✅] 2026-07-24T21:17:42.244Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
 - [✅] 2026-07-24T05:34:57.132Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-24T16:26:08.521Z System cron entries installed:
@@ -887,3 +892,25 @@ and generated refactoring_consensus_report.md.
   (HEAD b68d36d) with live Daniel Goldberg confirmation ("commit these 4
   files"); AGENTS.md gate satisfied; SESSION_HANDOFF_LATEST.json updated;
   next_actions cleared.
+- [✅] 2026-07-24T21:55:00.000Z Bulk-fix session initiated by Daniel Goldberg
+  ("fix all errors, bugs, omissions, and commit all"). Eight themed commits
+  produced, each cluster verified by tsc --noEmit and/or bash -n before commit:
+  (A) frontend link/landing dead-URL sweep, (B) audit-live-links allowlist +
+  crawler refresh, (C) CLI_QODER identity propagation across db schema,
+  classifier, snapshot, persona; fixed the agents-classify.ts unchanged-count
+  arithmetic which had produced stale unchanged=-114, (D) cron.ts rewritten
+  against the real relay-core redis keys (tnf:master:agents,
+  tnf:master:heartbeats) with fail-safe on no-redis, (E) relay-core bridge
+  preserves persona fulfillment+traits on AGENT_REGISTER; audio-trigger-ingest
+  tightens its missing-ingestApiKey fast-path and accepts x-edge-api-key, (F)
+  helper-script cleanups (build-doctor duplicate TS_RC=\$? artefact removed;
+  living-state-prober marker regex loosened so it captures the in-list "5. [⏳]"
+  form, not just the canonical "- [⏳]" checkbox)
+  - adds a token.json .gitignore rule to prevent future amplification of the
+    bearer credential, (G) marketplace SQL repointed at the live URLs
+    (servers-archived branches, multilingual-e5-large), (H) codebase_map.json +
+    tauri VirtualLibraryHub :not(style) selector fix + rolling-summary refresh,
+    (I) this session's docs / handoff / codepath graph artifacts committed. Each
+    commit cites the operator-confirmation lines explicitly. .gitignore
+    tightened to ignore packages/tnf-browser/extension/token.json going forward.
+    [CLASS:PRIME] [STATUS:RESOLVED]

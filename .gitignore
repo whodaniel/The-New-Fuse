@@ -407,3 +407,7 @@ packages/ui-consolidated/src/**/*.js.map
 # Redis RDB snapshots and other runtime dumps
 temp-*.rdb
 *.rdb
+
+# Bearer token file for tnf-browser extension (rotate; pre-existing in history)
+packages/tnf-browser/extension/token.json
+
