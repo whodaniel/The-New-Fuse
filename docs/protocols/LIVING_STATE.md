@@ -54,16 +54,15 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 - [✅] 2026-07-24T01:29:08.242Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
-- [🔑] **2026-07-23 OPERATOR-ONLY, OPEN: rotate leaked credentials.**
-  `apps/api/.env` + 3 `.bak` copies were tracked and pushed to the **public**
-  `whodaniel/The-New-Fuse` with live values. Files removed from all 7 remote
-  tips and GitHub secret scanning + push protection enabled (verified), but
-  **tip cleanup does not invalidate a leaked credential — only rotation does.**
-  Order: Upstash → Supabase → `JWT_SECRET` → `ENCRYPTION_KEY` →
-  `SHAREDSTATE_AUTH_TOKEN` → anon key, plus `apps/backend/.env.performance`.
-  History remains dirty; a rewrite is optional and does NOT substitute for
-  rotation (GitHub keeps force-pushed commits reachable by SHA until Support
-  purges them).
+- [✅] **2026-07-24 RESOLVED: leaked credentials rotated (operator-reported).**
+  `apps/api/.env` + `.bak` copies + `CLOUD_MIGRATION_BLUEPRINT.md` history had
+  live Supabase/Upstash/JWT/encryption/sharedstate values. All rotated per
+  operator on 2026-07-24, so the copies remaining in git history are now
+  worthless — the leak is closed whether or not history is ever rewritten.
+  Follow-through to confirm still landed: new creds present in the Cloud Run /
+  local runtime env; `ENCRYPTION_KEY` change reconciled with any data encrypted
+  under the old key; `JWT_SECRET` change invalidated live sessions (re-login);
+  `SHAREDSTATE_AUTH_TOKEN` change propagated to the federation gate.
 - [✅] 2026-07-23 **Agent identity layer built (D23).** A2A signing was
   decorative — an HMAC was attached and never verified, role was read off the
   wire, `A2A_SECRET_KEY` was unset so `'default-secret'` was live, and the bus
