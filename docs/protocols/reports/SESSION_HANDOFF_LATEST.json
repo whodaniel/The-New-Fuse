@@ -1,33 +1,21 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "9501bfcd-ded9-4b2b-b607-32a91cc0bd19",
-  "created_at": "2026-07-24T01:29:08.250Z",
+  "handoff_id": "02fe0d33-95d7-4e07-9879-a0c02a66c7fe",
+  "created_at": "2026-07-24T02:28:16.743Z",
   "repository": "The-New-Fuse",
   "branch": "fix/a2a-signature-verification",
-  "head_sha": "3455c9721f21d8838322e2cd7c529ccebc5cd7c1",
+  "head_sha": "7fba1626662d3d40df3de114f255046c4c3f1d08",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Interactive operator console added: node scripts/tnf-authority.cjs review — requires TTY",
-    "no default action (bare Enter never approves)",
-    "double confirmation restating exactly what will be granted",
-    "Warnings (role mismatch",
-    "missing registry entry",
-    "executive tier",
-    "degraded root) render ABOVE the decision line where they cannot be scrolled past",
-    "Agent-written justification is truncated and fenced as untrusted text — a prompt-injection attempt is included in the test fixtures",
-    "107 tests across 7 suites green",
-    "OPERATOR ACTION still open: sudo bash scripts/setup/tnf-agent-account.sh then launch agents AS that user",
-    "STILL OPEN: rotate leaked credentials"
+    "Untracked force-added env files that matched .gitignore (frontend .env.local/.production, backend .env.performance/.cloud_runtime, local-fleet-full-auto.env)"
   ],
   "changed_paths": [
-    "ocs/protocols/CHALLENGE_RATIONALE_LOG.md",
-    "docs/protocols/DIRECTIVES.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
-    "scripts/tnf-authority.cjs",
-    "scripts/lib/tnf-authority-console.cjs",
-    "scripts/lib/tnf-authority-console.test.cjs"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -38,25 +26,19 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": [
-      "orchestrator"
-    ],
-    "priority": "medium",
+    "targets": ["orchestrator"],
+    "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against schema",
-      "Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
   "next_actions": [
-    "Review updated LIVING_STATE.md for new active steps",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 6 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": [
-      "3455c9721f21d8838322e2cd7c529ccebc5cd7c1"
-    ],
-    "deployment_urls": [],
-    "database_migrations": []
+    "commits": ["7fba1626662d3d40df3de114f255046c4c3f1d08"]
   }
 }

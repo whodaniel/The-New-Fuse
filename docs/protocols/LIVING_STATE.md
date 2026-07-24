@@ -2,20 +2,21 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** ⚠️ NEEDS LIVE OPERATOR CONFIRMATION: master-clock herd
-cull (6 procs) — type handshake in-session before any kill **Project ID:**
-`TNF-SESSION` **Handoff:** `a69e0826-181e-411f-a3c2-3cb6a6d22e56` **Head:**
-`b2d907005c90` PASS, api `tsc -b` exit 0) — next: optional gemini-bridge
-residual + full turbo C03/C04 rerun; await live Daniel handshake before
-master-clock cull; commit when requested **Project ID:** `TNF-SESSION`
-**Handoff:** `7b497037-01eb-48ac-9916-9b5177fc20fa` **Head:** `b9c1298e41e3`
-build) is clean apart from one environment-load-sensitive memory-threshold test,
-confirmed non-deterministic and not a real bug **Project ID:**
-`TNF-MONOREPO-HEALTH` **Handoff:** `c1b8b297-baba-482e-a0dd-9801a46e9616`
-**Head:** `13806d3f5980` `.verifier/whole-codebase/latest-rerun/SUMMARY.md`
-**Project ID:** `TNF-SESSION` **Handoff:**
-`e84e62c0-c3f8-469e-9c71-69855c7b9d01` **Head:** `fb12dac55ff7` tnf-cli,
-tnf-browser, .verifier) **Project ID:** `TNF-SESSION` **Handoff:**
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`02fe0d33-95d7-4e07-9879-a0c02a66c7fe` **Head:** `7fba1626662d` cull (6 procs) —
+type handshake in-session before any kill **Project ID:** `TNF-SESSION`
+**Handoff:** `a69e0826-181e-411f-a3c2-3cb6a6d22e56` **Head:** `b2d907005c90`
+PASS, api `tsc -b` exit 0) — next: optional gemini-bridge residual + full turbo
+C03/C04 rerun; await live Daniel handshake before master-clock cull; commit when
+requested **Project ID:** `TNF-SESSION` **Handoff:**
+`7b497037-01eb-48ac-9916-9b5177fc20fa` **Head:** `b9c1298e41e3` build) is clean
+apart from one environment-load-sensitive memory-threshold test, confirmed
+non-deterministic and not a real bug **Project ID:** `TNF-MONOREPO-HEALTH`
+**Handoff:** `c1b8b297-baba-482e-a0dd-9801a46e9616` **Head:** `13806d3f5980`
+`.verifier/whole-codebase/latest-rerun/SUMMARY.md` **Project ID:** `TNF-SESSION`
+**Handoff:** `e84e62c0-c3f8-469e-9c71-69855c7b9d01` **Head:** `fb12dac55ff7`
+tnf-cli, tnf-browser, .verifier) **Project ID:** `TNF-SESSION` **Handoff:**
 `8409363d-172d-49b8-9135-1bd612f879ac` **Head:** `1b83ed4c7e67`
 `tnf:agent-registry` (callableWorker). Continuity via
 `TNF_AUTONOMOUS_CONTINUITY_PROTOCOL.md`. Full-auto daemon restarted with
@@ -40,13 +41,14 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 
 ## ⚡ Active Steps
 
-- [✅] 2026-07-24T00:30:13.658Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-24T01:16:10.135Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-24T01:22:56.438Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-24T01:29:08.242Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-
-
+- [✅] 2026-07-24T00:30:13.658Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T01:16:10.135Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T01:22:56.438Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T01:29:08.242Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
 - [🔑] **2026-07-23 OPERATOR-ONLY, OPEN: rotate leaked credentials.**
   `apps/api/.env` + 3 `.bak` copies were tracked and pushed to the **public**
@@ -64,17 +66,17 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
   was unauthenticated. Any local process could claim `local-director`. Fixed
   across `14e59ae213` (verification + `patch.js` removal), Phase 1 identity /
   operator-owned role registry, and `e09161b9e2` (per-agent Ed25519 binding —
-  symmetric keys were rejected as insufficient, since any peer able to verify
-  an agent could also forge as it). 51 tests / 4 suites; impersonation verified
+  symmetric keys were rejected as insufficient, since any peer able to verify an
+  agent could also forge as it). 51 tests / 4 suites; impersonation verified
   closed end-to-end. Branch `fix/a2a-signature-verification`.
 - [✅] 2026-07-23 **Phase 2 built: capability grants + environment-adaptive
   trust roots.** `tnf-capability-grant.cjs` — UCAN-shaped, 15m default / 60m
   ceiling, task-bound, single-use, **attenuating** (a chain can only narrow,
   enforced at issue AND verify, because issue-time checks are bypassable by
-  crafting a grant directly). `tnf-trust-root.cjs` — probes `fido2 |
-  secure-enclave | tpm2 | pkcs11 | remote-attestation | separate-uid |
-  os-keystore | file` and picks the strongest that genuinely works, so one build
-  adapts to any environment. Contracts published to
+  crafting a grant directly). `tnf-trust-root.cjs` — probes
+  `fido2 | secure-enclave | tpm2 | pkcs11 | remote-attestation | separate-uid | os-keystore | file`
+  and picks the strongest that genuinely works, so one build adapts to any
+  environment. Contracts published to
   `packages/control-plane-contracts/src/authority.ts` (public API boundary) so
   the proprietary hosted root implements the same interface. 27 tests.
 - [⚠️] 2026-07-23 **The active trust root on this workstation is `file` — not a
@@ -89,18 +91,19 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
   `decide()` refuses from agent context — `TNF_AGENT_ID`/`AGENT_ID`, `CI`,
   non-TTY stdin, or running as the agent account — and audits every refusal.
   Approvals may narrow, never widen; the requester's role always comes from the
-  registry and a self-asserted role is recorded as a claim and ignored.
-  15 tests. Verified live: an agent with `TNF_AGENT_ID` set is refused.
-- [✅] 2026-07-23 **Interactive review console.** `node scripts/tnf-authority.cjs
-  review` — requires a TTY, **no default action** (bare Enter re-prompts, never
-  approves), double confirmation restating exactly what will be granted,
-  warnings rendered above the decision line, and the agent-written
-  `justification` truncated + fenced as untrusted (a prompt-injection attempt is
-  in the fixtures). 14 tests.
-- [🔑] 2026-07-23 **OPERATOR ACTION: run `sudo bash scripts/setup/tnf-agent-account.sh`.**
-  Until a dedicated `tnf-agent` account exists, the trust root stays `file` and
-  the broker's agent-context checks are defence-in-depth only — a same-uid agent
-  can unset an env var and read the operator key. The account makes the boundary
+  registry and a self-asserted role is recorded as a claim and ignored. 15
+  tests. Verified live: an agent with `TNF_AGENT_ID` set is refused.
+- [✅] 2026-07-23 **Interactive review console.**
+  `node scripts/tnf-authority.cjs review` — requires a TTY, **no default
+  action** (bare Enter re-prompts, never approves), double confirmation
+  restating exactly what will be granted, warnings rendered above the decision
+  line, and the agent-written `justification` truncated + fenced as untrusted (a
+  prompt-injection attempt is in the fixtures). 14 tests.
+- [🔑] 2026-07-23 **OPERATOR ACTION: run
+  `sudo bash scripts/setup/tnf-agent-account.sh`.** Until a dedicated
+  `tnf-agent` account exists, the trust root stays `file` and the broker's
+  agent-context checks are defence-in-depth only — a same-uid agent can unset an
+  env var and read the operator key. The account makes the boundary
   kernel-enforced at zero cost. **The account alone is not enough**: agents must
   actually be launched as that user (launchd `UserName`, systemd `User=`), and
   the proof is `sudo -u tnf-agent cat ~/.tnf/authority/operator.ed25519` being

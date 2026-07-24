@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-23T19:34:33.997Z** — handoff
+Updated: **2026-07-24T02:28:16.743Z** — handoff
+`02fe0d33-95d7-4e07-9879-a0c02a66c7fe` (`7fba1626662d`).
 `a69e0826-181e-411f-a3c2-3cb6a6d22e56` (`b2d907005c90`).
 `7b497037-01eb-48ac-9916-9b5177fc20fa` (`b9c1298e41e3`).
 `c1b8b297-baba-482e-a0dd-9801a46e9616` (`13806d3f5980`).
@@ -56,17 +57,10 @@ were per-action operator-confirmed; no self-authorization.
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                   |
-| -------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **P0**   | 🔑 OPERATOR-ONLY, STILL OPEN: rotate leaked credentials — Upstash → Supabase → `JWT_SECRET` → `ENCRYPTION_KEY` → `SHAREDSTATE_AUTH_TOKEN` → anon key, plus `apps/backend/.env.performance`. Tip cleanup did NOT invalidate them |
-| **P0**   | 🔒 `whodaniel/The-New-Fuse` was PUBLIC with the full proprietary tree (~27.6k lines) under MIT since 2026-04-25 — now PRIVATE. `fuse-open-runtime` was never affected (stubs verified by content). Audit that boundary by CONTENT, not path existence |
-| **P0**   | 🔑 OPERATOR ACTION: `sudo bash scripts/setup/tnf-agent-account.sh` — until then the trust root is `file` and the approval channel's agent-context checks are defence-in-depth only. Then launch agents AS that user (launchd `UserName` / systemd `User=`) and verify `sudo -u tnf-agent cat ~/.tnf/authority/operator.ed25519` is DENIED |
-| **P0**   | ⚠️ No Secure Enclave on `MacBookPro12,1` (probed, OSStatus -25300). `separate-uid` is the free fix; a FIDO2 token is stronger and works on this hardware. `tnf-authority status` reports the live root |
-| **P0**   | ⚠️ Do NOT set `TNF_MESSAGE_AUTH_MODE=enforce` until every agent has an Ed25519 keypair AND every node has imported its peers' public keys — otherwise traffic silently drops (see D23, `.env.example`) |
-| **P0**   | ⚠️ NEEDS LIVE OPERATOR CONFIRMATION: master-clock herd cull (6 procs) — type handshake in-session before any kill        |
-| **P0**   | ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): pi-wrapper-launchd.sh + REMEDIATION triage + dirty state files |
-| **P0**   | Optional: repair voice-coop-loop (voice-agent-send missing) or switch to silent mode                                     |
-| **P0**   | When disk allows: full turbo whole-codebase harness for official ~28/29 score flip                                       |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -312,3 +306,12 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-07-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (a69e0826-181e-411f-a3c2-3cb6a6d22e56) | ✅ HANDOFF_READY |
+
+| 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(785d4ec4-fa5a-460f-9efe-34ec333fcc33) | ✅ HANDOFF_READY |
+
+| 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f4648a3d-4ab0-47c0-aea4-a1c076459bd2) | ✅ HANDOFF_READY |
+
+| 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(02fe0d33-95d7-4e07-9879-a0c02a66c7fe) | ✅ HANDOFF_READY |
