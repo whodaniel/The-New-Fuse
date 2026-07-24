@@ -1,23 +1,18 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "c729fad8-43e4-41ab-a44c-b56936342ac1",
-  "created_at": "2026-07-24T05:34:57.140Z",
+  "handoff_id": "1d37a0e4-6cb8-43c8-9f2d-216b4243689a",
+  "created_at": "2026-07-24T16:26:08.526Z",
   "repository": "The-New-Fuse",
   "branch": "fix/a2a-signature-verification",
-  "head_sha": "db1aec3982e10286b7ab8bcdf8df2847fc6ef957",
+  "head_sha": "21ad6e027dc6902dee88c362ddb68349698d3bef",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
   "work_summary": [
-    "Autonomous session: mapped agent launchers (AUTHORITY_INTEGRATION_MAP.md); authority stack above Phase 0 built but NOT yet consumed by any agent",
-    "Found existing apps/api agentApiGrants = server-side analogue of local credential broker; both should conform to CredentialBroker contract",
-    "Hardening: capped grant chain depth at 8 (was unbounded DoS); documented scrub and nonce limits",
-    "Fixed turn-end.cjs false 'git not available' on clean tree",
-    "Opened PR #70 (Phases 0-4a 126 tests)",
-    "OPERATOR-ONLY: rotate creds; migrate worker launchers to tnf-agent then confirm-isolation"
+    "Modified 1 file(s)"
   ],
   "changed_paths": [
-    "cripts/turn-end.cjs"
+    "pps/frontend/src/data/codebase_map.json"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -43,7 +38,7 @@
   ],
   "artifacts": {
     "commits": [
-      "db1aec3982e10286b7ab8bcdf8df2847fc6ef957"
+      "21ad6e027dc6902dee88c362ddb68349698d3bef"
     ],
     "deployment_urls": [],
     "database_migrations": []

@@ -1,28 +1,23 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`
-Created At: `2026-07-24T05:34:57.140Z`
-Handoff ID: `c729fad8-43e4-41ab-a44c-b56936342ac1`
+Created At: `2026-07-24T16:26:08.526Z`
+Handoff ID: `1d37a0e4-6cb8-43c8-9f2d-216b4243689a`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/a2a-signature-verification`
-- Head SHA: `db1aec3982e10286b7ab8bcdf8df2847fc6ef957`
+- Head SHA: `21ad6e027dc6902dee88c362ddb68349698d3bef`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Autonomous session: mapped agent launchers (AUTHORITY_INTEGRATION_MAP.md); authority stack above Phase 0 built but NOT yet consumed by any agent
-- Found existing apps/api agentApiGrants = server-side analogue of local credential broker; both should conform to CredentialBroker contract
-- Hardening: capped grant chain depth at 8 (was unbounded DoS); documented scrub and nonce limits
-- Fixed turn-end.cjs false 'git not available' on clean tree
-- Opened PR #70 (Phases 0-4a 126 tests)
-- OPERATOR-ONLY: rotate creds; migrate worker launchers to tnf-agent then confirm-isolation
+- Modified 1 file(s)
 
 ## Changed Paths
 
-- cripts/turn-end.cjs
+- pps/frontend/src/data/codebase_map.json
 
 ## Continuation
 
@@ -44,4 +39,4 @@ Handoff ID: `c729fad8-43e4-41ab-a44c-b56936342ac1`
 ## Artifacts
 
 **Commits:**
-- db1aec3982e10286b7ab8bcdf8df2847fc6ef957
+- 21ad6e027dc6902dee88c362ddb68349698d3bef
