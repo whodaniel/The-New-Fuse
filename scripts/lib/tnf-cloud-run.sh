@@ -10,7 +10,7 @@
 #   source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/tnf-cloud-run.sh"
 #
 # See: packages/compounding-memory/wiki/doc-cloud-migration-blueprint.md
-#      archive/railway-era/README.md
+#      Retired Railway-era scripts: github.com/whodaniel/tnf-railway-era-archive (private)
 
 : "${TNF_GCP_PROJECT_ID:=${GCP_PROJECT_ID:-${GOOGLE_CLOUD_PROJECT:-the-new-fuse-2025}}}"
 : "${TNF_GCP_REGION:=${GCP_REGION:-${CLOUD_RUN_REGION:-us-central1}}}"
