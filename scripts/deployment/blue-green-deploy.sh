@@ -9,6 +9,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+source "$SCRIPT_DIR/../lib/tnf-cloud-run.sh"
 BG_LOG_DIR="$PROJECT_ROOT/logs/blue-green"
 BG_STATE_DIR="$PROJECT_ROOT/.deployment-state"
 
@@ -164,23 +166,14 @@ deploy_to_inactive_environment() {
   # Deploy to inactive environment
   log STEP "Deploying to $environment environment..."
 
-  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
-    : # was: command -v cloud_runtime
-    # Deploy to environment-specific service
-    export CLOUD_RUNTIME_SERVICE_NAME="${service}-${environment}"
-    export CLOUD_RUNTIME_ENVIRONMENT="$environment"
-
-    if ! scripts/deployment/gcp-deploy.sh --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
-      log ERROR "Failed to deploy to $environment environment"
-      return 1
-    fi
-
-    log SUCCESS "Deployed to $environment environment"
-
-  else
-    log ERROR "CloudRuntime CLI not available"
-    return 1
-  fi
+  # Per-environment ("$service-$environment") deploys were a Railway-era concept.
+  # TNF's Cloud Run deploy (scripts/deployment/gcp-deploy.sh) is a full-monorepo
+  # cloudbuild rollout with no per-service target, so blue/green isolation cannot
+  # be reproduced here. Refuse honestly rather than pretend to deploy one env.
+  log ERROR "Per-environment blue/green deploy is retired (Railway-era model)."
+  log ERROR "TNF Cloud Run deploys the full stack via scripts/deployment/gcp-deploy.sh."
+  log ERROR "For revision-level canary/rollout use 'gcloud run services update-traffic'."
+  return 1
 
   # Wait for deployment to stabilize
   log INFO "Waiting for deployment to stabilize..."
@@ -323,21 +316,23 @@ switch_traffic() {
   # Example using environment variable swap
   log STEP "Updating routing configuration..."
 
-  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
-    : # was: command -v cloud_runtime
-    # Update the main service to point to the new environment
-    log INFO "Setting active environment to: $to_env"
-
-    # This would require updating environment variables
-    # cloud_runtime variables set ACTIVE_ENV="$to_env" --service "$service"
-
-    log WARNING "Manual environment variable update required"
-    log INFO "Set ACTIVE_ENV=$to_env in CloudRuntime dashboard"
-
-    # Wait for user confirmation
+  # Faithful port of `cloud_runtime variables set ACTIVE_ENV=$to_env --service $service`
+  # to Cloud Run: set the ACTIVE_ENV env var (merge, not replace) via gcloud.
+  if tnf_has_cloud_deploy_cli; then
+    log INFO "Setting active environment to: $to_env (Cloud Run env var on $service)"
+    if tnf_cloud_run_update_env "$service" "ACTIVE_ENV=$to_env"; then
+      log SUCCESS "Traffic switch completed (ACTIVE_ENV=$to_env)"
+    else
+      log ERROR "Failed to set ACTIVE_ENV on $service via gcloud"
+      return 1
+    fi
+  else
+    # No gcloud available — fall back to manual load-balancer switch.
+    log WARNING "gcloud not available; manual traffic switch required"
+    log INFO "Set ACTIVE_ENV=$to_env on service '$service' (Cloud Run console)"
     if [[ "${AUTO_CONFIRM:-false}" != "true" ]]; then
       echo ""
-      echo -e "${YELLOW}Please update the load balancer configuration to route traffic to $to_env${NC}"
+      echo -e "${YELLOW}Please route traffic to $to_env, then continue.${NC}"
       echo ""
       read -p "Press Enter after traffic has been switched..." -r
       echo ""
@@ -345,11 +340,7 @@ switch_traffic() {
       log INFO "Auto-confirm enabled, waiting 30 seconds for manual switch..."
       sleep 30
     fi
-
-    log SUCCESS "Traffic switch completed"
-  else
-    log ERROR "CloudRuntime CLI not available"
-    return 1
+    log SUCCESS "Traffic switch completed (manual)"
   fi
 
   return 0

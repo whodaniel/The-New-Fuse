@@ -9,6 +9,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+source "$SCRIPT_DIR/../lib/tnf-cloud-run.sh"
 DEPLOYMENT_LOG_DIR="$PROJECT_ROOT/logs/deployment"
 BACKUP_DIR="$PROJECT_ROOT/backups"
 
@@ -324,41 +326,24 @@ rebuild_services() {
 redeploy_services() {
   print_section "Redeploying Services"
 
-  log STEP "Redeploying services to CloudRuntime..."
+  log STEP "Redeploying services to Cloud Run..."
 
-  if true; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
-    log ERROR "CloudRuntime CLI not available"
-    log ERROR "Manual deployment required"
+  # TNF's Cloud Run deploy is a single full-monorepo cloudbuild rollout — there is
+  # no per-service deploy target. The Railway-era per-app loop is retired; trigger
+  # the standard rollout once.
+  if [[ ! -x "$PROJECT_ROOT/scripts/deployment/gcp-deploy.sh" ]]; then
+    log ERROR "scripts/deployment/gcp-deploy.sh not found or not executable"
+    log ERROR "Redeploy manually: gcloud builds submit --config scripts/deployment/cloudbuild.yaml ."
     return 1
   fi
 
-  local services=("api-gateway" "backend" "frontend" "api")
+  cd "$PROJECT_ROOT"
+  if ! TNF_ROOT_DIR="$PROJECT_ROOT" "$PROJECT_ROOT/scripts/deployment/gcp-deploy.sh"; then
+    log ERROR "Cloud Run rollout failed"
+    return 1
+  fi
 
-  for service in "${services[@]}"; do
-    local service_path="$PROJECT_ROOT/apps/$service"
-
-    if [[ ! -d "$service_path" ]]; then
-      log WARNING "Service directory not found: $service_path"
-      continue
-    fi
-
-    log INFO "Deploying $service..."
-
-    cd "$service_path"
-    scripts/deployment/gcp-deploy.sh || {
-      log ERROR "Deployment failed for $service"
-      cd "$PROJECT_ROOT"
-      return 1
-    }
-    cd "$PROJECT_ROOT"
-
-    log SUCCESS "$service deployed"
-
-    # Wait between deployments
-    sleep 3
-  done
-
-  log SUCCESS "All services redeployed"
+  log SUCCESS "Cloud Run rollout triggered"
 }
 
 verify_rollback() {
@@ -370,33 +355,39 @@ verify_rollback() {
   log INFO "Waiting for services to stabilize..."
   sleep 10
 
-  # Check service health
-  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
-    : # was: command -v cloud_runtime
-    local services=("api-gateway" "backend" "frontend" "api")
-    local all_healthy=true
-
-    for service in "${services[@]}"; do
-      log INFO "Checking $service health..."
-
-      if gcloud run services list --service "$service" &>/dev/null; then
-        log SUCCESS "$service is healthy"
-      else
-        log ERROR "$service health check failed"
-        all_healthy=false
-      fi
-    done
-
-    if [[ "$all_healthy" == "true" ]]; then
-      log SUCCESS "All services are healthy"
-      return 0
-    else
-      log ERROR "Some services are not healthy"
-      return 1
-    fi
-  else
-    log WARNING "CloudRuntime CLI not available, skipping health checks"
+  # Check service health via gcloud (Cloud Run). Skip gracefully if unavailable.
+  if ! tnf_has_cloud_deploy_cli; then
+    log WARNING "gcloud not available, skipping automated health checks"
     log WARNING "Please verify services manually"
+    return 0
+  fi
+
+  local services=("api-gateway" "backend" "frontend" "api")
+  local all_healthy=true
+
+  for service in "${services[@]}"; do
+    log INFO "Checking $service readiness..."
+
+    local ready
+    ready="$(gcloud run services describe "$service" \
+      --project="$(tnf_gcp_project)" \
+      --region="$(tnf_gcp_region)" \
+      --format='value(status.conditions[0].status)' 2>/dev/null || true)"
+
+    if [[ "$ready" == "True" ]]; then
+      log SUCCESS "$service is Ready"
+    else
+      log ERROR "$service is not Ready (condition=${ready:-unknown})"
+      all_healthy=false
+    fi
+  done
+
+  if [[ "$all_healthy" == "true" ]]; then
+    log SUCCESS "All services are Ready"
+    return 0
+  else
+    log ERROR "Some services are not Ready"
+    return 1
   fi
 }
 
