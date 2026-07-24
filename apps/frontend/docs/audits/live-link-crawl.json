@@ -1,7 +1,7 @@
 {
   "summary": {
-    "startedAt": "2026-07-20T07:56:49.480Z",
-    "generatedAt": "2026-07-20T08:06:47.239Z",
+    "startedAt": "2026-07-24T16:46:26.537Z",
+    "generatedAt": "2026-07-24T16:57:44.374Z",
     "settings": {
       "maxDepth": 5,
       "maxPagesPerDomain": 500,
@@ -12,9 +12,9 @@
     },
     "seeds": 4,
     "totalChecked": 179,
-    "totalBroken": 8,
+    "totalBroken": 10,
     "internalBroken": 0,
-    "externalBroken": 8,
+    "externalBroken": 10,
     "semanticBroken": 0,
     "perSeed": [
       {
@@ -23,7 +23,7 @@
         "crawledPages": 36,
         "maxDepthReached": 3,
         "checked": 45,
-        "broken": 0,
+        "broken": 1,
         "semanticBroken": 0,
         "pageErrors": 0
       },
@@ -53,7 +53,7 @@
         "crawledPages": 103,
         "maxDepthReached": 3,
         "checked": 132,
-        "broken": 8,
+        "broken": 9,
         "semanticBroken": 0,
         "pageErrors": 0
       }
@@ -767,11 +767,11 @@
           "url": "https://github.com/whodaniel/The-New-Fuse",
           "pageStatus": null,
           "pageError": null,
-          "status": 200,
-          "ok": true,
+          "status": 404,
+          "ok": false,
           "finalUrl": "https://github.com/whodaniel/The-New-Fuse",
           "error": null,
-          "broken": false
+          "broken": true
         },
         {
           "type": "external",
@@ -1174,7 +1174,7 @@
           "pageError": null,
           "title": "The New Fuse - Agent Communication Flow",
           "h1": "🤖 Agent Communication Flow",
-          "fingerprintHash": "f6b4dc9e4d955d85d68fb74bae7824f87f946c1c",
+          "fingerprintHash": "c3733d1c757c9dd59e99e41c6b1cc30ffb5057b5",
           "status": 200,
           "ok": true,
           "finalUrl": "https://thenewfuse.com/visualizations/agent-communication-flow",
@@ -1210,7 +1210,7 @@
           "pageError": null,
           "title": "The New Fuse - Monitoring Dashboard",
           "h1": "🎛️ Monitoring Dashboard",
-          "fingerprintHash": "9202846e08082511284bfe913283ce73000dcb11",
+          "fingerprintHash": "1063098890e324fa42e408e52065970fa5465ee4",
           "status": 200,
           "ok": true,
           "finalUrl": "https://thenewfuse.com/visualizations/monitoring-dashboard",
@@ -2816,11 +2816,11 @@
           "url": "https://github.com/whodaniel/The-New-Fuse",
           "pageStatus": null,
           "pageError": null,
-          "status": 200,
-          "ok": true,
+          "status": 404,
+          "ok": false,
           "finalUrl": "https://github.com/whodaniel/The-New-Fuse",
           "error": null,
-          "broken": false
+          "broken": true
         },
         {
           "type": "external",
@@ -3176,6 +3176,36 @@
     }
   ],
   "broken": [
+    {
+      "seed": "https://ai-arcade.xyz/",
+      "type": "external",
+      "domain": "ai-arcade.xyz",
+      "from": "https://ai-arcade.xyz/",
+      "depth": null,
+      "url": "https://github.com/whodaniel/The-New-Fuse",
+      "pageStatus": null,
+      "pageError": null,
+      "status": 404,
+      "ok": false,
+      "finalUrl": "https://github.com/whodaniel/The-New-Fuse",
+      "error": null,
+      "broken": true
+    },
+    {
+      "seed": "https://thenewfuse.com/",
+      "type": "external",
+      "domain": "thenewfuse.com",
+      "from": "https://thenewfuse.com/",
+      "depth": null,
+      "url": "https://github.com/whodaniel/The-New-Fuse",
+      "pageStatus": null,
+      "pageError": null,
+      "status": 404,
+      "ok": false,
+      "finalUrl": "https://github.com/whodaniel/The-New-Fuse",
+      "error": null,
+      "broken": true
+    },
     {
       "seed": "https://thenewfuse.com/",
       "type": "external",
