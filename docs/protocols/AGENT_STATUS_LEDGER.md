@@ -3,9 +3,10 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-24T23:25:12.879Z** — handoff
-`f82b041a-f2d2-4edd-9cc9-b546c74269ec` (`9c7e6bd7a1c8`). fix (Cursor session).
-Prior: handoff `41db2ffc-ad4e-46b0-9c21-5b7e2e3adb78` (`c0dc522dcac4`).
+Updated: **2026-07-24T23:48:00Z** — coherence audit follow-up `f8e109bdfa` (D23
+honesty + graphs). Prior handoff `f82b041a-f2d2-4edd-9cc9-b546c74269ec`
+(`9c7e6bd7a1` enforcement close-out). Prior: handoff
+`41db2ffc-ad4e-46b0-9c21-5b7e2e3adb78` (`c0dc522dcac4`).
 `02fe0d33-95d7-4e07-9879-a0c02a66c7fe` (`7fba1626662d`).
 `a69e0826-181e-411f-a3c2-3cb6a6d22e56` (`b2d907005c90`).
 `7b497037-01eb-48ac-9916-9b5177fc20fa` (`b9c1298e41e3`).
@@ -63,14 +64,25 @@ into `packages/tnf-cli`; TNF launcher drops to `tnf-agent`; added
 (SUDO_UID + live straggler re-check in trust-root probe). Consumer gate already
 at Redis chokepoint (`e01f85cc17`). Account uid 442 exists; isolation marker
 exists but is **not** load-bearing while workers remain on uid 501. Docs:
-`AUTHORITY_TURNUP_RUNBOOK.md`. No commit this session unless operator requests.
+`AUTHORITY_TURNUP_RUNBOOK.md`.
+
+Cursor session (2026-07-24 evening): enforcement close-out + coherence audit.
+Code: `9c7e6bd7a1` (thin Redis shim, SecureAuthGuard USER default, broker/relay
+signing, `tnf authority provision-keys`). Protocol review verdict **mixed** —
+wiring coherent; load-bearing still blocked on isolation + flags. Artifacts:
+`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`, pathway/
+coherence graphs. Honesty patches: integration map §1/§4; LOCKED D23
+self-contradiction + separate-uid degraded naming (`f8e109bdfa`, ledgered in
+`CHALLENGE_RATIONALE_LOG.md`). Do **not** claim enforce/consumer on. Operator
+next: `tnf authority relaunch-workers` → `confirm-isolation` as normal user.
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                  |
-| -------- | --------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                                                               |
+| -------- | ---------------------------------------------------------------------------------------------------- |
+| **P0**   | Operator isolation turn-up: `tnf authority relaunch-workers` → `confirm-isolation` (not `sudo tnf`). |
+| **P0**   | Read `AUTHORITY_COHERENCE_AUDIT_2026-07-24.md` before flipping consumer/enforce.                     |
+| **P1**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.              |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
