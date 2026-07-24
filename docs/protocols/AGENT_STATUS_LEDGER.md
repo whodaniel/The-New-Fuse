@@ -3,9 +3,10 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-24T19:17:00.000Z** — authority turn-up docs + sudo false-pass
-fix (Cursor session). Prior: handoff `41db2ffc-ad4e-46b0-9c21-5b7e2e3adb78`
-(`c0dc522dcac4`). `02fe0d33-95d7-4e07-9879-a0c02a66c7fe` (`7fba1626662d`).
+Updated: **2026-07-24T23:25:12.879Z** — handoff
+`f82b041a-f2d2-4edd-9cc9-b546c74269ec` (`9c7e6bd7a1c8`). fix (Cursor session).
+Prior: handoff `41db2ffc-ad4e-46b0-9c21-5b7e2e3adb78` (`c0dc522dcac4`).
+`02fe0d33-95d7-4e07-9879-a0c02a66c7fe` (`7fba1626662d`).
 `a69e0826-181e-411f-a3c2-3cb6a6d22e56` (`b2d907005c90`).
 `7b497037-01eb-48ac-9916-9b5177fc20fa` (`b9c1298e41e3`).
 `c1b8b297-baba-482e-a0dd-9801a46e9616` (`13806d3f5980`).
@@ -66,11 +67,10 @@ exists but is **not** load-bearing while workers remain on uid 501. Docs:
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                                                       |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Authority turn-up (as **normal user**, not `sudo tnf`): `tnf authority relaunch-workers` → clean `workers` → `confirm-isolation` → strong `separate-uid` on `status`. Runbook: `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`. |
-| **P1**   | Flip `TNF_AUTHORITY_CONSUMER=1` on one pilot after isolation is real; then merge PR #70 on operator review.                                                                                                                  |
-| **P1**   | Emit a fresh handoff artifact after the next critical work unit.                                                                                                                                                             |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -328,3 +328,6 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (41db2ffc-ad4e-46b0-9c21-5b7e2e3adb78) | ✅ HANDOFF_READY |
+
+| 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f82b041a-f2d2-4edd-9cc9-b546c74269ec) | ✅ HANDOFF_READY |

@@ -9,23 +9,30 @@ made to any launcher or running process during this sweep.
 
 ---
 
-## 1. The core finding: the authority stack is built but not yet CONSUMED
+## 1. The core finding: the authority stack is wired but not yet LOAD-BEARING
 
 The Phase 0 message-auth layer is wired into `RedisAgentClient`
 (`scripts/tnf-agent-cli.cjs`), which the worker wrappers route through — so
-signature verification applies to live agent traffic today.
+signature verification applies to live agent traffic today (default
+`TNF_MESSAGE_AUTH_MODE=warn`).
 
-**Everything above Phase 0 is not yet called by any agent.** A repo-wide grep
-for consumers of `tnf-capability-grant`, `tnf-elevation-broker`,
-`tnf-cred-broker`, and `tnf-trust-root` (excluding the modules, their tests, and
-the CLI) returns nothing. The grant/elevation/broker system is complete and
-tested, but no wrapper requests a grant, verifies one, or calls the broker.
+**Phases 1–4a are wired at the shared chokepoint but default-off.**
+`RedisAgentClient.handleIncomingMessage` → `gateAndDispatch` →
+`tnf-wrapper-authority.gateTask` holds tasks that declare authority-shaped
+`requiredCapabilities` (`{ with, can }`) when
+`TNF_AUTHORITY_CONSUMER=1|true|on`. Unset, the gate is a cheap sync skip — fleet
+behaviour unchanged. The stack is therefore **consumed in code** and **not
+load-bearing in production** until an operator opts in _after_ isolation is
+proven.
 
 **Consequence for the trust-root migration:** isolating agents to the
-`tnf-agent` uid gives defence-in-depth (they can't read the operator key), but
-nothing yet _depends_ on that isolation, because no agent holds a grant that the
-key protects. Migration and integration are coupled; doing the migration first
-is safe but not yet meaningful on its own.
+`tnf-agent` uid is what makes elevation/grants a real boundary (agents cannot
+read the operator key). Enabling the consumer flag while workers still share uid
+501 would exercise the path under a degraded root — defence-in-depth only.
+**Order source of truth:**
+[`AUTHORITY_TURNUP_RUNBOOK.md`](./AUTHORITY_TURNUP_RUNBOOK.md) (C2 relaunch → C3
+confirm-isolation → C4 pilot flag). See also
+`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`.
 
 ---
 
@@ -95,41 +102,31 @@ open-runtime one. This is the natural place for the SaaS/open split to land.
 
 ## 4. Recommended sequencing
 
-1. **Integrate the authority stack into ONE worker wrapper end to end** (e.g.
-   gemini-redis-wrapper): request a grant, verify it, call the broker for a
-   read-only action. This makes the isolation boundary meaningful and validates
-   the contracts against a real consumer before fanning out.
-   - **DONE (library half, 2026-07-24):** `scripts/lib/tnf-authority-client.cjs`
-     is the agent-side API
-     (`requestElevation → awaitGrant → verifyHeldGrant → useCredential`, plus
-     `withElevation`). An e2e test drives the full loop — agent requests,
-     operator approves, agent verifies and spends, secret never reaches the
-     agent. The contracts compose.
-   - **DONE (wrapper half, 2026-07-24):** wired at the SHARED chokepoint rather
-     than per-wrapper. `RedisAgentClient.handleIncomingMessage`
-     (scripts/tnf-agent-cli.cjs → `gateAndDispatch`) gates every Redis-driven
-     wrapper (gemini/jules/pi/claude/antigravity) uniformly — the same place
-     Phase 0 auth and the D22 check already live. A task that declares
-     `requiredCapabilities` is held for operator elevation before reaching any
-     handler; denial/timeout/error fail closed. DEFAULT-OFF via
-     `TNF_AUTHORITY_CONSUMER`: a cheap sync flag check skips the whole path when
-     unset, so the fleet is byte-for-byte unchanged until an operator opts in.
-     Verified: default-off delivers a capability-declaring task synchronously;
-     enabled + declared blocks until approved; the approved grant is attached to
-     the message as `authorityGrant` for the handler to spend. The centralized
-     gate supersedes the earlier gemini-only hook (removed to avoid
-     double-gating).
-2. **Then migrate that wrapper's launcher to `tnf-agent`** and run
-   `tnf-authority confirm-isolation`. Now the trust root is genuinely
-   non-degraded for a real workload.
-3. **Reconcile `agentApiGrants` to the `CredentialBroker` contract** so the
-   hosted and local paths share one grant vocabulary.
-4. **Fan out** to the remaining worker wrappers.
-5. Operator-side launchers (cron, turn-end, review) stay uid 501 throughout.
+**Library + chokepoint wiring is DONE (2026-07-24).** Remaining work is operator
+turn-up order (do not invert):
 
-Migrating launchers before step 1 is safe but buys only defence-in-depth. Wiring
-a consumer first is what turns the whole stack from tested-in-isolation into
-load-bearing.
+1. **DONE — library:** `scripts/lib/tnf-authority-client.cjs`
+   (`requestElevation → awaitGrant → verifyHeldGrant → useCredential`, plus
+   `withElevation`). E2e test covers approve → verify → spend; secret never
+   reaches the agent.
+2. **DONE — wrapper chokepoint:** `RedisAgentClient.handleIncomingMessage` →
+   `gateAndDispatch` → `tnf-wrapper-authority.gateTask` for every Redis-driven
+   wrapper. DEFAULT-OFF via `TNF_AUTHORITY_CONSUMER`. Centralized gate
+   supersedes the earlier gemini-only hook.
+3. **NEXT — migrate pilot worker to `tnf-agent`**
+   (`tnf authority relaunch-workers`), then **`tnf authority confirm-isolation`
+   as the normal user** (never `sudo tnf authority …`). Strong `separate-uid`
+   only when denial works and no uid-501 worker stragglers remain.
+4. **THEN — enable `TNF_AUTHORITY_CONSUMER=1` on that pilot unit only**;
+   exercise approve/deny/plain-task via `tnf authority review`.
+5. **Fan out** remaining workers one by one (isolate → confirm → flag each).
+6. **Deferred:** reconcile `agentApiGrants` → `CredentialBroker` contract
+   (SaaS/open convergence — not turn-up).
+7. Operator-side launchers (cron, turn-end, review) stay uid 501 throughout.
+
+Enabling the consumer before isolation is safe only as a lab exercise; it is
+**not** load-bearing under a degraded root. Isolation-then-flag is what turns
+the wired stack into a real boundary.
 
 **Operator turn-up checklist** (encryption migration → TNF launcher relaunch →
 confirm-isolation → flag → fan out): see

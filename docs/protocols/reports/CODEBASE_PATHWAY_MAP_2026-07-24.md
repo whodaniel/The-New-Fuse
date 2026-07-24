@@ -187,14 +187,14 @@ JSONL under `~/.tnf/authority/`.
 | `scripts/claude-redis-wrapper.cjs`      | same pattern                                    |                                                                |
 | `scripts/antigravity-redis-wrapper.cjs` | same pattern                                    |                                                                |
 
-### 2.3 Alternate thin Redis client (no A2A auth/authority)
+### 2.3 Thin Redis client (shim → full `RedisAgentClient`)
 
-| Field       | Detail                                                                                                                                     |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Entry**   | `scripts/lib/redis-agent-client.cjs` — minimal pub/sub, **no** `handleIncomingMessage` / auth / gate                                       |
-| **Used by** | `runtime/tnf-director-loop.cjs`, `tnf-swarm-context-bridge.cjs`, `relay-channel-monitor.cjs`, `terminal-heartbeat-pulse.cjs` (via resolve) |
+| Field       | Detail                                                                                                                                        |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Entry**   | `scripts/lib/redis-agent-client.cjs` — compatibility shim over full `RedisAgentClient` (signs outbound A2A; inbound via auth + optional gate) |
+| **Used by** | `runtime/tnf-director-loop.cjs`, `tnf-swarm-context-bridge.cjs`, `relay-channel-monitor.cjs`, `terminal-heartbeat-pulse.cjs` (via resolve)    |
 
-**Gap:** processes using this stub bypass Phase-0 verify and authority consumer.
+**Status (2026-07-24):** former bypass **closed** at `9c7e6bd7a1` — see gaps #3.
 
 ### 2.4 Other bus participants
 
@@ -449,8 +449,8 @@ Tasks **without** `requiredCapabilities` are never gated even when flag is on
 ### P09 — HTTP API (apps/api)
 
 - **Entry:** `main.bootstrap` → controllers
-- **Gates:** SecurityGuard + SecureAuthGuard (PUBLIC default) + selective
-  JwtAuthGuard/RequireAuthLevel
+- **Gates:** SecurityGuard + SecureAuthGuard (**USER default**, fail-closed) +
+  selective JwtAuthGuard/`@RequireAuthLevel`; PUBLIC is explicit opt-in
 - **Exit:** DB/HTTP/LLM
 
 ### P10 — API Gateway edge
@@ -537,3 +537,86 @@ Tasks **without** `requiredCapabilities` are never gated even when flag is on
 
 - Markdown: `docs/protocols/reports/CODEBASE_PATHWAY_MAP_2026-07-24.md`
 - JSON graph: `docs/protocols/reports/CODEBASE_PATHWAY_MAP_2026-07-24.json`
+
+---
+
+## Coherence audit addendum — 2026-07-24 (post `9c7e6bd7a1`)
+
+**Verdict: mixed** — close-out hops are real and wired; load-bearing enforcement
+still depends on soft defaults and remaining unsigned publishers.
+
+### Verified pathway hops (live code)
+
+| Pathway                   | Hop chain (source)                                                                                                                                                                                                          | Mode                                                                                                       |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **P01 Redis A2A inbound** | `RedisAgentClient` subscriber → `handleIncomingMessage` → `authenticateEnvelope` → `normalizeIncomingMessage` → (`task` + `messageAuthorityEnabled`) `gateAndDispatch` → `dispatchToHandlers` (`scripts/tnf-agent-cli.cjs`) | Message auth: default **warn** (soft). Authority: default **off**. Gate path **fail-closed** when enabled. |
+| **Thin client shim**      | `scripts/lib/redis-agent-client.cjs` → full `RedisAgentClient`; `_wrapPublisherForSigning` on `initialize`; `onMessage` → full `onMessage('*')` channel fanout                                                              | Closed vs prior bypass; edge cases below.                                                                  |
+| **Broker dispatch**       | `BrokerAgent` → hoist authority-shaped `{with,can}` → `stringifySignedBusMessage` → Redis egress/ingress (`packages/relay-core/src/broker-agent.ts`)                                                                        | Task envelopes signed. Heartbeats / policy-decision pubs still **unsigned**.                               |
+| **Redis relay bridge**    | `handleWebSocketMessage` / `publishToIngress` / `publishToAgent` → `stringifySignedBusMessage` (`redis-relay-bridge.ts`)                                                                                                    | Ingress/egress signed. Raw `publish(channel, message)` still **unsigned passthrough**.                     |
+| **HTTP apps/api**         | `APP_GUARD` `SecureAuthGuard`: default `AuthLevel.USER`; `TNF_SECURE_AUTH_DEFAULT=public` emergency only                                                                                                                    | Fail-closed default. PUBLIC via `@RequireAuthLevel(PUBLIC)`.                                               |
+| **Authority CLI**         | `tnf authority *` → `runAuthorityScript` → `scripts/tnf-authority.cjs`; `provision-keys` → `tnf-identity.ensureAgentKeypair` (`packages/tnf-cli/src/cli.ts`)                                                                | Operator surface present.                                                                                  |
+
+### Closed vs still open (enforcement)
+
+**Closed by `9c7e6bd7a1` (verified):**
+
+1. Thin Redis client bypass → shim (`scripts/lib/redis-agent-client.cjs`)
+2. `SecureAuthGuard` PUBLIC default → USER (`secure-auth.guard.ts`)
+3. Broker task-envelope unsigned publish → `stringifySignedBusMessage`
+4. Relay bridge ingress/egress unsigned → same helper
+5. Authority-shaped caps not on task envelope → broker hoist to
+   `payload.requiredCapabilities`
+
+**Still open:**
+
+1. `TNF_AUTHORITY_CONSUMER` default **off** — `messageAuthorityEnabled` /
+   `tnf-wrapper-authority.isEnabled`
+2. `TNF_MESSAGE_AUTH_MODE` default **`warn`** — unsigned/forged allowed with
+   audit (`tnf-message-auth.getMode`)
+3. `GatewayAuthGuard` **opt-in only** — no `APP_GUARD` in api-gateway; only
+   `@UseGuards` on two auth controller routes
+4. Phase **4b** mutating broker actions — deferred (README / turnup)
+5. Unsigned publishers remaining:
+   - `BrokerAgent.startHeartbeat` → `JSON.stringify(heartbeat)`
+   - `BrokerAgent.publishPolicyDecision` / escalate payloads
+   - `DirectorAgent.startHeartbeat` (+ decision-channel events)
+   - Master-clock Redis `REGISTRATION_*` pubs (heartbeat itself is WS/hset, not
+     signed bus envelope)
+   - `RedisRelayBridge.publish` raw channel passthrough
+6. `stringifySignedBusMessage` **fail-open** on sign throw (warn + unsigned
+   JSON)
+7. Tasks without authority-shaped `{with,can}` never gated even when consumer on
+
+### New / clarified bypasses (shim + PUBLIC)
+
+- **Shim:** signing wrap only after `initialize()`; non-A2A / non-JSON payloads
+  pass unsigned; already-signed envelopes skipped; parse errors publish as-is.
+- **PUBLIC surface larger than “allowlist” narrative:** explicit
+  `@RequireAuthLevel(PUBLIC)` also on `access`, `visualizations`, `system`
+  (selected), `orchestrator` (selected), `onboarding`, `compounding-memory` —
+  not missing annotations; docs that list only
+  auth/health/public-info/bridges/webhook-incoming are **incomplete**.
+
+### DOC vs CODE contradictions flagged
+
+| Artifact                                              | Issue                                                                                                                                                                               |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AUTHORITY_INTEGRATION_MAP.md` §1                     | Stale claim “Everything above Phase 0 is not yet called” / “no wrapper requests a grant” — contradicted by §4 DONE (chokepoint `gateAndDispatch`) and live `tnf-wrapper-authority`. |
+| This map **P09** (pre-addendum)                       | Said SecureAuth PUBLIC default — contradicted live USER default (fixed above).                                                                                                      |
+| Companion **JSON** (pre-refresh)                      | Still listed thin-client bypass + SecureAuth PUBLIC as `enforcementGaps` — stale vs commit.                                                                                         |
+| Pathway Gaps §5 “PUBLIC allowlist”                    | Underspecifies other intentional PUBLIC controllers (see above).                                                                                                                    |
+| `AUTHORITY_TURNUP_RUNBOOK.md` / `AUTHORITY_README.md` | Aligned with commit on USER default, shim, signed broker/bridge; still correctly document warn/consumer-off.                                                                        |
+
+### Operator vs code next actions (ordered)
+
+1. **Operator:** `tnf authority provision-keys` for live agent ids; run
+   warn-mode until audit clean; then consider `TNF_MESSAGE_AUTH_MODE=enforce`.
+2. **Operator:** isolation → `confirm-isolation` → pilot
+   `TNF_AUTHORITY_CONSUMER=1` with tasks that declare `{with,can}`.
+3. **Code:** sign remaining bus publishers (broker/director heartbeats +
+   decision pubs; master-clock registration replies; bridge raw `publish` or
+   retire it).
+4. **Code:** gateway global auth parity (`APP_GUARD` or audit every route).
+5. **Docs:** refresh `AUTHORITY_INTEGRATION_MAP.md` §1 stale “not consumed”
+   paragraph.
+6. **Deferred:** Phase 4b mutations after non-degraded trust root.

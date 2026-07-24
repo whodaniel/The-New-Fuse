@@ -2,10 +2,13 @@
   "meta": {
     "id": "CODEBASE_PATHWAY_MAP_2026-07-24",
     "generatedAt": "2026-07-24",
+    "coherenceAuditAt": "2026-07-24",
+    "coherenceCommit": "9c7e6bd7a1",
     "branch": "fix/a2a-signature-verification",
     "repoRoot": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
-    "method": "read-only verified tree analysis",
+    "method": "read-only verified tree analysis + post-close-out coherence audit",
     "companionMarkdown": "docs/protocols/reports/CODEBASE_PATHWAY_MAP_2026-07-24.md",
+    "verdict": "mixed",
     "kinds": ["entry", "handler", "gate", "store", "cli", "bus"]
   },
   "summary": {
@@ -22,24 +25,56 @@
       "pw-cred-broker"
     ],
     "failClosedByDefault": [
-      "gate-authority-consumer-off",
+      "gate-secure-auth-user-default",
       "gate-cred-broker-mutating",
-      "gate-elevation-decide-agent-context"
+      "gate-elevation-decide-agent-context",
+      "handler-gate-and-dispatch"
     ],
+    "failClosedOnlyWhenEnabled": ["gate-authority-consumer-off"],
     "failOpenOrSoft": [
       "gate-message-auth-warn",
-      "gate-secure-auth-public-default",
-      "node-thin-redis-client"
+      "gate-sign-bus-message-fail-open",
+      "gate-gateway-auth-opt-in"
+    ],
+    "enforcementGapsClosed": [
+      "scripts/lib/redis-agent-client.cjs shim → full RedisAgentClient (sign outbound; inbound auth chokepoint)",
+      "SecureAuthGuard defaults AuthLevel.USER (PUBLIC is @RequireAuthLevel opt-in)",
+      "BrokerAgent task dispatch signed via stringifySignedBusMessage",
+      "RedisRelayBridge ingress/egress signed via stringifySignedBusMessage",
+      "Broker hoists authority-shaped {with,can} onto task envelope payload.requiredCapabilities"
     ],
     "enforcementGaps": [
-      "TNF_AUTHORITY_CONSUMER default off — authority not load-bearing",
-      "TNF_MESSAGE_AUTH_MODE=warn allows unsigned/forged dispatch",
-      "scripts/lib/redis-agent-client.cjs bypasses A2A auth/authority",
-      "BrokerAgent policy gates are not TNF authority grants",
-      "SecureAuthGuard defaults AuthLevel.PUBLIC without RequireAuthLevel",
-      "Dual HTTP surfaces (api / backend / gateway) auth drift risk",
-      "Some relay publishers do not sign envelopes yet"
-    ]
+      "TNF_AUTHORITY_CONSUMER default off — authority not load-bearing until opted in + {with,can} caps",
+      "TNF_MESSAGE_AUTH_MODE=warn allows unsigned/forged dispatch (audit only)",
+      "GatewayAuthGuard opt-in only (no APP_GUARD) — dual HTTP surface auth drift",
+      "BrokerAgent local policy gates are not TNF authority grants",
+      "Unsigned publishers remain: broker/director heartbeats + decision pubs; master-clock REGISTRATION_*; RedisRelayBridge.publish raw",
+      "stringifySignedBusMessage fail-open on sign throw",
+      "Phase 4b credential-broker mutating actions deferred",
+      "AUTHORITY_INTEGRATION_MAP.md §1 stale vs wired gateAndDispatch consumer"
+    ],
+    "nodeEdgeDeltas": {
+      "upsertNodes": [
+        "node-redis-agent-client-shim",
+        "handler-stringify-signed-bus",
+        "gate-secure-auth-user-default",
+        "gate-sign-bus-message-fail-open",
+        "gate-gateway-auth-opt-in",
+        "pub-broker-heartbeat-unsigned",
+        "pub-director-heartbeat-unsigned"
+      ],
+      "retireOrRelabel": [
+        "node-thin-redis-client",
+        "gate-secure-auth-public-default"
+      ],
+      "upsertEdges": [
+        "e-shim-to-full-client",
+        "e-broker-sign-dispatch",
+        "e-bridge-sign-ingress",
+        "e-bridge-sign-egress",
+        "e-sign-bus-fail-open"
+      ]
+    }
   },
   "pathways": [
     {
@@ -109,15 +144,19 @@
       "nodeIds": [
         "entry-standalone-relay",
         "handler-redis-relay-bridge",
+        "handler-stringify-signed-bus",
         "bus-tnf-ingress",
         "bus-tnf-egress",
         "entry-redis-agent-client"
       ],
       "edgeIds": [
         "e-relay-to-bridge",
+        "e-bridge-sign-ingress",
+        "e-bridge-sign-egress",
         "e-bridge-to-ingress",
         "e-egress-to-bridge",
-        "e-ingress-to-agent-client"
+        "e-ingress-to-agent-client",
+        "e-sign-bus-fail-open"
       ]
     },
     {
@@ -199,10 +238,20 @@
       "nodeIds": [
         "entry-broker-agent",
         "handler-broker-policy",
+        "handler-stringify-signed-bus",
         "store-agent-registry",
-        "bus-tnf-agents"
+        "bus-tnf-egress",
+        "bus-tnf-ingress",
+        "pub-broker-heartbeat-unsigned"
       ],
-      "edgeIds": ["e-broker-start", "e-broker-policy", "e-broker-dispatch"]
+      "edgeIds": [
+        "e-broker-start",
+        "e-broker-policy",
+        "e-broker-sign-dispatch",
+        "e-broker-dispatch",
+        "e-broker-dispatch-to-bus",
+        "e-broker-heartbeat-unsigned"
+      ]
     },
     {
       "id": "pw-frontend-spa",
@@ -677,13 +726,95 @@
     {
       "id": "node-thin-redis-client",
       "kind": "entry",
-      "label": "thin redis-agent-client (no auth gate)",
+      "label": "redis-agent-client shim (delegates to full client)",
       "filePath": "scripts/lib/redis-agent-client.cjs",
       "symbol": "RedisAgentClient",
       "properties": {
-        "bypassesMessageAuth": true,
-        "bypassesAuthorityConsumer": true,
-        "status": "gap"
+        "status": "closed-2026-07-24",
+        "replacedBy": "node-redis-agent-client-shim",
+        "bypassesMessageAuth": false,
+        "bypassesAuthorityConsumer": false,
+        "note": "kept id for graph continuity; use node-redis-agent-client-shim"
+      }
+    },
+    {
+      "id": "node-redis-agent-client-shim",
+      "kind": "entry",
+      "label": "redis-agent-client shim → full RedisAgentClient",
+      "filePath": "scripts/lib/redis-agent-client.cjs",
+      "symbol": "RedisAgentClient.initialize/_wrapPublisherForSigning/onMessage",
+      "properties": {
+        "failClosed": false,
+        "failOpen": false,
+        "signsOutboundA2A": true,
+        "inboundViaFullClientAuth": true,
+        "edgeCases": [
+          "publisher wrap only after initialize()",
+          "non-A2A/non-JSON pass unsigned",
+          "already-signed skipped",
+          "parse errors publish as-is"
+        ]
+      }
+    },
+    {
+      "id": "handler-stringify-signed-bus",
+      "kind": "handler",
+      "label": "stringifySignedBusMessage",
+      "filePath": "packages/relay-core/src/protocol/sign-bus-message.ts",
+      "symbol": "stringifySignedBusMessage",
+      "properties": {
+        "failOpenOnSignThrow": true,
+        "uses": "scripts/lib/tnf-message-auth.cjs"
+      }
+    },
+    {
+      "id": "gate-sign-bus-message-fail-open",
+      "kind": "gate",
+      "label": "sign-bus-message catch → unsigned JSON",
+      "filePath": "packages/relay-core/src/protocol/sign-bus-message.ts",
+      "symbol": "stringifySignedBusMessage",
+      "properties": { "failOpen": true, "status": "soft-on-error" }
+    },
+    {
+      "id": "gate-gateway-auth-opt-in",
+      "kind": "gate",
+      "label": "GatewayAuthGuard opt-in (no APP_GUARD)",
+      "filePath": "apps/api-gateway/src/auth/gateway-auth.guard.ts",
+      "symbol": "GatewayAuthGuard",
+      "properties": {
+        "failClosed": false,
+        "failOpen": true,
+        "status": "opt-in-only",
+        "verifiedUses": ["apps/api-gateway/src/auth/auth.controller.ts"]
+      }
+    },
+    {
+      "id": "pub-broker-heartbeat-unsigned",
+      "kind": "bus",
+      "label": "BrokerAgent heartbeat (unsigned JSON)",
+      "filePath": "packages/relay-core/src/broker-agent.ts",
+      "symbol": "BrokerAgent.startHeartbeat",
+      "properties": { "signed": false, "failOpen": true }
+    },
+    {
+      "id": "pub-director-heartbeat-unsigned",
+      "kind": "bus",
+      "label": "DirectorAgent heartbeat (unsigned JSON)",
+      "filePath": "packages/relay-core/src/director-agent.ts",
+      "symbol": "DirectorAgent.startHeartbeat",
+      "properties": { "signed": false, "failOpen": true }
+    },
+    {
+      "id": "gate-secure-auth-user-default",
+      "kind": "gate",
+      "label": "SecureAuthGuard USER default",
+      "filePath": "apps/api/src/guards/secure-auth.guard.ts",
+      "symbol": "SecureAuthGuard.canActivate",
+      "properties": {
+        "defaultAuthLevel": "USER",
+        "failClosed": true,
+        "emergencyRollbackEnv": "TNF_SECURE_AUTH_DEFAULT=public",
+        "status": "closed-2026-07-24"
       }
     },
     {
@@ -783,8 +914,10 @@
       "filePath": "apps/api/src/guards/secure-auth.guard.ts",
       "symbol": "SecureAuthGuard.canActivate",
       "properties": {
-        "defaultAuthLevel": "PUBLIC",
-        "gap": "missing RequireAuthLevel => public"
+        "defaultAuthLevel": "USER",
+        "failClosed": true,
+        "publicOptIn": "@RequireAuthLevel(PUBLIC)",
+        "emergencyRollbackEnv": "TNF_SECURE_AUTH_DEFAULT=public"
       }
     },
     {
@@ -1024,12 +1157,100 @@
     {
       "id": "gate-secure-auth-public-default",
       "kind": "gate",
-      "label": "SecureAuthGuard PUBLIC default",
+      "label": "SecureAuthGuard PUBLIC default (retired)",
       "filePath": "apps/api/src/guards/secure-auth.guard.ts",
-      "properties": { "status": "enforcement-gap" }
+      "properties": {
+        "status": "closed-2026-07-24",
+        "replacedBy": "gate-secure-auth-user-default"
+      }
     }
   ],
   "edges": [
+    {
+      "id": "e-shim-to-full-client",
+      "source": "node-redis-agent-client-shim",
+      "target": "entry-redis-agent-client",
+      "type": "delegates",
+      "label": "loadFullClient + initialize",
+      "properties": { "failClosed": false }
+    },
+    {
+      "id": "e-broker-sign-dispatch",
+      "source": "entry-broker-agent",
+      "target": "handler-stringify-signed-bus",
+      "type": "calls",
+      "label": "task envelope publish",
+      "properties": { "failClosed": false, "failOpenOnSignThrow": true }
+    },
+    {
+      "id": "e-bridge-sign-ingress",
+      "source": "handler-redis-relay-bridge",
+      "target": "handler-stringify-signed-bus",
+      "type": "calls",
+      "label": "ingress / publishToIngress",
+      "properties": { "failClosed": false }
+    },
+    {
+      "id": "e-bridge-sign-egress",
+      "source": "handler-redis-relay-bridge",
+      "target": "handler-stringify-signed-bus",
+      "type": "calls",
+      "label": "publishToAgent egress",
+      "properties": { "failClosed": false }
+    },
+    {
+      "id": "e-sign-bus-fail-open",
+      "source": "handler-stringify-signed-bus",
+      "target": "gate-sign-bus-message-fail-open",
+      "type": "on_error",
+      "label": "publish unsigned JSON",
+      "properties": { "failOpen": true }
+    },
+    {
+      "id": "e-broker-heartbeat-unsigned",
+      "source": "entry-broker-agent",
+      "target": "pub-broker-heartbeat-unsigned",
+      "type": "publishes",
+      "properties": { "signed": false, "failOpen": true }
+    },
+    {
+      "id": "e-director-heartbeat-unsigned",
+      "source": "pub-director-heartbeat-unsigned",
+      "target": "bus-tnf-agents",
+      "type": "publishes",
+      "label": "DirectorAgent.startHeartbeat → HEARTBEAT_CHANNEL",
+      "properties": {
+        "signed": false,
+        "failOpen": true,
+        "filePath": "packages/relay-core/src/director-agent.ts"
+      }
+    },
+    {
+      "id": "e-stringify-to-agents-bus",
+      "source": "handler-stringify-signed-bus",
+      "target": "bus-tnf-agents",
+      "type": "may_publish",
+      "label": "signed task/event envelopes"
+    },
+    {
+      "id": "e-stringify-to-ingress",
+      "source": "handler-stringify-signed-bus",
+      "target": "bus-tnf-ingress",
+      "type": "publishes"
+    },
+    {
+      "id": "e-stringify-to-egress",
+      "source": "handler-stringify-signed-bus",
+      "target": "bus-tnf-egress",
+      "type": "publishes"
+    },
+    {
+      "id": "e-gw-auth-opt-in-flag",
+      "source": "gate-gateway-auth",
+      "target": "gate-gateway-auth-opt-in",
+      "type": "characterized_as",
+      "properties": { "failOpen": true }
+    },
     {
       "id": "e-sub-to-handle",
       "source": "entry-redis-agent-client",
@@ -1185,7 +1406,9 @@
       "id": "e-bridge-to-ingress",
       "source": "handler-redis-relay-bridge",
       "target": "bus-tnf-ingress",
-      "type": "publishes"
+      "type": "publishes",
+      "label": "via stringifySignedBusMessage",
+      "properties": { "signed": true, "failOpenOnSignThrow": true }
     },
     {
       "id": "e-egress-to-bridge",
@@ -1252,8 +1475,17 @@
     {
       "id": "e-broker-dispatch",
       "source": "handler-broker-policy",
-      "target": "bus-tnf-agents",
-      "type": "publishes"
+      "target": "handler-stringify-signed-bus",
+      "type": "publishes",
+      "label": "signed task envelope → egress/ingress",
+      "properties": { "signed": true, "failOpenOnSignThrow": true }
+    },
+    {
+      "id": "e-broker-dispatch-to-bus",
+      "source": "handler-stringify-signed-bus",
+      "target": "bus-tnf-egress",
+      "type": "publishes",
+      "label": "after stringifySignedBusMessage"
     },
     {
       "id": "e-api-to-security",

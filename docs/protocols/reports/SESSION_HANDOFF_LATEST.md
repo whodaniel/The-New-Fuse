@@ -1,75 +1,76 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-24T21:17:42.248Z` Handoff
-ID: `2aff5fc1-e783-4f83-8f03-9f0dc1d42dd1`
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-07-24T23:25:12.879Z`  
+Handoff ID: `f82b041a-f2d2-4edd-9cc9-b546c74269ec`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/a2a-signature-verification`
-- Head SHA: `32f389a5bcf94550f82c7a13a1f500929c699695`
+- Head SHA: `9c7e6bd7a1c812f17e2db90337c4618931294c59`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Created 1 new agent(s): qodercli
-- Modified 25 file(s)
+- Protocol enforcement layer implemented for mandatory session handoff
+  continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
 ## Changed Paths
 
-- agent/test-reports/\_rolling-summary.json
-- .tnf/agent-registry-snapshot.json
-- apps/audio-trigger-kws-mvp/src/server.ts
-- apps/frontend/docs/audits/live-link-crawl.json
-- apps/frontend/docs/audits/live-link-crawl.md
-- apps/frontend/scripts/audit-live-links.mjs
-- apps/frontend/src/components/SiteFooter.tsx
-- apps/frontend/src/components/layout/LandingFooter.tsx
-- apps/frontend/src/components/layout/LandingHeader.tsx
-- apps/frontend/src/data/codebase_map.json
-- apps/frontend/src/pages/Home.tsx
-- apps/frontend/src/pages/Landing/StaticLanding.html
-- apps/frontend/src/utils/paths.ts
-- apps/tauri-desktop/src/pages/VirtualLibraryHub.tsx
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- packages/database/src/drizzle/schema/enums.ts
-- packages/relay-core/src/agent-registry-bridge.ts
-- packages/tnf-cli/src/commands/agents-classify.ts
-- scripts/marketplace/seed-catalog-items.sql
-- .agent/agents/qodercli.md
+- apps/api/src/controllers/auth.controller.ts
+- apps/api/src/controllers/bridges.controller.ts
+- apps/api/src/controllers/health.controller.ts
+- apps/api/src/controllers/public-info.controller.ts
+- apps/api/src/guards/secure-auth.guard.ts
+- apps/api/src/modules/webhooks/webhooks.controller.ts
+- docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md
+- docs/protocols/CHALLENGE_RATIONALE_LOG.md
+- docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/CODEBASE_PATHWAY_MAP_2026-07-24.md
-- packages/tnf-cli/src/tasks/
-- scripts/agents/tnf-build-doctor.sh
-- scripts/agents/tnf-living-state-prober.sh
-- scripts/agents/tnf-registry-anchored-reconciler.sh
+- packages/relay-core/dist/broker-agent.js
+- packages/relay-core/dist/broker-agent.js.map
+- packages/relay-core/dist/protocol/sign-bus-message.d.ts
+- packages/relay-core/dist/protocol/sign-bus-message.d.ts.map
+- packages/relay-core/dist/protocol/sign-bus-message.js
+- packages/relay-core/dist/protocol/sign-bus-message.js.map
+- packages/relay-core/dist/redis-relay-bridge.d.ts.map
+- packages/relay-core/dist/redis-relay-bridge.js
+- packages/relay-core/dist/redis-relay-bridge.js.map
+- packages/relay-core/src/broker-agent.ts
+- packages/relay-core/src/protocol/sign-bus-message.ts
+- packages/relay-core/src/redis-relay-bridge.ts
+- packages/tnf-cli/src/cli.ts
+- scripts/lib/AUTHORITY_README.md
+- scripts/lib/redis-agent-client.cjs
+- scripts/lib/redis-agent-client.shim.test.cjs
+- scripts/lib/tnf-wrapper-authority.cjs
+- scripts/lib/tnf-wrapper-authority.test.cjs
+
+## Verification
+
+- privacy_guard: `pass`
+- secret_sweep: `pass`
+- docs_pii_guard: `pass`
+- supabase_rls_audit: `na`
 
 ## Continuation
 
-- **Owner:** operator
-- **Priority:** medium
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
+- Priority: `high`
 
-**Targets:**
-
-- orchestrator
-
-**Resume Checklist:**
+### Resume Checklist
 
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
-  CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop
-  and get live operator confirmation before running git commit/push for those,
-  do not auto-execute them
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
 
-- Run check-agent-registration.cjs to verify agent ledger is current
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 25 file(s)
-  uncommitted — see
-  docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
-
-## Artifacts
-
-**Commits:**
-
-- 32f389a5bcf94550f82c7a13a1f500929c699695
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.

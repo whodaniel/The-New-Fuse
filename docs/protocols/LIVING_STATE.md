@@ -2,9 +2,11 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Authority enforcement code landed (thin Redis shim,
-SecureAuthGuard USER default, broker/relay signing, `provision-keys`). Operator
-still needs (normal user, not `sudo tnf`): `tnf authority relaunch-workers` →
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`f82b041a-f2d2-4edd-9cc9-b546c74269ec` **Head:** `9c7e6bd7a1c8` SecureAuthGuard
+USER default, broker/relay signing, `provision-keys`). Operator still needs
+(normal user, not `sudo tnf`): `tnf authority relaunch-workers` →
 `confirm-isolation` → strong `separate-uid`, then pilot
 `TNF_AUTHORITY_CONSUMER=1`. Runbook:
 `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`. **Project ID:**
