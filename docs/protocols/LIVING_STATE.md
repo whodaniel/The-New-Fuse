@@ -41,6 +41,8 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 ## ⚡ Active Steps
 
 - [✅] 2026-07-24T00:30:13.658Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T01:16:10.135Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
 
 - [🔑] **2026-07-23 OPERATOR-ONLY, OPEN: rotate leaked credentials.**
   `apps/api/.env` + 3 `.bak` copies were tracked and pushed to the **public**
@@ -61,9 +63,25 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
   symmetric keys were rejected as insufficient, since any peer able to verify
   an agent could also forge as it). 51 tests / 4 suites; impersonation verified
   closed end-to-end. Branch `fix/a2a-signature-verification`.
-- [⏳] 2026-07-23 **Elevation layer NOT built.** Capability grants (Phase 2),
-  operator approval CLI (Phase 3), credential broker (Phase 4) do not exist.
-  D23 states this explicitly so no agent can claim a grant it cannot hold.
+- [✅] 2026-07-23 **Phase 2 built: capability grants + environment-adaptive
+  trust roots.** `tnf-capability-grant.cjs` — UCAN-shaped, 15m default / 60m
+  ceiling, task-bound, single-use, **attenuating** (a chain can only narrow,
+  enforced at issue AND verify, because issue-time checks are bypassable by
+  crafting a grant directly). `tnf-trust-root.cjs` — probes `fido2 |
+  secure-enclave | tpm2 | pkcs11 | remote-attestation | separate-uid |
+  os-keystore | file` and picks the strongest that genuinely works, so one build
+  adapts to any environment. Contracts published to
+  `packages/control-plane-contracts/src/authority.ts` (public API boundary) so
+  the proprietary hosted root implements the same interface. 27 tests.
+- [⚠️] 2026-07-23 **The active trust root on this workstation is `file` — not a
+  boundary.** `MacBookPro12,1` has no Secure Enclave (probed: OSStatus -25300).
+  Creating a `tnf-agent` account makes 0600 a kernel-enforced boundary at zero
+  cost; a FIDO2 token is stronger still and works on this hardware. Grants
+  signed under `file` are only as trustworthy as every process running as this
+  user, and `describeSelection()` says so at runtime.
+- [⏳] 2026-07-23 **Approval channel NOT built.** Operator approval CLI (Phase 3)
+  and credential broker (Phase 4) do not exist. Until they do, no agent can
+  claim an operator approved anything — there is no channel for it.
 - [⚠️] 2026-07-23 **Do not flip `TNF_MESSAGE_AUTH_MODE=enforce` yet.** Requires
   every agent to hold an Ed25519 keypair and every node to have imported its
   peers' public keys; flipping early silently drops traffic. See `.env.example`.

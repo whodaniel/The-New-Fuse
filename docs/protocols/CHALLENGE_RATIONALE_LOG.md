@@ -59,6 +59,34 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: Daniel Goldberg (operator), confirmed via plan approval
   (ExitPlanMode) in a live Claude Code session, 2026-07-23.
 
+## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23 — Phase 2 grants + trust roots)
+
+- file: docs/protocols/DIRECTIVES.md
+- git_blob_sha: (see commit history for this session; logged concurrently with
+  the commit)
+- rationale: Operator directed that TNF be adaptable to varied user
+  environments out of the box, and that the open/proprietary split be
+  respected. D23 previously said the whole elevation layer was unimplemented;
+  that is now only partly true and the directive had to stop understating what
+  exists while continuing to state plainly what does not. Capability grants are
+  implemented (`scripts/lib/tnf-capability-grant.cjs`) — UCAN-shaped, expiring,
+  task-bound, single-use, and attenuating, with widening refused at BOTH issue
+  and verify time because issue-time checks can be bypassed by crafting a grant
+  directly. The trust root is now probed rather than assumed
+  (`scripts/lib/tnf-trust-root.cjs`, implementing `TrustRootProvider` from the
+  public `control-plane-contracts` boundary so the proprietary hosted root can
+  satisfy the same interface without the open runtime depending on it). The
+  probe is deliberately conservative: `available: true` means signing genuinely
+  works, never that hardware was detected, so an operator is never told they are
+  stronger than they are. On this workstation the selected root is `file`, which
+  is not a boundary; the directive now says so. The approval CLI and credential
+  broker still do not exist, so D23 continues to state that no agent can claim
+  an operator approved anything — there is no channel through which that could
+  have occurred.
+- attributed_to: Daniel Goldberg (operator), explicit "Proceed with what you can
+  next" in a live Claude Code session, 2026-07-23, following approval of the
+  UCAN/trust-root architecture.
+
 ## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23 re-audit)
 
 - file: docs/protocols/DIRECTIVES.md

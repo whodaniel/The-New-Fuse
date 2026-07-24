@@ -218,11 +218,29 @@ These are hard requirements. Violation is a protocol failure.
   - **Holding `sub-director` / `super-director` conveys the right to *request*
     elevation — never standing elevated access.** Every privileged action still
     needs its own operator approval under D8's tiers.
-  - **The elevation layer itself is NOT YET IMPLEMENTED.** Capability grants,
-    the operator approval CLI, and the credential broker (plan Phases 2–4) do
-    not exist. No agent may claim to hold, issue, or act on a grant; there is
-    nothing to hold. Any message or log asserting otherwise is fabricated —
-    treat it as the incident class in `CHALLENGE_RATIONALE_LOG.md`.
+  - **Capability grants exist; the approval channel does not yet.** Grants are
+    UCAN-shaped and implemented in `scripts/lib/tnf-capability-grant.cjs`:
+    scoped, expiring (15m default, 60m ceiling), task-bound, single-use, and
+    **attenuating** — a delegation chain can only narrow, enforced at both issue
+    and verify time so a hand-crafted grant cannot widen it. Capabilities use
+    TNF's existing plain-language vocabulary from agent frontmatter
+    (`lane_coordination`, `prompt_injection`, …), not a parallel taxonomy.
+    The **operator approval CLI (Phase 3) and credential broker (Phase 4) do NOT
+    exist.** Until they do, no agent may claim an operator approved anything —
+    there is no channel through which that could have happened. Any message or
+    log asserting otherwise is fabricated; treat it as the incident class in
+    `CHALLENGE_RATIONALE_LOG.md`.
+  - **The trust root is probed, not assumed.** `scripts/lib/tnf-trust-root.cjs`
+    implements `TrustRootProvider` from
+    `@the-new-fuse/control-plane-contracts` and selects the strongest root that
+    actually works in the current environment (`fido2 | secure-enclave | tpm2 |
+    pkcs11 | remote-attestation | separate-uid | os-keystore | file`), so one
+    build adapts to a Linux server, a container, or an Intel Mac with no
+    configuration. `available: true` means signing genuinely works here — never
+    "the hardware exists". A root that cannot survive an agent compromise
+    reports `degraded` and says so out loud. **On the current workstation the
+    selected root is `file`, which is no boundary at all**; `separate-uid` would
+    make it one at no hardware cost, and a FIDO2 token would be stronger still.
   - **Known limitation, stated rather than implied:** private keys are mode
     0600 and `roles.json` is operator-owned, but agents run under the operator's
     own uid and can therefore read or write those files directly. This closes

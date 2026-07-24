@@ -59,6 +59,8 @@ were per-action operator-confirmed; no self-authorization.
 | Priority | Action                                                                                                                   |
 | -------- | ------------------------------------------------------------------------------------------------------------------------ |
 | **P0**   | 🔑 OPERATOR-ONLY, STILL OPEN: rotate leaked credentials — Upstash → Supabase → `JWT_SECRET` → `ENCRYPTION_KEY` → `SHAREDSTATE_AUTH_TOKEN` → anon key, plus `apps/backend/.env.performance`. Tip cleanup did NOT invalidate them |
+| **P0**   | 🔒 `whodaniel/The-New-Fuse` was PUBLIC with the full proprietary tree (~27.6k lines) under MIT since 2026-04-25 — now PRIVATE. `fuse-open-runtime` was never affected (stubs verified by content). Audit that boundary by CONTENT, not path existence |
+| **P0**   | ⚠️ Trust root on this workstation is `file` — no boundary. No Secure Enclave on `MacBookPro12,1` (probed). Create a `tnf-agent` account (free, kernel-enforced) or add a FIDO2 token before relying on grants |
 | **P0**   | ⚠️ Do NOT set `TNF_MESSAGE_AUTH_MODE=enforce` until every agent has an Ed25519 keypair AND every node has imported its peers' public keys — otherwise traffic silently drops (see D23, `.env.example`) |
 | **P0**   | ⚠️ NEEDS LIVE OPERATOR CONFIRMATION: master-clock herd cull (6 procs) — type handshake in-session before any kill        |
 | **P0**   | ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): pi-wrapper-launchd.sh + REMEDIATION triage + dirty state files |

@@ -1,31 +1,37 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "d5c8d298-8a6d-42a6-b1bb-4b025329f2d5",
-  "created_at": "2026-07-24T00:30:13.664Z",
+  "handoff_id": "d4f056e7-86cd-4e51-83bc-eb36de0a4581",
+  "created_at": "2026-07-24T01:16:10.141Z",
   "repository": "The-New-Fuse",
   "branch": "fix/a2a-signature-verification",
-  "head_sha": "e09161b9e284463423a7c4b57d2fdf20ff42b230",
+  "head_sha": "adda5f088a6e486f7e9b56c051e35278a6e8f36d",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
   "work_summary": [
-    "A2A signing was decorative: HMAC attached but never verified; role read off the wire; A2A_SECRET_KEY unset so 'default-secret' was live; bus unauthenticated — any local process could claim local-director",
-    "Built the enforcement layer instead of the requested override: verification (14e59ae213) + operator-owned role registry + per-agent Ed25519 identity binding (e09161b9e2); symmetric per-agent keys rejected as insufficient",
-    "51 tests / 4 suites green; impersonation verified closed end-to-end against the real receive path",
-    "Added DIRECTIVES.md D23 + CHALLENGE_RATIONALE_LOG entry; elevation layer (Phases 2-4) explicitly documented as NOT built so no agent can claim a grant",
-    "OPERATOR-ONLY STILL OPEN: rotate credentials leaked to the public repo — Upstash",
+    "Phase 2 built: UCAN-shaped capability grants (tnf-capability-grant.cjs) — expiring",
+    "task-bound",
+    "single-use",
+    "attenuating; widening refused at BOTH issue and verify time",
+    "Environment-adaptive trust roots (tnf-trust-root.cjs) implementing TrustRootProvider from the public control-plane-contracts boundary; probes fido2/secure-enclave/tpm2/separate-uid/os-keystore/file and picks the strongest that genuinely works",
+    "Active root on this workstation is 'file' — NOT a boundary; no Secure Enclave on MacBookPro12-1 (probed OSStatus -25300). separate-uid is free and kernel-enforced; FIDO2 stronger",
+    "whodaniel/The-New-Fuse was PUBLIC with the full proprietary tree under MIT since 2026-04-25 — now PRIVATE. fuse-open-runtime was never affected; stubs verified by content not path existence",
+    "Approval CLI (Phase 3) and credential broker (Phase 4) still NOT built — no agent can claim an operator approved anything",
+    "OPERATOR-ONLY STILL OPEN: rotate leaked credentials (Upstash",
     "Supabase",
     "JWT_SECRET",
     "ENCRYPTION_KEY",
     "SHAREDSTATE_AUTH_TOKEN",
-    "anon key"
+    "anon key)"
   ],
   "changed_paths": [
-    "claude/skills/tnf-autonomy-safety-audit/SKILL.md",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "ocs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/CHALLENGE_RATIONALE_LOG.md",
     "docs/protocols/DIRECTIVES.md",
-    "docs/protocols/LIVING_STATE.md"
+    "docs/protocols/LIVING_STATE.md",
+    "scripts/lib/tnf-capability-grant.cjs",
+    "scripts/lib/tnf-capability-grant.test.cjs",
+    "scripts/lib/tnf-trust-root.cjs"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -48,11 +54,11 @@
   },
   "next_actions": [
     "Review updated LIVING_STATE.md for new active steps",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 5 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 7 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
     "commits": [
-      "e09161b9e284463423a7c4b57d2fdf20ff42b230"
+      "adda5f088a6e486f7e9b56c051e35278a6e8f36d"
     ],
     "deployment_urls": [],
     "database_migrations": []
