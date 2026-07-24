@@ -37,6 +37,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const identity = require('./tnf-identity.cjs');
 
 // ============================================================================
 // CONFIGURATION
@@ -244,6 +245,64 @@ function computeSignature(header, payload, secret) {
   return crypto.createHmac('sha256', secret).update(message).digest('hex');
 }
 
+// ============================================================================
+// KEY MODES
+// ============================================================================
+//
+// `header.kid` declares which key signed the envelope:
+//
+//   'ed25519' — signed with the sender's own private key. Only that agent can
+//               produce it, so header.agent_id is a real identity claim and
+//               resolveRole() may be trusted against it.
+//   'shared'  — signed with the bus-wide A2A_SECRET_KEY (legacy). Every agent
+//               holds that secret, so ANY holder can sign as ANY agent_id.
+//               Authenticates membership of the bus, never an individual.
+//
+// enforce mode rejects 'shared' outright. Accepting it would leave the exact
+// impersonation path this whole layer exists to close: an attacker would simply
+// set kid:'shared' and sign as the local-director. This is the same downgrade
+// reasoning that pins `alg`.
+
+const KID_ED25519 = 'ed25519';
+const KID_SHARED = 'shared';
+
+/**
+ * Sign with the agent's Ed25519 private key when one exists.
+ * @returns {{ kid: string, sign: (msg: string) => string } | null}
+ */
+function ed25519Signer(agentId) {
+  const priv = identity.loadAgentPrivateKey(agentId);
+  if (!priv) return null;
+  return {
+    kid: KID_ED25519,
+    sign: (message) => crypto.sign(null, Buffer.from(message, 'utf8'), priv).toString('base64'),
+  };
+}
+
+function verifyEd25519(agentId, message, signature) {
+  const pub = identity.loadAgentPublicKey(agentId);
+  if (!pub) {
+    return { ok: false, reason: `no public key registered for agent ${agentId}` };
+  }
+  let sigBuf;
+  try {
+    sigBuf = Buffer.from(signature, 'base64');
+  } catch {
+    return { ok: false, reason: 'signature is not valid base64' };
+  }
+  // Ed25519 signatures are a fixed 64 bytes; anything else is malformed.
+  if (sigBuf.length !== 64) {
+    return { ok: false, reason: 'signature is not a 64-byte Ed25519 signature' };
+  }
+  let ok = false;
+  try {
+    ok = crypto.verify(null, Buffer.from(message, 'utf8'), pub, sigBuf);
+  } catch (err) {
+    return { ok: false, reason: `verify failed: ${err.message}` };
+  }
+  return ok ? { ok: true } : { ok: false, reason: 'signature mismatch' };
+}
+
 /**
  * Constant-time hex comparison. `crypto.timingSafeEqual` throws on length
  * mismatch, which would itself leak length via the exception path, so length is
@@ -267,15 +326,46 @@ function safeEqualHex(a, b) {
  * @returns {{ header: object, payload: object, signature: string }}
  */
 function signEnvelope(header, payload) {
+  const agentId = header && typeof header.agent_id === 'string' ? header.agent_id : null;
+  const signer = agentId ? ed25519Signer(agentId) : null;
+
+  if (signer) {
+    const fullHeader = {
+      alg: 'Ed25519',
+      kid: KID_ED25519,
+      nonce: crypto.randomBytes(16).toString('hex'),
+      timestamp: Date.now(),
+      ...header,
+    };
+    return {
+      header: fullHeader,
+      payload,
+      signature: signer.sign(canonicalize({ header: fullHeader, payload })),
+    };
+  }
+
+  // No per-agent private key: fall back to the shared bus secret. This
+  // authenticates bus membership only, so enforce mode will refuse to sign
+  // this way rather than emit an envelope no peer is allowed to accept.
+  if (getMode() === 'enforce') {
+    throw new Error(
+      `[tnf-message-auth] refusing to sign: no Ed25519 private key for agent ${JSON.stringify(agentId)}. ` +
+        'Provision one with tnf-identity.ensureAgentKeypair(agentId).'
+    );
+  }
   const resolved = resolveSecretForSigning();
   const fullHeader = {
     alg: 'HS256',
+    kid: KID_SHARED,
     nonce: crypto.randomBytes(16).toString('hex'),
     timestamp: Date.now(),
     ...header,
   };
-  const signature = computeSignature(fullHeader, payload, resolved.secret);
-  return { header: fullHeader, payload, signature };
+  return {
+    header: fullHeader,
+    payload,
+    signature: computeSignature(fullHeader, payload, resolved.secret),
+  };
 }
 
 /**
@@ -305,9 +395,9 @@ function verifyEnvelope(envelope, opts = {}) {
   if (typeof signature !== 'string' || signature.length === 0) {
     return { ok: false, reason: 'missing signature' };
   }
-  if (header.alg !== 'HS256') {
-    // Pinned. Without this, an attacker picks the algorithm — the classic
-    // JWT `alg: none` downgrade.
+  // Pinned. Without this, an attacker picks the algorithm — the classic
+  // JWT `alg: none` downgrade.
+  if (header.alg !== 'HS256' && header.alg !== 'Ed25519') {
     return { ok: false, reason: `unsupported alg: ${String(header.alg)}` };
   }
   const agentId = typeof header.agent_id === 'string' ? header.agent_id : undefined;
@@ -326,23 +416,47 @@ function verifyEnvelope(envelope, opts = {}) {
     return { ok: false, reason: `timestamp outside ±${SKEW_WINDOW_MS}ms window (drift ${drift}ms)`, agentId };
   }
 
-  const resolved = resolveSecret();
-  if (!resolved.ok) {
-    return { ok: false, reason: resolved.reason, agentId };
-  }
+  const kid = header.kid === KID_ED25519 ? KID_ED25519 : KID_SHARED;
+  const message = canonicalize({ header, payload });
 
-  const expected = computeSignature(header, payload, resolved.secret);
-  if (!safeEqualHex(signature, expected)) {
-    return { ok: false, reason: 'signature mismatch', agentId };
+  if (kid === KID_ED25519) {
+    if (header.alg !== 'Ed25519') {
+      return { ok: false, reason: 'kid/alg mismatch', agentId, kid };
+    }
+    const res = verifyEd25519(agentId, message, signature);
+    if (!res.ok) return { ok: false, reason: res.reason, agentId, kid };
+  } else {
+    // Shared-secret envelope. Proves the sender holds A2A_SECRET_KEY, which
+    // every agent does — so it cannot establish WHICH agent sent it. Rejected
+    // in enforce mode; in warn mode it is checked so the log stays useful, but
+    // identityBound stays false and callers must not treat agentId as proven.
+    if (getMode() === 'enforce') {
+      return {
+        ok: false,
+        reason: 'shared-secret envelope rejected: identity not individually provable',
+        agentId,
+        kid,
+      };
+    }
+    if (header.alg !== 'HS256') {
+      return { ok: false, reason: 'kid/alg mismatch', agentId, kid };
+    }
+    const resolved = resolveSecret();
+    if (!resolved.ok) {
+      return { ok: false, reason: resolved.reason, agentId, kid };
+    }
+    if (!safeEqualHex(signature, computeSignature(header, payload, resolved.secret))) {
+      return { ok: false, reason: 'signature mismatch', agentId, kid };
+    }
   }
 
   // Nonce is claimed only after the signature checks out. Claiming earlier
   // would let an unauthenticated flood evict every legitimate nonce.
   if (!claimNonce(header.nonce, now)) {
-    return { ok: false, reason: 'nonce replay', agentId };
+    return { ok: false, reason: 'nonce replay', agentId, kid };
   }
 
-  return { ok: true, agentId };
+  return { ok: true, agentId, kid, identityBound: kid === KID_ED25519 };
 }
 
 /**
@@ -375,6 +489,7 @@ function verifyAndAudit(envelope, context = {}) {
     action: reject ? 'rejected' : 'allowed_warn_mode',
     reason: result.reason,
     agent_id: result.agentId || null,
+    kid: result.kid ?? null,
     // Claimed values are recorded as claims, never trusted. This is what makes
     // a forged-role attempt visible in the log rather than merely blocked.
     claimed_role: context.claimedRole ?? null,
@@ -408,5 +523,7 @@ module.exports = {
   audit,
   SKEW_WINDOW_MS,
   NONCE_TTL_MS,
+  KID_ED25519,
+  KID_SHARED,
   _resetNonceCache,
 };

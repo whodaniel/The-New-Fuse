@@ -70,15 +70,26 @@ test('canonicalize preserves array order', () => {
 // Secret hygiene
 // ---------------------------------------------------------------------------
 
-test('enforce mode refuses to sign with the default-secret placeholder', () => {
+test('the shared-secret path refuses the default-secret placeholder', () => {
   withEnv({ A2A_SECRET_KEY: 'default-secret', TNF_MESSAGE_AUTH_MODE: 'enforce' }, () => {
-    assert.throws(() => auth.signEnvelope({ agent_id: 'a' }, {}), /placeholder value/);
+    assert.throws(() => auth.resolveSecretForSigning(), /placeholder value/);
   });
 });
 
-test('enforce mode refuses to sign when A2A_SECRET_KEY is unset', () => {
+test('the shared-secret path refuses an unset A2A_SECRET_KEY', () => {
   withEnv({ A2A_SECRET_KEY: undefined, TNF_MESSAGE_AUTH_MODE: 'enforce' }, () => {
-    assert.throws(() => auth.signEnvelope({ agent_id: 'a' }, {}), /not set/);
+    assert.throws(() => auth.resolveSecretForSigning(), /not set/);
+  });
+});
+
+test('enforce mode will not sign at all without a per-agent private key', () => {
+  // Supersedes the secret checks above for the signing path: since identity
+  // binding landed, enforce mode never reaches the shared secret.
+  withEnv({ A2A_SECRET_KEY: GOOD_SECRET, TNF_MESSAGE_AUTH_MODE: 'enforce' }, () => {
+    assert.throws(
+      () => auth.signEnvelope({ agent_id: 'agent-without-a-keypair' }, {}),
+      /no Ed25519 private key/
+    );
   });
 });
 
@@ -178,7 +189,10 @@ test('forged role claim is rejected (2026-07-23 regression)', () => {
 
     assert.equal(result.ok, false);
     assert.equal(result.reject, true, 'enforce mode must drop a forged envelope');
-    assert.equal(result.reason, 'signature mismatch');
+    // Since identity binding landed, an envelope with no `kid` is treated as
+    // shared-secret and refused before the HMAC is even considered — a
+    // strictly earlier rejection than the original 'signature mismatch'.
+    assert.match(result.reason, /identity not individually provable/);
 
     const lines = fs.readFileSync(TMP_AUDIT, 'utf8').trim().split('\n');
     const last = JSON.parse(lines[lines.length - 1]);

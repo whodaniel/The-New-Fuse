@@ -274,7 +274,16 @@ class RedisAgentClient {
       messageId: rawMessage?.payload?.data?.id ?? null,
       claimedRole: rawMessage?.payload?.data?.from?.role ?? null,
     });
-    return { verified: result.ok, reject: result.reject, agentId: result.agentId };
+    return {
+      verified: result.ok,
+      reject: result.reject,
+      agentId: result.agentId,
+      kid: result.kid ?? null,
+      // Only an Ed25519 envelope proves WHICH agent sent it. A shared-secret
+      // envelope proves bus membership, which every agent has — so it must
+      // never be allowed to resolve a privileged role.
+      identityBound: Boolean(result.ok && result.identityBound),
+    };
   }
 
   async send(content, options = {}) {
@@ -472,12 +481,18 @@ class RedisAgentClient {
     // Authoritative role comes from the operator-owned registry keyed by the
     // verified agent_id (Phase 1). Wire claims are recorded only.
     // See DIRECTIVES.md D8/D23.
+    // Only an identity-bound (Ed25519) envelope may resolve a registry role. A
+    // shared-secret envelope verifies, but proves only that the sender holds
+    // the bus-wide key — which every agent does. Treating it as an identity
+    // would let any bus member sign as the local-director and inherit the
+    // grant, the exact hole this layer exists to close.
     const claimedRole = msg.from.role || 'worker';
-    const verifiedId = authResult?.verified
+    const identityBound = Boolean(authResult?.identityBound);
+    const verifiedId = identityBound
       ? authResult?.agentId || msg.from.agentId || msg.from.id
       : null;
     const resolvedRole = identity.resolveRoleForMessage({
-      verified: Boolean(authResult?.verified),
+      verified: identityBound,
       agentId: verifiedId,
       claimedRole,
     });
@@ -501,6 +516,8 @@ class RedisAgentClient {
       },
       auth: {
         verified: Boolean(authResult?.verified),
+        identityBound,
+        kid: authResult?.kid ?? null,
         agentId: authResult?.agentId ?? null,
       },
       to: msg.to,

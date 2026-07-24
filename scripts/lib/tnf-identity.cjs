@@ -279,6 +279,155 @@ function keyPathFor(agentId) {
   return path.join(KEYS_DIR, id);
 }
 
+// ============================================================================
+// PER-AGENT ED25519 KEYPAIRS
+// ============================================================================
+//
+// Symmetric keys cannot solve impersonation on a multi-verifier bus. If agent B
+// must verify a message from agent A, B needs A's key — and anything B can
+// verify with, B can also sign with. Per-agent HMAC keys therefore just move the
+// shared-secret problem around: every peer able to check a director's messages
+// would also be able to forge them.
+//
+// Ed25519 splits those capabilities. A signs with a private key only A holds;
+// everyone else verifies with A's public key, which is safe to distribute. Only
+// A can produce a signature that validates as A.
+//
+// Private keys: ~/.tnf/authority/keys/<agent-id>.ed25519 (0600)
+// Public keys:  ~/.tnf/authority/pubkeys/<agent-id>.pub  (0644, distributable)
+
+const PUBKEYS_DIR = process.env.TNF_PUBKEYS_DIR || path.join(AUTHORITY_DIR, 'pubkeys');
+
+function pubkeysDir() {
+  return PUBKEYS_DIR;
+}
+
+function privateKeyPathFor(agentId) {
+  const id = normalizeAgentId(agentId);
+  if (!id) throw new Error('[tnf-identity] invalid agent id for key path');
+  return path.join(KEYS_DIR, `${id}.ed25519`);
+}
+
+function publicKeyPathFor(agentId) {
+  const id = normalizeAgentId(agentId);
+  if (!id) throw new Error('[tnf-identity] invalid agent id for key path');
+  return path.join(PUBKEYS_DIR, `${id}.pub`);
+}
+
+function ensurePubkeysDir() {
+  fs.mkdirSync(PUBKEYS_DIR, { recursive: true, mode: 0o755 });
+}
+
+/**
+ * Load or create an agent's Ed25519 keypair.
+ *
+ * Never replaces an existing private key unless `{ rotate: true }` — silently
+ * regenerating would invalidate every signature that agent has produced and
+ * strand peers holding the old public key.
+ *
+ * @returns {{ agentId, privateKeyPath, publicKeyPath, publicKeyPem, created }}
+ */
+function ensureAgentKeypair(agentId, { rotate = false } = {}) {
+  const id = normalizeAgentId(agentId);
+  if (!id) throw new Error('[tnf-identity] invalid agent id');
+  ensureAuthorityLayout();
+  ensurePubkeysDir();
+
+  const privPath = privateKeyPathFor(id);
+  const pubPath = publicKeyPathFor(id);
+
+  if (!rotate && fs.existsSync(privPath) && fs.existsSync(pubPath)) {
+    return {
+      agentId: id,
+      privateKeyPath: privPath,
+      publicKeyPath: pubPath,
+      publicKeyPem: fs.readFileSync(pubPath, 'utf8'),
+      created: false,
+    };
+  }
+
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519');
+  const privPem = privateKey.export({ type: 'pkcs8', format: 'pem' });
+  const pubPem = publicKey.export({ type: 'spki', format: 'pem' });
+
+  const privTmp = `${privPath}.${process.pid}.${crypto.randomBytes(4).toString('hex')}.tmp`;
+  fs.writeFileSync(privTmp, privPem, { mode: 0o600 });
+  fs.renameSync(privTmp, privPath);
+  try {
+    fs.chmodSync(privPath, 0o600);
+  } catch {
+    /* best-effort */
+  }
+
+  const pubTmp = `${pubPath}.${process.pid}.${crypto.randomBytes(4).toString('hex')}.tmp`;
+  fs.writeFileSync(pubTmp, pubPem, { mode: 0o644 });
+  fs.renameSync(pubTmp, pubPath);
+
+  return {
+    agentId: id,
+    privateKeyPath: privPath,
+    publicKeyPath: pubPath,
+    publicKeyPem: pubPem,
+    created: true,
+  };
+}
+
+/** @returns {crypto.KeyObject|null} */
+function loadAgentPrivateKey(agentId) {
+  const id = normalizeAgentId(agentId);
+  if (!id) return null;
+  const p = privateKeyPathFor(id);
+  if (!fs.existsSync(p)) return null;
+  try {
+    return crypto.createPrivateKey(fs.readFileSync(p, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Load an agent's public key. This is the trust anchor for verification: a
+ * missing public key means the agent is unknown to this node and its messages
+ * cannot be authenticated — never a reason to fall back to a shared secret.
+ *
+ * @returns {crypto.KeyObject|null}
+ */
+function loadAgentPublicKey(agentId) {
+  const id = normalizeAgentId(agentId);
+  if (!id) return null;
+  const p = publicKeyPathFor(id);
+  if (!fs.existsSync(p)) return null;
+  try {
+    return crypto.createPublicKey(fs.readFileSync(p, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Import a peer's public key so this node can verify that agent.
+ *
+ * Public keys are not secrets, but importing one is a trust decision: it tells
+ * this node "signatures from this key ARE this agent id." Distribution and
+ * authenticity of that mapping are out of band.
+ */
+function importAgentPublicKey(agentId, publicKeyPem) {
+  const id = normalizeAgentId(agentId);
+  if (!id) throw new Error('[tnf-identity] invalid agent id');
+  if (typeof publicKeyPem !== 'string' || !publicKeyPem.includes('BEGIN PUBLIC KEY')) {
+    throw new Error('[tnf-identity] expected a PEM-encoded SPKI public key');
+  }
+  try {
+    crypto.createPublicKey(publicKeyPem);
+  } catch (err) {
+    throw new Error(`[tnf-identity] not a valid public key: ${err.message}`);
+  }
+  ensurePubkeysDir();
+  const p = publicKeyPathFor(id);
+  fs.writeFileSync(p, publicKeyPem, { mode: 0o644 });
+  return { agentId: id, publicKeyPath: p };
+}
+
 /**
  * Load or create a per-agent HMAC key (32 bytes hex). Mode 0600.
  * Does not replace an existing key unless `{ rotate: true }`.
@@ -329,18 +478,22 @@ function bootstrapAgentIdentity(agentId, requestedRole = 'worker') {
     throw new Error('[tnf-identity] invalid agent id');
   }
   const keyInfo = ensureAgentKey(id);
+  // Provision the Ed25519 keypair too — this is what the auth path actually
+  // signs and verifies with. Idempotent: existing keys are never replaced.
+  const keypair = ensureAgentKeypair(id);
+  const withKeys = { ...keyInfo, keypair };
   const resolved = resolveRole(id);
   if (resolved.source === 'registry') {
-    return { ...keyInfo, role: resolved.role, roleSource: 'registry' };
+    return { ...withKeys, role: resolved.role, roleSource: 'registry' };
   }
 
-  const role = SELF_REGISTERABLE.has(requestedRole) ? requestedRole : 'worker';
+  const selfRole = SELF_REGISTERABLE.has(requestedRole) ? requestedRole : 'worker';
   // First-seen agents default to worker without rewriting the operator file
   // when the requested role is already worker — keeps the registry sparse.
   // Elevated requests are ignored until the operator grants them.
   return {
-    ...keyInfo,
-    role,
+    ...withKeys,
+    role: selfRole,
     roleSource: 'default',
     elevatedRequestIgnored:
       typeof requestedRole === 'string' &&
@@ -371,4 +524,12 @@ module.exports = {
   bootstrapAgentIdentity,
   canRequestElevation,
   keyPathFor,
+  // Ed25519 per-agent identity
+  pubkeysDir,
+  privateKeyPathFor,
+  publicKeyPathFor,
+  ensureAgentKeypair,
+  loadAgentPrivateKey,
+  loadAgentPublicKey,
+  importAgentPublicKey,
 };

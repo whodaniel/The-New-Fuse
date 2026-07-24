@@ -12,11 +12,14 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-const TMP_AUDIT = path.join(
-  fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-cli-auth-')),
-  'audit.jsonl'
-);
+const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-cli-auth-'));
+const TMP_AUDIT = path.join(TMP, 'audit.jsonl');
 process.env.TNF_AUTH_AUDIT_PATH = TMP_AUDIT;
+// Isolate the authority layout so the suite never touches ~/.tnf/authority.
+process.env.TNF_AUTHORITY_DIR = path.join(TMP, 'authority');
+process.env.TNF_ROLES_PATH = path.join(TMP, 'authority', 'roles.json');
+process.env.TNF_KEYS_DIR = path.join(TMP, 'authority', 'keys');
+process.env.TNF_PUBKEYS_DIR = path.join(TMP, 'authority', 'pubkeys');
 process.env.A2A_SECRET_KEY = 'receive-path-test-secret-key';
 
 const test = require('node:test');
@@ -24,6 +27,10 @@ const assert = require('node:assert/strict');
 
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
 const messageAuth = require('./lib/tnf-message-auth.cjs');
+const identity = require('./lib/tnf-identity.cjs');
+
+// The peer must have a keypair, or enforce mode rightly refuses its messages.
+identity.ensureAgentKeypair('agent-peer');
 
 /**
  * A client wired for observation: no Redis, no disk logging, no delegation
@@ -77,6 +84,8 @@ test('a properly signed message reaches handlers', () => {
     client.handleIncomingMessage('tnf:agents', JSON.stringify(envelope));
     assert.equal(delivered.length, 1);
     assert.equal(delivered[0].auth.verified, true);
+    assert.equal(delivered[0].auth.identityBound, true);
+    assert.equal(delivered[0].auth.kid, messageAuth.KID_ED25519);
     assert.equal(delivered[0].auth.agentId, 'agent-peer');
   });
 });
