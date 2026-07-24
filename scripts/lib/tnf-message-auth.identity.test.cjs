@@ -6,7 +6,7 @@
  *
  * Before this change, verification used the bus-wide shared secret, so
  * `header.agent_id` was a claim any secret-holder could make. resolveRole()
- * then looked that claim up in roles.json — meaning the first `local-director`
+ * then looked that claim up in roles.json — meaning the first `sub-director`
  * grant would have been assumable by every agent on the bus.
  */
 
@@ -34,7 +34,7 @@ const ATTACKER = 'agent-attacker';
 // The director has a keypair and an operator-granted role.
 identity.ensureAgentKeypair(DIRECTOR);
 identity.ensureAgentKeypair(ATTACKER);
-identity.setAgentRole(DIRECTOR, 'local-director', { note: 'test fixture' });
+identity.setAgentRole(DIRECTOR, 'sub-director', { note: 'test fixture' });
 
 function withMode(mode, fn) {
   const saved = process.env.TNF_MESSAGE_AUTH_MODE;
@@ -48,7 +48,7 @@ function withMode(mode, fn) {
 }
 
 function body(agentId) {
-  return { type: 'task', channel: 'tnf:agents', data: { from: { agentId, role: 'local-director' } } };
+  return { type: 'task', channel: 'tnf:agents', data: { from: { agentId, role: 'sub-director' } } };
 }
 
 // ---------------------------------------------------------------------------
@@ -64,7 +64,7 @@ test('the real director signs an identity-bound envelope', () => {
     assert.equal(res.ok, true, res.reason);
     assert.equal(res.identityBound, true);
     assert.equal(res.agentId, DIRECTOR);
-    assert.equal(identity.resolveRole(res.agentId).role, 'local-director');
+    assert.equal(identity.resolveRole(res.agentId).role, 'sub-director');
   });
 });
 
@@ -181,7 +181,7 @@ test('resolveRoleForMessage forces worker when identity is not bound', () => {
   const res = identity.resolveRoleForMessage({
     verified: false,
     agentId: DIRECTOR,
-    claimedRole: 'local-director',
+    claimedRole: 'sub-director',
   });
   assert.equal(res.role, 'worker');
   assert.equal(res.roleVerified, false);

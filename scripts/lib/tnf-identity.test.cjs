@@ -29,9 +29,9 @@ test('unknown agent defaults to worker', () => {
 });
 
 test('operator grant elevates; revoke returns to worker', () => {
-  identity.setAgentRole('director-1', 'local-director', { note: 'test grant' });
+  identity.setAgentRole('director-1', 'sub-director', { note: 'test grant' });
   let resolved = identity.resolveRole('director-1');
-  assert.equal(resolved.role, 'local-director');
+  assert.equal(resolved.role, 'sub-director');
   assert.equal(resolved.source, 'registry');
   assert.equal(resolved.entry.granted_by, 'operator');
 
@@ -54,32 +54,34 @@ test('path-traversal agent ids rejected', () => {
 });
 
 test('unverified message forced to worker regardless of claim', () => {
-  identity.setAgentRole('forger', 'local-director');
+  identity.setAgentRole('forger', 'sub-director');
   const resolved = identity.resolveRoleForMessage({
     verified: false,
     agentId: 'forger',
-    claimedRole: 'local-director',
+    claimedRole: 'sub-director',
   });
   assert.equal(resolved.role, 'worker');
   assert.equal(resolved.roleVerified, false);
   assert.equal(resolved.source, 'unverified');
-  assert.equal(resolved.claimedRole, 'local-director');
+  assert.equal(resolved.claimedRole, 'sub-director');
 });
 
 test('verified message uses registry; claim mismatch flagged', () => {
+  // Registry grants sub-director; the message claims the higher super-director.
+  // The registry must win and the over-claim must be visible to callers.
   identity.setAgentRole('honest', 'sub-director');
   const resolved = identity.resolveRoleForMessage({
     verified: true,
     agentId: 'honest',
-    claimedRole: 'local-director',
+    claimedRole: 'super-director',
   });
-  assert.equal(resolved.role, 'sub-director');
+  assert.equal(resolved.role, 'sub-director', 'registry beats the wire claim');
   assert.equal(resolved.roleVerified, true);
-  assert.equal(resolved.claimMismatch, true);
+  assert.equal(resolved.claimMismatch, true, 'over-claim must be flagged');
 });
 
 test('bootstrap ignores self-asserted elevation', () => {
-  const boot = identity.bootstrapAgentIdentity('climber', 'local-director');
+  const boot = identity.bootstrapAgentIdentity('climber', 'sub-director');
   assert.equal(boot.role, 'worker');
   assert.equal(boot.elevatedRequestIgnored, true);
   assert.equal(identity.resolveRole('climber').source, 'default');
@@ -89,7 +91,7 @@ test('agent process cannot write roles.json', () => {
   process.env.TNF_AGENT_ID = 'evil-agent';
   try {
     assert.throws(
-      () => identity.setAgentRole('victim', 'local-director'),
+      () => identity.setAgentRole('victim', 'sub-director'),
       /TNF_AGENT_ID is set/
     );
   } finally {
@@ -117,5 +119,5 @@ test('roles.json written mode 0600', () => {
 test('canRequestElevation only for director strata', () => {
   assert.equal(identity.canRequestElevation('worker'), false);
   assert.equal(identity.canRequestElevation('sub-director'), true);
-  assert.equal(identity.canRequestElevation('local-director'), true);
+  assert.equal(identity.canRequestElevation('sub-director'), true);
 });

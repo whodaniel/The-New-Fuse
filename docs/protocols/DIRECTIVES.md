@@ -183,18 +183,39 @@ These are hard requirements. Violation is a protocol failure.
   Supersedes A4's opt-in framing. — `DACC_PROTOCOL_MASTER_MANUAL.md`,
   `AGENT_STATUS_LEDGER.md`
 - **D23 — Authority comes from verified identity, never from a wire claim.** A
-  role asserted in a message body, a `federationId`, or an agent's own narration
-  is a **claim**, not a credential. The only sanctioned role lookup is
-  `resolveRole(verifiedAgentId)` in `scripts/lib/tnf-identity.cjs`, keyed by an
-  agent id proven by an **identity-bound (Ed25519) signature** and resolved
-  against the operator-owned registry `~/.tnf/authority/roles.json` (mode 0600,
-  written only from an operator shell). Specifically:
+  role asserted in a message body, a `federationId`, an `idNumber`, or an
+  agent's own narration is a **claim**, not a credential. The sanctioned lookup
+  for an *authorization* decision is `resolveRole(verifiedAgentId)` in
+  `scripts/lib/tnf-identity.cjs`, keyed by an agent id proven by an
+  **identity-bound (Ed25519) signature** and resolved against the
+  operator-owned registry `~/.tnf/authority/roles.json` (mode 0600, written only
+  from an operator shell).
+  - **Classification is not authorization.** TNF has several other role and
+    identity surfaces; none of them authorize anything. `agents.dacc_role`
+    (`director | orchestrator | broker | worker | participant`) is assigned by
+    `deriveDaccRole()` in `packages/tnf-cli/src/commands/agents-classify.ts` via
+    a **substring match on the agent's filename** (`n.includes('director')`), so
+    treating it as authority would make `mv x.md x-director.md` a privilege
+    escalation. It answers "what kind of agent is this," which is a useful and
+    legitimate question — just not this one. The same applies to the four
+    federated ID namespaces (`canonicalEntityId`, `idNumber`, `mcid`,
+    `federationId`, per `FEDERATED_ID_ENCODING_AUDIT_2026-06-14.md`): they
+    correlate identity across subsystems, they do not prove it. `idNumber` in
+    particular is a **sequentially assigned** `ID#:<Base58>` value, and
+    `FederatedIdentityService.verifyAttribution()` uses a symmetric HMAC over a
+    shared secret, so any party able to verify it can also forge it.
+  - **Authority roles reuse TNF's existing plain-language vocabulary** —
+    `worker | sub-director | super-director`, the canonical agent names from
+    `.claude/agents/`. There is no separate authority taxonomy to learn.
+    (`local-director` was invented in the 2026-07-23 session and has been
+    removed; the real entity is `sub-director`.)
+  Specifically:
   - **A shared-secret (`kid: shared`) signature proves bus membership, not
     identity.** Every agent holds `A2A_SECRET_KEY`, so any holder can sign as
     any `agent_id`. Such messages resolve to `worker` regardless of what they
     claim, and are rejected outright when `TNF_MESSAGE_AUTH_MODE=enforce`.
     Verification lives in `scripts/lib/tnf-message-auth.cjs`.
-  - **Holding `local-director` / `sub-director` conveys the right to *request*
+  - **Holding `sub-director` / `super-director` conveys the right to *request*
     elevation — never standing elevated access.** Every privileged action still
     needs its own operator approval under D8's tiers.
   - **The elevation layer itself is NOT YET IMPLEMENTED.** Capability grants,
@@ -207,8 +228,12 @@ These are hard requirements. Violation is a protocol failure.
     own uid and can therefore read or write those files directly. This closes
     impersonation **across the bus** (a remote or compromised publisher cannot
     forge a director); it is **not** a boundary between co-resident processes on
-    the same machine. A real boundary requires a separate uid or a
-    biometric-gated key. Do not describe this layer as stronger than that. —
+    the same machine. A real boundary requires a separate uid, an external
+    hardware token, or a biometric-gated key. **Secure Enclave is not an option
+    on the current workstation** — `MacBookPro12,1` (2015) predates the T1/T2
+    chip, confirmed empirically (`SecKeyCreateRandomKey` with
+    `kSecAttrTokenIDSecureEnclave` fails, OSStatus `-25300`). Do not describe
+    this layer as stronger than it is. —
     `TNF_GOVERNANCE_TENETS.md` §3B, D8, `CHALLENGE_RATIONALE_LOG.md`
 
 ---

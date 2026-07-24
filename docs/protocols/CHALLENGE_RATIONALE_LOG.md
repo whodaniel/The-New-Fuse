@@ -59,6 +59,38 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: Daniel Goldberg (operator), confirmed via plan approval
   (ExitPlanMode) in a live Claude Code session, 2026-07-23.
 
+## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23 re-audit)
+
+- file: docs/protocols/DIRECTIVES.md
+- git_blob_sha: (see commit history for this session; logged concurrently with
+  the commit)
+- rationale: Operator directed a full sweep of existing federation and ID#
+  infrastructure before Phase 2, then an audit of the earlier phases against
+  what it found. The sweep showed D23 as first written was overstated and
+  partly wrong: (a) it claimed `resolveRole` was "the only sanctioned role
+  lookup" when `agents.dacc_role` is an established classification axis —
+  corrected to distinguish classification from authorization, and to record
+  that `deriveDaccRole()` assigns it by **substring match on the agent's
+  filename**, so it must never authorize; (b) it used the role name
+  `local-director`, which I invented in the prior session and which exists
+  nowhere else in the codebase — the canonical entity is `sub-director`
+  (displayName "Local Sub-Director"), so the authority vocabulary is now
+  `worker | sub-director | super-director`, reusing TNF's existing
+  plain-language agent names rather than a new taxonomy; (c) it did not
+  acknowledge the other three federated ID namespaces (`canonicalEntityId`,
+  `idNumber`, `mcid`) documented in `FEDERATED_ID_ENCODING_AUDIT_2026-06-14.md`,
+  nor that `idNumber` is sequentially assigned and
+  `FederatedIdentityService.verifyAttribution()` uses a symmetric HMAC — both
+  reasons it cannot serve as the credential the original request assumed;
+  (d) it named a biometric-gated key as the real boundary without checking the
+  hardware — the workstation is `MacBookPro12,1` (2015), which predates the
+  T1/T2 chip and has no Secure Enclave, confirmed empirically via
+  `SecKeyCreateRandomKey` failing with OSStatus `-25300`. That is now stated
+  rather than implied.
+- attributed_to: Daniel Goldberg (operator), explicit "proceed" for the
+  re-audit in a live Claude Code session, 2026-07-23, after selecting
+  "audit before Phase 2".
+
 ## 2026-07-23 — docs/protocols/DIRECTIVES.md (D23)
 
 - file: docs/protocols/DIRECTIVES.md

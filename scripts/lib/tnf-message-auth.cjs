@@ -260,7 +260,7 @@ function computeSignature(header, payload, secret) {
 //
 // enforce mode rejects 'shared' outright. Accepting it would leave the exact
 // impersonation path this whole layer exists to close: an attacker would simply
-// set kid:'shared' and sign as the local-director. This is the same downgrade
+// set kid:'shared' and sign as the sub-director. This is the same downgrade
 // reasoning that pins `alg`.
 
 const KID_ED25519 = 'ed25519';

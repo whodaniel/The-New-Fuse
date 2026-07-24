@@ -10,9 +10,9 @@
  *   resolveRole(verifiedKeyId) -> { ok, role, source, ... }
  *
  * Roles live in `~/.tnf/authority/roles.json` (mode 0600), written only by
- * the operator. Agents must never write this file. Holding `local-director`
- * conveys the right to *request* elevation (Phase 2+); it never conveys
- * standing elevated access.
+ * the operator. Agents must never write this file. Holding `sub-director` or
+ * `super-director` conveys the right to *request* elevation (Phase 2+); it
+ * never conveys standing elevated access.
  *
  * Per-agent HMAC keys live at `~/.tnf/authority/keys/<agent-id>` (mode 0600).
  * Phase 0 still verifies with the shared A2A_SECRET_KEY during rollout; this
@@ -27,7 +27,23 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-const VALID_ROLES = Object.freeze(['worker', 'sub-director', 'local-director']);
+/**
+ * Authority roles, using TNF's existing plain-language vocabulary.
+ *
+ * These are the canonical agent names from `.claude/agents/` — the same words
+ * that already appear in staffing and orchestration — NOT a new taxonomy.
+ * `local-director` was an invention of the 2026-07-23 session and has been
+ * removed; the real entity is `sub-director` (displayName "Local Sub-Director").
+ *
+ * Deliberately distinct from `daccRole` (director | orchestrator | broker |
+ * worker | participant) in packages/database/src/drizzle/schema/agents.ts.
+ * That field is *classification*, derived by `deriveDaccRole()` in
+ * packages/tnf-cli/src/commands/agents-classify.ts via a substring match on the
+ * agent's filename (`n.includes('director') -> 'director'`). It answers "what
+ * kind of agent is this," and must never answer "what may this agent do" — if
+ * it did, renaming a file to `x-director.md` would be a privilege escalation.
+ */
+const VALID_ROLES = Object.freeze(['worker', 'sub-director', 'super-director']);
 
 const AUTHORITY_DIR =
   process.env.TNF_AUTHORITY_DIR || path.join(os.homedir(), '.tnf', 'authority');
@@ -175,7 +191,7 @@ function setAgentRole(agentId, role, { note } = {}) {
  * @param {string} verifiedKeyId  agent_id from a *verified* envelope header
  * @returns {{
  *   ok: boolean,
- *   role: 'worker'|'sub-director'|'local-director',
+ *   role: 'worker'|'sub-director'|'super-director',
  *   source: 'registry'|'default',
  *   agentId: string|null,
  *   entry: object|null,
@@ -503,7 +519,7 @@ function bootstrapAgentIdentity(agentId, requestedRole = 'worker') {
 }
 
 function canRequestElevation(role) {
-  return role === 'local-director' || role === 'sub-director';
+  return role === 'super-director' || role === 'sub-director';
 }
 
 module.exports = {

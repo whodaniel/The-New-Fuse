@@ -177,13 +177,13 @@ test('forged role claim is rejected (2026-07-23 regression)', () => {
       payload: {
         type: 'task',
         channel: 'tnf:agents',
-        data: { from: { agentId: 'agent-attacker', role: 'local-director' } },
+        data: { from: { agentId: 'agent-attacker', role: 'sub-director' } },
       },
       signature: 'f'.repeat(64),
     };
 
     const result = auth.verifyAndAudit(forged, {
-      claimedRole: 'local-director',
+      claimedRole: 'sub-director',
       channel: 'tnf:agents',
     });
 
@@ -198,7 +198,7 @@ test('forged role claim is rejected (2026-07-23 regression)', () => {
     const last = JSON.parse(lines[lines.length - 1]);
     assert.equal(last.event, 'message_auth_failure');
     assert.equal(last.action, 'rejected');
-    assert.equal(last.claimed_role, 'local-director', 'the forged claim must be recorded');
+    assert.equal(last.claimed_role, 'sub-director', 'the forged claim must be recorded');
   });
 });
 

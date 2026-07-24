@@ -484,7 +484,7 @@ class RedisAgentClient {
     // Only an identity-bound (Ed25519) envelope may resolve a registry role. A
     // shared-secret envelope verifies, but proves only that the sender holds
     // the bus-wide key — which every agent does. Treating it as an identity
-    // would let any bus member sign as the local-director and inherit the
+    // would let any bus member sign as the sub-director and inherit the
     // grant, the exact hole this layer exists to close.
     const claimedRole = msg.from.role || 'worker';
     const identityBound = Boolean(authResult?.identityBound);
