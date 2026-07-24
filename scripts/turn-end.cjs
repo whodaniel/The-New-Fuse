@@ -498,8 +498,13 @@ async function main() {
     process.exit(0);
   }
 
-  const gitTest = runGit('git status --short', TNF_ROOT_DIR);
-  if (!gitTest) {
+  // Probe with a command that ALWAYS prints on success, even when the working
+  // tree is clean. `git status --short` returns an empty string for a clean
+  // tree, and runGit returns null on failure — using `!gitTest` conflated the
+  // two, so turn-end wrongly reported "git not available" whenever everything
+  // was already committed.
+  const gitTest = runGit('git rev-parse --is-inside-work-tree', TNF_ROOT_DIR);
+  if (gitTest === null || gitTest.trim() !== 'true') {
     console.error('Error: git is not available or TNF_ROOT_DIR is not a git repository');
     console.error(`TNF_ROOT_DIR: ${TNF_ROOT_DIR}`);
     process.exit(1);
