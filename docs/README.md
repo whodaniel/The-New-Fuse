@@ -454,7 +454,7 @@ pnpm run deploy:gcp
 - **[DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)** — Navigational index
   with guided paths
 - **[QUICK_START_GUIDE.md](./QUICK_START_GUIDE.md)** — Fast setup guide
-- **[CLOUD_MIGRATION_BLUEPRINT.md](./CLOUD_MIGRATION_BLUEPRINT.md)** —
+- **[CLOUD_MIGRATION_BLUEPRINT.md](/CLOUD_MIGRATION_BLUEPRINT.md)** —
   Infrastructure reference (GCP + Cloudflare)
 - **[RELEASE_GATE.md](./RELEASE_GATE.md)** — Merge-blocking release gate
 - **[PRODUCTION_READINESS.md](./docs/project-management/PRODUCTION_READINESS.md)**
@@ -471,7 +471,7 @@ pnpm run deploy:gcp
 | GraphQL             | [apps/api/src/graphql/README.md](./apps/api/src/graphql/README.md)                           |
 | MCP Integration     | [apps/backend/src/modules/mcp/README.md](./apps/backend/src/modules/mcp/README.md)           |
 | Deployment          | [docs/guides/deployment-guide.md](./docs/guides/deployment-guide.md)                         |
-| Cloud Infra         | [CLOUD_MIGRATION_BLUEPRINT.md](./CLOUD_MIGRATION_BLUEPRINT.md)                               |
+| Cloud Infra         | [CLOUD_MIGRATION_BLUEPRINT.md](/CLOUD_MIGRATION_BLUEPRINT.md)                                |
 | Security            | [docs/security/audit-findings.md](./docs/security/audit-findings.md)                         |
 | Testing             | [docs/testing/TESTING_SETUP_COMPLETE.md](./docs/testing/TESTING_SETUP_COMPLETE.md)           |
 | Design System       | [docs/PREMIUM_THEME_MANIFEST.md](./docs/PREMIUM_THEME_MANIFEST.md)                           |
