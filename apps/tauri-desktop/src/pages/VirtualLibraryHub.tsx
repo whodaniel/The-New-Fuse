@@ -55,7 +55,11 @@ const VirtualLibraryHub: React.FC = () => {
           <button type="button" className="ghost-button" onClick={() => setReloadKey((v) => v + 1)}>
             Reload
           </button>
-          <button type="button" className="secondary-button" onClick={() => void openExternal(baseUrl)}>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => void openExternal(baseUrl)}
+          >
             Open in browser
           </button>
         </>
@@ -63,10 +67,9 @@ const VirtualLibraryHub: React.FC = () => {
       banner={
         online === false ? (
           <div className="info-banner">
-            Start the library with{' '}
-            <code>pnpm --filter virtual-library-blueprints dev</code> (port 3000) or{' '}
-            <code>docker compose up virtual-library</code> (port 5173). Then set the URL below if
-            needed.
+            Start the library with <code>pnpm --filter virtual-library-blueprints dev</code> (port
+            3000) or <code>docker compose up virtual-library</code> (port 5173). Then set the URL
+            below if needed.
           </div>
         ) : null
       }
@@ -157,7 +160,7 @@ const VirtualLibraryHub: React.FC = () => {
           display: block;
         }
         .page-fill .page-fill-body,
-        .page-fill > :not(.page-header):not(.synergy-status-bar) {
+                .page-fill > :not(.page-header):not(.synergy-status-bar):not(style) {
           display: flex;
           flex-direction: column;
           min-height: 0;
