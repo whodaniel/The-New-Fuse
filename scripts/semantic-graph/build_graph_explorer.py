@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
-"""Generate self-contained unified_graph_explorer.html from unified_graph.json.gz."""
+"""Generate self-contained graph explorer HTMLs.
+
+  unified_graph_explorer.html            from unified_graph.json.gz (system, distributable)
+  user/unified_graph_explorer_full.html  from user/unified_graph_full.json.gz (local only)
+"""
 import json, os
 
-from common import (OUT as OUT_DIR, b64_of_file, viz_links,
+from common import (OUT as OUT_DIR, USER_OUT, b64_of_file, viz_links,
                     CHROME_CSS, chrome_header, chrome_footer)
 
-GZ = os.path.join(OUT_DIR, "unified_graph.json.gz")
-STATS = os.path.join(OUT_DIR, "unified_graph_stats.json")
-HTML_OUT = os.path.join(OUT_DIR, "unified_graph_explorer.html")
-
-b64 = b64_of_file(GZ)
-stats = json.load(open(STATS))
-meta = stats["meta"]
-
-links = viz_links(exclude_titles=("Unified Semantic Graph Explorer",))
+PALETTE = {
+    'wiki': '#e879f9', 'memory-graph': '#c084fc', 'concept-kg': '#5b9dff',
+    'filesystem': '#94a3b8', 'codebase-map': '#34d399', 'agent-graph': '#f97316',
+    'framework-graph': '#facc15', 'knowledge-tree': '#f43f5e', 'wordcount': '#22d3ee',
+    'handoff': '#fb7185', 'wiki-inbox': '#a78bfa', 'observatory': '#4ade80',
+}
 
 TEMPLATE = r"""<!DOCTYPE html>
 <html lang="en">
@@ -28,6 +29,9 @@ TEMPLATE = r"""<!DOCTYPE html>
   #layout { display:flex; flex:1; min-height:0; }
   #pagenav a { color:var(--dim); text-decoration:none; }
   #pagenav a:hover { color:var(--accent); }
+  .dcbadge { display:inline-block; margin-top:6px; font-size:10px; padding:2px 9px; border-radius:9px; border:1px solid; letter-spacing:.3px; }
+  .dc-sys { color:#4ade80; border-color:#2f6b45; background:rgba(74,222,128,.08); }
+  .dc-user { color:#fbbf24; border-color:#7a5c17; background:rgba(251,191,36,.08); }
 __CHROME_CSS__
   #side { width:360px; min-width:360px; border-right:1px solid var(--border); display:flex; flex-direction:column; transition:margin-left .18s ease; }
   #side.collapsed { margin-left:-360px; }
@@ -84,9 +88,10 @@ __HDR__
 <div id="layout">
   <div id="side">
     <header>
-      <h1>TNF Unified Semantic Graph</h1>
+      <h1>__TITLE__</h1>
       <div class="sub">__NODES__ nodes &middot; __EDGES__ edges &middot; generated __GEN__</div>
-      <div class="sub" id="pagenav"><a href="index.html">Hub</a> &middot; <a href="wordcount_report.html">Word Frequency</a></div>
+      <div class="sub" id="pagenav"><a href="__PFX__index.html">Hub</a> &middot; <a href="__PFX__wordcount_report.html">Word Frequency</a>__ALTLINK__</div>
+      <div>__BANNER__</div>
     </header>
     <div id="tabs"><div class="tab on" data-t="search">Search</div><div class="tab" data-t="stats">Stats</div><div class="tab" data-t="links">Links</div></div>
     <div id="searchpanel" style="display:flex;flex-direction:column;flex:1;min-height:0">
@@ -120,12 +125,7 @@ __HDR__
 </div>
 <script id="gzdata" type="application/octet-stream">__B64__</script>
 <script>
-const ORIGIN_COLORS = {
-  'wiki':'#e879f9','memory-graph':'#c084fc','concept-kg':'#5b9dff','filesystem':'#94a3b8',
-  'codebase-map':'#34d399','agent-graph':'#f97316','framework-graph':'#facc15',
-  'knowledge-tree':'#f43f5e','wordcount':'#22d3ee',
-  'handoff':'#fb7185','wiki-inbox':'#a78bfa','observatory':'#4ade80'
-};
+const ORIGIN_COLORS = __ORIGIN_COLORS__;
 let G = null;              // {meta,nodes,edges}
 let idOf = new Map();      // id -> index
 let adj = [];              // index -> [[nbrIdx, edgeIdx], ...]
@@ -500,19 +500,48 @@ __FTR__
 </body>
 </html>"""
 
-page = (TEMPLATE
-        .replace("__CHROME_CSS__", CHROME_CSS)
-        .replace("__HDR__", chrome_header("unified_graph_explorer.html"))
-        .replace("__FTR__", chrome_footer())
-        .replace("__B64__", b64)
-        .replace("__NODES__", f"{meta['nodes']:,}")
-        .replace("__EDGES__", f"{meta['edges']:,}")
-        .replace("__GEN__", meta["generated"])
-        .replace("__LINKS__", json.dumps(links))
-        .replace("__STATS__", json.dumps({
-            "nodes_by_origin": stats["nodes_by_origin"],
-            "edges_by_type": stats["edges_by_type"],
-            "cross_links": stats["cross_links"]})))
+def build(gz, stats_path, html_out, title, banner, prefix, active, alt_link):
+    stats = json.load(open(stats_path))
+    meta = stats["meta"]
+    links = viz_links(exclude_titles=("Unified Semantic Graph Explorer",))
+    if prefix:
+        links = [{**l, "href": prefix + l["href"]} for l in links]
+    palette = {o: c for o, c in PALETTE.items() if o in stats["nodes_by_origin"]}
+    page = (TEMPLATE
+            .replace("__CHROME_CSS__", CHROME_CSS)
+            .replace("__HDR__", chrome_header(active, prefix))
+            .replace("__FTR__", chrome_footer(prefix))
+            .replace("__B64__", b64_of_file(gz))
+            .replace("__TITLE__", title)
+            .replace("__BANNER__", banner)
+            .replace("__PFX__", prefix)
+            .replace("__ALTLINK__", alt_link)
+            .replace("__ORIGIN_COLORS__", json.dumps(palette))
+            .replace("__NODES__", f"{meta['nodes']:,}")
+            .replace("__EDGES__", f"{meta['edges']:,}")
+            .replace("__GEN__", meta["generated"])
+            .replace("__LINKS__", json.dumps(links))
+            .replace("__STATS__", json.dumps({
+                "nodes_by_origin": stats["nodes_by_origin"],
+                "edges_by_type": stats["edges_by_type"],
+                "cross_links": stats["cross_links"]})))
+    open(html_out, "w", encoding="utf-8").write(page)
+    print(html_out, f"{os.path.getsize(html_out) / 1048576:.2f} MB")
 
-open(HTML_OUT, "w", encoding="utf-8").write(page)
-print(HTML_OUT, os.path.getsize(HTML_OUT) / 1048576, "MB")
+
+FULL_GZ = os.path.join(USER_OUT, "unified_graph_full.json.gz")
+
+build(os.path.join(OUT_DIR, "unified_graph.json.gz"),
+      os.path.join(OUT_DIR, "unified_graph_stats.json"),
+      os.path.join(OUT_DIR, "unified_graph_explorer.html"),
+      "TNF Unified Semantic Graph",
+      '<span class="dcbadge dc-sys">System data only &mdash; distributable</span>',
+      "", "unified_graph_explorer.html", "")
+
+if os.path.exists(FULL_GZ):
+    build(FULL_GZ,
+          os.path.join(USER_OUT, "unified_graph_full_stats.json"),
+          os.path.join(USER_OUT, "unified_graph_explorer_full.html"),
+          "TNF Unified Semantic Graph &mdash; Full",
+          '<span class="dcbadge dc-user">Includes personal activity data &mdash; local only, never committed</span>',
+          "../", "", ' &middot; <a href="../unified_graph_explorer.html">System graph</a>')

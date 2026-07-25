@@ -3,12 +3,15 @@
 
 Sources: compounding-memory wiki, doc concept KG, codebase map, agent graphs,
 KNOWLEDGE_TREE.json, wordcount terms + concordance per-file index.
-Outputs: concordance_results/unified_graph.json.gz + unified_graph_stats.json
+Outputs:
+  concordance_results/unified_graph.json.gz          system origins only (distributable)
+  concordance_results/user/unified_graph_full.json.gz  system + user origins (local only)
 """
 import os, re, json, gzip, glob, time
 from collections import Counter, defaultdict
 
-from common import ROOT, OUT, slugify, kb_vector_id
+from common import (ROOT, OUT, slugify, kb_vector_id, SYSTEM_ORIGINS, USER_ORIGINS,
+                    PERSONAL_IDENTIFIERS, ensure_user_out)
 
 MAX_CONCEPTS = 25000
 CONCEPT_MIN_FREQ = 5
@@ -396,38 +399,83 @@ for s, t, ty, w in edges:
     seen.add(k)
     edge_list.append({"s": s, "t": t, "type": ty, "w": w})
 
-meta = {
-    "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-    "root": os.path.basename(ROOT),
-    "nodes": len(node_list),
-    "edges": len(edge_list),
-    "sources": ["wiki", "memory-graph", "concept-kg", "codebase-map",
-                "agent-graph", "framework-graph", "knowledge-tree",
-                "wordcount", "filesystem", "wiki-inbox", "handoff",
-                "observatory"],
-}
-out = {"meta": meta, "nodes": node_list, "edges": edge_list}
-with gzip.open(os.path.join(OUT, "unified_graph.json.gz"), "wt", encoding="utf-8") as f:
-    json.dump(out, f, ensure_ascii=False)
 
-origin_counts = Counter(n["origin"] for n in node_list)
-type_counts = Counter(n["type"] for n in node_list)
-edge_type_counts = Counter(e["type"] for e in edge_list)
-stats_out = {
-    "meta": meta,
-    "nodes_by_origin": dict(origin_counts),
-    "nodes_by_type": dict(type_counts.most_common()),
-    "edges_by_type": dict(edge_type_counts.most_common()),
-    "cross_links": {
-        "wiki_documents_path": edge_type_counts.get("documents", 0),
-        "code_same_file_path": edge_type_counts.get("same_file", 0),
-        "concept_term_lexical": edge_type_counts.get("lexical_match", 0),
-        "agent_concept_named": edge_type_counts.get("named_as", 0),
-        "concept_mentioned_in": edge_type_counts.get("mentioned_in", 0),
-        "term_occurs_in": edge_type_counts.get("occurs_in", 0),
-    },
-}
-with open(os.path.join(OUT, "unified_graph_stats.json"), "w") as f:
-    json.dump(stats_out, f, indent=2)
+def system_view(all_nodes, all_edges):
+    """Strip USER-origin nodes/edges and private KB enrichment for the
+    distributable artifact. kleaf labels revert to their vector IDs (which
+    come from the tracked KNOWLEDGE_TREE.json, not the private KB)."""
+    kept = {}
+    out_nodes = []
+    for n in all_nodes:
+        if n["origin"] in USER_ORIGINS:
+            continue
+        probe = (n["id"] + " " + n["label"]).lower()
+        if any(p in probe for p in PERSONAL_IDENTIFIERS):
+            continue
+        n2 = dict(n)
+        m = dict(n2.get("meta") or {})
+        if "also" in m:
+            also = [o for o in m["also"] if o not in USER_ORIGINS]
+            if also:
+                m["also"] = also
+            else:
+                m.pop("also")
+        if "kb_index" in m:  # private AI_Knowledge_Base.md enrichment
+            n2["label"] = m.get("vector_id") or n2["id"].split(":", 1)[1]
+            m.pop("kb_index", None)
+            m.pop("url", None)
+        n2["meta"] = m
+        kept[n2["id"]] = True
+        out_nodes.append(n2)
+    out_edges = [e for e in all_edges if e["s"] in kept and e["t"] in kept]
+    return out_nodes, out_edges
 
-print(json.dumps(stats_out, indent=2)[:3000])
+
+def emit(nodes_, edges_, gz_path, stats_path, sources, data_class):
+    meta = {
+        "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "root": os.path.basename(ROOT),
+        "data_class": data_class,
+        "nodes": len(nodes_),
+        "edges": len(edges_),
+        "sources": sources,
+    }
+    with gzip.open(gz_path, "wt", encoding="utf-8") as f:
+        json.dump({"meta": meta, "nodes": nodes_, "edges": edges_}, f, ensure_ascii=False)
+    edge_type_counts = Counter(e["type"] for e in edges_)
+    stats_out = {
+        "meta": meta,
+        "nodes_by_origin": dict(Counter(n["origin"] for n in nodes_)),
+        "nodes_by_type": dict(Counter(n["type"] for n in nodes_).most_common()),
+        "edges_by_type": dict(edge_type_counts.most_common()),
+        "cross_links": {
+            "wiki_documents_path": edge_type_counts.get("documents", 0),
+            "code_same_file_path": edge_type_counts.get("same_file", 0),
+            "concept_term_lexical": edge_type_counts.get("lexical_match", 0),
+            "agent_concept_named": edge_type_counts.get("named_as", 0),
+            "concept_mentioned_in": edge_type_counts.get("mentioned_in", 0),
+            "term_occurs_in": edge_type_counts.get("occurs_in", 0),
+        },
+    }
+    with open(stats_path, "w") as f:
+        json.dump(stats_out, f, indent=2)
+    print(f"  {data_class}: {len(nodes_):,} nodes / {len(edges_):,} edges -> {os.path.basename(gz_path)}")
+    return stats_out
+
+
+SYS_SOURCES = sorted(SYSTEM_ORIGINS - {"filesystem"}) + ["filesystem"]
+ALL_SOURCES = SYS_SOURCES + sorted(USER_ORIGINS)
+
+sys_nodes, sys_edges = system_view(node_list, edge_list)
+sys_stats = emit(sys_nodes, sys_edges,
+                 os.path.join(OUT, "unified_graph.json.gz"),
+                 os.path.join(OUT, "unified_graph_stats.json"),
+                 SYS_SOURCES, "system")
+
+user_out = ensure_user_out()
+emit(node_list, edge_list,
+     os.path.join(user_out, "unified_graph_full.json.gz"),
+     os.path.join(user_out, "unified_graph_full_stats.json"),
+     ALL_SOURCES, "user-full")
+
+print(json.dumps(sys_stats, indent=2)[:3000])

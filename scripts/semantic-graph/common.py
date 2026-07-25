@@ -17,6 +17,28 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..", "..")))
 OUT = os.path.join(ROOT, "concordance_results")
 
+# --------------------------------------------- system / user data boundary
+# SYSTEM origins are distributable: built only from tracked, non-personal repo
+# data. USER origins carry personal activity data (session lineage, private
+# knowledge-base packets) and must only ever land under USER_OUT, which is
+# gitignored.
+SYSTEM_ORIGINS = frozenset({
+    "wiki", "memory-graph", "concept-kg", "filesystem", "codebase-map",
+    "agent-graph", "framework-graph", "knowledge-tree", "wordcount",
+    "observatory",
+})
+USER_ORIGINS = frozenset({"handoff", "wiki-inbox"})
+USER_OUT = os.path.join(OUT, "user")
+
+# Operator identifiers that must never appear in distributable artifacts, even
+# as corpus terms (mirrors scripts/security/sanitize-personal-identifiers.cjs).
+PERSONAL_IDENTIFIERS = ("danielgoldberg", "whodaniel", "bizsynth")
+
+
+def ensure_user_out():
+    os.makedirs(USER_OUT, exist_ok=True)
+    return USER_OUT
+
 
 def slugify(s):
     return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", s.lower())).strip("-")
@@ -147,22 +169,22 @@ CHROME_CSS = """
 """
 
 
-def chrome_header(active):
+def chrome_header(active, prefix=""):
     logo = logo_data_uri()
     img = f'<img src="{logo}" alt="TNF logo">' if logo else ""
-    nav = "".join(f'<a href="{href}"{" class=\"on\"" if href == active else ""}>{label}</a>'
+    nav = "".join(f'<a href="{prefix}{href}"{" class=\"on\"" if href == active else ""}>{label}</a>'
                   for href, label in NAV_PAGES)
     return (f'<div id="tnfhdr">{img}<span class="brand">The New Fuse</span>'
             f'<nav>{nav}</nav></div>')
 
 
-def chrome_sidebar(active):
-    nav = "".join(f'<a href="{href}"{" class=\"on\"" if href == active else ""}>{label}</a>'
+def chrome_sidebar(active, prefix=""):
+    nav = "".join(f'<a href="{prefix}{href}"{" class=\"on\"" if href == active else ""}>{label}</a>'
                   for href, label in NAV_PAGES)
     return f'<div id="tnfnav"><div class="nt">Navigate</div>{nav}</div>'
 
 
-def chrome_footer():
-    nav = " &middot; ".join(f'<a href="{href}">{label}</a>' for href, label in NAV_PAGES)
+def chrome_footer(prefix=""):
+    nav = " &middot; ".join(f'<a href="{prefix}{href}">{label}</a>' for href, label in NAV_PAGES)
     return (f'<div id="tnfftr"><span>The New Fuse &mdash; semantic reports</span>'
-            f'<span>{nav}</span><span><a href="README.md">README</a></span></div>')
+            f'<span>{nav}</span><span><a href="{prefix}README.md">README</a></span></div>')
