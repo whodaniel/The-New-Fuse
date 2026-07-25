@@ -10566,33 +10566,64 @@ zeroTurnCommand
         console.log(chalk.red('❌ TNF Agent Daemon: not running'));
       }
 
+      const processAlive = (pattern: string): boolean => {
+        try {
+          const output = execSync(`pgrep -af ${pattern}`, {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'ignore'],
+          });
+          return output.trim().length > 0;
+        } catch {
+          return false;
+        }
+      };
+
+      let crontabText = '';
       try {
-        const directorOutput = execSync('pgrep -af tnf-director-loop', {
+        crontabText = execSync('crontab -l', {
           encoding: 'utf8',
           stdio: ['pipe', 'pipe', 'ignore'],
         });
-        status.director = directorOutput.trim().length > 0;
-        if (status.director) {
-          console.log(chalk.green('✅ TNF Director Loop: running'));
-        } else {
-          console.log(chalk.red('❌ TNF Director Loop: not running'));
-        }
       } catch {
+        crontabText = '';
+      }
+
+      const logFreshWithinMs = (logPath: string, maxAgeMs: number): boolean => {
+        try {
+          return Date.now() - fs.statSync(logPath).mtimeMs <= maxAgeMs;
+        } catch {
+          return false;
+        }
+      };
+
+      // Director loop and terminal heartbeat are one-shot pulse scripts driven
+      // by cron, so a missing live process is normal between pulses.
+      const directorCron = crontabText.includes('tnf-director-loop');
+      const directorFresh = logFreshWithinMs(
+        path.join(os.homedir(), '.tnf/director/logs/cron.log'),
+        10 * 60 * 1000
+      );
+      status.director = processAlive('tnf-director-loop') || (directorCron && directorFresh);
+      if (status.director) {
+        console.log(chalk.green('✅ TNF Director Loop: running (cron pulse every 5m)'));
+      } else if (directorCron) {
+        console.log(chalk.red('❌ TNF Director Loop: cron installed but no recent pulse'));
+      } else {
         console.log(chalk.red('❌ TNF Director Loop: not running'));
       }
 
-      try {
-        const heartbeatOutput = execSync('pgrep -af terminal-heartbeat-pulse', {
-          encoding: 'utf8',
-          stdio: ['pipe', 'pipe', 'ignore'],
-        });
-        status.heartbeat = heartbeatOutput.trim().length > 0;
-        if (status.heartbeat) {
-          console.log(chalk.green('✅ Terminal Heartbeat: running'));
-        } else {
-          console.log(chalk.red('❌ Terminal Heartbeat: not running'));
-        }
-      } catch {
+      const heartbeatCron = crontabText.includes('terminal-heartbeat-pulse');
+      const heartbeatFresh = logFreshWithinMs(
+        path.join(os.homedir(), '.tnf/terminal-heartbeat/logs/cron.log'),
+        3 * 60 * 1000
+      );
+      status.heartbeat =
+        processAlive('terminal-heartbeat-pulse') || (heartbeatCron && heartbeatFresh);
+      if (status.heartbeat) {
+        console.log(chalk.green('✅ Terminal Heartbeat: running (cron pulse every 1m)'));
+      } else if (heartbeatCron) {
+        console.log(chalk.red('❌ Terminal Heartbeat: cron installed but no recent pulse'));
+      } else {
         console.log(chalk.red('❌ Terminal Heartbeat: not running'));
       }
 

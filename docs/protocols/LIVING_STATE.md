@@ -24,11 +24,15 @@ remain: PR #70; `tnf authority relaunch-workers` → `confirm-isolation` (not
 ## ⚡ Active Steps
 
 - [✅] **2026-07-25 Cursor session — role⊥platform + handoff lifecycle** —
+- [✅] 2026-07-25T20:05:30.080Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
   Corrected baton vs `daccRole` vs platform axes; orphaned `ORCHESTRATOR-*`
   inbox migration; dual inbox keys; graph regen + safe publish; protocol
   `docs/protocols/HANDOFF_PACKET_LIFECYCLE.md` + broker 15m sweep +
   `pnpm run handoff:lifecycle:*`; tests 11/11. Handoff
   `4d393466-34a4-4dc3-bbaa-af1680956fa1`. No commit (operator-gated).
+
 - [✅] 2026-07-24T00:30:13.658Z System cron entries installed:
 - [✅] 2026-07-24T04:21:15.352Z System cron entries installed:
 - [✅] 2026-07-24T21:17:42.244Z New agent(s) created: qodercli
