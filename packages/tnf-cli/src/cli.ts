@@ -5,6 +5,7 @@ import { spawn, spawnSync } from 'child_process';
 import { Command } from 'commander';
 import { createHash } from 'crypto';
 import fs from 'fs';
+import { createRequire } from 'module';
 import os from 'os';
 import path from 'path';
 import readline from 'readline';
@@ -69,6 +70,7 @@ const _dirname =
     : path.dirname(fileURLToPath((import.meta as any).url));
 const _filename =
   typeof __filename !== 'undefined' ? __filename : fileURLToPath((import.meta as any).url);
+const require = createRequire(_filename);
 const repoRoot = path.resolve(_dirname, '../../..');
 const invocationCwd = process.env.TNF_INVOCATION_CWD || process.cwd();
 const LOCAL_ENV_FILES = ['.env', '.env.local', '.tnf.local.env'];
@@ -144,7 +146,8 @@ function loadLocalEnv(rootDir: string): void {
       if (separatorIndex <= 0) continue;
 
       const key = normalizedLine.slice(0, separatorIndex).trim();
-      if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key) || exportedKeys.has(key)) continue;
+      // First-wins: shell env > LOCAL_ENV_FILES > FALLBACK_ENV_SOURCES; fallbacks must not clobber earlier values.
+      if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key) || key in process.env) continue;
 
       process.env[key] = parseEnvValue(normalizedLine.slice(separatorIndex + 1));
     }
@@ -218,7 +221,9 @@ async function runTnfCliEntrypoint(args: string[]): Promise<void> {
 }
 
 async function runTurnZeroOnboardSurface(options: { repair?: boolean } = {}): Promise<void> {
-  const args = ['scripts/tnf-onboard.cjs', '--runtime-timeout-ms', '1000'];
+  // 1000ms was too short for the Supabase pooler (5 sequential queries); 8000ms verified working.
+  const runtimeTimeoutMs = process.env.TNF_ONBOARD_RUNTIME_TIMEOUT_MS || '10000';
+  const args = ['scripts/tnf-onboard.cjs', '--runtime-timeout-ms', runtimeTimeoutMs];
   if (options.repair) args.push('--repair');
   await runCommand('node', args);
 }
@@ -7120,7 +7125,7 @@ harness
   )
   .action(async (options: { reason?: string; injectionOnly?: boolean }) => {
     try {
-      const repoRootLocal = path.join(__dirname, '..', '..', '..');
+      const repoRootLocal = repoRoot;
       const fleetModeScript = path.join(repoRootLocal, 'scripts', 'lib', 'tnf-fleet-mode.cjs');
       if (!fs.existsSync(fleetModeScript)) {
         throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
@@ -7147,7 +7152,7 @@ harness
   .description('Resume normal autonomous TNF fleet activity (clear pause state)')
   .action(async () => {
     try {
-      const repoRootLocal = path.join(__dirname, '..', '..', '..');
+      const repoRootLocal = repoRoot;
       const fleetModeScript = path.join(repoRootLocal, 'scripts', 'lib', 'tnf-fleet-mode.cjs');
       if (!fs.existsSync(fleetModeScript)) {
         throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
@@ -7173,7 +7178,7 @@ harness
   .option('--json', 'Output machine-readable JSON')
   .action(async (options: { json?: boolean }) => {
     try {
-      const repoRootLocal = path.join(__dirname, '..', '..', '..');
+      const repoRootLocal = repoRoot;
       const fleetModeScript = path.join(repoRootLocal, 'scripts', 'lib', 'tnf-fleet-mode.cjs');
       if (!fs.existsSync(fleetModeScript)) {
         throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);

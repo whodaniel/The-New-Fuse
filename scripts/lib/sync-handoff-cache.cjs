@@ -57,7 +57,7 @@ function buildCacheSummary(handoff, sourcePath) {
         handoff.created_at || 'unknown',
         handoff.repository || 'TNF',
         handoff.branch || 'unknown',
-        handoff.handoff_id || '',
+        handoff.handoff_id ? `ID:${handoff.handoff_id}` : '',
       ]
         .join(' ')
         .trim(),
