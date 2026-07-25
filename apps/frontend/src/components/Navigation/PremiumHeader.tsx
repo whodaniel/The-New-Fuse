@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { openAIAssist } from '../../utils/aiAssistEvents';
+import { TnfLogo } from '../brand/TnfLogo';
 
 interface PremiumHeaderProps {
   onMenuClick: () => void;
@@ -40,6 +41,10 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
           >
             <Menu className="w-6 h-6" />
           </button>
+
+          {/* On small screens the sidebar (and its logo) is hidden behind the
+              menu button, which left the header with no brand mark at all. */}
+          <TnfLogo size={28} to="/dashboard" className="lg:hidden" />
 
           {title && <h1 className="text-xl font-semibold text-white hidden sm:block">{title}</h1>}
         </div>

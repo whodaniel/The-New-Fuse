@@ -1,5 +1,5 @@
-import { Rocket } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { TnfLogo } from './brand/TnfLogo';
 
 export const SiteFooter = () => {
   return (
@@ -8,15 +8,9 @@ export const SiteFooter = () => {
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-4">
           {/* Brand */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
-            <Link
-              to="/"
-              className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Rocket className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">The New Fuse</span>
-            </Link>
+            <div className="mb-6">
+              <TnfLogo size={40} showWordmark wordmarkClassName="text-xl text-white" />
+            </div>
             <p className="text-gray-400 text-sm mb-6">
               The world's most advanced AI agent orchestration platform.
             </p>

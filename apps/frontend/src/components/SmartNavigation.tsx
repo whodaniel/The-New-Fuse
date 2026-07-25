@@ -32,7 +32,8 @@ import { EXPERIENCE_SURFACES } from '../config/experienceArchitecture';
 import { useAuth } from '../hooks/useAuth';
 import { useAuthorization } from '../hooks/useAuthorization';
 
-const TNF_LOGO_URL = 'https://thenewfuse.com/assets/brand/tnf-logo.png';
+import { TNF_LOGO_SRC } from './brand/TnfLogo';
+const TNF_LOGO_URL = TNF_LOGO_SRC;
 
 interface DomainMenuItem {
   to: string;
