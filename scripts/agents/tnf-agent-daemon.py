@@ -1239,7 +1239,7 @@ Assess health and take proactive actions if needed."""
             )
             self.r.publish(CHANNEL_INGRESS, json.dumps(envelope))
             self.messages_sent += 1
-            logger.info(f"Think cycle complete: {response[:120]}...")
+            logger.info(f"Think cycle complete: {response.content[:120]}...")
 
     # -- State persistence ---------------------------------------------------
 
