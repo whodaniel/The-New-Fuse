@@ -11,7 +11,7 @@ set -euo pipefail
 # can both resolve it without operator-home traversal.
 export PATH="/opt/tnf-node/bin:$PATH"
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ENV_FILE="${TNF_HARNESS_CONTEXT_ENV:-$ROOT/.agent/runtime-state/harness-context.env}"
 RESOLVER="$ROOT/scripts/runtime/resolve-harness-context.cjs"
 WRAPPER="${1:-}"

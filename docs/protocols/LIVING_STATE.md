@@ -52,6 +52,15 @@ sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
 - [✅] 2026-07-24T21:17:42.244Z New agent(s) created: qodercli
 - [✅] 2026-07-24T21:17:42.244Z System cron entries installed:
 - [✅] 2026-07-24T23:38:13.615Z System cron entries installed:
+- [✅] 2026-07-25T06:16:47.412Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-25T07:00:25.030Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-25T11:33:58.096Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-25T11:43:25.323Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)

@@ -1,14 +1,14 @@
 {
-  "now": "2026-07-23T20:00:02Z",
+  "now": "2026-07-25T12:00:09Z",
   "ok": true,
   "summaries": {
     "cron_count": 19,
-    "live_count": 15,
+    "live_count": 11,
     "packages_count": 93,
     "apps_count": 30,
     "proto_count": 32,
-    "agent_scripts_count": 26,
-    "relay_core_ts_count": 69
+    "agent_scripts_count": 29,
+    "relay_core_ts_count": 70
   },
   "findings": []
 }

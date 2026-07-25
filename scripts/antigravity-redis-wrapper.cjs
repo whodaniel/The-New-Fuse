@@ -382,8 +382,19 @@ ${Object.entries(WORKFLOWS)
         await this.stop();
         resolve();
       });
+      process.on('SIGTERM', async () => {
+        console.log('\n🛑 Shutting down (SIGTERM)...');
+        await this.stop();
+        resolve();
+      });
 
-      // Handle terminal input
+      // Headless / nohup: do not attach readline to a non-TTY stdin
+      // (EOF or /dev/zero null bytes would tear the process down).
+      if (!process.stdin.isTTY) {
+        console.log('[headless] no TTY — orchestrator stays up on Redis event loop');
+        return;
+      }
+
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,

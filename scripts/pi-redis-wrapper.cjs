@@ -805,6 +805,15 @@ class PiRedisAgent {
         await this.stop();
         resolve();
       });
+      process.on('SIGTERM', async () => {
+        await this.stop();
+        resolve();
+      });
+
+      if (!process.stdin.isTTY) {
+        console.log('[headless] no TTY — Pi stays up on Redis event loop');
+        return;
+      }
 
       const rl = readline.createInterface({
         input: process.stdin,

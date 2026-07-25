@@ -519,6 +519,16 @@ class JulesRedisAgent {
         await this.stop();
         resolve();
       });
+      process.on('SIGTERM', async () => {
+        console.log('\n🛑 Shutting down (SIGTERM)...');
+        await this.stop();
+        resolve();
+      });
+
+      if (!process.stdin.isTTY) {
+        console.log('[headless] no TTY — Jules stays up on Redis event loop');
+        return;
+      }
 
       // Handle terminal input for testing
       const rl = readline.createInterface({
