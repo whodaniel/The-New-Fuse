@@ -79,7 +79,12 @@ const VoiceHub: React.FC = () => {
       title="Voice Bridge"
       subtitle="Mic, beam, speaker identity, and spoken replies — the same loop you use in Cursor, visible here."
       actions={
-        <button type="button" className="primary-button" onClick={() => void refresh()} disabled={!!busy}>
+        <button
+          type="button"
+          className="primary-button"
+          onClick={() => void refresh()}
+          disabled={!!busy}
+        >
           Refresh
         </button>
       }
@@ -103,8 +108,8 @@ const VoiceHub: React.FC = () => {
             <strong>{snapshot.profile}</strong>.
           </p>
           <p className="voice-muted">
-            Routing tags stay on the voice stream and in logs. Chat injection and this page show your
-            plain words only.
+            Routing tags stay on the voice stream and in logs. Chat injection and this page show
+            your plain words only.
           </p>
           <div className="voice-meta-list">
             <div>
@@ -129,9 +134,7 @@ const VoiceHub: React.FC = () => {
               type="button"
               className="primary-button"
               disabled={!!busy || !snapshot.online}
-              onClick={() =>
-                void runAction('beam', snapshot.micPaused ? resumeBeam : pauseBeam)
-              }
+              onClick={() => void runAction('beam', snapshot.micPaused ? resumeBeam : pauseBeam)}
             >
               {snapshot.micPaused ? 'Resume beam' : 'Pause beam'}
             </button>
@@ -183,7 +186,11 @@ const VoiceHub: React.FC = () => {
                 onChange={(event) => setTestLine(event.target.value)}
                 placeholder="Say something…"
               />
-              <button type="submit" className="primary-button" disabled={!!busy || !testLine.trim()}>
+              <button
+                type="submit"
+                className="primary-button"
+                disabled={!!busy || !testLine.trim()}
+              >
                 Send
               </button>
             </div>
@@ -225,12 +232,39 @@ const VoiceHub: React.FC = () => {
             </label>
             <label>
               Profile
-              <input value={draftProfile} onChange={(event) => setDraftProfile(event.target.value)} />
+              <input
+                value={draftProfile}
+                onChange={(event) => setDraftProfile(event.target.value)}
+              />
             </label>
           </div>
           <button type="button" className="primary-button" onClick={() => void saveConfig()}>
             Save config
           </button>
+        </section>
+
+        {/* Embedded Sensor Iframe */}
+        <section
+          className="voice-panel voice-panel-wide"
+          style={{ border: '1px solid rgba(99, 102, 241, 0.45)' }}
+        >
+          <h2>Native Audio Capture Engine</h2>
+          <p className="voice-muted">
+            The Voice Beam requires microphone access. Start the engine below to activate the
+            embedded sensor without opening a separate browser tab.
+          </p>
+          <iframe
+            src={`http://localhost:${snapshot.port}`}
+            allow="microphone"
+            style={{
+              width: '100%',
+              height: '300px',
+              borderRadius: '10px',
+              border: 'none',
+              background: '#000',
+            }}
+            title="Voice Sensor Engine"
+          />
         </section>
       </div>
 

@@ -66,10 +66,38 @@ const VirtualLibraryHub: React.FC = () => {
       }
       banner={
         online === false ? (
-          <div className="info-banner">
-            Start the library with <code>pnpm --filter virtual-library-blueprints dev</code> (port
-            3000) or <code>docker compose up virtual-library</code> (port 5173). Then set the URL
-            below if needed.
+          <div
+            className="info-banner"
+            style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+            }}
+          >
+            <strong style={{ color: '#fca5a5' }}>Library Engine is Offline</strong>
+            <span>
+              You need to start the background engine. Click to copy the boot command, paste it into
+              your terminal, and click Reload.
+            </span>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
+              <code
+                style={{ background: 'rgba(0,0,0,0.3)', padding: '6px 12px', borderRadius: '6px' }}
+              >
+                pnpm --filter virtual-library-blueprints dev
+              </code>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => {
+                  navigator.clipboard.writeText('pnpm --filter virtual-library-blueprints dev');
+                }}
+              >
+                Copy Command
+              </button>
+            </div>
           </div>
         ) : null
       }

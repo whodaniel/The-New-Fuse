@@ -11,6 +11,7 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
+import { printProtocolAgentRosterSafe } from './boot/agent-roster.js';
 import {
   createBootPipeline,
   printBootPlan,
@@ -4835,6 +4836,9 @@ program
           }
           console.log('');
         }
+
+        // Clear ACTIVE / INACTIVE view of every agent known on the TNF protocol bus.
+        printProtocolAgentRosterSafe(repoRoot);
 
         if (options.attachAgent !== false && !options.nonInteractive && process.stdin.isTTY) {
           console.log(
@@ -17159,6 +17163,8 @@ async function startTuiAgent(options?: { autonomous?: boolean }): Promise<void> 
   console.log('');
   console.log(chalk.bold.cyan('  ⚡ TNF TUI Agent — Always-on LLM session'));
   console.log(chalk.dim('  ─────────────────────────────────────────────'));
+  // Clear ACTIVE / INACTIVE view of every agent known on the TNF protocol bus.
+  printProtocolAgentRosterSafe(repoRoot);
   await startInteractiveAgent(options);
 }
 
