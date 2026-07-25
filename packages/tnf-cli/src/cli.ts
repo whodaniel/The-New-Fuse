@@ -4886,6 +4886,93 @@ program
     }
   });
 
+// Phase-1.2 (tnf pi parity): promote `tnf debug skill` to a top-level
+// `tnf skill` command surface (single-engine reuse of DebugService.
+//   listSkills(); extended to walk ~/.pi/agent/skills/ and ~/.agents/skills/
+// matching `.pi` Agent-Skills standard topology).
+// `tnf debug skill` is kept as a Commander alias for one minor release for
+// existing scripts; remove when Phase-2 lands the .pi-package installer.
+const skillCommand = program
+  .command('skill')
+  .description(
+    'Inspect the Agent-Skills discovery surface (`tnf debug skill` is the legacy alias).'
+  );
+
+skillCommand
+  .command('list')
+  .description('List all available skills (sources: tnf | pi | agents | claude)')
+  .option('--json', 'Output machine-readable JSON')
+  .option('--source <source>', 'Filter by source (tnf | pi | agents | claude)')
+  .action((options: { json?: boolean; source?: string }) => {
+    try {
+      const all = debugService.listSkills();
+      const filtered = options.source ? all.filter((s) => s.source === options.source) : all;
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            { count: filtered.length, source: options.source ?? 'all', skills: filtered },
+            null,
+            2
+          )
+        );
+        return;
+      }
+      console.log(chalk.bold('\nAvailable Skills\n'));
+      if (filtered.length === 0) {
+        console.log(chalk.dim('  (none discovered)'));
+        console.log('');
+        return;
+      }
+      for (const s of filtered) {
+        console.log(
+          `  ${chalk.cyan(s.name.padEnd(28))} ${chalk.dim(s.source.padEnd(8))} ${chalk.dim(s.path)}`
+        );
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+skillCommand
+  .command('show')
+  .description('Show full contents of a discovered skill')
+  .argument('<name>', 'Skill name (from `tnf skill list`)')
+  .option(
+    '--source <source>',
+    'Disambiguate when the same skill name exists under multiple sources'
+  )
+  .action((name: string, options: { source?: string }) => {
+    try {
+      const all = debugService.listSkills();
+      const candidates = all.filter((s) => s.name === name);
+      const choice =
+        candidates.find((s) => s.source === options.source) ??
+        (candidates.length === 1 ? candidates[0] : null);
+      if (!choice) {
+        console.error(chalk.red(`Skill '${name}' not found`));
+        for (const c of candidates) {
+          console.error(chalk.dim(`  - found under source '${c.source}' at ${c.path}`));
+        }
+        process.exit(1);
+      }
+      const contents = fs.readFileSync(choice.path, 'utf8');
+      console.log(chalk.bold(`\n${choice.name}\n`));
+      console.log(chalk.dim(`  source: ${choice.source}`));
+      console.log(chalk.dim(`  path:   ${choice.path}`));
+      console.log('');
+      console.log(contents);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// `tnf debug skill` (registered below) continues to call the same
+// debugService.listSkills() engine; no aliasing of the parent `debug` command
+// is required to retain backward-compat.
+
 program
   .command('register')
   .description('Register and listen as an agent')
@@ -8241,7 +8328,12 @@ compatOpenClaw
     }
   );
 
-const skills = program.command('skills').description('Skill bank operations');
+// Phase-1.2 (tnf pi parity): Rename `tnf skills` → `tnf skill-bank` to free the
+// `tnf skill` namespace for the new Agent-Skills discovery surface. Existing
+// scripts that call `tnf skills bank <sub>` must update to `tnf skill-bank bank <sub>`.
+const skills = program
+  .command('skill-bank')
+  .description('Cross-LLM skill bank operations (renamed from `tnf skills` in Phase-1.2)');
 const skillsBank = skills.command('bank').description('Cross-LLM skill bank operations');
 skillsBank
   .command('sync')
@@ -15502,6 +15594,82 @@ forefrontCommand
       }
     }
   );
+
+// Phase-1.3 (tnf pi parity): `extensionCmd` historically lists shipped
+// chrome/vscode/tauri apps. `.pi`-style user-modules (TS loadable extensions,
+// hot-reload, custom tools/commands) live in ~/.pi/agent/extensions/,
+// .pi/extensions/. Surface them as a sibling subcommand so the existing
+// shipped-extension semantics stay untouched.
+function discoverUserExtensions(repoRootArg: string): Array<{
+  name: string;
+  source: string;
+  dir: string;
+  entry: string | null;
+}> {
+  const home = os.homedir();
+  const candidates: Array<{ name: string; source: string; dir: string; entry: string | null }> = [];
+  const roots: Array<{ source: string; dir: string }> = [
+    { source: 'local', dir: path.join(home, '.pi', 'agent', 'extensions') },
+    { source: 'project', dir: path.join(repoRootArg, '.pi', 'extensions') },
+  ];
+  for (const { source, dir } of roots) {
+    if (!fs.existsSync(dir)) continue;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      let full: string | null = null;
+      let real: string | null = null;
+      try {
+        if (entry.isSymbolicLink()) real = fs.realpathSync(path.join(dir, entry.name));
+      } catch {}
+      const probeTarget = real ?? (entry.isDirectory() ? path.join(dir, entry.name) : null);
+      if (!probeTarget) continue;
+      try {
+        if (fs.statSync(probeTarget).isDirectory()) full = probeTarget;
+      } catch {}
+      if (!full) continue;
+      const entryFile =
+        ['index.ts', 'index.js', 'extension.ts', 'extension.js']
+          .map((cand) => path.join(full!, cand))
+          .find((p) => fs.existsSync(p)) ?? null;
+      candidates.push({ name: entry.name, source, dir: full, entry: entryFile });
+    }
+  }
+  return candidates;
+}
+
+extensionCmd
+  .command('user-list')
+  .description(
+    'List user-module extensions discovered from `~/.pi/agent/extensions/` and `.pi/extensions/` (.pi parity)'
+  )
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const found = discoverUserExtensions(repoRoot);
+      if (options.json) {
+        console.log(JSON.stringify({ count: found.length, repoRoot, extensions: found }, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nUser-Module Extensions (.pi parity)\n'));
+      if (found.length === 0) {
+        console.log(chalk.dim('  (none discovered — seed ~/.pi/agent/extensions/ to populate)'));
+        console.log('');
+        return;
+      }
+      for (const e of found) {
+        console.log(
+          `  ${chalk.cyan(e.name.padEnd(28))} ${chalk.dim(e.source.padEnd(8))} ${chalk.dim(e.dir)}`
+        );
+        console.log(
+          `  ${''.padEnd(28)} ${chalk.dim(e.entry ?? chalk.yellow('(no index.ts/extension.ts)'))}`
+        );
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 program
   .command('browser-control')
