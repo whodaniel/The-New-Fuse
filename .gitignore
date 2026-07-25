@@ -146,6 +146,11 @@ apps/external/cursor-watch-learn/output/
 scripts/cloud_runtime/openclaw-codex-tenants.json
 archive/junk/
 
+# Semantic pipeline: personal-data overlay + local build cache (system
+# artifacts in concordance_results/ stay tracked)
+concordance_results/user/
+concordance_results/.tnf-logo-96.png
+
 
 # OS
 .DS_Store
