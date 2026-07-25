@@ -11,12 +11,17 @@ const ROUTE_TITLES: Record<string, string> = {
   '/mcp': 'MCP Store',
   '/settings': 'Settings',
   '/web-hub': 'Web Parity Hub',
-  '/browser': 'Browser Control',
+  '/computer-use': 'Computer Use',
   '/terminal': 'Swarm Terminal',
-  '/oagi': 'OAGI Hub',
-  '/antigravity': 'Antigravity',
+  '/voice': 'Voice Bridge',
   '/a2a': 'A2A Control',
   '/knowledge': 'Knowledge Hub',
+};
+
+const LEGACY_REDIRECTS: Record<string, { path: string; title: string }> = {
+  '/browser': { path: '/computer-use', title: 'Computer Use' },
+  '/oagi': { path: '/computer-use', title: 'Computer Use' },
+  '/antigravity': { path: '/agents', title: 'Agent Hub' },
 };
 
 async function expectPageTitle(page: import('@playwright/test').Page, title: string) {
@@ -28,6 +33,14 @@ test.describe('desktop route navigation', () => {
     test(`loads ${route}`, async ({ page }) => {
       await page.goto(`/#${route}`);
       await expectPageTitle(page, title);
+    });
+  }
+
+  for (const [legacy, target] of Object.entries(LEGACY_REDIRECTS)) {
+    test(`redirects legacy ${legacy} → ${target.path}`, async ({ page }) => {
+      await page.goto(`/#${legacy}`);
+      await expectPageTitle(page, target.title);
+      expect(page.url()).toContain(`#${target.path}`);
     });
   }
 

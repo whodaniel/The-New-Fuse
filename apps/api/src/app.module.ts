@@ -23,18 +23,19 @@ import { AgentHandoffController } from './controllers/agent-handoff.controller';
 import { AgentPfpOverridesController } from './controllers/agent-pfp-overrides.controller';
 import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { AiController } from './controllers/ai.controller';
+import { AvailableModelsController } from './controllers/available-models.controller';
+import { BridgesController } from './controllers/bridges.controller';
 import { CommunityController } from './controllers/community.controller';
 import { CompoundingMemoryController } from './controllers/compounding-memory.controller';
 import { HealthController } from './controllers/health.controller';
 import { LLMIntelController } from './controllers/llm-intel.controller';
-import { PublicInfoController } from './controllers/public-info.controller';
-import { BridgesController } from './controllers/bridges.controller';
 import { MCPServerController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
 import { OnboardingController } from './controllers/onboarding.controller';
 import { OrchestrationController } from './controllers/orchestration.controller';
 import { ProviderKeysController } from './controllers/provider-keys.controller';
+import { PublicInfoController } from './controllers/public-info.controller';
 import { SystemController } from './controllers/system.controller';
 import { UserManagementController } from './controllers/user-management.controller';
 import { WebSocketController } from './controllers/websocket.controller';
@@ -182,6 +183,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     CompoundingMemoryController,
     LLMIntelController,
     ModelsController, // AI model provider selection
+    AvailableModelsController, // Dynamic available LLM catalog for Create Agent
     SystemController,
     UserManagementController, // User CRUD operations
     WebSocketController,

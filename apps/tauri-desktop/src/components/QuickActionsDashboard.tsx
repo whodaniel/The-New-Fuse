@@ -27,7 +27,9 @@ interface QuickAction {
   label: string;
   icon: string;
   description: string;
-  command?: string;
+  /** Allowlisted Tauri lifecycle invoke name (never free-form shell). */
+  invoke?: string;
+  invokeArgs?: Record<string, unknown>;
   url?: string;
   handler?: () => Promise<void>;
   requiresConfirmation?: boolean;
@@ -40,6 +42,13 @@ interface ExecutionResult {
   output?: string;
 }
 
+interface LifecycleInvokeResult {
+  ok?: boolean;
+  message?: string;
+  command?: string;
+  already_running?: boolean;
+}
+
 // ============================================================================
 // ACTION CATEGORIES
 // ============================================================================
@@ -48,107 +57,77 @@ const ACTION_CATEGORIES: ActionCategory[] = [
   {
     name: 'Operator Forefront',
     icon: '🚀',
-    description: 'One-click operator surface: local UI, browser control, harness',
+    description: 'One-click operator surface: local stack, relay, voice',
     actions: [
       {
         id: 'forefront-boot',
         label: 'Launch Forefront Stack',
         icon: '⚡',
-        description: 'Boot harness, relay, local UI, and open browser control',
-        command: 'node scripts/local-ui/tnf-forefront-boot.cjs',
+        description: 'Boot harness, relay, and local operator stack',
+        invoke: 'start_forefront_boot',
       },
       {
-        id: 'local-ui',
-        label: 'Start Local UI',
+        id: 'start-api',
+        label: 'Start TNF API',
         icon: '🖥️',
-        description: 'Web operator shell on http://localhost:1420',
-        command: 'pnpm run tnf:local-ui',
-      },
-      {
-        id: 'cursor-harness',
-        label: 'Onboard Cursor Harness',
-        icon: '🎯',
-        description: 'Wire Cursor CLI into TNF harness protocol + MCP routing',
-        command: 'node scripts/cursor/tnf-cursor-harness-onboard.cjs',
+        description: 'Start local REST API on port 3001 (agent CRUD)',
+        invoke: 'start_tnf_api',
       },
       {
         id: 'relay-start',
-        label: 'Start Browser Relay',
+        label: 'Start Local Relay',
         icon: '🔌',
-        description: 'Start relay-core for Chrome extension browser control',
-        command: 'pnpm run relay:start',
+        description: 'Start federation relay (ports 3007 / 3000 / 3010)',
+        invoke: 'start_local_relay',
+      },
+      {
+        id: 'voice-start',
+        label: 'Start Voice Stack',
+        icon: '🎤',
+        description: 'Server + listen STT (same as tnf voice up --with-listen)',
+        invoke: 'ensure_voice_stack',
+      },
+      {
+        id: 'library-voice-start',
+        label: 'Start Library Voice',
+        icon: '📚',
+        description: 'Story Architect :43120 + KWS :43110 (Library browser STT path)',
+        invoke: 'ensure_library_audio_stack',
       },
     ],
   },
   {
     name: 'AI Agents',
     icon: '🤖',
-    description: 'Manage AI agents and multi-agent conversations',
+    description: 'Open agent surfaces in the desktop shell',
     actions: [
       {
-        id: 'join-network',
-        label: 'Join Agent Network',
-        icon: '🔗',
-        description: 'Register this app as an agent on the Redis network',
-        command: 'node scripts/tnf-agent-cli.cjs register tauri-app participant tauri',
-      },
-      {
-        id: 'view-agents',
-        label: 'View Active Agents',
+        id: 'open-agents',
+        label: 'Open Agent Hub',
         icon: '👥',
-        description: 'See all AI agents currently connected',
-        command: 'node scripts/tnf-agent-cli.cjs list',
+        description: 'Manage local + federated agents',
+        url: 'http://localhost:1420/#/agents',
       },
       {
-        id: 'start-conversation',
-        label: 'Start AI Conversation',
+        id: 'open-chat',
+        label: 'Multi-Agent Chat',
         icon: '💬',
-        description: 'Begin a new multi-AI conversation',
-        command: 'node scripts/tnf-agent-cli.cjs convo start general',
+        description: 'Open multi-agent chat',
+        url: 'http://localhost:1420/#/chat',
       },
       {
-        id: 'run-orchestration',
-        label: 'Run Orchestration Demo',
-        icon: '🎭',
-        description: 'Demo: Orchestrator + Broker + Workers pattern',
-        command: 'node scripts/orchestration-demo.cjs',
-      },
-    ],
-  },
-  {
-    name: 'Analysis & Tools',
-    icon: '🔍',
-    description: 'Code analysis and development tools',
-    actions: [
-      {
-        id: 'typecheck',
-        label: 'TypeScript Check',
-        icon: '📝',
-        description: 'Check for TypeScript errors',
-        command: 'pnpm run typecheck',
+        id: 'open-computer-use',
+        label: 'Computer Use Tools',
+        icon: '🖥️',
+        description: 'Browser runtime + screen automation for agents',
+        url: 'http://localhost:1420/#/computer-use',
       },
       {
-        id: 'lint',
-        label: 'Lint Code',
-        icon: '🧹',
-        description: 'Run linting on the codebase',
-        command: 'pnpm run lint',
-      },
-      {
-        id: 'test',
-        label: 'Run Tests',
-        icon: '🧪',
-        description: 'Execute test suite',
-        command: 'pnpm run test',
-      },
-      {
-        id: 'build',
-        label: 'Build Project',
-        icon: '🏗️',
-        description: 'Build the entire project',
-        command: 'pnpm run build',
-        requiresConfirmation: true,
-        confirmMessage: 'Building the project may take several minutes. Continue?',
+        id: 'open-voice',
+        label: 'Voice Bridge',
+        icon: '🎙️',
+        description: 'Mic, beam, and STT controls',
+        url: 'http://localhost:1420/#/voice',
       },
     ],
   },
@@ -158,13 +137,6 @@ const ACTION_CATEGORIES: ActionCategory[] = [
     description: 'Open external TNF tools and services',
     actions: [
       {
-        id: 'open-theia',
-        label: 'Open Theia IDE',
-        icon: '💻',
-        description: 'Open the cloud-based Theia IDE',
-        url: 'https://skideancer-ide-241337102384.us-central1.run.app',
-      },
-      {
         id: 'open-website',
         label: 'Open TNF Website',
         icon: '🌍',
@@ -172,84 +144,18 @@ const ACTION_CATEGORIES: ActionCategory[] = [
         url: 'https://thenewfuse.com',
       },
       {
-        id: 'open-github',
-        label: 'Open GitHub',
-        icon: '📦',
-        description: 'View the TNF GitHub repository',
-        url: 'https://github.com/whodaniel/The-New-Fuse',
+        id: 'open-settings',
+        label: 'Desktop Settings',
+        icon: '⚙️',
+        description: 'Environment and endpoint configuration',
+        url: 'http://localhost:1420/#/settings',
       },
       {
-        id: 'open-cloud_runtime',
-        label: 'CloudRuntime Dashboard',
-        icon: '🚂',
-        description: 'Manage CloudRuntime deployments',
-        url: 'https://cloud_runtime.app/dashboard',
-      },
-    ],
-  },
-  {
-    name: 'Development',
-    icon: '⚡',
-    description: 'Start and manage development services',
-    actions: [
-      {
-        id: 'start-dev',
-        label: 'Start Dev Server',
-        icon: '▶️',
-        description: 'Start all development services',
-        command: 'pnpm run dev',
-      },
-      {
-        id: 'start-redis',
-        label: 'Start Redis',
-        icon: '🔴',
-        description: 'Ensure Redis server is running',
-        command: 'redis-server --daemonize yes || echo "Redis already running"',
-      },
-      {
-        id: 'check-services',
-        label: 'Check Services',
-        icon: '✅',
-        description: 'Verify all services are running',
-        command: 'scripts/check-health.sh',
-      },
-      {
-        id: 'clean-node',
-        label: 'Clean Node Modules',
-        icon: '🗑️',
-        description: 'Remove node_modules for fresh install',
-        command: 'rm -rf node_modules && pnpm install',
-        requiresConfirmation: true,
-        confirmMessage:
-          'This will delete node_modules and reinstall. This may take a while. Continue?',
-      },
-    ],
-  },
-  {
-    name: 'Settings',
-    icon: '⚙️',
-    description: 'Configure TNF settings',
-    actions: [
-      {
-        id: 'edit-env',
-        label: 'Edit Environment',
-        icon: '📄',
-        description: 'Open .env file for editing',
-        command: 'code .env',
-      },
-      {
-        id: 'view-modes',
-        label: 'View AI Modes',
-        icon: '🎨',
-        description: 'List available AI interaction modes',
-        command: 'cat .agent/workflows/*.md',
-      },
-      {
-        id: 'view-config',
-        label: 'View Configuration',
-        icon: '📋',
-        description: 'Display current configuration',
-        command: 'cat package.json | head -30',
+        id: 'open-analytics',
+        label: 'Analytics',
+        icon: '📊',
+        description: 'Live synergy metrics',
+        url: 'http://localhost:1420/#/analytics',
       },
     ],
   },
@@ -286,15 +192,19 @@ export const QuickActionsDashboard: React.FC = () => {
             message: 'Opened in browser',
           })
         );
-      } else if (action.command) {
-        // Execute command
-        const output = await invoke<string>('execute_command', { command: action.command });
-        setTerminalOutput((prev) => prev + `\n$ ${action.command}\n${output}\n`);
+      } else if (action.invoke) {
+        const output = await invoke<LifecycleInvokeResult>(action.invoke, action.invokeArgs || {});
+        const message = output?.message || (output?.ok ? 'Completed' : 'Failed');
+        setTerminalOutput(
+          (prev) =>
+            prev +
+            `\n$ ${action.invoke}${output?.command ? ` → ${output.command}` : ''}\n${message}\n`
+        );
         setResults((prev) =>
           new Map(prev).set(action.id, {
-            success: true,
-            message: 'Completed',
-            output,
+            success: Boolean(output?.ok ?? true),
+            message,
+            output: output?.command,
           })
         );
       } else if (action.handler) {
@@ -304,6 +214,13 @@ export const QuickActionsDashboard: React.FC = () => {
           new Map(prev).set(action.id, {
             success: true,
             message: 'Completed',
+          })
+        );
+      } else {
+        setResults((prev) =>
+          new Map(prev).set(action.id, {
+            success: false,
+            message: 'No allowlisted action configured',
           })
         );
       }

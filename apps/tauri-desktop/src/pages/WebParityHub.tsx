@@ -56,8 +56,8 @@ const WebParityHub: React.FC = () => {
       }
       banner={
         <div className="info-banner">
-          Native desktop features (Browser Control, OAGI, Swarm Terminal, federation relay) run
-          locally. Web-only surfaces open in your browser at <strong>{webBase}</strong>.
+          Native desktop features (Computer Use, Swarm Terminal, federation relay) run locally.
+          Web-only surfaces open in your browser at <strong>{webBase}</strong>.
         </div>
       }
     >

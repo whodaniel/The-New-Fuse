@@ -5,7 +5,7 @@ import SidebarAuth from './components/layout/SidebarAuth';
 import { useRoute } from './components/route-context';
 import './ComprehensiveRouter.css';
 import { ROUTE_COMPONENTS } from './config/routeComponents';
-import { isKnownRoute, NAV_GROUPS, routesForGroup } from './config/routes';
+import { isKnownRoute, NAV_GROUPS, resolveLegacyRedirect, routesForGroup } from './config/routes';
 import { useLayout } from './contexts/LayoutContext';
 import { useOperatorSynergy } from './hooks/useOperatorSynergy';
 
@@ -24,7 +24,8 @@ const ComprehensiveRouter: React.FC = () => {
   useCommandPaletteShortcut(togglePalette);
 
   const renderPage = () => {
-    const PageComponent = ROUTE_COMPONENTS[currentRoute];
+    const resolvedRoute = resolveLegacyRedirect(currentRoute);
+    const PageComponent = ROUTE_COMPONENTS[resolvedRoute];
     if (!isKnownRoute(currentRoute) || !PageComponent) {
       return <NotFound attemptedRoute={currentRoute} />;
     }

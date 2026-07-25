@@ -3,6 +3,7 @@ import BrowserControlPanel from '../components/browser/BrowserControlPanel';
 import StartRuntimeHint from '../components/browser/StartRuntimeHint';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useComputerUseEmbed } from '../contexts/ComputerUseEmbedContext';
 import { useTnfBrowser } from '../hooks/useTnfBrowser';
 import {
   closeTNFBrowserWebview,
@@ -34,6 +35,7 @@ function resolveNavigationInput(raw: string): string | null {
  * rather than falling back to a surface that cannot act.
  */
 const WebBrowser: React.FC = () => {
+  const embedded = useComputerUseEmbed();
   const tnf = useTnfBrowser();
   const { environment } = useSettingsStore();
   const [inputUrl, setInputUrl] = useState('');
@@ -107,290 +109,288 @@ const WebBrowser: React.FC = () => {
 
   const statusClass = tnfConnected ? 'local' : tnfListening ? 'cloud' : 'offline';
 
-  return (
-    <PageShell
-      className="page-fill"
-      title="Browser Control"
-      subtitle="Operator console for the Chromium session on :7331 — not a built-in browser"
-      actions={<span className={`env-badge ${statusClass}`}>{statusLabel}</span>}
-    >
-      <SynergyStatusBar />
-      <div className="page-fill-body">
-        <div className="browser-page">
-          <div className="browser-main">
-            <div className="tab-bar" role="tablist" aria-label="Browser tabs">
-              {stripTabs.length === 0 ? (
-                <div className="tab empty-tab">
-                  <span className="tab-title">
-                    {tnfConnected ? 'No Chrome tabs' : 'Not connected'}
-                  </span>
-                </div>
-              ) : (
-                stripTabs.map((tab) => (
-                  // role="tab" carries aria-selected, so it must be the focusable
-                  // element. The close control stays a real button inside it.
-                  <div
-                    key={tab.id}
-                    role="tab"
-                    aria-selected={tab.active}
-                    tabIndex={tab.active ? 0 : -1}
-                    className={`tab ${tab.active ? 'active' : ''}`}
-                    title={tab.url}
-                    onClick={() => void tnf.activateTab(tab.id)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        void tnf.activateTab(tab.id);
-                      }
-                    }}
+  const body = (
+    <div className="page-fill-body">
+      {!embedded ? (
+        <div className="browser-status-row">
+          <span className={`env-badge ${statusClass}`}>{statusLabel}</span>
+        </div>
+      ) : null}
+      <div className="browser-page">
+        <div className="browser-main">
+          <div className="tab-bar" role="tablist" aria-label="Browser tabs">
+            {stripTabs.length === 0 ? (
+              <div className="tab empty-tab">
+                <span className="tab-title">
+                  {tnfConnected ? 'No Chrome tabs' : 'Not connected'}
+                </span>
+              </div>
+            ) : (
+              stripTabs.map((tab) => (
+                // role="tab" carries aria-selected, so it must be the focusable
+                // element. The close control stays a real button inside it.
+                <div
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={tab.active}
+                  tabIndex={tab.active ? 0 : -1}
+                  className={`tab ${tab.active ? 'active' : ''}`}
+                  title={tab.url}
+                  onClick={() => void tnf.activateTab(tab.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      void tnf.activateTab(tab.id);
+                    }
+                  }}
+                >
+                  <span className="tab-mark" aria-hidden />
+                  <span className="tab-title">{tab.title}</span>
+                  <button
+                    type="button"
+                    className="tab-close"
+                    aria-label={`Close ${tab.title}`}
+                    onClick={(event) => closeTab(tab.id, event)}
                   >
-                    <span className="tab-mark" aria-hidden />
-                    <span className="tab-title">{tab.title}</span>
-                    <button
-                      type="button"
-                      className="tab-close"
-                      aria-label={`Close ${tab.title}`}
-                      onClick={(event) => closeTab(tab.id, event)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))
-              )}
+                    ×
+                  </button>
+                </div>
+              ))
+            )}
+            <button
+              className="add-tab-btn"
+              onClick={() => void tnf.createTab()}
+              aria-label="New tab"
+              type="button"
+              disabled={!tnfConnected}
+            >
+              +
+            </button>
+          </div>
+
+          <div className="browser-controls">
+            <div className="nav-btns">
               <button
-                className="add-tab-btn"
-                onClick={() => void tnf.createTab()}
-                aria-label="New tab"
+                className="nav-btn"
+                title="Back"
                 type="button"
                 disabled={!tnfConnected}
+                onClick={() => void tnf.goBack(activeTnfTab?.id ?? null)}
               >
-                +
+                ←
+              </button>
+              <button
+                className="nav-btn"
+                title="Forward"
+                type="button"
+                disabled={!tnfConnected}
+                onClick={() => void tnf.goForward(activeTnfTab?.id ?? null)}
+              >
+                →
+              </button>
+              <button
+                className="nav-btn"
+                title="Reload"
+                type="button"
+                disabled={!tnfConnected}
+                onClick={() => void tnf.reload(activeTnfTab?.id ?? null)}
+              >
+                ↻
+              </button>
+              <button
+                className="nav-btn"
+                title="Home"
+                type="button"
+                disabled={!tnfConnected}
+                onClick={handleHome}
+              >
+                ⌂
               </button>
             </div>
 
-            <div className="browser-controls">
-              <div className="nav-btns">
-                <button
-                  className="nav-btn"
-                  title="Back"
-                  type="button"
-                  disabled={!tnfConnected}
-                  onClick={() => void tnf.goBack(activeTnfTab?.id ?? null)}
-                >
-                  ←
-                </button>
-                <button
-                  className="nav-btn"
-                  title="Forward"
-                  type="button"
-                  disabled={!tnfConnected}
-                  onClick={() => void tnf.goForward(activeTnfTab?.id ?? null)}
-                >
-                  →
-                </button>
-                <button
-                  className="nav-btn"
-                  title="Reload"
-                  type="button"
-                  disabled={!tnfConnected}
-                  onClick={() => void tnf.reload(activeTnfTab?.id ?? null)}
-                >
-                  ↻
-                </button>
-                <button
-                  className="nav-btn"
-                  title="Home"
-                  type="button"
-                  disabled={!tnfConnected}
-                  onClick={handleHome}
-                >
-                  ⌂
-                </button>
+            <form className="address-bar-container" onSubmit={handleNavigate}>
+              <input
+                type="text"
+                className="address-bar"
+                value={inputUrl}
+                onChange={(event) => setInputUrl(event.target.value)}
+                placeholder={
+                  tnfConnected ? 'Enter address or search…' : 'Connect to TNF Browser to navigate'
+                }
+                aria-label="Address bar"
+                disabled={!tnfConnected}
+              />
+            </form>
+
+            <div className="browser-actions">
+              <div className={`env-badge ${environment}`} title="Current Connection Environment">
+                <span className="env-dot" />
+                {environment.charAt(0).toUpperCase() + environment.slice(1)}
               </div>
-
-              <form className="address-bar-container" onSubmit={handleNavigate}>
-                <input
-                  type="text"
-                  className="address-bar"
-                  value={inputUrl}
-                  onChange={(event) => setInputUrl(event.target.value)}
-                  placeholder={
-                    tnfConnected ? 'Enter address or search…' : 'Connect to TNF Browser to navigate'
-                  }
-                  aria-label="Address bar"
-                  disabled={!tnfConnected}
-                />
-              </form>
-
-              <div className="browser-actions">
-                <div className={`env-badge ${environment}`} title="Current Connection Environment">
-                  <span className="env-dot" />
-                  {environment.charAt(0).toUpperCase() + environment.slice(1)}
-                </div>
-                <div
-                  className={`env-badge ${tnfConnected ? 'local' : tnfListening ? 'cloud' : 'sandbox'}`}
-                >
-                  {tnfConnected ? 'TNF Live' : tnfListening ? 'TNF Ready' : 'TNF Offline'}
-                </div>
-                <div
-                  className={`env-badge ${tnf.state.status?.runtimeConnected ? 'local' : 'sandbox'}`}
-                >
-                  {tnf.state.status?.runtimeConnected ? 'Extension Live' : 'Extension Idle'}
-                </div>
+              <div
+                className={`env-badge ${tnfConnected ? 'local' : tnfListening ? 'cloud' : 'sandbox'}`}
+              >
+                {tnfConnected ? 'TNF Live' : tnfListening ? 'TNF Ready' : 'TNF Offline'}
               </div>
-            </div>
-
-            <div className="content-area">
-              {isBlank ? (
-                <div className="new-tab-page">
-                  <div className="new-tab-content">
-                    <p className="brand-kicker">The New Fuse</p>
-                    <h1>TNF Browser</h1>
-                    <p className="lede">
-                      {tnfConnected
-                        ? 'Drive the real Chromium session through the live DOM — discover, click, type, screenshot. Prefer inspect → act → verify.'
-                        : 'This console drives a real Chromium session over :7331. Nothing here can act until that runtime is connected.'}
-                    </p>
-
-                    {tnfConnected && (
-                      <>
-                        <form className="search-box" onSubmit={handleNavigate}>
-                          <input
-                            type="text"
-                            value={inputUrl}
-                            onChange={(event) => setInputUrl(event.target.value)}
-                            placeholder="Navigate or search…"
-                            aria-label="New tab navigation"
-                          />
-                          <button type="submit">Go</button>
-                        </form>
-                        <div className="shortcuts">
-                          {[
-                            ['Example', 'https://example.com'],
-                            ['TNF Docs', 'https://thenewfuse.com'],
-                            ['DuckDuckGo', 'https://duckduckgo.com'],
-                          ].map(([label, url]) => (
-                            <button
-                              key={url}
-                              className="shortcut-link"
-                              type="button"
-                              onClick={() => {
-                                void navigateToUrl(url);
-                              }}
-                            >
-                              {label}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-
-                    <div className="startup-hint">
-                      {tnfConnected ? (
-                        <span>Connected to TNF Browser on :7331</span>
-                      ) : tnfListening ? (
-                        <button type="button" onClick={() => void tnf.connect()}>
-                          Connect to running TNF Browser
-                        </button>
-                      ) : (
-                        <StartRuntimeHint
-                          starting={tnf.state.starting}
-                          result={tnf.state.startResult}
-                          onStart={() => void tnf.startRuntime()}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="live-webview-surface">
-                  <div className="live-webview-head">
-                    <div className="live-webview-meta">
-                      <strong>Controlled session</strong>
-                      <span className="live-webview-url">{activeTitle}</span>
-                    </div>
-                    <div className="live-webview-actions">
-                      <button type="button" onClick={() => void tnf.takeScreenshot()}>
-                        Refresh Shot
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => void openAuxiliaryWebView(activeUrl)}
-                        title="Opens a separate WebView — not the controlled Chromium session"
-                      >
-                        Open Separate Window
-                      </button>
-                      {webviewOpen && (
-                        <>
-                          <button type="button" onClick={() => void focusTNFBrowserWebview()}>
-                            Focus Window
-                          </button>
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              try {
-                                await closeTNFBrowserWebview();
-                              } catch {
-                                /* ignore */
-                              }
-                              setWebviewOpen(false);
-                            }}
-                          >
-                            Close Window
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <div className="live-webview-body">
-                    {previewShot ? (
-                      <img
-                        src={previewShot}
-                        alt="Controlled Chromium screenshot"
-                        className="live-preview"
-                      />
-                    ) : (
-                      <div className="live-placeholder">
-                        <p>
-                          This panel shows screenshots of the controlled Chromium tab — not a live
-                          embedded browser. Discover / Screenshot drive the real session on :7331.
-                          “Open Separate Window” is an unrelated WebView with its own cookies.
-                        </p>
-                        <button type="button" onClick={() => void tnf.takeScreenshot()}>
-                          Take Screenshot
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+              <div
+                className={`env-badge ${tnf.state.status?.runtimeConnected ? 'local' : 'sandbox'}`}
+              >
+                {tnf.state.status?.runtimeConnected ? 'Extension Live' : 'Extension Idle'}
+              </div>
             </div>
           </div>
 
-          <BrowserControlPanel
-            tnf={tnf.state}
-            onTnfConnect={tnf.connect}
-            onTnfDisconnect={tnf.disconnect}
-            onTnfStart={tnf.startRuntime}
-            onTnfNavigate={async (url) => {
-              setInputUrl(url);
-              await tnf.navigate(url, activeTnfTab?.id ?? null);
-            }}
-            onTnfReload={() => tnf.reload(activeTnfTab?.id ?? null)}
-            onTnfScreenshot={tnf.takeScreenshot}
-            onTnfDiscover={tnf.discover}
-            onTnfHtml={tnf.readHtml}
-            onTnfCopyFullHtml={tnf.readFullHtml}
-            onTnfClick={tnf.click}
-            onTnfType={tnf.typeText}
-            onTnfKeyPress={tnf.keyPress}
-            onTnfActivateTab={tnf.activateTab}
-            onTnfCloseTab={tnf.closeTab}
-            onTnfCreateTab={tnf.createTab}
-            onTnfRefreshTabs={tnf.refreshTabs}
-          />
+          <div className="content-area">
+            {isBlank ? (
+              <div className="new-tab-page">
+                <div className="new-tab-content">
+                  <p className="brand-kicker">The New Fuse</p>
+                  <h1>TNF Browser</h1>
+                  <p className="lede">
+                    {tnfConnected
+                      ? 'Drive the real Chromium session through the live DOM — discover, click, type, screenshot. Prefer inspect → act → verify.'
+                      : 'This console drives a real Chromium session over :7331. Nothing here can act until that runtime is connected.'}
+                  </p>
 
-          <style>{`
+                  {tnfConnected && (
+                    <>
+                      <form className="search-box" onSubmit={handleNavigate}>
+                        <input
+                          type="text"
+                          value={inputUrl}
+                          onChange={(event) => setInputUrl(event.target.value)}
+                          placeholder="Navigate or search…"
+                          aria-label="New tab navigation"
+                        />
+                        <button type="submit">Go</button>
+                      </form>
+                      <div className="shortcuts">
+                        {[
+                          ['Example', 'https://example.com'],
+                          ['TNF Docs', 'https://thenewfuse.com'],
+                          ['DuckDuckGo', 'https://duckduckgo.com'],
+                        ].map(([label, url]) => (
+                          <button
+                            key={url}
+                            className="shortcut-link"
+                            type="button"
+                            onClick={() => {
+                              void navigateToUrl(url);
+                            }}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  <div className="startup-hint">
+                    {tnfConnected ? (
+                      <span>Connected to TNF Browser on :7331</span>
+                    ) : tnfListening ? (
+                      <button type="button" onClick={() => void tnf.connect()}>
+                        Connect to running TNF Browser
+                      </button>
+                    ) : (
+                      <StartRuntimeHint
+                        starting={tnf.state.starting}
+                        result={tnf.state.startResult}
+                        onStart={() => void tnf.startRuntime()}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="live-webview-surface">
+                <div className="live-webview-head">
+                  <div className="live-webview-meta">
+                    <strong>Controlled session</strong>
+                    <span className="live-webview-url">{activeTitle}</span>
+                  </div>
+                  <div className="live-webview-actions">
+                    <button type="button" onClick={() => void tnf.takeScreenshot()}>
+                      Refresh Shot
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void openAuxiliaryWebView(activeUrl)}
+                      title="Opens a separate WebView — not the controlled Chromium session"
+                    >
+                      Open Separate Window
+                    </button>
+                    {webviewOpen && (
+                      <>
+                        <button type="button" onClick={() => void focusTNFBrowserWebview()}>
+                          Focus Window
+                        </button>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              await closeTNFBrowserWebview();
+                            } catch {
+                              /* ignore */
+                            }
+                            setWebviewOpen(false);
+                          }}
+                        >
+                          Close Window
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="live-webview-body">
+                  {previewShot ? (
+                    <img
+                      src={previewShot}
+                      alt="Controlled Chromium screenshot"
+                      className="live-preview"
+                    />
+                  ) : (
+                    <div className="live-placeholder">
+                      <p>
+                        This panel shows screenshots of the controlled Chromium tab — not a live
+                        embedded browser. Discover / Screenshot drive the real session on :7331.
+                        “Open Separate Window” is an unrelated WebView with its own cookies.
+                      </p>
+                      <button type="button" onClick={() => void tnf.takeScreenshot()}>
+                        Take Screenshot
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <BrowserControlPanel
+          tnf={tnf.state}
+          onTnfConnect={tnf.connect}
+          onTnfDisconnect={tnf.disconnect}
+          onTnfStart={tnf.startRuntime}
+          onTnfNavigate={async (url) => {
+            setInputUrl(url);
+            await tnf.navigate(url, activeTnfTab?.id ?? null);
+          }}
+          onTnfReload={() => tnf.reload(activeTnfTab?.id ?? null)}
+          onTnfScreenshot={tnf.takeScreenshot}
+          onTnfDiscover={tnf.discover}
+          onTnfHtml={tnf.readHtml}
+          onTnfCopyFullHtml={tnf.readFullHtml}
+          onTnfClick={tnf.click}
+          onTnfType={tnf.typeText}
+          onTnfKeyPress={tnf.keyPress}
+          onTnfActivateTab={tnf.activateTab}
+          onTnfCloseTab={tnf.closeTab}
+          onTnfCreateTab={tnf.createTab}
+          onTnfRefreshTabs={tnf.refreshTabs}
+        />
+
+        <style>{`
         .browser-page {
           display: flex;
           height: 100%;
@@ -698,8 +698,23 @@ const WebBrowser: React.FC = () => {
           .shortcuts { grid-template-columns: 1fr; }
         }
       `}</style>
-        </div>
       </div>
+    </div>
+  );
+
+  if (embedded) {
+    return body;
+  }
+
+  return (
+    <PageShell
+      className="page-fill"
+      title="Browser Control"
+      subtitle="Operator console for the Chromium session on :7331 — not a built-in browser"
+      actions={<span className={`env-badge ${statusClass}`}>{statusLabel}</span>}
+    >
+      <SynergyStatusBar />
+      {body}
     </PageShell>
   );
 };

@@ -167,6 +167,13 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
     }
   }
 
+  /** Re-probe local API/relay after Start API / Start Relay. */
+  async rediscoverLocal(): Promise<void> {
+    const environment = this.snapshot.environment;
+    const customApiUrl = environment === 'custom' ? this.snapshot.apiUrl : '';
+    await this.bootstrap(environment, customApiUrl);
+  }
+
   async refreshHealth(): Promise<void> {
     const [relayHealth, apiOnline] = await Promise.all([
       this.fetchRelayHealth(this.snapshot.relayUrl),

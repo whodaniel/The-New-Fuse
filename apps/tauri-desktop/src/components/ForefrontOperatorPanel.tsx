@@ -40,8 +40,8 @@ export const ForefrontOperatorPanel: React.FC = () => {
       </div>
 
       <div className="forefront-actions">
-        <button className="forefront-btn primary" onClick={() => navigate('/browser')}>
-          Open Browser + Federation
+        <button className="forefront-btn primary" onClick={() => navigate('/computer-use')}>
+          Open Computer Use
         </button>
         <button className="forefront-btn" onClick={() => navigate('/terminal')}>
           Swarm Terminal

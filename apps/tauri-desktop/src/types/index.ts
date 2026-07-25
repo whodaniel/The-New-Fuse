@@ -21,6 +21,8 @@ export interface AgentConfig {
   maxTokens: number;
   systemPrompt: string;
   tools: string[];
+  /** LLM provider id from integrated catalog (e.g. nvidia). */
+  provider?: string;
 }
 
 // Workflow Types

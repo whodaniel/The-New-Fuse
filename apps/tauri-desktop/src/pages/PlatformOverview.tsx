@@ -13,9 +13,9 @@ const FEATURES = [
   },
   {
     icon: '👁️',
-    title: 'Lux Bridge Intelligence',
-    body: 'DOM-exact browser control plus OAGI visual automation from the desktop native layer.',
-    route: '/browser',
+    title: 'Lux Bridge / Computer Use',
+    body: 'DOM-exact browser control plus screen automation for agent computer-use.',
+    route: '/computer-use',
   },
   {
     icon: '🧠',

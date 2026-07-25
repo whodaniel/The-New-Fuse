@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import {
@@ -19,7 +19,7 @@ const VoiceHub: React.FC = () => {
     pauseBeam,
     resumeBeam,
     stopSpeech,
-    activateBridge,
+    ensureStarted,
     sendUtterance,
     setResponseAudioEnabled,
   } = useVoiceBridge();
@@ -29,6 +29,7 @@ const VoiceHub: React.FC = () => {
   const [draftProfile, setDraftProfile] = useState(getVoiceProfile());
   const [testLine, setTestLine] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
+  const [bootNote, setBootNote] = useState<string | null>(null);
 
   const runAction = async (label: string, action: () => Promise<void>) => {
     setBusy(label);
@@ -39,6 +40,29 @@ const VoiceHub: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (!isTauriRuntime()) return;
+    let cancelled = false;
+    void (async () => {
+      setBusy('boot');
+      try {
+        const result = await ensureStarted();
+        if (!cancelled && result?.message) {
+          setBootNote(result.message);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setBootNote(error instanceof Error ? error.message : String(error));
+        }
+      } finally {
+        if (!cancelled) setBusy(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [ensureStarted]);
+
   const saveConfig = async () => {
     setVoiceProjectRoot(draftRoot);
     setVoicePort(Number.parseInt(draftPort, 10) || 50005);
@@ -46,53 +70,72 @@ const VoiceHub: React.FC = () => {
     await refresh();
   };
 
-  const statusCards = [
-    {
-      label: 'Voice server',
-      ok: snapshot.online,
-      detail: snapshot.online ? `127.0.0.1:${snapshot.port}` : snapshot.lastError || 'Offline',
-    },
-    {
-      label: 'Beam',
-      ok: snapshot.online && !snapshot.micPaused,
-      detail: snapshot.micPaused ? 'Paused' : 'Active',
-    },
-    {
-      label: 'TTS',
-      ok: !snapshot.aiSpeaking,
-      detail: snapshot.aiSpeaking ? 'Speaking' : 'Idle',
-    },
-    {
-      label: 'Reply audio',
-      ok: snapshot.responseAudioEnabled,
-      detail: snapshot.responseAudioEnabled ? 'On' : 'Off',
-    },
-    {
-      label: 'KWS',
-      ok: snapshot.kwsEnabled,
-      detail: snapshot.kwsEnabled ? snapshot.kwsStreamId || 'Connected' : 'Disabled',
-    },
-  ];
-
   return (
     <PageShell
       title="Voice Bridge"
-      subtitle="Mic, beam, speaker identity, and spoken replies — the same loop you use in Cursor, visible here."
+      subtitle="Same stack as `tnf voice up --with-listen` — server, listen STT, beam, and spoken replies."
       actions={
         <button
           type="button"
           className="primary-button"
-          onClick={() => void refresh()}
+          onClick={() =>
+            void runAction('boot', async () => {
+              const result = await ensureStarted();
+              if (result?.message) setBootNote(result.message);
+            })
+          }
           disabled={!!busy}
         >
-          Refresh
+          {busy === 'boot' ? 'Starting…' : 'Start full stack'}
         </button>
       }
     >
       <SynergyStatusBar />
 
+      {bootNote ? <p className="voice-muted voice-boot-note">{bootNote}</p> : null}
+
+      <p className="voice-muted voice-cli-hint">
+        Agents/CLI: use <code>tnf voice …</code> (canonical). Prefer <code>tnf voice listen</code> —
+        bare <code>tnf listen</code> is not a command.
+      </p>
+
       <section className="voice-status-grid" aria-label="Voice bridge status">
-        {statusCards.map((card) => (
+        {[
+          {
+            label: 'Voice server',
+            ok: snapshot.online,
+            detail: snapshot.online
+              ? `127.0.0.1:${snapshot.port}`
+              : snapshot.lastError || 'Offline',
+          },
+          {
+            label: 'Listen STT',
+            ok: snapshot.listenRunning,
+            detail: snapshot.listenRunning
+              ? `Sidecar live · ${snapshot.profile}`
+              : 'Not running — start full stack',
+          },
+          {
+            label: 'Beam',
+            ok: snapshot.online && !snapshot.micPaused,
+            detail: !snapshot.online ? 'Offline' : snapshot.micPaused ? 'Paused' : 'Active',
+          },
+          {
+            label: 'Whisper',
+            ok: snapshot.stt.ready,
+            detail: snapshot.stt.detail || (snapshot.stt.ready ? 'Ready' : 'Not ready'),
+          },
+          {
+            label: 'TTS',
+            ok: !snapshot.aiSpeaking,
+            detail: snapshot.aiSpeaking ? 'Speaking' : 'Idle',
+          },
+          {
+            label: 'Reply audio',
+            ok: snapshot.responseAudioEnabled,
+            detail: snapshot.responseAudioEnabled ? 'On' : 'Off',
+          },
+        ].map((card) => (
           <div key={card.label} className={`voice-status-card ${card.ok ? 'ok' : 'warn'}`}>
             <span className="voice-status-label">{card.label}</span>
             <strong>{card.detail}</strong>
@@ -162,9 +205,22 @@ const VoiceHub: React.FC = () => {
               type="button"
               className="ghost-button"
               disabled={!!busy}
-              onClick={() => void runAction('activate', activateBridge)}
+              onClick={() => void refresh()}
             >
-              Start / heal bridge
+              Refresh status
+            </button>
+            <button
+              type="button"
+              className="ghost-button"
+              disabled={!!busy}
+              onClick={() =>
+                void runAction('activate', async () => {
+                  const result = await ensureStarted();
+                  if (result?.message) setBootNote(result.message);
+                })
+              }
+            >
+              Heal bridge + listen
             </button>
           </div>
 
@@ -318,6 +374,19 @@ const VoiceHub: React.FC = () => {
           margin: 0 0 12px;
           color: var(--tnf-text-secondary, #cbd5e1);
           font-size: 14px;
+        }
+        .voice-cli-hint code {
+          font-size: 12px;
+          padding: 1px 6px;
+          border-radius: 4px;
+          background: rgba(255,255,255,0.06);
+        }
+        .voice-boot-note {
+          margin: 0 0 12px;
+          padding: 10px 12px;
+          border-radius: 8px;
+          background: rgba(99, 102, 241, 0.12);
+          border: 1px solid rgba(99, 102, 241, 0.25);
         }
         .voice-meta-list {
           display: grid;

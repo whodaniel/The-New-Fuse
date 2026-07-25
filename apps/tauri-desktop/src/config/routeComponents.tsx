@@ -8,14 +8,12 @@ import React, { lazy } from 'react';
  */
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 const AgentHub = lazy(() => import('../pages/AgentHub'));
-const AntigravityHub = lazy(() => import('../pages/AntigravityHub'));
 const WorkflowBuilder = lazy(() => import('../pages/WorkflowBuilder'));
 const MultiAgentChat = lazy(() => import('../pages/MultiAgentChat'));
 const MCPMarketplace = lazy(() => import('../pages/MCPMarketplace'));
 const Analytics = lazy(() => import('../pages/Analytics'));
 const Settings = lazy(() => import('../pages/Settings'));
-const WebBrowser = lazy(() => import('../pages/WebBrowser'));
-const OAGIHub = lazy(() => import('../pages/OAGIHub'));
+const ComputerUseHub = lazy(() => import('../pages/ComputerUseHub'));
 const SwarmTerminal = lazy(() => import('../pages/SwarmTerminal'));
 const A2AControl = lazy(() => import('../pages/A2AControl'));
 const WebParityHub = lazy(() => import('../pages/WebParityHub'));
@@ -27,16 +25,14 @@ const VirtualLibraryHub = lazy(() => import('../pages/VirtualLibraryHub'));
 export const ROUTE_COMPONENTS: Record<string, React.LazyExoticComponent<React.FC>> = {
   '/platform': PlatformOverview,
   '/dashboard': Dashboard,
-  '/browser': WebBrowser,
   '/terminal': SwarmTerminal,
-  '/oagi': OAGIHub,
-  '/antigravity': AntigravityHub,
   '/voice': VoiceHub,
   '/library': VirtualLibraryHub,
   '/agents': AgentHub,
   '/a2a': A2AControl,
   '/chat': MultiAgentChat,
   '/knowledge': KnowledgeHub,
+  '/computer-use': ComputerUseHub,
   '/workflows': WorkflowBuilder,
   '/mcp': MCPMarketplace,
   '/analytics': Analytics,

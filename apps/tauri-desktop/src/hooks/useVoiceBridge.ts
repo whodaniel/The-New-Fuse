@@ -14,15 +14,44 @@ export function useVoiceBridge(_pollMs = 2000) {
     await VoiceBridgeService.refresh();
   }, []);
 
+  const pauseBeam = useCallback(async () => {
+    await VoiceBridgeService.pauseBeam();
+  }, []);
+
+  const resumeBeam = useCallback(async () => {
+    await VoiceBridgeService.resumeBeam();
+  }, []);
+
+  const stopSpeech = useCallback(async () => {
+    await VoiceBridgeService.stopSpeech();
+  }, []);
+
+  const activateBridge = useCallback(async () => {
+    await VoiceBridgeService.activateBridge();
+  }, []);
+
+  const ensureStarted = useCallback(async () => {
+    return VoiceBridgeService.ensureStarted();
+  }, []);
+
+  const sendUtterance = useCallback(async (text: string) => {
+    await VoiceBridgeService.sendUtterance(text);
+  }, []);
+
+  const setResponseAudioEnabled = useCallback(async (enabled: boolean) => {
+    await VoiceBridgeService.setResponseAudioEnabled(enabled);
+  }, []);
+
   return {
     snapshot,
     refresh,
-    pauseBeam: VoiceBridgeService.pauseBeam.bind(VoiceBridgeService),
-    resumeBeam: VoiceBridgeService.resumeBeam.bind(VoiceBridgeService),
-    stopSpeech: VoiceBridgeService.stopSpeech.bind(VoiceBridgeService),
-    activateBridge: VoiceBridgeService.activateBridge.bind(VoiceBridgeService),
-    sendUtterance: VoiceBridgeService.sendUtterance.bind(VoiceBridgeService),
-    setResponseAudioEnabled: VoiceBridgeService.setResponseAudioEnabled.bind(VoiceBridgeService),
+    pauseBeam,
+    resumeBeam,
+    stopSpeech,
+    activateBridge,
+    ensureStarted,
+    sendUtterance,
+    setResponseAudioEnabled,
   };
 }
 

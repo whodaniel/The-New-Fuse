@@ -6,6 +6,7 @@ mod antigravity;
 mod oagi;
 mod browser_webview;
 mod tnf_browser_bridge;
+mod service_lifecycle;
 
 // HashMap imported on demand via bridge module
 use std::path::{Path, PathBuf};
@@ -37,7 +38,27 @@ fn allowed_roots() -> Vec<PathBuf> {
         roots.push(data.join("com.thenewfuse.desktop"));
     }
 
+    // Voice bridge state under configured project root
+    if let Ok(root) = std::env::var("TNF_PROJECT_ROOT") {
+        roots.push(PathBuf::from(root).join(".voicebridge"));
+    }
+
     roots
+}
+
+/// True when path is under $HOME and includes a `.voicebridge` path segment.
+fn is_voicebridge_path(resolved: &Path) -> bool {
+    let has_segment = resolved.components().any(|c| c.as_os_str() == ".voicebridge");
+    if !has_segment {
+        return false;
+    }
+    if let Some(home) = dirs::home_dir() {
+        if let Ok(home_canon) = home.canonicalize() {
+            return resolved.starts_with(&home_canon);
+        }
+        return resolved.starts_with(&home);
+    }
+    false
 }
 
 /// Validates that `path` resolves to a location within one of the allowed roots.
@@ -76,10 +97,13 @@ fn validate_sandboxed_path(path: &str) -> Result<PathBuf, String> {
         }
     }
 
+    if is_voicebridge_path(&resolved) {
+        return Ok(resolved);
+    }
+
     Err(format!(
         "Access denied: path '{}' is outside the sandbox. Allowed roots: {:?}",
-        path,
-        roots.iter().map(|r| r.display().to_string()).collect::<Vec<_>>()
+        path, roots
     ))
 }
 
@@ -490,7 +514,20 @@ pub fn run() {
             write_file,
             list_directory,
             file_exists,
+            service_lifecycle::delete_file,
             // execute_command REMOVED — CRIT-1 RCE remediation
+            // Allowlisted lifecycle (fixed argv only)
+            service_lifecycle::voice_server_status,
+            service_lifecycle::voice_listen_status,
+            service_lifecycle::start_voice_server,
+            service_lifecycle::start_voice_listen,
+            service_lifecycle::ensure_voice_stack,
+            service_lifecycle::start_tnf_api,
+            service_lifecycle::start_local_relay,
+            service_lifecycle::start_forefront_boot,
+            service_lifecycle::start_story_architect_relay,
+            service_lifecycle::start_kws_server,
+            service_lifecycle::ensure_library_audio_stack,
             // Services
             check_service_status,
             // Antigravity
