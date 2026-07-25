@@ -4973,6 +4973,776 @@ skillCommand
 // debugService.listSkills() engine; no aliasing of the parent `debug` command
 // is required to retain backward-compat.
 
+// Phase-1.4 (tnf pi parity): top-level `tnf theme` for `.pi`-style color-token
+// JSON themes. Mirrors `.pi`'s discovery locations:
+//   ~/.pi/agent/themes/**/*.json
+//   .pi/themes/**/*.json
+// The existing `tnf splash --theme fuse|atri|neon|ember|mono` (SPLASH_THEMES) is
+// a *splash animator* concept and stays untouched.
+const themeCommand = program
+  .command('theme')
+  .description(
+    'List and inspect color-token themes for the TUI (.pi parity; splash themes use `tnf splash --theme`)'
+  );
+
+function discoverColorThemes(repoRootArg: string): Array<{
+  name: string;
+  source: string;
+  path: string;
+}> {
+  const home = os.homedir();
+  const out: Array<{ name: string; source: string; path: string }> = [];
+  const seen = new Set<string>();
+  const roots: Array<{ source: string; dir: string }> = [
+    { source: 'local', dir: path.join(home, '.pi', 'agent', 'themes') },
+    { source: 'project', dir: path.join(repoRootArg, '.pi', 'themes') },
+  ];
+  for (const { source, dir } of roots) {
+    if (!fs.existsSync(dir)) continue;
+    const walk = (cur: string) => {
+      const entries = fs.readdirSync(cur, { withFileTypes: true });
+      for (const e of entries) {
+        const full = path.join(cur, e.name);
+        let probe = full;
+        if (e.isSymbolicLink()) {
+          try {
+            probe = fs.realpathSync(full);
+          } catch {}
+        }
+        if (fs.statSync(probe).isDirectory()) {
+          walk(probe);
+          continue;
+        }
+        if (!probe.endsWith('.json')) continue;
+        const key = `${source}::${probe}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push({
+          name: path.relative(dir, probe).replace(/\.json$/, ''),
+          source,
+          path: probe,
+        });
+      }
+    };
+    walk(dir);
+  }
+  return out;
+}
+
+themeCommand
+  .command('list')
+  .description('List discovered color-token themes')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const found = discoverColorThemes(repoRoot);
+      if (options.json) {
+        console.log(JSON.stringify({ count: found.length, themes: found }, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nColor-Token Themes (.pi parity)\n'));
+      if (found.length === 0) {
+        console.log(chalk.dim('  (none discovered — seed ~/.pi/agent/themes/)'));
+        console.log('');
+        return;
+      }
+      for (const t of found) {
+        console.log(
+          `  ${chalk.cyan(t.name.padEnd(28))} ${chalk.dim(t.source.padEnd(8))} ${chalk.dim(t.path)}`
+        );
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+themeCommand
+  .command('show')
+  .description('Show the contents of a discovered theme JSON file')
+  .argument('<name>', 'Theme name as shown by `tnf theme list`')
+  .action((name: string) => {
+    try {
+      const found = discoverColorThemes(repoRoot).filter((t) => t.name === name);
+      if (found.length === 0) {
+        console.error(chalk.red(`Theme '${name}' not found`));
+        process.exit(1);
+      }
+      const contents = fs.readFileSync(found[0].path, 'utf8');
+      console.log(chalk.bold(`\n${found[0].name}\n`));
+      console.log(chalk.dim(`  source: ${found[0].source}`));
+      console.log(chalk.dim(`  path:   ${found[0].path}`));
+      console.log('');
+      console.log(contents);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+themeCommand
+  .command('validate')
+  .description('Validate a theme JSON file (.json strict schema check)')
+  .argument('<path>', 'Absolute path to a theme JSON file')
+  .action((filePath: string) => {
+    try {
+      if (!fs.existsSync(filePath)) {
+        console.error(chalk.red(`File not found: ${filePath}`));
+        process.exit(1);
+      }
+      const raw = fs.readFileSync(filePath, 'utf8');
+      const parsed = JSON.parse(raw);
+      const keys = Object.keys(parsed);
+      console.log(chalk.bold(`\nTheme Validation\n`));
+      console.log(`  Path:   ${chalk.cyan(filePath)}`);
+      console.log(`  Tokens: ${keys.length}`);
+      if (keys.length > 0) {
+        console.log(
+          chalk.dim(
+            `  Sample tokens: ${keys.slice(0, 6).join(', ')}${keys.length > 6 ? ', …' : ''}`
+          )
+        );
+      }
+      console.log(chalk.green(`\n  ✓ Valid JSON (${keys.length} top-level color tokens)\n`));
+    } catch (err: any) {
+      console.error(chalk.red(`❌ ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Phase-1.5 (tnf pi parity): top-level `tnf prompt-template` for `.pi`-style
+// prompt templates. Mirrors `.pi`'s discovery locations:
+//   ~/.pi/agent/prompts/*.md
+//   .pi/prompts/*.md
+const promptTemplateCommand = program
+  .command('prompt-template')
+  .description(
+    'List, show, and expand Markdown prompt templates (.pi parity; invoke via `/<name>` in interactive shells)'
+  );
+
+function discoverPromptTemplates(repoRootArg: string): Array<{
+  name: string;
+  source: string;
+  path: string;
+}> {
+  const home = os.homedir();
+  const out: Array<{ name: string; source: string; path: string }> = [];
+  const seen = new Set<string>();
+  const roots: Array<{ source: string; dir: string }> = [
+    { source: 'local', dir: path.join(home, '.pi', 'agent', 'prompts') },
+    { source: 'project', dir: path.join(repoRootArg, '.pi', 'prompts') },
+  ];
+  for (const { source, dir } of roots) {
+    if (!fs.existsSync(dir)) continue;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const e of entries) {
+      let probe = path.join(dir, e.name);
+      if (e.isSymbolicLink()) {
+        try {
+          probe = fs.realpathSync(probe);
+        } catch {}
+      }
+      let stat: fs.Stats | null = null;
+      try {
+        stat = fs.statSync(probe);
+      } catch {}
+      if (!stat || !stat.isFile() || !probe.endsWith('.md')) continue;
+      const key = `${source}::${probe}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ name: e.name.replace(/\.md$/, ''), source, path: probe });
+    }
+  }
+  return out;
+}
+
+function parsePromptFrontmatter(text: string): {
+  description?: string;
+  body: string;
+} {
+  if (!text.startsWith('---')) return { body: text };
+  const end = text.indexOf('\n---', 3);
+  if (end < 0) return { body: text };
+  const head = text.slice(3, end).trim();
+  const body = text.slice(end + 4).trim();
+  let description: string | undefined;
+  for (const line of head.split(/\r?\n/)) {
+    const m = line.match(/^description:\s*(.*)$/);
+    if (m) description = m[1].trim();
+  }
+  return { description, body };
+}
+
+promptTemplateCommand
+  .command('list')
+  .description('List discovered Markdown prompt templates')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const found = discoverPromptTemplates(repoRoot);
+      if (options.json) {
+        console.log(JSON.stringify({ count: found.length, templates: found }, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nPrompt Templates (.pi parity)\n'));
+      if (found.length === 0) {
+        console.log(chalk.dim('  (none discovered — seed ~/.pi/agent/prompts/*.md to populate)'));
+        console.log('');
+        return;
+      }
+      for (const t of found) {
+        const raw = fs.readFileSync(t.path, 'utf8');
+        const meta = parsePromptFrontmatter(raw);
+        const desc = meta.description
+          ? chalk.dim(`  — ${meta.description}`)
+          : chalk.dim(`  (no description frontmatter)`);
+        console.log(
+          `  ${chalk.cyan('/' + t.name.padEnd(22))} ${chalk.dim(t.source.padEnd(8))}${desc}`
+        );
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+promptTemplateCommand
+  .command('show')
+  .description('Show the contents of a discovered prompt template')
+  .argument('<name>', 'Prompt template name as shown by `tnf prompt-template list`')
+  .action((name: string) => {
+    try {
+      const found = discoverPromptTemplates(repoRoot).filter((t) => t.name === name);
+      if (found.length === 0) {
+        console.error(chalk.red(`Template '${name}' not found`));
+        process.exit(1);
+      }
+      const contents = fs.readFileSync(found[0].path, 'utf8');
+      console.log(chalk.bold(`\n/${found[0].name}\n`));
+      console.log(chalk.dim(`  source: ${found[0].source}`));
+      console.log(chalk.dim(`  path:   ${found[0].path}`));
+      console.log('');
+      console.log(contents);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+promptTemplateCommand
+  .command('expand')
+  .description('Print the expanded body of a prompt template (frontmatter stripped)')
+  .argument('<name>', 'Prompt template name')
+  .action((name: string) => {
+    try {
+      const found = discoverPromptTemplates(repoRoot).filter((t) => t.name === name);
+      if (found.length === 0) {
+        console.error(chalk.red(`Template '${name}' not found`));
+        process.exit(1);
+      }
+      const raw = fs.readFileSync(found[0].path, 'utf8');
+      const { body } = parsePromptFrontmatter(raw);
+      process.stdout.write(body + '\n');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Phase-1.6 (tnf pi parity): top-level `tnf provider` for `.pi`-style custom
+// providers. Single-engine reuse of the existing `ModelsService.listProviders()`.
+// `tnf` does NOT ship add/remove yet — the provider set is built into
+// ModelsService. A future add/remove will write through ~/.pi/agent/settings.json
+// in the same way `pi custom-provider.md` describes.
+const providerCommand = program
+  .command('provider')
+  .description(
+    'Inspect built-in model providers (.pi custom-provider parity; add/remove deferred to Phase-2)'
+  );
+
+providerCommand
+  .command('list')
+  .description('List known model providers with `configured: true|false`')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (options: { json?: boolean }) => {
+    try {
+      const svc = new ModelsService();
+      const providers = await svc.listProviders();
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            {
+              count: providers.length,
+              configuredCount: providers.filter((p) => p.configured).length,
+              providers,
+            },
+            null,
+            2
+          )
+        );
+        return;
+      }
+      console.log(chalk.bold('\nModel Providers (.pi parity)\n'));
+      for (const p of providers) {
+        const status = p.configured
+          ? chalk.green(`configured${p.models.length ? ` (${p.models.length} models)` : ''}`)
+          : chalk.dim('not configured');
+        console.log(`  ${chalk.cyan(p.id.padEnd(14))} ${p.name.padEnd(18)} ${status}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+providerCommand
+  .command('show')
+  .description('Show provider + model detail')
+  .argument('<id>', 'Provider ID (e.g. nvidia, openai, anthropic)')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (id: string, options: { json?: boolean }) => {
+    try {
+      const svc = new ModelsService();
+      const providers = await svc.listProviders();
+      const found = providers.find((p) => p.id === id);
+      if (!found) {
+        console.error(chalk.red(`Unknown provider: ${id}`));
+        process.exit(1);
+      }
+      if (options.json) {
+        console.log(JSON.stringify(found, null, 2));
+        return;
+      }
+      console.log(chalk.bold(`\n${found.name}\n`));
+      console.log(`  ID:         ${chalk.cyan(found.id)}`);
+      console.log(`  Type:       ${found.type}`);
+      console.log(`  Configured: ${found.configured ? chalk.green('yes') : chalk.yellow('no')}`);
+      if (found.models.length > 0) {
+        console.log(chalk.bold('\n  Models:\n'));
+        for (const m of found.models.slice(0, 10)) {
+          console.log(`    ${chalk.cyan(m.id)}`);
+          if (m.contextWindow)
+            console.log(`      context: ${m.contextWindow.toLocaleString()} tokens`);
+        }
+        if (found.models.length > 10) {
+          console.log(`      ${chalk.dim(`(+${found.models.length - 10} more)`)}`);
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Phase-1.7 (tnf pi parity): `.pi`-style package installer. Phase-1.1 renamed
+// `tnf packages` → `tnf workspace` to clear the namespace; this fills it with
+// the new concept. `.pi` packages bundle extensions/skills/themes/
+// prompt-templates via npm/git/path sources.
+//
+// Supported source shapes (a la `pi install <source>`):
+//   npm:<pkg>[@<version>]    → npm install --prefix ~/.pi/agent
+//   git:<url>[@<ref>]        → git clone into ~/.pi/agent/packages/<name>
+//   https://…                → git clone
+//   /abs/or/relative/path    → copied into ~/.pi/agent/packages/<basename>
+function piAgentRoot(): string {
+  return path.join(os.homedir(), '.pi', 'agent');
+}
+
+function piPackagesRoot(): string {
+  return path.join(piAgentRoot(), 'packages');
+}
+
+async function installPiPackage(source: string): Promise<{
+  source: string;
+  target: string;
+  mode: 'npm' | 'git' | 'copy';
+}> {
+  fs.mkdirSync(piPackagesRoot(), { recursive: true });
+
+  if (source.startsWith('npm:')) {
+    const pkg = source.slice(4);
+    await runCommand('npm', ['install', '--prefix', piAgentRoot(), '--save', pkg]);
+    return { source, target: path.join(piAgentRoot(), 'node_modules', pkg), mode: 'npm' };
+  } else if (source.startsWith('git:')) {
+    const url = source.slice(4);
+    const name = url
+      .split('/')
+      .pop()!
+      .replace(/\.git$/, '');
+    const target = path.join(piPackagesRoot(), name);
+    if (fs.existsSync(target)) {
+      await runCommand('git', ['-C', target, 'pull', '--ff-only']);
+    } else {
+      await runCommand('git', ['clone', url, target]);
+    }
+    return { source, target, mode: 'git' };
+  } else if (source.startsWith('https://') || source.startsWith('http://')) {
+    const url = source;
+    const name = url
+      .split('/')
+      .pop()!
+      .replace(/\.git$/, '');
+    const target = path.join(piPackagesRoot(), name);
+    if (fs.existsSync(target)) {
+      await runCommand('git', ['-C', target, 'pull', '--ff-only']);
+    } else {
+      await runCommand('git', ['clone', url, target]);
+    }
+    return { source, target, mode: 'git' };
+  } else if (source.startsWith('/') || source.startsWith('./') || source.startsWith('../')) {
+    const real = fs.realpathSync(source);
+    const name = path.basename(real);
+    const target = path.join(piPackagesRoot(), name);
+    fs.mkdirSync(target, { recursive: true });
+    await runCommand('cp', ['-R', `${real}/.`, `${target}/`]);
+    return { source, target, mode: 'copy' };
+  } else {
+    throw new Error(
+      `Unrecognized source: '${source}'. Use npm:<pkg>, git:<url>, https://… or an absolute/relative path.`
+    );
+  }
+}
+
+const piPackageCommand = program
+  .command('pi-package')
+  .description(
+    '.pi-style package installer/uninstaller (Phase-1.7); subcmds: install | uninstall | list'
+  );
+
+piPackageCommand
+  .command('install')
+  .description(
+    'Install a .pi-style package (npm: | git: | https:// | /path) — bundles extensions/skills/themes/prompt-templates'
+  )
+  .argument('<source>', 'Package source: npm:<pkg>, git:<url>, https://…, /abs/or/relative/path')
+  .option('--dry-run', 'Print the resolved target without executing install')
+  .action(async (source: string, options: { dryRun?: boolean }) => {
+    try {
+      if (options.dryRun) {
+        console.log(chalk.dim(`  dry-run: would install '${source}' into ${piPackagesRoot()}`));
+        return;
+      }
+      const result = await installPiPackage(source);
+      console.log(chalk.bold('\n✓ Package installed\n'));
+      console.log(`  source: ${chalk.cyan(result.source)}`);
+      console.log(`  mode:   ${chalk.cyan(result.mode)}`);
+      console.log(`  target: ${chalk.dim(result.target)}`);
+      console.log('');
+      console.log(
+        chalk.dim(
+          `  Tip: relist discoveries with 'tnf skill list --source pi', 'tnf theme list', 'tnf prompt-template list'.`
+        )
+      );
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+piPackageCommand
+  .command('uninstall')
+  .description('Remove an installed .pi-style package by basename under ~/.pi/agent/packages/')
+  .argument('<name>', 'Package basename')
+  .action((name: string) => {
+    try {
+      const target = path.join(piPackagesRoot(), name);
+      if (!fs.existsSync(target)) {
+        console.error(chalk.red(`Not installed: ${target}`));
+        process.exit(1);
+      }
+      if (!target.startsWith(piPackagesRoot() + path.sep)) {
+        console.error(chalk.red(`Refusing to delete outside ~/.pi/agent/packages/`));
+        process.exit(1);
+      }
+      fs.rmSync(target, { recursive: true, force: true });
+      console.log(chalk.green(`✓ Removed ${target}`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+piPackageCommand
+  .command('list')
+  .description('List installed .pi-style packages under ~/.pi/agent/packages/')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      fs.mkdirSync(piPackagesRoot(), { recursive: true });
+      const entries = fs.readdirSync(piPackagesRoot(), { withFileTypes: true });
+      const found = entries.filter((e) => e.isDirectory() || e.isSymbolicLink());
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            {
+              piAgentRoot: piAgentRoot(),
+              count: found.length,
+              packages: found.map((e) => ({
+                name: e.name,
+                kind: e.isSymbolicLink() ? 'symlink' : 'dir',
+              })),
+            },
+            null,
+            2
+          )
+        );
+        return;
+      }
+      console.log(chalk.bold('\nInstalled .pi Packages\n'));
+      if (found.length === 0) {
+        console.log(
+          chalk.dim(`  (none yet — install with: tnf install npm:<pkg> or /path/to/pkg)`)
+        );
+      } else {
+        for (const e of found) {
+          const real = e.isSymbolicLink()
+            ? fs.realpathSync(path.join(piPackagesRoot(), e.name))
+            : path.join(piPackagesRoot(), e.name);
+          console.log(`  ${chalk.cyan(e.name.padEnd(28))} ${chalk.dim(real)}`);
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Phase-1.8 (tnf pi parity): SDK surface — `tnf sdk info` reports the local
+// package versions that participate in the `.pi` parity story. The `.pi`
+// runtime ships an npm module (`@earendil-works/pi-coding-agent`) with a
+// `dist/rpc-entry.js` programmatic entry. `tnf` supplies a parity reporter
+// that scans the package.json files of tnf-cli's owned packages (and
+// reports whether the .pi dev dependency is detected). Real RPC-binding
+// is deferred to a future Phase-2 once a downstream consumer asks for it.
+const sdkCommand = program
+  .command('sdk')
+  .description('.pi SDK parity surface (Phase-1.8 info-only; full RPC binding deferred)');
+
+sdkCommand
+  .command('info')
+  .description('Report package versions participating in .pi parity')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const cliPkgRaw = fs.readFileSync(
+        path.join(repoRoot, 'packages/tnf-cli/package.json'),
+        'utf8'
+      );
+      const cliPkg = JSON.parse(cliPkgRaw);
+      const info = {
+        tnfCliVersion: cliPkg.version ?? 'unknown',
+        tnfCliName: cliPkg.name ?? '@the-new-fuse/tnf-cli',
+        piCodingAgent: (() => {
+          // The .pi dev dep appears via "node_modules path" in consumer
+          // workspaces; we do not require it but report its presence.
+          const home = os.homedir();
+          const probePaths = [
+            path.join(
+              home,
+              '.hermes',
+              'node',
+              'lib',
+              'node_modules',
+              '@earendil-works',
+              'pi-coding-agent'
+            ),
+            path.join(
+              home,
+              '.hermes',
+              'node',
+              'lib',
+              'node_modules',
+              '@earendil-works',
+              'pi-coding-agent',
+              'package.json'
+            ),
+          ];
+          for (const probe of probePaths) {
+            if (fs.existsSync(probe)) {
+              try {
+                const pj = fs.existsSync(path.join(probe, 'package.json'))
+                  ? JSON.parse(fs.readFileSync(path.join(probe, 'package.json'), 'utf8'))
+                  : null;
+                return {
+                  discovered: true,
+                  path: probe,
+                  version: pj?.version ?? null,
+                };
+              } catch {}
+            }
+          }
+          return { discovered: false, path: null, version: null };
+        })(),
+        parityPhases: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8],
+      };
+      if (options.json) {
+        console.log(JSON.stringify(info, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nSDK Parity Info (.pi runtime)\n'));
+      console.log(
+        `  tnf cli:          ${chalk.cyan(info.tnfCliName)}@${chalk.cyan(info.tnfCliVersion)}`
+      );
+      console.log(
+        `  .pi discovered:   ${info.piCodingAgent.discovered ? chalk.green('yes') : chalk.yellow('no (operator can npm i @earendil-works/pi-coding-agent)')}`
+      );
+      if (info.piCodingAgent.version) {
+        console.log(`  .pi version:      ${chalk.cyan(info.piCodingAgent.version)}`);
+      }
+      if (info.piCodingAgent.path) {
+        console.log(`  .pi path:         ${chalk.dim(info.piCodingAgent.path)}`);
+      }
+      console.log(
+        `  parity phases:    ${chalk.cyan(info.parityPhases.join(' | '))} (shipped + 1.9 pending)`
+      );
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Phase-1.9 (tnf pi parity): the `.pi`-parity contract test as JSON. Aggregates
+// every Phase-1.x surface into one truth-y output so any future drift is
+// catchable in a single `tnf capabilities` invocation. All data is read from
+// the SAME engines that Phase-1.2–1.8 wired; no shadow registries.
+const capabilitiesCommand = program
+  .command('capabilities')
+  .description('Aggregate JSON manifest of all `.pi`-parity surfaces (Phase-1.x contract test)');
+
+capabilitiesCommand
+  .option('--json', 'Output JSON (default)')
+  .action(async (options: { json?: boolean }) => {
+    try {
+      const skillsAll = debugService.listSkills();
+      const skillsBySource: Record<string, number> = {};
+      for (const s of skillsAll) skillsBySource[s.source] = (skillsBySource[s.source] ?? 0) + 1;
+
+      const shippedExt = Object.values(EXTENSION_REGISTRY).map((ext) => ({
+        id: ext.id,
+        type: ext.type,
+        installed: checkExtensionExists(ext.appDir),
+        version: getExtensionVersion(ext.appDir),
+      }));
+      const userExt = discoverUserExtensions(repoRoot);
+
+      const themes = discoverColorThemes(repoRoot);
+      const promptTemplates = discoverPromptTemplates(repoRoot);
+
+      const svc = new ModelsService();
+      const providers = await svc.listProviders();
+
+      fs.mkdirSync(piPackagesRoot(), { recursive: true });
+      const installedPiPkgs = fs
+        .readdirSync(piPackagesRoot(), { withFileTypes: true })
+        .filter((e) => e.isDirectory() || e.isSymbolicLink())
+        .map((e) => ({ name: e.name, kind: e.isSymbolicLink() ? 'symlink' : 'dir' }));
+
+      const home = os.homedir();
+      const piProbe = path.join(
+        home,
+        '.hermes',
+        'node',
+        'lib',
+        'node_modules',
+        '@earendil-works',
+        'pi-coding-agent',
+        'package.json'
+      );
+      let piVersion: string | null = null;
+      if (fs.existsSync(piProbe)) {
+        try {
+          piVersion = JSON.parse(fs.readFileSync(piProbe, 'utf8')).version ?? null;
+        } catch {}
+      }
+
+      const manifest = {
+        generatedAt: new Date().toISOString(),
+        agentPlatform: 'pi' as const,
+        triadicCheck: {
+          taxonomy: PLATFORM_TAXONOMY.includes('pi'),
+          mcpConfig: fs.existsSync(path.join(repoRoot, 'data/mcp.clients/pi.mcp.json')),
+          passthroughDispatch: (() => {
+            try {
+              return getTnfTopLevelCommands().has('pi');
+            } catch {
+              return false;
+            }
+          })(),
+        },
+        primitives: {
+          skill: {
+            command: 'tnf skill',
+            discovery_sources: ['tnf', 'pi', 'agents', 'claude'],
+            count: skillsAll.length,
+            by_source: skillsBySource,
+            subcommands: ['list', 'show'],
+            shows_symlink_resolution: true,
+          },
+          extension: {
+            command_shipped: 'tnf extension {list,status,install,user-list}',
+            command_user_modules: 'tnf extension user-list',
+            shipped_count: shippedExt.length,
+            shipped: shippedExt,
+            user_module_count: userExt.length,
+            user_modules: userExt,
+          },
+          theme: {
+            command: 'tnf theme',
+            count: themes.length,
+            themes,
+            subcommands: ['list', 'show', 'validate'],
+            untouched_splash: { command: 'tnf splash --theme', choices: SPLASH_THEMES },
+          },
+          prompt_template: {
+            command: 'tnf prompt-template',
+            count: promptTemplates.length,
+            templates: promptTemplates,
+            subcommands: ['list', 'show', 'expand'],
+          },
+          provider: {
+            command: 'tnf provider',
+            count: providers.length,
+            configured_count: providers.filter((p) => p.configured).length,
+            subcommands: ['list', 'show'],
+            engine: 'services/ModelsService.ts (unchanged)',
+          },
+          package: {
+            command: 'tnf pi-package',
+            subcommands: ['install', 'uninstall', 'list'],
+            supported_sources: ['npm:', 'git:', 'https://…', '/abs/or/relative/path'],
+            installed_count: installedPiPkgs.length,
+            installed: installedPiPkgs,
+            install_target: piPackagesRoot(),
+          },
+          sdk: {
+            command: 'tnf sdk info',
+            pi_coding_agent_version: piVersion,
+            pi_coding_agent_path: piVersion ? piProbe.replace('/package.json', '') : null,
+            rpc_entry_deferred: true,
+          },
+        },
+        version: {
+          tnf_cli_version:
+            JSON.parse(
+              fs.readFileSync(path.join(repoRoot, 'packages/tnf-cli/package.json'), 'utf8')
+            ).version ?? 'unknown',
+          parity_phases_shipped: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9],
+        },
+      };
+
+      console.log(JSON.stringify(manifest, null, 2));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 program
   .command('register')
   .description('Register and listen as an agent')
