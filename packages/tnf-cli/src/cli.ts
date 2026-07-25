@@ -15556,9 +15556,18 @@ program
     }
   );
 
-const packagesCommand = program
-  .command('packages')
-  .description('Monorepo package reconnect and availability utilities');
+// Phase-1.1 (tnf pi parity): `packages` was a generic noun that collided with the
+// `.pi` `pi install <source>` namespace — `.pi` packages bundle extensions/skills/
+// themes/prompt-templates and are installed via `tnf <install|remove|list|update>`.
+//
+// Rename to `tnf workspace` (clear role: monorepo probe + reconnect utilities inside
+// the TNF monorepo). `tnf packages` is kept as a Commander alias for one minor release
+// so existing scripts and `docs/protocols/reports/tnf-cli-command-paths-2026-05-28.json`
+// keep working. Remove the alias when Phase-2 lands the `.pi`-style installer.
+const workspaceCommand = program
+  .command('workspace')
+  .alias('packages')
+  .description('Monorepo package reconnect and availability utilities (alias: `tnf packages`)');
 
 function printPackageProbeTable(results: PackageProbeResult[]): void {
   const headers = ['Package', 'Manifest', 'Entry', 'Resolved', 'Runtime', 'Dir'];
@@ -15609,7 +15618,7 @@ function printPackageProbeTable(results: PackageProbeResult[]): void {
   }
 }
 
-packagesCommand
+workspaceCommand
   .command('status')
   .description('Show reconnect status for all internal workspace packages')
   .option('--runtime', 'Attempt runtime loading for each package entrypoint')
@@ -15686,7 +15695,7 @@ packagesCommand
     }
   });
 
-packagesCommand
+workspaceCommand
   .command('probe')
   .description('Probe a single package reconnect status by package name')
   .argument('<packageName>', 'Workspace package name (e.g. @the-new-fuse/fairtable-core)')
