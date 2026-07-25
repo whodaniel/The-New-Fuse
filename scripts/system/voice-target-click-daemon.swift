@@ -161,6 +161,15 @@ func writePointTarget(x: Int, y: Int, appName: String, bundleId: String, tty: St
     let parent = URL(fileURLWithPath: targetPath).deletingLastPathComponent()
     try? FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
 
+    if let existingData = try? Data(contentsOf: URL(fileURLWithPath: targetPath)),
+       let existing = try? JSONSerialization.jsonObject(with: existingData) as? [String: Any],
+       let locked = existing["locked"] as? Bool,
+       locked == true {
+        print("🔒 Anchor locked (\(existing["lock_reason"] ?? "manual")); ignoring click retarget.")
+        fflush(stdout)
+        return
+    }
+
     let pressEnter = isTerminalLike(appName: appName, bundleId: bundleId)
 
     var payload: [String: Any] = [

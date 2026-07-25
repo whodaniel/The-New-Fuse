@@ -178,6 +178,22 @@ normalize_transcript() {
     printf '%s\n' "$text"
 }
 
+is_noise_transcript() {
+    local text="$1"
+    local letters norm
+    text="$(printf '%s' "$text" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//' | tr '[:upper:]' '[:lower:]')"
+    [[ -z "$text" ]] && return 0
+    letters="$(printf '%s' "$text" | tr -cd 'a-z0-9')"
+    [[ "${#letters}" -lt 4 ]] && return 0
+    norm="$(printf '%s' "$text" | sed -E 's/[^a-z0-9[:space:]]+/ /g; s/[[:space:]]+/ /g; s/^ //; s/ $//')"
+    case "$norm" in
+      transcription|thank\ you|thanks|thanks\ for\ watching|you|mm|mmm|hmm|uh|um|ah|oh|bye|okay|ok|subtitle|subtitles|music|applause|silence)
+        return 0
+        ;;
+    esac
+    return 1
+}
+
 ai_speaking_or_recent() {
     if [[ -f "$A2A_SPEECH_PID_FILE" ]]; then
         local global_pid
@@ -359,6 +375,10 @@ run_once() {
     rm -f "$AUDIO_FILE"
 
     if [[ -n "$text" ]]; then
+        if is_noise_transcript "$text"; then
+            echo "🔕 Suppressed noise transcript: $text"
+            return
+        fi
         if ai_speaking_or_recent; then
             echo "🔕 Suppressed transcript during AI speech window."
             return

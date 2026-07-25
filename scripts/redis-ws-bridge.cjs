@@ -91,6 +91,16 @@ class RedisBridgeServer {
               res.writeHead(500, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ error: error.message }));
             });
+        } else if (req.url === '/terminal-mirror') {
+          this.getTerminalMirrorSnapshot()
+            .then((snapshot) => {
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify(snapshot));
+            })
+            .catch((error) => {
+              res.writeHead(500, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: error.message }));
+            });
         } else {
           res.writeHead(404);
           res.end('Not Found');
@@ -160,6 +170,51 @@ class RedisBridgeServer {
       websocketClientCount: websocketAgents.length,
       redisAgents,
       redisAgentCount: redisAgents.length,
+    };
+  }
+
+  /**
+   * Terminal Mirror snapshot: spatial window layout from the heartbeat pulse
+   * state file. contentsTail is stripped — terminal contents can hold secrets.
+   */
+  async getTerminalMirrorSnapshot() {
+    const fs = require('fs/promises');
+    const os = require('os');
+    const statePath =
+      process.env.TNF_TERMINAL_HEARTBEAT_STATE_PATH ||
+      path.join(os.homedir(), '.tnf', 'terminal-heartbeat', 'state', 'terminal-heartbeat-latest.json');
+
+    let state = null;
+    try {
+      state = JSON.parse(await fs.readFile(statePath, 'utf8'));
+    } catch (_error) {
+      return { available: false, reason: `terminal heartbeat state not found: ${statePath}` };
+    }
+
+    const observed = Array.isArray(state.observed) ? state.observed : [];
+    const generatedAt = state.generatedAt || null;
+    const ageMs = generatedAt ? Date.now() - Date.parse(generatedAt) : Infinity;
+
+    return {
+      available: true,
+      source: statePath,
+      generatedAt,
+      stale: ageMs > 3 * 60 * 1000,
+      ageSeconds: Number.isFinite(ageMs) ? Math.round(ageMs / 1000) : null,
+      displays: Array.isArray(state.displays) ? state.displays : [],
+      windows: observed.map((session) => ({
+        windowId: session.windowId ?? null,
+        agentId: session.agentId ?? null,
+        tty: session.tty ?? null,
+        title: session.title ?? null,
+        busy: Boolean(session.busy),
+        agentLike: Boolean(session.agentLike),
+        cwd: session.cwd ?? null,
+        bounds: session.bounds ?? null,
+        display: session.display ?? null,
+        zOrder: session.zOrder ?? null,
+        matched: session.matched ?? null,
+      })),
     };
   }
 

@@ -45,6 +45,8 @@ def _add_cors_headers(response):
 @app.route("/is_ai_speaking", methods=["OPTIONS"])
 @app.route("/kws_state", methods=["OPTIONS"])
 @app.route("/stt_state", methods=["OPTIONS"])
+@app.route("/target_state", methods=["OPTIONS"])
+@app.route("/target_lock_agent", methods=["OPTIONS"])
 @app.route("/mic_pause", methods=["OPTIONS"])
 @app.route("/mic_resume", methods=["OPTIONS"])
 @app.route("/activate", methods=["OPTIONS"])
@@ -239,6 +241,7 @@ for name in (
             pass
 
 STREAM_FILE = os.path.join(STATE_DIR, state_file_name("voice_stream.txt"))
+TARGET_FILE = os.path.join(STATE_DIR, state_file_name("voice_target.json"))
 MIC_PAUSE_FILE = os.path.join(STATE_DIR, state_file_name("voice_mic_paused"))
 STREAM_WATCH_LOG = f"/tmp/stream_watch{PROFILE_SUFFIX}.log"
 CLICK_DAEMON_LOG = "/tmp/voice_target_click.log"
@@ -424,6 +427,17 @@ def prune_duplicate_pids(pids):
     return [keep], killed
 
 
+def read_voice_target() -> dict:
+    try:
+        if not os.path.exists(TARGET_FILE):
+            return {}
+        with open(TARGET_FILE, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
 def spawn_background_process(cmd, log_path):
     with open(log_path, "ab", buffering=0) as log_file:
         subprocess.Popen(
@@ -460,7 +474,11 @@ def ensure_background_bridge():
         click_pids, killed_click = prune_duplicate_pids(click_daemon_pids())
         if killed_click:
             deduped.append(f"click_anchor_daemon(-{len(killed_click)})")
-        if not click_pids:
+        click_anchor_enabled = os.environ.get(
+            "VOICE_CLICK_ANCHOR_ENABLED", "1"
+        ).strip().lower() not in {"0", "false", "no", "off"}
+        target_locked = bool(read_voice_target().get("locked"))
+        if click_anchor_enabled and not target_locked and not click_pids:
             daemon_bin = voice_system_path("voice-target-click-daemon")
             daemon_script = voice_system_path("voice-target-click-daemon.swift")
             cmd = (
@@ -468,6 +486,14 @@ def ensure_background_bridge():
             )
             spawn_background_process(cmd, CLICK_DAEMON_LOG)
             started.append("click_anchor_daemon")
+        elif target_locked and click_pids:
+            # Agent/manual lock wins over opportunistic click anchors.
+            for pid in click_pids:
+                try:
+                    os.kill(pid, signal.SIGTERM)
+                except OSError:
+                    pass
+            started.append("click_anchor_daemon(paused-for-lock)")
 
         if RESPONSE_AUDIO_AUTO_HEAL:
             response_watcher_script = os.path.expanduser(
@@ -650,6 +676,50 @@ def looks_like_ai_echo(candidate: str, spoken: str) -> bool:
     return overlap >= 0.62
 
 
+_NOISE_TRANSCRIPTS = {
+    "transcription",
+    "thank you",
+    "thanks",
+    "thanks for watching",
+    "thank you for watching",
+    "you",
+    "mm",
+    "mmm",
+    "hmm",
+    "uh",
+    "um",
+    "ah",
+    "oh",
+    "bye",
+    "okay",
+    "ok",
+    "subtitle",
+    "subtitles",
+    "music",
+    "applause",
+    "silence",
+    "the end",
+}
+
+
+def is_noise_transcript(text: str) -> bool:
+    """Drop Whisper/browser filler and empty-audio hallucinations."""
+    cleaned = " ".join((text or "").split()).strip()
+    if not cleaned:
+        return True
+    letters = re.sub(r"[^a-z0-9]+", "", cleaned.lower())
+    if len(letters) < 4:
+        return True
+    norm = re.sub(r"[^a-z0-9\s]+", " ", cleaned.lower())
+    norm = " ".join(norm.split())
+    if norm in _NOISE_TRANSCRIPTS:
+        return True
+    tokens = norm.split()
+    if len(tokens) == 1 and tokens[0] in _NOISE_TRANSCRIPTS:
+        return True
+    return False
+
+
 def post_json(url, payload, timeout_seconds):
     data = json.dumps(payload).encode("utf-8")
     headers = {
@@ -801,15 +871,75 @@ def transcribe_wav_file(wav_path: str) -> str:
     return " ".join((result.stdout or "").split()).strip()
 
 
+def _ffmpeg_error_detail(stderr: str, stdout: str, returncode: int) -> str:
+    text = (stderr or stdout or "").strip()
+    if not text:
+        return f"ffmpeg exit {returncode}"
+    # Prefer the trailing diagnostic lines; banners are at the top.
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    useful = [ln for ln in lines if not ln.lower().startswith("ffmpeg version")]
+    useful = [ln for ln in useful if "configuration:" not in ln.lower()]
+    useful = [ln for ln in useful if not ln.lower().startswith("built with")]
+    useful = [ln for ln in useful if not ln.lower().startswith("libav")]
+    useful = [ln for ln in useful if not ln.lower().startswith("libsw")]
+    snippet = " | ".join((useful or lines)[-4:])
+    return snippet[:240] or f"ffmpeg exit {returncode}"
+
+
+def _detect_audio_suffix(raw: bytes, content_type: str = "") -> str:
+    lowered = (content_type or "").lower()
+    if raw.startswith(b"RIFF") and b"WAVE" in raw[:16]:
+        return ".wav"
+    if raw.startswith(b"OggS"):
+        return ".ogg"
+    if len(raw) >= 4 and raw[4:8] == b"ftyp":
+        return ".mp4"
+    if "wav" in lowered:
+        return ".wav"
+    if "ogg" in lowered:
+        return ".ogg"
+    if "mp4" in lowered or "m4a" in lowered:
+        return ".mp4"
+    return ".webm"
+
+
+def lock_voice_target_to_agent(prefer: str = "cursor-agent", press_enter: bool = True) -> dict:
+    script = voice_system_path("voice-target-agent")
+    if not script or not os.path.isfile(script):
+        raise RuntimeError("voice-target-agent not found")
+    cmd = [script, "--profile", VOICEBRIDGE_PROFILE, "--prefer", prefer or "cursor-agent"]
+    if press_enter:
+        cmd.append("--enter")
+    else:
+        cmd.append("--no-enter")
+    env = os.environ.copy()
+    env["VOICEBRIDGE_PROFILE"] = VOICEBRIDGE_PROFILE
+    env["VOICEBRIDGE_STATE_DIR"] = STATE_DIR
+    proc = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        check=False,
+        env=env,
+        timeout=20,
+    )
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout or "").strip()[:240]
+        raise RuntimeError(detail or f"voice-target-agent exit {proc.returncode}")
+    target = read_voice_target()
+    target["message"] = (proc.stdout or "").strip().splitlines()[-1] if (proc.stdout or "").strip() else "locked"
+    return target
+
+
 def transcribe_uploaded_audio(raw: bytes, content_type: str = "") -> str:
     if not raw or len(raw) < 400:
         return ""
-    suffix = ".webm"
-    lowered = (content_type or "").lower()
-    if "wav" in lowered:
-        suffix = ".wav"
-    elif "ogg" in lowered:
-        suffix = ".ogg"
+    # Multipart form posts (curl -F) are not valid media containers.
+    if (content_type or "").lower().startswith("multipart/"):
+        raise RuntimeError(
+            "Expected raw audio body (audio/webm|wav). Multipart form uploads are not supported."
+        )
+    suffix = _detect_audio_suffix(raw, content_type)
     input_path = ""
     wav_path = ""
     try:
@@ -829,8 +959,7 @@ def transcribe_uploaded_audio(raw: bytes, content_type: str = "") -> str:
             check=False,
         )
         if proc.returncode != 0:
-            detail = (proc.stderr or proc.stdout or "").strip()[:240]
-            raise RuntimeError(detail or f"ffmpeg exit {proc.returncode}")
+            raise RuntimeError(_ffmpeg_error_detail(proc.stderr or "", proc.stdout or "", proc.returncode))
         return transcribe_wav_file(wav_path)
     finally:
         for path in (input_path, wav_path):
@@ -876,7 +1005,9 @@ HTML_TEMPLATE = """
         <div id="status">UNBREAKABLE LINK v8.0</div>
         <div id="meter"><div id="fill"></div></div>
         <div id="text" style="color: #444; font-size: 14px;">Click to start the beam.</div>
+        <div id="target-status" style="margin-top: 10px; color: #668866; font-size: 12px;">Target: …</div>
         <button id="activate-btn" type="button">ACTIVATE BEAM</button>
+        <button id="lock-agent-btn" type="button" style="margin-top: 8px; background: #111; color: #88cc88; border: 1px solid #335533; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 12px;">LOCK TO CURSOR-AGENT</button>
     </div>
     <div id="right">
         <h3>
@@ -893,6 +1024,8 @@ HTML_TEMPLATE = """
         const cacheList = document.getElementById('cache-list');
         const infoText = document.getElementById('text');
         const activateBtn = document.getElementById('activate-btn');
+        const lockAgentBtn = document.getElementById('lock-agent-btn');
+        const targetStatus = document.getElementById('target-status');
 
         let isSpeaking = false;
         let wasSpeaking = false;
@@ -912,18 +1045,100 @@ HTML_TEMPLATE = """
         let vadRaf = null;
         let listeningActive = false;
         let transcribing = false;
-        const VOICE_THRESHOLD = 11;
-        const SILENCE_END_MS = 2400;
-        const MIN_UTTERANCE_MS = 500;
+        const VOICE_THRESHOLD = 6;
+        const SILENCE_END_MS = 1800;
+        const MIN_UTTERANCE_MS = 400;
         const MAX_UTTERANCE_MS = 18000;
         let lastSentText = '';
         let lastSentAtMs = 0;
         let lastInterruptAtMs = 0;
+        let webSpeechRecognition = null;
         const POST_AI_SUPPRESS_MS = 900;
         const INTERRUPT_COOLDOWN_MS = 350;
         const POST_INTERRUPT_TRANSCRIPT_SUPPRESS_MS = 1600;
         const MIN_BARGE_CHARS = 4;
         const INTERRUPT_RE = /\b(stop|pause|wait|interrupt|hold on|quiet|be quiet|shut up|enough|cancel)\b/i;
+
+        function handleFinalTranscript(cleaned, source) {
+            const text = (cleaned || '').trim();
+            if (!text) return;
+            const letters = text.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const norm = text.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/ +/g, ' ').trim();
+            const noise = new Set([
+                'transcription', 'thank you', 'thanks', 'thanks for watching',
+                'you', 'mm', 'mmm', 'hmm', 'uh', 'um', 'ah', 'oh', 'bye', 'okay', 'ok',
+                'subtitle', 'subtitles', 'music', 'applause', 'silence'
+            ]);
+            if (letters.length < 4 || noise.has(norm)) {
+                addCacheItem('[stt] ignored noise: ' + text);
+                return;
+            }
+            const now = Date.now();
+            if (isSpeaking) {
+                const compactLen = text.replace(/[^a-z0-9]/gi, '').length;
+                const shouldInterrupt = INTERRUPT_RE.test(text) || compactLen >= MIN_BARGE_CHARS;
+                if (shouldInterrupt && (now - lastInterruptAtMs) >= INTERRUPT_COOLDOWN_MS) {
+                    addCacheItem('[interrupt] ' + text.slice(0, 80));
+                    sendInterrupt(text);
+                    lastInterruptAtMs = now;
+                }
+                return;
+            }
+            if ((now - lastInterruptAtMs) < POST_INTERRUPT_TRANSCRIPT_SUPPRESS_MS) return;
+            if ((now - lastAiStopAtMs) < POST_AI_SUPPRESS_MS) return;
+            if (text === lastSentText && (now - lastSentAtMs) < 3000) return;
+
+            const prefix = source ? ('[' + source + '] ') : '';
+            addCacheItem(prefix + text);
+            sendText(text);
+            if (lastStreamTotal >= 0) lastStreamTotal += 1;
+            lastSentText = text;
+            lastSentAtMs = now;
+            infoText.innerText = 'Heard: ' + text;
+        }
+
+        function startWebSpeechFallback() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                addCacheItem('[stt] Web Speech unavailable — Whisper-only');
+                return;
+            }
+            if (webSpeechRecognition) {
+                try { webSpeechRecognition.stop(); } catch (e) {}
+            }
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            recognition.onresult = (event) => {
+                const result = event.results[event.results.length - 1];
+                if (!result) return;
+                const transcript = ((result[0] && result[0].transcript) || '').trim();
+                if (!transcript) return;
+                if (!result.isFinal) {
+                    infoText.innerText = 'Hearing: ' + transcript;
+                    return;
+                }
+                handleFinalTranscript(transcript, 'live');
+            };
+            recognition.onerror = (event) => {
+                if (event && event.error && event.error !== 'no-speech' && event.error !== 'aborted') {
+                    addCacheItem('[error] webspeech: ' + event.error);
+                }
+            };
+            recognition.onend = () => {
+                if (userActivated && !micPaused && webSpeechRecognition === recognition) {
+                    try { recognition.start(); } catch (e) {}
+                }
+            };
+            webSpeechRecognition = recognition;
+            try {
+                recognition.start();
+                addCacheItem('[stt] browser speech recognition ON — speak now');
+            } catch (e) {
+                addCacheItem('[error] webspeech start: ' + ((e && e.message) ? e.message : e));
+            }
+        }
 
         async function checkAiStatus() {
             try {
@@ -976,6 +1191,10 @@ HTML_TEMPLATE = """
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 try { mediaRecorder.stop(); } catch (e) {}
             }
+            if (webSpeechRecognition) {
+                try { webSpeechRecognition.onend = null; webSpeechRecognition.stop(); } catch (e) {}
+                webSpeechRecognition = null;
+            }
             isRecordingUtterance = false;
             recordingChunks = [];
             fill.style.width = '0%';
@@ -1021,6 +1240,7 @@ HTML_TEMPLATE = """
             utteranceStartedAtMs = Date.now();
             silenceStartedAtMs = 0;
             infoText.innerText = 'Listening…';
+            addCacheItem('[stt] recording utterance…');
         }
 
         function finishUtteranceRecording() {
@@ -1039,6 +1259,7 @@ HTML_TEMPLATE = """
         async function transcribeBlob(blob) {
             if (!blob || blob.size < 400 || transcribing) return;
             transcribing = true;
+            addCacheItem('[stt] whisper… ' + Math.round(blob.size / 1024) + 'kb');
             try {
                 const resp = await fetch('/transcribe', {
                     method: 'POST',
@@ -1050,28 +1271,11 @@ HTML_TEMPLATE = """
                     throw new Error(data.error || ('HTTP ' + resp.status));
                 }
                 const cleaned = (data.text || '').trim();
-                if (!cleaned) return;
-
-                const now = Date.now();
-                if (isSpeaking) {
-                    const compactLen = cleaned.replace(/[^a-z0-9]/gi, '').length;
-                    const shouldInterrupt = INTERRUPT_RE.test(cleaned) || compactLen >= MIN_BARGE_CHARS;
-                    if (shouldInterrupt && (now - lastInterruptAtMs) >= INTERRUPT_COOLDOWN_MS) {
-                        addCacheItem('[interrupt] ' + cleaned.slice(0, 80));
-                        sendInterrupt(cleaned);
-                        lastInterruptAtMs = now;
-                    }
+                if (!cleaned) {
+                    addCacheItem('[stt] whisper empty — keep speaking / check mic meter');
                     return;
                 }
-                if ((now - lastInterruptAtMs) < POST_INTERRUPT_TRANSCRIPT_SUPPRESS_MS) return;
-                if ((now - lastAiStopAtMs) < POST_AI_SUPPRESS_MS) return;
-                if (cleaned === lastSentText && (now - lastSentAtMs) < 3000) return;
-
-                addCacheItem(cleaned);
-                sendText(cleaned);
-                lastSentText = cleaned;
-                lastSentAtMs = now;
-                infoText.innerText = 'Heard: ' + cleaned;
+                handleFinalTranscript(cleaned, 'whisper');
             } catch (e) {
                 const msg = (e && e.message) ? e.message : String(e);
                 addCacheItem('[error] transcribe: ' + msg);
@@ -1147,19 +1351,39 @@ HTML_TEMPLATE = """
             setTimeout(checkMicState, 500);
         }
 
-        let lastStreamIndex = 0;
+        let lastStreamTotal = -1;
+        let streamHydrated = false;
+        function displayStreamLine(raw) {
+            let line = (raw || '').trim();
+            if (!line) return;
+            // Strip U2A envelope for readable Thought Stream rows.
+            if (line.startsWith('[U2A ')) {
+                const idx = line.lastIndexOf('] ');
+                if (idx >= 0) line = line.slice(idx + 2);
+            }
+            addCacheItem(line);
+        }
         async function checkStream() {
             try {
                 const resp = await fetch('/stream');
                 const data = await resp.json();
-                if (data.lines && data.lines.length > lastStreamIndex) {
-                    for (let i = lastStreamIndex; i < data.lines.length; i++) {
-                        const line = data.lines[i].trim();
-                        if (line) {
-                            addCacheItem(line);
-                        }
-                    }
-                    lastStreamIndex = data.lines.length;
+                const lines = Array.isArray(data.lines) ? data.lines : [];
+                const total = typeof data.total === 'number' ? data.total : lines.length;
+
+                if (!streamHydrated) {
+                    // First paint: show the newest few lines, not the whole backlog.
+                    const seed = lines.slice(-8);
+                    for (const raw of seed) displayStreamLine(raw);
+                    streamHydrated = true;
+                    lastStreamTotal = total;
+                } else if (total > lastStreamTotal) {
+                    const newCount = Math.min(total - lastStreamTotal, lines.length);
+                    const fresh = lines.slice(lines.length - newCount);
+                    for (const raw of fresh) displayStreamLine(raw);
+                    lastStreamTotal = total;
+                } else if (total < lastStreamTotal) {
+                    // Stream file rotated/truncated.
+                    lastStreamTotal = total;
                 }
             } catch (e) {}
             setTimeout(checkStream, 1000);
@@ -1198,8 +1422,9 @@ HTML_TEMPLATE = """
             listeningActive = true;
             status.innerText = '📡 BEAM ACTIVE';
             status.className = 'recording';
-            infoText.innerText = 'Local Whisper listening. Speak, then pause.';
-            addCacheItem('[stt] local whisper ready');
+            infoText.innerText = 'Listening — speak now (browser STT + Whisper).';
+            addCacheItem('[stt] mic open — local whisper ready');
+            startWebSpeechFallback();
             vadLoop();
         }
 
@@ -1253,9 +1478,43 @@ HTML_TEMPLATE = """
             syncBeamButton();
         };
 
+        async function refreshTargetStatus() {
+            try {
+                const resp = await fetch('/target_state');
+                const data = await resp.json();
+                targetStatus.innerText = 'Inject → ' + (data.summary || 'unset');
+            } catch (e) {
+                targetStatus.innerText = 'Inject → unreachable';
+            }
+            setTimeout(refreshTargetStatus, 2500);
+        }
+
+        lockAgentBtn.onclick = async () => {
+            lockAgentBtn.disabled = true;
+            try {
+                const resp = await fetch('/target_lock_agent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prefer: 'cursor-agent', press_enter: true })
+                });
+                const data = await resp.json();
+                if (!resp.ok || !data.ok) {
+                    throw new Error(data.error || ('HTTP ' + resp.status));
+                }
+                const summary = data.tty ? ('terminal ' + data.tty + (data.app ? ' (' + data.app + ')' : '')) : (data.message || 'locked');
+                targetStatus.innerText = 'Inject → ' + summary;
+                addCacheItem('[target] ' + summary);
+            } catch (e) {
+                addCacheItem('[error] target lock: ' + ((e && e.message) ? e.message : e));
+            } finally {
+                lockAgentBtn.disabled = false;
+            }
+        };
+
         checkAiStatus();
         checkMicState();
         checkStream();
+        refreshTargetStatus();
     </script>
 </body>
 </html>
@@ -1269,10 +1528,11 @@ def stream():
         if os.path.exists(STREAM_FILE):
             with open(STREAM_FILE, "r") as f:
                 lines = f.readlines()
-            return {"lines": lines[-20:]}  # Last 20 lines
-        return {"lines": []}
+            total = len(lines)
+            return {"lines": lines[-40:], "total": total, "file": STREAM_FILE}
+        return {"lines": [], "total": 0}
     except Exception as err:
-        return {"error": str(err), "lines": []}, 500
+        return {"error": str(err), "lines": [], "total": 0}, 500
 
 
 @app.route("/")
@@ -1309,6 +1569,38 @@ def stt_state():
     return whisper_stt_state()
 
 
+@app.route("/target_state")
+def target_state():
+    target = read_voice_target()
+    kind = str(target.get("kind", "") or "")
+    tty = str(target.get("tty", "") or "")
+    app = str(target.get("app", "") or "")
+    summary = "unset"
+    if kind == "terminal" and tty:
+        summary = f"terminal {tty}" + (f" ({app})" if app else "")
+    elif kind == "point":
+        summary = f"point {target.get('x')},{target.get('y')}" + (f" app:{app}" if app else "")
+    elif kind == "app" and app:
+        summary = f"app {app}"
+    elif target:
+        summary = kind or "custom"
+    return {"ok": True, "summary": summary, "target": target}
+
+
+@app.route("/target_lock_agent", methods=["POST"])
+def target_lock_agent():
+    payload = request.get_json(silent=True) or {}
+    prefer = str(payload.get("prefer", "cursor-agent") or "cursor-agent")
+    press_enter = bool(payload.get("press_enter", True))
+    try:
+        target = lock_voice_target_to_agent(prefer=prefer, press_enter=press_enter)
+        log_event("TARGET_LOCK", target.get("message", "agent"))
+        return {"ok": True, **target}
+    except Exception as err:
+        log_event("TARGET_LOCK_ERR", str(err)[:180])
+        return {"ok": False, "error": str(err)}, 500
+
+
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
     if is_mic_paused():
@@ -1319,6 +1611,9 @@ def transcribe():
             request.headers.get("Content-Type", ""),
         )
         text = " ".join((text or "").split())
+        if text and is_noise_transcript(text):
+            log_event("NOISE_SUPPRESS", text[:80])
+            return {"text": "", "suppressed": "noise"}
         if text:
             log_event("STT", text[:60])
         return {"text": text}
@@ -1381,6 +1676,10 @@ def send():
         if looks_like_ai_echo(text, last_ai_text):
             log_event("ECHO_SUPPRESS", text[:80])
             return "ECHO_SUPPRESSED"
+
+    if text and is_noise_transcript(text):
+        log_event("NOISE_SUPPRESS", text[:80])
+        return "NOISE_SUPPRESSED"
 
     if text:
         tagged = format_user_utterance(text)

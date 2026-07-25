@@ -11324,6 +11324,7 @@ voiceBridgeCommand
         'listen',
         'voice-target-here',
         'voice-target-pick',
+        'voice-target-agent',
         'voice-target-show',
         'voice-target-clear',
         'voice-mic-toggle',
@@ -11717,6 +11718,32 @@ voiceTargetCommand
       process.exit(1);
     }
   });
+
+voiceTargetCommand
+  .command('agent')
+  .description('Anchor destination to cursor-agent / tnf agent tty (auto-detect)')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .option('--prefer <name>', 'Prefer cursor-agent or tnf', 'cursor-agent')
+  .option('--no-enter', 'Do not press Enter after inject')
+  .argument('[args...]', 'Arguments forwarded to voice-target-agent')
+  .action(
+    async (
+      args: string[] = [],
+      options: { profile?: string; prefer?: string; noEnter?: boolean } = {}
+    ) => {
+      try {
+        let forwarded = [...args];
+        if (options.profile) forwarded = appendVoiceProfileArg(forwarded, options.profile);
+        if (options.prefer) forwarded.push('--prefer', options.prefer);
+        if (options.noEnter) forwarded.push('--no-enter');
+        else forwarded.push('--enter');
+        await runVoiceBridgeCommand('voice-target-agent', forwarded);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
 
 voiceTargetCommand
   .command('show')

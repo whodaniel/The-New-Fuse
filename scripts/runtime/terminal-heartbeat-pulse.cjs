@@ -212,6 +212,100 @@ async function pollTerminalWindows() {
   }
 }
 
+// Spatial capture for the Terminal Mirror UI: CGWindow bounds + display
+// geometry via .agent/skills/screenshot/scripts/macos_window_info.swift.
+// Terminal.app AppleScript window.id() matches kCGWindowNumber, so results
+// join onto pollTerminalWindows() output by windowId (title fallback below).
+const WINDOW_INFO_BINARY = path.join(os.homedir(), '.tnf', 'bin', 'tnf-window-info');
+
+function resolveWindowInfoScript() {
+  const candidates = [
+    path.join(__dirname, '..', '..', '.agent', 'skills', 'screenshot', 'scripts', 'macos_window_info.swift'),
+    path.join(os.homedir(), '.tnf', 'bin', 'macos_window_info.swift'),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return null;
+}
+
+async function collectWindowBounds() {
+  if (process.platform !== 'darwin') return { windows: [], displays: [] };
+
+  const args = ['--app', 'Terminal', '--list', '--screens'];
+  let invocation = null;
+  if (fs.existsSync(WINDOW_INFO_BINARY)) {
+    invocation = [WINDOW_INFO_BINARY, args];
+  } else {
+    const script = resolveWindowInfoScript();
+    if (script) invocation = ['swift', [script, ...args]];
+  }
+  if (!invocation) return { windows: [], displays: [] };
+
+  try {
+    const { stdout } = await execFileAsync(invocation[0], invocation[1], {
+      maxBuffer: 4 * 1024 * 1024,
+      timeout: 45000,
+    });
+    const parsed = JSON.parse(stdout || '{}');
+    return {
+      windows: Array.isArray(parsed.windows) ? parsed.windows : [],
+      displays: Array.isArray(parsed.displays) ? parsed.displays : [],
+    };
+  } catch (error) {
+    console.error(`[terminal-heartbeat] window bounds capture failed: ${String(error.message || error)}`);
+    return { windows: [], displays: [] };
+  }
+}
+
+function findDisplayId(bounds, displays) {
+  if (!bounds || !displays.length) return null;
+  const centerX = bounds.x + bounds.width / 2;
+  const centerY = bounds.y + bounds.height / 2;
+  for (const display of displays) {
+    if (
+      centerX >= display.x &&
+      centerX < display.x + display.width &&
+      centerY >= display.y &&
+      centerY < display.y + display.height
+    ) {
+      return display.id;
+    }
+  }
+  return displays[0].id;
+}
+
+function mergeWindowBounds(terminals, cgCapture) {
+  const { windows: cgWindows, displays } = cgCapture;
+  const byId = new Map(cgWindows.map((w) => [w.id, w]));
+  const byTitle = new Map();
+  for (const w of cgWindows) {
+    if (w.name) byTitle.set(w.name, w);
+  }
+  // CGWindowListCopyWindowInfo returns windows front-to-back.
+  const zOrderById = new Map(cgWindows.map((w, index) => [w.id, index]));
+
+  return terminals.map((terminal) => {
+    let cg = byId.get(terminal.windowId) || null;
+    let matchedBy = cg ? 'windowId' : null;
+    if (!cg && terminal.customTitle && byTitle.has(terminal.customTitle)) {
+      cg = byTitle.get(terminal.customTitle);
+      matchedBy = 'title';
+    }
+    if (!cg) {
+      return { ...terminal, bounds: null, display: null, zOrder: null, matched: false };
+    }
+    return {
+      ...terminal,
+      bounds: cg.bounds,
+      display: findDisplayId(cg.bounds, displays),
+      zOrder: zOrderById.get(cg.id) ?? null,
+      matched: true,
+      matchedBy,
+    };
+  });
+}
+
 async function collectProcessTable() {
   try {
     const { stdout } = await execFileAsync('ps', ['-axo', 'pid=,ppid=,tty=,comm=,args='], {
@@ -643,8 +737,12 @@ async function main() {
       : null;
 
   try {
-    const terminals = await pollTerminalWindows();
-    const processTable = await collectProcessTable();
+    const [rawTerminals, cgCapture, processTable] = await Promise.all([
+      pollTerminalWindows(),
+      collectWindowBounds(),
+      collectProcessTable(),
+    ]);
+    const terminals = mergeWindowBounds(rawTerminals, cgCapture);
     const managedSessions = readManagedSessions();
     const managedByAgentId = new Map(
       managedSessions
@@ -663,6 +761,12 @@ async function main() {
         windowId: terminal.windowId,
         tty: terminal.tty,
         busy: terminal.busy,
+        title: terminal.customTitle,
+        bounds: terminal.bounds,
+        display: terminal.display,
+        zOrder: terminal.zOrder,
+        matched: terminal.matched,
+        matchedBy: terminal.matchedBy || null,
         cwd,
         shellPid: processContext.shellPid,
         foregroundPid: processContext.foregroundPid,
@@ -714,6 +818,7 @@ async function main() {
         queueHintFailures: injections.filter((target) => target.queueHintPresent).length,
       },
       observed,
+      displays: cgCapture.displays,
       targets: injections,
       skippedForAttention: injections.filter((target) => target.skippedReason === 'typing-in-progress').length,
       functionalGaps: injectionSkippedReason
@@ -726,6 +831,25 @@ async function main() {
     };
 
     await writeArtifacts(payload);
+
+    // Spatial snapshot for Terminal Mirror consumers (redis-ws-bridge WS
+    // subscribers). Deliberately excludes contentsTail — terminal contents
+    // can hold secrets and must never leave the state file unfiltered.
+    await publishActivity('tnf-terminal-mirror', 'terminal_mirror_snapshot', {
+      displays: cgCapture.displays,
+      windows: observed.map((session) => ({
+        agentId: session.agentId,
+        windowId: session.windowId,
+        tty: session.tty,
+        busy: session.busy,
+        title: session.title,
+        bounds: session.bounds,
+        display: session.display,
+        zOrder: session.zOrder,
+        agentLike: session.agentLike,
+      })),
+    });
+
     console.log(
       `[terminal-heartbeat] status=${payload.status} observed=${payload.summary.observedSessions} targeted=${payload.summary.targetedSessions} injections=${payload.summary.injections}`
     );
