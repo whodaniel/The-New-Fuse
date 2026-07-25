@@ -119,12 +119,14 @@ export interface RuntimePortPreflightResult {
 }
 
 const DEFAULT_RUNTIME_PORTS: RuntimePortCatalogEntry[] = [
+  { port: 3000, serviceName: 'relay-core', protected: false },
   { port: 3001, serviceName: 'api/backend', protected: false },
   { port: 3004, serviceName: 'backend', protected: false },
   { port: 3003, serviceName: 'api-gateway/ws-bridge-secondary', protected: false },
   { port: 3006, serviceName: 'skideancer/ws', protected: false },
   { port: 3007, serviceName: 'skideancer/ide', protected: false },
   { port: 3008, serviceName: 'skideancer websocket', protected: true },
+  { port: 1420, serviceName: 'tauri-desktop', protected: false },
   { port: 5173, serviceName: 'vite', protected: false },
   { port: 5174, serviceName: 'vite-alt', protected: false },
   { port: 5555, serviceName: 'drizzle-studio', protected: true },
@@ -196,7 +198,7 @@ export class PortRegistryService extends EventEmitter {
       serviceName,
       serviceType,
       environment,
-      host = 'localhost',
+      host = '127.0.0.1',
       protocol = 'http',
       healthCheckUrl,
       metadata = {},
@@ -312,8 +314,9 @@ export class PortRegistryService extends EventEmitter {
   /**
    * Check if a port is available
    */
-  async isPortAvailable(port: number, host: string = 'localhost'): Promise<boolean> {
-    // Simple TCP check for port availability
+  async isPortAvailable(port: number, host: string = '127.0.0.1'): Promise<boolean> {
+    // Prefer IPv4 loopback — binding `localhost` can succeed on ::1 while
+    // 127.0.0.1 (or vice versa) is already occupied (see tauri HMR / relay clash).
     return new Promise((resolve) => {
       const server = net.createServer();
       server.once('error', () => resolve(false));
@@ -432,13 +435,31 @@ export class PortRegistryService extends EventEmitter {
   private async loadConfigurations(): Promise<void> {
     const defaultConfigs: ServiceConfiguration[] = [
       {
-        serviceName: 'frontend',
+        serviceName: 'relay-core',
         environment: 'development',
         preferredPort: 3000,
         fallbackPorts: [3010, 3020, 3030],
-        autoAssign: true,
+        autoAssign: false,
         portRangeMin: 3000,
-        portRangeMax: 3099,
+        portRangeMax: 3000,
+      },
+      {
+        serviceName: 'tauri-desktop',
+        environment: 'development',
+        preferredPort: 1420,
+        fallbackPorts: [1421, 1422, 1423, 5173],
+        autoAssign: true,
+        portRangeMin: 1420,
+        portRangeMax: 1499,
+      },
+      {
+        serviceName: 'frontend',
+        environment: 'development',
+        preferredPort: 5173,
+        fallbackPorts: [5174, 5175, 3010],
+        autoAssign: true,
+        portRangeMin: 5173,
+        portRangeMax: 5199,
       },
       {
         serviceName: 'api',
@@ -516,7 +537,7 @@ export class PortRegistryService extends EventEmitter {
       // No need to acquire lock here, as it should be acquired before calling this function.
       // This function only attempts to bind the port physically.
       const server = net.createServer();
-      server.listen(port, 'localhost', () => {
+      server.listen(port, '127.0.0.1', () => {
         // Port successfully bound, keep it open temporarily
         this.temporaryReservations.set(port, server);
         resolve(server); // Return the server instance

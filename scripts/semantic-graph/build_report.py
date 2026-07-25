@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-import base64, json, html, os
+import json, html, os
 
-OUT_DIR = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results"
+from common import OUT as OUT_DIR, b64_of_file
+
 TSV = os.path.join(OUT_DIR, "wordcount_full.tsv.gz")
 STATS = os.path.join(OUT_DIR, "wordcount_stats.json")
 HTML_OUT = os.path.join(OUT_DIR, "wordcount_report.html")
@@ -9,8 +10,7 @@ HTML_OUT = os.path.join(OUT_DIR, "wordcount_report.html")
 with open(STATS) as f:
     stats = json.load(f)
 
-with open(TSV, "rb") as f:
-    b64 = base64.b64encode(f.read()).decode("ascii")
+b64 = b64_of_file(TSV)
 
 page = f"""<!DOCTYPE html>
 <html lang="en">

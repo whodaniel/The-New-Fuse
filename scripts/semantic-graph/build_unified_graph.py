@@ -8,8 +8,7 @@ Outputs: concordance_results/unified_graph.json.gz + unified_graph_stats.json
 import os, re, json, gzip, glob, time
 from collections import Counter, defaultdict
 
-ROOT = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
-OUT = os.path.join(ROOT, "concordance_results")
+from common import ROOT, OUT, slugify, kb_vector_id
 
 MAX_CONCEPTS = 25000
 CONCEPT_MIN_FREQ = 5
@@ -37,9 +36,6 @@ def add_node(nid, label, ntype, origin, weight=1, meta=None):
 def add_edge(s, t, etype, w=1.0):
     edges.append((s, t, etype, round(float(w), 3)))
     stats[f"edges.{etype}"] += 1
-
-def slugify(s):
-    return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", s.lower())).strip("-")
 
 def path_node(relpath):
     return add_node(f"path:{relpath}", relpath, "file", "filesystem")
@@ -235,8 +231,130 @@ for wl, lst in term_files.items():
     for cnt, fpath in lst[:TERM_MAX_FILES]:
         add_edge(f"term:{wl}", path_node(fpath), "occurs_in", cnt)
 
-# ------------------------------------------------------ 8. cross-linking
-print("[8/8] cross-links...")
+# ----------------------------------------- 8. KB sections + vector IDs
+print("[8/12] AI knowledge base sections...")
+
+kb_sections = {}
+try:
+    kb_text = open(os.path.join(ROOT, "data/AI_Knowledge_Base.md"), encoding="utf-8", errors="ignore").read()
+    for sec in kb_text.split("---"):
+        m = re.search(r"## #(\d+):\s*(.+)", sec)
+        if not m:
+            continue
+        idx, title = int(m.group(1)), m.group(2).strip()
+        url = (re.search(r"\*\*URL\*\*:\s*(\S+)", sec) or [None, None])[1]
+        trp = (re.search(r"trp://wiki-inbox/([\w.-]+\.json)", sec) or [None, None])[1]
+        kb_sections[idx] = (title, url, trp)
+    for idx, (title, url, trp) in kb_sections.items():
+        vid = kb_vector_id(idx)
+        nid = f"kleaf:{vid}"
+        if nid in nodes:
+            nodes[nid]["label"] = f"#{idx}: {title[:70]}"
+            nodes[nid]["meta"].update({"kb_index": idx, "url": url, "vector_id": vid})
+        else:
+            add_node(nid, f"#{idx}: {title[:70]}", "kb-entry", "knowledge-tree",
+                     meta={"kb_index": idx, "url": url, "vector_id": vid})
+        if trp:
+            add_edge(nid, f"inbox:{os.path.splitext(trp)[0]}", "resource_pointer")
+except OSError as e:
+    print("  KB skipped:", e)
+
+# ------------------------------------------------- 9. wiki-inbox packets
+print("[9/12] wiki-inbox packets...")
+for fp in glob.glob(os.path.join(ROOT, "data/wiki-inbox/*.json")):
+    try:
+        pkt = json.load(open(fp, encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        continue
+    pid = pkt.get("id", os.path.splitext(os.path.basename(fp))[0])
+    add_node(f"inbox:{pid}", pkt.get("title", pid)[:90], "inbox-packet", "wiki-inbox",
+             meta={"category": pkt.get("category")})
+    for bl in pkt.get("backlinks", []) or []:
+        tgt = bl if bl in wiki_stems else slugify(str(bl))
+        if tgt in wiki_stems:
+            add_edge(f"inbox:{pid}", f"wiki:{tgt}", "backlink")
+        elif concept_id(str(bl)) in nodes:
+            add_edge(f"inbox:{pid}", concept_id(str(bl)), "backlink")
+        elif f"term:{str(bl).lower()}" in nodes:
+            add_edge(f"inbox:{pid}", f"term:{str(bl).lower()}", "backlink")
+
+# --------------------------------------------- 10. UTP handoff lineage
+print("[10/12] UTP handoff session lineage (14k events)...")
+sessions = {}   # context -> {actor, first_ts, last_ts, count}
+utp_dir = os.path.join(ROOT, "data/utp_events")
+if os.path.isdir(utp_dir):
+    for fn in os.listdir(utp_dir):
+        if not fn.endswith(".json"):
+            continue
+        try:
+            ev = json.load(open(os.path.join(utp_dir, fn), encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        ctx = (ev.get("source") or {}).get("context") or "unknown"
+        actor = ((ev.get("actor") or {}).get("handle")
+                 or (ev.get("actor") or {}).get("id") or "unknown")
+        ts = ev.get("timestamp", "")
+        s = sessions.setdefault(ctx, {"actor": actor, "first": ts, "last": ts, "count": 0})
+        s["count"] += 1
+        if ts < s["first"]:
+            s["first"] = ts
+        if ts > s["last"]:
+            s["last"] = ts
+
+    MANY = len(sessions) > 4000
+    by_actor = defaultdict(list)
+    for ctx, s in sessions.items():
+        key = f"{s['actor']}/{s['first'][:10]}" if MANY else ctx
+        by_actor[(s["actor"], key)].append(s)
+
+    actor_days = defaultdict(list)  # actor -> [(first_ts, node_id, count)]
+    for (actor, key), lst in by_actor.items():
+        cnt = sum(x["count"] for x in lst)
+        first = min(x["first"] for x in lst)
+        last = max(x["last"] for x in lst)
+        label = key if not MANY else f"{actor} {key.split('/')[-1]}"
+        nid = add_node(f"session:{slugify(key)[:90]}", label[:90], "session", "handoff",
+                       weight=cnt, meta={"events": cnt, "first": first[:19], "last": last[:19],
+                                          "sessions_merged": len(lst) if MANY else 1})
+        aid = add_node(f"actor:{slugify(actor)}", actor, "actor", "handoff")
+        add_edge(aid, nid, "ran_session", cnt)
+        actor_days[aid].append((first, nid))
+    for aid, lst in actor_days.items():
+        lst.sort()
+        for i in range(1, len(lst)):
+            add_edge(lst[i - 1][1], lst[i][1], "handoff_chain")
+    print(f"  {len(sessions)} sessions -> {sum(len(v) for v in actor_days.values())} nodes (aggregated={MANY})")
+
+# repo handoff-current causal chain
+try:
+    hc = json.load(open(os.path.join(ROOT, ".agent/handoff-current.json")))
+    hid = add_node(f"handoff:{slugify(hc.get('handoff_id','current'))[:80]}",
+                   hc.get("handoff_id", "handoff-current"), "handoff-packet", "handoff",
+                   meta={"created_at": hc.get("created_at"), "branch": hc.get("branch")})
+except (OSError, json.JSONDecodeError):
+    pass
+
+# ------------------------------------------- 11. observatory agent index
+print("[11/12] observatory agents...")
+try:
+    obs = json.load(open(os.path.join(ROOT, "apps/frontend/public/observatory/agents.index.json")))
+    for a in obs.get("agents", []):
+        aid = add_node(agent_id(a["id"]), a.get("name", a["id"]), "agent", "observatory",
+                       meta={"description": (a.get("description") or "")[:160]})
+        for tool in a.get("tools", []) or []:
+            tid = add_node(f"tool:{slugify(str(tool))[:60]}", str(tool), "tool", "observatory")
+            add_edge(aid, tid, "uses_tool")
+        for rc in (a.get("semantic") or {}).get("relatedConcepts", [])[:10]:
+            cname = rc.get("concept") if isinstance(rc, dict) else str(rc)
+            score = rc.get("score", 1) if isinstance(rc, dict) else 1
+            cid = concept_id(cname)
+            if cid in nodes:
+                add_edge(aid, cid, "semantically_related", score)
+except (OSError, json.JSONDecodeError) as e:
+    print("  observatory skipped:", e)
+
+# ------------------------------------------------------ 12. cross-linking
+print("[12/12] cross-links...")
 # path <-> wiki page (doc-<slug> convention)
 for nid in [k for k in nodes if k.startswith("path:")]:
     rel = nid[5:]
@@ -285,7 +403,8 @@ meta = {
     "edges": len(edge_list),
     "sources": ["wiki", "memory-graph", "concept-kg", "codebase-map",
                 "agent-graph", "framework-graph", "knowledge-tree",
-                "wordcount", "filesystem"],
+                "wordcount", "filesystem", "wiki-inbox", "handoff",
+                "observatory"],
 }
 out = {"meta": meta, "nodes": node_list, "edges": edge_list}
 with gzip.open(os.path.join(OUT, "unified_graph.json.gz"), "wt", encoding="utf-8") as f:

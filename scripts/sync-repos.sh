@@ -146,6 +146,22 @@ ALWAYS_EXCLUDE=(
   # Private env files (should never be in any public repo)
   ".env"
   ".env.local"
+  # Personal-data tooling: mines the operator's Google Drive / ArDrive and hard-codes
+  # a path to ~/.config/gcloud/legacy_credentials/<personal email>/. No credentials
+  # live in these files, but the tooling and the PII do not belong in a public runtime.
+  "scripts/personal-archaeology"
+  ".agent/skills/personal-historical-archaeology"
+  # Generated runtime artifacts. These carry absolute operator paths (and, in the
+  # case of utp_events, agent handoff context) and are regenerated locally, so they
+  # have no business in a distributed source tree. utp_events alone is ~11.5k files.
+  "data/utp_events"
+  ".verifier"
+  "concordance_results"
+  "page-analysis-results"
+  "validation-results"
+  # Build output committed to the tree (Rust target dir, turbo cache)
+  "packages/relay-core/native/envelope-validator/target"
+  "packages/relay-core/.turbo"
   # Deprecated local install snapshot (canonical: scripts/system/)
   "voice-bridge-package-20260325"
   # Duplicated mirror directory

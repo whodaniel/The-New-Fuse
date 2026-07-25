@@ -30,4 +30,29 @@ printf '%s\n' '// no-op implementation for open runtime' > "$EXPORT/apps/backend
 
 chmod +x "$SCRIPT_DIR/check-proprietary-leakage.sh"
 "$SCRIPT_DIR/check-proprietary-leakage.sh" "$EXPORT"
+
+# ─────────────────────────────────────────────────────────────────────
+# Hard-coded operator paths must never ship in the public export.
+#
+# Resolving a personal path at RUNTIME is fine (os.homedir(), Path.home(),
+# $HOME, path.resolve(__dirname, ...)). Baking the literal into source is not:
+# it leaks the operator's filesystem layout and is broken for every other user.
+#
+# privacy-guard.cjs already detects this as `owner_home_path` but at severity
+# "warn", so it never blocked — which is how 111 files reached the public repo.
+# The export boundary is where the rule is absolute, so it is enforced here.
+# ─────────────────────────────────────────────────────────────────────
+echo "Checking for hard-coded operator paths..."
+PERSONAL_HITS="$(grep -rIl -E '/Users/[a-zA-Z0-9._-]+/' "$EXPORT" 2>/dev/null || true)"
+if [ -n "$PERSONAL_HITS" ]; then
+  COUNT="$(printf '%s\n' "$PERSONAL_HITS" | grep -c . || true)"
+  echo "FAIL: $COUNT file(s) in the export contain a hard-coded /Users/<name>/ path."
+  echo "      Replace the literal with runtime resolution, or exclude the file."
+  echo "      First 20:"
+  FIRST20="$(printf '%s\n' "$PERSONAL_HITS" | sed "s#^$EXPORT/##" | sed -n '1,20p')"
+  printf '%s\n' "$FIRST20" | sed 's/^/        /'
+  exit 1
+fi
+echo "PASS: no hard-coded operator paths in export"
+
 echo "PASS: open-runtime export verification"

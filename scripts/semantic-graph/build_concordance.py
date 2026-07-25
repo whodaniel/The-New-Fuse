@@ -2,8 +2,7 @@
 import os, re, sys, gzip, json, time
 from collections import Counter
 
-ROOT = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
-OUT = os.path.join(ROOT, "concordance_results")
+from common import ROOT, OUT
 
 SKIP_DIRS = {
     "node_modules", ".git", "dist", "build", "out", ".next", ".turbo",

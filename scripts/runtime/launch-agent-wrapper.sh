@@ -55,9 +55,6 @@ while [[ $# -gt 0 ]]; do
     export "$1"
   fi
   shift
-  [[ -n "${AGENT_PARITY_TIMEOUT:-}" ]] && sleep $AGENT_PARITY_TIMEOUT || true
-  [[ -n "${AGT_ID:-}" ]] && break
-  [[ -n "${ACK:-}" ]] && break
 done
 
 # Resolve absolute wrapper path before any uid switch.
@@ -89,6 +86,10 @@ if should_run_as_agent; then
   # Use -n (non-interactive) so the wrapper works headlessly when a
   # NOPASSWD sudoers grant exists in /etc/sudoers.d/tnf-agent-launch.
   # In an interactive TTY with no grant, sudo will still prompt normally.
+  # Set HOME to tnf-agent's own home dir so operator HOME doesn't leak
+  # (the operator's HOME contains the operator key; tnf-agent must not
+  # reach it). NFSHomeDirectory for tnf-agent is /var/tnf-agent-home.
+  export HOME=/var/tnf-agent-home
   exec sudo -n -u "$AGENT_USER" "$NODE_BIN" "$WRAPPER"
 fi
 

@@ -1,5 +1,5 @@
 {
-  "now": "2026-07-25T12:00:09Z",
+  "now": "2026-07-25T16:00:03Z",
   "generated_by": "tnf-process-atlas-generator",
   "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "cron": [
@@ -95,6 +95,18 @@
     },
     {
       "role": "Master Clock (relay-core)",
+      "cmd": "30400 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "30429 node /Users/danielgoldberg/.hermes/node/bin/pnpm --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "30487 node dist/master-clock.js"
+    },
+    {
+      "role": "Master Clock (relay-core)",
       "cmd": "51867 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
     },
     {
@@ -106,12 +118,32 @@
       "cmd": "51997 node dist/master-clock.js"
     },
     {
-      "role": "Broker Agent (task dispatcher)",
-      "cmd": "83826 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIgcDIxNTY0NzZhNTI2OTA0ZGJkOGE2ZTRkYTg0NDg3YzQxNA@key-shark-87762.upstash.io:6379' LEDGER_API_BASE='https://api.thenewfuse.com' node dist/broker-agent.js"
+      "role": "Master Clock (relay-core)",
+      "cmd": "55940 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "55949 node /Users/danielgoldberg/.hermes/node/bin/pnpm --filter @the-new-fuse/relay-core run master-clock"
+    },
+    {
+      "role": "Master Clock (relay-core)",
+      "cmd": "55961 node dist/master-clock.js"
     },
     {
       "role": "Broker Agent (task dispatcher)",
-      "cmd": "83845 node dist/broker-agent.js"
+      "cmd": "25494 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIgcDIxNTY0NzZhNTI2OTA0ZGJkOGE2ZTRkYTg0NDg3YzQxNA@key-shark-87762.upstash.io:6379' LEDGER_API_BASE='https://api.thenewfuse.com' node dist/broker-agent.js"
+    },
+    {
+      "role": "Broker Agent (task dispatcher)",
+      "cmd": "25513 node dist/broker-agent.js"
+    },
+    {
+      "role": "Director Agent (escalation reviewer)",
+      "cmd": "65542 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIgcDIxNTY0NzZhNTI2OTA0ZGJkOGE2ZTRkYTg0NDg3YzQxNA@key-shark-87762.upstash.io:6379' LEDGER_API_BASE='https://api.thenewfuse.com' DIRECTOR_AUTO_POLICY='risk-aware' node dist/director-agent.js"
+    },
+    {
+      "role": "Director Agent (escalation reviewer)",
+      "cmd": "65561 node dist/director-agent.js"
     },
     {
       "role": "Local Redis WebSocket Bridge",
@@ -392,7 +424,7 @@
   ],
   "summaries": {
     "cron_count": 19,
-    "live_count": 11,
+    "live_count": 19,
     "packages_count": 93,
     "apps_count": 30,
     "proto_count": 32,

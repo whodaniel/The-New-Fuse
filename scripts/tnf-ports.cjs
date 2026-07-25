@@ -10,13 +10,14 @@ const repoRoot = path.resolve(__dirname, '..');
 const LOCAL_ENV_FILES = ['.env', '.env.local', '.tnf.local.env'];
 
 const DEFAULT_PORTS = [
-  { port: 3000, service: 'relay-core/frontend', protected: false },
+  { port: 3000, service: 'relay-core', protected: false },
   { port: 3001, service: 'api/backend', protected: false },
   { port: 3004, service: 'backend', protected: false },
   { port: 3005, service: 'api-gateway/ws-bridge', protected: false },
   { port: 3006, service: 'skideancer/ws', protected: false },
   { port: 3007, service: 'skideancer/ide', protected: false },
   { port: 3008, service: 'skideancer websocket', protected: true },
+  { port: 1420, service: 'tauri-desktop', protected: false },
   { port: 5173, service: 'vite', protected: false },
   { port: 5174, service: 'vite-alt', protected: false },
   { port: 5555, service: 'drizzle-studio', protected: true },
