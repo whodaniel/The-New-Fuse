@@ -67,13 +67,13 @@ We develop in a single monorepo because:
 
 ## Repository Map
 
-### `whodaniel/The-New-Fuse` — Combined Public Monorepo
+### `whodaniel/tnf-monorepo` — Combined Private Monorepo
 
-This is where you work. It contains the open-source runtime and public facing
-features.
+This is where you work. It contains the open-source runtime, the proprietary
+control-plane sources, and everything published to both downstream repos.
 
 ```
-The-New-Fuse/
+tnf-monorepo/
 ├── apps/                       # Applications
 │   ├── api/                    # 🟢 NestJS API server
 │   ├── api-gateway/            # 🟢 NestJS gateway
@@ -99,17 +99,17 @@ The-New-Fuse/
 │   └── ...                     # 🟢 (all others are open)
 ├── cloudflare-sharedstate/     # 🔴 PROPRIETARY
 ├── scripts/
-│   ├── registry/orchestrator/  # 🔴 PROPRIETARY orchestration scripts (names in PROPRIETARY_SCRIPTS)
+│   ├── registry/orchestrator/  # 🔴 PROPRIETARY (covered by PROPRIETARY_DIRS)
 │   └── sync-repos.sh           # ⚙️ THE SYNC SCRIPT
 └── docs/
     └── REPO_SEPARATION.md      # 📖 THIS FILE
 ```
 
-🟢 = Open source (ships in `fuse-open-runtime`) 🔴 = Proprietary (full source
-stays in the combined monorepo `The-New-Fuse`, extracted to
-`fuse-control-plane`, stubbed in the open-runtime publish tree)
+🟢 = Open source (ships in the public `The-New-Fuse`) 🔴 = Proprietary (full
+source stays in the private monorepo `tnf-monorepo`, extracted to
+`fuse-control-plane`, stubbed in the public publish tree)
 
-### `whodaniel/fuse-open-runtime` — Open Source Publish Target (Public)
+### `whodaniel/The-New-Fuse` — Open Source Publish Target (Public)
 
 Published from the monorepo MINUS proprietary content. Where proprietary code
 was removed, contract stubs are placed that:
