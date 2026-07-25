@@ -97,29 +97,41 @@ PROPRIETARY_DIRS=(
   "cloudflare-sharedstate"
   # Agent coordination patterns
   "packages/agent-coordination"
+  # Orchestration scripts (Director-authority channel drivers).
+  # Previously listed by bare filename in PROPRIETARY_SCRIPTS, which no consumer
+  # could resolve — every entry was treated as repo-root-relative, so nothing was
+  # removed and the whole directory published. Covered as a directory instead so
+  # new files here are proprietary by default.
+  "scripts/registry/orchestrator"
 )
 
+# Paths are repo-root-relative, exactly like PROPRIETARY_FILES/DIRS — every
+# consumer does "$EXPORT/$entry". Bare filenames silently match nothing, which is
+# how these published: all 20 entries were basenames, so both the remover and
+# check-proprietary-leakage.sh looked for them at the repo root and found nothing.
+#
+# The 11 under scripts/registry/orchestrator are also covered by PROPRIETARY_DIRS;
+# they stay listed as defense in depth. Three historical entries were dropped
+# because they exist nowhere in the tree: orchestrate_antigravity.js,
+# orchestrate_cloud_qa.js, tnf-master-orchestrator.ts.
 PROPRIETARY_SCRIPTS=(
-  "tnf-master-orchestrator.ts"
-  "orchestrate-blue.js"
-  "orchestrate-claude-blue.js"
-  "orchestrate-claude-green.js"
-  "orchestrate-green.js"
-  "orchestrate-listener.js"
-  "orchestrate-reply.js"
-  "orchestrate-send-task.js"
-  "orchestrate_antigravity.js"
-  "orchestrate_cloud_qa.js"
-  "orchestrate_ecosystem.js"
-  "orchestrator-green-channel.js"
-  "orchestrator-persistent.js"
-  "orchestrator-red-channel.js"
-  "orchestrator-yellow-channel.js"
-  "tnf-orchestrator.js"
-  "tnf-orchestrator-final.js"
-  "tnf-orchestrator-resume.js"
-  "tnf-orchestrator-status.js"
-  "tnf-strategic-orchestrator.js"
+  "scripts/registry/orchestrator/orchestrate-blue.js"
+  "scripts/registry/orchestrator/orchestrate-claude-blue.js"
+  "scripts/registry/orchestrator/orchestrate-claude-green.js"
+  "scripts/registry/orchestrator/orchestrate-green.js"
+  "scripts/registry/orchestrator/orchestrate-listener.js"
+  "scripts/registry/orchestrator/orchestrate-reply.js"
+  "scripts/registry/orchestrator/orchestrate-send-task.js"
+  "scripts/registry/orchestrator/tnf-orchestrator.js"
+  "scripts/registry/orchestrator/tnf-orchestrator-final.js"
+  "scripts/registry/orchestrator/tnf-orchestrator-resume.js"
+  "scripts/registry/orchestrator/tnf-orchestrator-status.js"
+  "scripts/orchestrate_ecosystem.js"
+  "scripts/orchestrator-red-channel.js"
+  "scripts/orchestration/orchestrator-green-channel.js"
+  "scripts/orchestration/orchestrator-persistent.js"
+  "scripts/orchestration/orchestrator-yellow-channel.js"
+  "scripts/orchestration/tnf-strategic-orchestrator.js"
 )
 
 ALWAYS_EXCLUDE=(

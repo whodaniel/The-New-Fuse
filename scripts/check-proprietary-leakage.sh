@@ -47,13 +47,37 @@ check_path() {
   fi
 }
 
+# A declared path that does not exist in the monorepo protects nothing, and the
+# leak check below would still pass. That is exactly how PROPRIETARY_SCRIPTS
+# published: all 20 entries were bare filenames, so every consumer resolved them
+# against the repo root, matched nothing, removed nothing, and reported PASS.
+# Treat an unresolvable declaration as a boundary failure, not a silent no-op.
+STALE=0
+check_declared() {
+  local p="$1"
+  [ -e "$MONO_ROOT/$p" ] || {
+    echo "STALE DECLARATION: $p (declared proprietary but not present in monorepo)"
+    STALE=$((STALE + 1))
+  }
+}
+
+for f in "${PROPRIETARY_FILES[@]}"; do check_declared "$f"; done
+for d in "${PROPRIETARY_DIRS[@]}"; do check_declared "$d"; done
+for f in "${PROPRIETARY_SCRIPTS[@]}"; do check_declared "$f"; done
+
 for f in "${PROPRIETARY_FILES[@]}"; do check_path "$f"; done
 for d in "${PROPRIETARY_DIRS[@]}"; do check_path "$d"; done
 for f in "${PROPRIETARY_SCRIPTS[@]}"; do check_path "$f"; done
+
+if [ "$STALE" -gt 0 ]; then
+  echo "FAIL: $STALE stale proprietary declaration(s) in scripts/sync-repos.sh"
+  echo "      Fix the path or remove the entry — a wrong path silently publishes the file."
+  exit 1
+fi
 
 if [ "$LEAKS" -gt 0 ]; then
   echo "FAIL: $LEAKS proprietary path(s) found under $TARGET"
   exit 1
 fi
 
-echo "PASS: No proprietary paths under $TARGET"
+echo "PASS: No proprietary paths under $TARGET; all declarations resolve"
