@@ -176,20 +176,20 @@ if (!pdm.isConfigured()) {
 ```javascript
 // Get base path
 const basePath = pdm.getPersonalDataPath();
-// Returns: /Users/you/my-ai-knowledge-base
+// Returns: $HOME/my-ai-knowledge-base
 
 // Get specific directories
 const libraryPath = pdm.getVideoLibraryPath();
-// Returns: /Users/you/my-ai-knowledge-base/video-library/ai_video_library.html
+// Returns: $HOME/my-ai-knowledge-base/video-library/ai_video_library.html
 
 const reportsDir = pdm.getVideoReportsDir();
-// Returns: /Users/you/my-ai-knowledge-base/video-reports
+// Returns: $HOME/my-ai-knowledge-base/video-reports
 
 const kbDir = pdm.getKnowledgeBaseDir();
-// Returns: /Users/you/my-ai-knowledge-base/knowledge-base
+// Returns: $HOME/my-ai-knowledge-base/knowledge-base
 
 const exportsDir = pdm.getExportsDir();
-// Returns: /Users/you/my-ai-knowledge-base/exports
+// Returns: $HOME/my-ai-knowledge-base/exports
 ```
 
 ### Configuration & Stats

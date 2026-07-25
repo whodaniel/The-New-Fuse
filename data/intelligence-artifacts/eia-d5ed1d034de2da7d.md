@@ -29,12 +29,10 @@
 ### Procedural
 
 - # Final tnf-cli type check
-- $ cd
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli
-  && npx tsc --noEmit 2>&1 | grep -v "npm warn" | grep "error TS" | wc -l
-- $ cd
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-core
-  && npx tsc --noEmit 2>&1 | grep -v "npm warn" | grep "error TS" | wc -l
+- $ cd $TNF_ROOT/packages/tnf-cli && npx tsc --noEmit 2>&1 | grep -v "npm warn"
+  | grep "error TS" | wc -l
+- $ cd $TNF_ROOT/packages/tnf-core && npx tsc --noEmit 2>&1 | grep -v "npm warn"
+  | grep "error TS" | wc -l
 - Fix curl|sh RCE in UpgradeService.ts (line 246)
 - Re-verify tnf-cli after UpgradeService fix
 - Fix api-client missing .js extensions on 13 integration files + index
@@ -58,15 +56,11 @@
 
 ### Strategic
 
-- $ cd
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli
-  && npx tsc --noEmit 2>&1 | grep -v "npm warn" | grep "error TS" | wc -l
-- $ cd
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-orchestrator-go
-  && go vet ./...
-- $ cd
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-core
-  && npx tsc --noEmit 2>&1 | grep -v "npm warn" | grep "error TS" | wc -l
+- $ cd $TNF_ROOT/packages/tnf-cli && npx tsc --noEmit 2>&1 | grep -v "npm warn"
+  | grep "error TS" | wc -l
+- $ cd $TNF_ROOT/packages/tnf-orchestrator-go && go vet ./...
+- $ cd $TNF_ROOT/packages/tnf-core && npx tsc --noEmit 2>&1 | grep -v "npm warn"
+  | grep "error TS" | wc -l
 - Fix api-client missing .js extensions on 13 integration files + index
 - Added .js to 13 integration files importing ../../core/ApiClient and
   ../../config/ApiConfig + fixed services/index.ts and root index.ts

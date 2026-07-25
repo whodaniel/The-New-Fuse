@@ -62,26 +62,23 @@
   (1 match)
 - Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/AGENTS.md [offset=84]
 - Edit Desktop/A1-Inter-LLM-Com/The-New-Fuse/AGENTS.md
-- - `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/public/visualizations/TNF_CONCORDANCE_VISUALIZER.html`
+- - `$TNF_ROOT/apps/frontend/public/visualizations/TNF_CONCORDANCE_VISUALIZER.html`
 - - Current local file: Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/
 - # Restore codebase_map.json from git in ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 - $ git show
   eed740a988ae1c36bd758a883b839c96a4af302c:apps/frontend/src/data/codebase_map.json >
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json
+  $TNF_ROOT/apps/frontend/src/data/codebase_map_restored.json
   2>&1 && wc -c
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json
-- 6692995
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json
+  $TNF_ROOT/apps/frontend/src/data/codebase_map_restored.json
+- 6692995 $TNF_ROOT/apps/frontend/src/data/codebase_map_restored.json
 - $ python3 -c "import json;
-  d=json.load(open('/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json'));
+  d=json.load(open('$TNF_ROOT/apps/frontend/src/data/codebase_map_restored.json'));
   print(f'nodes: {len(d[\"nodes\"])}, edges: {len(d[\"edges\"])}')"
 - $ mv
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map.json
-- $ wc -c
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map.json
-- 6692995
-  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map.json
+  $TNF_ROOT/apps/frontend/src/data/codebase_map_restored.json
+  $TNF_ROOT/apps/frontend/src/data/codebase_map.json
+- $ wc -c $TNF_ROOT/apps/frontend/src/data/codebase_map.json
+- 6692995 $TNF_ROOT/apps/frontend/src/data/codebase_map.json
 
 ### Governance
 
