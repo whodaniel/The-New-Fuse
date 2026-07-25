@@ -464,6 +464,35 @@ STUB
 
   echo "  Created 3 contract stubs"
 
+  # ── Publication gates ─────────────────────────────────────────────────────
+  # These MUST run here, in the actual publish path. They previously existed only
+  # in scripts/verify-open-runtime-export.sh, which is a separate script someone
+  # has to remember to run — so `pnpm run sync:repos` could publish a leak while
+  # the guard sat unused. Same failure shape as the bare-filename bug: a guard
+  # that exists but is not in the path that matters.
+  echo ""
+  echo "  ━━ Publication gates ━━"
+
+  chmod +x "$MONO_ROOT/scripts/check-proprietary-leakage.sh"
+  if ! "$MONO_ROOT/scripts/check-proprietary-leakage.sh" "$OPEN_DIR"; then
+    echo ""
+    echo "ABORT: proprietary content present in the open-runtime export."
+    echo "       Nothing was pushed."
+    exit 1
+  fi
+
+  PERSONAL_HITS="$(grep -rIl -E '/Users/[a-zA-Z0-9._-]+/' "$OPEN_DIR" 2>/dev/null | grep -v '^'"$OPEN_DIR"'/\.git/' || true)"
+  if [ -n "$PERSONAL_HITS" ]; then
+    COUNT="$(printf '%s\n' "$PERSONAL_HITS" | grep -c . || true)"
+    echo "ABORT: $COUNT file(s) contain a hard-coded /Users/<name>/ path."
+    echo "       Replace the literal with runtime resolution, or exclude the file."
+    printf '%s\n' "$PERSONAL_HITS" | sed "s#^$OPEN_DIR/##" | sed -n '1,20p' | sed 's/^/         /'
+    echo "       Nothing was pushed."
+    exit 1
+  fi
+  echo "  PASS: no proprietary content, no hard-coded operator paths"
+  echo ""
+
   git add -A
   git commit -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
 
