@@ -3,27 +3,44 @@
 > **Status**: Active — This is the canonical reference for how TNF code is
 > distributed across repositories.
 >
-> **Last Updated**: 2026-07-14
+> **Last Updated**: 2026-07-25 (repo names swapped; boundary leak fixed)
 
 ---
 
 ## TL;DR for AI Agents
 
-**TNF uses a single combined monorepo for development, with two downstream
-publication repos.**
+**TNF uses a single combined PRIVATE monorepo for development, with two
+downstream publication repos.**
 
 ```
-whodaniel/The-New-Fuse  (COMBINED MONOREPO — you develop here)
-    │                    (historical slug `the-new-fuse-next-gen` 301-redirects here)
-    ├──► whodaniel/fuse-open-runtime   (90% open-source, read-only publish target)
-    └──► whodaniel/fuse-control-plane  (10% proprietary, read-only publish target)
+whodaniel/tnf-monorepo  (COMBINED MONOREPO, PRIVATE — you develop here)
+    │
+    ├──► whodaniel/The-New-Fuse        (PUBLIC,  ~90% open-source runtime)
+    └──► whodaniel/fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
 ```
 
-- **NEVER commit directly to `fuse-open-runtime` or `fuse-control-plane`.**
-- **ALL development happens in `whodaniel/The-New-Fuse`.**
+- **NEVER commit directly to `The-New-Fuse` or `fuse-control-plane`.**
+- **ALL development happens in `whodaniel/tnf-monorepo`.**
 - Run `pnpm run sync:repos` to push changes to both downstream repos.
 - The proprietary boundary is defined in `scripts/sync-repos.sh` (the
   `PROPRIETARY_*` arrays).
+
+### ⚠️ Naming was swapped on 2026-07-25
+
+The flagship name `The-New-Fuse` now belongs to the **public** publication repo,
+because that is the artifact the world should find. The private development
+monorepo is `whodaniel/tnf-monorepo`.
+
+| Name                          | Before 2026-07-25         | After                         |
+| ----------------------------- | ------------------------- | ----------------------------- |
+| `whodaniel/The-New-Fuse`      | private combined monorepo | **public** open runtime       |
+| `whodaniel/fuse-open-runtime` | public open runtime       | _(name retired)_              |
+| `whodaniel/tnf-monorepo`      | _(did not exist)_         | **private** combined monorepo |
+
+**Any remote still pointing at `whodaniel/The-New-Fuse` for monorepo work is now
+aimed at the PUBLIC repo.** Pushing the monorepo there publishes proprietary
+code. Check with `git remote -v` and repoint to `tnf-monorepo`. Historical slugs
+`fuse-open-runtime` and `the-new-fuse-next-gen` refer to the pre-swap layout.
 
 ---
 
@@ -124,6 +141,69 @@ fuse-control-plane/
 ├── scripts/                    # Utility scripts
 └── .github/workflows/          # CI/CD for each service
 ```
+
+---
+
+## Cross-Boundary Runtime Dependencies
+
+The split is not only a source-code boundary — it changes **runtime behaviour**.
+Running only the open side is a supported configuration, but some capabilities
+are gated off, and the failure looks like a bug if you do not know this.
+
+### Agent registration requires Director authority
+
+`packages/relay-core/src/standalone-relay.ts` defers agent registration to the
+Master Clock, which is proprietary. With the control plane absent:
+
+- `AGENT_REGISTER` is refused with
+  `REGISTRATION_ERROR / RELAY_BRIDGE_ERROR: "Relay bridge not connected, cannot register agent."`
+- `GET /health` on the relay reports `agents: 0` indefinitely
+- Anything that infers presence from the agent roster stays empty — e.g. the
+  Chrome extension registers as `platform: 'chrome-extension'`, so the desktop
+  app's "Extension" indicator never lights up
+
+**This is the boundary working as designed, not a misconfiguration.** Redis
+being up is not sufficient; the authority service is the missing half.
+
+Two supported ways to work locally:
+
+```bash
+BRIDGE_GATE_ENABLED=false   # open the gate; register agents without Director authority
+```
+
+or run the control-plane `services/master-clock` alongside the relay.
+
+The open publication tree receives a 21-line stub for `master-clock.ts` and
+`broker-agent.ts` (see `verify-open-runtime-export.sh`), so a consumer of the
+public repo gets stub-mode behaviour by default.
+
+---
+
+## Boundary Integrity
+
+The `PROPRIETARY_*` arrays are only as good as their paths. Every consumer
+resolves entries as **repo-root-relative** (`"$EXPORT/$entry"`), so a wrong or
+stale path silently protects nothing.
+
+This failed in production: `PROPRIETARY_SCRIPTS` listed all 20 entries as bare
+filenames while the files lived under `scripts/registry/orchestrator/`,
+`scripts/orchestration/` and `scripts/`. Nothing matched, nothing was removed,
+and 17 of them published. `check-proprietary-leakage.sh` had the identical path
+bug, so the guard reported `PASS` throughout.
+
+Rules that follow from that:
+
+1. **Always use full repo-root-relative paths** in every `PROPRIETARY_*` array.
+2. **Prefer directory coverage** over file lists for a wholly-proprietary
+   directory, so new files there are proprietary by default.
+3. `check-proprietary-leakage.sh` now **fails on a stale declaration** — a
+   declared path that does not exist in the monorepo is an error, not a no-op.
+4. Verify before publishing: `bash scripts/verify-open-runtime-export.sh` should
+   end with `all declarations resolve`.
+
+Note: fixing the boundary does not remove already-published files from the
+public repo's history. That needs a separate decision (history rewrite vs.
+deleting them going forward).
 
 ---
 

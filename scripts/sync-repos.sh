@@ -6,9 +6,17 @@ set -euo pipefail
 # =============================================================================
 #
 # PURPOSE:
-#   Syncs the combined monorepo (whodaniel/The-New-Fuse; historical slug the-new-fuse-next-gen redirects here) to the two downstream repos:
-#     1. whodaniel/fuse-open-runtime   (90% open-source)
-#     2. whodaniel/fuse-control-plane  (10% proprietary)
+#   Syncs the combined private monorepo (whodaniel/tnf-monorepo) to the two
+#   downstream publication repos:
+#     1. whodaniel/The-New-Fuse        (PUBLIC, ~90% open-source runtime)
+#     2. whodaniel/fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
+#
+#   NAMING (swapped 2026-07-25): the flagship name The-New-Fuse now belongs to the
+#   PUBLIC publication repo. The private development monorepo — this one — is
+#   whodaniel/tnf-monorepo. Older slugs (The-New-Fuse as monorepo,
+#   fuse-open-runtime, the-new-fuse-next-gen) refer to the pre-swap layout.
+#   Anything still pointing a monorepo remote at whodaniel/The-New-Fuse is now
+#   aimed at the PUBLIC repo — repoint it at tnf-monorepo.
 #
 # USAGE:
 #   pnpm run sync:repos              # sync both
@@ -40,7 +48,7 @@ for arg in "$@"; do
     --force)   FORCE=true ;;
     --help)
       echo "Usage: sync-repos.sh [--open] [--control] [--dry-run] [--force]"
-      echo "  --open      Sync only fuse-open-runtime"
+      echo "  --open      Sync only The-New-Fuse (public)"
       echo "  --control   Sync only fuse-control-plane"
       echo "  --dry-run   Preview changes without pushing"
       echo "  --force     Force push even if no changes detected"
@@ -60,14 +68,14 @@ mkdir -p "$WORK_DIR"
 # Get current commit for tagging
 MONO_HEAD=$(cd "$MONO_ROOT" && git rev-parse --short HEAD)
 MONO_MSG=$(cd "$MONO_ROOT" && git log -1 --format='%s')
-echo "Source: whodaniel/fuse @ $MONO_HEAD"
+echo "Source: whodaniel/tnf-monorepo @ $MONO_HEAD"
 echo "        \"$MONO_MSG\""
 echo ""
 
 # ─────────────────────────────────────────────────────────────────────
 # PROPRIETARY EXCLUSION LIST
 # ─────────────────────────────────────────────────────────────────────
-# These paths are REMOVED from fuse-open-runtime and EXTRACTED to
+# These paths are REMOVED from the public The-New-Fuse export and EXTRACTED to
 # fuse-control-plane. This is the single source of truth for what
 # is proprietary.
 # ─────────────────────────────────────────────────────────────────────
@@ -265,11 +273,11 @@ Source commit: $MONO_MSG" 2>/dev/null
 fi
 
 # ─────────────────────────────────────────────────────────────────────
-# PHASE 2: Sync fuse-open-runtime
+# PHASE 2: Sync The-New-Fuse (public)
 # ─────────────────────────────────────────────────────────────────────
 
 if [ "$SYNC_OPEN" = true ]; then
-  echo "━━━ Phase 2: fuse-open-runtime ━━━"
+  echo "━━━ Phase 2: The-New-Fuse (public) ━━━"
   echo ""
 
   OPEN_DIR="$WORK_DIR/fuse-open-runtime"
@@ -280,9 +288,9 @@ if [ "$SYNC_OPEN" = true ]; then
   cd "$OPEN_DIR"
   git init -b main -q
   if [ -n "${GITHUB_PAT:-}" ]; then
-    git remote add origin "https://${GITHUB_PAT}@github.com/whodaniel/fuse-open-runtime.git"
+    git remote add origin "https://${GITHUB_PAT}@github.com/whodaniel/The-New-Fuse.git"
   else
-    git remote add origin https://github.com/whodaniel/fuse-open-runtime.git
+    git remote add origin https://github.com/whodaniel/The-New-Fuse.git
   fi
 
   # Remove proprietary files
@@ -387,10 +395,10 @@ Source commit: $MONO_MSG
 Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null || echo "Nothing to commit"
 
   if [ "$DRY_RUN" = true ]; then
-    echo "🔍 DRY RUN: Would force-push to fuse-open-runtime"
+    echo "🔍 DRY RUN: Would force-push to The-New-Fuse (public)"
   else
     git push origin main --force 2>&1
-    echo "✅ fuse-open-runtime pushed (force)"
+    echo "✅ The-New-Fuse (public) pushed (force)"
   fi
 
   echo ""
