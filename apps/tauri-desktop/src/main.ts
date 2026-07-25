@@ -168,9 +168,7 @@ function renderDashboard(): string {
   return `
     <div class="dashboard-container">
       <div class="dashboard-header">
-        <div class="icon-circle">
-          <i class="fas fa-rocket icon"></i>
-        </div>
+        <img src="https://thenewfuse.com/assets/brand/tnf-logo.png" alt="TNF Logo" style="width: 64px; height: 64px; border-radius: 16px; object-fit: cover; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); margin-bottom: 16px;" />
         <h1>The New Fuse</h1>
         <p class="subtitle">Lightweight Desktop Hub • Cloud Brain</p>
       </div>

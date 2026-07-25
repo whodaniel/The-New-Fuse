@@ -216,9 +216,13 @@ const Settings: React.FC = () => {
             <h2 className="section-title">ℹ️ About</h2>
             <div className="about-info">
               <div className="app-info">
-                <span className="app-icon">🔥</span>
+                <img
+                  src="https://thenewfuse.com/assets/brand/tnf-logo.png"
+                  alt="TNF Logo"
+                  className="brand-logo"
+                />
                 <div>
-                  <h3>TNF (The New Fuse) Desktop App</h3>
+                  <h3>The New Fuse Desktop</h3>
                   <p>Version 4.1.0</p>
                 </div>
               </div>
@@ -493,8 +497,12 @@ const Settings: React.FC = () => {
           margin-bottom: 16px;
         }
 
-        .app-icon {
-          font-size: 48px;
+        .brand-logo {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          object-fit: cover;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .app-info h3 {

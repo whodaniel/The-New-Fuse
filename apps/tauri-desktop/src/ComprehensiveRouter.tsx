@@ -73,9 +73,14 @@ const ComprehensiveRouter: React.FC = () => {
             {sidebarOpen ? '✕' : '☰'}
           </button>
           <div className="mobile-logo">
-            <span className="logo-icon">🔥</span>
-            <span className="logo-text">TNF Desktop</span>
-            <span className="logo-sub">The New Fuse</span>
+            <img
+              src="https://thenewfuse.com/assets/brand/tnf-logo.png"
+              alt="TNF Logo"
+              className="brand-logo"
+            />
+            <span className="logo-text" style={{ marginLeft: '8px' }}>
+              The New Fuse
+            </span>
           </div>
           <div className="mobile-header-spacer"></div>
         </header>
@@ -99,12 +104,15 @@ const ComprehensiveRouter: React.FC = () => {
         {!isMobile && (
           <div className="sidebar-header">
             <div className="logo">
-              <span className="logo-icon">🔥</span>
+              <img
+                src="https://thenewfuse.com/assets/brand/tnf-logo.png"
+                alt="TNF Logo"
+                className="brand-logo"
+              />
               {!sidebarCollapsed && (
-                <>
-                  <span className="logo-text">TNF Desktop</span>
-                  <span className="logo-sub">The New Fuse</span>
-                </>
+                <span className="logo-text" style={{ marginLeft: '10px' }}>
+                  The New Fuse
+                </span>
               )}
             </div>
             <button
@@ -306,27 +314,23 @@ const ComprehensiveRouter: React.FC = () => {
           gap: 12px;
         }
 
-        .logo-icon {
-          font-size: 24px;
-          filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+        .brand-logo {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          object-fit: cover;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .logo-text {
           font-family: var(--tnf-font-heading, 'Outfit', sans-serif);
           font-weight: 700;
           font-size: 18px;
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          background: linear-gradient(135deg, #f8fafc, #94a3b8);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-        }
-
-        .logo-sub {
-          display: block;
-          font-size: 11px;
-          color: var(--tnf-text-muted, #64748b);
-          font-weight: 500;
-          margin-top: 2px;
+          letter-spacing: -0.02em;
         }
 
         .collapse-btn {
