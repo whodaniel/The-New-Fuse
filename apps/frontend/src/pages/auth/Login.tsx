@@ -3,6 +3,7 @@ import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import { useAuth } from '@/providers/AuthProvider';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { TnfLogo } from '../../components/brand/TnfLogo';
 
 const isTruthy = (value: string | undefined): boolean => {
   if (!value) return false;
@@ -165,6 +166,9 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
       <div className="w-full max-w-md rounded-md border border-slate-800 bg-slate-900 p-4">
+        <div className="mb-6 flex justify-center">
+          <TnfLogo size={48} showWordmark wordmarkClassName="text-lg text-white" />
+        </div>
         <h1 className="text-2xl font-semibold text-white">Sign in</h1>
         <p className="mt-2 text-sm text-slate-400">New Cloudflare-ready auth flow</p>
 
