@@ -28,13 +28,12 @@ script requires `ioredis` which is only available in the TNF repository's
 
 **Root Cause:** The script is copied to `~/.tnf/bin/` but depends on `ioredis`
 from the repo's `node_modules/`. Without `NODE_PATH` pointing to
-`/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules`, the
-module resolution fails.
+`$TNF_ROOT/node_modules`, the module resolution fails.
 
 **Solution Applied:** All heartbeat invocations now use:
 
 ```bash
-env NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules" node <script>
+env NODE_PATH="$TNF_ROOT/node_modules" node <script>
 ```
 
 ## Execution Procedure
@@ -49,7 +48,7 @@ echo "NODE_PATH: ${NODE_PATH:-NOT SET}"
 
 # If NOT SET, set it before running node scripts
 if [ -z "$NODE_PATH" ]; then
-    export NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules"
+    export NODE_PATH="$TNF_ROOT/node_modules"
 fi
 
 # Verify ioredis is accessible
@@ -66,12 +65,12 @@ if pgrep -f "tnf-agent-daemon.py" > /dev/null; then
     echo "✅ Daemon: running (PID: $(pgrep -f 'tnf-agent-daemon.py' | head -1))"
 else
     echo "❌ Daemon: NOT running - restarting..."
-    cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && \
+    cd $TNF_ROOT && \
     nohup python3 scripts/agents/tnf-agent-daemon.py live > ~/.tnf/logs/daemon.log 2>&1 &
 fi
 
 # 2. Terminal Heartbeat (with NODE_PATH fix)
-export NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules"
+export NODE_PATH="$TNF_ROOT/node_modules"
 if pgrep -f "terminal-heartbeat-pulse.cjs" > /dev/null; then
     echo "✅ Heartbeat: running (PID: $(pgrep -f 'terminal-heartbeat-pulse.cjs' | head -1))"
 else
@@ -124,7 +123,7 @@ fi
 
 ```bash
 # Install fleet health probe (15 minute intervals)
-(crontab -l 2>/dev/null | grep -v "tnf-fleet-health-probe"; echo "*/15 * * * * cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && /Users/danielgoldberg/Library/pnpm/node scripts/protocols/run-chronological-process.cjs --process-id tnf-fleet-health-probe >> ~/.tnf/poll-jobs/tnf-fleet-health-probe/cron.log 2>&1") | crontab -
+(crontab -l 2>/dev/null | grep -v "tnf-fleet-health-probe"; echo "*/15 * * * * cd $TNF_ROOT && $HOME/Library/pnpm/node scripts/protocols/run-chronological-process.cjs --process-id tnf-fleet-health-probe >> ~/.tnf/poll-jobs/tnf-fleet-health-probe/cron.log 2>&1") | crontab -
 ```
 
 ## Integration with Other Protocols

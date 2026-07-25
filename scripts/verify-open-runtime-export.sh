@@ -23,6 +23,9 @@ for d in "${PROPRIETARY_DIRS[@]}"; do [ -d "$EXPORT/$d" ] && rm -rf "$EXPORT/$d"
 for f in "${PROPRIETARY_SCRIPTS[@]}"; do [ -e "$EXPORT/$f" ] && rm -f "$EXPORT/$f" || true; done
 for f in "${ALWAYS_EXCLUDE[@]}"; do [ -e "$EXPORT/$f" ] && rm -rf "$EXPORT/$f" || true; done
 
+# Mirror the pattern-prune that sync-repos.sh applies to the real export.
+find "$EXPORT" -type d \( -name '.turbo' -o -name 'node_modules' \) -exec rm -rf {} + 2>/dev/null || true
+
 mkdir -p "$EXPORT/packages/relay-core/src" "$EXPORT/apps/backend/src/modules/orchestrator"
 printf '%s\n' 'export class MasterClockStub { async start() { console.warn("[MasterClock] stub mode"); } }' > "$EXPORT/packages/relay-core/src/master-clock.ts"
 printf '%s\n' 'export class BrokerAgentStub { async start() { console.warn("[BrokerAgent] stub mode"); } }' > "$EXPORT/packages/relay-core/src/broker-agent.ts"

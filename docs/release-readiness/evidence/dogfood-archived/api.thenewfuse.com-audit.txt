@@ -49,4 +49,4 @@ server: Google Frontend
    Checking for API index:
 {"statusCode":404,"timestamp":"2026-05-05T15:12:45.391Z","path":"/api/v1","method":"GET","message":"
 
-/Users/danielgoldberg/.hermes/skills/dogfood/scripts/quick-security-audit.sh: line 196: syntax error: unexpected end of file
+$HOME/.hermes/skills/dogfood/scripts/quick-security-audit.sh: line 196: syntax error: unexpected end of file

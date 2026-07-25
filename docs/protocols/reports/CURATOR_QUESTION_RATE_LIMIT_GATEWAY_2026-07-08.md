@@ -93,7 +93,7 @@ decision recorded.
 - **Verifier:** subagent `deleg_138473bd` (5-pass Prometheus scan, dispatched
   2026-07-08T22:39:22Z).
 - **Verifier transcript:**
-  `/Users/danielgoldberg/.hermes/cache/delegation/subagent-summary-0-20260708_224703_480012.txt`
+  `$HOME/.hermes/cache/delegation/subagent-summary-0-20260708_224703_480012.txt`
   (lines 23-65 of the file are the canonical output JSON).
 - **Filed by:** current session (TNF cooperative audit; post-session, before
   Turn End).

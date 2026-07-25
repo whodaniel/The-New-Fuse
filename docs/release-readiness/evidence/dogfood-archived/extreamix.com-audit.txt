@@ -54,4 +54,4 @@ No obvious version info found
     <meta charset="UTF-8" />
     <meta name="viewport" con
 
-/Users/danielgoldberg/.hermes/skills/dogfood/scripts/quick-security-audit.sh: line 196: syntax error: unexpected end of file
+$HOME/.hermes/skills/dogfood/scripts/quick-security-audit.sh: line 196: syntax error: unexpected end of file

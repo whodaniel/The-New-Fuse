@@ -162,6 +162,30 @@ ALWAYS_EXCLUDE=(
   # Build output committed to the tree (Rust target dir, turbo cache)
   "packages/relay-core/native/envelope-validator/target"
   "packages/relay-core/.turbo"
+  # Local editor config and archived launchd plists — operator-machine specific,
+  # both carry absolute home paths and neither is useful to a public consumer.
+  ".cursor"
+  "archive/disabled-launch-agents-20260623"
+  # Benchmark run outputs (third-party SWE-bench fixtures + result dumps)
+  ".agent/skills/antigravity/loki-mode/benchmarks/results"
+  # Generated run records that embed absolute paths
+  "data/ingestion-runs"
+  "data/intelligence-artifacts"
+  # ── Operator-machine automation ───────────────────────────────────────────
+  # These drive THIS operator's fleet: launchd wrappers, swarm daemons, autonomy
+  # loops. They hard-code an absolute checkout location by nature and are useless
+  # to a public consumer. This is the code-side of the system/user-data split:
+  # distributable library code must be portable; operator automation need not be,
+  # and therefore must not ship.
+  "scripts/agents"
+  "scripts/autonomy"
+  "scripts/audit/swarm"
+  ".deepsec"
+  "scripts/gemini-wrapper-launchd.sh"
+  "scripts/pi-wrapper-ctl.sh"
+  "scripts/pi-wrapper-launch.sh"
+  "scripts/pi-wrapper-launchd.sh"
+  "scripts/execute-refactoring-consensus.ts"
   # Deprecated local install snapshot (canonical: scripts/system/)
   "voice-bridge-package-20260325"
   # Duplicated mirror directory
@@ -323,6 +347,13 @@ if [ "$SYNC_OPEN" = true ]; then
   for f in "${ALWAYS_EXCLUDE[@]}"; do
     [ -e "$f" ] && rm -rf "$f" && ((REMOVED++)) || true
   done
+
+  # Pattern-pruned build cache. These are tracked in the monorepo but are
+  # regenerated locally and embed absolute operator paths in their logs
+  # (packages/*/.turbo alone accounts for ~129 such files).
+  while IFS= read -r d; do
+    rm -rf "$d" && ((REMOVED++)) || true
+  done < <(find . -type d \( -name '.turbo' -o -name 'node_modules' \) 2>/dev/null)
 
   # Remove temp/junk dotfiles
   rm -f .!*!home_verification.png 2>/dev/null || true

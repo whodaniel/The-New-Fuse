@@ -43,7 +43,7 @@ TNF has a split architecture for Node.js scripts:
 
 ```bash
 # REQUIRED for all ~/.tnf/bin/ node scripts
-export NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules"
+export NODE_PATH="$TNF_ROOT/node_modules"
 
 # OPTIONAL - TNF root (defaults to ~/.tnf)
 export TNF_ROOT="${TNF_ROOT:-$HOME/.tnf}"
@@ -56,7 +56,7 @@ All Node.js scripts in `~/.tnf/bin/` MUST be wrapped with:
 ```bash
 #!/bin/bash
 # TNF Module Dependency Wrapper
-export NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules"
+export NODE_PATH="$TNF_ROOT/node_modules"
 exec node "$@"
 ```
 
@@ -81,7 +81,7 @@ check_dependencies() {
     local required_modules="${2:-ioredis}"
 
     for mod in $required_modules; do
-        if ! env NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules" \
+        if ! env NODE_PATH="$TNF_ROOT/node_modules" \
                    node -e "require('$mod')" 2>/dev/null; then
             echo "MISSING: $mod"
             return 1
@@ -93,12 +93,12 @@ check_dependencies() {
 
 ### Automated NODE_PATH Injection
 
-Create `/Users/danielgoldberg/.tnf/bin/node-wrapper`:
+Create `$HOME/.tnf/bin/node-wrapper`:
 
 ```bash
 #!/bin/bash
 # Injected at start of ALL ~/.tnf/bin/ node script invocations
-export NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules"
+export NODE_PATH="$TNF_ROOT/node_modules"
 exec node "$@"
 ```
 
@@ -128,7 +128,7 @@ Verify protocol compliance:
 node ~/.tnf/bin/terminal-heartbeat-pulse.cjs 2>&1 | grep -q "MODULE_NOT_FOUND" && echo "❌ Protocol violation: module missing without NODE_PATH"
 
 # Test 2: Script with NODE_PATH should work
-env NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules" node ~/.tnf/bin/terminal-heartbeat-pulse.cjs &
+env NODE_PATH="$TNF_ROOT/node_modules" node ~/.tnf/bin/terminal-heartbeat-pulse.cjs &
 sleep 2
 pgrep -f "terminal-heartbeat-pulse.cjs" && echo "✅ Protocol working"
 ```

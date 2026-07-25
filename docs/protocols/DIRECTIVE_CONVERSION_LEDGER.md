@@ -65,7 +65,7 @@ with evidence - Deep Sec security workflow
 ### Evidence Artifacts
 
 ```
-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/
+$TNF_ROOT/data/ingestion-runs/ai5-phase7-evidence/
 ├── directive-1-init-deepsec.json (1.5 KB)
 └── batch-001-execution-summary.json (1.7 KB)
 ```

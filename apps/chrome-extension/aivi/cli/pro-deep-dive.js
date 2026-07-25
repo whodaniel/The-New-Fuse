@@ -11,7 +11,8 @@ const { chromium } = require('playwright');
 
 const AI_STUDIO_URL = 'https://aistudio.google.com/app/prompts/new_chat';
 const DEEP_MODEL = 'Gemini 3.1 Pro Preview';
-const DATA_DIR = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data';
+// Resolved from this file's location (or TNF_DATA_DIR) so it works in any checkout.
+const DATA_DIR = process.env.TNF_DATA_DIR || path.resolve(__dirname, '../../../..', 'data');
 const REPORTS_DIR = path.join(DATA_DIR, 'video-reports');
 const PRO_REPORTS_DIR = path.join(DATA_DIR, 'pro-deep-dives');
 

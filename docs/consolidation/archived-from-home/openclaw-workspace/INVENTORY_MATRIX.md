@@ -6,12 +6,12 @@ allocation.
 
 ## 📦 1. CODEBASE ASSETS (Local)
 
-| Asset Name     | Path                                                          | Primary Purpose             | Status             |
-| :------------- | :------------------------------------------------------------ | :-------------------------- | :----------------- |
-| **TNF Core**   | `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse` | Multi-agent platform core   | Active / Evolving  |
-| **OpenClaw**   | `~/.openclaw`                                                 | Master Orchestrator         | Active / Mesh      |
-| **SkIDEancer** | `.../apps/skideancer-ide`                                     | Agentic IDE                 | Maintenance        |
-| **LDS Index**  | Cloudflare D1                                                 | Living Documentation System | 1,993 Docs Indexed |
+| Asset Name     | Path                      | Primary Purpose             | Status             |
+| :------------- | :------------------------ | :-------------------------- | :----------------- |
+| **TNF Core**   | `$TNF_ROOT`               | Multi-agent platform core   | Active / Evolving  |
+| **OpenClaw**   | `~/.openclaw`             | Master Orchestrator         | Active / Mesh      |
+| **SkIDEancer** | `.../apps/skideancer-ide` | Agentic IDE                 | Maintenance        |
+| **LDS Index**  | Cloudflare D1             | Living Documentation System | 1,993 Docs Indexed |
 
 ### 🛠️ UI Component Audit & Consolidation
 

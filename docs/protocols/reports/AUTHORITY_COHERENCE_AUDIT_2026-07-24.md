@@ -3,7 +3,7 @@
 # Authority Stack — Logical Coherence Audit + Protocol Review
 
 **Date:** 2026-07-24  
-**Repo:** `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse`  
+**Repo:** `$TNF_ROOT`  
 **Branch:** `fix/a2a-signature-verification`  
 **Head (audit):** `9c7e6bd7a1` —
 `feat(authority): close A2A/HTTP fail-open gaps and sign bus publishers`  

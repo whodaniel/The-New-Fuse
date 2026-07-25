@@ -27,7 +27,7 @@
 ### 1. Turn Zero (Cursor / any agent)
 
 ```bash
-cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd $TNF_ROOT
 tnf onboard
 tnf state show
 tnf protocol gate
