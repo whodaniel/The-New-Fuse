@@ -18,6 +18,35 @@ This is the **BATON HOLDER**. The baton is NEVER dropped.
 
 ---
 
+## 🧭 Orthogonal Axes (Role ≠ Platform)
+
+TNF classifies agents on independent axes. **Any agent can be assigned any
+role** — there is no protocol constraint that couples a fulfillment platform
+(Antigravity, Claude, Pi, Gemini, …) to a DACC seat.
+
+| Axis | What it answers | Examples |
+|------|-----------------|----------|
+| **Baton identity** | Which *process session* holds the master clock right now? | `ORCHESTRATOR-{timestamp}` from `master-clock.ts` |
+| **`daccRole`** | Where does this agent sit in the DACC hierarchy? | `director`, `orchestrator`, `broker`, `worker`, `participant` |
+| **`workerAction` / capabilities** | What *kind of work* can it do? | `orchestrator` action, `code_generation`, `orchestration` capability |
+| **`platform`** | Which fulfillment / runtime surface? | `antigravity`, `claude`, `pi`, `gemini`, `tnf-runtime` |
+
+**Do not conflate:**
+
+- The **ORCHESTRATOR identity** (baton / `master-clock`) with a platform wrapper
+  that happens to have orchestration *capabilities*.
+- A registry `role: orchestrator` label on a CLI wrapper with the baton holder.
+  Platform wrappers should normally register as `worker` (or another assigned
+  seat) and express coordination via capabilities / `workerAction`.
+- Broker infra exclusion (`isWorkerAgent`) with “only Antigravity can
+  orchestrate.” Exclusion is by **DACC seat**, not by platform.
+
+When an `ORCHESTRATOR-{ts}` session ends, handoff inboxes addressed to that
+session are migrated to the current baton identity (see
+`orchestrator-inbox-migration.service.ts`).
+
+---
+
 ## 📊 Role Hierarchy
 
 ```
@@ -94,8 +123,9 @@ from Orchestrator **Identifier:** `DIRECTOR-001` (or human name)
 
 ### ORCHESTRATOR (Master Clock)
 
-**Identity:** `master-clock.ts` daemon running in cloud **Quantity:** 1 primary,
-1 standby **Responsibilities:**
+**Identity:** `master-clock.ts` daemon (platform `master-clock` /
+`tnf-runtime`) — **not** any particular AI CLI platform. **Quantity:** 1
+primary, 1 standby **Responsibilities:**
 
 - Run CONTINUOUSLY (never stops)
 - Send heartbeats (every 3 seconds)
@@ -106,6 +136,12 @@ from Orchestrator **Identifier:** `DIRECTOR-001` (or human name)
 - Trigger recovery for stalled agents
 - Log EVERYTHING
 - Propagate state to Redis
+- On session start, migrate orphaned handoff inboxes from prior
+  `ORCHESTRATOR-{timestamp}` sessions onto the current baton identity
+
+Agents with orchestration *capabilities* (any platform) are **not** this
+identity. They are workers (or other assigned seats) that can perform
+coordination *work* via `workerAction` / capabilities.
 
 **Timing Requirements:** | Action | Interval | |--------|----------| | Heartbeat
 | 3,000ms | | Stall check | 2,500ms | | Recovery ping | 10,000ms | | Max

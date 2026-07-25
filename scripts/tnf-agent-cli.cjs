@@ -10,7 +10,7 @@
  * - Act as Orchestrator, Broker, or Worker
  *
  * Usage:
- *   node tnf-agent-cli.js register --name "antigravity" --role orchestrator
+ *   node tnf-agent-cli.js register --name "antigravity" --role worker
  *   node tnf-agent-cli.js listen
  *   node tnf-agent-cli.js send "Hello from Antigravity!"
  *   node tnf-agent-cli.js convo start "code-review"
@@ -141,7 +141,7 @@ class RedisAgentClient {
   /**
    * Register this agent on the network
    */
-  async register(name, role, platform, capabilities = []) {
+  async register(name, role, platform, capabilities = [], extra = {}) {
     const preferredId = String(process.env.AGENT_ID || process.env.TNF_AGENT_ID || '').trim();
     const resolvedId = preferredId || `agent_${name}_${Date.now()}`;
 
@@ -165,13 +165,14 @@ class RedisAgentClient {
       authoritySource: bootstrapped.roleSource,
       platform,
       status: 'active',
-      capabilities: capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(platform),
+      capabilities: capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(role, platform),
       registeredAt: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
       routing: {
         callableWorker: String(role || '').toLowerCase() === 'worker',
         directorPoolEligible: String(role || '').toLowerCase() === 'worker',
       },
+      ...extra,
     };
 
     // Store in Redis
@@ -210,11 +211,28 @@ class RedisAgentClient {
   }
 
   /**
-   * Get default capabilities based on platform
+   * Defaults are role ∪ platform. Role and platform are orthogonal —
+   * orchestration capabilities come from role assignment (or explicit caps),
+   * not from any particular platform.
    */
-  getDefaultCapabilities(platform) {
-    const capabilityMap = {
-      antigravity: ['code_assistance', 'orchestration', 'planning', 'analysis'],
+  getDefaultCapabilities(role, platform) {
+    const roleCapabilities = {
+      director: ['strategy', 'escalation', 'override'],
+      orchestrator: [
+        'orchestration',
+        'workflow_management',
+        'task_routing',
+        'result_aggregation',
+        'agent_coordination',
+      ],
+      broker: ['routing', 'mediation', 'channel_management'],
+      coordinator: ['coordinate', 'plan', 'delegate'],
+      bridge: ['bridge', 'translate', 'relay'],
+      worker: ['task_execution', 'report', 'collaborate'],
+      participant: ['message', 'observe', 'respond'],
+    };
+    const platformCapabilities = {
+      antigravity: ['code_assistance', 'planning', 'analysis'],
       gemini: ['code_analysis', 'research', 'implementation', 'review'],
       claude: ['reasoning', 'review', 'synthesis', 'documentation'],
       jules: ['parallel_execution', 'github_commits', 'refactoring', 'batch_processing'],
@@ -231,7 +249,9 @@ class RedisAgentClient {
       vscode: ['code_editing', 'terminal', 'debugging', 'extensions'],
       browser: ['web_scraping', 'research', 'automation'],
     };
-    return capabilityMap[platform] || ['general'];
+    const roleCaps = roleCapabilities[String(role || '').toLowerCase()] || [];
+    const platformCaps = platformCapabilities[String(platform || '').toLowerCase()] || ['general'];
+    return Array.from(new Set([...roleCaps, ...platformCaps]));
   }
 
   /**
@@ -999,8 +1019,11 @@ Environment Variables:
   AGENT_PLATFORM  Default agent platform
 
 Examples:
-  # Register as Antigravity orchestrator
-  node tnf-agent-cli.js register antigravity orchestrator antigravity
+  # Register Antigravity as a worker (any platform can hold any role)
+  node tnf-agent-cli.js register antigravity worker antigravity
+
+  # Register a worker that was assigned coordination capabilities explicitly
+  node tnf-agent-cli.js register planner coordinator claude
 
   # Register as Gemini worker
   node tnf-agent-cli.js register gemini worker gemini

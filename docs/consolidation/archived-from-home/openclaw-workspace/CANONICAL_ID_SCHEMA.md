@@ -144,19 +144,26 @@ Each Canonical ID maps to a UUID for database storage:
 {
   "canonicalId": "TNF:ORCHESTRATOR:001",
   "uuid": "f7f235df-abb5-4f3f-a0f2-a2a92a8aca83",
-  "name": "Antigravity",
-  "type": "ORCHESTRATOR"
+  "name": "Master Clock (baton)",
+  "type": "ORCHESTRATOR",
+  "platform": "master-clock",
+  "note": "Canonical baton seat. Not bound to Antigravity or any CLI platform."
 }
 ```
 
 ## Current Registry
 
-| Canonical ID           | UUID          | Name                | Status |
-| ---------------------- | ------------- | ------------------- | ------ |
-| `TNF:ORCHESTRATOR:001` | `f7f235df...` | Antigravity         | ACTIVE |
-| `TNF:VALIDATOR:001`    | `d0cf89dd...` | PicoClaw-Tester     | ACTIVE |
-| `TNF:CLI_TESTER:001`   | `ee42321e...` | PicoClaw-Subject    | ACTIVE |
-| `TNF:RESEARCH_WEB:001` | `c4ad4914...` | PicoClaw-Perplexity | ACTIVE |
+| Canonical ID           | UUID          | Name                 | Status |
+| ---------------------- | ------------- | -------------------- | ------ |
+| `TNF:ORCHESTRATOR:001` | `f7f235df...` | Master Clock (baton) | ACTIVE |
+| `TNF:VALIDATOR:001`    | `d0cf89dd...` | PicoClaw-Tester      | ACTIVE |
+| `TNF:CLI_TESTER:001`   | `ee42321e...` | PicoClaw-Subject     | ACTIVE |
+| `TNF:RESEARCH_WEB:001` | `c4ad4914...` | PicoClaw-Perplexity  | ACTIVE |
+
+> Historical snapshots sometimes listed Antigravity under
+> `TNF:ORCHESTRATOR:001`. That coupled platform to baton seat and is incorrect.
+> Antigravity is a fulfillment platform; baton identity is
+> `ORCHESTRATOR-{timestamp}` from master-clock.
 
 ## Implementation Notes
 

@@ -41,7 +41,14 @@ export declare class HandoffStoreService {
     private getAck;
     private packetKey;
     private ackKey;
+    /** Canonical store key (API / HandoffStoreService). */
     private agentInboxKey;
+    /**
+     * Both inbox key shapes used in the wild. Role/platform of the agent does not
+     * change which shape applies — wrappers wrote `inbox:{id}` while the store
+     * historically wrote `inbox:agent:{id}`.
+     */
+    private agentInboxKeys;
     private sessionIndexKey;
     private parsePacket;
     private parseAck;

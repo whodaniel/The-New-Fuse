@@ -21,8 +21,12 @@ pnpm tnf-agent register "TNF-Content-Agent" worker vscode
 # Register analytics agent
 pnpm tnf-agent register "TNF-Analytics-Agent" worker gemini
 
-# Register orchestration agent
-pnpm tnf-agent register "TNF-Orchestrator" orchestrator antigravity
+# Register a worker that will perform coordination work (any platform)
+pnpm tnf-agent register "TNF-Coordinator" worker antigravity
+
+# Register orchestration *seat* only when intentionally elevating infra
+# (baton identity is still master-clock ORCHESTRATOR-{ts}, not this name)
+pnpm tnf-agent register "TNF-Planning-Seat" coordinator tnf-runtime
 ```
 
 ### 2. Execute Network-Beneficial Workflows

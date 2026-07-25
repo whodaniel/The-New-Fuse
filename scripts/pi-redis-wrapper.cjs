@@ -573,10 +573,39 @@ class PiRedisAgent {
     return signal;
   }
 
+  async resolveHandoffTarget(msg) {
+    const fromId = String(msg?.from?.agentId || '').trim();
+    // Prefer the upstream agent when it is not a rotated baton session.
+    if (fromId && !/^ORCHESTRATOR-\d+$/i.test(fromId)) {
+      return fromId;
+    }
+
+    // When upstream was a prior ORCHESTRATOR-{ts} session, retarget to the
+    // current baton holder so packets are not orphaned after master-clock
+    // restart. Platform wrappers are never assumed to own this seat.
+    try {
+      const redis = this.client.publisher || this.client.redis || this.client._redis;
+      if (redis && typeof redis.hget === 'function') {
+        const raw = await redis.hget('tnf:master:state', 'orchestrator');
+        if (raw) {
+          const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          const sessionId = String(parsed?.sessionId || '').trim();
+          if (/^ORCHESTRATOR-\d+$/i.test(sessionId)) {
+            return sessionId;
+          }
+        }
+      }
+    } catch {
+      // fall through
+    }
+
+    return fromId || 'Local-Director';
+  }
+
   async exportHandoff(msg, sessionKey, piRunResult, validation) {
     if (!CONFIG.handoffEnabled) return null;
     const fromAgentId = this.client.agentInfo?.id || CONFIG.agentName;
-    const toAgent = msg?.from?.agentId || 'agent_orchestrator';
+    const toAgent = await this.resolveHandoffTarget(msg);
     const summary = piRunResult.ok
       ? 'Pi executed the upstream task and returned a response for continuation.'
       : 'Pi execution failed and returned diagnostics for downstream recovery.';

@@ -262,9 +262,27 @@ const TIME_SCALES = [0.5, 1, 2, 4];
 
 const VISUALIZATION_SECTIONS: VisualizationSection[] = [
   {
+    id: 'protocol-axes',
+    label: 'Protocol Axes',
+    summary:
+      'Canonical DACC taxonomy surfaces: baton identity, daccRole, workerAction/capabilities, and platform are orthogonal.',
+    items: [
+      {
+        title: 'DACC Role × Platform Axes',
+        description:
+          'Corrected taxonomy viz: baton=master-clock only; any agent can hold any role; platforms are not seats.',
+        href: '/visualizations/graphs/dacc-role-platform-axes.html',
+        tags: ['DACC', 'Taxonomy', 'Protocol'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+    ],
+  },
+  {
     id: 'agent-graphs',
     label: 'Agent Relationship Graphs',
-    summary: 'Domain-level subgraphs generated from the relationship graph artifact pipeline.',
+    summary:
+      'Domain-level subgraphs from the relationship graph pipeline. Cluster labels are work domains, not baton seats — see Protocol Axes.',
     items: [
       {
         title: 'Content Domain Subgraph',

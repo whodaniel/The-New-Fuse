@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TNF DACC Role × Platform Axes</title>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --panel: #111827;
+        --ink: #e5e7eb;
+        --muted: #94a3b8;
+        --director: #f43f5e;
+        --baton: #3b82f6;
+        --broker: #8b5cf6;
+        --worker: #10b981;
+        --platform: #f59e0b;
+        --line: #334155;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+        background: radial-gradient(1200px 600px at 20% -10%, #1e293b, var(--bg));
+        color: var(--ink);
+        padding: 24px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 1.5rem;
+      }
+      .lede {
+        color: var(--muted);
+        max-width: 72ch;
+        margin-bottom: 24px;
+        line-height: 1.5;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        margin-bottom: 24px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .card h2 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+      .tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 999px;
+        margin-bottom: 8px;
+      }
+      .t-director {
+        background: color-mix(in srgb, var(--director) 25%, transparent);
+        color: #fecdd3;
+      }
+      .t-baton {
+        background: color-mix(in srgb, var(--baton) 25%, transparent);
+        color: #bfdbfe;
+      }
+      .t-broker {
+        background: color-mix(in srgb, var(--broker) 25%, transparent);
+        color: #ddd6fe;
+      }
+      .t-worker {
+        background: color-mix(in srgb, var(--worker) 25%, transparent);
+        color: #a7f3d0;
+      }
+      .t-platform {
+        background: color-mix(in srgb, var(--platform) 25%, transparent);
+        color: #fde68a;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.9rem;
+        vertical-align: top;
+      }
+      th {
+        background: #0f172a;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      .ok {
+        color: #86efac;
+      }
+      .bad {
+        color: #fda4af;
+      }
+      .matrix {
+        display: grid;
+        grid-template-columns: 140px repeat(5, 1fr);
+        gap: 4px;
+        margin-top: 24px;
+        font-size: 0.75rem;
+      }
+      .matrix div {
+        background: #0f172a;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 8px;
+        text-align: center;
+      }
+      .matrix .head {
+        background: #1e293b;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .matrix .yes {
+        color: #86efac;
+      }
+      .footnote {
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 0.85rem;
+        max-width: 80ch;
+        line-height: 1.5;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.85em;
+        color: #93c5fd;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>TNF DACC Axes — Role ⊥ Platform</h1>
+    <p class="lede">
+      Canonical visualization for the corrected TNF taxonomy. Hierarchy seats and fulfillment
+      platforms are independent. The baton identity
+      <code>ORCHESTRATOR-{timestamp}</code> is held only by
+      <code>master-clock</code>, never by a platform name such as Antigravity.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <span class="tag t-baton">Baton identity</span>
+        <h2>Who holds the clock?</h2>
+        <p>
+          <code>ORCHESTRATOR-{ts}</code> from <code>master-clock.ts</code>. One active session.
+          Handoffs to prior sessions are migrated onto the current baton.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag t-director">daccRole</span>
+        <h2>Where do they sit?</h2>
+        <p>
+          director · orchestrator · broker · worker · participant · coordinator · bridge. Infra
+          seats are excluded from broker <em>worker</em> dispatch by seat, not by platform.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag t-worker">workerAction / caps</span>
+        <h2>What work can they do?</h2>
+        <p>
+          Coordination work (orchestration capabilities, <code>workerAction: orchestrator</code>)
+          can be assigned to any worker on any platform without claiming the baton.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag t-platform">platform</span>
+        <h2>Which surface runs them?</h2>
+        <p>
+          antigravity · claude · gemini · pi · jules · vscode · browser · tnf-runtime ·
+          master-clock. Product/CLI surface only — not a hierarchy label.
+        </p>
+      </div>
+    </div>
+
+    <h2 style="font-size: 1.05rem; margin: 8px 0 12px">Anti-patterns this viz corrects</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Wrong implication</th>
+          <th>Correct reading</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="bad">“Antigravity is the Orchestrator”</td>
+          <td class="ok">
+            Antigravity is a <strong>platform</strong>. It may register as worker (default) with
+            orchestration capabilities. Baton = master-clock.
+          </td>
+        </tr>
+        <tr>
+          <td class="bad">“orchestrator-antigravity owns DACC”</td>
+          <td class="ok">
+            Historical demo IDs. Live baton is <code>ORCHESTRATOR-{ts}</code>; registry role and
+            platform remain independently assignable.
+          </td>
+        </tr>
+        <tr>
+          <td class="bad">“Broker only routes to Antigravity for orchestration tasks”</td>
+          <td class="ok">
+            Broker routes to workers by capability / fulfillment. Infra
+            <code>daccRole</code> values are excluded regardless of platform.
+          </td>
+        </tr>
+        <tr>
+          <td class="bad">“Relationship graph cluster=orchestration ⇒ baton holder”</td>
+          <td class="ok">
+            Cluster labels domain/work affinity. They are not DACC seats. See taxonomy metadata on
+            the agent-relationship-graph artifact.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 style="font-size: 1.05rem; margin: 28px 0 8px">Valid pairings (examples)</h2>
+    <p class="lede" style="margin-bottom: 12px">
+      Every cell is allowed. Registration is <code>tnf agents register [name] [role] [platform]</code>.
+    </p>
+    <div class="matrix" aria-label="Role by platform matrix">
+      <div class="head">role \ platform</div>
+      <div class="head">antigravity</div>
+      <div class="head">claude</div>
+      <div class="head">pi</div>
+      <div class="head">tnf-runtime</div>
+      <div class="head">master-clock</div>
+
+      <div class="head">worker</div>
+      <div class="yes">✓ default</div>
+      <div class="yes">✓</div>
+      <div class="yes">✓</div>
+      <div class="yes">✓</div>
+      <div class="yes">rare</div>
+
+      <div class="head">broker</div>
+      <div class="yes">✓</div>
+      <div class="yes">✓</div>
+      <div class="yes">✓</div>
+      <div class="yes">✓ common</div>
+      <div class="yes">✓</div>
+
+      <div class="head">orchestrator*</div>
+      <div class="yes">assignable</div>
+      <div class="yes">assignable</div>
+      <div class="yes">assignable</div>
+      <div class="yes">assignable</div>
+      <div class="yes">✓ baton process</div>
+
+      <div class="head">director</div>
+      <div class="yes">✓</div>
+      <div class="yes">✓</div>
+      <div class="yes">✓</div>
+      <div class="yes">✓</div>
+      <div class="yes">✓</div>
+    </div>
+    <p class="footnote">
+      *Registry <code>daccRole: orchestrator</code> marks an infra seat (not worker-dispatch
+      eligible). The live baton process still uses identity
+      <code>ORCHESTRATOR-{ts}</code> on platform <code>master-clock</code>. Prefer workers with
+      orchestration <em>capabilities</em> for coordination work unless an operator intentionally
+      elevates a seat.
+    </p>
+    <p class="footnote">
+      Source of truth: <code>.agent/ROLE_DEFINITIONS.md</code> · migration:
+      <code>packages/relay-core/src/services/orchestrator-inbox-migration.service.ts</code> ·
+      roster defaults: <code>packages/tnf-cli/src/boot/agent-roster.ts</code>
+    </p>
+  </body>
+</html>

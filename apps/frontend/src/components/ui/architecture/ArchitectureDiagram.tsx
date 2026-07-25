@@ -1,8 +1,8 @@
 /**
  * Architecture Diagram Component
  *
- * Simple SVG diagram showing the TNF multi-agent architecture
- * Created based on Gemini assessment feedback
+ * TNF multi-agent architecture with orthogonal axes:
+ * baton identity ≠ daccRole ≠ workerAction ≠ platform.
  */
 
 import React from 'react';
@@ -10,158 +10,156 @@ import React from 'react';
 const ArchitectureDiagram: React.FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
-      <svg viewBox="0 0 800 400" className="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
-        {/* Background */}
-        <rect x="0" y="0" width="800" height="400" fill="#1e293b" rx="12" />
+      <svg viewBox="0 0 860 480" className="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#64748b" />
+          </marker>
+        </defs>
 
-        {/* Title */}
-        <text x="400" y="30" textAnchor="middle" fill="#e2e8f0" fontSize="18" fontWeight="bold">
-          TNF Multi-Agent Architecture
+        <rect x="0" y="0" width="860" height="480" fill="#1e293b" rx="12" />
+
+        <text x="430" y="28" textAnchor="middle" fill="#e2e8f0" fontSize="16" fontWeight="bold">
+          TNF Multi-Agent Architecture (DACC Axes)
+        </text>
+        <text x="430" y="48" textAnchor="middle" fill="#94a3b8" fontSize="10">
+          Role seat ⊥ platform · Baton = master-clock only
         </text>
 
-        {/* Orchestrator */}
-        <rect x="300" y="60" width="200" height="50" fill="#3b82f6" rx="8" />
-        <text x="400" y="90" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">
-          Orchestrator
+        {/* Director */}
+        <rect x="320" y="62" width="220" height="40" fill="#f43f5e" rx="8" />
+        <text x="430" y="80" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
+          DIRECTOR (authority seat)
+        </text>
+        <text x="430" y="94" textAnchor="middle" fill="#fecdd3" fontSize="9">
+          human or designated super/sub-director — any platform
         </text>
 
-        {/* Arrow from Orchestrator to Broker */}
         <line
-          x1="400"
-          y1="110"
-          x2="400"
-          y2="150"
+          x1="430"
+          y1="102"
+          x2="430"
+          y2="118"
+          stroke="#64748b"
+          strokeWidth="2"
+          markerEnd="url(#arrow)"
+        />
+
+        {/* Master Clock / Baton */}
+        <rect x="280" y="120" width="300" height="52" fill="#3b82f6" rx="8" />
+        <text x="430" y="140" textAnchor="middle" fill="white" fontSize="13" fontWeight="bold">
+          ORCHESTRATOR baton · master-clock
+        </text>
+        <text x="430" y="158" textAnchor="middle" fill="#bfdbfe" fontSize="9">
+          identity ORCHESTRATOR-{'{ts}'} · platform master-clock / tnf-runtime
+        </text>
+
+        <line
+          x1="430"
+          y1="172"
+          x2="430"
+          y2="188"
           stroke="#64748b"
           strokeWidth="2"
           markerEnd="url(#arrow)"
         />
 
         {/* Broker */}
-        <rect x="300" y="150" width="200" height="50" fill="#8b5cf6" rx="8" />
-        <text x="400" y="180" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">
-          Broker / Message Bus
+        <rect x="300" y="190" width="260" height="44" fill="#8b5cf6" rx="8" />
+        <text x="430" y="210" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
+          BROKER (channel / dispatch seat)
+        </text>
+        <text x="430" y="224" textAnchor="middle" fill="#ddd6fe" fontSize="9">
+          process or AI — not locked to any CLI platform
         </text>
 
-        {/* Arrow from Broker to Workers */}
-        <line x1="400" y1="200" x2="400" y2="240" stroke="#64748b" strokeWidth="2" />
+        <line x1="430" y1="234" x2="430" y2="250" stroke="#64748b" strokeWidth="2" />
 
-        {/* Worker Nodes */}
-        <rect x="50" y="260" width="140" height="60" fill="#10b981" rx="8" />
-        <text x="120" y="290" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
-          Worker Agent 1
+        {/* Workers */}
+        <rect x="40" y="258" width="150" height="56" fill="#10b981" rx="8" />
+        <text x="115" y="280" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">
+          Worker
         </text>
-        <text x="120" y="308" textAnchor="middle" fill="#a7f3d0" fontSize="10">
-          Task Execution
+        <text x="115" y="296" textAnchor="middle" fill="#a7f3d0" fontSize="9">
+          daccRole=worker
         </text>
-
-        <rect x="220" y="260" width="140" height="60" fill="#10b981" rx="8" />
-        <text x="290" y="290" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
-          Worker Agent 2
-        </text>
-        <text x="290" y="308" textAnchor="middle" fill="#a7f3d0" fontSize="10">
-          Data Processing
+        <text x="115" y="308" textAnchor="middle" fill="#6ee7b7" fontSize="8">
+          + caps / workerAction
         </text>
 
-        <rect x="390" y="260" width="140" height="60" fill="#10b981" rx="8" />
-        <text x="460" y="290" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
-          Worker Agent 3
+        <rect x="210" y="258" width="150" height="56" fill="#10b981" rx="8" />
+        <text x="285" y="280" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">
+          Worker
         </text>
-        <text x="460" y="308" textAnchor="middle" fill="#a7f3d0" fontSize="10">
-          API Integration
+        <text x="285" y="296" textAnchor="middle" fill="#a7f3d0" fontSize="9">
+          may run orchestration work
         </text>
-
-        <rect x="560" y="260" width="140" height="60" fill="#10b981" rx="8" />
-        <text x="630" y="290" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
-          Worker Agent N
-        </text>
-        <text x="630" y="308" textAnchor="middle" fill="#a7f3d0" fontSize="10">
-          Custom Tasks
+        <text x="285" y="308" textAnchor="middle" fill="#6ee7b7" fontSize="8">
+          without holding baton
         </text>
 
-        {/* Horizontal arrows from Broker to Workers */}
+        <rect x="380" y="258" width="150" height="56" fill="#10b981" rx="8" />
+        <text x="455" y="280" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">
+          Worker
+        </text>
+        <text x="455" y="296" textAnchor="middle" fill="#a7f3d0" fontSize="9">
+          any platform
+        </text>
+        <text x="455" y="308" textAnchor="middle" fill="#6ee7b7" fontSize="8">
+          antigravity · claude · pi…
+        </text>
+
+        <rect x="550" y="258" width="150" height="56" fill="#10b981" rx="8" />
+        <text x="625" y="280" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">
+          Participant
+        </text>
+        <text x="625" y="296" textAnchor="middle" fill="#a7f3d0" fontSize="9">
+          federation / browser
+        </text>
+        <text x="625" y="308" textAnchor="middle" fill="#6ee7b7" fontSize="8">
+          seat ≠ product name
+        </text>
+
+        {/* Platform lane (orthogonal) */}
+        <rect x="40" y="340" width="780" height="70" fill="#0f172a" stroke="#334155" rx="8" />
+        <text x="60" y="362" fill="#fbbf24" fontSize="11" fontWeight="bold">
+          Platform lane (fulfillment · orthogonal to daccRole)
+        </text>
+        <text x="60" y="380" fill="#cbd5e1" fontSize="10">
+          antigravity · claude · gemini · jules · pi · vscode · browser · tnf-runtime · master-clock
+        </text>
+        <text x="60" y="396" fill="#94a3b8" fontSize="9">
+          Platforms are not hierarchy seats. Assigning orchestration capabilities ≠ claiming
+          ORCHESTRATOR-{'{ts}'} baton identity.
+        </text>
+
+        {/* Redis */}
+        <rect x="720" y="190" width="100" height="44" fill="#f59e0b" rx="6" />
+        <text x="770" y="210" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">
+          Redis bus
+        </text>
+        <text x="770" y="224" textAnchor="middle" fill="#fde68a" fontSize="8">
+          state + handoff
+        </text>
         <line
-          x1="400"
-          y1="240"
-          x2="120"
-          y2="260"
-          stroke="#64748b"
-          strokeWidth="1"
-          strokeDasharray="4"
-        />
-        <line
-          x1="400"
-          y1="240"
-          x2="290"
-          y2="260"
-          stroke="#64748b"
-          strokeWidth="1"
-          strokeDasharray="4"
-        />
-        <line
-          x1="400"
-          y1="240"
-          x2="460"
-          y2="260"
-          stroke="#64748b"
-          strokeWidth="1"
-          strokeDasharray="4"
-        />
-        <line
-          x1="400"
-          y1="240"
-          x2="630"
-          y2="260"
-          stroke="#64748b"
-          strokeWidth="1"
-          strokeDasharray="4"
-        />
-
-        {/* Redis / Storage */}
-        <rect x="620" y="130" width="140" height="40" fill="#f59e0b" rx="6" />
-        <text x="690" y="155" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
-          Redis Synaptic Bus
-        </text>
-
-        {/* Arrow from Broker to Redis */}
-        <line
-          x1="500"
-          y1="175"
-          x2="620"
-          y2="150"
+          x1="560"
+          y1="212"
+          x2="720"
+          y2="212"
           stroke="#f59e0b"
           strokeWidth="2"
           strokeDasharray="4"
         />
 
-        {/* Legend */}
-        <text x="50" y="370" fill="#94a3b8" fontSize="10">
-          ▲ Control Flow
+        <text x="40" y="450" fill="#94a3b8" fontSize="9">
+          ▲ Control / baton hierarchy
         </text>
-        <text x="180" y="370" fill="#f59e0b" fontSize="10">
-          --- Data Sync
+        <text x="220" y="450" fill="#fbbf24" fontSize="9">
+          ■ Platform assignment (independent)
         </text>
-
-        {/* External Services */}
-        <rect x="50" y="60" width="100" height="30" fill="#6366f1" rx="4" />
-        <text x="100" y="80" textAnchor="middle" fill="white" fontSize="10">
-          External APIs
+        <text x="460" y="450" fill="#a7f3d0" fontSize="9">
+          ■ Worker dispatch eligible (non-infra daccRole)
         </text>
-
-        <rect x="50" y="100" width="100" height="30" fill="#6366f1" rx="4" />
-        <text x="100" y="120" textAnchor="middle" fill="white" fontSize="10">
-          Databases
-        </text>
-
-        {/* Arrow from External to Orchestrator */}
-        <line
-          x1="150"
-          y1="75"
-          x2="300"
-          y2="85"
-          stroke="#6366f6"
-          strokeWidth="1"
-          strokeDasharray="4"
-        />
       </svg>
     </div>
   );

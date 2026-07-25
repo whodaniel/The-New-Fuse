@@ -135,7 +135,7 @@ redis-server
 # Terminal 2: Start WS Bridge
 node scripts/redis-ws-bridge.cjs
 
-# Terminal 3: Start Antigravity (Orchestrator)
+# Terminal 3: Start Antigravity (platform worker; baton = master-clock)
 node scripts/antigravity-redis-wrapper.cjs
 
 # Terminal 4: Load Chrome Extension

@@ -1,55 +1,120 @@
 {
   "generated_at": "2026-04-07",
+  "updated_at": "2026-07-25",
+  "taxonomy": {
+    "note": "Cluster labels are work-domain affinity, NOT DACC baton seats. Role and platform are orthogonal axes.",
+    "axes": {
+      "baton_identity": "ORCHESTRATOR-{timestamp} from master-clock only",
+      "daccRole": [
+        "director",
+        "orchestrator",
+        "broker",
+        "worker",
+        "participant",
+        "coordinator",
+        "bridge"
+      ],
+      "workerAction_capabilities": "What work an agent can perform (may include orchestration without holding the baton)",
+      "platform": [
+        "antigravity",
+        "claude",
+        "gemini",
+        "jules",
+        "pi",
+        "vscode",
+        "browser",
+        "tnf-runtime",
+        "master-clock"
+      ]
+    },
+    "anti_patterns": [
+      "Do not treat cluster=orchestration as master-clock baton ownership",
+      "Do not treat platform ids (e.g. gemini, antigravity) as hierarchy seats",
+      "orchestrator-agent node is a skill/persona primary, not ORCHESTRATOR-{ts}"
+    ],
+    "canonical_viz": "/visualizations/graphs/dacc-role-platform-axes.html"
+  },
   "nodes": [
     {
       "id": "agent-registry-manager",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "axes_note": "cluster=work domain; not baton"
     },
     {
       "id": "agent-relationship-grapher",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "axes_note": "cluster=work domain; not baton"
     },
     {
       "id": "agent-search-engine",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "axes_note": "cluster=work domain; not baton"
     },
     {
       "id": "agent-tagger",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "axes_note": "cluster=work domain; not baton"
     },
     {
       "id": "content-calendar-orchestrator-agent",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "axes_note": "persona name contains orchestrator; not master-clock baton"
     },
     {
       "id": "gemini",
       "kind": "sub",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "platform": "gemini",
+      "daccRole_default": "worker",
+      "axes_note": "PLATFORM node in orchestration-domain workflows — not a DACC seat"
     },
     {
       "id": "inter-agentic-workflow-definer",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "axes_note": "cluster=work domain; not baton"
     },
     {
       "id": "interoperability-protocol-agent",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "axes_note": "cluster=work domain; not baton"
     },
     {
       "id": "orchestrator-agent",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "daccRole_default": "worker",
+      "workerAction": "orchestrator",
+      "axes_note": "Skill/persona for coordination work — NOT master-clock ORCHESTRATOR-{ts} baton"
     },
     {
       "id": "orchestrator-agent-copy",
       "kind": "sub",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "axes_note": "Copy/variant of orchestrator-agent persona; not baton identity"
+    },
+    {
+      "id": "master-clock-baton",
+      "kind": "infra",
+      "cluster": "runtime-infra",
+      "platform": "master-clock",
+      "daccRole": "orchestrator",
+      "baton_identity": "ORCHESTRATOR-{timestamp}",
+      "axes_note": "Canonical baton holder process. Added 2026-07-25 for axis clarity."
+    },
+    {
+      "id": "antigravity-platform",
+      "kind": "platform",
+      "cluster": "fulfillment",
+      "platform": "antigravity",
+      "daccRole_default": "worker",
+      "axes_note": "Fulfillment platform only. Default roster role=worker with optional orchestration capabilities."
     },
     {
       "id": "personal-archaeology-integrity-team-orchestrator",

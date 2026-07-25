@@ -9,6 +9,11 @@ import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
 import { stringifySignedBusMessage } from './protocol/sign-bus-message.js';
 import { createTNFEnvelope } from './protocol/tnf-envelope.js';
+import {
+  isOrchestratorSessionId,
+  migrateOrphanedOrchestratorInboxes,
+  parseActiveOrchestratorSessionId,
+} from './services/orchestrator-inbox-migration.service.js';
 
 type QueueTask = {
   id: string;
@@ -182,6 +187,9 @@ const CONFIG = {
   CONTEXT_RISK_ESCALATION_LEVEL: String(
     process.env.BROKER_CONTEXT_RISK_ESCALATION_LEVEL || 'high'
   ).toLowerCase(),
+  MASTER_STATE_KEY: process.env.BROKER_MASTER_STATE_KEY || 'tnf:master:state',
+  ORPHAN_INBOX_MIGRATE_MS: parseInt(process.env.BROKER_ORPHAN_INBOX_MIGRATE_MS || '', 10) || 60000,
+  ORPHAN_INBOX_MIGRATE_MAX: parseInt(process.env.BROKER_ORPHAN_INBOX_MIGRATE_MAX || '', 10) || 2000,
 };
 
 const REQUIRED_FEDERATION_GATES = [
@@ -197,6 +205,7 @@ class BrokerAgent {
   private redisBlocking: Redis | Cluster | null = null;
   private upstash: any = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
+  private orphanMigrateInterval: NodeJS.Timeout | null = null;
   private running = false;
   private readonly brokerId = process.env.BROKER_ID || `BROKER-${Date.now()}`;
   private twipSnapshotCache: { loadedAt: number; byTwid: Map<string, TwipIdentity> } | null = null;
@@ -222,6 +231,7 @@ class BrokerAgent {
 
     await this.registerBroker();
     this.startHeartbeat();
+    this.startOrphanInboxMigration();
 
     console.log(`[Broker] Online as ${this.brokerId}`);
     console.log(`[Broker] Consuming queue: ${CONFIG.TASK_QUEUE_KEY}`);
@@ -301,6 +311,51 @@ class BrokerAgent {
 
     this.heartbeatInterval = setInterval(sendHeartbeat, CONFIG.HEARTBEAT_INTERVAL_MS);
     void sendHeartbeat();
+  }
+
+  private startOrphanInboxMigration(): void {
+    const run = async () => {
+      try {
+        await this.migrateOrphanedOrchestratorInboxes();
+      } catch (error) {
+        console.warn('[Broker] Orphan inbox migration failed:', (error as Error).message);
+      }
+    };
+    this.orphanMigrateInterval = setInterval(run, CONFIG.ORPHAN_INBOX_MIGRATE_MS);
+    void run();
+  }
+
+  private async getActiveOrchestratorSessionId(): Promise<string | null> {
+    try {
+      let raw: unknown = null;
+      if (this.upstash) {
+        // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
+        raw = await this.upstash.hget(CONFIG.MASTER_STATE_KEY, 'orchestrator');
+      } else if (this.redis) {
+        raw = await this.redis.hget(CONFIG.MASTER_STATE_KEY, 'orchestrator');
+      }
+      return parseActiveOrchestratorSessionId(raw);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Safety net when master-clock is down or a prior baton left packets behind.
+   * Does not imply any platform (e.g. antigravity) owns the orchestrator seat.
+   */
+  private async migrateOrphanedOrchestratorInboxes(): Promise<void> {
+    const active = await this.getActiveOrchestratorSessionId();
+    if (!active || !this.redis) return;
+
+    const result = await migrateOrphanedOrchestratorInboxes(this.redis as any, active, {
+      maxMove: CONFIG.ORPHAN_INBOX_MIGRATE_MAX,
+    });
+    if (result.migrated > 0) {
+      console.log(
+        `[Broker] Migrated ${result.migrated} orphaned handoff packet(s) → ${active} from ${result.sources.length} inbox(es)`
+      );
+    }
   }
 
   private async consumeLoop(): Promise<void> {
@@ -940,6 +995,11 @@ class BrokerAgent {
     // Project-Planner) and 'bridge' (e.g. hermes-bridge) were added
     // 2026-07-22 after being found live in the registry with role values the
     // CLI's AGENT_ROLE_TRAITS didn't yet recognize.
+    //
+    // Platform is orthogonal: a worker on any platform (antigravity, claude,
+    // pi, …) remains eligible. Infra exclusion is by DACC seat, not by
+    // fulfillment surface. Coordination work uses `workerAction` /
+    // capabilities (e.g. orchestration), not `daccRole: orchestrator`.
     // Fall back to inspecting both daccRole and the legacy `role` so existing
     // emitters continue to classify correctly.
     const INFRA_ROLES = ['director', 'orchestrator', 'broker', 'coordinator', 'bridge'];
@@ -1071,7 +1131,12 @@ class BrokerAgent {
 
     if (agents.length === 0) return null;
 
-    const requestedAssignee = String(task.assignee || '').trim();
+    let requestedAssignee = String(task.assignee || '').trim();
+    // Stale or live baton identities are not worker dispatch targets. Clear so
+    // capability / fulfillment selection can pick any eligible worker.
+    if (isOrchestratorSessionId(requestedAssignee)) {
+      requestedAssignee = '';
+    }
     if (requestedAssignee) {
       const normalized = requestedAssignee.toLowerCase();
       const exact = agents.find((agent) =>
@@ -1417,6 +1482,10 @@ class BrokerAgent {
     if (this.heartbeatInterval) {
       clearInterval(this.heartbeatInterval);
       this.heartbeatInterval = null;
+    }
+    if (this.orphanMigrateInterval) {
+      clearInterval(this.orphanMigrateInterval);
+      this.orphanMigrateInterval = null;
     }
     try {
       // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression

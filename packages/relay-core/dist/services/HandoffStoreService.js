@@ -60,10 +60,12 @@ class HandoffStoreService {
                 const pipeline = this.upstash.pipeline();
                 pipeline.set(packetKey, JSON.stringify(packet), { ex: ttlSeconds });
                 for (const agentId of packet.targets.agentIds) {
-                    const inboxKey = this.agentInboxKey(agentId);
-                    pipeline.lpush(inboxKey, packet.id);
-                    pipeline.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-                    pipeline.expire(inboxKey, ttlSeconds);
+                    // Dual-write: wrappers historically used inbox:{id}; store used inbox:agent:{id}.
+                    for (const inboxKey of this.agentInboxKeys(agentId)) {
+                        pipeline.lpush(inboxKey, packet.id);
+                        pipeline.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+                        pipeline.expire(inboxKey, ttlSeconds);
+                    }
                 }
                 if (packet.scope.sessionKey) {
                     const sessionKey = this.sessionIndexKey(packet.scope.sessionKey);
@@ -78,10 +80,11 @@ class HandoffStoreService {
                 const multi = this.client.multi();
                 multi.set(packetKey, JSON.stringify(packet), 'EX', ttlSeconds);
                 for (const agentId of packet.targets.agentIds) {
-                    const inboxKey = this.agentInboxKey(agentId);
-                    multi.lpush(inboxKey, packet.id);
-                    multi.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-                    multi.expire(inboxKey, ttlSeconds);
+                    for (const inboxKey of this.agentInboxKeys(agentId)) {
+                        multi.lpush(inboxKey, packet.id);
+                        multi.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+                        multi.expire(inboxKey, ttlSeconds);
+                    }
                 }
                 if (packet.scope.sessionKey) {
                     const sessionKey = this.sessionIndexKey(packet.scope.sessionKey);
@@ -119,16 +122,26 @@ class HandoffStoreService {
         const limit = Math.max(options.limit ?? 20, 1);
         const includeAcknowledged = options.includeAcknowledged ?? false;
         const result = [];
-        const inboxKey = this.agentInboxKey(agentId);
         let candidateIds = [];
         candidateIds = await this.withRetry('list handoff inbox', async () => {
-            if (this.upstash) {
-                return await this.upstash.lrange(inboxKey, 0, limit * 10 - 1);
+            const ids = [];
+            for (const inboxKey of this.agentInboxKeys(agentId)) {
+                let chunk = [];
+                if (this.upstash) {
+                    chunk = (await this.upstash.lrange(inboxKey, 0, limit * 10 - 1)) || [];
+                }
+                else if (this.client) {
+                    chunk = (await this.client.lrange(inboxKey, 0, limit * 10 - 1)) || [];
+                }
+                else {
+                    throw new Error('No handoff store backend is available');
+                }
+                for (const id of chunk) {
+                    if (!ids.includes(id))
+                        ids.push(id);
+                }
             }
-            if (this.client) {
-                return await this.client.lrange(inboxKey, 0, limit * 10 - 1);
-            }
-            throw new Error('No handoff store backend is available');
+            return ids;
         });
         for (const packetId of candidateIds) {
             if (result.length >= limit) {
@@ -231,8 +244,17 @@ class HandoffStoreService {
     ackKey(packetId) {
         return `${this.keyPrefix}:ack:${packetId}`;
     }
+    /** Canonical store key (API / HandoffStoreService). */
     agentInboxKey(agentId) {
         return `${this.keyPrefix}:inbox:agent:${agentId}`;
+    }
+    /**
+     * Both inbox key shapes used in the wild. Role/platform of the agent does not
+     * change which shape applies — wrappers wrote `inbox:{id}` while the store
+     * historically wrote `inbox:agent:{id}`.
+     */
+    agentInboxKeys(agentId) {
+        return [`${this.keyPrefix}:inbox:${agentId}`, this.agentInboxKey(agentId)];
     }
     sessionIndexKey(sessionKey) {
         return `${this.keyPrefix}:index:session:${sessionKey}`;

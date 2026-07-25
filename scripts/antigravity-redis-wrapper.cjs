@@ -1,17 +1,22 @@
 #!/usr/bin/env node
 
 /**
- * Antigravity (Orchestrator) Redis Wrapper
+ * Antigravity Redis Wrapper
  *
- * Antigravity acts as the ORCHESTRATOR in the TNF agent network.
+ * Antigravity is a TNF *platform* (fulfillment surface). Role is orthogonal:
+ * this wrapper defaults to `worker` and may carry coordination capabilities
+ * without claiming the master-clock baton identity (`ORCHESTRATOR-{timestamp}`).
+ *
  * This wrapper:
- * 1. Coordinates tasks between agents
- * 2. Manages workflow execution
+ * 1. Coordinates tasks between agents when capabilities allow
+ * 2. Manages workflow execution as a worker with orchestration caps
  * 3. Routes messages between specialists
  * 4. Collects and aggregates results
  *
  * Usage:
  *   node antigravity-redis-wrapper.cjs
+ *   AGENT_ROLE=worker node antigravity-redis-wrapper.cjs
+ *   AGENT_ROLE=coordinator node antigravity-redis-wrapper.cjs
  */
 
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
@@ -23,7 +28,8 @@ const readline = require('readline');
 
 const CONFIG = {
   agentName: process.env.AGENT_NAME || 'antigravity',
-  agentRole: process.env.AGENT_ROLE || 'orchestrator',
+  // Default worker — baton holder is master-clock, not this platform.
+  agentRole: process.env.AGENT_ROLE || 'worker',
   platform: 'antigravity',
   taskTimeout: 300000, // 5 minutes max per task
 };
@@ -73,10 +79,10 @@ const WORKFLOWS = {
 };
 
 // ============================================================================
-// ORCHESTRATOR IMPLEMENTATION
+// AGENT IMPLEMENTATION
 // ============================================================================
 
-class AntigravityOrchestrator {
+class AntigravityAgent {
   constructor() {
     this.client = new RedisAgentClient();
     this.isRunning = false;
@@ -94,13 +100,13 @@ class AntigravityOrchestrator {
   }
 
   /**
-   * Start the orchestrator
+   * Start the agent
    */
   async start() {
     console.log(`
 ╔═══════════════════════════════════════════════════╗
-║           Antigravity - The Orchestrator          ║
-║             ( Coordinating AI Agents )            ║
+║     Antigravity — TNF Platform Worker             ║
+║   (role=${String(CONFIG.agentRole).padEnd(12)} platform=antigravity) ║
 ╚═══════════════════════════════════════════════════╝
 `);
 
@@ -108,20 +114,49 @@ class AntigravityOrchestrator {
       // Initialize Redis connection
       await this.client.initialize();
 
-      // Register as orchestrator
-      await this.client.register(CONFIG.agentName, CONFIG.agentRole, CONFIG.platform, [
-        'orchestration',
-        'workflow_management',
-        'task_routing',
-        'result_aggregation',
-        'agent_coordination',
-      ]);
+      // Register with coordination capabilities. Role stays worker (or
+      // AGENT_ROLE override for non-baton seats); never claim master-clock.
+      const requestedRole = String(CONFIG.agentRole || 'worker').toLowerCase();
+      const effectiveRole = ['orchestrator', 'director'].includes(requestedRole)
+        ? 'worker'
+        : requestedRole;
+      if (effectiveRole !== requestedRole) {
+        console.warn(
+          `[antigravity] AGENT_ROLE=${requestedRole} coerced to worker — baton seat is master-clock only`
+        );
+      }
+      await this.client.register(
+        CONFIG.agentName,
+        effectiveRole,
+        CONFIG.platform,
+        [
+          'orchestration',
+          'workflow_management',
+          'task_routing',
+          'result_aggregation',
+          'agent_coordination',
+          'code_assistance',
+          'planning',
+          'analysis',
+        ],
+        {
+          daccRole: effectiveRole,
+          workerAction: 'orchestrator',
+          traits: {
+            orchestrates_agents: true,
+            subAgent_capable: true,
+            persona_source: 'platform',
+            autonomy_level: 'semiautonomous',
+          },
+        }
+      );
 
       // Set up message handlers
       this.setupHandlers();
 
       this.isRunning = true;
-      console.log('\n🎯 Antigravity Orchestrator is ready!');
+      console.log('\n🎯 Antigravity agent is ready!');
+      console.log('   Role/platform are orthogonal — baton holder is master-clock.');
       console.log('\nAvailable workflows:');
       Object.entries(WORKFLOWS).forEach(([id, wf]) => {
         console.log(`  - ${id}: ${wf.name}`);
@@ -391,7 +426,7 @@ ${Object.entries(WORKFLOWS)
       // Headless / nohup: do not attach readline to a non-TTY stdin
       // (EOF or /dev/zero null bytes would tear the process down).
       if (!process.stdin.isTTY) {
-        console.log('[headless] no TTY — orchestrator stays up on Redis event loop');
+        console.log('[headless] no TTY — agent stays up on Redis event loop');
         return;
       }
 
@@ -411,12 +446,12 @@ ${Object.entries(WORKFLOWS)
   }
 
   /**
-   * Stop the orchestrator
+   * Stop the agent
    */
   async stop() {
     this.isRunning = false;
     await this.client.cleanup();
-    console.log('👋 Antigravity orchestrator stopped');
+    console.log('👋 Antigravity agent stopped');
   }
 }
 
@@ -425,8 +460,8 @@ ${Object.entries(WORKFLOWS)
 // ============================================================================
 
 async function main() {
-  const orchestrator = new AntigravityOrchestrator();
-  await orchestrator.start();
+  const agent = new AntigravityAgent();
+  await agent.start();
 }
 
 // Run if executed directly
@@ -434,4 +469,4 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-module.exports = { AntigravityOrchestrator, WORKFLOWS };
+module.exports = { AntigravityAgent, AntigravityOrchestrator: AntigravityAgent, WORKFLOWS };

@@ -234,7 +234,10 @@ export const PROTOCOL_NETWORK_AGENTS: Array<{
 }> = [
   {
     name: 'antigravity',
-    role: 'orchestrator',
+    // Platform wrappers are workers by default. The baton holder is master-clock
+    // (ORCHESTRATOR-{ts}), not any particular fulfillment platform. Orchestration
+    // capabilities may still be assigned via capabilities / workerAction.
+    role: 'worker',
     platform: 'antigravity',
     processPattern: 'antigravity-redis-wrapper',
   },

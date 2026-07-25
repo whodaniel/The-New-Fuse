@@ -416,3 +416,8 @@ temp-*.rdb
 # Bearer token file for tnf-browser extension (rotate; pre-existing in history)
 packages/tnf-browser/extension/token.json
 
+
+# Build artifact exclusions (fix: dist/ negation pattern re-includes these)
+packages/contracts/cache/
+packages/mcp-concordance-server/dist/
+packages/types/.turbo/
