@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SCHEMA_DIR="/Users/gspencer/code/a2ui/specification/0.9"
+SCHEMA_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SERVER_SCHEMA="${SCHEMA_DIR}/server_to_client.json"
 COMMON_TYPES="${SCHEMA_DIR}/common_types.json"
 COMPONENT_CATALOG="${SCHEMA_DIR}/component_catalog.json"

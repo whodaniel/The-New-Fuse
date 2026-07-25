@@ -50,7 +50,7 @@
             {
               "id": "rep-001",
               "name": "repo",
-              "value": "=/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+              "value": "=${TNF_ROOT}",
               "type": "string"
             },
             {
