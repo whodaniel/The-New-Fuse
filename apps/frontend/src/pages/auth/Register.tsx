@@ -100,12 +100,11 @@ const Register: React.FC = () => {
     setIsLoading(true);
     try {
       const result = await signInWithGoogle();
-      if (result?.method !== 'google_redirect') {
-        navigate('/dashboard', { replace: true });
-      }
+      if (result?.method === 'google_redirect') return;
+      navigate('/dashboard', { replace: true });
     } catch (err: unknown) {
-      setError(err?.message || 'Google sign-up failed');
-    } finally {
+      const message = err instanceof Error ? err.message : (err as { message?: string })?.message;
+      setError(message || 'Google sign-up failed');
       setIsLoading(false);
     }
   };

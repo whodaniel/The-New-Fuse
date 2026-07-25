@@ -474,18 +474,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const code = url?.searchParams.get('code') ?? _code ?? '';
       let accessToken = '';
 
-      if (code) {
+      // detectSessionInUrl may already have exchanged the PKCE code during
+      // client init. Prefer an existing session before attempting a second exchange.
+      {
+        const { data: existing } = await supabase.auth.getSession();
+        accessToken = existing?.session?.access_token ?? '';
+      }
+
+      if (!accessToken && code) {
         const { data, error: codeErr } = await supabase.auth.exchangeCodeForSession(code);
-        if (codeErr) throw new Error(codeErr.message || 'Failed to exchange OAuth code');
-        accessToken = data?.session?.access_token ?? '';
-      } else if (url) {
+        if (codeErr) {
+          // Code may already have been consumed by detectSessionInUrl — re-check session.
+          const { data: afterErr } = await supabase.auth.getSession();
+          accessToken = afterErr?.session?.access_token ?? '';
+          if (!accessToken) {
+            throw new Error(codeErr.message || 'Failed to exchange OAuth code');
+          }
+        } else {
+          accessToken = data?.session?.access_token ?? '';
+        }
+      } else if (!accessToken && url) {
         const hashParams = new URLSearchParams(
           url.hash.startsWith('#') ? url.hash.slice(1) : url.hash
         );
         accessToken = hashParams.get('access_token') ?? '';
       }
 
-      // Poll for session if not yet available
+      // Poll for session if not yet available (race with detectSessionInUrl)
       if (!accessToken) {
         for (let i = 0; i < 10; i++) {
           const { data } = await supabase.auth.getSession();

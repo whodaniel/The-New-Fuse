@@ -50,7 +50,9 @@ const OAuthCallback = () => {
         navigate('/dashboard', { replace: true });
         return;
       }
-      // Supabase OAuth callback flow (uses ?code= query param)
+      // Supabase OAuth callback flow (uses ?code= query param).
+      // handleSSOCallback also recovers when detectSessionInUrl already
+      // consumed the code and established a session.
       const code = params.get('code');
       if (code) {
         await handleSSOCallback('supabase', code);
@@ -61,7 +63,10 @@ const OAuthCallback = () => {
       console.error('OAuthCallback: No code, token, or access_token found in URL');
       navigate('/auth/login?error=no_auth_data', { replace: true });
     };
-    run().catch(() => navigate('/auth/login?error=auth_failed', { replace: true }));
+    run().catch((err) => {
+      console.error('OAuth callback handling failed:', err);
+      navigate('/auth/login?error=auth_failed', { replace: true });
+    });
   }, [location, navigate, login, handleSSOCallback]);
   return (
     <div className="flex items-center justify-center min-h-screen">

@@ -55,6 +55,14 @@ import {
   loadAutonomousTurnCapConfig,
   parseExtendTurnCapMarker,
 } from './utils/autonomous-turn-cap.js';
+import {
+  DEFAULT_OPERATOR_WINDOW_MS,
+  detectOperatorWindowDirective,
+  effectiveOperatorWindowMs,
+  parseOperatorWindowArg,
+  persistOperatorWindowMs,
+  resolveOperatorWindowMs,
+} from './utils/operator-window.js';
 import { resolvePrompt } from './utils/prompt-input.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
@@ -4167,6 +4175,8 @@ type AutonomousSessionState = {
   capResets: number;
   /** Consecutive autonomous turns that produced zero executable bash blocks. */
   consecutiveNoBashTurns: number;
+  /** Operator hold: suppress auto-continue until /continue (or /autonomous on). */
+  operatorHold: boolean;
 };
 
 const autonomousTurnCapConfig = loadAutonomousTurnCapConfig();
@@ -4616,11 +4626,65 @@ async function handleInteractiveSlashCommand(
     if (context.autonomousMode) {
       enableAutonomousRuntimeDefaults();
       if (context.autonomousState) {
+        context.autonomousState.operatorHold = false;
         context.autonomousState.continuePending = true;
       }
     } else if (context.autonomousState) {
       context.autonomousState.continuePending = false;
     }
+    return { handled: true };
+  }
+
+  if (command.name === 'window' || command.aliases?.includes('operator-window')) {
+    const arg = parsed.args.join(' ').trim();
+    if (!arg) {
+      const current = resolveOperatorWindowMs();
+      console.log(
+        chalk.cyan(
+          `  Operator window: ${Math.round(current / 1000)}s (${current}ms). Default ${Math.round(DEFAULT_OPERATOR_WINDOW_MS / 1000)}s.`
+        )
+      );
+      console.log(
+        chalk.dim('  Usage: /window <seconds|30s|8000ms>  ·  persists to ~/.tnf/tui-mode.json')
+      );
+      return { handled: true };
+    }
+    const parsedMs = parseOperatorWindowArg(arg);
+    if (parsedMs === null) {
+      console.log(chalk.red('  Usage: /window <seconds|30s|8000ms>'));
+      return { handled: true };
+    }
+    const saved = persistOperatorWindowMs(parsedMs);
+    process.env.TNF_OPERATOR_WINDOW_MS = String(saved);
+    console.log(
+      chalk.green(
+        `  Operator window set to ${Math.round(saved / 1000)}s (${saved}ms) — persisted for next launch`
+      )
+    );
+    return { handled: true };
+  }
+
+  if (command.name === 'hold' || command.aliases?.includes('pause-auto')) {
+    if (context.autonomousState) {
+      context.autonomousState.operatorHold = true;
+      context.autonomousState.continuePending = false;
+    }
+    console.log(
+      chalk.yellow(
+        '  ⏸ Autonomous continue HOLD — type freely. /continue or /autonomous on to resume.'
+      )
+    );
+    return { handled: true };
+  }
+
+  if (command.name === 'continue' || command.aliases?.includes('resume-auto')) {
+    if (context.autonomousState) {
+      context.autonomousState.operatorHold = false;
+      context.autonomousState.continuePending = true;
+    }
+    context.autonomousMode = true;
+    enableAutonomousRuntimeDefaults();
+    console.log(chalk.green('  ⟳ Autonomous continue resumed'));
     return { handled: true };
   }
 
@@ -17687,7 +17751,8 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
   console.log(chalk.cyan('╚══════════════════════════════════════════════╝'));
   console.log(
     chalk.dim(
-      ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous off to pause shell auto-exec\n'
+      ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous off to pause shell auto-exec\n' +
+        ' /hold pauses auto-continue · /window <sec> sets operator takeover window · /continue resumes\n'
     )
   );
 
@@ -17722,6 +17787,7 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     capCeiling: turnCapState.capCeiling,
     capResets: turnCapState.capResets,
     consecutiveNoBashTurns: 0,
+    operatorHold: false,
   };
   const slashContext: InteractiveSlashContext = {
     messages,
@@ -17730,9 +17796,19 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     autonomousMode,
     autonomousState,
   };
+  // Mutable session window — /window and natural-language directives update this live.
+  let operatorWindowMs = resolveOperatorWindowMs();
+  /** True while waiting for (or collecting) operator keystrokes — mutes TUI noise. */
+  let operatorInputActive = false;
+  const STALL_AUTO_HOLD_AFTER = 5;
   if (autonomousMode) {
     enableAutonomousRuntimeDefaults();
     console.log(chalk.dim('  Autonomous shell execution: ON (auto-continue enabled)'));
+    console.log(
+      chalk.dim(
+        `  Operator window: ${Math.round(operatorWindowMs / 1000)}s (TNF_OPERATOR_WINDOW_MS or ~/.tnf/tui-mode.json; change with /window)`
+      )
+    );
     if (tuiMode === 'LONG_RUN' || tuiMode === 'AUTONOMOUS') {
       console.log(
         chalk.dim('  TUI mode: ') +
@@ -17745,25 +17821,32 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     }
   }
 
-  // Start heartbeat to keep session alive
-  const heartbeatInterval = setInterval(async () => {
+  // Keep-alive pulse — must NOT inherit stdio into the TUI (that dumps
+  // heartbeat JSON onto the prompt line and corrupts operator typing).
+  const heartbeatInterval = setInterval(() => {
+    if (operatorInputActive || autonomousState.operatorHold) return;
     try {
-      // Simple heartbeat via terminal pulse script
       const pulseScript = path.join(
         process.env.HOME || '/tmp',
         '.tnf/bin/terminal-heartbeat-pulse.cjs'
       );
-      if (fs.existsSync(pulseScript)) {
-        await runCommand('node', [pulseScript]);
-      }
+      if (!fs.existsSync(pulseScript)) return;
+      const child = spawn(process.execPath, [pulseScript], {
+        cwd: repoRoot,
+        env: process.env,
+        stdio: 'ignore',
+        detached: true,
+      });
+      child.unref();
     } catch {
       // Silent fail - heartbeat is best-effort
     }
   }, 30000);
 
   // Self-prompting: queue an autonomous turn every 5 minutes
-  const contextRefreshInterval = setInterval(async () => {
+  const contextRefreshInterval = setInterval(() => {
     if (!slashContext.autonomousMode) return;
+    if (operatorInputActive || autonomousState.operatorHold) return;
     try {
       autonomousState.contextRefreshPending = true;
       autonomousState.continuePending = true;
@@ -17776,6 +17859,12 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
   const ask = (prompt: string): Promise<string> =>
     new Promise((resolve, reject) => {
       if (rlClosed) return reject(new Error('stdin closed'));
+      operatorInputActive = true;
+
+      const finish = (answer: string) => {
+        operatorInputActive = false;
+        resolve(answer);
+      };
 
       const timeoutSec = parseInt(process.env.TNF_STALL_DEFENSE_TIMEOUT || '0', 10);
 
@@ -17787,6 +17876,7 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
           if (answered) return;
           answered = true;
           ac.abort();
+          operatorInputActive = false;
           console.log(chalk.yellow('\n⏳ Stall timeout reached. Self-prompting to continue...'));
           resolve(
             process.env.TNF_STALL_DEFENSE_PROMPT ||
@@ -17798,28 +17888,18 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
           if (answered) return;
           answered = true;
           clearTimeout(timer);
-          resolve(answer);
+          finish(answer);
         });
       } else {
-        rl.question(prompt, resolve);
+        rl.question(prompt, finish);
       }
     });
 
-  // Operator-priority window (operator report 2026-07-22: "tnf is now always
-  // thinking, leaving me no time to manually prompt"). Before each autonomous
-  // continuation, hold an interruptible idle window with the prompt line
-  // visible: any keypress hands the turn to the operator (the keystroke stays
-  // in the readline buffer, so nothing is lost); plain Enter skips the wait;
-  // idle expiry proceeds autonomously. continuePending is NOT cleared on
-  // takeover, so autonomy resumes after the operator's input is handled.
-  const operatorWindowMs = (() => {
-    const parsedWindow = parseInt(
-      process.env.TNF_OPERATOR_WINDOW_MS || process.env.TNF_AUTONOMOUS_TURN_DELAY_MS || '8000',
-      10
-    );
-    return Number.isFinite(parsedWindow) && parsedWindow >= 0 ? parsedWindow : 8000;
-  })();
-
+  // Operator-priority window (operator report 2026-07-22 / 2026-07-25):
+  // Before each autonomous continuation, hold an interruptible idle window.
+  // Default is 30s (was 8s — too short to finish typing). Any keypress hands
+  // the turn to the operator; plain Enter skips the wait; idle expiry continues.
+  // /hold freezes auto-continue entirely until /continue.
   const waitForOperatorInterrupt = (windowMs: number): Promise<boolean> =>
     new Promise((resolve) => {
       let settled = false;
@@ -17844,6 +17924,9 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     });
 
   while (true) {
+    // Pick up /window changes (env + ~/.tnf/tui-mode.json) every turn.
+    operatorWindowMs = resolveOperatorWindowMs();
+
     const modelLabel = `${chalk.dim(client.providerName || 'model')}/${chalk.white(client.model.replace(/^.*\//, ''))}`;
     const promptWithModel =
       process.env.TNF_SHOW_MODEL_IN_PROMPT !== '0'
@@ -17853,18 +17936,36 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     let trimmed: string;
     let fromAutonomousContinue = false;
 
+    // Honor hold: never auto-continue while operator has paused the loop.
+    if (autonomousState.operatorHold) {
+      autonomousState.continuePending = false;
+    }
+
     let operatorTakeover = false;
-    if (slashContext.autonomousMode && autonomousState.continuePending) {
+    if (
+      slashContext.autonomousMode &&
+      autonomousState.continuePending &&
+      !autonomousState.operatorHold
+    ) {
+      const windowMs = effectiveOperatorWindowMs(
+        operatorWindowMs,
+        autonomousState.consecutiveNoBashTurns
+      );
       if (String((rl as any).line || '').trim()) {
         // Operator is mid-keystroke — never continue over a half-typed line.
         operatorTakeover = true;
-      } else if (operatorWindowMs > 0 && process.stdin.isTTY) {
+      } else if (windowMs > 0 && process.stdin.isTTY) {
         console.log(
           chalk.dim(
-            `\n  ⏸ operator window ${Math.round(operatorWindowMs / 1000)}s — type to take over, Enter to continue now`
+            `\n  ⏸ operator window ${Math.round(windowMs / 1000)}s — type to take over, Enter to continue now` +
+              (autonomousState.consecutiveNoBashTurns >= 2
+                ? chalk.yellow('  (stall-boosted — /hold for unlimited time)')
+                : '')
           )
         );
-        operatorTakeover = await waitForOperatorInterrupt(operatorWindowMs);
+        operatorInputActive = true;
+        operatorTakeover = await waitForOperatorInterrupt(windowMs);
+        if (!operatorTakeover) operatorInputActive = false;
       }
       if (operatorTakeover) {
         console.log(
@@ -17873,7 +17974,12 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
       }
     }
 
-    if (slashContext.autonomousMode && autonomousState.continuePending && !operatorTakeover) {
+    if (
+      slashContext.autonomousMode &&
+      autonomousState.continuePending &&
+      !operatorTakeover &&
+      !autonomousState.operatorHold
+    ) {
       autonomousState.continuePending = false;
       fromAutonomousContinue = true;
       trimmed = buildAutonomousContinuePrompt(autonomousState);
@@ -17899,6 +18005,22 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
         continue;
       }
       if (!trimmed) continue;
+
+      // Natural-language window directive (typed mid-session without /window).
+      const windowDirectiveMs = detectOperatorWindowDirective(trimmed);
+      if (windowDirectiveMs !== null) {
+        operatorWindowMs = persistOperatorWindowMs(windowDirectiveMs);
+        process.env.TNF_OPERATOR_WINDOW_MS = String(operatorWindowMs);
+        console.log(
+          chalk.green(
+            `  Operator window set to ${Math.round(operatorWindowMs / 1000)}s — type your next prompt (or /continue)`
+          )
+        );
+        // Give them the quieter hold so the next line isn't raced.
+        autonomousState.operatorHold = true;
+        autonomousState.continuePending = false;
+        continue;
+      }
     }
 
     let outbound = trimmed;
@@ -17914,6 +18036,7 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
     if (wantsAutonomousExecution(outbound)) {
       slashContext.autonomousMode = true;
       enableAutonomousRuntimeDefaults();
+      autonomousState.operatorHold = false;
       autonomousState.continuePending = true;
     }
 
@@ -18019,6 +18142,16 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
                 `\n  ⚠ No commands executed (${autonomousState.consecutiveNoBashTurns} turn(s)) — stall break injected`
               )
             );
+            // After repeated idle/blocked loops, stop racing the operator.
+            if (autonomousState.consecutiveNoBashTurns >= STALL_AUTO_HOLD_AFTER) {
+              autonomousState.operatorHold = true;
+              autonomousState.continuePending = false;
+              console.log(
+                chalk.yellow(
+                  `\n  ⏸ Auto-held after ${STALL_AUTO_HOLD_AFTER} stall turns — type freely. /continue to resume autonomous loop.`
+                )
+              );
+            }
           }
         }
         const verifyChecks = await runAutonomousVerifyGates();
@@ -18087,15 +18220,15 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
         } else if (hardCap.kind === 'reset') {
           console.log(chalk.yellow(`\n  ${hardCap.consoleLine}`));
           messages.push({ role: 'system', content: hardCap.systemMessage });
-          autonomousState.continuePending = true;
+          autonomousState.continuePending = !autonomousState.operatorHold;
         } else {
-          autonomousState.continuePending = true;
+          autonomousState.continuePending = !autonomousState.operatorHold;
         }
       }
     } catch (err: any) {
       stopProcessingIndicator(false);
       console.error(chalk.red('\n  Error: ' + err.message));
-      if (slashContext.autonomousMode) {
+      if (slashContext.autonomousMode && !autonomousState.operatorHold) {
         autonomousState.continuePending = true;
       }
     }

@@ -187,6 +187,50 @@ implementation — determines whether the system becomes brittle.
 - **MCP Server**: `packages/mcp-concordance-server/` — 5 tools:
   lookup_identifier, top_identifiers, power_phrases, file_identifiers,
   concordance_stats
+
+## Semantic Pipeline (Unified Graph)
+
+Cross-system semantic integration joining the concordance count, wiki backlinks,
+concept KG, codebase map, agent graphs, framework graph, knowledge tree,
+observatory agents, handoff lineage, and wiki-inbox packets into ONE searchable
+graph.
+
+- **Generator**: `scripts/semantic-graph/` (Python stdlib only — no pip deps)
+  - `build_concordance.py` — re-scan corpus term counts (use `--recount`)
+  - `build_unified_graph.py` — merges 8+ sources into `unified_graph.json.gz`
+  - `build_report.py` — self-contained wordcount HTML
+  - `build_graph_explorer.py` — self-contained unified graph explorer (HTML)
+  - `build_index.py` — hub `index.html` linking all reports
+  - `build_all.py` — single command for the full pipeline
+  - `common.py` — shared helpers (slugify, base58, base64-gzip embedding, chrome
+    header/sidebar/footer w/ TNF logo data URI, `SYSTEM_ORIGINS`/`USER_ORIGINS`
+    classification, personal-identifier filter)
+- **Outputs**:
+  - **System (distributable)**:
+    `concordance_results/{index.html, unified_graph_explorer.html, wordcount_report.html, *.json.gz, *_stats.json}`
+    — these are also published to
+    `apps/frontend/public/visualizations/semantic/` by `build_all.py`
+  - **Personal (local-only)**: `concordance_results/user/` — contains
+    handoff-lineage, wiki-inbox, and KB-section origins. NEVER published,
+    gitignored. The explorer carries a banner stating the data class.
+- **Origins classification** (in `common.py` `SYSTEM_ORIGINS`/`USER_ORIGINS`):
+  - **System**: wiki, memory-graph, concept-kg, filesystem, codebase-map,
+    agent-graph, framework-graph, knowledge-tree, wordcount, observatory
+  - **User**: handoff (utp_events), wiki-inbox, KB-section enrichment
+- **Filter rule**: targets matching `PERSONAL_IDENTIFIERS` (e.g.
+  `danielgoldberg`) are stripped from the SYSTEM view; the user overlay retains
+  them for local use.
+- **npm entry points** (run from TNF repo root):
+  - `pnpm tnf:semantic:build` — rebuild graph + reports + hub + publish
+  - `pnpm tnf:semantic:recount` — include corpus re-scan (~GB scan)
+  - `pnpm tnf:semantic:graph` / `:report` — targeted rebuilds
+  - `pnpm tnf:semantic:open` — open hub in browser
+- **Frontend registry**: `apps/frontend/src/pages/Visualizations.tsx` registers
+  the hub and graph explorer as static-html surfaces (under "System Views").
+- **Two concordance generations coexist** (see `concordance_results/README.md`
+  for the table) — the legacy MCP-bound pipeline
+  (`scripts/generate_concordance.py`) is intentionally retained because the MCP
+  server and Supabase edge function depend on its outputs.
 - **HTTP API (Edge Function)**:
   `https://wslydgtgindrywldatbv.supabase.co/functions/v1/concordance/` — no auth
   required (verify_jwt=false)

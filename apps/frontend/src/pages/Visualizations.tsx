@@ -402,6 +402,24 @@ const VISUALIZATION_SECTIONS: VisualizationSection[] = [
         status: 'needs-work',
         integration: 'static-html',
       },
+      {
+        title: 'Semantic Hub (Reports Index)',
+        description:
+          'Index of the distributed semantic reports — concordance, unified graph, and 19 discovered TNF visualizations.',
+        href: '/visualizations/semantic/index.html',
+        tags: ['Semantic', 'Hub'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+      {
+        title: 'Unified Semantic Graph Explorer',
+        description:
+          'Cross-system graph explorer joining wiki backlinks, concept KG, codebase map, agent graphs, knowledge tree, handoff lineage, and corpus terms into one searchable visualization.',
+        href: '/visualizations/semantic/unified_graph_explorer.html',
+        tags: ['Graph', 'Semantic'],
+        status: 'stable',
+        integration: 'static-html',
+      },
     ],
   },
   {
