@@ -7,11 +7,22 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::process::{Command, Stdio};
 use std::sync::Arc;
-use tauri::State;
+use tauri::{AppHandle, Emitter, Manager, State};
 use tokio::sync::{mpsc, oneshot, Mutex};
 use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 use uuid::Uuid;
+
+const TNF_BROWSER_EVENT: &str = "tnf-browser-event";
+
+/// Events worth pushing to the UI. Drop high-volume frames like `response`.
+fn should_forward_event(event: &str) -> bool {
+    matches!(
+        event,
+        "extensionConnected" | "extensionDisconnected" | "urlChanged"
+    )
+}
 
 const DEFAULT_PORT: u16 = 7331;
 
@@ -96,7 +107,7 @@ impl TnfBrowserBridge {
         }
     }
 
-    pub async fn connect(&self) -> Result<(), String> {
+    pub async fn connect(&self, app: AppHandle) -> Result<(), String> {
         {
             let inner = self.inner.lock().await;
             if inner.connected {
@@ -147,6 +158,7 @@ impl TnfBrowserBridge {
         });
 
         let read_inner = self.inner.clone();
+        let app_handle = app.clone();
         tokio::spawn(async move {
             while let Some(msg) = read.next().await {
                 match msg {
@@ -154,11 +166,16 @@ impl TnfBrowserBridge {
                         if let Ok(value) = serde_json::from_str::<Value>(&text) {
                             if value.get("type").and_then(|v| v.as_str()) == Some("event") {
                                 let event = value.get("event").and_then(|v| v.as_str()).unwrap_or("");
-                                let mut inner = read_inner.lock().await;
-                                if event == "extensionConnected" {
-                                    inner.runtime_connected = true;
-                                } else if event == "extensionDisconnected" {
-                                    inner.runtime_connected = false;
+                                {
+                                    let mut inner = read_inner.lock().await;
+                                    if event == "extensionConnected" {
+                                        inner.runtime_connected = true;
+                                    } else if event == "extensionDisconnected" {
+                                        inner.runtime_connected = false;
+                                    }
+                                }
+                                if should_forward_event(event) {
+                                    let _ = app_handle.emit(TNF_BROWSER_EVENT, &value);
                                 }
                                 continue;
                             }
@@ -205,6 +222,7 @@ impl TnfBrowserBridge {
 
     pub async fn command(
         &self,
+        app: AppHandle,
         action: String,
         params: Option<Value>,
         tab_id: Option<i64>,
@@ -213,7 +231,7 @@ impl TnfBrowserBridge {
             let inner = self.inner.lock().await;
             if !inner.connected {
                 drop(inner);
-                self.connect().await?;
+                self.connect(app).await?;
             }
         }
 
@@ -260,9 +278,172 @@ pub async fn tnf_browser_status(
     Ok(bridge.status().await)
 }
 
+// ---------------------------------------------------------------------------
+// Runtime launcher
+//
+// SCOPE NOTE: this is deliberately NOT a general command runner. The generic
+// `execute_command` was removed as the CRIT-1 RCE remediation and must not come
+// back. This spawns one fixed program (the TNF Browser CLI) with one fixed
+// argument (`start`) and accepts no caller-supplied input.
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Serialize, Clone)]
+pub struct TnfBrowserStartResult {
+    pub ok: bool,
+    pub message: String,
+    /// Exact command to run by hand when we cannot launch it ourselves.
+    pub command: String,
+    pub already_running: bool,
+}
+
+/// Locate `bin/cli.js` — bundled resource first, then dev monorepo layouts.
+fn resolve_cli_path(app: &AppHandle) -> Option<PathBuf> {
+    if let Ok(dir) = std::env::var("TNF_BROWSER_CLI") {
+        let explicit = PathBuf::from(dir);
+        if explicit.is_file() {
+            return Some(explicit);
+        }
+    }
+
+    if let Ok(resource_dir) = app.path().resource_dir() {
+        let bundled = resource_dir.join("tnf-browser").join("bin").join("cli.js");
+        if bundled.is_file() {
+            return Some(bundled);
+        }
+    }
+
+    let mut roots: Vec<PathBuf> = Vec::new();
+    if let Ok(cwd) = std::env::current_dir() {
+        roots.push(cwd);
+    }
+    if let Ok(manifest) = std::env::var("CARGO_MANIFEST_DIR") {
+        roots.push(PathBuf::from(manifest));
+    }
+
+    // Walk up a few levels from each root looking for the workspace package.
+    for root in roots {
+        let mut cursor = root.as_path();
+        for _ in 0..6 {
+            let candidate = cursor
+                .join("packages")
+                .join("tnf-browser")
+                .join("bin")
+                .join("cli.js");
+            if candidate.is_file() {
+                return Some(candidate);
+            }
+            match cursor.parent() {
+                Some(parent) => cursor = parent,
+                None => break,
+            }
+        }
+    }
+
+    None
+}
+
+/// Locate a node binary. A macOS .app launched from Finder inherits a minimal
+/// PATH, so PATH lookup alone is not enough.
+fn resolve_node() -> Option<PathBuf> {
+    if let Ok(explicit) = std::env::var("NODE") {
+        let path = PathBuf::from(explicit);
+        if path.is_file() {
+            return Some(path);
+        }
+    }
+
+    if let Ok(path_var) = std::env::var("PATH") {
+        for dir in std::env::split_paths(&path_var) {
+            let candidate = dir.join("node");
+            if candidate.is_file() {
+                return Some(candidate);
+            }
+        }
+    }
+
+    let home = dirs_home();
+    let fallbacks = [
+        home.join(".local").join("bin").join("node"),
+        PathBuf::from("/opt/homebrew/bin/node"),
+        PathBuf::from("/usr/local/bin/node"),
+        PathBuf::from("/usr/bin/node"),
+    ];
+    fallbacks.into_iter().find(|p| p.is_file())
+}
+
 #[tauri::command]
-pub async fn tnf_browser_connect(bridge: State<'_, Arc<TnfBrowserBridge>>) -> Result<bool, String> {
-    bridge.connect().await?;
+pub async fn tnf_browser_start(app: AppHandle) -> Result<TnfBrowserStartResult, String> {
+    let manual = "node packages/tnf-browser/bin/cli.js start".to_string();
+
+    if port_open(DEFAULT_PORT).await {
+        return Ok(TnfBrowserStartResult {
+            ok: true,
+            message: format!("TNF Browser already listening on :{}", DEFAULT_PORT),
+            command: manual,
+            already_running: true,
+        });
+    }
+
+    let cli = match resolve_cli_path(&app) {
+        Some(path) => path,
+        None => {
+            return Ok(TnfBrowserStartResult {
+                ok: false,
+                message: "TNF Browser CLI not found. Start it from a terminal.".to_string(),
+                command: manual,
+                already_running: false,
+            })
+        }
+    };
+
+    let node = match resolve_node() {
+        Some(path) => path,
+        None => {
+            return Ok(TnfBrowserStartResult {
+                ok: false,
+                message: "Node.js not found on PATH. Start TNF Browser from a terminal."
+                    .to_string(),
+                command: format!("node {} start", cli.display()),
+                already_running: false,
+            })
+        }
+    };
+
+    let resolved = format!("{} {} start", node.display(), cli.display());
+
+    match Command::new(&node)
+        .arg(&cli)
+        .arg("start")
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+    {
+        Ok(child) => Ok(TnfBrowserStartResult {
+            ok: true,
+            message: format!(
+                "TNF Browser starting (pid {}) — opens managed Chromium, then :{}",
+                child.id(),
+                DEFAULT_PORT
+            ),
+            command: resolved,
+            already_running: false,
+        }),
+        Err(err) => Ok(TnfBrowserStartResult {
+            ok: false,
+            message: format!("Failed to launch TNF Browser: {}", err),
+            command: resolved,
+            already_running: false,
+        }),
+    }
+}
+
+#[tauri::command]
+pub async fn tnf_browser_connect(
+    app: AppHandle,
+    bridge: State<'_, Arc<TnfBrowserBridge>>,
+) -> Result<bool, String> {
+    bridge.connect(app).await?;
     Ok(true)
 }
 
@@ -276,10 +457,11 @@ pub async fn tnf_browser_disconnect(
 
 #[tauri::command]
 pub async fn tnf_browser_command(
+    app: AppHandle,
     action: String,
     params: Option<Value>,
     tab_id: Option<i64>,
     bridge: State<'_, Arc<TnfBrowserBridge>>,
 ) -> Result<Value, String> {
-    bridge.command(action, params, tab_id).await
+    bridge.command(app, action, params, tab_id).await
 }

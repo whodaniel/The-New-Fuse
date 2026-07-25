@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import FederationChannelPanel from '../components/federation/FederationChannelPanel';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useFederationNode } from '../hooks/useFederationNode';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import FederationNodeService from '../services/FederationNodeService';
 
@@ -16,6 +18,9 @@ interface A2AMessage {
 
 const A2AControl: React.FC = () => {
   const { unifiedAgents, state: synergy } = useOperatorSynergy();
+  // Federation channels live here rather than in the browser console — they are
+  // agent-to-agent messaging, not browser control.
+  const federation = useFederationNode();
   const [messages, setMessages] = useState<A2AMessage[]>([]);
   const [targetAgent, setTargetAgent] = useState('');
   const [messageType, setMessageType] = useState('task');
@@ -117,6 +122,21 @@ const A2AControl: React.FC = () => {
     >
       <SynergyStatusBar />
       <div className="a2a-layout">
+        <div className="tnf-card a2a-channels">
+          <FederationChannelPanel
+            state={federation.state}
+            onConnect={federation.connect}
+            onRefresh={federation.refresh}
+            onSelectChannel={federation.selectChannel}
+            onCreateChannel={federation.createChannel}
+            onJoinChannel={federation.joinChannel}
+            onLeaveChannel={federation.leaveChannel}
+            onSendMessage={federation.sendMessage}
+            onPauseChannel={federation.pauseChannel}
+            onResumeChannel={federation.resumeChannel}
+          />
+        </div>
+
         <div className="tnf-card a2a-composer">
           <h3 className="tnf-section-title">Send Message</h3>
           <div className="composer-field">
@@ -201,9 +221,17 @@ const A2AControl: React.FC = () => {
       <style>{`
         .a2a-layout {
           display: grid;
-          grid-template-columns: minmax(280px, 360px) 1fr;
+          grid-template-columns: minmax(300px, 380px) minmax(280px, 360px) 1fr;
           gap: 20px;
           align-items: start;
+        }
+        .a2a-channels {
+          padding: 0;
+          overflow: hidden;
+        }
+        @media (max-width: 1280px) {
+          .a2a-layout { grid-template-columns: minmax(280px, 360px) 1fr; }
+          .a2a-channels { grid-column: 1 / -1; }
         }
         .composer-field {
           display: flex;

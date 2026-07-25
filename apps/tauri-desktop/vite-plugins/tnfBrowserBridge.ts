@@ -37,6 +37,12 @@ const DEFAULT_PORT = 7331;
 const TOKEN_PATH = path.join(os.homedir(), 'tnf-browser', 'token');
 const BASE = '/__tnf-browser';
 
+/** Keeps idle SSE streams from being dropped by the dev server or a proxy. */
+const SSE_HEARTBEAT_MS = 25000;
+
+/** Events worth pushing to the UI. Drop high-volume frames like `response`. */
+const UI_EVENTS = new Set(['extensionConnected', 'extensionDisconnected', 'urlChanged']);
+
 type Pending = {
   resolve: (value: unknown) => void;
   reject: (error: Error) => void;
@@ -49,6 +55,7 @@ type BridgeState = {
   runtimeConnected: boolean;
   lastError: string | null;
   daemon: ChildProcess | null;
+  sseClients: Set<http.ServerResponse>;
 };
 
 const state: BridgeState = {
@@ -57,7 +64,19 @@ const state: BridgeState = {
   runtimeConnected: false,
   lastError: null,
   daemon: null,
+  sseClients: new Set(),
 };
+
+function broadcastEvent(msg: Record<string, unknown>): void {
+  const payload = `data: ${JSON.stringify(msg)}\n\n`;
+  for (const client of state.sseClients) {
+    try {
+      client.write(payload);
+    } catch {
+      state.sseClients.delete(client);
+    }
+  }
+}
 
 function readToken(): string {
   try {
@@ -114,12 +133,16 @@ function attachMessageHandler(ws: InstanceType<WsCtor>): void {
       return;
     }
 
-    if (msg.type === 'event' && msg.event === 'extensionConnected') {
-      state.runtimeConnected = true;
-      return;
-    }
-    if (msg.type === 'event' && msg.event === 'extensionDisconnected') {
-      state.runtimeConnected = false;
+    if (msg.type === 'event') {
+      const eventName = typeof msg.event === 'string' ? msg.event : '';
+      if (eventName === 'extensionConnected') {
+        state.runtimeConnected = true;
+      } else if (eventName === 'extensionDisconnected') {
+        state.runtimeConnected = false;
+      }
+      if (UI_EVENTS.has(eventName)) {
+        broadcastEvent(msg);
+      }
       return;
     }
 
@@ -216,13 +239,15 @@ function resolveCliPath(): string {
   return path.resolve(__dirname, '../../../packages/tnf-browser/bin/cli.js');
 }
 
-function startDaemon(): { ok: boolean; message: string } {
-  if (state.daemon && !state.daemon.killed) {
-    return { ok: true, message: 'TNF Browser daemon already spawning' };
-  }
+function startDaemon(): { ok: boolean; message: string; command: string } {
   const cli = resolveCliPath();
+  const command = `node ${cli} start`;
+
+  if (state.daemon && !state.daemon.killed) {
+    return { ok: true, message: 'TNF Browser daemon already spawning', command };
+  }
   if (!fs.existsSync(cli)) {
-    return { ok: false, message: `CLI not found at ${cli}` };
+    return { ok: false, message: `CLI not found at ${cli}`, command };
   }
   try {
     const child = spawn(process.execPath, [cli, 'start'], {
@@ -235,10 +260,11 @@ function startDaemon(): { ok: boolean; message: string } {
     return {
       ok: true,
       message: 'TNF Browser start requested (opens managed Chromium + WS on :7331)',
+      command,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return { ok: false, message };
+    return { ok: false, message, command };
   }
 }
 
@@ -312,6 +338,33 @@ export function tnfBrowserBridgePlugin(): Plugin {
           if (pathname === `${BASE}/start` && req.method === 'POST') {
             const result = startDaemon();
             sendJson(res, result.ok ? 200 : 500, result);
+            return;
+          }
+
+          if (pathname === `${BASE}/events` && req.method === 'GET') {
+            res.writeHead(200, {
+              'Content-Type': 'text/event-stream',
+              'Cache-Control': 'no-cache, no-transform',
+              Connection: 'keep-alive',
+            });
+            res.write(': connected\n\n');
+            state.sseClients.add(res);
+            // Comment-frame heartbeat so idle streams are not dropped as stale.
+            const heartbeat = setInterval(() => {
+              try {
+                res.write(': ping\n\n');
+              } catch {
+                clearInterval(heartbeat);
+                state.sseClients.delete(res);
+              }
+            }, SSE_HEARTBEAT_MS);
+            const cleanup = () => {
+              clearInterval(heartbeat);
+              state.sseClients.delete(res);
+            };
+            req.on('close', cleanup);
+            req.on('error', cleanup);
+            res.on('close', cleanup);
             return;
           }
 

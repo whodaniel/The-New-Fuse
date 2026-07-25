@@ -1,10 +1,9 @@
-// The New Fuse - TNF Browser embedded WebView
+// The New Fuse - auxiliary browser WebView
 //
-// Hosts a real Tauri child WebView window that renders the live browser
-// surface for the TNF Browser control tool. This replaces the sandboxed
-// <iframe> preview (which many sites block via X-Frame-Options / CSP) with a
-// native webview that loads and renders the real site, and is the visible
-// surface driven by the TNF Browser extension + relay.
+// Opens a separate Tauri WebviewWindow at a URL for convenience preview.
+// This is NOT the Chromium session controlled by the TNF Browser extension
+// on :7331 — cookies, tabs, and DOM actions do not apply here. Prefer the
+// screenshot / Discover surface for the controlled session.
 
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 

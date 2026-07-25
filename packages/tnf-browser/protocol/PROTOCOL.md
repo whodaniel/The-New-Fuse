@@ -2,7 +2,8 @@
 
 TNF Browser exposes browser control over WebSocket.
 
-The protocol tells the browser what to do. It does not decide the task. The user or LLM chooses the sequence of actions.
+The protocol tells the browser what to do. It does not decide the task. The user
+or LLM chooses the sequence of actions.
 
 ## Connection
 
@@ -10,11 +11,13 @@ The protocol tells the browser what to do. It does not decide the task. The user
 WebSocket: ws://localhost:7331
 ```
 
-The local server listens on this port. The extension connects on launch. Your client connects to the same server.
+The local server listens on this port. The extension connects on launch. Your
+client connects to the same server.
 
 ## Message Format
 
 ### Request
+
 ```json
 {
   "id": "unique-string",
@@ -30,6 +33,7 @@ The local server listens on this port. The extension connects on launch. Your cl
 - `params`: action-specific payload
 
 ### Response
+
 ```json
 { "id": "same-id", "result": {} }
 ```
@@ -41,12 +45,14 @@ or:
 ```
 
 ### Events
+
 ```json
 { "type": "event", "event": "response", "data": { "url": "...", "status": 200, "tabId": 123, "method": "GET" } }
 { "type": "event", "event": "urlChanged", "data": { "tabId": 123, "url": "https://..." } }
 ```
 
 ### Keepalive
+
 - server sends `{ "type": "ping" }` every 20s
 - extension responds with `{ "type": "pong" }`
 
@@ -63,39 +69,45 @@ Many DOM commands return `handleId` values like `el_42`.
 
 The extension runtime exposes:
 
-| Action | Params | Returns |
-|--------|--------|---------|
+| Action                | Params                                                                                                  | Returns                   |
+| --------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------- |
 | `framework.setConfig` | `{ config: { handles?: { ttlMs?, cleanupIntervalMs? }, debug?: { cursor?, devtools?, sessionLog? } } }` | `{ ok: true, framework }` |
-| `framework.getConfig` | `{}` | `{ framework, version }` |
-| `framework.reload` | `{}` | `{ reloading: true }` |
+| `framework.getConfig` | `{}`                                                                                                    | `{ framework, version }`  |
+| `framework.reload`    | `{}`                                                                                                    | `{ reloading: true }`     |
 
 Normal usage:
+
 - Node loads `~/tnf-browser/config.js` (or path passed via `--config`)
 - the server injects `framework` and `human` settings into commands
-- clients can still call `framework.setConfig` and `framework.getConfig` directly
+- clients can still call `framework.setConfig` and `framework.getConfig`
+  directly
 
-The public package ships example defaults. They do not represent a human profile, and advanced cursor tuning or realistic timing still depends on user configuration.
+The public package ships example defaults. They do not represent a human
+profile, and advanced cursor tuning or realistic timing still depends on user
+configuration.
 
 ## Boot Config
 
-TNF Browser can load state on startup from config before the user or LLM sends any commands.
+TNF Browser can load state on startup from config before the user or LLM sends
+any commands.
 
 Example:
 
 ```javascript
 module.exports = {
   boot: {
-    cookiesPath: "./cookies.json",
+    cookiesPath: './cookies.json',
     commands: [
-      "go https://example.com",
-      "cookies load ./cookies.json",
-      { action: "framework.getConfig", params: {} }
+      'go https://example.com',
+      'cookies load ./cookies.json',
+      { action: 'framework.getConfig', params: {} },
     ],
   },
 };
 ```
 
 Rules:
+
 - `boot.cookiesPath` loads a cookie jar first
 - `boot.commands` accepts CLI-style strings
 - `boot.commands` also accepts raw command objects: `{ action, params, tabId? }`
@@ -103,73 +115,81 @@ Rules:
 
 ## Actions: Tabs
 
-| Action | Params | Returns |
-|--------|--------|---------|
-| `tabs.list` | `{}` | `[{ id, url, title, active, windowId, index }]` |
-| `tabs.navigate` | `{ url }` | `{ success: true }` |
-| `tabs.create` | `{ url? }` | `{ id, url, title }` |
-| `tabs.close` | `{}` | `{ success: true }` |
-| `tabs.activate` | `{}` | `{ success: true }` |
-| `tabs.reload` | `{}` | `{ success: true }` |
-| `tabs.waitForNavigation` | `{ timeout? }` | `{ success: true }` |
-| `tabs.setViewport` | `{ width, height }` | `{ success: true }` |
-| `tabs.screenshot` | `{ fullPage? }` | `{ dataUrl }` |
+| Action                   | Params              | Returns                                         |
+| ------------------------ | ------------------- | ----------------------------------------------- |
+| `tabs.list`              | `{}`                | `[{ id, url, title, active, windowId, index }]` |
+| `tabs.navigate`          | `{ url }`           | `{ success: true }`                             |
+| `tabs.create`            | `{ url? }`          | `{ id, url, title }`                            |
+| `tabs.close`             | `{}`                | `{ success: true }`                             |
+| `tabs.activate`          | `{}`                | `{ success: true }`                             |
+| `tabs.goBack`            | `{}`                | `{ success: true }`                             |
+| `tabs.goForward`         | `{}`                | `{ success: true }`                             |
+| `tabs.reload`            | `{}`                | `{ success: true }`                             |
+| `tabs.waitForNavigation` | `{ timeout? }`      | `{ success: true }`                             |
+| `tabs.setViewport`       | `{ width, height }` | `{ success: true }`                             |
+| `tabs.screenshot`        | `{ fullPage? }`     | `{ dataUrl }`                                   |
 
 ## Actions: Frames
 
-| Action | Params | Returns |
-|--------|--------|---------|
-| `frames.list` | `{}` | `[{ frameId, parentFrameId, url }]` |
+| Action        | Params | Returns                             |
+| ------------- | ------ | ----------------------------------- |
+| `frames.list` | `{}`   | `[{ frameId, parentFrameId, url }]` |
 
 ## Actions: Cookies
 
-| Action | Params | Returns |
-|--------|--------|---------|
-| `cookies.getAll` | `{ url? }` | `[{ name, value, domain, ... }]` |
-| `cookies.set` | `{ cookie: { name, value, domain?, path?, secure?, httpOnly?, sameSite?, expires? } }` | `{ success: true }` |
+| Action           | Params                                                                                 | Returns                          |
+| ---------------- | -------------------------------------------------------------------------------------- | -------------------------------- |
+| `cookies.getAll` | `{ url? }`                                                                             | `[{ name, value, domain, ... }]` |
+| `cookies.set`    | `{ cookie: { name, value, domain?, path?, secure?, httpOnly?, sameSite?, expires? } }` | `{ success: true }`              |
 
 ## Actions: DOM
 
-`dom.click` uses the same safe interaction pipeline as `human.click`. Other `dom.*` commands are direct DOM/runtime operations.
+`dom.click` uses the same safe interaction pipeline as `human.click`. Other
+`dom.*` commands are direct DOM/runtime operations.
 
-| Action | Params | Returns |
-|--------|--------|---------|
-| `dom.querySelector` | `{ selector }` | `handleId` or `null` |
-| `dom.querySelectorAll` | `{ selector }` | `[handleId, ...]` |
-| `dom.querySelectorWithin` | `{ parentHandleId, selector }` | `handleId` or `null` |
-| `dom.querySelectorAllWithin` | `{ parentHandleId, selector }` | `[handleId, ...]` |
-| `dom.waitForSelector` | `{ selector, timeout? }` | `handleId` or `null` |
-| `dom.boundingBox` | `{ handleId \| selector }` | `{ x, y, width, height }` or `null` |
-| `dom.click` | `{ handleId \| selector, clickCount?, avoid? }` | `{ clicked: true }` or `{ clicked: false, reason }` |
-| `dom.mouseMoveTo` | `{ handleId \| selector }` | `{ x, y }` |
-| `dom.focus` | `{ handleId \| selector }` | `{ focused: true }` |
-| `dom.type` | `{ text, handleId?, selector? }` | `{ typed: true }` |
-| `dom.keyPress` | `{ key }` | `{ pressed: true }` |
-| `dom.keyDown` | `{ key }` | `{ down: true }` |
-| `dom.keyUp` | `{ key }` | `{ up: true }` |
-| `dom.scroll` | `{ handleId? \| selector?, direction?, amount?, behavior? }` | `{ scrolled: true, before, after, target }` |
-| `dom.setValue` | `{ handleId \| selector, value }` | `{ set: true }` |
-| `dom.getAttribute` | `{ handleId \| selector, name }` | string or `null` |
-| `dom.getProperty` | `{ handleId \| selector, name }` | any |
-| `dom.evaluate` | `{ fn, args? }` | any |
-| `dom.elementEvaluate` | `{ handleId, fn, args? }` | any |
-| `dom.evaluateHandle` | `{ fn, args?, elementMarkers? }` | `{ type, handleId?, value?, properties? }` |
-| `dom.getHTML` | `{}` | `{ html, title, url }` |
-| `dom.elementHTML` | `{ handleId, limit? }` | `{ outer, inner, tag }` |
-| `dom.queryAllInfo` | `{ selector }` | `[{ handleId, tag, id, cls, text, label }]` |
-| `dom.batchQuery` | `{ selectors: [...] }` | `{ [selector]: boolean }` |
-| `dom.findScrollable` | `{}` | `[{ handleId, tag, id, cls, overflowY, overflow, scrollHeight, clientHeight, children, text }]` |
-| `dom.discoverElements` | `{}` | `{ elements, cursor, viewport, scrollY }` |
-| `dom.setDebug` | `{ enabled }` | `{ debug: boolean }` |
+| Action                       | Params                                                       | Returns                                                                                         |
+| ---------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `dom.querySelector`          | `{ selector }`                                               | `handleId` or `null`                                                                            |
+| `dom.querySelectorAll`       | `{ selector }`                                               | `[handleId, ...]`                                                                               |
+| `dom.querySelectorWithin`    | `{ parentHandleId, selector }`                               | `handleId` or `null`                                                                            |
+| `dom.querySelectorAllWithin` | `{ parentHandleId, selector }`                               | `[handleId, ...]`                                                                               |
+| `dom.waitForSelector`        | `{ selector, timeout? }`                                     | `handleId` or `null`                                                                            |
+| `dom.boundingBox`            | `{ handleId \| selector }`                                   | `{ x, y, width, height }` or `null`                                                             |
+| `dom.click`                  | `{ handleId \| selector, clickCount?, avoid? }`              | `{ clicked: true }` or `{ clicked: false, reason }`                                             |
+| `dom.mouseMoveTo`            | `{ handleId \| selector }`                                   | `{ x, y }`                                                                                      |
+| `dom.focus`                  | `{ handleId \| selector }`                                   | `{ focused: true }`                                                                             |
+| `dom.type`                   | `{ text, handleId?, selector? }`                             | `{ typed: true }`                                                                               |
+| `dom.keyPress`               | `{ key }`                                                    | `{ pressed: true }`                                                                             |
+| `dom.keyDown`                | `{ key }`                                                    | `{ down: true }`                                                                                |
+| `dom.keyUp`                  | `{ key }`                                                    | `{ up: true }`                                                                                  |
+| `dom.scroll`                 | `{ handleId? \| selector?, direction?, amount?, behavior? }` | `{ scrolled: true, before, after, target }`                                                     |
+| `dom.setValue`               | `{ handleId \| selector, value }`                            | `{ set: true }`                                                                                 |
+| `dom.getAttribute`           | `{ handleId \| selector, name }`                             | string or `null`                                                                                |
+| `dom.getProperty`            | `{ handleId \| selector, name }`                             | any                                                                                             |
+| `dom.evaluate`               | `{ fn, args? }`                                              | any                                                                                             |
+| `dom.elementEvaluate`        | `{ handleId, fn, args? }`                                    | any                                                                                             |
+| `dom.evaluateHandle`         | `{ fn, args?, elementMarkers? }`                             | `{ type, handleId?, value?, properties? }`                                                      |
+| `dom.getHTML`                | `{}`                                                         | `{ html, title, url }`                                                                          |
+| `dom.elementHTML`            | `{ handleId, limit? }`                                       | `{ outer, inner, tag }`                                                                         |
+| `dom.queryAllInfo`           | `{ selector }`                                               | `[{ handleId, tag, id, cls, text, label }]`                                                     |
+| `dom.batchQuery`             | `{ selectors: [...] }`                                       | `{ [selector]: boolean }`                                                                       |
+| `dom.findScrollable`         | `{}`                                                         | `[{ handleId, tag, id, cls, overflowY, overflow, scrollHeight, clientHeight, children, text }]` |
+| `dom.discoverElements`       | `{}`                                                         | `{ elements, cursor, viewport, scrollY }`                                                       |
+| `dom.setDebug`               | `{ enabled }`                                                | `{ debug: boolean }`                                                                            |
 
 ### Keyboard Names
-`Meta`, `Control`, `Shift`, `Alt`, `Enter`, `Tab`, `Escape`, `Backspace`, `Delete`, `Space`, `ArrowUp`, `ArrowDown`, `ArrowLeft`, `ArrowRight`, `Home`, `End`, `PageUp`, `PageDown`, single characters, or code forms like `KeyA` and `Digit5`.
+
+`Meta`, `Control`, `Shift`, `Alt`, `Enter`, `Tab`, `Escape`, `Backspace`,
+`Delete`, `Space`, `ArrowUp`, `ArrowDown`, `ArrowLeft`, `ArrowRight`, `Home`,
+`End`, `PageUp`, `PageDown`, single characters, or code forms like `KeyA` and
+`Digit5`.
 
 ## Actions: Human
 
 Human commands add safety checks and use injected `human.*` config.
 
 Public config sections:
+
 - `human.cursor`
 - `human.click`
 - `human.type`
@@ -196,10 +216,12 @@ Example:
 ```
 
 Returns:
+
 - success: `{ "clicked": true }`
 - blocked: `{ "clicked": false, "reason": "...", "detail": "..." }`
 
 Built-in checks:
+
 1. avoid rules
 2. aria-hidden
 3. missing `offsetParent`
@@ -217,6 +239,7 @@ Built-in checks:
 15. `mousedown -> mouseup -> click` at actual cursor coordinates
 
 Public defaults intentionally ship with advanced cursor tricks off or near zero:
+
 - `overshootRatio: 0`
 - `jitterRatio: 0`
 - `stutterChance: 0`
@@ -237,12 +260,14 @@ Example:
 ```
 
 Returns:
+
 - `{ "typed": true }`
 - or `{ "typed": false, "reason": "avoided" }`
 
 Typing cadence comes from `human.type`.
 
 Public defaults are very fast:
+
 - `baseDelayMin: 8`
 - `baseDelayMax: 20`
 - `pauseChance: 0`
@@ -266,6 +291,7 @@ Example:
 Accepts `handleId`, `selector`, or neither.
 
 Returns:
+
 - `{ "scrolled": true, "amount": 487 }`
 
 Scroll behavior comes from `human.scroll`.
@@ -282,10 +308,12 @@ Example:
 ```
 
 Returns:
+
 - `{ "cleared": true }`
 - or a click failure response
 
 Behavior:
+
 1. safe click to focus
 2. triple-click to select
 3. backspace/delete sequence
@@ -310,16 +338,27 @@ Per-request `avoid` merges with global `human.avoid` config.
 ## Events
 
 ### `response`
+
 ```json
-{ "type": "event", "event": "response", "data": { "url": "https://...", "status": 200, "tabId": 123, "method": "GET" } }
+{
+  "type": "event",
+  "event": "response",
+  "data": { "url": "https://...", "status": 200, "tabId": 123, "method": "GET" }
+}
 ```
 
 ### `urlChanged`
+
 ```json
-{ "type": "event", "event": "urlChanged", "data": { "tabId": 123, "url": "https://..." } }
+{
+  "type": "event",
+  "event": "urlChanged",
+  "data": { "tabId": 123, "url": "https://..." }
+}
 ```
 
 ### `cookiesChanged`
+
 ```json
 { "type": "event", "event": "cookiesChanged", "data": { "cookies": [...], "count": 42 } }
 ```
@@ -327,10 +366,12 @@ Per-request `avoid` merges with global `human.avoid` config.
 ## CSP
 
 Two execution contexts exist:
+
 1. ISOLATED world: DOM-safe, CSP-safe
 2. MAIN world: page globals, may be blocked by CSP
 
 Commands that keep working under CSP:
+
 - `dom.querySelector`
 - `dom.querySelectorAll`
 - `dom.getHTML`
@@ -339,7 +380,8 @@ Commands that keep working under CSP:
 - `human.scroll`
 - `dom.click`
 
-`dom.evaluate` and `dom.elementEvaluate` try MAIN first and fall back when possible.
+`dom.evaluate` and `dom.elementEvaluate` try MAIN first and fall back when
+possible.
 
 ## Example Python Client
 

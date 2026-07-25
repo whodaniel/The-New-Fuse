@@ -32,7 +32,9 @@
   "bundle": {
     "active": true,
     "targets": ["dmg", "app"],
-    "resources": [],
+    "resources": {
+      "../../../packages/tnf-browser/": "tnf-browser/"
+    },
     "externalBin": []
   },
   "plugins": {

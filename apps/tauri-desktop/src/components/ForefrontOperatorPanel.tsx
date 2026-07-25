@@ -1,7 +1,6 @@
 import React from 'react';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
-import BrowserControlService from '../services/BrowserControlService';
 import FederationNodeService from '../services/FederationNodeService';
 import { useRoute } from './route-context';
 
@@ -12,10 +11,7 @@ export const ForefrontOperatorPanel: React.FC = () => {
   const { state, refresh } = useOperatorSynergy();
 
   const connectRelay = async () => {
-    await Promise.allSettled([
-      FederationNodeService.connect(state.relayUrl),
-      BrowserControlService.connect(state.relayUrl),
-    ]);
+    await FederationNodeService.connect(state.relayUrl);
     await refresh();
   };
 

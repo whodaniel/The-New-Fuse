@@ -522,7 +522,8 @@ pub fn run() {
             tnf_browser_bridge::tnf_browser_status,
             tnf_browser_bridge::tnf_browser_connect,
             tnf_browser_bridge::tnf_browser_disconnect,
-            tnf_browser_bridge::tnf_browser_command
+            tnf_browser_bridge::tnf_browser_command,
+            tnf_browser_bridge::tnf_browser_start
         ])
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();

@@ -232,6 +232,14 @@ async function handleCommand(msg) {
       await chrome.tabs.update(tabId, { active: true });
       return { success: true };
     }
+    case 'tabs.goBack': {
+      await chrome.tabs.goBack(tabId);
+      return { success: true };
+    }
+    case 'tabs.goForward': {
+      await chrome.tabs.goForward(tabId);
+      return { success: true };
+    }
     case 'tabs.waitForNavigation': {
       const timeout = params.timeout || 30000;
       return new Promise((resolve) => {

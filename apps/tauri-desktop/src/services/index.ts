@@ -9,7 +9,6 @@ export type {
   UserSettings,
 } from './antigravity';
 export { apiService } from './api';
-export { default as BrowserControlService } from './BrowserControlService';
 export { EventEmitter } from './EventEmitter';
 export { heartbeatClient } from './heartbeat';
 export { default as OperatorSynergyService } from './OperatorSynergyService';

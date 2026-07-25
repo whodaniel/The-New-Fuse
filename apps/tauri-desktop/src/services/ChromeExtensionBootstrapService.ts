@@ -4,7 +4,7 @@
  */
 import { invoke } from '@tauri-apps/api/core';
 import { isTauriRuntime } from '../lib/isTauri';
-import BrowserControlService from './BrowserControlService';
+import FederationNodeService from './FederationNodeService';
 
 export interface ChromeExtensionBootstrapState {
   chromeAvailable: boolean;
@@ -41,18 +41,21 @@ class ChromeExtensionBootstrapServiceClass {
     return this.lastState;
   }
 
-  async ensure(relayUrl: string, startUrl = DEFAULT_START_URL): Promise<ChromeExtensionBootstrapState> {
+  async ensure(
+    relayUrl: string,
+    startUrl = DEFAULT_START_URL
+  ): Promise<ChromeExtensionBootstrapState> {
     if (!isTauriRuntime()) {
       return this.setState({
         chromeAvailable: false,
         extensionPath: null,
         launched: false,
-        connected: BrowserControlService.isExtensionConnected(),
+        connected: FederationNodeService.isBrowserExtensionConnected(),
         message: 'Chrome bootstrap skipped (web preview)',
       });
     }
 
-    if (BrowserControlService.isExtensionConnected()) {
+    if (FederationNodeService.isBrowserExtensionConnected()) {
       return this.setState({
         chromeAvailable: true,
         extensionPath: this.lastState.extensionPath,
@@ -70,10 +73,7 @@ class ChromeExtensionBootstrapServiceClass {
     return this.inFlight;
   }
 
-  private async run(
-    relayUrl: string,
-    startUrl: string
-  ): Promise<ChromeExtensionBootstrapState> {
+  private async run(relayUrl: string, startUrl: string): Promise<ChromeExtensionBootstrapState> {
     try {
       const [chromePath, extensionPath] = await Promise.all([
         invoke<string | null>('find_chrome_executable'),
@@ -123,25 +123,28 @@ class ChromeExtensionBootstrapServiceClass {
         chromeAvailable: this.lastState.chromeAvailable,
         extensionPath: this.lastState.extensionPath,
         launched: false,
-        connected: BrowserControlService.isExtensionConnected(),
+        connected: FederationNodeService.isBrowserExtensionConnected(),
         message: `Chrome bootstrap failed: ${message}`,
       });
     }
   }
 
   private async waitForExtension(timeoutMs: number): Promise<boolean> {
-    if (BrowserControlService.isExtensionConnected()) return true;
+    if (FederationNodeService.isBrowserExtensionConnected()) return true;
 
     return new Promise((resolve) => {
       const deadline = Date.now() + timeoutMs;
 
-      const onConnected = () => {
+      // `agents_updated` fires on every roster change, so re-check rather than
+      // assuming the update means the extension specifically arrived.
+      const onAgentsUpdated = () => {
+        if (!FederationNodeService.isBrowserExtensionConnected()) return;
         cleanup();
         resolve(true);
       };
 
       const timer = window.setInterval(() => {
-        if (BrowserControlService.isExtensionConnected()) {
+        if (FederationNodeService.isBrowserExtensionConnected()) {
           cleanup();
           resolve(true);
           return;
@@ -152,11 +155,11 @@ class ChromeExtensionBootstrapServiceClass {
         }
       }, 500);
 
-      BrowserControlService.on('extension_connected', onConnected);
+      FederationNodeService.on('agents_updated', onAgentsUpdated);
 
       const cleanup = () => {
         window.clearInterval(timer);
-        BrowserControlService.off('extension_connected', onConnected);
+        FederationNodeService.off('agents_updated', onAgentsUpdated);
       };
     });
   }
