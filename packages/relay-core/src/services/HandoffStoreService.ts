@@ -16,6 +16,14 @@ import {
   type HandoffPacket as HandoffPacketType,
   type HandoffStatus,
 } from '../protocol/handoff-protocol.js';
+import {
+  softRetirePacketFromLiveIndexes,
+  sweepHandoffPacketLifecycle,
+  writeVerificationReceipt,
+  type HandoffVerificationReceipt,
+  type SweepHandoffLifecycleOptions,
+  type SweepHandoffLifecycleResult,
+} from './handoff-packet-lifecycle.service.js';
 
 interface HandoffStoreOptions {
   redisUrl?: string;
@@ -305,6 +313,65 @@ export class HandoffStoreService {
     }
 
     return packets;
+  }
+
+  /**
+   * Record verification and soft-retire from live inboxes when result=pass.
+   * Requires terminal acks for all targets. See HANDOFF_PACKET_LIFECYCLE.md.
+   */
+  async verifyAndRetire(
+    receipt: Omit<HandoffVerificationReceipt, 'verifiedAt'> & { verifiedAt?: string }
+  ): Promise<HandoffVerificationReceipt> {
+    await this.connect();
+    const redis = this.requireLifecycleRedis();
+    return this.withRetry('verify and retire handoff packet', async () =>
+      writeVerificationReceipt(
+        redis,
+        {
+          ...receipt,
+          verifiedAt: receipt.verifiedAt ?? this.now().toISOString(),
+        },
+        { keyPrefix: this.keyPrefix }
+      )
+    );
+  }
+
+  /** Soft-retire a packet from live inbox/session indexes (idempotent). */
+  async softRetire(packetId: string): Promise<number> {
+    await this.connect();
+    const packet = await this.getPacket(packetId);
+    if (!packet) {
+      throw new Error(`Cannot soft-retire missing packet: ${packetId}`);
+    }
+    const redis = this.requireLifecycleRedis();
+    return this.withRetry('soft-retire handoff packet', async () =>
+      softRetirePacketFromLiveIndexes(redis, packet, this.keyPrefix)
+    );
+  }
+
+  /** Periodic lifecycle sweep: dangling/expired LREM, verify grace, archive. */
+  async sweepLifecycle(
+    options: SweepHandoffLifecycleOptions = {}
+  ): Promise<SweepHandoffLifecycleResult> {
+    await this.connect();
+    const redis = this.requireLifecycleRedis();
+    return this.withRetry('sweep handoff packet lifecycle', async () =>
+      sweepHandoffPacketLifecycle(redis, {
+        ...options,
+        keyPrefix: options.keyPrefix ?? this.keyPrefix,
+        now: options.now ?? this.now,
+      })
+    );
+  }
+
+  private requireLifecycleRedis() {
+    if (this.client) {
+      return this.client as any;
+    }
+    if (this.upstash) {
+      return this.upstash as any;
+    }
+    throw new Error('No handoff store backend is available');
   }
 
   private async getAck(

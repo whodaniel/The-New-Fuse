@@ -144,7 +144,7 @@ Native Rust commands for computer-use automation in Tauri.
 ### Flow
 
 ```
-1. Antigravity (Orchestrator) assigns task
+1. Antigravity (worker + coordination caps) assigns task
 2. Claude (Broker) manages coordination
 3. Gemini (Worker) analyzes code
 4. Jules (Worker) implements changes

@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 /**
- * Antigravity Orchestrator - Enhanced with Logging
+ * AXIS NOTE (2026-07-25): This demo coordinates work on the antigravity
+ * *platform*. It is NOT the DACC baton (ORCHESTRATOR-{ts} / master-clock).
+ * role ⊥ platform — see .agent/ROLE_DEFINITIONS.md
+ */
+/**
+ * Antigravity Coordinator - Enhanced with Logging
  * DACC-v1 Protocol Implementation
  *
  * Features:
@@ -17,7 +22,7 @@ const path = require('path');
 const WebSocket = require('ws');
 
 const RELAY_URL = 'ws://localhost:3001/ws';
-const ORCHESTRATOR_ID = 'orchestrator-antigravity';
+const ORCHESTRATOR_ID = 'coordinator-antigravity';
 const TARGET_CHANNEL_NAME = 'Green';
 
 // === SESSION LOGGING ===
@@ -206,7 +211,7 @@ Session ID: ${sessionId}
 Channel: ${TARGET_CHANNEL_NAME}
 Time: ${new Date().toISOString()}
 
-I am the **Antigravity Orchestrator**, coordinating this session.
+I am an **Antigravity platform coordinator** (not the master-clock baton), coordinating this session.
 
 📋 DISCOVERY & REGISTRATION REQUEST
 
@@ -352,14 +357,14 @@ ws.on('open', () => {
   sendMessage('AGENT_REGISTER', {
     agent: {
       id: ORCHESTRATOR_ID,
-      name: 'Antigravity Orchestrator',
+      name: 'Antigravity Coordinator',
       platform: 'cli-orchestrator',
       status: 'active',
       capabilities: ['orchestration', 'discovery', 'logging', 'task-dispatch'],
       metadata: { role: 'orchestrator', protocol: 'DACC-v1', sessionId },
     },
   });
-  console.log('[✓] Registered as Antigravity Orchestrator');
+  console.log('[✓] Registered as Antigravity Coordinator');
   logMessage('SYSTEM', 'Orchestrator connected and registered');
 
   setTimeout(() => {

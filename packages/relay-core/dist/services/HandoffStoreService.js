@@ -7,6 +7,7 @@ exports.HandoffStoreService = void 0;
 const crypto_1 = __importDefault(require("crypto"));
 const infrastructure_1 = require("@the-new-fuse/infrastructure");
 const handoff_protocol_js_1 = require("../protocol/handoff-protocol.js");
+const handoff_packet_lifecycle_service_js_1 = require("./handoff-packet-lifecycle.service.js");
 const DEFAULT_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 const DEFAULT_MAX_INBOX_ITEMS = 2000;
 const DEFAULT_MAX_RETRIES = 3;
@@ -211,6 +212,47 @@ class HandoffStoreService {
             }
         }
         return packets;
+    }
+    /**
+     * Record verification and soft-retire from live inboxes when result=pass.
+     * Requires terminal acks for all targets. See HANDOFF_PACKET_LIFECYCLE.md.
+     */
+    async verifyAndRetire(receipt) {
+        await this.connect();
+        const redis = this.requireLifecycleRedis();
+        return this.withRetry('verify and retire handoff packet', async () => (0, handoff_packet_lifecycle_service_js_1.writeVerificationReceipt)(redis, {
+            ...receipt,
+            verifiedAt: receipt.verifiedAt ?? this.now().toISOString(),
+        }, { keyPrefix: this.keyPrefix }));
+    }
+    /** Soft-retire a packet from live inbox/session indexes (idempotent). */
+    async softRetire(packetId) {
+        await this.connect();
+        const packet = await this.getPacket(packetId);
+        if (!packet) {
+            throw new Error(`Cannot soft-retire missing packet: ${packetId}`);
+        }
+        const redis = this.requireLifecycleRedis();
+        return this.withRetry('soft-retire handoff packet', async () => (0, handoff_packet_lifecycle_service_js_1.softRetirePacketFromLiveIndexes)(redis, packet, this.keyPrefix));
+    }
+    /** Periodic lifecycle sweep: dangling/expired LREM, verify grace, archive. */
+    async sweepLifecycle(options = {}) {
+        await this.connect();
+        const redis = this.requireLifecycleRedis();
+        return this.withRetry('sweep handoff packet lifecycle', async () => (0, handoff_packet_lifecycle_service_js_1.sweepHandoffPacketLifecycle)(redis, {
+            ...options,
+            keyPrefix: options.keyPrefix ?? this.keyPrefix,
+            now: options.now ?? this.now,
+        }));
+    }
+    requireLifecycleRedis() {
+        if (this.client) {
+            return this.client;
+        }
+        if (this.upstash) {
+            return this.upstash;
+        }
+        throw new Error('No handoff store backend is available');
     }
     async getAck(packetId, agentId) {
         let raw = null;

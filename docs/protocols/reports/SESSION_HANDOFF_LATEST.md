@@ -1,78 +1,127 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-25T11:43:25.329Z` Handoff
-ID: `41c653d3-f668-48ff-b3c3-20857d1d3abd`
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-07-25T19:38:53.119Z`  
+Handoff ID: `4d393466-34a4-4dc3-bbaa-af1680956fa1`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/a2a-signature-verification`
-- Head SHA: `40316a075bf85cda9bc3272bbc3ebdd2315e3527`
+- Head SHA: `9bdd3b6b147ab0f6ca09ce66ea1d543196c6d26c`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Modified 28 file(s)
+- Corrected role⊥platform framing: baton identity is ORCHESTRATOR-{ts} from
+  master-clock; Antigravity is fulfillment platform, not orchestrator seat by
+  definition.
+- Implemented orphaned ORCHESTRATOR inbox migration (master-clock start + broker
+  60s) with dual inbox key shapes; HandoffStoreService dual-write/read.
+- Aligned visualizations/graphs (ArchitectureDiagram, dacc-role-platform-axes,
+  Neo4j regen+publish); hardened publish-graph-artifacts to skip missing tools
+  sources instead of wiping public.
+- Defined and implemented Handoff Packet Lifecycle Protocol
+  (docs/protocols/HANDOFF_PACKET_LIFECYCLE.md): verify→soft-retire→24h grace
+  archive→purge; broker 15m sweep; CLI handoff:lifecycle:\*; 11/11 relay-core
+  lifecycle+migration tests pass.
 
 ## Changed Paths
 
-- agent/test-reports/\_rolling-summary.json
-- .verifier/process-atlas.digest.md
-- .verifier/process-atlas.payload.json
-- .verifier/process-atlas.verify.json
-- .verifier/tnf-process-atlas.html
-- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
+- .agent/TNF_IMPLEMENTATION_PLAN.md
+- .agent/agents/agent-relationship-grapher.md
+- .agent/fleet/users/agents/tnf-cli.md
+- .claude/agents/agent-relationship-grapher.md
+- .claude/agents/graph-writer.md
+- apps/api/tsconfig.json
+- apps/frontend/.turbo/turbo-build.log
+- apps/frontend/public/visualizations/data/graph-artifacts.index.json
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/agent-relationship-graph.cypher
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/agent-relationship-graph.json
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/agent-relationship-graph.md
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/agent-relationship-graph.noapoc.cypher
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/neo4j-package/README.md
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/neo4j-package/domain_membership.csv
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/neo4j-package/edges.csv
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/neo4j-package/load.apoc.cypher
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/neo4j-package/load.noapoc.cypher
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/neo4j-package/nodes.csv
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/reports/agent-relationship-centrality-report.json
+- apps/frontend/public/visualizations/graphs/agent-relationship-graph/reports/agent-relationship-centrality-report.md
+- apps/frontend/src/components/agent-network.tsx
+- apps/frontend/src/data/agent-visual-profiles.json
 - apps/frontend/src/data/codebase_map.json
-- apps/tauri-desktop/src-tauri/src/browser_webview.rs
-- apps/tauri-desktop/src-tauri/src/lib.rs
-- apps/tauri-desktop/src-tauri/src/tnf_browser_bridge.rs
-- apps/tauri-desktop/src/components/browser/BrowserControlPanel.tsx
-- apps/tauri-desktop/src/hooks/useTnfBrowser.ts
-- apps/tauri-desktop/src/lib/tnfBrowserWebview.ts
-- apps/tauri-desktop/src/pages/WebBrowser.tsx
-- apps/tauri-desktop/src/services/TnfBrowserService.ts
-- apps/tauri-desktop/vite-plugins/tnfBrowserBridge.ts
+- apps/virtual-library-blueprints
+- docs/TNF_ENTITY_ID_TAXONOMY_V2.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/AGENT_TARGETED_HANDOFF_V1.md
 - docs/protocols/LIVING_STATE.md
+- docs/protocols/UTP_SPEC_v1.0.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-browser/extension/service-worker.js
-- packages/tnf-browser/index.js
-- packages/tnf-browser/lib/cli-parser.js
-- packages/tnf-browser/protocol/PROTOCOL.md
-- packages/tnf-cli/src/services/ACPService.ts
-- packages/tnf-cli/src/services/ServeService.ts
-- packages/tnf-cli/src/services/UpgradeService.ts
-- scripts/runtime/launch-agent-wrapper.sh
-- apps/tauri-desktop/src/components/browser/StartRuntimeHint.tsx
-- packages/tnf-browser/extension/token.json
+- docs/protocols/reports/agent-pathway-matrix.latest.json
+- package.json
+- packages/relay-core/dist/broker-agent.js
+- packages/relay-core/dist/broker-agent.js.map
+- packages/relay-core/dist/index.d.ts
+- packages/relay-core/dist/index.d.ts.map
+- packages/relay-core/dist/index.js
+- packages/relay-core/dist/index.js.map
+- packages/relay-core/dist/services/HandoffStoreService.d.ts
+- packages/relay-core/dist/services/HandoffStoreService.d.ts.map
+- packages/relay-core/dist/services/HandoffStoreService.js
+- packages/relay-core/dist/services/HandoffStoreService.js.map
+- packages/relay-core/src/broker-agent.ts
+- packages/relay-core/src/index.ts
+- packages/relay-core/src/services/HandoffStoreService.ts
+- scripts/antigravity-redis-wrapper.cjs
+- scripts/orchestration/orchestrator-green-channel.js
+- scripts/orchestration/orchestrator-persistent.js
+- scripts/orchestration/orchestrator-red-channel.js
+- scripts/orchestration/orchestrator-yellow-channel.js
+- scripts/send-improvement-task.js
+- scripts/sync-repos.sh
+- scripts/visualizations/publish-graph-artifacts.cjs
+- docs/protocols/HANDOFF_PACKET_LIFECYCLE.md
+- packages/relay-core/src/services/handoff-packet-lifecycle.service.ts
+- packages/relay-core/tests/handoff-packet-lifecycle.test.cjs
+- scripts/handoff/sweep-packet-lifecycle.cjs
+- scripts/visualizations/regenerate-agent-relationship-neo4j.cjs
+- tools/agent-relationship-graph/
+- tools/framework-master-graph/
+- apps/frontend/public/visualizations/graphs/dacc-role-platform-axes.html
+
+## Verification
+
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
+- notes:
+  `Session close 2026-07-25T19:38:53Z: relay-core lifecycle+migration tests 11/11 pass; auto-verify guards not run (operator close-out without --auto-verify).`
 
 ## Continuation
 
-- **Owner:** operator
-- **Priority:** medium
+- Owner: `cursor-auto-operator`
+- Targets: `orchestrator`, `broker`
+- Priority: `high`
 
-**Targets:**
+### Resume Checklist
 
-- orchestrator
-
-**Resume Checklist:**
-
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
-  CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop
-  and get live operator confirmation before running git commit/push for those,
-  do not auto-execute them
+- Read docs/protocols/HANDOFF_PACKET_LIFECYCLE.md and
+  docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Confirm role⊥platform still reflected in .agent/ROLE_DEFINITIONS.md before
+  changing registration/routing
+- Work next_actions in order; items needing live operator confirmation are
+  notices — do not auto-commit/push
 
 ## Next Actions
 
-- Review updated LIVING_STATE.md for new active steps
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 27 file(s)
-  uncommitted — see
-  docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
-
-## Artifacts
-
-**Commits:**
-
-- 40316a075bf85cda9bc3272bbc3ebdd2315e3527
+- Operator: confirm commit scope for uncommitted handoff-lifecycle +
+  role/platform + graph artifacts (do not auto-commit).
+- Optional: pnpm run handoff:lifecycle:sweep -- --dry-run on live Redis, then
+  verify/retire completed baton inbox residue only with evidence refs.
+- Continue prior P0s as needed: PR #70 review/merge; tnf authority
+  relaunch-workers → confirm-isolation (not sudo tnf).

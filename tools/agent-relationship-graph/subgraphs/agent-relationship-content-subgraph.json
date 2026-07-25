@@ -1,0 +1,302 @@
+{
+  "generated_at": "2026-04-07",
+  "domain": "content",
+  "nodes": [
+    {
+      "id": "orchestrator-agent",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "task-agent-router",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "ad-network-manager-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "analytics-and-reporting-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "content-writer-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "digital-product-creator-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "digital-product-factory-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "fan-funding-agent",
+      "kind": "sub",
+      "cluster": "content"
+    },
+    {
+      "id": "live-stream-manager-agent",
+      "kind": "sub",
+      "cluster": "content"
+    },
+    {
+      "id": "media-evidence-investigator",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "storyboard-artist-agent",
+      "kind": "sub",
+      "cluster": "content"
+    },
+    {
+      "id": "technical-setup-agent",
+      "kind": "sub",
+      "cluster": "content"
+    },
+    {
+      "id": "twip-orchestration-bridge",
+      "kind": "sub",
+      "cluster": "content"
+    },
+    {
+      "id": "user-feedback-analysis-agent",
+      "kind": "sub",
+      "cluster": "content"
+    },
+    {
+      "id": "video-editor-agent",
+      "kind": "sub",
+      "cluster": "content"
+    },
+    {
+      "id": "yt-niche-strategy-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "keyword-research-agent",
+      "kind": "primary",
+      "cluster": "seo"
+    },
+    {
+      "id": "seo-optimizer-agent",
+      "kind": "primary",
+      "cluster": "seo"
+    }
+  ],
+  "edges": [
+    {
+      "source": "ad-network-manager-agent",
+      "target": "analytics-and-reporting-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "seed",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "ad-network-manager-agent",
+      "target": "user-feedback-analysis-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "seed",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "ad-network-manager-agent",
+      "target": "yt-niche-strategy-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "analytics-and-reporting-agent",
+      "target": "content-writer-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "analytics-and-reporting-agent",
+      "target": "user-feedback-analysis-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "seed",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "content-writer-agent",
+      "target": "ad-network-manager-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "content-writer-agent",
+      "target": "seo-optimizer-agent",
+      "type": "depends_on",
+      "strength": 0.77,
+      "origin": "seed"
+    },
+    {
+      "source": "content-writer-agent",
+      "target": "seo-optimizer-agent",
+      "type": "feeds",
+      "strength": 0.91,
+      "origin": "seed"
+    },
+    {
+      "source": "content-writer-agent",
+      "target": "seo-optimizer-agent",
+      "type": "handoff",
+      "strength": 0.91,
+      "origin": "seed"
+    },
+    {
+      "source": "digital-product-creator-agent",
+      "target": "keyword-research-agent",
+      "type": "depends_on",
+      "strength": 0.73,
+      "origin": "seed"
+    },
+    {
+      "source": "digital-product-creator-agent",
+      "target": "video-editor-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "digital-product-factory-agent",
+      "target": "media-evidence-investigator",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "digital-product-factory-agent",
+      "target": "seo-optimizer-agent",
+      "type": "depends_on",
+      "strength": 0.58,
+      "origin": "seed"
+    },
+    {
+      "source": "keyword-research-agent",
+      "target": "content-writer-agent",
+      "type": "feeds",
+      "strength": 0.88,
+      "origin": "seed"
+    },
+    {
+      "source": "keyword-research-agent",
+      "target": "seo-optimizer-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "live-stream-manager-agent",
+      "target": "video-editor-agent",
+      "type": "fallback",
+      "strength": 0.54,
+      "origin": "seed",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "media-evidence-investigator",
+      "target": "digital-product-creator-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98,
+      "origin": "seed"
+    },
+    {
+      "source": "storyboard-artist-agent",
+      "target": "video-editor-agent",
+      "type": "fallback",
+      "strength": 0.62,
+      "origin": "seed",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "analytics-and-reporting-agent",
+      "type": "delegates",
+      "strength": 0.82,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "content-writer-agent",
+      "type": "routes_to",
+      "strength": 0.72,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "keyword-research-agent",
+      "type": "delegates",
+      "strength": 0.82,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "keyword-research-agent",
+      "type": "routes_to",
+      "strength": 0.73,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "seo-optimizer-agent",
+      "type": "routes_to",
+      "strength": 0.73,
+      "origin": "seed"
+    },
+    {
+      "source": "technical-setup-agent",
+      "target": "user-feedback-analysis-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "video-editor-agent",
+      "target": "fan-funding-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "yt-niche-strategy-agent",
+      "target": "digital-product-factory-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    }
+  ]
+}

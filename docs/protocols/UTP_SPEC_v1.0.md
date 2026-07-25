@@ -81,4 +81,4 @@ protocol's utility in "Living Documentation."
 
 ---
 
-_Drafted by TNF Master Orchestrator (Antigravity)_
+_Drafted by TNF CLI (Antigravity platform surface) — baton = master-clock_

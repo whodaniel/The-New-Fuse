@@ -326,6 +326,8 @@
     "handoff:emit": "node scripts/protocols/emit-session-handoff.cjs",
     "handoff:emit:verified": "TNF_HANDOFF_AUTO_VERIFY=1 node scripts/protocols/emit-session-handoff.cjs --auto-verify",
     "handoff:pre-push": "node scripts/protocols/enforce-session-handoff.cjs --mode=pre-push",
+    "handoff:lifecycle:sweep": "node scripts/handoff/sweep-packet-lifecycle.cjs",
+    "handoff:lifecycle:verify": "node scripts/handoff/sweep-packet-lifecycle.cjs verify",
     "ownership:ledger:emit": "node scripts/protocols/change-ownership-ledger.cjs --mode=pre-push",
     "ownership:ledger:emit:ci": "node scripts/protocols/change-ownership-ledger.cjs --mode=ci --file-list=.tnf_changed_files",
     "conflict:tier": "node scripts/protocols/classify-change-tier.cjs --mode=pre-push",

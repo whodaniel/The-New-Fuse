@@ -7,7 +7,7 @@
 const WebSocket = require('ws');
 
 const RELAY_URL = 'ws://localhost:3001/ws';
-const ORCHESTRATOR_ID = 'orchestrator-antigravity-task';
+const COORDINATOR_ID = 'coordinator-antigravity-task';
 const CHANNEL_ID = 'channel-1768617361721'; // Green channel
 
 const ws = new WebSocket(RELAY_URL);
@@ -19,10 +19,10 @@ ws.on('open', () => {
   ws.send(
     JSON.stringify({
       type: 'AGENT_REGISTER',
-      source: ORCHESTRATOR_ID,
+      source: COORDINATOR_ID,
       payload: {
         agent: {
-          id: ORCHESTRATOR_ID,
+          id: COORDINATOR_ID,
           name: 'Task Dispatcher',
           status: 'active',
           capabilities: ['task-dispatch'],
@@ -36,7 +36,7 @@ ws.on('open', () => {
     ws.send(
       JSON.stringify({
         type: 'CHANNEL_JOIN',
-        source: ORCHESTRATOR_ID,
+        source: COORDINATOR_ID,
         payload: { channelId: CHANNEL_ID },
       })
     );
@@ -91,7 +91,7 @@ Analyze the \`packages/agent\` package:
     ws.send(
       JSON.stringify({
         type: 'MESSAGE_SEND',
-        source: ORCHESTRATOR_ID,
+        source: COORDINATOR_ID,
         channel: CHANNEL_ID,
         payload: {
           to: 'broadcast',

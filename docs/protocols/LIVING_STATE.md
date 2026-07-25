@@ -2,51 +2,33 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Coherence audit complete —
-`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md` (verdict
-**mixed**). Operator (normal user, not `sudo tnf`):
-`tnf authority relaunch-workers` → `confirm-isolation` → strong `separate-uid`,
-then pilot `TNF_AUTHORITY_CONSUMER=1`. Runbook:
-`docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`. **Project ID:**
-`TNF-AUTHORITY-TURNUP` **Updated:** `2026-07-24T23:35:00Z` **Handoff:**
-`f82b041a-f2d2-4edd-9cc9-b546c74269ec` **Head:** `9c7e6bd7a1` Prior:
-`02fe0d33-95d7-4e07-9879-a0c02a66c7fe` **Head:** `7fba1626662d` cull (6 procs) —
-type handshake in-session before any kill **Project ID:** `TNF-SESSION`
-**Handoff:** `a69e0826-181e-411f-a3c2-3cb6a6d22e56` **Head:** `b2d907005c90`
-PASS, api `tsc -b` exit 0) — next: optional gemini-bridge residual + full turbo
-C03/C04 rerun; await live Daniel handshake before master-clock cull; commit when
-requested **Project ID:** `TNF-SESSION` **Handoff:**
-`7b497037-01eb-48ac-9916-9b5177fc20fa` **Head:** `b9c1298e41e3` build) is clean
-apart from one environment-load-sensitive memory-threshold test, confirmed
-non-deterministic and not a real bug **Project ID:** `TNF-MONOREPO-HEALTH`
-**Handoff:** `c1b8b297-baba-482e-a0dd-9801a46e9616` **Head:** `13806d3f5980`
-`.verifier/whole-codebase/latest-rerun/SUMMARY.md` **Project ID:** `TNF-SESSION`
-**Handoff:** `e84e62c0-c3f8-469e-9c71-69855c7b9d01` **Head:** `fb12dac55ff7`
-tnf-cli, tnf-browser, .verifier) **Project ID:** `TNF-SESSION` **Handoff:**
-`8409363d-172d-49b8-9135-1bd612f879ac` **Head:** `1b83ed4c7e67`
-`tnf:agent-registry` (callableWorker). Continuity via
-`TNF_AUTONOMOUS_CONTINUITY_PROTOCOL.md`. Full-auto daemon restarted with
-`--skip-build` to avoid OOM stalls. Advance handoff targets `story-architect` +
-`librarian`. **Project ID:** `TNF-AUTONOMY` **Handoff:**
-`c07ffb4a-6639-44a1-8fe3-5558a36c66dc` **Head:** `4173f555ba25`
+**Current Directive:** Operator: confirm commit scope for uncommitted
+handoff-lifecycle + role/platform + graph artifacts (do not auto-commit).
+**Project ID:** `TNF-HANDOFF-LIFECYCLE` **Handoff:**
+`4d393466-34a4-4dc3-bbaa-af1680956fa1` **Head:** `9bdd3b6b147a` **Updated:**
+`2026-07-25T19:38:53Z`
 
-**Session note:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist when not on autonomy work. **Project ID:**
-`TNF-SESSION` **Handoff:** `c07ffb4a-6639-44a1-8fe3-5558a36c66dc` **Head:**
-`4173f555ba25`
+**Session note:** Cursor session closed logs for role⊥platform corrections,
+orphaned-inbox migration, graph regen/publish harden, and
+`HANDOFF_PACKET_LIFECYCLE` (verify→retire→archive). Live baton inbox residue
+must not be mass-deleted without verification evidence. Prior authority P0s
+remain: PR #70; `tnf authority relaunch-workers` → `confirm-isolation` (not
+`sudo tnf`). See `SESSION_HANDOFF_LATEST.json`.
 
-**Prior notes:** Continue priority queue from SESSION_HANDOFF when not on UI-IA
-work. (ghs.googlehosted.com). /about and /blog pages created with SPA routes.
-sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
-`LAUNCH-001` **Handoff:** `ef70c596-2124-40bd-952e-5239f3e042a0` **Head:**
-`baab5b2825e5` login at app.thenewfuse.com/auth/login. **Project ID:**
-`LAUNCH-001` **Handoff:** `30532802-3db1-429c-80f3-245a94a7cd75` **Head:**
-`199370ded064`
+**Prior notes:** Authority coherence audit mixed —
+`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`. Handoff
+`f82b041a-f2d2-4edd-9cc9-b546c74269ec` / head `9c7e6bd7a1`.
 
 ---
 
 ## ⚡ Active Steps
 
+- [✅] **2026-07-25 Cursor session — role⊥platform + handoff lifecycle** —
+  Corrected baton vs `daccRole` vs platform axes; orphaned `ORCHESTRATOR-*`
+  inbox migration; dual inbox keys; graph regen + safe publish; protocol
+  `docs/protocols/HANDOFF_PACKET_LIFECYCLE.md` + broker 15m sweep +
+  `pnpm run handoff:lifecycle:*`; tests 11/11. Handoff
+  `4d393466-34a4-4dc3-bbaa-af1680956fa1`. No commit (operator-gated).
 - [✅] 2026-07-24T00:30:13.658Z System cron entries installed:
 - [✅] 2026-07-24T04:21:15.352Z System cron entries installed:
 - [✅] 2026-07-24T21:17:42.244Z New agent(s) created: qodercli

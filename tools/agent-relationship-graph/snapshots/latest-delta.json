@@ -1,0 +1,157 @@
+{
+  "generated_at": "2026-04-07T13:44:08.708042+00:00",
+  "baseline_snapshot": "snapshot-20260326T092335Z.json",
+  "current_snapshot": "snapshot-20260407T134408Z.json",
+  "summary": {
+    "graphs_changed": 2,
+    "nodes_added_total": 0,
+    "nodes_removed_total": 0,
+    "edges_added_total": 9,
+    "edges_removed_total": 0
+  },
+  "details": [
+    {
+      "file": "agent-relationship-brand-subgraph.json",
+      "domain": "brand",
+      "node_count_old": 20,
+      "node_count_new": 20,
+      "edge_count_old": 48,
+      "edge_count_new": 51,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [
+        {
+          "source": "competitive-intelligence-agent",
+          "target": "brand-identity-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "contract-manager-agent",
+          "target": "email-marketing-automation-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "deal-negotiator-agent",
+          "target": "email-marketing-automation-agent",
+          "type": "fallback"
+        }
+      ],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-content-subgraph.json",
+      "domain": "content",
+      "node_count_old": 18,
+      "node_count_new": 18,
+      "edge_count_old": 27,
+      "edge_count_new": 27,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-funnel-subgraph.json",
+      "domain": "funnel",
+      "node_count_old": 25,
+      "node_count_new": 25,
+      "edge_count_old": 41,
+      "edge_count_new": 41,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-graph.json",
+      "domain": "full",
+      "node_count_old": 120,
+      "node_count_new": 120,
+      "edge_count_old": 431,
+      "edge_count_new": 437,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [
+        {
+          "source": "agent-tagger",
+          "target": "agent-search-engine",
+          "type": "fallback"
+        },
+        {
+          "source": "competitive-intelligence-agent",
+          "target": "brand-identity-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "contract-manager-agent",
+          "target": "email-marketing-automation-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "deal-negotiator-agent",
+          "target": "email-marketing-automation-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "interoperability-protocol-agent",
+          "target": "personal-archaeology-master-orchestrator",
+          "type": "fallback"
+        },
+        {
+          "source": "personal-archaeology-source-team-orchestrator",
+          "target": "interoperability-protocol-agent",
+          "type": "fallback"
+        }
+      ],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-ops-subgraph.json",
+      "domain": "ops",
+      "node_count_old": 13,
+      "node_count_new": 13,
+      "edge_count_old": 23,
+      "edge_count_new": 23,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-podcast-subgraph.json",
+      "domain": "podcast",
+      "node_count_old": 20,
+      "node_count_new": 20,
+      "edge_count_old": 48,
+      "edge_count_new": 48,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-seo-subgraph.json",
+      "domain": "seo",
+      "node_count_old": 11,
+      "node_count_new": 11,
+      "edge_count_old": 32,
+      "edge_count_new": 32,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-social-subgraph.json",
+      "domain": "social",
+      "node_count_old": 18,
+      "node_count_new": 18,
+      "edge_count_old": 31,
+      "edge_count_new": 31,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    }
+  ]
+}

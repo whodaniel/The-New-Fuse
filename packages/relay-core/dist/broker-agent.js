@@ -40,6 +40,7 @@ const path = __importStar(require("node:path"));
 const sign_bus_message_js_1 = require("./protocol/sign-bus-message.js");
 const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
 const orchestrator_inbox_migration_service_js_1 = require("./services/orchestrator-inbox-migration.service.js");
+const handoff_packet_lifecycle_service_js_1 = require("./services/handoff-packet-lifecycle.service.js");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
         process.env.CLOUD_RUNTIME_REDIS_URL ||
@@ -79,6 +80,10 @@ const CONFIG = {
     MASTER_STATE_KEY: process.env.BROKER_MASTER_STATE_KEY || 'tnf:master:state',
     ORPHAN_INBOX_MIGRATE_MS: parseInt(process.env.BROKER_ORPHAN_INBOX_MIGRATE_MS || '', 10) || 60000,
     ORPHAN_INBOX_MIGRATE_MAX: parseInt(process.env.BROKER_ORPHAN_INBOX_MIGRATE_MAX || '', 10) || 2000,
+    /** Periodic handoff packet lifecycle sweep (verify/archive residue). Default 15m. */
+    HANDOFF_LIFECYCLE_MS: parseInt(process.env.BROKER_HANDOFF_LIFECYCLE_MS || '', 10) || 15 * 60 * 1000,
+    HANDOFF_LIFECYCLE_MAX_INBOXES: parseInt(process.env.BROKER_HANDOFF_LIFECYCLE_MAX_INBOXES || '', 10) || 200,
+    HANDOFF_LIFECYCLE_MAX_PACKETS: parseInt(process.env.BROKER_HANDOFF_LIFECYCLE_MAX_PACKETS || '', 10) || 2000,
 };
 const REQUIRED_FEDERATION_GATES = [
     'TENANT_SCOPE_GATE',
@@ -94,6 +99,7 @@ class BrokerAgent {
         this.upstash = null;
         this.heartbeatInterval = null;
         this.orphanMigrateInterval = null;
+        this.handoffLifecycleInterval = null;
         this.running = false;
         this.brokerId = process.env.BROKER_ID || `BROKER-${Date.now()}`;
         this.twipSnapshotCache = null;
@@ -113,6 +119,7 @@ class BrokerAgent {
         await this.registerBroker();
         this.startHeartbeat();
         this.startOrphanInboxMigration();
+        this.startHandoffLifecycleSweep();
         console.log(`[Broker] Online as ${this.brokerId}`);
         console.log(`[Broker] Consuming queue: ${CONFIG.TASK_QUEUE_KEY}`);
         await this.consumeLoop();
@@ -227,6 +234,34 @@ class BrokerAgent {
         });
         if (result.migrated > 0) {
             console.log(`[Broker] Migrated ${result.migrated} orphaned handoff packet(s) → ${active} from ${result.sources.length} inbox(es)`);
+        }
+    }
+    startHandoffLifecycleSweep() {
+        const run = async () => {
+            try {
+                await this.sweepHandoffPacketLifecycle();
+            }
+            catch (error) {
+                console.warn('[Broker] Handoff lifecycle sweep failed:', error.message);
+            }
+        };
+        this.handoffLifecycleInterval = setInterval(run, CONFIG.HANDOFF_LIFECYCLE_MS);
+        void run();
+    }
+    /**
+     * Retire verified/expired/dangling handoff residue from live inboxes.
+     * See docs/protocols/HANDOFF_PACKET_LIFECYCLE.md.
+     */
+    async sweepHandoffPacketLifecycle() {
+        if (!this.redis)
+            return;
+        const result = await (0, handoff_packet_lifecycle_service_js_1.sweepHandoffPacketLifecycle)(this.redis, {
+            maxInboxes: CONFIG.HANDOFF_LIFECYCLE_MAX_INBOXES,
+            maxPackets: CONFIG.HANDOFF_LIFECYCLE_MAX_PACKETS,
+        });
+        const changed = result.danglingRemoved + result.expiredRemoved + result.softRetired + result.archived;
+        if (changed > 0) {
+            console.log(`[Broker] Handoff lifecycle sweep: dangling=${result.danglingRemoved} expired=${result.expiredRemoved} softRetired=${result.softRetired} archived=${result.archived} inspected=${result.packetsInspected}`);
         }
     }
     async consumeLoop() {
@@ -1206,6 +1241,10 @@ class BrokerAgent {
         if (this.orphanMigrateInterval) {
             clearInterval(this.orphanMigrateInterval);
             this.orphanMigrateInterval = null;
+        }
+        if (this.handoffLifecycleInterval) {
+            clearInterval(this.handoffLifecycleInterval);
+            this.handoffLifecycleInterval = null;
         }
         try {
             // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression

@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 /**
- * Antigravity Orchestrator - Persistent Mode
+ * AXIS NOTE (2026-07-25): This demo coordinates work on the antigravity
+ * *platform*. It is NOT the DACC baton (ORCHESTRATOR-{ts} / master-clock).
+ * role ⊥ platform — see .agent/ROLE_DEFINITIONS.md
+ */
+/**
+ * Antigravity Coordinator - Persistent Mode
  * DACC-v1 Protocol with Auto-Reconnect & Message Validation
  *
  * Features:
@@ -19,7 +24,7 @@ const path = require('path');
 
 // === CONFIGURATION ===
 const RELAY_URL = process.env.RELAY_URL || 'ws://localhost:3001/ws';
-const ORCHESTRATOR_ID = 'orchestrator-antigravity';
+const ORCHESTRATOR_ID = 'coordinator-antigravity';
 const TARGET_CHANNEL_NAME = process.argv[2] || 'Green';
 const RECONNECT_DELAY = 5000; // 5 seconds
 const HEARTBEAT_INTERVAL = 25000; // 25 seconds
@@ -281,7 +286,7 @@ Channel: ${TARGET_CHANNEL_NAME}
 Time: ${new Date().toISOString()}
 Mode: **PERSISTENT** (continuous operation)
 
-I am the **Antigravity Orchestrator**, coordinating this session.
+I am an **Antigravity platform coordinator** (not the master-clock baton), coordinating this session.
 
 📋 DISCOVERY & REGISTRATION
 
@@ -367,7 +372,7 @@ function connect() {
     sendMessage('AGENT_REGISTER', {
       agent: {
         id: ORCHESTRATOR_ID,
-        name: 'Antigravity Orchestrator (Persistent)',
+        name: 'Antigravity Coordinator (Persistent)',
         platform: 'cli-orchestrator',
         status: 'active',
         capabilities: ['orchestration', 'discovery', 'logging', 'validation', 'persistent'],

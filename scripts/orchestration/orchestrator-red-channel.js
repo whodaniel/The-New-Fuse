@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 /**
+ * AXIS NOTE (2026-07-25): This demo coordinates work on the antigravity
+ * *platform*. It is NOT the DACC baton (ORCHESTRATOR-{ts} / master-clock).
+ * role ⊥ platform — see .agent/ROLE_DEFINITIONS.md
+ */
+/**
  * Orchestrator Script - Join Red Channel and Send Tasks
  * Run with: node orchestrator-red-channel.js
  */
@@ -7,10 +12,10 @@
 const WebSocket = require('ws');
 
 const RELAY_URL = 'ws://localhost:3001/ws';
-const ORCHESTRATOR_ID = 'orchestrator-antigravity';
+const ORCHESTRATOR_ID = 'coordinator-antigravity';
 const RED_CHANNEL_ID = 'channel-1768555591302';
 
-console.log('=== Antigravity Orchestrator ===');
+console.log('=== Antigravity Coordinator ===');
 console.log(`Connecting to relay at ${RELAY_URL}...`);
 
 const ws = new WebSocket(RELAY_URL);
@@ -28,7 +33,7 @@ ws.on('open', () => {
       payload: {
         agent: {
           id: ORCHESTRATOR_ID,
-          name: 'Antigravity Orchestrator',
+          name: 'Antigravity Coordinator',
           platform: 'vscode-ai',
           status: 'active',
           capabilities: ['orchestration', 'task-dispatch', 'coordination'],
@@ -38,7 +43,7 @@ ws.on('open', () => {
       },
     })
   );
-  console.log('[✓] Registered as Antigravity Orchestrator');
+  console.log('[✓] Registered as Antigravity Coordinator');
 
   // 2. Join Red Channel
   setTimeout(() => {
@@ -57,7 +62,7 @@ ws.on('open', () => {
   // 3. Send Greeting
   setTimeout(() => {
     const greeting =
-      'Hello Red Channel! I am the Antigravity Orchestrator, now online and ready to coordinate multi-agent tasks. Please acknowledge this message.';
+      'Hello Red Channel! I am the Antigravity Coordinator, now online and ready to coordinate multi-agent tasks. Please acknowledge this message.';
 
     ws.send(
       JSON.stringify({

@@ -3,19 +3,12 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-24T23:48:00Z** — coherence audit follow-up `f8e109bdfa` (D23
-honesty + graphs). Prior handoff `f82b041a-f2d2-4edd-9cc9-b546c74269ec`
-(`9c7e6bd7a1` enforcement close-out). Prior: handoff
-`41db2ffc-ad4e-46b0-9c21-5b7e2e3adb78` (`c0dc522dcac4`).
-`02fe0d33-95d7-4e07-9879-a0c02a66c7fe` (`7fba1626662d`).
-`a69e0826-181e-411f-a3c2-3cb6a6d22e56` (`b2d907005c90`).
-`7b497037-01eb-48ac-9916-9b5177fc20fa` (`b9c1298e41e3`).
-`c1b8b297-baba-482e-a0dd-9801a46e9616` (`13806d3f5980`).
-`e84e62c0-c3f8-469e-9c71-69855c7b9d01` (`fb12dac55ff7`).
-`8409363d-172d-49b8-9135-1bd612f879ac` (`1b83ed4c7e67`). Heartbeat reconcile:
-**2026-07-17T23:13Z** — `cron-heartbeat-ttys011-1784329995324` updated P1 count
-from stale "6 PIDs" to live `4 owner / 9 worker / 18 total`; no kill
-(handshake-gated); no commit (operator-gated).
+Updated: **2026-07-25T19:38:53.119Z** — handoff
+`4d393466-34a4-4dc3-bbaa-af1680956fa1` (`9bdd3b6b147a`). Prior coherence audit
+handoff `f82b041a-f2d2-4edd-9cc9-b546c74269ec` (`9c7e6bd7a1`). Heartbeat
+reconcile: **2026-07-17T23:13Z** — `cron-heartbeat-ttys011-1784329995324`
+updated P1 count from stale "6 PIDs" to live `4 owner / 9 worker / 18 total`; no
+kill (handshake-gated); no commit (operator-gated).
 `858a32ed-09b3-4c45-8e72-b5eafb0b085b` (`47cde235c48f`). Claude Code session
 (`tnf-local-terminal-ttys004`, 2026-07-21): not a persistent daemon/broker — a
 single attended conversational session, noted here rather than given a
@@ -76,13 +69,23 @@ self-contradiction + separate-uid degraded naming (`f8e109bdfa`, ledgered in
 `CHALLENGE_RATIONALE_LOG.md`). Do **not** claim enforce/consumer on. Operator
 next: `tnf authority relaunch-workers` → `confirm-isolation` as normal user.
 
+Cursor session (2026-07-25 afternoon, `cursor-auto-operator`): role⊥platform
+protocol correction + handoff packet lifecycle. Challenged Antigravity-as-
+orchestrator drift; baton identity remains `ORCHESTRATOR-{ts}` from
+master-clock. Shipped orphaned-inbox migration, dual inbox key support,
+visualization/Neo4j axis alignment, publish harden (no wipe on missing
+`tools/*`), and `HANDOFF_PACKET_LIFECYCLE` (verify receipt required before
+retire; broker 15m sweep; CLI `handoff:lifecycle:*`). Tests: 11/11. No
+commit/push this session (operator-gated). Handoff
+`4d393466-34a4-4dc3-bbaa-af1680956fa1`.
+
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                               |
-| -------- | ---------------------------------------------------------------------------------------------------- |
-| **P0**   | Operator isolation turn-up: `tnf authority relaunch-workers` → `confirm-isolation` (not `sudo tnf`). |
-| **P0**   | Read `AUTHORITY_COHERENCE_AUDIT_2026-07-24.md` before flipping consumer/enforce.                     |
-| **P1**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.              |
+| Priority | Action                                                                                                                                           |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **P0**   | Operator: confirm commit scope for uncommitted handoff-lifecycle + role/platform + graph artifacts (do not auto-commit).                         |
+| **P0**   | Optional: pnpm run handoff:lifecycle:sweep -- --dry-run on live Redis, then verify/retire completed baton inbox residue only with evidence refs. |
+| **P0**   | Continue prior P0s as needed: PR #70 review/merge; tnf authority relaunch-workers → confirm-isolation (not sudo tnf).                            |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -169,10 +172,10 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 - **Director**: `cursor-auto-operator`
 - **Active channel**: Green
-- **Handoff ID**: `cb8606c4-29fc-40b0-8db9-6c1c3d26fe7f`
+- **Handoff ID**: `4d393466-34a4-4dc3-bbaa-af1680956fa1`
 - **Cumulative mcid**: `27ba9127-5afb-41bc-83f9-d365a54c8315`
-- **Next**: P0 restart checklist in SESSION_HANDOFF_LATEST.md → four-agent
-  verification
+- **Next**: SESSION_HANDOFF_LATEST P0s — commit scope confirmation, optional
+  lifecycle dry-run (evidence before retire), prior authority isolation turn-up
 
 | 2026-06-20 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (ee61db00-218d-4d00-8539-54c2d153d8a6) | ✅ HANDOFF_READY |
@@ -343,3 +346,9 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (f82b041a-f2d2-4edd-9cc9-b546c74269ec) | ✅ HANDOFF_READY |
+
+| 2026-07-25 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(897cbb6b-2189-4e69-ab4e-e108eabe5609) | ✅ HANDOFF_READY |
+
+| 2026-07-25 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4d393466-34a4-4dc3-bbaa-af1680956fa1) | ✅ HANDOFF_READY |
