@@ -87,7 +87,7 @@ with open(os.path.join(OUT, "wordcount_summary.txt"), "w", encoding="utf-8") as 
 
 with open(os.path.join(OUT, "wordcount_stats.json"), "w", encoding="utf-8") as f:
     json.dump({
-        "root": ROOT,
+        "root": os.path.basename(ROOT),
         "generated": generated,
         "files_indexed": files_indexed,
         "text_bytes": total_bytes,
@@ -97,8 +97,8 @@ with open(os.path.join(OUT, "wordcount_stats.json"), "w", encoding="utf-8") as f
         "skipped_large": skipped_large,
         "elapsed_seconds": round(elapsed, 1),
         "outputs": {
-            "full_tsv_gz": os.path.join(OUT, "wordcount_full.tsv.gz"),
-            "summary": os.path.join(OUT, "wordcount_summary.txt"),
+            "full_tsv_gz": "wordcount_full.tsv.gz",
+            "summary": "wordcount_summary.txt",
         },
     }, f, indent=2)
 

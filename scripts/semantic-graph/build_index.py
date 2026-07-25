@@ -2,7 +2,8 @@
 """Generate concordance_results/index.html — landing hub for all TNF semantic reports."""
 import json, html, os, time
 
-from common import OUT, ROOT, viz_links
+from common import (OUT, ROOT, viz_links,
+                    CHROME_CSS, chrome_header, chrome_sidebar, chrome_footer)
 
 HTML_OUT = os.path.join(OUT, "index.html")
 
@@ -56,7 +57,10 @@ page = f"""<!DOCTYPE html>
 <style>
   :root {{ --bg:#0f1117; --panel:#181b24; --border:#2a2f3d; --text:#e6e8ee; --dim:#8b91a3; --accent:#5b9dff; }}
   * {{ box-sizing:border-box; }}
-  body {{ margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); padding:36px 44px; }}
+  body {{ margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); display:flex; flex-direction:column; height:100vh; }}
+  #shell {{ display:flex; flex:1; min-height:0; }}
+  #content {{ flex:1; overflow-y:auto; min-width:0; padding:28px 40px; }}
+__CHROME_CSS__
   h1 {{ margin:0 0 4px; font-size:24px; }}
   h2 {{ font-size:15px; color:var(--dim); margin:28px 0 10px; font-weight:600; }}
   .sub {{ color:var(--dim); font-size:13px; }}
@@ -72,8 +76,12 @@ page = f"""<!DOCTYPE html>
 </style>
 </head>
 <body>
+__HDR__
+<div id="shell">
+__NAV__
+<main id="content">
 <h1>TNF Semantic Reports Hub</h1>
-<div class="sub">{html.escape(ROOT)} &middot; generated {generated}</div>
+<div class="sub">{html.escape(os.path.basename(ROOT))} &middot; generated {generated}</div>
 <h2>Primary explorers (this pipeline)</h2>
 <div class="grid">{primary_html}</div>
 <h2>Other TNF visualizations found in the codebase</h2>
@@ -81,8 +89,17 @@ page = f"""<!DOCTYPE html>
 <h2>Machine-readable datasets (for agents &amp; tooling)</h2>
 <table>{data_html}</table>
 <div class="foot">Rebuild everything with: python3 scripts/semantic-graph/build_all.py &nbsp;(add --recount to re-scan the repo word counts)</div>
+</main>
+</div>
+__FTR__
 </body>
 </html>"""
+
+page = (page
+        .replace("__CHROME_CSS__", CHROME_CSS)
+        .replace("__HDR__", chrome_header("index.html"))
+        .replace("__NAV__", chrome_sidebar("index.html"))
+        .replace("__FTR__", chrome_footer()))
 
 open(HTML_OUT, "w", encoding="utf-8").write(page)
 print(HTML_OUT, f"{os.path.getsize(HTML_OUT)/1024:.1f} KB, {len(others)} external viz links")

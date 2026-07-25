@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import json, html, os
 
-from common import OUT as OUT_DIR, b64_of_file
+from common import (OUT as OUT_DIR, b64_of_file,
+                    CHROME_CSS, chrome_header, chrome_sidebar, chrome_footer)
 
 TSV = os.path.join(OUT_DIR, "wordcount_full.tsv.gz")
 STATS = os.path.join(OUT_DIR, "wordcount_stats.json")
@@ -20,7 +21,10 @@ page = f"""<!DOCTYPE html>
 <style>
   :root {{ --bg:#0f1117; --panel:#181b24; --border:#2a2f3d; --text:#e6e8ee; --dim:#8b91a3; --accent:#5b9dff; --bar:#2d5fa8; }}
   * {{ box-sizing:border-box; }}
-  body {{ margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); }}
+  body {{ margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); display:flex; flex-direction:column; height:100vh; }}
+  #shell {{ display:flex; flex:1; min-height:0; }}
+  #content {{ flex:1; overflow-y:auto; min-width:0; }}
+__CHROME_CSS__
   header {{ padding:32px 40px 16px; }}
   h1 {{ margin:0 0 4px; font-size:24px; }}
   .sub {{ color:var(--dim); font-size:13px; }}
@@ -52,6 +56,10 @@ page = f"""<!DOCTYPE html>
 </style>
 </head>
 <body>
+__HDR__
+<div id="shell">
+__NAV__
+<main id="content">
 <header>
   <h1>TNF Codebase &mdash; Word / Term Frequency</h1>
   <div class="sub">{html.escape(stats['root'])} &middot; generated {stats['generated']}</div>
@@ -199,8 +207,17 @@ $('goto').addEventListener('keydown', e => {{ if (e.key === 'Enter') $('go').cli
 
 init();
 </script>
+</main>
+</div>
+__FTR__
 </body>
 </html>"""
+
+page = (page
+        .replace("__CHROME_CSS__", CHROME_CSS)
+        .replace("__HDR__", chrome_header("wordcount_report.html"))
+        .replace("__NAV__", chrome_sidebar("wordcount_report.html"))
+        .replace("__FTR__", chrome_footer()))
 
 with open(HTML_OUT, "w", encoding="utf-8") as f:
     f.write(page)

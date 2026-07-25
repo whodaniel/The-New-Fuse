@@ -2,7 +2,8 @@
 """Generate self-contained unified_graph_explorer.html from unified_graph.json.gz."""
 import json, os
 
-from common import OUT as OUT_DIR, b64_of_file, viz_links
+from common import (OUT as OUT_DIR, b64_of_file, viz_links,
+                    CHROME_CSS, chrome_header, chrome_footer)
 
 GZ = os.path.join(OUT_DIR, "unified_graph.json.gz")
 STATS = os.path.join(OUT_DIR, "unified_graph_stats.json")
@@ -23,7 +24,11 @@ TEMPLATE = r"""<!DOCTYPE html>
   :root { --bg:#0f1117; --panel:#181b24; --border:#2a2f3d; --text:#e6e8ee; --dim:#8b91a3; --accent:#5b9dff; }
   * { box-sizing:border-box; }
   html,body { margin:0; height:100%; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); overflow:hidden; }
-  #layout { display:flex; height:100%; }
+  body { display:flex; flex-direction:column; }
+  #layout { display:flex; flex:1; min-height:0; }
+  #pagenav a { color:var(--dim); text-decoration:none; }
+  #pagenav a:hover { color:var(--accent); }
+__CHROME_CSS__
   #side { width:360px; min-width:360px; border-right:1px solid var(--border); display:flex; flex-direction:column; transition:margin-left .18s ease; }
   #side.collapsed { margin-left:-360px; }
   #collapse { position:absolute; top:10px; left:0; z-index:8; background:var(--panel); border:1px solid var(--border); border-left:none; color:var(--dim); border-radius:0 8px 8px 0; padding:8px 6px; cursor:pointer; font-size:12px; }
@@ -75,11 +80,13 @@ TEMPLATE = r"""<!DOCTYPE html>
 </style>
 </head>
 <body>
+__HDR__
 <div id="layout">
   <div id="side">
     <header>
       <h1>TNF Unified Semantic Graph</h1>
       <div class="sub">__NODES__ nodes &middot; __EDGES__ edges &middot; generated __GEN__</div>
+      <div class="sub" id="pagenav"><a href="index.html">Hub</a> &middot; <a href="wordcount_report.html">Word Frequency</a></div>
     </header>
     <div id="tabs"><div class="tab on" data-t="search">Search</div><div class="tab" data-t="stats">Stats</div><div class="tab" data-t="links">Links</div></div>
     <div id="searchpanel" style="display:flex;flex-direction:column;flex:1;min-height:0">
@@ -489,10 +496,14 @@ buildLinks();
 
 init();
 </script>
+__FTR__
 </body>
 </html>"""
 
 page = (TEMPLATE
+        .replace("__CHROME_CSS__", CHROME_CSS)
+        .replace("__HDR__", chrome_header("unified_graph_explorer.html"))
+        .replace("__FTR__", chrome_footer())
         .replace("__B64__", b64)
         .replace("__NODES__", f"{meta['nodes']:,}")
         .replace("__EDGES__", f"{meta['edges']:,}")

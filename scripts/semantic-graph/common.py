@@ -83,7 +83,11 @@ CANDIDATE_LINKS = [
 
 
 def viz_links(exclude_titles=()):
-    """Existing visualization assets as [{title, href, desc}] with file:// hrefs."""
+    """Existing visualization assets as [{title, href, desc}].
+
+    hrefs are RELATIVE to concordance_results/ so no personal absolute paths
+    ever land in generated (distributable) artifacts.
+    """
     candidates = list(CANDIDATE_LINKS)
     sub = f"{_VIZ}/graphs/agent-relationship-graph/subgraphs"
     sub_abs = os.path.join(ROOT, sub)
@@ -93,6 +97,72 @@ def viz_links(exclude_titles=()):
                 domain = name.replace("agent-relationship-", "").replace("-subgraph.html", "")
                 candidates.append((f"Agent Subgraph — {domain}", f"{sub}/{name}",
                                    "Neo4j-derived agent relationship subgraph"))
-    return [{"title": t, "href": "file://" + os.path.join(ROOT, rel), "desc": d}
+    return [{"title": t, "href": os.path.relpath(os.path.join(ROOT, rel), OUT), "desc": d}
             for t, rel, d in candidates
             if t not in exclude_titles and os.path.exists(os.path.join(ROOT, rel))]
+
+
+# ------------------------------------------------------------------ site chrome
+
+LOGO_SOURCE = os.path.join(ROOT, "assets", "brand", "primary", "tnf-logo.png")
+_LOGO_THUMB = os.path.join(OUT, ".tnf-logo-96.png")
+
+
+def logo_data_uri():
+    """Official TNF logo as a small base64 data URI (thumbnail built on demand)."""
+    if not os.path.exists(_LOGO_THUMB) and os.path.exists(LOGO_SOURCE):
+        import subprocess
+        subprocess.run(["sips", "-Z", "96", "-s", "format", "png",
+                        LOGO_SOURCE, "--out", _LOGO_THUMB],
+                       capture_output=True)
+    if os.path.exists(_LOGO_THUMB):
+        return "data:image/png;base64," + b64_of_file(_LOGO_THUMB)
+    return ""
+
+
+NAV_PAGES = [
+    ("index.html", "Hub"),
+    ("unified_graph_explorer.html", "Graph Explorer"),
+    ("wordcount_report.html", "Word Frequency"),
+]
+
+CHROME_CSS = """
+  #tnfhdr { display:flex; align-items:center; gap:14px; padding:0 18px; height:52px;
+    background:var(--panel); border-bottom:1px solid var(--border); flex:none; }
+  #tnfhdr img { height:34px; width:34px; border-radius:7px; }
+  #tnfhdr .brand { font-weight:700; font-size:14px; letter-spacing:.4px; white-space:nowrap; }
+  #tnfhdr nav { display:flex; gap:4px; margin-left:10px; }
+  #tnfhdr nav a { color:var(--dim); text-decoration:none; font-size:12px; padding:6px 12px; border-radius:7px; }
+  #tnfhdr nav a:hover { color:var(--text); background:var(--bg); }
+  #tnfhdr nav a.on { color:var(--accent); background:var(--bg); }
+  #tnfftr { display:flex; align-items:center; gap:16px; padding:8px 18px; font-size:11px;
+    color:var(--dim); background:var(--panel); border-top:1px solid var(--border); flex:none; }
+  #tnfftr a { color:var(--dim); text-decoration:none; }
+  #tnfftr a:hover { color:var(--accent); }
+  #tnfnav { width:190px; min-width:190px; border-right:1px solid var(--border); padding:14px 10px; }
+  #tnfnav .nt { font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px; padding:4px 8px; }
+  #tnfnav a { display:block; color:var(--text); text-decoration:none; font-size:12px; padding:7px 10px; border-radius:7px; }
+  #tnfnav a:hover { background:var(--panel); }
+  #tnfnav a.on { color:var(--accent); background:var(--panel); }
+"""
+
+
+def chrome_header(active):
+    logo = logo_data_uri()
+    img = f'<img src="{logo}" alt="TNF logo">' if logo else ""
+    nav = "".join(f'<a href="{href}"{" class=\"on\"" if href == active else ""}>{label}</a>'
+                  for href, label in NAV_PAGES)
+    return (f'<div id="tnfhdr">{img}<span class="brand">The New Fuse</span>'
+            f'<nav>{nav}</nav></div>')
+
+
+def chrome_sidebar(active):
+    nav = "".join(f'<a href="{href}"{" class=\"on\"" if href == active else ""}>{label}</a>'
+                  for href, label in NAV_PAGES)
+    return f'<div id="tnfnav"><div class="nt">Navigate</div>{nav}</div>'
+
+
+def chrome_footer():
+    nav = " &middot; ".join(f'<a href="{href}">{label}</a>' for href, label in NAV_PAGES)
+    return (f'<div id="tnfftr"><span>The New Fuse &mdash; semantic reports</span>'
+            f'<span>{nav}</span><span><a href="README.md">README</a></span></div>')

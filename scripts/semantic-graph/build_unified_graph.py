@@ -398,7 +398,7 @@ for s, t, ty, w in edges:
 
 meta = {
     "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-    "root": ROOT,
+    "root": os.path.basename(ROOT),
     "nodes": len(node_list),
     "edges": len(edge_list),
     "sources": ["wiki", "memory-graph", "concept-kg", "codebase-map",

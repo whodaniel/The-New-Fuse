@@ -1,5 +1,5 @@
 {
-  "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "root": "The-New-Fuse",
   "generated": "2026-07-25T12:24:40Z",
   "files_indexed": 64091,
   "text_bytes": 700578399,
@@ -9,7 +9,7 @@
   "skipped_large": 139,
   "elapsed_seconds": 661.1,
   "outputs": {
-    "full_tsv_gz": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/wordcount_full.tsv.gz",
-    "summary": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/wordcount_summary.txt"
+    "full_tsv_gz": "wordcount_full.tsv.gz",
+    "summary": "wordcount_summary.txt"
   }
 }
