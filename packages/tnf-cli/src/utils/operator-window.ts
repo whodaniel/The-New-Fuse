@@ -9,6 +9,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import { writeFileAtomic } from './safe-fs.js';
 
 export const DEFAULT_OPERATOR_WINDOW_MS = 30_000;
 export const MIN_OPERATOR_WINDOW_MS = 0;
@@ -121,7 +122,9 @@ export function persistOperatorWindowMs(windowMs: number, home?: string): number
   };
   if (!next.mode) next.mode = 'LONG_RUN';
   fs.mkdirSync(path.dirname(configPath), { recursive: true });
-  fs.writeFileSync(configPath, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
+  // Atomic: a torn /window config would lapse into the default on next boot,
+  // surprising operators mid-debug.
+  writeFileAtomic(configPath, `${JSON.stringify(next, null, 2)}\n`);
   return clamped;
 }
 
