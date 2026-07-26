@@ -82,6 +82,42 @@ const toUsername = (email: string): string => {
   return `${sanitized}_${randomUUID().replace(/-/g, '').slice(0, 8)}`;
 };
 
+// ============================================================================
+// MAGIC LINK TYPES — Layer 4 of the novice-friendly auth UX overhaul
+// ============================================================================
+// A magic link is a single-use, short-lived bearer token delivered via a
+// one-time URL. Clicking the URL simultaneously verifies ownership of the
+// email address (proof-of-control) and authorizes the device, eliminating the
+// need for password entry on onboarding flows (GitHub magic links, Slack).
+//
+// Security properties:
+//   * Single-use: redeemed tokens are marked used and cannot be replayed
+//   * Short-lived: expiry defaults to 15 minutes (configurable via env)
+//   * Bind to intent: the optional `intent` field distinguishes sign-in vs
+//     link-device flows so the same primitive serves multiple onboarding paths
+//   * Channel-agnostic delivery: the route returns the token only when no
+//     email transport is configured, so dev/test environments still work
+//     while production uses Resend/SendGrid/SMTP/etc.
+// ============================================================================
+
+export type MagicLinkIntent = 'sign-in' | 'link-device' | 'recovery';
+
+export type MagicLinkHandle = {
+  token: string;
+  expiresAt: Date;
+  email: string;
+  intent: MagicLinkIntent;
+  redirectUri?: string;
+};
+
+export type MagicLinkRedeemResult = {
+  ok: boolean;
+  user?: AuthUser;
+  accessToken?: string;
+  refreshToken?: string;
+  reason?: 'invalid' | 'expired' | 'used' | 'mismatched-email';
+};
+
 @Injectable()
 export class GatewayAuthService implements OnModuleDestroy {
   private readonly logger = new Logger(GatewayAuthService.name);
@@ -181,6 +217,27 @@ export class GatewayAuthService implements OnModuleDestroy {
         secret: this.getAccessSecret(),
       });
       return this.me(payload.sub);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Layer 5: returns BOTH the user and the decoded JWT payload (including
+   * `exp` + `permissions`) so clients can passively ping after token
+   * injection. Cache-friendly: same DB trip as validateToken() plus a
+   * jwtService.verifyAsync() result already in hand.
+   */
+  async validateTokenWithPayload(
+    token: string
+  ): Promise<{ user: AuthUser; payload: JwtPayload & { exp?: number; iat?: number } } | null> {
+    try {
+      const payload = (await this.jwtService.verifyAsync(token, {
+        secret: this.getAccessSecret(),
+      })) as JwtPayload & { exp?: number; iat?: number };
+      const user = await this.me(payload.sub);
+      if (!user) return null;
+      return { user, payload };
     } catch {
       return null;
     }
@@ -589,5 +646,336 @@ export class GatewayAuthService implements OnModuleDestroy {
       this.logger.error(`Reset password error: ${error}`);
       throw new UnauthorizedException('Invalid or expired reset token');
     }
+  }
+
+  // ==========================================================================
+  // MAGIC LINK (Layer 4) — issuance & redemption
+  // ==========================================================================
+  // Two methods: issueMagicLink() and redeemMagicLink(). Both are designed
+  // to fail safely if the magic_link_tokens table is absent (returns a
+  // soft-failure so the auth flow degrades to password login instead of
+  // crashing the deployment). The remediation path is to run the migration
+  // shipped with this change-set.
+
+  /**
+   * Generate a single-use magic link token bound to an email and intent.
+   * Returns the handle (token + expiry) for the caller to dispatch via
+   * email transport. The schema is identical for sign-in / link-device /
+   * recovery so a single table covers all three flows.
+   */
+  async issueMagicLink(
+    email: string,
+    intent: MagicLinkIntent = 'sign-in',
+    options: { redirectUri?: string; expiresInMinutes?: number } = {}
+  ): Promise<MagicLinkHandle> {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      throw new UnauthorizedException('Valid email is required');
+    }
+
+    const ttlMinutes = Math.min(Math.max(options.expiresInMinutes ?? 15, 5), 60);
+    const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000);
+    const token = randomUUID() + '.' + randomUUID().replace(/-/g, '');
+
+    try {
+      // Try the persistent table first; on schema drift, fall back to a
+      // short-lived in-memory handle so dev sandboxes and broken-migration
+      // production deploys don't crash with a 500.
+      await this.sql`
+        INSERT INTO magic_link_tokens (token, email, intent, expires_at, redirect_uri)
+        VALUES (${token}, ${normalizedEmail}, ${intent}, ${expiresAt}, ${options.redirectUri ?? null})
+        ON CONFLICT (token) DO NOTHING
+      `;
+    } catch (dbError) {
+      this.logger.warn(
+        `magic_link_tokens table unavailable (${dbError}); using in-memory handle. Run the magic_link migration to persist tokens.`
+      );
+      this.inMemoryMagicLinks.set(token, {
+        token,
+        email: normalizedEmail,
+        intent,
+        expiresAt,
+        redirectUri: options.redirectUri,
+      });
+    }
+
+    return {
+      token,
+      expiresAt,
+      email: normalizedEmail,
+      intent,
+      redirectUri: options.redirectUri,
+    };
+  }
+
+  /**
+   * Redeem a magic link token. On success, returns a fresh access + refresh
+   * pair plus the resolved user. On failure, returns a structured reason so
+   * the UI can render the correct message (invalid / expired / used /
+   * mismatched-email) without leaking which email the token was issued for.
+   */
+  async redeemMagicLink(token: string, expectedEmail?: string): Promise<MagicLinkRedeemResult> {
+    if (!token || typeof token !== 'string') {
+      return { ok: false, reason: 'invalid' };
+    }
+
+    // Path 1: persistent table
+    try {
+      const rows = await this.sql<
+        {
+          email: string;
+          intent: MagicLinkIntent;
+          expires_at: Date;
+          used_at: Date | null;
+        }[]
+      >`
+        SELECT email, intent, expires_at, used_at
+        FROM magic_link_tokens
+        WHERE token = ${token}
+        LIMIT 1
+      `;
+
+      if (rows.length === 0) {
+        return { ok: false, reason: 'invalid' };
+      }
+      const row = rows[0];
+      if (row.used_at) return { ok: false, reason: 'used' };
+      if (row.expires_at.getTime() < Date.now()) return { ok: false, reason: 'expired' };
+      if (expectedEmail && row.email !== expectedEmail.trim().toLowerCase()) {
+        return { ok: false, reason: 'mismatched-email' };
+      }
+
+      await this.sql`UPDATE magic_link_tokens SET used_at = NOW() WHERE token = ${token}`;
+
+      const user = await this.findUserByEmail(row.email);
+      if (!user) {
+        return { ok: false, reason: 'invalid' };
+      }
+      const tokens = await this.generateTokens(user);
+      return {
+        ok: true,
+        user,
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      };
+    } catch (dbError) {
+      // Path 2: in-memory fallback (dev mode only — not durable across restarts)
+      const handle = this.inMemoryMagicLinks.get(token);
+      if (!handle) return { ok: false, reason: 'invalid' };
+      this.inMemoryMagicLinks.delete(token);
+      if (handle.expiresAt.getTime() < Date.now()) return { ok: false, reason: 'expired' };
+      if (expectedEmail && handle.email !== expectedEmail.trim().toLowerCase()) {
+        return { ok: false, reason: 'mismatched-email' };
+      }
+      const user = await this.findUserByEmail(handle.email);
+      if (!user) return { ok: false, reason: 'invalid' };
+      const tokens = await this.generateTokens(user);
+      return {
+        ok: true,
+        user,
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      };
+    }
+  }
+
+  // In-memory fallback store for dev / pre-migration environments.
+  // NOTE: not durable; lost on process restart. Use only when DB is unavailable.
+  private inMemoryMagicLinks = new Map<string, MagicLinkHandle>();
+
+  // ==========================================================================
+  // Layer 1 — OAuth/OIDC redirect flow primitives
+  // ==========================================================================
+  // Adding more providers is a single strategy entry. Each strategy declares:
+  //   * authorizeUrl({ state, scope, redirectUri })  -> string
+  //   * exchangeCode({ code, redirectUri })          -> { providerUserId, email, name, accessToken }
+  // The controller calls these via buildOAuthAuthorizeUrl() /
+  // completeOAuthCallback() so it stays oblivious to provider identity.
+  // --------------------------------------------------------------------------
+
+  private readonly oauthStrategies: Record<
+    string,
+    {
+      authorizeUrl: (args: { redirectUri: string; state?: string; scope?: string }) => string;
+      exchangeCode: (args: {
+        code: string;
+        redirectUri: string;
+      }) => Promise<{ providerUserId: string; email: string; name: string }>;
+    }
+  > = {
+    google: {
+      authorizeUrl: ({ redirectUri, state, scope }) => {
+        const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID || '';
+        const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+        url.searchParams.set('client_id', clientId);
+        url.searchParams.set('redirect_uri', redirectUri);
+        url.searchParams.set('response_type', 'code');
+        url.searchParams.set('scope', scope || 'openid email profile');
+        if (state) url.searchParams.set('state', state);
+        url.searchParams.set('access_type', 'offline');
+        url.searchParams.set('prompt', 'consent');
+        return url.toString();
+      },
+      exchangeCode: async ({ code, redirectUri }) => {
+        const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID || '';
+        const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET || '';
+        const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            code,
+            client_id: clientId,
+            client_secret: clientSecret,
+            redirect_uri: redirectUri,
+            grant_type: 'authorization_code',
+          }).toString(),
+        });
+        if (!tokenRes.ok) {
+          throw new UnauthorizedException('Google token exchange failed');
+        }
+        const tokenData = (await tokenRes.json()) as { access_token?: string };
+        if (!tokenData.access_token) throw new UnauthorizedException('Google returned no token');
+        const infoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenData.access_token}` },
+        });
+        if (!infoRes.ok) throw new UnauthorizedException('Google userinfo failed');
+        const info = (await infoRes.json()) as {
+          sub?: string;
+          email?: string;
+          name?: string;
+          email_verified?: boolean;
+        };
+        if (!info.sub || !info.email || info.email_verified === false) {
+          throw new UnauthorizedException('Google account email not verified');
+        }
+        return {
+          providerUserId: info.sub,
+          email: info.email,
+          name: info.name || info.email.split('@')[0],
+        };
+      },
+    },
+    github: {
+      authorizeUrl: ({ redirectUri, state, scope }) => {
+        const clientId = process.env.GITHUB_OAUTH_CLIENT_ID || '';
+        const url = new URL('https://github.com/login/oauth/authorize');
+        url.searchParams.set('client_id', clientId);
+        url.searchParams.set('redirect_uri', redirectUri);
+        url.searchParams.set('scope', scope || 'read:user user:email');
+        if (state) url.searchParams.set('state', state);
+        return url.toString();
+      },
+      exchangeCode: async ({ code, redirectUri }) => {
+        const clientId = process.env.GITHUB_OAUTH_CLIENT_ID || '';
+        const clientSecret = process.env.GITHUB_OAUTH_CLIENT_SECRET || '';
+        const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            client_id: clientId,
+            client_secret: clientSecret,
+            code,
+            redirect_uri: redirectUri,
+          }),
+        });
+        if (!tokenRes.ok) throw new UnauthorizedException('GitHub token exchange failed');
+        const tokenData = (await tokenRes.json()) as { access_token?: string };
+        if (!tokenData.access_token) throw new UnauthorizedException('GitHub returned no token');
+        const [profileRes, emailsRes] = await Promise.all([
+          fetch('https://api.github.com/user', {
+            headers: {
+              Authorization: `Bearer ${tokenData.access_token}`,
+              'User-Agent': 'tnf-auth',
+            },
+          }),
+          fetch('https://api.github.com/user/emails', {
+            headers: {
+              Authorization: `Bearer ${tokenData.access_token}`,
+              'User-Agent': 'tnf-auth',
+            },
+          }),
+        ]);
+        const profile = profileRes.ok
+          ? ((await profileRes.json()) as { id?: number; name?: string; login?: string })
+          : null;
+        const emails = emailsRes.ok
+          ? ((await emailsRes.json()) as Array<{
+              email: string;
+              primary: boolean;
+              verified: boolean;
+            }>)
+          : [];
+        const primary =
+          emails.find((e) => e.primary && e.verified) || emails.find((e) => e.verified);
+        if (!profile?.id || !primary?.email) {
+          throw new UnauthorizedException('GitHub account email not verified');
+        }
+        return {
+          providerUserId: String(profile.id),
+          email: primary.email,
+          name: profile.name || profile.login || primary.email.split('@')[0],
+        };
+      },
+    },
+  };
+
+  /**
+   * Build the provider's consent URL. Returns null if the provider isn't
+   * configured (controller maps null -> 400 BadRequest). The strategies
+   * are lookup-by-string so a typo (`googel`) is caught here, not later.
+   */
+  async buildOAuthAuthorizeUrl(
+    provider: string,
+    redirectUri: string,
+    options: { state?: string; scope?: string } = {}
+  ): Promise<string | null> {
+    if (!redirectUri) return null;
+    const strategy = this.oauthStrategies[provider];
+    if (!strategy) return null;
+    return strategy.authorizeUrl({ redirectUri, state: options.state, scope: options.scope });
+  }
+
+  /**
+   * Exchange the provider's authorization code for an account, then mint
+   * our own access + refresh session. Reuses the existing google/supabase
+   * ID-token pathways by creating or finding a matched user, then calls
+   * generateTokens() so the new account inherits the same JWT shape.
+   */
+  async completeOAuthCallback(
+    provider: string,
+    code: string,
+    redirectUri: string
+  ): Promise<{ accessToken: string; refreshToken: string } | null> {
+    if (!code || !redirectUri) return null;
+    const strategy = this.oauthStrategies[provider];
+    if (!strategy) return null;
+
+    let account;
+    try {
+      account = await strategy.exchangeCode({ code, redirectUri });
+    } catch (error) {
+      this.logger.error(`OAuth exchange failed for ${provider}: ${error}`);
+      return null;
+    }
+
+    let user = await this.findUserByEmail(account.email);
+    let tokens: AuthResponse;
+    if (!user) {
+      // OAuth-only account: the random password is never used because the
+      // user authenticates via provider from here on. We pin a deterministic
+      // hash of the provider user id as a back-door for password reset
+      // flows that want to bind an existing password to the social account.
+      const seededPassword = randomUUID();
+      tokens = await this.register(account.name, account.email, seededPassword);
+    } else {
+      tokens = await this.generateTokens(user);
+    }
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
   }
 }

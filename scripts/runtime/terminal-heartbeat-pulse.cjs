@@ -188,11 +188,20 @@ async function pollTerminalWindows() {
       try {
         const tab = window.selectedTab();
         const contents = String(tab.contents() || '');
+        let jxaBounds = null;
+        try {
+          const b = window.bounds();
+          jxaBounds = { x: Number(b.x), y: Number(b.y), width: Number(b.width), height: Number(b.height) };
+        } catch (_e) {}
+        let jxaIndex = null;
+        try { jxaIndex = Number(window.index()); } catch (_e) {}
         windows.push({
           windowId: Number(window.id()),
           tty: String(tab.tty() || '') || null,
           busy: Boolean(tab.busy()),
           customTitle: String(tab.customTitle() || '') || null,
+          jxaBounds,
+          jxaIndex,
           contentsTail: contents.length > ${config.contentTailChars} ? contents.slice(-${config.contentTailChars}) : contents
         });
       } catch (_error) {}
@@ -258,6 +267,40 @@ async function collectWindowBounds() {
   }
 }
 
+// Cron sessions often cannot reach the WindowServer for CGWindowList, but
+// osascript still can. NSScreen frames use a bottom-left origin, so flip Y
+// into the top-left space that window bounds and the mirror UI use.
+async function collectDisplaysFallback() {
+  const script = `
+    ObjC.import('AppKit');
+    const screens = $.NSScreen.screens;
+    const main = screens.objectAtIndex(0).frame;
+    const out = [];
+    for (let i = 0; i < screens.count; i++) {
+      const f = screens.objectAtIndex(i).frame;
+      out.push({
+        id: i,
+        x: Number(f.origin.x),
+        y: Number(main.size.height - f.origin.y - f.size.height),
+        width: Number(f.size.width),
+        height: Number(f.size.height),
+        main: i === 0
+      });
+    }
+    JSON.stringify(out);
+  `;
+  try {
+    const { stdout } = await execFileAsync('osascript', ['-l', 'JavaScript', '-e', script], {
+      maxBuffer: 1024 * 1024,
+      timeout: 20000,
+    });
+    const parsed = JSON.parse(stdout || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_error) {
+    return [];
+  }
+}
+
 function findDisplayId(bounds, displays) {
   if (!bounds || !displays.length) return null;
   const centerX = bounds.x + bounds.width / 2;
@@ -286,6 +329,7 @@ function mergeWindowBounds(terminals, cgCapture) {
   const zOrderById = new Map(cgWindows.map((w, index) => [w.id, index]));
 
   return terminals.map((terminal) => {
+    const { jxaBounds, jxaIndex, ...rest } = terminal;
     let cg = byId.get(terminal.windowId) || null;
     let matchedBy = cg ? 'windowId' : null;
     if (!cg && terminal.customTitle && byTitle.has(terminal.customTitle)) {
@@ -293,10 +337,20 @@ function mergeWindowBounds(terminals, cgCapture) {
       matchedBy = 'title';
     }
     if (!cg) {
-      return { ...terminal, bounds: null, display: null, zOrder: null, matched: false };
+      if (jxaBounds) {
+        return {
+          ...rest,
+          bounds: jxaBounds,
+          display: findDisplayId(jxaBounds, displays),
+          zOrder: Number.isFinite(jxaIndex) ? jxaIndex - 1 : null,
+          matched: true,
+          matchedBy: 'jxa',
+        };
+      }
+      return { ...rest, bounds: null, display: null, zOrder: null, matched: false };
     }
     return {
-      ...terminal,
+      ...rest,
       bounds: cg.bounds,
       display: findDisplayId(cg.bounds, displays),
       zOrder: zOrderById.get(cg.id) ?? null,
@@ -742,6 +796,9 @@ async function main() {
       collectWindowBounds(),
       collectProcessTable(),
     ]);
+    if (!cgCapture.displays.length) {
+      cgCapture.displays = await collectDisplaysFallback();
+    }
     const terminals = mergeWindowBounds(rawTerminals, cgCapture);
     const managedSessions = readManagedSessions();
     const managedByAgentId = new Map(

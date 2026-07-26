@@ -278,13 +278,42 @@ LAST_AI_SPEECH_TS_FILE = f"/tmp/voice_last_ai_speech_ts{PROFILE_SUFFIX}"
 LAST_AI_SPEECH_TEXT_FILE = f"/tmp/voice_last_ai_speech_text{PROFILE_SUFFIX}"
 AI_SPEAKING_FLAG = f"/tmp/ai_is_speaking{PROFILE_SUFFIX}"
 AI_POST_SPEECH_SUPPRESS_SECONDS = float(
-    os.environ.get("VOICE_AI_POST_SPEECH_SUPPRESS_SECONDS", "1.6")
+    os.environ.get("VOICE_AI_POST_SPEECH_SUPPRESS_SECONDS", "3.0")
 )
 AI_ECHO_SUPPRESS_SECONDS = float(
-    os.environ.get("VOICE_AI_ECHO_SUPPRESS_SECONDS", "8.0")
+    os.environ.get("VOICE_AI_ECHO_SUPPRESS_SECONDS", "20.0")
+)
+MAX_INJECT_CHARS = int(os.environ.get("VOICE_MAX_INJECT_CHARS", "420"))
+SPEAKER_BLEED_PHRASES = (
+    "box drawing",
+    "status chrome",
+    "terminal history",
+    "cursor agent redraw",
+    "filters are tighter",
+    "mic now pauses",
+    "prose diffs",
+    "shell json",
+    "spinner code",
+    "link in the description",
+    "thanks for watching",
+    "sponsored this portion",
+    "run everything",
+    "files edited",
+    "select edit",
+    "esc cancel",
+    "esc council",
 )
 RESPONSE_AUDIO_AUTO_HEAL = os.environ.get(
     "VOICE_RESPONSE_AUDIO_AUTO_HEAL", "1"
+).strip().lower() not in {
+    "0",
+    "false",
+    "no",
+    "off",
+}
+# Beam activate turns LLM→audio on by default (mic-pause/echo guards still apply).
+RESPONSE_AUDIO_DEFAULT_ON = os.environ.get(
+    "VOICE_RESPONSE_AUDIO_DEFAULT_ON", "1"
 ).strip().lower() not in {
     "0",
     "false",
@@ -477,25 +506,30 @@ def ensure_background_bridge():
         click_anchor_enabled = os.environ.get(
             "VOICE_CLICK_ANCHOR_ENABLED", "1"
         ).strip().lower() not in {"0", "false", "no", "off"}
-        target_locked = bool(read_voice_target().get("locked"))
-        if click_anchor_enabled and not target_locked and not click_pids:
+        # Always keep click-anchor alive. Cmd+Option+Click must be able to
+        # retarget even when an agent lock is present (daemon clears lock).
+        if click_anchor_enabled and not click_pids:
             daemon_bin = voice_system_path("voice-target-click-daemon")
             daemon_script = voice_system_path("voice-target-click-daemon.swift")
-            cmd = (
-                [daemon_bin] if os.path.exists(daemon_bin) else ["swift", daemon_script]
-            )
+            use_swift = os.environ.get("VOICE_CLICK_USE_SWIFT", "1").strip().lower() not in {
+                "0",
+                "false",
+                "no",
+                "off",
+            }
+            if use_swift and os.path.exists(daemon_script):
+                cmd = ["swift", daemon_script]
+            elif os.path.exists(daemon_bin):
+                cmd = [daemon_bin]
+            else:
+                cmd = ["swift", daemon_script]
             spawn_background_process(cmd, CLICK_DAEMON_LOG)
             started.append("click_anchor_daemon")
-        elif target_locked and click_pids:
-            # Agent/manual lock wins over opportunistic click anchors.
-            for pid in click_pids:
-                try:
-                    os.kill(pid, signal.SIGTERM)
-                except OSError:
-                    pass
-            started.append("click_anchor_daemon(paused-for-lock)")
 
         if RESPONSE_AUDIO_AUTO_HEAL:
+            response_enable = os.path.join(
+                STATE_DIR, state_file_name("voice_response_audio_enabled")
+            )
             response_watcher_script = os.path.expanduser(
                 voice_system_path("voice-response-audio-watch.py")
             )
@@ -507,7 +541,13 @@ def ensure_background_bridge():
                 )
                 if killed_response:
                     deduped.append(f"response_audio_watcher(-{len(killed_response)})")
-                if not response_pids:
+                if RESPONSE_AUDIO_DEFAULT_ON and not os.path.exists(response_enable):
+                    try:
+                        open(response_enable, "a", encoding="utf-8").close()
+                        started.append("response_audio_enabled")
+                    except Exception:
+                        pass
+                if os.path.exists(response_enable) and not response_pids:
                     spawn_background_process(
                         [
                             "python3",
@@ -519,6 +559,14 @@ def ensure_background_bridge():
                         RESPONSE_AUDIO_LOG,
                     )
                     started.append("response_audio_watcher")
+                elif (not os.path.exists(response_enable)) and response_pids:
+                    for pid in response_pids:
+                        try:
+                            os.kill(pid, signal.SIGTERM)
+                        except Exception:
+                            pass
+                    if response_pids:
+                        deduped.append(f"response_audio_watcher(-{len(response_pids)})")
 
     if deduped:
         log_event("DEDUPE", ", ".join(deduped))
@@ -667,13 +715,198 @@ def _tokenize_compare(text: str):
     }
 
 
+def is_speaker_bleed_transcript(text: str) -> bool:
+    """Drop mic pickup of speakers / YouTube / prior AI narration."""
+    cleaned = " ".join((text or "").split()).strip()
+    if not cleaned:
+        return True
+    if len(cleaned) > MAX_INJECT_CHARS:
+        return True
+    lower = cleaned.lower()
+    hits = sum(1 for phrase in SPEAKER_BLEED_PHRASES if phrase in lower)
+    if hits >= 1 and len(cleaned) > 80:
+        return True
+    if hits >= 2:
+        return True
+    words = lower.split()
+    # Long-form media dumps (podcasts/videos) should never inject.
+    if len(words) >= 90:
+        return True
+    return False
+
+
+INKY_WAKE_RE = re.compile(
+    r"^\s*(hey|hi|okay|ok|yo)?\s*inky\b[\s,.:\-]*",
+    re.IGNORECASE,
+)
+INKY_STATUS_RE = re.compile(
+    r"\b(who('?s| is)?\s+(online|active|busy|working|there)|"
+    r"network status|status report|who'?s on|who is on|"
+    r"who('?s| is)\s+who|who is who|agent names|name cheat|"
+    r"read\s*(them|it|that)?\s*back|reading back|"
+    r"what('?s| is) everyone doing)\b",
+    re.IGNORECASE,
+)
+
+
+def network_roster_payload() -> dict:
+    script = voice_system_path("voice-network-roster.py")
+    if not script or not os.path.isfile(script):
+        return {"ok": False, "error": "voice-network-roster.py missing", "agents": [], "speech": ""}
+    try:
+        proc = subprocess.run(
+            ["python3", script],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        if proc.returncode != 0:
+            return {"ok": False, "error": (proc.stderr or "")[:200], "agents": [], "speech": ""}
+        return json.loads(proc.stdout or "{}")
+    except Exception as err:
+        return {"ok": False, "error": str(err)[:200], "agents": [], "speech": ""}
+
+
+def who_is_who_payload() -> dict:
+    script = voice_system_path("tnf-agent-who-is-who.py")
+    if not script or not os.path.isfile(script):
+        return {"ok": False, "speech": ""}
+    try:
+        proc = subprocess.run(
+            ["python3", script, "--json"],
+            capture_output=True,
+            text=True,
+            timeout=6,
+            check=False,
+        )
+        if proc.returncode != 0:
+            return {"ok": False, "speech": ""}
+        return json.loads(proc.stdout or "{}")
+    except Exception:
+        return {"ok": False, "speech": ""}
+
+
+def speak_inky_reply(text: str) -> None:
+    """Short Inky replies with mic paused (KWS-style echo suppression)."""
+    if not text:
+        return
+    if os.environ.get("VOICE_INKY_SPEAK", "1").strip().lower() in {"0", "false", "no", "off"}:
+        return
+
+    def _run() -> None:
+        try:
+            set_mic_paused(True)
+            open(AI_SPEAKING_FLAG, "a", encoding="utf-8").close()
+            with open(LAST_AI_SPEECH_TEXT_FILE, "w", encoding="utf-8") as f:
+                f.write(text)
+            subprocess.run(
+                ["say", "-v", os.environ.get("VOICE_INKY_VOICE", "Daniel"), text[:420]],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            time.sleep(1.2)
+        finally:
+            try:
+                os.remove(AI_SPEAKING_FLAG)
+            except FileNotFoundError:
+                pass
+            try:
+                with open(LAST_AI_SPEECH_TS_FILE, "w", encoding="utf-8") as f:
+                    f.write(f"{time.time():.6f}\n")
+            except Exception:
+                pass
+            set_mic_paused(False)
+
+    threading.Thread(target=_run, daemon=True).start()
+
+
+def maybe_handle_inky_front_door(text: str) -> str | None:
+    """
+    Single audio front door. Inky-addressed (or network-status) utterances
+    stay with Inky — they are not dumped into whatever agent tty is locked.
+    """
+    cleaned = " ".join((text or "").split()).strip()
+    if not cleaned:
+        return None
+    addressed = bool(INKY_WAKE_RE.match(cleaned))
+    wants_status = bool(INKY_STATUS_RE.search(cleaned))
+    if not addressed and not wants_status:
+        return None
+
+    body = INKY_WAKE_RE.sub("", cleaned).strip()
+    wants_who = bool(
+        re.search(
+            r"\b(who('?s| is)\s+who|who is who|agent names|name cheat|read\s*(them|it|that)?\s*back|reading back)\b",
+            cleaned,
+            re.IGNORECASE,
+        )
+    )
+    if wants_who:
+        who = who_is_who_payload()
+        speech = (who.get("speech") or "").strip() or (
+            "Inky here. Claude is Anthropic. Hermes is its own agent. "
+            "OpenClaw is separate. Cursor and TNF are different windows."
+        )
+        log_event("INKY_WHO", speech[:120])
+        try:
+            with open(STREAM_FILE, "a", encoding="utf-8") as f:
+                f.write(f"[INKY] {speech}\n")
+        except Exception:
+            pass
+        speak_inky_reply(speech)
+        return "INKY_OK"
+
+    roster = network_roster_payload()
+    if wants_status or not body or body.lower() in {"status", "report", "hello", "hi"}:
+        speech = roster.get("speech") or status_fallback(roster)
+        log_event("INKY", speech[:120])
+        try:
+            with open(STREAM_FILE, "a", encoding="utf-8") as f:
+                f.write(f"[INKY] {speech}\n")
+        except Exception:
+            pass
+        speak_inky_reply(speech)
+        return "INKY_OK"
+
+    # Addressed to Inky with a task — acknowledge; full routing comes next.
+    ack = (
+        f"Inky here. Got it: {body[:180]}. "
+        "I'll keep that at the front door for now — say 'Inky, who's online' for network status."
+    )
+    log_event("INKY_TASK", body[:120])
+    try:
+        with open(STREAM_FILE, "a", encoding="utf-8") as f:
+            f.write(f"[INKY] {ack}\n")
+    except Exception:
+        pass
+    speak_inky_reply(ack)
+    return "INKY_OK"
+
+
+def status_fallback(roster: dict) -> str:
+    agents = roster.get("agents") or []
+    if not agents:
+        return "Inky here. No agent terminals look active right now."
+    names = [f"{a.get('name', a.get('id'))} on {a.get('tty')}" for a in agents[:6]]
+    return f"Inky here. Active: {'; '.join(names)}."
+
+
 def looks_like_ai_echo(candidate: str, spoken: str) -> bool:
     cand = _tokenize_compare(candidate)
     ref = _tokenize_compare(spoken)
     if not cand or not ref:
         return False
+    # Prefer cand⊆spoken ratio; also catch long garbled echoes with partial overlap.
     overlap = len(cand & ref) / max(1, len(cand))
-    return overlap >= 0.62
+    if overlap >= 0.38:
+        return True
+    # Long transcripts that share many spoken tokens are almost always speaker bleed.
+    shared = len(cand & ref)
+    if shared >= 8 and overlap >= 0.28:
+        return True
+    return False
 
 
 _NOISE_TRANSCRIPTS = {
@@ -903,11 +1136,11 @@ def _detect_audio_suffix(raw: bytes, content_type: str = "") -> str:
     return ".webm"
 
 
-def lock_voice_target_to_agent(prefer: str = "cursor-agent", press_enter: bool = True) -> dict:
+def lock_voice_target_to_agent(prefer: str = "any", press_enter: bool = True) -> dict:
     script = voice_system_path("voice-target-agent")
     if not script or not os.path.isfile(script):
         raise RuntimeError("voice-target-agent not found")
-    cmd = [script, "--profile", VOICEBRIDGE_PROFILE, "--prefer", prefer or "cursor-agent"]
+    cmd = [script, "--profile", VOICEBRIDGE_PROFILE, "--prefer", prefer or "any"]
     if press_enter:
         cmd.append("--enter")
     else:
@@ -1007,7 +1240,8 @@ HTML_TEMPLATE = """
         <div id="text" style="color: #444; font-size: 14px;">Click to start the beam.</div>
         <div id="target-status" style="margin-top: 10px; color: #668866; font-size: 12px;">Target: …</div>
         <button id="activate-btn" type="button">ACTIVATE BEAM</button>
-        <button id="lock-agent-btn" type="button" style="margin-top: 8px; background: #111; color: #88cc88; border: 1px solid #335533; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 12px;">LOCK TO CURSOR-AGENT</button>
+        <button id="lock-agent-btn" type="button" style="margin-top: 8px; background: #111; color: #88cc88; border: 1px solid #335533; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 12px;">LOCK TO ANY AGENT</button>
+        <div style="margin-top: 6px; font-size: 11px; color: #668866;">TNF-wide: finds cursor-agent, claude, codex, gemini, tnf agent, … — or Cmd+Option+Click any app/tab.</div>
     </div>
     <div id="right">
         <h3>
@@ -1046,18 +1280,20 @@ HTML_TEMPLATE = """
         let listeningActive = false;
         let transcribing = false;
         const VOICE_THRESHOLD = 6;
-        const SILENCE_END_MS = 1800;
-        const MIN_UTTERANCE_MS = 400;
+        const SILENCE_END_MS = 1200;
+        const MIN_UTTERANCE_MS = 350;
         const MAX_UTTERANCE_MS = 18000;
         let lastSentText = '';
         let lastSentAtMs = 0;
         let lastInterruptAtMs = 0;
         let webSpeechRecognition = null;
-        const POST_AI_SUPPRESS_MS = 900;
+        const POST_AI_SUPPRESS_MS = 12000;
         const INTERRUPT_COOLDOWN_MS = 350;
-        const POST_INTERRUPT_TRANSCRIPT_SUPPRESS_MS = 1600;
+        const POST_INTERRUPT_TRANSCRIPT_SUPPRESS_MS = 2500;
         const MIN_BARGE_CHARS = 4;
+        const MAX_INJECT_CHARS = 420;
         const INTERRUPT_RE = /\b(stop|pause|wait|interrupt|hold on|quiet|be quiet|shut up|enough|cancel)\b/i;
+        const SPEAKER_BLEED_RE = /box drawing|status chrome|terminal history|cursor agent redraw|filters are tighter|mic now pauses|link in the description|thanks for watching|run everything|files edited|select edit|esc cancel|esc council/i;
 
         function handleFinalTranscript(cleaned, source) {
             const text = (cleaned || '').trim();
@@ -1071,6 +1307,10 @@ HTML_TEMPLATE = """
             ]);
             if (letters.length < 4 || noise.has(norm)) {
                 addCacheItem('[stt] ignored noise: ' + text);
+                return;
+            }
+            if (text.length > MAX_INJECT_CHARS || text.split(/\\s+/).length >= 90 || SPEAKER_BLEED_RE.test(text)) {
+                addCacheItem('[stt] ignored speaker-bleed/media: ' + text.slice(0, 80));
                 return;
             }
             const now = Date.now();
@@ -1394,7 +1634,11 @@ HTML_TEMPLATE = """
             userActivated = true;
 
             try {
-                await fetch('/activate', { method: 'POST' });
+                const act = await fetch('/activate', { method: 'POST' });
+                const actData = await act.json().catch(() => ({}));
+                if (actData && actData.response_audio) {
+                    addCacheItem('[audio] LLM reply audio ON (tied to beam)');
+                }
             } catch (e) {}
 
             const sttResp = await fetch('/stt_state');
@@ -1495,7 +1739,7 @@ HTML_TEMPLATE = """
                 const resp = await fetch('/target_lock_agent', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prefer: 'cursor-agent', press_enter: true })
+                    body: JSON.stringify({ prefer: 'any', press_enter: true })
                 });
                 const data = await resp.json();
                 if (!resp.ok || !data.ok) {
@@ -1519,6 +1763,13 @@ HTML_TEMPLATE = """
 </body>
 </html>
 """
+
+
+@app.route("/network_agents")
+def network_agents():
+    payload = network_roster_payload()
+    payload["front_door"] = "inky"
+    return payload
 
 
 @app.route("/stream")
@@ -1590,7 +1841,7 @@ def target_state():
 @app.route("/target_lock_agent", methods=["POST"])
 def target_lock_agent():
     payload = request.get_json(silent=True) or {}
-    prefer = str(payload.get("prefer", "cursor-agent") or "cursor-agent")
+    prefer = str(payload.get("prefer", "any") or "any")
     press_enter = bool(payload.get("press_enter", True))
     try:
         target = lock_voice_target_to_agent(prefer=prefer, press_enter=press_enter)
@@ -1638,10 +1889,28 @@ def kws_state():
 
 @app.route("/activate", methods=["POST"])
 def activate():
+    # Beam ON ⇒ LLM reply audio ON by default (standard voice loop).
+    if RESPONSE_AUDIO_DEFAULT_ON:
+        try:
+            enable_path = os.path.join(
+                STATE_DIR, state_file_name("voice_response_audio_enabled")
+            )
+            open(enable_path, "a", encoding="utf-8").close()
+        except Exception:
+            pass
     started = ensure_background_bridge()
     if started:
         log_event("ACTIVATE", f"Started: {', '.join(started)}")
-    return {"ok": True, "started": started}
+    else:
+        log_event("ACTIVATE", "Beam active (services already running)")
+    enabled = os.path.exists(
+        os.path.join(STATE_DIR, state_file_name("voice_response_audio_enabled"))
+    )
+    return {
+        "ok": True,
+        "started": started,
+        "response_audio": enabled,
+    }
 
 
 @app.route("/send", methods=["POST"])
@@ -1659,6 +1928,13 @@ def send():
     now_ts = time.time()
     last_ai_ts = read_last_ai_speech_ts()
     last_ai_text = read_last_ai_speech_text()
+
+    # Echo check BEFORE barge-in. Speaker feedback must never look like a user interrupt.
+    if text and last_ai_ts > 0 and (now_ts - last_ai_ts) < AI_ECHO_SUPPRESS_SECONDS:
+        if looks_like_ai_echo(text, last_ai_text):
+            log_event("ECHO_SUPPRESS", text[:80])
+            return "ECHO_SUPPRESSED"
+
     ai_recent = (
         last_ai_ts > 0 and (now_ts - last_ai_ts) < AI_POST_SPEECH_SUPPRESS_SECONDS
     )
@@ -1672,16 +1948,19 @@ def send():
             pass
         time.sleep(0.15)
 
-    if text and last_ai_ts > 0 and (now_ts - last_ai_ts) < AI_ECHO_SUPPRESS_SECONDS:
-        if looks_like_ai_echo(text, last_ai_text):
-            log_event("ECHO_SUPPRESS", text[:80])
-            return "ECHO_SUPPRESSED"
-
     if text and is_noise_transcript(text):
         log_event("NOISE_SUPPRESS", text[:80])
         return "NOISE_SUPPRESSED"
 
+    if text and is_speaker_bleed_transcript(text):
+        log_event("SPEAKER_BLEED_SUPPRESS", text[:80])
+        return "SPEAKER_BLEED_SUPPRESSED"
+
     if text:
+        inky = maybe_handle_inky_front_door(text)
+        if inky:
+            return inky
+
         tagged = format_user_utterance(text)
         parsed = parse_user_utterance(tagged)
         body = parsed.get("body") or text

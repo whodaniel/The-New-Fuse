@@ -1,18 +1,26 @@
-import { hasSupabaseConfig, supabase } from '@/lib/supabase';
-import axios, { type AxiosRequestConfig } from 'axios';
+import {
+  getAccessToken,
+  getAuthTokenCandidates,
+  silentRefreshAccessToken,
+} from '@/services/authSession';
+import axios, {
+  type AxiosError,
+  type AxiosRequestConfig,
+  type InternalAxiosRequestConfig,
+} from 'axios';
 import { toast } from 'sonner';
 
-// Custom config type to allow silent requests
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _silent?: boolean;
+  _retry?: boolean;
 }
 
-// Create an axios instance with default config
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001',
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 const sanitizeErrorMessage = (input: unknown): string => {
@@ -36,51 +44,31 @@ const sanitizeErrorMessage = (input: unknown): string => {
   return compact;
 };
 
-// Add a request interceptor to add the auth token to every request
 api.interceptors.request.use(
-  async (config) => {
-    // Prefer app JWT first, then Supabase session token.
-    let bearerToken: string | null = null;
-    const storedToken =
-      localStorage.getItem('auth_token') ||
-      localStorage.getItem('authToken') ||
-      localStorage.getItem('accessToken') ||
-      localStorage.getItem('token');
-    if (storedToken) bearerToken = storedToken;
+  async (config: InternalAxiosRequestConfig) => {
+    let bearerToken = getAccessToken();
 
-    if (!bearerToken && hasSupabaseConfig && supabase) {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-        if (!error) {
-          bearerToken = data?.session?.access_token || null;
-        }
-      } catch (error) {
-        console.error('Error getting Supabase auth token:', error);
-      }
+    if (!bearerToken) {
+      const candidates = await getAuthTokenCandidates();
+      bearerToken = candidates[0] || null;
     }
 
     if (bearerToken) {
+      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${bearerToken}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Add a response interceptor to handle common errors
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
+  (response) => response,
+  async (error: AxiosError) => {
     const { response, config } = error;
-    // Cast config to our custom type to access _silent
-    const customConfig = config as CustomAxiosRequestConfig;
+    const customConfig = config as CustomAxiosRequestConfig | undefined;
     const isSilent = customConfig?._silent === true;
 
-    // Network Error (no response)
     if (!response) {
       if (!isSilent) {
         toast.error('Network Error. Please check your connection.');
@@ -88,27 +76,39 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Silent token rotation: refresh once and retry original request.
+    if (
+      (response.status === 401 || response.status === 403) &&
+      customConfig &&
+      !customConfig._retry &&
+      !String(customConfig.url || '').includes('/auth/refresh') &&
+      !String(customConfig.url || '').includes('/auth/login')
+    ) {
+      customConfig._retry = true;
+      const refreshed = await silentRefreshAccessToken();
+      if (refreshed) {
+        customConfig.headers = customConfig.headers || {};
+        (customConfig.headers as Record<string, string>).Authorization = `Bearer ${refreshed}`;
+        return api.request(customConfig);
+      }
+    }
+
     if (!isSilent) {
-      const rawMessage = response?.data?.message || 'Something went wrong';
+      const rawMessage =
+        (response.data as { message?: string } | undefined)?.message || 'Something went wrong';
       const errorMessage = sanitizeErrorMessage(rawMessage);
 
       switch (response.status) {
         case 400:
-          // Validation Error
           toast.error(errorMessage);
           break;
         case 401:
-          // Unauthorized
           toast.error('Session expired. Please log in again.');
-          // Optional: Event bus emit for logout
           break;
         case 403:
-          // Forbidden
           toast.error('You do not have permission to perform this action.');
           break;
         case 404:
-          // Not Found - sometimes we don't want to toast this (e.g. check user existence),
-          // but usually it's helpful.
           toast.error(typeof errorMessage === 'string' ? errorMessage : 'Resource not found.');
           break;
         case 500:
@@ -129,7 +129,6 @@ api.interceptors.response.use(
 
 export default api;
 
-// Helper functions for common API operations
 export const apiService = {
   get: async <T>(url: string, params?: any, config?: { silent?: boolean }) => {
     const requestConfig: CustomAxiosRequestConfig = {
@@ -163,8 +162,6 @@ export const apiService = {
     const response = await api.delete<T>(url, requestConfig);
     return response.data;
   },
-
-  // --- Real API Integration for Settings ---
 
   generatePersonalAccessToken: async () => {
     const response = await api.post<{ token: string; prefix: string; createdAt: string }>(

@@ -31,6 +31,7 @@ import { EXPERIENCE_SURFACES } from '../config/experienceArchitecture';
 
 import { useAuth } from '../hooks/useAuth';
 import { useAuthorization } from '../hooks/useAuthorization';
+import AuthConnectionChip from './auth/AuthConnectionChip';
 
 import { TNF_LOGO_SRC } from './brand/TnfLogo';
 const TNF_LOGO_URL = TNF_LOGO_SRC;
@@ -305,11 +306,15 @@ function SmartNavigation() {
             </div>
 
             <div className="flex items-center space-x-4">
-              <Link to="/login" className="text-sm font-medium text-slate-400 hover:text-white">
+              <AuthConnectionChip compact />
+              <Link
+                to="/auth/login"
+                className="text-sm font-medium text-slate-400 hover:text-white"
+              >
                 Sign In
               </Link>
               <Link
-                to="/register"
+                to="/auth/register"
                 className="bg-transparent text-gray-900 hover:bg-muted/30 px-5 py-2 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-glow-sm"
               >
                 Get Started
@@ -410,6 +415,7 @@ function SmartNavigation() {
           </div>
 
           <div className="flex items-center gap-3">
+            <AuthConnectionChip compact />
             {isSuperAdmin && (
               <div className="relative">
                 <button

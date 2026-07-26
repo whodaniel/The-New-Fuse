@@ -18,10 +18,8 @@ export function useAISource() {
     setRefreshing(true);
     setError(null);
     try {
-      const [nextSources, online] = await Promise.all([
-        aiSourceService.listSources(relayBaseUrl),
-        aiSourceService.probeRelayHealth(relayBaseUrl),
-      ]);
+      const nextSources = await aiSourceService.listSources(relayBaseUrl || undefined);
+      const online = relayBaseUrl ? await aiSourceService.probeRelayHealth(relayBaseUrl) : false;
       setSources(nextSources);
       setRelayOnline(online);
 

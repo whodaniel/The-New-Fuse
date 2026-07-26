@@ -39,6 +39,14 @@ export const NAV_GROUPS: NavGroup[] = [
 
 export const DESKTOP_ROUTES: DesktopRoute[] = [
   { id: 'platform', path: '/platform', label: 'Platform', group: 'home', badge: 'TNF' },
+  {
+    id: 'mission',
+    path: '/mission',
+    label: 'Mission Control',
+    group: 'home',
+    badge: 'LIVE',
+    keywords: ['goals', 'cron', 'schedule', 'terminal', 'mirror', 'windows'],
+  },
   { id: 'dashboard', path: '/dashboard', label: 'Dashboard', group: 'home' },
   {
     id: 'voice',

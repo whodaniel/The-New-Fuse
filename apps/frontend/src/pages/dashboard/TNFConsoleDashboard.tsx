@@ -1,3 +1,9 @@
+import {
+  CronPanel,
+  GoalsPanel,
+  TerminalMirrorPanel,
+  ZoneBadge,
+} from '@/components/control-surface';
 import { ActionCard, GlassCard, StatsCard } from '@/components/ui';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import {
@@ -17,6 +23,7 @@ import {
   Layers,
   Loader2,
   Radio,
+  Rocket,
   Settings,
   Shield,
   Wrench,
@@ -24,18 +31,25 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-type ConsoleSection = 'overview' | 'architecture' | 'observability' | 'audit' | 'settings';
+type ConsoleSection =
+  | 'mission'
+  | 'overview'
+  | 'architecture'
+  | 'observability'
+  | 'audit'
+  | 'settings';
 
 const resolveSection = (pathname: string): ConsoleSection => {
+  if (pathname === '/dashboard/overview') return 'overview';
   if (pathname === '/dashboard/architecture') return 'architecture';
   if (pathname === '/dashboard/observability') return 'observability';
   if (pathname === '/dashboard/logs' || pathname === '/dashboard/audit') return 'audit';
   if (pathname === '/dashboard/settings') return 'settings';
-  return 'overview';
+  return 'mission';
 };
 
 const sectionLink = (section: ConsoleSection): string => {
-  if (section === 'overview') return '/dashboard';
+  if (section === 'mission') return '/dashboard';
   if (section === 'audit') return '/dashboard/audit';
   return `/dashboard/${section}`;
 };
@@ -67,11 +81,22 @@ export const TNFConsoleDashboard: React.FC = () => {
 
   const sectionNav = useMemo(
     () => [
-      { id: 'overview' as const, label: 'Overview', icon: Layers },
-      { id: 'architecture' as const, label: 'Architecture', icon: CircuitBoard },
-      { id: 'observability' as const, label: 'Observability', icon: Activity },
-      { id: 'audit' as const, label: 'Audit Channels', icon: FileText },
-      { id: 'settings' as const, label: 'Settings', icon: Settings },
+      { id: 'mission' as const, label: 'Mission Control', icon: Rocket, zone: 'personal' as const },
+      { id: 'overview' as const, label: 'Overview', icon: Layers, zone: 'system' as const },
+      {
+        id: 'architecture' as const,
+        label: 'Architecture',
+        icon: CircuitBoard,
+        zone: 'system' as const,
+      },
+      {
+        id: 'observability' as const,
+        label: 'Observability',
+        icon: Activity,
+        zone: 'system' as const,
+      },
+      { id: 'audit' as const, label: 'Audit Channels', icon: FileText, zone: 'system' as const },
+      { id: 'settings' as const, label: 'Settings', icon: Settings, zone: 'system' as const },
     ],
     []
   );
@@ -119,10 +144,16 @@ export const TNFConsoleDashboard: React.FC = () => {
       </GlassCard>
 
       <GlassCard className="p-3">
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+        <div className="mb-2 flex items-center gap-3 px-1">
+          <ZoneBadge zone="personal" detail="your work" />
+          <ZoneBadge zone="system" detail="platform" />
+        </div>
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
           {sectionNav.map((item) => {
             const Icon = item.icon;
             const active = section === item.id;
+            const zoneAccent =
+              item.zone === 'personal' ? 'border-amber-400/25' : 'border-cyan-400/15';
             return (
               <Link
                 key={item.id}
@@ -130,7 +161,7 @@ export const TNFConsoleDashboard: React.FC = () => {
                 className={`rounded-md border px-3 py-2 text-sm transition ${
                   active
                     ? 'border-blue-400/40 bg-blue-500/15 text-blue-200'
-                    : 'border-white/10 bg-black/20 text-slate-300 hover:border-white/25 hover:text-white'
+                    : `${zoneAccent} bg-black/20 text-slate-300 hover:border-white/25 hover:text-white`
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -143,7 +174,7 @@ export const TNFConsoleDashboard: React.FC = () => {
         </div>
       </GlassCard>
 
-      {loading ? (
+      {loading && section !== 'mission' ? (
         <GlassCard className="p-10">
           <div className="flex items-center justify-center gap-3 text-slate-300">
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -152,6 +183,65 @@ export const TNFConsoleDashboard: React.FC = () => {
         </GlassCard>
       ) : (
         <>
+          {section === 'mission' && (
+            <>
+              <div className="grid gap-4 lg:grid-cols-2">
+                <GoalsPanel />
+                <CronPanel />
+              </div>
+              <div className="grid gap-4 xl:grid-cols-[3fr_2fr]">
+                <TerminalMirrorPanel />
+                <div className="grid gap-4 content-start">
+                  <div className="mb-1 flex items-center gap-2">
+                    <ZoneBadge zone="system" detail="platform health" />
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <StatsCard
+                      label="Active Agents"
+                      value={metrics.activeAgents}
+                      icon={Boxes}
+                      gradient="blue"
+                      change={metrics.activeAgents > 0 ? 'Fleet online' : 'Awaiting mesh signal'}
+                      changeType={metrics.activeAgents > 0 ? 'positive' : 'neutral'}
+                      trendPct={metrics.trends.agentsPct}
+                    />
+                    <StatsCard
+                      label="Active Workflows"
+                      value={metrics.activeWorkflows}
+                      icon={FolderKanban}
+                      gradient="purple"
+                      change={
+                        metrics.activeWorkflows > 0
+                          ? 'Executions in progress'
+                          : 'Execution queue idle'
+                      }
+                      changeType={metrics.activeWorkflows > 0 ? 'positive' : 'neutral'}
+                      trendPct={metrics.trends.workflowsPct}
+                    />
+                    <StatsCard
+                      label="Health Score"
+                      value={`${metrics.healthScore}%`}
+                      icon={Shield}
+                      gradient="green"
+                      change={metrics.systemStatus === 'healthy' ? 'Stable' : 'Needs attention'}
+                      changeType={metrics.systemStatus === 'healthy' ? 'positive' : 'negative'}
+                      trendPct={metrics.trends.healthPct}
+                    />
+                    <StatsCard
+                      label="Open Incidents"
+                      value={metrics.incidents}
+                      icon={AlertTriangle}
+                      gradient="orange"
+                      change={`${metrics.errorRatePercent}% error-rate signal`}
+                      changeType={metrics.incidents > 0 ? 'negative' : 'neutral'}
+                      trendPct={metrics.incidents > 0 ? -4.5 : 1.2}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
           {section === 'overview' && (
             <>
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

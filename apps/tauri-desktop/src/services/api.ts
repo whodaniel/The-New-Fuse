@@ -307,6 +307,15 @@ class ApiService {
     });
   }
 
+  // Local runtime (Mission Control) endpoints
+  async getLocalRuntimeSummary(): Promise<ApiResponse<unknown>> {
+    return this.request<unknown>('/api/local-runtime/summary');
+  }
+
+  async getLocalRuntimeTerminalMirror(): Promise<ApiResponse<unknown>> {
+    return this.request<unknown>('/api/local-runtime/terminal-mirror');
+  }
+
   // Health check
   async healthCheck(): Promise<boolean> {
     try {

@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { authFetch } from '@/utils/authToken';
+import { useQuery } from '@tanstack/react-query';
 
 export type LocalGoalTask = {
   id: string;
@@ -37,7 +37,13 @@ export type LocalCronJob = {
 export type Unavailable = { available: false; reason: string; generatedAt?: string };
 
 export type LocalGoalsResult =
-  | { available: true; source: string; activeGoalId: string | null; goals: LocalGoal[]; generatedAt: string }
+  | {
+      available: true;
+      source: string;
+      activeGoalId: string | null;
+      goals: LocalGoal[];
+      generatedAt: string;
+    }
   | Unavailable;
 
 export type LocalCronResult =

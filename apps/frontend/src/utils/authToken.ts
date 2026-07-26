@@ -1,20 +1,14 @@
-import { hasSupabaseConfig, supabase } from '@/lib/supabase';
+import {
+  getAccessToken,
+  getAuthTokenCandidates as sessionTokenCandidates,
+  silentRefreshAccessToken,
+} from '@/services/authSession';
 
 const AUTH_TOKEN_KEYS = ['auth_token', 'authToken', 'accessToken', 'token', 'AUTH_TOKEN'] as const;
 
 /** Read the app-issued JWT from browser storage (preferred for TNF API routes). */
 export function getStoredAuthToken(): string | null {
-  if (typeof window === 'undefined') return null;
-
-  for (const key of AUTH_TOKEN_KEYS) {
-    const fromLocal = localStorage.getItem(key);
-    if (fromLocal?.trim()) return fromLocal.trim();
-
-    const fromSession = sessionStorage.getItem(key);
-    if (fromSession?.trim()) return fromSession.trim();
-  }
-
-  return null;
+  return getAccessToken();
 }
 
 /**
@@ -22,22 +16,7 @@ export function getStoredAuthToken(): string | null {
  * App JWT is tried before Supabase session tokens to avoid 401 desync on timeline and ledger routes.
  */
 export async function getAuthTokenCandidates(): Promise<string[]> {
-  const tokens: string[] = [];
-  const storedToken = getStoredAuthToken();
-  if (storedToken) tokens.push(storedToken);
-
-  if (hasSupabaseConfig && supabase) {
-    try {
-      const { data, error } = await supabase.auth.getSession();
-      if (!error && data?.session?.access_token) {
-        tokens.push(data.session.access_token);
-      }
-    } catch {
-      // Fall through — caller handles unauthenticated responses.
-    }
-  }
-
-  return Array.from(new Set(tokens));
+  return sessionTokenCandidates();
 }
 
 export async function buildAuthHeaders(
@@ -89,10 +68,24 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
     });
     lastResponse = response;
 
-    const canRetry = i < authOptions.length - 1;
-    if ((response.status === 401 || response.status === 403) && canRetry) {
+    const canRetryToken = i < authOptions.length - 1;
+    if ((response.status === 401 || response.status === 403) && canRetryToken) {
       continue;
     }
+
+    // Silent refresh once, then retry original request with new bearer.
+    if (response.status === 401 || response.status === 403) {
+      const refreshed = await silentRefreshAccessToken();
+      if (refreshed) {
+        const retryHeaders = { ...attemptHeaders, Authorization: `Bearer ${refreshed}` };
+        return fetch(input, {
+          ...init,
+          headers: retryHeaders,
+          credentials: init?.credentials ?? 'include',
+        });
+      }
+    }
+
     return response;
   }
 
@@ -100,3 +93,6 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
     lastResponse ?? fetch(input, { ...init, headers, credentials: init?.credentials ?? 'include' })
   );
 }
+
+// Re-export for callers that imported storage keys historically
+export { AUTH_TOKEN_KEYS };

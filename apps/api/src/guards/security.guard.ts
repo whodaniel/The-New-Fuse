@@ -149,7 +149,7 @@ export class SecurityGuard implements CanActivate {
   }
 
   private isAuthBootstrapPath(path: string): boolean {
-    return /^\/api(?:\/v1)?\/auth\/(me|supabase|login|register|refresh|google|invite-policy)(?:\/|$)/i.test(
+    return /^\/api(?:\/v1)?\/auth\/(me|session|supabase|login|register|refresh|google|github|invite-policy)(?:\/|$)/i.test(
       path
     );
   }

@@ -532,6 +532,14 @@ function frontloadSystemPromptTemplate() {
     '## Legacy Compatibility',
     'Do not create or update `.agent/handoff_notes.txt`, `task_plan.md`, `findings.md`, or `progress.md` unless the operator explicitly requests legacy file-based planning.',
     '',
+    '## Fleet Delegation (Cornerstone Tenet)',
+    '',
+    'Maximize available compute by delegating to other capable top-level agents, not only your own sub-agents.',
+    'Discover targets: `tnf agents who --json` or the `tnf:agent-registry` Redis hash.',
+    'Dispatch: `tnf send "<msg>" --to <agentId>`, `tnf handoff emit --owner <me> --targets <a,b> --next-actions "..."`, or LPUSH `tnf:master:tasks:realtime` with assignee/requiredCapabilities/fulfillmentHints.',
+    'Wake sleeping agents: `scripts/start-agent-network.sh` or Terminal window prompt injection.',
+    'Verify delivery via handoff ack or reply channel; never simulate a dispatch.',
+    '',
     '## Raw Agent Prompt',
     '',
     '```text',
@@ -1106,6 +1114,41 @@ async function writeRuntimeStateSnapshot(timeoutMs = DEFAULT_RUNTIME_SNAPSHOT_TI
   }
 }
 
+function ensureVoiceKwsAlwaysOnFromOnboard() {
+  if (String(process.env.VOICE_KWS_ALWAYS_ON || '1').trim() === '0') {
+    console.log('- Voice/KWS always-on: skipped (VOICE_KWS_ALWAYS_ON=0)');
+    return;
+  }
+  const bootScript = path.join(ROOT, 'scripts/system/tnf-voice-kws-boot.sh');
+  if (!fs.existsSync(bootScript)) {
+    console.log(`- Voice/KWS always-on: missing ${bootScript}`);
+    return;
+  }
+  try {
+    const { spawnSync } = require('node:child_process');
+    const result = spawnSync('bash', [bootScript], {
+      cwd: ROOT,
+      env: {
+        ...process.env,
+        VOICE_KWS_ALWAYS_ON: process.env.VOICE_KWS_ALWAYS_ON || '1',
+        VOICE_RESPONSE_AUDIO_DEFAULT_ON: process.env.VOICE_RESPONSE_AUDIO_DEFAULT_ON || '1',
+        MINI_OMNI_ENABLED: process.env.MINI_OMNI_ENABLED || 'false',
+        REQUIRE_INGEST_AUTH: process.env.REQUIRE_INGEST_AUTH || 'false',
+      },
+      encoding: 'utf8',
+      timeout: 45000,
+    });
+    if (result.status === 0) {
+      console.log('- Voice beam + KWS: ensured (always-on for onboarded TNF software)');
+    } else {
+      const detail = (result.stderr || result.stdout || '').toString().trim().slice(0, 240);
+      console.log(`- Voice/KWS ensure warning (non-fatal): exit ${result.status}${detail ? ` — ${detail}` : ''}`);
+    }
+  } catch (error) {
+    console.log(`- Voice/KWS ensure warning (non-fatal): ${error?.message || 'unknown error'}`);
+  }
+}
+
 async function main() {
   let parsed;
   try {
@@ -1293,6 +1336,10 @@ async function main() {
   console.log('- Alt: pnpm run tnf -- onboard');
   console.log('- Read: AGENTS.md');
   console.log('- Optional shell auto-bootstrap: docs/TNF_SESSION_ONBOARDING.md');
+  console.log('- Voice beam + KWS start by default on onboard / boot / tui (VOICE_KWS_ALWAYS_ON=1)');
+
+  printHeader('Voice Beam + KWS Always-On');
+  ensureVoiceKwsAlwaysOnFromOnboard();
 
   printHeader('Prompt For Raw AI CLI Sessions');
   console.log(

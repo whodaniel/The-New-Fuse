@@ -135,12 +135,16 @@ TARGET_JSON_FILE = os.path.join(STATE_DIR, state_file_name("voice_target.json"))
 LEGACY_TTY_FILE = os.path.join(STATE_DIR, state_file_name("voice_target_tty"))
 MIC_PAUSE_FILE = os.path.join(STATE_DIR, state_file_name("voice_mic_paused"))
 POLL_INTERVAL_SECONDS = 0.15
-IDLE_FLUSH_SECONDS = float(os.environ.get("VOICE_IDLE_FLUSH_SECONDS", "3.5"))
-MAX_FLUSH_SECONDS = float(os.environ.get("VOICE_MAX_FLUSH_SECONDS", "18.0"))
-MIN_FLUSH_CHARS = int(os.environ.get("VOICE_MIN_FLUSH_CHARS", "20"))
-CHAT_IDLE_FLUSH_SECONDS = float(os.environ.get("VOICE_CHAT_IDLE_FLUSH_SECONDS", "5.0"))
-CHAT_MAX_FLUSH_SECONDS = float(os.environ.get("VOICE_CHAT_MAX_FLUSH_SECONDS", "25.0"))
-CHAT_MIN_FLUSH_CHARS = int(os.environ.get("VOICE_CHAT_MIN_FLUSH_CHARS", "36"))
+IDLE_FLUSH_SECONDS = float(os.environ.get("VOICE_IDLE_FLUSH_SECONDS", "7.0"))
+MAX_FLUSH_SECONDS = float(os.environ.get("VOICE_MAX_FLUSH_SECONDS", "30.0"))
+MIN_FLUSH_CHARS = int(os.environ.get("VOICE_MIN_FLUSH_CHARS", "12"))
+CHAT_IDLE_FLUSH_SECONDS = float(os.environ.get("VOICE_CHAT_IDLE_FLUSH_SECONDS", "8.0"))
+CHAT_MAX_FLUSH_SECONDS = float(os.environ.get("VOICE_CHAT_MAX_FLUSH_SECONDS", "40.0"))
+CHAT_MIN_FLUSH_CHARS = int(os.environ.get("VOICE_CHAT_MIN_FLUSH_CHARS", "12"))
+# Agent tty dictation: hold multiple pause-chunks, then one inject + Enter.
+AGENT_IDLE_FLUSH_SECONDS = float(os.environ.get("VOICE_AGENT_IDLE_FLUSH_SECONDS", "8.0"))
+AGENT_MAX_FLUSH_SECONDS = float(os.environ.get("VOICE_AGENT_MAX_FLUSH_SECONDS", "45.0"))
+AGENT_MIN_FLUSH_CHARS = int(os.environ.get("VOICE_AGENT_MIN_FLUSH_CHARS", "8"))
 CHAT_APP_HINTS = tuple(
     hint.strip().lower()
     for hint in os.environ.get(
@@ -476,9 +480,23 @@ def is_chat_composer_target(target: dict | None) -> bool:
 
 
 def flush_settings_for_target(target: dict | None) -> tuple[float, float, int]:
+    # Terminal/agent destinations: accumulate pause-chunks into ONE submit.
+    if target and str(target.get("tty") or "").strip():
+        return AGENT_IDLE_FLUSH_SECONDS, AGENT_MAX_FLUSH_SECONDS, AGENT_MIN_FLUSH_CHARS
     if is_chat_composer_target(target):
         return CHAT_IDLE_FLUSH_SECONDS, CHAT_MAX_FLUSH_SECONDS, CHAT_MIN_FLUSH_CHARS
     return IDLE_FLUSH_SECONDS, MAX_FLUSH_SECONDS, MIN_FLUSH_CHARS
+
+
+def flush_policy_label(target: dict | None) -> str:
+    idle_s, max_s, min_chars = flush_settings_for_target(target)
+    if target and str(target.get("tty") or "").strip():
+        mode = "agent-batch"
+    elif is_chat_composer_target(target):
+        mode = "chat"
+    else:
+        mode = "default"
+    return f"{mode} idle={idle_s:.1f}s max={max_s:.1f}s min_chars={min_chars}"
 
 
 def batch_char_count(chunks: list[str]) -> int:
@@ -507,12 +525,6 @@ def should_flush_pending(
     if char_count > 0 and idle_elapsed >= idle_seconds * 2.5:
         return True, "idle-stale"
     return False, ""
-
-
-def flush_policy_label(target: dict | None) -> str:
-    idle_s, max_s, min_chars = flush_settings_for_target(target)
-    mode = "chat" if is_chat_composer_target(target) else "default"
-    return f"{mode} idle={idle_s:.1f}s max={max_s:.1f}s min_chars={min_chars}"
 
 
 def is_beam_paused() -> bool:
@@ -924,28 +936,22 @@ def maybe_anchor_voice_text(text: str) -> str:
 
 
 def is_blocked_voice_tty(tty: str) -> bool:
+    """Honor explicit VOICEBRIDGE_BLOCKED_TTYS only.
+
+    TNF CLI used to be auto-blocked as a 'protected lane', which made it
+    impossible to lock the beam to the TNF CLI prompt input. Intentional
+    locks (voice-target-agent / Cmd+Option+Click) must be able to inject.
+    """
     blocked = os.environ.get("VOICEBRIDGE_BLOCKED_TTYS", "")
     blocked_set = {item.strip() for item in blocked.split(",") if item.strip()}
-    if tty in blocked_set:
-        return True
-    try:
-        proc = subprocess.run(
-            ["ps", "-t", f"/dev/{tty}", "-o", "command="],
-            capture_output=True,
-            text=True,
-            timeout=2,
-            check=False,
-        )
-        cmd = (proc.stdout or "").strip()
-        if "packages/tnf-cli" in cmd and ("cli.ts" in cmd or "cli.js" in cmd):
-            return True
-    except Exception:
-        pass
-    return False
+    return tty in blocked_set
 
 
 def inject_text(text: str, target: dict | None) -> None:
     tagged_line = " ".join(text.splitlines()).strip()
+    if tagged_line.startswith("[INKY]"):
+        print(f"🎙️ [{VOICEBRIDGE_PROFILE}] Inky front-door line (no agent inject).")
+        return
     single_line = body_for_injection(tagged_line)
     if not single_line:
         return

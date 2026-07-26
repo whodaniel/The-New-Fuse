@@ -1,5 +1,6 @@
 #!/bin/bash
-# voice-target-agent: Lock transcription inject to the tty running cursor-agent / tnf agent.
+# voice-target-agent: Lock transcription inject to any live agent tty (TNF-wide, not Cursor-only).
+# Destination = whichever agent process matches; Cmd+Option+Click can still retarget.
 set -euo pipefail
 
 _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -42,7 +43,7 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     *)
-      echo "Usage: voice-target-agent [--profile A|B|...] [--enter|--no-enter] [--prefer cursor-agent|tnf] [--quiet]" >&2
+      echo "Usage: voice-target-agent [--profile A|B|...] [--enter|--no-enter] [--prefer any|cursor-agent|tnf|claude|codex|gemini|...] [--quiet]" >&2
       exit 1
       ;;
   esac
@@ -72,18 +73,38 @@ import re
 import subprocess
 
 prefer = (os.environ.get("PREFER") or "").strip().lower()
+if prefer in {"", "any", "all", "auto", "agent"}:
+    prefer = "any"
 
-# Patterns ordered by preference for chat-agent destinations.
+# TNF voice destinations: any interactive agent CLI on a tty — not Cursor-specific.
+# Order is default search priority when prefer=any (most common first).
 patterns = [
     ("cursor-agent", re.compile(r"(^|[/\s])cursor-agent([/\s]|$)")),
     ("cursor-agent", re.compile(r"\.local/share/cursor-agent/")),
-    ("tnf-agent", re.compile(r"tnf-agent-daemon|tnf agent |packages/tnf-cli.*\bagent\b")),
+    # TNF CLI REPL (boot / interactive) + daemon variants
+    ("tnf-cli", re.compile(
+        r"packages/tnf-cli|\btnf-cli\b|tnf-agent-daemon|\btnf agent\b"
+    )),
+    ("claude", re.compile(r"(^|[/\s])claude([/\s]|$)|\bclaude-code\b")),
+    ("codex", re.compile(r"(^|[/\s])codex([/\s]|$)")),
+    ("gemini", re.compile(r"(^|[/\s])gemini([/\s]|$)")),
+    ("aider", re.compile(r"(^|[/\s])aider([/\s]|$)")),
+    ("kilo", re.compile(r"(^|[/\s])kilo([/\s]|$)|\bkilo-cli\b")),
+    ("hermes", re.compile(r"(^|[/\s])hermes([/\s]|$)")),
+    ("opencode", re.compile(r"(^|[/\s])opencode([/\s]|$)")),
 ]
 
-if prefer in {"cursor", "cursor-agent"}:
-    patterns = [p for p in patterns if p[0] == "cursor-agent"] + [p for p in patterns if p[0] != "cursor-agent"]
-elif prefer in {"tnf", "tnf-agent"}:
-    patterns = [p for p in patterns if p[0] == "tnf-agent"] + [p for p in patterns if p[0] != "tnf-agent"]
+if prefer != "any":
+    aliases = {
+        "cursor": "cursor-agent",
+        "tnf": "tnf-cli",
+        "tnf-agent": "tnf-cli",
+        "claude-code": "claude",
+    }
+    prefer = aliases.get(prefer, prefer)
+    preferred = [p for p in patterns if p[0] == prefer]
+    if preferred:
+        patterns = preferred + [p for p in patterns if p[0] != prefer]
 
 try:
     out = subprocess.check_output(["ps", "axo", "pid=,tty=,command="], text=True, stderr=subprocess.DEVNULL)
@@ -117,9 +138,20 @@ for line in out.splitlines():
 if not candidates:
     raise SystemExit(2)
 
+# Honor --prefer: pick that label when present, else fall back.
+if prefer != "any":
+    preferred_hits = [c for c in candidates if c[0] == prefer]
+    if preferred_hits:
+        candidates = preferred_hits
+
 # Prefer highest pid (most recently started) within the best label order.
+# For TNF CLI, prefer the interactive TUI prompt over plain `boot`.
 best_label = candidates[0][0]
 ranked = [c for c in candidates if c[0] == best_label] or candidates
+if best_label == "tnf-cli":
+    tui = [c for c in ranked if re.search(r"\btui\b", c[3], re.I)]
+    if tui:
+        ranked = tui
 ranked.sort(key=lambda c: c[2], reverse=True)
 label, tty, pid, cmd = ranked[0]
 print(f"{label}\t{tty}\t{pid}\t{cmd}")
@@ -127,8 +159,9 @@ PY
 )" || {
   code=$?
   if [[ "$code" -eq 2 ]]; then
-    echo "❌ No cursor-agent / tnf agent process found on a tty." >&2
-    echo "   Start the agent in Terminal, then re-run: voice-target-agent" >&2
+    echo "❌ No agent process found on a tty." >&2
+    echo "   Start any TNF-compatible agent in Terminal (cursor-agent, claude, codex, gemini, tnf agent, …)," >&2
+    echo "   or Cmd+Option+Click to set the inject destination." >&2
   else
     echo "❌ Failed to scan processes for agent tty." >&2
   fi
@@ -152,8 +185,10 @@ payload = {
     "press_enter": os.environ.get("PRESS_ENTER", "1") == "1",
     "app": os.environ.get("LABEL", "agent"),
     "agent_pid": int(os.environ.get("AGENT_PID") or "0"),
+    # Soft lock: preferred destination, but Cmd+Option+Click always wins.
     "locked": True,
     "lock_reason": "voice-target-agent",
+    "lock_scope": "tnf-any-agent",
     "updated_at": int(time.time()),
 }
 with open(os.environ["TARGET_JSON"], "w", encoding="utf-8") as f:

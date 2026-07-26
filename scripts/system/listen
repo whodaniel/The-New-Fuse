@@ -67,7 +67,9 @@ AUDIO_FILE="${LISTEN_AUDIO_FILE:-$__listen_audio_default}"
 AI_SPEAKING_FLAG="/tmp/ai_is_speaking${__listen_profile_suffix}"
 LAST_AI_SPEECH_TS_FILE="/tmp/voice_last_ai_speech_ts${__listen_profile_suffix}"
 A2A_SPEECH_PID_FILE="${VOICE_A2A_SPEECH_PID_FILE:-/tmp/codex_voice.pid}"
-LISTEN_AI_ECHO_SUPPRESS_SECONDS="${LISTEN_AI_ECHO_SUPPRESS_SECONDS:-8.0}"
+LISTEN_AI_ECHO_SUPPRESS_SECONDS="${LISTEN_AI_ECHO_SUPPRESS_SECONDS:-20.0}"
+LAST_AI_SPEECH_TEXT_FILE="/tmp/voice_last_ai_speech_text${__listen_profile_suffix}"
+LISTEN_MAX_INJECT_CHARS="${LISTEN_MAX_INJECT_CHARS:-420}"
 WHISPER_THREADS="${LISTEN_WHISPER_THREADS:-4}"
 WHISPER_LANG="${LISTEN_WHISPER_LANG:-en}"
 WHISPER_PROMPT_DEFAULT="AI, NVIDIA, Jensen Huang, algorithm, refactor, shard, pipeline, data, model, GPU"
@@ -79,7 +81,7 @@ else
     LISTEN_STREAM_FILE="${LISTEN_STREAM_FILE:-$VOICEBRIDGE_STATE_DIR/voice_stream.txt}"
 fi
 LISTEN_PRESS_ENTER="${LISTEN_PRESS_ENTER:-1}"
-LISTEN_SILENCE_END_SECONDS="${LISTEN_SILENCE_END_SECONDS:-2.8}"
+LISTEN_SILENCE_END_SECONDS="${LISTEN_SILENCE_END_SECONDS:-1.4}"
 MODEL_CANDIDATES=(
   "${LISTEN_WHISPER_MODEL:-}"
   "$MODEL_DIR/ggml-large-v3-turbo.bin"
@@ -192,6 +194,63 @@ is_noise_transcript() {
         ;;
     esac
     return 1
+}
+
+looks_like_ai_echo_transcript() {
+    local text="$1"
+    python3 - "$LAST_AI_SPEECH_TEXT_FILE" "$text" <<'PY'
+import pathlib
+import re
+import sys
+
+spoken_path = pathlib.Path(sys.argv[1])
+candidate = sys.argv[2] if len(sys.argv) > 2 else ""
+try:
+    spoken = spoken_path.read_text(encoding="utf-8")
+except Exception:
+    raise SystemExit(1)
+
+def toks(s: str):
+    return {t for t in re.findall(r"[a-z0-9]+", (s or "").lower()) if len(t) >= 3}
+
+cand = toks(candidate)
+ref = toks(spoken)
+if len(cand) < 4 or len(ref) < 4:
+    raise SystemExit(1)
+overlap = len(cand & ref) / max(1, len(cand))
+raise SystemExit(0 if overlap >= 0.38 else 1)
+PY
+}
+
+is_speaker_bleed_transcript() {
+    local text="$1"
+    python3 - "$LISTEN_MAX_INJECT_CHARS" "$text" <<'PY'
+import re
+import sys
+
+max_chars = int(sys.argv[1])
+text = " ".join((sys.argv[2] if len(sys.argv) > 2 else "").split())
+if not text:
+    raise SystemExit(0)
+if len(text) > max_chars:
+    raise SystemExit(0)
+lower = text.lower()
+phrases = (
+    "box drawing", "status chrome", "terminal history", "cursor agent redraw",
+    "filters are tighter", "mic now pauses", "prose diffs", "shell json",
+    "link in the description", "thanks for watching", "run everything",
+    "files edited", "select edit", "esc cancel", "esc council",
+)
+hits = sum(1 for p in phrases if p in lower)
+words = lower.split()
+if hits >= 1 and len(text) > 80:
+    raise SystemExit(0)
+if hits >= 2:
+    raise SystemExit(0)
+if len(words) >= 90:
+    raise SystemExit(0)
+raise SystemExit(1)
+PY
 }
 
 ai_speaking_or_recent() {
@@ -381,6 +440,14 @@ run_once() {
         fi
         if ai_speaking_or_recent; then
             echo "🔕 Suppressed transcript during AI speech window."
+            return
+        fi
+        if looks_like_ai_echo_transcript "$text"; then
+            echo "🔕 Suppressed AI-echo transcript (speaker feedback)."
+            return
+        fi
+        if is_speaker_bleed_transcript "$text"; then
+            echo "🔕 Suppressed speaker-bleed/media transcript."
             return
         fi
         if ! append_to_stream "$text"; then

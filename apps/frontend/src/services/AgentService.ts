@@ -78,7 +78,7 @@ class AgentService {
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const { authFetch } = await import('@/utils/authToken');
+    const { authFetch, getAuthTokenCandidates } = await import('@/utils/authToken');
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -88,6 +88,13 @@ class AgentService {
     // Prefer explicit constructor apiKey; otherwise authFetch attaches session JWT.
     if (this.apiKey) {
       headers['Authorization'] = `Bearer ${this.apiKey}`;
+    } else {
+      const candidates = await getAuthTokenCandidates();
+      if (!candidates.length) {
+        const err = new Error('Agent API Error: 401 Authentication required');
+        (err as Error & { status?: number }).status = 401;
+        throw err;
+      }
     }
 
     try {
@@ -102,14 +109,27 @@ class AgentService {
       }
 
       if (!response.ok) {
-        throw new Error(`Agent API Error: ${response.status} ${response.statusText}`);
+        const err = new Error(`Agent API Error: ${response.status} ${response.statusText}`);
+        (err as Error & { status?: number }).status = response.status;
+        throw err;
       }
 
       return await response.json();
     } catch (error) {
-      console.warn('API request to %s failed. Error:', url, error);
+      const status = (error as Error & { status?: number })?.status;
+      // 401/403 are expected when signed out or session expired — callers soft-fallback.
+      if (status !== 401 && status !== 403) {
+        console.warn('API request to %s failed. Error:', url, error);
+      }
       throw error;
     }
+  }
+
+  private isAuthFailure(error: unknown): boolean {
+    const status = (error as Error & { status?: number })?.status;
+    if (status === 401 || status === 403) return true;
+    const message = error instanceof Error ? error.message : String(error || '');
+    return /\b401\b|\b403\b|authentication required|unauthorized/i.test(message);
   }
 
   /** Live DB instances for the signed-in user (Fleet). */
@@ -118,6 +138,9 @@ class AgentService {
       const instances = await this.request<any[]>('/agents');
       return (Array.isArray(instances) ? instances : []).map((a) => this.transformAgent(a));
     } catch (error) {
+      if (this.isAuthFailure(error)) {
+        return [];
+      }
       console.error('Failed to get fleet agents', error);
       throw error;
     }
@@ -134,7 +157,9 @@ class AgentService {
         return templates;
       }
     } catch (error) {
-      console.warn('Agent bank API unavailable, trying packaged catalog', error);
+      if (!this.isAuthFailure(error)) {
+        console.warn('Agent bank API unavailable, trying packaged catalog');
+      }
     }
 
     return this.loadPackagedCatalog(bank);

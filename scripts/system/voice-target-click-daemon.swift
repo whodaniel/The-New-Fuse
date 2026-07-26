@@ -165,9 +165,9 @@ func writePointTarget(x: Int, y: Int, appName: String, bundleId: String, tty: St
        let existing = try? JSONSerialization.jsonObject(with: existingData) as? [String: Any],
        let locked = existing["locked"] as? Bool,
        locked == true {
-        print("🔒 Anchor locked (\(existing["lock_reason"] ?? "manual")); ignoring click retarget.")
+        print("🔓 Clearing previous lock (\(existing["lock_reason"] ?? "manual")) for Cmd+Option click retarget.")
         fflush(stdout)
-        return
+        // Continue and overwrite — explicit user gesture wins over agent lock.
     }
 
     let pressEnter = isTerminalLike(appName: appName, bundleId: bundleId)

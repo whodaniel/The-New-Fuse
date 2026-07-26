@@ -1,6 +1,26 @@
 type RelayJson = Record<string, unknown> | unknown[] | null;
 
+function isLoopbackBase(baseUrl: string): boolean {
+  try {
+    const host = new URL(baseUrl).hostname;
+    return host === '127.0.0.1' || host === 'localhost' || host === '::1';
+  } catch {
+    return /127\.0\.0\.1|localhost/i.test(baseUrl);
+  }
+}
+
+function isBrowserOnLocalhost(): boolean {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+}
+
 async function relayRequest(baseUrl: string, path: string): Promise<Response | null> {
+  // Hosted Pages CSP blocks http://127.0.0.1 — skip before fetch to avoid console noise.
+  if (isLoopbackBase(baseUrl) && !isBrowserOnLocalhost()) {
+    return null;
+  }
+  if (!baseUrl?.trim()) return null;
   try {
     return await globalThis.fetch(`${baseUrl}${path}`);
   } catch {

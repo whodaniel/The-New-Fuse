@@ -21,9 +21,11 @@ const PlatformOverview = lazy(() => import('../pages/PlatformOverview'));
 const KnowledgeHub = lazy(() => import('../pages/KnowledgeHub'));
 const VoiceHub = lazy(() => import('../pages/VoiceHub'));
 const VirtualLibraryHub = lazy(() => import('../pages/VirtualLibraryHub'));
+const MissionControl = lazy(() => import('../pages/MissionControl'));
 
 export const ROUTE_COMPONENTS: Record<string, React.LazyExoticComponent<React.FC>> = {
   '/platform': PlatformOverview,
+  '/mission': MissionControl,
   '/dashboard': Dashboard,
   '/terminal': SwarmTerminal,
   '/voice': VoiceHub,

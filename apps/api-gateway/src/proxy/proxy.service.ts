@@ -82,6 +82,20 @@ export class ProxyService {
       retries: 3,
     });
 
+    // Local NestJS API for Mission Control local-runtime data. Distinct from
+    // 'api' because that alias defaults to the gateway's own port (3001) when
+    // env is unset, which would loop; apps/api falls back to 3002 locally.
+    this.registerService({
+      name: 'local-runtime',
+      baseUrl: this.configService.get(
+        'LOCAL_API_SERVICE_URL',
+        this.configService.get('API_SERVICE_URL', 'http://127.0.0.1:3002')
+      ),
+      healthPath: '/health',
+      timeout: 10000,
+      retries: 1,
+    });
+
     this.registerService({
       name: 'theia-ide',
       baseUrl: this.configService.get('THEIA_IDE_URL', 'http://localhost:3007'),

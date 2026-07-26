@@ -98,7 +98,9 @@ export const CronPanel: React.FC<{ limit?: number }> = ({ limit = 5 }) => {
 
   const systemProcesses = (system.data?.processes ?? [])
     .filter((process) => process.procedural.enabled)
-    .sort((a, b) => (a.procedural.nextRunAt ?? '9999').localeCompare(b.procedural.nextRunAt ?? '9999'));
+    .sort((a, b) =>
+      (a.procedural.nextRunAt ?? '9999').localeCompare(b.procedural.nextRunAt ?? '9999')
+    );
 
   const handleRun = async (processId: string) => {
     setRunningId(processId);

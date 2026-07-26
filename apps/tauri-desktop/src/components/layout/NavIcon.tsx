@@ -9,6 +9,7 @@ import {
   MessageSquare,
   Mic,
   Monitor,
+  Rocket,
   Settings,
   Sparkles,
   Store,
@@ -21,6 +22,7 @@ import React from 'react';
 
 const ICON_MAP: Record<string, LucideIcon> = {
   platform: Sparkles,
+  mission: Rocket,
   dashboard: Home,
   'computer-use': Monitor,
   agents: Bot,

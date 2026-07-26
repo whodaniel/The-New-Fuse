@@ -260,6 +260,10 @@ async function ensureTurnZeroForAgentEntrypoint(): Promise<void> {
       )
     );
   }
+  // Fresh TNF software / onboarded operators get Voice+KWS by default.
+  if (process.env.VOICE_KWS_ALWAYS_ON !== '0') {
+    await ensureVoiceKwsAlwaysOn();
+  }
 }
 
 function isTruthyEnv(value: string | undefined): boolean {
@@ -4933,9 +4937,13 @@ program
   .command('tui')
   .description('Launch the TNF TUI agent — always-on interactive LLM session')
   .option('--autonomous', 'Start with autonomous shell execution and auto-continue enabled')
-  .action(async (options: { autonomous?: boolean }) => {
+  .option('--skip-voice-kws', 'Do not auto-start Voice beam + KWS (default: start them)')
+  .action(async (options: { autonomous?: boolean; skipVoiceKws?: boolean }) => {
     try {
       await runTurnZeroOnboardSurface();
+      if (!options.skipVoiceKws && process.env.VOICE_KWS_ALWAYS_ON !== '0') {
+        await ensureVoiceKwsAlwaysOn();
+      }
       await startTuiAgent(options);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -12584,6 +12592,28 @@ traits
 
 const agents = program.command('agents').description('Agent-focused command paths');
 agents
+  .command('who')
+  .description('Human-friendly who-is-who: Claude vs Hermes vs OpenClaw vs Cursor, plus live ttys')
+  .option('--json', 'Print machine-readable JSON')
+  .option('--no-write', 'Print only; do not refresh the markdown record')
+  .action(async (options: { json?: boolean; write?: boolean } = {}) => {
+    try {
+      const script = path.join(repoRoot, 'scripts/system/tnf-agent-who-is-who.py');
+      if (!fs.existsSync(script)) {
+        throw new Error(`Missing ${script}`);
+      }
+      const args = [script];
+      if (options.json) args.push('--json');
+      // default: write the running record unless --no-write
+      if (options.write !== false && !options.json) args.push('--write');
+      else if (options.write !== false && options.json) args.push('--write', '--json');
+      await runCommand('python3', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+agents
   .command('list')
   .description('Alias for `tnf list`')
   .action(async () => runSelfCliWithExit(['list']));
@@ -17768,6 +17798,7 @@ function stopProcessingIndicator(success = true): void {
 
 async function startInteractiveAgent(options?: { autonomous?: boolean }): Promise<void> {
   syncHomeHandoffCache();
+  const voiceTty = lockVoiceGroundInputToThisSession('tnf-cli');
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -17813,6 +17844,13 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
         ' /hold pauses auto-continue · /window <sec> sets operator takeover window · /continue resumes\n'
     )
   );
+  if (voiceTty) {
+    console.log(
+      chalk.dim('  🎙️ Voice ground input locked to this TNF CLI session (') +
+        chalk.cyan(voiceTty) +
+        chalk.dim(') — same beam/STT path as Cursor ([↑t…] turns)')
+    );
+  }
 
   let autonomousMode =
     options?.autonomous ||
@@ -18064,6 +18102,27 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
       }
       if (!trimmed) continue;
 
+      // Beam/STT ground input parity with Cursor: accept [↑tN] chronicle tags
+      // and attach situational context so the agent understands what's happening.
+      const voiceNorm = normalizeVoiceGroundInput(trimmed);
+      if (voiceNorm.wasVoice) {
+        const turnLabel =
+          voiceNorm.voiceTurn != null
+            ? chalk.cyan(`[↑t${voiceNorm.voiceTurn}]`)
+            : chalk.cyan('[voice]');
+        console.log(chalk.dim(`  🎙️ ground input ${turnLabel}`));
+        const situation = loadVoiceGroundSituation(voiceNorm.voiceTurn);
+        if (situation) {
+          console.log(chalk.dim('  🧭 attached voice situation context'));
+        }
+        const body = voiceNorm.text.trim()
+          ? voiceNorm.voiceTurn != null
+            ? `[↑t${voiceNorm.voiceTurn}] ${voiceNorm.text.trim()}`
+            : voiceNorm.text.trim()
+          : trimmed;
+        trimmed = `${situation}${body}`;
+      }
+
       // Natural-language window directive (typed mid-session without /window).
       const windowDirectiveMs = detectOperatorWindowDirective(trimmed);
       if (windowDirectiveMs !== null) {
@@ -18298,6 +18357,164 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
 
   rl.close();
   console.log(chalk.cyan('\n  TNF Agent session ended.\n'));
+}
+
+async function ensureVoiceKwsAlwaysOn(): Promise<void> {
+  const bootScript = path.join(repoRoot, 'scripts/system/tnf-voice-kws-boot.sh');
+  if (!fs.existsSync(bootScript)) {
+    console.log(chalk.dim('  Voice/KWS boot script missing — skipped'));
+    return;
+  }
+  console.log(chalk.dim('  Ensuring Voice beam + KWS always-on…'));
+  try {
+    await runCommand('bash', [bootScript], {
+      env: {
+        VOICE_KWS_ALWAYS_ON: process.env.VOICE_KWS_ALWAYS_ON || '1',
+        VOICE_RESPONSE_AUDIO_DEFAULT_ON: process.env.VOICE_RESPONSE_AUDIO_DEFAULT_ON || '1',
+        MINI_OMNI_ENABLED: process.env.MINI_OMNI_ENABLED || 'false',
+        REQUIRE_INGEST_AUTH: process.env.REQUIRE_INGEST_AUTH || 'false',
+      },
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err ?? 'unknown');
+    console.log(chalk.yellow(`  Voice/KWS ensure warning (non-fatal): ${msg}`));
+  }
+}
+
+/** Resolve this process's controlling Terminal tty (e.g. ttys006). */
+function detectControllingTty(): string | null {
+  try {
+    const result = spawnSync('tty', {
+      encoding: 'utf8',
+      stdio: ['inherit', 'pipe', 'pipe'],
+    });
+    const raw = String(result.stdout || '').trim();
+    if (!raw || raw === 'not a tty') return null;
+    return path.basename(raw.replace(/^\/dev\//, ''));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lock the voice beam inject destination to this TNF CLI session so ground/voice
+ * input is processed here the same way it is for Cursor Agent.
+ */
+function lockVoiceGroundInputToThisSession(app = 'tnf-cli'): string | null {
+  if (process.env.TNF_VOICE_AUTO_LOCK === '0') return null;
+  const tty = detectControllingTty();
+  if (!tty) return null;
+  try {
+    const stateDir = resolveVoiceBridgeStateDir();
+    fs.mkdirSync(stateDir, { recursive: true });
+    const targetPath = path.join(stateDir, 'voice_target.json');
+    const ttyPath = path.join(stateDir, 'voice_target_tty');
+    const payload = {
+      kind: 'terminal',
+      tty,
+      press_enter: true,
+      app,
+      agent_pid: process.pid,
+      locked: true,
+      lock_reason: 'tnf-cli-voice-ground',
+      lock_scope: 'tnf-cli',
+      updated_at: Math.floor(Date.now() / 1000),
+    };
+    fs.writeFileSync(targetPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+    fs.writeFileSync(ttyPath, `${tty}\n`, 'utf8');
+    return tty;
+  } catch {
+    return null;
+  }
+}
+
+/** Normalize beam/chronicle voice lines ([↑tN] …) for TNF CLI ground-input parity. */
+function normalizeVoiceGroundInput(line: string): {
+  text: string;
+  voiceTurn: number | null;
+  wasVoice: boolean;
+} {
+  const raw = String(line || '');
+  const tagged = raw.match(/^\[↑t(\d+)\]\s*(.*)$/s);
+  if (tagged) {
+    return {
+      text: tagged[2] ?? '',
+      voiceTurn: Number.parseInt(tagged[1], 10) || null,
+      wasVoice: true,
+    };
+  }
+  const chronicle = raw.match(/^\[Voice @ chronicle[^\]]*\]\s*(.*)$/is);
+  if (chronicle) {
+    return { text: (chronicle[1] || '').trim(), voiceTurn: null, wasVoice: true };
+  }
+  return { text: raw, voiceTurn: null, wasVoice: false };
+}
+
+/**
+ * Load sidecar situation for a voice turn so TNF CLI has contextual understanding
+ * of what's happening (thread hint, live agents, beam anchor).
+ */
+function loadVoiceGroundSituation(voiceTurn: number | null): string {
+  try {
+    const stateDir = resolveVoiceBridgeStateDir();
+    const injectPath = path.join(stateDir, 'chronicle-inject-context.json');
+    const whoPath = path.join(stateDir, 'agent_who_is_who.json');
+    const parts: string[] = [];
+
+    if (fs.existsSync(injectPath)) {
+      const inject = JSON.parse(fs.readFileSync(injectPath, 'utf8')) as {
+        turn?: number;
+        thread_hint?: string;
+        user_text?: string;
+        situation?: {
+          voice_target?: { app?: string; tty?: string };
+          live_agents?: Array<{ name?: string; tty?: string; detail?: string }>;
+          who_speech?: string;
+        };
+      };
+      if (voiceTurn == null || inject.turn == null || inject.turn === voiceTurn) {
+        if (inject.thread_hint) {
+          parts.push(`Recent voice thread: ${String(inject.thread_hint).slice(0, 240)}`);
+        }
+        const target = inject.situation?.voice_target;
+        if (target?.tty) {
+          parts.push(`Beam anchor: ${target.app || 'agent'} on ${target.tty}`);
+        }
+        const live = inject.situation?.live_agents;
+        if (Array.isArray(live) && live.length > 0) {
+          const listing = live
+            .slice(0, 6)
+            .map((a) => `${a.name || '?'}${a.detail ? ` ${a.detail}` : ''}@${a.tty || '?'}`)
+            .join('; ');
+          parts.push(`Live agents: ${listing}`);
+        }
+      }
+    }
+
+    // Refresh who-is-who if inject sidecar lacked live agents.
+    if (!parts.some((p) => p.startsWith('Live agents:')) && fs.existsSync(whoPath)) {
+      const who = JSON.parse(fs.readFileSync(whoPath, 'utf8')) as {
+        live?: Array<{ name?: string; tty?: string; detail?: string }>;
+      };
+      const live = who.live || [];
+      if (live.length > 0) {
+        const listing = live
+          .slice(0, 6)
+          .map((a) => `${a.name || '?'}${a.detail ? ` ${a.detail}` : ''}@${a.tty || '?'}`)
+          .join('; ');
+        parts.push(`Live agents: ${listing}`);
+      }
+    }
+
+    if (parts.length === 0) return '';
+    return (
+      `[Voice situation — contextual understanding for this ground-input turn]\n` +
+      parts.map((p) => `- ${p}`).join('\n') +
+      `\n[End situation]\n\n`
+    );
+  } catch {
+    return '';
+  }
 }
 
 async function startTuiAgent(options?: { autonomous?: boolean }): Promise<void> {

@@ -1,3 +1,4 @@
+import { ZoneBadge } from '@/components/control-surface';
 import TalkToAIFormAssist from '@/components/forms/TalkToAIFormAssist';
 import { Button, Card, Input, Textarea } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
@@ -99,7 +100,10 @@ export default function GoalsPage() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Goals</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">Goals</h1>
+            <ZoneBadge zone="personal" detail="your workspace" />
+          </div>
           <p className="text-muted-foreground">
             Primary planning goals connected to task/suggestion records.
           </p>

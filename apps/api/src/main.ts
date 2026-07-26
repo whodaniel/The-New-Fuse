@@ -21,6 +21,8 @@ import { validateGcpEnvironment } from './config/gcp.config';
 import { setupSwagger } from './config/swagger.config';
 import { routeFallbackMiddleware } from './middleware/route-fallback.middleware';
 import { securityMiddleware } from './middleware/security.middleware';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const cookieParser = require('cookie-parser');
 
 const logger = new Logger('Bootstrap');
 
@@ -73,6 +75,7 @@ async function bootstrap(): Promise<void> {
   // Explicitly add body parsers (essential for POST data processing)
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
 
   // Global validation pipe with enhanced options
   app.useGlobalPipes(

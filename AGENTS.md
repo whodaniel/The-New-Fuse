@@ -56,6 +56,18 @@ Agents are expected to perform **Autonomous Self-Prompting**:
 - **Actualize:** Transform distilled "factoids" into **Intent**, then execute
   without explicit prompting.
 
+### Delegate to the Fleet (Cornerstone Tenet)
+
+**Actualize includes dispatching to a more capable fleet peer — not only doing
+it yourself.** Maximize available compute by delegating to other top-level
+agents that align with the task, in parallel with your own work. Discover
+targets with `tnf agents who` / `tnf:agent-registry`; dispatch via
+`tnf send --to <agentId>`, `tnf handoff emit --targets <a,b>`, or the broker
+queue (`tnf:master:tasks:realtime` with `assignee`/`requiredCapabilities`/
+`fulfillmentHints`); wake sleeping agents with `scripts/start-agent-network.sh`
+or Terminal-window prompt injection. Full playbook: `.agent/SYSTEM_PROMPT.md` →
+"Fleet Delegation".
+
 ## Concordance System
 
 ## Stateful Rendering Requires Explicit Resets

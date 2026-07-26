@@ -1,4 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
+import { consumeDeepLinkNext } from '@/services/authSession';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -23,43 +24,43 @@ const OAuthCallback = () => {
       const hashParams = new URLSearchParams(
         location.hash.startsWith('#') ? location.hash.slice(1) : location.hash
       );
+      const next = consumeDeepLinkNext('/dashboard');
       const error = extractCallbackError(location);
       if (error) {
         console.error('Authentication failed:', error);
         navigate(`/auth/login?error=${encodeURIComponent(error)}`, { replace: true });
         return;
       }
-      // Legacy token callback compatibility
       const legacyToken = params.get('token');
       if (legacyToken) {
         await login(legacyToken);
-        navigate('/dashboard', { replace: true });
+        navigate(next, { replace: true });
         return;
       }
-      // Magic link: token comes in hash as access_token
       const magicLinkToken = hashParams.get('access_token');
       if (magicLinkToken) {
         await login(magicLinkToken);
-        navigate('/dashboard', { replace: true });
+        navigate(next, { replace: true });
         return;
       }
-      // Magic link: Supabase also sends token as 'token' in hash sometimes
       const magicToken = hashParams.get('token');
       if (magicToken) {
         await login(magicToken);
-        navigate('/dashboard', { replace: true });
+        navigate(next, { replace: true });
         return;
       }
-      // Supabase OAuth callback flow (uses ?code= query param).
-      // handleSSOCallback also recovers when detectSessionInUrl already
-      // consumed the code and established a session.
       const code = params.get('code');
       if (code) {
         await handleSSOCallback('supabase', code);
-        navigate('/dashboard', { replace: true });
+        navigate(next, { replace: true });
         return;
       }
-      // No valid auth data found
+      const type = hashParams.get('type') || params.get('type');
+      if (type === 'magiclink' || type === 'recovery' || type === 'signup') {
+        await handleSSOCallback('supabase', '');
+        navigate(next, { replace: true });
+        return;
+      }
       console.error('OAuthCallback: No code, token, or access_token found in URL');
       navigate('/auth/login?error=no_auth_data', { replace: true });
     };
@@ -71,8 +72,8 @@ const OAuthCallback = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">
-        <h2 className="text-xl font-semibold mb-2">Processing...</h2>
-        <p>Please wait while we complete your authentication.</p>
+        <h2 className="text-xl font-semibold mb-2">Connecting…</h2>
+        <p>Authorizing this device and injecting your session.</p>
       </div>
     </div>
   );

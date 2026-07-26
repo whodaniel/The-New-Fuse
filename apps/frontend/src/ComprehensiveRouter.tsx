@@ -163,6 +163,7 @@ const Features = lazy(() => import('./pages/Features'));
 const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const VisualizationSurfaceViewerPage = lazy(() => import('./pages/VisualizationSurfaceViewer'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
+const TerminalMirrorPage = lazy(() => import('./pages/TerminalMirrorPage'));
 const CodebaseMapPage = lazy(() => import('./pages/CodebaseMap'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
@@ -536,6 +537,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={
                   <RequireMemberAccess>
                     <DatasetsWorkbenchPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/overview"
+                element={
+                  <RequireMemberAccess>
+                    <Dashboard />
                   </RequireMemberAccess>
                 }
               />
@@ -1526,6 +1535,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/visualizations/concordance" element={<ConcordanceViewerPage />} />
               <Route path="/visualizations/surface" element={<VisualizationSurfaceViewerPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
+              <Route path="/terminals/mirror" element={<TerminalMirrorPage />} />
               <Route path="/status" element={<SystemStatus />} />
               <Route path="/system-status" element={<SystemStatus />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />

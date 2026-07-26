@@ -197,11 +197,33 @@ def chronicle_inject_context_path(profile: str | None = None) -> str:
 def write_inject_context(turn_id: int, user_text: str, thread_hint: str, profile: str | None = None) -> None:
     """Sidecar for agents: full relative context without bloating injected text."""
     context_path = chronicle_inject_context_path(profile)
+    state_dir = resolve_state_dir()
+    situation: dict[str, Any] = {}
+    # Voice destination (where this ground input is aimed).
+    try:
+        target_path = os.path.join(state_dir, state_file_name("voice_target.json", profile))
+        if os.path.isfile(target_path):
+            with open(target_path, "r", encoding="utf-8") as handle:
+                situation["voice_target"] = json.load(handle)
+    except Exception:
+        pass
+    # Who-is-who live snapshot (Claude vs Hermes vs OpenClaw, etc.).
+    try:
+        who_path = os.path.join(state_dir, "agent_who_is_who.json")
+        if os.path.isfile(who_path):
+            with open(who_path, "r", encoding="utf-8") as handle:
+                who = json.load(handle)
+            if isinstance(who, dict):
+                situation["live_agents"] = who.get("live") or []
+                situation["who_speech"] = who.get("speech") or ""
+    except Exception:
+        pass
     payload = {
         "turn": turn_id,
         "ts": time.time(),
         "user_text": user_text,
         "thread_hint": thread_hint,
+        "situation": situation,
     }
     tmp = f"{context_path}.tmp"
     with open(tmp, "w", encoding="utf-8") as handle:

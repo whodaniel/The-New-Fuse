@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Queue text for Inky TTS (guaranteed speak path when reply-audio is enabled).
+set -euo pipefail
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=voicebridge-paths.sh
+source "$_SCRIPT_DIR/voicebridge-paths.sh" 2>/dev/null || true
+
+profile="${VOICEBRIDGE_PROFILE:-main}"
+if command -v voicebridge_use_profile >/dev/null 2>&1; then
+  voicebridge_use_profile "$profile" || true
+fi
+if command -v voicebridge_state_file >/dev/null 2>&1; then
+  QUEUE="$(voicebridge_state_file "inky_tts_queue.txt")"
+else
+  QUEUE="${VOICEBRIDGE_STATE_DIR:-$HOME/.voicebridge}/inky_tts_queue.txt"
+fi
+mkdir -p "$(dirname "$QUEUE")"
+text="${*:-}"
+if [[ -z "$text" ]]; then
+  text="$(cat)"
+fi
+text="$(printf '%s' "$text" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
+[[ -n "$text" ]] || exit 0
+printf '%s\n' "$text" >> "$QUEUE"
+echo "🎙️ Queued for Inky TTS ($(wc -c <<<"$text" | tr -d ' ') chars)"

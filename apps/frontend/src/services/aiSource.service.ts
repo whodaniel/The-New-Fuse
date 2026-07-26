@@ -9,7 +9,8 @@ import type {
 } from '@/types/aiSource';
 
 const STORAGE_KEY = 'tnf.aiSource.v1';
-const DEFAULT_RELAY_URL = import.meta.env.VITE_AI_RELAY_URL?.trim() || 'http://127.0.0.1:43120';
+const CONFIGURED_RELAY_URL = import.meta.env.VITE_AI_RELAY_URL?.trim() || '';
+const LOOPBACK_RELAY_URL = 'http://127.0.0.1:43120';
 
 type RelayDiscoverPayload = {
   profiles?: Array<{
@@ -32,6 +33,42 @@ type TnfProvider = {
   modelName: string;
   isDefault?: boolean;
 };
+
+function isLoopbackUrl(value: string): boolean {
+  try {
+    const host = new URL(value).hostname;
+    return host === '127.0.0.1' || host === 'localhost' || host === '::1';
+  } catch {
+    return /127\.0\.0\.1|localhost/i.test(value);
+  }
+}
+
+function isBrowserOnLocalhost(): boolean {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+}
+
+/**
+ * Local relay (:43120) is for desktop/dev only. Hosted Pages CSP blocks http://127.0.0.1,
+ * so never probe loopback from app.thenewfuse.com / production Pages.
+ */
+function resolveRelayBaseUrl(explicit?: string): string | null {
+  const candidate = (explicit || CONFIGURED_RELAY_URL || LOOPBACK_RELAY_URL).replace(/\/+$/, '');
+  if (!candidate) return null;
+
+  if (isLoopbackUrl(candidate)) {
+    if (!isBrowserOnLocalhost()) return null;
+    return candidate;
+  }
+
+  // Non-loopback relay URLs (https://…) are allowed when explicitly configured.
+  if (CONFIGURED_RELAY_URL || (explicit && !isLoopbackUrl(explicit))) {
+    return candidate;
+  }
+
+  return null;
+}
 
 function readSelection(): AISourceSelection | null {
   try {
@@ -96,7 +133,9 @@ function mapTnfProvider(provider: TnfProvider): AISourceOption {
   };
 }
 
-async function fetchRelaySources(relayBaseUrl: string): Promise<AISourceOption[]> {
+async function fetchRelaySources(relayBaseUrl: string | null): Promise<AISourceOption[]> {
+  if (!relayBaseUrl) return [];
+
   const payload = await relayGetOptionalJson<RelayDiscoverPayload>(
     relayBaseUrl,
     '/v1/agents/discover'
@@ -119,8 +158,8 @@ async function fetchRelaySources(relayBaseUrl: string): Promise<AISourceOption[]
 
 async function fetchTnfCloudSources(): Promise<AISourceOption[]> {
   try {
-    const response: any = await apiService.get('/api/llm/providers');
-    const payload = response?.data;
+    const response: any = await apiService.get('/api/llm/providers', undefined, { silent: true });
+    const payload = response?.data ?? response;
     const list: TnfProvider[] = Array.isArray(payload)
       ? payload
       : Array.isArray(payload?.data)
@@ -147,7 +186,9 @@ async function activateRelayProfile(relayBaseUrl: string, profileId: string): Pr
         headers: { 'Content-Type': 'application/json' },
         body: '{}',
       });
-    } catch {}
+    } catch {
+      /* ignore */
+    }
   }
 }
 
@@ -185,8 +226,13 @@ function buildMessages(request: AISourceChatRequest): AISourceChatMessage[] {
 }
 
 export const aiSourceService = {
+  /** Resolved relay base, or empty string when probing would violate CSP / is unavailable. */
   getRelayBaseUrl(): string {
-    return DEFAULT_RELAY_URL.replace(/\/+$/, '');
+    return resolveRelayBaseUrl() || '';
+  },
+
+  isLocalRelayAvailable(): boolean {
+    return resolveRelayBaseUrl() != null;
   },
 
   getSelectedSourceId(): string | null {
@@ -197,8 +243,8 @@ export const aiSourceService = {
     return writeSelection(sourceId);
   },
 
-  async listSources(relayBaseUrl = DEFAULT_RELAY_URL): Promise<AISourceOption[]> {
-    const normalizedRelay = relayBaseUrl.replace(/\/+$/, '');
+  async listSources(relayBaseUrl?: string): Promise<AISourceOption[]> {
+    const normalizedRelay = resolveRelayBaseUrl(relayBaseUrl);
     const [relaySources, cloudSources] = await Promise.all([
       fetchRelaySources(normalizedRelay),
       fetchTnfCloudSources(),
@@ -217,7 +263,10 @@ export const aiSourceService = {
     const preferredId = sourceId || readSelection()?.sourceId;
     const match = preferredId ? sources.find((source) => source.id === preferredId) : null;
     if (match) return match;
-    return sources.find((source) => source.kind === 'orchestrator') || orchestratorDefault();
+    // Prefer orchestrator over stale local-relay selections when relay is unavailable.
+    const orchestrator = sources.find((source) => source.kind === 'orchestrator');
+    if (orchestrator) return orchestrator;
+    return orchestratorDefault();
   },
 
   async chat(request: AISourceChatRequest): Promise<AISourceChatResult> {
@@ -229,7 +278,12 @@ export const aiSourceService = {
     }
 
     if (source.kind === 'local-relay') {
-      const relayBaseUrl = (source.relayBaseUrl || DEFAULT_RELAY_URL).replace(/\/+$/, '');
+      const relayBaseUrl = resolveRelayBaseUrl(source.relayBaseUrl);
+      if (!relayBaseUrl) {
+        throw new Error(
+          'Local AI relay is only available on localhost. Choose TNF Auto (Orchestrator) or a cloud provider.'
+        );
+      }
       if (source.relayProfileId) {
         await activateRelayProfile(relayBaseUrl, source.relayProfileId);
       }
@@ -261,27 +315,34 @@ export const aiSourceService = {
       [...messages].reverse().find((entry) => entry.role === 'user')?.content ||
       '';
 
-    const payload = await apiService.post('/orchestration/chat', {
-      message: userMessage,
-      systemPrompt: request.systemPrompt,
-      provider: source.kind === 'tnf-cloud' ? source.provider : undefined,
-      model: source.kind === 'tnf-cloud' ? source.model : undefined,
-      temperature: request.temperature,
-      maxTokens: request.maxTokens,
-      context: request.context,
-    });
+    // Nest global prefix is `api` → /api/orchestration/chat.
+    // VITE_API_URL is https://api.thenewfuse.com (no /api), so include the prefix here
+    // (same pattern as /api/llm/providers).
+    const payload = await apiService.post(
+      '/api/orchestration/chat',
+      {
+        message: userMessage,
+        systemPrompt: request.systemPrompt,
+        provider: source.kind === 'tnf-cloud' ? source.provider : undefined,
+        model: source.kind === 'tnf-cloud' ? source.model : undefined,
+        temperature: request.temperature,
+        maxTokens: request.maxTokens,
+        context: request.context,
+      },
+      { silent: true }
+    );
 
     const text = extractText(payload);
     if (!text) throw new Error('AI orchestrator returned an empty response.');
     return { text, source, raw: payload };
   },
 
-  async probeRelayHealth(relayBaseUrl = DEFAULT_RELAY_URL): Promise<boolean> {
-    const payload = await relayGetJson<{ status?: string }>(
-      relayBaseUrl.replace(/\/+$/, ''),
-      '/v1/health',
-      { status: 'down' }
-    );
+  async probeRelayHealth(relayBaseUrl?: string): Promise<boolean> {
+    const resolved = resolveRelayBaseUrl(relayBaseUrl);
+    if (!resolved) return false;
+    const payload = await relayGetJson<{ status?: string }>(resolved, '/v1/health', {
+      status: 'down',
+    });
     return payload?.status === 'ok';
   },
 };

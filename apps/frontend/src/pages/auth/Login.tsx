@@ -1,6 +1,7 @@
 // @ts-nocheck
 import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import { useAuth } from '@/providers/AuthProvider';
+import { stashDeepLinkNext } from '@/services/authSession';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { TnfLogo } from '../../components/brand/TnfLogo';
@@ -50,6 +51,7 @@ const Login: React.FC = () => {
     isLoading: isAuthLoading,
     login,
     signInWithGoogle,
+    signInWithGitHub,
     signInWithMagicLink,
   } = useAuth();
   const navigate = useNavigate();
@@ -66,6 +68,11 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [cfTurnstileToken, setCfTurnstileToken] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const nextPath = searchParams.get('next') || searchParams.get('redirect') || '/dashboard';
+
+  useEffect(() => {
+    stashDeepLinkNext(nextPath);
+  }, [nextPath]);
 
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
   const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
@@ -105,8 +112,8 @@ const Login: React.FC = () => {
     }
 
     sessionStorage.setItem(LOGIN_REDIRECT_COUNT_KEY, String(redirectCount + 1));
-    navigate('/dashboard', { replace: true });
-  }, [isAuthenticated, isAuthLoading, navigate]);
+    navigate(nextPath.startsWith('/') ? nextPath : '/dashboard', { replace: true });
+  }, [isAuthenticated, isAuthLoading, navigate, nextPath]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -122,7 +129,7 @@ const Login: React.FC = () => {
         cfTurnstileToken:
           cfTurnstileToken && cfTurnstileToken !== ' bypass' ? cfTurnstileToken : undefined,
       });
-      if (result) navigate('/dashboard', { replace: true });
+      if (result) navigate(nextPath.startsWith('/') ? nextPath : '/dashboard', { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Invalid email or password';
       setError(message);
@@ -135,13 +142,29 @@ const Login: React.FC = () => {
     setError('');
     setIsLoading(true);
     try {
+      stashDeepLinkNext(nextPath);
       const result = await signInWithGoogle();
       // google_redirect leaves the page; keep the spinner until navigation happens.
       if (result?.method === 'google_redirect') return;
-      navigate('/dashboard', { replace: true });
+      navigate(nextPath.startsWith('/') ? nextPath : '/dashboard', { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : (err as { message?: string })?.message;
       setError(message || 'Google sign-in failed');
+      setIsLoading(false);
+    }
+  };
+
+  const handleGitHubSignIn = async () => {
+    setError('');
+    setIsLoading(true);
+    try {
+      stashDeepLinkNext(nextPath);
+      const result = await signInWithGitHub();
+      if (result?.method === 'github_redirect') return;
+      navigate(nextPath.startsWith('/') ? nextPath : '/dashboard', { replace: true });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : (err as { message?: string })?.message;
+      setError(message || 'GitHub sign-in failed');
       setIsLoading(false);
     }
   };
@@ -154,7 +177,7 @@ const Login: React.FC = () => {
     }
     setIsLoading(true);
     try {
-      await signInWithMagicLink(email);
+      await signInWithMagicLink(email, nextPath.startsWith('/') ? nextPath : '/dashboard');
       setError('Magic link sent. Check your inbox to continue.');
     } catch (err: unknown) {
       setError(err?.message || 'Failed to send magic link');
@@ -251,14 +274,22 @@ const Login: React.FC = () => {
           )}
         </form>
 
-        <div className="mt-4">
+        <div className="mt-4 space-y-3">
           <button
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isLoading}
             className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:opacity-50"
           >
-            Continue with Google
+            Connect with Google
+          </button>
+          <button
+            type="button"
+            onClick={handleGitHubSignIn}
+            disabled={isLoading}
+            className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+          >
+            Connect with GitHub
           </button>
         </div>
 

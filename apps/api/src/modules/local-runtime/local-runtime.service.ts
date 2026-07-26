@@ -1,5 +1,5 @@
-import { execFile } from 'child_process';
 import { Injectable, Logger } from '@nestjs/common';
+import { execFile } from 'child_process';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
@@ -234,7 +234,13 @@ export class LocalRuntimeService {
         return `daily at ${pad(hour)}:${pad(minute)}`;
       }
     }
-    if (dom === '*' && month === '*' && /^\d+$/.test(dow) && /^\d+$/.test(minute) && /^\d+$/.test(hour)) {
+    if (
+      dom === '*' &&
+      month === '*' &&
+      /^\d+$/.test(dow) &&
+      /^\d+$/.test(minute) &&
+      /^\d+$/.test(hour)
+    ) {
       const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       return `every ${days[Number(dow) % 7]} at ${pad(hour)}:${pad(minute)}`;
     }
@@ -268,9 +274,13 @@ export class LocalRuntimeService {
       const monthOk = monthSet.has(candidate.getMonth() + 1);
       const domOk = domSet.has(candidate.getDate());
       const dowOk = dowSet.has(candidate.getDay());
-      const dayOk =
-        domRestricted && dowRestricted ? domOk || dowOk : domRestricted ? domOk : dowOk;
-      if (monthOk && dayOk && hourSet.has(candidate.getHours()) && minuteSet.has(candidate.getMinutes())) {
+      const dayOk = domRestricted && dowRestricted ? domOk || dowOk : domRestricted ? domOk : dowOk;
+      if (
+        monthOk &&
+        dayOk &&
+        hourSet.has(candidate.getHours()) &&
+        minuteSet.has(candidate.getMinutes())
+      ) {
         return candidate.toISOString();
       }
       candidate.setMinutes(candidate.getMinutes() + 1);

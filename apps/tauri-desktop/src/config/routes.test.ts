@@ -33,9 +33,9 @@ import { safeStorage } from '../lib/safeStorage';
 
 describe('routes registry', () => {
   it('registers unique desktop routes', () => {
-    expect(DESKTOP_ROUTES).toHaveLength(15);
+    expect(DESKTOP_ROUTES).toHaveLength(16);
     const paths = DESKTOP_ROUTES.map((route) => route.path);
-    expect(new Set(paths).size).toBe(15);
+    expect(new Set(paths).size).toBe(16);
   });
 
   it('classifies known vs unknown paths', () => {

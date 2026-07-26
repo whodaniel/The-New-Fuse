@@ -109,7 +109,10 @@ export const GoalsPanel: React.FC<{ limit?: number }> = ({ limit = 6 }) => {
         <p className="text-sm text-slate-400">Loading goals...</p>
       ) : visible.length === 0 ? (
         <p className="text-sm text-slate-400">
-          No goals yet. Create one from the <Link to="/goals" className="text-blue-300">Goals</Link>{' '}
+          No goals yet. Create one from the{' '}
+          <Link to="/goals" className="text-blue-300">
+            Goals
+          </Link>{' '}
           page or `tnf goals add`.
         </p>
       ) : (
