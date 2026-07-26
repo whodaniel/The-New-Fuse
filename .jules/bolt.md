@@ -23,3 +23,7 @@
 ## 2024-05-24 - [Fix TS5107 Deprecation and Database Schema Builds]
 **Learning:** Fixing TypeScript `moduleResolution: node10` deprecation in older packages by using `bundler` and `ESNext` requires updating `jest.config` to use `ts-jest/presets/default-esm` and mapping `.js` extensions.
 **Action:** Updated `core-vector-db` tsconfig and package.json to resolve build and test failures.
+
+## 2024-05-24 - Inline Component Re-renders in MultiAgentChat
+**Learning:** `apps/frontend/src/components/MultiAgentChat.tsx` defined the agent item inside the `.map` iteration directly as inline JSX, which is re-created on every render triggered by the chat input state. Same for `ParamSlider` defined at the bottom.
+**Action:** Extract list item components like `AgentItem` outside of their parent component and wrap them with `React.memo`, and also wrap `ParamSlider` with `React.memo` to ensure they only re-render when their explicit props change.
