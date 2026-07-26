@@ -25,6 +25,11 @@ remain: PR #70; `tnf authority relaunch-workers` → `confirm-isolation` (not
 
 - [✅] **2026-07-25 Cursor session — role⊥platform + handoff lifecycle** —
 - [✅] 2026-07-25T20:05:30.080Z System cron entries installed:
+- [✅] 2026-07-26T16:49:21.106Z New script(s) created: tnf-voice-kws-boot.sh,
+  voice-beam-watchdog.sh
+- [✅] 2026-07-26T16:49:21.106Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
   Corrected baton vs `daccRole` vs platform axes; orphaned `ORCHESTRATOR-*`

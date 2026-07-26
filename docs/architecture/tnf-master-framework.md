@@ -35,8 +35,10 @@ flowchart LR
     app_api_gateway[api-gateway]
     app_audio_trigger_kws_mvp[audio-trigger-kws-mvp]
     app_backend[backend]
+    app_browser_extension[browser-extension]
     app_casin8_games[casin8-games]
     app_chrome_extension[chrome-extension]
+    app_claim_tracker[claim-tracker]
     app_cloud_sandbox[cloud-sandbox]
     app_demo_agent_extension[demo-agent-extension]
     app_external[external]
@@ -66,6 +68,9 @@ flowchart LR
     pkg_ag_ui_core[ag-ui-core]
     pkg_agent[agent]
     pkg_agent_coordination[agent-coordination]
+    pkg_agent_evaluation_framework[agent-evaluation-framework]
+    pkg_agentic_rag_search[agentic-rag-search]
+    pkg_ai_security_bridge[ai-security-bridge]
     pkg_ap2_protocol[ap2-protocol]
     pkg_api[api]
     pkg_api_client[api-client]
@@ -80,10 +85,10 @@ flowchart LR
     pkg_cli[cli]
     pkg_client[client]
     pkg_common[common]
-    pkg_communication[communication]
     pkg_compounding_memory[compounding-memory]
     pkg_contracts[contracts]
     pkg_contracts_legacy[contracts-legacy]
+    pkg_control_plane_contracts[control-plane-contracts]
     pkg_core[core]
     pkg_core_auth[core-auth]
     pkg_core_error_handling[core-error-handling]
@@ -107,6 +112,7 @@ flowchart LR
     pkg_features[features]
     pkg_gemini_browser_skill[gemini-browser-skill]
     pkg_google_sheets_mcp_server[google-sheets-mcp-server]
+    pkg_governance_gate[governance-gate]
     pkg_hardware_bridge[hardware-bridge]
     pkg_hooks[hooks]
     pkg_infrastructure[infrastructure]
@@ -114,11 +120,14 @@ flowchart LR
     pkg_job_queue[job-queue]
     pkg_jules_integration[jules-integration]
     pkg_jules_skill[jules-skill]
+    pkg_logger[logger]
     pkg_lpm_native[lpm-native]
     pkg_mcp_cloud_redis_bridge[mcp-cloud-redis-bridge]
     pkg_mcp_concordance_server[mcp-concordance-server]
     pkg_mcp_core[mcp-core]
     pkg_mcp_skills_server[mcp-skills-server]
+    pkg_mcp_tar_bridge[mcp-tar-bridge]
+    pkg_messaging_bridge[messaging-bridge]
     pkg_n8n_workflows[n8n-workflows]
     pkg_port_management[port-management]
     pkg_prompt_templating[prompt-templating]
@@ -130,8 +139,10 @@ flowchart LR
     pkg_shared[shared]
     pkg_shared_utils[shared-utils]
     pkg_sync_core[sync-core]
+    pkg_telegram_bot_service[telegram-bot-service]
     pkg_test_utils[test-utils]
     pkg_testing[testing]
+    pkg_tnf_browser[tnf-browser]
     pkg_tnf_cli[tnf-cli]
     pkg_tnf_core[tnf-core]
     pkg_tnf_note_taking[tnf-note-taking]
@@ -169,9 +180,12 @@ flowchart LR
     wf_protocol_schema_gate_yml[protocol-schema-gate.yml]
     wf_quality_yml[quality.yml]
     wf_release_readiness_yml[release-readiness.yml]
+    wf_repo_boundary_gate_yml[repo-boundary-gate.yml]
     wf_repo_sync_yml[repo-sync.yml]
     wf_route_surface_parity_gate_yml[route-surface-parity-gate.yml]
     wf_skills_governance_gate_yml[skills-governance-gate.yml]
+    wf_tauri_desktop_dmg_yml[tauri-desktop-dmg.yml]
+    wf_tauri_desktop_qa_yml[tauri-desktop-qa.yml]
     wf_test_yml[test.yml]
     wf_traits_intelligence_nightly_yml[traits-intelligence-nightly.yml]
   end
@@ -181,8 +195,10 @@ flowchart LR
   Web -.maps.-> app_api_gateway
   Web -.maps.-> app_audio_trigger_kws_mvp
   Web -.maps.-> app_backend
+  Web -.maps.-> app_browser_extension
   Web -.maps.-> app_casin8_games
   Web -.maps.-> app_chrome_extension
+  Web -.maps.-> app_claim_tracker
   Web -.maps.-> app_cloud_sandbox
   Web -.maps.-> app_demo_agent_extension
   Web -.maps.-> app_external
@@ -210,6 +226,9 @@ flowchart LR
   Gateway -.depends on.-> pkg_ag_ui_core
   Gateway -.depends on.-> pkg_agent
   Gateway -.depends on.-> pkg_agent_coordination
+  Gateway -.depends on.-> pkg_agent_evaluation_framework
+  Gateway -.depends on.-> pkg_agentic_rag_search
+  Gateway -.depends on.-> pkg_ai_security_bridge
   Gateway -.depends on.-> pkg_ap2_protocol
   Gateway -.depends on.-> pkg_api
   Gateway -.depends on.-> pkg_api_client
@@ -224,10 +243,10 @@ flowchart LR
   Gateway -.depends on.-> pkg_cli
   Gateway -.depends on.-> pkg_client
   Gateway -.depends on.-> pkg_common
-  Gateway -.depends on.-> pkg_communication
   Gateway -.depends on.-> pkg_compounding_memory
   Gateway -.depends on.-> pkg_contracts
   Gateway -.depends on.-> pkg_contracts_legacy
+  Gateway -.depends on.-> pkg_control_plane_contracts
   Gateway -.depends on.-> pkg_core
   Gateway -.depends on.-> pkg_core_auth
   Gateway -.depends on.-> pkg_core_error_handling
@@ -251,6 +270,7 @@ flowchart LR
   Gateway -.depends on.-> pkg_features
   Gateway -.depends on.-> pkg_gemini_browser_skill
   Gateway -.depends on.-> pkg_google_sheets_mcp_server
+  Gateway -.depends on.-> pkg_governance_gate
   Gateway -.depends on.-> pkg_hardware_bridge
   Gateway -.depends on.-> pkg_hooks
   Gateway -.depends on.-> pkg_infrastructure
@@ -258,11 +278,14 @@ flowchart LR
   Gateway -.depends on.-> pkg_job_queue
   Gateway -.depends on.-> pkg_jules_integration
   Gateway -.depends on.-> pkg_jules_skill
+  Gateway -.depends on.-> pkg_logger
   Gateway -.depends on.-> pkg_lpm_native
   Gateway -.depends on.-> pkg_mcp_cloud_redis_bridge
   Gateway -.depends on.-> pkg_mcp_concordance_server
   Gateway -.depends on.-> pkg_mcp_core
   Gateway -.depends on.-> pkg_mcp_skills_server
+  Gateway -.depends on.-> pkg_mcp_tar_bridge
+  Gateway -.depends on.-> pkg_messaging_bridge
   Gateway -.depends on.-> pkg_n8n_workflows
   Gateway -.depends on.-> pkg_port_management
   Gateway -.depends on.-> pkg_prompt_templating
@@ -274,8 +297,10 @@ flowchart LR
   Gateway -.depends on.-> pkg_shared
   Gateway -.depends on.-> pkg_shared_utils
   Gateway -.depends on.-> pkg_sync_core
+  Gateway -.depends on.-> pkg_telegram_bot_service
   Gateway -.depends on.-> pkg_test_utils
   Gateway -.depends on.-> pkg_testing
+  Gateway -.depends on.-> pkg_tnf_browser
   Gateway -.depends on.-> pkg_tnf_cli
   Gateway -.depends on.-> pkg_tnf_core
   Gateway -.depends on.-> pkg_tnf_note_taking
@@ -311,9 +336,12 @@ flowchart LR
   wf_protocol_schema_gate_yml --> Audits
   wf_quality_yml --> Audits
   wf_release_readiness_yml --> Audits
+  wf_repo_boundary_gate_yml --> Audits
   wf_repo_sync_yml --> Audits
   wf_route_surface_parity_gate_yml --> Audits
   wf_skills_governance_gate_yml --> Audits
+  wf_tauri_desktop_dmg_yml --> Audits
+  wf_tauri_desktop_qa_yml --> Audits
   wf_test_yml --> Audits
   wf_traits_intelligence_nightly_yml --> Audits
 ```

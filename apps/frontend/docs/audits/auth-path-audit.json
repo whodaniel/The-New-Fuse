@@ -1,9 +1,9 @@
 {
   "summary": {
-    "generatedAt": "2026-06-22T16:09:32.234Z",
+    "generatedAt": "2026-07-26T22:58:48.794Z",
     "total": 4,
-    "passed": 2,
-    "failed": 2,
+    "passed": 4,
+    "failed": 0,
     "publicBaseUrl": "https://thenewfuse.com",
     "apiBaseUrl": "https://api.thenewfuse.com"
   },
@@ -19,7 +19,7 @@
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 1379,
+      "elapsedMs": 436,
       "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
@@ -31,10 +31,10 @@
         "email": "invalid@example.com",
         "password": "bad-password"
       },
-      "status": 404,
-      "ok": false,
-      "elapsedMs": 320,
-      "responseSnippet": "{\"message\":\"Cannot POST /api/v1/auth/login\",\"error\":\"Not Found\",\"statusCode\":404}"
+      "status": 401,
+      "ok": true,
+      "elapsedMs": 543,
+      "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "Gateway /v1/auth/login canonical route",
@@ -45,10 +45,10 @@
         "email": "invalid@example.com",
         "password": "bad-password"
       },
-      "status": 404,
-      "ok": false,
-      "elapsedMs": 217,
-      "responseSnippet": "{\"message\":\"Cannot POST /v1/auth/login\",\"error\":\"Not Found\",\"statusCode\":404}"
+      "status": 401,
+      "ok": true,
+      "elapsedMs": 223,
+      "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "Public /health route",
@@ -57,8 +57,8 @@
       "expectedStatus": [200],
       "status": 200,
       "ok": true,
-      "elapsedMs": 43,
-      "responseSnippet": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-06-22T16:09:32.370Z\"}"
+      "elapsedMs": 42,
+      "responseSnippet": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-07-26T22:58:48.871Z\"}"
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "now": "2026-07-26T08:00:03Z",
+  "now": "2026-07-26T20:00:14Z",
   "generated_by": "tnf-process-atlas-generator",
   "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "cron": [
@@ -83,43 +83,39 @@
   "live": [
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1572 node /Users/danielgoldberg/.hermes/node/bin/pnpm run master-clock"
+      "cmd": "22657 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIgcDIxNTY0NzZhNTI2OTA0ZGJkOGE2ZTRkYTg0NDg3YzQxNA@key-shark-87762.upstash.io:6379' RELAY_URL='ws://127.0.0.1:3000/ws' LEDGER_API_BASE='http://localhost:3001' STALL_THRESHOLD='45000' RECOVERY_INTERVAL='30000' SELF_PROMPT_ENABLED='true' SELF_PROMPT_COOLDOWN_MS='30000' node dist/master-clock.js"
     },
     {
       "role": "Master Clock (relay-core)",
-      "cmd": "1579 node /Users/danielgoldberg/.hermes/node/bin/pnpm --filter @the-new-fuse/relay-core run master-clock"
-    },
-    {
-      "role": "Master Clock (relay-core)",
-      "cmd": "1589 node dist/master-clock.js"
+      "cmd": "22676 node dist/master-clock.js"
     },
     {
       "role": "Broker Agent (task dispatcher)",
-      "cmd": "5307 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIgcDIxNTY0NzZhNTI2OTA0ZGJkOGE2ZTRkYTg0NDg3YzQxNA@key-shark-87762.upstash.io:6379' LEDGER_API_BASE='https://api.thenewfuse.com' node dist/broker-agent.js"
+      "cmd": "5657 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIgcDIxNTY0NzZhNTI2OTA0ZGJkOGE2ZTRkYTg0NDg3YzQxNA@key-shark-87762.upstash.io:6379' LEDGER_API_BASE='http://localhost:3001' node dist/broker-agent.js"
     },
     {
       "role": "Broker Agent (task dispatcher)",
-      "cmd": "5326 node dist/broker-agent.js"
+      "cmd": "5676 node dist/broker-agent.js"
     },
     {
       "role": "Director Agent (escalation reviewer)",
-      "cmd": "5328 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIgcDIxNTY0NzZhNTI2OTA0ZGJkOGE2ZTRkYTg0NDg3YzQxNA@key-shark-87762.upstash.io:6379' LEDGER_API_BASE='https://api.thenewfuse.com' DIRECTOR_AUTO_POLICY='risk-aware' node dist/director-agent.js"
+      "cmd": "5685 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='rediss://default:gQAAAAAAAVbSAAIgcDIxNTY0NzZhNTI2OTA0ZGJkOGE2ZTRkYTg0NDg3YzQxNA@key-shark-87762.upstash.io:6379' LEDGER_API_BASE='http://localhost:3001' DIRECTOR_AUTO_POLICY='risk-aware' node dist/director-agent.js"
     },
     {
       "role": "Director Agent (escalation reviewer)",
-      "cmd": "5350 node dist/director-agent.js"
+      "cmd": "5705 node dist/director-agent.js"
     },
     {
       "role": "Local Redis WebSocket Bridge",
-      "cmd": "75060 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/redis-ws-bridge.cjs"
+      "cmd": "2158 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/redis-ws-bridge.cjs"
     },
     {
       "role": "Standalone Relay Server",
-      "cmd": "1543 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
+      "cmd": "2513 node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/dist/standalone-relay.js"
     },
     {
       "role": "Relay Core Runtime",
-      "cmd": "1498 node /Users/danielgoldberg/.hermes/node/bin/pnpm --filter @the-new-fuse/relay-core run relay"
+      "cmd": "2455 node /Users/danielgoldberg/.hermes/node/bin/pnpm --filter @the-new-fuse/relay-core run relay"
     }
   ],
   "packages": [
@@ -390,7 +386,7 @@
   ],
   "summaries": {
     "cron_count": 19,
-    "live_count": 10,
+    "live_count": 9,
     "packages_count": 93,
     "apps_count": 30,
     "proto_count": 32,

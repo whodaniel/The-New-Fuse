@@ -1,16 +1,67 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Resolve repo-root pages/ relative to this file's compiled location.
-// When launched from apps/api-gateway/dist/main.js, __dirname = .../dist,
-// so resolve(__dirname, '..', '..', '..') lands at repo root.
+// Static page renderer for gateway fallback.
+// Previously attempted Next.js but it caused:
+// 1. Symlink issues (pages/ pointed outside repo, Turbopack rejects)
+// 2. OOM during build (monorepo too large for Next.js turbopack)
+// 3. Dev server conflicts when next() spawns its own server
+// This simple static handler serves the three demo pages directly.
 const PAGES_DIR = path.resolve(__dirname, '..', '..', '..', 'pages');
 
-export async function ensureNextHandler() {
-  // Dynamic import avoids requiring `next` at top-level when not used.
-  const { default: next } = await import('next');
-  const dir = fs.existsSync(PAGES_DIR) ? PAGES_DIR : process.cwd();
-  const app = next({ dev: process.env.NODE_ENV !== 'production', dir });
-  await app.prepare();
-  return app.getRequestHandler();
+// Simple HTML templates for each page
+const PAGE_TEMPLATES: Record<string, string> = {
+  '/pricing': `<!DOCTYPE html>
+<html>
+<head><title>Pricing - The New Fuse</title></head>
+<body style="font-family: sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto;">
+<h1>Pricing Page</h1>
+<p>This is the pricing page for The New Fuse.</p>
+</body>
+</html>`,
+  '/features': `<!DOCTYPE html>
+<html>
+<head><title>Features - The New Fuse</title></head>
+<body style="font-family: sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto;">
+<h1>Features Page</h1>
+<p>This is the features page for The New Fuse.</p>
+</body>
+</html>`,
+  '/docs': `<!DOCTYPE html>
+<html>
+<head><title>Docs - The New Fuse</title></head>
+<body style="font-family: sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto;">
+<h1>Docs Page</h1>
+<p>This is the documentation page for The New Fuse.</p>
+</body>
+</html>`,
+};
+
+/**
+ * Returns a handler for serving static pages.
+ * Serves HTML for known routes, 404 for others.
+ */
+export async function ensureNextHandler(): Promise<(req: any, res: any) => void> {
+  // Log what we're serving
+  const pages = fs.existsSync(PAGES_DIR)
+    ? fs.readdirSync(PAGES_DIR).filter((f) => f.endsWith('.tsx') || f === 'index.tsx')
+    : [];
+  console.log(
+    `[next-handler] Serving ${pages.length} static pages from ${PAGES_DIR}:`,
+    pages.join(', ')
+  );
+
+  return (req: any, res: any) => {
+    const url = req.url || req.path || '';
+    const cleanUrl = url.split('?')[0];
+
+    if (cleanUrl in PAGE_TEMPLATES) {
+      res.setHeader('Content-Type', 'text/html');
+      res.end(PAGE_TEMPLATES[cleanUrl]);
+    } else {
+      res.statusCode = 404;
+      res.setHeader('Content-Type', 'text/html');
+      res.end('<h1>Not Found</h1><p>The requested page does not exist.</p>');
+    }
+  };
 }

@@ -1,16 +1,15 @@
 {
   "mode": "running",
-  "updatedAt": "2026-07-20T10:06:55.568Z",
-  "intervalMinutes": 30,
+  "updatedAt": "2026-07-26T22:58:56.328Z",
+  "intervalMinutes": 60,
   "maxCycles": 0,
-  "completedCycles": 0,
-  "failedCycles": 72,
+  "completedCycles": 1,
+  "failedCycles": 0,
   "lastRun": {
-    "cycle": 72,
-    "startedAt": "2026-07-20T10:06:55.142Z",
-    "finishedAt": "2026-07-20T10:06:55.567Z",
-    "durationMs": 425,
-    "ok": false,
-    "error": "/Users/danielgoldberg/.hermes/node/bin/node exited with code 1"
+    "cycle": 1,
+    "startedAt": "2026-07-26T22:14:28.969Z",
+    "finishedAt": "2026-07-26T22:58:56.325Z",
+    "durationMs": 2667356,
+    "ok": true
   }
 }
