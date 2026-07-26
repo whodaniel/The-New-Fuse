@@ -34,10 +34,52 @@ def get_indexed_ids():
         ids = {row[0] for row in cur.fetchall()}
         cur.close()
         conn.close()
+        # Treat legacy ID#:INTEL-N as already indexed for the matching VEC#:INTEL-N.
+        for lid in list(ids):
+            if lid.startswith("ID#:INTEL-"):
+                ids.add("VEC#:INTEL-" + lid[len("ID#:INTEL-"):])
+            elif lid.startswith("VEC#:INTEL-"):
+                ids.add("ID#:INTEL-" + lid[len("VEC#:INTEL-"):])
         return ids
     except Exception as e:
         print(f"⚠️ Could not fetch existing IDs: {e}")
         return set()
+
+
+def migrate_legacy_ids():
+    """Rename ID#:INTEL-* rows to VEC#:INTEL-* and stamp metadata (idempotent)."""
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute(
+            """
+            UPDATE vector_embeddings
+            SET metadata = COALESCE(metadata, '{}'::jsonb)
+                || jsonb_build_object(
+                    'legacy_id', id,
+                    'vector_id_prefix', 'VEC#:'
+                ),
+                id = regexp_replace(id, '^ID#:INTEL-', 'VEC#:INTEL-'),
+                updated_at = NOW()
+            WHERE namespace = %s
+              AND id LIKE 'ID#:INTEL-%%'
+              AND NOT EXISTS (
+                SELECT 1 FROM vector_embeddings v2
+                WHERE v2.namespace = vector_embeddings.namespace
+                  AND v2.id = regexp_replace(vector_embeddings.id, '^ID#:INTEL-', 'VEC#:INTEL-')
+              )
+            """,
+            (NAMESPACE,),
+        )
+        updated = cur.rowcount
+        conn.commit()
+        cur.close()
+        conn.close()
+        print(f"🔁 Migrated {updated} vector_embeddings ids ID#:INTEL-* → VEC#:INTEL-*")
+        return updated
+    except Exception as e:
+        print(f"⚠️ ID migration skipped: {e}")
+        return 0
 
 def parse_knowledge_base():
     if not os.path.exists(KB_PATH):
@@ -73,14 +115,17 @@ def parse_knowledge_base():
         vector_content = f"{title}\n\nSummary: {summary}\n\nInsights:\n{insights}"
         
         artifacts.append({
-            "id": f"ID#:INTEL-{idx}",
+            "id": f"VEC#:INTEL-{idx}",
+            "legacy_id": f"ID#:INTEL-{idx}",
             "content": vector_content,
             "metadata": {
                 "index": idx,
                 "title": title,
                 "url": url,
                 "class": cl,
-                "source": "AI_Knowledge_Base.md"
+                "source": "AI_Knowledge_Base.md",
+                "vector_id_prefix": "VEC#:",
+                "legacy_id": f"ID#:INTEL-{idx}",
             }
         })
             
@@ -126,6 +171,7 @@ def store_in_db(artifacts, embeddings):
 
 def main():
     print("🧠 Starting Incremental Intelligence Vectorization...")
+    migrate_legacy_ids()
     all_artifacts = parse_knowledge_base()
     existing_ids = get_indexed_ids()
     

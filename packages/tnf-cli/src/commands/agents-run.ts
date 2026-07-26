@@ -25,10 +25,10 @@
  * arguments never go through a shell — no injection surface even when
  * the LLM emits untrusted input.
  */
-import { Command } from 'commander';
-import * as path from 'path';
-import * as fs from 'fs';
 import { execFile } from 'child_process';
+import { Command } from 'commander';
+import * as fs from 'fs';
+import * as path from 'path';
 import { promisify } from 'util';
 
 import { resolvePrompt } from '../utils/prompt-input.js';
@@ -125,7 +125,8 @@ async function defaultExecutor(
         const offset = Math.max(Number(args.offset ?? 1) || 1, 1);
         const limit = Math.min(Math.max(Number(args.limit ?? 2000) || 2000, 1), 2000);
         if (!p) return { ok: false, error: 'read_file: empty path' };
-        if (!ctx.quiet) console.error(`[agents-run] read_file: ${p} offset=${offset} limit=${limit}`);
+        if (!ctx.quiet)
+          console.error(`[agents-run] read_file: ${p} offset=${offset} limit=${limit}`);
         const full = await fs.promises.readFile(p, 'utf8');
         const lines = full.split(/\r?\n/);
         const slice = lines.slice(offset - 1, offset - 1 + limit).join('\n');
@@ -164,7 +165,8 @@ async function defaultExecutor(
         const root = String(args.path ?? ctx.cwd);
         const limit = Math.min(Math.max(Number(args.limit ?? 50) || 50, 1), 500);
         if (!pattern) return { ok: false, error: 'search_files: empty pattern' };
-        if (!ctx.quiet) console.error(`[agents-run] search_files: ${target} ${pattern} (root=${root})`);
+        if (!ctx.quiet)
+          console.error(`[agents-run] search_files: ${target} ${pattern} (root=${root})`);
         // No search-adapter module dependency — the runSearch helper below
         // is portable across this and older builds (rg → grep → Node walk).
         result = await runSearch(pattern, target, root, limit);
@@ -208,7 +210,8 @@ async function defaultExecutor(
     }
     return result ?? '';
   } catch (err: any) {
-    if (!ctx.quiet) console.error(`[agents-run] ${name} failed in ${Date.now() - t0}ms: ${err?.message ?? err}`);
+    if (!ctx.quiet)
+      console.error(`[agents-run] ${name} failed in ${Date.now() - t0}ms: ${err?.message ?? err}`);
     return {
       ok: false,
       error: err?.message ?? String(err),
@@ -251,14 +254,40 @@ async function runSearch(
     try {
       const { stdout } = await execFileAsync(
         'rg',
-        ['--no-heading', '--line-number', '-g', '!node_modules', '-g', '!.git', '-m', String(limit), pattern, root],
+        [
+          '--no-heading',
+          '--line-number',
+          '-g',
+          '!node_modules',
+          '-g',
+          '!.git',
+          '-m',
+          String(limit),
+          pattern,
+          root,
+        ],
         { maxBuffer: 4 * 1024 * 1024, timeout: 30_000 }
       );
-      return { ok: true, target: 'content', engine: 'rg', matches: stdout, count: stdout.split('\n').filter(Boolean).length };
+      return {
+        ok: true,
+        target: 'content',
+        engine: 'rg',
+        matches: stdout,
+        count: stdout.split('\n').filter(Boolean).length,
+      };
     } catch {
       const { stdout } = await execFileAsync(
         'grep',
-        ['-RIn', '--exclude-dir=node_modules', '--exclude-dir=.git', '-m', String(limit), '-E', pattern, root],
+        [
+          '-RIn',
+          '--exclude-dir=node_modules',
+          '--exclude-dir=.git',
+          '-m',
+          String(limit),
+          '-E',
+          pattern,
+          root,
+        ],
         { maxBuffer: 4 * 1024 * 1024, timeout: 30_000 }
       );
       return { ok: true, target: 'content', engine: 'grep', matches: stdout };
@@ -295,7 +324,8 @@ async function fallbackWeb(
       if (!resp.ok) return { ok: false, error: `search HTTP ${resp.status}` };
       const html = await resp.text();
       const results: Array<{ title: string; url: string; snippet: string }> = [];
-      const re = /<a class="result__a" href="([^"]+)"[^>]*>(.*?)<\/a>[\s\S]*?<a class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
+      const re =
+        /<a class="result__a" href="([^"]+)"[^>]*>(.*?)<\/a>[\s\S]*?<a class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
       let m: RegExpExecArray | null;
       while ((m = re.exec(html)) && results.length < maxResults) {
         results.push({
@@ -311,7 +341,10 @@ async function fallbackWeb(
   }
   if (name === 'web_fetch') {
     const u = String(args.url ?? '');
-    const maxBytes = Math.min(Math.max(Number(args.maxBytes ?? 200_000) || 200_000, 1024), 2_000_000);
+    const maxBytes = Math.min(
+      Math.max(Number(args.maxBytes ?? 200_000) || 200_000, 1024),
+      2_000_000
+    );
     if (!u) return { ok: false, error: 'empty url' };
     try {
       const resp = await fetch(u, {
@@ -325,7 +358,8 @@ async function fallbackWeb(
         truncated ? buf.slice(0, maxBytes) : buf
       );
       // Strip tags crudely for legibility.
-      const stripped = text.replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+      const stripped = text
+        .replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, ' ')
         .replace(/<[^>]+>/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
@@ -414,17 +448,23 @@ async function recallMemory(query: string, limit: number): Promise<Record<string
     // Lazy require so the CLI works without the redis package.
     let redis: any = null;
     try {
-      redis = (await import('ioredis' as string).catch(() => null) as any)?.default;
+      redis = ((await import('ioredis' as string).catch(() => null)) as any)?.default;
     } catch {}
     if (redis) {
-      const client = new redis({ host: process.env.REDIS_HOST || '127.0.0.1', port: Number(process.env.REDIS_PORT || 6379), lazyConnect: true });
+      const client = new redis({
+        host: process.env.REDIS_HOST || '127.0.0.1',
+        port: Number(process.env.REDIS_PORT || 6379),
+        lazyConnect: true,
+      });
       try {
         await client.connect();
         const keys = await client.keys('hermes:memory:fact:*');
         const facts: Array<{ key: string; content: string }> = [];
         for (const key of keys.slice(0, 200)) {
           const data = await client.hgetall(key);
-          const text = Object.values(data || {}).join(' ').toLowerCase();
+          const text = Object.values(data || {})
+            .join(' ')
+            .toLowerCase();
           if (!query || text.includes(query.toLowerCase())) {
             facts.push({ key, content: Object.values(data || {}).join(' ') });
           }
@@ -467,9 +507,16 @@ async function recallMemory(query: string, limit: number): Promise<Record<string
 export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
   const t0 = Date.now();
   const cwd = opts.cwd ?? process.cwd();
-  const enabledTools = opts.enableTools
-    ? opts.enableTools.split(',').map((s) => s.trim()).filter(Boolean)
-    : undefined;
+  const enabledToolsRaw = opts.enableTools?.trim();
+  const enabledTools =
+    enabledToolsRaw === undefined || enabledToolsRaw === ''
+      ? undefined
+      : enabledToolsRaw.toLowerCase() === 'none'
+        ? ([] as string[])
+        : enabledToolsRaw
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
 
   // Lazy-import the LLM guts. cli.ts is heavy; don't eagerly load it here.
   const { LLMClient: LLMClientCtor } = (await import('../utils/llm-client.js')) as {
@@ -493,7 +540,12 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
       const tTool = Date.now();
       let response: string | Record<string, unknown>;
       try {
-        response = await defaultExecutor(name, args, { cwd, quiet: !!opts.quiet });
+        // Plan/ask / --tools none: refuse tool execution even if the model asks.
+        if (Array.isArray(enabledTools) && enabledTools.length === 0) {
+          response = { ok: false, error: `tool '${name}' disabled (tools=none)` };
+        } else {
+          response = await defaultExecutor(name, args, { cwd, quiet: !!opts.quiet });
+        }
       } catch (err: any) {
         response = { ok: false, error: err?.message ?? String(err), tool: name };
       }
@@ -504,9 +556,7 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
         name,
         argsSummary: summarizeArgs(args),
         resultSummary:
-          typeof response === 'string'
-            ? truncate(response, 240)
-            : summarizeObject(response),
+          typeof response === 'string' ? truncate(response, 240) : summarizeObject(response),
         durationMs,
         ok,
       });
@@ -516,15 +566,15 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
       maxIterations: opts.maxIterations, // undefined → unlimited (autonomy default)
       timeoutMs: opts.timeoutMs,
       systemPrompt: opts.systemPrompt,
-      // Drive the available tools via builtinTools.
-      builtinTools: enabledTools ? ['all'] : enabledTools === undefined ? undefined : 'none',
-      // We DO want the builtins — but the executor uses enabledTools list
-      // directly. Workaround: if enabledTools was passed as a list, we
-      // override it explicitly via the proxy input.
+      builtinTools:
+        enabledTools === undefined
+          ? undefined
+          : enabledTools.length === 0
+            ? 'none'
+            : enabledTools.includes('all')
+              ? 'all'
+              : enabledTools,
       stream: opts.stream,
-      // Streams only matter at chatCompleteWithTools wrapper level if we
-      // want to render tokens. For now, --stream is a hint we can wire
-      // to stdout printing if a future caller asks for it.
     } as any
   );
 
@@ -578,19 +628,38 @@ export function registerAgentsRunCommand(program: Command): void {
     .command('run')
     .description(
       'Run an autonomous agent loop with the canonical TNF built-in toolset. ' +
-      'Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. ' +
-      'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, list_skills, load_skill, memory_recall.'
+        'Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. ' +
+        'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, list_skills, load_skill, memory_recall.'
     )
-    .argument('[task...]', 'Task description. If omitted, --task / --task-file / stdin must supply it.')
+    .argument(
+      '[task...]',
+      'Task description. If omitted, --task / --task-file / stdin must supply it.'
+    )
     .option('-t, --task <text>', 'Task description (alternative to positional or stdin).')
     .option('--task-file <path>', 'Read the task from a file (UTF-8). Use "-" to read from stdin.')
     .option('--stream', 'Stream tokens to stdout as the model generates them.', false)
-    .option('--max-iterations <n>', 'Maximum inner agent loop iterations. Omit for unlimited (autonomy default).')
-    .option('--timeout-ms <n>', 'Per-call HTTP timeout in milliseconds. Default: env TNF_LLM_TIMEOUT_MS, else 600000 (10min).')
-    .option('--tools <list>', 'Comma-separated builtin tool names to enable. Default: all. Examples: "bash,read_file,write_file" or "none" to disable.')
+    .option(
+      '--max-iterations <n>',
+      'Maximum inner agent loop iterations. Omit for unlimited (autonomy default).'
+    )
+    .option(
+      '--timeout-ms <n>',
+      'Per-call HTTP timeout in milliseconds. Default: env TNF_LLM_TIMEOUT_MS, else 600000 (10min).'
+    )
+    .option(
+      '--tools <list>',
+      'Comma-separated builtin tool names to enable. Default: all. Examples: "bash,read_file,write_file" or "none" to disable.'
+    )
     .option('--system <text>', 'Custom system prompt override for the loop.')
-    .option('--cwd <path>', 'Working directory for the bash / file / search tools. Default: process.cwd().')
-    .option('--json', 'Emit a single JSON envelope on stdout (final result + tool call ledger).', false)
+    .option(
+      '--cwd <path>',
+      'Working directory for the bash / file / search tools. Default: process.cwd().'
+    )
+    .option(
+      '--json',
+      'Emit a single JSON envelope on stdout (final result + tool call ledger).',
+      false
+    )
     .option('--quiet', 'Suppress per-tool stderr log lines.', false)
     .action(
       async (
@@ -661,8 +730,12 @@ export function registerAgentsRunCommand(program: Command): void {
           if (runOpts.json) {
             process.stdout.write(JSON.stringify(result, null, 2) + '\n');
           } else {
-            process.stdout.write(`\n[tnf agents run] provider=${result.provider} model=${result.model} base=${result.baseUrl}\n`);
-            process.stdout.write(`[tnf agents run] iterations=${result.iterations} toolCalls=${result.toolCalls.length} durationMs=${result.durationMs} finish=${result.finishReason}\n\n`);
+            process.stdout.write(
+              `\n[tnf agents run] provider=${result.provider} model=${result.model} base=${result.baseUrl}\n`
+            );
+            process.stdout.write(
+              `[tnf agents run] iterations=${result.iterations} toolCalls=${result.toolCalls.length} durationMs=${result.durationMs} finish=${result.finishReason}\n\n`
+            );
             process.stdout.write(result.finalContent + '\n');
           }
           process.exit(0);

@@ -11,7 +11,8 @@ import os, re, json, gzip, glob, time
 from collections import Counter, defaultdict
 
 from common import (ROOT, OUT, slugify, kb_vector_id, SYSTEM_ORIGINS, USER_ORIGINS,
-                    PERSONAL_IDENTIFIERS, ensure_user_out)
+                    PERSONAL_IDENTIFIERS, ensure_user_out, contains_personal_identifier,
+                    redact_personal_identifiers, normalize_edge_type)
 
 MAX_CONCEPTS = 25000
 CONCEPT_MIN_FREQ = 5
@@ -187,11 +188,17 @@ for lib, ldata in kt.get("libraries", {}).items():
         leaves = cdata.get("leaves", cdata if isinstance(cdata, list) else [])
         if isinstance(leaves, list):
             for leaf in leaves:
-                vid = leaf.get("vector_id") if isinstance(leaf, dict) else None
-                if vid:
-                    lf = add_node(f"kleaf:{vid}", vid, "kb-entry", "knowledge-tree",
-                                  meta={"index": leaf.get("index")})
-                    add_edge(cid, lf, "classified_as")
+                if not isinstance(leaf, dict):
+                    continue
+                vid = leaf.get("vector_id")
+                if not vid:
+                    continue
+                idx = leaf.get("index")
+                meta = {"index": idx, "vector_id": vid}
+                if leaf.get("legacy_vector_id"):
+                    meta["legacy_vector_id"] = leaf["legacy_vector_id"]
+                lf = add_node(f"kleaf:{vid}", vid, "kb-entry", "knowledge-tree", meta=meta)
+                add_edge(cid, lf, "classified_as")
     for fname in ldata.get("files", {}):
         add_edge(lid, path_node(f"docs/protocols/{fname}" if "/" not in fname else fname),
                  "tracks_integrity")
@@ -261,6 +268,25 @@ try:
             add_edge(nid, f"inbox:{os.path.splitext(trp)[0]}", "resource_pointer")
 except OSError as e:
     print("  KB skipped:", e)
+
+# ----------------------------------------- 8b. live pgvector embedding edges
+print("[8b/12] embedding_similar edges (pgvector)...")
+_embed_path = os.path.join(OUT, "embedding_edges.json")
+_embed_count = 0
+if os.path.isfile(_embed_path):
+    try:
+        _embed = json.load(open(_embed_path, encoding="utf-8"))
+        for ee in _embed.get("edges") or []:
+            s, t = ee.get("s"), ee.get("t")
+            if not s or not t or s not in nodes or t not in nodes:
+                continue
+            add_edge(s, t, "embedding_similar", ee.get("w") or ee.get("sim") or 1)
+            _embed_count += 1
+        print(f"  loaded {_embed_count} embedding_similar edges from embedding_edges.json")
+    except (OSError, json.JSONDecodeError) as e:
+        print("  embedding edges skipped:", e)
+else:
+    print("  embedding_edges.json missing — run build_embedding_edges.py first")
 
 # ------------------------------------------------- 9. wiki-inbox packets
 print("[9/12] wiki-inbox packets...")
@@ -358,12 +384,51 @@ except (OSError, json.JSONDecodeError) as e:
 
 # ------------------------------------------------------ 12. cross-linking
 print("[12/12] cross-links...")
-# path <-> wiki page (doc-<slug> convention)
+# path <-> wiki page
+# Stems are usually `doc-<slugify(path-without-ext)>` but many wiki pages keep
+# a trailing `-md` / `-json` from the original extension. Try both.
+def wiki_slugs_for_path(rel: str):
+    stem, ext = os.path.splitext(rel)
+    base = slugify(stem)
+    out = {f"doc-{base}", base}
+    if ext:
+        out.add(f"doc-{slugify(stem + ext)}")  # e.g. doc-apps-frontend-readme-md
+        out.add(f"doc-{base}-{ext.lstrip('.').lower()}")
+    # basename-only fallback (README.md in many packages)
+    bn = os.path.basename(stem)
+    if bn and bn.lower() not in ("index", "readme"):
+        out.add(f"doc-{slugify(bn)}")
+    return out
+
+wiki_docs = 0
 for nid in [k for k in nodes if k.startswith("path:")]:
     rel = nid[5:]
-    slug = "doc-" + slugify(os.path.splitext(rel)[0])
-    if slug in wiki_by_slug:
-        add_edge(wiki_by_slug[slug], nid, "documents")
+    for slug in wiki_slugs_for_path(rel):
+        if slug in wiki_by_slug:
+            add_edge(wiki_by_slug[slug], nid, "documents")
+            wiki_docs += 1
+            break
+# Reverse: wiki doc-* stems → reconstruct likely repo paths and link if present
+for stem, wid in wiki_by_slug.items():
+    if not stem.startswith("doc-"):
+        continue
+    body = stem[4:]
+    # Prefer exact path node hits via reconstructed slashy forms
+    candidates = [
+        body.replace("-", "/"),
+        re.sub(r"-md$", ".md", body).replace("-", "/"),
+        re.sub(r"-json$", ".json", body).replace("-", "/"),
+    ]
+    # Also try keeping last segment extension: foo-bar-readme-md → foo/bar/readme.md
+    m = re.match(r"^(.+)-([a-z0-9]+)$", body)
+    if m:
+        candidates.append(m.group(1).replace("-", "/") + "." + m.group(2))
+    for cand in candidates:
+        pid = f"path:{cand}"
+        if pid in nodes:
+            add_edge(wid, pid, "documents")
+            wiki_docs += 1
+            break
 
 # path <-> codebase-map file node (unique basename match)
 path_by_base = defaultdict(list)
@@ -374,18 +439,42 @@ for base, code_ids in code_file_labels.items():
     if len(cands) == 1 and len(code_ids) == 1:
         add_edge(code_ids[0], cands[0], "same_file")
 
-# term <-> concept lexical match
+# term <-> concept lexical match (exact + hyphen/space normalized)
+term_index = {t: f"term:{t}" for t in term_set}
 for c in keep:
-    cl = c.lower()
-    if cl in term_set:
-        add_edge(concept_id(c), f"term:{cl}", "lexical_match")
+    cl = c.lower().strip()
+    variants = {cl, cl.replace("_", " "), cl.replace("-", " "), slugify(cl).replace("-", " ")}
+    for v in variants:
+        key = v if v in term_index else slugify(v).replace("-", "")
+        # try direct term key
+        if v in term_set:
+            add_edge(concept_id(c), f"term:{v}", "lexical_match")
+            break
+        # try slug-collapsed term keys
+        collapsed = slugify(v)
+        if collapsed in term_set:
+            add_edge(concept_id(c), f"term:{collapsed}", "lexical_match")
+            break
 
-# agent <-> concept name match
+# agent <-> concept name match (exact slug, strip -agent suffix, label tokens)
 agent_names = {nid.split(":", 1)[1]: nid for nid in nodes if nid.startswith("agent:")}
+agent_aliases = dict(agent_names)
+for slug, aid in list(agent_names.items()):
+    if slug.endswith("-agent"):
+        agent_aliases.setdefault(slug[: -len("-agent")], aid)
+    if slug.startswith("agent-"):
+        agent_aliases.setdefault(slug[len("agent-"):], aid)
+named_as = 0
 for c in keep:
     s = slugify(c)
-    if s in agent_names:
-        add_edge(agent_names[s], concept_id(c), "named_as")
+    hit = agent_aliases.get(s)
+    if not hit and s.endswith("-agent"):
+        hit = agent_aliases.get(s[: -len("-agent")])
+    if hit:
+        add_edge(hit, concept_id(c), "named_as")
+        named_as += 1
+
+print(f"  wiki↔path documents≈{wiki_docs}, agent↔concept named_as≈{named_as}")
 
 # ---------------------------------------------------------------- output
 node_list = list(nodes.values())
@@ -400,38 +489,112 @@ for s, t, ty, w in edges:
     edge_list.append({"s": s, "t": t, "type": ty, "w": w})
 
 
+def scrub_node_for_system(n):
+    """Return a privacy-safe copy of a node for the distributable graph, or None."""
+    n2 = dict(n)
+    n2["id"] = redact_personal_identifiers(n2["id"])
+    n2["label"] = redact_personal_identifiers(n2["label"])
+    meta = dict(n2.get("meta") or {})
+    for k, v in list(meta.items()):
+        if isinstance(v, str):
+            meta[k] = redact_personal_identifiers(v)
+    if "also" in meta:
+        also = [o for o in meta["also"] if o not in USER_ORIGINS or o == "handoff"]
+        # Keep handoff in also only after scrub; drop other user-only tags.
+        also = [o for o in also if o not in (USER_ORIGINS - {"handoff"})]
+        if also:
+            meta["also"] = also
+        else:
+            meta.pop("also", None)
+    if "kb_index" in meta:  # private AI_Knowledge_Base.md enrichment
+        n2["label"] = meta.get("vector_id") or n2["id"].split(":", 1)[-1]
+        meta.pop("kb_index", None)
+        meta.pop("url", None)
+    n2["meta"] = meta
+    probe = f"{n2['id']} {n2['label']} {json.dumps(meta, sort_keys=True)}"
+    if contains_personal_identifier(probe):
+        return None
+    return n2
+
+
 def system_view(all_nodes, all_edges):
-    """Strip USER-origin nodes/edges and private KB enrichment for the
-    distributable artifact. kleaf labels revert to their vector IDs (which
-    come from the tracked KNOWLEDGE_TREE.json, not the private KB)."""
-    kept = {}
+    """Build the distributable artifact.
+
+    - Keep SYSTEM_ORIGINS nodes (incl. wiki-inbox).
+    - Promote USER handoff nodes only after PERSONAL_IDENTIFIERS redaction.
+    - Drop private KB enrichment and residual personal probes.
+    """
+    id_map = {}  # original id -> scrubbed id (may be identical)
     out_nodes = []
     for n in all_nodes:
-        if n["origin"] in USER_ORIGINS:
-            continue
-        probe = (n["id"] + " " + n["label"]).lower()
-        if any(p in probe for p in PERSONAL_IDENTIFIERS):
-            continue
-        n2 = dict(n)
-        m = dict(n2.get("meta") or {})
-        if "also" in m:
-            also = [o for o in m["also"] if o not in USER_ORIGINS]
-            if also:
-                m["also"] = also
+        origin = n["origin"]
+        if origin in USER_ORIGINS:
+            scrubbed = scrub_node_for_system(n)
+            if scrubbed is None:
+                continue
+            id_map[n["id"]] = scrubbed["id"]
+            existing = next((x for x in out_nodes if x["id"] == scrubbed["id"]), None)
+            if existing:
+                existing["weight"] = max(existing.get("weight", 1), scrubbed.get("weight", 1))
             else:
-                m.pop("also")
-        if "kb_index" in m:  # private AI_Knowledge_Base.md enrichment
-            n2["label"] = m.get("vector_id") or n2["id"].split(":", 1)[1]
-            m.pop("kb_index", None)
-            m.pop("url", None)
-        n2["meta"] = m
-        kept[n2["id"]] = True
+                out_nodes.append(scrubbed)
+            continue
+        if contains_personal_identifier(n["id"] + " " + n["label"]):
+            scrubbed = scrub_node_for_system(n)
+            if scrubbed is None:
+                continue
+            id_map[n["id"]] = scrubbed["id"]
+            out_nodes.append(scrubbed)
+            continue
+        n2 = scrub_node_for_system(n)
+        if n2 is None:
+            continue
+        id_map[n["id"]] = n2["id"]
         out_nodes.append(n2)
-    out_edges = [e for e in all_edges if e["s"] in kept and e["t"] in kept]
+
+    kept = {n["id"] for n in out_nodes}
+    out_edges = []
+    seen_e = set()
+    for e in all_edges:
+        s = id_map.get(e["s"], e["s"])
+        t = id_map.get(e["t"], e["t"])
+        if s not in kept or t not in kept or s == t:
+            continue
+        ty = normalize_edge_type(e["type"])
+        key = (s, t, ty)
+        if key in seen_e:
+            continue
+        seen_e.add(key)
+        out_edges.append({"s": s, "t": t, "type": ty, "w": e["w"]})
     return out_nodes, out_edges
 
 
+def prune_graph(nodes_, edges_):
+    """Drop degree-0 orphans and collapse residual edge aliases."""
+    deg = Counter()
+    norm_edges = []
+    seen = set()
+    for e in edges_:
+        ty = normalize_edge_type(e["type"])
+        key = (e["s"], e["t"], ty)
+        if key in seen or e["s"] == e["t"]:
+            continue
+        seen.add(key)
+        norm_edges.append({"s": e["s"], "t": e["t"], "type": ty, "w": e["w"]})
+        deg[e["s"]] += 1
+        deg[e["t"]] += 1
+    # Keep weight>1 orphans (rare hubs pending edges) but drop weight≤1 isolates.
+    kept_nodes = [
+        n for n in nodes_
+        if deg[n["id"]] > 0 or (n.get("weight") or 0) > 1
+    ]
+    kept_ids = {n["id"] for n in kept_nodes}
+    kept_edges = [e for e in norm_edges if e["s"] in kept_ids and e["t"] in kept_ids]
+    return kept_nodes, kept_edges
+
+
 def emit(nodes_, edges_, gz_path, stats_path, sources, data_class):
+    nodes_, edges_ = prune_graph(nodes_, edges_)
     meta = {
         "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "root": os.path.basename(ROOT),
@@ -455,6 +618,9 @@ def emit(nodes_, edges_, gz_path, stats_path, sources, data_class):
             "agent_concept_named": edge_type_counts.get("named_as", 0),
             "concept_mentioned_in": edge_type_counts.get("mentioned_in", 0),
             "term_occurs_in": edge_type_counts.get("occurs_in", 0),
+            "wiki_inbox_backlink": edge_type_counts.get("backlink", 0),
+            "handoff_lineage": edge_type_counts.get("handoff", 0),
+            "embedding_similar": edge_type_counts.get("embedding_similar", 0),
         },
     }
     with open(stats_path, "w") as f:
@@ -464,9 +630,12 @@ def emit(nodes_, edges_, gz_path, stats_path, sources, data_class):
 
 
 SYS_SOURCES = sorted(SYSTEM_ORIGINS - {"filesystem"}) + ["filesystem"]
-ALL_SOURCES = SYS_SOURCES + sorted(USER_ORIGINS)
+# System sources list also advertises scrubbed handoff projection when present.
+ALL_SOURCES = sorted(set(SYS_SOURCES) | USER_ORIGINS | {"handoff"})
 
 sys_nodes, sys_edges = system_view(node_list, edge_list)
+if any(n["origin"] == "handoff" for n in sys_nodes):
+    SYS_SOURCES = sorted(set(SYS_SOURCES) | {"handoff"})
 sys_stats = emit(sys_nodes, sys_edges,
                  os.path.join(OUT, "unified_graph.json.gz"),
                  os.path.join(OUT, "unified_graph_stats.json"),

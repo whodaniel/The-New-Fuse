@@ -13,8 +13,12 @@
  *
  *   1. `--task <text>`           explicit single-string override (flag wins)
  *   2. `--task-file <path|->`    file contents; "-" means inline stdin
- *   3. implicit stdin            when piped (stdin.isTTY === false)
- *   4. positional args           joined with "\n" so $'a\nb' round-trips
+ *   3. positional args           joined with "\n" so $'a\nb' round-trips
+ *                                (checked BEFORE implicit stdin so an open
+ *                                non-TTY stdin from agent runners cannot hang
+ *                                when the operator already supplied a prompt)
+ *   4. implicit stdin            when piped (stdin.isTTY === false), with a
+ *                                short idle timeout so hung FDs fail soft
  *   5. `undefined`               caller renders its own usage error
  *
  * NOTES for callers:
@@ -32,6 +36,13 @@ import * as path from 'path';
 
 /** Hard cap on how much stdin a single prompt command will consume. */
 export const STDIN_PROMPT_MAX_BYTES = 8 * 1024 * 1024; // 8 MiB
+
+/**
+ * Max time to wait for the first byte (or EOF) on an open non-TTY stdin.
+ * Agent runners often leave stdin open without data; blocking forever would
+ * starve positional prompts and hang the CLI.
+ */
+export const STDIN_PROMPT_IDLE_MS = 100;
 
 /** Marker spliced onto the prompt if stdin was truncated by the byte cap. */
 export const STDIN_TRUNCATION_MARKER = '\n[tnf: stdin truncated to 8 MiB cap]';
@@ -52,47 +63,144 @@ export interface ResolvePromptOptions {
   taskFile?: string;
   /**
    * Raw positional argv array, as commander hands the `task` argument for
-   * `[task...]`. Joined with newlines; non-empty after join wins.
+   * `[task...]`. Joined with newlines; non-empty after join wins over
+   * implicit stdin.
    */
   positional?: string[];
+  /**
+   * Override the idle timeout for stdin reads (ms). Tests inject a tiny
+   * value; production keeps STDIN_PROMPT_IDLE_MS.
+   */
+  stdinIdleMs?: number;
+  /** Injectable readable for tests. Defaults to process.stdin. */
+  stdin?: NodeJS.ReadableStream;
 }
 
-function readStdinTask(maxBytes: number = STDIN_PROMPT_MAX_BYTES): Promise<string> {
+type StdinLike = NodeJS.ReadableStream & {
+  isTTY?: boolean;
+  readableEnded?: boolean;
+  readableLength?: number;
+  resume?: () => void;
+  destroy?: (err?: Error) => void;
+};
+
+function getStdin(opts?: ResolvePromptOptions): StdinLike {
+  return (opts?.stdin as StdinLike) || (process.stdin as StdinLike);
+}
+
+function positionalText(positional?: string[]): string {
+  if (!positional || positional.length === 0) return '';
+  return positional.join('\n');
+}
+
+/**
+ * Read stdin up to maxBytes. Returns '' on TTY, already-ended streams, idle
+ * timeout with no bytes, or empty EOF. Never hangs forever on an open FD.
+ */
+function readStdinTask(
+  maxBytes: number = STDIN_PROMPT_MAX_BYTES,
+  idleMs: number = STDIN_PROMPT_IDLE_MS,
+  stdin: StdinLike = process.stdin as StdinLike
+): Promise<string> {
   return new Promise((resolve, reject) => {
-    if (process.stdin.isTTY) {
+    if (stdin.isTTY) {
       resolve('');
       return;
     }
+    if (stdin.readableEnded) {
+      resolve('');
+      return;
+    }
+
     const chunks: Buffer[] = [];
     let total = 0;
     let truncated = false;
-    process.stdin.on('data', (chunk: Buffer) => {
+    let settled = false;
+    let sawData = false;
+    let idleTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const finish = (text: string) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(text);
+    };
+
+    const fail = (err: Error) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(err);
+    };
+
+    const cleanup = () => {
+      if (idleTimer) {
+        clearTimeout(idleTimer);
+        idleTimer = null;
+      }
+      stdin.removeListener('data', onData);
+      stdin.removeListener('end', onEnd);
+      stdin.removeListener('error', onError);
+    };
+
+    const onData = (chunk: Buffer | string) => {
+      const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      sawData = true;
+      if (idleTimer) {
+        clearTimeout(idleTimer);
+        idleTimer = null;
+      }
       if (truncated) return;
-      total += chunk.length;
+      total += buf.length;
       if (total > maxBytes) {
         truncated = true;
-        const remaining = chunk.subarray(0, Math.max(0, maxBytes - (total - chunk.length)));
+        const remaining = buf.subarray(0, Math.max(0, maxBytes - (total - buf.length)));
         if (remaining.length) chunks.push(remaining);
-        process.stdin.removeAllListeners('data');
         // Drain the rest so the pipe closes cleanly instead of EPIPE-ing the producer.
-        process.stdin.resume();
-        process.stdin.on('data', () => {});
-        resolve(Buffer.concat(chunks).toString('utf8') + STDIN_TRUNCATION_MARKER);
+        stdin.removeListener('data', onData);
+        if (typeof stdin.resume === 'function') stdin.resume();
+        stdin.on('data', () => {});
+        finish(Buffer.concat(chunks).toString('utf8') + STDIN_TRUNCATION_MARKER);
         return;
       }
-      chunks.push(chunk);
-    });
-    process.stdin.on('end', () => {
-      resolve(Buffer.concat(chunks).toString('utf8'));
-    });
-    process.stdin.on('error', (err) => reject(err));
+      chunks.push(buf);
+    };
+
+    const onEnd = () => {
+      finish(Buffer.concat(chunks).toString('utf8'));
+    };
+
+    const onError = (err: Error) => fail(err);
+
+    stdin.on('data', onData);
+    stdin.on('end', onEnd);
+    stdin.on('error', onError);
+
+    // Already-buffered bytes (e.g. Readable.from) still need flowing mode.
+    if (typeof stdin.resume === 'function') {
+      stdin.resume();
+    }
+
+    // If nothing arrives within idleMs and we have no buffered length, treat
+    // as empty so callers can fall through (or return null). Explicit
+    // `--task-file -` still gets '' rather than hanging.
+    const buffered = typeof stdin.readableLength === 'number' ? stdin.readableLength : 0;
+    if (buffered === 0) {
+      idleTimer = setTimeout(
+        () => {
+          if (settled || sawData || total > 0) return;
+          finish('');
+        },
+        Math.max(0, idleMs)
+      );
+    }
   });
 }
 
 /**
  * Resolve the user's prompt text from the available input channels.
  *
- * Returns `null` for `text` when no channel supplied a value — the caller is
+ * Returns `null` when no channel supplied a value — the caller is
  * responsible for rendering the usage error in its own voice (different
  * commands want different lists of valid channels).
  */
@@ -101,12 +209,14 @@ export async function resolvePrompt(opts: ResolvePromptOptions): Promise<PromptR
   if (flagText) {
     return { text: flagText, source: 'flag' };
   }
-  let filePath = opts.taskFile;
-  // Treat undefined / empty / "-" as inline stdin so callers don't need to
-  // special-case them.
+
+  const filePath = opts.taskFile;
   const wantsStdinFile = filePath !== undefined && (filePath === '' || filePath === '-');
+  const idleMs = opts.stdinIdleMs ?? STDIN_PROMPT_IDLE_MS;
+  const stdin = getStdin(opts);
+
   if (wantsStdinFile) {
-    const text = await readStdinTask();
+    const text = await readStdinTask(STDIN_PROMPT_MAX_BYTES, idleMs, stdin);
     return text ? { text, source: 'stdin', filePath: '<stdin>' } : null;
   }
   if (filePath !== undefined) {
@@ -115,19 +225,22 @@ export async function resolvePrompt(opts: ResolvePromptOptions): Promise<PromptR
       const text = fs.readFileSync(abs, 'utf8');
       return { text, source: 'file', filePath: abs };
     } catch (err: any) {
-      // Surface the read failure through the resolved envelope; the caller
-      // turns it into a CLI-shaped error. Returning `text === ''` and a
-      // custom marker would erase information.
       throw new Error(`--task-file "${filePath}" could not be read: ${err?.message ?? err}`);
     }
   }
-  if (!process.stdin.isTTY) {
-    const text = await readStdinTask();
+
+  // Prefer positional over implicit stdin so open non-TTY FDs cannot hang
+  // when the operator already supplied a prompt on the argv.
+  const fromPositional = positionalText(opts.positional);
+  if (fromPositional) {
+    return { text: fromPositional, source: 'positional' };
+  }
+
+  if (!stdin.isTTY) {
+    const text = await readStdinTask(STDIN_PROMPT_MAX_BYTES, idleMs, stdin);
     if (text) return { text, source: 'stdin' };
   }
-  if (opts.positional && opts.positional.length) {
-    return { text: opts.positional.join('\n'), source: 'positional' };
-  }
+
   return null;
 }
 

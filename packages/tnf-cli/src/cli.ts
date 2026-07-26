@@ -64,6 +64,7 @@ import {
   resolveOperatorWindowMs,
 } from './utils/operator-window.js';
 import { resolvePrompt } from './utils/prompt-input.js';
+import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
 // Propagates to both open-source installable binary (packages/tnf-cli/dist/cli.js)
@@ -513,7 +514,8 @@ function voiceSessionFile(profileInput?: string): string {
 
 function writeVoiceSession(session: VoiceSessionState): void {
   const file = voiceSessionFile(session.profile);
-  fs.writeFileSync(file, `${JSON.stringify(session, null, 2)}\n`, 'utf8');
+  // Atomic: torn writes here would force operators to re-enroll voice profiles.
+  writeFileAtomic(file, `${JSON.stringify(session, null, 2)}\n`);
 }
 
 function readVoiceSession(profileInput?: string): VoiceSessionState | null {
@@ -1030,6 +1032,7 @@ type SelfImprovementArtifactsIndex = {
 type SelfImprovementRunCliOptions = {
   baseUrl?: string;
   apiUrl?: string;
+  appUrl?: string;
   maxDepth?: string;
   maxPages?: string;
   maxExternal?: string;
@@ -1065,6 +1068,9 @@ const MASTER_CLOCK_PROVIDER_ENV_KEY = 'TNF_MASTER_CLOCK_PROVIDER';
 const SUPER_CYCLE_PROVIDER_ENV_KEY = 'TNF_SUPER_CYCLE_PROVIDER';
 const DEFAULT_SELF_IMPROVEMENT_BASE_URL = 'https://thenewfuse.com';
 const DEFAULT_SELF_IMPROVEMENT_API_URL = 'https://api.thenewfuse.com';
+// The landing domain serves a static marketing page; the React SPA (and every
+// router path the semantic audit enumerates) lives on the app domain.
+const DEFAULT_SELF_IMPROVEMENT_APP_URL = 'https://app.thenewfuse.com';
 const DEFAULT_FULL_AUTO_INTERVAL_MINUTES = 30;
 const FULL_AUTO_STATE_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-state.json');
 const FULL_AUTO_RUN_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-runs.jsonl');
@@ -1229,6 +1235,15 @@ function resolveSelfImprovementBaseUrl(input?: string): string {
   );
 }
 
+function resolveSelfImprovementAppUrl(input?: string): string {
+  return (
+    normalizeToken(input) ??
+    normalizeToken(process.env.TNF_APP_BASE_URL) ??
+    normalizeToken(process.env.TNF_APP_URL) ??
+    DEFAULT_SELF_IMPROVEMENT_APP_URL
+  );
+}
+
 function resolveSelfImprovementApiUrl(input?: string): string {
   return (
     normalizeToken(input) ??
@@ -1344,6 +1359,7 @@ function buildSelfImprovementRunCliArgs(options: SelfImprovementRunCliOptions): 
   const args = ['self-improvement', 'run'];
   if (options.baseUrl) args.push('--base-url', options.baseUrl);
   if (options.apiUrl) args.push('--api-url', options.apiUrl);
+  if (options.appUrl) args.push('--app-url', options.appUrl);
   if (options.maxDepth) args.push('--max-depth', options.maxDepth);
   if (options.maxPages) args.push('--max-pages', options.maxPages);
   if (options.maxExternal) args.push('--max-external', options.maxExternal);
@@ -1375,16 +1391,12 @@ function appendJsonLine(filePath: string, payload: unknown): void {
 
 function writeFullAutoState(state: FullAutoState): void {
   ensureParentDir(FULL_AUTO_STATE_PATH);
-  fs.writeFileSync(FULL_AUTO_STATE_PATH, JSON.stringify(state, null, 2), 'utf8');
+  // Atomic: this file drives full-auto execution on the next boot.
+  writeFileAtomic(FULL_AUTO_STATE_PATH, JSON.stringify(state, null, 2));
 }
 
 function readFullAutoState(): FullAutoState | null {
-  if (!fs.existsSync(FULL_AUTO_STATE_PATH)) return null;
-  try {
-    return JSON.parse(fs.readFileSync(FULL_AUTO_STATE_PATH, 'utf8')) as FullAutoState;
-  } catch {
-    return null;
-  }
+  return safeReadJson<FullAutoState>(FULL_AUTO_STATE_PATH);
 }
 
 function readLastJsonLine(filePath: string): any | null {
@@ -1395,6 +1407,7 @@ function readLastJsonLine(filePath: string): any | null {
     .map((line) => line.trim())
     .filter(Boolean);
   if (lines.length === 0) return null;
+
   try {
     return JSON.parse(lines[lines.length - 1]);
   } catch {
@@ -3826,7 +3839,11 @@ async function printCommandMenu(
 }
 
 async function runSelfCli(args: string[]): Promise<void> {
-  await runCommand(process.execPath, [...process.execArgv, cliEntryPath, ...args]);
+  // Nested CLI re-entries must not re-dump Turn Zero / ProtocolInterceptor
+  // banners onto stdout (breaks JSON consumers and floods full-auto logs).
+  await runCommand(process.execPath, [...process.execArgv, cliEntryPath, ...args], {
+    env: { TNF_SILENT_PREFLIGHT: '1' },
+  });
 }
 
 function findFullAutoStartProcesses(): Array<{ pid: number; cmd: string }> {
@@ -3850,6 +3867,7 @@ function buildFullAutoStartArgs(
   if (options.maxCycles) args.push('--max-cycles', options.maxCycles);
   if (options.baseUrl) args.push('--base-url', options.baseUrl);
   if (options.apiUrl) args.push('--api-url', options.apiUrl);
+  if (options.appUrl) args.push('--app-url', options.appUrl);
   if (options.maxDepth) args.push('--max-depth', options.maxDepth);
   if (options.maxPages) args.push('--max-pages', options.maxPages);
   if (options.maxExternal) args.push('--max-external', options.maxExternal);
@@ -4109,6 +4127,7 @@ program
       '    - Set the CI_SUPER_ADMIN_TOKEN environment variable (for CI/CD)'
   )
   .version(pkgVersion)
+  .option('--no-splash', 'Disable splash graphic and silence protocol preflight chatter on stdout')
   .showSuggestionAfterError()
   .showHelpAfterError();
 
@@ -4322,6 +4341,20 @@ function attachSlashCommandDropdown(
 
   readline.emitKeypressEvents(process.stdin, rl);
 
+  // Input-bug fix: TTY line discipline in cooked mode buffers an entire
+  // line and only delivers keypress events on Enter — by which time the
+  // dropdown cannot react character-by-character. Put stdin into raw
+  // mode while the dropdown is active so each printable keystroke fires
+  // synchronously, and restore it on readline close.
+  const stdinAny = process.stdin as unknown as { setRawMode?: (m: boolean) => void };
+  if (typeof stdinAny.setRawMode === 'function') {
+    try {
+      stdinAny.setRawMode(true);
+    } catch {
+      /* tty may be wrapped */
+    }
+  }
+
   const onKeypress = (_value: string, key: any) => {
     const keyName = key?.name;
     if (['return', 'enter'].includes(keyName)) {
@@ -4372,6 +4405,13 @@ function attachSlashCommandDropdown(
   process.stdin.on('keypress', onKeypress);
   rl.once('close', () => {
     process.stdin.off('keypress', onKeypress);
+    if (typeof stdinAny.setRawMode === 'function') {
+      try {
+        stdinAny.setRawMode(false);
+      } catch {
+        /* already gone */
+      }
+    }
   });
   return state;
 }
@@ -4935,21 +4975,114 @@ program
 
 program
   .command('tui')
-  .description('Launch the TNF TUI agent — always-on interactive LLM session')
+  .description(
+    'Launch the TNF TUI agent — always-on interactive LLM session (peer-parity with claude/cursor/hermes/codex entry flags)'
+  )
+  .argument(
+    '[prompt...]',
+    'Optional initial prompt (also accepted via --task / --task-file / stdin)'
+  )
+  .option('-m, --model <model>', 'Model override for this session (sets TNF_LLM_MODEL)')
+  .option('-c, --continue', 'Resume the most recent saved TNF session transcript')
+  .option('--resume [id]', 'Resume a saved session by id (omit id for most recent)')
+  .option(
+    '-p, --print',
+    'Non-interactive oneshot: run one agent turn and print the final response (no TUI)'
+  )
+  .option(
+    '-z, --oneshot <prompt>',
+    'Hermes-style oneshot: send a single prompt, print ONLY the final response text, exit'
+  )
+  .option(
+    '--output-format <format>',
+    'Oneshot/print output format: text | json (default: text)',
+    'text'
+  )
+  .option('--task <text>', 'Inline initial prompt / oneshot task override')
+  .option('--task-file <path>', 'Read initial prompt from a file (UTF-8). Use "-" for stdin.')
   .option('--autonomous', 'Start with autonomous shell execution and auto-continue enabled')
+  .option('-f, --force', 'Alias for --yolo (full auto-approve + autonomous)')
+  .option('--yolo', 'Bypass approval friction: enable autonomous shell auto-exec')
+  .option(
+    '--mode <mode>',
+    'Execution mode: agent (default) | plan | ask (plan/ask disable shell auto-exec)',
+    'agent'
+  )
   .option('--skip-voice-kws', 'Do not auto-start Voice beam + KWS (default: start them)')
-  .action(async (options: { autonomous?: boolean; skipVoiceKws?: boolean }) => {
-    try {
-      await runTurnZeroOnboardSurface();
-      if (!options.skipVoiceKws && process.env.VOICE_KWS_ALWAYS_ON !== '0') {
-        await ensureVoiceKwsAlwaysOn();
+  .action(
+    async (
+      promptParts: string[] | undefined,
+      options: {
+        model?: string;
+        continue?: boolean;
+        resume?: string | true;
+        print?: boolean;
+        oneshot?: string;
+        outputFormat?: string;
+        task?: string;
+        taskFile?: string;
+        autonomous?: boolean;
+        force?: boolean;
+        yolo?: boolean;
+        mode?: string;
+        skipVoiceKws?: boolean;
       }
-      await startTuiAgent(options);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
+    ) => {
+      try {
+        const modeRaw = String(options.mode || 'agent').toLowerCase();
+        const mode = (['agent', 'plan', 'ask'].includes(modeRaw) ? modeRaw : 'agent') as
+          | 'agent'
+          | 'plan'
+          | 'ask';
+        const yolo = Boolean(options.yolo || options.force);
+        const autonomous =
+          yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
+        const wantsOneshot = Boolean(options.print || options.oneshot);
+
+        if (options.model) {
+          process.env.TNF_LLM_MODEL = options.model;
+        }
+
+        if (wantsOneshot) {
+          await runTuiOneshot({
+            oneshot: options.oneshot,
+            task: options.task,
+            taskFile: options.taskFile,
+            positional: promptParts,
+            outputFormat: options.outputFormat || 'text',
+            model: options.model,
+            enableTools: mode === 'ask' || mode === 'plan' ? 'none' : undefined,
+          });
+          return;
+        }
+
+        await runTurnZeroOnboardSurface();
+        if (!options.skipVoiceKws && process.env.VOICE_KWS_ALWAYS_ON !== '0') {
+          await ensureVoiceKwsAlwaysOn();
+        }
+
+        const shouldResume = Boolean(options.continue || options.resume !== undefined);
+        const resumeId =
+          typeof options.resume === 'string' && options.resume.trim()
+            ? options.resume.trim()
+            : undefined;
+
+        await startTuiAgent({
+          autonomous: mode === 'agent' ? Boolean(autonomous || yolo) : false,
+          model: options.model,
+          mode,
+          continueSession: shouldResume,
+          resumeId,
+          task: options.task,
+          taskFile: options.taskFile,
+          positional: promptParts,
+        });
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
     }
-  });
+  );
 
 program
   .command('gateway')
@@ -7791,18 +7924,49 @@ marketplace
         process.exit(1);
       }
 
+      // SECURITY (audit #1): user-supplied --kind / --category previously
+      // interpolated into the SQL string before the entire SQL was passed
+      // through a shell-quoted execSync. Any " in DATABASE_URL or ' in
+      // --kind/--category broke out of the quote and ran arbitrary SQL/shell.
+      // Switch to execFileSync (no shell), and validate --kind against an
+      // allow-list because psql can't parameterize identifiers.
+      const KIND_WHITELIST = new Set([
+        'agent',
+        'agent_template',
+        'experience',
+        'mcp_server',
+        'model',
+        'prompt',
+        'skill',
+        'workflow',
+      ]);
       let whereClauses: string[] = ["publication_status = 'published'"];
-      if (options.kind) whereClauses.push(`kind = '${options.kind.replace(/'/g, "''")}'`);
-      if (options.category)
-        whereClauses.push(`category = '${options.category.replace(/'/g, "''")}'`);
+      if (options.kind) {
+        if (!KIND_WHITELIST.has(options.kind)) {
+          console.error(
+            chalk.red(
+              `Error: --kind must be one of: ${Array.from(KIND_WHITELIST).sort().join(', ')}`
+            )
+          );
+          process.exit(1);
+        }
+        whereClauses.push(`kind = '${options.kind}'`);
+      }
+      if (options.category) {
+        // category is a user-supplied free string; reject any character that
+        // could terminate a SQL string literal.
+        if (!/^[A-Za-z0-9 _./-]{1,64}$/.test(options.category)) {
+          console.error(chalk.red('Error: --category must match /^[A-Za-z0-9 _./-]{1,64}$/'));
+          process.exit(1);
+        }
+        whereClauses.push(`category = '${options.category}'`);
+      }
       const whereClause = whereClauses.join(' AND ');
 
       const sql = `SELECT id, slug, name, kind, category, rating, total_runs, success_rate, price_per_run, status FROM marketplace_catalog_items WHERE ${whereClause} ORDER BY kind, name;`;
 
-      const psqlArgs = [databaseUrl, '-t', '-A', '-F', '|', '-c', sql];
-
-      const { execSync } = await import('child_process');
-      const raw = execSync(`psql "${databaseUrl}" -t -A -F '|' -c "${sql.replace(/"/g, '\\"')}"`, {
+      const { execFileSync } = await import('child_process');
+      const raw = execFileSync('psql', [databaseUrl, '-t', '-A', '-F', '|', '-c', sql], {
         encoding: 'utf-8',
         timeout: 15000,
         env: { ...process.env },
@@ -7890,8 +8054,12 @@ marketplace
 
       const sql = `SELECT kind, COUNT(*) AS total, COUNT(*) FILTER (WHERE price_per_run = 0) AS free, COUNT(*) FILTER (WHERE price_per_run > 0) AS paid, ROUND(AVG(rating)::numeric, 2) AS avg_rating, SUM(total_runs) AS total_runs FROM marketplace_catalog_items WHERE publication_status = 'published' GROUP BY kind ORDER BY kind;`;
 
-      const { execSync } = await import('child_process');
-      const raw = execSync(`psql "${databaseUrl}" -t -A -F '|' -c "${sql.replace(/"/g, '\\"')}"`, {
+      // SECURITY (audit #1): no user input in this command, but DATABASE_URL
+      // could still contain "; ... -- and break out of the prior
+      // shell-quoted execSync. Use execFileSync (no shell) so the URL is
+      // passed verbatim as a single argv element.
+      const { execFileSync } = await import('child_process');
+      const raw = execFileSync('psql', [databaseUrl, '-t', '-A', '-F', '|', '-c', sql], {
         encoding: 'utf-8',
         timeout: 15000,
         env: { ...process.env },
@@ -9552,8 +9720,9 @@ const selfImprovement = program
 selfImprovement
   .command('run')
   .description('Run full self-improvement loop (build, audits, scorecard, architecture map)')
-  .option('--base-url <url>', 'Public base URL used by semantic/auth audits')
+  .option('--base-url <url>', 'Public base URL used by live-link/auth audits')
   .option('--api-url <url>', 'API base URL used by auth audit')
+  .option('--app-url <url>', 'App (SPA) base URL used by the semantic route audit')
   .option('--max-depth <n>', 'Max crawl depth for live link audit', '5')
   .option('--max-pages <n>', 'Max page count for live link audit', '500')
   .option('--max-external <n>', 'Max external URL checks for live link audit', '400')
@@ -9574,6 +9743,7 @@ selfImprovement
       options: {
         baseUrl?: string;
         apiUrl?: string;
+        appUrl?: string;
         maxDepth?: string;
         maxPages?: string;
         maxExternal?: string;
@@ -9594,6 +9764,7 @@ selfImprovement
         const startedAtMs = startedAt.getTime();
         const baseUrl = resolveSelfImprovementBaseUrl(options.baseUrl);
         const apiUrl = resolveSelfImprovementApiUrl(options.apiUrl);
+        const appUrl = resolveSelfImprovementAppUrl(options.appUrl);
         const maxDepth = parsePositiveIntegerOption(options.maxDepth, 5, '--max-depth');
         const maxPages = parsePositiveIntegerOption(options.maxPages, 500, '--max-pages');
         const maxExternal = parsePositiveIntegerOption(options.maxExternal, 400, '--max-external');
@@ -9619,7 +9790,9 @@ selfImprovement
           await runCommand('pnpm', ['run', 'audit:all-routes-semantic'], {
             cwd: frontendCwd,
             env: {
-              SEMANTIC_AUDIT_BASE_URL: baseUrl,
+              // Router paths are served by the SPA on the app domain, not the
+              // static landing domain used by the live-link crawl.
+              SEMANTIC_AUDIT_BASE_URL: appUrl,
               FAIL_ON_SEMANTIC_ISSUES: '1',
             },
           });
@@ -9661,7 +9834,7 @@ selfImprovement
 
         const runNote =
           normalizeToken(options.note) ||
-          `Executed via tnf self-improvement run (base-url=${baseUrl}, api-url=${apiUrl})`;
+          `Executed via tnf self-improvement run (base-url=${baseUrl}, api-url=${apiUrl}, app-url=${appUrl})`;
         const runLogPath = appendSelfImprovementRunLog(runNote);
         expectedArtifacts.push(runLogPath);
 
@@ -9871,8 +10044,9 @@ fullAuto
 fullAuto
   .command('once')
   .description('Run one unattended cycle (self-improvement + optional orchestration broadcast)')
-  .option('--base-url <url>', 'Public base URL used by semantic/auth audits')
+  .option('--base-url <url>', 'Public base URL used by live-link/auth audits')
   .option('--api-url <url>', 'API base URL used by auth audit')
+  .option('--app-url <url>', 'App (SPA) base URL used by the semantic route audit')
   .option('--max-depth <n>', 'Max crawl depth for live link audit')
   .option('--max-pages <n>', 'Max page count for live link audit')
   .option('--max-external <n>', 'Max external URL checks for live link audit')
@@ -9956,8 +10130,9 @@ fullAuto
     String(DEFAULT_FULL_AUTO_INTERVAL_MINUTES)
   )
   .option('--max-cycles <n>', 'Number of cycles before stop (0 = run forever)', '0')
-  .option('--base-url <url>', 'Public base URL used by semantic/auth audits')
+  .option('--base-url <url>', 'Public base URL used by live-link/auth audits')
   .option('--api-url <url>', 'API base URL used by auth audit')
+  .option('--app-url <url>', 'App (SPA) base URL used by the semantic route audit')
   .option('--max-depth <n>', 'Max crawl depth for live link audit')
   .option('--max-pages <n>', 'Max page count for live link audit')
   .option('--max-external <n>', 'Max external URL checks for live link audit')
@@ -10132,8 +10307,9 @@ fullAutoDaemon
     String(DEFAULT_FULL_AUTO_INTERVAL_MINUTES)
   )
   .option('--max-cycles <n>', 'Number of cycles before stop (0 = run forever)', '0')
-  .option('--base-url <url>', 'Public base URL used by semantic/auth audits')
+  .option('--base-url <url>', 'Public base URL used by live-link/auth audits')
   .option('--api-url <url>', 'API base URL used by auth audit')
+  .option('--app-url <url>', 'App (SPA) base URL used by the semantic route audit')
   .option('--max-depth <n>', 'Max crawl depth for live link audit')
   .option('--max-pages <n>', 'Max page count for live link audit')
   .option('--max-external <n>', 'Max external URL checks for live link audit')
@@ -17796,7 +17972,73 @@ function stopProcessingIndicator(success = true): void {
   process.stdout.write(`${icon}\n`);
 }
 
-async function startInteractiveAgent(options?: { autonomous?: boolean }): Promise<void> {
+type TuiAgentOptions = {
+  autonomous?: boolean;
+  model?: string;
+  mode?: 'agent' | 'plan' | 'ask';
+  continueSession?: boolean;
+  resumeId?: string;
+  initialPrompt?: string;
+  task?: string;
+  taskFile?: string;
+  positional?: string[];
+};
+
+/**
+ * Peer-parity oneshot/print path (claude -p / hermes -z / cursor --print).
+ * Resolves prompt via resolvePrompt, runs agents-run once, prints clean output.
+ */
+async function runTuiOneshot(options: {
+  oneshot?: string;
+  task?: string;
+  taskFile?: string;
+  positional?: string[];
+  outputFormat?: string;
+  model?: string;
+  enableTools?: string;
+}): Promise<void> {
+  if (options.model) {
+    process.env.TNF_LLM_MODEL = options.model;
+  }
+  process.env.TNF_SILENT_PREFLIGHT = '1';
+
+  const resolved = await resolvePrompt({
+    task: options.oneshot || options.task,
+    taskFile: options.taskFile,
+    positional: options.positional,
+  });
+  if (!resolved?.text) {
+    console.error(
+      chalk.red(
+        'No prompt provided for oneshot/print. Supply --oneshot, --task, --task-file, positional args, or pipe stdin.'
+      )
+    );
+    process.exit(2);
+  }
+
+  const { runAgentsRun } = await import('./commands/agents-run.js');
+  const format = String(options.outputFormat || 'text').toLowerCase();
+  const result = await runAgentsRun({
+    task: resolved.text,
+    json: format === 'json',
+    quiet: true,
+    maxIterations: 12,
+    enableTools: options.enableTools,
+  });
+
+  if (format === 'json') {
+    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
+  } else {
+    process.stdout.write(
+      (result.finalContent || '') + (result.finalContent?.endsWith('\n') ? '' : '\n')
+    );
+  }
+  if (!result.ok) {
+    process.exit(1);
+  }
+}
+
+async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   syncHomeHandoffCache();
   const voiceTty = lockVoiceGroundInputToThisSession('tnf-cli');
   const rl = readline.createInterface({
@@ -17812,10 +18054,42 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
 
   const systemPrompt = await loadTnfSystemPrompt();
 
+  if (options?.model) {
+    process.env.TNF_LLM_MODEL = options.model;
+  }
+
   const { LLMClient } = await import('./utils/llm-client.js');
   const client = await LLMClient.create('orchestrator');
 
   const messages: ChatMessage[] = [{ role: 'system', content: systemPrompt }];
+
+  // --continue / --resume: hydrate transcript from SessionManager when available.
+  if (options?.continueSession) {
+    try {
+      const sessions = sessionManager.list();
+      const target =
+        (options.resumeId &&
+          (sessionManager.get(options.resumeId)
+            ? sessionManager.export(options.resumeId)
+            : undefined)) ||
+        (sessions[0] ? sessionManager.export(sessions[0].id) : undefined);
+      if (target?.messages?.length) {
+        for (const msg of target.messages) {
+          if (msg.role === 'system') continue;
+          messages.push({ role: msg.role, content: msg.content });
+        }
+        console.log(
+          chalk.dim(
+            `  Resumed session ${target.session.name || target.session.id} (${target.messages.length} messages)`
+          )
+        );
+      } else {
+        console.log(chalk.yellow('  No saved session found to resume — starting fresh.'));
+      }
+    } catch (err: any) {
+      console.log(chalk.yellow(`  Session resume skipped: ${err?.message ?? err}`));
+    }
+  }
 
   console.log('');
   console.log(chalk.cyan('╔══════════════════════════════════════════════╗'));
@@ -17853,19 +18127,31 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
   }
 
   let autonomousMode =
-    options?.autonomous ||
-    isTruthyEnv(process.env.TNF_INTERACTIVE_EXEC) ||
-    isTruthyEnv(process.env.TNF_AUTONOMOUS_ON_BOOT);
+    options?.mode === 'plan' || options?.mode === 'ask'
+      ? false
+      : options?.autonomous ||
+        isTruthyEnv(process.env.TNF_INTERACTIVE_EXEC) ||
+        isTruthyEnv(process.env.TNF_AUTONOMOUS_ON_BOOT);
 
   // Resolve the persistent TUI mode. LONG_RUN keeps the agent alive without
   // operator keystrokes; INTERACTIVE waits for input.
   const tuiMode: TuiMode = resolveTuiMode();
-  if ((tuiMode === 'LONG_RUN' || tuiMode === 'AUTONOMOUS') && !autonomousMode) {
+  const modeDisablesAuto = options?.mode === 'plan' || options?.mode === 'ask';
+  if (
+    (tuiMode === 'LONG_RUN' || tuiMode === 'AUTONOMOUS') &&
+    !autonomousMode &&
+    !modeDisablesAuto
+  ) {
     autonomousMode = true;
     enableAutonomousRuntimeDefaults();
   }
   // --autonomous means full autonomous at launch: persist LONG_RUN so relaunches match.
-  if (options?.autonomous && tuiMode !== 'LONG_RUN' && !process.env.TNF_TUI_MODE) {
+  if (
+    options?.autonomous &&
+    !modeDisablesAuto &&
+    tuiMode !== 'LONG_RUN' &&
+    !process.env.TNF_TUI_MODE
+  ) {
     persistTuiMode('LONG_RUN');
   } else if (!fs.existsSync(getTuiModeConfigPath()) && !process.env.TNF_TUI_MODE) {
     // Seed operator default so subsequent launches stay fully autonomous.
@@ -18019,6 +18305,29 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
       process.stdin.on('keypress', onKey);
     });
 
+  // Optional seed prompt from --task / --task-file / positional (peer CLI parity).
+  let pendingInitialPrompt: string | null = null;
+  try {
+    const seed = await resolvePrompt({
+      task: options?.task || options?.initialPrompt,
+      taskFile: options?.taskFile,
+      positional: options?.positional,
+    });
+    if (seed?.text?.trim()) {
+      pendingInitialPrompt = seed.text.trim();
+      console.log(
+        chalk.dim(
+          `  Seeded initial prompt from ${seed.source} (${pendingInitialPrompt.length} chars)`
+        )
+      );
+    }
+  } catch (err: any) {
+    console.log(chalk.yellow(`  Initial prompt resolve skipped: ${err?.message ?? err}`));
+  }
+  if (options?.mode && options.mode !== 'agent') {
+    console.log(chalk.dim(`  Mode: ${options.mode} (shell auto-exec disabled)`));
+  }
+
   while (true) {
     // Pick up /window changes (env + ~/.tnf/tui-mode.json) every turn.
     operatorWindowMs = resolveOperatorWindowMs();
@@ -18037,106 +18346,115 @@ async function startInteractiveAgent(options?: { autonomous?: boolean }): Promis
       autonomousState.continuePending = false;
     }
 
-    let operatorTakeover = false;
-    if (
-      slashContext.autonomousMode &&
-      autonomousState.continuePending &&
-      !autonomousState.operatorHold
-    ) {
-      const windowMs = effectiveOperatorWindowMs(
-        operatorWindowMs,
-        autonomousState.consecutiveNoBashTurns
-      );
-      if (String((rl as any).line || '').trim()) {
-        // Operator is mid-keystroke — never continue over a half-typed line.
-        operatorTakeover = true;
-      } else if (windowMs > 0 && process.stdin.isTTY) {
-        console.log(
-          chalk.dim(
-            `\n  ⏸ operator window ${Math.round(windowMs / 1000)}s — type to take over, Enter to continue now` +
-              (autonomousState.consecutiveNoBashTurns >= 2
-                ? chalk.yellow('  (stall-boosted — /hold for unlimited time)')
-                : '')
-          )
-        );
-        operatorInputActive = true;
-        operatorTakeover = await waitForOperatorInterrupt(windowMs);
-        if (!operatorTakeover) operatorInputActive = false;
-      }
-      if (operatorTakeover) {
-        console.log(
-          chalk.cyan('  ⏸ Operator takeover — autonomous continue deferred until after your input')
-        );
-      }
-    }
-
-    if (
-      slashContext.autonomousMode &&
-      autonomousState.continuePending &&
-      !operatorTakeover &&
-      !autonomousState.operatorHold
-    ) {
-      autonomousState.continuePending = false;
-      fromAutonomousContinue = true;
-      trimmed = buildAutonomousContinuePrompt(autonomousState);
-      autonomousState.contextRefreshPending = false;
-      console.log(chalk.dim('\n  ⟳ Autonomous continue (no operator input required)'));
+    // Consume one-shot seed prompt before operator/autonomous input paths.
+    if (pendingInitialPrompt) {
+      trimmed = pendingInitialPrompt;
+      pendingInitialPrompt = null;
+      console.log(chalk.green('\n❯ ') + trimmed);
     } else {
-      let input: string;
-      try {
-        input = resolveSlashDropdownInput(await ask(promptWithModel), slashDropdown);
-      } catch {
-        break;
-      }
-      trimmed = input.trim();
-
-      if (trimmed === '.exit' || trimmed === '.quit') break;
-      if (trimmed === '.clear') {
-        messages.length = 1;
-        console.log(chalk.dim('  History cleared'));
-        continue;
-      }
-      if (trimmed === '.help') {
-        printSlashCommandList();
-        continue;
-      }
-      if (!trimmed) continue;
-
-      // Beam/STT ground input parity with Cursor: accept [↑tN] chronicle tags
-      // and attach situational context so the agent understands what's happening.
-      const voiceNorm = normalizeVoiceGroundInput(trimmed);
-      if (voiceNorm.wasVoice) {
-        const turnLabel =
-          voiceNorm.voiceTurn != null
-            ? chalk.cyan(`[↑t${voiceNorm.voiceTurn}]`)
-            : chalk.cyan('[voice]');
-        console.log(chalk.dim(`  🎙️ ground input ${turnLabel}`));
-        const situation = loadVoiceGroundSituation(voiceNorm.voiceTurn);
-        if (situation) {
-          console.log(chalk.dim('  🧭 attached voice situation context'));
-        }
-        const body = voiceNorm.text.trim()
-          ? voiceNorm.voiceTurn != null
-            ? `[↑t${voiceNorm.voiceTurn}] ${voiceNorm.text.trim()}`
-            : voiceNorm.text.trim()
-          : trimmed;
-        trimmed = `${situation}${body}`;
-      }
-
-      // Natural-language window directive (typed mid-session without /window).
-      const windowDirectiveMs = detectOperatorWindowDirective(trimmed);
-      if (windowDirectiveMs !== null) {
-        operatorWindowMs = persistOperatorWindowMs(windowDirectiveMs);
-        process.env.TNF_OPERATOR_WINDOW_MS = String(operatorWindowMs);
-        console.log(
-          chalk.green(
-            `  Operator window set to ${Math.round(operatorWindowMs / 1000)}s — type your next prompt (or /continue)`
-          )
+      let operatorTakeover = false;
+      if (
+        slashContext.autonomousMode &&
+        autonomousState.continuePending &&
+        !autonomousState.operatorHold
+      ) {
+        const windowMs = effectiveOperatorWindowMs(
+          operatorWindowMs,
+          autonomousState.consecutiveNoBashTurns
         );
-        // Give them the quieter hold so the next line isn't raced.
-        autonomousState.operatorHold = true;
+        if (String((rl as any).line || '').trim()) {
+          // Operator is mid-keystroke — never continue over a half-typed line.
+          operatorTakeover = true;
+        } else if (windowMs > 0 && process.stdin.isTTY) {
+          console.log(
+            chalk.dim(
+              `\n  ⏸ operator window ${Math.round(windowMs / 1000)}s — type to take over, Enter to continue now` +
+                (autonomousState.consecutiveNoBashTurns >= 2
+                  ? chalk.yellow('  (stall-boosted — /hold for unlimited time)')
+                  : '')
+            )
+          );
+          operatorInputActive = true;
+          operatorTakeover = await waitForOperatorInterrupt(windowMs);
+          if (!operatorTakeover) operatorInputActive = false;
+        }
+        if (operatorTakeover) {
+          console.log(
+            chalk.cyan(
+              '  ⏸ Operator takeover — autonomous continue deferred until after your input'
+            )
+          );
+        }
+      }
+
+      if (
+        slashContext.autonomousMode &&
+        autonomousState.continuePending &&
+        !operatorTakeover &&
+        !autonomousState.operatorHold
+      ) {
         autonomousState.continuePending = false;
-        continue;
+        fromAutonomousContinue = true;
+        trimmed = buildAutonomousContinuePrompt(autonomousState);
+        autonomousState.contextRefreshPending = false;
+        console.log(chalk.dim('\n  ⟳ Autonomous continue (no operator input required)'));
+      } else {
+        let input: string;
+        try {
+          input = resolveSlashDropdownInput(await ask(promptWithModel), slashDropdown);
+        } catch {
+          break;
+        }
+        trimmed = input.trim();
+
+        if (trimmed === '.exit' || trimmed === '.quit') break;
+        if (trimmed === '.clear') {
+          messages.length = 1;
+          console.log(chalk.dim('  History cleared'));
+          continue;
+        }
+        if (trimmed === '.help') {
+          printSlashCommandList();
+          continue;
+        }
+        if (!trimmed) continue;
+
+        // Beam/STT ground input parity with Cursor: accept [↑tN] chronicle tags
+        // and attach situational context so the agent understands what's happening.
+        const voiceNorm = normalizeVoiceGroundInput(trimmed);
+        if (voiceNorm.wasVoice) {
+          const turnLabel =
+            voiceNorm.voiceTurn != null
+              ? chalk.cyan(`[↑t${voiceNorm.voiceTurn}]`)
+              : chalk.cyan('[voice]');
+          console.log(chalk.dim(`  🎙️ ground input ${turnLabel}`));
+          const situation = loadVoiceGroundSituation(voiceNorm.voiceTurn);
+          if (situation) {
+            console.log(chalk.dim('  🧭 attached voice situation context'));
+          }
+          const body = voiceNorm.text.trim()
+            ? voiceNorm.voiceTurn != null
+              ? `[↑t${voiceNorm.voiceTurn}] ${voiceNorm.text.trim()}`
+              : voiceNorm.text.trim()
+            : trimmed;
+          trimmed = `${situation}${body}`;
+        }
+
+        // Natural-language window directive (typed mid-session without /window).
+        const windowDirectiveMs = detectOperatorWindowDirective(trimmed);
+        if (windowDirectiveMs !== null) {
+          operatorWindowMs = persistOperatorWindowMs(windowDirectiveMs);
+          process.env.TNF_OPERATOR_WINDOW_MS = String(operatorWindowMs);
+          console.log(
+            chalk.green(
+              `  Operator window set to ${Math.round(operatorWindowMs / 1000)}s — type your next prompt (or /continue)`
+            )
+          );
+          // Give them the quieter hold so the next line isn't raced.
+          autonomousState.operatorHold = true;
+          autonomousState.continuePending = false;
+          continue;
+        }
       }
     }
 
@@ -18517,7 +18835,7 @@ function loadVoiceGroundSituation(voiceTurn: number | null): string {
   }
 }
 
-async function startTuiAgent(options?: { autonomous?: boolean }): Promise<void> {
+async function startTuiAgent(options?: TuiAgentOptions): Promise<void> {
   console.clear();
   await renderSplash({ compact: true, animate: false });
   console.log('');
@@ -18575,6 +18893,29 @@ function normalizeEntrypointArgv(argv: string[]): string[] {
   return [argv[0], argv[1], ...argv.slice(3)];
 }
 
+const HELP_OR_VERSION_ARGS = new Set(['--help', '-h', 'help', '--version', '-v']);
+
+/**
+ * Decide whether ProtocolInterceptor cosmetic output should be suppressed.
+ * Checks still RUN; failures route to stderr via ProtocolInterceptor.
+ *
+ * Silenced for: non-TTY stdout, --no-splash, help/version, machine-readable
+ * flags (--json / --print / --oneshot), and nested runSelfCli (env).
+ */
+function wantsSilentPreflight(argv: string[]): boolean {
+  if (isTruthyEnv(process.env.TNF_SILENT_PREFLIGHT)) return true;
+  if (!process.stdout.isTTY) return true;
+  if (argv.includes('--no-splash')) return true;
+  if (argv.includes('--json')) return true;
+  if (argv.includes('--print') || argv.includes('-p')) return true;
+  if (argv.includes('--oneshot') || argv.includes('-z')) return true;
+  const tail = (argv[2] ?? '').toLowerCase();
+  if (!tail || HELP_OR_VERSION_ARGS.has(tail)) return true;
+  // Subcommand help: `tnf tui --help`
+  if (argv.slice(2).some((a) => HELP_OR_VERSION_ARGS.has(String(a).toLowerCase()))) return true;
+  return false;
+}
+
 async function main(): Promise<void> {
   const argv = normalizeEntrypointArgv(process.argv);
 
@@ -18584,19 +18925,10 @@ async function main(): Promise<void> {
   // suppresses it. Respect sigterm shortcut (process.argv[2] === undefined|help).
   // Animation is opt-in only on interactive TTYs.
   const tail = (argv[2] ?? '').toLowerCase();
-  const firstArgIsHelp =
-    tail === '' ||
-    tail === '--help' ||
-    tail === '-h' ||
-    tail === 'help' ||
-    tail === '--version' ||
-    tail === '-v';
+  const firstArgIsHelp = !tail || HELP_OR_VERSION_ARGS.has(tail);
   const noSplashFlag = argv.includes('--no-splash');
-  // --no-splash also silences the protocol pre-flight chatter so the
-  // command's stdout (e.g. JSON envelopes from `tnf agents run --json`)
-  // stays parseable. Checks still RUN — failures route to stderr.
-  const silentPreflight = noSplashFlag || !process.stdout.isTTY;
-  const wantSplash = !firstArgIsHelp && !noSplashFlag && process.stdout.isTTY;
+  const silentPreflight = wantsSilentPreflight(argv);
+  const wantSplash = !firstArgIsHelp && !noSplashFlag && !silentPreflight && process.stdout.isTTY;
   if (wantSplash) {
     try {
       await renderSplash({ animate: false });

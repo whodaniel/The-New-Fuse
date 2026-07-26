@@ -100,22 +100,18 @@ Phase 9 fixes all of this.
 
 ## 3. What's still fragmented (open follow-up)
 
-### 3.1 The `ID#:` prefix is shared with `vector_id`
+### 3.1 The `ID#:` prefix is shared with `vector_id` — RESOLVED 2026-07-26
 
-`scripts/autonomy/generate_merkle_tree.py` uses
-`ID#:${base58.b58encode(hash[:8])}` for `KNOWLEDGE_TREE.json` leaf vectors.
-These are hash-derived **intelligence-vector IDs**, not federated reputation
-sequences. The shared `ID#:` prefix is documented as a conflict in
-`ROLE_DEFINITIONS.md` (Phase 9 section) but no migration has been attempted.
-Three options exist:
+FOLLOWUP-1 closed via option **(b)**: intelligence vector IDs now use `VEC#:`.
 
-(a) leave the prefix and rely on context/auditability; (b) replace `ID#:` with
-`VEC#:` on the next knowledge-tree rebuild; (c) replace `ID#:` with `FED#:` for
-the federated reputation sequence.
-
-The audit recommends **(a) for now** — both encodings carry semantic distinction
-that downstream consumers already key off (sequence position vs hash hex
-prefix). A breaking change risks regression in unrelated tooling.
+- `scripts/autonomy/generate_merkle_tree.py` emits `VEC#:` + `legacy_vector_id`
+  (`ID#:…`)
+- `scripts/semantic-graph/common.py` `kb_vector_id()` matches; dual-read via
+  aliases
+- `KNOWLEDGE_TREE.json` rebuilt (645 leaves on `VEC#:`)
+- `vector_embeddings` rows migrated `ID#:INTEL-*` → `VEC#:INTEL-*`
+- Federated reputation `idNumber` keeps `ID#:`
+- Live pgvector `embedding_similar` edges wired via `build_embedding_edges.py`
 
 ### 3.2 `mcid` bundle is JSON-encoded only
 

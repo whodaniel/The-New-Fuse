@@ -3,6 +3,7 @@
 
 Pipeline (run via build_all.py):
   build_concordance.py  -> wordcount_full.tsv.gz + stats
+  build_embedding_edges.py -> embedding_edges.json (needs DATABASE_URL)
   build_unified_graph.py-> unified_graph.json.gz + stats
   build_report.py       -> wordcount_report.html
   build_graph_explorer.py-> unified_graph_explorer.html
@@ -19,20 +20,55 @@ OUT = os.path.join(ROOT, "concordance_results")
 
 # --------------------------------------------- system / user data boundary
 # SYSTEM origins are distributable: built only from tracked, non-personal repo
-# data. USER origins carry personal activity data (session lineage, private
-# knowledge-base packets) and must only ever land under USER_OUT, which is
-# gitignored.
+# data. USER origins carry personal activity data (session lineage) and must
+# only ever land under USER_OUT, which is gitignored.
+#
+# 2026-07-26 upgrade:
+# - `wiki-inbox` promoted to SYSTEM (tracked packets; scrubbed at emit).
+# - `handoff` stays USER for the full graph, but system_view promotes a
+#   PERSONAL_IDENTIFIERS-redacted projection so ops lineage is visible in the
+#   distributable explorer without leaking operator handles.
 SYSTEM_ORIGINS = frozenset({
     "wiki", "memory-graph", "concept-kg", "filesystem", "codebase-map",
     "agent-graph", "framework-graph", "knowledge-tree", "wordcount",
-    "observatory",
+    "observatory", "wiki-inbox",
 })
-USER_ORIGINS = frozenset({"handoff", "wiki-inbox"})
+USER_ORIGINS = frozenset({"handoff"})
 USER_OUT = os.path.join(OUT, "user")
 
 # Operator identifiers that must never appear in distributable artifacts, even
 # as corpus terms (mirrors scripts/security/sanitize-personal-identifiers.cjs).
 PERSONAL_IDENTIFIERS = ("danielgoldberg", "whodaniel", "bizsynth")
+
+# Edge-type aliases collapsed at emit so filters/queries stay usable.
+EDGE_TYPE_ALIASES = {
+    "implements": "rel_implements",
+    "depends_on": "rel_dependson",
+    "uses": "rel_uses",
+    "contains_application": "contains",
+    "backend-framework": "rel_uses",
+    "workflow-backbone": "rel_uses",
+    "visualized-by": "visualized_by",
+    "handoff_chain": "handoff",
+    "ran_session": "handoff",
+}
+
+
+def contains_personal_identifier(text: str) -> bool:
+    probe = (text or "").lower()
+    return any(p in probe for p in PERSONAL_IDENTIFIERS)
+
+
+def redact_personal_identifiers(text: str) -> str:
+    """Replace operator identifiers with a stable opaque token."""
+    out = text or ""
+    for p in PERSONAL_IDENTIFIERS:
+        out = re.sub(re.escape(p), "local-operator", out, flags=re.IGNORECASE)
+    return out
+
+
+def normalize_edge_type(etype: str) -> str:
+    return EDGE_TYPE_ALIASES.get(etype, etype)
 
 
 def ensure_user_out():
@@ -56,11 +92,17 @@ def b58encode(b):
     return "1" * (len(b) - len(b.lstrip(b"\x00"))) + (out or "1")
 
 
-def kb_vector_id(index):
-    # Must match scripts/autonomy/generate_merkle_tree.py (ID#: prefix policy,
-    # Phase 9 FOLLOWUP-1; planned migration to VEC#: on next tree rebuild).
+def kb_vector_id(index, *, legacy: bool = False):
+    # Must match scripts/autonomy/generate_merkle_tree.py.
+    # 2026-07-26 FOLLOWUP-1: intelligence vectors use VEC#:; federated IDs keep ID#:.
     raw = hashlib.sha256(f"tnf-intelligence-salt-2026-{index}".encode()).digest()
-    return "ID#:" + b58encode(raw[:8])
+    prefix = "ID#:" if legacy else "VEC#:"
+    return prefix + b58encode(raw[:8])
+
+
+def kb_vector_id_aliases(index):
+    """Canonical + legacy forms for dual-read joins during / after migration."""
+    return (kb_vector_id(index), kb_vector_id(index, legacy=True))
 
 
 def b64_of_file(path):

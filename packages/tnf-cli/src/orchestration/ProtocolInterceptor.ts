@@ -104,7 +104,7 @@ export class ProtocolInterceptor {
 
     // 1. Turn Zero Mandate
     log(chalk.bold('▶ Protocol: Turn Zero Mandate'));
-    const turnZeroResult = await this.turnZero.execute();
+    const turnZeroResult = await this.turnZero.execute({ silent: this.silent });
     checks.push({
       name: 'Turn Zero Mandate',
       passed: turnZeroResult.passed,
@@ -135,7 +135,7 @@ export class ProtocolInterceptor {
 
     // 3. Procedural Disclosure
     log(chalk.bold('\n▶ Protocol: Procedural Disclosure'));
-    const disclosureResult = await this.disclosure.executeCheck();
+    const disclosureResult = await this.disclosure.executeCheck({ silent: this.silent });
     checks.push({
       name: 'Procedural Disclosure',
       passed: disclosureResult.ready,

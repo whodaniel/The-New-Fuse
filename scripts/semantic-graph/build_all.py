@@ -24,6 +24,7 @@ from common import ROOT  # type: ignore  # ROOT resolves TNF repo root (TNF_ROOT
 
 STEPS = [
     ("build_concordance.py", "Word/term count (full repo scan)"),
+    ("build_embedding_edges.py", "Live pgvector embedding_similar edges"),
     ("build_unified_graph.py", "Unified semantic graph"),
     ("build_report.py", "Word frequency HTML report"),
     ("build_graph_explorer.py", "Graph explorer HTML"),
@@ -82,7 +83,7 @@ def main():
         return
 
     for script, desc in STEPS:
-        if graph_only and script not in ("build_unified_graph.py", "build_index.py"):
+        if graph_only and script not in ("build_embedding_edges.py", "build_unified_graph.py", "build_index.py"):
             continue
         if report_only and script not in ("build_concordance.py", "build_report.py", "build_index.py"):
             continue
