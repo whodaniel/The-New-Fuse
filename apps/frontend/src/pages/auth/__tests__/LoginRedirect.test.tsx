@@ -45,10 +45,10 @@ describe('Login Redirect', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/email address/i), {
+    fireEvent.change(screen.getByLabelText(/^Email/i), {
       target: { value: 'test@example.com' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password' } });
+    fireEvent.change(screen.getByLabelText(/^Password/i), { target: { value: 'password' } });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -85,10 +85,10 @@ describe('Login Redirect', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/email address/i), {
+    fireEvent.change(screen.getByLabelText(/^Email/i), {
       target: { value: 'test@example.com' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password' } });
+    fireEvent.change(screen.getByLabelText(/^Password/i), { target: { value: 'password' } });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -153,10 +153,10 @@ describe('Login Redirect', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/email address/i), {
+    fireEvent.change(screen.getByLabelText(/^Email/i), {
       target: { value: 'test@example.com' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password' } });
+    fireEvent.change(screen.getByLabelText(/^Password/i), { target: { value: 'password' } });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
