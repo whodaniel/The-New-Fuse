@@ -67,13 +67,15 @@ describe('PremiumSidebar Accessibility', () => {
 
   it('navigation links have aria-label matching name when collapsed', () => {
     renderSidebar({ isCollapsed: true });
-    const workspaceLink = screen.getByLabelText('Workspace');
+    const workspaceLink = screen.getByLabelText('Chat');
     expect(workspaceLink).toBeInTheDocument();
   });
 
   it('renders parent navigation toggles for grouped sub-pages when expanded', () => {
     renderSidebar({ isCollapsed: false });
-    expect(screen.getByLabelText('Expand Workspace navigation')).toBeInTheDocument();
+    const btn = screen.getByRole('button', { name: /Advanced Controls/i });
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('logout button has aria-label "Sign Out" when collapsed', () => {

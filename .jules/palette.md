@@ -9,3 +9,6 @@
 ## 2025-05-18 - [Add ARIA Labels to MemoryVisualizer Actions]
 **Learning:** Found that custom small icon button components without text sometimes slip through standard accessibility checks if they aren't properly configured to require an ARIA label from the start.
 **Action:** When creating local, non-reusable icon buttons inside complex visualizations, ensure they always mandate an `ariaLabel` prop.
+## 2024-07-27 - Icon Button Accessibility
+**Learning:** The `Button` component with `size="icon"` in this design system (at `apps/frontend/src/components/ui/button.tsx`) does not enforce or automatically provide accessibility labels.
+**Action:** Always manually add descriptive `aria-label` attributes to icon-only `<Button size="icon">` components to ensure they remain accessible to screen reader users, as was missed in the Header and ChatInterface components.

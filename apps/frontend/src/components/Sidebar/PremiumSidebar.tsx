@@ -176,12 +176,14 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                             isActive
                               ? 'bg-slate-800 text-slate-100 border border-slate-700'
                               : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
-                          }`}
+                          } ${isCollapsed ? 'justify-center' : ''}`}
+                          title={isCollapsed ? item.name : undefined}
+                          aria-label={isCollapsed ? item.name : undefined}
                         >
                           <item.icon
                             className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-400 group-hover:text-slate-300'}`}
                           />
-                          <span className="text-sm font-medium whitespace-nowrap">{item.name}</span>
+                          {!isCollapsed && <span className="text-sm font-medium whitespace-nowrap">{item.name}</span>}
                         </NavLink>
                       );
                     })}
