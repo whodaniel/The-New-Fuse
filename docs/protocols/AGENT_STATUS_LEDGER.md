@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-25T19:38:53.119Z** — handoff
+Updated: **2026-07-27T05:56:05.173Z** — handoff
+`ed0bc749-f675-42d6-bcdd-4bd5adc5994c` (`16ffb646d646`).
 `4d393466-34a4-4dc3-bbaa-af1680956fa1` (`9bdd3b6b147a`). Prior coherence audit
 handoff `f82b041a-f2d2-4edd-9cc9-b546c74269ec` (`9c7e6bd7a1`). Heartbeat
 reconcile: **2026-07-17T23:13Z** — `cron-heartbeat-ttys011-1784329995324`
@@ -81,11 +82,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                           |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **P0**   | Operator: confirm commit scope for uncommitted handoff-lifecycle + role/platform + graph artifacts (do not auto-commit).                         |
-| **P0**   | Optional: pnpm run handoff:lifecycle:sweep -- --dry-run on live Redis, then verify/retire completed baton inbox residue only with evidence refs. |
-| **P0**   | Continue prior P0s as needed: PR #70 review/merge; tnf authority relaunch-workers → confirm-isolation (not sudo tnf).                            |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -352,3 +352,15 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-07-25 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (4d393466-34a4-4dc3-bbaa-af1680956fa1) | ✅ HANDOFF_READY |
+
+| 2026-07-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c8375887-de13-4374-b66c-a83de450387c) | ✅ HANDOFF_READY |
+
+| 2026-07-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d95a4c90-1374-4494-bb60-a906ec9a82ea) | ✅ HANDOFF_READY |
+
+| 2026-07-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(b1bcde0e-0d8d-4f43-b3a2-7d7aaff8be6e) | ✅ HANDOFF_READY |
+
+| 2026-07-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ed0bc749-f675-42d6-bcdd-4bd5adc5994c) | ✅ HANDOFF_READY |

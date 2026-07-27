@@ -2,7 +2,9 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Operator: confirm commit scope for uncommitted
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`ed0bc749-f675-42d6-bcdd-4bd5adc5994c` **Head:** `16ffb646d646`
 handoff-lifecycle + role/platform + graph artifacts (do not auto-commit).
 **Project ID:** `TNF-HANDOFF-LIFECYCLE` **Handoff:**
 `4d393466-34a4-4dc3-bbaa-af1680956fa1` **Head:** `9bdd3b6b147a` **Updated:**
