@@ -21,6 +21,21 @@ existed.
 
 Never edit or delete a prior entry — this is an append-only audit trail.
 
+### Entry template (D27 — 2026-07-28)
+
+- file: path/to/mutated/doc
+- doc_hash: sha256:<hex> ← content hash at write time, self-contained
+- rationale: one paragraph explaining what changed and why
+- attributed_to: who/what authorized it (operator + tier per D26, or
+  `standing-authorization:<scope>` for TIER 4, or `self-improvement-scorecard`
+  for autonomous cadence tuning per D15+D27)
+- ledger_event_id: uuid v4 (assigned at write time; used for cross-references)
+
+The legacy `git_blob_sha` field has been deprecated (2026-07-28, D27). New
+entries use `doc_hash` because it is computable from the document content alone,
+with no dependency on the commit landing first. Existing entries with
+`git_blob_sha` remain valid history; do not rewrite them.
+
 ---
 
 ## 2026-07-21 — docs/protocols/DIRECTIVES.md
@@ -313,6 +328,115 @@ Never edit or delete a prior entry — this is an append-only audit trail.
 - attributed_to: Daniel Goldberg (operator), confirmed via plan approval
   (ExitPlanMode) in a live Claude Code session, 2026-07-23, and by explicit
   "PROCEED" for the identity-binding work in the same session.
+
+## 2026-07-28 — docs/protocols/DIRECTIVES.md (D26/D27 + D7/D8/D15 refinements)
+
+- file: docs/protocols/DIRECTIVES.md
+- doc_hash: (recomputed at commit time; entries log the protocol creation
+  concurrently with the commit, not as a backfill)
+- rationale: Operator audit on 2026-07-28 found seven real contradictions in the
+  doctrine as written: (1) AGENTS.md per-action confirmation vs D1's
+  routine-tasks authorization; (2) D16 Gate 5 challenge_rationale gate vs the
+  swarm's self-evolution imperative; (3) D15 schedule rationale vs the
+  undocumented `* * * * *` heartbeat; (4) D7 Anti-Lobotomy "never modify" vs the
+  Non-Temporal Proliferation Mandate "must modify"; (5) D23 verified identity vs
+  the crontab env-flag bypass; (6) challenge_rationale template's `git_blob_sha`
+  dependency on commit landing first; (7) heartbeat protocol "lightweight" vs
+  reality of 5,727 history files. Resolved by adding D26 (four-tier authority
+  gate, EXECUTIVE-only blocking at default), D27 (Self-Evolution Mandate with
+  `doc_hash` replacement for `git_blob_sha`), refining D7 (silent destruction
+  forbidden, additions and logged rewrites permitted), D8 (D26 tier auto-approve
+  at TIER 2), D15 (cadence tuning delegated to self-improvement-scorecard within
+  logged bounds), and adding the new entry template. Doctrine stays
+  load-bearing, but the operator's standing authorization at TIER 4 now covers
+  routine self-evolution; only EXECUTIVE-tier and cross-cutting OPERATIONAL-tier
+  actions retain per-action blocking. The four-tier file
+  (`~/.tnf/authority/tier.json`) and standing authorization
+  (`~/.tnf/authority/standing.md`) are written by the operator; default is TIER
+  2 with auto-approve on timeout, matching the spirit of D1's existing
+  routine-tasks authorization. The CI guard
+  `check-operator-terminal-inviolability.cjs` already covers D24;
+  `check-artifacts-lifecycle.cjs` already covers D25; both remain in force.
+- attributed_to: Daniel Goldberg (operator), explicit "Do what leads to the most
+  powerful system" and "make sure the system can self evolve unrestricted" in a
+  live pi session, 2026-07-28, after seven contradictions surfaced in one
+  inspection pass.
+
+## 2026-07-28 — docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md (D24)
+
+- file: docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md (new), D24
+  added to DIRECTIVES.md §1, scripts/runtime/terminal-heartbeat-pulse.cjs
+  modified, scripts/runtime/terminal-heartbeat-cron.sh modified,
+  scripts/protocols/check-operator-terminal-inviolability.cjs (new)
+- doc_hash:
+  sha256:c367aee283d0a2abc6bcb668f7e178c7a09f3348e7a9b88dc9d35f62fceb034a
+- rationale: Cron-driven `terminal-heartbeat-pulse.cjs` had been stealing
+  operator Terminal.app focus every minute
+  (`tell application "Terminal" to activate` +
+  `set frontmost of window id N to true` + auto-submitting prompts into the
+  operator's agent composer). The pulse predated any operator-facing UI
+  hardening and accumulated a known incident pattern: protected-sessions.json
+  entries dated 2026-07-21 (`ttys004`) and 2026-07-22 (`ttys006`) with the same
+  complaint. The operator audit on 2026-07-28 found three violations of
+  canonical TNF doctrine in one script: (a) `docs/core/HEARTBEAT.md` says
+  heartbeats are "lightweight proactive checks" — the cron was UI-active, not
+  lightweight; (b) `docs/protocols/TNF_AGENT_SHELL_HYGIENE.md` hard rule #5
+  forbids WAKE loops spamming the operator — the cron was exactly that pattern,
+  just relocated to Terminal.app; (c) `docs/core/ENGINEERING_PRINCIPLES.md` Zero
+  Trust Between Agents requires structured channels over UI-level keystroke
+  injection. Codified into a new [CLASS:PRIME][STATUS:ACTIVE] protocol and a CI
+  guard (`check-operator-terminal-inviolability.cjs`) that fails any merge
+  introducing `tell application "Terminal" to activate`,
+  `set frontmost of window id N to true`, or a hardcoded
+  `TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="true"` without a sibling
+  `challenge_rationale`. Behavior change is reversible: the legacy auto-submit
+  crontab line is preserved as a commented escape hatch with an inline rationale
+  pointing to the protocol, so the operator can flip back to bulk unattended
+  wake-up by editing one line and adding a log entry. Per protocol, the gate is
+  now: no activate, no set frontmost, no auto-submit unless opted-in with
+  rationale, frontmost-window pre-check, signed envelopes (canonical channel
+  `tnf:heartbeat`, not `tnf:bus:heartbeat` — the earlier draft comment named the
+  wrong channel; corrected).
+- attributed_to: Daniel Goldberg (operator), explicit "I Approve the four-layer
+  plan as written" in a live pi session, 2026-07-28.
+
+## 2026-07-28 — docs/protocols/TNF_ARTIFACTS_LIFECYCLE_PROTOCOL.md (D25)
+
+- file: docs/protocols/TNF_ARTIFACTS_LIFECYCLE_PROTOCOL.md (new), D25 added to
+  DIRECTIVES.md §1, scripts/protocols/check-artifacts-lifecycle.cjs (new),
+  scripts/operations/swarm-disk-retention.sh (wired to consult the policy),
+  docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md (new row for
+  `tnf-terminal-heartbeat-pulse` per D15)
+- doc_hash:
+  sha256:36366b04d3ae319c4e84e9ae56af6ecc720d71c891f26a37382e3914ee65c123
+- rationale: Three retention pathologies coexisted: (1) the retention policy
+  lived only in `.agent/skills/tnf-multi-agent-state-governor/SKILL.md` and a
+  cron script — documentation, not enforcement; (2) open tasks were scattered
+  across `lessons-learned.md`, `handoff-current.json::IMMEDIATE_TASKS`,
+  agent-local TODOs, and operator headspace — no canonical surface, so any one
+  of them could vanish without an agent noticing; (3)
+  `~/.tnf/terminal-heartbeat/state/history/` had accumulated 5,727 files (68 MB)
+  at last measurement despite a documented 200-file cap, because no CI step ever
+  checked. Codified into a new [CLASS:PRIME][STATUS:ACTIVE] protocol with three
+  explicit categories (persistent logic / transient state / open tasks), eight
+  hard rules (persistent logic is append-only; transient state has hard numeric
+  caps; open tasks live in canonical surfaces only; every prune writes a sweep
+  report; operator-owned files require explicit confirmation; lessons-learned
+  with `Verified: N` get a 90-day shelf-life; handoff lineage is append-only),
+  and a CI guard (`check-artifacts-lifecycle.cjs`) that fails the build on
+  persistent-anchor absence or transient-state cap overflow, and reports
+  operator-owned items (`openclaw-pre-migration-carry`, `~/.tnf/node_modules`)
+  without failing. The first run against the actual tree surfaced two real
+  failures (heartbeat history 5,746 files vs cap 200; heartbeat JSONL 6,264
+  lines vs cap 500) and the two operator-owned items. Both failures are
+  transient-state and the sweep script is authorized to handle them; the two
+  operator-owned items require explicit operator decision per the protocol's
+  hard rule §5.6 and were resolved in this same session as part of the
+  comprehensive cleanup.
+- attributed_to: Daniel Goldberg (operator), explicit "Do what leads to the most
+  powerful system" in a live pi session, 2026-07-28, after the operator audit
+  found both the focus-stealing and the retention pathologies in one inspection
+  pass.
 
 ## 2026-07-21 — docs/protocols/TURN_ZERO_MANDATE.md
 

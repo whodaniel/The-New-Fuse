@@ -90,17 +90,24 @@ cron_line() {
   # case branch and no-ops — see git history/plan notes). Without setting
   # these here, the pulse script's new safe-by-default config would silently
   # stop all pulsing, since crontab invocations otherwise get no env vars.
-  # The real protection against corrupting an attended session is the
-  # per-terminal attention check in the script itself (isTtyRecentlyActive +
-  # isTypingInTerminal), not this flag — this flag just preserves "unattended
-  # terminals keep getting pulsed" as the default, same as before.
-  printf '%s cd "%s" && PATH="%s:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" NODE_PATH="%s/node_modules:%s/packages/tnf-cli/node_modules" TNF_TERMINAL_HEARTBEAT_STATE_DIR="%s" TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="true" TNF_INTERACTIVE_SAFE_MODE="false" "%s" "%s" >> "%s" 2>&1 %s\n' \
+  #
+  # D24 — Operator Terminal Inviolability (2026-07-28): default is now
+  # ALLOW_PROMPT_INJECTION="false". The pulse types the heartbeat text into
+  # the agent's tab without submitting (agent TUI picks it up on next render)
+  # and skips the target window if it is currently operator-frontmost.
+  # Operators who need the legacy bulk-wake behavior must edit this line to
+  # "true" and append a `challenge_rationale` referencing the protocol; the
+  # CI guard `scripts/protocols/check-operator-terminal-inviolability.cjs`
+  # refuses any new cron entry that flips this flag without one.
+  local allow_injection_value="${TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION:-false}"
+  printf '%s cd "%s" && PATH="%s:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" NODE_PATH="%s/node_modules:%s/packages/tnf-cli/node_modules" TNF_TERMINAL_HEARTBEAT_STATE_DIR="%s" TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="%s" TNF_INTERACTIVE_SAFE_MODE="false" "%s" "%s" >> "%s" 2>&1 %s\n' \
     "$SCHEDULE_VALUE" \
     "$SERVICE_HOME" \
     "$(dirname "$NODE_BIN_VALUE")" \
     "${REPO_ROOT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}" \
     "${REPO_ROOT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}" \
     "$STATE_DIR" \
+    "$allow_injection_value" \
     "$NODE_BIN_VALUE" \
     "$MIRRORED_SCRIPT" \
     "$LOG_FILE" \

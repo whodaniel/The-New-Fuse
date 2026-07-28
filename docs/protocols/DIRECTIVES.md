@@ -89,20 +89,36 @@ These are hard requirements. Violation is a protocol failure.
   persistent JSON-RPC log; agent status posted to the shared ledger so other
   agents can position work supportively/non-destructively. — Axiom 7, Governance
   Synthesis §1, `TNF_GOVERNANCE_TENETS.md` #3
-- **D7 — Anti-Lobotomy mandate.** Never `rm`/`git rm`/modify `.agent/`,
-  `.gemini/`, `.claude/`, `.codex/`, `.opencode/`, `.kilo/`, `.tnf/`, or any
-  LLM-runner state dir without explicit human authorization. Class-1 Violation →
-  automatic kill-signal. Automated `clean`/`prune`/`sweep` MUST hardcode
-  exclusions. — `TNF_GOVERNANCE_TENETS.md` §6
-- **D8 — Human-in-the-Loop (three-tier).** Risk-classified gating:
+- **D7 — Anti-Lobotomy mandate (refined 2026-07-28, D27).** Never **silently
+  destroy** files under `.agent/`, `.gemini/`, `.claude/`, `.codex/`,
+  `.opencode/`, `.kilo/`, `.tnf/`, or any LLM-runner state dir. Silent
+  destruction (`rm`, `git rm`, overwrite without audit, dropped columns, dropped
+  keys without a `challenge_rationale`) is a Class-1 Violation → automatic
+  kill-signal. **Additions and logged rewrites are permitted** under D27's
+  Self-Evolution Mandate: the agent may write new files, append to append-only
+  logs (handoff-lineage, CHALLENGE_RATIONALE_LOG, DIRECTIVE_CONVERSION_LEDGER,
+  sweep reports), and rewrite `[STATUS:ACTIVE]` doc bodies when a
+  `challenge_rationale` + `Verified: Y` lesson or operator standing
+  authorization covers the change. `[STATUS:LOCKED]` doc bodies remain gated by
+  D16 Gate 5 + D26 TIER 2+ confirmation. Automated `clean`/`prune`/`sweep` MUST
+  hardcode exclusions on operator-owned artifacts per D25 §5.6 — exclusions are
+  not optional. — `TNF_GOVERNANCE_TENETS.md` §6, D25, D27
+- **D8 — Human-in-the-Loop (three-tier, extended to four by D26).**
+  Risk-classified gating:
   - **EXECUTIVE (irreversible):** financial tx, public post, root system mod →
     mandatory human "Go", dual-key co-sign; Super Admin ONLY; no agent bypass.
   - **OPERATIONAL (high-risk):** workflow branch points, agent >50 steps → human
-    confirmation dialog; 5-min timeout → auto kill.
+    confirmation dialog; 5-min timeout → **D26 TIER 2 auto-approve** when the
+    operator has set the tier programmatically (default behavior stays "auto
+    kill" if no tier file).
   - **TACTICAL (routine):** high-frequency micro-actions → logical next-checker
     agent; audit trail; retroactive human review in 24h if flagged. Voice input
-    MUST parrot parsed intent back verbatim before high-risk execution. —
-    `TNF_GOVERNANCE_TENETS.md` §3B, Governance Synthesis §2
+    MUST parrot parsed intent back verbatim before high-risk execution.
+  - **DELEGATED (D26 TIER 4):** actions within a documented
+    `~/.tnf/authority/standing.md` scope execute without per-action
+    confirmation; the standing authorization IS the confirmation. See D26 for
+    the full four-tier gate, tier files, and re-authorization cadence. —
+    `TNF_GOVERNANCE_TENETS.md` §3B, Governance Synthesis §2, D26
 - **D9 — No autonomous purchases.** Financial autonomy strictly forbidden. —
   `SOUL.md` Guardrails (Absolute). (Consistent with EXECUTIVE HITL + Wallet
   Scoping.)
@@ -131,10 +147,18 @@ These are hard requirements. Violation is a protocol failure.
   `docs/protocols/`, `.github/workflows/`) MUST carry these or CI fails.
   Supabase paths require `verification.supabase_rls_audit = pass`. —
   `TURN_END_MANDATE.md`, `SESSION_HANDOFF_ENFORCEMENT.md`
-- **D15 — Scheduling challenge & verify.** Any cron/interval change needs a
-  `challenge_rationale` (Orchestration Audit Gate). Stale runs (3× interval
-  without success heartbeat) auto-suspended. Master Calendar is single source of
-  truth (drift fails CI). — `TNF_ORCHESTRATION_GOVERNANCE_PROTOCOL.md`
+- **D15 — Scheduling challenge & verify (delegated 2026-07-28, D26+D27).** Any
+  cron/interval change needs a `challenge_rationale` (Orchestration Audit Gate).
+  Stale runs (3× interval without success heartbeat) auto-suspended. Master
+  Calendar is single source of truth (drift fails CI). **The
+  self-improvement-scorecard agent owns cadence tuning within logged bounds**:
+  it MAY increase interval (e.g. `* * * * *` → `*/5 * * * *`) when the no-op
+  rate exceeds 70% over a 24h window AND the change preserves load-bearing
+  behavior, AND it logs the change in `DIRECTIVE_CONVERSION_LEDGER.md`
+  (`ready→claimed→running→verified→landed`). Decreasing interval (more frequent)
+  is TIER 2 per D26. Cadence changes that cross category boundaries or affect
+  operator-visible surfaces remain TIER 2. —
+  `TNF_ORCHESTRATION_GOVERNANCE_PROTOCOL.md`, D26, D27
 - **D16 — Document Vetting (Five Gates) + no silent deletes.** Every governed
   unit passes: (1) Definition/Class validation, (2) Library/Namespace
   assignment, (3) Flag integrity `[CLASS:X][STATUS:Y]`, (4) Linkage &
@@ -287,6 +311,107 @@ These are hard requirements. Violation is a protocol failure.
     `-25300`). Do not describe this layer as stronger than it is. —
     `TNF_GOVERNANCE_TENETS.md` §3B, D8, `CHALLENGE_RATIONALE_LOG.md`,
     `AUTHORITY_TURNUP_RUNBOOK.md`
+- **D24 — Operator Terminal Inviolability.** No cron-driven agent may
+  `tell application "Terminal" to activate` or
+  `set frontmost of window id N to true` against any Terminal window the
+  operator did not just raise, and no cron may auto-submit prompts into an
+  operator-visible terminal composer unless the operator has explicitly opted in
+  via `TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="true"` AND the crontab
+  entry carries a sibling `challenge_rationale` AND a corresponding entry exists
+  in `CHALLENGE_RATIONALE_LOG.md`. A frontmost-window pre-check is mandatory
+  before any keystroke path runs. The CI guard
+  `scripts/protocols/check-operator-terminal-inviolability.cjs` fails any merge
+  that violates these rules. The canonical heartbeat channel is `tnf:heartbeat`
+  (not `tnf:bus:heartbeat`); envelopes are signed via
+  `scripts/lib/tnf-message-auth.cjs` and carry an `mcid` lineage envelope. The
+  protocol is at
+  `docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md`; the rationale
+  entry is in `CHALLENGE_RATIONALE_LOG.md` 2026-07-28. —
+  `TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md`, `ENGINEERING_PRINCIPLES.md`
+- **D25 — Artifacts Lifecycle Policy is load-bearing on CI.** Retention is not a
+  polite cron; it is a policy enforced by
+  `scripts/protocols/check-artifacts-lifecycle.cjs` which fails any build where
+  a persistent-logic anchor is missing (`~/.tnf/authority/roles.json`,
+  `~/.tnf/handoff-current.json`, `~/.tnf/handoff-lineage.json`,
+  `~/.tnf/lessons-learned.md`) or a transient-state cap is exceeded (heartbeat
+  history ≤ 200 files or 30 days;
+  relay-monitor/wrapper-logs/tnf-logs/hermes-cron-output caps per protocol
+  table). Every prune MUST write a sweep report row to
+  `~/.tnf/reports/retention/sweep-<date>.jsonl` with
+  `{ at, rule, before, after, removed, archived, errors }`; the
+  self-improvement-scorecard ingests these on its 6-hourly cycle. Operator-owned
+  items (`openclaw-pre-migration-carry`, `~/.tnf/node_modules`) require explicit
+  operator confirmation before any delete; the guard reports them without
+  failing CI. Lessons-learned entries with `Verified: N` archive after 90 days;
+  `Verified: Y` entries never auto-archive. Handoff lineage is append-only. Open
+  tasks MUST live in a canonical surface
+  (`handoff-current.json::IMMEDIATE_TASKS`,
+  `handoff-current.json::next_actions`, `lessons-learned.md` Verified:N,
+  `[STATUS:PENDING]` doc headers, run reports) — local-only TODO comments are
+  breadcrumbs, never the sole record. The protocol is at
+  `docs/protocols/TNF_ARTIFACTS_LIFECYCLE_PROTOCOL.md`; the rationale entry is
+  in `CHALLENGE_RATIONALE_LOG.md` 2026-07-28. —
+  `TNF_ARTIFACTS_LIFECYCLE_PROTOCOL.md`, `HANDOFF_PACKET_LIFECYCLE.md`,
+  `TNF_DOCUMENT_VETTING_PROCEDURE.md`, `tnf-multi-agent-state-governor` skill,
+  `swarm-disk-retention.sh`, `hermes-state-retention.cjs`
+- **D26 — Four-tier authority gate (operator-configurable).** Per-action
+  operator confirmation is the default only at the EXECUTIVE tier; the operator
+  MAY raise the swarm's autonomy by setting a session or environment-level
+  authority tier:
+  - **TIER 1 — EXECUTIVE (default-on-blocking).** Irreversible actions:
+    financial tx, public post, root system mod, force-push, hard delete of
+    operator-owned artifacts. Mandatory human "Go" with dual-key co-sign when in
+    force; Super Admin ONLY. CI gates these via D7 + D16.
+  - **TIER 2 — OPERATIONAL (default-blocking).** Workflow branch points,
+    agent >50 steps, LOCKED-doc mutations, schedule changes that affect
+    cross-cutting behavior. Human confirmation dialog; **5-minute auto-approve
+    timeout** when the operator has set the tier programmatically
+    (`TNF_AUTHORITY_TIER=operational` env or `~/.tnf/authority/tier.json`). The
+    agent MAY proceed after the timeout if and only if the action is auditable
+    post-hoc.
+  - **TIER 3 — TACTICAL (default-autonomous).** Routine long-running tasks, code
+    refactors, file edits within non-LOCKED docs, retention sweeps, cron cadence
+    tuning within logged bounds (D15), protocol-doc additions (new docs, not
+    mutations to existing [STATUS:LOCKED] docs). Audit trail mandatory;
+    retroactive human review in 24h if flagged.
+  - **TIER 4 — DELEGATED (autonomous-with-constraint).** When the operator
+    issues a **standing authorization** in `~/.tnf/authority/standing.md`
+    (scope-bounded, time-bounded, with a re-authorization cadence of ≤ 30 days),
+    the swarm may act within that scope without per-action blocking. Standing
+    authorizations MUST be revoked automatically on any anomaly, intent
+    conflict, or `Verified: Y` lesson that contradicts them.
+  - **Default in interactive mode is TIER 2.** The agent's `challenge_rationale`
+    then serves as the auditable record, not as a blocking gate. The operator
+    MAY escalate any TIER 3 action to TIER 2 with a single `tnf authority hold`
+    invocation, and MAY lower the default to TIER 1 with `tnf authority lower`.
+    D26 is the resolution of the contradiction between AGENTS.md "live
+    confirmation every time" and DIRECTIVES.md D1 "routine tasks authorized";
+    the latter is now the default for TIER 3+ and the former only binds TIER 1.
+    — `TNF_GOVERNANCE_SYNTHESIS_v2.0.md` §2, D8, D23
+- **D27 — Self-Evolution Mandate.** The swarm MUST evolve its own doctrine,
+  code, and retention policy within the bounds of D26 and D16. Self-evolution
+  includes: (a) adding new sub-protocols and skills; (b) mutating
+  `[STATUS:ACTIVE]` docs when a logged `challenge_rationale` + a `Verified: Y`
+  lesson or operator standing authorization cover the change; (c) tuning cron
+  cadences within the no-op-rate envelope codified in
+  `TNF_ORCHESTRATION_GOVERNANCE_PROTOCOL.md`; (d) extending retention policy in
+  `TNF_ARTIFACTS_LIFECYCLE_PROTOCOL.md` with new rules that target
+  transient-state only (persistent-logic additions/removals require TIER 2
+  authorization). Self-evolution MUST NOT delete or rewrite `[STATUS:LOCKED]`
+  doc bodies unless the `challenge_rationale` carries a baseline-comparison
+  table per D16 Gate 5 and the operator has issued a TIER 2 confirmation OR a
+  TIER 4 standing authorization covers the scope. Self-evolution MUST emit a
+  `DIRECTIVE_CONVERSION_LEDGER.md` row whenever a doctrine change lands
+  (`ready→claimed→running→verified→landed`). Self-evolution MUST be auditable:
+  every change carries a `doc_hash: sha256:<hex>` computed at write time, and
+  the CHALLENGE_RATIONALE_LOG entry template's old `git_blob_sha` field is
+  replaced by this self-contained identifier. Self-evolution respects D7's
+  anti-lobotomy rule but resolves the contradiction with the Non-Temporal
+  Proliferation Mandate by reading D7 as "never silently destroy" rather than
+  "never modify": additions and logged rewrites are permitted; silent removals
+  are not. — `TURN_ZERO_MANDATE.md` Axiom 5 + Best-Known Assimilation Mandate,
+  D3, D7 (refined), D16 Gate 5, D26, `DIRECTIVE_CONVERSION_LEDGER.md`,
+  `CHALLENGE_RATIONALE_LOG.md`
 
 ---
 
