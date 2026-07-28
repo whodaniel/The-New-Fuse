@@ -1,5 +1,6 @@
 import AISourceSelector from '@/components/ai/AISourceSelector';
 import { ALL_PAGES_CATALOG } from '@/config/routeCatalog';
+import { useAISource } from '@/hooks/useAISource';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useAuth } from '@/providers/AuthProvider';
@@ -89,6 +90,13 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Model override for a local relay backend — the hosted equivalent of the library's
+  // `/relay model <name>` command.
+  const { selectedSource } = useAISource();
+  const [relayModels, setRelayModels] = useState<string[]>([]);
+  const [selectedModel, setSelectedModel] = useState('');
+  const isLocalRelay = selectedSource?.kind === 'local-relay';
+
   const pageInfo = useMemo(() => {
     if (contextOverride) return contextOverride;
     return (
@@ -132,6 +140,32 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [open, messages]);
+
+  useEffect(() => {
+    if (!open || !isLocalRelay) {
+      setRelayModels([]);
+      return;
+    }
+    let cancelled = false;
+    void aiSourceService.listRelayModels(selectedSource?.relayBaseUrl).then((models) => {
+      if (cancelled) return;
+      setRelayModels(models);
+      // Default to whatever the relay reports as active so the dropdown reflects reality.
+      setSelectedModel((current) =>
+        current && models.includes(current) ? current : selectedSource?.model || models[0] || ''
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, isLocalRelay, selectedSource?.relayBaseUrl, selectedSource?.model]);
+
+  const handleModelChange = async (model: string) => {
+    setSelectedModel(model);
+    // Tell the relay to switch its active backend model; the per-request `model` field below
+    // covers relays that don't support the config endpoint.
+    await aiSourceService.setRelayModel(model, selectedSource?.relayBaseUrl);
+  };
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -200,6 +234,7 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
         const result = await aiSourceService.chat({
           message: `You are assisting a user inside "${pageInfo?.name}" (${location.pathname}). ${pageInfo?.description || ''}\n\nUser request: ${userMessage}`,
           context: pageContext,
+          model: isLocalRelay ? selectedModel || undefined : undefined,
         });
         setMessages((prev) => [...prev, { role: 'assistant', content: result.text }]);
       }
@@ -346,6 +381,27 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
 
               <div className="space-y-3 border-t border-white/10 px-4 py-3">
                 {!selectedAgent ? <AISourceSelector compact label="AI Source" /> : null}
+
+                {!selectedAgent && isLocalRelay && relayModels.length > 0 ? (
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">Model</Label>
+                    <Select value={selectedModel} onValueChange={handleModelChange}>
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Model" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Local models</SelectLabel>
+                          {relayModels.map((model) => (
+                            <SelectItem key={model} value={model}>
+                              {model}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ) : null}
 
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { AgentGrantList } from '@/components/ApiKeyManagement/AgentGrantList';
 import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
+import { LocalRelaySettings } from '@/components/ai/LocalRelaySettings';
 import Switch, {
   Alert,
   AlertDescription,
@@ -244,6 +245,7 @@ export default function API() {
 
         {/* Provider API Keys - Self-contained Card */}
         <ProviderApiKeyList />
+        <LocalRelaySettings />
         <AgentGrantList />
 
         {/* Personal Access Tokens */}

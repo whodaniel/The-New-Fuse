@@ -12,16 +12,21 @@ export function useAISource() {
   const [relayOnline, setRelayOnline] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const relayBaseUrl = useMemo(() => aiSourceService.getRelayBaseUrl(), []);
+  // Re-read on each refresh rather than memoizing once: the user can change their relay URL in
+  // Settings without remounting whatever is showing this picker.
+  const [relayBaseUrl, setRelayBaseUrl] = useState(() => aiSourceService.getRelayBaseUrl());
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
     setError(null);
+    // Clear cached failures so an explicit refresh genuinely re-probes a relay the user just started.
+    aiSourceService.resetRelayProbe();
     try {
-      const [nextSources, online] = await Promise.all([
-        aiSourceService.listSources(relayBaseUrl),
-        aiSourceService.probeRelayHealth(relayBaseUrl),
-      ]);
+      const currentRelay = aiSourceService.getRelayBaseUrl();
+      setRelayBaseUrl(currentRelay);
+
+      const nextSources = await aiSourceService.listSources(currentRelay || undefined);
+      const online = currentRelay ? await aiSourceService.probeRelayHealth(currentRelay) : false;
       setSources(nextSources);
       setRelayOnline(online);
 
@@ -37,7 +42,9 @@ export function useAISource() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [relayBaseUrl]);
+    // No deps: refresh re-reads the relay URL itself, so depending on relayBaseUrl (which it also
+    // sets) would risk re-running this effect on every refresh.
+  }, []);
 
   useEffect(() => {
     void refresh();

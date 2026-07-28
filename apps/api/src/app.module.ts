@@ -23,18 +23,19 @@ import { AgentHandoffController } from './controllers/agent-handoff.controller';
 import { AgentPfpOverridesController } from './controllers/agent-pfp-overrides.controller';
 import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { AiController } from './controllers/ai.controller';
+import { AvailableModelsController } from './controllers/available-models.controller';
+import { BridgesController } from './controllers/bridges.controller';
 import { CommunityController } from './controllers/community.controller';
 import { CompoundingMemoryController } from './controllers/compounding-memory.controller';
 import { HealthController } from './controllers/health.controller';
 import { LLMIntelController } from './controllers/llm-intel.controller';
-import { PublicInfoController } from './controllers/public-info.controller';
-import { BridgesController } from './controllers/bridges.controller';
 import { MCPServerController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
 import { OnboardingController } from './controllers/onboarding.controller';
 import { OrchestrationController } from './controllers/orchestration.controller';
 import { ProviderKeysController } from './controllers/provider-keys.controller';
+import { PublicInfoController } from './controllers/public-info.controller';
 import { SystemController } from './controllers/system.controller';
 import { UserManagementController } from './controllers/user-management.controller';
 import { WebSocketController } from './controllers/websocket.controller';
@@ -56,6 +57,7 @@ import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { DirectorModule } from './modules/director/director.module';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ExportModule } from './modules/export/export.module';
+import { LocalRuntimeModule } from './modules/local-runtime/local-runtime.module';
 import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
 import { ResourcesModule } from './modules/resources/resources.module';
@@ -71,6 +73,7 @@ import { AgentApiGrantsService } from './services/agent-api-grants.service';
 import { AgentHandoffService } from './services/agent-handoff.service';
 import { AgentPfpOverridesService } from './services/agent-pfp-overrides.service';
 import { OpenClawOAuthRotationService } from './services/openclaw-oauth-rotation.service';
+import { ProviderCatalogService } from './services/provider-catalog.service';
 import { ProviderKeysService } from './services/provider-keys.service';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
 import { TransactionsModule } from './transactions/transactions.module';
@@ -160,6 +163,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     MarketplaceModule,
     ResourcesModule,
     TerminalsModule,
+    LocalRuntimeModule,
     UnifiedLedgerModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
@@ -182,6 +186,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     CompoundingMemoryController,
     LLMIntelController,
     ModelsController, // AI model provider selection
+    AvailableModelsController, // Dynamic available LLM catalog for Create Agent
     SystemController,
     UserManagementController, // User CRUD operations
     WebSocketController,
@@ -207,6 +212,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     LLMProviderService,
     AgentPfpOverridesService,
     ProviderKeysService,
+    ProviderCatalogService, // Shared provider naming/catalog for the picker and the chat executor
     OpenClawOAuthRotationService,
     AgentApiGrantsService,
     AgentHandoffService,

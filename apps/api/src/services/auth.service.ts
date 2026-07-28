@@ -389,7 +389,13 @@ export class AuthService {
     profileData: {
       displayName?: string;
       bio?: string;
-      preferences?: { theme?: 'light' | 'dark' | 'system'; notifications?: boolean };
+      preferences?: {
+        theme?: 'light' | 'dark' | 'system';
+        notifications?: boolean;
+        /** AI Assist source settings, e.g. a user-configured local AI relay URL. */
+        aiSource?: { relayUrl?: string };
+        [key: string]: unknown;
+      };
     }
   ) {
     const existing = await this.db.users.findById(userId);
@@ -406,7 +412,17 @@ export class AuthService {
       (patch as Record<string, unknown>).bio = profileData.bio;
     }
     if (profileData.preferences) {
-      (patch as Record<string, unknown>).preferences = profileData.preferences;
+      // Merge, don't replace: preferences is a single jsonb blob shared by several features, so
+      // writing only the keys a caller happens to send would silently drop the others (e.g. saving
+      // a relay URL would wipe the user's theme).
+      const current = ((existing as Record<string, unknown>).preferences || {}) as Record<
+        string,
+        unknown
+      >;
+      (patch as Record<string, unknown>).preferences = {
+        ...current,
+        ...profileData.preferences,
+      };
     }
 
     const updated = await this.db.users.update(userId, patch);
