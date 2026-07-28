@@ -264,6 +264,14 @@ scripts/personal-archaeology/archaeology.sqlite*
 # Google MCP Server Credentials
 packages/google-docs-mcp-server/credentials.json
 packages/google-docs-mcp-server/token.json
+
+# tnf-browser extension bearer token.
+# Regenerated with crypto.randomBytes(32) on every server start
+# (packages/tnf-browser/index.js), so it must never be tracked — it churned a
+# fresh live secret into git on each automated commit. The source comment there
+# already assumed this file was ignored; it was not, because .gitignore has no
+# effect on files git is already tracking.
+packages/tnf-browser/extension/token.json
 packages/google-drive-mcp-server/credentials/
 packages/google-sheets-mcp-server/credentials.json
 
