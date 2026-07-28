@@ -41,12 +41,39 @@ has_changes() {
 }
 
 # Function to commit and push to GitHub
+#
+# `git add -A` was removed deliberately. It swept every unrelated change in the
+# tree into one commit — in one real case, 20 files of in-progress feature work
+# alongside 25 unrelated files (audit JSONs, build logs, a rotating auth token)
+# under a single "stage cleanup" message.
+#
+# That commit was unreviewable by construction, and when files were later ported
+# out of it onto main they carried the surrounding branch's work with them,
+# leaving main unbuildable. See docs/core/AGENTS.md#porting-work-between-branches.
+#
+# This now commits only paths it is explicitly told to, and never runs unattended
+# without TNF_ALLOW_AUTO_COMMIT=1.
 git_push() {
   local commit_message="$1"
-  log "Checking for changes..."
-  if has_changes; then
+  shift || true
+  local paths=("$@")
+
+  if [[ "${TNF_ALLOW_AUTO_COMMIT:-0}" != "1" ]]; then
+    log "Auto-commit disabled (set TNF_ALLOW_AUTO_COMMIT=1 to enable). Skipping."
+    log "Uncommitted changes remain in the tree for a human to review."
+    return 0
+  fi
+
+  if [[ ${#paths[@]} -eq 0 ]]; then
+    log "ERROR: git_push called with no explicit paths. Refusing to 'git add -A'."
+    log "       Pass the paths to commit, e.g. git_push \"msg\" docs/operations"
+    return 1
+  fi
+
+  log "Checking for changes in: ${paths[*]}"
+  if [[ -n "$(git status --porcelain -- "${paths[@]}" | head -n 1)" ]]; then
     log "Changes detected. Committing and pushing to GitHub..."
-    git add -A
+    git add -- "${paths[@]}"
     git commit -m "$commit_message"
     git push origin HEAD
     log "Push to GitHub complete."
@@ -82,8 +109,15 @@ deploy_cloudflare() {
 # Main update cycle
 log "Starting GitHub and Cloudflare update cycle"
 
-# Commit and push to GitHub with a message from the AI
-git_push "Auto-update: TNF swarm maintenance and improvements $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+# Commit and push to GitHub.
+#
+# Paths are explicit and limited to generated operational state. Source trees
+# (apps/, packages/) are deliberately excluded: in-progress human or agent work
+# must never be swept into an automated commit.
+git_push \
+  "Auto-update: TNF swarm operational state $(date -u +"%Y-%m-%d %H:%M:%S UTC")" \
+  docs/operations \
+  docs/protocols/reports
 
 # Sync repos
 sync_repos
