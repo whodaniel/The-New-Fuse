@@ -20,6 +20,7 @@ import {
   SecureAuthGuard,
   SetRateLimitTier,
 } from '../guards/secure-auth.guard';
+import { ProviderCatalogService } from '../services/provider-catalog.service';
 import { assertDevLoopBudget } from '../utils/dev-loop-guard';
 
 interface OrchestrationChatRequest {
@@ -55,7 +56,10 @@ type AuthUser = {
 export class OrchestrationController {
   private readonly logger = new Logger(OrchestrationController.name);
 
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly providerCatalog: ProviderCatalogService
+  ) {}
 
   @Post('chat')
   @ApiOperation({
@@ -139,8 +143,10 @@ export class OrchestrationController {
     }
   }
 
+  // Delegated to ProviderCatalogService so the AI source picker (GET /llm/providers/available)
+  // and this executor cannot drift apart on provider naming or model defaults.
   private normalizeProvider(value?: string): string {
-    return typeof value === 'string' ? value.trim().toLowerCase() : '';
+    return this.providerCatalog.normalizeProvider(value);
   }
 
   private async resolveProviderForUser(
@@ -291,26 +297,11 @@ export class OrchestrationController {
   }
 
   private async safeLoadEnabledConfigs() {
-    try {
-      return (await this.db.llmConfigs.findEnabled()) as Array<{
-        provider: string;
-        modelName: string;
-        apiKey: string;
-        apiEndpoint: string | null;
-        priority: number;
-      }>;
-    } catch (error) {
-      this.logger.warn(`LLM config lookup failed: ${(error as Error).message}`);
-      return [];
-    }
+    return this.providerCatalog.safeLoadEnabledConfigs();
   }
 
   private defaultModelForProvider(provider: string): string {
-    if (provider === 'anthropic') return 'claude-3-5-sonnet-20240620';
-    if (provider === 'openrouter') return 'openai/gpt-4o-mini';
-    if (provider === 'perplexity') return 'sonar';
-    if (provider === 'groq') return 'llama-3.1-70b-versatile';
-    return 'gpt-4o-mini';
+    return this.providerCatalog.defaultModelForProvider(provider);
   }
 
   private resolveChatEndpoint(
