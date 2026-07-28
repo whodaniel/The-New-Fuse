@@ -2,6 +2,7 @@ import { useAISource } from '@/hooks/useAISource';
 import type { AISourceOption } from '@/types/aiSource';
 import { Bot, Cloud, RefreshCw, Wifi, WifiOff } from 'lucide-react';
 import React, { useMemo } from 'react';
+import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import {
   Select,
@@ -12,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { Button } from '../ui/button';
 
 export interface AISourceSelectorProps {
   label?: string;
@@ -24,14 +24,19 @@ export interface AISourceSelectorProps {
   onChange?: (sourceId: string, source: AISourceOption) => void;
 }
 
-const groupOrder: AISourceOption['group'][] = ['Automatic', 'Local & Network', 'TNF Cloud'];
+const groupOrder: AISourceOption['group'][] = [
+  'Automatic',
+  'Local & Network',
+  'Your Providers',
+  'TNF Cloud',
+];
 
 function healthBadge(source: AISourceOption, relayOnline: boolean | null) {
   if (source.kind === 'local-relay') {
     const online = source.health === 'online' || relayOnline;
     return online ? 'Local online' : 'Local offline';
   }
-  if (source.kind === 'tnf-cloud') return 'Cloud';
+  if (source.kind === 'tnf-cloud') return source.isUserKey ? 'Your key' : 'Cloud';
   return 'Auto route';
 }
 
@@ -117,13 +122,27 @@ export const AISourceSelector: React.FC<AISourceSelectorProps> = ({
         <SelectContent>
           {groupOrder.map((group) => {
             const items = grouped.get(group) || [];
+            // An empty local group is meaningful — say why rather than hiding it, otherwise a user
+            // whose browser blocks loopback just sees the feature missing with no explanation.
+            if (!items.length && group === 'Local & Network' && relayOnline === false) {
+              return (
+                <SelectGroup key={group}>
+                  <SelectLabel className="flex items-center gap-1.5">
+                    <Bot className="h-3 w-3" />
+                    {group}
+                  </SelectLabel>
+                  <div className="px-2 py-1.5 text-[10px] leading-relaxed text-muted-foreground">
+                    No local AI relay reachable. Start it on this machine, or set an https:// relay
+                    URL in Settings → API. Safari and Firefox block local addresses from this page.
+                  </div>
+                </SelectGroup>
+              );
+            }
             if (!items.length) return null;
             return (
               <SelectGroup key={group}>
                 <SelectLabel className="flex items-center gap-1.5">
-                  {group === 'Local & Network' ? (
-                    <Bot className="h-3 w-3" />
-                  ) : group === 'TNF Cloud' ? (
+                  {group === 'TNF Cloud' || group === 'Your Providers' ? (
                     <Cloud className="h-3 w-3" />
                   ) : (
                     <Bot className="h-3 w-3" />

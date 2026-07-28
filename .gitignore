@@ -421,3 +421,20 @@ packages/tnf-browser/extension/token.json
 packages/contracts/cache/
 packages/mcp-concordance-server/dist/
 packages/types/.turbo/
+
+# API audit logs (runtime artifacts, not source)
+apps/api/logs/
+
+# Frontend Vite/Vitest cache (runtime artifacts)
+apps/frontend/node_modules/.vite/
+
+# API audit logs (runtime artifacts, not source)
+apps/api/logs/*.json
+# Vite cache
+apps/frontend/node_modules/.vite/
+
+# API audit logs (runtime artifacts)
+apps/api/logs/*.json
+
+# Vite cache
+apps/frontend/node_modules/.vite/

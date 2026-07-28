@@ -73,6 +73,7 @@ import { AgentApiGrantsService } from './services/agent-api-grants.service';
 import { AgentHandoffService } from './services/agent-handoff.service';
 import { AgentPfpOverridesService } from './services/agent-pfp-overrides.service';
 import { OpenClawOAuthRotationService } from './services/openclaw-oauth-rotation.service';
+import { ProviderCatalogService } from './services/provider-catalog.service';
 import { ProviderKeysService } from './services/provider-keys.service';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
 import { TransactionsModule } from './transactions/transactions.module';
@@ -211,6 +212,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     LLMProviderService,
     AgentPfpOverridesService,
     ProviderKeysService,
+    ProviderCatalogService, // Shared provider naming/catalog for the picker and the chat executor
     OpenClawOAuthRotationService,
     AgentApiGrantsService,
     AgentHandoffService,

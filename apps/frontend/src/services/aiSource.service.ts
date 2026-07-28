@@ -1,5 +1,12 @@
 import { apiService } from '@/services/api';
-import { relayGetJson, relayGetOptionalJson } from '@/services/relayHttp.client';
+import {
+  getRelayReachability,
+  relayGetJson,
+  relayGetOptionalJson,
+  relayPostJson,
+  resetRelayReachability,
+  setRelayAuthToken,
+} from '@/services/relayHttp.client';
 import type {
   AISourceChatMessage,
   AISourceChatRequest,
@@ -32,6 +39,8 @@ type TnfProvider = {
   provider: string;
   modelName: string;
   isDefault?: boolean;
+  /** True when this provider is backed by the signed-in user's own API key. */
+  isUserKey?: boolean;
 };
 
 function isLoopbackUrl(value: string): boolean {
@@ -43,49 +52,97 @@ function isLoopbackUrl(value: string): boolean {
   }
 }
 
-function isBrowserOnLocalhost(): boolean {
-  if (typeof window === 'undefined') return false;
-  const host = window.location.hostname;
-  return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+/**
+ * Validate a user-supplied relay URL.
+ *
+ * Loopback may be plain http: — browsers treat 127.0.0.1/localhost as a trustworthy origin. Any
+ * remote host must be https:, otherwise the request dies at the mixed-content/CSP layer with an
+ * opaque failure, so we reject it up front where we can explain why.
+ */
+export function validateRelayUrl(
+  value: string
+): { ok: true; url: string } | { ok: false; error: string } {
+  const trimmed = (value || '').trim().replace(/\/+$/, '');
+  if (!trimmed) return { ok: false, error: 'Enter a relay URL.' };
+
+  let parsed: URL;
+  try {
+    parsed = new URL(trimmed);
+  } catch {
+    return {
+      ok: false,
+      error: 'That is not a valid URL. Include the protocol, e.g. https://relay.example.com',
+    };
+  }
+
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    return { ok: false, error: 'Relay URL must use http:// or https://' };
+  }
+
+  if (parsed.protocol === 'http:' && !isLoopbackUrl(trimmed)) {
+    return {
+      ok: false,
+      error: 'A remote relay must use https:// — browsers block insecure requests from this page.',
+    };
+  }
+
+  return { ok: true, url: trimmed };
 }
 
 /**
- * Local relay (:43120) is for desktop/dev only. Hosted Pages CSP blocks http://127.0.0.1,
- * so never probe loopback from app.thenewfuse.com / production Pages.
+ * Resolve which relay to talk to, in precedence order:
+ *   explicit argument → user setting → build-time VITE_AI_RELAY_URL → loopback default.
+ *
+ * This no longer gates on page origin. A hosted page *can* reach the loopback relay now that CSP
+ * allows :43120 and the relay answers the Private Network Access preflight; where it genuinely
+ * cannot (Safari, Firefox, relay not running) the request fails and `relayHttp.client` caches that,
+ * which surfaces to the user as an explicit "not reachable" state rather than a silently empty list.
  */
 function resolveRelayBaseUrl(explicit?: string): string | null {
-  const candidate = (explicit || CONFIGURED_RELAY_URL || LOOPBACK_RELAY_URL).replace(/\/+$/, '');
-  if (!candidate) return null;
+  const candidate = (explicit || readCustomRelayUrl() || CONFIGURED_RELAY_URL || LOOPBACK_RELAY_URL)
+    .trim()
+    .replace(/\/+$/, '');
+  return candidate || null;
+}
 
-  if (isLoopbackUrl(candidate)) {
-    if (!isBrowserOnLocalhost()) return null;
-    return candidate;
+function readStoredState(): Partial<AISourceSelection> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    return (JSON.parse(raw) as Partial<AISourceSelection>) || {};
+  } catch {
+    return {};
   }
+}
 
-  // Non-loopback relay URLs (https://…) are allowed when explicitly configured.
-  if (CONFIGURED_RELAY_URL || (explicit && !isLoopbackUrl(explicit))) {
-    return candidate;
-  }
-
-  return null;
+function writeStoredState(patch: Partial<AISourceSelection>): AISourceSelection {
+  const next = {
+    ...readStoredState(),
+    ...patch,
+    updatedAt: new Date().toISOString(),
+  } as AISourceSelection;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  return next;
 }
 
 function readSelection(): AISourceSelection | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as AISourceSelection;
-    if (!parsed?.sourceId) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
+  const stored = readStoredState();
+  return stored.sourceId ? (stored as AISourceSelection) : null;
 }
 
+function readCustomRelayUrl(): string {
+  return readStoredState().customRelayUrl?.trim() || '';
+}
+
+function readRelayAuthToken(): string {
+  return readStoredState().relayAuthToken?.trim() || '';
+}
+
+// Prime the HTTP client at module load so the very first relay call is already authenticated.
+setRelayAuthToken(readRelayAuthToken());
+
 function writeSelection(sourceId: string): AISourceSelection {
-  const next: AISourceSelection = { sourceId, updatedAt: new Date().toISOString() };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  return next;
+  return writeStoredState({ sourceId });
 }
 
 function orchestratorDefault(): AISourceOption {
@@ -125,11 +182,14 @@ function mapTnfProvider(provider: TnfProvider): AISourceOption {
     kind: 'tnf-cloud',
     label: provider.name || provider.provider,
     description: `${provider.provider} · ${provider.modelName}`,
-    group: 'TNF Cloud',
+    // Providers the user personally holds a key for get their own group so they are not buried
+    // among the globally-configured ones.
+    group: provider.isUserKey ? 'Your Providers' : 'TNF Cloud',
     health: 'online',
     provider: provider.provider,
     model: provider.modelName,
     tnfProviderId: provider.id,
+    isUserKey: provider.isUserKey,
   };
 }
 
@@ -156,40 +216,42 @@ async function fetchRelaySources(relayBaseUrl: string | null): Promise<AISourceO
     .filter(Boolean) as AISourceOption[];
 }
 
+function coerceProviderList(payload: any): TnfProvider[] {
+  const body = payload?.data ?? payload;
+  if (Array.isArray(body)) return body;
+  if (Array.isArray(body?.data)) return body.data;
+  if (Array.isArray(body?.providers)) return body.providers;
+  return [];
+}
+
 async function fetchTnfCloudSources(): Promise<AISourceOption[]> {
+  // User-scoped endpoint: global providers ∪ providers this user holds a personal key for.
+  try {
+    const response: any = await apiService.get('/api/llm/providers/available', undefined, {
+      silent: true,
+    });
+    const list = coerceProviderList(response);
+    if (list.length) return list.map(mapTnfProvider);
+  } catch {
+    /* fall through to the global list below */
+  }
+
+  // Fallback for an API that predates /available.
   try {
     const response: any = await apiService.get('/api/llm/providers', undefined, { silent: true });
-    const payload = response?.data ?? response;
-    const list: TnfProvider[] = Array.isArray(payload)
-      ? payload
-      : Array.isArray(payload?.data)
-        ? payload.data
-        : [];
-    return list.map(mapTnfProvider);
+    return coerceProviderList(response).map(mapTnfProvider);
   } catch {
     return [];
   }
 }
 
 async function activateRelayProfile(relayBaseUrl: string, profileId: string): Promise<void> {
-  try {
-    await fetch(`${relayBaseUrl}/v1/provider-profiles/activate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: profileId }),
-    });
-  } catch {
-    // Newer relays also accept auto-select
-    try {
-      await fetch(`${relayBaseUrl}/v1/agents/auto-select`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: '{}',
-      });
-    } catch {
-      /* ignore */
-    }
-  }
+  const activated = await relayPostJson(relayBaseUrl, '/v1/provider-profiles/activate', {
+    id: profileId,
+  });
+  if (activated) return;
+  // Newer relays also accept auto-select.
+  await relayPostJson(relayBaseUrl, '/v1/agents/auto-select', {});
 }
 
 function extractText(payload: unknown): string | null {
@@ -226,13 +288,139 @@ function buildMessages(request: AISourceChatRequest): AISourceChatMessage[] {
 }
 
 export const aiSourceService = {
-  /** Resolved relay base, or empty string when probing would violate CSP / is unavailable. */
+  /** Relay base URL that will be used for local AI, following the documented precedence order. */
   getRelayBaseUrl(): string {
     return resolveRelayBaseUrl() || '';
   },
 
   isLocalRelayAvailable(): boolean {
     return resolveRelayBaseUrl() != null;
+  },
+
+  /** The user's own relay URL override, or '' when they haven't set one. */
+  getCustomRelayUrl(): string {
+    return readCustomRelayUrl();
+  },
+
+  /**
+   * Save a user-supplied relay URL. Validates before storing so a bad value is rejected here
+   * rather than failing opaquely at the browser's mixed-content check later.
+   */
+  setCustomRelayUrl(value: string): AISourceSelection {
+    const trimmed = (value || '').trim();
+    if (!trimmed) {
+      resetRelayReachability();
+      return writeStoredState({ customRelayUrl: '' });
+    }
+    const validated = validateRelayUrl(trimmed);
+    if (!validated.ok) throw new Error(validated.error);
+    resetRelayReachability();
+    return writeStoredState({ customRelayUrl: validated.url });
+  },
+
+  clearCustomRelayUrl(): AISourceSelection {
+    resetRelayReachability();
+    return writeStoredState({ customRelayUrl: '' });
+  },
+
+  getRelayAuthToken(): string {
+    return readRelayAuthToken();
+  },
+
+  /**
+   * Store the relay's shared secret. Deliberately device-local and never synced to the profile —
+   * it grants access to whatever models that relay fronts.
+   */
+  setRelayAuthToken(token: string): AISourceSelection {
+    const trimmed = (token || '').trim();
+    setRelayAuthToken(trimmed);
+    resetRelayReachability();
+    return writeStoredState({ relayAuthToken: trimmed });
+  },
+
+  /**
+   * Mirror the relay URL onto the user's profile so it follows them to another browser.
+   * Best-effort: localStorage is the source of truth for this device, and a failed sync must not
+   * block saving locally.
+   */
+  async syncCustomRelayUrlToProfile(relayUrl: string): Promise<boolean> {
+    try {
+      await apiService.patch(
+        '/api/auth/me',
+        { preferences: { aiSource: { relayUrl: relayUrl || '' } } },
+        { silent: true }
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
+  /**
+   * Adopt a relay URL stored on the user's profile when this device has none set, so a user who
+   * configured it elsewhere doesn't have to re-enter it. A local value always wins.
+   */
+  async hydrateCustomRelayUrlFromProfile(): Promise<string> {
+    if (readCustomRelayUrl()) return readCustomRelayUrl();
+    try {
+      const response: any = await apiService.get('/api/auth/me', undefined, { silent: true });
+      const stored = (response?.data ?? response)?.preferences?.aiSource?.relayUrl;
+      if (typeof stored !== 'string' || !stored.trim()) return '';
+      const validated = validateRelayUrl(stored);
+      if (!validated.ok) return '';
+      writeStoredState({ customRelayUrl: validated.url });
+      resetRelayReachability();
+      return validated.url;
+    } catch {
+      return '';
+    }
+  },
+
+  /** Force the next relay call to re-probe rather than trust a cached failure. */
+  resetRelayProbe(): void {
+    resetRelayReachability();
+  },
+
+  /**
+   * Whether the last relay attempt succeeded. `null` = not yet attempted, `false` = this browser
+   * or machine genuinely cannot reach it (Safari/Firefox loopback block, or relay not running).
+   */
+  getRelayReachability(relayBaseUrl?: string): boolean | null {
+    const resolved = resolveRelayBaseUrl(relayBaseUrl);
+    return resolved ? getRelayReachability(resolved) : null;
+  },
+
+  /** Models offered by the relay's active backend, for the model-override dropdown. */
+  async listRelayModels(relayBaseUrl?: string): Promise<string[]> {
+    const resolved = resolveRelayBaseUrl(relayBaseUrl);
+    if (!resolved) return [];
+    const payload = await relayGetOptionalJson<any>(resolved, '/v1/models');
+    const list = payload?.data ?? payload?.models ?? payload;
+    if (!Array.isArray(list)) return [];
+    return list
+      .map((entry: any) => (typeof entry === 'string' ? entry : entry?.id || entry?.name))
+      .filter((id: unknown): id is string => typeof id === 'string' && id.trim().length > 0);
+  },
+
+  /**
+   * Override the model on the relay's active backend without restarting it.
+   *
+   * /v1/backend/config is keyed by backend `name` (ollama | openai-compat | gemini), so we read the
+   * currently active one from /v1/health first — sending only a model is rejected.
+   */
+  async setRelayModel(model: string, relayBaseUrl?: string): Promise<boolean> {
+    const resolved = resolveRelayBaseUrl(relayBaseUrl);
+    if (!resolved || !model.trim()) return false;
+
+    const health = await relayGetOptionalJson<{ active?: string }>(resolved, '/v1/health');
+    const active = health?.active?.trim();
+    if (!active) return false;
+
+    const result = await relayPostJson(resolved, '/v1/backend/config', {
+      name: active,
+      model: model.trim(),
+    });
+    return result != null;
   },
 
   getSelectedSourceId(): string | null {
@@ -281,23 +469,40 @@ export const aiSourceService = {
       const relayBaseUrl = resolveRelayBaseUrl(source.relayBaseUrl);
       if (!relayBaseUrl) {
         throw new Error(
-          'Local AI relay is only available on localhost. Choose TNF Auto (Orchestrator) or a cloud provider.'
+          'No local AI relay is configured. Set one under Settings → API → Local AI Relay, or choose TNF Auto (Orchestrator).'
         );
       }
       if (source.relayProfileId) {
         await activateRelayProfile(relayBaseUrl, source.relayProfileId);
       }
 
+      const relayToken = readRelayAuthToken();
       const response = await fetch(`${relayBaseUrl}/v1/chat/completions`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(relayToken ? { Authorization: `Bearer ${relayToken}` } : {}),
+        },
         body: JSON.stringify({
           messages,
-          model: source.model || 'story-architect',
+          model: request.model || source.model || 'story-architect',
           temperature: request.temperature,
           max_tokens: request.maxTokens,
         }),
-      });
+      }).catch(() => null);
+
+      if (!response) {
+        resetRelayReachability(relayBaseUrl);
+        throw new Error(
+          `Could not reach the local AI relay at ${relayBaseUrl}. Confirm it is running, and note that Safari and Firefox block requests from this page to a loopback address — use Chrome, or point Settings → API → Local AI Relay at an https:// relay URL.`
+        );
+      }
+
+      if (response.status === 401) {
+        throw new Error(
+          'The local AI relay rejected the auth token. Set the matching RELAY_AUTH_TOKEN value in Settings → API → Local AI Relay.'
+        );
+      }
 
       if (!response.ok) {
         const detail = await response.text().catch(() => '');

@@ -1,13 +1,13 @@
 {
   "summary": {
-    "startedAt": "2026-07-26T22:49:57.742Z",
-    "generatedAt": "2026-07-26T22:58:46.592Z",
+    "startedAt": "2026-07-27T06:10:06.471Z",
+    "generatedAt": "2026-07-27T06:18:37.464Z",
     "baseUrl": "https://app.thenewfuse.com",
     "totalRoutes": 224,
     "hardBroken": 0,
     "networkBroken": 0,
     "sameAsRoot": 0,
-    "duplicateFingerprintGroups": 13,
+    "duplicateFingerprintGroups": 12,
     "rootHasAppRoot": true
   },
   "rows": [
@@ -1802,7 +1802,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "d4aca6712c4957516d721322efdce673ba3f148e",
+      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -2335,8 +2335,8 @@
       "title": "",
       "h1": "",
       "hasAppRoot": false,
-      "fingerprint": "b3e43dc0f6c721d9a12c367b843ab80443e86669",
-      "textPreview": "{\"status\":\"ok\",\"service\":\"tnf-app\",\"timestamp\":\"2026-07-26t22:56:44.794z\"}"
+      "fingerprint": "8133c5e8c70b8ef00fc2fa795916801a6bb29c6f",
+      "textPreview": "{\"status\":\"ok\",\"service\":\"tnf-app\",\"timestamp\":\"2026-07-27t06:16:37.297z\"}"
     },
     {
       "route": "/suggestions",
@@ -2387,8 +2387,8 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "26f8ba7025d47430f068505e337f5870643219eb",
-      "textPreview": "system statusthe new fuse statuslive service checks refresh every 15 seconds.multiple services unavailablerefresh nowlast checked: 06:56:53 pmpublic path: /statusapi gatewaycore api health endpoint response.healthygatewa"
+      "fingerprint": "2da20b00d5579cf30c25d8329e9527fa323838f5",
+      "textPreview": "system statusthe new fuse statuslive service checks refresh every 15 seconds.multiple services unavailablerefresh nowlast checked: 02:16:46 ampublic path: /statusapi gatewaycore api health endpoint response.healthygatewa"
     },
     {
       "route": "/tasks",
@@ -2582,7 +2582,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "7ec75f6031dc1e001077c9a7986691854c538e3f",
+      "fingerprint": "e80bd13e16ebe4750f6ab18bc8bbab9b0c0e34f6",
       "textPreview": "back to tnf homemaster clock visualizationturn tnf chron jobs into a living watch movement.drag gears into open mesh sockets, keep them coupled to the heartbeat, and inspect exact producer intervals with last-run and nex"
     },
     {
@@ -2621,7 +2621,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "992997b562b1f5024e5d7b029a61037ce97ed14c",
+      "fingerprint": "3276fd4141128703f65ec82a11ad20957c2831a5",
       "textPreview": "back to visualizationsterminal graphholistic twip projection of terminal identities, process topology, and runtime ownership hints for tnf agent orchestration.safety defaultcommands remain redacted unless explicitly requ"
     },
     {
@@ -3127,7 +3127,7 @@
     },
     {
       "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
-      "routes": ["/capabilities", "/platform", "/product-map"]
+      "routes": ["/capabilities", "/marketplace", "/platform", "/product-map"]
     },
     {
       "fingerprint": "9039f0758ce82e0328a01a74575b348b1528097c",
@@ -3152,10 +3152,6 @@
     {
       "fingerprint": "b3f6f24c7ba7f1d7fc02b41668a2788f1beae6a1",
       "routes": ["/legal/terms", "/terms"]
-    },
-    {
-      "fingerprint": "992997b562b1f5024e5d7b029a61037ce97ed14c",
-      "routes": ["/terminals", "/visualizations/terminals"]
     }
   ]
 }

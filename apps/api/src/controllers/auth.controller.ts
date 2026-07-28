@@ -210,7 +210,13 @@ export class AuthController {
     body: {
       displayName?: string;
       bio?: string;
-      preferences?: { theme?: 'light' | 'dark' | 'system'; notifications?: boolean };
+      preferences?: {
+        theme?: 'light' | 'dark' | 'system';
+        notifications?: boolean;
+        /** AI Assist source settings, e.g. a user-configured local AI relay URL. */
+        aiSource?: { relayUrl?: string };
+        [key: string]: unknown;
+      };
     }
   ) {
     return this.authService.updateCurrentUserProfile(req.user.id, body);

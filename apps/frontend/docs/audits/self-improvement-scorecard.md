@@ -1,6 +1,6 @@
 # TNF Self-Improvement Scorecard
 
-- Generated: 2026-07-26T22:58:49.992Z
+- Generated: 2026-07-27T06:18:40.102Z
 - Overall: PASS
 - Required audits present: yes
 
@@ -17,7 +17,7 @@
 - hard broken: 0
 - network broken: 0
 - same as root: 0
-- duplicate groups: 13
+- duplicate groups: 12
 - passed: true
 
 ## Auth Path Audit

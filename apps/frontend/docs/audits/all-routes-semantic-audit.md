@@ -1,6 +1,6 @@
 # All Routes Semantic Audit
 
-Generated: 2026-07-26T22:58:46.592Z Base URL: https://app.thenewfuse.com
+Generated: 2026-07-27T06:18:37.464Z Base URL: https://app.thenewfuse.com
 
 ## Summary
 
@@ -8,7 +8,7 @@ Generated: 2026-07-26T22:58:46.592Z Base URL: https://app.thenewfuse.com
 - hard broken (HTTP >= 400): 0
 - network broken: 0
 - routes with same fingerprint as / (excluding SPA-shell duplicates): 0
-- duplicate fingerprint groups: 13
+- duplicate fingerprint groups: 12
 
 ## Hard Broken
 
@@ -73,8 +73,8 @@ Generated: 2026-07-26T22:58:46.592Z Base URL: https://app.thenewfuse.com
 - 0fdb296356f6da7940ac08348b6a34dd8ec6ef1a: /auth/forgot-password,
   /forgot-password
 - ff2bd7eb8d69ce5f67abcdc9e2f379568f01f39a: /brand, /design-system
-- 7f95713d0adfa7db46b9ade85969ad1d893fcd55: /capabilities, /platform,
-  /product-map
+- 7f95713d0adfa7db46b9ade85969ad1d893fcd55: /capabilities, /marketplace,
+  /platform, /product-map
 - 9039f0758ce82e0328a01a74575b348b1528097c: /community, /help/community
 - 261b16762e5c4fa16a6d757ebfb8e3741ea8f5d8: /connect, /integrations
 - 7010ea1eda456f60ca76fa9cd61df236deab8ff2: /docs, /help/documentation,
@@ -82,5 +82,3 @@ Generated: 2026-07-26T22:58:46.592Z Base URL: https://app.thenewfuse.com
 - 59214064dd6c6e73bda58e2d641c0d3bbca1dc1e: /help/support, /support
 - 71e5bff5fc86dd4e76d04c524966ac39c3a9a464: /legal/privacy, /privacy
 - b3f6f24c7ba7f1d7fc02b41668a2788f1beae6a1: /legal/terms, /terms
-- 992997b562b1f5024e5d7b029a61037ce97ed14c: /terminals,
-  /visualizations/terminals

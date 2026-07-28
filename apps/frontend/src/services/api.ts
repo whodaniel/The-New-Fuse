@@ -155,6 +155,14 @@ export const apiService = {
     return response.data;
   },
 
+  patch: async <T>(url: string, data: any, config?: { silent?: boolean }) => {
+    const requestConfig: CustomAxiosRequestConfig = {
+      _silent: config?.silent,
+    };
+    const response = await api.patch<T>(url, data, requestConfig);
+    return response.data;
+  },
+
   delete: async <T>(url: string, config?: { silent?: boolean }) => {
     const requestConfig: CustomAxiosRequestConfig = {
       _silent: config?.silent,

@@ -495,17 +495,51 @@ async function readTerminalContents(windowId) {
   return readTerminalContentsShared(windowId, execFileAsync);
 }
 
+// Background keystroke injection — never raises the target window.
+// Operator Terminal Inviolability (docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md,
+// D24 in DIRECTIVES.md) forbids the cron pulse from stealing operator focus
+// or from auto-submitting prompts into operator-visible terminal composers.
+// We keep this helper only for the composer-satisfaction path (Tab/Enter) and
+// the keystroke goes to `process "Terminal"` without `activate` or
+// `set frontmost ... to true`. macOS may still deliver the keystroke only if
+// Terminal is reachable as a System Events target; the call is best-effort
+// and a failure here is logged but does not abort the pulse. If the operator
+// has Terminal on another desktop or hidden, the agent's own TUI will pick
+// up the queued text on its next render.
 async function pressTerminalKey(windowId, keyCode) {
   await execFileAsync('osascript', [
     '-e',
-    'tell application "Terminal" to activate',
-    '-e',
-    `tell application "Terminal" to set frontmost of window id ${Number(windowId)} to true`,
-    '-e',
-    'delay 0.1',
-    '-e',
     `tell application "System Events" to tell process "Terminal" to key code ${Number(keyCode)}`,
   ]);
+}
+
+// Cheap, sync check: is this terminal window currently frontmost? Used as a
+// final guard before any keystroke-side path runs, so we never type into a
+// window the operator just raised — they keep their selection, the keystroke
+// is a no-op for that tty, and the agent's own wake-up channel (Redis
+// `tnf:bus:heartbeat`) carries the heartbeat record instead.
+async function isFrontmostTerminalWindow(windowId) {
+  if (process.platform !== 'darwin') return false;
+  const script = `
+    const Terminal = Application('Terminal');
+    try {
+      const front = Terminal.frontmost();
+      const frontWin = front ? Terminal.windows().find((w) => Number(w.id()) === ${Number(windowId)}) : null;
+      JSON.stringify({ isFrontmost: Boolean(frontWin) });
+    } catch (_e) {
+      JSON.stringify({ isFrontmost: false });
+    }
+  `;
+  try {
+    const { stdout } = await execFileAsync('osascript', ['-l', 'JavaScript', '-e', script], {
+      maxBuffer: 4096,
+      timeout: 5000,
+    });
+    const parsed = JSON.parse(stdout || '{"isFrontmost":false}');
+    return Boolean(parsed.isFrontmost);
+  } catch (_error) {
+    return false;
+  }
 }
 
 async function submitPromptIfNeeded(windowId, marker, pendingPrefix) {
@@ -588,7 +622,7 @@ async function flushAnyPendingTnfPrompt(windowId) {
 
 async function injectHeartbeat(target) {
   // Authoritative attention check, done fresh right before the
-  // focus-stealing/keystroke call — time passes between the earlier JXA
+  // keystroke call — time passes between the earlier JXA
   // poll (isTtyRecentlyActive pre-filter in shouldTargetSession) and here,
   // so this re-checks against current terminal contents rather than a
   // stale snapshot. This is what actually catches "human is mid-keystroke
@@ -616,15 +650,95 @@ async function injectHeartbeat(target) {
     }
   }
 
+  // Operator Terminal Inviolability (D24): if this target is the window the
+  // operator currently has focused, skip the UI path entirely. The heartbeat
+  // record still goes out via Redis (handled by the caller), so the agent's
+  // own wake-up channel carries it without us touching the operator's screen.
+  let skippedFrontmost = false;
+  if (target.windowId) {
+    try {
+      if (await isFrontmostTerminalWindow(target.windowId)) {
+        skippedFrontmost = true;
+      }
+    } catch (_error) {
+      // Treat probe failure as non-frontmost; the keystroke helpers below
+      // are best-effort and a miss here just means we attempt the no-activate
+      // path anyway, which is the safe default.
+    }
+  }
+  if (skippedFrontmost) {
+    return {
+      agentId: target.agentId,
+      tty: target.tty,
+      windowId: target.windowId,
+      heartbeatId: null,
+      method: 'skipped-frontmost',
+      submitted: false,
+      skippedReason: 'target-window-is-operator-frontmost',
+      enterAttempts: 0,
+      queueHintPresent: false,
+      injectedAt: nowIso(),
+    };
+  }
+
   const heartbeatId = `cron-heartbeat-${normalizeTty(target.tty)}-${Date.now()}`;
   const prompt = renderPrompt(target.agentId, heartbeatId);
   const escapedPrompt = `${config.clearLine ? '\u0015' : ''}${prompt}`;
 
   // Pre-injection: non-destructive pending-prompt cleanup only.
-  if (config.clearLine && target.windowId) {
+  // Gated by allowPromptInjection so the default cron run never types into
+  // a terminal composer (D24 — Operator Terminal Inviolability). When the
+  // opt-in is off, stale TNF text from a prior opted-in run is left in the
+  // composer and will be picked up by isTypingInTerminal on the next pulse.
+  if (config.clearLine && config.allowPromptInjection && target.windowId) {
     await flushAnyPendingTnfPrompt(target.windowId);
   }
 
+  // Two-mode injection (D24 — Operator Terminal Inviolability):
+  //   - Default (allowPromptInjection=false): write the prompt text into the
+  //     tab's scrollback WITHOUT submitting. The agent's own TUI sees the
+  //     text on next render and the heartbeat record on `agent:activity`
+  //     tells it to act. Operator focus is never raised; Enter is never
+  //     pressed by this cron.
+  //   - Opt-in (allowPromptInjection=true): the legacy `do script` path with
+  //     a trailing newline. `do script` does not itself `activate`, but it
+  //     does submit the prompt when followed by `\n` — this is the
+  //     break-glass path for unattended bulk wake-ups and must be enabled
+  //     per-deployment via TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION=true
+  //     in the crontab env. The CI guard
+  //     `scripts/protocols/check-operator-terminal-inviolability.cjs`
+  //     refuses to merge any new crontab line that sets this without an
+  //     attached `challenge_rationale` referencing this protocol.
+  if (!config.allowPromptInjection) {
+    // Non-submitting, non-activating write: `do script` with a trailing
+    // literal (no `\n`) types into the tab without sending. The agent TUI
+    // renders the prompt as pending input and the operator never sees the
+    // window raise. If the operator then brings the tab to front and edits,
+    // `isTypingInTerminal` will catch it on the next pulse.
+    if (target.windowId) {
+      await execFileAsync('osascript', [
+        '-e',
+        `tell application "Terminal" to do script "${escapedPrompt.replace(/"/g, '\\"')}" in selected tab of window id ${Number(target.windowId)}`,
+      ]);
+    }
+    return {
+      agentId: target.agentId,
+      tty: target.tty,
+      windowId: target.windowId,
+      heartbeatId,
+      method: 'terminal-do-script-pending',
+      submitted: false,
+      skippedReason: 'prompt-injection-not-allowed-text-only',
+      enterAttempts: 0,
+      queueHintPresent: false,
+      injectedAt: nowIso(),
+    };
+  }
+
+  // Opt-in path: legacy submit. Still does not `activate` (Terminal raises
+  // the tab only when the operator has Terminal.app as the frontmost app
+  // already and we don't touch that). Keep the verification/flush dance so
+  // existing Codex/Claude Code composer quirks still resolve correctly.
   // Using Terminal 'do script' for reliable type-and-submit in Codex
   await execFileAsync('osascript', [
     '-e',
@@ -635,7 +749,7 @@ async function injectHeartbeat(target) {
   let queued = false;
   let submitted = true;
   let enterAttempts = 0;
-  
+
   if (config.verifyQueueHints && target.windowId) {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -644,7 +758,7 @@ async function injectHeartbeat(target) {
         heartbeatId,
         '› TNF heartbeat'
       ));
-      
+
       // Secondary aggressive flush if first pass failed
       if (queueHintPresent) {
         const cleanup = await flushAnyPendingTnfPrompt(target.windowId);
@@ -662,7 +776,7 @@ async function injectHeartbeat(target) {
     tty: target.tty,
     windowId: target.windowId,
     heartbeatId,
-    method: 'terminal-do-script',
+    method: 'terminal-do-script-submitted',
     submitted: config.verifyQueueHints ? submitted || !queueHintPresent : true,
     enterAttempts,
     queueHintPresent,
