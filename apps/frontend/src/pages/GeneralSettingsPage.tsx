@@ -98,7 +98,7 @@ export default function GeneralSettings() {
     setSettings((prev) => {
       const keys = path.split('.');
       const newSettings = { ...prev };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       let current: Record<string, any> = newSettings;
 
       for (let i = 0; i < keys.length - 1; i++) {
