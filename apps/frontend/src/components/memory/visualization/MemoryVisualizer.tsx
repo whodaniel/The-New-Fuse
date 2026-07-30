@@ -201,10 +201,10 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
       </div>
 
       <div className="absolute top-4 right-4 z-10 flex gap-1">
-        <VisualizerAction icon={<ZoomIn className="w-4 h-4" />} />
-        <VisualizerAction icon={<ZoomOut className="w-4 h-4" />} />
-        <VisualizerAction icon={<Maximize className="w-4 h-4" />} />
-        <VisualizerAction icon={<Share2 className="w-4 h-4" />} />
+        <VisualizerAction icon={<ZoomIn className="w-4 h-4" />} ariaLabel="Zoom in" />
+        <VisualizerAction icon={<ZoomOut className="w-4 h-4" />} ariaLabel="Zoom out" />
+        <VisualizerAction icon={<Maximize className="w-4 h-4" />} ariaLabel="Maximize" />
+        <VisualizerAction icon={<Share2 className="w-4 h-4" />} ariaLabel="Share" />
       </div>
 
       <svg ref={svgRef} className="w-full h-full" style={{ background: 'transparent' }} />
@@ -221,8 +221,12 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
   );
 };
 
-const VisualizerAction: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
-  <button className="p-2 rounded-md bg-transparent/5 border border-white/10 text-gray-400 hover:text-white hover:bg-transparent/10 transition-all">
+const VisualizerAction: React.FC<{ icon: React.ReactNode; ariaLabel: string }> = ({ icon, ariaLabel }) => (
+  <button
+    className="p-2 rounded-md bg-transparent/5 border border-white/10 text-gray-400 hover:text-white hover:bg-transparent/10 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+    aria-label={ariaLabel}
+    title={ariaLabel}
+  >
     {icon}
   </button>
 );
