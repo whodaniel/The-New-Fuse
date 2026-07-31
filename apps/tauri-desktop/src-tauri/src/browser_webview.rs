@@ -1,8 +1,8 @@
 // The New Fuse - auxiliary browser WebView
 //
 // Opens a separate Tauri WebviewWindow at a URL for convenience preview.
-// This is NOT the Chromium session controlled by the TNF Browser extension
-// on :7331 — cookies, tabs, and DOM actions do not apply here. Prefer the
+// This is NOT the Chromium session controlled by agent-browser —
+// cookies, tabs, and DOM actions do not apply here. Prefer the
 // screenshot / Discover surface for the controlled session.
 
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};

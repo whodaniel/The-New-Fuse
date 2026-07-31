@@ -74,8 +74,8 @@ export const BrowserControlPanel: React.FC<BrowserControlPanelProps> = ({
       <header className="panel-header">
         <h2>TNF Browser</h2>
         <p>
-          Live DOM control over ws://127.0.0.1:{tnf.status?.port || 7331} — discover, click, html,
-          screenshot.
+          Live DOM control via agent-browser — discover, click, html, screenshot. Legacy :7331 is
+          opt-in with TNF_BROWSER_BACKEND=legacy.
         </p>
       </header>
 
@@ -84,7 +84,7 @@ export const BrowserControlPanel: React.FC<BrowserControlPanelProps> = ({
         <div className="status-grid">
           <StatusPill label="Server" ok={listening} />
           <StatusPill label="Client" ok={connected} />
-          <StatusPill label="Extension" ok={runtime} />
+          <StatusPill label="Runtime" ok={runtime} />
         </div>
         <div className="panel-row wrap">
           {!listening && (
@@ -120,7 +120,7 @@ export const BrowserControlPanel: React.FC<BrowserControlPanelProps> = ({
         {!listening && (
           <p className="panel-hint">
             Or from a terminal:{' '}
-            <code>{tnf.startResult?.command || 'node packages/tnf-browser/bin/cli.js start'}</code>
+            <code>{tnf.startResult?.command || 'agent-browser open about:blank --headed'}</code>
           </p>
         )}
         {(tnf.lastError || tnf.status?.lastError) && (

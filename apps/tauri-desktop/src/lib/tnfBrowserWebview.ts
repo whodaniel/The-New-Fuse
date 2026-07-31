@@ -5,7 +5,7 @@ import { invoke } from '@tauri-apps/api/core';
  *
  * These wrap Rust `browser_webview` commands that open a separate Tauri
  * WebviewWindow. That window is NOT the Chromium session controlled by TNF
- * Browser on :7331 — it has its own cookies and does not receive protocol
+ * Browser on the agent-browser runtime — it has its own cookies and does not receive protocol
  * actions. Prefer screenshots / Discover for the controlled session.
  */
 

@@ -30,9 +30,10 @@ function resolveNavigationInput(raw: string): string | null {
 /**
  * TNF Browser operator console.
  *
- * There is exactly one transport: the Chromium session driven over :7331. When
- * it is not connected there is nothing to drive, so navigation is disabled
- * rather than falling back to a surface that cannot act.
+ * Drives a real Chromium session through agent-browser (default). Legacy
+ * packages/tnf-browser on :7331 remains available via TNF_BROWSER_BACKEND=legacy.
+ * When the runtime is not connected there is nothing to drive, so navigation is
+ * disabled rather than falling back to a surface that cannot act.
  */
 const WebBrowser: React.FC = () => {
   const embedded = useComputerUseEmbed();
@@ -249,7 +250,7 @@ const WebBrowser: React.FC = () => {
                   <p className="lede">
                     {tnfConnected
                       ? 'Drive the real Chromium session through the live DOM — discover, click, type, screenshot. Prefer inspect → act → verify.'
-                      : 'This console drives a real Chromium session over :7331. Nothing here can act until that runtime is connected.'}
+                      : 'This console drives a real Chromium session via agent-browser. Nothing here can act until that runtime is connected.'}
                   </p>
 
                   {tnfConnected && (
@@ -287,7 +288,7 @@ const WebBrowser: React.FC = () => {
 
                   <div className="startup-hint">
                     {tnfConnected ? (
-                      <span>Connected to TNF Browser on :7331</span>
+                      <span>Connected to agent-browser</span>
                     ) : tnfListening ? (
                       <button type="button" onClick={() => void tnf.connect()}>
                         Connect to running TNF Browser
@@ -353,8 +354,9 @@ const WebBrowser: React.FC = () => {
                     <div className="live-placeholder">
                       <p>
                         This panel shows screenshots of the controlled Chromium tab — not a live
-                        embedded browser. Discover / Screenshot drive the real session on :7331.
-                        “Open Separate Window” is an unrelated WebView with its own cookies.
+                        embedded browser. Discover / Screenshot drive the real agent-browser
+                        session. “Open Separate Window” is an unrelated WebView with its own
+                        cookies.
                       </p>
                       <button type="button" onClick={() => void tnf.takeScreenshot()}>
                         Take Screenshot
@@ -710,7 +712,7 @@ const WebBrowser: React.FC = () => {
     <PageShell
       className="page-fill"
       title="Browser Control"
-      subtitle="Operator console for the Chromium session on :7331 — not a built-in browser"
+      subtitle="Operator console for the agent-browser Chromium session — not a built-in browser"
       actions={<span className={`env-badge ${statusClass}`}>{statusLabel}</span>}
     >
       <SynergyStatusBar />

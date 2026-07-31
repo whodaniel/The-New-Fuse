@@ -34,7 +34,7 @@ TNF already had better pieces:
 scrape / read public URL  → Crawl4AI (web_fetch / scrape_website_crawl4ai)
 interact / auth UI        → agent-browser (tnf browser / browser_interact)
 reuse signed-in cookies   → browser-session-auth-bridge → --state / state load
-Tauri legacy panel only   → tnf browser legacy-*
+Tauri desktop panel       → agent-browser (default); TNF_BROWSER_BACKEND=legacy for :7331
 ```
 
 ## Operator commands
@@ -55,8 +55,11 @@ tnf browser start --state /tmp/playwright_state_app.example.com.json \
 
 ## Compatibility
 
+- Tauri Browser Control defaults to **agent-browser** (Vite `/__tnf-browser`
+  bridge + Rust commands). Opt into the old extension/WS stack with
+  `TNF_BROWSER_BACKEND=legacy`.
 - `tnf browser legacy-start|legacy-exec|legacy-stop` still wraps
-  `packages/tnf-browser` for Tauri desktop bridge consumers.
+  `packages/tnf-browser` for that legacy path.
 - `.agent/skills/webpilot` is retained as a **deprecated redirect** so old
   prompts do not resurrect `h17-webpilot`.
 

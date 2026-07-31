@@ -1,9 +1,10 @@
 /**
- * Vite middleware that bridges the desktop UI to TNF Browser (ws://127.0.0.1:7331).
+ * Vite middleware that bridges the desktop UI to the TNF interactive browser.
  *
- * The TNF Browser server rejects browser Origins, so the UI must not open a
- * WebSocket from the page. This Node-side bridge connects without Origin and
- * exposes a same-origin HTTP API under /__tnf-browser/*.
+ * Default backend is agent-browser (no :7331 extension/WebSocket). Set
+ * TNF_BROWSER_BACKEND=legacy to use the old packages/tnf-browser runtime on
+ * ws://127.0.0.1:7331. The legacy server rejects browser Origins, so that path
+ * still connects from Node without an Origin header.
  */
 import { spawn, type ChildProcess } from 'node:child_process';
 import fs from 'node:fs';
@@ -14,6 +15,13 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Connect, Plugin } from 'vite';
+
+import {
+  preferredBackend,
+  runMappedCommand,
+  startAgentBrowser,
+  statusAgentBrowser,
+} from './agentBrowserBackend';
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -239,15 +247,24 @@ function resolveCliPath(): string {
   return path.resolve(__dirname, '../../../packages/tnf-browser/bin/cli.js');
 }
 
-function startDaemon(): { ok: boolean; message: string; command: string } {
+async function startDaemon(): Promise<{
+  ok: boolean;
+  message: string;
+  command: string;
+  already_running?: boolean;
+}> {
+  if (preferredBackend() === 'agent-browser') {
+    return startAgentBrowser('about:blank');
+  }
+
   const cli = resolveCliPath();
   const command = `node ${cli} start`;
 
   if (state.daemon && !state.daemon.killed) {
-    return { ok: true, message: 'TNF Browser daemon already spawning', command };
+    return { ok: true, message: 'Legacy TNF Browser daemon already spawning', command };
   }
   if (!fs.existsSync(cli)) {
-    return { ok: false, message: `CLI not found at ${cli}`, command };
+    return { ok: false, message: `Legacy CLI not found at ${cli}`, command };
   }
   try {
     const child = spawn(process.execPath, [cli, 'start'], {
@@ -259,7 +276,7 @@ function startDaemon(): { ok: boolean; message: string; command: string } {
     state.daemon = child;
     return {
       ok: true,
-      message: 'TNF Browser start requested (opens managed Chromium + WS on :7331)',
+      message: 'Legacy TNF Browser start requested (extension + WS on :7331)',
       command,
     };
   } catch (error) {
@@ -306,6 +323,10 @@ export function tnfBrowserBridgePlugin(): Plugin {
           }
 
           if (pathname === `${BASE}/status` && req.method === 'GET') {
+            if (preferredBackend() === 'agent-browser') {
+              sendJson(res, 200, await statusAgentBrowser(state.lastError));
+              return;
+            }
             const listening = await portOpen();
             sendJson(res, 200, {
               listening,
@@ -315,16 +336,33 @@ export function tnfBrowserBridgePlugin(): Plugin {
               lastError: state.lastError,
               port: DEFAULT_PORT,
               tokenPath: TOKEN_PATH,
+              backend: 'legacy',
             });
             return;
           }
 
           if (pathname === `${BASE}/connect` && req.method === 'POST') {
+            if (preferredBackend() === 'agent-browser') {
+              const status = await statusAgentBrowser(state.lastError);
+              if (!status.listening) {
+                throw new Error(
+                  'agent-browser is not available. Run Start Runtime or install agent-browser.'
+                );
+              }
+              sendJson(res, 200, {
+                ok: true,
+                connected: true,
+                runtimeConnected: true,
+                backend: 'agent-browser',
+              });
+              return;
+            }
             await connect();
             sendJson(res, 200, {
               ok: true,
               connected: true,
               runtimeConnected: state.runtimeConnected,
+              backend: 'legacy',
             });
             return;
           }
@@ -336,7 +374,7 @@ export function tnfBrowserBridgePlugin(): Plugin {
           }
 
           if (pathname === `${BASE}/start` && req.method === 'POST') {
-            const result = startDaemon();
+            const result = await startDaemon();
             sendJson(res, result.ok ? 200 : 500, result);
             return;
           }
@@ -376,11 +414,16 @@ export function tnfBrowserBridgePlugin(): Plugin {
               sendJson(res, 400, { error: 'action required' });
               return;
             }
+            if (preferredBackend() === 'agent-browser') {
+              const result = await runMappedCommand(action, body.params || {});
+              sendJson(res, 200, { ok: true, result, backend: 'agent-browser' });
+              return;
+            }
             if (!state.ws || state.ws.readyState !== WebSocket.OPEN) {
               await connect();
             }
             const result = await command(action, body.params || {}, body.tabId ?? null);
-            sendJson(res, 200, { ok: true, result });
+            sendJson(res, 200, { ok: true, result, backend: 'legacy' });
             return;
           }
 

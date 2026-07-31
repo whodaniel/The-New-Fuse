@@ -5,6 +5,7 @@ mod bridge;
 mod antigravity;
 mod oagi;
 mod browser_webview;
+mod agent_browser_backend;
 mod tnf_browser_bridge;
 mod service_lifecycle;
 
@@ -555,7 +556,7 @@ pub fn run() {
             browser_webview::focus_browser_webview,
             browser_webview::close_browser_webview,
             browser_webview::browser_webview_exists,
-            // TNF Browser protocol bridge (:7331)
+            // TNF Browser protocol bridge (agent-browser default; legacy :7331 opt-in)
             tnf_browser_bridge::tnf_browser_status,
             tnf_browser_bridge::tnf_browser_connect,
             tnf_browser_bridge::tnf_browser_disconnect,

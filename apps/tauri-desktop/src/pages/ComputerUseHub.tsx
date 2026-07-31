@@ -26,7 +26,7 @@ const ComputerUseHub: React.FC = () => {
   const subtitle = useMemo(
     () =>
       tab === 'browser'
-        ? 'Agent browser runtime on :7331 — operator console, not a consumer web browser'
+        ? 'Agent browser via agent-browser — operator console, not a consumer web browser'
         : 'Screen capture and OS automation for agent computer-use',
     [tab]
   );

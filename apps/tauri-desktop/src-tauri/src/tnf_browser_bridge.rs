@@ -1,6 +1,8 @@
-// TNF Browser WebSocket bridge (native, no Origin header).
-// Lets the desktop UI talk to ws://127.0.0.1:7331 without being rejected
-// by the browser Origin gate in packages/tnf-browser.
+// TNF Browser bridge (native).
+//
+// Default backend is agent-browser (no :7331). Set TNF_BROWSER_BACKEND=legacy
+// for the old packages/tnf-browser WebSocket path. That legacy server rejects
+// browser Origins, so the WS client here connects without an Origin header.
 
 use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
@@ -273,8 +275,22 @@ impl TnfBrowserBridge {
 
 #[tauri::command]
 pub async fn tnf_browser_status(
+    app: AppHandle,
     bridge: State<'_, Arc<TnfBrowserBridge>>,
 ) -> Result<TnfBrowserStatus, String> {
+    if crate::agent_browser_backend::preferred_backend() == "agent-browser" {
+        let last_error = bridge.inner.lock().await.last_error.clone();
+        let status = crate::agent_browser_backend::status_agent_browser(last_error, Some(&app));
+        return Ok(TnfBrowserStatus {
+            listening: status.listening,
+            has_token: status.has_token,
+            connected: status.connected,
+            runtime_connected: status.runtime_connected,
+            last_error: status.last_error,
+            port: status.port,
+            token_path: status.token_path,
+        });
+    }
     Ok(bridge.status().await)
 }
 
@@ -373,12 +389,22 @@ fn resolve_node() -> Option<PathBuf> {
 
 #[tauri::command]
 pub async fn tnf_browser_start(app: AppHandle) -> Result<TnfBrowserStartResult, String> {
-    let manual = "node packages/tnf-browser/bin/cli.js start".to_string();
+    if crate::agent_browser_backend::preferred_backend() == "agent-browser" {
+        let started = crate::agent_browser_backend::start_agent_browser(&app);
+        return Ok(TnfBrowserStartResult {
+            ok: started.ok,
+            message: started.message,
+            command: started.command,
+            already_running: started.already_running,
+        });
+    }
+
+    let manual = "tnf browser legacy-start".to_string();
 
     if port_open(DEFAULT_PORT).await {
         return Ok(TnfBrowserStartResult {
             ok: true,
-            message: format!("TNF Browser already listening on :{}", DEFAULT_PORT),
+            message: format!("Legacy TNF Browser already listening on :{}", DEFAULT_PORT),
             command: manual,
             already_running: true,
         });
@@ -422,7 +448,7 @@ pub async fn tnf_browser_start(app: AppHandle) -> Result<TnfBrowserStartResult, 
         Ok(child) => Ok(TnfBrowserStartResult {
             ok: true,
             message: format!(
-                "TNF Browser starting (pid {}) — opens managed Chromium, then :{}",
+                "Legacy TNF Browser starting (pid {}) — opens managed Chromium, then :{}",
                 child.id(),
                 DEFAULT_PORT
             ),
@@ -443,6 +469,19 @@ pub async fn tnf_browser_connect(
     app: AppHandle,
     bridge: State<'_, Arc<TnfBrowserBridge>>,
 ) -> Result<bool, String> {
+    if crate::agent_browser_backend::preferred_backend() == "agent-browser" {
+        if !crate::agent_browser_backend::agent_browser_available(Some(&app)) {
+            return Err(
+                "agent-browser is not available. Run Start Runtime or install agent-browser."
+                    .into(),
+            );
+        }
+        let mut inner = bridge.inner.lock().await;
+        inner.connected = true;
+        inner.runtime_connected = true;
+        inner.last_error = None;
+        return Ok(true);
+    }
     bridge.connect(app).await?;
     Ok(true)
 }
@@ -463,5 +502,8 @@ pub async fn tnf_browser_command(
     tab_id: Option<i64>,
     bridge: State<'_, Arc<TnfBrowserBridge>>,
 ) -> Result<Value, String> {
+    if crate::agent_browser_backend::preferred_backend() == "agent-browser" {
+        return crate::agent_browser_backend::run_mapped_command(&app, &action, params);
+    }
     bridge.command(app, action, params, tab_id).await
 }

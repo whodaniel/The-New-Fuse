@@ -96,12 +96,12 @@ export function useTnfBrowser() {
 
   const connect = useCallback(async () => {
     setState((prev) => ({ ...prev, connecting: true, lastError: null }));
-    appendLog('Connecting to TNF Browser (:7331)...');
+    appendLog('Connecting to agent-browser runtime...');
     try {
       await TnfBrowserService.connect();
       const status = await refreshStatus();
       setState((prev) => ({ ...prev, connecting: false, status }));
-      appendLog('Connected to TNF Browser');
+      appendLog('Connected to agent-browser');
       await refreshTabs();
       return true;
     } catch (error) {
@@ -119,13 +119,13 @@ export function useTnfBrowser() {
   }, [appendLog, refreshStatus]);
 
   const startRuntime = useCallback(async () => {
-    appendLog('Requesting TNF Browser start...');
+    appendLog('Requesting agent-browser start...');
     setState((prev) => ({ ...prev, starting: true, startResult: null }));
     try {
       const result = await TnfBrowserService.startRuntime();
       appendLog(result.message);
       setState((prev) => ({ ...prev, starting: false, startResult: result }));
-      // The runtime opens Chromium before binding :7331 — poll past the cold start.
+      // agent-browser may take a moment to open Chromium — poll past cold start.
       [1500, 4000, 8000].forEach((delay) =>
         setTimeout(() => {
           void refreshStatus();
@@ -137,7 +137,7 @@ export function useTnfBrowser() {
       const result = {
         ok: false,
         message,
-        command: 'node packages/tnf-browser/bin/cli.js start',
+        command: 'agent-browser open about:blank --headed',
       };
       appendLog(`Start failed: ${message}`);
       setState((prev) => ({ ...prev, starting: false, startResult: result }));
@@ -387,7 +387,7 @@ export function useTnfBrowser() {
       });
 
       offRuntime = TnfBrowserService.on<{ connected?: boolean }>('runtime', (data) => {
-        appendLog(data?.connected ? 'Extension connected' : 'Extension disconnected');
+        appendLog(data?.connected ? 'Runtime connected' : 'Runtime disconnected');
         void refreshStatus();
         if (data?.connected) void refreshTabs();
       });

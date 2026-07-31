@@ -67,7 +67,7 @@ export interface TnfBrowserStartResult {
   already_running?: boolean;
 }
 
-const FALLBACK_START_COMMAND = 'node packages/tnf-browser/bin/cli.js start';
+const FALLBACK_START_COMMAND = 'agent-browser open about:blank --headed';
 
 const DEV_BASE = '/__tnf-browser';
 const TAURI_EVENT = 'tnf-browser-event';
@@ -107,7 +107,7 @@ function normalizeStatus(raw: Record<string, unknown> | TauriStatus): TnfBrowser
     connected: Boolean(d.connected),
     runtimeConnected: Boolean(d.runtimeConnected),
     lastError: (d.lastError as string | null) ?? null,
-    port: Number(d.port || 7331),
+    port: Number(d.port ?? 0),
     tokenPath: String(d.tokenPath || ''),
   };
 }
