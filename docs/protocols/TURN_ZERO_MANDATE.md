@@ -109,10 +109,17 @@ When `TNF_SESSION_MODE=swarm`, execute the full 7-step sequence below.
 4. Ingest codebase structure:
    - `apps/frontend/src/data/codebase_map.json`
 5. Verify integrity:
-   - confirm current Merkle/root integrity artifacts if required by active
-     protocol
+   - parse `KNOWLEDGE_TREE.json` and confirm it carries a Merkle/root hash.
+     Absent artifact reports `skipped` (with reason); unparseable artifact
+     reports `failed`. It must never report success without having parsed.
 6. Synchronize repo:
-   - run `git pull --rebase` (or `--autostash` when local edits are present)
+   - **Measure by default; do not mutate.** Report branch, upstream, and
+     ahead/behind counts, and raise a warning when an in-progress
+     merge/rebase/cherry-pick is detected (an interrupted merge sat unnoticed
+     in this repo for three days; Turn Zero must surface it at session start).
+   - Set `TNF_TURN_ZERO_AUTOPULL=1` to opt into `git pull --rebase --autostash`.
+     Pulling unconditionally at session start is unsafe: rebasing into a
+     half-resolved merge compounds the damage rather than reporting it.
 7. **ASSIMILATE_CHECK**: Scan session handoff work summary, recent git diff, and
    any failure patterns from `~/.hermes/cron/output/` for:
    - Systemic issues (bugs, broken tools, missing capabilities) → create

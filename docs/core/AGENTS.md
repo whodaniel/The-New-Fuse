@@ -90,6 +90,88 @@ authenticity. If you're about to run `git commit` or `git push` and no live
 operator confirmation exists in the current session for that specific action,
 stop and ask first.
 
+## Build Before You Merge
+
+Do not merge to `main` on the strength of review alone. Run the build.
+
+Incident (2026-07-28, PR #71): a PR was assembled by cherry-picking files from
+an automation commit. The file list was correct, the diffstat looked right, and
+`mergeable=CLEAN`. All of that was verified and reported as correct. It was
+merged, and `main` could not compile — a file imported `@/services/authSession`,
+a module that exists only on the source branch. The break was discovered by a
+build that ran _after_ the merge, during deploy preparation.
+
+File lists, diffstats, and merge status cannot detect wrong file _contents_.
+Compiling can, in one step. `.github/workflows/ci-build.yml` now enforces this
+on PRs touching `apps/**` or `packages/**`.
+
+When a full build is not possible locally (this repo's Vite build is
+memory-hungry), `tsc --noEmit` on the affected app is the minimum bar — it is
+exactly what catches a missing or renamed module.
+
+## Porting Work Between Branches
+
+Never port work by copying files out of a commit made on another branch.
+
+Files carry everything that branch changed, not just the change you want. In the
+#71 incident, five files each carried unrelated work:
+
+| File                                         | Intended              | Actually carried                                                                     |
+| -------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------ |
+| `services/api.ts`                            | add a `patch` method  | entire auth interceptor swapped to `authSession` + `withCredentials` + refresh-retry |
+| `controllers/auth.controller.ts`             | widen a type          | ~94 lines of httpOnly cookie auth                                                    |
+| `app.module.ts`                              | register one service  | two modules that do not exist on `main`                                              |
+| `controllers/available-models.controller.ts` | fix a type annotation | a 196-line file that never existed on `main`                                         |
+| `core/utils/client-security.ts`              | one CSP line          | a Prettier reformat of the whole file                                                |
+
+Do this instead, in order of preference:
+
+1. **Branch from the target and redo the edit.** Cheapest and safest.
+2. If you must port, diff against the **target baseline** and read every line:
+   `git diff <target> <candidate> -- <path>`. A per-file `--numstat` that is
+   larger than your intended change is the tell — `api.ts` showed `+50/-45` for
+   what should have been `+8/-0`.
+
+Never treat "the file list is correct" as verification. It was correct in #71.
+
+## Deploys Are Not Done When They Are Merged
+
+`thenewfuse-main` (serving `app.thenewfuse.com`, `thenewfuse.com`,
+`www.thenewfuse.com`) is a Cloudflare Pages **Direct Upload** project with no
+Git integration, as are all other Pages projects on the account. Cloudflare does
+not permit converting a Direct Upload project to Git, so **merging to `main`
+does not deploy anything**.
+
+Two consequences:
+
+- Deploy with `scripts/deployment/deploy-frontend.sh`. It refuses to upload a
+  dirty tree or a commit that is not an ancestor of `origin/main`, and records
+  the commit hash with the deployment.
+- A deploy is finished when the live site serves the new artifact, not when the
+  upload command exits 0. `scripts/deployment/verify-production.mjs` asserts the
+  entry bundle hash changed and that the app's API contract holds.
+
+This is not theoretical: AI Assist posted to `/orchestration/chat` while the API
+served `/api/orchestration/chat`, returning 404 on every page for an unknown
+period, and the fix was later merged to `main` and reported as shipped while
+production continued serving a two-day-old bundle.
+
+## Heartbeat Prompts and Provenance
+
+`scripts/runtime/terminal-heartbeat-pulse.cjs` writes its prompt into a terminal
+composer and, by default, does **not** submit it. The operator may then append
+their own text and submit both together.
+
+The template itself is correctly scoped — it states that state files are
+informational and that high-impact actions still need live confirmation. But
+once appended text is submitted with it, an agent cannot distinguish the
+machine-authored portion from the operator-authored portion in the same turn.
+
+Therefore: treat any _action verb_ arriving in a heartbeat turn as operator
+intent that still requires confirmation before a high-impact action. When in
+doubt, restate the action and ask. Confirming costs one turn; an unattended
+merge or deploy can cost a production outage.
+
 ## OpenClaw Operator Policy
 
 When a task involves OpenClaw or other Claw-type agents:
