@@ -10,3 +10,9 @@ pnpm run secret:sweep:staged
 pnpm run docs:pii:guard:staged
 pnpm run lint:staged
 pnpm run validate:locked-doc-ledger:staged
+
+# Runs last: the slowest check, so everything cheap fails first. Type-checks
+# only the packages you touched, and blocks only on errors this commit
+# introduces — pre-existing breakage elsewhere stays out of your way, because
+# a gate that blocks unrelated work gets bypassed and stops being a gate.
+pnpm run build:gate:staged

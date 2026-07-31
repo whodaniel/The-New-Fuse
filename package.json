@@ -387,7 +387,8 @@
     "contracts:generate": "pnpm --filter @the-new-fuse/protocol-contracts run generate:all",
     "contracts:check": "pnpm --filter @the-new-fuse/protocol-contracts run check",
     "contracts:check:drift": "pnpm --filter @the-new-fuse/protocol-contracts run check:drift",
-    "merge:guard": "node scripts/security/merge-guard.cjs"
+    "merge:guard": "node scripts/security/merge-guard.cjs",
+    "build:gate:staged": "node scripts/protocols/build-gate.cjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
