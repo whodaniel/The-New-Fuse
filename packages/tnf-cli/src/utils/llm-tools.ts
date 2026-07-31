@@ -50,7 +50,8 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
       properties: {
         command: {
           type: 'string',
-          description: 'Shell command line to execute. Multi-line allowed; pass as a single string.',
+          description:
+            'Shell command line to execute. Multi-line allowed; pass as a single string.',
         },
         cwd: {
           type: 'string',
@@ -102,12 +103,14 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
     name: 'search_files',
     category: 'search',
     defaultEnabled: true,
-    description:
-      'Search file contents by regex or list files by glob. Equivalent to ripgrep / fd.',
+    description: 'Search file contents by regex or list files by glob. Equivalent to ripgrep / fd.',
     parameters: {
       type: 'object',
       properties: {
-        pattern: { type: 'string', description: 'Regex (for content) or glob (for files: target="files").' },
+        pattern: {
+          type: 'string',
+          description: 'Regex (for content) or glob (for files: target="files").',
+        },
         target: {
           type: 'string',
           enum: ['content', 'files'],
@@ -141,7 +144,7 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
     category: 'web',
     defaultEnabled: true,
     description:
-      'Fetch a single HTTP/HTTPS URL and return its text content (HTML stripped to plain text, capped at 200KB).',
+      'Read a public HTTP/HTTPS URL. Prefers the local Crawl4AI service for LLM-optimized Markdown and falls back to a direct text fetch.',
     parameters: {
       type: 'object',
       properties: {
@@ -149,6 +152,66 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
         maxBytes: { type: 'integer', description: 'Default 200_000, max 2_000_000.' },
       },
       required: ['url'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'browser_interact',
+    category: 'web',
+    defaultEnabled: true,
+    description:
+      'Interact with a stateful browser through agent-browser. Use for authenticated pages, navigation, forms, clicks, and other UI actions. Use web_fetch instead for read-only public URLs.',
+    parameters: {
+      type: 'object',
+      properties: {
+        operation: {
+          type: 'string',
+          enum: [
+            'open',
+            'snapshot',
+            'click',
+            'fill',
+            'type',
+            'press',
+            'wait',
+            'get',
+            'back',
+            'forward',
+            'reload',
+            'close',
+            'state_load',
+            'state_save',
+            'profiles',
+          ],
+        },
+        target: {
+          type: 'string',
+          description: 'URL, element reference/selector, key, wait condition, or state-file path.',
+        },
+        value: {
+          type: 'string',
+          description: 'Text/value used by fill, type, and supported get operations.',
+        },
+        profile: {
+          type: 'string',
+          description:
+            'Chrome profile name (for a read-only snapshot such as Default) or persistent agent profile directory.',
+        },
+        stateFile: {
+          type: 'string',
+          description:
+            'Playwright-compatible storage-state file exported by browser-session-auth-bridge.',
+        },
+        session: {
+          type: 'string',
+          description: 'Optional isolated agent-browser session name.',
+        },
+        headed: {
+          type: 'boolean',
+          description: 'Show the browser window when opening. Defaults to true for TNF local runs.',
+        },
+      },
+      required: ['operation'],
       additionalProperties: false,
     },
   },
@@ -196,7 +259,7 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
       required: ['query'],
       additionalProperties: false,
     },
-  }
+  },
 ]) as readonly BuiltinTool[];
 
 /**

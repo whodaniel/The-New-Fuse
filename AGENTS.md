@@ -173,9 +173,17 @@ implementation — determines whether the system becomes brittle.
 
 ## Skills Available
 
-- **tnf-browser** — TNF's assimilated CDP-free browser automation via Chrome
-  extension + WebSocket relay. Use for navigating, scraping, form-filling, any
-  real browser task. CLI: `tnf browser`.
+- **agent-browser** — Primary interactive browser automation. Use for click,
+  type, navigate, and authenticated UI work. CLI: `tnf browser` (wraps
+  agent-browser). Prefer `--profile` / `--state` over Dev-mode extension Chrome.
+- **crawl4ai** — Read-only public URL scrape to Fit Markdown. Prefer over
+  browser automation when no interaction is required. Start with
+  `pnpm run tnf:start:crawler:local`.
+- **browser-session-auth-bridge** — Export signed-in browser cookies into a
+  Playwright storageState file for agent-browser / Playwright reuse.
+- **tnf-browser (legacy)** — Extension/WebSocket runtime retained for Tauri
+  bridge compatibility only (`tnf browser legacy-*`). Do not prefer for new
+  agent work. The deprecated `webpilot` skill redirects here / to agent-browser.
 - **sspdf** — Declarative PDF generation engine. JSON source + theme = PDF. Use
   for invoices, reports, articles, any printable document.
 - **sspdf-theme-generator** — Generate sspdf theme files from brand specs. Use

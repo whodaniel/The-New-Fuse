@@ -4,7 +4,7 @@
  * `tnf agents run --task "..."` — long-running autonomous agent loop.
  *
  * Wires LLMClient.chatCompleteWithTools to a default executor that
- * implements the 9 built-in tool definitions declared in
+ * implements the built-in tool definitions declared in
  * `utils/llm-tools.ts`. The agent can run indefinitely (no iteration
  * cap by default) and emits:
  *
@@ -31,6 +31,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
 
+import {
+  AGENT_BROWSER_OPERATIONS,
+  type AgentBrowserOperation,
+  normalizeAgentBrowserOperation,
+  runAgentBrowser,
+} from '../utils/browser-routing.js';
 import { resolvePrompt } from '../utils/prompt-input.js';
 
 const execFileAsync = promisify(execFile);
@@ -78,7 +84,7 @@ interface JsonResult {
 }
 
 /**
- * Default executor — implements each of the 9 builtin tools against
+ * Default executor — implements each builtin tool against
  * real host facilities. Failures are caught and returned as a
  * structured string so the LLM can self-correct on the next iteration
  * instead of crashing the loop.
@@ -174,11 +180,51 @@ async function defaultExecutor(
       }
       case 'web_search':
       case 'web_fetch': {
-        // The web tools have a webpilot bridge preference (Chrome extension
-        // + WebSocket relay) when available; until that bridge is wired
-        // here we default to the OAuth-free DuckDuckGo HTML paste fetch
-        // so the agent is never blocked in offline-shell mode.
+        // Public read-only retrieval belongs to Crawl4AI/direct HTTP. Stateful
+        // or authenticated interaction is handled by browser_interact below.
         result = await fallbackWeb(name, args, ctx);
+        break;
+      }
+      case 'browser_interact': {
+        let operation: AgentBrowserOperation;
+        try {
+          operation = normalizeAgentBrowserOperation(String(args.operation ?? ''));
+        } catch {
+          return {
+            ok: false,
+            error: `browser_interact: unsupported operation "${String(args.operation ?? '')}"`,
+            supportedOperations: AGENT_BROWSER_OPERATIONS,
+          };
+        }
+        if (!ctx.quiet) {
+          console.error(
+            `[agents-run] browser_interact: ${operation} ${truncate(String(args.target ?? ''), 180)}`
+          );
+        }
+        const browserResult = await runAgentBrowser(
+          ctx.cwd,
+          {
+            operation,
+            target: args.target ? String(args.target) : undefined,
+            value: args.value ? String(args.value) : undefined,
+            profile: args.profile
+              ? String(args.profile)
+              : process.env.TNF_BROWSER_PROFILE || process.env.AGENT_BROWSER_PROFILE,
+            stateFile: args.stateFile ? String(args.stateFile) : undefined,
+            session: args.session ? String(args.session) : undefined,
+            headed: args.headed === undefined ? operation === 'open' : Boolean(args.headed),
+            json: true,
+          },
+          { cwd: ctx.cwd }
+        );
+        result = {
+          ok: browserResult.code === 0,
+          engine: 'agent-browser',
+          operation,
+          exitCode: browserResult.code,
+          stdout: truncate(browserResult.stdout, 64_000),
+          stderr: truncate(browserResult.stderr, 16_000),
+        };
         break;
       }
       case 'list_skills': {
@@ -298,10 +344,9 @@ async function runSearch(
 }
 
 /**
- * Fallback web implementation — works without API keys. Production
- * agents will get better results via the webpilot bridge (existing
- * chrome extension + WebSocket relay), but this fallback ensures the
- * CLI is never stranded in a fully offline shell.
+ * Public-web implementation that requires no API keys. URL reads prefer the
+ * existing local Crawl4AI service and degrade to direct HTTP; search uses
+ * DuckDuckGo HTML. Interactive/authenticated work is intentionally separate.
  */
 async function fallbackWeb(
   name: string,
@@ -346,6 +391,46 @@ async function fallbackWeb(
       2_000_000
     );
     if (!u) return { ok: false, error: 'empty url' };
+
+    const crawl4aiUrl = process.env.CRAWL4AI_SERVICE_URL || 'http://localhost:8000/scrape';
+    try {
+      const resp = await fetch(crawl4aiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: u,
+          max_chars: maxBytes,
+          timeout_ms: 20_000,
+          main_content_only: true,
+        }),
+        signal: AbortSignal.timeout(25_000),
+      });
+      if (resp.ok) {
+        const data = (await resp.json()) as {
+          success?: boolean;
+          url?: string;
+          title?: string;
+          text?: string;
+          markdown?: string;
+          error?: string;
+        };
+        if (data.success) {
+          const content = String(data.markdown || data.text || '');
+          return {
+            ok: true,
+            engine: 'crawl4ai',
+            url: data.url || u,
+            title: data.title || '',
+            content: truncate(content, maxBytes),
+            bytes: Buffer.byteLength(content, 'utf8'),
+            truncated: Buffer.byteLength(content, 'utf8') > maxBytes,
+          };
+        }
+      }
+    } catch {
+      // Crawl4AI is an optional local service; direct HTTP remains available.
+    }
+
     try {
       const resp = await fetch(u, {
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; tnf-agent/1.0)' },
@@ -365,6 +450,7 @@ async function fallbackWeb(
         .trim();
       return {
         ok: true,
+        engine: 'direct-http',
         url: u,
         contentType: resp.headers.get('content-type') ?? 'unknown',
         truncated,
@@ -629,7 +715,7 @@ export function registerAgentsRunCommand(program: Command): void {
     .description(
       'Run an autonomous agent loop with the canonical TNF built-in toolset. ' +
         'Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. ' +
-        'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, list_skills, load_skill, memory_recall.'
+        'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall.'
     )
     .argument(
       '[task...]',

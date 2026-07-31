@@ -53,3 +53,14 @@ The Node.js services connect to the crawler via:
 If the Crawl4AI service is not running or fails, the `WebScrapingService`
 automatically falls back to the Puppeteer-based `scrapeFull` method, ensuring no
 interruption to your workflows.
+
+## Relationship to interactive browser automation
+
+Crawl4AI is the **read-only** path. It does not log into accounts or click UI.
+
+For stateful / authenticated browser work use:
+
+- `tnf browser` / `.agent/skills/agent-browser`
+- `.agent/skills/browser-session-auth-bridge` for cookie → storageState reuse
+
+See `docs/tools/BROWSER_STACK_MIGRATION.md`.

@@ -121,9 +121,14 @@ export class GoalPlanner {
       tasks: ['capture-error-context', 'log-to-learnings', 'suggest-fix'],
     },
     {
-      pattern: /browser|chrome|automation|scrape|web.*scrap/i,
+      pattern: /scrape|crawl|extract.*(?:url|web|page)|read.*(?:url|webpage)/i,
+      skill: '.agent/skills/crawl4ai',
+      tasks: ['start-crawler-if-needed', 'scrape-fit-markdown', 'verify-content'],
+    },
+    {
+      pattern: /browser|chrome|automation|click|fill.*form|authenticated.*(?:site|page)/i,
       skill: '.agent/skills/agent-browser',
-      tasks: ['launch-browser', 'navigate-target', 'extract-data', 'close-browser'],
+      tasks: ['load-auth-state-if-needed', 'launch-browser', 'inspect-act-verify', 'close-browser'],
     },
     {
       pattern: /security|threat|audit|vulnerability|pen.?test/i,
