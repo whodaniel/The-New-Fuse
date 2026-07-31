@@ -6,23 +6,39 @@ import { execFileSync } from 'node:child_process';
 import * as portfinder from 'portfinder';
 import { createClient, type RedisClientType } from 'redis';
 
+/**
+ * Port locks MUST carry a TTL.
+ *
+ * These were plain SETNX keys with no expiry, released only on the happy path.
+ * Any crash, kill, or Ctrl-C between acquire and release left the key in Redis
+ * forever — permanently poisoning that port for every future run. Because the
+ * allocator scans upward from portRangeMin, the poisoned low ports are the
+ * first ones retried every time, so a handful of interrupted runs was enough
+ * to make findAvailablePort fail outright across a 7000-port range.
+ *
+ * A self-expiring lock makes an interrupted run cost `ttlMs`, not forever.
+ */
+const PORT_LOCK_TTL_MS = 30_000;
+
 interface PortLockClient {
   connect(): Promise<void>;
   disconnect(): Promise<void>;
-  setnx(key: string, value: string): Promise<number>;
+  /** Acquire `key` only if unset, expiring after `ttlMs`. Returns 1 on acquire. */
+  setnx(key: string, value: string, ttlMs: number): Promise<number>;
   del(key: string): Promise<number>;
 }
 
 function createLocalPortLockClient(): PortLockClient {
-  const locks = new Map<string, string>();
+  const locks = new Map<string, { value: string; expiresAt: number }>();
   return {
     connect: async () => {},
     disconnect: async () => {
       locks.clear();
     },
-    setnx: async (key: string, value: string) => {
-      if (locks.has(key)) return 0;
-      locks.set(key, value);
+    setnx: async (key: string, value: string, ttlMs: number) => {
+      const existing = locks.get(key);
+      if (existing && existing.expiresAt > Date.now()) return 0;
+      locks.set(key, { value, expiresAt: Date.now() + ttlMs });
       return 1;
     },
     del: async (key: string) => (locks.delete(key) ? 1 : 0),
@@ -40,8 +56,8 @@ async function createPortLockClient(): Promise<PortLockClient> {
       disconnect: async () => {
         await client.disconnect();
       },
-      setnx: async (key: string, value: string) => {
-        const result = await client.set(key, value, { NX: true });
+      setnx: async (key: string, value: string, ttlMs: number) => {
+        const result = await client.set(key, value, { NX: true, PX: ttlMs });
         return result ? 1 : 0;
       },
       del: async (key: string) => await client.del(key),
@@ -287,16 +303,24 @@ export class PortRegistryService extends EventEmitter {
           stopPort: config.portRangeMax,
         });
 
-        const reservedServer = await this.reservePortTemporarily(potentialPort);
-        // Try to acquire a lock before attempting to bind
+        // Lock first, then bind — reservePortTemporarily opens and HOLDS a real
+        // socket, so calling it twice on the same port guarantees the second
+        // call hits EADDRINUSE against our own reservation. That is what used
+        // to happen here (an unconditional bind before the lock, then a second
+        // bind inside it, the inner `const` shadowing the outer): every
+        // candidate port failed, every iteration leaked a bound socket, and a
+        // range of 7000 free ports reported "no available ports found".
         const lockAcquired = await this.acquirePortLock(potentialPort);
         if (lockAcquired) {
           const reservedServer = await this.reservePortTemporarily(potentialPort);
+          // The lock only has to serialize check-and-bind. Once we hold the
+          // bound socket, that socket IS the exclusion, so release the lock on
+          // both paths — holding it past the bind made every subsequent caller
+          // block for the full acquire timeout on a port that was already
+          // decided.
+          await this.releasePortLock(potentialPort);
           if (reservedServer) {
             return potentialPort;
-          } else {
-            // If temporary reservation failed, release the lock
-            await this.releasePortLock(potentialPort);
           }
         }
       } catch (err: unknown) {
@@ -538,7 +562,15 @@ export class PortRegistryService extends EventEmitter {
       // This function only attempts to bind the port physically.
       const server = net.createServer();
       server.listen(port, '127.0.0.1', () => {
-        // Port successfully bound, keep it open temporarily
+        // Port successfully bound, keep it open temporarily.
+        //
+        // unref() so an outstanding reservation never keeps the process alive.
+        // The socket still holds the port for as long as this process runs —
+        // which is the semantic callers want — but Node can exit once its real
+        // work is done. Without this, `PORT=$(find-available-port.cjs …)` in
+        // api-gateway's start:dev hangs forever: the reservation pins the event
+        // loop, the process never exits, and command substitution never returns.
+        server.unref();
         this.temporaryReservations.set(port, server);
         resolve(server); // Return the server instance
       });
@@ -566,7 +598,7 @@ export class PortRegistryService extends EventEmitter {
     const redisClient = await this.getRedisClient();
     while (Date.now() - startTime < timeoutMs) {
       try {
-        const acquired = await redisClient.setnx(lockKey, 'locked');
+        const acquired = await redisClient.setnx(lockKey, 'locked', PORT_LOCK_TTL_MS);
         if (acquired === 1) {
           return true;
         }

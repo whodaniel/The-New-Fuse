@@ -64,6 +64,7 @@ import {
   resolveOperatorWindowMs,
 } from './utils/operator-window.js';
 import { resolvePrompt } from './utils/prompt-input.js';
+import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
@@ -190,34 +191,16 @@ try {
 async function runCommand(
   cmd: string,
   args: string[],
-  options: { cwd?: string; env?: NodeJS.ProcessEnv; isBackground?: boolean } = {}
+  options: {
+    cwd?: string;
+    env?: NodeJS.ProcessEnv;
+    isBackground?: boolean;
+    /** Kill the child and reject with CommandTimeoutError after this long.
+     *  Omit for the historical unbounded behaviour. */
+    timeoutMs?: number;
+  } = {}
 ): Promise<void> {
-  await new Promise<void>((resolve, reject) => {
-    const stdio = options.isBackground ? 'ignore' : 'inherit';
-    const child = spawn(cmd, args, {
-      cwd: options.cwd || repoRoot,
-      env: { ...process.env, ...(options.env || {}) },
-      stdio,
-      detached: options.isBackground,
-    });
-
-    if (options.isBackground) {
-      child.unref();
-      return resolve();
-    }
-
-    child.on('error', (error: NodeJS.ErrnoException) => {
-      if (error?.code === 'ENOENT') {
-        reject(new Error(`'${cmd}' is not installed or not on PATH`));
-        return;
-      }
-      reject(error);
-    });
-    child.on('close', (code) => {
-      if (code === 0) return resolve();
-      reject(new Error(`${cmd} exited with code ${code}`));
-    });
-  });
+  await spawnWithTimeout(cmd, args, { ...options, cwd: options.cwd || repoRoot });
 }
 
 async function runTnfCliEntrypoint(args: string[]): Promise<void> {
@@ -1052,6 +1035,9 @@ type FullAutoRunEvent = {
   durationMs: number;
   ok: boolean;
   error?: string;
+  /** Set when the cycle was killed for exceeding --cycle-timeout-minutes,
+   *  as opposed to failing on its own. */
+  timedOut?: boolean;
 };
 type FullAutoState = {
   mode: 'running' | 'idle';
@@ -1072,6 +1058,9 @@ const DEFAULT_SELF_IMPROVEMENT_API_URL = 'https://api.thenewfuse.com';
 // router path the semantic audit enumerates) lives on the app domain.
 const DEFAULT_SELF_IMPROVEMENT_APP_URL = 'https://app.thenewfuse.com';
 const DEFAULT_FULL_AUTO_INTERVAL_MINUTES = 30;
+// Observed cycle duration is ~35 min, so 90 is a generous ceiling that still
+// catches a genuine hang long before it burns a day of autopilot time.
+const DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES = 90;
 const FULL_AUTO_STATE_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-state.json');
 const FULL_AUTO_RUN_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-runs.jsonl');
 const FULL_AUTO_DAEMON_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-daemon.log');
@@ -3838,11 +3827,12 @@ async function printCommandMenu(
   console.log(chalk.dim('Run `tnf --help` for complete command reference.\n'));
 }
 
-async function runSelfCli(args: string[]): Promise<void> {
+async function runSelfCli(args: string[], timeoutMs?: number): Promise<void> {
   // Nested CLI re-entries must not re-dump Turn Zero / ProtocolInterceptor
   // banners onto stdout (breaks JSON consumers and floods full-auto logs).
   await runCommand(process.execPath, [...process.execArgv, cliEntryPath, ...args], {
     env: { TNF_SILENT_PREFLIGHT: '1' },
+    timeoutMs,
   });
 }
 
@@ -3857,6 +3847,7 @@ function buildFullAutoStartArgs(
   options: SelfImprovementRunCliOptions & {
     intervalMinutes?: string;
     maxCycles?: string;
+    cycleTimeoutMinutes?: string;
     broadcast?: boolean;
     strict?: boolean;
     skipStrictStatus?: boolean;
@@ -3865,6 +3856,8 @@ function buildFullAutoStartArgs(
   const args = ['full-auto', 'start'];
   if (options.intervalMinutes) args.push('--interval-minutes', options.intervalMinutes);
   if (options.maxCycles) args.push('--max-cycles', options.maxCycles);
+  if (options.cycleTimeoutMinutes)
+    args.push('--cycle-timeout-minutes', options.cycleTimeoutMinutes);
   if (options.baseUrl) args.push('--base-url', options.baseUrl);
   if (options.apiUrl) args.push('--api-url', options.apiUrl);
   if (options.appUrl) args.push('--app-url', options.appUrl);
@@ -10130,6 +10123,11 @@ fullAuto
     String(DEFAULT_FULL_AUTO_INTERVAL_MINUTES)
   )
   .option('--max-cycles <n>', 'Number of cycles before stop (0 = run forever)', '0')
+  .option(
+    '--cycle-timeout-minutes <n>',
+    'Kill a cycle that runs longer than this and record it as a failure',
+    String(DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES)
+  )
   .option('--base-url <url>', 'Public base URL used by live-link/auth audits')
   .option('--api-url <url>', 'API base URL used by auth audit')
   .option('--app-url <url>', 'App (SPA) base URL used by the semantic route audit')
@@ -10154,6 +10152,7 @@ fullAuto
       options: SelfImprovementRunCliOptions & {
         intervalMinutes?: string;
         maxCycles?: string;
+        cycleTimeoutMinutes?: string;
         broadcast?: boolean;
         strict?: boolean;
         skipStrictStatus?: boolean;
@@ -10168,10 +10167,24 @@ fullAuto
           '--interval-minutes'
         );
         const maxCycles = parseNonNegativeIntegerOption(options.maxCycles, 0, '--max-cycles');
+        // A cycle that never returns used to hang the loop forever while the state
+        // file still read `mode: "running"` — the autopilot was dead and nothing
+        // said so. Bound every cycle; an overrun is a loud failure, not silence.
+        const cycleTimeoutMinutes = parsePositiveIntegerOption(
+          options.cycleTimeoutMinutes,
+          DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES,
+          '--cycle-timeout-minutes'
+        );
         const cycleArgs = buildSelfImprovementRunCliArgs(options);
         const intervalMs = intervalMinutes * 60 * 1000;
+        const cycleTimeoutMs = cycleTimeoutMinutes * 60 * 1000;
         let completedCycles = 0;
         let failedCycles = 0;
+
+        // Cycle numbers must stay monotonic across daemon restarts, otherwise the
+        // run log reads `…7, 8, 1` and the cycle number is not a usable key.
+        const priorRun = readLastJsonLine(FULL_AUTO_RUN_LOG_PATH) as FullAutoRunEvent | null;
+        let cycle = Number.isFinite(priorRun?.cycle) ? Number(priorRun!.cycle) : 0;
 
         writeFullAutoState({
           mode: 'running',
@@ -10184,13 +10197,16 @@ fullAuto
 
         console.log(chalk.bold('\nTNF Full-Auto Loop Started\n'));
         console.log(`Interval: ${chalk.cyan(`${intervalMinutes} minute(s)`)}`);
+        console.log(`Cycle timeout: ${chalk.cyan(`${cycleTimeoutMinutes} minute(s)`)}`);
         console.log(`Max cycles: ${chalk.cyan(maxCycles === 0 ? 'unbounded' : String(maxCycles))}`);
+        console.log(`Resuming from cycle: ${chalk.cyan(String(cycle))}`);
         console.log(`State: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
         console.log('');
 
-        let cycle = 0;
-        while (maxCycles === 0 || cycle < maxCycles) {
+        let cyclesThisSession = 0;
+        while (maxCycles === 0 || cyclesThisSession < maxCycles) {
           cycle += 1;
+          cyclesThisSession += 1;
           const startedAt = new Date();
           let event: FullAutoRunEvent = {
             cycle,
@@ -10200,12 +10216,18 @@ fullAuto
             ok: false,
           };
 
+          // One budget for the whole cycle, not per sub-command, so a cycle can
+          // never outlive its timeout no matter which stage stalls.
+          const deadline = startedAt.getTime() + cycleTimeoutMs;
+          const remainingMs = () => Math.max(1, deadline - Date.now());
+          let cycleError: unknown;
+
           try {
-            await runSelfCli(cycleArgs);
+            await runSelfCli(cycleArgs, remainingMs());
             if (options.broadcast) {
-              await runSelfCli(['orchestrate', 'self-improvement']);
+              await runSelfCli(['orchestrate', 'self-improvement'], remainingMs());
             }
-            await runSelfCli(buildSelfImprovementStatusCliArgs(options));
+            await runSelfCli(buildSelfImprovementStatusCliArgs(options), remainingMs());
 
             const finishedAt = new Date();
             event = {
@@ -10223,6 +10245,7 @@ fullAuto
             );
           } catch (err: any) {
             const finishedAt = new Date();
+            const timedOut = err instanceof CommandTimeoutError;
             event = {
               cycle,
               startedAt: startedAt.toISOString(),
@@ -10230,29 +10253,31 @@ fullAuto
               durationMs: finishedAt.getTime() - startedAt.getTime(),
               ok: false,
               error: err instanceof Error ? err.message : String(err),
+              ...(timedOut ? { timedOut: true } : {}),
             };
             failedCycles += 1;
-            console.error(chalk.red(`[full-auto] cycle ${cycle} failed: ${event.error}`));
-
-            appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
-            writeFullAutoState({
-              mode: options.strict ? 'idle' : 'running',
-              updatedAt: new Date().toISOString(),
-              intervalMinutes,
-              maxCycles,
-              completedCycles,
-              failedCycles,
-              lastRun: event,
-            });
-
-            if (options.strict) {
-              throw err;
+            cycleError = err;
+            console.error(
+              chalk.red(
+                `[full-auto] cycle ${cycle} ${timedOut ? 'TIMED OUT' : 'failed'}: ${event.error}`
+              )
+            );
+            if (timedOut) {
+              console.error(
+                chalk.yellow(
+                  `[full-auto] cycle exceeded --cycle-timeout-minutes ${cycleTimeoutMinutes}; child killed. ` +
+                    `Raise the budget if cycles legitimately run longer.`
+                )
+              );
             }
           }
 
+          // Single write per cycle. This used to run twice on the failure path
+          // (once in the catch, once here), double-counting every failed cycle
+          // in the run log.
           appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
           writeFullAutoState({
-            mode: 'running',
+            mode: options.strict && !event.ok ? 'idle' : 'running',
             updatedAt: new Date().toISOString(),
             intervalMinutes,
             maxCycles,
@@ -10261,7 +10286,11 @@ fullAuto
             lastRun: event,
           });
 
-          if (maxCycles > 0 && cycle >= maxCycles) {
+          if (options.strict && cycleError) {
+            throw cycleError;
+          }
+
+          if (maxCycles > 0 && cyclesThisSession >= maxCycles) {
             break;
           }
 

@@ -17,6 +17,7 @@ import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { ensureNextHandler } from './next-handler';
 
 interface WebSocketProxyRoute {
   prefix: string;
@@ -340,19 +341,6 @@ async function bootstrap() {
   // Global interceptors
   app.useGlobalInterceptors(new LoggingInterceptor(), new ResponseInterceptor());
 
-  // Fallback: non-/api routes served by Next.js (pages at repo root)
-  app.use(async (req: any, res: any, nextMw: any) => {
-    try {
-      if (req.url && req.url.startsWith('/api')) return nextMw();
-      const { ensureNextHandler } = await import('./next-handler');
-      const handler = await ensureNextHandler();
-      await handler(req, res);
-    } catch (err) {
-      console.error('[next-fallback] error:', err);
-      nextMw();
-    }
-  });
-
   // Global prefix for ALL routes
   app.setGlobalPrefix('api');
 
@@ -505,6 +493,25 @@ async function bootstrap() {
   });
   app.getHttpAdapter().get('/api/v1/health', (req, res) => {
     res.json(healthPayload());
+  });
+
+  // Static-page fallback for non-/api routes.
+  //
+  // MUST be registered last. Express runs middleware in registration order, so
+  // when this sat above the route table it swallowed '/' and '/health' before
+  // their handlers could run — which is why it previously needed a hand-kept
+  // list of routes to exempt. A catch-all that has to enumerate what it must
+  // not catch drifts out of date the moment someone adds a route; one that
+  // runs last cannot.
+  const staticPageHandler = await ensureNextHandler();
+  app.use(async (req: any, res: any, nextMw: any) => {
+    try {
+      if (req.url && req.url.startsWith('/api')) return nextMw();
+      await staticPageHandler(req, res);
+    } catch (err) {
+      console.error('[next-fallback] error:', err);
+      nextMw();
+    }
   });
 
   // Listen on provided API_GATEWAY_PORT, default to PORT provided by CloudRuntime, fallback to 8080

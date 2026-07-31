@@ -40,6 +40,12 @@ const PAGE_TEMPLATES: Record<string, string> = {
 /**
  * Returns a handler for serving static pages.
  * Serves HTML for known routes, 404 for others.
+ *
+ * Call this ONCE at bootstrap, not per request — it stats the pages directory.
+ * The caller must register the resulting handler after the route table, so
+ * routes the gateway owns ('/', '/health', the proxy prefixes) are matched
+ * before this ever sees them. It deliberately keeps no exemption list: an
+ * allowlist of "routes I must not swallow" silently rots as routes are added.
  */
 export async function ensureNextHandler(): Promise<(req: any, res: any) => void> {
   // Log what we're serving

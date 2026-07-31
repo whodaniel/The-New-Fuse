@@ -450,3 +450,14 @@ apps/frontend/node_modules/.vite/
 # Playwright / agent-browser auth state exports (secrets)
 **/playwright_state_*.json
 .tnf/agent-chrome-profile/
+
+# ── Process atlas: generated runtime snapshots ───────────────────────────────
+# These are regenerated locally by .verifier/generate-process-atlas.py and
+# capture live `pgrep -fl` command lines. The generator redacts credentials,
+# but a process snapshot of the operator's machine is runtime state, not
+# source — it does not belong in the tree. (.verifier is already in
+# ALWAYS_EXCLUDE in scripts/sync-repos.sh; this closes the private-repo side.)
+.verifier/process-atlas.payload.json
+.verifier/process-atlas.digest.md
+.verifier/process-atlas.verify.json
+.verifier/tnf-process-atlas.html

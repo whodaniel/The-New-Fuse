@@ -18,6 +18,51 @@
 
 const Redis = require('ioredis');
 const { v4: uuidv4 } = require('uuid');
+
+/**
+ * Redis connection errors repeat on every reconnect attempt. Logging each one
+ * verbatim turned the full-auto daemon log into thousands of identical
+ * `getaddrinfo ENOTFOUND` lines with nothing else visible in it.
+ *
+ * Log the first occurrence immediately, then at most once a minute with a
+ * count of what was suppressed — so a persistent outage stays visible without
+ * drowning the log, and a config error (a host that does not resolve) says so
+ * once, in words that point at the fix.
+ */
+const REDIS_ERROR_LOG_INTERVAL_MS = 60_000;
+
+function makeThrottledRedisErrorLogger(label) {
+  let lastLoggedAt = 0;
+  let suppressed = 0;
+  let hintShown = false;
+
+  return (error) => {
+    const now = Date.now();
+    const code = error?.code || '';
+
+    if (!hintShown && (code === 'ENOTFOUND' || code === 'EAI_AGAIN')) {
+      hintShown = true;
+      console.error(
+        `Redis ${label}: cannot resolve host "${CONFIG.redis.host}" (${code}, port ` +
+          `${CONFIG.redis.port}). Either the host is wrong — check REDIS_HOST/REDIS_URL — ` +
+          `or DNS is failing intermittently. Retries continue with backoff; ` +
+          `further identical errors are summarised, not repeated.`
+      );
+      lastLoggedAt = now;
+      return;
+    }
+
+    if (now - lastLoggedAt < REDIS_ERROR_LOG_INTERVAL_MS) {
+      suppressed += 1;
+      return;
+    }
+
+    const tail = suppressed > 0 ? ` (${suppressed} identical errors suppressed)` : '';
+    console.error(`Redis ${label} error: ${error?.message || error}${tail}`);
+    lastLoggedAt = now;
+    suppressed = 0;
+  };
+}
 const readline = require('readline');
 const crypto = require('crypto');
 const fs = require('node:fs');
@@ -108,12 +153,19 @@ class RedisAgentClient {
   /**
    * Initialize Redis connections
    */
+  /* eslint-disable-next-line no-use-before-define */
   async initialize() {
     const redisConfig = {
       host: CONFIG.redis.host,
       port: CONFIG.redis.port,
       password: CONFIG.redis.password,
-      retryStrategy: (times) => Math.min(times * 50, 2000),
+      // Was `times * 50` capped at 2s — a linear ramp that never backs off past
+      // two seconds and never gives up. Against a host that no longer resolves
+      // that is ~30 reconnects a minute, forever, and the resulting error spam
+      // made tnf-full-auto-daemon.log 100% Redis noise with the actual cycle
+      // output buried. Exponential with a 30s ceiling keeps transient blips
+      // recovering fast while a genuinely dead endpoint stays quiet.
+      retryStrategy: (times) => Math.min(1000 * 2 ** Math.min(times, 5), 30000),
       maxRetriesPerRequest: 3,
     };
 
@@ -127,13 +179,8 @@ class RedisAgentClient {
       this.handleIncomingMessage(channel, message);
     });
 
-    this.subscriber.on('error', (error) => {
-      console.error('Redis subscriber error:', error.message);
-    });
-
-    this.publisher.on('error', (error) => {
-      console.error('Redis publisher error:', error.message);
-    });
+    this.subscriber.on('error', makeThrottledRedisErrorLogger('subscriber'));
+    this.publisher.on('error', makeThrottledRedisErrorLogger('publisher'));
 
     console.log(`✅ Connected to Redis at ${CONFIG.redis.host}:${CONFIG.redis.port}`);
   }
